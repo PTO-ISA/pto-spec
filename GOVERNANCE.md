@@ -13,15 +13,13 @@ distinguishes clone-verifiable checks, GitHub settings, and human review.
 
 | Rule | Enforced by |
 | --- | --- |
-| A template status contains no active ASL | `scripts/check-repository` (`make repo-check`) |
-| The template scanner detects active ASL and malformed comments | `scripts/check-gate` (`make gate-check`) |
 | The pinned ASLRef accepts valid and rejects invalid ASL1 | `scripts/check-toolchain` (`make toolchain-check`) |
 | `.aslref-version` holds one full commit SHA | `scripts/check-repository` |
 | `status` and `normative` describe one maturity state | `scripts/check-repository` |
 | Every checked-in ASL source reaches the type checker | `scripts/check-repository` |
-| Every non-template maturity has executable tests | `scripts/check-repository` |
+| Every supported maturity has executable tests | `scripts/check-repository` |
 | Catalogs, decoder reachability, profile hooks, feature evidence, and public-source dispositions agree | `scripts/check-catalogs` |
-| Prohibited source identities and legacy references stay unpublished | `scripts/check-no-legacy-references` |
+| Prohibited source identities, stale URLs, and broken local documentation links stay unpublished | `scripts/check-publication-hygiene` |
 | Generated artifacts stay untracked and scripts are syntactically valid | `scripts/check-repository` |
 | Review routing for normative, toolchain, and governance paths | `.github/CODEOWNERS` |
 | Admin-only updates, required `validate`, signed commits, linear history, resolved conversations, no force push or deletion | GitHub branch protection on `main` |
@@ -76,6 +74,5 @@ permitted only when every accepted form has total semantics and feature-level
 evidence.
 
 `scripts/check-repository` enforces the mechanical part of that transition:
-every non-template status requires `normative = true` and a non-empty
-`ASL_TESTS`; template status requires `normative = false` and an empty
-`ASL_TESTS`. The remaining conditions are review obligations.
+every supported status requires `normative = true` and a non-empty `ASL_TESTS`.
+The remaining conditions are review obligations.

@@ -16,7 +16,7 @@ CANONICAL_EXECUTION_FAULTS = {
     "C.EBREAK": "Fault_SoftwareBreakpoint",
     "EBREAK": "Fault_SoftwareBreakpoint",
 }
-REMOVED_SCALAR_ENCODINGS = ((0x0000700B, 32),)
+RESERVED_SCALAR_ENCODINGS = ((0x0000700B, 32),)
 SCALAR_DESTINATION_FIELDS = {"RegDst", "RegDst0", "RegDst1"}
 SCALAR_SOURCE_FIELDS = {"SrcA", "SrcD", "SrcD1", "SrcL", "SrcP", "SrcR"}
 SCALAR_IMPLICIT_T_BRIDGE_FORMS = {
@@ -770,7 +770,7 @@ def main() -> None:
         print(
             f"    assert DecodeScalarForm({bit_literal(0, 48)}, {length}) == PTO_SCALAR_FORM_COUNT;"
         )
-    for encoding, length in REMOVED_SCALAR_ENCODINGS:
+    for encoding, length in RESERVED_SCALAR_ENCODINGS:
         print(
             f"    assert DecodeScalarForm({bit_literal(encoding, 48)}, {length}) "
             "== PTO_SCALAR_FORM_COUNT;"

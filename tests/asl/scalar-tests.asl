@@ -422,11 +422,11 @@ begin
     WriteMemoryByte(Zeros{PTO_XLEN} + 448, Zeros{8} + 0x5a);
     WriteGPR(2, Zeros{PTO_XLEN} + 256);
     WriteGPR(3, Zeros{PTO_XLEN} + 448);
-    var removed_dma: bits(48) = Zeros{48} + 0x0000700b;
-    removed_dma[19:15] = Zeros{5} + 2;
-    removed_dma[24:20] = Zeros{5} + 3;
-    let removed_dma_status = ExecuteScalarInstruction(removed_dma, 32);
-    assert removed_dma_status == ScalarExecution_Rejected;
+    var reserved_encoding: bits(48) = Zeros{48} + 0x0000700b;
+    reserved_encoding[19:15] = Zeros{5} + 2;
+    reserved_encoding[24:20] = Zeros{5} + 3;
+    let reserved_encoding_status = ExecuteScalarInstruction(reserved_encoding, 32);
+    assert reserved_encoding_status == ScalarExecution_Rejected;
     assert _LastFault == Fault_IllegalInstruction;
     assert ReadMemoryByte(Zeros{PTO_XLEN} + 448) == Zeros{8} + 0x5a;
 end;

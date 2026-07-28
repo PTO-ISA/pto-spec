@@ -7,9 +7,9 @@ share encodings or semantics.
 
 ## Official comparison sources
 
-- [Arm Architecture Specification Language](https://developer.arm.com/architectures/architecture-specification-language)
-- [Arm A64 PRFM (immediate), 2022-06](https://developer.arm.com/documentation/ddi0602/2022-06/Base-Instructions/PRFM--immediate---Prefetch-Memory--immediate--)
-- [Arm Architecture Reference Manual DDI0487mb, load-store pair](https://developer.arm.com/documentation/ddi0487/mb/-Part-C-The-AArch64-Instruction-Set/-Chapter-C3-A64-Instruction-Set-Overview/-C3-2-Loads-and-stores/-C3-2-3-Load-store-pair)
+- [Arm Architecture Specification Language](https://support.arm.com/architectures/architecture-specification-language)
+- [Arm A64 PRFM (immediate), 2022-06](https://support.arm.com/documentation/ddi0602/2022-06/Base-Instructions/PRFM--immediate---Prefetch-Memory--immediate--)
+- [Arm Architecture Reference Manual DDI0487mb, load-store pair](https://support.arm.com/documentation/ddi0487/mb/-Part-C-The-AArch64-Instruction-Set/-Chapter-C3-A64-Instruction-Set-Overview/-C3-2-Loads-and-stores/-C3-2-3-Load-store-pair)
 
 The references are versioned official Arm pages. They were reviewed to identify
 questions PTO must answer; their pseudocode, prose, constraints, and

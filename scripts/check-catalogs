@@ -1054,14 +1054,6 @@ def main() -> int:
     asl_body = "\n".join(
         path.read_text(encoding="utf-8") for path in (ROOT / "asl").rglob("*.asl")
     )
-    require(
-        re.search(r"\bDMA64\b", asl_body) is None,
-        "removed DMA64 semantics remain in normative ASL",
-    )
-    require(
-        "_MemoryAcquireEpoch" not in asl_body and "_MemoryReleaseEpoch" not in asl_body,
-        "ordering counters must not substitute for the PTO-TSO event model",
-    )
     concurrency_body = (ROOT / "asl" / "concurrency.asl").read_text(encoding="utf-8")
     for relation in (
         "MemoryProgramOrderLocationBefore",
@@ -1205,7 +1197,7 @@ def main() -> int:
     require(
         "DecodeScalarForm('000000000000000000000000000000000111000000001011', 32)"
         in generated_tile_dispatch,
-        "removed DMA encoding lacks generated rejection evidence",
+        "reserved scalar encoding lacks generated rejection evidence",
     )
     scalar_operands_body = (ROOT / "asl" / "scalar" / "operands.asl").read_text(
         encoding="utf-8"

@@ -1,7 +1,7 @@
 PTO Instruction Set Architecture formal specification
 Copyright (c) 2026, Kevin Zhou
 
-This repository is the self-contained golden architecture contract for PTO.
+This repository is the self-contained normative architecture contract for PTO.
 
 External evidence used for independent review:
 
@@ -12,8 +12,8 @@ External evidence used for independent review:
   cross-check. No private text, source, diagrams, project names, or repository
   paths are redistributed here.
 - ASLRef and the ASL language reference, BSD 2-Clause License.
-  https://github.com/herd/herdtools7/tree/master/asllib
+  https://github.com/herd/herdtools7/tree/0b6e09066d4186c8a26e02e3bb884bd664d5eb34/asllib
 
 Names, selectors, bit assignments, and operation behavior in the canonical PTO
 catalogs are architecture facts. See docs/normative-sources.md and
-docs/traceability.md for the review and evidence policy.
+spec/requirements.json for the source and traceability policy.

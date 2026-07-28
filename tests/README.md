@@ -1,7 +1,7 @@
 # Tests
 
-Validation in this repository ultimately reduces to process exit codes. The
-test directories cover both PTO semantics and the validation machinery itself.
+The test directories cover PTO architecture semantics and the pinned ASLRef
+toolchain.
 
 ## `asl/`
 
@@ -10,24 +10,8 @@ must be listed in `ASL_TESTS` in the `Makefile`; the ordered sources are
 assembled after `build/pto-spec.asl` into `build/pto-tests.asl`.
 
 The final source defines exactly one `main` that returns zero on success.
-`scripts/check-repository` rejects a non-template maturity with an empty test
-list and rejects listed files that do not exist.
-
-## `gate/`
-
-Lexical fixtures for `scripts/asl-active-content`, exercised by
-`make gate-check`.
-
-`active-*.asl` fixtures must be rejected and `inert-*.asl` fixtures must be
-accepted. The active cases include declaration syntax a line-anchored keyword
-scan cannot see. The inert case includes declaration keywords inside comments.
-
-`active-unterminated-comment.asl` covers a separate failure mode: a block
-comment that is never closed can hide later concatenated sources. The scanner
-must report that it could not certify the file instead of calling it inert.
-
-These fixtures are lexical inputs only. They are never assembled into the PTO
-specification or passed to ASLRef.
+`scripts/check-repository` rejects an empty test list and rejects listed files
+that do not exist.
 
 ## `canary/`
 

@@ -8,7 +8,7 @@
 
 The retained scalar system-register addresses include three names that carried
 source-specific branding rather than portable architectural meaning. The PTO
-golden specification must preserve the address and access contracts without
+normative specification must preserve the address and access contracts without
 retaining an identity from a superseded source.
 
 ## Decision
