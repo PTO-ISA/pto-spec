@@ -9,6 +9,22 @@ begin
            right_start < left_start + left_size;
 end;
 
+impdef func TranslateDataAddress(address: Word,
+                                 size_bytes: integer {1..262144},
+                                 write: boolean) => Word
+begin
+    // The portable model uses identity translation.
+    return address;
+end;
+
+impdef func DataAccessPermitted(address: Word,
+                                size_bytes: integer {1..262144},
+                                write: boolean) => boolean
+begin
+    // The portable model exposes one bounded, readable, writable address space.
+    return UInt(address) + size_bytes <= PTO_MODEL_MEMORY_BYTES;
+end;
+
 func ApplyMemoryOrderBefore(order: MemoryOrder)
 begin
     if order == MemoryOrder_Release || order == MemoryOrder_AcquireRelease then
@@ -29,13 +45,15 @@ begin
         SetFault(Fault_DataAlignment, address);
         return Zeros{PTO_XLEN};
     end;
-    if UInt(address) + size_bytes > PTO_MODEL_MEMORY_BYTES then
+    let translated_address = TranslateDataAddress(address, size_bytes, FALSE);
+    if !DataAccessPermitted(translated_address, size_bytes, FALSE) ||
+       UInt(translated_address) + size_bytes > PTO_MODEL_MEMORY_BYTES then
         SetFault(Fault_DataPage, address);
         return Zeros{PTO_XLEN};
     end;
     var result: Word = Zeros{PTO_XLEN};
     for byte_index = 0 to size_bytes - 1 do
-        let byte_address = address +
+        let byte_address = translated_address +
             NaturalToWord(byte_index as integer {0..262144});
         result[(byte_index * 8) +: 8] = ReadMemoryByte(byte_address);
     end;
@@ -59,12 +77,14 @@ begin
         SetFault(Fault_DataAlignment, address);
         return;
     end;
-    if UInt(address) + size_bytes > PTO_MODEL_MEMORY_BYTES then
+    let translated_address = TranslateDataAddress(address, size_bytes, TRUE);
+    if !DataAccessPermitted(translated_address, size_bytes, TRUE) ||
+       UInt(translated_address) + size_bytes > PTO_MODEL_MEMORY_BYTES then
         SetFault(Fault_DataPage, address);
         return;
     end;
     for byte_index = 0 to size_bytes - 1 do
-        let byte_address = address +
+        let byte_address = translated_address +
             NaturalToWord(byte_index as integer {0..262144});
         WriteMemoryByte(byte_address, value[(byte_index * 8) +: 8]);
     end;

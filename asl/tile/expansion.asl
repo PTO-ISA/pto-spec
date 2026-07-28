@@ -23,6 +23,13 @@ begin
     end;
 end;
 
+impdef func TileProfileExpand(op: TileExpandOperation,
+                              data_type: TileDataType,
+                              left: Word, broadcast: Word) => Word
+begin
+    return TileExpandValue(op, left, broadcast);
+end;
+
 func ExecuteTileExpand(op: TileExpandOperation, axis: TileAxis,
                        destination: TileIndex, source: TileIndex,
                        broadcast_source: TileIndex)
@@ -30,6 +37,8 @@ begin
     let source_tile = _Tiles[[source]];
     let broadcast_tile = _Tiles[[broadcast_source]];
     assert TileShapesMatch(_Tiles[[destination]], source_tile);
+    assert _Tiles[[destination]].data_type == source_tile.data_type;
+    assert broadcast_tile.data_type == source_tile.data_type;
     let source_payload = source_tile.payload;
     let broadcast_payload = broadcast_tile.payload;
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
@@ -41,8 +50,9 @@ begin
             let broadcast_element = TileLinearIndex(broadcast_tile,
                 broadcast_row as integer {0..65535},
                 broadcast_column as integer {0..65535});
-            _Tiles[[destination]].payload[[source_element]] = TileExpandValue(op,
-                source_payload[[source_element]], broadcast_payload[[broadcast_element]]);
+            _Tiles[[destination]].payload[[source_element]] = TileProfileExpand(
+                op, source_tile.data_type, source_payload[[source_element]],
+                broadcast_payload[[broadcast_element]]);
         end;
     end;
 end;

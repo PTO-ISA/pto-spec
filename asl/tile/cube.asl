@@ -1,4 +1,27 @@
-// PTO-REQ-CUBE-001: direct integer matrix multiply and accumulation.
+// PTO-REQ-CUBE-001: profile-defined matrix arithmetic with portable integer defaults.
+
+impdef func TileProfileMatrixAccumulate(accumulator: Word, left: Word, right: Word,
+                                         destination_type: TileDataType,
+                                         left_type: TileDataType,
+                                         right_type: TileDataType) => Word
+begin
+    return accumulator + MultiplyWord(left, right);
+end;
+
+impdef func TileProfileMatrixBias(value: Word, bias: Word,
+                                  destination_type: TileDataType,
+                                  bias_type: TileDataType) => Word
+begin
+    return value + bias;
+end;
+
+impdef func TileProfileMatrixScale(value: Word, row_scale: Word, column_scale: Word,
+                                   destination_type: TileDataType,
+                                   row_type: TileDataType,
+                                   column_type: TileDataType) => Word
+begin
+    return MultiplyWord(MultiplyWord(value, row_scale), column_scale);
+end;
 
 func TMATMUL(destination: TileIndex, left: TileIndex, right: TileIndex,
              accumulate: boolean)
@@ -25,9 +48,10 @@ begin
                     row as integer {0..65535}, inner as integer {0..65535});
                 let right_element = TileLinearIndex(right_tile,
                     inner as integer {0..65535}, column as integer {0..65535});
-                let product = MultiplyWord(left_payload[[left_element]],
-                    right_payload[[right_element]]);
-                sum = sum + product;
+                sum = TileProfileMatrixAccumulate(sum,
+                    left_payload[[left_element]], right_payload[[right_element]],
+                    _Tiles[[destination]].data_type, left_tile.data_type,
+                    right_tile.data_type);
             end;
             WriteTileElement(destination, row as integer {0..65535},
                 column as integer {0..65535}, sum);
@@ -51,8 +75,9 @@ begin
             let bias_column = if bias_tile.valid_columns == 1 then 0 else column;
             let bias_element = TileLinearIndex(bias_tile,
                 bias_row as integer {0..65535}, bias_column as integer {0..65535});
-            _Tiles[[destination]].payload[[destination_element]] =
-                destination_payload[[destination_element]] + bias_payload[[bias_element]];
+            _Tiles[[destination]].payload[[destination_element]] = TileProfileMatrixBias(
+                destination_payload[[destination_element]], bias_payload[[bias_element]],
+                destination_tile.data_type, bias_tile.data_type);
         end;
     end;
 end;
@@ -77,9 +102,10 @@ begin
                 row as integer {0..65535}, 0);
             let column_element = TileLinearIndex(column_scale_tile,
                 0, column as integer {0..65535});
-            _Tiles[[destination]].payload[[destination_element]] = MultiplyWord(
-                MultiplyWord(destination_payload[[destination_element]], row_scale_payload[[row_element]]),
-                column_scale_payload[[column_element]]);
+            _Tiles[[destination]].payload[[destination_element]] = TileProfileMatrixScale(
+                destination_payload[[destination_element]], row_scale_payload[[row_element]],
+                column_scale_payload[[column_element]], destination_tile.data_type,
+                row_scale_tile.data_type, column_scale_tile.data_type);
         end;
     end;
 end;

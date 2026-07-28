@@ -13,7 +13,7 @@ closed.
 | System registers | 52 definitions, 13 trap numbers | executable catalog | generated access witnesses and read/write/trap tests | platform-specific reset values |
 | Tile registers | 64 | implemented | hand mapping, descriptor, capacity, and alias tests | none in the portable state model |
 | TEPL | 97 operations | 97/97 handler-mapped | elementwise, reduction, expansion, generation, conversion, rearrangement, complex, and pipe tests | numeric profile hooks and independent evidence gaps |
-| TMA | 6 operations | 6/6 handler-mapped | load/store/move/prefetch/gather/scatter tests | translation, permission, ordering, and restart profile |
+| TMA | 6 operations | 6/6 handler-mapped | load/store/move/prefetch/gather/scatter tests | concrete translation and permission profile |
 | CUBE | 8 operations | 8/8 handler-mapped | matrix/vector base, bias, accumulate, and MX tests | numeric type and accumulation profile |
 | Encodings | 474 scalar forms + 111 tile operations | executable complete | generated ASL decoder and reserved-code assertions | none for accepted selector identity |
 | Independent tile cross-check | 111 operations | complete disposition inventory | 97 agree, 1 conflict, 13 incomplete | resolve incomplete evidence pages |
@@ -62,11 +62,13 @@ the normative sources alone is insufficient.
   destination packing, and sticky flags are executable in the portable model.
 - `ExecuteScalarInstruction` runs every accepted scalar form through legality,
   operand binding, Reg5 access, and its architecture state transition.
-- Translation, permission, restart, and some numeric conversion details remain
-  named profiles rather than silent implementation behavior.
+- Translation, permission, and some numeric conversion details remain named
+  profiles rather than silent implementation behavior. Tile memory accesses
+  use the scalar data-access hooks, including destination-free prefetch.
 - Platform-specific interpretation of the atomic FAR address-class hint remains
   a named refinement of the portable flat-address baseline.
 
 These gaps remain machine-readable in
-`spec/evidence/independent-tile-crosscheck.json` and in ASL `impdef` declarations.
-Green validation does not erase them.
+`spec/evidence/independent-tile-crosscheck.json` and
+`spec/profile-hooks.json`. CI requires the profile registry to match every ASL
+`impdef` declaration exactly. Green validation does not erase them.

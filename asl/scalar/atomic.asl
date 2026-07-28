@@ -1,6 +1,6 @@
 // PTO-REQ-SCALAR-AMO-001: LR/SC, CAS, RMW, and exact 64-byte DMA.
 
-pure func AtomicAddress(address: Word, far: boolean) => Word
+readonly impdef func AtomicAddress(address: Word, far: boolean) => Word
 begin
     // The portable model has one flat address domain. FAR remains an explicit
     // address-class hint so profiles can refine it without changing decoding.

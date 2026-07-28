@@ -42,6 +42,12 @@ begin
     end;
 end;
 
+impdef func TileProfileBinary(op: TileBinaryOperation, data_type: TileDataType,
+                              left: Word, right: Word) => Word
+begin
+    return TileBinaryValue(op, left, right);
+end;
+
 func ExecuteTileBinary(op: TileBinaryOperation, destination: TileIndex,
                        source_left: TileIndex, source_right: TileIndex)
 begin
@@ -50,6 +56,8 @@ begin
     assert left_tile.allocated && right_tile.allocated;
     assert TileShapesMatch(left_tile, right_tile);
     assert TileShapesMatch(_Tiles[[destination]], left_tile);
+    assert left_tile.data_type == right_tile.data_type;
+    assert _Tiles[[destination]].data_type == left_tile.data_type;
 
     // Snapshot both sources before the first destination write. This defines
     // source/destination aliasing as read-before-write.
@@ -60,7 +68,8 @@ begin
             let element = TileLinearIndex(left_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             _Tiles[[destination]].payload[[element]] =
-                TileBinaryValue(op, left_payload[[element]], right_payload[[element]]);
+                TileProfileBinary(op, left_tile.data_type,
+                    left_payload[[element]], right_payload[[element]]);
         end;
     end;
 end;
@@ -82,11 +91,24 @@ begin
     end;
 end;
 
+impdef func TileProfileUnary(op: TileUnaryOperation, data_type: TileDataType,
+                             value: Word) => Word
+begin
+    return TileUnaryValue(op, value);
+end;
+
+impdef func TileProfileAxpy(destination_value: Word, source_value: Word,
+                            scalar: Word, data_type: TileDataType) => Word
+begin
+    return destination_value + MultiplyWord(scalar, source_value);
+end;
+
 func ExecuteTileAxpy(destination: TileIndex, source: TileIndex, scalar: Word)
 begin
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
     assert TileShapesMatch(destination_tile, source_tile);
+    assert destination_tile.data_type == source_tile.data_type;
     let destination_payload = destination_tile.payload;
     let source_payload = source_tile.payload;
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
@@ -94,7 +116,8 @@ begin
             let element = TileLinearIndex(source_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             _Tiles[[destination]].payload[[element]] =
-                destination_payload[[element]] + MultiplyWord(scalar, source_payload[[element]]);
+                TileProfileAxpy(destination_payload[[element]],
+                    source_payload[[element]], scalar, source_tile.data_type);
         end;
     end;
 end;
@@ -116,13 +139,15 @@ begin
     let source_tile = _Tiles[[source]];
     assert source_tile.allocated;
     assert TileShapesMatch(_Tiles[[destination]], source_tile);
+    assert _Tiles[[destination]].data_type == source_tile.data_type;
     let source_payload = source_tile.payload;
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
             let element = TileLinearIndex(source_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             _Tiles[[destination]].payload[[element]] =
-                TileUnaryValue(op, source_payload[[element]]);
+                TileProfileUnary(op, source_tile.data_type,
+                    source_payload[[element]]);
         end;
     end;
 end;
@@ -133,13 +158,15 @@ begin
     let source_tile = _Tiles[[source]];
     assert source_tile.allocated;
     assert TileShapesMatch(_Tiles[[destination]], source_tile);
+    assert _Tiles[[destination]].data_type == source_tile.data_type;
     let source_payload = source_tile.payload;
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
             let element = TileLinearIndex(source_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             _Tiles[[destination]].payload[[element]] =
-                TileBinaryValue(op, source_payload[[element]], scalar);
+                TileProfileBinary(op, source_tile.data_type,
+                    source_payload[[element]], scalar);
         end;
     end;
 end;
@@ -158,12 +185,20 @@ begin
     if result then return Zeros{PTO_XLEN} + 1; else return Zeros{PTO_XLEN}; end;
 end;
 
+impdef func TileProfileCompare(comparison: TileComparison,
+                               data_type: TileDataType,
+                               left: Word, right: Word) => Word
+begin
+    return TileCompareValue(comparison, left, right);
+end;
+
 func ExecuteTileCompare(destination: TileIndex, source_left: TileIndex,
                         source_right: TileIndex, comparison: TileComparison)
 begin
     let left_tile = _Tiles[[source_left]];
     let right_tile = _Tiles[[source_right]];
     assert TileShapesMatch(left_tile, right_tile);
+    assert left_tile.data_type == right_tile.data_type;
     assert _Tiles[[destination]].rows == left_tile.rows;
     assert _Tiles[[destination]].columns == left_tile.columns;
     let left_payload = left_tile.payload;
@@ -173,7 +208,8 @@ begin
             let element = TileLinearIndex(left_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             _Tiles[[destination]].payload[[element]] =
-                TileCompareValue(comparison, left_payload[[element]], right_payload[[element]]);
+                TileProfileCompare(comparison, left_tile.data_type,
+                    left_payload[[element]], right_payload[[element]]);
         end;
     end;
 end;
@@ -190,7 +226,8 @@ begin
             let element = TileLinearIndex(source_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             _Tiles[[destination]].payload[[element]] =
-                TileCompareValue(comparison, payload[[element]], scalar);
+                TileProfileCompare(comparison, source_tile.data_type,
+                    payload[[element]], scalar);
         end;
     end;
 end;

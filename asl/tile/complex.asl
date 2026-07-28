@@ -16,6 +16,22 @@ begin
     end;
 end;
 
+impdef func TileProfilePartialValue(op: TilePartialOperation,
+                                     data_type: TileDataType,
+                                     left: Word, right: Word) => Word
+begin
+    return TilePartialValue(op, left, right);
+end;
+
+impdef func TileProfileOrderLeft(left: Word, right: Word,
+                                 descending: boolean,
+                                 data_type: TileDataType) => boolean
+begin
+    if descending then return SInt(left) >= SInt(right);
+    else return SInt(left) <= SInt(right);
+    end;
+end;
+
 func ExecuteTilePartial(op: TilePartialOperation, destination: TileIndex,
                         source_left: TileIndex, source_right: TileIndex)
 begin
@@ -41,7 +57,8 @@ begin
                     row as integer {0..65535}, column as integer {0..65535});
                 let right_element = TileLinearIndex(right_tile,
                     row as integer {0..65535}, column as integer {0..65535});
-                value = TilePartialValue(op, left_payload[[left_element]], right_payload[[right_element]]);
+                value = TileProfilePartialValue(op, destination_tile.data_type,
+                    left_payload[[left_element]], right_payload[[right_element]]);
             elsif left_valid then
                 let left_element = TileLinearIndex(left_tile,
                     row as integer {0..65535}, column as integer {0..65535});
@@ -71,6 +88,8 @@ begin
     let right_index_payload = _Tiles[[right_indices]].payload;
     assert _Tiles[[destination_indices]].valid_rows == destination_tile.valid_rows;
     assert _Tiles[[destination_indices]].valid_columns == destination_tile.valid_columns;
+    assert destination_tile.data_type == left_tile.data_type;
+    assert destination_tile.data_type == right_tile.data_type;
     for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
             let left_valid = row < left_tile.valid_rows && column < left_tile.valid_columns;
@@ -88,9 +107,9 @@ begin
                     row as integer {0..65535}, column as integer {0..65535});
             end;
             if left_valid && right_valid then
-                choose_left = if maximum then
-                    SInt(left_payload[[left_element]]) >= SInt(right_payload[[right_element]])
-                    else SInt(left_payload[[left_element]]) <= SInt(right_payload[[right_element]]);
+                choose_left = TileProfileOrderLeft(
+                    left_payload[[left_element]], right_payload[[right_element]],
+                    maximum, destination_tile.data_type);
             end;
             let output_value = if choose_left then left_payload[[left_element]]
                                else right_payload[[right_element]];
@@ -110,12 +129,14 @@ begin
     let destination_tile = _Tiles[[destination]];
     let extent: integer = source_tile.valid_rows * source_tile.valid_columns;
     assert destination_tile.valid_rows * destination_tile.valid_columns == extent;
+    assert destination_tile.data_type == source_tile.data_type;
     var values: TilePayload = source_tile.payload;
     for sort_pass = 0 to extent - 1 looplimit 4096 do
         for element = 0 to extent - 2 looplimit 4096 do
             let left = values[[element as ModelTileElementIndex]];
             let right = values[[(element + 1) as ModelTileElementIndex]];
-            let swap = if descending then SInt(left) < SInt(right) else SInt(left) > SInt(right);
+            let swap = !TileProfileOrderLeft(
+                left, right, descending, source_tile.data_type);
             if swap then
                 values[[element as ModelTileElementIndex]] = right;
                 values[[(element + 1) as ModelTileElementIndex]] = left;
@@ -137,6 +158,8 @@ begin
     let left_extent: integer = left_tile.valid_rows * left_tile.valid_columns;
     let right_extent: integer = right_tile.valid_rows * right_tile.valid_columns;
     assert destination_tile.valid_rows * destination_tile.valid_columns == left_extent + right_extent;
+    assert left_tile.data_type == right_tile.data_type;
+    assert destination_tile.data_type == left_tile.data_type;
     let left_payload = left_tile.payload;
     let right_payload = right_tile.payload;
     var left_index: integer = 0;
@@ -146,8 +169,8 @@ begin
         if left_index < left_extent && right_index < right_extent then
             let left_value = left_payload[[left_index as ModelTileElementIndex]];
             let right_value = right_payload[[right_index as ModelTileElementIndex]];
-            take_left = if descending then SInt(left_value) >= SInt(right_value)
-                        else SInt(left_value) <= SInt(right_value);
+            take_left = TileProfileOrderLeft(
+                left_value, right_value, descending, left_tile.data_type);
         end;
         if take_left then
             _Tiles[[destination]].payload[[output as ModelTileElementIndex]] =

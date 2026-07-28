@@ -305,6 +305,7 @@ def main() -> int:
     tile = load("spec/catalog/tile-operations.json")
     crosscheck = load("spec/evidence/independent-tile-crosscheck.json")
     requirements = load("spec/requirements.json")["requirements"]
+    profile_catalog = load("spec/profile-hooks.json")
     specification = tomllib.loads(
         (ROOT / "specification.toml").read_text(encoding="utf-8")
     )
@@ -978,6 +979,103 @@ def main() -> int:
                 (ROOT / relative).exists(), f"missing traceability path: {relative}"
             )
 
+    require(
+        set(profile_catalog) == {"hooks", "schema_version"},
+        "profile-hook catalog top-level schema drift",
+    )
+    require(profile_catalog["schema_version"] == 1, "unsupported profile-hook schema")
+    profile_hooks = profile_catalog["hooks"]
+    profile_names = [row["name"] for row in profile_hooks]
+    requirements_by_id = {row["id"]: row for row in requirements}
+    require(len(profile_names) == len(set(profile_names)), "duplicate profile hooks")
+    asl_text = "\n".join(
+        path.read_text(encoding="utf-8") for path in (ROOT / "asl").rglob("*.asl")
+    )
+    for hook in profile_hooks:
+        require(
+            set(hook)
+            == {
+                "domain",
+                "model",
+                "name",
+                "portable_default",
+                "profile_obligations",
+                "requirement",
+                "status",
+                "tests",
+            },
+            f"profile-hook schema drift for {hook.get('name', '<unknown>')}",
+        )
+        require(
+            hook["status"] == "explicit-impdef",
+            f"bad profile-hook status for {hook['name']}",
+        )
+        require(
+            all(
+                isinstance(hook[key], str) and hook[key]
+                for key in ("domain", "model", "name", "portable_default")
+            ),
+            f"empty profile-hook identity for {hook['name']}",
+        )
+        require(
+            hook["requirement"] in requirement_ids,
+            f"unknown profile requirement for {hook['name']}",
+        )
+        require(
+            "spec/profile-hooks.json"
+            in requirements_by_id[hook["requirement"]]["model"],
+            f"profile registry is not traceable from {hook['requirement']}",
+        )
+        require(
+            hook["portable_default"], f"missing portable default for {hook['name']}"
+        )
+        require(
+            isinstance(hook["profile_obligations"], list)
+            and hook["profile_obligations"]
+            and all(hook["profile_obligations"]),
+            f"missing profile obligations for {hook['name']}",
+        )
+        model_path = ROOT / hook["model"]
+        require(model_path.exists(), f"missing profile model for {hook['name']}")
+        require(
+            re.search(
+                rf"\bimpdef\s+func\s+{re.escape(hook['name'])}\b",
+                model_path.read_text(encoding="utf-8"),
+            )
+            is not None,
+            f"profile hook is not an impdef declaration: {hook['name']}",
+        )
+        require(
+            len(re.findall(rf"\b{re.escape(hook['name'])}\b", asl_text)) >= 2,
+            f"profile hook has no ASL call site: {hook['name']}",
+        )
+        require(
+            isinstance(hook["tests"], list) and hook["tests"],
+            f"missing profile tests for {hook['name']}",
+        )
+        for relative in hook["tests"]:
+            require(
+                (ROOT / relative).exists(), f"missing profile test path: {relative}"
+            )
+    declared_profile_names: set[str] = set()
+    for path in (ROOT / "asl").rglob("*.asl"):
+        declared_profile_names.update(
+            re.findall(
+                r"\bimpdef\s+func\s+([A-Za-z][A-Za-z0-9_]*)\b",
+                path.read_text(encoding="utf-8"),
+            )
+        )
+    require(
+        set(profile_names) == declared_profile_names,
+        "profile-hook catalog does not exactly cover ASL impdef declarations",
+    )
+    for requirement in requirements:
+        if "profile" in requirement["status"]:
+            require(
+                "spec/profile-hooks.json" in requirement["model"],
+                f"profile-bearing requirement omits registry: {requirement['id']}",
+            )
+
     used_ids: set[str] = set()
     nested_names = (
         "V" + "CALL",
@@ -1007,7 +1105,8 @@ def main() -> int:
     print(
         "catalog checks passed: 474 scalar forms, 45 operand fields, 1,867 field pieces, "
         "3 constrained overlaps, 52 system-register definitions, 13 trap numbers, and "
-        "111 tile operations with complete handler and executable feature coverage"
+        "111 tile operations with complete handler and executable feature coverage; "
+        f"{len(profile_names)} profile hooks are declared, invoked, and traceable"
     )
     return 0
 

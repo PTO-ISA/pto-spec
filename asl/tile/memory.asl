@@ -92,8 +92,13 @@ func TPREFETCH(base_address: Word, byte_count: integer {0..262144})
 begin
     // Architecturally destination-free. It performs the same translation and
     // legality checks as a load but allocates and writes no tile state.
-    if byte_count > 0 &&
-       (UInt(base_address) + byte_count > PTO_MODEL_MEMORY_BYTES) then
-        SetFault(Fault_DataPage, base_address);
+    if byte_count > 0 then
+        let access_size = byte_count as integer {1..262144};
+        let translated_address = TranslateDataAddress(
+            base_address, access_size, FALSE);
+        if !DataAccessPermitted(translated_address, access_size, FALSE) ||
+           UInt(translated_address) + byte_count > PTO_MODEL_MEMORY_BYTES then
+            SetFault(Fault_DataPage, base_address);
+        end;
     end;
 end;

@@ -1,6 +1,6 @@
 ---
 name: pto-asl
-description: Author, review, validate, or govern PTO formal architecture specifications written in ASL1. Use for changes to pto-spec ASL types, architectural state, instruction semantics, legality rules, tests, ASLRef integration, normative traceability, or formal-spec repository quality.
+description: Author, migrate, review, validate, or govern PTO formal architecture specifications written in ASL1. Use for pto-spec state and instruction semantics, source-to-golden catalog migration, one-level tile modeling, ASLRef integration, executable validation, normative traceability, or formal-spec repository quality.
 ---
 
 # PTO ASL
@@ -22,12 +22,16 @@ Before editing, read:
 
 For ASLRef setup, versioning, or language behavior, read [references/aslref.md](references/aslref.md). For any normative
 model change or review, also read [references/formal-quality.md](references/formal-quality.md).
+For source-to-golden migration or reconciliation, also read
+[references/source-map.md](references/source-map.md).
 
 ## Classify the task
 
 - **Repository maintenance**: improve tooling, governance, or non-normative docs without adding semantics.
 - **Language/tooling maintenance**: update the audited ASLRef pin or validation workflow; verify the upstream delta first.
 - **Normative modeling**: add or change architectural types, state, legality, instruction results, ordering, or faults.
+- **Migration/reconciliation**: inventory source material, normalize it into PTO-owned contracts, and record independent
+  evidence and conflicts without publishing restricted source identity or material.
 - **Review**: test traceability, totality, determinism, type safety, state effects, profile boundaries, and evidence.
 
 Never turn a repository-maintenance request into a normative modeling change.
@@ -37,12 +41,15 @@ Never turn a repository-maintenance request into a normative modeling change.
 1. Identify the public PTO requirement and assign or cite stable requirement IDs.
 2. State the architecture boundary, including what remains implementation-defined, constrained-unpredictable, or
    explicitly out of scope.
-3. Add the smallest named types and state needed by the requirement.
-4. Express legality independently from operation semantics when possible.
-5. Use pure functions for value semantics and thin procedures for architecture-visible state updates.
-6. Add positive, boundary, negative-legality, and state-transition tests as applicable.
-7. Update the traceability matrix and change classification in the pull request.
-8. Run the repository validation gate and inspect the output before claiming completion.
+3. Inventory exact accepted forms, fields, constraints, registers, traps, selectors, reserved values, and rejected
+   aliases before writing migrated semantics.
+4. Record source conflicts and PTO normalization decisions explicitly.
+5. Add the smallest named types and state needed by the requirement.
+6. Express legality independently from operation semantics when possible.
+7. Use pure functions for value semantics and thin procedures for architecture-visible state updates.
+8. Add positive, boundary, negative-legality, aliasing, fault, ordering, and state-transition tests as applicable.
+9. Update catalogs, generated witnesses, requirements, coverage, traceability, and change classification together.
+10. Run the repository validation gate and inspect the output before claiming completion.
 
 For instruction-set changes, also keep the five coverage layers synchronized:
 
@@ -83,6 +90,7 @@ Do not invent missing semantics. Stop at a documented requirement gap and open o
 For every change:
 
 ```bash
+make clean
 make ci
 git diff --check
 ```
@@ -96,6 +104,9 @@ Before committing, confirm:
 - Every scalar semantic primitive and tile handler group has direct executable feature evidence.
 - Every form claimed executable has a checked decoded operand-to-effect binding;
   catalog or enum linkage alone is not execution.
+- Every declared implementation profile has an exact machine-readable portable default, override obligations,
+  requirement owner, ASL call site, and executable feature evidence.
+- Independent-evidence gaps and conflicts remain visible rather than being converted into unsupported agreement.
 - Generated files are not committed.
 - No backend mechanism leaked into the portable model.
 - Governance, security, and contribution policies remain consistent.

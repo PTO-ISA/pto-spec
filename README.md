@@ -11,7 +11,9 @@ instruction surface, operand fields, architectural state, and scalar, TEPL,
 TMA, and CUBE semantic primitives execute under ASLRef. Numeric and system
 behaviors that require an implementation profile use named ASL `impdef` hooks
 rather than silent backend choices. Coverage and those remaining closure items
-are tracked in [docs/coverage.md](docs/coverage.md).
+are tracked in [docs/coverage.md](docs/coverage.md), with exact portable
+defaults and override obligations in
+[docs/profile-contracts.md](docs/profile-contracts.md).
 
 ## Canonical contract
 
@@ -68,6 +70,7 @@ spec/
   requirements.json      Machine-readable requirement traceability
   catalog/               Canonical scalar forms, system registers, and tile operations
   evidence/              Independent semantic cross-check results
+  profile-hooks.json     Exact impdef/default/override obligation registry
 docs/                     Architecture decisions, coverage, and review contract
 scripts/                  Reproducible evidence import and fail-closed validation
 ```
