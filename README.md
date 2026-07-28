@@ -1,76 +1,85 @@
-# PTO ASL Specification Template
+# PTO Instruction Set Architecture
 
 [![ASL](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml/badge.svg)](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml)
 
-`pto-spec` is the repository template for describing the Parallel Tile Operation (PTO) architecture in
-[ASL1](https://developer.arm.com/Architectures/Architecture%20Specification%20Language) (Architecture Specification
-Language). ASL sources are checked with [ASLRef](https://github.com/herd/herdtools7/tree/master/asllib).
+`pto-spec` is the self-contained golden ASL1 model of the **PTO Instruction Set
+Architecture**. It defines a 64-bit scalar ISA and direct tile operations in a
+flat, one-level machine.
 
-This repository intentionally contains no PTO architecture or instruction implementation. It provides only the source
-layout, authoring placeholders, validation workflow, governance, and contribution conventions needed to begin the
-formal model.
+The current specification is a normative draft. Its complete accepted
+instruction surface, operand fields, architectural state, and scalar, TEPL,
+TMA, and CUBE semantic primitives execute under ASLRef. Numeric and system
+behaviors that require an implementation profile use named ASL `impdef` hooks
+rather than silent backend choices. Coverage and those remaining closure items
+are tracked in [docs/coverage.md](docs/coverage.md), with exact portable
+defaults and override obligations in
+[docs/profile-contracts.md](docs/profile-contracts.md).
 
-## Quick start
+## Canonical contract
 
-Prerequisites:
+The normative precedence and one-level boundary are defined in
+[docs/normative-sources.md](docs/normative-sources.md) and
+[ADR-0001](docs/architecture-decisions/0001-one-level-pto.md). The direct Reg5
+tile bridge is fixed by
+[ADR-0002](docs/architecture-decisions/0002-direct-reg5-tile-bridge.md).
 
-- GNU Make
-- Git
-- OCaml and an initialized [opam](https://opam.ocaml.org/) switch
+- 474 scalar forms are accepted across AGU, ALU, AMO, BRU, FSU, and SYS, with
+  exact masks, matches, operand pieces, signedness, and legality constraints.
+- All 474 scalar forms have executable decoded state transitions, including
+  the 30 FSU forms and their explicit scalar numeric profile boundaries.
+- 111 direct tile operations are accepted: 97 TEPL, 6 TMA, and 8 CUBE.
+- 64 tile registers form T/U/M/N hands with 16 registers per hand.
+- The architecture contains no nested instruction bodies or body-local state.
+- Private tile documentation is used only as anonymized, non-redistributive
+  semantic cross-check evidence.
 
-Install ASLRef build dependencies once, then validate the template:
+## Validate
+
+Prerequisites are Git, GNU Make, Python 3.11+, OCaml, and an initialized opam
+switch. Install ASLRef build dependencies once and run the complete gate:
 
 ```bash
 make setup
 make ci
 ```
 
-`make check` parses and type-checks the assembled ASL source without executing it. Generated, concatenated ASL files
-are written under `build/`. The wrapper in `scripts/aslref` fetches the exact audited `herdtools7` commit recorded in
-`.aslref-version` and builds it under the ignored `.cache/` directory. To use an existing ASLRef binary instead:
+The gate performs:
 
-```bash
-make ci ASLREF=/path/to/aslref
-```
+- repository, naming, and licensing checks;
+- exact scalar, system-register, and tile catalog validation;
+- generated scalar-form, operand-field, and tile-selector decoder witnesses;
+- one-level architecture and legacy-reference checks;
+- strict ASLRef type checking;
+- executable ASL feature and boundary tests.
 
-## Repository layout
+ASLRef is built from the exact herdtools7 commit in `.aslref-version`. Generated
+assembled files remain ignored under `build/`; the ASLRef checkout remains
+ignored under `.cache/`.
+
+## Layout
 
 ```text
 asl/
-  architecture.asl       Empty specification entry point
-  instructions/
-    TEMPLATE.asl         Commented instruction authoring template
-docs/
-  architecture.md        Scope and architecture-design checklist
-  modeling-conventions.md
-  review-checklist.md     Formal review obligations
-  traceability.md         Requirement-to-model evidence matrix
-.codex/skills/pto-asl/    Repo-local ASL authoring and review workflow
-scripts/                  Reproducible ASLRef and repository checks
-specification.toml        Machine-readable maturity status
+  architecture.asl       Architecture identity and model bounds
+  types.asl              Scalar, fault, memory-order, and tile domains
+  state.asl              Scalar, system, memory, and fault state
+  scalar/                Operand bridge, integer, control, memory, atomic, system, and FP semantics
+  tile/                  Flat tile state, TEPL, TMA, and CUBE semantics
+tests/asl/                Executable feature and boundary tests
+spec/
+  requirements.json      Machine-readable requirement traceability
+  catalog/               Canonical scalar forms, system registers, and tile operations
+  evidence/              Independent semantic cross-check results
+  profile-hooks.json     Exact impdef/default/override obligation registry
+docs/                     Architecture decisions, coverage, and review contract
+scripts/                  Reproducible evidence import and fail-closed validation
 ```
 
-The source order is explicit in the `Makefile`. Keep source files independently focused; ASLRef receives a generated
-single-file specification because its command-line interface accepts one primary ASL file.
+## Governance and licensing
 
-## Starting the specification
+Normative changes require a formal-model issue, stable requirement IDs,
+executable evidence, architecture-owner review, and formal-model review. See
+[GOVERNANCE.md](GOVERNANCE.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Define the architectural boundary in [docs/architecture.md](docs/architecture.md), then add named ASL types, visible
-state, common helpers, and instruction operations in small reviewable files. Add each new source to `ASL_SOURCES` in
-the `Makefile` and keep it valid under `make check`.
-
-## Quality and governance
-
-Read [GOVERNANCE.md](GOVERNANCE.md) and [CONTRIBUTING.md](CONTRIBUTING.md) before proposing changes. Normative model
-changes require stable public requirement IDs, explicit architecture boundaries, executable evidence, and traceability.
-Repository/tooling changes and ASLRef pin updates stay separate from semantic changes.
-
-The reference implementation and ASL1 conformance corpus live in
-[`herd/herdtools7`](https://github.com/herd/herdtools7/tree/master). CI uses a full commit pin rather than a moving
-branch so parser, type-checker, interpreter, and standard-library behavior remain auditable.
-
-## Licensing
-
-No project license has been selected yet. Until one is added, copyright remains with the contributors and reuse is
-not granted beyond rights provided by applicable law. Selecting a license is a governance prerequisite before accepting
-external semantic contributions.
+This repository is licensed under the [BSD 3-Clause License](LICENSE). External
+evidence and its permitted use are recorded in [NOTICE](NOTICE).

@@ -1,5 +1,5 @@
 name: Specification or tooling defect
-description: Report a problem in the template, formal model, validation, or documentation.
+description: Report a problem in the formal model, validation, governance, or documentation.
 title: "[bug]: "
 labels: [bug]
 body:
@@ -8,7 +8,7 @@ body:
     attributes:
       label: Area
       options:
-        - Repository governance or template
+        - Repository governance
         - ASLRef integration
         - ASL syntax or typing
         - PTO semantics

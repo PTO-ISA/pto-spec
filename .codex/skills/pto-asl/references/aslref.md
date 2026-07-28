@@ -36,7 +36,11 @@ aslref --type-check-strict build/test-suite.asl
 ```
 
 ASLRef accepts one primary ASL input file. The Makefile therefore concatenates ordered checked-in sources into an
-ignored build artifact. Keep the order explicit and deterministic.
+ignored build artifact. It also generates decoder declarations from the normative JSON catalogs into that same ignored
+build tree. Keep source order and generation deterministic; never edit or commit the assembled files.
+
+Use `DIV` only when exact divisibility is an architectural precondition. Use `DIVRM` for Euclidean quotient behavior.
+ASLRef deliberately rejects an inexact `DIV` at run time, which is useful for exposing accidental arithmetic assumptions.
 
 ## Upstream source build
 

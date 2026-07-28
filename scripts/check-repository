@@ -10,10 +10,18 @@ required_files=(
     CONTRIBUTING.md
     GOVERNANCE.md
     SECURITY.md
+    LICENSE
+    NOTICE
     specification.toml
     .codex/skills/pto-asl/SKILL.md
     asl/architecture.asl
     docs/traceability.md
+    docs/normative-sources.md
+    spec/requirements.json
+    spec/catalog/scalar-forms.json
+    spec/catalog/system-registers.json
+    spec/catalog/tile-operations.json
+    spec/evidence/independent-tile-crosscheck.json
 )
 
 for path in "${required_files[@]}"; do
@@ -34,17 +42,10 @@ if git ls-files | grep -E '^(build|\.cache)/' >/dev/null; then
     exit 1
 fi
 
-if grep -Eq '^status = "template"$' specification.toml; then
-    if grep -REn \
-        '^[[:space:]]*(func|type|var|let|constant|config|implementation|impdef)[[:space:]]' \
-        --include='*.asl' asl; then
-        echo "error: template status forbids active ASL declarations or implementations" >&2
-        exit 1
-    fi
-fi
-
 empty_tree=$(git hash-object -t tree /dev/null)
 git diff --check "$empty_tree" HEAD
 git diff --check
 git diff --cached --check
 bash -n scripts/aslref scripts/check-repository scripts/setup-aslref
+python3 scripts/check-catalogs
+python3 scripts/check-no-legacy-references

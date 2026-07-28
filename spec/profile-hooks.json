@@ -1,0 +1,392 @@
+{
+  "hooks": [
+    {
+      "domain": "system-time",
+      "model": "asl/scalar/system.asl",
+      "name": "ReadMonotonicTime",
+      "portable_default": "Return the architectural cycle counter.",
+      "profile_obligations": [
+        "Define the time unit, monotonicity guarantee, rollover behavior, and reset value."
+      ],
+      "requirement": "PTO-REQ-SCALAR-SYS-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/scalar-tests.asl"]
+    },
+    {
+      "domain": "scalar-floating-mathematical",
+      "model": "asl/scalar/floating.asl",
+      "name": "FloatingExponential",
+      "portable_default": "Return the input real value.",
+      "profile_obligations": [
+        "Define accuracy, exceptional inputs, overflow, underflow, and rounding."
+      ],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/scalar-tests.asl"]
+    },
+    {
+      "domain": "scalar-floating-mathematical",
+      "model": "asl/scalar/floating.asl",
+      "name": "FloatingRoundNearest",
+      "portable_default": "Round to nearest with halfway cases away from zero.",
+      "profile_obligations": [
+        "Define tie handling and prove consistency with the selected scalar numeric profile."
+      ],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/scalar-tests.asl"]
+    },
+    {
+      "domain": "scalar-floating-encoding",
+      "model": "asl/scalar/floating.asl",
+      "name": "ScalarFPBinaryProfile",
+      "portable_default": "Return the normalized left operand and no new flags.",
+      "profile_obligations": [
+        "Define correctly rounded ADD, SUB, MUL, and DIV raw results for every accepted scalar format.",
+        "Define NaN propagation, infinities, subnormals, signed zero, and NV/DZ/OF/UF/NX flags."
+      ],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/scalar-tests.asl"]
+    },
+    {
+      "domain": "scalar-floating-encoding",
+      "model": "asl/scalar/floating.asl",
+      "name": "ScalarFPUnaryProfile",
+      "portable_default": "Return the normalized operand and no new flags.",
+      "profile_obligations": [
+        "Define correctly rounded SQRT, reciprocal, and exponential raw results.",
+        "Define exceptional inputs, approximation guarantees, and NV/DZ/OF/UF/NX flags."
+      ],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/scalar-tests.asl"]
+    },
+    {
+      "domain": "scalar-floating-encoding",
+      "model": "asl/scalar/floating.asl",
+      "name": "ScalarFPFusedProfile",
+      "portable_default": "Return the normalized addend and no new flags.",
+      "profile_obligations": [
+        "Define single-rounding fused multiply-add variants for every accepted scalar format.",
+        "Define NaN propagation and NV/OF/UF/NX flags."
+      ],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/scalar-tests.asl"]
+    },
+    {
+      "domain": "scalar-floating-encoding",
+      "model": "asl/scalar/floating.asl",
+      "name": "ScalarFPToIntegerProfile",
+      "portable_default": "Return the source payload before normative destination-width normalization and no new flags.",
+      "profile_obligations": [
+        "Define rounding, saturation or indefinite results, exceptional inputs, and NV/NX flags for every accepted integer destination type."
+      ],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/scalar-tests.asl"]
+    },
+    {
+      "domain": "scalar-floating-encoding",
+      "model": "asl/scalar/floating.asl",
+      "name": "ScalarFPConvertProfile",
+      "portable_default": "Return the source payload before normative floating destination-width normalization and no new flags.",
+      "profile_obligations": [
+        "Define floating format conversion, rounding, NaN payload handling, overflow, underflow, and flags for every accepted destination type."
+      ],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/scalar-tests.asl"]
+    },
+    {
+      "domain": "scalar-floating-encoding",
+      "model": "asl/scalar/floating.asl",
+      "name": "ScalarIntegerToFPProfile",
+      "portable_default": "Return the normalized integer source payload before normative floating destination-width normalization and no new flags.",
+      "profile_obligations": [
+        "Define integer-to-floating conversion, rounding, overflow, underflow, and NX flags for every accepted destination type."
+      ],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/scalar-tests.asl"]
+    },
+    {
+      "domain": "tile-floating",
+      "model": "asl/tile/elementwise.asl",
+      "name": "TileSquareRoot",
+      "portable_default": "Return the raw input payload.",
+      "profile_obligations": [
+        "Define per-data-type square-root encoding, accuracy, exceptional inputs, and rounding."
+      ],
+      "requirement": "PTO-REQ-TEPL-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "domain": "tile-floating",
+      "model": "asl/tile/elementwise.asl",
+      "name": "TileLogarithm",
+      "portable_default": "Return the raw input payload.",
+      "profile_obligations": [
+        "Define per-data-type logarithm encoding, base, accuracy, exceptional inputs, and rounding."
+      ],
+      "requirement": "PTO-REQ-TEPL-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "domain": "tile-floating",
+      "model": "asl/tile/elementwise.asl",
+      "name": "TileReciprocal",
+      "portable_default": "Apply unsigned bitvector reciprocal and reject zero.",
+      "profile_obligations": [
+        "Define per-data-type reciprocal encoding, accuracy, division-by-zero behavior, and rounding."
+      ],
+      "requirement": "PTO-REQ-TEPL-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "domain": "tile-floating",
+      "model": "asl/tile/elementwise.asl",
+      "name": "TileExponential",
+      "portable_default": "Return the raw input payload.",
+      "profile_obligations": [
+        "Define per-data-type exponential encoding, base, accuracy, overflow, underflow, and rounding."
+      ],
+      "requirement": "PTO-REQ-TEPL-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "domain": "tile-floating",
+      "model": "asl/tile/expansion.asl",
+      "name": "TileExpDifference",
+      "portable_default": "Subtract the raw right payload from the raw left payload.",
+      "profile_obligations": [
+        "Define the exponential-difference formula, intermediate precision, exceptional inputs, and rounding for every accepted floating type."
+      ],
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "domain": "tile-conversion",
+      "model": "asl/tile/conversion.asl",
+      "name": "TileProfileConvert",
+      "portable_default": "Preserve the raw payload for conversions involving a floating type.",
+      "profile_obligations": [
+        "Define every accepted floating/integer type pair, destination packing, rounding, saturation, and exceptional values."
+      ],
+      "requirement": "PTO-REQ-TEPL-CONVERT-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "domain": "tile-conversion",
+      "model": "asl/tile/conversion.asl",
+      "name": "TileProfileQuantize",
+      "portable_default": "Apply unsigned bitvector division by scale, add zero point, and normalize to the destination integer width.",
+      "profile_obligations": [
+        "Define scale and zero-point encodings, rounding, clamping, saturation, per-type legality, and zero-scale behavior."
+      ],
+      "requirement": "PTO-REQ-TEPL-CONVERT-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "domain": "tile-conversion",
+      "model": "asl/tile/conversion.asl",
+      "name": "TileProfileDequantize",
+      "portable_default": "Subtract the zero point and multiply by scale as raw bitvectors.",
+      "profile_obligations": [
+        "Define scale and zero-point encodings, intermediate precision, destination rounding, and per-type legality."
+      ],
+      "requirement": "PTO-REQ-TEPL-CONVERT-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "domain": "memory-address",
+      "model": "asl/scalar/atomic.asl",
+      "name": "AtomicAddress",
+      "portable_default": "Preserve the decoded address for both address-class hint values.",
+      "profile_obligations": [
+        "Define address-class selection, translation, fault priority, and interaction with reservations for both hint values."
+      ],
+      "requirement": "PTO-REQ-SCALAR-AMO-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/scalar-tests.asl"]
+    },
+    {
+      "domain": "memory-translation",
+      "model": "asl/scalar/memory.asl",
+      "name": "TranslateDataAddress",
+      "portable_default": "Use identity translation for scalar data accesses.",
+      "profile_obligations": [
+        "Define translation inputs, address-space selection, access-size behavior, and translation-fault priority."
+      ],
+      "requirement": "PTO-REQ-MEMORY-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/scalar-tests.asl"]
+    },
+    {
+      "domain": "memory-permission",
+      "model": "asl/scalar/memory.asl",
+      "name": "DataAccessPermitted",
+      "portable_default": "Permit reads and writes wholly contained in the bounded model memory.",
+      "profile_obligations": [
+        "Define read/write permissions, bounds, access-size behavior, and permission-fault priority."
+      ],
+      "requirement": "PTO-REQ-MEMORY-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/scalar-tests.asl"]
+    },
+    {
+      "domain": "tile-elementwise",
+      "model": "asl/tile/elementwise.asl",
+      "name": "TileProfileBinary",
+      "portable_default": "Apply the operation with deterministic raw bitvector arithmetic.",
+      "profile_obligations": [
+        "Define per-type arithmetic, rounding, exceptional values, overflow, and underflow."
+      ],
+      "requirement": "PTO-REQ-TEPL-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "domain": "tile-elementwise",
+      "model": "asl/tile/elementwise.asl",
+      "name": "TileProfileUnary",
+      "portable_default": "Apply the operation with deterministic raw bitvector behavior.",
+      "profile_obligations": [
+        "Define per-type arithmetic, rounding, exceptional values, overflow, and underflow."
+      ],
+      "requirement": "PTO-REQ-TEPL-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "domain": "tile-elementwise",
+      "model": "asl/tile/elementwise.asl",
+      "name": "TileProfileAxpy",
+      "portable_default": "Multiply and add raw bitvectors at architectural word width.",
+      "profile_obligations": [
+        "Define per-type multiplication, addition, intermediate precision, rounding, and exceptional values."
+      ],
+      "requirement": "PTO-REQ-TEPL-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "domain": "tile-comparison",
+      "model": "asl/tile/elementwise.asl",
+      "name": "TileProfileCompare",
+      "portable_default": "Compare raw payloads with deterministic signed or equality relations.",
+      "profile_obligations": [
+        "Define per-type ordering, equality, NaN behavior, signed-zero behavior, and unordered results."
+      ],
+      "requirement": "PTO-REQ-TEPL-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "domain": "tile-reduction",
+      "model": "asl/tile/reduction.asl",
+      "name": "TileProfileReductionInitial",
+      "portable_default": "Initialize reduction accumulators from the first raw payload.",
+      "profile_obligations": [
+        "Define per-type identities, first-element handling, exceptional values, and empty-input legality."
+      ],
+      "requirement": "PTO-REQ-TEPL-REDUCE-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "domain": "tile-reduction",
+      "model": "asl/tile/reduction.asl",
+      "name": "TileProfileReductionStep",
+      "portable_default": "Apply raw bitvector sum, product, minimum, maximum, or argument selection.",
+      "profile_obligations": [
+        "Define per-type accumulation precision, rounding, ordering, exceptional values, and tie selection."
+      ],
+      "requirement": "PTO-REQ-TEPL-REDUCE-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "domain": "tile-expansion",
+      "model": "asl/tile/expansion.asl",
+      "name": "TileProfileExpand",
+      "portable_default": "Apply the selected expansion operation with raw bitvector arithmetic.",
+      "profile_obligations": [
+        "Define per-type broadcast arithmetic, rounding, exceptional values, overflow, and underflow."
+      ],
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "domain": "tile-partial",
+      "model": "asl/tile/complex.asl",
+      "name": "TileProfilePartialValue",
+      "portable_default": "Apply partial arithmetic with deterministic raw bitvector operations.",
+      "profile_obligations": [
+        "Define per-type partial arithmetic, rounding, exceptional values, and missing-source behavior."
+      ],
+      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "domain": "tile-ordering",
+      "model": "asl/tile/complex.asl",
+      "name": "TileProfileOrderLeft",
+      "portable_default": "Order raw payloads as signed words and prefer the left operand on ties.",
+      "profile_obligations": [
+        "Define per-type ordering, NaN behavior, signed-zero behavior, stability, and tie selection."
+      ],
+      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "domain": "tile-matrix",
+      "model": "asl/tile/cube.asl",
+      "name": "TileProfileMatrixAccumulate",
+      "portable_default": "Multiply raw payloads and accumulate at architectural word width.",
+      "profile_obligations": [
+        "Define accepted type triples, product and accumulator widths, rounding, saturation, and exceptional values."
+      ],
+      "requirement": "PTO-REQ-CUBE-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "domain": "tile-matrix",
+      "model": "asl/tile/cube.asl",
+      "name": "TileProfileMatrixBias",
+      "portable_default": "Add bias and destination raw payloads at architectural word width.",
+      "profile_obligations": [
+        "Define accepted type pairs, bias conversion, rounding, saturation, and exceptional values."
+      ],
+      "requirement": "PTO-REQ-CUBE-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "domain": "tile-matrix",
+      "model": "asl/tile/cube.asl",
+      "name": "TileProfileMatrixScale",
+      "portable_default": "Apply row and column scales with raw word-width multiplication.",
+      "profile_obligations": [
+        "Define accepted type triples, scale encodings, intermediate precision, rounding, saturation, and exceptional values."
+      ],
+      "requirement": "PTO-REQ-CUBE-001",
+      "status": "explicit-impdef",
+      "tests": ["tests/asl/tile-tests.asl"]
+    }
+  ],
+  "schema_version": 1
+}

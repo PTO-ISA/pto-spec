@@ -1,6 +1,6 @@
 ## Change class
 
-- [ ] Repository or template maintenance only
+- [ ] Repository or documentation maintenance only
 - [ ] ASLRef/toolchain pin update
 - [ ] Normative architecture model change
 - [ ] Non-normative refactor
@@ -12,7 +12,7 @@ List stable PTO requirement IDs and source links, or write `N/A - non-normative`
 ## Architecture impact
 
 Describe visible state, legality, results, ordering, faults, profile scope, and intentionally unspecified behavior.
-Write `None` for template-only changes.
+Write `None` for non-normative changes.
 
 ## Evidence
 

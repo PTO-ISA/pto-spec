@@ -1,9 +1,31 @@
 [specification]
-name = "PTO"
+name = "PTO Instruction Set Architecture"
+short_name = "PTO ISA"
 language = "ASL1"
-status = "template"
-normative = false
+status = "draft"
+normative = true
 entry_point = "asl/architecture.asl"
+formal_model_issue = "https://github.com/PTO-ISA/pto-spec/issues/4"
+
+[architecture]
+profile = "pto-v0"
+xlen = 64
+scalar_forms = 474
+system_register_definitions = 52
+trap_numbers = 13
+tile_model = "one-level"
+tile_registers = 64
+pto_operations = 111
+hierarchical_calls = false
+
+[maturity]
+scalar_state = "implemented"
+scalar_semantics = "surface-complete-with-profile-hooks"
+system_state = "implemented"
+tile_state = "implemented"
+tile_semantics = "surface-complete-with-profile-hooks"
+binary_decode = "executable-complete"
+instruction_dispatch = "all-474-scalar-forms-executable"
 
 [toolchain]
 aslref_repository = "https://github.com/herd/herdtools7.git"

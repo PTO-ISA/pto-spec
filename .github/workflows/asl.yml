@@ -29,5 +29,5 @@ jobs:
       - name: Install ASLRef build dependencies
         run: make setup
 
-      - name: Validate repository and ASL template
+      - name: Validate repository and golden ASL model
         run: make ci

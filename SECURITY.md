@@ -1,7 +1,7 @@
 # Security policy
 
-The repository is currently a non-normative template and has no supported release. Security-sensitive issues can still
-affect CI, dependency pinning, GitHub configuration, or future architecture artifacts.
+The repository is a normative draft and has no supported release. Security-sensitive issues can affect CI, dependency
+pinning, GitHub configuration, architecture artifacts, or the integrity of generated formal-model evidence.
 
 Report such issues privately with a [GitHub security advisory](https://github.com/PTO-ISA/pto-spec/security/advisories/new).
 Do not open a public issue for a suspected credential leak, supply-chain compromise, or exploitable CI behavior.

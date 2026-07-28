@@ -1,0 +1,220 @@
+{
+  "requirements": [
+    {
+      "id": "PTO-REQ-STATE-001",
+      "model": ["asl/types.asl", "asl/state.asl"],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
+      "status": "implemented-portable-model",
+      "tests": ["tests/asl/state-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-FAULT-001",
+      "model": ["asl/types.asl", "asl/state.asl"],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
+      "status": "implemented-portable-envelope",
+      "tests": ["tests/asl/state-tests.asl", "tests/asl/scalar-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-SCALAR-ALU-001",
+      "model": ["asl/scalar/integer.asl"],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
+      "status": "implemented",
+      "tests": ["tests/asl/scalar-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-SCALAR-DISPATCH-001",
+      "model": [
+        "asl/scalar/dispatch.asl",
+        "scripts/generate-asl-decoders",
+        "spec/catalog/scalar-forms.json"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
+      "status": "implemented",
+      "tests": [
+        "scripts/check-catalogs",
+        "tests/asl/main.asl",
+        "tests/asl/scalar-tests.asl"
+      ]
+    },
+    {
+      "id": "PTO-REQ-SCALAR-CONTROL-001",
+      "model": ["asl/scalar/control.asl"],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
+      "status": "implemented",
+      "tests": ["tests/asl/scalar-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-SCALAR-OPERAND-001",
+      "model": ["asl/scalar/operands.asl"],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
+      "status": "implemented",
+      "tests": ["tests/asl/state-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-SCALAR-ADDRESS-001",
+      "model": [
+        "asl/scalar/addressing.asl",
+        "asl/scalar/dispatch.asl",
+        "scripts/generate-asl-decoders"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
+      "status": "implemented",
+      "tests": ["tests/asl/scalar-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-SCALAR-AMO-001",
+      "model": [
+        "asl/scalar/atomic.asl",
+        "asl/scalar/dispatch.asl",
+        "spec/profile-hooks.json"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
+      "status": "implemented-with-address-profile",
+      "tests": ["tests/asl/scalar-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-SCALAR-SYS-001",
+      "model": [
+        "asl/scalar/system.asl",
+        "asl/scalar/dispatch.asl",
+        "spec/profile-hooks.json"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
+      "status": "implemented-with-platform-profile",
+      "tests": ["tests/asl/scalar-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-SCALAR-SSR-001",
+      "model": [
+        "asl/scalar/system-registers.asl",
+        "spec/catalog/system-registers.json",
+        "docs/architecture-decisions/0003-pto-owned-system-register-names.md"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/system-registers.json",
+      "status": "implemented",
+      "tests": ["tests/asl/scalar-tests.asl", "scripts/check-catalogs"]
+    },
+    {
+      "id": "PTO-REQ-SCALAR-FP-001",
+      "model": [
+        "asl/scalar/floating.asl",
+        "asl/scalar/dispatch.asl",
+        "spec/profile-hooks.json"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
+      "status": "implemented-with-numeric-profile-hooks",
+      "tests": ["tests/asl/scalar-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-MEMORY-001",
+      "model": [
+        "asl/scalar/memory.asl",
+        "asl/scalar/dispatch.asl",
+        "spec/profile-hooks.json"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
+      "status": "implemented-with-platform-profile",
+      "tests": ["tests/asl/scalar-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-TILE-001",
+      "model": ["asl/types.asl", "asl/tile/state.asl"],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
+      "status": "implemented-portable-model",
+      "tests": ["tests/asl/state-tests.asl", "tests/asl/tile-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-TILE-MANAGEMENT-001",
+      "model": ["asl/tile/management.asl"],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
+      "status": "implemented",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-TEPL-001",
+      "model": ["asl/tile/elementwise.asl", "spec/profile-hooks.json"],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
+      "status": "implemented-with-numeric-profile-hooks",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-TEPL-REDUCE-001",
+      "model": ["asl/tile/reduction.asl", "spec/profile-hooks.json"],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
+      "status": "implemented-with-numeric-profile-hooks",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-TEPL-EXPAND-001",
+      "model": ["asl/tile/expansion.asl", "spec/profile-hooks.json"],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
+      "status": "implemented-with-numeric-profile-hooks",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-TEPL-GENERATE-001",
+      "model": ["asl/tile/generation.asl"],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
+      "status": "implemented",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-TEPL-CONVERT-001",
+      "model": ["asl/tile/conversion.asl", "spec/profile-hooks.json"],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
+      "status": "implemented-with-numeric-profile-hooks",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-TEPL-REARRANGE-001",
+      "model": ["asl/tile/rearrangement.asl"],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
+      "status": "implemented",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-TEPL-COMPLEX-001",
+      "model": ["asl/tile/complex.asl", "spec/profile-hooks.json"],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
+      "status": "implemented-with-numeric-profile-hooks",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-TMA-001",
+      "model": [
+        "asl/tile/memory.asl",
+        "asl/scalar/memory.asl",
+        "spec/profile-hooks.json"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
+      "status": "implemented-with-memory-profile-hooks",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-CUBE-001",
+      "model": ["asl/tile/cube.asl", "spec/profile-hooks.json"],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
+      "status": "implemented-with-numeric-profile-hooks",
+      "tests": ["tests/asl/tile-tests.asl"]
+    },
+    {
+      "id": "PTO-REQ-ENCODING-001",
+      "model": [
+        "spec/catalog/scalar-forms.json",
+        "spec/catalog/tile-operations.json",
+        "scripts/generate-asl-decoders"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/tree/main/spec/catalog",
+      "status": "executable-canonical",
+      "tests": ["scripts/check-catalogs", "tests/asl/main.asl"]
+    },
+    {
+      "id": "PTO-REQ-HIERARCHY-001",
+      "model": ["docs/architecture-decisions/0001-one-level-pto.md"],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0001-one-level-pto.md",
+      "status": "implemented",
+      "tests": ["scripts/check-catalogs", "scripts/check-no-legacy-references"]
+    }
+  ],
+  "schema_version": 1
+}
