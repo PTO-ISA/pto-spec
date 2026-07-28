@@ -20,7 +20,7 @@ distinguishes clone-verifiable checks, GitHub settings, and human review.
 | `status` and `normative` describe one maturity state | `scripts/check-repository` |
 | Every checked-in ASL source reaches the type checker | `scripts/check-repository` |
 | Every non-template maturity has executable tests | `scripts/check-repository` |
-| Catalogs, decoder reachability, profile hooks, and feature evidence agree | `scripts/check-catalogs` |
+| Catalogs, decoder reachability, profile hooks, feature evidence, and public-source dispositions agree | `scripts/check-catalogs` |
 | Prohibited source identities and legacy references stay unpublished | `scripts/check-no-legacy-references` |
 | Generated artifacts stay untracked and scripts are syntactically valid | `scripts/check-repository` |
 | Review routing for normative, toolchain, and governance paths | `.github/CODEOWNERS` |

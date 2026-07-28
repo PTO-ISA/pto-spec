@@ -296,6 +296,19 @@
       "tests": ["scripts/check-catalogs", "tests/asl/main.asl"]
     },
     {
+      "id": "PTO-REQ-SOURCE-RECONCILIATION-001",
+      "model": [
+        "docs/architecture-decisions/0007-public-source-layer-reconciliation.md",
+        "docs/arm-asl-comparison.md",
+        "docs/source-reconciliation.md",
+        "scripts/generate-public-source-reconciliation",
+        "spec/evidence/public-source-reconciliation.json"
+      ],
+      "source": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/docs/isa/reference/source-of-truth.md",
+      "status": "closed-public-source-disposition",
+      "tests": ["scripts/check-catalogs", "scripts/check-repository"]
+    },
+    {
       "id": "PTO-REQ-HIERARCHY-001",
       "model": ["docs/architecture-decisions/0001-one-level-pto.md"],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0001-one-level-pto.md",

@@ -27,6 +27,11 @@ update its selector, handler mapping, evidence disposition, and tests together.
 Do not hand-edit `build/decoders.asl`; it is reproduced from the canonical
 catalogs during every build.
 
+Public source reconciliation changes must update the audited commit, content
+hashes, per-row disposition, ADR or rationale, and generated ledger together.
+Never change the raw private cross-check merely to make a public closure count
+pass.
+
 Commit messages should explain intent and record important constraints, rejected alternatives, verification, and known
 gaps. Use native Git trailers when those details are useful.
 

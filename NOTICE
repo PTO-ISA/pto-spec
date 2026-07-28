@@ -7,7 +7,7 @@ External evidence used for independent review:
 
 - PTO Tile Library public architecture documentation and public instruction
   declarations, CANN Open Software License Agreement Version 2.0.
-  https://github.com/PTO-ISA/pto-isa
+  https://github.com/hw-native-sys/pto-isa/tree/712cbe9f23df5d5362be5e8327599f4285317473
 - Private tile documentation was used only for an independent semantic
   cross-check. No private text, source, diagrams, project names, or repository
   paths are redistributed here.

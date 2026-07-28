@@ -345,6 +345,7 @@ def main() -> int:
     system_registers = load("spec/catalog/system-registers.json")
     tile = load("spec/catalog/tile-operations.json")
     crosscheck = load("spec/evidence/independent-tile-crosscheck.json")
+    reconciliation = load("spec/evidence/public-source-reconciliation.json")
     requirements = load("spec/requirements.json")["requirements"]
     profile_catalog = load("spec/profile-hooks.json")
     specification = tomllib.loads(
@@ -1384,6 +1385,256 @@ def main() -> int:
     require(
         crosscheck["source_class"] == "private-independent-tile-reference",
         "independent evidence source class drift",
+    )
+
+    reconciliation_check = subprocess.run(
+        [str(ROOT / "scripts" / "generate-public-source-reconciliation"), "--check"],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    require(
+        reconciliation_check.returncode == 0,
+        "public source reconciliation is not deterministic or is stale",
+    )
+    require(
+        set(reconciliation)
+        == {
+            "policy",
+            "public_commit",
+            "public_layer_sources",
+            "public_repository",
+            "public_sources",
+            "public_tile_symbol_inventory",
+            "scalar_forms",
+            "schema_version",
+            "summary",
+            "tile_operations",
+        },
+        "public source reconciliation top-level schema drift",
+    )
+    require(reconciliation["schema_version"] == 1, "unsupported reconciliation schema")
+    public_commit = "712cbe9f23df5d5362be5e8327599f4285317473"
+    public_repository = "https://github.com/hw-native-sys/pto-isa"
+    require(reconciliation["public_commit"] == public_commit, "public source pin drift")
+    require(
+        reconciliation["public_repository"] == public_repository,
+        "public source repository drift",
+    )
+    require(
+        set(reconciliation["policy"])
+        == {"authority", "external_isa_use", "private_evidence_use", "public_api_use"},
+        "public reconciliation policy schema drift",
+    )
+    require(
+        all(
+            isinstance(statement, str) and statement
+            for statement in reconciliation["policy"].values()
+        ),
+        "public reconciliation policy statements must be non-empty",
+    )
+    expected_public_hashes = {
+        "include/pto/common/pto_instr.hpp": "6fbd4bfb068606ee7cd00cb0b98d38e8550a026779d3d723d9a08934400e0e98",
+        "docs/isa/reference/source-of-truth.md": "50ffe6f25a9f54f8c3ad63016dba9ccb1025182338fda456107993c7948d849e",
+        "docs/isa/introduction/current-isa-scope.md": "df65fc48325f478fbf6e1b7fe1a04f418673ae11e25b6612f506bf64c4da87fe",
+        "docs/isa/syntax-and-operands/assembly-model.md": "381c2dfe4b6b0031178a87b0a37de09836c90b73d7f952859fa22d350e8777ba",
+        "docs/isa/scalar/shared-arith.md": "f8ed82355f975e1ba7d54f8027b404f2d3be9a1b340b9a3824f967d401d799cf",
+        "docs/isa/instruction-families/scalar-and-control-families.md": "24a2919faaf0fcb6a1915ce5847f3cce3e471b7de4bc71ac9c4ae3f40fe28864",
+    }
+    public_sources = reconciliation["public_sources"]
+    require(len(public_sources) == 6, "public source inventory must contain six audited files")
+    require(
+        {row["path"]: row["sha256"] for row in public_sources} == expected_public_hashes,
+        "public source content hashes drifted",
+    )
+    source_ids = {row["id"] for row in public_sources}
+    require(len(source_ids) == len(public_sources), "duplicate public source IDs")
+    for row in public_sources:
+        require(
+            set(row) == {"id", "path", "role", "sha256", "url"},
+            f"public source schema drift for {row.get('path', '<unknown>')}",
+        )
+        require(
+            row["url"] == f"{public_repository}/blob/{public_commit}/{row['path']}",
+            f"unpinned public source URL for {row['path']}",
+        )
+        require(
+            re.fullmatch(r"[0-9a-f]{64}", row["sha256"]) is not None,
+            f"bad public source hash for {row['path']}",
+        )
+    public_symbol_inventory = reconciliation["public_tile_symbol_inventory"]
+    require(
+        set(public_symbol_inventory) == {"count", "source_id", "source_sha256", "symbols"},
+        "public tile symbol inventory schema drift",
+    )
+    public_symbols = public_symbol_inventory["symbols"]
+    require(
+        public_symbol_inventory["count"] == len(public_symbols) == len(set(public_symbols)) == 111,
+        "public tile symbol inventory must contain 111 unique audited names",
+    )
+    require(public_symbols == sorted(public_symbols), "public tile symbol inventory must be sorted")
+    require(
+        public_symbol_inventory["source_id"] == "public-intrinsic-api",
+        "public tile symbol inventory must identify the intrinsic header",
+    )
+    require(
+        public_symbol_inventory["source_sha256"]
+        == expected_public_hashes["include/pto/common/pto_instr.hpp"],
+        "public tile symbol inventory is not tied to the audited header hash",
+    )
+    expected_public_layer_sources = {
+        "shared-scalar-source-layer": ["public-shared-scalar-arith", "public-scalar-control"],
+        "scalar-control-or-lowering-layer": ["public-scalar-control", "public-source-precedence"],
+        "typed-tile-intrinsic-layer": [
+            "public-intrinsic-api",
+            "public-isa-scope",
+            "public-assembly-model",
+        ],
+    }
+    require(
+        reconciliation["public_layer_sources"] == expected_public_layer_sources,
+        "public layer source mapping drift",
+    )
+    for layer, ids in expected_public_layer_sources.items():
+        require(ids and set(ids) <= source_ids, f"unknown source ID in public layer {layer}")
+
+    scalar_reconciliation = reconciliation["scalar_forms"]
+    require(
+        len(scalar_reconciliation) == len(forms) == 473,
+        "public reconciliation must cover all 473 scalar forms",
+    )
+    scalar_by_id = {row["form_id"]: row for row in scalar_reconciliation}
+    require(len(scalar_by_id) == 473, "duplicate reconciled scalar form ID")
+    require(
+        set(scalar_by_id) == {row["form_id"] for row in forms},
+        "reconciled scalar form IDs drifted from the catalog",
+    )
+    for form in forms:
+        row = scalar_by_id[form["form_id"]]
+        require(
+            set(row) == {"closure_status", "form_id", "mnemonic", "public_layer", "semantic_family"},
+            f"scalar reconciliation schema drift for {form['form_id']}",
+        )
+        require(row["closure_status"] == "closed", f"open scalar source disposition: {form['form_id']}")
+        require(row["mnemonic"] == form["mnemonic"], f"scalar mnemonic drift for {form['form_id']}")
+        require(
+            row["semantic_family"] == form["semantic_family"],
+            f"scalar family drift for {form['form_id']}",
+        )
+        expected_layer = (
+            "shared-scalar-source-layer"
+            if form["semantic_family"] in {"ALU", "FSU"}
+            else "scalar-control-or-lowering-layer"
+        )
+        require(row["public_layer"] == expected_layer, f"wrong source layer for {form['form_id']}")
+
+    tile_reconciliation = reconciliation["tile_operations"]
+    require(
+        len(tile_reconciliation) == len(operations) == 111,
+        "public reconciliation must cover all 111 tile operations",
+    )
+    tile_reconciliation_by_name = {row["name"]: row for row in tile_reconciliation}
+    require(len(tile_reconciliation_by_name) == 111, "duplicate reconciled tile operation")
+    require(
+        set(tile_reconciliation_by_name) == {row["name"] for row in operations},
+        "reconciled tile operation names drifted from the catalog",
+    )
+    evidence_by_name = {row["name"]: row for row in evidence_rows}
+    public_aligned = {
+        "TAXPY",
+        "TDEINTERLEAVE",
+        "THISTOGRAM",
+        "TPARTARGMAX",
+        "TPARTARGMIN",
+        "TPUSH",
+        "TPOP",
+        "TFREE",
+    }
+    explicit_layer_difference = {
+        "TPREFETCH",
+        "TDEQUANT",
+        "TCONCAT",
+        "TINTERLEAVE",
+        "TSORT",
+        "TALLOC",
+    }
+    raw_open = {
+        row["name"] for row in evidence_rows if row["disposition"] in {"incomplete", "conflict"}
+    }
+    require(
+        raw_open == public_aligned | explicit_layer_difference,
+        "every raw independent-evidence gap must have an explicit public closure",
+    )
+    for operation in operations:
+        name = operation["name"]
+        row = tile_reconciliation_by_name[name]
+        require(
+            set(row)
+            == {
+                "closure_basis",
+                "closure_status",
+                "family",
+                "name",
+                "private_disposition",
+                "public_symbol",
+                "public_symbol_relation",
+                "resolution",
+                "selector",
+            },
+            f"tile reconciliation schema drift for {name}",
+        )
+        require(row["closure_status"] == "closed", f"open tile source disposition: {name}")
+        require(row["family"] == operation["family"], f"tile family drift for {name}")
+        require(row["selector"] == operation.get("selector"), f"tile selector drift for {name}")
+        require(
+            row["private_disposition"] == evidence_by_name[name]["disposition"],
+            f"raw evidence disposition drift for {name}",
+        )
+        expected_basis = (
+            "public-api-aligned"
+            if name in public_aligned
+            else "explicit-layer-difference"
+            if name in explicit_layer_difference
+            else "existing-pto-contract-and-private-agreement"
+        )
+        require(row["closure_basis"] == expected_basis, f"wrong closure basis for {name}")
+        expected_symbol = "TSORT32" if name == "TSORT" else name
+        expected_symbol_relation = "documented-spelling-mapping" if name == "TSORT" else "exact-name"
+        require(row["public_symbol"] == expected_symbol, f"wrong public symbol for {name}")
+        require(
+            row["public_symbol"] in public_symbols,
+            f"public symbol is absent from the audited inventory for {name}",
+        )
+        require(
+            row["public_symbol_relation"] == expected_symbol_relation,
+            f"wrong public symbol relation for {name}",
+        )
+        require(bool(row["resolution"]), f"missing public reconciliation rationale for {name}")
+    require(
+        {row["public_symbol"] for row in tile_reconciliation} == set(public_symbols),
+        "audited public tile symbol inventory is not used exactly once",
+    )
+    expected_reconciliation_summary = {
+        "scalar_forms": {"count": 473, "closed": 473, "open": 0},
+        "tile_operations": {
+            "count": 111,
+            "closed": 111,
+            "open": 0,
+            "public_exact_name": 110,
+            "public_spelling_mapping": 1,
+        },
+        "private_crosscheck_raw": {"agree": 97, "incomplete": 13, "conflict": 1},
+        "private_crosscheck_closure": {
+            "existing_pto_contract": 97,
+            "public_api_aligned": 8,
+            "explicit_layer_difference": 6,
+            "open": 0,
+        },
+    }
+    require(
+        reconciliation["summary"] == expected_reconciliation_summary,
+        "public source reconciliation summary drift",
     )
 
     requirement_ids = [row["id"] for row in requirements]

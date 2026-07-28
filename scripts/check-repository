@@ -25,11 +25,14 @@ required_files=(
     asl/architecture.asl
     docs/traceability.md
     docs/normative-sources.md
+    docs/arm-asl-comparison.md
     spec/requirements.json
     spec/catalog/scalar-forms.json
     spec/catalog/system-registers.json
     spec/catalog/tile-operations.json
     spec/evidence/independent-tile-crosscheck.json
+    spec/evidence/public-source-reconciliation.json
+    scripts/generate-public-source-reconciliation
     tests/README.md
 )
 
