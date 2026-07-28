@@ -48,6 +48,14 @@ The canonical selector and descriptor fields define encoding/operand facts, not
 a command queue. Direct PTO operations have explicit destinations,
 sources, dimensions, addresses, and attributes.
 
+`ExecuteTileInstruction` is the decoded tile execution boundary. The normative
+tile catalog binds each accepted selector to a typed subset of
+`TileInstructionOperands`, an ordered semantic-handler argument list, and an
+optional result. Every one of the 111 accepted operations reaches its declared
+architecture state transition. TALLOC returns its allocated address; other
+accepted operations return zero. Unknown family-selector combinations raise
+the illegal-instruction fault and perform no tile semantic handler call.
+
 TPREFETCH is destination-free. It performs applicable address translation,
 permission, and fault checks but allocates and writes no tile. This resolves a
 known independent-documentation conflict in favor of the canonical PTO contract.

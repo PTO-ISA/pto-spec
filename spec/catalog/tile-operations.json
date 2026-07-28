@@ -23,667 +23,3800 @@
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TADD",
-      "selector": "0x000"
+      "selector": "0x000",
+      "semantic_handler": "ExecuteTileBinary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_ADD"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TSUB",
-      "selector": "0x001"
+      "selector": "0x001",
+      "semantic_handler": "ExecuteTileBinary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_SUB"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TMUL",
-      "selector": "0x002"
+      "selector": "0x002",
+      "semantic_handler": "ExecuteTileBinary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_MUL"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TMAX",
-      "selector": "0x004"
+      "selector": "0x004",
+      "semantic_handler": "ExecuteTileBinary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_MAX"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TMIN",
-      "selector": "0x005"
+      "selector": "0x005",
+      "semantic_handler": "ExecuteTileBinary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_MIN"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TAND",
-      "selector": "0x006"
+      "selector": "0x006",
+      "semantic_handler": "ExecuteTileBinary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_AND"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TOR",
-      "selector": "0x007"
+      "selector": "0x007",
+      "semantic_handler": "ExecuteTileBinary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_OR"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TXOR",
-      "selector": "0x008"
+      "selector": "0x008",
+      "semantic_handler": "ExecuteTileBinary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_XOR"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TSHL",
-      "selector": "0x009"
+      "selector": "0x009",
+      "semantic_handler": "ExecuteTileBinary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_SHL"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TSHR",
-      "selector": "0x00A"
+      "selector": "0x00A",
+      "semantic_handler": "ExecuteTileBinary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_SHR"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TCMP",
-      "selector": "0x02B"
+      "selector": "0x02B",
+      "semantic_handler": "ExecuteTileCompare",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        },
+        {
+          "field": "comparison",
+          "role": "comparison"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "comparison"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TSEL",
-      "selector": "0x02C"
+      "selector": "0x02C",
+      "semantic_handler": "ExecuteTileSelect",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "mask"
+        },
+        {
+          "field": "source1",
+          "role": "source-true"
+        },
+        {
+          "field": "source2",
+          "role": "source-false"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TABS",
-      "selector": "0x02D"
+      "selector": "0x02D",
+      "semantic_handler": "ExecuteTileUnary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileUnary_ABS"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TNOT",
-      "selector": "0x02E"
+      "selector": "0x02E",
+      "semantic_handler": "ExecuteTileUnary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileUnary_NOT"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TNEG",
-      "selector": "0x02F"
+      "selector": "0x02F",
+      "semantic_handler": "ExecuteTileUnary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileUnary_NEG"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TRELU",
-      "selector": "0x00B"
+      "selector": "0x00B",
+      "semantic_handler": "ExecuteTileUnary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileUnary_RELU"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TDIV",
-      "selector": "0x003"
+      "selector": "0x003",
+      "semantic_handler": "ExecuteTileBinary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_DIV"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TREM",
-      "selector": "0x030"
+      "selector": "0x030",
+      "semantic_handler": "ExecuteTileBinary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_REM"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TSQRT",
-      "selector": "0x010"
+      "selector": "0x010",
+      "semantic_handler": "ExecuteTileUnary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileUnary_SQRT"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TLOG",
-      "selector": "0x00F"
+      "selector": "0x00F",
+      "semantic_handler": "ExecuteTileUnary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileUnary_LOG"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TRECIP",
-      "selector": "0x018"
+      "selector": "0x018",
+      "semantic_handler": "ExecuteTileUnary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileUnary_RECIP"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TEXP",
-      "selector": "0x00E"
+      "selector": "0x00E",
+      "semantic_handler": "ExecuteTileUnary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileUnary_EXP"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TRSQRT",
-      "selector": "0x011"
+      "selector": "0x011",
+      "semantic_handler": "ExecuteTileUnary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileUnary_RSQRT"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TADDS",
-      "selector": "0x020"
+      "selector": "0x020",
+      "semantic_handler": "ExecuteTileScalar",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_ADD"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TAXPY",
-      "selector": "0x031"
+      "selector": "0x031",
+      "semantic_handler": "ExecuteTileAxpy",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TSUBS",
-      "selector": "0x021"
+      "selector": "0x021",
+      "semantic_handler": "ExecuteTileScalar",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_SUB"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TMULS",
-      "selector": "0x022"
+      "selector": "0x022",
+      "semantic_handler": "ExecuteTileScalar",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_MUL"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TDIVS",
-      "selector": "0x023"
+      "selector": "0x023",
+      "semantic_handler": "ExecuteTileScalar",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_DIV"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TMINS",
-      "selector": "0x025"
+      "selector": "0x025",
+      "semantic_handler": "ExecuteTileScalar",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_MIN"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TMAXS",
-      "selector": "0x024"
+      "selector": "0x024",
+      "semantic_handler": "ExecuteTileScalar",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_MAX"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TREMS",
-      "selector": "0x032"
+      "selector": "0x032",
+      "semantic_handler": "ExecuteTileScalar",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_REM"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TANDS",
-      "selector": "0x026"
+      "selector": "0x026",
+      "semantic_handler": "ExecuteTileScalar",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_AND"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TORS",
-      "selector": "0x027"
+      "selector": "0x027",
+      "semantic_handler": "ExecuteTileScalar",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_OR"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TXORS",
-      "selector": "0x028"
+      "selector": "0x028",
+      "semantic_handler": "ExecuteTileScalar",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_XOR"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TCMPS",
-      "selector": "0x033"
+      "selector": "0x033",
+      "semantic_handler": "ExecuteTileCompareScalar",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar"
+        },
+        {
+          "field": "comparison",
+          "role": "comparison"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        },
+        {
+          "operand": "comparison"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TSELS",
-      "selector": "0x034"
+      "selector": "0x034",
+      "semantic_handler": "ExecuteTileSelectScalar",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "mask"
+        },
+        {
+          "field": "source1",
+          "role": "source-true"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar-false"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TSHLS",
-      "selector": "0x029"
+      "selector": "0x029",
+      "semantic_handler": "ExecuteTileScalar",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_SHL"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TSHRS",
-      "selector": "0x02A"
+      "selector": "0x02A",
+      "semantic_handler": "ExecuteTileScalar",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_SHR"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TROWSUM",
-      "selector": "0x014"
+      "selector": "0x014",
+      "semantic_handler": "ExecuteTileReduction",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileReduction_SUM"
+        },
+        {
+          "constant": "TileAxis_Row"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TROWPROD",
-      "selector": "0x035"
+      "selector": "0x035",
+      "semantic_handler": "ExecuteTileReduction",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileReduction_PRODUCT"
+        },
+        {
+          "constant": "TileAxis_Row"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TROWMAX",
-      "selector": "0x012"
+      "selector": "0x012",
+      "semantic_handler": "ExecuteTileReduction",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileReduction_MAX"
+        },
+        {
+          "constant": "TileAxis_Row"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TROWMIN",
-      "selector": "0x013"
+      "selector": "0x013",
+      "semantic_handler": "ExecuteTileReduction",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileReduction_MIN"
+        },
+        {
+          "constant": "TileAxis_Row"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TROWARGMAX",
-      "selector": "0x036"
+      "selector": "0x036",
+      "semantic_handler": "ExecuteTileReduction",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileReduction_ARGMAX"
+        },
+        {
+          "constant": "TileAxis_Row"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TROWARGMIN",
-      "selector": "0x037"
+      "selector": "0x037",
+      "semantic_handler": "ExecuteTileReduction",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileReduction_ARGMIN"
+        },
+        {
+          "constant": "TileAxis_Row"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TCOLSUM",
-      "selector": "0x017"
+      "selector": "0x017",
+      "semantic_handler": "ExecuteTileReduction",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileReduction_SUM"
+        },
+        {
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TCOLPROD",
-      "selector": "0x038"
+      "selector": "0x038",
+      "semantic_handler": "ExecuteTileReduction",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileReduction_PRODUCT"
+        },
+        {
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TCOLMAX",
-      "selector": "0x015"
+      "selector": "0x015",
+      "semantic_handler": "ExecuteTileReduction",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileReduction_MAX"
+        },
+        {
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TCOLMIN",
-      "selector": "0x016"
+      "selector": "0x016",
+      "semantic_handler": "ExecuteTileReduction",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileReduction_MIN"
+        },
+        {
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TCOLARGMAX",
-      "selector": "0x039"
+      "selector": "0x039",
+      "semantic_handler": "ExecuteTileReduction",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileReduction_ARGMAX"
+        },
+        {
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TCOLARGMIN",
-      "selector": "0x03A"
+      "selector": "0x03A",
+      "semantic_handler": "ExecuteTileReduction",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileReduction_ARGMIN"
+        },
+        {
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TROWEXPAND",
-      "selector": "0x01F"
+      "selector": "0x01F",
+      "semantic_handler": "ExecuteTileExpand",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "broadcast-source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileExpand_COPY"
+        },
+        {
+          "constant": "TileAxis_Row"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TROWEXPANDADD",
-      "selector": "0x03B"
+      "selector": "0x03B",
+      "semantic_handler": "ExecuteTileExpand",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "broadcast-source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileExpand_ADD"
+        },
+        {
+          "constant": "TileAxis_Row"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TROWEXPANDSUB",
-      "selector": "0x03C"
+      "selector": "0x03C",
+      "semantic_handler": "ExecuteTileExpand",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "broadcast-source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileExpand_SUB"
+        },
+        {
+          "constant": "TileAxis_Row"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TROWEXPANDMUL",
-      "selector": "0x03D"
+      "selector": "0x03D",
+      "semantic_handler": "ExecuteTileExpand",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "broadcast-source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileExpand_MUL"
+        },
+        {
+          "constant": "TileAxis_Row"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TROWEXPANDDIV",
-      "selector": "0x03E"
+      "selector": "0x03E",
+      "semantic_handler": "ExecuteTileExpand",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "broadcast-source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileExpand_DIV"
+        },
+        {
+          "constant": "TileAxis_Row"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TROWEXPANDMAX",
-      "selector": "0x03F"
+      "selector": "0x03F",
+      "semantic_handler": "ExecuteTileExpand",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "broadcast-source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileExpand_MAX"
+        },
+        {
+          "constant": "TileAxis_Row"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TROWEXPANDMIN",
-      "selector": "0x040"
+      "selector": "0x040",
+      "semantic_handler": "ExecuteTileExpand",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "broadcast-source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileExpand_MIN"
+        },
+        {
+          "constant": "TileAxis_Row"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TROWEXPANDEXPDIF",
-      "selector": "0x041"
+      "selector": "0x041",
+      "semantic_handler": "ExecuteTileExpand",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "broadcast-source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileExpand_EXPDIF"
+        },
+        {
+          "constant": "TileAxis_Row"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TCOLEXPAND",
-      "selector": "0x01E"
+      "selector": "0x01E",
+      "semantic_handler": "ExecuteTileExpand",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "broadcast-source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileExpand_COPY"
+        },
+        {
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TCOLEXPANDADD",
-      "selector": "0x042"
+      "selector": "0x042",
+      "semantic_handler": "ExecuteTileExpand",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "broadcast-source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileExpand_ADD"
+        },
+        {
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TCOLEXPANDSUB",
-      "selector": "0x043"
+      "selector": "0x043",
+      "semantic_handler": "ExecuteTileExpand",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "broadcast-source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileExpand_SUB"
+        },
+        {
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TCOLEXPANDMUL",
-      "selector": "0x044"
+      "selector": "0x044",
+      "semantic_handler": "ExecuteTileExpand",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "broadcast-source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileExpand_MUL"
+        },
+        {
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TCOLEXPANDDIV",
-      "selector": "0x045"
+      "selector": "0x045",
+      "semantic_handler": "ExecuteTileExpand",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "broadcast-source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileExpand_DIV"
+        },
+        {
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TCOLEXPANDMAX",
-      "selector": "0x046"
+      "selector": "0x046",
+      "semantic_handler": "ExecuteTileExpand",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "broadcast-source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileExpand_MAX"
+        },
+        {
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TCOLEXPANDMIN",
-      "selector": "0x047"
+      "selector": "0x047",
+      "semantic_handler": "ExecuteTileExpand",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "broadcast-source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileExpand_MIN"
+        },
+        {
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TCOLEXPANDEXPDIF",
-      "selector": "0x048"
+      "selector": "0x048",
+      "semantic_handler": "ExecuteTileExpand",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "broadcast-source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileExpand_EXPDIF"
+        },
+        {
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "CUBE",
       "function": 0,
-      "name": "TMATMUL"
+      "name": "TMATMUL",
+      "semantic_handler": "TMATMUL",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "left"
+        },
+        {
+          "field": "source1",
+          "role": "right"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "constant": "FALSE"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "CUBE",
       "function": 1,
-      "name": "TMATMUL_BIAS"
+      "name": "TMATMUL_BIAS",
+      "semantic_handler": "TMATMUL_BIAS",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "left"
+        },
+        {
+          "field": "source1",
+          "role": "right"
+        },
+        {
+          "field": "source2",
+          "role": "bias"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "CUBE",
       "function": 2,
-      "name": "TMATMUL_ACC"
+      "name": "TMATMUL_ACC",
+      "semantic_handler": "TMATMUL_ACC",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "left"
+        },
+        {
+          "field": "source1",
+          "role": "right"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "CUBE",
       "function": 4,
-      "name": "TMATMUL_MX"
+      "name": "TMATMUL_MX",
+      "semantic_handler": "TMATMUL_MX",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "left"
+        },
+        {
+          "field": "source1",
+          "role": "right"
+        },
+        {
+          "field": "source2",
+          "role": "row-scale"
+        },
+        {
+          "field": "source3",
+          "role": "column-scale"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        },
+        {
+          "operand": "source3"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "CUBE",
       "function": 16,
-      "name": "TGEMV"
+      "name": "TGEMV",
+      "semantic_handler": "TGEMV",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "matrix"
+        },
+        {
+          "field": "source1",
+          "role": "vector"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "CUBE",
       "function": 17,
-      "name": "TGEMV_BIAS"
+      "name": "TGEMV_BIAS",
+      "semantic_handler": "TGEMV_BIAS",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "matrix"
+        },
+        {
+          "field": "source1",
+          "role": "vector"
+        },
+        {
+          "field": "source2",
+          "role": "bias"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "CUBE",
       "function": 18,
-      "name": "TGEMV_ACC"
+      "name": "TGEMV_ACC",
+      "semantic_handler": "TGEMV_ACC",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "matrix"
+        },
+        {
+          "field": "source1",
+          "role": "vector"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "CUBE",
       "function": 20,
-      "name": "TGEMV_MX"
+      "name": "TGEMV_MX",
+      "semantic_handler": "TGEMV_MX",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "matrix"
+        },
+        {
+          "field": "source1",
+          "role": "vector"
+        },
+        {
+          "field": "source2",
+          "role": "row-scale"
+        },
+        {
+          "field": "source3",
+          "role": "column-scale"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        },
+        {
+          "operand": "source3"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TMA",
       "function": 0,
-      "name": "TLOAD"
+      "name": "TLOAD",
+      "semantic_handler": "TLOAD",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "address",
+          "role": "base-address"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "address"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TMA",
       "function": 1,
-      "name": "TSTORE"
+      "name": "TSTORE",
+      "semantic_handler": "TSTORE",
+      "operands": [
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TMA",
       "function": 3,
-      "name": "TPREFETCH"
+      "name": "TPREFETCH",
+      "semantic_handler": "TPREFETCH",
+      "operands": [
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "byte_count",
+          "role": "byte-count"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "byte_count"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TMA",
       "function": 4,
-      "name": "MGATHER"
+      "name": "MGATHER",
+      "semantic_handler": "MGATHER",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TMA",
       "function": 5,
-      "name": "MSCATTER"
+      "name": "MSCATTER",
+      "semantic_handler": "MSCATTER",
+      "operands": [
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "indices"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TEXPANDS",
-      "selector": "0x019"
+      "selector": "0x019",
+      "semantic_handler": "ExecuteTileFillScalar",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TCI",
-      "selector": "0x080"
+      "selector": "0x080",
+      "semantic_handler": "TCI",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "scalar0",
+          "role": "start"
+        },
+        {
+          "field": "flag0",
+          "role": "descending"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "scalar0"
+        },
+        {
+          "operand": "flag0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TTRI",
-      "selector": "0x081"
+      "selector": "0x081",
+      "semantic_handler": "TTRI",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "flag0",
+          "role": "upper"
+        },
+        {
+          "field": "diagonal",
+          "role": "diagonal"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "flag0"
+        },
+        {
+          "operand": "diagonal"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TFILLPAD",
-      "selector": "0x082"
+      "selector": "0x082",
+      "semantic_handler": "TFILLPAD",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "padding"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TCVT",
-      "selector": "0x00D"
+      "selector": "0x00D",
+      "semantic_handler": "TCVT",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TQUANT",
-      "selector": "0x083"
+      "selector": "0x083",
+      "semantic_handler": "TQUANT",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scale"
+        },
+        {
+          "field": "scalar1",
+          "role": "zero-point"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        },
+        {
+          "operand": "scalar1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TDEQUANT",
-      "selector": "0x084"
+      "selector": "0x084",
+      "semantic_handler": "TDEQUANT",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scale"
+        },
+        {
+          "field": "scalar1",
+          "role": "zero-point"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        },
+        {
+          "operand": "scalar1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TEXTRACT",
-      "selector": "0x085"
+      "selector": "0x085",
+      "semantic_handler": "TEXTRACT",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "natural0",
+          "role": "row-offset"
+        },
+        {
+          "field": "natural1",
+          "role": "column-offset"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "natural0"
+        },
+        {
+          "operand": "natural1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TINSERT",
-      "selector": "0x086"
+      "selector": "0x086",
+      "semantic_handler": "TINSERT",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "natural0",
+          "role": "row-offset"
+        },
+        {
+          "field": "natural1",
+          "role": "column-offset"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "natural0"
+        },
+        {
+          "operand": "natural1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TGATHER",
-      "selector": "0x01A"
+      "selector": "0x01A",
+      "semantic_handler": "TGATHER",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "indices"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TSCATTER",
-      "selector": "0x01B"
+      "selector": "0x01B",
+      "semantic_handler": "TSCATTER",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "indices"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TCONCAT",
-      "selector": "0x087"
+      "selector": "0x087",
+      "semantic_handler": "TCONCAT",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        },
+        {
+          "field": "axis",
+          "role": "axis"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "axis"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TTRANS",
-      "selector": "0x01D"
+      "selector": "0x01D",
+      "semantic_handler": "TTRANS",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TIMG2COL",
-      "selector": "0x088"
+      "selector": "0x088",
+      "semantic_handler": "TIMG2COL",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "positive0",
+          "role": "kernel-rows"
+        },
+        {
+          "field": "positive1",
+          "role": "kernel-columns"
+        },
+        {
+          "field": "positive2",
+          "role": "stride-rows"
+        },
+        {
+          "field": "positive3",
+          "role": "stride-columns"
+        },
+        {
+          "field": "natural0",
+          "role": "pad-rows"
+        },
+        {
+          "field": "natural1",
+          "role": "pad-columns"
+        },
+        {
+          "field": "scalar0",
+          "role": "padding"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "positive0"
+        },
+        {
+          "operand": "positive1"
+        },
+        {
+          "operand": "positive2"
+        },
+        {
+          "operand": "positive3"
+        },
+        {
+          "operand": "natural0"
+        },
+        {
+          "operand": "natural1"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TMA",
       "function": 2,
-      "name": "TMOV"
+      "name": "TMOV",
+      "semantic_handler": "TMOV",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TGATHERB",
-      "selector": "0x089"
+      "selector": "0x089",
+      "semantic_handler": "TGATHERB",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "byte-offsets"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TDEINTERLEAVE",
-      "selector": "0x08A"
+      "selector": "0x08A",
+      "semantic_handler": "TDEINTERLEAVE",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination-even"
+        },
+        {
+          "field": "destination1",
+          "role": "destination-odd"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "destination1"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TINTERLEAVE",
-      "selector": "0x08B"
+      "selector": "0x08B",
+      "semantic_handler": "TINTERLEAVE",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TRESHAPE",
-      "selector": "0x01C"
+      "selector": "0x01C",
+      "semantic_handler": "TRESHAPE",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TSORT",
-      "selector": "0x0C0"
+      "selector": "0x0C0",
+      "semantic_handler": "TSORT",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "flag0",
+          "role": "descending"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "flag0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TMRGSORT",
-      "selector": "0x0C1"
+      "selector": "0x0C1",
+      "semantic_handler": "TMRGSORT",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        },
+        {
+          "field": "flag0",
+          "role": "descending"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "flag0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "THISTOGRAM",
-      "selector": "0x0C2"
+      "selector": "0x0C2",
+      "semantic_handler": "THISTOGRAM",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "indices"
+        },
+        {
+          "field": "selected_byte",
+          "role": "selected-byte"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "selected_byte"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TPARTADD",
-      "selector": "0x0C3"
+      "selector": "0x0C3",
+      "semantic_handler": "ExecuteTilePartial",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TilePartial_ADD"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TPARTMUL",
-      "selector": "0x0C4"
+      "selector": "0x0C4",
+      "semantic_handler": "ExecuteTilePartial",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TilePartial_MUL"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TPARTMAX",
-      "selector": "0x0C5"
+      "selector": "0x0C5",
+      "semantic_handler": "ExecuteTilePartial",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TilePartial_MAX"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TPARTMIN",
-      "selector": "0x0C6"
+      "selector": "0x0C6",
+      "semantic_handler": "ExecuteTilePartial",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TilePartial_MIN"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TPARTARGMAX",
-      "selector": "0x0C7"
+      "selector": "0x0C7",
+      "semantic_handler": "ExecuteTilePartialArg",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "destination1",
+          "role": "destination-indices"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        },
+        {
+          "field": "source2",
+          "role": "left-indices"
+        },
+        {
+          "field": "source3",
+          "role": "right-indices"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TRUE"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "destination1"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        },
+        {
+          "operand": "source3"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TPARTARGMIN",
-      "selector": "0x0C8"
+      "selector": "0x0C8",
+      "semantic_handler": "ExecuteTilePartialArg",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "destination1",
+          "role": "destination-indices"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        },
+        {
+          "field": "source2",
+          "role": "left-indices"
+        },
+        {
+          "field": "source3",
+          "role": "right-indices"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "FALSE"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "destination1"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        },
+        {
+          "operand": "source3"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TPUSH",
-      "selector": "0x0E0"
+      "selector": "0x0E0",
+      "semantic_handler": "TPUSH",
+      "operands": [
+        {
+          "field": "pipe",
+          "role": "pipe"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "pipe"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TPOP",
-      "selector": "0x0E1"
+      "selector": "0x0E1",
+      "semantic_handler": "TPOP",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "pipe",
+          "role": "pipe"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "pipe"
+        }
+      ]
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TALLOC",
-      "selector": "0x0E2"
+      "selector": "0x0E2",
+      "semantic_handler": "TALLOC",
+      "operands": [
+        {
+          "field": "pipe",
+          "role": "pipe"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "pipe"
+        }
+      ],
+      "result": "value"
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "name": "TFREE",
-      "selector": "0x0E3"
+      "selector": "0x0E3",
+      "semantic_handler": "TFREE",
+      "operands": [
+        {
+          "field": "pipe",
+          "role": "pipe"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "pipe"
+        }
+      ]
     }
   ],
   "rejected_review_only_names": [
@@ -736,5 +3869,5 @@
       ]
     ]
   },
-  "schema_version": 1
+  "schema_version": 2
 }

@@ -279,6 +279,67 @@ type TileExpandOperation of enumeration {
     TileExpand_EXPDIF
 };
 
+type TileExecutionStatus of enumeration {
+    TileExecution_Executed,
+    TileExecution_Rejected
+};
+
+// Uniform decoded operand carrier for direct tile instructions. Catalog
+// bindings select only the fields named by each operation; unused fields have
+// no architectural effect.
+type TileInstructionOperands of record {
+    destination0: TileIndex,
+    destination1: TileIndex,
+    source0: TileIndex,
+    source1: TileIndex,
+    source2: TileIndex,
+    source3: TileIndex,
+    pipe: PipeIndex,
+    address: Word,
+    scalar0: Word,
+    scalar1: Word,
+    natural0: integer {0..65535},
+    natural1: integer {0..65535},
+    positive0: integer {1..65535},
+    positive1: integer {1..65535},
+    positive2: integer {1..65535},
+    positive3: integer {1..65535},
+    diagonal: integer {-65535..65535},
+    byte_count: integer {0..262144},
+    selected_byte: integer {0..3},
+    axis: TileAxis,
+    comparison: TileComparison,
+    flag0: boolean
+};
+
+pure func DefaultTileInstructionOperands() => TileInstructionOperands
+begin
+    return TileInstructionOperands {
+        destination0 = 0,
+        destination1 = 0,
+        source0 = 0,
+        source1 = 0,
+        source2 = 0,
+        source3 = 0,
+        pipe = 0,
+        address = Zeros{PTO_XLEN},
+        scalar0 = Zeros{PTO_XLEN},
+        scalar1 = Zeros{PTO_XLEN},
+        natural0 = 0,
+        natural1 = 0,
+        positive0 = 1,
+        positive1 = 1,
+        positive2 = 1,
+        positive3 = 1,
+        diagonal = 0,
+        byte_count = 0,
+        selected_byte = 0,
+        axis = TileAxis_Row,
+        comparison = TileComparison_EQ,
+        flag0 = FALSE
+    };
+end;
+
 type TilePayload of array [[PTO_MODEL_TILE_ELEMENTS]] of Word;
 
 type TileState of record {

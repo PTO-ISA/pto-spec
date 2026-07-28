@@ -467,3 +467,78 @@ begin
     assert ReadTileElement(28, 0, 0) == Zeros{PTO_XLEN} + 8;
     assert ReadTileElement(28, 1, 0) == Zeros{PTO_XLEN} + 18;
 end;
+
+// PTO-REQ-TILE-DISPATCH-001: representative decoded effects cover every
+// direct family, value-returning management, and unknown-selector rejection.
+func TestDecodedTileExecution()
+begin
+    ConfigureTwoByTwo(0);
+    ConfigureTwoByTwo(1);
+    ConfigureTwoByTwo(2);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 7);
+    WriteTileElement(1, 1, 1, Zeros{PTO_XLEN} + 11);
+
+    var tepl_operands = DefaultTileInstructionOperands();
+    tepl_operands.destination0 = 2;
+    tepl_operands.source0 = 0;
+    tepl_operands.source1 = 1;
+    let (tepl_status, tepl_value) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000000000000', tepl_operands);
+    assert tepl_status == TileExecution_Executed;
+    assert tepl_value == Zeros{PTO_XLEN};
+    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 9;
+    assert ReadTileElement(2, 1, 1) == Zeros{PTO_XLEN} + 16;
+
+    ConfigureTwoByTwo(3);
+    Store(Zeros{PTO_XLEN} + 512, 8, Zeros{PTO_XLEN} + 21);
+    Store(Zeros{PTO_XLEN} + 520, 8, Zeros{PTO_XLEN} + 22);
+    Store(Zeros{PTO_XLEN} + 528, 8, Zeros{PTO_XLEN} + 23);
+    Store(Zeros{PTO_XLEN} + 536, 8, Zeros{PTO_XLEN} + 24);
+    var tma_operands = DefaultTileInstructionOperands();
+    tma_operands.destination0 = 3;
+    tma_operands.address = Zeros{PTO_XLEN} + 512;
+    let (tma_status, tma_value) = ExecuteTileInstruction(
+        TileDecode_TMA, '000000000000', tma_operands);
+    assert tma_status == TileExecution_Executed;
+    assert tma_value == Zeros{PTO_XLEN};
+    assert ReadTileElement(3, 0, 0) == Zeros{PTO_XLEN} + 21;
+    assert ReadTileElement(3, 1, 1) == Zeros{PTO_XLEN} + 24;
+
+    ConfigureTwoByTwo(4);
+    ConfigureTwoByTwo(5);
+    ConfigureTwoByTwo(6);
+    WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(4, 0, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(4, 1, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(4, 1, 1, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(5, 0, 1, Zeros{PTO_XLEN} + 6);
+    WriteTileElement(5, 1, 0, Zeros{PTO_XLEN} + 7);
+    WriteTileElement(5, 1, 1, Zeros{PTO_XLEN} + 8);
+    var cube_operands = DefaultTileInstructionOperands();
+    cube_operands.destination0 = 6;
+    cube_operands.source0 = 4;
+    cube_operands.source1 = 5;
+    let (cube_status, cube_value) = ExecuteTileInstruction(
+        TileDecode_CUBE, '000000000000', cube_operands);
+    assert cube_status == TileExecution_Executed;
+    assert cube_value == Zeros{PTO_XLEN};
+    assert ReadTileElement(6, 0, 0) == Zeros{PTO_XLEN} + 19;
+    assert ReadTileElement(6, 1, 1) == Zeros{PTO_XLEN} + 50;
+
+    ConfigurePipe(1, Zeros{PTO_XLEN} + 2048, 64, 2);
+    var allocation_operands = DefaultTileInstructionOperands();
+    allocation_operands.pipe = 1;
+    let (allocation_status, allocation_value) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000011100010', allocation_operands);
+    assert allocation_status == TileExecution_Executed;
+    assert allocation_value == Zeros{PTO_XLEN} + 2048;
+
+    let (rejected_status, rejected_value) = ExecuteTileInstruction(
+        TileDecode_TEPL, '111111111111', DefaultTileInstructionOperands());
+    assert rejected_status == TileExecution_Rejected;
+    assert rejected_value == Zeros{PTO_XLEN};
+    assert _LastFault == Fault_IllegalInstruction;
+end;

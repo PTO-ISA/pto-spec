@@ -18,6 +18,7 @@ review-oriented projection.
 | PTO-REQ-SCALAR-FP-001 | `asl/scalar/floating.asl`, decoded dispatch | carrier/type legality, comparison, NaN, signed-zero, flag, conversion, and mathematical tests | implemented with numeric profile hooks |
 | PTO-REQ-MEMORY-001 | `asl/scalar/memory.asl`, decoded dispatch | endian, alignment, signedness, pair, pre/post, and fault tests | implemented with platform profile |
 | PTO-REQ-TILE-001 | `asl/types.asl`, `asl/tile/state.asl` | mapping/capacity/alias tests | implemented portable model |
+| PTO-REQ-TILE-DISPATCH-001 | generated tile decode bindings, `asl/types.asl` | all-selector binding witnesses, decoded TEPL/TMA/CUBE effects, result, and rejection tests | implemented |
 | PTO-REQ-TILE-MANAGEMENT-001 | `asl/tile/management.asl` | tile/global FIFO tests | implemented |
 | PTO-REQ-TEPL-001 | `asl/tile/elementwise.asl` | binary/unary/scalar/select tests | implemented with numeric profile hooks |
 | PTO-REQ-TEPL-REDUCE-001 | `asl/tile/reduction.asl` | row/column reduction tests | implemented with numeric profile hooks |
@@ -28,7 +29,7 @@ review-oriented projection.
 | PTO-REQ-TEPL-COMPLEX-001 | `asl/tile/complex.asl` | partial/sort/merge/histogram tests | implemented with numeric profile hooks |
 | PTO-REQ-TMA-001 | `asl/tile/memory.asl`, scalar memory profile hooks | all six operation tests | implemented with memory profile hooks |
 | PTO-REQ-CUBE-001 | `asl/tile/cube.asl` | all eight operation tests | implemented with numeric profile hooks |
-| PTO-REQ-ENCODING-001 | canonical catalogs and generated decoder | catalog checker and ASL witnesses | executable canonical |
+| PTO-REQ-ENCODING-001 | canonical catalogs and generated decoder | catalog checker, operand/handler binding assertions, and ASL witnesses | executable canonical |
 | PTO-REQ-HIERARCHY-001 | ADR-0001 and one-level boundary | catalog/naming gates | implemented |
 
 Every normative ASL file cites one or more stable IDs. CI verifies that cited

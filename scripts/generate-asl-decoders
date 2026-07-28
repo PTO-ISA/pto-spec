@@ -34,6 +34,14 @@ def asl_identifier(value: str) -> str:
     return re.sub(r"[^A-Za-z0-9_]", "_", value)
 
 
+def tile_argument_expression(argument: dict) -> str:
+    if set(argument) == {"operand"}:
+        return f"operands.{argument['operand']}"
+    if set(argument) == {"constant"}:
+        return argument["constant"]
+    raise ValueError(f"invalid tile binding argument: {argument!r}")
+
+
 def agu_metadata(row: dict) -> dict:
     mnemonic_parts = row["mnemonic"].split(".")
     core_index = 1 if mnemonic_parts[0] in {"C", "HL"} else 0
@@ -126,6 +134,10 @@ def main() -> None:
     ]
     scalar_handlers = sorted({row["semantic_handler"] for row in scalar})
     tile_operations = [f"TileOperation_{asl_identifier(row['name'])}" for row in tile]
+    tile_handlers = sorted({row["semantic_handler"] for row in tile})
+    tile_operand_fields = sorted(
+        {operand["field"] for row in tile for operand in row["operands"]}
+    )
     if len(scalar_operations) != len(set(scalar_operations)):
         raise ValueError("scalar operation identifiers are not unique")
     if len(tile_operations) != len(set(tile_operations)):
@@ -133,10 +145,12 @@ def main() -> None:
 
     print("// Generated from the normative PTO catalogs. Do not edit.")
     print("// PTO-REQ-ENCODING-001: complete scalar and tile decode witnesses.")
+    print("// PTO-REQ-TILE-DISPATCH-001: total decoded direct-tile execution.")
     print(f"constant PTO_SCALAR_FORM_COUNT = {len(scalar)};")
     print(f"constant PTO_TILE_OPERATION_COUNT = {len(tile)};")
     print(f"constant PTO_SYSTEM_REGISTER_DEFINITION_COUNT = {len(system_registers)};")
     print(f"constant PTO_SCALAR_SEMANTIC_HANDLER_COUNT = {len(scalar_handlers)};")
+    print(f"constant PTO_TILE_SEMANTIC_HANDLER_COUNT = {len(tile_handlers)};")
     print("type ScalarFormIndex of integer {0..PTO_SCALAR_FORM_COUNT};")
     print("type TileOperationIndex of integer {0..PTO_TILE_OPERATION_COUNT};")
     print("type TileDecodeFamily of enumeration {")
@@ -151,6 +165,10 @@ def main() -> None:
         "ScalarSemanticHandler", [f"ScalarHandler_{name}" for name in scalar_handlers]
     )
     emit_enum("TileOperation", tile_operations)
+    emit_enum("TileSemanticHandler", [f"TileHandler_{name}" for name in tile_handlers])
+    emit_enum(
+        "TileOperandField", [f"TileOperand_{name}" for name in tile_operand_fields], 4
+    )
     emit_enum(
         "ScalarOperandField", [f"ScalarField_{name}" for name in operand_fields], 4
     )
@@ -468,6 +486,57 @@ def main() -> None:
     print("    unreachable;")
     print("end;")
     print()
+    print("pure func TileHandlerOfIndex(")
+    print("    operation: integer {0..PTO_TILE_OPERATION_COUNT-1})")
+    print("    => TileSemanticHandler")
+    print("begin")
+    for index, row in enumerate(tile):
+        print(
+            f"    if operation == {index} then return TileHandler_{row['semantic_handler']}; end;"
+        )
+    print("    unreachable;")
+    print("end;")
+    print()
+    print("pure func TileOperandPresent(")
+    print("    operation: integer {0..PTO_TILE_OPERATION_COUNT-1},")
+    print("    field: TileOperandField) => boolean")
+    print("begin")
+    for index, row in enumerate(tile):
+        for operand in row["operands"]:
+            print(
+                f"    if operation == {index} && field == TileOperand_{operand['field']} "
+                "then return TRUE; end;"
+            )
+    print("    return FALSE;")
+    print("end;")
+    print()
+    print("func ExecuteTileInstruction(family: TileDecodeFamily, code: bits(12),")
+    print("                            operands: TileInstructionOperands)")
+    print("                            => (TileExecutionStatus, Word)")
+    print("begin")
+    print("    let operation = DecodeTileOperation(family, code);")
+    print("    if operation == PTO_TILE_OPERATION_COUNT then")
+    print("        SetFault(Fault_IllegalInstruction, ReadPC());")
+    print("        return (TileExecution_Rejected, Zeros{PTO_XLEN});")
+    print("    end;")
+    print(
+        "    let accepted_operation = operation as integer {0..PTO_TILE_OPERATION_COUNT-1};"
+    )
+    print("    case TileOperationOfIndex(accepted_operation) of")
+    for row, operation_name in zip(tile, tile_operations, strict=True):
+        arguments = ", ".join(
+            tile_argument_expression(argument) for argument in row["arguments"]
+        )
+        print(f"        when {operation_name} =>")
+        if row.get("result") == "value":
+            print(f"            let value = {row['semantic_handler']}({arguments});")
+            print("            return (TileExecution_Executed, value);")
+        else:
+            print(f"            {row['semantic_handler']}({arguments});")
+            print("            return (TileExecution_Executed, Zeros{PTO_XLEN});")
+    print("    end;")
+    print("end;")
+    print()
     print("func ValidateCanonicalDecoders()")
     print("begin")
     for index, row in enumerate(scalar):
@@ -520,6 +589,13 @@ def main() -> None:
             f"    assert DecodeTileOperation(TileDecode_{row['family']}, {bit_literal(value, 12)}) == {index};"
         )
         print(f"    assert TileOperationOfIndex({index}) == {tile_operations[index]};")
+        print(
+            f"    assert TileHandlerOfIndex({index}) == TileHandler_{row['semantic_handler']};"
+        )
+        for operand in row["operands"]:
+            print(
+                f"    assert TileOperandPresent({index}, TileOperand_{operand['field']});"
+            )
     for row in system_registers:
         access = access_names[row["access"]]
         if row["scope"] == "base":

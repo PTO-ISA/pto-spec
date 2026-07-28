@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import math
 import re
+import subprocess
 import sys
 import tomllib
 from collections import Counter
@@ -194,6 +195,37 @@ SCALAR_REGISTER_FIELDS = {
     "SrcZero",
 }
 
+TILE_OPERAND_FIELDS = {
+    "destination0",
+    "destination1",
+    "source0",
+    "source1",
+    "source2",
+    "source3",
+    "pipe",
+    "address",
+    "scalar0",
+    "scalar1",
+    "natural0",
+    "natural1",
+    "positive0",
+    "positive1",
+    "positive2",
+    "positive3",
+    "diagonal",
+    "byte_count",
+    "selected_byte",
+    "axis",
+    "comparison",
+    "flag0",
+}
+
+TILE_BINDING_CONSTANT = re.compile(
+    r"(?:TRUE|FALSE|TileAxis_(?:Row|Column)|"
+    r"TileBinary_[A-Z]+|TileUnary_[A-Z]+|TileReduction_[A-Z]+|"
+    r"TileExpand_[A-Z]+|TilePartial_[A-Z]+)"
+)
+
 
 def load(relative: str):
     return json.loads((ROOT / relative).read_text(encoding="utf-8"))
@@ -341,8 +373,8 @@ def main() -> int:
     )
     require(
         specification["maturity"]["instruction_dispatch"]
-        == "all-474-scalar-forms-executable",
-        "instruction dispatch maturity must match the complete checked scalar catalog",
+        == "all-474-scalar-forms-and-111-tile-operations-executable",
+        "instruction dispatch maturity must match the complete checked catalogs",
     )
     require(
         specification["architecture"]["scalar_forms"] == 474,
@@ -591,7 +623,7 @@ def main() -> int:
         },
         "tile catalog top-level schema drift",
     )
-    require(tile["schema_version"] == 1, "unsupported tile catalog schema")
+    require(tile["schema_version"] == 2, "unsupported tile catalog schema")
     require(tile["isa"] == isa_name, "tile catalog has wrong ISA identity")
     require(
         tile["operation_count"] == len(operations) == 111,
@@ -612,8 +644,19 @@ def main() -> int:
         values = [row[key] for row in rows]
         require(len(values) == len(set(values)), f"duplicate {family} {key}")
         for row in rows:
+            expected_keys = {
+                "disposition",
+                "family",
+                "name",
+                key,
+                "semantic_handler",
+                "operands",
+                "arguments",
+            }
+            if row.get("result") is not None:
+                expected_keys.add("result")
             require(
-                set(row) == {"disposition", "family", "name", key},
+                set(row) == expected_keys,
                 f"tile operation schema drift for {row['name']}",
             )
             require(
@@ -624,6 +667,60 @@ def main() -> int:
             require(
                 0 <= value < 1 << 12, f"tile selector exceeds 12 bits for {row['name']}"
             )
+            matching_handlers = [
+                handler
+                for handler, operation_names in TILE_SEMANTIC_GROUPS.items()
+                if row["name"] in operation_names
+            ]
+            require(
+                matching_handlers == [row["semantic_handler"]],
+                f"tile handler binding drift for {row['name']}",
+            )
+            operand_fields = [operand["field"] for operand in row["operands"]]
+            require(
+                len(operand_fields) == len(set(operand_fields)),
+                f"duplicate tile operand field for {row['name']}",
+            )
+            for operand in row["operands"]:
+                require(
+                    set(operand) == {"field", "role"},
+                    f"tile operand schema drift for {row['name']}",
+                )
+                require(
+                    operand["field"] in TILE_OPERAND_FIELDS,
+                    f"unknown tile operand field for {row['name']}: {operand['field']}",
+                )
+                require(
+                    isinstance(operand["role"], str) and operand["role"],
+                    f"empty tile operand role for {row['name']}",
+                )
+            referenced_operands: list[str] = []
+            for argument in row["arguments"]:
+                require(
+                    set(argument) in ({"operand"}, {"constant"}),
+                    f"tile argument schema drift for {row['name']}",
+                )
+                if "operand" in argument:
+                    require(
+                        argument["operand"] in operand_fields,
+                        f"undeclared tile operand argument for {row['name']}: {argument['operand']}",
+                    )
+                    referenced_operands.append(argument["operand"])
+                else:
+                    require(
+                        TILE_BINDING_CONSTANT.fullmatch(argument["constant"])
+                        is not None,
+                        f"invalid tile binding constant for {row['name']}: {argument['constant']}",
+                    )
+            require(
+                set(referenced_operands) == set(operand_fields),
+                f"unused tile operand metadata for {row['name']}",
+            )
+            if "result" in row:
+                require(
+                    row["result"] == "value" and row["name"] == "TALLOC",
+                    f"invalid tile result binding for {row['name']}",
+                )
 
     tepl_accepted = {
         int(row["selector"], 0) if isinstance(row["selector"], str) else row["selector"]
@@ -805,6 +902,43 @@ def main() -> int:
         f"tile semantic coverage drift: missing={sorted(catalog_names - semantic_names)}, extra={sorted(semantic_names - catalog_names)}",
     )
 
+    generator = ROOT / "scripts" / "generate-asl-decoders"
+    generated_tile_dispatch = subprocess.run(
+        [str(generator)],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout
+    require(
+        re.search(r"\bfunc\s+ExecuteTileInstruction\b", generated_tile_dispatch)
+        is not None,
+        "missing generated tile execution entry point",
+    )
+    for index, row in enumerate(operations):
+        operation = re.sub(r"[^A-Za-z0-9_]", "_", row["name"])
+        require(
+            len(
+                re.findall(
+                    rf"\bwhen\s+TileOperation_{re.escape(operation)}\s*=>",
+                    generated_tile_dispatch,
+                )
+            )
+            == 1,
+            f"tile operation lacks one decoded execution binding: {row['name']}",
+        )
+        require(
+            f"assert TileHandlerOfIndex({index}) == "
+            f"TileHandler_{row['semantic_handler']};" in generated_tile_dispatch,
+            f"tile operation lacks handler-identity evidence: {row['name']}",
+        )
+        for operand in row["operands"]:
+            require(
+                f"assert TileOperandPresent({index}, "
+                f"TileOperand_{operand['field']});" in generated_tile_dispatch,
+                f"tile operation lacks operand-presence evidence: {row['name']}/{operand['field']}",
+            )
+
     for family, handlers in SCALAR_FAMILY_HANDLERS.items():
         require(
             any(row["semantic_family"] == family for row in forms),
@@ -880,6 +1014,10 @@ def main() -> int:
             re.search(rf"\b{re.escape(handler)}\s*\(", test_body) is not None,
             f"tile semantic handler lacks executable feature evidence: {handler}",
         )
+    require(
+        re.search(r"\bExecuteTileInstruction\s*\(", test_body) is not None,
+        "decoded tile execution lacks executable feature evidence",
+    )
     for handler in (
         "ReadSystemRegisterAddress",
         "WriteSystemRegisterAddress",
