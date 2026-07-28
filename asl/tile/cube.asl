@@ -80,6 +80,7 @@ begin
                 destination_tile.data_type, bias_tile.data_type);
         end;
     end;
+    _Tiles[[destination]].contents_defined = TRUE;
 end;
 
 func ScaleMatrixResult(destination: TileIndex, row_scale: TileIndex, column_scale: TileIndex)
@@ -108,6 +109,7 @@ begin
                 row_scale_tile.data_type, column_scale_tile.data_type);
         end;
     end;
+    _Tiles[[destination]].contents_defined = TRUE;
 end;
 
 func TMATMUL_BIAS(destination: TileIndex, left: TileIndex, right: TileIndex, bias: TileIndex)
@@ -126,6 +128,27 @@ func TMATMUL_MX(destination: TileIndex, left: TileIndex, right: TileIndex,
 begin
     TMATMUL(destination, left, right, FALSE);
     ScaleMatrixResult(destination, row_scale, column_scale);
+end;
+
+func TMATMUL_MX_BIAS(destination: TileIndex, left: TileIndex, right: TileIndex,
+                     row_scale: TileIndex, column_scale: TileIndex,
+                     bias: TileIndex)
+begin
+    TMATMUL(destination, left, right, FALSE);
+    ScaleMatrixResult(destination, row_scale, column_scale);
+    AddMatrixBias(destination, bias);
+end;
+
+func TMATMUL_MX_ACC(destination: TileIndex, left: TileIndex, right: TileIndex,
+                    row_scale: TileIndex, column_scale: TileIndex)
+begin
+    TMATMUL(destination, left, right, TRUE);
+    ScaleMatrixResult(destination, row_scale, column_scale);
+end;
+
+func ACCCVT(destination: TileIndex, source: TileIndex)
+begin
+    TCVT(destination, source);
 end;
 
 func TGEMV(destination: TileIndex, matrix: TileIndex, vector: TileIndex)
@@ -150,5 +173,20 @@ func TGEMV_MX(destination: TileIndex, matrix: TileIndex, vector: TileIndex,
               row_scale: TileIndex, column_scale: TileIndex)
 begin
     TGEMV(destination, matrix, vector);
+    ScaleMatrixResult(destination, row_scale, column_scale);
+end;
+
+func TGEMV_MX_BIAS(destination: TileIndex, matrix: TileIndex, vector: TileIndex,
+                   row_scale: TileIndex, column_scale: TileIndex, bias: TileIndex)
+begin
+    TGEMV(destination, matrix, vector);
+    ScaleMatrixResult(destination, row_scale, column_scale);
+    AddMatrixBias(destination, bias);
+end;
+
+func TGEMV_MX_ACC(destination: TileIndex, matrix: TileIndex, vector: TileIndex,
+                  row_scale: TileIndex, column_scale: TileIndex)
+begin
+    TGEMV_ACC(destination, matrix, vector);
     ScaleMatrixResult(destination, row_scale, column_scale);
 end;

@@ -135,7 +135,7 @@ end;
 
 readonly func ScalarFPActiveRoundingMode() => bits(3)
 begin
-    let encoded = _SystemRegisters.cstate[39:37];
+    let encoded = _SystemRegisters.core_state[39:37];
     if UInt(encoded) <= 4 then return encoded;
     else return Zeros{3};
     end;
@@ -143,13 +143,13 @@ end;
 
 readonly func ScalarFPFlags() => bits(5)
 begin
-    // flags[0..4] map to CSTATE[32..36] as NV, DZ, OF, UF, and NX.
-    return _SystemRegisters.cstate[36:32];
+    // flags[0..4] map to CORE_STATE[32..36] as NV, DZ, OF, UF, and NX.
+    return _SystemRegisters.core_state[36:32];
 end;
 
 func ScalarFPRecordFlags(flags: bits(5))
 begin
-    _SystemRegisters.cstate[36:32] = ScalarFPFlags() OR flags;
+    _SystemRegisters.core_state[36:32] = ScalarFPFlags() OR flags;
 end;
 
 pure func NormalizeScalarFPSource(value: Word, data_type: bits(5)) => Word

@@ -39,7 +39,7 @@ begin
     compressed_add[15:11] = Zeros{5} + 3;
     let compressed_status = ExecuteScalarInstruction(compressed_add, 16);
     assert compressed_status == ScalarExecution_Executed;
-    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 17;
+    assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN} + 17;
 
     ClearFault();
     WritePC(Zeros{PTO_XLEN} + 100);
@@ -73,14 +73,14 @@ begin
     assert set_commit_status == ScalarExecution_Executed;
     assert _CommitArgument == Zeros{PTO_XLEN} + 1;
 
-    WritePredicateMask(Zeros{PTO_XLEN});
+    SetCommitTarget(Zeros{PTO_XLEN});
     WritePC(Zeros{PTO_XLEN} + 100);
     var branch_zero: bits(48) = Zeros{48} + 0x00001037;
     branch_zero[31:15] = Zeros{17} + 3;
     let branch_taken_status = ExecuteScalarInstruction(branch_zero, 32);
     assert branch_taken_status == ScalarExecution_Executed;
     assert ReadPC() == Zeros{PTO_XLEN} + 106;
-    WritePredicateMask(Zeros{PTO_XLEN} + 1);
+    SetCommitTarget(Zeros{PTO_XLEN} + 1);
     WritePC(Zeros{PTO_XLEN} + 100);
     let branch_fallthrough_status = ExecuteScalarInstruction(branch_zero, 32);
     assert branch_fallthrough_status == ScalarExecution_Executed;
@@ -93,14 +93,17 @@ begin
     let jump_register_status = ExecuteScalarInstruction(jump_register, 32);
     assert jump_register_status == ScalarExecution_Executed;
     assert ReadPC() == Zeros{PTO_XLEN} + 204;
+
+    ClearFault();
+    let reserved_status = ExecuteScalarInstruction(Zeros{48}, 32);
+    assert reserved_status == ScalarExecution_Rejected;
+    assert _LastFault == Fault_IllegalInstruction;
 end;
 
-// PTO-REQ-TILE-LEGALITY-001: unavailable Reg5 bridges reject before scalar
-// destination effects, including implicit compressed T1 access.
-func TestScalarTileLegalityFaults()
+// PTO-REQ-SCALAR-OPERAND-001: decoded scalar forms read ClockHands entries and
+// push compressed results without consulting tile state.
+func TestScalarQueueDispatch()
 begin
-    ConfigureTile(0, 0, 0, 0, 0, 0, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
     WritePC(Zeros{PTO_XLEN} + 0x240);
     ClearFault();
     WriteGPR(2, Zeros{PTO_XLEN} + 10);
@@ -109,29 +112,26 @@ begin
     compressed_add[10:6] = Zeros{5} + 2;
     compressed_add[15:11] = Zeros{5} + 3;
     let compressed_status = ExecuteScalarInstruction(compressed_add, 16);
-    assert compressed_status == ScalarExecution_Rejected;
-    assert _LastFault == Fault_TileLegality;
-    assert _FaultAddress == Zeros{PTO_XLEN} + 0x240;
-    assert !_Tiles[[0]].allocated;
+    assert compressed_status == ScalarExecution_Executed;
+    assert _LastFault == Fault_None;
+    assert ReadScalarRegisterOperand(24) == Zeros{PTO_XLEN} + 30;
 
     ClearFault();
+    PushTemporaryQueue(TRUE, Zeros{PTO_XLEN} + 7);
     WriteGPR(5, Zeros{PTO_XLEN} + 0x55);
-    var bridged_add: bits(48) = Zeros{48} + 0x00000005;
-    bridged_add[11:7] = Zeros{5} + 5;
-    bridged_add[19:15] = Zeros{5} + 24;
-    bridged_add[24:20] = Zeros{5} + 3;
-    let bridged_status = ExecuteScalarInstruction(bridged_add, 32);
-    assert bridged_status == ScalarExecution_Rejected;
-    assert _LastFault == Fault_TileLegality;
-    assert ReadGPR(5) == Zeros{PTO_XLEN} + 0x55;
-
-    ConfigureTile(0, 256, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Vector);
+    var queued_add: bits(48) = Zeros{48} + 0x00000005;
+    queued_add[11:7] = Zeros{5} + 5;
+    queued_add[19:15] = Zeros{5} + 24;
+    queued_add[24:20] = Zeros{5} + 3;
+    let queued_status = ExecuteScalarInstruction(queued_add, 32);
+    assert queued_status == ScalarExecution_Executed;
+    assert _LastFault == Fault_None;
+    assert ReadGPR(5) == Zeros{PTO_XLEN} + 27;
 end;
 
-// PTO-REQ-SCALAR-CONSTRAINT-001: shared AGU constraints reject ambiguous
-// result/writeback overlap before registers or memory change.
-func TestScalarFamilyConstraints()
+// PTO-REQ-SCALAR-ADDRESS-001: accepted aliasing encodings have ordered writes.
+// A later result/writeback wins, while store data is snapshotted first.
+func TestScalarAliasingOrder()
 begin
     Store(Zeros{PTO_XLEN} + 1024, 8, Zeros{PTO_XLEN} + 0x1122);
     WriteGPR(2, Zeros{PTO_XLEN} + 1024);
@@ -152,9 +152,9 @@ begin
     WriteGPR(6, Zeros{PTO_XLEN} + 0x66);
     ClearFault();
     let overlap_load_status = ExecuteScalarInstruction(overlap_load, 48);
-    assert overlap_load_status == ScalarExecution_Rejected;
-    assert _LastFault == Fault_IllegalInstruction;
-    assert ReadGPR(6) == Zeros{PTO_XLEN} + 0x66;
+    assert overlap_load_status == ScalarExecution_Executed;
+    assert _LastFault == Fault_None;
+    assert ReadGPR(6) == Zeros{PTO_XLEN} + 1032;
 
     WriteGPR(2, Zeros{PTO_XLEN} + 1088);
     WriteGPR(3, Zeros{PTO_XLEN} + 0x3344);
@@ -176,12 +176,11 @@ begin
     overlap_store[15:11] = Zeros{5} + 3;
     ClearFault();
     let overlap_store_status = ExecuteScalarInstruction(overlap_store, 48);
-    assert overlap_store_status == ScalarExecution_Rejected;
-    assert _LastFault == Fault_IllegalInstruction;
-    ClearFault();
+    assert overlap_store_status == ScalarExecution_Executed;
+    assert _LastFault == Fault_None;
     let overlap_store_value = LoadUnsigned(Zeros{PTO_XLEN} + 1088, 8);
-    assert overlap_store_value == Zeros{PTO_XLEN} + 0x55;
-    assert ReadGPR(3) == Zeros{PTO_XLEN} + 0x3344;
+    assert overlap_store_value == Zeros{PTO_XLEN} + 0x3344;
+    assert ReadGPR(3) == Zeros{PTO_XLEN} + 1096;
 end;
 
 // PTO-REQ-MEMORY-COMPLETION-001: pair accesses preflight both elements, expose
@@ -241,7 +240,7 @@ begin
     ssrset_instruction[19:15] = Zeros{5} + 5;
     let ssrset_status = ExecuteScalarInstruction(ssrset_instruction, 32);
     assert ssrset_status == ScalarExecution_Executed;
-    let tp_after_set = ReadSystemRegister(SystemRegister_TP);
+    let tp_after_set = ReadSystemRegister(SystemRegister_THREAD_PTR);
     assert tp_after_set == Zeros{PTO_XLEN} + 0x55;
 
     var ssrget_instruction: bits(48) = Zeros{48} + 0x0000003b;
@@ -257,13 +256,13 @@ begin
     let ssrswap_status = ExecuteScalarInstruction(ssrswap_instruction, 32);
     assert ssrswap_status == ScalarExecution_Executed;
     assert ReadGPR(8) == Zeros{PTO_XLEN} + 0x55;
-    let tp_after_swap = ReadSystemRegister(SystemRegister_TP);
+    let tp_after_swap = ReadSystemRegister(SystemRegister_THREAD_PTR);
     assert tp_after_swap == Zeros{PTO_XLEN} + 0x66;
 
     var compressed_get: bits(48) = Zeros{48} + 0x802c;
     let compressed_get_status = ExecuteScalarInstruction(compressed_get, 16);
     assert compressed_get_status == ScalarExecution_Executed;
-    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 0x66;
+    assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN} + 0x66;
 
     WriteGPR(5, Zeros{PTO_XLEN} + 0x1234);
     var long_set: bits(48) = Zeros{48} + 0x0000103b000e;
@@ -313,7 +312,7 @@ begin
     let close_status = ExecuteScalarInstruction(close_request, 32);
     assert close_status == ScalarExecution_Executed;
     assert _ArchitectureRequestEpoch == before_request + 1;
-    assert _SystemRegisters.cstate[3:0] == '0111';
+    assert _ControlRequestOperand[3:0] == '0111';
 
     ClearFault();
     var enter_request: bits(48) = Zeros{48} + 0x0100302b;
@@ -419,16 +418,29 @@ begin
     assert compare_swap_value == Zeros{PTO_XLEN} + 9;
 
     ClearFault();
-    WriteMemoryByte(Zeros{PTO_XLEN} + 448, Zeros{8} + 0x5a);
+    WriteMemoryByte(Zeros{PTO_XLEN} + 256, Zeros{8} + 0x5a);
+    WriteMemoryByte(Zeros{PTO_XLEN} + 319, Zeros{8} + 0xa5);
     WriteGPR(2, Zeros{PTO_XLEN} + 256);
     WriteGPR(3, Zeros{PTO_XLEN} + 448);
-    var reserved_encoding: bits(48) = Zeros{48} + 0x0000700b;
-    reserved_encoding[19:15] = Zeros{5} + 2;
-    reserved_encoding[24:20] = Zeros{5} + 3;
-    let reserved_encoding_status = ExecuteScalarInstruction(reserved_encoding, 32);
-    assert reserved_encoding_status == ScalarExecution_Rejected;
-    assert _LastFault == Fault_IllegalInstruction;
+    var dma_instruction: bits(48) = Zeros{48} + 0x0000700b;
+    dma_instruction[19:15] = Zeros{5} + 2;
+    dma_instruction[24:20] = Zeros{5} + 3;
+    let dma_status = ExecuteScalarInstruction(dma_instruction, 32);
+    assert dma_status == ScalarExecution_Executed;
+    assert _LastFault == Fault_None;
     assert ReadMemoryByte(Zeros{PTO_XLEN} + 448) == Zeros{8} + 0x5a;
+    assert ReadMemoryByte(Zeros{PTO_XLEN} + 511) == Zeros{8} + 0xa5;
+
+    // Destination failure is detected before any source read or destination
+    // write becomes architecturally visible.
+    WriteMemoryByte(Zeros{PTO_XLEN} + 4032, Zeros{8} + 0x77);
+    WriteGPR(3, Zeros{PTO_XLEN} + 4064);
+    ClearFault();
+    let dma_fault_status = ExecuteScalarInstruction(dma_instruction, 32);
+    assert dma_fault_status == ScalarExecution_Executed;
+    assert _LastFault == Fault_DataPage;
+    assert _FaultAddress == Zeros{PTO_XLEN} + 4064;
+    assert ReadMemoryByte(Zeros{PTO_XLEN} + 4032) == Zeros{8} + 0x77;
 end;
 
 func TestScalarAGUDispatchEffects()
@@ -483,7 +495,7 @@ begin
     compressed_load[15:11] = Zeros{5} + 1;
     let compressed_load_status = ExecuteScalarInstruction(compressed_load, 16);
     assert compressed_load_status == ScalarExecution_Executed;
-    assert ReadTileElement(0, 0, 0) ==
+    assert ReadTemporaryQueue(TRUE, 0) ==
         SignExtend{PTO_XLEN}(Zeros{32} + 0x80000002);
 
     WriteGPR(2, Zeros{PTO_XLEN} + 640);
@@ -596,9 +608,9 @@ end;
 func TestScalarFPDispatchEffects()
 begin
     ClearFault();
-    _SystemRegisters.cstate = Zeros{PTO_XLEN};
-    _SystemRegisters.cstate[39:37] = '010';
-    _SystemRegisters.cstate[36:32] = '10000';
+    _SystemRegisters.core_state = Zeros{PTO_XLEN};
+    _SystemRegisters.core_state[39:37] = '010';
+    _SystemRegisters.core_state[36:32] = '10000';
 
     WriteGPR(2, Zeros{PTO_XLEN} + 0xbf800000);
     var absolute: bits(48) = Zeros{48} + 0x0000007b;
@@ -813,7 +825,7 @@ begin
     SetReturnAddress(Zeros{PTO_XLEN} + 3);
     assert _ReturnAddress == Zeros{PTO_XLEN} + 106;
     AddToPC(11, Zeros{PTO_XLEN} + 4);
-    assert ReadGPR(11) == Zeros{PTO_XLEN} + 108;
+    assert ReadGPR(11) == Zeros{PTO_XLEN} + 0x4000;
 
     assert MaterializeLongSigned(Zeros{32} + 0x80000000) ==
         SignExtend{PTO_XLEN}(Zeros{32} + 0x80000000);
@@ -934,14 +946,65 @@ begin
     assert old_signed_min == Zeros{PTO_XLEN} + 0xff;
     assert after_signed_min == Zeros{PTO_XLEN} + 0xff;
 
+    for index = 0 to 63 do
+        Store(Zeros{PTO_XLEN} + 256 + NaturalToWord(index as integer {0..262144}),
+              1, Zeros{PTO_XLEN} + index);
+        Store(Zeros{PTO_XLEN} + 320 + NaturalToWord(index as integer {0..262144}),
+              1, Zeros{PTO_XLEN} + 0xaa);
+    end;
+    ClearFault();
+    ExecuteScalarDMACopy64(Zeros{PTO_XLEN} + 256, Zeros{PTO_XLEN} + 320);
+    assert _LastFault == Fault_None;
+    for index = 0 to 63 do
+        let copied_byte = LoadUnsigned(
+            Zeros{PTO_XLEN} + 320 + NaturalToWord(index as integer {0..262144}),
+            1);
+        assert copied_byte == Zeros{PTO_XLEN} + index;
+    end;
+
+    WriteGPR(2, Zeros{PTO_XLEN} + 320);
+    WriteGPR(3, Zeros{PTO_XLEN} + 384);
+    var dma_instruction: bits(48) = Zeros{48} + 0x0000700b;
+    dma_instruction[19:15] = Zeros{5} + 2;
+    dma_instruction[24:20] = Zeros{5} + 3;
+    ClearFault();
+    let dma_status = ExecuteScalarInstruction(dma_instruction, 32);
+    assert dma_status == ScalarExecution_Executed;
+    assert _LastFault == Fault_None;
+    for index = 0 to 63 do
+        let decoded_copied_byte = LoadUnsigned(
+            Zeros{PTO_XLEN} + 384 + NaturalToWord(index as integer {0..262144}),
+            1);
+        assert decoded_copied_byte == Zeros{PTO_XLEN} + index;
+    end;
+
+    Store(Zeros{PTO_XLEN} + 480, 1, Zeros{PTO_XLEN} + 0x55);
+    ClearFault();
+    ExecuteScalarDMACopy64(Zeros{PTO_XLEN} + 320, Zeros{PTO_XLEN} + 4080);
+    assert _LastFault == Fault_DataPage;
+    let preserved_byte = LoadUnsigned(Zeros{PTO_XLEN} + 480, 1);
+    assert preserved_byte == Zeros{PTO_XLEN} + 0x55;
 end;
 
 func TestScalarSystem()
 begin
     ClearFault();
-    WriteSystemRegister(SystemRegister_TP, Zeros{PTO_XLEN} + 123);
-    let tp = ReadSystemRegister(SystemRegister_TP);
+    WriteSystemRegister(SystemRegister_THREAD_PTR, Zeros{PTO_XLEN} + 123);
+    let tp = ReadSystemRegister(SystemRegister_THREAD_PTR);
     assert tp == Zeros{PTO_XLEN} + 123;
+    WriteSystemRegister(SystemRegister_GLOBAL_PTR, Zeros{PTO_XLEN} + 321);
+    let global_ptr = ReadSystemRegister(SystemRegister_GLOBAL_PTR);
+    assert global_ptr == Zeros{PTO_XLEN} + 321;
+    WriteSystemRegister(SystemRegister_CORE_STATE, Zeros{PTO_XLEN} + 3);
+    assert CurrentACR() == 3;
+    SetCurrentACR(0);
+    let thread_id = ReadSystemRegister(SystemRegister_THREAD_ID);
+    let tile_capacity = ReadSystemRegister(SystemRegister_TILE_CAPACITY);
+    let block_id = ReadSystemRegister(SystemRegister_BLOCKID);
+    assert thread_id == Zeros{PTO_XLEN};
+    assert tile_capacity ==
+        Zeros{PTO_XLEN} + PTO_MODEL_MAX_TILE_CAPACITY_BYTES;
+    assert block_id == Zeros{PTO_XLEN};
 
     WriteSystemRegister(SystemRegister_VENDOR, Ones{PTO_XLEN});
     assert _LastFault == Fault_IllegalInstruction;
@@ -951,9 +1014,10 @@ begin
     assert _LastFenceSuccessor == '0001';
 
     ClearFault();
-    let old_tp = SwapSystemRegister(SystemRegister_TP, Zeros{PTO_XLEN} + 456);
+    let old_tp = SwapSystemRegister(SystemRegister_THREAD_PTR,
+        Zeros{PTO_XLEN} + 456);
     assert old_tp == Zeros{PTO_XLEN} + 123;
-    let new_tp = ReadSystemRegister(SystemRegister_TP);
+    let new_tp = ReadSystemRegister(SystemRegister_THREAD_PTR);
     assert new_tp == Zeros{PTO_XLEN} + 456;
     let before_tlb = _TLBEpoch;
     ExecuteMaintenance(Maintenance_TLB_IV, Zeros{PTO_XLEN} + 0x1000);
@@ -986,6 +1050,17 @@ begin
     let trap_argument = ReadSystemRegisterAddress(Zeros{24} + 0x0f03);
     assert trap_argument == Zeros{PTO_XLEN} + 0x4000;
 
+    SetCurrentACR(2);
+    SetFault(Fault_Assert, Zeros{PTO_XLEN} + 0x2222);
+    assert CurrentACR() == 1;
+    SetCurrentACR(0);
+    let acr1_trap_status = ReadSystemRegisterAddress(Zeros{24} + 0x1f02);
+    let acr0_trap_status = ReadSystemRegisterAddress(Zeros{24} + 0x0f02);
+    assert acr1_trap_status[5:0] == Zeros{6} + 52;
+    assert acr0_trap_status[5:0] == Zeros{6} + 35;
+    let acr1_trap_argument = ReadSystemRegisterAddress(Zeros{24} + 0x1f03);
+    assert acr1_trap_argument == Zeros{PTO_XLEN} + 0x2222;
+
     ClearFault();
     WriteSystemRegisterAddress(Zeros{24} + 0x0010, Ones{PTO_XLEN});
     assert _LastFault == Fault_IllegalInstruction;
@@ -996,10 +1071,10 @@ begin
 
     ClearFault();
     RaiseInterrupt(Zeros{PTO_XLEN} + 7, Zeros{24} + 9);
-    assert PackTrapStatus()[63] == '1';
-    assert PackTrapStatus()[5:0] == Zeros{6} + 44;
+    assert PackTrapStatus(CurrentACR())[63] == '1';
+    assert PackTrapStatus(CurrentACR())[5:0] == Zeros{6} + 44;
     WriteSystemRegisterAddress(Zeros{24} + 0x0f0a, Zeros{PTO_XLEN} + 7);
-    assert PackTrapStatus()[63] == '0';
+    assert PackTrapStatus(CurrentACR())[63] == '0';
 
     ClearFault();
     WriteGPR(5, Zeros{PTO_XLEN} + 0x55);
@@ -1011,12 +1086,12 @@ begin
     WriteGPR(5, Zeros{PTO_XLEN} + 0x66);
     ExecuteSystemRegisterSwap(6, 5, Zeros{24} + 0x0000);
     assert ReadGPR(6) == Zeros{PTO_XLEN} + 0x55;
-    let swapped_tp = ReadSystemRegister(SystemRegister_TP);
+    let swapped_tp = ReadSystemRegister(SystemRegister_THREAD_PTR);
     assert swapped_tp == Zeros{PTO_XLEN} + 0x66;
 
-    WriteSystemRegister(SystemRegister_TP, Zeros{PTO_XLEN} + 0x77);
+    WriteSystemRegister(SystemRegister_THREAD_PTR, Zeros{PTO_XLEN} + 0x77);
     ExecuteCompressedSystemRegisterGet(Zeros{24} + 0x0000);
-    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 0x77;
+    assert ReadScalarRegisterOperand(24) == Zeros{PTO_XLEN} + 0x77;
 
     let before_instruction_fence = _InstructionCacheEpoch;
     FenceInstruction();
@@ -1025,7 +1100,7 @@ begin
     let before_close = _ArchitectureRequestEpoch;
     ArchitectureCloseRequest('0011');
     assert _ArchitectureRequestEpoch == before_close + 1;
-    assert _SystemRegisters.cstate[3:0] == '0011';
+    assert _ControlRequestOperand[3:0] == '0011';
 
     WritePC(Zeros{PTO_XLEN} + 0x400);
     ClearFault();

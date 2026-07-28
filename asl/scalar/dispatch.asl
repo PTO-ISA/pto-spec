@@ -818,7 +818,7 @@ begin
                 ScalarDecodedWord(instruction, form, ScalarField_simm12));
         when ScalarOperation_B_Z, ScalarOperation_B_NZ =>
             BranchRelative(ScalarConditionForOperation(operation),
-                ReadPredicateMask(), Zeros{PTO_XLEN},
+                ReadBranchPredicate(), Zeros{PTO_XLEN},
                 ScalarDecodedWord(instruction, form, ScalarField_simm22));
         when ScalarOperation_J =>
             JumpRelative(ScalarDecodedWord(instruction, form, ScalarField_simm22));
@@ -1072,6 +1072,10 @@ func ExecuteDecodedAMOForm(instruction: bits(48),
 begin
     let operation = ScalarOperationOfForm(form);
     case operation of
+        when ScalarOperation_DMA =>
+            ExecuteScalarDMACopy64(
+                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR));
         when ScalarOperation_LR_B =>
             ExecuteDecodedLoadReserved(instruction, form, 1);
         when ScalarOperation_LR_H =>
@@ -1162,7 +1166,7 @@ readonly func ScalarDecodedAGUBase(
     action: ScalarAGUAction, address_kind: ScalarAGUAddressKind) => Word
 begin
     if address_kind == ScalarAGU_PCRelative then
-        return ReadPC() AND (Ones{PTO_XLEN} - 3);
+        return ReadTPC();
     elsif address_kind == ScalarAGU_Compressed then
         return ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL);
     elsif (action == ScalarAGU_Store || action == ScalarAGU_StorePair) &&

@@ -15,22 +15,23 @@ architecture behavior, and supplies raw input/output and state-effect tests.
 
 ## PTO v0 concrete behavior
 
-### Reset, privilege, and time
+### Reset, access-control rings, and time
 
-`ResetProfileState` clears GPRs and bounded memory, invalidates tile and pipe
-descriptors, clears defined extended system-register storage, resets faults,
-reservations, concurrency candidates and maintenance epochs, sets VERSION to 1,
-sets time to zero, and enters `Privilege_Machine`. Tile/pipe payload backing that becomes
-unobservable through invalid descriptors is not scrubbed.
+`ResetProfileState` clears the 24 absolute GPRs, the T/U queues, P0..P7, and
+bounded memory; invalidates every `TileInfo`; clears defined extended
+system-register storage; resets faults, reservations, concurrency candidates,
+and maintenance epochs; sets VERSION to 1 and TILE_CAPACITY to 512 KiB; sets
+time to zero; and enters ACR0. Tile payload backing that becomes unobservable
+through invalid descriptors is not scrubbed.
 
-Privilege is explicit architecture state with User, Supervisor, and Machine
-levels. Base system registers are accessible at every level subject to their
-RO/WO/RW class. Context, translation, interrupt, and debug register families
-whose low index is at least `0xF00` require Machine privilege. A denied system
+ACR0..ACR15 are explicit architecture state. Base system registers are
+accessible at every ring subject to their RO/WO/RW class. Context,
+translation, interrupt, and debug register families whose low index is at
+least `0xF00` require ACR0. A denied system
 register access raises `Fault_IllegalInstruction` before the access.
 
-The bounded reference memory is 4096 bytes. Machine and Supervisor can access
-the full range; User can access bytes 0 through 3071. Translation is identity.
+The bounded reference memory is 4096 bytes. ACR0 and ACR1 can access the full
+range; ACR2 through ACR15 can access bytes 0 through 3071. Translation is identity.
 Permission and bounds failure use the existing data-page fault envelope.
 
 TIME and CYCLE return the same 64-bit modulo counter. Reset sets it to zero and
@@ -65,7 +66,7 @@ must not silently reinterpret `pto-v0` results.
 | Domain | Concrete boundary |
 | --- | --- |
 | Architecture reset | deterministic PTO v0 reset state |
-| Privilege | User/Supervisor/Machine memory and system-register policy |
+| Access-control ring | ACR0..ACR15 memory and system-register policy |
 | System time | one modulo-64-bit tick per decoded execution attempt |
 | Scalar mathematical helpers | 18-term exponential and nearest-ties-even rounding |
 | Scalar carrier arithmetic/conversion | deterministic raw word operations and flags |

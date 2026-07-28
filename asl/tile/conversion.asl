@@ -48,6 +48,7 @@ begin
                 source_payload[[source_element]], source_tile.data_type, destination_tile.data_type);
         end;
     end;
+    _Tiles[[destination]].contents_defined = TRUE;
 end;
 
 impdef func TileProfileQuantize(value: Word, scale: Word, zero_point: Word,
@@ -82,6 +83,7 @@ begin
                 source_tile.data_type, destination_tile.data_type);
         end;
     end;
+    _Tiles[[destination]].contents_defined = TRUE;
 end;
 
 func TDEQUANT(destination: TileIndex, source: TileIndex, scale: Word, zero_point: Word)
@@ -100,4 +102,5 @@ begin
                 source_tile.data_type, destination_tile.data_type);
         end;
     end;
+    _Tiles[[destination]].contents_defined = TRUE;
 end;

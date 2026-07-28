@@ -324,34 +324,6 @@ begin
     assert ReadTileElement(37, 0, 3) == Zeros{PTO_XLEN} + 4;
 end;
 
-func TestTileManagement()
-begin
-    ConfigureTile(38, 256, 1, 2, 1, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Vector);
-    WriteTileElement(38, 0, 0, Zeros{PTO_XLEN} + 71);
-    WriteTileElement(38, 0, 1, Zeros{PTO_XLEN} + 72);
-    ConfigurePipe(0, Zeros{PTO_XLEN} + 1024, 64, 2);
-    TPUSH(0, 38);
-    assert _Pipes[[0]].count == 1;
-    TPOP(39, 0);
-    assert _Pipes[[0]].count == 0;
-    assert _Tiles[[39]].allocated;
-    assert ReadTileElement(39, 0, 0) == Zeros{PTO_XLEN} + 71;
-    assert ReadTileElement(39, 0, 1) == Zeros{PTO_XLEN} + 72;
-
-    let allocated_slot = TALLOC(0);
-    assert allocated_slot == Zeros{PTO_XLEN} + 1088;
-    Store(allocated_slot, 8, Zeros{PTO_XLEN} + 99);
-    TPUSHGlobal(0, allocated_slot);
-    assert _Pipes[[0]].count == 1;
-    let popped_slot = TPOPGlobal(0);
-    assert popped_slot == allocated_slot;
-    let popped_value = LoadUnsigned(popped_slot, 8);
-    assert popped_value == Zeros{PTO_XLEN} + 99;
-    TFREE(0);
-    assert _Pipes[[0]].count == 0;
-end;
-
 func TestTileConversion()
 begin
     ConfigureTile(40, 256, 1, 2, 1, 2, TileDataType_U64,
@@ -418,6 +390,8 @@ begin
     ConfigureTile(61, 256, 1, 4, 1, 4, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigureTwoByTwo(62);
+    ExecuteTileFillScalar(55, Zeros{PTO_XLEN});
+    ExecuteTileFillScalar(61, Zeros{PTO_XLEN});
     WriteTileElement(56, 0, 0, Zeros{PTO_XLEN} + 7);
     WriteTileElement(56, 0, 1, Zeros{PTO_XLEN} + 8);
     TINSERT(55, 56, 1, 0);
@@ -466,6 +440,122 @@ begin
     TGEMV_MX(28, 5, 27, 61, 63);
     assert ReadTileElement(28, 0, 0) == Zeros{PTO_XLEN} + 8;
     assert ReadTileElement(28, 1, 0) == Zeros{PTO_XLEN} + 18;
+end;
+
+func TestTileSelectorClosureExtensions()
+begin
+    ConfigureTwoByTwo(0);
+    ConfigureTwoByTwo(1);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} - 3);
+    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} - 5);
+    WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 6);
+    TPRELU(1, 0, Zeros{PTO_XLEN} + 2);
+    assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} - 6;
+    assert ReadTileElement(1, 0, 1) == Zeros{PTO_XLEN} + 4;
+
+    TFREE(63);
+    assert !_Tiles[[63]].allocated;
+    TALLOC(63, 256, 2, 2, 2, 2, Zeros{PTO_XLEN} + 24, FALSE);
+    assert _Tiles[[63]].allocated;
+    assert !_Tiles[[63]].contents_defined;
+    assert _Tiles[[63]].data_type == TileDataType_U64;
+    TPUSH(63, 1);
+    assert ReadTileElement(63, 1, 1) == Zeros{PTO_XLEN} + 6;
+    TPOP(62, 63);
+    assert ReadTileElement(62, 0, 0) == Zeros{PTO_XLEN} - 6;
+
+    ConfigureTile(55, 256, 1, 3, 1, 3, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(56, 256, 1, 3, 1, 3, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(57, 256, 1, 3, 1, 3, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ExecuteTileFillScalar(55, Zeros{PTO_XLEN} + 0xaa);
+    WriteTileElement(56, 0, 0, Zeros{PTO_XLEN});
+    WriteTileElement(56, 0, 1, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(56, 0, 2, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(57, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(57, 0, 1, Zeros{PTO_XLEN});
+    WriteTileElement(57, 0, 2, Zeros{PTO_XLEN} + 1);
+    Store(Zeros{PTO_XLEN} + 1536, 8, Zeros{PTO_XLEN} + 11);
+    Store(Zeros{PTO_XLEN} + 1544, 8, Zeros{PTO_XLEN} + 22);
+    Store(Zeros{PTO_XLEN} + 1552, 8, Zeros{PTO_XLEN} + 33);
+    MGATHER_MASK(55, Zeros{PTO_XLEN} + 1536, 56, 57);
+    assert ReadTileElement(55, 0, 0) == Zeros{PTO_XLEN} + 11;
+    assert ReadTileElement(55, 0, 1) == Zeros{PTO_XLEN} + 0xaa;
+    assert ReadTileElement(55, 0, 2) == Zeros{PTO_XLEN} + 33;
+
+    Store(Zeros{PTO_XLEN} + 2048, 8, Zeros{PTO_XLEN});
+    Store(Zeros{PTO_XLEN} + 2056, 8, Zeros{PTO_XLEN});
+    Store(Zeros{PTO_XLEN} + 2064, 8, Zeros{PTO_XLEN});
+    MSCATTER_MASK(Zeros{PTO_XLEN} + 2048, 55, 56, 57);
+    let masked_scatter_first = LoadUnsigned(Zeros{PTO_XLEN} + 2048, 8);
+    let masked_scatter_middle = LoadUnsigned(Zeros{PTO_XLEN} + 2056, 8);
+    let masked_scatter_last = LoadUnsigned(Zeros{PTO_XLEN} + 2064, 8);
+    assert masked_scatter_first == Zeros{PTO_XLEN} + 11;
+    assert masked_scatter_middle == Zeros{PTO_XLEN};
+    assert masked_scatter_last == Zeros{PTO_XLEN} + 33;
+
+    ConfigureTile(58, 256, 1, 3, 1, 3, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(59, 256, 1, 3, 1, 3, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(58, 0, 0, Zeros{PTO_XLEN} + 11);
+    WriteTileElement(58, 0, 1, Zeros{PTO_XLEN} + 99);
+    WriteTileElement(58, 0, 2, Zeros{PTO_XLEN} + 33);
+    WriteTileElement(59, 0, 0, Zeros{PTO_XLEN} + 111);
+    WriteTileElement(59, 0, 1, Zeros{PTO_XLEN} + 222);
+    WriteTileElement(59, 0, 2, Zeros{PTO_XLEN} + 333);
+    MGATHER_CAS(55, Zeros{PTO_XLEN} + 1536, 56, 58, 59);
+    assert ReadTileElement(55, 0, 0) == Zeros{PTO_XLEN} + 11;
+    assert ReadTileElement(55, 0, 1) == Zeros{PTO_XLEN} + 22;
+    assert ReadTileElement(55, 0, 2) == Zeros{PTO_XLEN} + 33;
+    let cas_first = LoadUnsigned(Zeros{PTO_XLEN} + 1536, 8);
+    let cas_middle = LoadUnsigned(Zeros{PTO_XLEN} + 1544, 8);
+    let cas_last = LoadUnsigned(Zeros{PTO_XLEN} + 1552, 8);
+    assert cas_first == Zeros{PTO_XLEN} + 111;
+    assert cas_middle == Zeros{PTO_XLEN} + 22;
+    assert cas_last == Zeros{PTO_XLEN} + 333;
+
+    ConfigureTwoByTwo(2);
+    ConfigureTwoByTwo(3);
+    ConfigureTwoByTwo(4);
+    ConfigureTile(5, 256, 2, 1, 2, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(6, 256, 1, 2, 1, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTwoByTwo(7);
+    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(2, 0, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(2, 1, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(2, 1, 1, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(3, 0, 1, Zeros{PTO_XLEN} + 6);
+    WriteTileElement(3, 1, 0, Zeros{PTO_XLEN} + 7);
+    WriteTileElement(3, 1, 1, Zeros{PTO_XLEN} + 8);
+    ExecuteTileFillScalar(5, Zeros{PTO_XLEN} + 1);
+    ExecuteTileFillScalar(6, Zeros{PTO_XLEN} + 1);
+    ExecuteTileFillScalar(7, Zeros{PTO_XLEN} + 2);
+    TMATMUL_MX_BIAS(4, 2, 3, 5, 6, 7);
+    assert ReadTileElement(4, 0, 0) == Zeros{PTO_XLEN} + 21;
+    TMATMUL_MX_ACC(4, 2, 3, 5, 6);
+    assert ReadTileElement(4, 0, 0) == Zeros{PTO_XLEN} + 40;
+    ACCCVT(7, 4);
+    assert ReadTileElement(7, 1, 1) == Zeros{PTO_XLEN} + 102;
+
+    ConfigureTile(8, 256, 2, 1, 2, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(9, 256, 1, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(8, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(8, 1, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(9, 0, 0, Zeros{PTO_XLEN} + 1);
+    ExecuteTileFillScalar(5, Zeros{PTO_XLEN} + 1);
+    TGEMV_MX_BIAS(8, 2, 5, 5, 9, 5);
+    assert ReadTileElement(8, 0, 0) == Zeros{PTO_XLEN} + 4;
+    TGEMV_MX_ACC(8, 2, 5, 5, 9);
+    assert ReadTileElement(8, 0, 0) == Zeros{PTO_XLEN} + 7;
 end;
 
 // PTO-REQ-TILE-DISPATCH-001: representative decoded effects cover every
@@ -528,14 +618,6 @@ begin
     assert ReadTileElement(6, 0, 0) == Zeros{PTO_XLEN} + 19;
     assert ReadTileElement(6, 1, 1) == Zeros{PTO_XLEN} + 50;
 
-    ConfigurePipe(1, Zeros{PTO_XLEN} + 2048, 64, 2);
-    var allocation_operands = DefaultTileInstructionOperands();
-    allocation_operands.pipe = 1;
-    let (allocation_status, allocation_value) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011100010', allocation_operands);
-    assert allocation_status == TileExecution_Executed;
-    assert allocation_value == Zeros{PTO_XLEN} + 2048;
-
     let (rejected_status, rejected_value) = ExecuteTileInstruction(
         TileDecode_TEPL, '111111111111', DefaultTileInstructionOperands());
     assert rejected_status == TileExecution_Rejected;
@@ -544,15 +626,26 @@ begin
 end;
 
 // PTO-REQ-TILE-LEGALITY-001: all legality failures are decided before the
-// first destination, pipe, or composite matrix effect.
+// first destination or composite matrix effect.
 func TestDecodedTileLegalityFaults()
 begin
     ConfigureTwoByTwo(7);
     ConfigureTwoByTwo(8);
     ConfigureTwoByTwo(9);
-    ExecuteTileFillScalar(7, Zeros{PTO_XLEN} + 8);
     ExecuteTileFillScalar(8, Zeros{PTO_XLEN} + 2);
     ExecuteTileFillScalar(9, Zeros{PTO_XLEN} + 0x5a);
+    var undefined_operands = DefaultTileInstructionOperands();
+    undefined_operands.destination0 = 9;
+    undefined_operands.source0 = 7;
+    undefined_operands.source1 = 8;
+    ClearFault();
+    let (undefined_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000000000000', undefined_operands);
+    assert undefined_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTileElement(9, 0, 0) == Zeros{PTO_XLEN} + 0x5a;
+
+    ExecuteTileFillScalar(7, Zeros{PTO_XLEN} + 8);
     WriteTileElement(8, 0, 1, Zeros{PTO_XLEN});
     var division_operands = DefaultTileInstructionOperands();
     division_operands.destination0 = 9;
@@ -565,7 +658,7 @@ begin
     assert division_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
     assert _FaultAddress == Zeros{PTO_XLEN} + 0x280;
-    assert _TrapNumber == Zeros{6} + 5;
+    assert _ACRTrapNumber[[CurrentACR()]] == Zeros{6} + 5;
     assert ReadTileElement(9, 0, 0) == Zeros{PTO_XLEN} + 0x5a;
     assert ReadTileElement(9, 0, 1) == Zeros{PTO_XLEN} + 0x5a;
 
@@ -577,16 +670,6 @@ begin
     assert shape_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
     assert ReadTileElement(9, 1, 1) == Zeros{PTO_XLEN} + 0x5a;
-
-    var pipe_operands = DefaultTileInstructionOperands();
-    pipe_operands.pipe = 2;
-    ClearFault();
-    let (pipe_status, pipe_value) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011100010', pipe_operands);
-    assert pipe_status == TileExecution_Rejected;
-    assert pipe_value == Zeros{PTO_XLEN};
-    assert _LastFault == Fault_TileLegality;
-    assert !_Pipes[[2]].producer_claimed;
 
     ConfigureTwoByTwo(10);
     ConfigureTwoByTwo(11);

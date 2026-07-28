@@ -19,13 +19,31 @@ begin
     end;
 end;
 
+// DMA copies one 64-byte command payload. Both ranges are translated and
+// permission-checked before any byte is read or written. Source bytes are
+// snapshotted before the destination commit, so overlapping ranges have
+// memmove semantics and any fault leaves memory unchanged.
+func ExecuteScalarDMACopy64(source_address: Word, destination_address: Word)
+begin
+    let source_probe = ProbeDataAccess(source_address, 64, 1, FALSE);
+    if RaiseDataAccessFault(source_probe, source_address) then return; end;
+    let destination_probe = ProbeDataAccess(destination_address, 64, 1, TRUE);
+    if RaiseDataAccessFault(destination_probe, destination_address) then return; end;
+
+    let snapshot = LoadTranslatedBytes64(source_probe.translated_address);
+    StoreTranslatedBytes64(destination_address, destination_probe.translated_address,
+                           snapshot);
+end;
+
 func LoadReserved(address: Word, size_bytes: integer {1,2,4,8},
                   order: MemoryOrder) => Word
 begin
     let result = LoadUnsigned(address, size_bytes);
     if _LastFault == Fault_None then
         _ReservationValid = TRUE;
-        _ReservationAddress = address;
+        _ReservationAddress = address - NaturalToWord(
+            (UInt(address) MOD PTO_RESERVATION_GRANULE_BYTES) as
+                integer {0..262144});
         _ReservationSize = size_bytes;
     end;
     return result;
@@ -34,8 +52,10 @@ end;
 func StoreConditional(address: Word, size_bytes: integer {1,2,4,8},
                       value: Word, order: MemoryOrder) => Word
 begin
-    let succeeds = _ReservationValid &&
-        _ReservationAddress == address && _ReservationSize == size_bytes;
+    let granule_address = address - NaturalToWord(
+        (UInt(address) MOD PTO_RESERVATION_GRANULE_BYTES) as
+            integer {0..262144});
+    let succeeds = _ReservationValid && _ReservationAddress == granule_address;
     if succeeds then
         let probe = ProbeDataAccess(address, size_bytes, size_bytes, TRUE);
         if RaiseDataAccessFault(probe, address) then return Zeros{PTO_XLEN}; end;

@@ -6,6 +6,7 @@ ASL_SOURCES_BEFORE_DECODER := \
 	asl/architecture.asl \
 	asl/types.asl \
 	asl/state.asl \
+	asl/block/state.asl \
 	asl/tile/state.asl \
 	asl/scalar/operands.asl \
 	asl/scalar/integer.asl \
@@ -17,7 +18,6 @@ ASL_SOURCES_BEFORE_DECODER := \
 	asl/scalar/system.asl \
 	asl/scalar/system-registers.asl \
 	asl/scalar/floating.asl \
-	asl/tile/management.asl \
 	asl/tile/elementwise.asl \
 	asl/tile/reduction.asl \
 	asl/tile/expansion.asl \
@@ -31,15 +31,19 @@ ASL_SOURCES_BEFORE_DECODER := \
 
 ASL_SOURCES_AFTER_DECODER := \
 	asl/profiles/pto-v0.asl \
-	asl/scalar/dispatch.asl
+	asl/block/dispatch.asl \
+	asl/scalar/dispatch.asl \
+	asl/dispatch.asl
 
 ASL_SOURCES := $(ASL_SOURCES_BEFORE_DECODER) $(ASL_SOURCES_AFTER_DECODER)
 
 # Executable semantic tests, assembled after the specification.
 ASL_TESTS := \
 	tests/asl/state-tests.asl \
+	tests/asl/block-tests.asl \
 	tests/asl/scalar-tests.asl \
 	tests/asl/tile-tests.asl \
+	tests/asl/dispatch-tests.asl \
 	tests/asl/concurrency-tests.asl \
 	tests/asl/profile-tests.asl \
 	tests/asl/main.asl
@@ -59,6 +63,7 @@ setup:
 build: $(SPEC)
 
 $(DECODER_SPEC): scripts/generate-asl-decoders spec/catalog/scalar-forms.json \
+		spec/catalog/command-forms.json \
 		spec/catalog/system-registers.json spec/catalog/tile-operations.json
 	@mkdir -p build
 	@./scripts/generate-asl-decoders > $@
@@ -71,6 +76,7 @@ $(TEST_SPEC): $(SPEC) $(ASL_TESTS) scripts/assemble-asl Makefile
 
 repo-check: $(SPEC)
 	./scripts/check-repository
+	./scripts/check-binary-closure
 
 # Canary checks proving the pinned ASLRef distinguishes valid from invalid ASL1.
 toolchain-check:

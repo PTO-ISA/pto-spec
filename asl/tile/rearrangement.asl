@@ -27,6 +27,7 @@ begin
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
     assert destination_tile.allocated && source_tile.allocated;
+    assert destination_tile.contents_defined;
     assert destination_tile.data_type == source_tile.data_type;
     assert row_offset + source_tile.valid_rows <= destination_tile.valid_rows;
     assert column_offset + source_tile.valid_columns <= destination_tile.valid_columns;
@@ -71,6 +72,7 @@ begin
         source_tile.valid_rows * source_tile.valid_columns;
     assert destination_tile.data_type == source_tile.data_type;
     _Tiles[[destination]].payload = source_tile.payload;
+    _Tiles[[destination]].contents_defined = source_tile.contents_defined;
 end;
 
 func TCONCAT(destination: TileIndex, source_left: TileIndex,
@@ -132,6 +134,7 @@ begin
                 source_payload[[source_index as ModelTileElementIndex]];
         end;
     end;
+    _Tiles[[destination]].contents_defined = TRUE;
 end;
 
 func TGATHERB(destination: TileIndex, source: TileIndex, byte_offsets: TileIndex)
@@ -157,6 +160,7 @@ begin
                 source_payload[[source_index as ModelTileElementIndex]];
         end;
     end;
+    _Tiles[[destination]].contents_defined = TRUE;
 end;
 
 func TSCATTER(destination: TileIndex, source: TileIndex, indices: TileIndex)
@@ -164,6 +168,7 @@ begin
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
     let index_tile = _Tiles[[indices]];
+    assert destination_tile.contents_defined;
     assert TileShapesMatch(source_tile, index_tile);
     let source_payload = source_tile.payload;
     let index_payload = index_tile.payload;
@@ -178,6 +183,7 @@ begin
                 source_payload[[source_element]];
         end;
     end;
+    _Tiles[[destination]].contents_defined = TRUE;
 end;
 
 func TINTERLEAVE(destination: TileIndex, source_even: TileIndex, source_odd: TileIndex)
@@ -197,6 +203,7 @@ begin
         _Tiles[[destination]].payload[[(element * 2 + 1) as ModelTileElementIndex]] =
             odd_payload[[element as ModelTileElementIndex]];
     end;
+    _Tiles[[destination]].contents_defined = TRUE;
 end;
 
 func TDEINTERLEAVE(destination_even: TileIndex, destination_odd: TileIndex, source: TileIndex)
@@ -215,6 +222,8 @@ begin
         _Tiles[[destination_odd]].payload[[element as ModelTileElementIndex]] =
             source_payload[[(element * 2 + 1) as ModelTileElementIndex]];
     end;
+    _Tiles[[destination_even]].contents_defined = TRUE;
+    _Tiles[[destination_odd]].contents_defined = TRUE;
 end;
 
 func TIMG2COL(destination: TileIndex, source: TileIndex,

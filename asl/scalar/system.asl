@@ -17,16 +17,18 @@ end;
 func ReadSystemRegister(reg: SystemRegister) => Word
 begin
     case reg of
-        when SystemRegister_TP       => return _SystemRegisters.tp;
-        when SystemRegister_GP       => return _SystemRegisters.gp;
+        when SystemRegister_THREAD_PTR => return _SystemRegisters.thread_ptr;
+        when SystemRegister_GLOBAL_PTR => return _SystemRegisters.global_ptr;
         when SystemRegister_TIME     => return ReadMonotonicTime();
-        when SystemRegister_CSTATE   => return _SystemRegisters.cstate;
+        when SystemRegister_CORE_STATE => return _SystemRegisters.core_state;
         when SystemRegister_CORE_ID  => return _SystemRegisters.core_id;
+        when SystemRegister_THREAD_ID => return _SystemRegisters.thread_id;
         when SystemRegister_VENDOR   => return _SystemRegisters.vendor;
         when SystemRegister_VERSION  => return _SystemRegisters.version;
         when SystemRegister_CORE_FEATURE => return _SystemRegisters.core_feature;
         when SystemRegister_CORE_FEATURE_ENABLE =>
             return _SystemRegisters.core_feature_enable;
+        when SystemRegister_TILE_CAPACITY => return _SystemRegisters.tile_capacity;
         when SystemRegister_BLOCKNUM => return _SystemRegisters.blocknum;
         when SystemRegister_BLOCKID  => return _SystemRegisters.blockid;
         when SystemRegister_CYCLE    => return _SystemRegisters.cycle;
@@ -35,8 +37,9 @@ end;
 
 func SystemRegisterIsWritable(reg: SystemRegister) => boolean
 begin
-    return reg == SystemRegister_TP || reg == SystemRegister_GP ||
-           reg == SystemRegister_CSTATE ||
+    return reg == SystemRegister_THREAD_PTR ||
+           reg == SystemRegister_GLOBAL_PTR ||
+           reg == SystemRegister_CORE_STATE ||
            reg == SystemRegister_CORE_FEATURE_ENABLE;
 end;
 
@@ -47,9 +50,11 @@ begin
         return;
     end;
     case reg of
-        when SystemRegister_TP      => _SystemRegisters.tp = value;
-        when SystemRegister_GP      => _SystemRegisters.gp = value;
-        when SystemRegister_CSTATE  => _SystemRegisters.cstate = value;
+        when SystemRegister_THREAD_PTR => _SystemRegisters.thread_ptr = value;
+        when SystemRegister_GLOBAL_PTR => _SystemRegisters.global_ptr = value;
+        when SystemRegister_CORE_STATE =>
+            _SystemRegisters.core_state = value;
+            _CurrentACR = UInt(value[3:0]) as AccessControlRing;
         when SystemRegister_CORE_FEATURE_ENABLE =>
             _SystemRegisters.core_feature_enable = value;
         otherwise => assert FALSE;
@@ -58,6 +63,7 @@ end;
 
 func FenceData(predecessor: bits(4), successor: bits(4))
 begin
+    _ReservationValid = FALSE;
     _LastFencePredecessor = predecessor;
     _LastFenceSuccessor = successor;
     if predecessor[3] == '1' || successor[3] == '1' then
@@ -67,6 +73,7 @@ end;
 
 func FenceInstruction()
 begin
+    _ReservationValid = FALSE;
     // The executable byte-array model has coherent instruction/data storage.
     // The epoch makes the architectural visibility point explicit.
     _InstructionCacheEpoch = _InstructionCacheEpoch + 1;
@@ -134,7 +141,7 @@ end;
 func ArchitectureCloseRequest(request_type: bits(4))
 begin
     _ArchitectureRequestEpoch = _ArchitectureRequestEpoch + 1;
-    _SystemRegisters.cstate[3:0] = request_type;
+    _ControlRequestOperand[3:0] = request_type;
 end;
 
 func ArchitectureEnterRequest(request_type: bits(4))
@@ -142,8 +149,9 @@ begin
     if request_type != '0000' && request_type != '0001' then
         SetFault(Fault_IllegalInstruction, ReadPC());
     else
+        let recovered = RecoverTrapContext(CurrentACR());
         _ArchitectureRequestEpoch = _ArchitectureRequestEpoch + 1;
-        _SystemRegisters.cstate[3:0] = request_type;
+        _ControlRequestOperand[3:0] = request_type;
     end;
 end;
 

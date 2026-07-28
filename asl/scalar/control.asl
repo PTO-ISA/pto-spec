@@ -14,6 +14,14 @@ begin
     end;
 end;
 
+readonly func ReadBranchPredicate() => Word
+begin
+    // SETC.* supplies the coupled-block predicate. Inside a block body P0 is
+    // the architectural branch predicate for B.Z/B.NZ.
+    return if _BlockBodyActive then ReadPredicateRegister(0)
+           else _CommitArgument;
+end;
+
 func BranchRelative(condition: ScalarCondition, left: Word, right: Word,
                     halfword_offset: Word)
 begin
@@ -76,5 +84,6 @@ end;
 
 func AddToPC(destination: Reg5Selector, halfword_offset: Word)
 begin
-    WriteScalarDestination(destination, ReadPC() + LSL(halfword_offset, 1));
+    let page_base = ReadTPC() AND (Ones{PTO_XLEN} - 4095);
+    WriteScalarDestination(destination, page_base + LSL(halfword_offset, 12));
 end;

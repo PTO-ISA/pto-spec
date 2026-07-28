@@ -12,8 +12,8 @@ forbidden one. PTO needs an executable relation over candidate memory events
 that covers scalar and tile accesses without introducing a second instruction
 execution level.
 
-The pinned `herdtools7` TSO model provides a public, reviewable relation shape.
-Its x86 event taxonomy and instruction semantics are not PTO authority.
+PTO needs a public, reviewable relation shape that is owned by this repository.
+External event taxonomies and instruction semantics are not PTO authority.
 
 ## Decision
 
@@ -36,10 +36,9 @@ fail closed pending a byte-level coherence rule.
 ## Consequences
 
 - Allowed and forbidden concurrency outcomes have executable witnesses.
-- Scalar and tile accesses share one ordering relation without nested execution
-  or hidden replay state.
+- Scalar and tile accesses share one ordering relation without hidden replay
+  state.
 - Epoch counters are removed because they are not concurrency evidence.
 - A future mixed-size extension must define byte-level coherence and add
   litmus evidence before those candidates can become valid.
-- Upstream TSO work remains a comparison source; every retained rule is stated
-  as a PTO-owned ASL predicate and test.
+- Every retained rule is stated as a PTO-owned ASL predicate and test.

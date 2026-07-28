@@ -10,7 +10,7 @@
       "domain": "architecture-reset",
       "model": "asl/state.asl",
       "name": "ResetProfileState",
-      "portable_default": "Clear scalar and bounded memory state, invalidate tile and pipe descriptors, set VERSION to 1, reset time to zero, and enter machine privilege.",
+      "portable_default": "Clear the 24 absolute scalar registers, temporary queues, predicates, and bounded memory; invalidate every TileInfo; set VERSION to 1 and TILE_CAPACITY to 512 KiB; reset time to zero; and enter ACR0.",
       "profile_obligations": [
         "Reset all architecturally visible PTO v0 reference-profile state to the values stated in the implementation."
       ],
@@ -21,12 +21,12 @@
       ]
     },
     {
-      "domain": "privilege",
+      "domain": "access-control-ring",
       "model": "asl/scalar/system-registers.asl",
       "name": "SystemRegisterAccessPermitted",
-      "portable_default": "Permit base system registers at every privilege and require machine privilege for context, translation, and debug families.",
+      "portable_default": "Permit base system registers at every ACR and require ACR0 for context, translation, and debug families.",
       "profile_obligations": [
-        "Define the privilege order, reset privilege, protected register classes, and denied-access fault behavior."
+        "Define the ACR order, reset ring, protected register classes, and denied-access fault behavior."
       ],
       "requirement": "PTO-REQ-PROFILE-001",
       "status": "implemented-by-pto-v0",
@@ -44,7 +44,9 @@
       ],
       "requirement": "PTO-REQ-SCALAR-SYS-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/scalar-tests.asl"]
+      "tests": [
+        "tests/asl/scalar-tests.asl"
+      ]
     },
     {
       "domain": "scalar-floating-mathematical",
@@ -56,7 +58,9 @@
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/scalar-tests.asl"]
+      "tests": [
+        "tests/asl/scalar-tests.asl"
+      ]
     },
     {
       "domain": "scalar-floating-mathematical",
@@ -68,7 +72,9 @@
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/scalar-tests.asl"]
+      "tests": [
+        "tests/asl/scalar-tests.asl"
+      ]
     },
     {
       "domain": "scalar-floating-encoding",
@@ -81,7 +87,9 @@
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/scalar-tests.asl"]
+      "tests": [
+        "tests/asl/scalar-tests.asl"
+      ]
     },
     {
       "domain": "scalar-floating-encoding",
@@ -94,7 +102,9 @@
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/scalar-tests.asl"]
+      "tests": [
+        "tests/asl/scalar-tests.asl"
+      ]
     },
     {
       "domain": "scalar-floating-encoding",
@@ -107,7 +117,9 @@
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/scalar-tests.asl"]
+      "tests": [
+        "tests/asl/scalar-tests.asl"
+      ]
     },
     {
       "domain": "scalar-floating-encoding",
@@ -119,7 +131,9 @@
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/scalar-tests.asl"]
+      "tests": [
+        "tests/asl/scalar-tests.asl"
+      ]
     },
     {
       "domain": "scalar-floating-encoding",
@@ -131,7 +145,9 @@
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/scalar-tests.asl"]
+      "tests": [
+        "tests/asl/scalar-tests.asl"
+      ]
     },
     {
       "domain": "scalar-floating-encoding",
@@ -143,7 +159,9 @@
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/scalar-tests.asl"]
+      "tests": [
+        "tests/asl/scalar-tests.asl"
+      ]
     },
     {
       "domain": "tile-floating",
@@ -155,7 +173,9 @@
       ],
       "requirement": "PTO-REQ-TEPL-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "tile-floating",
@@ -167,7 +187,9 @@
       ],
       "requirement": "PTO-REQ-TEPL-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "tile-floating",
@@ -179,7 +201,9 @@
       ],
       "requirement": "PTO-REQ-TEPL-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "tile-floating",
@@ -191,7 +215,9 @@
       ],
       "requirement": "PTO-REQ-TEPL-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "tile-floating",
@@ -203,7 +229,9 @@
       ],
       "requirement": "PTO-REQ-TEPL-EXPAND-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "tile-conversion",
@@ -215,7 +243,9 @@
       ],
       "requirement": "PTO-REQ-TEPL-CONVERT-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "tile-conversion",
@@ -227,7 +257,9 @@
       ],
       "requirement": "PTO-REQ-TEPL-CONVERT-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "tile-conversion",
@@ -239,7 +271,39 @@
       ],
       "requirement": "PTO-REQ-TEPL-CONVERT-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
+    },
+    {
+      "domain": "trap-context",
+      "model": "asl/state.asl",
+      "name": "SaveTrapContext",
+      "portable_default": "Save TPC, BPC, block-control state, and trap argument state for a target access-control ring.",
+      "profile_obligations": [
+        "Define which context fields are banked, which ring may save them, and whether partial context save is possible."
+      ],
+      "requirement": "PTO-REQ-FAULT-001",
+      "status": "implemented-by-pto-v0",
+      "tests": [
+        "tests/asl/block-tests.asl",
+        "tests/asl/state-tests.asl"
+      ]
+    },
+    {
+      "domain": "trap-context",
+      "model": "asl/state.asl",
+      "name": "RecoverTrapContext",
+      "portable_default": "Restore TPC, BPC, block-control state, and trap argument state for a target access-control ring when a saved context is valid.",
+      "profile_obligations": [
+        "Define context validity, failed recovery behavior, and restored field set."
+      ],
+      "requirement": "PTO-REQ-FAULT-001",
+      "status": "implemented-by-pto-v0",
+      "tests": [
+        "tests/asl/block-tests.asl",
+        "tests/asl/state-tests.asl"
+      ]
     },
     {
       "domain": "memory-address",
@@ -251,7 +315,9 @@
       ],
       "requirement": "PTO-REQ-SCALAR-AMO-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/scalar-tests.asl"]
+      "tests": [
+        "tests/asl/scalar-tests.asl"
+      ]
     },
     {
       "domain": "memory-translation",
@@ -264,20 +330,26 @@
       ],
       "requirement": "PTO-REQ-MEMORY-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/scalar-tests.asl", "tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/scalar-tests.asl",
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "memory-permission",
       "model": "asl/scalar/memory.asl",
       "name": "DataAccessPermitted",
-      "portable_default": "Permit machine/supervisor access to all bounded memory and user access to bytes 0 through 3071.",
+      "portable_default": "Permit ACR0 and ACR1 access to all bounded memory and restrict ACR2 through ACR15 to bytes 0 through 3071.",
       "profile_obligations": [
         "Define read/write permissions, bounds, access-size behavior, and permission-fault priority.",
         "Return a stable permission decision for every repeated probe of one architectural access during an instruction."
       ],
       "requirement": "PTO-REQ-MEMORY-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/scalar-tests.asl", "tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/scalar-tests.asl",
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "tile-elementwise",
@@ -289,7 +361,9 @@
       ],
       "requirement": "PTO-REQ-TEPL-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "tile-elementwise",
@@ -301,7 +375,9 @@
       ],
       "requirement": "PTO-REQ-TEPL-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "tile-elementwise",
@@ -313,7 +389,24 @@
       ],
       "requirement": "PTO-REQ-TEPL-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
+    },
+    {
+      "domain": "tile-elementwise",
+      "model": "asl/tile/elementwise.asl",
+      "name": "TileProfilePReLU",
+      "portable_default": "Apply negative-slope multiplication to signed-negative raw payloads and preserve non-negative payloads.",
+      "profile_obligations": [
+        "Define per-type signedness, negative-zero behavior, multiplication precision, rounding, saturation, and exceptional values."
+      ],
+      "requirement": "PTO-REQ-TEPL-001",
+      "status": "implemented-by-pto-v0",
+      "tests": [
+        "tests/asl/profile-tests.asl",
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "tile-comparison",
@@ -325,7 +418,9 @@
       ],
       "requirement": "PTO-REQ-TEPL-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "tile-reduction",
@@ -337,7 +432,9 @@
       ],
       "requirement": "PTO-REQ-TEPL-REDUCE-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "tile-reduction",
@@ -349,7 +446,9 @@
       ],
       "requirement": "PTO-REQ-TEPL-REDUCE-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "tile-expansion",
@@ -361,7 +460,9 @@
       ],
       "requirement": "PTO-REQ-TEPL-EXPAND-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "tile-partial",
@@ -373,7 +474,9 @@
       ],
       "requirement": "PTO-REQ-TEPL-COMPLEX-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "tile-ordering",
@@ -385,7 +488,9 @@
       ],
       "requirement": "PTO-REQ-TEPL-COMPLEX-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "tile-matrix",
@@ -397,7 +502,9 @@
       ],
       "requirement": "PTO-REQ-CUBE-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "tile-matrix",
@@ -409,7 +516,9 @@
       ],
       "requirement": "PTO-REQ-CUBE-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "domain": "tile-matrix",
@@ -421,7 +530,9 @@
       ],
       "requirement": "PTO-REQ-CUBE-001",
       "status": "implemented-by-pto-v0",
-      "tests": ["tests/asl/tile-tests.asl"]
+      "tests": [
+        "tests/asl/tile-tests.asl"
+      ]
     }
   ],
   "schema_version": 2
