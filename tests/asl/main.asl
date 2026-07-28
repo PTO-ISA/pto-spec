@@ -19,5 +19,6 @@ begin
     TestTileComplex();
     TestTileManagement();
     TestTileConversion();
+    TestTileHandlerClosure();
     return 0;
 end;

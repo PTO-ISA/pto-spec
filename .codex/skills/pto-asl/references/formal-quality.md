@@ -29,6 +29,8 @@ Check:
 - **Decode closure**: every accepted encoding has a canonical positive witness, overlaps have reviewed priority, and
   every catalog-reserved or review-only selector rejects.
 - **Catalog closure**: every accepted direct operation maps to exactly one semantic handler and validation feature.
+- **Semantic reachability**: decoded forms bind operands and reach a defined state transition; function-name presence or
+  enum linkage alone is insufficient.
 - **Evidence hygiene**: external comparison evidence records provenance and disposition without importing incompatible
   material into the normative model.
 

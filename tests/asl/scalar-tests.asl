@@ -91,6 +91,50 @@ begin
     assert _ReturnAddress == Zeros{PTO_XLEN} + 106;
     AddToPC(11, Zeros{PTO_XLEN} + 4);
     assert ReadGPR(11) == Zeros{PTO_XLEN} + 108;
+
+    assert MaterializeLongSigned(Zeros{32} + 0x80000000) ==
+        SignExtend{PTO_XLEN}(Zeros{32} + 0x80000000);
+    assert MultiplyWord(Zeros{PTO_XLEN} + 3, Zeros{PTO_XLEN} + 4) ==
+        Zeros{PTO_XLEN} + 12;
+    assert ScalarConditionalSelect(Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 1,
+        Zeros{PTO_XLEN} + 2) == Zeros{PTO_XLEN} + 2;
+    assert ScalarDivideUnsignedW(Zeros{PTO_XLEN} + 0xffffffff,
+        Zeros{PTO_XLEN} + 16) == Zeros{PTO_XLEN} + 0x0fffffff;
+    assert ScalarRemainderSignedW(Zeros{PTO_XLEN} + 0xfffffff6,
+        Zeros{PTO_XLEN} + 3) == Ones{PTO_XLEN};
+    assert ScalarMultiplyAdd(Zeros{PTO_XLEN} + 5, Zeros{PTO_XLEN} + 3,
+        Zeros{PTO_XLEN} + 4) == Zeros{PTO_XLEN} + 17;
+
+    ExecuteScalarDividePairW(8, 9, Zeros{PTO_XLEN} + 23,
+        Zeros{PTO_XLEN} + 5, FALSE);
+    assert ReadGPR(8) == Zeros{PTO_XLEN} + 4;
+    assert ReadGPR(9) == Zeros{PTO_XLEN} + 3;
+
+    WriteGPR(10, Zeros{PTO_XLEN} + 1);
+    ExecuteCompareLogical(10, ScalarCondition_EQ, Zeros{PTO_XLEN} + 1,
+        Zeros{PTO_XLEN} + 2, TRUE);
+    assert ReadGPR(10) == Zeros{PTO_XLEN} + 1;
+    _CommitArgument = Zeros{PTO_XLEN} + 1;
+    ExecuteSetCommitLogical(ScalarCondition_EQ, Zeros{PTO_XLEN} + 1,
+        Zeros{PTO_XLEN} + 2, TRUE);
+    assert _CommitArgument == Zeros{PTO_XLEN} + 1;
+
+    WritePC(Zeros{PTO_XLEN} + 100);
+    BranchRelative(ScalarCondition_EQ, Zeros{PTO_XLEN} + 7,
+        Zeros{PTO_XLEN} + 7, Zeros{PTO_XLEN} + 3);
+    assert ReadPC() == Zeros{PTO_XLEN} + 106;
+    WritePC(Zeros{PTO_XLEN} + 100);
+    BranchRelative(ScalarCondition_NE, Zeros{PTO_XLEN} + 7,
+        Zeros{PTO_XLEN} + 7, Zeros{PTO_XLEN} + 3);
+    assert ReadPC() == Zeros{PTO_XLEN} + 104;
+    WritePC(Zeros{PTO_XLEN} + 100);
+    JumpRelative(Zeros{PTO_XLEN} + 4);
+    assert ReadPC() == Zeros{PTO_XLEN} + 108;
+    JumpRegister(Zeros{PTO_XLEN} + 200);
+    assert ReadPC() == Zeros{PTO_XLEN} + 200;
+    ClearFault();
+    JumpRegister(Zeros{PTO_XLEN} + 201);
+    assert _LastFault == Fault_InstructionPC;
 end;
 
 func TestScalarMemory()
@@ -245,6 +289,32 @@ begin
     ExecuteSystemRegisterSet(5, Zeros{24} + 0x0000);
     ExecuteSystemRegisterGet(6, Zeros{24} + 0x0000);
     assert ReadGPR(6) == Zeros{PTO_XLEN} + 0x55;
+
+    ClearFault();
+    WriteGPR(5, Zeros{PTO_XLEN} + 0x66);
+    ExecuteSystemRegisterSwap(6, 5, Zeros{24} + 0x0000);
+    assert ReadGPR(6) == Zeros{PTO_XLEN} + 0x55;
+    let swapped_tp = ReadSystemRegister(SystemRegister_TP);
+    assert swapped_tp == Zeros{PTO_XLEN} + 0x66;
+
+    WriteSystemRegister(SystemRegister_TP, Zeros{PTO_XLEN} + 0x77);
+    ExecuteCompressedSystemRegisterGet(Zeros{24} + 0x0000);
+    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 0x77;
+
+    let before_instruction_fence = _MemoryReleaseEpoch;
+    FenceInstruction();
+    assert _MemoryReleaseEpoch == before_instruction_fence + 1;
+
+    let before_close = _ArchitectureRequestEpoch;
+    ArchitectureCloseRequest('0011');
+    assert _ArchitectureRequestEpoch == before_close + 1;
+    assert _SystemRegisters.cstate[3:0] == '0011';
+
+    WritePC(Zeros{PTO_XLEN} + 0x400);
+    ClearFault();
+    SoftwareBreakpoint();
+    assert _LastFault == Fault_SoftwareBreakpoint;
+    assert _FaultAddress == Zeros{PTO_XLEN} + 0x400;
 end;
 
 func TestScalarFloating()

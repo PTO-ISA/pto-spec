@@ -725,6 +725,22 @@ def main() -> int:
             is not None,
             f"missing per-form semantic handler {row['semantic_handler']} for {row['form_id']}",
         )
+
+    test_body = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in (ROOT / "tests" / "asl").glob("*.asl")
+    )
+    test_body = re.sub(r"//.*", "", test_body)
+    for handler in sorted({row["semantic_handler"] for row in forms}):
+        require(
+            re.search(rf"\b{re.escape(handler)}\s*\(", test_body) is not None,
+            f"scalar semantic handler lacks executable feature evidence: {handler}",
+        )
+    for handler in sorted(TILE_SEMANTIC_GROUPS):
+        require(
+            re.search(rf"\b{re.escape(handler)}\s*\(", test_body) is not None,
+            f"tile semantic handler lacks executable feature evidence: {handler}",
+        )
     for handler in (
         "ReadSystemRegisterAddress",
         "WriteSystemRegisterAddress",
@@ -853,7 +869,7 @@ def main() -> int:
     print(
         "catalog checks passed: 474 scalar forms, 45 operand fields, 1,867 field pieces, "
         "3 constrained overlaps, 52 system-register definitions, 13 trap numbers, and "
-        "111 tile operations with complete handler coverage"
+        "111 tile operations with complete handler and executable feature coverage"
     )
     return 0
 

@@ -40,6 +40,9 @@ and three form-legality constraints. Build generation emits strict ASL for:
 The repository checker independently rejects out-of-width masks, unmasked match
 bits, overlapping field pieces, non-contiguous reconstructed values, dangling
 constraints, ambiguous equal-priority encodings, and unreviewed overlaps.
+It also requires every one of the 68 scalar semantic primitives and all 51 tile
+handler groups to appear in executable ASL feature evidence; handler-name
+presence in the normative sources alone is insufficient.
 
 ## Explicit gaps
 
