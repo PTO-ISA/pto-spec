@@ -1,0 +1,10 @@
+[specification]
+name = "PTO"
+language = "ASL1"
+status = "template"
+normative = false
+entry_point = "asl/architecture.asl"
+
+[toolchain]
+aslref_repository = "https://github.com/herd/herdtools7.git"
+aslref_pin_file = ".aslref-version"

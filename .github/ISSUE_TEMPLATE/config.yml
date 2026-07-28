@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: ASLRef issue
+    url: https://github.com/herd/herdtools7/issues
+    about: Report ASL language or ASLRef tool defects upstream.
+  - name: Private security report
+    url: https://github.com/PTO-ISA/pto-spec/security/advisories/new
+    about: Report security-sensitive repository or toolchain issues privately.
