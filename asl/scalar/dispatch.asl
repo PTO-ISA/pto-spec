@@ -1597,6 +1597,10 @@ begin
         SetFault(Fault_IllegalInstruction, ReadPC());
         return ScalarExecution_Rejected;
     end;
+    if !ScalarRegisterOperandsLegal(instruction, form) then
+        SetFault(Fault_TileLegality, ReadPC());
+        return ScalarExecution_Rejected;
+    end;
     case ScalarFamilyOfForm(form) of
         when ScalarSemantic_AGU => ExecuteDecodedAGUForm(instruction, form);
         when ScalarSemantic_ALU => ExecuteDecodedALUForm(instruction, form);

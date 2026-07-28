@@ -6,7 +6,7 @@ review-oriented projection.
 | Requirement ID | ASL definition | Evidence | Status |
 | --- | --- | --- | --- |
 | PTO-REQ-STATE-001 | `asl/types.asl`, `asl/state.asl` | state tests | implemented portable model |
-| PTO-REQ-FAULT-001 | `asl/types.asl`, `asl/state.asl` | state/scalar tests | implemented portable envelope |
+| PTO-REQ-FAULT-001 | `asl/types.asl`, `asl/state.asl`, tile legality preflight | state/scalar/tile fault and no-partial-effect tests | implemented portable envelope |
 | PTO-REQ-SCALAR-ALU-001 | `asl/scalar/integer.asl` | integer and edge-case tests | implemented |
 | PTO-REQ-SCALAR-DISPATCH-001 | `asl/scalar/dispatch.asl`, generated decode bindings | all 474 canonical forms plus family effect and rejection tests | implemented |
 | PTO-REQ-SCALAR-CONTROL-001 | `asl/scalar/control.asl` | compare/branch/commit tests | implemented |
@@ -19,6 +19,7 @@ review-oriented projection.
 | PTO-REQ-MEMORY-001 | `asl/scalar/memory.asl`, decoded dispatch | endian, alignment, signedness, pair, pre/post, and fault tests | implemented with platform profile |
 | PTO-REQ-TILE-001 | `asl/types.asl`, `asl/tile/state.asl` | mapping/capacity/alias tests | implemented portable model |
 | PTO-REQ-TILE-DISPATCH-001 | generated tile decode bindings, `asl/types.asl` | all-selector binding witnesses, decoded TEPL/TMA/CUBE effects, result, and rejection tests | implemented |
+| PTO-REQ-TILE-LEGALITY-001 | `asl/tile/legality.asl`, generated tile and Reg5 preflight | data, descriptor, shape, pipe, composite, Reg5, fault-address, and no-partial-effect tests | implemented |
 | PTO-REQ-TILE-MANAGEMENT-001 | `asl/tile/management.asl` | tile/global FIFO tests | implemented |
 | PTO-REQ-TEPL-001 | `asl/tile/elementwise.asl` | binary/unary/scalar/select tests | implemented with numeric profile hooks |
 | PTO-REQ-TEPL-REDUCE-001 | `asl/tile/reduction.asl` | row/column reduction tests | implemented with numeric profile hooks |

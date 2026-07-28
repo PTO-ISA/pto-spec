@@ -23,7 +23,7 @@ scalar_state = "implemented"
 scalar_semantics = "surface-complete-with-profile-hooks"
 system_state = "implemented"
 tile_state = "implemented"
-tile_semantics = "surface-complete-with-profile-hooks"
+tile_semantics = "decoded-with-explicit-legality-and-profile-hooks"
 binary_decode = "executable-complete"
 instruction_dispatch = "all-474-scalar-forms-and-111-tile-operations-executable"
 

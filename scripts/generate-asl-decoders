@@ -16,6 +16,30 @@ CANONICAL_EXECUTION_FAULTS = {
     "C.EBREAK": "Fault_SoftwareBreakpoint",
     "EBREAK": "Fault_SoftwareBreakpoint",
 }
+SCALAR_DESTINATION_FIELDS = {"RegDst", "RegDst0", "RegDst1"}
+SCALAR_SOURCE_FIELDS = {"SrcA", "SrcD", "SrcD1", "SrcL", "SrcP", "SrcR"}
+SCALAR_IMPLICIT_T_BRIDGE_FORMS = {
+    "C.ADD",
+    "C.ADDI",
+    "C.AND",
+    "C.CMP.EQI",
+    "C.CMP.NEI",
+    "C.LDI",
+    "C.LWI",
+    "C.OR",
+    "C.SDI",
+    "C.SEXT.B",
+    "C.SEXT.H",
+    "C.SEXT.W",
+    "C.SLLI",
+    "C.SRLI",
+    "C.SSRGET",
+    "C.SUB",
+    "C.SWI",
+    "C.ZEXT.B",
+    "C.ZEXT.H",
+    "C.ZEXT.W",
+}
 
 
 def load(path: str):
@@ -460,6 +484,32 @@ def main() -> None:
     print("    return TRUE;")
     print("end;")
     print()
+    print("readonly func ScalarRegisterOperandsLegal(")
+    print("    instruction: bits(48),")
+    print("    form: integer {0..PTO_SCALAR_FORM_COUNT-1}) => boolean")
+    print("begin")
+    for index, row in enumerate(scalar):
+        for field in row["fields"]:
+            name = field["name"]
+            if name in SCALAR_SOURCE_FIELDS:
+                predicate = "ScalarSourceSelectorLegal"
+            elif name in SCALAR_DESTINATION_FIELDS:
+                predicate = "ScalarDestinationSelectorLegal"
+            else:
+                continue
+            print(
+                f"    if form == {index} && !{predicate}(UInt("
+                f"DecodeScalarOperandRaw(instruction, form, ScalarField_{name})[4:0]) "
+                "as Reg5Selector) then return FALSE; end;"
+            )
+        if row["mnemonic"] in SCALAR_IMPLICIT_T_BRIDGE_FORMS:
+            print(
+                f"    if form == {index} && !ScalarTileBridgeLegal("
+                "DirectTBridgeIndex()) then return FALSE; end;"
+            )
+    print("    return TRUE;")
+    print("end;")
+    print()
     print("pure func DecodeTileOperation(family: TileDecodeFamily, code: bits(12))")
     print("                              => TileOperationIndex")
     print("begin")
@@ -528,6 +578,12 @@ def main() -> None:
             tile_argument_expression(argument) for argument in row["arguments"]
         )
         print(f"        when {operation_name} =>")
+        print(
+            f"            if !TileOperandsLegal_{row['semantic_handler']}({arguments}) then"
+        )
+        print("                SetFault(Fault_TileLegality, ReadPC());")
+        print("                return (TileExecution_Rejected, Zeros{PTO_XLEN});")
+        print("            end;")
         if row.get("result") == "value":
             print(f"            let value = {row['semantic_handler']}({arguments});")
             print("            return (TileExecution_Executed, value);")

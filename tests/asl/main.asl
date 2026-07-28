@@ -10,6 +10,7 @@ begin
     TestScalarAtomicDispatchEffects();
     TestScalarAGUDispatchEffects();
     TestScalarFPDispatchEffects();
+    TestScalarTileLegalityFaults();
     TestScalarInteger();
     TestScalarMemory();
     TestScalarAtomics();
@@ -27,5 +28,6 @@ begin
     TestTileConversion();
     TestTileHandlerClosure();
     TestDecodedTileExecution();
+    TestDecodedTileLegalityFaults();
     return 0;
 end;

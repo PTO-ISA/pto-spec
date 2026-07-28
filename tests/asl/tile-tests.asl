@@ -542,3 +542,71 @@ begin
     assert rejected_value == Zeros{PTO_XLEN};
     assert _LastFault == Fault_IllegalInstruction;
 end;
+
+// PTO-REQ-TILE-LEGALITY-001: all legality failures are decided before the
+// first destination, pipe, or composite matrix effect.
+func TestDecodedTileLegalityFaults()
+begin
+    ConfigureTwoByTwo(7);
+    ConfigureTwoByTwo(8);
+    ConfigureTwoByTwo(9);
+    ExecuteTileFillScalar(7, Zeros{PTO_XLEN} + 8);
+    ExecuteTileFillScalar(8, Zeros{PTO_XLEN} + 2);
+    ExecuteTileFillScalar(9, Zeros{PTO_XLEN} + 0x5a);
+    WriteTileElement(8, 0, 1, Zeros{PTO_XLEN});
+    var division_operands = DefaultTileInstructionOperands();
+    division_operands.destination0 = 9;
+    division_operands.source0 = 7;
+    division_operands.source1 = 8;
+    WritePC(Zeros{PTO_XLEN} + 0x280);
+    ClearFault();
+    let (division_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000000000011', division_operands);
+    assert division_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert _FaultAddress == Zeros{PTO_XLEN} + 0x280;
+    assert _TrapNumber == Zeros{6} + 5;
+    assert ReadTileElement(9, 0, 0) == Zeros{PTO_XLEN} + 0x5a;
+    assert ReadTileElement(9, 0, 1) == Zeros{PTO_XLEN} + 0x5a;
+
+    ConfigureTile(8, 0, 0, 0, 0, 0, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ClearFault();
+    let (shape_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000000000000', division_operands);
+    assert shape_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTileElement(9, 1, 1) == Zeros{PTO_XLEN} + 0x5a;
+
+    var pipe_operands = DefaultTileInstructionOperands();
+    pipe_operands.pipe = 2;
+    ClearFault();
+    let (pipe_status, pipe_value) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000011100010', pipe_operands);
+    assert pipe_status == TileExecution_Rejected;
+    assert pipe_value == Zeros{PTO_XLEN};
+    assert _LastFault == Fault_TileLegality;
+    assert !_Pipes[[2]].producer_claimed;
+
+    ConfigureTwoByTwo(10);
+    ConfigureTwoByTwo(11);
+    ConfigureTwoByTwo(12);
+    ConfigureTile(13, 256, 2, 3, 2, 3, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ExecuteTileFillScalar(10, Zeros{PTO_XLEN} + 1);
+    ExecuteTileFillScalar(11, Zeros{PTO_XLEN} + 1);
+    ExecuteTileFillScalar(12, Zeros{PTO_XLEN} + 0x66);
+    ExecuteTileFillScalar(13, Zeros{PTO_XLEN} + 1);
+    var matrix_operands = DefaultTileInstructionOperands();
+    matrix_operands.destination0 = 12;
+    matrix_operands.source0 = 10;
+    matrix_operands.source1 = 11;
+    matrix_operands.source2 = 13;
+    ClearFault();
+    let (matrix_status, -) = ExecuteTileInstruction(
+        TileDecode_CUBE, '000000000001', matrix_operands);
+    assert matrix_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTileElement(12, 0, 0) == Zeros{PTO_XLEN} + 0x66;
+    assert ReadTileElement(12, 1, 1) == Zeros{PTO_XLEN} + 0x66;
+end;
