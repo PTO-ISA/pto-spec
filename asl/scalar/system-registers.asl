@@ -1,4 +1,14 @@
-// PTO-REQ-SCALAR-SSR-001: canonical 24-bit system-register addressing.
+// PTO-REQ-SCALAR-SSR-001, PTO-REQ-PROFILE-001: canonical 24-bit
+// system-register addressing with explicit privilege checks.
+
+readonly impdef func SystemRegisterAccessPermitted(
+    address: SystemRegisterAddress, write: boolean,
+    privilege: PrivilegeLevel) => boolean
+begin
+    // The active profile permits base registers at every privilege and keeps
+    // context-family registers machine-only.
+    return UInt(address[11:0]) < 0x0f00 || privilege == Privilege_Machine;
+end;
 
 pure func IsBaseSystemRegisterAddress(address: SystemRegisterAddress) => boolean
 begin
@@ -44,6 +54,10 @@ end;
 
 func ReadSystemRegisterAddress(address: SystemRegisterAddress) => Word
 begin
+    if !SystemRegisterAccessPermitted(address, FALSE, CurrentPrivilege()) then
+        SetFault(Fault_IllegalInstruction, ReadPC());
+        return Zeros{PTO_XLEN};
+    end;
     let access = SystemRegisterAccessOf(address);
     if access == SystemRegisterAccess_Unknown ||
        access == SystemRegisterAccess_WriteOnly then
@@ -63,6 +77,10 @@ end;
 
 func WriteSystemRegisterAddress(address: SystemRegisterAddress, value: Word)
 begin
+    if !SystemRegisterAccessPermitted(address, TRUE, CurrentPrivilege()) then
+        SetFault(Fault_IllegalInstruction, ReadPC());
+        return;
+    end;
     let access = SystemRegisterAccessOf(address);
     if access == SystemRegisterAccess_Unknown ||
        access == SystemRegisterAccess_ReadOnly then

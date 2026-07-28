@@ -7,6 +7,16 @@ normative = true
 entry_point = "asl/architecture.asl"
 formal_model_issue = "https://github.com/PTO-ISA/pto-spec/issues/4"
 
+[profile]
+id = "pto-v0"
+implementation = "asl/profiles/pto-v0.asl"
+conformance_tests = "tests/asl/profile-tests.asl"
+numeric_model = "deterministic-raw-carrier-reference"
+memory_model = "identity-translation-with-user-protected-region"
+reset_model = "explicit-reference-reset"
+privilege_model = "user-supervisor-machine"
+time_model = "one-tick-per-decoded-attempt"
+
 [architecture]
 profile = "pto-v0"
 xlen = 64
@@ -20,10 +30,10 @@ hierarchical_calls = false
 
 [maturity]
 scalar_state = "implemented"
-scalar_semantics = "surface-complete-with-profile-hooks"
-system_state = "implemented"
+scalar_semantics = "complete-under-pto-v0-reference-profile"
+system_state = "implemented-with-explicit-privilege-time-and-reset"
 tile_state = "implemented"
-tile_semantics = "decoded-with-explicit-legality-and-profile-hooks"
+tile_semantics = "decoded-with-explicit-legality-and-pto-v0-reference-profile"
 binary_decode = "executable-complete"
 instruction_dispatch = "all-473-scalar-forms-and-111-tile-operations-executable"
 

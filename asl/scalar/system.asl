@@ -7,6 +7,12 @@ begin
     return _SystemRegisters.cycle;
 end;
 
+func AdvanceArchitecturalTime()
+begin
+    // PTO v0 defines one time unit per decoded execution attempt.
+    _SystemRegisters.cycle = _SystemRegisters.cycle + 1;
+end;
+
 func ReadSystemRegister(reg: SystemRegister) => Word
 begin
     case reg of

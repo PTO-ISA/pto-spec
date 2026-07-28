@@ -1,26 +1,27 @@
 # Formal model coverage
 
 Coverage grades describe executable architecture evidence, not only parser or
-mnemonic presence. The accepted surface is complete; the repository remains a
-normative draft until the named profile hooks and independent evidence gaps are
-closed.
+mnemonic presence. The accepted surface is complete under the concrete PTO v0
+reference profile. The repository remains a normative draft while concurrency
+and independent-evidence gaps are closed.
 
 | Area | Accepted surface | Current ASL grade | Executable evidence | Remaining closure |
 | --- | ---: | --- | --- | --- |
-| Scalar state | 24 GPRs, PC, return, commit, predicate, trap, system state | implemented | reset, R0, predicate, trap envelope, and state tests | platform-specific exception routing |
+| Scalar state | 24 GPRs, PC, return, commit, predicate, trap, privilege, system, time, and memory-order state | implemented under PTO v0 | reset, R0, predicate, privilege, time, trap envelope, and state tests | platform-specific exception routing outside PTO v0 |
 | Scalar forms | 473 | complete decode, operand extraction, form/family constraints, Reg5 legality, handler linkage, and decoded execution | one positive decode, every operand-field witness, every family-constraint application, one semantic-handler witness per form, all-form canonical execution, family effects, overlap rejection, unavailable-bridge rejection, and removed-DMA rejection | none for current decoded dispatch |
-| Scalar semantics | AGU, ALU, AMO, BRU, FSU, SYS | surface-complete draft | arithmetic, division, wide multiply, bitfields, control, memory, atomic, system, raw FP carrier/comparison/min-max/flag, and mathematical FP tests | concrete correctly rounded FP arithmetic/conversion and privileged profiles |
-| System registers | 52 definitions, 13 trap numbers | executable catalog | generated access witnesses and read/write/trap tests | platform-specific reset values |
+| Scalar semantics | AGU, ALU, AMO, BRU, FSU, SYS | complete under PTO v0 | arithmetic, division, wide multiply, bitfields, control, memory, atomic, system, raw-carrier FP, profile, and privilege tests | alternate IEEE or hardware profiles only if separately specified |
+| System registers | 52 definitions, 13 trap numbers | executable catalog with explicit privilege and reset | generated access witnesses plus read/write/trap/privilege/reset tests | none for PTO v0 |
 | Tile registers | 64 | implemented | hand mapping, descriptor, capacity, and alias tests | none in the portable state model |
-| TEPL | 97 operations | decoded execution with explicit legality | elementwise, reduction, expansion, generation, conversion, rearrangement, complex, pipe, decoded-effect, negative-data/descriptor/pipe, and no-partial-effect tests | numeric profile hooks and independent evidence gaps |
-| TMA | 6 operations | decoded execution with explicit legality and precise completion | decoded load plus load/store/move/prefetch/gather/scatter, descriptor, first/middle/last fault, preservation, and restart tests | concrete translation/permission profile |
-| CUBE | 8 operations | decoded execution with explicit legality | decoded matrix multiply, matrix/vector base, bias, accumulate, MX, and composite preflight tests | numeric type and accumulation profiles |
+| TEPL | 97 operations | decoded execution with explicit legality under PTO v0 | elementwise, reduction, expansion, generation, conversion, rearrangement, complex, pipe, decoded-effect, profile, negative-data/descriptor/pipe, and no-partial-effect tests | independent evidence gaps |
+| TMA | 6 operations | decoded execution with explicit legality, PTO v0 access policy, and precise completion | decoded load plus load/store/move/prefetch/gather/scatter, profile, descriptor, first/middle/last fault, preservation, and restart tests | TSO/concurrency closure |
+| CUBE | 8 operations | decoded execution with explicit legality under PTO v0 | decoded matrix multiply, matrix/vector base, bias, accumulate, MX, profile, and composite preflight tests | alternate hardware numeric profile only if desired |
 | Encodings | 473 scalar forms + 111 tile operations | executable complete | generated ASL decoders, operand/handler bindings, reserved/removed-code assertions, and decoded family effects | none for accepted selector-to-handler identity |
 | Independent tile cross-check | 111 operations | complete disposition inventory | 97 agree, 1 conflict, 13 incomplete | resolve incomplete evidence pages |
 
-`surface-complete draft` means every accepted operation is connected to an ASL
-semantic primitive, while explicitly named numeric or system profiles can still
-determine portable details. It does not mean `architecturally-complete`.
+`complete under PTO v0` means every accepted operation is connected to an ASL
+semantic primitive and every registered implementation-defined interface has a
+concrete override and direct conformance witness. PTO v0 is a deterministic
+raw-carrier reference profile, not an IEEE-754 or hardware-performance claim.
 
 ## Decoder evidence
 
@@ -61,26 +62,28 @@ sources alone is insufficient.
 - TPREFETCH is destination-free in PTO while the current independent evidence
   shows a tile destination; PTO remains authoritative.
 - Backend availability is not evidence of portable semantics.
-- Floating arithmetic, transcendental, and low-precision conversion hooks still
-  require a concrete correctly rounded numeric profile. Carrier widths,
-  type-code legality, ordered comparison behavior, NaN/signed-zero min/max,
-  destination packing, and sticky flags are executable in the portable model.
+- PTO v0 closes the numeric interfaces with deterministic raw-carrier behavior;
+  it deliberately does not claim correctly rounded IEEE-754 arithmetic. A
+  future IEEE or hardware profile needs a distinct identity and evidence.
 - `ExecuteScalarInstruction` runs every accepted scalar form through legality,
   operand binding, Reg5 access, and its architecture state transition.
 - `ExecuteTileInstruction` runs every accepted tile selector through its
   catalog-declared operand binding, read-only per-operation legality preflight,
   and architecture state transition. Tile and Reg5 legality failures are
   explicit and effect-free.
-- Translation, permission, and some numeric conversion details remain named
-  profiles rather than silent implementation behavior. Tile memory accesses
-  use the scalar data-access hooks, including destination-free prefetch.
+- PTO v0 uses identity translation and explicit User, Supervisor, and Machine
+  permissions. Tile memory accesses use the same scalar data-access hooks,
+  including destination-free prefetch.
 - Scalar pairs and tile memory operations preflight every access and commit
   atomically at instruction granularity. First/middle/last failure witnesses
   prove original-address reporting, preservation, and restart by full reissue.
 - Platform-specific interpretation of the atomic FAR address-class hint remains
   a named refinement of the portable flat-address baseline.
+- The shared scalar/tile ordering state does not yet constitute a complete
+  multi-agent TSO and concurrency model.
 
-These gaps remain machine-readable in
-`spec/evidence/independent-tile-crosscheck.json` and
-`spec/profile-hooks.json`. CI requires the profile registry to match every ASL
-`impdef` declaration exactly. Green validation does not erase them.
+The independent-evidence gaps remain machine-readable in
+`spec/evidence/independent-tile-crosscheck.json`. The profile registry is closed
+for PTO v0: CI requires exact equality among all 34 registered hooks, ASL
+`impdef` declarations, active implementations, and direct conformance calls.
+Green validation does not turn PTO v0 into an IEEE or hardware profile.

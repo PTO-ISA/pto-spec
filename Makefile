@@ -29,6 +29,7 @@ ASL_SOURCES_BEFORE_DECODER := \
 	asl/tile/legality.asl
 
 ASL_SOURCES_AFTER_DECODER := \
+	asl/profiles/pto-v0.asl \
 	asl/scalar/dispatch.asl
 
 ASL_SOURCES := $(ASL_SOURCES_BEFORE_DECODER) $(ASL_SOURCES_AFTER_DECODER)
@@ -38,6 +39,7 @@ ASL_TESTS := \
 	tests/asl/state-tests.asl \
 	tests/asl/scalar-tests.asl \
 	tests/asl/tile-tests.asl \
+	tests/asl/profile-tests.asl \
 	tests/asl/main.asl
 
 SPEC := build/pto-spec.asl

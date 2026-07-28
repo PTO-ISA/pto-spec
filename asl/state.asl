@@ -1,4 +1,5 @@
-// PTO-REQ-STATE-001: architecture-visible scalar, memory, and fault state.
+// PTO-REQ-STATE-001, PTO-REQ-PROFILE-001: architecture-visible scalar,
+// memory, privilege, reset-profile, and fault state.
 
 var _GPR : array [[PTO_SCALAR_REGISTER_COUNT]] of Word;
 var _PC : Word;
@@ -30,6 +31,7 @@ var _TrapArgumentValid : boolean;
 var _TrapCause : bits(24);
 var _TrapNumber : TrapNumber;
 var _TrapArgument0 : Word;
+var _CurrentPrivilege : PrivilegeLevel;
 
 type BaseSystemRegisterState of record {
     tp: Word,
@@ -46,6 +48,23 @@ type BaseSystemRegisterState of record {
 };
 
 var _SystemRegisters : BaseSystemRegisterState;
+
+impdef func ResetProfileState()
+begin
+    // Overridden by the active concrete profile.
+    _CurrentPrivilege = Privilege_Machine;
+    _SystemRegisters.cycle = Zeros{PTO_XLEN};
+end;
+
+readonly func CurrentPrivilege() => PrivilegeLevel
+begin
+    return _CurrentPrivilege;
+end;
+
+func SetCurrentPrivilege(level: PrivilegeLevel)
+begin
+    _CurrentPrivilege = level;
+end;
 
 readonly func ReadGPR(index: GPRIndex) => Word
 begin

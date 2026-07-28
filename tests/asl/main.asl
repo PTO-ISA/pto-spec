@@ -1,5 +1,6 @@
 func main() => integer
 begin
+    ResetProfileState();
     ValidateCanonicalDecoders();
     TestScalarState();
     TestTileRegisterMapping();
@@ -32,5 +33,6 @@ begin
     TestDecodedTileExecution();
     TestDecodedTileLegalityFaults();
     TestTileMemoryCompletionAndRestart();
+    TestConcreteProfile();
     return 0;
 end;

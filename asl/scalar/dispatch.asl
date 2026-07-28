@@ -1589,6 +1589,7 @@ func ExecuteScalarInstruction(instruction: bits(48),
                               length_bits: integer {16,32,48})
                               => ScalarExecutionStatus
 begin
+    AdvanceArchitecturalTime();
     let decoded = DecodeScalarForm(instruction, length_bits);
     if decoded == PTO_SCALAR_FORM_COUNT then
         SetFault(Fault_IllegalInstruction, ReadPC());
