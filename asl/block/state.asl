@@ -270,6 +270,7 @@ begin
         if transfer == BlockTransfer_Call ||
            transfer == BlockTransfer_IndirectCall then
             _ReturnAddress = return_target;
+            WriteGPR(10, return_target);
         end;
     end;
 end;

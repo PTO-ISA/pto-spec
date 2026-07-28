@@ -141,4 +141,18 @@ begin
     assert _LastFault == Fault_None;
     assert !BlockIsActive();
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x204;
+
+    ResetBlockControlState();
+    ClearFault();
+    WriteTPC(Zeros{PTO_XLEN} + 0x300);
+    var call: bits(64) = Zeros{64} + 0x50160002;
+    call[15:4] = Zeros{12} + 4;
+    call[26:22] = Zeros{5} + 3;
+    let call_status = ExecuteCommandInstruction(call, 32);
+    assert call_status == CommandExecution_Executed;
+    assert _LastFault == Fault_None;
+    assert _BlockTransfer == BlockTransfer_Call;
+    assert ReadTPC() == Zeros{PTO_XLEN} + 0x308;
+    assert ReadGPR(10) == Zeros{PTO_XLEN} + 0x308;
+    assert _ReturnAddress == Zeros{PTO_XLEN} + 0x308;
 end;
