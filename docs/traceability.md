@@ -35,6 +35,7 @@ review-oriented projection.
 | PTO-REQ-TMA-001 | `asl/tile/memory.asl`, scalar memory hooks, PTO v0 profile | all six operation, permission, and direct profile tests | implemented by PTO v0 profile |
 | PTO-REQ-CUBE-001 | `asl/tile/cube.asl`, PTO v0 profile | all eight operation and direct profile tests | implemented by PTO v0 profile |
 | PTO-REQ-ENCODING-001 | canonical catalogs and generated decoder | catalog checker, operand/handler binding assertions, and ASL witnesses | executable canonical |
+| PTO-REQ-SOURCE-RECONCILIATION-001 | public reconciliation ledger, generator, ADR-0007, bounded Arm comparison record | deterministic generation, exact 473/111 coverage, pinned URLs/hashes, zero-open closure assertions, and explicit external non-import decisions | closed public source disposition |
 | PTO-REQ-HIERARCHY-001 | ADR-0001 and one-level boundary | catalog/naming gates | implemented |
 
 Every normative ASL file cites one or more stable IDs. CI verifies that cited

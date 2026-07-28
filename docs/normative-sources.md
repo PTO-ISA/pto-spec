@@ -10,14 +10,17 @@ Sources are applied in this order:
 1. Normative ASL, the selected PTO v0 implementation profile, and accepted
    architecture decisions in this repository.
 2. PTO-owned machine-readable scalar and tile catalogs under `spec/catalog/`.
-3. The public PTO ISA manual and public `PTO_INST` declarations.
+3. The pinned public PTO ISA manual and public `PTO_INST` declarations, as
+   classified by `spec/evidence/public-source-reconciliation.json`.
 4. An anonymized private tile-document snapshot as independent cross-check evidence.
 5. Backend implementations as non-normative executable evidence.
 6. Public specifications for other ISAs as review-only design comparisons.
 
-A lower-precedence source cannot override a higher-precedence source. Conflicts
-are resolved by an architecture decision or remain explicitly incomplete in
-`spec/evidence/independent-tile-crosscheck.json`.
+A lower-precedence source cannot override a higher-precedence source. Raw
+private disagreements remain unchanged in
+`spec/evidence/independent-tile-crosscheck.json`; public architecture closure is
+recorded separately in `spec/evidence/public-source-reconciliation.json` and an
+accepted architecture decision.
 
 ## Golden catalog
 
@@ -65,6 +68,11 @@ must be stated in PTO-owned architecture text, represented in the PTO catalog or
 ASL, and covered by PTO tests. ADR-0004 applies this policy to scalar family
 constraints.
 
+`docs/arm-asl-comparison.md` records the bounded official-source comparison for
+prefetch and load/store overlap hazards. It is review evidence only; ADR-0004,
+the scalar catalog, generated legality, and tests contain the retained PTO
+decisions.
+
 The pinned `herdtools7` `x86tso.cat` relation structure is the public comparison
 source for PTO-TSO. PTO defines its own event classes, ordering annotations,
 fence masks, atomicity, candidate validity, and tests in
@@ -88,6 +96,17 @@ license. The cross-check records only anonymized document names, hashes, and
 review dispositions. No project identity, repository path, prose, source, or
 diagram from that reference is copied here.
 
-Where independent evidence and PTO disagree, the canonical PTO ASL and catalogs prevail.
-The current explicit conflict is TPREFETCH: PTO defines a destination-free hint
-that performs applicable address checks but writes no tile state.
+Where independent evidence and PTO disagree, the canonical PTO ASL and catalogs
+prevail. ADR-0007 closes the current `TPREFETCH` disposition: PTO defines a
+destination-free hint that performs applicable address checks but writes no
+tile state, while the public typed intrinsic's destination-shaped parameter is
+a lowering context rather than a direct architectural destination.
+
+## Public source snapshot
+
+The audited public PTO snapshot is commit
+`712cbe9f23df5d5362be5e8327599f4285317473` of
+`https://github.com/hw-native-sys/pto-isa`. The generated public reconciliation
+ledger records content hashes and a disposition for all 473 scalar forms and
+111 tile operations. ADR-0007 defines the boundary between its typed source API
+and this repository's direct binary architecture.

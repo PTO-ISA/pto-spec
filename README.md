@@ -30,6 +30,9 @@ selected by
 The shared scalar/tile total-store-order contract is executable in
 [docs/memory-model.md](docs/memory-model.md) and fixed by
 [ADR-0006](docs/architecture-decisions/0006-pto-total-store-order.md).
+The public source/binary boundary and complete disposition ledger are described
+in [docs/source-reconciliation.md](docs/source-reconciliation.md) and fixed by
+[ADR-0007](docs/architecture-decisions/0007-public-source-layer-reconciliation.md).
 
 - 473 scalar forms are accepted across AGU, ALU, AMO, BRU, FSU, and SYS, with
   exact masks, matches, operand pieces, signedness, three form constraints, and
@@ -41,6 +44,8 @@ The shared scalar/tile total-store-order contract is executable in
 - The architecture contains no nested instruction bodies or body-local state.
 - Private tile documentation is used only as anonymized, non-redistributive
   semantic cross-check evidence.
+- All 473 scalar forms and 111 tile operations have closed public-source
+  dispositions at a pinned, content-hashed PTO public repository commit.
 
 ## Validate
 
@@ -69,6 +74,7 @@ work can fail fast before ASLRef is built. The complete gate also validates:
 - generated scalar-form, operand-field, and tile-selector decoder witnesses;
 - exact 34-hook active-profile implementation and conformance-test closure;
 - bounded PTO-TSO candidate validity, ordering relations, and litmus outcomes;
+- deterministic public-source reconciliation with exact catalog coverage;
 - one-level architecture and publication hygiene;
 - strict ASLRef type checking and executable semantic evidence;
 - gate and toolchain canaries that prove validation can fail correctly.

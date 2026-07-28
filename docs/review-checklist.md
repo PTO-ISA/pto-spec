@@ -5,6 +5,9 @@
 - Stable requirement IDs and public source links are present.
 - The ASL claims no more than the normative source.
 - Requirement, definition, and test links are recorded in `docs/traceability.md`.
+- Public source evidence is pinned by commit and content hash, every accepted
+  form or operation has a disposition, and raw private observations are not
+  rewritten as agreement.
 
 ## Semantics
 
@@ -33,4 +36,6 @@
 - Memory-model changes include both allowed and forbidden litmus outcomes and
   state whether mixed-size or overlapping accesses are modeled or rejected.
 - Known coverage gaps and ASLRef limitations are disclosed.
+- Source-layer spelling or operand differences have an explicit PTO-owned
+  resolution; a shared Arm or other-ISA mnemonic imports no semantics.
 - Toolchain updates are isolated from normative changes, and any canary fixture they change is explained.
