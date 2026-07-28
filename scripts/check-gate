@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Self-test for the template gate.
+#
+# The gate is the only mechanism keeping a non-normative repository free of
+# specification, so a gate that silently stopped detecting anything would look
+# exactly like a clean repository. These fixtures assert both directions:
+# active content is reported, and comment-only content is not.
+#
+# Fixtures are lexical inputs for scripts/asl-active-content. They are never
+# passed to ASLRef and are not required to be well-typed ASL1.
+set -euo pipefail
+
+repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+cd "$repo_root"
+
+shopt -s nullglob
+active_fixtures=(tests/gate/active-*.asl)
+inert_fixtures=(tests/gate/inert-*.asl)
+shopt -u nullglob
+
+if [[ ${#active_fixtures[@]} -eq 0 || ${#inert_fixtures[@]} -eq 0 ]]; then
+    echo "error: gate fixtures are missing under tests/gate/" >&2
+    exit 1
+fi
+
+status=0
+
+for fixture in "${active_fixtures[@]}"; do
+    if ./scripts/asl-active-content "$fixture" >/dev/null 2>&1; then
+        echo "error: gate reported no active content in $fixture" >&2
+        status=1
+    fi
+done
+
+for fixture in "${inert_fixtures[@]}"; do
+    if ! ./scripts/asl-active-content "$fixture" >/dev/null 2>&1; then
+        echo "error: gate reported active content in comment-only $fixture" >&2
+        ./scripts/asl-active-content "$fixture" >&2 || true
+        status=1
+    fi
+done
+
+if [[ $status -ne 0 ]]; then
+    echo "error: the template gate does not behave as specified" >&2
+    exit 1
+fi
+
+echo "gate self-test: ${#active_fixtures[@]} active and ${#inert_fixtures[@]} inert fixtures behaved as expected"

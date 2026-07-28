@@ -43,18 +43,36 @@ make setup
 make ci
 ```
 
-The gate performs:
+`make ci` runs five checks:
 
-- repository, naming, and licensing checks;
-- exact scalar, system-register, and tile catalog validation;
+| Target | Checks | Needs ASLRef |
+| --- | --- | --- |
+| `gate-check` | the template gate detects active ASL and scanner failures | no |
+| `repo-check` | repository, source-list, catalog, maturity, and publication invariants | no |
+| `toolchain-check` | the pinned ASLRef accepts valid and rejects invalid ASL1 | yes |
+| `check` | strict type-checking of the assembled specification | yes |
+| `test` | executable PTO feature and boundary tests | yes |
+
+`gate-check` and `repo-check` run without an opam switch, so most repository
+work can fail fast before ASLRef is built. The complete gate also validates:
+
+- exact scalar, system-register, and tile catalogs;
 - generated scalar-form, operand-field, and tile-selector decoder witnesses;
-- one-level architecture and legacy-reference checks;
-- strict ASLRef type checking;
-- executable ASL feature and boundary tests.
+- one-level architecture and publication hygiene;
+- strict ASLRef type checking and executable semantic evidence;
+- gate and toolchain canaries that prove validation can fail correctly.
 
-ASLRef is built from the exact herdtools7 commit in `.aslref-version`. Generated
-assembled files remain ignored under `build/`; the ASLRef checkout remains
-ignored under `.cache/`.
+The wrapper in `scripts/aslref` fetches the exact audited `herdtools7` commit
+recorded in `.aslref-version` and builds it under the ignored `.cache/`
+directory. To use an existing ASLRef binary locally:
+
+```bash
+make ci ASLREF=/path/to/aslref
+```
+
+Substituting a binary bypasses the repository pin, so it is useful for local
+iteration but is not evidence about the audited commit. Hosted CI always uses
+the pinned wrapper.
 
 ## Layout
 
@@ -65,7 +83,10 @@ asl/
   state.asl              Scalar, system, memory, and fault state
   scalar/                Operand bridge, integer, control, memory, atomic, system, and FP semantics
   tile/                  Flat tile state, TEPL, TMA, and CUBE semantics
-tests/asl/                Executable feature and boundary tests
+tests/
+  asl/                   Executable PTO feature and boundary tests
+  gate/                  Fixtures proving the template gate works
+  canary/                Fixtures proving the pinned ASLRef works
 spec/
   requirements.json      Machine-readable requirement traceability
   catalog/               Canonical scalar forms, system registers, and tile operations
@@ -74,6 +95,16 @@ spec/
 docs/                     Architecture decisions, coverage, and review contract
 scripts/                  Reproducible evidence import and fail-closed validation
 ```
+
+Every checked-in ASL source must appear in `ASL_SOURCES`, and every semantic
+test must appear in `ASL_TESTS`, both in dependency order in the `Makefile`.
+`make repo-check` rejects unlisted inputs so they cannot silently bypass ASLRef.
+Generated assembled files remain ignored under `build/`.
+
+Every validation result ultimately becomes an exit code, so `tests/gate/` and
+`tests/canary/` test the checks themselves. The enforcement map in
+[GOVERNANCE.md](GOVERNANCE.md) distinguishes clone-verifiable rules from GitHub
+repository settings and human review obligations.
 
 ## Governance and licensing
 

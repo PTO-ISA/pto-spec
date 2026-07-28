@@ -20,8 +20,10 @@ Write `None` for non-normative changes.
 - [ ] `git diff --check`
 - [ ] Positive and boundary tests, when semantics change
 - [ ] Negative-legality and state-transition tests, when applicable
+- [ ] New tests listed in `ASL_TESTS`
 - [ ] Traceability matrix updated, when normative claims change
 - [ ] No generated files committed
+- [ ] No check, gate fixture, or canary was weakened to make this change pass
 
 ## Review risks
 

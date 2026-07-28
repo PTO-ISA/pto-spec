@@ -17,6 +17,8 @@
 ## Evidence
 
 - Strict ASLRef type-checking passes at the pinned commit.
+- The gate self-test and toolchain canaries pass, so the checks above are known to be capable of failing.
 - Positive, boundary, negative-legality, and state-transition cases are covered where applicable.
+- New semantic tests are listed in `ASL_TESTS` and therefore actually execute.
 - Known coverage gaps and ASLRef limitations are disclosed.
-- Toolchain updates are isolated from normative changes.
+- Toolchain updates are isolated from normative changes, and any canary fixture they change is explained.

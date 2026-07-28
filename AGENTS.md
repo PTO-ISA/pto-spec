@@ -27,9 +27,13 @@ architecture requirement.
 ## Verification
 
 ```bash
-make setup
+make gate-check repo-check   # no opam switch required
+make setup                   # once, to build the pinned ASLRef
 make ci
 git diff --check
 ```
 
 Generated `build/` and `.cache/` files must remain untracked.
+
+Do not weaken a check to make a change pass. `tests/gate/` and `tests/canary/` exist so that the checks themselves
+fail loudly when they stop working; a fixture that starts failing is evidence, not an obstacle.

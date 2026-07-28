@@ -4,6 +4,13 @@ set -euo pipefail
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 cd "$repo_root"
 
+spec=${1:-build/pto-spec.asl}
+
+fail() {
+    echo "error: $*" >&2
+    exit 1
+}
+
 required_files=(
     .aslref-version
     AGENTS.md
@@ -13,6 +20,7 @@ required_files=(
     LICENSE
     NOTICE
     specification.toml
+    .github/CODEOWNERS
     .codex/skills/pto-asl/SKILL.md
     asl/architecture.asl
     docs/traceability.md
@@ -22,30 +30,137 @@ required_files=(
     spec/catalog/system-registers.json
     spec/catalog/tile-operations.json
     spec/evidence/independent-tile-crosscheck.json
+    tests/README.md
 )
 
 for path in "${required_files[@]}"; do
-    if [[ ! -f $path ]]; then
-        echo "error: required repository file is missing: $path" >&2
-        exit 1
-    fi
+    [[ -f $path ]] || fail "required repository file is missing: $path"
 done
 
 pin=$(tr -d '[:space:]' < .aslref-version)
-if [[ ! $pin =~ ^[0-9a-f]{40}$ ]]; then
-    echo "error: .aslref-version must contain one full Git commit SHA" >&2
-    exit 1
+[[ $pin =~ ^[0-9a-f]{40}$ ]] || fail ".aslref-version must contain one full Git commit SHA"
+
+if git ls-files | grep -Eq '^(build|\.cache)/'; then
+    fail "generated build or cache files are tracked"
 fi
 
-if git ls-files | grep -E '^(build|\.cache)/' >/dev/null; then
-    echo "error: generated build or cache files are tracked" >&2
-    exit 1
+# Parse policy input as TOML instead of matching source formatting. The status
+# fields live in the specification table and must describe one maturity state.
+metadata=$(python3 - <<'PY'
+import pathlib
+import tomllib
+
+data = tomllib.loads(pathlib.Path("specification.toml").read_text(encoding="utf-8"))
+specification = data.get("specification", {})
+status = specification.get("status")
+normative = specification.get("normative")
+if not isinstance(status, str):
+    raise SystemExit("specification.status must be a string")
+if not isinstance(normative, bool):
+    raise SystemExit("specification.normative must be a boolean")
+print(status)
+print(str(normative).lower())
+PY
+) || fail "specification.toml does not contain valid maturity metadata"
+
+status=${metadata%%$'\n'*}
+normative=${metadata#*$'\n'}
+
+case $status in
+    template | draft | normative | architecturally-complete) ;;
+    *) fail "unsupported specification status: '$status'" ;;
+esac
+
+if [[ $status == template && $normative != false ]]; then
+    fail "template status requires normative = false"
+fi
+if [[ $status != template && $normative != true ]]; then
+    fail "$status status requires normative = true"
+fi
+
+# Every checked-in ASL source must reach the assembled file and therefore the
+# type checker. Comment-only authoring templates are the sole exemption.
+assembled=$(make --no-print-directory print-asl-sources)
+
+while IFS= read -r path; do
+    [[ -n $path ]] || continue
+
+    case $path in
+        */TEMPLATE.asl)
+            set +e
+            ./scripts/asl-active-content "$path"
+            template_status=$?
+            set -e
+
+            case $template_status in
+                0) ;;
+                1) fail "authoring template must stay commented out: $path" ;;
+                3) fail "authoring template could not be scanned: $path" ;;
+                *) fail "asl-active-content failed with status $template_status" ;;
+            esac
+            continue
+            ;;
+    esac
+
+    printf '%s\n' "$assembled" | grep -Fxq "$path" ||
+        fail "ASL source is absent from ASL_SOURCES and is never type-checked: $path"
+done < <(git ls-files asl | grep -E '\.asl$' || true)
+
+# When the repository is a non-normative template, the exact file ASLRef reads
+# must contain only comments and blank lines.
+if [[ $status == template ]]; then
+    [[ -f $spec ]] || fail "assembled specification not found: $spec (run 'make build')"
+
+    set +e
+    ./scripts/asl-active-content "$spec"
+    active_status=$?
+    set -e
+
+    case $active_status in
+        0) ;;
+        1) fail "template status forbids active ASL content in $spec" ;;
+        3) fail "$spec could not be scanned, so the template gate cannot certify it" ;;
+        *) fail "asl-active-content failed with status $active_status" ;;
+    esac
+fi
+
+# A normative draft or later maturity must execute semantic evidence. A
+# template defines no semantics and therefore must not claim semantic tests.
+test_count=0
+while IFS= read -r path; do
+    [[ -n $path ]] || continue
+    test_count=$((test_count + 1))
+    [[ -f $path ]] || fail "ASL_TESTS lists a missing file: $path"
+done < <(make --no-print-directory print-asl-tests)
+
+if [[ $status != template && $test_count -eq 0 ]]; then
+    fail "$status status requires executable semantic tests in ASL_TESTS"
+fi
+if [[ $status == template && $test_count -ne 0 ]]; then
+    fail "template status defines no semantics, so ASL_TESTS must be empty"
 fi
 
 empty_tree=$(git hash-object -t tree /dev/null)
 git diff --check "$empty_tree" HEAD
 git diff --check
 git diff --cached --check
-bash -n scripts/aslref scripts/check-repository scripts/setup-aslref
+
+for script in scripts/*; do
+    [[ -f $script ]] || continue
+    [[ -x $script ]] || fail "script is not executable: $script"
+
+    case $(head -n 1 "$script") in
+        '#!/usr/bin/env bash')
+            bash -n "$script"
+            ;;
+        '#!/usr/bin/env python3')
+            python3 -c 'import ast, pathlib, sys; ast.parse(pathlib.Path(sys.argv[1]).read_text())' "$script"
+            ;;
+        *)
+            fail "script has an unsupported interpreter: $script"
+            ;;
+    esac
+done
+
 python3 scripts/check-catalogs
 python3 scripts/check-no-legacy-references
