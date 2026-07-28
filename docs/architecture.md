@@ -82,7 +82,9 @@ known independent-documentation conflict in favor of the canonical PTO contract.
 
 - Byte order is little-endian.
 - Scalar and tile memory share one architectural ordering domain.
-- The default memory model is TSO, with explicit acquire/release and fence rules.
+- The memory model is PTO-TSO, with explicit candidate events, reads-from,
+  coherence, from-read, preserved program order, acquire/release, and fence
+  rules in `docs/memory-model.md`.
 - Atomic `aq` and `rl` bits map to relaxed, acquire, release, or
   acquire-release ordering. The portable one-level address model treats FAR as
   an explicit address-class hint with identity address translation.
@@ -91,6 +93,15 @@ known independent-documentation conflict in favor of the canonical PTO contract.
   access for Supervisor and Machine.
 - The bounded ASL byte array is executable-test infrastructure, not the
   architectural address-space size.
+
+Concurrent executions are checked independently of the sequential byte-array
+executor. Successful scalar and tile accesses contribute events to a common
+multi-agent candidate; faulting instructions contribute none. PTO-TSO requires
+acyclic per-location order and global happens-before, permits unfenced store
+buffering, and forbids fenced store buffering and inconsistent message passing.
+The 16-event/four-agent ASL bounds are verification limits. Mixed-size or
+partially overlapping candidates fail closed until byte-level coherence is
+defined. ADR-0006 records the source and ownership boundary.
 
 Every retained data access first produces a profile-backed probe containing its
 translated address or architectural fault. A scalar pair or tile memory

@@ -19,8 +19,8 @@ architecture behavior, and supplies raw input/output and state-effect tests.
 
 `ResetProfileState` clears GPRs and bounded memory, invalidates tile and pipe
 descriptors, clears defined extended system-register storage, resets faults,
-reservations, ordering and maintenance epochs, sets VERSION to 1, sets time to
-zero, and enters `Privilege_Machine`. Tile/pipe payload backing that becomes
+reservations, concurrency candidates and maintenance epochs, sets VERSION to 1,
+sets time to zero, and enters `Privilege_Machine`. Tile/pipe payload backing that becomes
 unobservable through invalid descriptors is not scrubbed.
 
 Privilege is explicit architecture state with User, Supervisor, and Machine

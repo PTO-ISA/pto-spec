@@ -10,6 +10,8 @@
 
 - Legal domains, results, visible state, faults, ordering, and profile scope are explicit.
 - Reset state, privilege checks, access permissions, and architectural time are explicit.
+- Concurrent memory candidates define program order, reads-from, coherence,
+  from-read, preserved order, fences, atomicity, validity, and allowed outcomes.
 - Fixed widths, integer constraints, indices, conversions, and aliases are type-safe.
 - Every legal case is total; every nondeterministic case is intentional.
 - Family-wide operand restrictions are catalog-owned, generated before effects,
@@ -28,5 +30,7 @@
   equal hook names.
 - Numeric review distinguishes the deterministic PTO v0 raw-carrier contract
   from IEEE-754 or target-hardware behavior.
+- Memory-model changes include both allowed and forbidden litmus outcomes and
+  state whether mixed-size or overlapping accesses are modeled or rejected.
 - Known coverage gaps and ASLRef limitations are disclosed.
 - Toolchain updates are isolated from normative changes, and any canary fixture they change is explained.

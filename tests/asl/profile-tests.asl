@@ -141,10 +141,13 @@ begin
 
     WriteGPR(1, Zeros{PTO_XLEN} + 0x55);
     Store(Zeros{PTO_XLEN}, 8, Zeros{PTO_XLEN} + 0xaa);
+    - = AddInitialWriteEvent(Zeros{PTO_XLEN} + 2048, 8,
+        Zeros{PTO_XLEN});
     SetCurrentPrivilege(Privilege_User);
     ResetProfileState();
     assert CurrentPrivilege() == Privilege_Machine;
     assert ReadGPR(1) == Zeros{PTO_XLEN};
+    assert _MemoryEventCount == 0;
     let reset_memory = LoadUnsigned(Zeros{PTO_XLEN}, 8);
     assert reset_memory == Zeros{PTO_XLEN};
     let final_reset_time = ReadMonotonicTime();

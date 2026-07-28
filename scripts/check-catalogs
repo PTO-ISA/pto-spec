@@ -404,6 +404,11 @@ def main() -> int:
         "system maturity must record privilege, time, and reset closure",
     )
     require(
+        specification["maturity"]["memory_order"]
+        == "bounded-executable-pto-tso-candidate-model",
+        "memory-order maturity must record executable PTO-TSO closure",
+    )
+    require(
         specification["profile"]
         == {
             "id": "pto-v0",
@@ -416,6 +421,18 @@ def main() -> int:
             "time_model": "one-tick-per-decoded-attempt",
         },
         "specification active-profile record drift",
+    )
+    require(
+        specification["memory_order"]
+        == {
+            "id": "PTO-TSO",
+            "model": "asl/concurrency.asl",
+            "comparison_source": "https://github.com/herd/herdtools7/blob/0b6e09066d4186c8a26e02e3bb884bd664d5eb34/herd/libdir/x86tso.cat",
+            "event_bound": 16,
+            "agent_bound": 4,
+            "mixed_size": "fail-closed",
+        },
+        "specification PTO-TSO record drift",
     )
     require(
         specification["architecture"]["scalar_forms"] == 473,
@@ -1040,6 +1057,31 @@ def main() -> int:
         re.search(r"\bDMA64\b", asl_body) is None,
         "removed DMA64 semantics remain in normative ASL",
     )
+    require(
+        "_MemoryAcquireEpoch" not in asl_body and "_MemoryReleaseEpoch" not in asl_body,
+        "ordering counters must not substitute for the PTO-TSO event model",
+    )
+    concurrency_body = (ROOT / "asl" / "concurrency.asl").read_text(encoding="utf-8")
+    for relation in (
+        "MemoryProgramOrderLocationBefore",
+        "MemoryReadsFromBefore",
+        "MemoryExternalReadsFromBefore",
+        "MemoryCoherenceBefore",
+        "MemoryFromReadBefore",
+        "MemoryPreservedProgramOrderBefore",
+        "MemoryCandidateExecutionValid",
+        "MemoryExecutionAllowedTSO",
+    ):
+        require(
+            re.search(rf"\bfunc\s+{relation}\b", concurrency_body) is not None,
+            f"PTO-TSO relation is missing: {relation}",
+        )
+    require(
+        "Mixed-size or partially overlapping" in concurrency_body
+        and "MemoryRelationAcyclic(TRUE)" in concurrency_body
+        and "MemoryRelationAcyclic(FALSE)" in concurrency_body,
+        "PTO-TSO validity or acyclicity gate drift",
+    )
     for path in (ROOT / "asl").rglob("*.asl"):
         if path == ROOT / "asl" / "state.asl" or path == (
             ROOT / "asl" / "scalar" / "memory.asl"
@@ -1256,6 +1298,18 @@ def main() -> int:
         and "restart_status" in test_body,
         "memory completion lacks pair and first/middle/last restart evidence",
     )
+    for litmus in (
+        "TestTSOStoreBufferingAllowed",
+        "TestTSOStoreBufferingFenceForbidden",
+        "TestTSOMessagePassing",
+        "TestTSOSameLocationAndAtomicity",
+        "TestTSOIRIWForbidden",
+    ):
+        require(litmus in test_body, f"missing PTO-TSO litmus evidence: {litmus}")
+    require(
+        test_body.count("MemoryExecutionAllowedTSO()") >= 7,
+        "PTO-TSO lacks sufficient allowed and forbidden outcome witnesses",
+    )
     for handler in (
         "ReadSystemRegisterAddress",
         "WriteSystemRegisterAddress",
@@ -1339,6 +1393,16 @@ def main() -> int:
     )
     require(
         len(requirement_ids) == len(set(requirement_ids)), "duplicate requirement IDs"
+    )
+    tso_requirement = next(
+        (row for row in requirements if row["id"] == "PTO-REQ-MEMORY-TSO-001"),
+        None,
+    )
+    require(tso_requirement is not None, "missing PTO-TSO requirement")
+    require(
+        tso_requirement["source"]
+        == "https://github.com/herd/herdtools7/blob/0b6e09066d4186c8a26e02e3bb884bd664d5eb34/herd/libdir/x86tso.cat",
+        "PTO-TSO comparison source must match the audited herdtools7 pin",
     )
     for requirement in requirements:
         require(
@@ -1527,7 +1591,9 @@ def main() -> int:
     )
     require(
         "ResetProfileState();" in main_test_body
-        and "ResetProfileState();" in profile_test_body,
+        and "ResetProfileState();" in profile_test_body
+        and "ResetMemoryExecution();" in profile_implementation_body
+        and "_MemoryEventCount == 0" in profile_test_body,
         "active profile reset is not executed and tested",
     )
     require(

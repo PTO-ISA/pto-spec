@@ -11,6 +11,7 @@ ASL_SOURCES_BEFORE_DECODER := \
 	asl/scalar/integer.asl \
 	asl/scalar/control.asl \
 	asl/scalar/memory.asl \
+	asl/concurrency.asl \
 	asl/scalar/addressing.asl \
 	asl/scalar/atomic.asl \
 	asl/scalar/system.asl \
@@ -39,6 +40,7 @@ ASL_TESTS := \
 	tests/asl/state-tests.asl \
 	tests/asl/scalar-tests.asl \
 	tests/asl/tile-tests.asl \
+	tests/asl/concurrency-tests.asl \
 	tests/asl/profile-tests.asl \
 	tests/asl/main.asl
 

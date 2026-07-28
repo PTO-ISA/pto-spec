@@ -1,4 +1,5 @@
-// PTO-REQ-SCALAR-AMO-001: LR/SC, CAS, and atomic read-modify-write.
+// PTO-REQ-SCALAR-AMO-001, PTO-REQ-MEMORY-TSO-001: LR/SC, CAS, and atomic
+// read-modify-write operations represented as indivisible TSO events.
 
 readonly impdef func AtomicAddress(address: Word, far: boolean) => Word
 begin
@@ -23,11 +24,9 @@ func LoadReserved(address: Word, size_bytes: integer {1,2,4,8},
 begin
     let result = LoadUnsigned(address, size_bytes);
     if _LastFault == Fault_None then
-        ApplyMemoryOrderBefore(order);
         _ReservationValid = TRUE;
         _ReservationAddress = address;
         _ReservationSize = size_bytes;
-        ApplyMemoryOrderAfter(order);
     end;
     return result;
 end;
@@ -41,9 +40,7 @@ begin
         let probe = ProbeDataAccess(address, size_bytes, size_bytes, TRUE);
         if RaiseDataAccessFault(probe, address) then return Zeros{PTO_XLEN}; end;
         _ReservationValid = FALSE;
-        ApplyMemoryOrderBefore(order);
         StoreTranslated(address, probe.translated_address, size_bytes, value);
-        ApplyMemoryOrderAfter(order);
         return Zeros{PTO_XLEN};
     else
         _ReservationValid = FALSE;
@@ -116,12 +113,10 @@ begin
     if RaiseDataAccessFault(read_probe, address) then return Zeros{PTO_XLEN}; end;
     let write_probe = ProbeDataAccess(address, size_bytes, size_bytes, TRUE);
     if RaiseDataAccessFault(write_probe, address) then return Zeros{PTO_XLEN}; end;
-    ApplyMemoryOrderBefore(order);
     let old_value = LoadTranslatedUnsigned(
         read_probe.translated_address, size_bytes);
     StoreTranslated(address, write_probe.translated_address, size_bytes,
         AtomicValueSized(op, old_value, operand, size_bytes));
-    ApplyMemoryOrderAfter(order);
     return old_value;
 end;
 
@@ -132,13 +127,11 @@ begin
     if RaiseDataAccessFault(read_probe, address) then return Zeros{PTO_XLEN}; end;
     let write_probe = ProbeDataAccess(address, size_bytes, size_bytes, TRUE);
     if RaiseDataAccessFault(write_probe, address) then return Zeros{PTO_XLEN}; end;
-    ApplyMemoryOrderBefore(order);
     let old_value = LoadTranslatedUnsigned(
         read_probe.translated_address, size_bytes);
     if old_value == NormalizeAtomicUnsigned(expected, size_bytes) then
         StoreTranslated(address, write_probe.translated_address,
             size_bytes, desired);
     end;
-    ApplyMemoryOrderAfter(order);
     return old_value;
 end;

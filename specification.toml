@@ -28,6 +28,14 @@ tile_registers = 64
 pto_operations = 111
 hierarchical_calls = false
 
+[memory_order]
+id = "PTO-TSO"
+model = "asl/concurrency.asl"
+comparison_source = "https://github.com/herd/herdtools7/blob/0b6e09066d4186c8a26e02e3bb884bd664d5eb34/herd/libdir/x86tso.cat"
+event_bound = 16
+agent_bound = 4
+mixed_size = "fail-closed"
+
 [maturity]
 scalar_state = "implemented"
 scalar_semantics = "complete-under-pto-v0-reference-profile"
@@ -36,6 +44,7 @@ tile_state = "implemented"
 tile_semantics = "decoded-with-explicit-legality-and-pto-v0-reference-profile"
 binary_decode = "executable-complete"
 instruction_dispatch = "all-473-scalar-forms-and-111-tile-operations-executable"
+memory_order = "bounded-executable-pto-tso-candidate-model"
 
 [toolchain]
 aslref_repository = "https://github.com/herd/herdtools7.git"

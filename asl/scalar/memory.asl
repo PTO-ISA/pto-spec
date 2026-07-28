@@ -1,5 +1,6 @@
-// PTO-REQ-MEMORY-001, PTO-REQ-MEMORY-COMPLETION-001: profile-backed,
-// little-endian memory with precise instruction-wide completion.
+// PTO-REQ-MEMORY-001, PTO-REQ-MEMORY-COMPLETION-001,
+// PTO-REQ-MEMORY-TSO-001: profile-backed, little-endian memory with precise
+// instruction-wide completion and PTO-TSO event extraction.
 
 readonly func RangesOverlap(left_address: Word, left_size: integer,
                             right_address: Word, right_size: integer) => boolean
@@ -24,20 +25,6 @@ impdef func DataAccessPermitted(address: Word,
 begin
     // The portable model exposes one bounded, readable, writable address space.
     return UInt(address) + size_bytes <= PTO_MODEL_MEMORY_BYTES;
-end;
-
-func ApplyMemoryOrderBefore(order: MemoryOrder)
-begin
-    if order == MemoryOrder_Release || order == MemoryOrder_AcquireRelease then
-        _MemoryReleaseEpoch = _MemoryReleaseEpoch + 1;
-    end;
-end;
-
-func ApplyMemoryOrderAfter(order: MemoryOrder)
-begin
-    if order == MemoryOrder_Acquire || order == MemoryOrder_AcquireRelease then
-        _MemoryAcquireEpoch = _MemoryAcquireEpoch + 1;
-    end;
 end;
 
 func ProbeDataAccess(address: Word,
