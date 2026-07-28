@@ -5,10 +5,15 @@ type Word of bits(PTO_XLEN);
 type DoubleWord of bits(PTO_XLEN * 2);
 type HalfWord of bits(32);
 type Byte of bits(8);
-type GPRIndex of integer {0..23};
+type GPRIndex of integer {0..PTO_ABSOLUTE_GPR_COUNT-1};
 type Reg5Selector of integer {0..31};
-type TileIndex of integer {0..63};
-type PipeIndex of integer {0..PTO_PIPE_COUNT-1};
+type TileIndex of integer {0..PTO_TILE_REGISTER_COUNT-1};
+type TemporaryQueueIndex of integer {0..PTO_TEMPORARY_QUEUE_DEPTH-1};
+type PredicateIndex of integer {0..PTO_PREDICATE_REGISTER_COUNT-1};
+type BlockDimensionIndex of integer {0..PTO_BLOCK_DIMENSION_COUNT-1};
+type BlockScalarBindingIndex of integer {0..PTO_BLOCK_SCALAR_BINDING_COUNT-1};
+type BlockTileBindingIndex of integer {0..PTO_BLOCK_TILE_BINDING_COUNT-1};
+type TileBaseIndex of integer {0..PTO_TILE_BASE_COUNT-1};
 type ModelTileElementIndex of integer {0..PTO_MODEL_TILE_ELEMENTS-1};
 type ModelAddress of integer {0..PTO_MODEL_MEMORY_BYTES-1};
 type SystemRegisterAddress of bits(24);
@@ -24,13 +29,49 @@ type FaultCode of enumeration {
     Fault_DataPage,
     Fault_SoftwareBreakpoint,
     Fault_Assert,
-    Fault_TileLegality
+    Fault_TileLegality,
+    Fault_BlockControl
 };
 
-type PrivilegeLevel of enumeration {
-    Privilege_User,
-    Privilege_Supervisor,
-    Privilege_Machine
+type BlockKind of enumeration {
+    BlockKind_Standard,
+    BlockKind_Floating,
+    BlockKind_System,
+    BlockKind_MachineParallel,
+    BlockKind_MachineSequential,
+    BlockKind_TileElement,
+    BlockKind_TileMemory,
+    BlockKind_TileMatrix,
+    BlockKind_FrameTemplate
+};
+
+type BlockTransfer of enumeration {
+    BlockTransfer_Fallthrough,
+    BlockTransfer_Direct,
+    BlockTransfer_Conditional,
+    BlockTransfer_Call,
+    BlockTransfer_Return,
+    BlockTransfer_Indirect,
+    BlockTransfer_IndirectCall
+};
+
+// ACR0 is the root ring. The active profile defines permissions and the
+// implemented Access Control Ring subtree.
+type AccessControlRing of integer {0..15};
+type TemporaryQueueSnapshot of array [[PTO_TEMPORARY_QUEUE_DEPTH]] of Word;
+
+type TrapContext of record {
+    valid: boolean,
+    source_acr: AccessControlRing,
+    tpc: Word,
+    bpc: Word,
+    core_state: Word,
+    block_argument: Word,
+    commit_argument: Word,
+    block_active: boolean,
+    block_body_active: boolean,
+    t_queue: TemporaryQueueSnapshot,
+    u_queue: TemporaryQueueSnapshot
 };
 
 type DataAccessProbe of record {
@@ -93,15 +134,17 @@ type AtomicOperation of enumeration {
 };
 
 type SystemRegister of enumeration {
-    SystemRegister_TP,
-    SystemRegister_GP,
+    SystemRegister_THREAD_PTR,
+    SystemRegister_GLOBAL_PTR,
     SystemRegister_TIME,
-    SystemRegister_CSTATE,
+    SystemRegister_CORE_STATE,
     SystemRegister_CORE_ID,
+    SystemRegister_THREAD_ID,
     SystemRegister_VENDOR,
     SystemRegister_VERSION,
     SystemRegister_CORE_FEATURE,
     SystemRegister_CORE_FEATURE_ENABLE,
+    SystemRegister_TILE_CAPACITY,
     SystemRegister_BLOCKNUM,
     SystemRegister_BLOCKID,
     SystemRegister_CYCLE
@@ -181,6 +224,7 @@ type TileHand of enumeration {
 };
 
 type TileDataType of enumeration {
+    TileDataType_F64,
     TileDataType_S8,
     TileDataType_U8,
     TileDataType_S16,
@@ -193,7 +237,11 @@ type TileDataType of enumeration {
     TileDataType_BF16,
     TileDataType_F32,
     TileDataType_FP8,
+    TileDataType_FPL8,
     TileDataType_FP4,
+    TileDataType_FPL4,
+    TileDataType_S4,
+    TileDataType_U4,
     TileDataType_E8M0
 };
 
@@ -335,7 +383,6 @@ type TileInstructionOperands of record {
     source1: TileIndex,
     source2: TileIndex,
     source3: TileIndex,
-    pipe: PipeIndex,
     address: Word,
     scalar0: Word,
     scalar1: Word,
@@ -362,7 +409,6 @@ begin
         source1 = 0,
         source2 = 0,
         source3 = 0,
-        pipe = 0,
         address = Zeros{PTO_XLEN},
         scalar0 = Zeros{PTO_XLEN},
         scalar1 = Zeros{PTO_XLEN},
@@ -383,8 +429,9 @@ end;
 
 type TilePayload of array [[PTO_MODEL_TILE_ELEMENTS]] of Word;
 
-type TileState of record {
+type TileInfo of record {
     allocated: boolean,
+    contents_defined: boolean,
     capacity_bytes: integer {0..524288},
     rows: integer {0..65535},
     columns: integer {0..65535},
@@ -394,20 +441,4 @@ type TileState of record {
     layout: TileLayout,
     location: TileLocation,
     payload: TilePayload
-};
-
-type PipeSlots of array [[PTO_MODEL_PIPE_DEPTH]] of TileState;
-type PipeState of record {
-    configured: boolean,
-    base_address: Word,
-    slot_size_bytes: integer {1..262144},
-    slot_count: integer {1..PTO_MODEL_PIPE_DEPTH},
-    head: integer {0..PTO_MODEL_PIPE_DEPTH-1},
-    tail: integer {0..PTO_MODEL_PIPE_DEPTH-1},
-    count: integer {0..PTO_MODEL_PIPE_DEPTH},
-    producer_claimed: boolean,
-    consumer_claimed: boolean,
-    producer_slot: integer {0..PTO_MODEL_PIPE_DEPTH-1},
-    consumer_slot: integer {0..PTO_MODEL_PIPE_DEPTH-1},
-    slots: PipeSlots
 };

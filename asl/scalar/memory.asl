@@ -71,6 +71,34 @@ begin
     return result;
 end;
 
+readonly func LoadTranslatedBytes64(translated_address: Word) => array [[64]] of Byte
+begin
+    var result: array [[64]] of Byte;
+    for byte_index = 0 to 63 do
+        let byte_address = translated_address +
+            NaturalToWord(byte_index as integer {0..262144});
+        result[[byte_index]] = ReadMemoryByte(byte_address);
+    end;
+    return result;
+end;
+
+readonly func LoadTranslatedBytesBounded(translated_address: Word,
+                                         byte_count: integer {0..63})
+                                         => array [[64]] of Byte
+begin
+    var result: array [[64]] of Byte;
+    for byte_index = 0 to 63 do
+        if byte_index < byte_count then
+            let byte_address = translated_address +
+                NaturalToWord(byte_index as integer {0..262144});
+            result[[byte_index]] = ReadMemoryByte(byte_address);
+        else
+            result[[byte_index]] = Zeros{8};
+        end;
+    end;
+    return result;
+end;
+
 pure func NormalizeLoadedValue(value: Word,
                                size_bytes: integer {1,2,4,8},
                                signed_load: boolean) => Word
@@ -84,6 +112,59 @@ begin
     end;
 end;
 
+func StoreTranslatedBytes64(original_address: Word, translated_address: Word,
+                            value: array [[64]] of Byte)
+begin
+    for byte_index = 0 to 63 do
+        let byte_address = translated_address +
+            NaturalToWord(byte_index as integer {0..262144});
+        WriteMemoryByte(byte_address, value[[byte_index]]);
+    end;
+    if _ReservationValid &&
+       RangesOverlap(original_address, 64,
+                     _ReservationAddress, PTO_RESERVATION_GRANULE_BYTES) then
+        _ReservationValid = FALSE;
+    end;
+end;
+
+func StoreTranslatedBytesBounded(original_address: Word,
+                                 translated_address: Word,
+                                 byte_count: integer {0..63},
+                                 value: array [[64]] of Byte)
+begin
+    for byte_index = 0 to 63 do
+        if byte_index < byte_count then
+            let byte_address = translated_address +
+                NaturalToWord(byte_index as integer {0..262144});
+            WriteMemoryByte(byte_address, value[[byte_index]]);
+        end;
+    end;
+    if _ReservationValid &&
+       RangesOverlap(original_address, byte_count,
+                     _ReservationAddress, PTO_RESERVATION_GRANULE_BYTES) then
+        _ReservationValid = FALSE;
+    end;
+end;
+
+func StoreTranslatedFillBounded(original_address: Word,
+                                translated_address: Word,
+                                byte_count: integer {0..63},
+                                value: Byte)
+begin
+    for byte_index = 0 to 63 do
+        if byte_index < byte_count then
+            let byte_address = translated_address +
+                NaturalToWord(byte_index as integer {0..262144});
+            WriteMemoryByte(byte_address, value);
+        end;
+    end;
+    if _ReservationValid &&
+       RangesOverlap(original_address, byte_count,
+                     _ReservationAddress, PTO_RESERVATION_GRANULE_BYTES) then
+        _ReservationValid = FALSE;
+    end;
+end;
+
 func StoreTranslated(original_address: Word, translated_address: Word,
                      size_bytes: integer {1,2,4,8}, value: Word)
 begin
@@ -94,7 +175,7 @@ begin
     end;
     if _ReservationValid &&
        RangesOverlap(original_address, size_bytes,
-                     _ReservationAddress, _ReservationSize) then
+                     _ReservationAddress, PTO_RESERVATION_GRANULE_BYTES) then
         _ReservationValid = FALSE;
     end;
 end;

@@ -147,6 +147,7 @@ begin
         _Tiles[[destination]].payload[[element as ModelTileElementIndex]] =
             values[[element as ModelTileElementIndex]];
     end;
+    _Tiles[[destination]].contents_defined = TRUE;
 end;
 
 func TMRGSORT(destination: TileIndex, source_left: TileIndex, source_right: TileIndex,
@@ -182,6 +183,7 @@ begin
             right_index = right_index + 1;
         end;
     end;
+    _Tiles[[destination]].contents_defined = TRUE;
 end;
 
 pure func ExtractWordByte(value: Word, byte_index: integer {0..3}) => Byte

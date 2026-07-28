@@ -44,6 +44,7 @@ TILE_SEMANTIC_GROUPS = {
         "TEXP",
         "TRSQRT",
     },
+    "TPRELU": {"TPRELU"},
     "ExecuteTileScalar": {
         "TADDS",
         "TSUBS",
@@ -116,24 +117,32 @@ TILE_SEMANTIC_GROUPS = {
     "THISTOGRAM": {"THISTOGRAM"},
     "ExecuteTilePartial": {"TPARTADD", "TPARTMUL", "TPARTMAX", "TPARTMIN"},
     "ExecuteTilePartialArg": {"TPARTARGMAX", "TPARTARGMIN"},
-    "TPUSH": {"TPUSH"},
-    "TPOP": {"TPOP"},
-    "TALLOC": {"TALLOC"},
-    "TFREE": {"TFREE"},
     "TLOAD": {"TLOAD"},
     "TSTORE": {"TSTORE"},
     "TPREFETCH": {"TPREFETCH"},
     "MGATHER": {"MGATHER"},
     "MSCATTER": {"MSCATTER"},
+    "MGATHER_MASK": {"MGATHER_MASK"},
+    "MSCATTER_MASK": {"MSCATTER_MASK"},
+    "MGATHER_CAS": {"MGATHER_CAS"},
     "TMOV": {"TMOV"},
+    "TPUSH": {"TPUSH"},
+    "TPOP": {"TPOP"},
+    "TALLOC": {"TALLOC"},
+    "TFREE": {"TFREE"},
     "TMATMUL": {"TMATMUL"},
     "TMATMUL_BIAS": {"TMATMUL_BIAS"},
     "TMATMUL_ACC": {"TMATMUL_ACC"},
     "TMATMUL_MX": {"TMATMUL_MX"},
+    "TMATMUL_MX_BIAS": {"TMATMUL_MX_BIAS"},
+    "TMATMUL_MX_ACC": {"TMATMUL_MX_ACC"},
+    "ACCCVT": {"ACCCVT"},
     "TGEMV": {"TGEMV"},
     "TGEMV_BIAS": {"TGEMV_BIAS"},
     "TGEMV_ACC": {"TGEMV_ACC"},
     "TGEMV_MX": {"TGEMV_MX"},
+    "TGEMV_MX_BIAS": {"TGEMV_MX_BIAS"},
+    "TGEMV_MX_ACC": {"TGEMV_MX_ACC"},
 }
 
 SCALAR_FAMILY_HANDLERS = {
@@ -156,6 +165,7 @@ SCALAR_FAMILY_HANDLERS = {
         "StoreConditional",
         "AtomicReadModifyWrite",
         "CompareAndSwap",
+        "ExecuteScalarDMACopy64",
     },
     "BRU": {
         "ConditionHolds",
@@ -201,7 +211,6 @@ TILE_OPERAND_FIELDS = {
     "source1",
     "source2",
     "source3",
-    "pipe",
     "address",
     "scalar0",
     "scalar1",
@@ -342,9 +351,9 @@ def expand_number_entries(entries: list) -> set[int]:
 
 def main() -> int:
     scalar = load("spec/catalog/scalar-forms.json")
+    command = load("spec/catalog/command-forms.json")
     system_registers = load("spec/catalog/system-registers.json")
     tile = load("spec/catalog/tile-operations.json")
-    crosscheck = load("spec/evidence/independent-tile-crosscheck.json")
     reconciliation = load("spec/evidence/public-source-reconciliation.json")
     requirements = load("spec/requirements.json")["requirements"]
     profile_catalog = load("spec/profile-hooks.json")
@@ -371,6 +380,21 @@ def main() -> int:
         "scalar catalog top-level schema drift",
     )
     require(scalar["schema_version"] == 2, "unsupported scalar catalog schema")
+    require(
+        set(command)
+        == {
+            "form_count",
+            "forms",
+            "isa",
+            "operand_field_count",
+            "operand_piece_count",
+            "schema_version",
+            "semantic_handler_count",
+            "surface",
+        },
+        "command catalog top-level schema drift",
+    )
+    require(command["schema_version"] == 1, "unsupported command catalog schema")
     require(specification["specification"]["name"] == isa_name, "wrong ISA name")
     require(
         specification["specification"]["normative"] is True,
@@ -386,7 +410,7 @@ def main() -> int:
     )
     require(
         specification["maturity"]["instruction_dispatch"]
-        == "all-473-scalar-forms-and-111-tile-operations-executable",
+        == "all-474-scalar-forms-107-command-forms-and-120-tile-operations-executable",
         "instruction dispatch maturity must match the complete checked catalogs",
     )
     require(
@@ -401,8 +425,8 @@ def main() -> int:
     )
     require(
         specification["maturity"]["system_state"]
-        == "implemented-with-explicit-privilege-time-and-reset",
-        "system maturity must record privilege, time, and reset closure",
+        == "implemented-with-explicit-acr-time-and-reset",
+        "system maturity must record ACR, time, and reset closure",
     )
     require(
         specification["maturity"]["memory_order"]
@@ -416,9 +440,9 @@ def main() -> int:
             "implementation": "asl/profiles/pto-v0.asl",
             "conformance_tests": "tests/asl/profile-tests.asl",
             "numeric_model": "deterministic-raw-carrier-reference",
-            "memory_model": "identity-translation-with-user-protected-region",
+            "memory_model": "identity-translation-with-acr2-protected-region",
             "reset_model": "explicit-reference-reset",
-            "privilege_model": "user-supervisor-machine",
+            "access_control_model": "acr0-to-acr15",
             "time_model": "one-tick-per-decoded-attempt",
         },
         "specification active-profile record drift",
@@ -436,11 +460,15 @@ def main() -> int:
         "specification PTO-TSO record drift",
     )
     require(
-        specification["architecture"]["scalar_forms"] == 473,
+        specification["architecture"]["scalar_forms"] == 474,
         "status record scalar count drift",
     )
     require(
-        specification["architecture"]["system_register_definitions"] == 52,
+        specification["architecture"]["command_forms"] == 107,
+        "status record command count drift",
+    )
+    require(
+        specification["architecture"]["system_register_definitions"] == 54,
         "status record system-register count drift",
     )
     require(
@@ -451,35 +479,31 @@ def main() -> int:
     forms = scalar["forms"]
     family_constraints = scalar["family_constraints"]
     require(scalar["isa"] == isa_name, "scalar catalog has wrong ISA identity")
-    require(scalar["form_count"] == len(forms) == 473, "scalar form count must be 473")
+    require(scalar["form_count"] == len(forms) == 474, "scalar form count must be 474")
     require(
         scalar["operand_field_count"] == 45, "scalar operand field count must be 45"
     )
     require(
-        scalar["operand_piece_count"] == 1865, "scalar operand piece count must be 1865"
+        scalar["operand_piece_count"] == 1867, "scalar operand piece count must be 1867"
     )
     require(
         scalar["form_constraint_count"] == 3,
         "scalar form constraint count must be 3",
     )
     require(
-        scalar["family_constraint_count"] == len(family_constraints) == 2,
-        "scalar family constraint count must be 2",
+        scalar["family_constraint_count"] == len(family_constraints) == 0,
+        "scalar family constraints must be empty",
     )
     require(
-        scalar["semantic_handler_count"] == 67,
-        "scalar semantic handler count must be 67",
-    )
-    require(
-        all(row["mnemonic"] != "DMA" for row in forms),
-        "DMA must remain outside the accepted scalar surface",
+        scalar["semantic_handler_count"] == 68,
+        "scalar semantic handler count must be 68",
     )
     form_ids = [row["form_id"] for row in forms]
     require(len(form_ids) == len(set(form_ids)), "scalar form IDs must be unique")
     require(
         Counter(row["semantic_family"] for row in forms)
         == Counter(
-            {"AGU": 183, "ALU": 107, "AMO": 52, "BRU": 66, "FSU": 30, "SYS": 35}
+            {"AGU": 183, "ALU": 107, "AMO": 53, "BRU": 66, "FSU": 30, "SYS": 35}
         ),
         "scalar family counts changed",
     )
@@ -506,10 +530,7 @@ def main() -> int:
             f"AGU {key} classification drift",
         )
     family_constraint_applications: list[tuple[str, str]] = []
-    expected_family_constraints = {
-        "agu-distinct-result-selectors": 57,
-        "agu-store-update-data-distinct": 28,
-    }
+    expected_family_constraints = {}
     require(
         {constraint["id"] for constraint in family_constraints}
         == set(expected_family_constraints),
@@ -591,8 +612,8 @@ def main() -> int:
     require(
         scalar["family_constraint_application_count"]
         == len(family_constraint_applications)
-        == 85,
-        "scalar family constraint application count must be 85",
+        == 0,
+        "scalar family constraint application count must be zero",
     )
     require(
         len(family_constraint_applications) == len(set(family_constraint_applications)),
@@ -777,6 +798,105 @@ def main() -> int:
         "scalar overlap review set must contain exactly three constrained aliases",
     )
 
+    command_forms = command["forms"]
+    require(command["isa"] == isa_name, "command catalog has wrong ISA identity")
+    require(command["surface"] == "command-and-boundary", "wrong command surface")
+    require(
+        command["form_count"] == len(command_forms) == 107,
+        "command form count must be 107",
+    )
+    require(command["operand_field_count"] == 58, "command operand-field count drift")
+    require(command["operand_piece_count"] == 197, "command operand-piece count drift")
+    require(command["semantic_handler_count"] == 22, "command handler count drift")
+    require(
+        Counter(row["semantic_family"] for row in command_forms)
+        == Counter({"CMD": 82, "BBD": 25}),
+        "command family counts changed",
+    )
+    require(
+        Counter(row["length_bits"] for row in command_forms)
+        == Counter({16: 10, 32: 75, 48: 13, 64: 9}),
+        "command length distribution changed",
+    )
+    command_ids = [row["form_id"] for row in command_forms]
+    require(len(command_ids) == len(set(command_ids)), "command form IDs must be unique")
+    for row in command_forms:
+        require(
+            set(row)
+            == {
+                "asm", "constraints", "encoding", "encoding_kind", "fields",
+                "form_id", "length_bits", "mnemonic", "semantic_family",
+                "semantic_group", "semantic_handler", "semantic_summary", "status",
+            },
+            f"command form schema drift for {row.get('form_id', '<unknown>')}",
+        )
+        require(row["status"] == "accepted", f"non-accepted command form {row['form_id']}")
+        require(row["length_bits"] in {16, 32, 48, 64}, f"bad command width {row['form_id']}")
+        require(row["semantic_summary"].strip(), f"missing command summary {row['form_id']}")
+        covered_encoding_bits: set[int] = set()
+        for part in row["encoding"]:
+            require(
+                set(part) == {"index", "mask", "match", "width_bits"},
+                f"command encoding schema drift for {row['form_id']}",
+            )
+            width = part["width_bits"]
+            low = part["index"] * 32
+            require(width in {16, 32, 48}, f"bad command encoding part width {row['form_id']}")
+            require(low + width <= row["length_bits"], f"command encoding exceeds form {row['form_id']}")
+            part_bits = set(range(low, low + width))
+            require(not covered_encoding_bits & part_bits, f"overlapping command encoding parts {row['form_id']}")
+            covered_encoding_bits.update(part_bits)
+            mask = int(part["mask"], 16)
+            match = int(part["match"], 16)
+            require(mask < 1 << width and match < 1 << width, f"command encoding exceeds part {row['form_id']}")
+            require(match & ~mask == 0, f"command match sets unmasked bits {row['form_id']}")
+        field_names: set[str] = set()
+        for field in row["fields"]:
+            require(
+                set(field) == {"name", "pieces", "signedness", "width"},
+                f"command field schema drift in {row['form_id']}",
+            )
+            require(field["name"] not in field_names, f"duplicate command field {row['form_id']}")
+            field_names.add(field["name"])
+            require(field["signedness"] in {"encoding-defined", "signed", "unsigned"}, f"bad command signedness {row['form_id']}")
+            value_bits: set[int] = set()
+            instruction_bits: set[int] = set()
+            for piece in field["pieces"]:
+                require(set(piece) == {"instruction_lsb", "value_lsb", "width"}, f"command piece schema drift {row['form_id']}")
+                ibits = set(range(piece["instruction_lsb"], piece["instruction_lsb"] + piece["width"]))
+                vbits = set(range(piece["value_lsb"], piece["value_lsb"] + piece["width"]))
+                require(ibits and max(ibits) < row["length_bits"], f"command field exceeds form {row['form_id']}")
+                require(not instruction_bits & ibits and not value_bits & vbits, f"overlapping command field pieces {row['form_id']}")
+                instruction_bits.update(ibits)
+                value_bits.update(vbits)
+            require(
+                value_bits
+                and value_bits
+                == set(range(min(value_bits), field["width"])),
+                f"non-contiguous command value {row['form_id']}",
+            )
+        for constraint in row["constraints"]:
+            require(set(constraint) == {"field", "operator", "value"}, f"command constraint schema drift {row['form_id']}")
+            require(constraint["field"] in field_names and constraint["operator"] == "not-equal", f"invalid command constraint {row['form_id']}")
+
+    for scalar_row in forms:
+        scalar_mask = int(scalar_row["encoding"][0]["mask"], 16)
+        scalar_match = int(scalar_row["encoding"][0]["match"], 16)
+        for command_row in command_forms:
+            if scalar_row["length_bits"] != command_row["length_bits"]:
+                continue
+            command_mask = 0
+            command_match = 0
+            for part in command_row["encoding"]:
+                shift = part["index"] * 32
+                command_mask |= int(part["mask"], 16) << shift
+                command_match |= int(part["match"], 16) << shift
+            common = scalar_mask & command_mask
+            require(
+                scalar_match & common != command_match & common,
+                f"scalar/command decode overlap: {scalar_row['form_id']} and {command_row['form_id']}",
+            )
+
     operations = tile["operations"]
     require(
         set(tile)
@@ -794,16 +914,16 @@ def main() -> int:
     require(tile["schema_version"] == 2, "unsupported tile catalog schema")
     require(tile["isa"] == isa_name, "tile catalog has wrong ISA identity")
     require(
-        tile["operation_count"] == len(operations) == 111,
-        "tile operation count must be 111",
+        tile["operation_count"] == len(operations) == 120,
+        "tile operation count must be 120",
     )
     require(
-        len({row["name"] for row in operations}) == 111,
+        len({row["name"] for row in operations}) == 120,
         "tile operation names must be unique",
     )
     require(
         Counter(row["family"] for row in operations)
-        == Counter({"TEPL": 97, "TMA": 6, "CUBE": 8}),
+        == Counter({"TEPL": 98, "TMA": 9, "CUBE": 13}),
         "tile family counts changed",
     )
     for family in ("TEPL", "TMA", "CUBE"):
@@ -884,11 +1004,7 @@ def main() -> int:
                 set(referenced_operands) == set(operand_fields),
                 f"unused tile operand metadata for {row['name']}",
             )
-            if "result" in row:
-                require(
-                    row["result"] == "value" and row["name"] == "TALLOC",
-                    f"invalid tile result binding for {row['name']}",
-                )
+            require("result" not in row, f"direct tile operation returns a scalar for {row['name']}")
 
     tepl_accepted = {
         int(row["selector"], 0) if isinstance(row["selector"], str) else row["selector"]
@@ -979,8 +1095,8 @@ def main() -> int:
     )
     register_rows = system_registers["registers"]
     require(
-        system_registers["register_definition_count"] == len(register_rows) == 52,
-        "system-register definition count must be 52",
+        system_registers["register_definition_count"] == len(register_rows) == 54,
+        "system-register definition count must be 54",
     )
     register_names: set[str] = set()
     canonical_registers: set[int] = set()
@@ -1188,7 +1304,7 @@ def main() -> int:
     require(
         "ScalarRegisterOperandsLegal(instruction, form)" in dispatch_body
         and "SetFault(Fault_TileLegality, ReadPC())" in dispatch_body,
-        "scalar dispatch does not preflight Reg5 tile bridges",
+        "scalar dispatch does not validate Reg5 operands",
     )
     require(
         "readonly func ScalarRegisterOperandsLegal" in generated_tile_dispatch,
@@ -1204,12 +1320,12 @@ def main() -> int:
     )
     require(
         re.search(r"\bassert\b", re.sub(r"//.*", "", scalar_operands_body)) is None,
-        "Reg5 tile-bridge legality must not use ASL assertions",
+        "Reg5 operand legality must not use ASL assertions",
     )
     executable_family_counts = {
         "AGU": 183,
         "ALU": 107,
-        "AMO": 52,
+        "AMO": 53,
         "BRU": 66,
         "FSU": 30,
         "SYS": 35,
@@ -1255,12 +1371,12 @@ def main() -> int:
     )
     test_body = re.sub(r"//.*", "", test_body)
     require(
-        "TestScalarFamilyConstraints" in test_body
+        "TestScalarAliasingOrder" in test_body
         and "distinct_load_status" in test_body
         and "overlap_load_status" in test_body
         and "distinct_store_status" in test_body
         and "overlap_store_status" in test_body,
-        "scalar family constraints lack positive and negative execution witnesses",
+        "scalar AGU aliasing order lacks executable witnesses",
     )
     for handler in sorted({row["semantic_handler"] for row in forms}):
         require(
@@ -1314,71 +1430,6 @@ def main() -> int:
             f"missing system-state handler {handler}",
         )
 
-    evidence_rows = crosscheck["operations"]
-    require(
-        set(crosscheck)
-        == {
-            "commit",
-            "license",
-            "operation_count",
-            "operations",
-            "policy",
-            "schema_version",
-            "source_class",
-            "worktree_dirty",
-        },
-        "independent evidence top-level schema drift",
-    )
-    require(crosscheck["schema_version"] == 1, "unsupported evidence schema")
-    require(
-        crosscheck["operation_count"] == len(evidence_rows) == 111,
-        "independent evidence must cover 111 operations",
-    )
-    require(
-        {row["name"] for row in evidence_rows} == {row["name"] for row in operations},
-        "evidence name drift",
-    )
-    require(
-        {row["disposition"] for row in evidence_rows}
-        <= {"agree", "conflict", "incomplete", "ignored"},
-        "invalid independent-evidence disposition",
-    )
-    require(
-        Counter(row["disposition"] for row in evidence_rows)
-        == Counter({"agree": 97, "incomplete": 13, "conflict": 1}),
-        "independent evidence disposition counts changed",
-    )
-    require(
-        re.fullmatch(r"[0-9a-f]{40}", crosscheck["commit"]) is not None,
-        "independent evidence commit must be full SHA",
-    )
-    require(
-        isinstance(crosscheck["worktree_dirty"], bool),
-        "independent evidence dirty flag must be boolean",
-    )
-    for row in evidence_rows:
-        require(
-            set(row) >= {"disposition", "name", "reason"},
-            f"evidence schema drift for {row.get('name', '<unknown>')}",
-        )
-        if "document" in row:
-            require(
-                re.fullmatch(r"[A-Z0-9_.]+\.md", row["document"]) is not None,
-                f"non-anonymized evidence document for {row['name']}",
-            )
-            require(
-                re.fullmatch(r"[0-9a-f]{64}", row["sha256"]) is not None,
-                f"bad evidence hash for {row['name']}",
-            )
-    require(
-        crosscheck["license"] == "proprietary-no-project-license",
-        "private evidence license must not be overstated",
-    )
-    require(
-        crosscheck["source_class"] == "private-independent-tile-reference",
-        "independent evidence source class drift",
-    )
-
     reconciliation_check = subprocess.run(
         [str(ROOT / "scripts" / "generate-public-source-reconciliation"), "--check"],
         cwd=ROOT,
@@ -1399,6 +1450,7 @@ def main() -> int:
             "public_repository",
             "public_sources",
             "public_tile_symbol_inventory",
+            "excluded_public_tile_operations",
             "scalar_forms",
             "schema_version",
             "summary",
@@ -1416,7 +1468,7 @@ def main() -> int:
     )
     require(
         set(reconciliation["policy"])
-        == {"authority", "external_isa_use", "private_evidence_use", "public_api_use"},
+        == {"authority", "public_api_use"},
         "public reconciliation policy schema drift",
     )
     require(
@@ -1493,11 +1545,11 @@ def main() -> int:
 
     scalar_reconciliation = reconciliation["scalar_forms"]
     require(
-        len(scalar_reconciliation) == len(forms) == 473,
-        "public reconciliation must cover all 473 scalar forms",
+        len(scalar_reconciliation) == len(forms) == 474,
+        "public reconciliation must cover all 474 scalar forms",
     )
     scalar_by_id = {row["form_id"]: row for row in scalar_reconciliation}
-    require(len(scalar_by_id) == 473, "duplicate reconciled scalar form ID")
+    require(len(scalar_by_id) == 474, "duplicate reconciled scalar form ID")
     require(
         set(scalar_by_id) == {row["form_id"] for row in forms},
         "reconciled scalar form IDs drifted from the catalog",
@@ -1523,25 +1575,21 @@ def main() -> int:
 
     tile_reconciliation = reconciliation["tile_operations"]
     require(
-        len(tile_reconciliation) == len(operations) == 111,
-        "public reconciliation must cover all 111 tile operations",
+        len(tile_reconciliation) == len(operations) == 120,
+        "public reconciliation must cover all 120 direct tile operations",
     )
     tile_reconciliation_by_name = {row["name"]: row for row in tile_reconciliation}
-    require(len(tile_reconciliation_by_name) == 111, "duplicate reconciled tile operation")
+    require(len(tile_reconciliation_by_name) == 120, "duplicate reconciled tile operation")
     require(
         set(tile_reconciliation_by_name) == {row["name"] for row in operations},
         "reconciled tile operation names drifted from the catalog",
     )
-    evidence_by_name = {row["name"]: row for row in evidence_rows}
     public_aligned = {
         "TAXPY",
         "TDEINTERLEAVE",
         "THISTOGRAM",
         "TPARTARGMAX",
         "TPARTARGMIN",
-        "TPUSH",
-        "TPOP",
-        "TFREE",
     }
     explicit_layer_difference = {
         "TPREFETCH",
@@ -1549,15 +1597,26 @@ def main() -> int:
         "TCONCAT",
         "TINTERLEAVE",
         "TSORT",
+        "TPUSH",
+        "TPOP",
         "TALLOC",
+        "TFREE",
     }
-    raw_open = {
-        row["name"] for row in evidence_rows if row["disposition"] in {"incomplete", "conflict"}
-    }
+    excluded_public_rows = reconciliation["excluded_public_tile_operations"]
+    excluded_by_name = {row["name"]: row for row in excluded_public_rows}
     require(
-        raw_open == public_aligned | explicit_layer_difference,
-        "every raw independent-evidence gap must have an explicit public closure",
+        set(excluded_by_name) == set(),
+        "source-API-only tile exclusion set drift",
     )
+    for name, row in excluded_by_name.items():
+        require(
+            set(row) == {"disposition", "name", "public_symbol", "resolution"},
+            f"excluded public tile schema drift for {name}",
+        )
+        require(row["public_symbol"] == name and row["public_symbol"] in public_symbols,
+                f"excluded public tile symbol drift for {name}")
+        require(row["disposition"] == "source-api-only-not-a-direct-operation" and row["resolution"],
+                f"excluded public tile disposition is not closed for {name}")
     for operation in operations:
         name = operation["name"]
         row = tile_reconciliation_by_name[name]
@@ -1568,7 +1627,6 @@ def main() -> int:
                 "closure_status",
                 "family",
                 "name",
-                "private_disposition",
                 "public_symbol",
                 "public_symbol_relation",
                 "resolution",
@@ -1579,48 +1637,57 @@ def main() -> int:
         require(row["closure_status"] == "closed", f"open tile source disposition: {name}")
         require(row["family"] == operation["family"], f"tile family drift for {name}")
         require(row["selector"] == operation.get("selector"), f"tile selector drift for {name}")
-        require(
-            row["private_disposition"] == evidence_by_name[name]["disposition"],
-            f"raw evidence disposition drift for {name}",
-        )
+        expected_symbol = "TSORT32" if name == "TSORT" else name
         expected_basis = (
             "public-api-aligned"
             if name in public_aligned
             else "explicit-layer-difference"
             if name in explicit_layer_difference
-            else "existing-pto-contract-and-private-agreement"
+            else "catalog-defined-direct-binary"
+            if expected_symbol not in public_symbols
+            else "public-source-supported"
         )
         require(row["closure_basis"] == expected_basis, f"wrong closure basis for {name}")
-        expected_symbol = "TSORT32" if name == "TSORT" else name
-        expected_symbol_relation = "documented-spelling-mapping" if name == "TSORT" else "exact-name"
-        require(row["public_symbol"] == expected_symbol, f"wrong public symbol for {name}")
-        require(
-            row["public_symbol"] in public_symbols,
-            f"public symbol is absent from the audited inventory for {name}",
+        expected_symbol_relation = (
+            "documented-spelling-mapping" if name == "TSORT"
+            else "catalog-defined" if expected_basis == "catalog-defined-direct-binary"
+            else "exact-name"
         )
+        require(row["public_symbol"] == expected_symbol, f"wrong public symbol for {name}")
+        if expected_basis != "catalog-defined-direct-binary":
+            require(
+                row["public_symbol"] in public_symbols,
+                f"public symbol is absent from the audited inventory for {name}",
+            )
         require(
             row["public_symbol_relation"] == expected_symbol_relation,
             f"wrong public symbol relation for {name}",
         )
         require(bool(row["resolution"]), f"missing public reconciliation rationale for {name}")
     require(
-        {row["public_symbol"] for row in tile_reconciliation} == set(public_symbols),
+        {
+            row["public_symbol"]
+            for row in tile_reconciliation
+            if row["public_symbol_relation"] != "catalog-defined"
+        }
+        == set(public_symbols),
         "audited public tile symbol inventory is not used exactly once",
     )
     expected_reconciliation_summary = {
-        "scalar_forms": {"count": 473, "closed": 473, "open": 0},
+        "scalar_forms": {"count": 474, "closed": 474, "open": 0},
         "tile_operations": {
-            "count": 111,
-            "closed": 111,
+            "count": 120,
+            "closed": 120,
             "open": 0,
             "public_exact_name": 110,
             "public_spelling_mapping": 1,
         },
-        "private_crosscheck_raw": {"agree": 97, "incomplete": 13, "conflict": 1},
-        "private_crosscheck_closure": {
-            "existing_pto_contract": 97,
-            "public_api_aligned": 8,
-            "explicit_layer_difference": 6,
+        "excluded_public_tile_operations": {"count": 0, "closed": 0},
+        "closure_basis": {
+            "public_source_supported": 97,
+            "catalog_defined_direct_binary": 9,
+            "public_api_aligned": 5,
+            "explicit_layer_difference": 9,
             "open": 0,
         },
     }
@@ -1644,8 +1711,8 @@ def main() -> int:
     require(tso_requirement is not None, "missing PTO-TSO requirement")
     require(
         tso_requirement["source"]
-        == "https://github.com/herd/herdtools7/blob/0b6e09066d4186c8a26e02e3bb884bd664d5eb34/herd/libdir/x86tso.cat",
-        "PTO-TSO comparison source must match the audited herdtools7 pin",
+        == "https://github.com/PTO-ISA/pto-spec/blob/main/docs/memory-model.md",
+        "PTO-TSO requirement must point at the self-contained memory model",
     )
     for requirement in requirements:
         require(
@@ -1814,23 +1881,20 @@ def main() -> int:
         all(
             name in types_body
             for name in (
-                "PrivilegeLevel",
-                "Privilege_User",
-                "Privilege_Supervisor",
-                "Privilege_Machine",
+                "AccessControlRing",
             )
         )
-        and "_CurrentPrivilege" in state_body
-        and "CurrentPrivilege()" in state_body,
-        "active profile lacks explicit privilege state",
+        and "_CurrentACR" in state_body
+        and "CurrentACR()" in state_body,
+        "active profile lacks explicit access-control-ring state",
     )
     require(
-        "SystemRegisterAccessPermitted(address, FALSE, CurrentPrivilege())"
+        "SystemRegisterAccessPermitted(address, FALSE, CurrentACR())"
         in system_register_body
-        and "SystemRegisterAccessPermitted(address, TRUE, CurrentPrivilege())"
+        and "SystemRegisterAccessPermitted(address, TRUE, CurrentACR())"
         in system_register_body
         and "Fault_IllegalInstruction" in system_register_body,
-        "system-register privilege checks are not enforced on read and write",
+        "system-register ACR checks are not enforced on read and write",
     )
     require(
         "ResetProfileState();" in main_test_body
@@ -1879,10 +1943,10 @@ def main() -> int:
     )
 
     print(
-        "catalog checks passed: 473 scalar forms, 45 operand fields, 1,865 field pieces, "
-        "3 form constraints, 2 family constraints with 85 applications, "
-        "3 constrained overlaps, 52 system-register definitions, 13 trap numbers, and "
-        "111 tile operations with complete handler and executable feature coverage; "
+        "catalog checks passed: 474 scalar forms, 45 operand fields, 1,867 field pieces, "
+        "3 form constraints, no family constraints, "
+        "3 constrained overlaps, 54 system-register definitions, 13 trap numbers, and "
+        "107 command forms and 120 tile operations with complete handler and executable feature coverage; "
         f"{len(profile_names)} profile hooks are declared, invoked, and traceable"
     )
     return 0

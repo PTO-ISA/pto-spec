@@ -9,107 +9,81 @@ Sources are applied in this order:
 
 1. Normative ASL, the selected PTO v0 implementation profile, and accepted
    architecture decisions in this repository.
-2. PTO-owned machine-readable scalar and tile catalogs under `spec/catalog/`.
-3. The pinned public PTO ISA manual and public `PTO_INST` declarations, as
-   classified by `spec/evidence/public-source-reconciliation.json`.
-4. An anonymized private tile-document snapshot as independent cross-check evidence.
-5. Backend implementations as non-normative executable evidence.
-6. Public specifications for other ISAs as review-only design comparisons.
+2. PTO-owned machine-readable catalogs under `spec/catalog/`.
+3. PTO-owned requirement, coverage, profile, and validation metadata under
+   `spec/`.
+4. Backend implementations and performance models, only as non-normative
+   implementation evidence.
 
-A lower-precedence source cannot override a higher-precedence source. Raw
-private disagreements remain unchanged in
-`spec/evidence/independent-tile-crosscheck.json`; public architecture closure is
-recorded separately in `spec/evidence/public-source-reconciliation.json` and an
-accepted architecture decision.
+A lower-precedence source cannot override a higher-precedence source. The PTO
+ASL and catalogs are the golden specification for accepted encodings and
+architectural behavior.
 
-## Normative catalog
+## Normative catalogs
 
-The scalar catalog contains 473 accepted forms across AGU, ALU, AMO, BRU, FSU,
-and SYS. Every row has a stable PTO form ID, assembly grammar, instruction width,
-semantic family/group, exact mask/match encoding, operand-field pieces,
-signedness, form-local constraints, and catalog-selected family constraints.
-The generated ASL decoder provides a positive witness for every form, every
-operand extraction, every current family-rule application, and its checked ASL
-semantic handler. Negative witnesses prove every declared constraint can reject.
+The scalar catalog contains 474 accepted forms across AGU, ALU, AMO, BRU, FSU,
+and SYS. Every row has a stable PTO form ID, assembly grammar, instruction
+width, semantic family/group, exact mask/match encoding, operand-field pieces,
+signedness, form-local constraints, and semantic handler. The generated ASL
+decoder provides a positive witness for every form and every operand
+extraction.
 
-The system-register catalog defines 52 base, context-family, and debug-register
-entries in a canonical 24-bit address domain, plus 13 trap-number identities.
-Generated ASL witnesses validate every register access class.
+The block/command catalog contains 107 accepted forms. It covers block start,
+split, argument, dimension, control attribute, data attribute, scalar IO, tile
+IO, hint, stop, and context-control forms. Vector-only block and queue forms are
+not part of the PTO ISA.
 
-The direct tile catalog contains exactly 111 operations: 97 TEPL, 6 TMA, and
-8 CUBE. Allocated and reserved selectors are part of the PTO contract, and the
+The direct tile catalog contains exactly 120 operations: 98 TEPL, 9 TMA, and 13
+CUBE. Allocated and reserved selectors are part of the PTO contract, and the
 generated ASL selector decoder witnesses every accepted operation.
 
-Neither catalog depends on an external repository or release label. Changes to
-them are normative PTO changes and require the same review and validation as ASL
-semantics.
+The system-register catalog defines 54 base, context-family, translation,
+interrupt, and debug-register entries in a canonical 24-bit address domain,
+plus 13 trap-number identities. Generated ASL witnesses validate every register
+access class.
+
+Catalog changes are normative PTO changes and require the same review and
+validation as ASL semantics.
 
 ## Active implementation profile
 
 `spec/profile-hooks.json` names the active `pto-v0` profile and is the exact
-registry for implementation-defined interfaces. Its 34 entries must equal the
-ASL `impdef` declarations, the `implementation func` overrides in
+registry for implementation-defined interfaces. Its entries must equal the ASL
+`impdef` declarations, the `implementation func` overrides in
 `asl/profiles/pto-v0.asl`, and the direct calls in
-`tests/asl/profile-tests.asl`. The profile fixes numeric, memory, privilege,
-time, and reset behavior; its deterministic raw numeric carrier is not an
-IEEE-754 claim. ADR-0005 records the selection and replacement rules.
+`tests/asl/profile-tests.asl`.
 
-An alternative profile cannot silently alter PTO v0. It needs a distinct
-identity, a complete implementation of the registry, and conformance evidence
-for every replaced interface.
+The profile fixes numeric, memory, ACR, time, and reset behavior. Its
+deterministic raw numeric carrier is not an IEEE-754 claim. An alternative
+profile cannot silently alter PTO v0; it needs a distinct identity, a complete
+implementation of the registry, and conformance evidence for every replaced
+interface.
 
-## External ISA comparison
+## Instruction reference
 
-Arm ASL and other public ISA specifications may be used to identify questions
-that PTO must answer, such as load/store destination and writeback overlap. A
-shared mnemonic or design pattern does not import the other ISA's constraint,
-fault, constrained-unpredictable choice, or execution order. Any retained rule
-must be stated in PTO-owned architecture text, represented in the PTO catalog or
-ASL, and covered by PTO tests. ADR-0004 applies this policy to scalar family
-constraints.
+`docs/instructions/` is generated from the canonical catalogs. It is
+human-readable reference material, not a separate source of truth. Regenerate it
+after changing instruction catalogs and keep the generated output fresh in the
+same change.
 
-`docs/arm-asl-comparison.md` records the bounded official-source comparison for
-prefetch and load/store overlap hazards. It is review evidence only; ADR-0004,
-the scalar catalog, generated legality, and tests contain the retained PTO
-decisions.
+## Architecture ownership
 
-The pinned `herdtools7` `x86tso.cat` relation structure is the public comparison
-source for PTO-TSO. PTO defines its own event classes, ordering annotations,
-fence masks, atomicity, candidate validity, and tests in
-`docs/memory-model.md`; no x86 instruction behavior is imported. ADR-0006
-records this boundary.
+PTO operations execute directly against explicit scalar, block, memory, and tile
+state. Block control state is visible through TPC, BPC, block active/body flags,
+arguments, dimensions, IO bindings, and attributes. Direct tile operations have
+explicit destinations, sources, dimensions, addresses, and attributes.
 
-## One-level execution
+PTO has no vector instruction execution surface. Adding vector instructions or
+target-specific behavior requires a new PTO requirement, catalog update, ASL
+state and semantics, executable tests, and profile evidence.
 
-PTO operations execute directly against explicit scalar, memory, and tile
-operands. The architecture has no nested programmable tile or vector body,
-implicit body dispatch, body-local register file, or body replay state.
+## Evidence policy
 
-TEPL, TMA, and CUBE operations have explicit destinations, sources, dimensions,
-addresses, and attributes. Selector identities are normative; implementation
-command queues and pipelines are not.
+Evidence files under `spec/evidence/` support audit and change control. They do
+not outrank the PTO-owned ASL, catalogs, or accepted architecture decisions.
+Do not publish non-public repository names, local paths, third-party prose,
+source code, diagrams, or comparison-specific identities as normative PTO
+material.
 
-## Independent evidence policy
-
-The independent reference is private and has no project-wide redistribution
-license. The cross-check records only anonymized document names, hashes, and
-review dispositions. No project identity, repository path, prose, source, or
-diagram from that reference is copied here.
-
-The repository intentionally ships no private-source importer. The checked-in
-ledger is retained review provenance, not a publicly reproducible source input.
-
-Where independent evidence and PTO disagree, the canonical PTO ASL and catalogs
-prevail. ADR-0007 closes the current `TPREFETCH` disposition: PTO defines a
-destination-free hint that performs applicable address checks but writes no
-tile state, while the public typed intrinsic's destination-shaped parameter is
-a lowering context rather than a direct architectural destination.
-
-## Public source snapshot
-
-The audited public PTO snapshot is commit
-`712cbe9f23df5d5362be5e8327599f4285317473` of
-`https://github.com/hw-native-sys/pto-isa`. The generated public reconciliation
-ledger records content hashes and a disposition for all 473 scalar forms and
-111 tile operations. ADR-0007 defines the boundary between its typed source API
-and this repository's direct binary architecture.
+Where evidence and PTO-owned semantics disagree, the PTO ASL and catalogs
+prevail after a reviewed architecture decision.

@@ -13,6 +13,7 @@ begin
             _Tiles[[destination]].payload[[element]] = value;
         end;
     end;
+    _Tiles[[destination]].contents_defined = TRUE;
 end;
 
 func TTRI(destination: TileIndex, upper: boolean,

@@ -215,21 +215,24 @@ TILE_LAYER_RESOLUTIONS = {
         "The public intrinsic exposes value and index destinations plus left and right value/index sources.",
     ),
     "TPUSH": (
-        "public-api-aligned",
-        "The public intrinsic has typed pipe and tile/global producer overloads corresponding to direct pipe push behavior.",
+        "explicit-layer-difference",
+        "The typed source helper is a producer-side API; the direct architecture operation updates explicit TileInfo state and has no hidden pipe state.",
     ),
     "TPOP": (
-        "public-api-aligned",
-        "The public intrinsic has typed pipe and tile consumer overloads corresponding to direct pipe pop behavior.",
+        "explicit-layer-difference",
+        "The typed source helper is a consumer-side API; the direct architecture operation updates explicit TileInfo state and has no hidden pipe state.",
     ),
     "TALLOC": (
         "explicit-layer-difference",
-        "The public typed API accepts a GlobalTensor and returns an event; the direct binary operation claims a pipe slot and returns its address.",
+        "The typed source helper requests storage; the direct architecture operation allocates TileInfo capacity bounded by TILE_CAPACITY and makes contents undefined.",
     ),
     "TFREE": (
-        "public-api-aligned",
-        "The public intrinsic exposes typed pipe and optional global-resource release overloads corresponding to direct pipe release behavior.",
+        "explicit-layer-difference",
+        "The typed source helper releases storage; the direct architecture operation clears the corresponding TileInfo allocation state.",
     ),
+}
+
+EXCLUDED_PUBLIC_TILE_OPERATIONS = {
 }
 
 
@@ -271,21 +274,24 @@ def scalar_rows(forms: list[dict]) -> list[dict]:
     return rows
 
 
-def tile_rows(operations: list[dict], evidence_by_name: dict[str, dict]) -> list[dict]:
+def tile_rows(operations: list[dict]) -> list[dict]:
     rows = []
     for operation in operations:
         name = operation["name"]
-        evidence = evidence_by_name[name]
         public_symbol = "TSORT32" if name == "TSORT" else name
-        if public_symbol not in PUBLIC_TILE_SYMBOLS:
-            raise ValueError(f"tile operation lacks an audited public symbol: {name}")
         if name in TILE_LAYER_RESOLUTIONS:
             closure_basis, resolution = TILE_LAYER_RESOLUTIONS[name]
-        else:
-            closure_basis = "existing-pto-contract-and-private-agreement"
+        elif public_symbol not in PUBLIC_TILE_SYMBOLS:
+            closure_basis = "catalog-defined-direct-binary"
             resolution = (
-                "The canonical PTO operation and anonymized independent observation agree; "
-                "the audited public intrinsic inventory contains the same operation spelling."
+                "The canonical PTO catalog defines this direct binary operation; "
+                "no typed public intrinsic symbol is required for the binary architecture."
+            )
+        else:
+            closure_basis = "public-source-supported"
+            resolution = (
+                "The canonical PTO operation is present in the audited public "
+                "intrinsic inventory with the same operation spelling."
             )
         rows.append(
             {
@@ -294,10 +300,11 @@ def tile_rows(operations: list[dict], evidence_by_name: dict[str, dict]) -> list
                 "selector": operation.get("selector"),
                 "closure_status": "closed",
                 "closure_basis": closure_basis,
-                "private_disposition": evidence["disposition"],
                 "public_symbol": public_symbol,
                 "public_symbol_relation": (
-                    "documented-spelling-mapping" if name == "TSORT" else "exact-name"
+                    "documented-spelling-mapping" if name == "TSORT"
+                    else "exact-name" if public_symbol in PUBLIC_TILE_SYMBOLS
+                    else "catalog-defined"
                 ),
                 "resolution": resolution,
             }
@@ -305,13 +312,24 @@ def tile_rows(operations: list[dict], evidence_by_name: dict[str, dict]) -> list
     return rows
 
 
+def excluded_public_tile_rows() -> list[dict]:
+    return [
+        {
+            "name": name,
+            "public_symbol": name,
+            "disposition": "source-api-only-not-a-direct-operation",
+            "resolution": resolution,
+        }
+        for name, resolution in sorted(EXCLUDED_PUBLIC_TILE_OPERATIONS.items())
+    ]
+
+
 def generate() -> dict:
     scalar = load("spec/catalog/scalar-forms.json")
     tile = load("spec/catalog/tile-operations.json")
-    independent = load("spec/evidence/independent-tile-crosscheck.json")
-    evidence_by_name = {row["name"]: row for row in independent["operations"]}
     scalars = scalar_rows(scalar["forms"])
-    tiles = tile_rows(tile["operations"], evidence_by_name)
+    tiles = tile_rows(tile["operations"])
+    excluded_tiles = excluded_public_tile_rows()
     return {
         "schema_version": 1,
         "public_repository": PUBLIC_REPOSITORY,
@@ -326,8 +344,6 @@ def generate() -> dict:
         "policy": {
             "authority": "PTO ASL, catalogs, and accepted architecture decisions define the direct binary architecture.",
             "public_api_use": "The pinned public PTO repository is source-API and lowering evidence; matching names do not import unmodeled operands or behavior.",
-            "private_evidence_use": "The anonymized private ledger remains raw independent evidence and is not rewritten by this reconciliation.",
-            "external_isa_use": "Arm ASL and other ISA specifications are review-only comparisons; PTO-owned text and tests are required for every retained rule.",
         },
         "public_layer_sources": {
             "shared-scalar-source-layer": ["public-shared-scalar-arith", "public-scalar-control"],
@@ -345,14 +361,16 @@ def generate() -> dict:
                     row["public_symbol_relation"] == "documented-spelling-mapping" for row in tiles
                 ),
             },
-            "private_crosscheck_raw": {
-                "agree": sum(row["disposition"] == "agree" for row in independent["operations"]),
-                "incomplete": sum(row["disposition"] == "incomplete" for row in independent["operations"]),
-                "conflict": sum(row["disposition"] == "conflict" for row in independent["operations"]),
+            "excluded_public_tile_operations": {
+                "count": len(excluded_tiles),
+                "closed": len(excluded_tiles),
             },
-            "private_crosscheck_closure": {
-                "existing_pto_contract": sum(
-                    row["closure_basis"] == "existing-pto-contract-and-private-agreement" for row in tiles
+            "closure_basis": {
+                "public_source_supported": sum(
+                    row["closure_basis"] == "public-source-supported" for row in tiles
+                ),
+                "catalog_defined_direct_binary": sum(
+                    row["closure_basis"] == "catalog-defined-direct-binary" for row in tiles
                 ),
                 "public_api_aligned": sum(row["closure_basis"] == "public-api-aligned" for row in tiles),
                 "explicit_layer_difference": sum(
@@ -363,6 +381,7 @@ def generate() -> dict:
         },
         "scalar_forms": scalars,
         "tile_operations": tiles,
+        "excluded_public_tile_operations": excluded_tiles,
     }
 
 

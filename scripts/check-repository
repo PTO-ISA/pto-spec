@@ -24,20 +24,20 @@ required_files=(
     .codex/skills/pto-asl/SKILL.md
     asl/architecture.asl
     docs/architecture.md
-    docs/arm-asl-comparison.md
     docs/coverage.md
     docs/memory-model.md
     docs/modeling-conventions.md
     docs/normative-sources.md
     docs/profile-contracts.md
     docs/review-checklist.md
-    docs/source-reconciliation.md
+    docs/instructions/index.md
     spec/requirements.json
     spec/catalog/scalar-forms.json
+    spec/catalog/command-forms.json
     spec/catalog/system-registers.json
     spec/catalog/tile-operations.json
-    spec/evidence/independent-tile-crosscheck.json
     spec/evidence/public-source-reconciliation.json
+    scripts/generate-instruction-reference
     scripts/generate-public-source-reconciliation
     tests/README.md
 )
@@ -90,6 +90,7 @@ assembled=$(make --no-print-directory print-asl-sources)
 
 while IFS= read -r path; do
     [[ -n $path ]] || continue
+    [[ -f $path ]] || continue
     printf '%s\n' "$assembled" | grep -Fxq "$path" ||
         fail "ASL source is absent from ASL_SOURCES and is never type-checked: $path"
 done < <(git ls-files asl | grep -E '\.asl$')
@@ -129,4 +130,5 @@ for script in scripts/*; do
 done
 
 python3 scripts/check-catalogs
+python3 scripts/generate-instruction-reference --check
 python3 scripts/check-publication-hygiene

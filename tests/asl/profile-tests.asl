@@ -4,7 +4,7 @@
 func TestConcreteProfile()
 begin
     ResetProfileState();
-    assert CurrentPrivilege() == Privilege_Machine;
+    assert CurrentACR() == 0;
     let reset_time = ReadMonotonicTime();
     assert reset_time == Zeros{PTO_XLEN};
     AdvanceArchitecturalTime();
@@ -77,26 +77,39 @@ begin
     let translated_address = TranslateDataAddress(
         Zeros{PTO_XLEN} + 256, 8, FALSE);
     assert translated_address == Zeros{PTO_XLEN} + 256;
-    SetCurrentPrivilege(Privilege_User);
-    let user_data_permitted = DataAccessPermitted(
+    SetCurrentACR(2);
+    let application_data_permitted = DataAccessPermitted(
         Zeros{PTO_XLEN} + 3064, 8, FALSE);
-    let user_data_denied = DataAccessPermitted(
+    let application_data_denied = DataAccessPermitted(
         Zeros{PTO_XLEN} + 3072, 8, FALSE);
-    assert user_data_permitted;
-    assert !user_data_denied;
+    assert application_data_permitted;
+    assert !application_data_denied;
     assert SystemRegisterAccessPermitted(
-        Zeros{24} + 0x0000, FALSE, CurrentPrivilege());
+        Zeros{24} + 0x0000, FALSE, CurrentACR());
     assert !SystemRegisterAccessPermitted(
-        Zeros{24} + 0x0f00, FALSE, CurrentPrivilege());
+        Zeros{24} + 0x0f00, FALSE, CurrentACR());
     ClearFault();
     - = ReadSystemRegisterAddress(Zeros{24} + 0x0f00);
     assert _LastFault == Fault_IllegalInstruction;
-    SetCurrentPrivilege(Privilege_Machine);
-    let machine_data_permitted = DataAccessPermitted(
+    SetCurrentACR(0);
+    let root_data_permitted = DataAccessPermitted(
         Zeros{PTO_XLEN} + 3072, 8, TRUE);
-    assert machine_data_permitted;
+    assert root_data_permitted;
     assert SystemRegisterAccessPermitted(
-        Zeros{24} + 0x0f00, TRUE, CurrentPrivilege());
+        Zeros{24} + 0x0f00, TRUE, CurrentACR());
+
+    WriteTPC(Zeros{PTO_XLEN} + 0x500);
+    WriteBPC(Zeros{PTO_XLEN} + 0x600);
+    _BlockArgument = Zeros{PTO_XLEN} + 0x77;
+    SaveTrapContext(1, CurrentACR());
+    WriteTPC(Zeros{PTO_XLEN} + 0x700);
+    WriteBPC(Zeros{PTO_XLEN} + 0x800);
+    _BlockArgument = Zeros{PTO_XLEN};
+    let recovered_context = RecoverTrapContext(1);
+    assert recovered_context;
+    assert ReadTPC() == Zeros{PTO_XLEN} + 0x500;
+    assert ReadBPC() == Zeros{PTO_XLEN} + 0x600;
+    assert _BlockArgument == Zeros{PTO_XLEN} + 0x77;
 
     let tile_binary = TileProfileBinary(TileBinary_ADD, TileDataType_U64,
         Zeros{PTO_XLEN} + 2, Zeros{PTO_XLEN} + 3);
@@ -104,6 +117,8 @@ begin
         Zeros{PTO_XLEN} + 2);
     let tile_axpy = TileProfileAxpy(Zeros{PTO_XLEN} + 1,
         Zeros{PTO_XLEN} + 2, Zeros{PTO_XLEN} + 3, TileDataType_U64);
+    let tile_prelu = TileProfilePReLU(Zeros{PTO_XLEN} - 3,
+        Zeros{PTO_XLEN} + 2, TileDataType_S64);
     let tile_compare = TileProfileCompare(TileComparison_LT, TileDataType_S64,
         Zeros{PTO_XLEN} + 2, Zeros{PTO_XLEN} + 3);
     let reduction_initial = TileProfileReductionInitial(
@@ -111,6 +126,7 @@ begin
     assert tile_binary == Zeros{PTO_XLEN} + 5;
     assert tile_unary == Zeros{PTO_XLEN} - 2;
     assert tile_axpy == Zeros{PTO_XLEN} + 7;
+    assert tile_prelu == Zeros{PTO_XLEN} - 6;
     assert tile_compare == Zeros{PTO_XLEN} + 1;
     assert reduction_initial == Zeros{PTO_XLEN};
     let (reduction_sum, reduction_selected) = TileProfileReductionStep(
@@ -139,13 +155,26 @@ begin
     assert matrix_bias == Zeros{PTO_XLEN} + 9;
     assert matrix_scale == Zeros{PTO_XLEN} + 24;
 
+    WriteTPC(Zeros{PTO_XLEN} + 0x120);
+    WriteBPC(Zeros{PTO_XLEN} + 0x100);
+    SetCurrentACR(2);
+    SaveTrapContext(1, CurrentACR());
+    WriteTPC(Zeros{PTO_XLEN} + 0x200);
+    WriteBPC(Zeros{PTO_XLEN} + 0x208);
+    SetCurrentACR(0);
+    let recovered_trap_context = RecoverTrapContext(1);
+    assert recovered_trap_context;
+    assert ReadTPC() == Zeros{PTO_XLEN} + 0x120;
+    assert ReadBPC() == Zeros{PTO_XLEN} + 0x100;
+    assert CurrentACR() == 2;
+
     WriteGPR(1, Zeros{PTO_XLEN} + 0x55);
     Store(Zeros{PTO_XLEN}, 8, Zeros{PTO_XLEN} + 0xaa);
     - = AddInitialWriteEvent(Zeros{PTO_XLEN} + 2048, 8,
         Zeros{PTO_XLEN});
-    SetCurrentPrivilege(Privilege_User);
+    SetCurrentACR(2);
     ResetProfileState();
-    assert CurrentPrivilege() == Privilege_Machine;
+    assert CurrentACR() == 0;
     assert ReadGPR(1) == Zeros{PTO_XLEN};
     assert _MemoryEventCount == 0;
     let reset_memory = LoadUnsigned(Zeros{PTO_XLEN}, 8);
@@ -153,4 +182,7 @@ begin
     let final_reset_time = ReadMonotonicTime();
     assert final_reset_time == Zeros{PTO_XLEN};
     assert _SystemRegisters.version == Zeros{PTO_XLEN} + 1;
+    assert _SystemRegisters.tile_capacity ==
+        Zeros{PTO_XLEN} + PTO_MODEL_MAX_TILE_CAPACITY_BYTES;
+    assert _SystemRegisters.thread_id == Zeros{PTO_XLEN};
 end;

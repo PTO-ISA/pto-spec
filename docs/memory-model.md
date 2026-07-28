@@ -5,11 +5,10 @@ executable definition is `asl/concurrency.asl`. It checks a bounded candidate
 execution rather than pretending that counters attached to a sequential test
 run prove concurrency behavior.
 
-The ASL checker follows the relation structure reviewed in the pinned
-`herdtools7` `x86tso.cat`: per-location order is checked separately from the
+The ASL checker defines per-location order separately from the
 global-happens-before relation. PTO owns the event classes, acquire/release
-rules, fence masks, and atomic contract below. No x86 or Arm instruction
-behavior is imported by reference.
+rules, fence masks, and atomic contract below. No external instruction behavior
+is imported by reference.
 
 ## Candidate execution
 
@@ -96,5 +95,4 @@ seeing the publication store while missing an earlier data store.
   and
 - rejection of a non-contiguous atomic read-modify-write candidate.
 
-ADR-0006 records why PTO uses this axiomatic candidate boundary and how the
-upstream comparison source is constrained.
+ADR-0006 records why PTO uses this axiomatic candidate boundary.

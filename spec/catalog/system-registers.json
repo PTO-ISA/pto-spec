@@ -2,18 +2,18 @@
   "address_bits": 24,
   "canonical_address_bits": 16,
   "isa": "PTO Instruction Set Architecture",
-  "register_definition_count": 52,
+  "register_definition_count": 54,
   "registers": [
     {
       "access": "RW",
       "address": "0x0000",
-      "name": "TP",
+      "name": "THREAD_PTR",
       "scope": "base"
     },
     {
       "access": "RW",
       "address": "0x0001",
-      "name": "GP",
+      "name": "GLOBAL_PTR",
       "scope": "base"
     },
     {
@@ -25,7 +25,7 @@
     {
       "access": "RW",
       "address": "0x0020",
-      "name": "CSTATE",
+      "name": "CORE_STATE",
       "scope": "base"
     },
     {
@@ -56,6 +56,18 @@
       "access": "RW",
       "address": "0x0025",
       "name": "CORE_FEATURE_ENABLE",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x0026",
+      "name": "THREAD_ID",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x0027",
+      "name": "TILE_CAPACITY",
       "scope": "base"
     },
     {

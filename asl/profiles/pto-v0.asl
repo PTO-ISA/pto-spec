@@ -1,10 +1,17 @@
 // PTO-REQ-PROFILE-001: concrete PTO v0 reference profile for every registered
-// numeric, memory, time, reset, and privilege boundary.
+// numeric, memory, time, reset, and access-control-ring boundary.
 
 implementation func ResetProfileState()
 begin
-    for index = 0 to PTO_SCALAR_REGISTER_COUNT - 1 do
+    for index = 0 to PTO_ABSOLUTE_GPR_COUNT - 1 do
         _GPR[[index]] = Zeros{PTO_XLEN};
+    end;
+    for index = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do
+        _TQueue[[index]] = Zeros{PTO_XLEN};
+        _UQueue[[index]] = Zeros{PTO_XLEN};
+    end;
+    for index = 0 to PTO_PREDICATE_REGISTER_COUNT - 1 do
+        _PredicateRegisters[[index]] = Zeros{PTO_XLEN};
     end;
     for index = 0 to PTO_MODEL_MEMORY_BYTES - 1 do
         _Memory[[index]] = Zeros{8};
@@ -16,6 +23,7 @@ begin
     end;
     for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
         _Tiles[[index]].allocated = FALSE;
+        _Tiles[[index]].contents_defined = FALSE;
         _Tiles[[index]].capacity_bytes = 0;
         _Tiles[[index]].rows = 0;
         _Tiles[[index]].columns = 0;
@@ -25,23 +33,13 @@ begin
         _Tiles[[index]].layout = TileLayout_RowMajor;
         _Tiles[[index]].location = TileLocation_Any;
     end;
-    for index = 0 to PTO_PIPE_COUNT - 1 do
-        _Pipes[[index]].configured = FALSE;
-        _Pipes[[index]].base_address = Zeros{PTO_XLEN};
-        _Pipes[[index]].slot_size_bytes = 1;
-        _Pipes[[index]].slot_count = 1;
-        _Pipes[[index]].head = 0;
-        _Pipes[[index]].tail = 0;
-        _Pipes[[index]].count = 0;
-        _Pipes[[index]].producer_claimed = FALSE;
-        _Pipes[[index]].consumer_claimed = FALSE;
-        _Pipes[[index]].producer_slot = 0;
-        _Pipes[[index]].consumer_slot = 0;
-    end;
     _PC = Zeros{PTO_XLEN};
+    _BPC = Zeros{PTO_XLEN};
+    _BlockActive = FALSE;
+    _BlockBodyActive = FALSE;
+    ResetBlockControlState();
     _ReturnAddress = Zeros{PTO_XLEN};
     _CommitArgument = Zeros{PTO_XLEN};
-    _PredicateMask = Zeros{PTO_XLEN};
     _ReservationValid = FALSE;
     _ReservationAddress = Zeros{PTO_XLEN};
     _ReservationSize = 1;
@@ -57,33 +55,51 @@ begin
     _LastControlRequest = ExecutionControl_SendEvent;
     _ControlRequestOperand = Zeros{PTO_XLEN};
     _BreakpointTag = Zeros{5};
-    _TrapAsynchronous = FALSE;
-    _TrapArgumentValid = FALSE;
-    _TrapCause = Zeros{24};
-    _TrapNumber = Zeros{6};
-    _TrapArgument0 = Zeros{PTO_XLEN};
-    _SystemRegisters.tp = Zeros{PTO_XLEN};
-    _SystemRegisters.gp = Zeros{PTO_XLEN};
-    _SystemRegisters.cstate = Zeros{PTO_XLEN};
+    for ring = 0 to PTO_ACR_COUNT - 1 do
+        _ACRTrapAsynchronous[[ring]] = FALSE;
+        _ACRTrapArgumentValid[[ring]] = FALSE;
+        _ACRTrapCause[[ring]] = Zeros{24};
+        _ACRTrapNumber[[ring]] = Zeros{6};
+        _ACRTrapArgument0[[ring]] = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].valid = FALSE;
+        _TrapContexts[[ring]].source_acr = 0;
+        _TrapContexts[[ring]].tpc = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].bpc = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].core_state = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].block_argument = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].commit_argument = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].block_active = FALSE;
+        _TrapContexts[[ring]].block_body_active = FALSE;
+        for queue_index = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do
+            _TrapContexts[[ring]].t_queue[[queue_index]] = Zeros{PTO_XLEN};
+            _TrapContexts[[ring]].u_queue[[queue_index]] = Zeros{PTO_XLEN};
+        end;
+    end;
+    _SystemRegisters.thread_ptr = Zeros{PTO_XLEN};
+    _SystemRegisters.global_ptr = Zeros{PTO_XLEN};
+    _SystemRegisters.core_state = Zeros{PTO_XLEN};
     _SystemRegisters.core_id = Zeros{PTO_XLEN};
+    _SystemRegisters.thread_id = Zeros{PTO_XLEN};
     _SystemRegisters.vendor = Zeros{PTO_XLEN};
     _SystemRegisters.version = Zeros{PTO_XLEN} + 1;
     _SystemRegisters.core_feature = Zeros{PTO_XLEN};
     _SystemRegisters.core_feature_enable = Zeros{PTO_XLEN};
+    _SystemRegisters.tile_capacity = Zeros{PTO_XLEN} +
+        PTO_MODEL_MAX_TILE_CAPACITY_BYTES;
     _SystemRegisters.blocknum = Zeros{PTO_XLEN};
     _SystemRegisters.blockid = Zeros{PTO_XLEN};
     _SystemRegisters.cycle = Zeros{PTO_XLEN};
-    _CurrentPrivilege = Privilege_Machine;
+    _CurrentACR = 0;
     ClearFault();
 end;
 
 readonly implementation func SystemRegisterAccessPermitted(
     address: SystemRegisterAddress, write: boolean,
-    privilege: PrivilegeLevel) => boolean
+    ring: AccessControlRing) => boolean
 begin
     // Base registers are available at every level. Context, translation, and
-    // debug register families are machine-only in the PTO v0 profile.
-    return UInt(address[11:0]) < 0x0f00 || privilege == Privilege_Machine;
+    // debug register families are ACR0-only in the PTO v0 profile.
+    return UInt(address[11:0]) < 0x0f00 || ring == 0;
 end;
 
 implementation func ReadMonotonicTime() => Word
@@ -286,9 +302,50 @@ implementation func DataAccessPermitted(address: Word,
 begin
     let end_address = UInt(address) + size_bytes;
     if end_address > PTO_MODEL_MEMORY_BYTES then return FALSE; end;
-    if CurrentPrivilege() == Privilege_User then return end_address <= 3072;
+    // PTO v0 assigns ACR0 and ACR1 full bounded-memory access. ACR2 through
+    // ACR15 use the bounded 3072-byte application region.
+    if CurrentACR() >= 2 then return end_address <= 3072;
     else return TRUE;
     end;
+end;
+
+implementation func SaveTrapContext(target: AccessControlRing,
+                                    source: AccessControlRing)
+begin
+    _TrapContexts[[target]].valid = TRUE;
+    _TrapContexts[[target]].source_acr = source;
+    _TrapContexts[[target]].tpc = ReadTPC();
+    _TrapContexts[[target]].bpc = ReadBPC();
+    _TrapContexts[[target]].core_state = _SystemRegisters.core_state;
+    _TrapContexts[[target]].block_argument = _BlockArgument;
+    _TrapContexts[[target]].commit_argument = _CommitArgument;
+    _TrapContexts[[target]].block_active = _BlockActive;
+    _TrapContexts[[target]].block_body_active = _BlockBodyActive;
+    for index = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do
+        _TrapContexts[[target]].t_queue[[index]] = _TQueue[[index]];
+        _TrapContexts[[target]].u_queue[[index]] = _UQueue[[index]];
+    end;
+end;
+
+implementation func RecoverTrapContext(target: AccessControlRing) => boolean
+begin
+    if !_TrapContexts[[target]].valid then
+        return FALSE;
+    end;
+    WriteTPC(_TrapContexts[[target]].tpc);
+    WriteBPC(_TrapContexts[[target]].bpc);
+    _SystemRegisters.core_state = _TrapContexts[[target]].core_state;
+    _BlockArgument = _TrapContexts[[target]].block_argument;
+    _CommitArgument = _TrapContexts[[target]].commit_argument;
+    _BlockActive = _TrapContexts[[target]].block_active;
+    _BlockBodyActive = _TrapContexts[[target]].block_body_active;
+    for index = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do
+        _TQueue[[index]] = _TrapContexts[[target]].t_queue[[index]];
+        _UQueue[[index]] = _TrapContexts[[target]].u_queue[[index]];
+    end;
+    _CurrentACR = _TrapContexts[[target]].source_acr;
+    _TrapContexts[[target]].valid = FALSE;
+    return TRUE;
 end;
 
 implementation func TileProfileBinary(op: TileBinaryOperation,
@@ -310,6 +367,16 @@ implementation func TileProfileAxpy(destination_value: Word,
                                      data_type: TileDataType) => Word
 begin
     return destination_value + MultiplyWord(scalar, source_value);
+end;
+
+implementation func TileProfilePReLU(value: Word, negative_slope: Word,
+                                     data_type: TileDataType) => Word
+begin
+    if SInt(value) < 0 then
+        return MultiplyWord(value, negative_slope);
+    else
+        return value;
+    end;
 end;
 
 implementation func TileProfileCompare(comparison: TileComparison,

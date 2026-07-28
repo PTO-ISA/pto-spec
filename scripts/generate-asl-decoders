@@ -16,7 +16,7 @@ CANONICAL_EXECUTION_FAULTS = {
     "C.EBREAK": "Fault_SoftwareBreakpoint",
     "EBREAK": "Fault_SoftwareBreakpoint",
 }
-RESERVED_SCALAR_ENCODINGS = ((0x0000700B, 32),)
+RESERVED_SCALAR_ENCODINGS = ()
 SCALAR_DESTINATION_FIELDS = {"RegDst", "RegDst0", "RegDst1"}
 SCALAR_SOURCE_FIELDS = {"SrcA", "SrcD", "SrcD1", "SrcL", "SrcP", "SrcR"}
 SCALAR_IMPLICIT_T_BRIDGE_FORMS = {
@@ -209,6 +209,58 @@ def agu_metadata(row: dict) -> dict:
     }
 
 
+def command_block_kind(row: dict) -> str:
+    mnemonic = row["mnemonic"]
+    if ".FP" in mnemonic:
+        return "Floating"
+    if ".SYS" in mnemonic:
+        return "System"
+    if ".MPAR" in mnemonic:
+        return "MachineParallel"
+    if ".MSEQ" in mnemonic:
+        return "MachineSequential"
+    if any(token in mnemonic for token in (".MGATHER", ".MSCATTER", ".TLOAD", ".TSTORE", ".TPREFETCH")):
+        return "TileMemory"
+    if any(token in mnemonic for token in (".CUBE", ".ACCCVT", ".TGEMV", ".TMATMUL")):
+        return "TileMatrix"
+    if any(token in mnemonic for token in (".TEPL", ".FIXP", ".TMOV")):
+        return "TileElement"
+    if mnemonic.startswith("F"):
+        return "FrameTemplate"
+    return "Standard"
+
+
+def command_block_transfer(row: dict) -> str:
+    asm = row["asm"]
+    if "{DIRECT, CALL}" in asm:
+        return "Direct"
+    if "ICALL" in asm:
+        return "IndirectCall"
+    if "CALL" in asm:
+        return "Call"
+    if "RET" in asm:
+        return "Return"
+    if "COND" in asm:
+        return "Conditional"
+    if "IND" in asm:
+        return "Indirect"
+    if "DIRECT" in asm:
+        return "Direct"
+    return "Fallthrough"
+
+
+def command_signed_offset_field(row: dict) -> dict | None:
+    signed_fields = [
+        field for field in row["fields"]
+        if field["signedness"] == "signed" and field["name"].startswith("simm")
+    ]
+    if not signed_fields:
+        return None
+    if len(signed_fields) != 1:
+        raise ValueError(f"ambiguous command offset field: {row['form_id']}")
+    return signed_fields[0]
+
+
 def emit_enum(type_name: str, members: list[str], columns: int = 3) -> None:
     print(f"type {type_name} of enumeration {{")
     for offset in range(0, len(members), columns):
@@ -218,10 +270,252 @@ def emit_enum(type_name: str, members: list[str], columns: int = 3) -> None:
     print("};")
 
 
+def encoded_form_witness(row: dict) -> int:
+    instruction = 0
+    for part in row["encoding"]:
+        instruction |= int(part["match"], 16) << (part["index"] * 32)
+    for constraint in row["constraints"]:
+        if constraint["operator"] != "not-equal":
+            raise ValueError(f"unsupported encoded-form constraint: {constraint!r}")
+        if decode_field(row, constraint["field"], instruction) == constraint["value"]:
+            field = next(field for field in row["fields"] if field["name"] == constraint["field"])
+            replacement = (constraint["value"] + 1) % (1 << field["width"])
+            instruction = encode_field(row, constraint["field"], instruction, replacement)
+    return instruction
+
+
+def emit_encoded_catalog(prefix: str, rows: list[dict]) -> None:
+    """Emit decode, identity, handler, and operand metadata for CMD/BBD or VEC."""
+    upper = prefix.upper()
+    count_name = f"PTO_{upper}_FORM_COUNT"
+    index_type = f"{prefix}FormIndex"
+    operation_type = f"{prefix}Operation"
+    handler_type = f"{prefix}SemanticHandler"
+    operand_type = f"{prefix}OperandField"
+    operations = [
+        f"{prefix}Operation_{asl_identifier(row['form_id'])}" for row in rows
+    ]
+    handlers = sorted({row["semantic_handler"] for row in rows})
+    operands = sorted({field["name"] for row in rows for field in row["fields"]})
+
+    print(f"constant {count_name} = {len(rows)};")
+    print(f"type {index_type} of integer {{0..{count_name}}};")
+    emit_enum(operation_type, operations, 2)
+    emit_enum(
+        handler_type, [f"{prefix}Handler_{asl_identifier(name)}" for name in handlers], 2
+    )
+    emit_enum(operand_type, [f"{prefix}Field_{asl_identifier(name)}" for name in operands], 3)
+    print()
+    print(f"pure func Decode{prefix}Form(instruction: bits(64),")
+    print("                          length_bits: integer {16,32,48,64})")
+    print(f"                          => {index_type}")
+    print("begin")
+    ordered = sorted(
+        enumerate(rows),
+        key=lambda pair: (
+            -sum(int(part["mask"], 16).bit_count() for part in pair[1]["encoding"]),
+            pair[1]["form_id"],
+        ),
+    )
+    for index, row in ordered:
+        tests = [f"length_bits == {row['length_bits']}"]
+        for part in row["encoding"]:
+            low = part["index"] * 32
+            width = part["width_bits"]
+            mask = bit_literal(int(part["mask"], 16), width)
+            match = bit_literal(int(part["match"], 16), width)
+            tests.append(
+                f"(instruction[{low} +: {width}] AND {mask}) == {match}"
+            )
+        print(f"    if {' && '.join(tests)} then return {index}; end;")
+    print(f"    return {count_name};")
+    print("end;")
+    print()
+    if prefix == "Command":
+        print("pure func CommandBlockKindOfForm(")
+        print(f"    form: integer {{0..{count_name}-1}}) => BlockKind")
+        print("begin")
+        for index, row in enumerate(rows):
+            print(
+                f"    if form == {index} then return BlockKind_"
+                f"{command_block_kind(row)}; end;"
+            )
+        print("    unreachable;")
+        print("end;")
+        print()
+        print("pure func CommandBlockTransferOfForm(")
+        print(f"    form: integer {{0..{count_name}-1}}) => BlockTransfer")
+        print("begin")
+        for index, row in enumerate(rows):
+            print(
+                f"    if form == {index} then return BlockTransfer_"
+                f"{command_block_transfer(row)}; end;"
+            )
+        print("    unreachable;")
+        print("end;")
+        print()
+        print("pure func CommandHasSignedOffset(")
+        print(f"    form: integer {{0..{count_name}-1}}) => boolean")
+        print("begin")
+        for index, row in enumerate(rows):
+            value = "TRUE" if command_signed_offset_field(row) is not None else "FALSE"
+            print(f"    if form == {index} then return {value}; end;")
+        print("    unreachable;")
+        print("end;")
+        print()
+        print("pure func CommandSignedOffsetOfForm(")
+        print("    instruction: bits(64),")
+        print(f"    form: integer {{0..{count_name}-1}}) => Word")
+        print("begin")
+        for index, row in enumerate(rows):
+            field = command_signed_offset_field(row)
+            if field is None:
+                print(f"    if form == {index} then return Zeros{{PTO_XLEN}}; end;")
+            else:
+                name = asl_identifier(field["name"])
+                width = field["width"]
+                print(
+                    f"    if form == {index} then return SignExtend{{PTO_XLEN}}("
+                    f"Decode{prefix}OperandRaw(instruction, form, "
+                    f"{prefix}Field_{name})[{width - 1}:0]); end;"
+                )
+        print("    unreachable;")
+        print("end;")
+        print()
+    print(f"pure func {prefix}OperationOfForm(form: integer {{0..{count_name}-1}})")
+    print(f"                                 => {operation_type}")
+    print("begin")
+    for index, operation in enumerate(operations):
+        print(f"    if form == {index} then return {operation}; end;")
+    print("    unreachable;")
+    print("end;")
+    print()
+    print(f"pure func {prefix}HandlerOfForm(form: integer {{0..{count_name}-1}})")
+    print(f"                               => {handler_type}")
+    print("begin")
+    for index, row in enumerate(rows):
+        print(
+            f"    if form == {index} then return {prefix}Handler_"
+            f"{asl_identifier(row['semantic_handler'])}; end;"
+        )
+    print("    unreachable;")
+    print("end;")
+    print()
+    print(f"pure func {prefix}OperandPresent(form: integer {{0..{count_name}-1}},")
+    print(f"                                field: {operand_type}) => boolean")
+    print("begin")
+    for index, row in enumerate(rows):
+        for field in row["fields"]:
+            print(
+                f"    if form == {index} && field == {prefix}Field_"
+                f"{asl_identifier(field['name'])} then return TRUE; end;"
+            )
+    print("    return FALSE;")
+    print("end;")
+    print()
+    print(f"pure func {prefix}OperandWidth(form: integer {{0..{count_name}-1}},")
+    print(f"                              field: {operand_type}) => integer {{0..64}}")
+    print("begin")
+    for index, row in enumerate(rows):
+        for field in row["fields"]:
+            print(
+                f"    if form == {index} && field == {prefix}Field_"
+                f"{asl_identifier(field['name'])} then return {field['width']}; end;"
+            )
+    print("    return 0;")
+    print("end;")
+    print()
+    print(f"pure func {prefix}OperandSignedness(form: integer {{0..{count_name}-1}},")
+    print(f"                                   field: {operand_type}) => ScalarFieldSignedness")
+    print("begin")
+    signedness_names = {
+        "encoding-defined": "EncodingDefined",
+        "signed": "Signed",
+        "unsigned": "Unsigned",
+    }
+    for index, row in enumerate(rows):
+        for field in row["fields"]:
+            print(
+                f"    if form == {index} && field == {prefix}Field_"
+                f"{asl_identifier(field['name'])} then return ScalarField_"
+                f"{signedness_names[field['signedness']]}; end;"
+            )
+    print("    return ScalarField_EncodingDefined;")
+    print("end;")
+    print()
+    print(f"pure func Decode{prefix}OperandRaw(instruction: bits(64),")
+    print(f"                                  form: integer {{0..{count_name}-1}},")
+    print(f"                                  field: {operand_type}) => bits(64)")
+    print("begin")
+    for index, row in enumerate(rows):
+        for field in row["fields"]:
+            print(
+                f"    if form == {index} && field == {prefix}Field_"
+                f"{asl_identifier(field['name'])} then"
+            )
+            print("        var value = Zeros{64};")
+            for piece in field["pieces"]:
+                print(
+                    f"        value[{piece['value_lsb']} +: {piece['width']}] = "
+                    f"instruction[{piece['instruction_lsb']} +: {piece['width']}];"
+                )
+            print("        return value;")
+            print("    end;")
+    print("    return Zeros{64};")
+    print("end;")
+    print()
+    print(f"pure func {prefix}FormOperandsLegal(instruction: bits(64),")
+    print(f"                                      form: integer {{0..{count_name}-1}}) => boolean")
+    print("begin")
+    for index, row in enumerate(rows):
+        for constraint in row["constraints"]:
+            if constraint["operator"] != "not-equal":
+                raise ValueError(f"unsupported {prefix} constraint: {constraint!r}")
+            width = next(
+                field["width"] for field in row["fields"]
+                if field["name"] == constraint["field"]
+            )
+            print(
+                f"    if form == {index} && Decode{prefix}OperandRaw(instruction, form, "
+                f"{prefix}Field_{asl_identifier(constraint['field'])})[{width - 1}:0] == "
+                f"{bit_literal(constraint['value'], width)} then return FALSE; end;"
+            )
+    print("    return TRUE;")
+    print("end;")
+    print()
+    print(f"func Validate{prefix}CatalogDecode()")
+    print("begin")
+    for index, row in enumerate(rows):
+        witness = bit_literal(encoded_form_witness(row), 64)
+        print(
+            f"    assert Decode{prefix}Form({witness}, {row['length_bits']}) == {index};"
+        )
+        print(
+            f"    assert {prefix}OperationOfForm({index}) == {operations[index]};"
+        )
+        print(
+            f"    assert {prefix}HandlerOfForm({index}) == {prefix}Handler_"
+            f"{asl_identifier(row['semantic_handler'])};"
+        )
+        print(f"    assert {prefix}FormOperandsLegal({witness}, {index});")
+        for field in row["fields"]:
+            print(
+                f"    assert {prefix}OperandPresent({index}, {prefix}Field_"
+                f"{asl_identifier(field['name'])});"
+            )
+            print(
+                f"    assert {prefix}OperandWidth({index}, {prefix}Field_"
+                f"{asl_identifier(field['name'])}) == {field['width']};"
+            )
+    print("end;")
+    print()
+
+
 def main() -> None:
     scalar_catalog = load("spec/catalog/scalar-forms.json")
     scalar = scalar_catalog["forms"]
     family_constraints = scalar_catalog["family_constraints"]
+    command = load("spec/catalog/command-forms.json")["forms"]
     tile_catalog = load("spec/catalog/tile-operations.json")
     tile = tile_catalog["operations"]
     system_register_catalog = load("spec/catalog/system-registers.json")
@@ -248,6 +542,7 @@ def main() -> None:
     print("// PTO-REQ-SCALAR-CONSTRAINT-001: catalog-generated family legality.")
     print("// PTO-REQ-TILE-DISPATCH-001: total decoded direct-tile execution.")
     print(f"constant PTO_SCALAR_FORM_COUNT = {len(scalar)};")
+    print(f"constant PTO_ENCODED_INSTRUCTION_FORM_COUNT = {len(scalar) + len(command)};")
     print(f"constant PTO_TILE_OPERATION_COUNT = {len(tile)};")
     print(f"constant PTO_SYSTEM_REGISTER_DEFINITION_COUNT = {len(system_registers)};")
     print(f"constant PTO_SCALAR_SEMANTIC_HANDLER_COUNT = {len(scalar_handlers)};")
@@ -277,6 +572,7 @@ def main() -> None:
     print("    ScalarField_EncodingDefined, ScalarField_Signed, ScalarField_Unsigned")
     print("};")
     print()
+    emit_encoded_catalog("Command", command)
     print("pure func DecodeScalarForm(instruction: bits(48),")
     print(
         "                           length_bits: integer {16,32,48}) => ScalarFormIndex"
@@ -308,6 +604,9 @@ def main() -> None:
             continue
         match = bit_literal(legal_scalar_witness(row, family_constraints), 48)
         print("    ClearFault();")
+        print("    WriteTPC(Zeros{PTO_XLEN});")
+        print("    WriteBPC(Zeros{PTO_XLEN});")
+        print("    _CommitArgument = Zeros{PTO_XLEN};")
         print(
             f"    let execution_status_{execution_witness_index} = "
             f"ExecuteScalarInstruction({match}, {row['length_bits']});"
@@ -342,6 +641,38 @@ def main() -> None:
     )
     print("    assert rejected_status == ScalarExecution_Rejected;")
     print("    assert _LastFault == Fault_IllegalInstruction;")
+    print("end;")
+    print()
+    print("func ValidateCanonicalCommandExecution()")
+    print("begin")
+    for index, row in enumerate(command):
+        witness = bit_literal(encoded_form_witness(row), 64)
+        handler = row["semantic_handler"]
+        print("    ResetBlockControlState();")
+        print("    ClearFault();")
+        if handler == "ExecuteBlockStop":
+            print(
+                "    BeginBlock(BlockKind_Standard, BlockTransfer_Direct, "
+                "Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 4, Zeros{PTO_XLEN} + 4, TRUE);"
+            )
+            print("    ClearFault();")
+        if handler == "RecoverExecutionContext":
+            print(
+                "    SaveExecutionContextState(Zeros{PTO_XLEN}, "
+                "Zeros{PTO_XLEN}, Zeros{PTO_XLEN});"
+            )
+            print("    ClearFault();")
+        print(
+            f"    let command_status_{index} = ExecuteCommandInstruction("
+            f"{witness}, {row['length_bits']});"
+        )
+        print(
+            f"    assert command_status_{index} != CommandExecution_Unsupported;"
+        )
+        print(
+            f"    assert command_status_{index} == CommandExecution_Executed;"
+        )
+        print("    assert _LastFault == Fault_None;")
     print("end;")
     print()
     print("pure func ScalarFamilyOfForm(form: integer {0..PTO_SCALAR_FORM_COUNT-1})")
@@ -592,11 +923,6 @@ def main() -> None:
                 f"DecodeScalarOperandRaw(instruction, form, ScalarField_{name})[4:0]) "
                 "as Reg5Selector) then return FALSE; end;"
             )
-        if row["mnemonic"] in SCALAR_IMPLICIT_T_BRIDGE_FORMS:
-            print(
-                f"    if form == {index} && !ScalarTileBridgeLegal("
-                "DirectTBridgeIndex()) then return FALSE; end;"
-            )
     print("    return TRUE;")
     print("end;")
     print()
@@ -669,6 +995,20 @@ def main() -> None:
             tile_argument_expression(argument) for argument in row["arguments"]
         )
         print(f"        when {operation_name} =>")
+        source_fields = [
+            operand["field"]
+            for operand in row["operands"]
+            if operand["field"].startswith("source")
+        ]
+        if source_fields:
+            undefined_sources = " || ".join(
+                f"!TileSourceContentsDefined(operands.{field})"
+                for field in source_fields
+            )
+            print(f"            if {undefined_sources} then")
+            print("                SetFault(Fault_TileLegality, ReadPC());")
+            print("                return (TileExecution_Rejected, Zeros{PTO_XLEN});")
+            print("            end;")
         print(
             f"            if !TileOperandsLegal_{row['semantic_handler']}({arguments}) then"
         )

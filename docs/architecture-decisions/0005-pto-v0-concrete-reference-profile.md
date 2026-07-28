@@ -9,7 +9,7 @@
 Named `impdef` interfaces make target-dependent choices visible, but an
 interface without a selected implementation leaves the executable repository
 unable to prove one complete architecture configuration. Numeric behavior,
-translation and permissions, reset values, privilege, and architectural time
+translation and permissions, reset values, access-control rings, and architectural time
 must be reproducible without inheriting host-language or backend behavior.
 
 The present model is intended to establish a deterministic formal reference.
@@ -26,14 +26,13 @@ direct conformance calls must have identical name sets.
 PTO v0 defines:
 
 - deterministic raw-carrier numeric operations, explicitly not IEEE-754;
-- identity address translation with full bounded-memory access for Supervisor
-  and Machine and a protected upper region for User;
-- explicit User, Supervisor, and Machine privilege state and Machine-only
-  extended system-register families;
+- identity address translation with full bounded-memory access for ACR0 and
+  ACR1 and a protected upper region for ACR2 through ACR15;
+- explicit ACR0..ACR15 state and ACR0-only extended system-register families;
 - one architectural time tick per decoded scalar or tile execution attempt;
   and
 - a deterministic reset of observable scalar, tile-descriptor, memory,
-  reservation, ordering, fault, system, time, and privilege state.
+  reservation, ordering, fault, system, time, and access-control-ring state.
 
 The profile does not remove the implementation interface. A future IEEE or
 hardware profile must use a distinct identity, implement the complete registry,
