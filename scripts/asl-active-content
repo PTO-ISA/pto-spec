@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+# Report lines that carry active (non-comment, non-blank) ASL content.
+#
+# The template gate needs to prove that a source file contains no specification,
+# which is an allow-list question: everything except comments and blank lines is
+# active. Enumerating forbidden declaration keywords cannot be complete, because
+# ASL1 keeps gaining declaration forms and a keyword can be split across lines.
+#
+# Comment stripping is lexical and deliberately conservative. It understands
+# `//` and `/* */` but not string literals, so a `//` inside a string would be
+# treated as a comment. That is only reachable once active content already
+# exists, at which point this gate no longer applies.
+#
+# An unterminated block comment is refused rather than certified. Sources are
+# concatenated into one file before checking, so a `/*` that is never closed
+# would otherwise hide every later source behind it and still report inert.
+#
+# Exit status: 0 when every file is inert, 1 when active content was found,
+# 2 on a usage error, 3 when a file could not be scanned.
+set -euo pipefail
+
+if [[ $# -eq 0 ]]; then
+    echo "usage: asl-active-content FILE..." >&2
+    exit 2
+fi
+
+for path in "$@"; do
+    if [[ ! -f $path ]]; then
+        echo "error: no such file: $path" >&2
+        exit 2
+    fi
+done
+
+awk '
+    FNR == 1 {
+        if (in_block) {
+            printf "%s: unterminated block comment reaches end of file\n", current
+            unterminated = 1
+        }
+        in_block = 0
+        current = FILENAME
+    }
+    {
+        active = ""
+        i = 1
+        n = length($0)
+        while (i <= n) {
+            pair = substr($0, i, 2)
+            if (in_block) {
+                if (pair == "*/") { in_block = 0; i += 2 } else { i += 1 }
+            } else if (pair == "/*") {
+                in_block = 1
+                i += 2
+            } else if (pair == "//") {
+                i = n + 1
+            } else {
+                active = active substr($0, i, 1)
+                i += 1
+            }
+        }
+        gsub(/[[:space:]]/, "", active)
+        if (active != "") {
+            printf "%s:%d: %s\n", FILENAME, FNR, $0
+            found = 1
+        }
+    }
+    END {
+        if (in_block) {
+            printf "%s: unterminated block comment reaches end of file\n", current
+            unterminated = 1
+        }
+        if (unterminated) exit 3
+        exit(found ? 1 : 0)
+    }
+' "$@"

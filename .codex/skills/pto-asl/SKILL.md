@@ -47,7 +47,8 @@ Never turn a repository-maintenance request into a normative modeling change.
 5. Add the smallest named types and state needed by the requirement.
 6. Express legality independently from operation semantics when possible.
 7. Use pure functions for value semantics and thin procedures for architecture-visible state updates.
-8. Add positive, boundary, negative-legality, aliasing, fault, ordering, and state-transition tests as applicable.
+8. Add positive, boundary, negative-legality, aliasing, fault, ordering, and state-transition tests under `tests/asl/`,
+   and list each new test source in `ASL_TESTS` so it executes.
 9. Update catalogs, generated witnesses, requirements, coverage, traceability, and change classification together.
 10. Run the repository validation gate and inspect the output before claiming completion.
 
@@ -95,10 +96,24 @@ make ci
 git diff --check
 ```
 
+`make ci` runs `gate-check`, `repo-check`, `toolchain-check`, `check`, and `test`.
+The first two need no opam switch, so use them for fast iteration:
+
+```bash
+make gate-check repo-check
+```
+
+The template gate is enforced by `scripts/check-repository` over the assembled
+`build/pto-spec.asl`, which must contain only comments and blank lines while
+`specification.toml` reports template status. Do not reintroduce a keyword scan
+over `asl/`; it misses declaration forms and can misclassify comments.
+`tests/gate/` holds fixtures for both failure directions.
+
 Before committing, confirm:
 
 - ASLRef strict type-checking succeeds.
-- Executable tests succeed when semantics exist.
+- The gate self-test and toolchain canaries pass.
+- Executable tests succeed, and every test source is listed in `ASL_TESTS`.
 - Every normative claim has a source and requirement ID.
 - Every accepted scalar form and tile operation has an executable decoder witness.
 - Every scalar semantic primitive and tile handler group has direct executable feature evidence.
@@ -110,6 +125,7 @@ Before committing, confirm:
 - Generated files are not committed.
 - No backend mechanism leaked into the portable model.
 - Governance, security, and contribution policies remain consistent.
+- No check, gate fixture, or canary was weakened to make a change pass.
 - `scripts/check-no-legacy-references` passes before publication.
 
 ## Review output

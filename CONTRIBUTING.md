@@ -9,13 +9,17 @@ architecture change proposal before code is added.
 2. Cite stable public PTO requirement IDs and source links.
 3. Separate ASLRef pin updates, governance changes, normative semantics, and mechanical refactors.
 4. Follow the repo-local `$pto-asl` skill under `.codex/skills/pto-asl/` when using Codex.
-5. Run `make setup` once, then `make ci` and `git diff --check`.
+5. Run `make gate-check repo-check` for fast feedback without an opam switch.
+6. Run `make setup` once, then `make ci` and `git diff --check`.
 
 ## Pull requests
 
 Keep changes small and reviewable. Complete the pull request template, disclose known gaps, and do not commit generated
-`build/` or `.cache/` content. Normative changes must update `docs/traceability.md` and include executable semantic
-evidence appropriate to the change.
+`build/` or `.cache/` content. Normative changes must update `docs/traceability.md`, add tests under `tests/asl/`,
+and list those tests in `ASL_TESTS` so they execute.
+
+Do not relax a check to make a change pass. The fixtures in `tests/` exist to make the checks fail when they stop
+working; if one starts failing, explain why in the pull request rather than adjusting it.
 
 For an accepted scalar form, update its exact mask/match, operand pieces,
 signedness, constraints, and semantic family together. For a tile operation,

@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Concatenate ordered ASL sources into the single file ASLRef consumes.
+#
+# ASLRef accepts one primary ASL input, so checked-in sources stay split for
+# reviewability and are assembled here in the order the Makefile declares.
+set -euo pipefail
+
+if [[ $# -lt 1 ]]; then
+    echo "usage: assemble-asl OUTPUT [SOURCE...]" >&2
+    exit 2
+fi
+
+output=$1
+shift
+
+mkdir -p "$(dirname "$output")"
+
+{
+    printf '// Generated from the ordered PTO ASL sources. Do not edit.\n'
+    for source in "$@"; do
+        printf '\n// Source: %s\n' "$source"
+        cat "$source"
+    done
+} > "$output"
