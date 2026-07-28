@@ -52,6 +52,10 @@ presence in the normative sources alone is insufficient.
 - Backend availability is not evidence of portable semantics.
 - Mathematical floating semantics still require raw encoding, NaN payload,
   exception, and rounding-profile completion.
+- Generated scalar decoding currently ends at form identity, operand extraction,
+  legality, and semantic-primitive linkage. An end-to-end fetched-instruction
+  dispatcher that binds each decoded form to its architecture state transition
+  remains open.
 - Translation, permission, restart, and some numeric conversion details remain
   named profiles rather than silent implementation behavior.
 

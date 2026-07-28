@@ -271,6 +271,11 @@ def main() -> int:
         "hierarchical calls must be disabled",
     )
     require(
+        specification["maturity"]["instruction_dispatch"]
+        == "catalog-linked-no-end-to-end-executor",
+        "instruction dispatch maturity must not overclaim end-to-end execution",
+    )
+    require(
         specification["architecture"]["scalar_forms"] == 474,
         "status record scalar count drift",
     )

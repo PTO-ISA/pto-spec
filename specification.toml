@@ -25,6 +25,7 @@ system_state = "implemented"
 tile_state = "implemented"
 tile_semantics = "surface-complete-with-profile-hooks"
 binary_decode = "executable-complete"
+instruction_dispatch = "catalog-linked-no-end-to-end-executor"
 
 [toolchain]
 aslref_repository = "https://github.com/herd/herdtools7.git"
