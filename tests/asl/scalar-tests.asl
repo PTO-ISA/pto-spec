@@ -1,3 +1,56 @@
+func TestScalarDispatchEffects()
+begin
+    WriteGPR(2, Zeros{PTO_XLEN} + 10);
+    WriteGPR(3, Zeros{PTO_XLEN} + 3);
+    var add_instruction: bits(48) = Zeros{48} + 0x00000005;
+    add_instruction[11:7] = Zeros{5} + 5;
+    add_instruction[19:15] = Zeros{5} + 2;
+    add_instruction[24:20] = Zeros{5} + 3;
+    add_instruction[26:25] = '11';
+    add_instruction[31:27] = Zeros{5} + 1;
+    let add_status = ExecuteScalarInstruction(add_instruction, 32);
+    assert add_status == ScalarExecution_Executed;
+    assert ReadGPR(5) == Zeros{PTO_XLEN} + 4;
+
+    var addi_instruction: bits(48) = Zeros{48} + 0x00000015;
+    addi_instruction[11:7] = Zeros{5} + 6;
+    addi_instruction[19:15] = Zeros{5} + 2;
+    addi_instruction[31:20] = Zeros{12} + 7;
+    let addi_status = ExecuteScalarInstruction(addi_instruction, 32);
+    assert addi_status == ScalarExecution_Executed;
+    assert ReadGPR(6) == Zeros{PTO_XLEN} + 17;
+
+    WriteGPR(2, Zeros{PTO_XLEN} + 0x7fffffff);
+    WriteGPR(3, Zeros{PTO_XLEN} + 1);
+    WriteGPR(4, Zeros{PTO_XLEN} + 1);
+    var maddw_instruction: bits(48) = Zeros{48} + 0x00007047;
+    maddw_instruction[11:7] = Zeros{5} + 7;
+    maddw_instruction[19:15] = Zeros{5} + 3;
+    maddw_instruction[24:20] = Zeros{5} + 4;
+    maddw_instruction[31:27] = Zeros{5} + 2;
+    let maddw_status = ExecuteScalarInstruction(maddw_instruction, 32);
+    assert maddw_status == ScalarExecution_Executed;
+    assert ReadGPR(7) == SignExtend{PTO_XLEN}(Zeros{32} + 0x80000000);
+
+    WriteGPR(2, Zeros{PTO_XLEN} + 8);
+    WriteGPR(3, Zeros{PTO_XLEN} + 9);
+    var compressed_add: bits(48) = Zeros{48} + 0x0008;
+    compressed_add[10:6] = Zeros{5} + 2;
+    compressed_add[15:11] = Zeros{5} + 3;
+    let compressed_status = ExecuteScalarInstruction(compressed_add, 16);
+    assert compressed_status == ScalarExecution_Executed;
+    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 17;
+
+    ClearFault();
+    WritePC(Zeros{PTO_XLEN} + 100);
+    var specific_alias: bits(48) = Zeros{48} + 0x0016;
+    specific_alias[15:11] = Zeros{5} + 10;
+    let alias_status = ExecuteScalarInstruction(specific_alias, 16);
+    assert alias_status == ScalarExecution_Executed;
+    assert _ReturnAddress == Zeros{PTO_XLEN} + 100;
+    assert _LastFault == Fault_None;
+end;
+
 func TestScalarInteger()
 begin
     let max_word: Word = Ones{PTO_XLEN};
@@ -81,6 +134,7 @@ begin
     assert ModifyBitfield(Zeros{PTO_XLEN}, 3, 4, TRUE) == Zeros{PTO_XLEN} + 0x70;
     assert ReverseBitfieldBytes(Zeros{PTO_XLEN} + 0x11223344, 32, 0) ==
         Zeros{PTO_XLEN} + 0x44332211;
+    assert ReverseBitfieldBytes(Ones{PTO_XLEN}, 7, 0) == Zeros{PTO_XLEN};
 
     WritePC(Zeros{PTO_XLEN} + 100);
     ExecuteCompare(10, ScalarCondition_LT, max_word, Zeros{PTO_XLEN});

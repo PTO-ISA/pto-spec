@@ -272,8 +272,8 @@ def main() -> int:
     )
     require(
         specification["maturity"]["instruction_dispatch"]
-        == "catalog-linked-no-end-to-end-executor",
-        "instruction dispatch maturity must not overclaim end-to-end execution",
+        == "alu-107-executable-other-families-catalog-linked",
+        "instruction dispatch maturity must match the checked ALU subset",
     )
     require(
         specification["architecture"]["scalar_forms"] == 474,
@@ -729,6 +729,23 @@ def main() -> int:
             re.search(rf"\bfunc\s+{re.escape(row['semantic_handler'])}\b", asl_body)
             is not None,
             f"missing per-form semantic handler {row['semantic_handler']} for {row['form_id']}",
+        )
+
+    dispatch_body = (ROOT / "asl" / "scalar" / "dispatch.asl").read_text(
+        encoding="utf-8"
+    )
+    require(
+        re.search(r"\bfunc\s+ExecuteScalarInstruction\b", dispatch_body) is not None,
+        "missing public scalar execution entry point",
+    )
+    alu_forms = [row for row in forms if row["semantic_family"] == "ALU"]
+    require(len(alu_forms) == 107, "ALU dispatch inventory must contain 107 forms")
+    for row in alu_forms:
+        operation = re.sub(r"[^A-Za-z0-9_]", "_", row["mnemonic"])
+        require(
+            re.search(rf"\bScalarOperation_{re.escape(operation)}\b", dispatch_body)
+            is not None,
+            f"ALU form lacks decoded execution binding: {row['form_id']}",
         )
 
     test_body = "\n".join(

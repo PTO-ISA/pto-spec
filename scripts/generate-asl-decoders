@@ -105,6 +105,41 @@ def main() -> None:
     print("    return PTO_SCALAR_FORM_COUNT;")
     print("end;")
     print()
+    print("func ValidateCanonicalScalarExecution()")
+    print("begin")
+    execution_witness_index = 0
+    for row in scalar:
+        if row["semantic_family"] != "ALU":
+            continue
+        match = bit_literal(int(row["encoding"][0]["match"], 16), 48)
+        print("    ClearFault();")
+        print(
+            f"    let execution_status_{execution_witness_index} = "
+            f"ExecuteScalarInstruction({match}, {row['length_bits']});"
+        )
+        print(
+            f"    assert execution_status_{execution_witness_index} "
+            "== ScalarExecution_Executed;"
+        )
+        print("    assert _LastFault == Fault_None;")
+        execution_witness_index += 1
+    unsupported = next(row for row in scalar if row["semantic_family"] != "ALU")
+    unsupported_match = bit_literal(int(unsupported["encoding"][0]["match"], 16), 48)
+    print("    ClearFault();")
+    print(
+        f"    let unsupported_status = ExecuteScalarInstruction({unsupported_match}, "
+        f"{unsupported['length_bits']});"
+    )
+    print("    assert unsupported_status == ScalarExecution_Unsupported;")
+    print("    assert _LastFault == Fault_None;")
+    print("    ClearFault();")
+    print(
+        f"    let rejected_status = ExecuteScalarInstruction({bit_literal(0, 48)}, 32);"
+    )
+    print("    assert rejected_status == ScalarExecution_Rejected;")
+    print("    assert _LastFault == Fault_IllegalInstruction;")
+    print("end;")
+    print()
     print("pure func ScalarFamilyOfForm(form: integer {0..PTO_SCALAR_FORM_COUNT-1})")
     print("                             => ScalarSemanticFamily")
     print("begin")
@@ -303,6 +338,19 @@ def main() -> None:
                 f"== {expected};"
             )
         print(f"    assert ScalarFormOperandsLegal({match}, {index});")
+        for constraint in row["constraints"]:
+            invalid_instruction = int(row["encoding"][0]["match"], 16)
+            constrained_field = next(
+                field for field in row["fields"] if field["name"] == constraint["field"]
+            )
+            for piece in constrained_field["pieces"]:
+                piece_mask = (1 << piece["width"]) - 1
+                invalid_instruction &= ~(piece_mask << piece["instruction_lsb"])
+                piece_value = (constraint["value"] >> piece["value_lsb"]) & piece_mask
+                invalid_instruction |= piece_value << piece["instruction_lsb"]
+            print(
+                f"    assert !ScalarFormOperandsLegal({bit_literal(invalid_instruction, 48)}, {index});"
+            )
     for index, row in enumerate(tile):
         raw = row.get("selector", row.get("function"))
         value = int(raw, 0) if isinstance(raw, str) else raw

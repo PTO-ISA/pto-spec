@@ -22,6 +22,21 @@
       "tests": ["tests/asl/scalar-tests.asl"]
     },
     {
+      "id": "PTO-REQ-SCALAR-DISPATCH-001",
+      "model": [
+        "asl/scalar/dispatch.asl",
+        "scripts/generate-asl-decoders",
+        "spec/catalog/scalar-forms.json"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
+      "status": "implemented-alu-subset",
+      "tests": [
+        "scripts/check-catalogs",
+        "tests/asl/main.asl",
+        "tests/asl/scalar-tests.asl"
+      ]
+    },
+    {
       "id": "PTO-REQ-SCALAR-CONTROL-001",
       "model": ["asl/scalar/control.asl"],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",

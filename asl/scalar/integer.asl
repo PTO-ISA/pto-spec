@@ -190,9 +190,10 @@ begin
     return RotateLeftWord(rotated, offset);
 end;
 
-pure func ReverseBitfieldBytes(value: Word, width: integer {8,16,24,32,40,48,56,64},
+pure func ReverseBitfieldBytes(value: Word, width: integer {1..64},
                                offset: integer {0..63}) => Word
 begin
+    if width MOD 8 != 0 then return Zeros{PTO_XLEN}; end;
     let field = ExtractBitfield(value, width, offset, FALSE);
     let byte_count = width DIV 8;
     var result: Word = Zeros{PTO_XLEN};
@@ -205,6 +206,13 @@ end;
 pure func ScalarMultiplyAdd(addend: Word, left: Word, right: Word) => Word
 begin
     return addend + MultiplyWord(left, right);
+end;
+
+pure func ScalarMultiplyAddW(addend: Word, left: Word, right: Word) => Word
+begin
+    let product = MultiplyWord(left, right);
+    let result: bits(32) = product[31:0] + addend[31:0];
+    return SignExtend{PTO_XLEN}(result);
 end;
 
 pure func ScalarConditionalSelect(predicate: Word, selected_true: Word,

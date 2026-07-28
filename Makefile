@@ -1,6 +1,6 @@
 ASLREF ?= ./scripts/aslref
 
-ASL_SOURCES := \
+ASL_SOURCES_BEFORE_DECODER := \
 	asl/architecture.asl \
 	asl/types.asl \
 	asl/state.asl \
@@ -24,6 +24,11 @@ ASL_SOURCES := \
 	asl/tile/complex.asl \
 	asl/tile/memory.asl \
 	asl/tile/cube.asl
+
+ASL_SOURCES_AFTER_DECODER := \
+	asl/scalar/dispatch.asl
+
+ASL_SOURCES := $(ASL_SOURCES_BEFORE_DECODER) $(ASL_SOURCES_AFTER_DECODER)
 
 SPEC := build/pto-spec.asl
 DECODER_SPEC := build/decoders.asl
@@ -52,12 +57,17 @@ $(SPEC): $(ASL_SOURCES) $(DECODER_SPEC) Makefile
 	@mkdir -p build
 	@{ \
 		echo "// Generated from the ordered PTO ASL sources. Do not edit."; \
-		for source in $(ASL_SOURCES); do \
+		for source in $(ASL_SOURCES_BEFORE_DECODER); do \
 			echo; \
 			echo "// Source: $$source"; \
 			cat "$$source"; \
 		done; \
 		cat $(DECODER_SPEC); \
+		for source in $(ASL_SOURCES_AFTER_DECODER); do \
+			echo; \
+			echo "// Source: $$source"; \
+			cat "$$source"; \
+		done; \
 	} > $@
 
 check: $(SPEC)

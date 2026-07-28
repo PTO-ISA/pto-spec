@@ -4,6 +4,8 @@ begin
     TestScalarState();
     TestTileRegisterMapping();
     TestScalarOperandBridge();
+    ValidateCanonicalScalarExecution();
+    TestScalarDispatchEffects();
     TestScalarInteger();
     TestScalarMemory();
     TestScalarAtomics();

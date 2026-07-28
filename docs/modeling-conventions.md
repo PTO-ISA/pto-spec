@@ -32,7 +32,8 @@ before choosing behavior.
 ## Source organization
 
 ASLRef consumes the generated `build/pto-spec.asl`. As sources are added, keep them split for reviewability and list
-them in dependency order under `ASL_SOURCES` in the `Makefile`.
+them in dependency order under `ASL_SOURCES_BEFORE_DECODER` or `ASL_SOURCES_AFTER_DECODER` in the `Makefile`.
+Sources that consume generated catalog types or decode functions belong after the decoder.
 
 Every new instruction definition should include:
 
