@@ -120,12 +120,17 @@ begin
     let kind = CommandBlockKindOfForm(form);
     let transfer = CommandBlockTransferOfForm(form);
     let fallthrough = ReadTPC() + (Zeros{PTO_XLEN} + (length_bits DIV 8));
-    let target = if CommandHasSignedOffset(form) then
-        CommandDecodedBlockTarget(instruction, form) else
-        if _BlockBodyAddress != Zeros{PTO_XLEN} then _BlockBodyAddress
+    let target = if transfer == BlockTransfer_Return then _ReturnAddress
+        else if transfer == BlockTransfer_Indirect ||
+                transfer == BlockTransfer_IndirectCall then _CommitArgument
+        else if transfer == BlockTransfer_Fallthrough then fallthrough
+        else if CommandHasSignedOffset(form) then
+            CommandDecodedBlockTarget(instruction, form)
+        else if _BlockBodyAddress != Zeros{PTO_XLEN} then _BlockBodyAddress
         else fallthrough;
     let return_target = if CommandOperandPresent(form, CommandField_uimm5) then
-        CommandDecodedWord(instruction, form, CommandField_uimm5)
+        ReadTPC() + (Zeros{PTO_XLEN} + ((length_bits DIV 8) - 2)) +
+        LSL(CommandDecodedWord(instruction, form, CommandField_uimm5), 1)
         else fallthrough;
     let condition = if transfer == BlockTransfer_Conditional then
         !IsZero(ReadBranchPredicate()) else TRUE;
