@@ -6,6 +6,7 @@ begin
     TestScalarOperandBridge();
     ValidateCanonicalScalarExecution();
     TestScalarDispatchEffects();
+    TestScalarSystemDispatchEffects();
     TestScalarInteger();
     TestScalarMemory();
     TestScalarAtomics();

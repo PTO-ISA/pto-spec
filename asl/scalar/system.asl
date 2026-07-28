@@ -49,10 +49,15 @@ begin
     end;
 end;
 
-func FenceData()
+func FenceData(predecessor: bits(4), successor: bits(4))
 begin
+    _LastFencePredecessor = predecessor;
+    _LastFenceSuccessor = successor;
     _MemoryReleaseEpoch = _MemoryReleaseEpoch + 1;
     _MemoryAcquireEpoch = _MemoryAcquireEpoch + 1;
+    if predecessor[3] == '1' || successor[3] == '1' then
+        _InstructionCacheEpoch = _InstructionCacheEpoch + 1;
+    end;
 end;
 
 func FenceInstruction()
@@ -62,8 +67,9 @@ begin
     _MemoryReleaseEpoch = _MemoryReleaseEpoch + 1;
 end;
 
-func SoftwareBreakpoint()
+func SoftwareBreakpoint(tag: bits(5))
 begin
+    _BreakpointTag = tag;
     SetFault(Fault_SoftwareBreakpoint, ReadPC());
 end;
 

@@ -95,6 +95,116 @@ begin
     assert ReadPC() == Zeros{PTO_XLEN} + 204;
 end;
 
+func TestScalarSystemDispatchEffects()
+begin
+    ClearFault();
+    WriteGPR(5, Zeros{PTO_XLEN} + 0x55);
+    var ssrset_instruction: bits(48) = Zeros{48} + 0x0000103b;
+    ssrset_instruction[19:15] = Zeros{5} + 5;
+    let ssrset_status = ExecuteScalarInstruction(ssrset_instruction, 32);
+    assert ssrset_status == ScalarExecution_Executed;
+    let tp_after_set = ReadSystemRegister(SystemRegister_TP);
+    assert tp_after_set == Zeros{PTO_XLEN} + 0x55;
+
+    var ssrget_instruction: bits(48) = Zeros{48} + 0x0000003b;
+    ssrget_instruction[11:7] = Zeros{5} + 6;
+    let ssrget_status = ExecuteScalarInstruction(ssrget_instruction, 32);
+    assert ssrget_status == ScalarExecution_Executed;
+    assert ReadGPR(6) == Zeros{PTO_XLEN} + 0x55;
+
+    WriteGPR(7, Zeros{PTO_XLEN} + 0x66);
+    var ssrswap_instruction: bits(48) = Zeros{48} + 0x0000203b;
+    ssrswap_instruction[11:7] = Zeros{5} + 8;
+    ssrswap_instruction[19:15] = Zeros{5} + 7;
+    let ssrswap_status = ExecuteScalarInstruction(ssrswap_instruction, 32);
+    assert ssrswap_status == ScalarExecution_Executed;
+    assert ReadGPR(8) == Zeros{PTO_XLEN} + 0x55;
+    let tp_after_swap = ReadSystemRegister(SystemRegister_TP);
+    assert tp_after_swap == Zeros{PTO_XLEN} + 0x66;
+
+    var compressed_get: bits(48) = Zeros{48} + 0x802c;
+    let compressed_get_status = ExecuteScalarInstruction(compressed_get, 16);
+    assert compressed_get_status == ScalarExecution_Executed;
+    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 0x66;
+
+    WriteGPR(5, Zeros{PTO_XLEN} + 0x1234);
+    var long_set: bits(48) = Zeros{48} + 0x0000103b000e;
+    long_set[47:36] = Zeros{12} + 0xf10;
+    long_set[15:4] = Zeros{12} + 1;
+    long_set[35:31] = Zeros{5} + 5;
+    let long_set_status = ExecuteScalarInstruction(long_set, 48);
+    assert long_set_status == ScalarExecution_Executed;
+    let long_system_value = ReadSystemRegisterAddress(Zeros{24} + 0x1f10);
+    assert long_system_value == Zeros{PTO_XLEN} + 0x1234;
+
+    let before_data_cache = _DataCacheEpoch;
+    var maintenance: bits(48) = Zeros{48} + 0x0030602b;
+    maintenance[19:15] = Zeros{5} + 5;
+    let maintenance_status = ExecuteScalarInstruction(maintenance, 32);
+    assert maintenance_status == ScalarExecution_Executed;
+    assert _DataCacheEpoch == before_data_cache + 1;
+
+    WriteGPR(5, Zeros{PTO_XLEN} + 17);
+    var wait_event: bits(48) = Zeros{48} + 0x0010002b;
+    wait_event[19:15] = Zeros{5} + 5;
+    let wait_event_status = ExecuteScalarInstruction(wait_event, 32);
+    assert wait_event_status == ScalarExecution_Executed;
+    assert _LastControlRequest == ExecutionControl_WaitEvent;
+    assert _ControlRequestOperand == Zeros{PTO_XLEN} + 17;
+
+    let before_release = _MemoryReleaseEpoch;
+    let before_acquire = _MemoryAcquireEpoch;
+    let before_instruction = _InstructionCacheEpoch;
+    var fence_data: bits(48) = Zeros{48} + 0x0000202b;
+    fence_data[27:24] = '1010';
+    fence_data[23:20] = '0101';
+    let fence_status = ExecuteScalarInstruction(fence_data, 32);
+    assert fence_status == ScalarExecution_Executed;
+    assert _LastFencePredecessor == '1010';
+    assert _LastFenceSuccessor == '0101';
+    assert _MemoryReleaseEpoch == before_release + 1;
+    assert _MemoryAcquireEpoch == before_acquire + 1;
+    assert _InstructionCacheEpoch == before_instruction + 1;
+
+    WriteGPR(5, Zeros{PTO_XLEN} + 0x800);
+    var set_target: bits(48) = Zeros{48} + 0x0000403b;
+    set_target[19:15] = Zeros{5} + 5;
+    let set_target_status = ExecuteScalarInstruction(set_target, 32);
+    assert set_target_status == ScalarExecution_Executed;
+    assert _CommitArgument == Zeros{PTO_XLEN} + 0x800;
+
+    let before_request = _ArchitectureRequestEpoch;
+    var close_request: bits(48) = Zeros{48} + 0x0000302b;
+    close_request[23:20] = '0111';
+    let close_status = ExecuteScalarInstruction(close_request, 32);
+    assert close_status == ScalarExecution_Executed;
+    assert _ArchitectureRequestEpoch == before_request + 1;
+    assert _SystemRegisters.cstate[3:0] == '0111';
+
+    ClearFault();
+    var enter_request: bits(48) = Zeros{48} + 0x0100302b;
+    enter_request[23:20] = '0010';
+    let enter_status = ExecuteScalarInstruction(enter_request, 32);
+    assert enter_status == ScalarExecution_Executed;
+    assert _LastFault == Fault_IllegalInstruction;
+
+    ClearFault();
+    WritePC(Zeros{PTO_XLEN} + 0x400);
+    var breakpoint: bits(48) = Zeros{48} + 0x0010102b;
+    breakpoint[27:24] = '1001';
+    let breakpoint_status = ExecuteScalarInstruction(breakpoint, 32);
+    assert breakpoint_status == ScalarExecution_Executed;
+    assert _LastFault == Fault_SoftwareBreakpoint;
+    assert _BreakpointTag == '01001';
+    assert _FaultAddress == Zeros{PTO_XLEN} + 0x400;
+
+    ClearFault();
+    var assertion: bits(48) = Zeros{48} + 0x0000102b;
+    let assertion_status = ExecuteScalarInstruction(assertion, 32);
+    assert assertion_status == ScalarExecution_Executed;
+    assert _LastFault == Fault_Assert;
+end;
+
 func TestScalarInteger()
 begin
     let max_word: Word = Ones{PTO_XLEN};
@@ -331,9 +441,11 @@ begin
 
     let before_acquire = _MemoryAcquireEpoch;
     let before_release = _MemoryReleaseEpoch;
-    FenceData();
+    FenceData('0010', '0001');
     assert _MemoryAcquireEpoch == before_acquire + 1;
     assert _MemoryReleaseEpoch == before_release + 1;
+    assert _LastFencePredecessor == '0010';
+    assert _LastFenceSuccessor == '0001';
 
     ClearFault();
     let old_tp = SwapSystemRegister(SystemRegister_TP, Zeros{PTO_XLEN} + 456);
@@ -414,9 +526,10 @@ begin
 
     WritePC(Zeros{PTO_XLEN} + 0x400);
     ClearFault();
-    SoftwareBreakpoint();
+    SoftwareBreakpoint('01001');
     assert _LastFault == Fault_SoftwareBreakpoint;
     assert _FaultAddress == Zeros{PTO_XLEN} + 0x400;
+    assert _BreakpointTag == '01001';
 end;
 
 func TestScalarFloating()

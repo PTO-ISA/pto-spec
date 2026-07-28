@@ -52,6 +52,27 @@ begin
     return DecodeScalarOperandRaw(instruction, form, field)[19:0];
 end;
 
+pure func ScalarDecodedBits4(instruction: bits(48),
+                             form: integer {0..PTO_SCALAR_FORM_COUNT-1},
+                             field: ScalarOperandField) => bits(4)
+begin
+    return DecodeScalarOperandRaw(instruction, form, field)[3:0];
+end;
+
+pure func ScalarDecodedBits5(instruction: bits(48),
+                             form: integer {0..PTO_SCALAR_FORM_COUNT-1},
+                             field: ScalarOperandField) => bits(5)
+begin
+    return DecodeScalarOperandRaw(instruction, form, field)[4:0];
+end;
+
+pure func ScalarDecodedSystemRegisterAddress(
+    instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1},
+    field: ScalarOperandField) => SystemRegisterAddress
+begin
+    return DecodeScalarOperandRaw(instruction, form, field)[23:0];
+end;
+
 pure func ScalarDecodedBits32(instruction: bits(48),
                               form: integer {0..PTO_SCALAR_FORM_COUNT-1},
                               field: ScalarOperandField) => bits(32)
@@ -794,6 +815,133 @@ begin
     end;
 end;
 
+func ExecuteDecodedSYSForm(instruction: bits(48),
+                           form: integer {0..PTO_SCALAR_FORM_COUNT-1})
+begin
+    let operation = ScalarOperationOfForm(form);
+    case operation of
+        when ScalarOperation_ACRC =>
+            ArchitectureCloseRequest(ScalarDecodedBits4(
+                instruction, form, ScalarField_RST_Type));
+        when ScalarOperation_ACRE =>
+            ArchitectureEnterRequest(ScalarDecodedBits4(
+                instruction, form, ScalarField_RRA_Type));
+        when ScalarOperation_ASSERT =>
+            ArchitectureAssert(ReadDecodedScalarRegister(
+                instruction, form, ScalarField_SrcL));
+
+        when ScalarOperation_BC_IALL =>
+            ExecuteMaintenance(Maintenance_BC_IALL, Zeros{PTO_XLEN});
+        when ScalarOperation_BC_IVA =>
+            ExecuteMaintenance(Maintenance_BC_IVA, ReadDecodedScalarRegister(
+                instruction, form, ScalarField_SrcL));
+        when ScalarOperation_DC_IALL =>
+            ExecuteMaintenance(Maintenance_DC_IALL, Zeros{PTO_XLEN});
+        when ScalarOperation_DC_IVA =>
+            ExecuteMaintenance(Maintenance_DC_IVA, ReadDecodedScalarRegister(
+                instruction, form, ScalarField_SrcL));
+        when ScalarOperation_DC_ISW =>
+            ExecuteMaintenance(Maintenance_DC_ISW, ReadDecodedScalarRegister(
+                instruction, form, ScalarField_SrcL));
+        when ScalarOperation_DC_ZVA =>
+            ExecuteMaintenance(Maintenance_DC_ZVA, ReadDecodedScalarRegister(
+                instruction, form, ScalarField_SrcL));
+        when ScalarOperation_DC_CVA =>
+            ExecuteMaintenance(Maintenance_DC_CVA, ReadDecodedScalarRegister(
+                instruction, form, ScalarField_SrcL));
+        when ScalarOperation_DC_CIVA =>
+            ExecuteMaintenance(Maintenance_DC_CIVA, ReadDecodedScalarRegister(
+                instruction, form, ScalarField_SrcL));
+        when ScalarOperation_DC_CSW =>
+            ExecuteMaintenance(Maintenance_DC_CSW, ReadDecodedScalarRegister(
+                instruction, form, ScalarField_SrcL));
+        when ScalarOperation_DC_CISW =>
+            ExecuteMaintenance(Maintenance_DC_CISW, ReadDecodedScalarRegister(
+                instruction, form, ScalarField_SrcL));
+        when ScalarOperation_IC_IALL =>
+            ExecuteMaintenance(Maintenance_IC_IALL, Zeros{PTO_XLEN});
+        when ScalarOperation_IC_IVA =>
+            ExecuteMaintenance(Maintenance_IC_IVA, ReadDecodedScalarRegister(
+                instruction, form, ScalarField_SrcL));
+        when ScalarOperation_TLB_IV =>
+            ExecuteMaintenance(Maintenance_TLB_IV, ReadDecodedScalarRegister(
+                instruction, form, ScalarField_SrcL));
+        when ScalarOperation_TLB_IAV =>
+            ExecuteMaintenance(Maintenance_TLB_IAV, ReadDecodedScalarRegister(
+                instruction, form, ScalarField_SrcL));
+        when ScalarOperation_TLB_IA =>
+            ExecuteMaintenance(Maintenance_TLB_IA, ReadDecodedScalarRegister(
+                instruction, form, ScalarField_SrcL));
+        when ScalarOperation_TLB_IALL =>
+            ExecuteMaintenance(Maintenance_TLB_IALL, Zeros{PTO_XLEN});
+
+        when ScalarOperation_BSE =>
+            ExecuteControlRequest(ExecutionControl_SendEvent,
+                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));
+        when ScalarOperation_BWE =>
+            ExecuteControlRequest(ExecutionControl_WaitEvent,
+                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));
+        when ScalarOperation_BWI =>
+            ExecuteControlRequest(ExecutionControl_WaitInterrupt,
+                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));
+        when ScalarOperation_BWT =>
+            ExecuteControlRequest(ExecutionControl_WaitTimeout,
+                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));
+
+        when ScalarOperation_C_EBREAK =>
+            SoftwareBreakpoint(ScalarDecodedBits5(
+                instruction, form, ScalarField_imm5));
+        when ScalarOperation_EBREAK =>
+            SoftwareBreakpoint(ZeroExtend{5}(ScalarDecodedBits4(
+                instruction, form, ScalarField_imm4)));
+        when ScalarOperation_FENCE_D =>
+            FenceData(
+                ScalarDecodedBits4(instruction, form, ScalarField_PRED_IMM),
+                ScalarDecodedBits4(instruction, form, ScalarField_SUCC_IMM));
+        when ScalarOperation_FENCE_I => FenceInstruction();
+
+        when ScalarOperation_C_SSRGET =>
+            ExecuteCompressedSystemRegisterGet(
+                ScalarDecodedSystemRegisterAddress(
+                    instruction, form, ScalarField_SSRID));
+        when ScalarOperation_HL_SSRGET =>
+            ExecuteSystemRegisterGet(
+                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+                ScalarDecodedSystemRegisterAddress(
+                    instruction, form, ScalarField_SSR_ID));
+        when ScalarOperation_HL_SSRSET =>
+            ExecuteSystemRegisterSet(
+                ScalarDecodedSelector(instruction, form, ScalarField_SrcL),
+                ScalarDecodedSystemRegisterAddress(
+                    instruction, form, ScalarField_SSR_ID));
+        when ScalarOperation_LSRGET =>
+            ExecuteSystemRegisterGet(
+                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+                ScalarDecodedSystemRegisterAddress(
+                    instruction, form, ScalarField_LSR_ID));
+        when ScalarOperation_SSRGET =>
+            ExecuteSystemRegisterGet(
+                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+                ScalarDecodedSystemRegisterAddress(
+                    instruction, form, ScalarField_SSR_ID));
+        when ScalarOperation_SSRSET =>
+            ExecuteSystemRegisterSet(
+                ScalarDecodedSelector(instruction, form, ScalarField_SrcL),
+                ScalarDecodedSystemRegisterAddress(
+                    instruction, form, ScalarField_SSR_ID));
+        when ScalarOperation_SSRSWAP =>
+            ExecuteSystemRegisterSwap(
+                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+                ScalarDecodedSelector(instruction, form, ScalarField_SrcL),
+                ScalarDecodedSystemRegisterAddress(
+                    instruction, form, ScalarField_SSR_ID));
+        when ScalarOperation_SETC_TGT =>
+            SetCommitTarget(ReadDecodedScalarRegister(
+                instruction, form, ScalarField_SrcL));
+        otherwise => unreachable;
+    end;
+end;
+
 func ExecuteScalarInstruction(instruction: bits(48),
                               length_bits: integer {16,32,48})
                               => ScalarExecutionStatus
@@ -811,6 +959,7 @@ begin
     case ScalarFamilyOfForm(form) of
         when ScalarSemantic_ALU => ExecuteDecodedALUForm(instruction, form);
         when ScalarSemantic_BRU => ExecuteDecodedBRUForm(instruction, form);
+        when ScalarSemantic_SYS => ExecuteDecodedSYSForm(instruction, form);
         otherwise => return ScalarExecution_Unsupported;
     end;
     return ScalarExecution_Executed;

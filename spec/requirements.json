@@ -29,7 +29,7 @@
         "spec/catalog/scalar-forms.json"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
-      "status": "implemented-alu-bru-subset",
+      "status": "implemented-alu-bru-sys-subset",
       "tests": [
         "scripts/check-catalogs",
         "tests/asl/main.asl",
@@ -66,7 +66,7 @@
     },
     {
       "id": "PTO-REQ-SCALAR-SYS-001",
-      "model": ["asl/scalar/system.asl"],
+      "model": ["asl/scalar/system.asl", "asl/scalar/dispatch.asl"],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
       "status": "implemented-subset",
       "tests": ["tests/asl/scalar-tests.asl"]

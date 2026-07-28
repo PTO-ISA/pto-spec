@@ -9,6 +9,12 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
+EXECUTABLE_SCALAR_FAMILIES = {"ALU", "BRU", "SYS"}
+CANONICAL_EXECUTION_FAULTS = {
+    "ASSERT": "Fault_Assert",
+    "C.EBREAK": "Fault_SoftwareBreakpoint",
+    "EBREAK": "Fault_SoftwareBreakpoint",
+}
 
 
 def load(path: str):
@@ -109,7 +115,7 @@ def main() -> None:
     print("begin")
     execution_witness_index = 0
     for row in scalar:
-        if row["semantic_family"] not in {"ALU", "BRU"}:
+        if row["semantic_family"] not in EXECUTABLE_SCALAR_FAMILIES:
             continue
         match = bit_literal(int(row["encoding"][0]["match"], 16), 48)
         print("    ClearFault();")
@@ -121,10 +127,13 @@ def main() -> None:
             f"    assert execution_status_{execution_witness_index} "
             "== ScalarExecution_Executed;"
         )
-        print("    assert _LastFault == Fault_None;")
+        expected_fault = CANONICAL_EXECUTION_FAULTS.get(row["mnemonic"], "Fault_None")
+        print(f"    assert _LastFault == {expected_fault};")
         execution_witness_index += 1
     unsupported = next(
-        row for row in scalar if row["semantic_family"] not in {"ALU", "BRU"}
+        row
+        for row in scalar
+        if row["semantic_family"] not in EXECUTABLE_SCALAR_FAMILIES
     )
     unsupported_match = bit_literal(int(unsupported["encoding"][0]["match"], 16), 48)
     print("    ClearFault();")
