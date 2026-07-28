@@ -2,30 +2,32 @@ name: ASL
 
 on:
   push:
+    branches: [main]
   pull_request:
 
 permissions:
   contents: read
 
+concurrency:
+  group: asl-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
+    name: validate
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
 
       - name: Set up OCaml and opam
-        uses: ocaml/setup-ocaml@v3
+        uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0 # v3
         with:
-          ocaml-compiler: "5.2"
-
-      - name: Fetch the pinned ASLRef source
-        run: git clone --depth 1 --branch aslref-v1.0-eac1 https://github.com/herd/herdtools7.git "$RUNNER_TEMP/herdtools7"
+          ocaml-compiler: "5.2.1"
 
       - name: Install ASLRef build dependencies
-        run: opam install --yes --deps-only "$RUNNER_TEMP/herdtools7/asllib"
+        run: make setup
 
-      - name: Validate ASL template
-        run: >-
-          make ci
-          ASLREF="opam exec -- dune exec --root=$RUNNER_TEMP/herdtools7 asllib/aslref.exe --"
+      - name: Validate repository and ASL template
+        run: make ci

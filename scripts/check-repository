@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+cd "$repo_root"
+
+required_files=(
+    .aslref-version
+    AGENTS.md
+    CONTRIBUTING.md
+    GOVERNANCE.md
+    SECURITY.md
+    specification.toml
+    .codex/skills/pto-asl/SKILL.md
+    asl/architecture.asl
+    docs/traceability.md
+)
+
+for path in "${required_files[@]}"; do
+    if [[ ! -f $path ]]; then
+        echo "error: required repository file is missing: $path" >&2
+        exit 1
+    fi
+done
+
+pin=$(tr -d '[:space:]' < .aslref-version)
+if [[ ! $pin =~ ^[0-9a-f]{40}$ ]]; then
+    echo "error: .aslref-version must contain one full Git commit SHA" >&2
+    exit 1
+fi
+
+if git ls-files | grep -E '^(build|\.cache)/' >/dev/null; then
+    echo "error: generated build or cache files are tracked" >&2
+    exit 1
+fi
+
+if grep -Eq '^status = "template"$' specification.toml; then
+    if grep -REn \
+        '^[[:space:]]*(func|type|var|let|constant|config|implementation|impdef)[[:space:]]' \
+        --include='*.asl' asl; then
+        echo "error: template status forbids active ASL declarations or implementations" >&2
+        exit 1
+    fi
+fi
+
+empty_tree=$(git hash-object -t tree /dev/null)
+git diff --check "$empty_tree" HEAD
+git diff --check
+git diff --cached --check
+bash -n scripts/aslref scripts/check-repository scripts/setup-aslref

@@ -1,0 +1,10 @@
+# Security policy
+
+The repository is currently a non-normative template and has no supported release. Security-sensitive issues can still
+affect CI, dependency pinning, GitHub configuration, or future architecture artifacts.
+
+Report such issues privately with a [GitHub security advisory](https://github.com/PTO-ISA/pto-spec/security/advisories/new).
+Do not open a public issue for a suspected credential leak, supply-chain compromise, or exploitable CI behavior.
+
+Include affected commits, reproduction steps, impact, and any proposed mitigation. Maintainers will acknowledge the
+report, assess exposure, and coordinate disclosure through the advisory.

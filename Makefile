@@ -1,12 +1,15 @@
-ASLREF ?= aslref
+ASLREF ?= ./scripts/aslref
 
 ASL_SOURCES := asl/architecture.asl
 
 SPEC := build/pto-spec.asl
 
-.PHONY: all build check ci clean
+.PHONY: all setup build repo-check check ci clean
 
 all: ci
+
+setup:
+	./scripts/setup-aslref
 
 build: $(SPEC)
 
@@ -24,7 +27,10 @@ $(SPEC): $(ASL_SOURCES) Makefile
 check: $(SPEC)
 	$(ASLREF) --type-check-strict --no-exec $(SPEC)
 
-ci: check
+repo-check:
+	./scripts/check-repository
+
+ci: repo-check check
 
 clean:
 	rm -rf build

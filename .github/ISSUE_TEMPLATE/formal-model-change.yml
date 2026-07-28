@@ -1,0 +1,33 @@
+name: Formal model change
+description: Propose a normative PTO architecture modeling change.
+title: "[model]: "
+labels: [formal-model]
+body:
+  - type: textarea
+    id: requirements
+    attributes:
+      label: Normative requirements
+      description: Provide stable requirement IDs and source links.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Architecture-visible behavior
+      description: Define inputs, outputs, state, legality, ordering, faults, and profile scope.
+    validations:
+      required: true
+  - type: textarea
+    id: ambiguity
+    attributes:
+      label: Open decisions and ambiguities
+      description: Identify any behavior that must not be guessed during implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Proposed verification evidence
+      description: List positive, boundary, negative, state-transition, and differential tests.
+    validations:
+      required: true

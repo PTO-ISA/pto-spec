@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+pin=$(tr -d '[:space:]' < "$repo_root/.aslref-version")
+aslref_root=${PTO_ASLREF_ROOT:-"$repo_root/.cache/herdtools7"}
+upstream=https://github.com/herd/herdtools7.git
+
+if [[ ! $pin =~ ^[0-9a-f]{40}$ ]]; then
+    echo "error: .aslref-version must contain one full Git commit SHA" >&2
+    exit 1
+fi
+
+if ! command -v opam >/dev/null 2>&1; then
+    echo "error: opam is required; run 'make setup' after installing opam" >&2
+    exit 1
+fi
+
+if [[ ! -d "$aslref_root/.git" ]]; then
+    mkdir -p "$aslref_root"
+    git -C "$aslref_root" init --quiet
+    git -C "$aslref_root" remote add origin "$upstream"
+elif [[ $(git -C "$aslref_root" remote get-url origin) != "$upstream" ]]; then
+    echo "error: cached ASLRef origin is not $upstream" >&2
+    exit 1
+fi
+
+current=$(git -C "$aslref_root" rev-parse HEAD 2>/dev/null || true)
+if [[ $current != "$pin" ]]; then
+    git -C "$aslref_root" fetch --quiet --depth 1 origin "$pin"
+    git -C "$aslref_root" checkout --quiet --detach "$pin"
+fi
+
+exec opam exec -- dune exec --root="$aslref_root" asllib/aslref.exe -- "$@"

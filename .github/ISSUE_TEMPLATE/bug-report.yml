@@ -1,0 +1,31 @@
+name: Specification or tooling defect
+description: Report a problem in the template, formal model, validation, or documentation.
+title: "[bug]: "
+labels: [bug]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Repository governance or template
+        - ASLRef integration
+        - ASL syntax or typing
+        - PTO semantics
+        - Tests or traceability
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Defect
+      description: Describe the expected contract and the observed behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: reproducer
+    attributes:
+      label: Minimal reproducer and evidence
+      description: Include commands, ASLRef output, requirement IDs, and relevant commit SHAs.
+    validations:
+      required: true

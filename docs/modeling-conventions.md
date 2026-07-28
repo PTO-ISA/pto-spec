@@ -17,6 +17,18 @@
 - Use `assert` for a legality precondition only while fault behavior is unspecified; replace it when the ISA defines a
   visible diagnostic, trap, or status result.
 
+Do not use an assertion to hide an unresolved architecture decision. Record the gap and obtain a normative decision
+before choosing behavior.
+
+## Normative precision
+
+- Give every modeled requirement a stable ID and public source link.
+- Separate legality predicates from result/state semantics when it improves reviewability.
+- Define source/destination aliasing, read-before-write behavior, exceptional values, and partial valid regions.
+- State memory, event, and asynchronous ordering explicitly.
+- Mark implementation-defined, constrained-unpredictable, or intentionally unspecified behavior in the model and docs.
+- Keep target differences behind named profiles.
+
 ## Source organization
 
 ASLRef consumes the generated `build/pto-spec.asl`. As sources are added, keep them split for reviewability and list
@@ -24,7 +36,8 @@ them in dependency order under `ASL_SOURCES` in the `Makefile`.
 
 Every new instruction definition should include:
 
-1. architecture-level preconditions;
-2. result or state-transition semantics;
-3. comments for intentionally unspecified behavior;
-4. at least one executable test.
+1. stable requirement traceability;
+2. architecture-level legality;
+3. result or state-transition semantics;
+4. explicit fault, profile, and unspecified behavior;
+5. positive, boundary, and negative evidence appropriate to the operation.

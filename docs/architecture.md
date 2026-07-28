@@ -5,6 +5,15 @@
 Use this document to define the PTO formal model before adding semantics. Replace the questions below with reviewed
 architecture decisions and links to the corresponding public PTO ISA requirements.
 
+## Normative source hierarchy
+
+Before implementation, approve and record the precedence between the public PTO ISA manual, public API declarations,
+assembly syntax, and this executable ASL model. ASLRef defines how ASL1 programs are parsed, typed, and executed; it
+does not supply PTO architectural requirements.
+
+Every modeled PTO behavior needs a stable requirement ID and public source link in `docs/traceability.md`. Conflicts
+between sources are architecture decisions and must not be resolved implicitly in code.
+
 ## Model boundary
 
 Decide which architecture-visible concepts the model will describe:
