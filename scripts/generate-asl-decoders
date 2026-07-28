@@ -55,6 +55,79 @@ def bit_literal(value: int, width: int) -> str:
     return f"'{value:0{width}b}'"
 
 
+def decode_field(row: dict, field_name: str, instruction: int) -> int:
+    field = next(field for field in row["fields"] if field["name"] == field_name)
+    value = 0
+    for piece in field["pieces"]:
+        piece_mask = (1 << piece["width"]) - 1
+        value |= ((instruction >> piece["instruction_lsb"]) & piece_mask) << piece[
+            "value_lsb"
+        ]
+    return value
+
+
+def encode_field(row: dict, field_name: str, instruction: int, value: int) -> int:
+    field = next(field for field in row["fields"] if field["name"] == field_name)
+    if not 0 <= value < 1 << field["width"]:
+        raise ValueError(f"field value exceeds {field_name} in {row['form_id']}")
+    for piece in field["pieces"]:
+        piece_mask = (1 << piece["width"]) - 1
+        instruction &= ~(piece_mask << piece["instruction_lsb"])
+        piece_value = (value >> piece["value_lsb"]) & piece_mask
+        instruction |= piece_value << piece["instruction_lsb"]
+    return instruction
+
+
+def family_constraint_applies(row: dict, constraint: dict) -> bool:
+    selector = constraint["applies_to"]
+    field_names = {field["name"] for field in row["fields"]}
+    return (
+        row["semantic_family"] in selector["semantic_families"]
+        and row["semantic_handler"] in selector["semantic_handlers"]
+        and set(selector["required_fields"]) <= field_names
+    )
+
+
+def legal_scalar_witness(row: dict, family_constraints: list[dict]) -> int:
+    instruction = int(row["encoding"][0]["match"], 16)
+    for constraint in row["constraints"]:
+        if constraint["operator"] != "not-equal":
+            raise ValueError(f"unsupported form constraint: {constraint!r}")
+        if decode_field(row, constraint["field"], instruction) == constraint["value"]:
+            replacement = 1 if constraint["value"] == 0 else 0
+            instruction = encode_field(
+                row, constraint["field"], instruction, replacement
+            )
+    for constraint in family_constraints:
+        if not family_constraint_applies(row, constraint):
+            continue
+        if constraint["operator"] != "fields-not-equal":
+            raise ValueError(f"unsupported family constraint: {constraint!r}")
+        left = decode_field(row, constraint["left_field"], instruction)
+        right = decode_field(row, constraint["right_field"], instruction)
+        if left == right:
+            right_field = next(
+                field
+                for field in row["fields"]
+                if field["name"] == constraint["right_field"]
+            )
+            instruction = encode_field(
+                row,
+                constraint["right_field"],
+                instruction,
+                (left + 1) % (1 << right_field["width"]),
+            )
+    for constraint in row["constraints"]:
+        if decode_field(row, constraint["field"], instruction) == constraint["value"]:
+            raise ValueError(f"cannot synthesize legal witness for {row['form_id']}")
+    for constraint in family_constraints:
+        if family_constraint_applies(row, constraint) and decode_field(
+            row, constraint["left_field"], instruction
+        ) == decode_field(row, constraint["right_field"], instruction):
+            raise ValueError(f"cannot synthesize legal witness for {row['form_id']}")
+    return instruction
+
+
 def asl_identifier(value: str) -> str:
     return re.sub(r"[^A-Za-z0-9_]", "_", value)
 
@@ -146,7 +219,9 @@ def emit_enum(type_name: str, members: list[str], columns: int = 3) -> None:
 
 
 def main() -> None:
-    scalar = load("spec/catalog/scalar-forms.json")["forms"]
+    scalar_catalog = load("spec/catalog/scalar-forms.json")
+    scalar = scalar_catalog["forms"]
+    family_constraints = scalar_catalog["family_constraints"]
     tile_catalog = load("spec/catalog/tile-operations.json")
     tile = tile_catalog["operations"]
     system_register_catalog = load("spec/catalog/system-registers.json")
@@ -170,6 +245,7 @@ def main() -> None:
 
     print("// Generated from the normative PTO catalogs. Do not edit.")
     print("// PTO-REQ-ENCODING-001: complete scalar and tile decode witnesses.")
+    print("// PTO-REQ-SCALAR-CONSTRAINT-001: catalog-generated family legality.")
     print("// PTO-REQ-TILE-DISPATCH-001: total decoded direct-tile execution.")
     print(f"constant PTO_SCALAR_FORM_COUNT = {len(scalar)};")
     print(f"constant PTO_TILE_OPERATION_COUNT = {len(tile)};")
@@ -230,7 +306,7 @@ def main() -> None:
     for row in scalar:
         if row["semantic_family"] not in EXECUTABLE_SCALAR_FAMILIES:
             continue
-        match = bit_literal(int(row["encoding"][0]["match"], 16), 48)
+        match = bit_literal(legal_scalar_witness(row, family_constraints), 48)
         print("    ClearFault();")
         print(
             f"    let execution_status_{execution_witness_index} = "
@@ -251,7 +327,7 @@ def main() -> None:
     if unsupported_rows:
         unsupported = unsupported_rows[0]
         unsupported_match = bit_literal(
-            int(unsupported["encoding"][0]["match"], 16), 48
+            legal_scalar_witness(unsupported, family_constraints), 48
         )
         print("    ClearFault();")
         print(
@@ -482,6 +558,19 @@ def main() -> None:
                 f"ScalarField_{constraint['field']}) == {bit_literal(constraint['value'], 48)} "
                 "then return FALSE; end;"
             )
+        for constraint in family_constraints:
+            if not family_constraint_applies(row, constraint):
+                continue
+            if constraint["operator"] != "fields-not-equal":
+                raise ValueError(
+                    f"unsupported scalar family constraint: {constraint!r}"
+                )
+            print(
+                f"    if form == {index} && DecodeScalarOperandRaw(instruction, form, "
+                f"ScalarField_{constraint['left_field']}) == "
+                "DecodeScalarOperandRaw(instruction, form, "
+                f"ScalarField_{constraint['right_field']}) then return FALSE; end;"
+            )
     print("    return TRUE;")
     print("end;")
     print()
@@ -598,6 +687,7 @@ def main() -> None:
     print("begin")
     for index, row in enumerate(scalar):
         match = bit_literal(int(row["encoding"][0]["match"], 16), 48)
+        legal_instruction = legal_scalar_witness(row, family_constraints)
         print(f"    assert DecodeScalarForm({match}, {row['length_bits']}) == {index};")
         print(
             f"    assert ScalarFamilyOfForm({index}) == ScalarSemantic_{row['semantic_family']};"
@@ -625,17 +715,28 @@ def main() -> None:
                 f"    assert DecodeScalarOperandRaw(Ones{{48}}, {index}, ScalarField_{field['name']}) "
                 f"== {expected};"
             )
-        print(f"    assert ScalarFormOperandsLegal({match}, {index});")
+        print(
+            f"    assert ScalarFormOperandsLegal({bit_literal(legal_instruction, 48)}, {index});"
+        )
         for constraint in row["constraints"]:
-            invalid_instruction = int(row["encoding"][0]["match"], 16)
-            constrained_field = next(
-                field for field in row["fields"] if field["name"] == constraint["field"]
+            invalid_instruction = encode_field(
+                row,
+                constraint["field"],
+                legal_instruction,
+                constraint["value"],
             )
-            for piece in constrained_field["pieces"]:
-                piece_mask = (1 << piece["width"]) - 1
-                invalid_instruction &= ~(piece_mask << piece["instruction_lsb"])
-                piece_value = (constraint["value"] >> piece["value_lsb"]) & piece_mask
-                invalid_instruction |= piece_value << piece["instruction_lsb"]
+            print(
+                f"    assert !ScalarFormOperandsLegal({bit_literal(invalid_instruction, 48)}, {index});"
+            )
+        for constraint in family_constraints:
+            if not family_constraint_applies(row, constraint):
+                continue
+            invalid_instruction = encode_field(
+                row,
+                constraint["right_field"],
+                legal_instruction,
+                decode_field(row, constraint["left_field"], legal_instruction),
+            )
             print(
                 f"    assert !ScalarFormOperandsLegal({bit_literal(invalid_instruction, 48)}, {index});"
             )

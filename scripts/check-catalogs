@@ -246,6 +246,16 @@ def extract_field(row: dict, field_name: str, instruction: int) -> int:
     return value
 
 
+def family_constraint_applies(row: dict, constraint: dict) -> bool:
+    selector = constraint["applies_to"]
+    field_names = {field["name"] for field in row["fields"]}
+    return (
+        row["semantic_family"] in selector["semantic_families"]
+        and row["semantic_handler"] in selector["semantic_handlers"]
+        and set(selector["required_fields"]) <= field_names
+    )
+
+
 def classify_agu_form(row: dict) -> dict:
     parts = row["mnemonic"].split(".")
     core_index = 1 if parts[0] in {"C", "HL"} else 0
@@ -345,8 +355,11 @@ def main() -> int:
     require(
         set(scalar)
         == {
-            "constraint_count",
+            "family_constraint_application_count",
+            "family_constraint_count",
+            "family_constraints",
             "form_count",
+            "form_constraint_count",
             "forms",
             "isa",
             "operand_field_count",
@@ -356,7 +369,7 @@ def main() -> int:
         },
         "scalar catalog top-level schema drift",
     )
-    require(scalar["schema_version"] == 1, "unsupported scalar catalog schema")
+    require(scalar["schema_version"] == 2, "unsupported scalar catalog schema")
     require(specification["specification"]["name"] == isa_name, "wrong ISA name")
     require(
         specification["specification"]["normative"] is True,
@@ -394,6 +407,7 @@ def main() -> int:
     )
 
     forms = scalar["forms"]
+    family_constraints = scalar["family_constraints"]
     require(scalar["isa"] == isa_name, "scalar catalog has wrong ISA identity")
     require(scalar["form_count"] == len(forms) == 473, "scalar form count must be 473")
     require(
@@ -403,7 +417,12 @@ def main() -> int:
         scalar["operand_piece_count"] == 1865, "scalar operand piece count must be 1865"
     )
     require(
-        scalar["constraint_count"] == 3, "scalar operand constraint count must be 3"
+        scalar["form_constraint_count"] == 3,
+        "scalar form constraint count must be 3",
+    )
+    require(
+        scalar["family_constraint_count"] == len(family_constraints) == 2,
+        "scalar family constraint count must be 2",
     )
     require(
         scalar["semantic_handler_count"] == 67,
@@ -444,6 +463,99 @@ def main() -> int:
             Counter(metadata[key] for metadata in agu_metadata) == expected,
             f"AGU {key} classification drift",
         )
+    family_constraint_applications: list[tuple[str, str]] = []
+    expected_family_constraints = {
+        "agu-distinct-result-selectors": 57,
+        "agu-store-update-data-distinct": 28,
+    }
+    require(
+        {constraint["id"] for constraint in family_constraints}
+        == set(expected_family_constraints),
+        "scalar family constraint identity drift",
+    )
+    for constraint in family_constraints:
+        require(
+            set(constraint)
+            == {
+                "applies_to",
+                "architectural_rule",
+                "id",
+                "left_field",
+                "operator",
+                "right_field",
+            },
+            f"family constraint schema drift in {constraint.get('id', '<unknown>')}",
+        )
+        selector = constraint["applies_to"]
+        require(
+            set(selector)
+            == {"required_fields", "semantic_families", "semantic_handlers"},
+            f"family constraint selector drift in {constraint['id']}",
+        )
+        require(
+            constraint["operator"] == "fields-not-equal",
+            f"unsupported family constraint operator in {constraint['id']}",
+        )
+        require(
+            constraint["left_field"] != constraint["right_field"],
+            f"self-comparison in family constraint {constraint['id']}",
+        )
+        require(
+            isinstance(constraint["architectural_rule"], str)
+            and constraint["architectural_rule"].strip(),
+            f"missing normative statement in family constraint {constraint['id']}",
+        )
+        require(
+            selector["semantic_families"]
+            and set(selector["semantic_families"]) <= set(SCALAR_FAMILY_HANDLERS),
+            f"unknown family selector in {constraint['id']}",
+        )
+        require(
+            selector["semantic_handlers"]
+            and set(selector["semantic_handlers"])
+            <= set().union(*SCALAR_FAMILY_HANDLERS.values()),
+            f"unknown handler selector in {constraint['id']}",
+        )
+        require(
+            selector["required_fields"]
+            and set(selector["required_fields"]) <= SCALAR_REGISTER_FIELDS,
+            f"unknown required field in {constraint['id']}",
+        )
+        require(
+            {constraint["left_field"], constraint["right_field"]}
+            <= set(selector["required_fields"]),
+            f"compared field omitted from selector in {constraint['id']}",
+        )
+        matched_forms = [
+            row for row in forms if family_constraint_applies(row, constraint)
+        ]
+        require(
+            len(matched_forms) == expected_family_constraints[constraint["id"]],
+            f"family constraint application drift in {constraint['id']}",
+        )
+        for row in matched_forms:
+            fields_by_name = {field["name"]: field for field in row["fields"]}
+            require(
+                constraint["left_field"] in fields_by_name
+                and constraint["right_field"] in fields_by_name,
+                f"constraint fields absent in {row['form_id']}",
+            )
+            require(
+                fields_by_name[constraint["left_field"]]["width"]
+                == fields_by_name[constraint["right_field"]]["width"],
+                f"constraint field widths differ in {row['form_id']}",
+            )
+            family_constraint_applications.append((constraint["id"], row["form_id"]))
+    require(
+        scalar["family_constraint_application_count"]
+        == len(family_constraint_applications)
+        == 85,
+        "scalar family constraint application count must be 85",
+    )
+    require(
+        len(family_constraint_applications) == len(set(family_constraint_applications)),
+        "duplicate scalar family constraint application",
+    )
     for row in forms:
         require(
             set(row)
@@ -571,6 +683,12 @@ def main() -> int:
                 0 <= constraint["value"] < 1 << width,
                 f"constraint value exceeds field in {row['form_id']}",
             )
+
+    require(
+        sum(len(row["constraints"]) for row in forms)
+        == scalar["form_constraint_count"],
+        "scalar form constraint total drift",
+    )
 
     overlaps: list[tuple[dict, dict]] = []
     for left_index, left in enumerate(forms):
@@ -1059,10 +1177,17 @@ def main() -> int:
         re.search(r"\bfunc\s+ExecuteDecodedAGUForm\b", dispatch_body) is not None,
         "missing metadata-driven AGU execution binding",
     )
+    generator_body = (ROOT / "scripts" / "generate-asl-decoders").read_text(
+        encoding="utf-8"
+    )
     require(
-        "ScalarAGUActionOfForm"
-        in (ROOT / "scripts" / "generate-asl-decoders").read_text(encoding="utf-8"),
+        "ScalarAGUActionOfForm" in generator_body,
         "missing generated AGU execution metadata",
+    )
+    require(
+        "family_constraint_applies" in generator_body
+        and '"fields-not-equal"' in generator_body,
+        "missing generated scalar family constraint enforcement",
     )
 
     test_body = "\n".join(
@@ -1070,6 +1195,14 @@ def main() -> int:
         for path in (ROOT / "tests" / "asl").glob("*.asl")
     )
     test_body = re.sub(r"//.*", "", test_body)
+    require(
+        "TestScalarFamilyConstraints" in test_body
+        and "distinct_load_status" in test_body
+        and "overlap_load_status" in test_body
+        and "distinct_store_status" in test_body
+        and "overlap_store_status" in test_body,
+        "scalar family constraints lack positive and negative execution witnesses",
+    )
     for handler in sorted({row["semantic_handler"] for row in forms}):
         require(
             re.search(rf"\b{re.escape(handler)}\s*\(", test_body) is not None,
@@ -1323,6 +1456,7 @@ def main() -> int:
 
     print(
         "catalog checks passed: 473 scalar forms, 45 operand fields, 1,865 field pieces, "
+        "3 form constraints, 2 family constraints with 85 applications, "
         "3 constrained overlaps, 52 system-register definitions, 13 trap numbers, and "
         "111 tile operations with complete handler and executable feature coverage; "
         f"{len(profile_names)} profile hooks are declared, invoked, and traceable"

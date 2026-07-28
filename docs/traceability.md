@@ -12,6 +12,7 @@ review-oriented projection.
 | PTO-REQ-SCALAR-CONTROL-001 | `asl/scalar/control.asl` | compare/branch/commit tests | implemented |
 | PTO-REQ-SCALAR-OPERAND-001 | `asl/scalar/operands.asl` | GPR/direct T/U bridge tests | implemented |
 | PTO-REQ-SCALAR-ADDRESS-001 | `asl/scalar/addressing.asl`, generated AGU metadata, decoded dispatch | register/immediate/PC-relative/compressed, scaled/unscaled, pre/post, pair, and prefetch tests | implemented |
+| PTO-REQ-SCALAR-CONSTRAINT-001 | scalar catalog v2, generated family legality, ADR-0004 | all 85 application witnesses plus positive/negative AGU load/store overlap tests | implemented catalog schema |
 | PTO-REQ-SCALAR-AMO-001 | `asl/scalar/atomic.asl`, `asl/scalar/dispatch.asl` | decoded LR/SC, CAS, RMW, ordering, and removed-DMA tests | implemented with address profile |
 | PTO-REQ-SCALAR-SYS-001 | `asl/scalar/system.asl`, `asl/scalar/dispatch.asl` | decoded system/register/maintenance/fence/request/fault tests | implemented with platform profile |
 | PTO-REQ-SCALAR-SSR-001 | `asl/scalar/system-registers.asl`, system catalog | access/trap/address tests | implemented |

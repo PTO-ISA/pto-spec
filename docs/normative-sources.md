@@ -12,6 +12,7 @@ Sources are applied in this order:
 3. The public PTO ISA manual and public `PTO_INST` declarations.
 4. An anonymized private tile-document snapshot as independent cross-check evidence.
 5. Backend implementations as non-normative executable evidence.
+6. Public specifications for other ISAs as review-only design comparisons.
 
 A lower-precedence source cannot override a higher-precedence source. Conflicts
 are resolved by an architecture decision or remain explicitly incomplete in
@@ -22,9 +23,10 @@ are resolved by an architecture decision or remain explicitly incomplete in
 The scalar catalog contains 473 accepted forms across AGU, ALU, AMO, BRU, FSU,
 and SYS. Every row has a stable PTO form ID, assembly grammar, instruction width,
 semantic family/group, exact mask/match encoding, operand-field pieces,
-signedness, and form-legality constraints. The generated ASL decoder provides a
-positive witness for every form, every operand extraction, and its checked ASL
-semantic handler.
+signedness, form-local constraints, and catalog-selected family constraints.
+The generated ASL decoder provides a positive witness for every form, every
+operand extraction, every current family-rule application, and its checked ASL
+semantic handler. Negative witnesses prove every declared constraint can reject.
 
 The system-register catalog defines 52 base, context-family, and debug-register
 entries in a canonical 24-bit address domain, plus 13 trap-number identities.
@@ -37,6 +39,16 @@ generated ASL selector decoder witnesses every accepted operation.
 Neither catalog depends on an external repository or release label. Changes to
 them are normative PTO changes and require the same review and validation as ASL
 semantics.
+
+## External ISA comparison
+
+Arm ASL and other public ISA specifications may be used to identify questions
+that PTO must answer, such as load/store destination and writeback overlap. A
+shared mnemonic or design pattern does not import the other ISA's constraint,
+fault, constrained-unpredictable choice, or execution order. Any retained rule
+must be stated in PTO-owned architecture text, represented in the PTO catalog or
+ASL, and covered by PTO tests. ADR-0004 applies this policy to scalar family
+constraints.
 
 ## One-level execution
 

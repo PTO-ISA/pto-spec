@@ -1,5 +1,48 @@
 {
-  "constraint_count": 3,
+  "family_constraint_application_count": 85,
+  "family_constraint_count": 2,
+  "family_constraints": [
+    {
+      "applies_to": {
+        "required_fields": [
+          "RegDst0",
+          "RegDst1"
+        ],
+        "semantic_families": [
+          "AGU"
+        ],
+        "semantic_handlers": [
+          "ExecuteScalarLoad",
+          "ExecuteScalarLoadPair"
+        ]
+      },
+      "architectural_rule": "AGU forms with two encoded result selectors require the selectors to be distinct.",
+      "id": "agu-distinct-result-selectors",
+      "left_field": "RegDst0",
+      "operator": "fields-not-equal",
+      "right_field": "RegDst1"
+    },
+    {
+      "applies_to": {
+        "required_fields": [
+          "RegDst",
+          "SrcD"
+        ],
+        "semantic_families": [
+          "AGU"
+        ],
+        "semantic_handlers": [
+          "ExecuteScalarStore"
+        ]
+      },
+      "architectural_rule": "An AGU store address-update result selector must be distinct from its stored-data selector.",
+      "id": "agu-store-update-data-distinct",
+      "left_field": "RegDst",
+      "operator": "fields-not-equal",
+      "right_field": "SrcD"
+    }
+  ],
+  "form_constraint_count": 3,
   "form_count": 473,
   "forms": [
     {
@@ -31566,6 +31609,6 @@
   "isa": "PTO Instruction Set Architecture",
   "operand_field_count": 45,
   "operand_piece_count": 1865,
-  "schema_version": 1,
+  "schema_version": 2,
   "semantic_handler_count": 67
 }

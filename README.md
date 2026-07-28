@@ -21,10 +21,13 @@ The normative precedence and one-level boundary are defined in
 [docs/normative-sources.md](docs/normative-sources.md) and
 [ADR-0001](docs/architecture-decisions/0001-one-level-pto.md). The direct Reg5
 tile bridge is fixed by
-[ADR-0002](docs/architecture-decisions/0002-direct-reg5-tile-bridge.md).
+[ADR-0002](docs/architecture-decisions/0002-direct-reg5-tile-bridge.md), and
+[ADR-0004](docs/architecture-decisions/0004-catalog-owned-family-constraints.md)
+defines catalog-owned family legality.
 
 - 473 scalar forms are accepted across AGU, ALU, AMO, BRU, FSU, and SYS, with
-  exact masks, matches, operand pieces, signedness, and legality constraints.
+  exact masks, matches, operand pieces, signedness, three form constraints, and
+  two family constraints with 85 generated applications.
 - All 473 scalar forms have executable decoded state transitions, including
   the 30 FSU forms and their explicit scalar numeric profile boundaries.
 - 111 direct tile operations are accepted: 97 TEPL, 6 TMA, and 8 CUBE.

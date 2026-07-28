@@ -11,6 +11,8 @@
 - Legal domains, results, visible state, faults, ordering, and profile scope are explicit.
 - Fixed widths, integer constraints, indices, conversions, and aliases are type-safe.
 - Every legal case is total; every nondeterministic case is intentional.
+- Family-wide operand restrictions are catalog-owned, generated before effects,
+  and have positive and negative application witnesses.
 - Verification-only bounds are not presented as architectural limits.
 - Backend behavior is isolated from portable PTO semantics.
 
