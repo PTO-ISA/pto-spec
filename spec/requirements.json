@@ -66,6 +66,18 @@
       "tests": ["tests/asl/scalar-tests.asl"]
     },
     {
+      "id": "PTO-REQ-SCALAR-CONSTRAINT-001",
+      "model": [
+        "asl/scalar/dispatch.asl",
+        "docs/architecture-decisions/0004-catalog-owned-family-constraints.md",
+        "scripts/generate-asl-decoders",
+        "spec/catalog/scalar-forms.json"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
+      "status": "implemented-catalog-schema",
+      "tests": ["scripts/check-catalogs", "tests/asl/scalar-tests.asl"]
+    },
+    {
       "id": "PTO-REQ-SCALAR-AMO-001",
       "model": [
         "asl/scalar/atomic.asl",

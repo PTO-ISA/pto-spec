@@ -109,6 +109,21 @@ signedness remains explicit metadata so instruction semantics, not the decoder,
 controls extension and scaling. Reg5 bridge behavior is defined in
 `asl/scalar/operands.asl`.
 
+Scalar catalog legality has two layers. Form constraints restrict a field
+against a literal value and continue to disambiguate encoding aliases. Family
+constraints select forms by semantic family, handler, and required fields, then
+apply typed relations between operands. The generator emits both layers into
+`ScalarFormOperandsLegal`; a failure raises `Fault_IllegalInstruction` before
+Reg5 availability checks or semantic execution.
+
+The current AGU family rules require `RegDst0` and `RegDst1` to differ whenever
+a form exposes both results, and require an address-updating store's `RegDst`
+to differ from `SrcD`. The comparison is between encoded selector values, not a
+claim that unlike source and destination selector numbers can never address the
+same backing resource. These are PTO-owned deterministic legality rules. They
+do not import another ISA's constrained or implementation-selected writeback
+behavior; ADR-0004 records that source boundary.
+
 `ExecuteScalarInstruction` is the decoded scalar execution boundary. Unknown or
 illegal encodings raise the illegal-instruction fault, and all 473 accepted
 forms execute checked-in state transitions. `ScalarExecution_Unsupported` is

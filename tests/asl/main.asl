@@ -11,6 +11,7 @@ begin
     TestScalarAGUDispatchEffects();
     TestScalarFPDispatchEffects();
     TestScalarTileLegalityFaults();
+    TestScalarFamilyConstraints();
     TestScalarInteger();
     TestScalarMemory();
     TestScalarPairMemoryCompletion();

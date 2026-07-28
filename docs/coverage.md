@@ -8,7 +8,7 @@ closed.
 | Area | Accepted surface | Current ASL grade | Executable evidence | Remaining closure |
 | --- | ---: | --- | --- | --- |
 | Scalar state | 24 GPRs, PC, return, commit, predicate, trap, system state | implemented | reset, R0, predicate, trap envelope, and state tests | platform-specific exception routing |
-| Scalar forms | 473 | complete decode, operand extraction, Reg5 legality, handler linkage, and decoded execution | one positive decode, every operand-field witness, one semantic-handler witness per form, all-form canonical execution, family effects, unavailable-bridge rejection, and removed-DMA rejection | none for current decoded dispatch |
+| Scalar forms | 473 | complete decode, operand extraction, form/family constraints, Reg5 legality, handler linkage, and decoded execution | one positive decode, every operand-field witness, every family-constraint application, one semantic-handler witness per form, all-form canonical execution, family effects, overlap rejection, unavailable-bridge rejection, and removed-DMA rejection | none for current decoded dispatch |
 | Scalar semantics | AGU, ALU, AMO, BRU, FSU, SYS | surface-complete draft | arithmetic, division, wide multiply, bitfields, control, memory, atomic, system, raw FP carrier/comparison/min-max/flag, and mathematical FP tests | concrete correctly rounded FP arithmetic/conversion and privileged profiles |
 | System registers | 52 definitions, 13 trap numbers | executable catalog | generated access witnesses and read/write/trap tests | platform-specific reset values |
 | Tile registers | 64 | implemented | hand mapping, descriptor, capacity, and alias tests | none in the portable state model |
@@ -25,13 +25,15 @@ determine portable details. It does not mean `architecturally-complete`.
 ## Decoder evidence
 
 The scalar catalog contains 45 operand-field kinds, 1,865 encoded field pieces,
-and three form-legality constraints. Build generation emits strict ASL for:
+three form constraints, and two family constraints with 85 current
+applications. Build generation emits strict ASL for:
 
 - all 473 scalar form masks and matches, ordered by mask specificity;
 - every scalar operand field, including split-field reconstruction;
-- operand width, signedness, presence, and form-legality queries;
+- operand width, signedness, presence, form-local legality, and relational
+  family-legality queries;
 - one-level Reg5 mapping across GPR and direct T/U bridge selectors;
-- exact linkage of every scalar form to one of 68 checked ASL semantic handlers;
+- exact linkage of every scalar form to one of 67 checked ASL semantic handlers;
 - decoded execution for all 473 forms, including legality, operand binding,
   Reg5 reads, all scalar address classes and update modes, atomic width/order/
   reservation effects, predicate/commit state, system-register addressing,
@@ -39,8 +41,9 @@ and three form-legality constraints. Build generation emits strict ASL for:
   ordered comparisons, NaN/signed-zero min/max, and sticky FP flags;
 - all 111 direct tile operation selectors, semantic handlers, typed operand
   presence, ordered handler arguments, and decoded execution cases; and
-- positive witnesses for every accepted form, operand occurrence, and tile
-  selector, every catalog-reserved and review-only tile code, plus
+- positive witnesses for every accepted form, operand occurrence, family-rule
+  application, and tile selector; negative witnesses for each form and family
+  constraint; every catalog-reserved and review-only tile code; plus
   out-of-width representatives.
 
 The repository checker independently rejects out-of-width masks, unmasked match
@@ -67,7 +70,7 @@ sources alone is insufficient.
 - `ExecuteTileInstruction` runs every accepted tile selector through its
   catalog-declared operand binding, read-only per-operation legality preflight,
   and architecture state transition. Tile and Reg5 legality failures are
-  explicit and effect-free; memory completion and restart remain closure work.
+  explicit and effect-free.
 - Translation, permission, and some numeric conversion details remain named
   profiles rather than silent implementation behavior. Tile memory accesses
   use the scalar data-access hooks, including destination-free prefetch.

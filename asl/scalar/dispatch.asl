@@ -1,4 +1,5 @@
-// PTO-REQ-SCALAR-DISPATCH-001: decoded scalar execution and rejection contract.
+// PTO-REQ-SCALAR-DISPATCH-001, PTO-REQ-SCALAR-CONSTRAINT-001: decoded scalar
+// execution with catalog-generated form and family legality.
 //
 // The public entry point deliberately reports recognized families that do not
 // yet have form-to-effect bindings. A recognized but unsupported form does not
