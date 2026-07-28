@@ -20,6 +20,7 @@ review-oriented projection.
 | PTO-REQ-SCALAR-FP-001 | `asl/scalar/floating.asl`, decoded dispatch, PTO v0 profile | carrier/type legality, raw arithmetic, comparison, NaN, signed-zero, flag, conversion, and direct profile tests | implemented by PTO v0 profile |
 | PTO-REQ-MEMORY-001 | `asl/scalar/memory.asl`, decoded dispatch, PTO v0 profile | endian, alignment, signedness, identity translation, privilege, pair, pre/post, and fault tests | implemented by PTO v0 profile |
 | PTO-REQ-MEMORY-COMPLETION-001 | shared access probe, scalar pair dispatch, tile memory, PTO v0 profile | pair first/second and tile first/middle/last faults, preservation, restart, and profile access tests | implemented by PTO v0 profile |
+| PTO-REQ-MEMORY-TSO-001 | `asl/concurrency.asl`, scalar/tile memory and atomic/fence boundaries, ADR-0006 | allowed/forbidden store-buffering, message-passing, IRIW, same-location, and atomic litmus tests | executable PTO-TSO candidate model |
 | PTO-REQ-TILE-001 | `asl/types.asl`, `asl/tile/state.asl` | mapping/capacity/alias tests | implemented portable model |
 | PTO-REQ-TILE-DISPATCH-001 | generated tile decode bindings, `asl/types.asl` | all-selector binding witnesses, decoded TEPL/TMA/CUBE effects, result, and rejection tests | implemented |
 | PTO-REQ-TILE-LEGALITY-001 | `asl/tile/legality.asl`, generated tile and Reg5 preflight | data, descriptor, shape, pipe, composite, Reg5, fault-address, and no-partial-effect tests | implemented |

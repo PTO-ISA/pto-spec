@@ -1,5 +1,6 @@
-// PTO-REQ-STATE-001, PTO-REQ-PROFILE-001: architecture-visible scalar,
-// memory, privilege, reset-profile, and fault state.
+// PTO-REQ-STATE-001, PTO-REQ-PROFILE-001, PTO-REQ-MEMORY-TSO-001:
+// architecture-visible scalar, memory, privilege, reset-profile,
+// concurrency-candidate, and fault state.
 
 var _GPR : array [[PTO_SCALAR_REGISTER_COUNT]] of Word;
 var _PC : Word;
@@ -12,10 +13,10 @@ var _Memory : array [[PTO_MODEL_MEMORY_BYTES]] of Byte;
 var _ReservationValid : boolean;
 var _ReservationAddress : Word;
 var _ReservationSize : integer {1,2,4,8};
-var _MemoryAcquireEpoch : integer;
-var _MemoryReleaseEpoch : integer;
 var _LastFencePredecessor : bits(4);
 var _LastFenceSuccessor : bits(4);
+var _MemoryEvents : array [[PTO_MODEL_MEMORY_EVENTS]] of MemoryEvent;
+var _MemoryEventCount : integer {0..PTO_MODEL_MEMORY_EVENTS};
 var _DataCacheEpoch : integer;
 var _InstructionCacheEpoch : integer;
 var _BlockCacheEpoch : integer;

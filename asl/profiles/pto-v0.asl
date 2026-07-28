@@ -45,8 +45,7 @@ begin
     _ReservationValid = FALSE;
     _ReservationAddress = Zeros{PTO_XLEN};
     _ReservationSize = 1;
-    _MemoryAcquireEpoch = 0;
-    _MemoryReleaseEpoch = 0;
+    ResetMemoryExecution();
     _LastFencePredecessor = Zeros{4};
     _LastFenceSuccessor = Zeros{4};
     _DataCacheEpoch = 0;

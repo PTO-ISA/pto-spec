@@ -160,6 +160,23 @@
       "tests": ["tests/asl/scalar-tests.asl", "tests/asl/tile-tests.asl"]
     },
     {
+      "id": "PTO-REQ-MEMORY-TSO-001",
+      "model": [
+        "asl/concurrency.asl",
+        "asl/scalar/atomic.asl",
+        "asl/scalar/memory.asl",
+        "asl/scalar/system.asl",
+        "asl/state.asl",
+        "asl/tile/memory.asl",
+        "asl/types.asl",
+        "docs/architecture-decisions/0006-pto-total-store-order.md",
+        "docs/memory-model.md"
+      ],
+      "source": "https://github.com/herd/herdtools7/blob/0b6e09066d4186c8a26e02e3bb884bd664d5eb34/herd/libdir/x86tso.cat",
+      "status": "executable-pto-tso-candidate-model",
+      "tests": ["scripts/check-catalogs", "tests/asl/concurrency-tests.asl"]
+    },
+    {
       "id": "PTO-REQ-TILE-001",
       "model": ["asl/types.asl", "asl/tile/state.asl"],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",

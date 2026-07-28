@@ -1,4 +1,5 @@
-// PTO-REQ-SCALAR-SYS-001: PTO base SSR access and architectural fences.
+// PTO-REQ-SCALAR-SYS-001, PTO-REQ-MEMORY-TSO-001: PTO base SSR access,
+// architectural time, and data/instruction fences.
 
 impdef func ReadMonotonicTime() => Word
 begin
@@ -59,8 +60,6 @@ func FenceData(predecessor: bits(4), successor: bits(4))
 begin
     _LastFencePredecessor = predecessor;
     _LastFenceSuccessor = successor;
-    _MemoryReleaseEpoch = _MemoryReleaseEpoch + 1;
-    _MemoryAcquireEpoch = _MemoryAcquireEpoch + 1;
     if predecessor[3] == '1' || successor[3] == '1' then
         _InstructionCacheEpoch = _InstructionCacheEpoch + 1;
     end;
@@ -70,7 +69,7 @@ func FenceInstruction()
 begin
     // The executable byte-array model has coherent instruction/data storage.
     // The epoch makes the architectural visibility point explicit.
-    _MemoryReleaseEpoch = _MemoryReleaseEpoch + 1;
+    _InstructionCacheEpoch = _InstructionCacheEpoch + 1;
 end;
 
 func SoftwareBreakpoint(tag: bits(5))

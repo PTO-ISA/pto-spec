@@ -65,6 +65,12 @@ must be stated in PTO-owned architecture text, represented in the PTO catalog or
 ASL, and covered by PTO tests. ADR-0004 applies this policy to scalar family
 constraints.
 
+The pinned `herdtools7` `x86tso.cat` relation structure is the public comparison
+source for PTO-TSO. PTO defines its own event classes, ordering annotations,
+fence masks, atomicity, candidate validity, and tests in
+`docs/memory-model.md`; no x86 instruction behavior is imported. ADR-0006
+records this boundary.
+
 ## One-level execution
 
 PTO operations execute directly against explicit scalar, memory, and tile

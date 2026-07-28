@@ -33,6 +33,7 @@ begin
     TestDecodedTileExecution();
     TestDecodedTileLegalityFaults();
     TestTileMemoryCompletionAndRestart();
+    TestTSOConcurrency();
     TestConcreteProfile();
     return 0;
 end;

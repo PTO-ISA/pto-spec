@@ -1,4 +1,5 @@
-// PTO-REQ-TMA-001, PTO-REQ-MEMORY-COMPLETION-001: precise, restartable direct
+// PTO-REQ-TMA-001, PTO-REQ-MEMORY-COMPLETION-001,
+// PTO-REQ-MEMORY-TSO-001: precise, restartable direct
 // TLOAD/TSTORE/MGATHER/MSCATTER and destination-free TPREFETCH.
 
 func TMOV(destination: TileIndex, source: TileIndex)

@@ -290,8 +290,6 @@ begin
     assert _LastControlRequest == ExecutionControl_WaitEvent;
     assert _ControlRequestOperand == Zeros{PTO_XLEN} + 17;
 
-    let before_release = _MemoryReleaseEpoch;
-    let before_acquire = _MemoryAcquireEpoch;
     let before_instruction = _InstructionCacheEpoch;
     var fence_data: bits(48) = Zeros{48} + 0x0000202b;
     fence_data[27:24] = '1010';
@@ -300,8 +298,6 @@ begin
     assert fence_status == ScalarExecution_Executed;
     assert _LastFencePredecessor == '1010';
     assert _LastFenceSuccessor == '0101';
-    assert _MemoryReleaseEpoch == before_release + 1;
-    assert _MemoryAcquireEpoch == before_acquire + 1;
     assert _InstructionCacheEpoch == before_instruction + 1;
 
     WriteGPR(5, Zeros{PTO_XLEN} + 0x800);
@@ -348,25 +344,26 @@ begin
     ClearFault();
     WriteGPR(2, Zeros{PTO_XLEN} + 128);
     Store(Zeros{PTO_XLEN} + 128, 4, Zeros{PTO_XLEN} + 0x80000001);
-    let before_lr_release = _MemoryReleaseEpoch;
-    let before_lr_acquire = _MemoryAcquireEpoch;
     var load_reserved: bits(48) = Zeros{48} + 0x2000000b;
     load_reserved[11:7] = Zeros{5} + 5;
     load_reserved[19:15] = Zeros{5} + 2;
     load_reserved[27] = '1';
     load_reserved[26] = '1';
     load_reserved[25] = '1';
+    let load_reserved_form_index = DecodeScalarForm(load_reserved, 32);
+    assert load_reserved_form_index != PTO_SCALAR_FORM_COUNT;
+    let load_reserved_form = load_reserved_form_index as
+        integer {0..PTO_SCALAR_FORM_COUNT-1};
+    assert ScalarDecodedMemoryOrder(load_reserved, load_reserved_form) ==
+        MemoryOrder_AcquireRelease;
     let load_reserved_status = ExecuteScalarInstruction(load_reserved, 32);
     assert load_reserved_status == ScalarExecution_Executed;
     assert ReadGPR(5) == SignExtend{PTO_XLEN}(Zeros{32} + 0x80000001);
     assert _ReservationValid;
     assert _ReservationAddress == Zeros{PTO_XLEN} + 128;
     assert _ReservationSize == 4;
-    assert _MemoryReleaseEpoch == before_lr_release + 1;
-    assert _MemoryAcquireEpoch == before_lr_acquire + 1;
 
     WriteGPR(3, Zeros{PTO_XLEN} + 0x11223344);
-    let before_sc_release = _MemoryReleaseEpoch;
     var store_conditional: bits(48) = Zeros{48} + 0x2000100b;
     store_conditional[11:7] = Zeros{5} + 6;
     store_conditional[19:15] = Zeros{5} + 3;
@@ -378,7 +375,6 @@ begin
     assert ReadGPR(6) == Zeros{PTO_XLEN};
     let stored_word = LoadUnsigned(Zeros{PTO_XLEN} + 128, 4);
     assert stored_word == Zeros{PTO_XLEN} + 0x11223344;
-    assert _MemoryReleaseEpoch == before_sc_release + 1;
 
     WriteGPR(2, Zeros{PTO_XLEN} + 136);
     WriteGPR(3, Zeros{PTO_XLEN} + 5);
@@ -950,11 +946,7 @@ begin
     WriteSystemRegister(SystemRegister_VENDOR, Ones{PTO_XLEN});
     assert _LastFault == Fault_IllegalInstruction;
 
-    let before_acquire = _MemoryAcquireEpoch;
-    let before_release = _MemoryReleaseEpoch;
     FenceData('0010', '0001');
-    assert _MemoryAcquireEpoch == before_acquire + 1;
-    assert _MemoryReleaseEpoch == before_release + 1;
     assert _LastFencePredecessor == '0010';
     assert _LastFenceSuccessor == '0001';
 
@@ -1026,9 +1018,9 @@ begin
     ExecuteCompressedSystemRegisterGet(Zeros{24} + 0x0000);
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 0x77;
 
-    let before_instruction_fence = _MemoryReleaseEpoch;
+    let before_instruction_fence = _InstructionCacheEpoch;
     FenceInstruction();
-    assert _MemoryReleaseEpoch == before_instruction_fence + 1;
+    assert _InstructionCacheEpoch == before_instruction_fence + 1;
 
     let before_close = _ArchitectureRequestEpoch;
     ArchitectureCloseRequest('0011');

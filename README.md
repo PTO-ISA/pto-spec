@@ -27,6 +27,9 @@ tile bridge is fixed by
 defines catalog-owned family legality. The concrete implementation boundary is
 selected by
 [ADR-0005](docs/architecture-decisions/0005-pto-v0-concrete-reference-profile.md).
+The shared scalar/tile total-store-order contract is executable in
+[docs/memory-model.md](docs/memory-model.md) and fixed by
+[ADR-0006](docs/architecture-decisions/0006-pto-total-store-order.md).
 
 - 473 scalar forms are accepted across AGU, ALU, AMO, BRU, FSU, and SYS, with
   exact masks, matches, operand pieces, signedness, three form constraints, and
@@ -65,6 +68,7 @@ work can fail fast before ASLRef is built. The complete gate also validates:
 - exact scalar, system-register, and tile catalogs;
 - generated scalar-form, operand-field, and tile-selector decoder witnesses;
 - exact 34-hook active-profile implementation and conformance-test closure;
+- bounded PTO-TSO candidate validity, ordering relations, and litmus outcomes;
 - one-level architecture and publication hygiene;
 - strict ASLRef type checking and executable semantic evidence;
 - gate and toolchain canaries that prove validation can fail correctly.
@@ -88,6 +92,7 @@ asl/
   architecture.asl       Architecture identity and model bounds
   types.asl              Scalar, fault, memory-order, and tile domains
   state.asl              Scalar, system, memory, and fault state
+  concurrency.asl        PTO-TSO candidate validity and ordering axioms
   scalar/                Operand bridge, integer, control, memory, atomic, system, and FP semantics
   tile/                  Flat tile state, TEPL, TMA, and CUBE semantics
 tests/

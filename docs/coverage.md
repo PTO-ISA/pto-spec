@@ -2,8 +2,8 @@
 
 Coverage grades describe executable architecture evidence, not only parser or
 mnemonic presence. The accepted surface is complete under the concrete PTO v0
-reference profile. The repository remains a normative draft while concurrency
-and independent-evidence gaps are closed.
+reference profile. The repository remains a normative draft while mixed-size
+concurrency behavior and independent-evidence gaps are closed.
 
 | Area | Accepted surface | Current ASL grade | Executable evidence | Remaining closure |
 | --- | ---: | --- | --- | --- |
@@ -13,9 +13,10 @@ and independent-evidence gaps are closed.
 | System registers | 52 definitions, 13 trap numbers | executable catalog with explicit privilege and reset | generated access witnesses plus read/write/trap/privilege/reset tests | none for PTO v0 |
 | Tile registers | 64 | implemented | hand mapping, descriptor, capacity, and alias tests | none in the portable state model |
 | TEPL | 97 operations | decoded execution with explicit legality under PTO v0 | elementwise, reduction, expansion, generation, conversion, rearrangement, complex, pipe, decoded-effect, profile, negative-data/descriptor/pipe, and no-partial-effect tests | independent evidence gaps |
-| TMA | 6 operations | decoded execution with explicit legality, PTO v0 access policy, and precise completion | decoded load plus load/store/move/prefetch/gather/scatter, profile, descriptor, first/middle/last fault, preservation, and restart tests | TSO/concurrency closure |
+| TMA | 6 operations | decoded execution with explicit legality, PTO v0 access policy, precise completion, and shared PTO-TSO events | decoded load plus load/store/move/prefetch/gather/scatter, profile, descriptor, first/middle/last fault, preservation, restart, and concurrency tests | mixed-size concurrency extension |
 | CUBE | 8 operations | decoded execution with explicit legality under PTO v0 | decoded matrix multiply, matrix/vector base, bias, accumulate, MX, profile, and composite preflight tests | alternate hardware numeric profile only if desired |
 | Encodings | 473 scalar forms + 111 tile operations | executable complete | generated ASL decoders, operand/handler bindings, reserved/removed-code assertions, and decoded family effects | none for accepted selector-to-handler identity |
+| PTO-TSO concurrency | 16-event/four-agent verification bound | executable axiomatic candidate model | store buffering, fenced store buffering, message passing, IRIW, same-location forwarding/stale-read, and atomicity tests | byte-level mixed-size coherence |
 | Independent tile cross-check | 111 operations | complete disposition inventory | 97 agree, 1 conflict, 13 incomplete | resolve incomplete evidence pages |
 
 `complete under PTO v0` means every accepted operation is connected to an ASL
@@ -79,8 +80,9 @@ sources alone is insufficient.
   prove original-address reporting, preservation, and restart by full reissue.
 - Platform-specific interpretation of the atomic FAR address-class hint remains
   a named refinement of the portable flat-address baseline.
-- The shared scalar/tile ordering state does not yet constitute a complete
-  multi-agent TSO and concurrency model.
+- PTO-TSO is executable for exact address-and-size locations. Mixed-size and
+  partially overlapping candidate accesses fail closed pending byte-level
+  coherence rules and litmus evidence.
 
 The independent-evidence gaps remain machine-readable in
 `spec/evidence/independent-tile-crosscheck.json`. The profile registry is closed
