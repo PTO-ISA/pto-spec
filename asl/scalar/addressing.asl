@@ -72,7 +72,8 @@ begin
     end;
 end;
 
-func ScalarPrefetch(base: Word, offset: Word, size_bytes: integer {1,2,4,8})
+func ScalarPrefetch(base: Word, offset: Word, size_bytes: integer {1,2,4,8},
+                    model: bits(5))
 begin
     // Scalar prefetch is a non-faulting hint. Address formation is retained so
     // the operand contract is explicit, but no translation or memory access is
@@ -80,4 +81,5 @@ begin
     let address = base + offset;
     assert UInt(address) >= 0;
     assert size_bytes >= 1;
+    assert UInt(model) >= 0;
 end;

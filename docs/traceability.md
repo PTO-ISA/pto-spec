@@ -8,15 +8,15 @@ review-oriented projection.
 | PTO-REQ-STATE-001 | `asl/types.asl`, `asl/state.asl` | state tests | implemented baseline |
 | PTO-REQ-FAULT-001 | `asl/types.asl`, `asl/state.asl` | state/scalar tests | implemented baseline |
 | PTO-REQ-SCALAR-ALU-001 | `asl/scalar/integer.asl` | integer and edge-case tests | implemented subset |
-| PTO-REQ-SCALAR-DISPATCH-001 | `asl/scalar/dispatch.asl`, generated decode bindings | all 107 ALU, 53 AMO, 66 BRU, and 35 SYS canonical forms plus effect and rejection tests | implemented ALU/AMO/BRU/SYS subset |
+| PTO-REQ-SCALAR-DISPATCH-001 | `asl/scalar/dispatch.asl`, generated decode bindings | all 183 AGU, 107 ALU, 53 AMO, 66 BRU, and 35 SYS canonical forms plus effect and rejection tests | implemented AGU/ALU/AMO/BRU/SYS subset |
 | PTO-REQ-SCALAR-CONTROL-001 | `asl/scalar/control.asl` | compare/branch/commit tests | implemented subset |
 | PTO-REQ-SCALAR-OPERAND-001 | `asl/scalar/operands.asl` | GPR/direct T/U bridge tests | implemented |
-| PTO-REQ-SCALAR-ADDRESS-001 | `asl/scalar/addressing.asl` | address-mode tests | implemented |
+| PTO-REQ-SCALAR-ADDRESS-001 | `asl/scalar/addressing.asl`, generated AGU metadata, decoded dispatch | register/immediate/PC-relative/compressed, scaled/unscaled, pre/post, pair, and prefetch tests | implemented |
 | PTO-REQ-SCALAR-AMO-001 | `asl/scalar/atomic.asl`, `asl/scalar/dispatch.asl` | decoded LR/SC, CAS, RMW, ordering, and DMA tests | implemented subset |
 | PTO-REQ-SCALAR-SYS-001 | `asl/scalar/system.asl`, `asl/scalar/dispatch.asl` | decoded system/register/maintenance/fence/request/fault tests | implemented subset |
 | PTO-REQ-SCALAR-SSR-001 | `asl/scalar/system-registers.asl`, system catalog | access/trap/address tests | implemented |
 | PTO-REQ-SCALAR-FP-001 | `asl/scalar/floating.asl` | mathematical FP tests | implemented subset |
-| PTO-REQ-MEMORY-001 | `asl/scalar/memory.asl` | endian, alignment, pair, pre/post tests | implemented subset |
+| PTO-REQ-MEMORY-001 | `asl/scalar/memory.asl`, decoded dispatch | endian, alignment, signedness, pair, pre/post, and fault tests | implemented subset |
 | PTO-REQ-TILE-001 | `asl/types.asl`, `asl/tile/state.asl` | mapping/capacity/alias tests | implemented baseline |
 | PTO-REQ-TILE-MANAGEMENT-001 | `asl/tile/management.asl` | tile/global FIFO tests | implemented |
 | PTO-REQ-TEPL-001 | `asl/tile/elementwise.asl` | binary/unary/scalar/select tests | implemented subset |

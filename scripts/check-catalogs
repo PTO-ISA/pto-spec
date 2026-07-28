@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import math
 import re
 import sys
 import tomllib
@@ -214,6 +215,73 @@ def extract_field(row: dict, field_name: str, instruction: int) -> int:
     return value
 
 
+def classify_agu_form(row: dict) -> dict:
+    parts = row["mnemonic"].split(".")
+    core_index = 1 if parts[0] in {"C", "HL"} else 0
+    core = parts[core_index]
+    suffixes = set(parts[core_index + 1 :])
+    actions = {
+        "ExecuteScalarLoad": "Load",
+        "ExecuteScalarLoadPair": "LoadPair",
+        "ExecuteScalarStore": "Store",
+        "ExecuteScalarStorePair": "StorePair",
+        "ScalarPrefetch": "Prefetch",
+    }
+    require(row["semantic_handler"] in actions, f"unknown AGU handler {row['form_id']}")
+    action = actions[row["semantic_handler"]]
+    if action == "Prefetch":
+        size_bytes = 1
+    else:
+        width_prefixes = (("LB", "SB"), ("LH", "SH"), ("LW", "SW"), ("LD", "SD"))
+        widths = (1, 2, 4, 8)
+        matches = [
+            width
+            for prefixes, width in zip(width_prefixes, widths, strict=True)
+            if core.startswith(prefixes)
+        ]
+        require(len(matches) == 1, f"ambiguous AGU width {row['form_id']}")
+        size_bytes = matches[0]
+
+    field_names = {field["name"] for field in row["fields"]}
+    if "PCR" in suffixes:
+        address_kind = "PCRelative"
+    elif parts[0] == "C":
+        address_kind = "Compressed"
+    elif "SrcRType" in field_names:
+        address_kind = "Register"
+    else:
+        address_kind = "Immediate"
+    if suffixes & {"PR", "UPR"}:
+        update_mode = "PreIndex"
+    elif suffixes & {"PO", "UPO"}:
+        update_mode = "PostIndex"
+    else:
+        update_mode = "None"
+    unscaled = bool(suffixes & {"U", "UPR", "UPO", "UA"})
+    if address_kind == "PCRelative":
+        offset_scale = 2
+    elif address_kind == "Register" and "shamt" in field_names:
+        offset_scale = 0
+    elif unscaled:
+        offset_scale = 0
+    else:
+        offset_scale = int(math.log2(size_bytes))
+    signed_load = (
+        action in {"Load", "LoadPair"}
+        and core.startswith(("LB", "LH", "LW"))
+        and not core.startswith(("LBU", "LHU", "LWU"))
+    )
+    return {
+        "action": action,
+        "address_kind": address_kind,
+        "offset_scale": offset_scale,
+        "prefetch_returns_address": row["mnemonic"] in {"HL.PRF.A", "HL.PRFI.UA"},
+        "signed_load": signed_load,
+        "size_bytes": size_bytes,
+        "update_mode": update_mode,
+    }
+
+
 def expand_number_entries(entries: list) -> set[int]:
     values: set[int] = set()
     for entry in entries:
@@ -272,8 +340,8 @@ def main() -> int:
     )
     require(
         specification["maturity"]["instruction_dispatch"]
-        == "alu-107-amo-53-bru-66-sys-35-executable-other-families-catalog-linked",
-        "instruction dispatch maturity must match the checked ALU, AMO, BRU, and SYS subset",
+        == "agu-183-alu-107-amo-53-bru-66-sys-35-executable-fsu-catalog-linked",
+        "instruction dispatch maturity must match the checked AGU, ALU, AMO, BRU, and SYS subset",
     )
     require(
         specification["architecture"]["scalar_forms"] == 474,
@@ -313,6 +381,28 @@ def main() -> int:
         ),
         "scalar family counts changed",
     )
+    agu_metadata = [
+        classify_agu_form(row) for row in forms if row["semantic_family"] == "AGU"
+    ]
+    require(len(agu_metadata) == 183, "AGU execution metadata must cover 183 forms")
+    expected_agu_distributions = {
+        "action": Counter(
+            {"Load": 85, "LoadPair": 19, "Store": 59, "StorePair": 14, "Prefetch": 6}
+        ),
+        "address_kind": Counter(
+            {"Immediate": 98, "Register": 59, "PCRelative": 22, "Compressed": 4}
+        ),
+        "offset_scale": Counter({0: 105, 1: 19, 2: 43, 3: 16}),
+        "prefetch_returns_address": Counter({False: 181, True: 2}),
+        "signed_load": Counter({False: 139, True: 44}),
+        "size_bytes": Counter({1: 39, 2: 52, 4: 54, 8: 38}),
+        "update_mode": Counter({"None": 117, "PreIndex": 33, "PostIndex": 33}),
+    }
+    for key, expected in expected_agu_distributions.items():
+        require(
+            Counter(metadata[key] for metadata in agu_metadata) == expected,
+            f"AGU {key} classification drift",
+        )
     for row in forms:
         require(
             set(row)
@@ -738,7 +828,13 @@ def main() -> int:
         re.search(r"\bfunc\s+ExecuteScalarInstruction\b", dispatch_body) is not None,
         "missing public scalar execution entry point",
     )
-    executable_family_counts = {"ALU": 107, "AMO": 53, "BRU": 66, "SYS": 35}
+    executable_family_counts = {
+        "AGU": 183,
+        "ALU": 107,
+        "AMO": 53,
+        "BRU": 66,
+        "SYS": 35,
+    }
     executable_forms = [
         row for row in forms if row["semantic_family"] in executable_family_counts
     ]
@@ -749,12 +845,23 @@ def main() -> int:
             f"{family} dispatch inventory must contain {expected_count} forms",
         )
     for row in executable_forms:
+        if row["semantic_family"] == "AGU":
+            continue
         operation = re.sub(r"[^A-Za-z0-9_]", "_", row["mnemonic"])
         require(
             re.search(rf"\bScalarOperation_{re.escape(operation)}\b", dispatch_body)
             is not None,
             f"executable form lacks decoded execution binding: {row['form_id']}",
         )
+    require(
+        re.search(r"\bfunc\s+ExecuteDecodedAGUForm\b", dispatch_body) is not None,
+        "missing metadata-driven AGU execution binding",
+    )
+    require(
+        "ScalarAGUActionOfForm"
+        in (ROOT / "scripts" / "generate-asl-decoders").read_text(encoding="utf-8"),
+        "missing generated AGU execution metadata",
+    )
 
     test_body = "\n".join(
         path.read_text(encoding="utf-8")

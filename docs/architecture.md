@@ -73,9 +73,9 @@ controls extension and scaling. Reg5 bridge behavior is defined in
 `asl/scalar/operands.asl`.
 
 `ExecuteScalarInstruction` is the decoded scalar execution boundary. Unknown or
-illegal encodings raise the illegal-instruction fault, all 107 ALU, 53 AMO, 66
-BRU, and 35 SYS forms execute their checked-in state transitions, and recognized families
-without completed operand-to-effect bindings return
+illegal encodings raise the illegal-instruction fault, all 183 AGU, 107 ALU, 53
+AMO, 66 BRU, and 35 SYS forms execute their checked-in state transitions, and
+recognized families without completed operand-to-effect bindings return
 `ScalarExecution_Unsupported` with no state change. This explicit result keeps
 partial executable coverage observable.
 

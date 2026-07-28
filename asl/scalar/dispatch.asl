@@ -1144,6 +1144,199 @@ begin
     end;
 end;
 
+pure func ScalarDecodedAGUImmediate(
+    instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1}) => Word
+begin
+    if ScalarOperandPresent(form, ScalarField_simm5) then
+        return ScalarDecodedWord(instruction, form, ScalarField_simm5);
+    elsif ScalarOperandPresent(form, ScalarField_simm12) then
+        return ScalarDecodedWord(instruction, form, ScalarField_simm12);
+    elsif ScalarOperandPresent(form, ScalarField_simm17) then
+        return ScalarDecodedWord(instruction, form, ScalarField_simm17);
+    elsif ScalarOperandPresent(form, ScalarField_simm22) then
+        return ScalarDecodedWord(instruction, form, ScalarField_simm22);
+    else
+        return ScalarDecodedWord(instruction, form, ScalarField_simm);
+    end;
+end;
+
+readonly func ScalarDecodedAGUBase(
+    instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1},
+    action: ScalarAGUAction, address_kind: ScalarAGUAddressKind) => Word
+begin
+    if address_kind == ScalarAGU_PCRelative then
+        return ReadPC() AND (Ones{PTO_XLEN} - 3);
+    elsif address_kind == ScalarAGU_Compressed then
+        return ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL);
+    elsif (action == ScalarAGU_Store || action == ScalarAGU_StorePair) &&
+          address_kind == ScalarAGU_Immediate then
+        return ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR);
+    else
+        return ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL);
+    end;
+end;
+
+readonly func ScalarDecodedAGUOffset(
+    instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1},
+    address_kind: ScalarAGUAddressKind) => Word
+begin
+    let scale = ScalarAGUOffsetScaleOfForm(form);
+    if address_kind == ScalarAGU_Register then
+        let unshifted = ApplyScalarRightModifier(
+            ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+            ScalarDecodedRightModifier(instruction, form), FALSE);
+        let shift_amount = if ScalarOperandPresent(form, ScalarField_shamt) then
+            ScalarDecodedUInt6(instruction, form, ScalarField_shamt)
+            else scale;
+        return LSL(unshifted, shift_amount);
+    else
+        return LSL(ScalarDecodedAGUImmediate(instruction, form), scale);
+    end;
+end;
+
+pure func NormalizeScalarLoadResult(value: Word,
+                                    size_bytes: integer {1,2,4,8},
+                                    signed_load: boolean) => Word
+begin
+    if signed_load then
+        case size_bytes of
+            when 1 => return SignExtend{PTO_XLEN}(value[7:0]);
+            when 2 => return SignExtend{PTO_XLEN}(value[15:0]);
+            when 4 => return SignExtend{PTO_XLEN}(value[31:0]);
+            when 8 => return value;
+        end;
+    end;
+    case size_bytes of
+        when 1 => return ZeroExtend{PTO_XLEN}(value[7:0]);
+        when 2 => return ZeroExtend{PTO_XLEN}(value[15:0]);
+        when 4 => return ZeroExtend{PTO_XLEN}(value[31:0]);
+        when 8 => return value;
+    end;
+end;
+
+func ExecuteDecodedAGULoad(
+    instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1},
+    address: Word, updated_base: Word, update_mode: AddressUpdateMode,
+    size_bytes: integer {1,2,4,8})
+begin
+    let value = LoadUnsigned(address, size_bytes);
+    if _LastFault == Fault_None then
+        let normalized = NormalizeScalarLoadResult(
+            value, size_bytes, ScalarAGUSignedLoadOfForm(form));
+        if ScalarAGUAddressKindOfForm(form) == ScalarAGU_Compressed then
+            WriteCompressedTResult(normalized);
+        elsif update_mode == AddressUpdate_None then
+            WriteScalarDestination(
+                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+                normalized);
+        else
+            WriteScalarDestination(
+                ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
+                normalized);
+            WriteScalarDestination(
+                ScalarDecodedSelector(instruction, form, ScalarField_RegDst1),
+                updated_base);
+        end;
+    end;
+end;
+
+func ExecuteDecodedAGULoadPair(
+    instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1},
+    address: Word, size_bytes: integer {1,2,4,8})
+begin
+    let first = LoadUnsigned(address, size_bytes);
+    if _LastFault == Fault_None then
+        let second = LoadUnsigned(
+            address + NaturalToWord(size_bytes as integer {0..262144}),
+            size_bytes);
+        if _LastFault == Fault_None then
+            WriteScalarDestination(
+                ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
+                NormalizeScalarLoadResult(first, size_bytes,
+                    ScalarAGUSignedLoadOfForm(form)));
+            WriteScalarDestination(
+                ScalarDecodedSelector(instruction, form, ScalarField_RegDst1),
+                NormalizeScalarLoadResult(second, size_bytes,
+                    ScalarAGUSignedLoadOfForm(form)));
+        end;
+    end;
+end;
+
+readonly func ReadDecodedAGUStoreSource(
+    instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1}) => Word
+begin
+    if ScalarOperandPresent(form, ScalarField_SrcD) then
+        return ReadDecodedScalarRegister(instruction, form, ScalarField_SrcD);
+    elsif ScalarAGUAddressKindOfForm(form) == ScalarAGU_Compressed then
+        return ReadScalarRegisterOperand(24);
+    else
+        return ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL);
+    end;
+end;
+
+func ExecuteDecodedAGUStore(
+    instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1},
+    address: Word, updated_base: Word, update_mode: AddressUpdateMode,
+    size_bytes: integer {1,2,4,8})
+begin
+    Store(address, size_bytes, ReadDecodedAGUStoreSource(instruction, form));
+    if _LastFault == Fault_None && update_mode != AddressUpdate_None then
+        WriteScalarDestination(
+            ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            updated_base);
+    end;
+end;
+
+func ExecuteDecodedAGUStorePair(
+    instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1},
+    address: Word, size_bytes: integer {1,2,4,8})
+begin
+    Store(address, size_bytes,
+        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcD));
+    if _LastFault == Fault_None then
+        Store(address + NaturalToWord(size_bytes as integer {0..262144}),
+            size_bytes,
+            ReadDecodedScalarRegister(instruction, form, ScalarField_SrcD1));
+    end;
+end;
+
+func ExecuteDecodedAGUForm(instruction: bits(48),
+                           form: integer {0..PTO_SCALAR_FORM_COUNT-1})
+begin
+    let action = ScalarAGUActionOfForm(form);
+    let address_kind = ScalarAGUAddressKindOfForm(form);
+    let update_mode = ScalarAGUUpdateModeOfForm(form);
+    let size_bytes = ScalarAGUSizeOfForm(form);
+    let base = ScalarDecodedAGUBase(instruction, form, action, address_kind);
+    let offset = ScalarDecodedAGUOffset(instruction, form, address_kind);
+    let updated_base = base + offset;
+    let address = if update_mode == AddressUpdate_PostIndex then base
+                  else updated_base;
+    case action of
+        when ScalarAGU_Load =>
+            ExecuteDecodedAGULoad(instruction, form, address, updated_base,
+                update_mode, size_bytes);
+        when ScalarAGU_LoadPair =>
+            ExecuteDecodedAGULoadPair(
+                instruction, form, address, size_bytes);
+        when ScalarAGU_Store =>
+            ExecuteDecodedAGUStore(instruction, form, address, updated_base,
+                update_mode, size_bytes);
+        when ScalarAGU_StorePair =>
+            ExecuteDecodedAGUStorePair(
+                instruction, form, address, size_bytes);
+        when ScalarAGU_Prefetch =>
+            let model = DecodeScalarOperandRaw(
+                instruction, form, ScalarField_model)[4:0];
+            ScalarPrefetch(base, offset, size_bytes, model);
+            if ScalarAGUPrefetchReturnsAddress(form) then
+                WriteScalarDestination(
+                    ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+                    updated_base);
+            end;
+    end;
+end;
+
 func ExecuteScalarInstruction(instruction: bits(48),
                               length_bits: integer {16,32,48})
                               => ScalarExecutionStatus
@@ -1159,6 +1352,7 @@ begin
         return ScalarExecution_Rejected;
     end;
     case ScalarFamilyOfForm(form) of
+        when ScalarSemantic_AGU => ExecuteDecodedAGUForm(instruction, form);
         when ScalarSemantic_ALU => ExecuteDecodedALUForm(instruction, form);
         when ScalarSemantic_AMO => ExecuteDecodedAMOForm(instruction, form);
         when ScalarSemantic_BRU => ExecuteDecodedBRUForm(instruction, form);

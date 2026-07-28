@@ -4,12 +4,13 @@
 from __future__ import annotations
 
 import json
+import math
 import re
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
-EXECUTABLE_SCALAR_FAMILIES = {"ALU", "AMO", "BRU", "SYS"}
+EXECUTABLE_SCALAR_FAMILIES = {"AGU", "ALU", "AMO", "BRU", "SYS"}
 CANONICAL_EXECUTION_FAULTS = {
     "ASSERT": "Fault_Assert",
     "C.EBREAK": "Fault_SoftwareBreakpoint",
@@ -31,6 +32,75 @@ def bit_literal(value: int, width: int) -> str:
 
 def asl_identifier(value: str) -> str:
     return re.sub(r"[^A-Za-z0-9_]", "_", value)
+
+
+def agu_metadata(row: dict) -> dict:
+    mnemonic_parts = row["mnemonic"].split(".")
+    core_index = 1 if mnemonic_parts[0] in {"C", "HL"} else 0
+    core = mnemonic_parts[core_index]
+    suffixes = set(mnemonic_parts[core_index + 1 :])
+    action_names = {
+        "ExecuteScalarLoad": "Load",
+        "ExecuteScalarLoadPair": "LoadPair",
+        "ExecuteScalarStore": "Store",
+        "ExecuteScalarStorePair": "StorePair",
+        "ScalarPrefetch": "Prefetch",
+    }
+    action = action_names[row["semantic_handler"]]
+    if action == "Prefetch":
+        size_bytes = 1
+    elif core.startswith(("LB", "SB")):
+        size_bytes = 1
+    elif core.startswith(("LH", "SH")):
+        size_bytes = 2
+    elif core.startswith(("LW", "SW")):
+        size_bytes = 4
+    elif core.startswith(("LD", "SD")):
+        size_bytes = 8
+    else:
+        raise ValueError(f"unclassified AGU width: {row['mnemonic']}")
+
+    field_names = {field["name"] for field in row["fields"]}
+    if "PCR" in suffixes:
+        address_kind = "PCRelative"
+    elif mnemonic_parts[0] == "C":
+        address_kind = "Compressed"
+    elif "SrcRType" in field_names:
+        address_kind = "Register"
+    else:
+        address_kind = "Immediate"
+
+    if suffixes & {"PR", "UPR"}:
+        update_mode = "PreIndex"
+    elif suffixes & {"PO", "UPO"}:
+        update_mode = "PostIndex"
+    else:
+        update_mode = "None"
+
+    unscaled = bool(suffixes & {"U", "UPR", "UPO", "UA"})
+    if address_kind == "PCRelative":
+        offset_scale = 2
+    elif address_kind == "Register" and "shamt" in field_names:
+        offset_scale = 0
+    elif unscaled:
+        offset_scale = 0
+    else:
+        offset_scale = int(math.log2(size_bytes))
+
+    signed_load = (
+        action in {"Load", "LoadPair"}
+        and core.startswith(("LB", "LH", "LW"))
+        and not core.startswith(("LBU", "LHU", "LWU"))
+    )
+    return {
+        "action": action,
+        "address_kind": address_kind,
+        "offset_scale": offset_scale,
+        "prefetch_returns_address": row["mnemonic"] in {"HL.PRF.A", "HL.PRFI.UA"},
+        "signed_load": signed_load,
+        "size_bytes": size_bytes,
+        "update_mode": update_mode,
+    }
 
 
 def emit_enum(type_name: str, members: list[str], columns: int = 3) -> None:
@@ -202,6 +272,83 @@ def main() -> None:
         print(
             f"    if form == {index} then return ScalarHandler_{row['semantic_handler']}; end;"
         )
+    print("    unreachable;")
+    print("end;")
+    print()
+    print("type ScalarAGUAction of enumeration {")
+    print("    ScalarAGU_Load, ScalarAGU_LoadPair, ScalarAGU_Store,")
+    print("    ScalarAGU_StorePair, ScalarAGU_Prefetch")
+    print("};")
+    print("type ScalarAGUAddressKind of enumeration {")
+    print("    ScalarAGU_Register, ScalarAGU_Immediate,")
+    print("    ScalarAGU_PCRelative, ScalarAGU_Compressed")
+    print("};")
+    agu_rows = [
+        (index, agu_metadata(row))
+        for index, row in enumerate(scalar)
+        if row["semantic_family"] == "AGU"
+    ]
+    print("pure func ScalarAGUActionOfForm(form: integer {0..PTO_SCALAR_FORM_COUNT-1})")
+    print("                                => ScalarAGUAction")
+    print("begin")
+    for index, metadata in agu_rows:
+        print(
+            f"    if form == {index} then return ScalarAGU_{metadata['action']}; end;"
+        )
+    print("    unreachable;")
+    print("end;")
+    print()
+    print("pure func ScalarAGUAddressKindOfForm(")
+    print("    form: integer {0..PTO_SCALAR_FORM_COUNT-1}) => ScalarAGUAddressKind")
+    print("begin")
+    for index, metadata in agu_rows:
+        print(
+            f"    if form == {index} then return ScalarAGU_{metadata['address_kind']}; end;"
+        )
+    print("    unreachable;")
+    print("end;")
+    print()
+    print("pure func ScalarAGUSizeOfForm(form: integer {0..PTO_SCALAR_FORM_COUNT-1})")
+    print("                              => integer {1,2,4,8}")
+    print("begin")
+    for index, metadata in agu_rows:
+        print(f"    if form == {index} then return {metadata['size_bytes']}; end;")
+    print("    unreachable;")
+    print("end;")
+    print()
+    print("pure func ScalarAGUOffsetScaleOfForm(")
+    print("    form: integer {0..PTO_SCALAR_FORM_COUNT-1}) => integer {0..3}")
+    print("begin")
+    for index, metadata in agu_rows:
+        print(f"    if form == {index} then return {metadata['offset_scale']}; end;")
+    print("    unreachable;")
+    print("end;")
+    print()
+    print("pure func ScalarAGUUpdateModeOfForm(")
+    print("    form: integer {0..PTO_SCALAR_FORM_COUNT-1}) => AddressUpdateMode")
+    print("begin")
+    for index, metadata in agu_rows:
+        print(
+            f"    if form == {index} then return AddressUpdate_{metadata['update_mode']}; end;"
+        )
+    print("    unreachable;")
+    print("end;")
+    print()
+    print("pure func ScalarAGUSignedLoadOfForm(")
+    print("    form: integer {0..PTO_SCALAR_FORM_COUNT-1}) => boolean")
+    print("begin")
+    for index, metadata in agu_rows:
+        value = "TRUE" if metadata["signed_load"] else "FALSE"
+        print(f"    if form == {index} then return {value}; end;")
+    print("    unreachable;")
+    print("end;")
+    print()
+    print("pure func ScalarAGUPrefetchReturnsAddress(")
+    print("    form: integer {0..PTO_SCALAR_FORM_COUNT-1}) => boolean")
+    print("begin")
+    for index, metadata in agu_rows:
+        value = "TRUE" if metadata["prefetch_returns_address"] else "FALSE"
+        print(f"    if form == {index} then return {value}; end;")
     print("    unreachable;")
     print("end;")
     print()

@@ -29,7 +29,7 @@
         "spec/catalog/scalar-forms.json"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
-      "status": "implemented-alu-amo-bru-sys-subset",
+      "status": "implemented-agu-alu-amo-bru-sys-subset",
       "tests": [
         "scripts/check-catalogs",
         "tests/asl/main.asl",
@@ -52,7 +52,11 @@
     },
     {
       "id": "PTO-REQ-SCALAR-ADDRESS-001",
-      "model": ["asl/scalar/addressing.asl"],
+      "model": [
+        "asl/scalar/addressing.asl",
+        "asl/scalar/dispatch.asl",
+        "scripts/generate-asl-decoders"
+      ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
       "status": "implemented",
       "tests": ["tests/asl/scalar-tests.asl"]
@@ -91,7 +95,7 @@
     },
     {
       "id": "PTO-REQ-MEMORY-001",
-      "model": ["asl/scalar/memory.asl"],
+      "model": ["asl/scalar/memory.asl", "asl/scalar/dispatch.asl"],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
       "status": "implemented-subset",
       "tests": ["tests/asl/scalar-tests.asl"]
