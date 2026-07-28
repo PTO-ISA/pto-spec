@@ -340,8 +340,8 @@ def main() -> int:
     )
     require(
         specification["maturity"]["instruction_dispatch"]
-        == "agu-183-alu-107-amo-53-bru-66-sys-35-executable-fsu-catalog-linked",
-        "instruction dispatch maturity must match the checked AGU, ALU, AMO, BRU, and SYS subset",
+        == "all-474-scalar-forms-executable",
+        "instruction dispatch maturity must match the complete checked scalar catalog",
     )
     require(
         specification["architecture"]["scalar_forms"] == 474,
@@ -833,6 +833,7 @@ def main() -> int:
         "ALU": 107,
         "AMO": 53,
         "BRU": 66,
+        "FSU": 30,
         "SYS": 35,
     }
     executable_forms = [

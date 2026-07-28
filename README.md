@@ -23,8 +23,8 @@ tile bridge is fixed by
 
 - 474 scalar forms are accepted across AGU, ALU, AMO, BRU, FSU, and SYS, with
   exact masks, matches, operand pieces, signedness, and legality constraints.
-- All 183 AGU, 107 ALU, 53 AMO, 66 BRU, and 35 SYS forms have executable
-  decoded state transitions; FSU remains explicitly catalog-linked.
+- All 474 scalar forms have executable decoded state transitions, including
+  the 30 FSU forms and their explicit scalar numeric profile boundaries.
 - 111 direct tile operations are accepted: 97 TEPL, 6 TMA, and 8 CUBE.
 - 64 tile registers form T/U/M/N hands with 16 registers per hand.
 - The architecture contains no nested instruction bodies or body-local state.

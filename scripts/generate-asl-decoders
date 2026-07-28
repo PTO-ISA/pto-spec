@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
-EXECUTABLE_SCALAR_FAMILIES = {"AGU", "ALU", "AMO", "BRU", "SYS"}
+EXECUTABLE_SCALAR_FAMILIES = {"AGU", "ALU", "AMO", "BRU", "FSU", "SYS"}
 CANONICAL_EXECUTION_FAULTS = {
     "ASSERT": "Fault_Assert",
     "C.EBREAK": "Fault_SoftwareBreakpoint",
@@ -200,19 +200,23 @@ def main() -> None:
         expected_fault = CANONICAL_EXECUTION_FAULTS.get(row["mnemonic"], "Fault_None")
         print(f"    assert _LastFault == {expected_fault};")
         execution_witness_index += 1
-    unsupported = next(
+    unsupported_rows = [
         row
         for row in scalar
         if row["semantic_family"] not in EXECUTABLE_SCALAR_FAMILIES
-    )
-    unsupported_match = bit_literal(int(unsupported["encoding"][0]["match"], 16), 48)
-    print("    ClearFault();")
-    print(
-        f"    let unsupported_status = ExecuteScalarInstruction({unsupported_match}, "
-        f"{unsupported['length_bits']});"
-    )
-    print("    assert unsupported_status == ScalarExecution_Unsupported;")
-    print("    assert _LastFault == Fault_None;")
+    ]
+    if unsupported_rows:
+        unsupported = unsupported_rows[0]
+        unsupported_match = bit_literal(
+            int(unsupported["encoding"][0]["match"], 16), 48
+        )
+        print("    ClearFault();")
+        print(
+            f"    let unsupported_status = ExecuteScalarInstruction({unsupported_match}, "
+            f"{unsupported['length_bits']});"
+        )
+        print("    assert unsupported_status == ScalarExecution_Unsupported;")
+        print("    assert _LastFault == Fault_None;")
     print("    ClearFault();")
     print(
         f"    let rejected_status = ExecuteScalarInstruction({bit_literal(0, 48)}, 32);"

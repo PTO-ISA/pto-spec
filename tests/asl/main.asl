@@ -9,6 +9,7 @@ begin
     TestScalarSystemDispatchEffects();
     TestScalarAtomicDispatchEffects();
     TestScalarAGUDispatchEffects();
+    TestScalarFPDispatchEffects();
     TestScalarInteger();
     TestScalarMemory();
     TestScalarAtomics();

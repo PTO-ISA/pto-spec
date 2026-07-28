@@ -73,11 +73,20 @@ controls extension and scaling. Reg5 bridge behavior is defined in
 `asl/scalar/operands.asl`.
 
 `ExecuteScalarInstruction` is the decoded scalar execution boundary. Unknown or
-illegal encodings raise the illegal-instruction fault, all 183 AGU, 107 ALU, 53
-AMO, 66 BRU, and 35 SYS forms execute their checked-in state transitions, and
-recognized families without completed operand-to-effect bindings return
-`ScalarExecution_Unsupported` with no state change. This explicit result keeps
-partial executable coverage observable.
+illegal encodings raise the illegal-instruction fault, and all 474 accepted
+forms execute checked-in state transitions. `ScalarExecution_Unsupported` is
+reserved for a future recognized family that lacks a completed binding; no
+current catalog form returns it.
+
+Scalar floating-point values occupy the shared Reg5 carrier. Source type `00`
+selects a 64-bit carrier and `01` selects a zero-extended 32-bit carrier; the
+other source encodings are illegal. CSTATE[39:37] supplies the rounding mode;
+CSTATE bits 32 through 36 accumulate sticky NV, DZ, OF, UF, and NX flags,
+respectively. The portable ASL fixes
+ordered comparisons, signaling behavior, NaN and signed-zero min/max rules,
+narrow-result packing, conversion type legality, and flag updates. Correctly
+rounded arithmetic and low-precision conversion payloads cross named numeric
+profile hooks rather than inheriting host-language behavior.
 
 ## Excluded implementation detail
 

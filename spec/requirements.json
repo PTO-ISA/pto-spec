@@ -29,7 +29,7 @@
         "spec/catalog/scalar-forms.json"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
-      "status": "implemented-agu-alu-amo-bru-sys-subset",
+      "status": "implemented",
       "tests": [
         "scripts/check-catalogs",
         "tests/asl/main.asl",
@@ -88,9 +88,9 @@
     },
     {
       "id": "PTO-REQ-SCALAR-FP-001",
-      "model": ["asl/scalar/floating.asl"],
+      "model": ["asl/scalar/floating.asl", "asl/scalar/dispatch.asl"],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
-      "status": "implemented-subset",
+      "status": "implemented-with-numeric-profile-hooks",
       "tests": ["tests/asl/scalar-tests.asl"]
     },
     {
