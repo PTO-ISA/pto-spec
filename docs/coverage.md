@@ -12,10 +12,10 @@ closed.
 | Scalar semantics | AGU, ALU, AMO, BRU, FSU, SYS | surface-complete draft | arithmetic, division, wide multiply, bitfields, control, memory, atomic, system, raw FP carrier/comparison/min-max/flag, and mathematical FP tests | concrete correctly rounded FP arithmetic/conversion and privileged profiles |
 | System registers | 52 definitions, 13 trap numbers | executable catalog | generated access witnesses and read/write/trap tests | platform-specific reset values |
 | Tile registers | 64 | implemented | hand mapping, descriptor, capacity, and alias tests | none in the portable state model |
-| TEPL | 97 operations | 97/97 handler-mapped | elementwise, reduction, expansion, generation, conversion, rearrangement, complex, and pipe tests | numeric profile hooks and independent evidence gaps |
-| TMA | 6 operations | 6/6 handler-mapped | load/store/move/prefetch/gather/scatter tests | concrete translation and permission profile |
-| CUBE | 8 operations | 8/8 handler-mapped | matrix/vector base, bias, accumulate, and MX tests | numeric type and accumulation profile |
-| Encodings | 474 scalar forms + 111 tile operations | executable complete | generated ASL decoder and reserved-code assertions | none for accepted selector identity |
+| TEPL | 97 operations | decoded execution complete | elementwise, reduction, expansion, generation, conversion, rearrangement, complex, pipe, and decoded-effect tests | explicit legality, numeric profile hooks, and independent evidence gaps |
+| TMA | 6 operations | decoded execution complete | decoded load plus load/store/move/prefetch/gather/scatter tests | explicit legality and concrete completion/translation/permission profiles |
+| CUBE | 8 operations | decoded execution complete | decoded matrix multiply plus matrix/vector base, bias, accumulate, and MX tests | explicit legality and numeric type/accumulation profiles |
+| Encodings | 474 scalar forms + 111 tile operations | executable complete | generated ASL decoders, operand/handler bindings, reserved-code assertions, and decoded family effects | none for accepted selector-to-handler identity |
 | Independent tile cross-check | 111 operations | complete disposition inventory | 97 agree, 1 conflict, 13 incomplete | resolve incomplete evidence pages |
 
 `surface-complete draft` means every accepted operation is connected to an ASL
@@ -37,7 +37,8 @@ and three form-legality constraints. Build generation emits strict ASL for:
   reservation effects, predicate/commit state, system-register addressing,
   maintenance, fences, requests, faults, floating carrier/type legality,
   ordered comparisons, NaN/signed-zero min/max, and sticky FP flags;
-- all 111 direct tile operation selectors; and
+- all 111 direct tile operation selectors, semantic handlers, typed operand
+  presence, ordered handler arguments, and decoded execution cases; and
 - positive witnesses for every accepted form, operand occurrence, and tile
   selector, every catalog-reserved and review-only tile code, plus
   out-of-width representatives.
@@ -46,9 +47,10 @@ The repository checker independently rejects out-of-width masks, unmasked match
 bits, overlapping field pieces, non-contiguous reconstructed values, dangling
 constraints, ambiguous equal-priority encodings, and unreviewed overlaps.
 It also requires every one of the 68 scalar semantic primitives and all 51 tile
-handler groups to appear in executable ASL feature evidence, and every scalar
-form to have a checked-in decoded-operation binding. Handler-name presence in
-the normative sources alone is insufficient.
+handler groups to appear in executable ASL feature evidence, every scalar form
+to have a checked-in decoded-operation binding, and the tile catalog to generate
+the public decoded execution boundary. Handler-name presence in the normative
+sources alone is insufficient.
 
 ## Explicit gaps
 
@@ -62,6 +64,9 @@ the normative sources alone is insufficient.
   destination packing, and sticky flags are executable in the portable model.
 - `ExecuteScalarInstruction` runs every accepted scalar form through legality,
   operand binding, Reg5 access, and its architecture state transition.
+- `ExecuteTileInstruction` runs every accepted tile selector through its
+  catalog-declared operand binding and architecture state transition. Explicit
+  per-operation legality and restart rules remain closure work.
 - Translation, permission, and some numeric conversion details remain named
   profiles rather than silent implementation behavior. Tile memory accesses
   use the scalar data-access hooks, including destination-free prefetch.

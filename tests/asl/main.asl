@@ -26,5 +26,6 @@ begin
     TestTileManagement();
     TestTileConversion();
     TestTileHandlerClosure();
+    TestDecodedTileExecution();
     return 0;
 end;

@@ -25,7 +25,7 @@ system_state = "implemented"
 tile_state = "implemented"
 tile_semantics = "surface-complete-with-profile-hooks"
 binary_decode = "executable-complete"
-instruction_dispatch = "all-474-scalar-forms-executable"
+instruction_dispatch = "all-474-scalar-forms-and-111-tile-operations-executable"
 
 [toolchain]
 aslref_repository = "https://github.com/herd/herdtools7.git"

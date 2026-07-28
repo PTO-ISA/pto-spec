@@ -124,6 +124,21 @@
       "tests": ["tests/asl/state-tests.asl", "tests/asl/tile-tests.asl"]
     },
     {
+      "id": "PTO-REQ-TILE-DISPATCH-001",
+      "model": [
+        "asl/types.asl",
+        "scripts/generate-asl-decoders",
+        "spec/catalog/tile-operations.json"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
+      "status": "implemented",
+      "tests": [
+        "scripts/check-catalogs",
+        "tests/asl/main.asl",
+        "tests/asl/tile-tests.asl"
+      ]
+    },
+    {
       "id": "PTO-REQ-TILE-MANAGEMENT-001",
       "model": ["asl/tile/management.asl"],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
