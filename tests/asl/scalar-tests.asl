@@ -95,6 +95,40 @@ begin
     assert ReadPC() == Zeros{PTO_XLEN} + 204;
 end;
 
+// PTO-REQ-TILE-LEGALITY-001: unavailable Reg5 bridges reject before scalar
+// destination effects, including implicit compressed T1 access.
+func TestScalarTileLegalityFaults()
+begin
+    ConfigureTile(0, 0, 0, 0, 0, 0, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WritePC(Zeros{PTO_XLEN} + 0x240);
+    ClearFault();
+    WriteGPR(2, Zeros{PTO_XLEN} + 10);
+    WriteGPR(3, Zeros{PTO_XLEN} + 20);
+    var compressed_add: bits(48) = Zeros{48} + 0x0008;
+    compressed_add[10:6] = Zeros{5} + 2;
+    compressed_add[15:11] = Zeros{5} + 3;
+    let compressed_status = ExecuteScalarInstruction(compressed_add, 16);
+    assert compressed_status == ScalarExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert _FaultAddress == Zeros{PTO_XLEN} + 0x240;
+    assert !_Tiles[[0]].allocated;
+
+    ClearFault();
+    WriteGPR(5, Zeros{PTO_XLEN} + 0x55);
+    var bridged_add: bits(48) = Zeros{48} + 0x00000005;
+    bridged_add[11:7] = Zeros{5} + 5;
+    bridged_add[19:15] = Zeros{5} + 24;
+    bridged_add[24:20] = Zeros{5} + 3;
+    let bridged_status = ExecuteScalarInstruction(bridged_add, 32);
+    assert bridged_status == ScalarExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadGPR(5) == Zeros{PTO_XLEN} + 0x55;
+
+    ConfigureTile(0, 256, 1, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Vector);
+end;
+
 func TestScalarSystemDispatchEffects()
 begin
     ClearFault();

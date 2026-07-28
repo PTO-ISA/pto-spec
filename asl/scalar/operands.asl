@@ -10,6 +10,32 @@ begin
     return 16;
 end;
 
+readonly func ScalarTileBridgeLegal(index: TileIndex) => boolean
+begin
+    return _Tiles[[index]].allocated &&
+           _Tiles[[index]].valid_rows > 0 &&
+           _Tiles[[index]].valid_columns > 0 &&
+           _Tiles[[index]].layout != TileLayout_ImplementationDefined;
+end;
+
+readonly func ScalarSourceSelectorLegal(selector: Reg5Selector) => boolean
+begin
+    if selector < PTO_SCALAR_REGISTER_COUNT then return TRUE; end;
+    let tile_index: TileIndex = if selector < 28 then
+        (selector - 24) as TileIndex
+    else
+        ((16 + selector) - 28) as TileIndex;
+    return ScalarTileBridgeLegal(tile_index);
+end;
+
+readonly func ScalarDestinationSelectorLegal(selector: Reg5Selector) => boolean
+begin
+    if selector < 30 then return TRUE; end;
+    let tile_index = if selector == 30 then DirectUBridgeIndex()
+                     else DirectTBridgeIndex();
+    return ScalarTileBridgeLegal(tile_index);
+end;
+
 readonly func ReadScalarRegisterOperand(selector: Reg5Selector) => Word
 begin
     if selector < PTO_SCALAR_REGISTER_COUNT then
@@ -20,9 +46,9 @@ begin
         (selector - 24) as TileIndex
     else
         ((16 + selector) - 28) as TileIndex;
-    assert _Tiles[[tile_index]].allocated;
-    assert _Tiles[[tile_index]].valid_rows > 0;
-    assert _Tiles[[tile_index]].valid_columns > 0;
+    if !ScalarTileBridgeLegal(tile_index) then
+        return Zeros{PTO_XLEN};
+    end;
     return ReadTileElement(tile_index, 0, 0);
 end;
 
@@ -32,15 +58,17 @@ begin
         WriteGPR(selector as GPRIndex, value);
     elsif selector == 30 then
         let destination = DirectUBridgeIndex();
-        assert _Tiles[[destination]].allocated;
-        assert _Tiles[[destination]].valid_rows > 0;
-        assert _Tiles[[destination]].valid_columns > 0;
+        if !ScalarTileBridgeLegal(destination) then
+            SetFault(Fault_TileLegality, ReadPC());
+            return;
+        end;
         WriteTileElement(destination, 0, 0, value);
     elsif selector == 31 then
         let destination = DirectTBridgeIndex();
-        assert _Tiles[[destination]].allocated;
-        assert _Tiles[[destination]].valid_rows > 0;
-        assert _Tiles[[destination]].valid_columns > 0;
+        if !ScalarTileBridgeLegal(destination) then
+            SetFault(Fault_TileLegality, ReadPC());
+            return;
+        end;
         WriteTileElement(destination, 0, 0, value);
     end;
     // Selectors 24..29 intentionally discard destination values.

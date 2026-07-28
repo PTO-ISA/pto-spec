@@ -8,13 +8,13 @@ closed.
 | Area | Accepted surface | Current ASL grade | Executable evidence | Remaining closure |
 | --- | ---: | --- | --- | --- |
 | Scalar state | 24 GPRs, PC, return, commit, predicate, trap, system state | implemented | reset, R0, predicate, trap envelope, and state tests | platform-specific exception routing |
-| Scalar forms | 474 | complete decode, operand extraction, handler linkage, and decoded execution | one positive decode, every operand-field witness, one semantic-handler witness per form, all-form canonical execution, and family effect witnesses | none for current decoded dispatch |
+| Scalar forms | 474 | complete decode, operand extraction, Reg5 legality, handler linkage, and decoded execution | one positive decode, every operand-field witness, one semantic-handler witness per form, all-form canonical execution, family effects, and unavailable-bridge rejection | none for current decoded dispatch |
 | Scalar semantics | AGU, ALU, AMO, BRU, FSU, SYS | surface-complete draft | arithmetic, division, wide multiply, bitfields, control, memory, atomic, system, raw FP carrier/comparison/min-max/flag, and mathematical FP tests | concrete correctly rounded FP arithmetic/conversion and privileged profiles |
 | System registers | 52 definitions, 13 trap numbers | executable catalog | generated access witnesses and read/write/trap tests | platform-specific reset values |
 | Tile registers | 64 | implemented | hand mapping, descriptor, capacity, and alias tests | none in the portable state model |
-| TEPL | 97 operations | decoded execution complete | elementwise, reduction, expansion, generation, conversion, rearrangement, complex, pipe, and decoded-effect tests | explicit legality, numeric profile hooks, and independent evidence gaps |
-| TMA | 6 operations | decoded execution complete | decoded load plus load/store/move/prefetch/gather/scatter tests | explicit legality and concrete completion/translation/permission profiles |
-| CUBE | 8 operations | decoded execution complete | decoded matrix multiply plus matrix/vector base, bias, accumulate, and MX tests | explicit legality and numeric type/accumulation profiles |
+| TEPL | 97 operations | decoded execution with explicit legality | elementwise, reduction, expansion, generation, conversion, rearrangement, complex, pipe, decoded-effect, negative-data/descriptor/pipe, and no-partial-effect tests | numeric profile hooks and independent evidence gaps |
+| TMA | 6 operations | decoded execution with explicit legality | decoded load plus load/store/move/prefetch/gather/scatter and descriptor tests | concrete completion/restart/translation/permission profiles |
+| CUBE | 8 operations | decoded execution with explicit legality | decoded matrix multiply, matrix/vector base, bias, accumulate, MX, and composite preflight tests | numeric type and accumulation profiles |
 | Encodings | 474 scalar forms + 111 tile operations | executable complete | generated ASL decoders, operand/handler bindings, reserved-code assertions, and decoded family effects | none for accepted selector-to-handler identity |
 | Independent tile cross-check | 111 operations | complete disposition inventory | 97 agree, 1 conflict, 13 incomplete | resolve incomplete evidence pages |
 
@@ -65,8 +65,9 @@ sources alone is insufficient.
 - `ExecuteScalarInstruction` runs every accepted scalar form through legality,
   operand binding, Reg5 access, and its architecture state transition.
 - `ExecuteTileInstruction` runs every accepted tile selector through its
-  catalog-declared operand binding and architecture state transition. Explicit
-  per-operation legality and restart rules remain closure work.
+  catalog-declared operand binding, read-only per-operation legality preflight,
+  and architecture state transition. Tile and Reg5 legality failures are
+  explicit and effect-free; memory completion and restart remain closure work.
 - Translation, permission, and some numeric conversion details remain named
   profiles rather than silent implementation behavior. Tile memory accesses
   use the scalar data-access hooks, including destination-free prefetch.

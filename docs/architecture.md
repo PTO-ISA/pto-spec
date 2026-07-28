@@ -56,6 +56,21 @@ architecture state transition. TALLOC returns its allocated address; other
 accepted operations return zero. Unknown family-selector combinations raise
 the illegal-instruction fault and perform no tile semantic handler call.
 
+Before a recognized tile operation executes, its complete operand set passes a
+read-only legality predicate. Descriptor availability, logical shapes, data
+types, divisor values, index ranges, matrix/broadcast dimensions, and pipe
+state are checked as applicable to that operation. Failure raises
+`Fault_TileLegality`, reports the current PC, returns `TileExecution_Rejected`,
+and performs no destination, memory, or pipe effect. Composite matrix forms
+validate their bias or scale operands before the base multiply begins.
+
+Scalar Reg5 sources 24..31 and destinations 30..31 use the same rule for their
+direct T/U bridges. Decoded scalar execution preflights every explicit and
+implicit bridge before its semantic handler, so an unavailable bridge raises
+`Fault_TileLegality` without a partial scalar effect. The lower-level read
+helper returns zero only as a defensive invariant fallback; it is not an
+architectural recovery behavior.
+
 TPREFETCH is destination-free. It performs applicable address translation,
 permission, and fault checks but allocates and writes no tile. This resolves a
 known independent-documentation conflict in favor of the canonical PTO contract.

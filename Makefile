@@ -25,7 +25,8 @@ ASL_SOURCES_BEFORE_DECODER := \
 	asl/tile/rearrangement.asl \
 	asl/tile/complex.asl \
 	asl/tile/memory.asl \
-	asl/tile/cube.asl
+	asl/tile/cube.asl \
+	asl/tile/legality.asl
 
 ASL_SOURCES_AFTER_DECODER := \
 	asl/scalar/dispatch.asl

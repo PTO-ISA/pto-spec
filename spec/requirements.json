@@ -9,10 +9,14 @@
     },
     {
       "id": "PTO-REQ-FAULT-001",
-      "model": ["asl/types.asl", "asl/state.asl"],
+      "model": ["asl/types.asl", "asl/state.asl", "asl/tile/legality.asl"],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
       "status": "implemented-portable-envelope",
-      "tests": ["tests/asl/state-tests.asl", "tests/asl/scalar-tests.asl"]
+      "tests": [
+        "tests/asl/state-tests.asl",
+        "tests/asl/scalar-tests.asl",
+        "tests/asl/tile-tests.asl"
+      ]
     },
     {
       "id": "PTO-REQ-SCALAR-ALU-001",
@@ -137,6 +141,18 @@
         "tests/asl/main.asl",
         "tests/asl/tile-tests.asl"
       ]
+    },
+    {
+      "id": "PTO-REQ-TILE-LEGALITY-001",
+      "model": [
+        "asl/scalar/dispatch.asl",
+        "asl/scalar/operands.asl",
+        "asl/tile/legality.asl",
+        "scripts/generate-asl-decoders"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
+      "status": "implemented",
+      "tests": ["tests/asl/scalar-tests.asl", "tests/asl/tile-tests.asl"]
     },
     {
       "id": "PTO-REQ-TILE-MANAGEMENT-001",

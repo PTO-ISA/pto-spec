@@ -377,6 +377,11 @@ def main() -> int:
         "instruction dispatch maturity must match the complete checked catalogs",
     )
     require(
+        specification["maturity"]["tile_semantics"]
+        == "decoded-with-explicit-legality-and-profile-hooks",
+        "tile maturity must record explicit decoded legality",
+    )
+    require(
         specification["architecture"]["scalar_forms"] == 474,
         "status record scalar count drift",
     )
@@ -896,6 +901,14 @@ def main() -> int:
             re.search(rf"\bfunc\s+{re.escape(handler)}\b", asl_body) is not None,
             f"missing ASL handler {handler}",
         )
+        require(
+            re.search(
+                rf"\breadonly\s+func\s+TileOperandsLegal_{re.escape(handler)}\b",
+                asl_body,
+            )
+            is not None,
+            f"missing ASL tile legality predicate for {handler}",
+        )
     catalog_names = {row["name"] for row in operations}
     require(
         semantic_names == catalog_names,
@@ -926,6 +939,11 @@ def main() -> int:
             )
             == 1,
             f"tile operation lacks one decoded execution binding: {row['name']}",
+        )
+        require(
+            f"if !TileOperandsLegal_{row['semantic_handler']}("
+            in generated_tile_dispatch,
+            f"tile operation lacks decoded legality binding: {row['name']}",
         )
         require(
             f"assert TileHandlerOfIndex({index}) == "
@@ -962,6 +980,22 @@ def main() -> int:
     require(
         re.search(r"\bfunc\s+ExecuteScalarInstruction\b", dispatch_body) is not None,
         "missing public scalar execution entry point",
+    )
+    require(
+        "ScalarRegisterOperandsLegal(instruction, form)" in dispatch_body
+        and "SetFault(Fault_TileLegality, ReadPC())" in dispatch_body,
+        "scalar dispatch does not preflight Reg5 tile bridges",
+    )
+    require(
+        "readonly func ScalarRegisterOperandsLegal" in generated_tile_dispatch,
+        "generated scalar Reg5 legality coverage is missing",
+    )
+    scalar_operands_body = (ROOT / "asl" / "scalar" / "operands.asl").read_text(
+        encoding="utf-8"
+    )
+    require(
+        re.search(r"\bassert\b", re.sub(r"//.*", "", scalar_operands_body)) is None,
+        "Reg5 tile-bridge legality must not use ASL assertions",
     )
     executable_family_counts = {
         "AGU": 183,
@@ -1017,6 +1051,12 @@ def main() -> int:
     require(
         re.search(r"\bExecuteTileInstruction\s*\(", test_body) is not None,
         "decoded tile execution lacks executable feature evidence",
+    )
+    require(
+        "Fault_TileLegality" in test_body
+        and "TileExecution_Rejected" in test_body
+        and "ScalarExecution_Rejected" in test_body,
+        "tile and Reg5 legality lack executable rejection evidence",
     )
     for handler in (
         "ReadSystemRegisterAddress",
