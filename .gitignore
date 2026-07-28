@@ -1,4 +1,5 @@
 /build/
 /.cache/
+/.omx/
 /_opam/
 /.DS_Store

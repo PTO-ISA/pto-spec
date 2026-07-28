@@ -1,4 +1,4 @@
 interface:
   display_name: "PTO ASL"
-  short_description: "Author and audit golden PTO ASL specifications"
+  short_description: "Author and audit normative PTO ASL specifications"
   default_prompt: "Use $pto-asl to migrate, define, or review a PTO formal architecture change with ASLRef validation."

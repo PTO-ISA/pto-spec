@@ -10,7 +10,7 @@
 # Normative surface. Requires the two review perspectives.
 /asl/                   @zhoubot @WenboCodes
 /tests/asl/             @zhoubot @WenboCodes
-/docs/traceability.md   @zhoubot @WenboCodes
+/docs/                  @zhoubot @WenboCodes
 /spec/                  @zhoubot @WenboCodes
 /specification.toml     @zhoubot @WenboCodes
 

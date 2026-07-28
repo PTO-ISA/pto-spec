@@ -1,6 +1,6 @@
 # Normative sources
 
-This repository is the self-contained golden definition of the **PTO
+This repository is the self-contained normative definition of the **PTO
 Instruction Set Architecture**.
 
 ## Precedence
@@ -22,7 +22,7 @@ private disagreements remain unchanged in
 recorded separately in `spec/evidence/public-source-reconciliation.json` and an
 accepted architecture decision.
 
-## Golden catalog
+## Normative catalog
 
 The scalar catalog contains 473 accepted forms across AGU, ALU, AMO, BRU, FSU,
 and SYS. Every row has a stable PTO form ID, assembly grammar, instruction width,
@@ -95,6 +95,9 @@ The independent reference is private and has no project-wide redistribution
 license. The cross-check records only anonymized document names, hashes, and
 review dispositions. No project identity, repository path, prose, source, or
 diagram from that reference is copied here.
+
+The repository intentionally ships no private-source importer. The checked-in
+ledger is retained review provenance, not a publicly reproducible source input.
 
 Where independent evidence and PTO disagree, the canonical PTO ASL and catalogs
 prevail. ADR-0007 closes the current `TPREFETCH` disposition: PTO defines a

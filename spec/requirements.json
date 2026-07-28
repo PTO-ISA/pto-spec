@@ -63,7 +63,10 @@
     },
     {
       "id": "PTO-REQ-SCALAR-OPERAND-001",
-      "model": ["asl/scalar/operands.asl"],
+      "model": [
+        "asl/scalar/operands.asl",
+        "docs/architecture-decisions/0002-direct-reg5-tile-bridge.md"
+      ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
       "status": "implemented",
       "tests": ["tests/asl/state-tests.asl"]
@@ -313,7 +316,7 @@
       "model": ["docs/architecture-decisions/0001-one-level-pto.md"],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0001-one-level-pto.md",
       "status": "implemented",
-      "tests": ["scripts/check-catalogs", "scripts/check-no-legacy-references"]
+      "tests": ["scripts/check-catalogs", "scripts/check-publication-hygiene"]
     }
   ],
   "schema_version": 1

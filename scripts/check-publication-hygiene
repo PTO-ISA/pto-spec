@@ -1,0 +1,126 @@
+#!/usr/bin/env python3
+"""Validate publication hygiene and repository-local Markdown references."""
+
+from __future__ import annotations
+
+import re
+import subprocess
+import sys
+from pathlib import Path
+from urllib.parse import unquote, urlsplit
+
+
+ROOT = Path(__file__).resolve().parent.parent
+FORBIDDEN_TERMS = (
+    "li" + "nx",
+    "0" + "." + "57",
+    "v" + "call",
+    "m" + "call",
+    "da" + "vincioo",
+    "heng" + "liao1972",
+)
+STALE_URL_PREFIXES = (
+    "https://developer." + "arm.com/architectures/architecture-specification-language",
+    "https://developer." + "arm.com/documentation/",
+)
+MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
+NUMBERED_HEADING = re.compile(r"^#{1,6}\s+\d+(?:[.)]|\s)")
+
+
+def repository_files() -> list[Path]:
+    result = subprocess.run(
+        ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    )
+    return [ROOT / item.decode() for item in result.stdout.split(b"\0") if item]
+
+
+def markdown_target(raw: str) -> str:
+    value = raw.strip()
+    if not value:
+        return ""
+    if value.startswith("<") and ">" in value:
+        return value[1 : value.index(">")]
+    return value.split(maxsplit=1)[0]
+
+
+def main() -> int:
+    failures: list[str] = []
+    markdown_link_count = 0
+    files = repository_files()
+
+    for path in files:
+        relative = path.relative_to(ROOT)
+        lower_path = str(relative).lower()
+        if any(term in lower_path for term in FORBIDDEN_TERMS):
+            failures.append(f"forbidden source identity in path: {relative}")
+            continue
+        if not path.is_file():
+            continue
+        try:
+            body = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+
+        lower_body = body.lower()
+        if any(term in lower_body for term in FORBIDDEN_TERMS):
+            failures.append(f"forbidden source identity in file: {relative}")
+        for prefix in STALE_URL_PREFIXES:
+            if prefix in body:
+                failures.append(f"stale external URL in file: {relative}: {prefix}")
+
+        if path.suffix != ".md":
+            continue
+
+        for line_number, line in enumerate(body.splitlines(), start=1):
+            if NUMBERED_HEADING.match(line):
+                failures.append(
+                    f"manually numbered Markdown heading: {relative}:{line_number}"
+                )
+
+        for match in MARKDOWN_LINK.finditer(body):
+            markdown_link_count += 1
+            target = markdown_target(match.group(1))
+            line_number = body.count("\n", 0, match.start()) + 1
+            if not target:
+                failures.append(
+                    f"empty Markdown link target: {relative}:{line_number}"
+                )
+                continue
+            parsed = urlsplit(target)
+            if parsed.scheme or target.startswith("#"):
+                continue
+            if not parsed.path:
+                continue
+            if parsed.path.startswith("/"):
+                failures.append(
+                    f"absolute local Markdown link: {relative}:{line_number}: {target}"
+                )
+                continue
+            destination = (path.parent / unquote(parsed.path)).resolve()
+            try:
+                destination.relative_to(ROOT)
+            except ValueError:
+                failures.append(
+                    f"Markdown link escapes repository: {relative}:{line_number}: {target}"
+                )
+                continue
+            if not destination.exists():
+                failures.append(
+                    f"broken local Markdown link: {relative}:{line_number}: {target}"
+                )
+
+    if failures:
+        print("\n".join(failures), file=sys.stderr)
+        return 1
+    print(
+        f"publication hygiene passed: {len(files)} files, "
+        f"{markdown_link_count} Markdown links checked"
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

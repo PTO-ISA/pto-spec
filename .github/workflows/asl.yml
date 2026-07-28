@@ -22,8 +22,8 @@ jobs:
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
 
       # Fails in seconds rather than after an OCaml toolchain build.
-      - name: Validate repository invariants and gate self-tests
-        run: make gate-check repo-check
+      - name: Validate repository invariants
+        run: make repo-check
 
       - name: Set up OCaml and opam
         uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0 # v3
@@ -33,5 +33,5 @@ jobs:
       - name: Install ASLRef build dependencies
         run: make setup
 
-      - name: Validate repository and golden ASL model
+      - name: Validate normative PTO ASL model
         run: make ci

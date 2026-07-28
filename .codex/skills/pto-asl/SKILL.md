@@ -1,6 +1,6 @@
 ---
 name: pto-asl
-description: Author, migrate, review, validate, or govern PTO formal architecture specifications written in ASL1. Use for pto-spec state and instruction semantics, source-to-golden catalog migration, one-level tile modeling, ASLRef integration, executable validation, normative traceability, or formal-spec repository quality.
+description: Author, migrate, review, validate, or govern PTO formal architecture specifications written in ASL1. Use for pto-spec state and instruction semantics, source-to-normative catalog migration, one-level tile modeling, ASLRef integration, executable validation, normative traceability, or formal-spec repository quality.
 ---
 
 # PTO ASL
@@ -22,7 +22,7 @@ Before editing, read:
 
 For ASLRef setup, versioning, or language behavior, read [references/aslref.md](references/aslref.md). For any normative
 model change or review, also read [references/formal-quality.md](references/formal-quality.md).
-For source-to-golden migration or reconciliation, also read
+For source-to-normative migration or reconciliation, also read
 [references/source-map.md](references/source-map.md).
 
 ## Classify the task
@@ -49,7 +49,7 @@ Never turn a repository-maintenance request into a normative modeling change.
 7. Use pure functions for value semantics and thin procedures for architecture-visible state updates.
 8. Add positive, boundary, negative-legality, aliasing, fault, ordering, and state-transition tests under `tests/asl/`,
    and list each new test source in `ASL_TESTS` so it executes.
-9. Update catalogs, generated witnesses, requirements, coverage, traceability, and change classification together.
+9. Update catalogs, generated witnesses, requirements, coverage, and change classification together.
 10. Run the repository validation gate and inspect the output before claiming completion.
 
 For instruction-set changes, also keep the five coverage layers synchronized:
@@ -96,23 +96,17 @@ make ci
 git diff --check
 ```
 
-`make ci` runs `gate-check`, `repo-check`, `toolchain-check`, `check`, and `test`.
-The first two need no opam switch, so use them for fast iteration:
+`make ci` runs `repo-check`, `toolchain-check`, `check`, and `test`.
+`repo-check` needs no opam switch, so use it for fast iteration:
 
 ```bash
-make gate-check repo-check
+make repo-check
 ```
-
-The template gate is enforced by `scripts/check-repository` over the assembled
-`build/pto-spec.asl`, which must contain only comments and blank lines while
-`specification.toml` reports template status. Do not reintroduce a keyword scan
-over `asl/`; it misses declaration forms and can misclassify comments.
-`tests/gate/` holds fixtures for both failure directions.
 
 Before committing, confirm:
 
 - ASLRef strict type-checking succeeds.
-- The gate self-test and toolchain canaries pass.
+- Toolchain canaries pass for accepted, rejected, and failing ASL inputs.
 - Executable tests succeed, and every test source is listed in `ASL_TESTS`.
 - Every normative claim has a source and requirement ID.
 - Every accepted scalar form and tile operation has an executable decoder witness.
@@ -125,8 +119,8 @@ Before committing, confirm:
 - Generated files are not committed.
 - No backend mechanism leaked into the portable model.
 - Governance, security, and contribution policies remain consistent.
-- No check, gate fixture, or canary was weakened to make a change pass.
-- `scripts/check-no-legacy-references` passes before publication.
+- No validation check or canary was weakened to make a change pass.
+- `scripts/check-publication-hygiene` passes before publication.
 
 ## Review output
 

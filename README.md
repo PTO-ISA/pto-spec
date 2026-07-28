@@ -1,134 +1,117 @@
-# PTO Instruction Set Architecture
+# PTO ISA Formal Specification
 
-[![ASL](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml/badge.svg)](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml)
+[![ASL validation](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml/badge.svg)](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml)
 
-`pto-spec` is the self-contained golden ASL1 model of the **PTO Instruction Set
-Architecture**. It defines a 64-bit scalar ISA and direct tile operations in a
-flat, one-level machine.
+`pto-spec` is the normative ASL1 definition of the PTO Instruction Set
+Architecture. It specifies a 64-bit scalar ISA, direct tile operations, visible
+architectural state, legality, faults, completion, profiles, and memory
+ordering in one executable model.
 
-The current specification is a normative draft. Its complete accepted
-instruction surface, operand fields, architectural state, and scalar, TEPL,
-TMA, and CUBE semantic primitives execute under ASLRef. Named ASL `impdef`
-interfaces isolate profile choices, and the repository selects a complete
-`pto-v0` implementation with explicit numeric, memory, time, reset, and
-privilege behavior. Coverage is tracked in
-[docs/coverage.md](docs/coverage.md), with exact behavior and alternative-profile
-obligations in
-[docs/profile-contracts.md](docs/profile-contracts.md).
+The repository is a normative draft. The accepted instruction surface is
+complete and executable under the `pto-v0` reference profile; explicit model
+limits and profile boundaries remain visible in
+[formal model coverage](docs/coverage.md).
 
-## Canonical contract
+## Architecture scope
 
-The normative precedence and one-level boundary are defined in
-[docs/normative-sources.md](docs/normative-sources.md) and
-[ADR-0001](docs/architecture-decisions/0001-one-level-pto.md). The direct Reg5
-tile bridge is fixed by
-[ADR-0002](docs/architecture-decisions/0002-direct-reg5-tile-bridge.md), and
-[ADR-0004](docs/architecture-decisions/0004-catalog-owned-family-constraints.md)
-defines catalog-owned family legality. The concrete implementation boundary is
-selected by
-[ADR-0005](docs/architecture-decisions/0005-pto-v0-concrete-reference-profile.md).
-The shared scalar/tile total-store-order contract is executable in
-[docs/memory-model.md](docs/memory-model.md) and fixed by
-[ADR-0006](docs/architecture-decisions/0006-pto-total-store-order.md).
-The public source/binary boundary and complete disposition ledger are described
-in [docs/source-reconciliation.md](docs/source-reconciliation.md) and fixed by
-[ADR-0007](docs/architecture-decisions/0007-public-source-layer-reconciliation.md).
+- 473 scalar forms across AGU, ALU, AMO, BRU, FSU, and SYS.
+- 111 direct tile operations: 97 TEPL, 6 TMA, and 8 CUBE.
+- 24 scalar registers and 64 flat T/U/M/N tile registers.
+- Exact encoding masks, operand fields, constraints, selectors, and rejection
+  witnesses generated from machine-readable catalogs.
+- Explicit tile and Reg5 legality before effects.
+- Instruction-granular memory completion and restart behavior.
+- A concrete `pto-v0` numeric, memory, privilege, reset, and time profile.
+- A bounded executable PTO-TSO candidate model.
+- No nested instruction bodies, hidden command streams, or backend scheduling
+  state.
 
-- 473 scalar forms are accepted across AGU, ALU, AMO, BRU, FSU, and SYS, with
-  exact masks, matches, operand pieces, signedness, three form constraints, and
-  two family constraints with 85 generated applications.
-- All 473 scalar forms have executable decoded state transitions, including
-  the 30 FSU forms under the concrete PTO v0 numeric carrier profile.
-- 111 direct tile operations are accepted: 97 TEPL, 6 TMA, and 8 CUBE.
-- 64 tile registers form T/U/M/N hands with 16 registers per hand.
-- The architecture contains no nested instruction bodies or body-local state.
-- Private tile documentation is used only as anonymized, non-redistributive
-  semantic cross-check evidence.
-- All 473 scalar forms and 111 tile operations have closed public-source
-  dispositions at a pinned, content-hashed PTO public repository commit.
+Hardware pipelines, physical tile allocation, backend intrinsics, latency,
+throughput, and target scheduling are outside this architecture contract.
 
-## Validate
+## Normative contract
+
+Normative authority and source precedence are defined in
+[Normative sources](docs/normative-sources.md). The primary review surfaces are:
+
+| Surface | Role |
+| --- | --- |
+| [`asl/`](asl/) | Executable architectural state and semantics |
+| [`spec/catalog/`](spec/catalog/) | Accepted scalar forms, system registers, traps, and tile selectors |
+| [`spec/requirements.json`](spec/requirements.json) | Requirement-to-model-to-test traceability |
+| [`spec/profile-hooks.json`](spec/profile-hooks.json) | Complete `impdef` profile registry |
+| [`spec/evidence/`](spec/evidence/) | Pinned public reconciliation and anonymized independent evidence |
+| [`specification.toml`](specification.toml) | Machine-readable status, profile, architecture, and toolchain metadata |
+
+Human-readable architecture documents supplement those machine-readable
+contracts:
+
+| Document | Purpose |
+| --- | --- |
+| [Architecture boundary](docs/architecture.md) | State, execution, legality, faults, and excluded implementation detail |
+| [Memory model](docs/memory-model.md) | PTO-TSO events, relations, axioms, and executable evidence |
+| [Profile contracts](docs/profile-contracts.md) | `pto-v0` behavior and alternate-profile obligations |
+| [Modeling conventions](docs/modeling-conventions.md) | ASL organization and normative modeling rules |
+| [Source reconciliation](docs/source-reconciliation.md) | Audited public PTO source disposition |
+| [Formal review checklist](docs/review-checklist.md) | Required evidence for normative review |
+
+Accepted architecture decisions are retained under
+[`docs/architecture-decisions/`](docs/architecture-decisions/).
+
+## Validation
 
 Prerequisites are Git, GNU Make, Python 3.11+, OCaml, and an initialized opam
-switch. Install ASLRef build dependencies once and run the complete gate:
+switch. Install ASLRef build dependencies once, then run the complete gate:
 
 ```bash
 make setup
 make ci
 ```
 
-`make ci` runs five checks:
+`make ci` runs:
 
 | Target | Checks | Needs ASLRef |
 | --- | --- | --- |
-| `gate-check` | the template gate detects active ASL and scanner failures | no |
-| `repo-check` | repository, source-list, catalog, maturity, and publication invariants | no |
-| `toolchain-check` | the pinned ASLRef accepts valid and rejects invalid ASL1 | yes |
-| `check` | strict type-checking of the assembled specification | yes |
-| `test` | executable PTO feature and boundary tests | yes |
+| `repo-check` | Repository structure, catalogs, generated evidence, traceability, and publication hygiene | No |
+| `toolchain-check` | Pinned ASLRef accept/reject/execute canaries | Yes |
+| `check` | Strict type-checking of the assembled specification | Yes |
+| `test` | Executable architecture and boundary tests | Yes |
 
-`gate-check` and `repo-check` run without an opam switch, so most repository
-work can fail fast before ASLRef is built. The complete gate also validates:
-
-- exact scalar, system-register, and tile catalogs;
-- generated scalar-form, operand-field, and tile-selector decoder witnesses;
-- exact 34-hook active-profile implementation and conformance-test closure;
-- bounded PTO-TSO candidate validity, ordering relations, and litmus outcomes;
-- deterministic public-source reconciliation with exact catalog coverage;
-- one-level architecture and publication hygiene;
-- strict ASLRef type checking and executable semantic evidence;
-- gate and toolchain canaries that prove validation can fail correctly.
-
-The wrapper in `scripts/aslref` fetches the exact audited `herdtools7` commit
-recorded in `.aslref-version` and builds it under the ignored `.cache/`
-directory. To use an existing ASLRef binary locally:
+The `scripts/aslref` wrapper fetches the exact audited `herdtools7` commit in
+`.aslref-version` and builds it under the ignored `.cache/` directory. To use a
+local ASLRef binary for iteration:
 
 ```bash
 make ci ASLREF=/path/to/aslref
 ```
 
-Substituting a binary bypasses the repository pin, so it is useful for local
-iteration but is not evidence about the audited commit. Hosted CI always uses
-the pinned wrapper.
+A substituted binary is not evidence about the audited toolchain pin. Hosted
+validation always uses the pinned source wrapper.
 
-## Layout
+## Repository layout
 
 ```text
-asl/
-  architecture.asl       Architecture identity and model bounds
-  types.asl              Scalar, fault, memory-order, and tile domains
-  state.asl              Scalar, system, memory, and fault state
-  concurrency.asl        PTO-TSO candidate validity and ordering axioms
-  scalar/                Operand bridge, integer, control, memory, atomic, system, and FP semantics
-  tile/                  Flat tile state, TEPL, TMA, and CUBE semantics
+asl/                     Normative ASL1 sources
+  scalar/                Scalar operand, arithmetic, control, memory, atomic, system, and FP semantics
+  tile/                  Flat tile state, legality, TEPL, TMA, and CUBE semantics
+  profiles/              Concrete architecture profiles
+spec/                    Machine-readable catalogs, requirements, profiles, and evidence
 tests/
-  asl/                   Executable PTO feature and boundary tests
-  gate/                  Fixtures proving the template gate works
-  canary/                Fixtures proving the pinned ASLRef works
-spec/
-  requirements.json      Machine-readable requirement traceability
-  catalog/               Canonical scalar forms, system registers, and tile operations
-  evidence/              Independent semantic cross-check results
-  profile-hooks.json     Exact impdef/default/override obligation registry
-docs/                     Architecture decisions, coverage, and review contract
-scripts/                  Reproducible evidence import and fail-closed validation
+  asl/                   Executable architecture and boundary tests
+  canary/                Pinned ASLRef parser, type-checker, and interpreter canaries
+docs/                    Architecture, memory model, profiles, evidence policy, and ADRs
+scripts/                 Deterministic generation and fail-closed validation
 ```
 
 Every checked-in ASL source must appear in `ASL_SOURCES`, and every semantic
 test must appear in `ASL_TESTS`, both in dependency order in the `Makefile`.
-`make repo-check` rejects unlisted inputs so they cannot silently bypass ASLRef.
-Generated assembled files remain ignored under `build/`.
+Generated assemblies remain ignored under `build/`.
 
-Every validation result ultimately becomes an exit code, so `tests/gate/` and
-`tests/canary/` test the checks themselves. The enforcement map in
-[GOVERNANCE.md](GOVERNANCE.md) distinguishes clone-verifiable rules from GitHub
-repository settings and human review obligations.
+## Contributing and license
 
-## Governance and licensing
+Normative changes require stable requirement IDs, executable evidence, and both
+architecture and formal-model review. See [Governance](GOVERNANCE.md) and
+[Contributing](CONTRIBUTING.md).
 
-Normative changes require a formal-model issue, stable requirement IDs,
-executable evidence, architecture-owner review, and formal-model review. See
-[GOVERNANCE.md](GOVERNANCE.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
-
-This repository is licensed under the [BSD 3-Clause License](LICENSE). External
-evidence and its permitted use are recorded in [NOTICE](NOTICE).
+The repository uses the [BSD 3-Clause License](LICENSE). External evidence and
+its permitted use are recorded in [NOTICE](NOTICE).

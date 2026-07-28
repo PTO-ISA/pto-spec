@@ -48,7 +48,7 @@ SPEC := build/pto-spec.asl
 DECODER_SPEC := build/decoders.asl
 TEST_SPEC := build/pto-tests.asl
 
-.PHONY: all setup build gate-check repo-check toolchain-check check test ci clean \
+.PHONY: all setup build repo-check toolchain-check check test ci clean \
 	print-asl-sources print-asl-tests
 
 all: ci
@@ -69,13 +69,8 @@ $(SPEC): $(ASL_SOURCES) $(DECODER_SPEC) scripts/assemble-asl Makefile
 $(TEST_SPEC): $(SPEC) $(ASL_TESTS) scripts/assemble-asl Makefile
 	./scripts/assemble-asl $@ $(SPEC) $(ASL_TESTS)
 
-# Self-test of the template gate. Needs no ASLRef, so it runs before the
-# toolchain is available.
-gate-check:
-	./scripts/check-gate
-
 repo-check: $(SPEC)
-	./scripts/check-repository $(SPEC)
+	./scripts/check-repository
 
 # Canary checks proving the pinned ASLRef distinguishes valid from invalid ASL1.
 toolchain-check:
@@ -84,15 +79,10 @@ toolchain-check:
 check: $(SPEC)
 	$(ASLREF) --type-check-strict --no-exec $(SPEC)
 
-test:
-ifeq ($(strip $(ASL_TESTS)),)
-	@echo "no semantic tests: ASL_TESTS is empty; see tests/README.md"
-else
-	@$(MAKE) --no-print-directory $(TEST_SPEC)
+test: $(TEST_SPEC)
 	$(ASLREF) --type-check-strict $(TEST_SPEC)
-endif
 
-ci: gate-check repo-check toolchain-check check test
+ci: repo-check toolchain-check check test
 
 print-asl-sources:
 	@printf '%s\n' $(ASL_SOURCES)

@@ -114,9 +114,10 @@ the same probe boundary before their byte effects. The concrete translation and
 permission implementation returns a stable decision for all probes within one
 instruction.
 
-DMA64 is not part of the current accepted PTO scalar surface. Its former
-encoding is rejected as an illegal instruction; a future DMA contract requires
-an independently specified operation, completion rule, and public source.
+The 32-bit encoding `0x0000700B` is reserved and raises
+`Fault_IllegalInstruction`. No DMA operation belongs to the accepted scalar
+surface; any future DMA contract requires an independently specified operation,
+completion rule, and public source.
 
 Exact scalar form recognition and operand extraction are generated from the
 normative catalog. Split fields are reconstructed into contiguous values;

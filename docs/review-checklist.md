@@ -4,7 +4,8 @@
 
 - Stable requirement IDs and public source links are present.
 - The ASL claims no more than the normative source.
-- Requirement, definition, and test links are recorded in `docs/traceability.md`.
+- Requirement, definition, and test links are recorded in
+  `spec/requirements.json`.
 - Public source evidence is pinned by commit and content hash, every accepted
   form or operation has a disposition, and raw private observations are not
   rewritten as agreement.
@@ -25,7 +26,8 @@
 ## Evidence
 
 - Strict ASLRef type-checking passes at the pinned commit.
-- The gate self-test and toolchain canaries pass, so the checks above are known to be capable of failing.
+- Toolchain canaries pass, so parser, type-checker, interpreter, and diagnostic
+  failures are known to be observable.
 - Positive, boundary, negative-legality, and state-transition cases are covered where applicable.
 - New semantic tests are listed in `ASL_TESTS` and therefore actually execute.
 - The profile registry, all ASL `impdef` declarations, active
