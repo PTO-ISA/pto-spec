@@ -26,6 +26,12 @@ type FaultCode of enumeration {
     Fault_TileLegality
 };
 
+type PrivilegeLevel of enumeration {
+    Privilege_User,
+    Privilege_Supervisor,
+    Privilege_Machine
+};
+
 type DataAccessProbe of record {
     fault: FaultCode,
     translated_address: Word

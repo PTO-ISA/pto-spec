@@ -654,6 +654,7 @@ def main() -> None:
     print("                            operands: TileInstructionOperands)")
     print("                            => (TileExecutionStatus, Word)")
     print("begin")
+    print("    AdvanceArchitecturalTime();")
     print("    let operation = DecodeTileOperation(family, code);")
     print("    if operation == PTO_TILE_OPERATION_COUNT then")
     print("        SetFault(Fault_IllegalInstruction, ReadPC());")

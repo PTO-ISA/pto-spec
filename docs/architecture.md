@@ -20,6 +20,9 @@ PTO instruction body.
 - PC, return address, commit argument, predicate mask, fault code/address,
   system state, and memory-ordering state are introduced only where required by
   retained forms.
+- Privilege is explicit User, Supervisor, or Machine state. PTO v0 reset enters
+  Machine privilege; the exact reset and access policy is the active profile in
+  `docs/profile-contracts.md`.
 
 ## Tile state
 
@@ -82,10 +85,10 @@ known independent-documentation conflict in favor of the canonical PTO contract.
 - The default memory model is TSO, with explicit acquire/release and fence rules.
 - Atomic `aq` and `rl` bits map to relaxed, acquire, release, or
   acquire-release ordering. The portable one-level address model treats FAR as
-  an explicit address-class hint with identity address translation; a platform
-  profile may refine that address class without changing instruction decoding.
-- Misalignment, translation, permission, and restart behavior are visible when
-  defined; implementation-dependent profiles must be named.
+  an explicit address-class hint with identity address translation.
+- Misalignment, translation, permission, and restart behavior are visible. PTO
+  v0 uses identity translation, a 3072-byte User region, and full bounded-memory
+  access for Supervisor and Machine.
 - The bounded ASL byte array is executable-test infrastructure, not the
   architectural address-space size.
 
@@ -96,8 +99,9 @@ tile, memory, writeback, or reservation effect. The first failing original
 address is reported. A fault commits none of the instruction's accesses and
 records no hidden progress; restart means reissuing the same instruction from
 its first access after the faulting condition is removed. Single accesses use
-the same probe boundary before their byte effects. Translation and permission
-profiles must return a stable decision for all probes within one instruction.
+the same probe boundary before their byte effects. The concrete translation and
+permission implementation returns a stable decision for all probes within one
+instruction.
 
 DMA64 is not part of the current accepted PTO scalar surface. Its former
 encoding is rejected as an illegal instruction; a future DMA contract requires
@@ -136,9 +140,17 @@ other source encodings are illegal. CSTATE[39:37] supplies the rounding mode;
 CSTATE bits 32 through 36 accumulate sticky NV, DZ, OF, UF, and NX flags,
 respectively. The portable ASL fixes
 ordered comparisons, signaling behavior, NaN and signed-zero min/max rules,
-narrow-result packing, conversion type legality, and flag updates. Correctly
-rounded arithmetic and low-precision conversion payloads cross named numeric
-profile hooks rather than inheriting host-language behavior.
+narrow-result packing, conversion type legality, and flag updates. Named
+numeric interfaces prevent host-language behavior from leaking into the model;
+PTO v0 supplies their complete deterministic raw-carrier implementation. It is
+not an IEEE-754 claim. Alternate IEEE or hardware profiles require a new name
+and their own conformance evidence.
+
+TIME and CYCLE expose one modulo-64-bit counter. Each decoded scalar or tile
+execution attempt advances it once, including rejected or faulting attempts.
+Reset sets it to zero. Base system registers follow their catalog RO/WO/RW
+class at every privilege; context, translation, interrupt, and debug families
+are Machine-only in PTO v0.
 
 ## Excluded implementation detail
 

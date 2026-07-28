@@ -1,5 +1,39 @@
 {
+  "active_profile": {
+    "conformance_tests": "tests/asl/profile-tests.asl",
+    "id": "pto-v0",
+    "implementation": "asl/profiles/pto-v0.asl",
+    "status": "concrete-reference-profile"
+  },
   "hooks": [
+    {
+      "domain": "architecture-reset",
+      "model": "asl/state.asl",
+      "name": "ResetProfileState",
+      "portable_default": "Clear scalar and bounded memory state, invalidate tile and pipe descriptors, set VERSION to 1, reset time to zero, and enter machine privilege.",
+      "profile_obligations": [
+        "Reset all architecturally visible PTO v0 reference-profile state to the values stated in the implementation."
+      ],
+      "requirement": "PTO-REQ-PROFILE-001",
+      "status": "implemented-by-pto-v0",
+      "tests": [
+        "tests/asl/profile-tests.asl"
+      ]
+    },
+    {
+      "domain": "privilege",
+      "model": "asl/scalar/system-registers.asl",
+      "name": "SystemRegisterAccessPermitted",
+      "portable_default": "Permit base system registers at every privilege and require machine privilege for context, translation, and debug families.",
+      "profile_obligations": [
+        "Define the privilege order, reset privilege, protected register classes, and denied-access fault behavior."
+      ],
+      "requirement": "PTO-REQ-PROFILE-001",
+      "status": "implemented-by-pto-v0",
+      "tests": [
+        "tests/asl/profile-tests.asl"
+      ]
+    },
     {
       "domain": "system-time",
       "model": "asl/scalar/system.asl",
@@ -9,70 +43,70 @@
         "Define the time unit, monotonicity guarantee, rollover behavior, and reset value."
       ],
       "requirement": "PTO-REQ-SCALAR-SYS-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/scalar-tests.asl"]
     },
     {
       "domain": "scalar-floating-mathematical",
       "model": "asl/scalar/floating.asl",
       "name": "FloatingExponential",
-      "portable_default": "Return the input real value.",
+      "portable_default": "Evaluate the fixed 18-term PTO v0 Taylor reference algorithm.",
       "profile_obligations": [
         "Define accuracy, exceptional inputs, overflow, underflow, and rounding."
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/scalar-tests.asl"]
     },
     {
       "domain": "scalar-floating-mathematical",
       "model": "asl/scalar/floating.asl",
       "name": "FloatingRoundNearest",
-      "portable_default": "Round to nearest with halfway cases away from zero.",
+      "portable_default": "Round to nearest with halfway cases selecting the even integer.",
       "profile_obligations": [
         "Define tie handling and prove consistency with the selected scalar numeric profile."
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/scalar-tests.asl"]
     },
     {
       "domain": "scalar-floating-encoding",
       "model": "asl/scalar/floating.asl",
       "name": "ScalarFPBinaryProfile",
-      "portable_default": "Return the normalized left operand and no new flags.",
+      "portable_default": "Apply deterministic modular carrier ADD, SUB, MUL, DIV, MIN, or MAX; zero DIV returns all ones and DZ.",
       "profile_obligations": [
         "Define correctly rounded ADD, SUB, MUL, and DIV raw results for every accepted scalar format.",
         "Define NaN propagation, infinities, subnormals, signed zero, and NV/DZ/OF/UF/NX flags."
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/scalar-tests.asl"]
     },
     {
       "domain": "scalar-floating-encoding",
       "model": "asl/scalar/floating.asl",
       "name": "ScalarFPUnaryProfile",
-      "portable_default": "Return the normalized operand and no new flags.",
+      "portable_default": "Apply deterministic carrier ABS, identity SQRT, increment EXP, or unsigned reciprocal; zero reciprocal returns all ones and DZ.",
       "profile_obligations": [
         "Define correctly rounded SQRT, reciprocal, and exponential raw results.",
         "Define exceptional inputs, approximation guarantees, and NV/DZ/OF/UF/NX flags."
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/scalar-tests.asl"]
     },
     {
       "domain": "scalar-floating-encoding",
       "model": "asl/scalar/floating.asl",
       "name": "ScalarFPFusedProfile",
-      "portable_default": "Return the normalized addend and no new flags.",
+      "portable_default": "Apply one modular word-width multiply followed by the selected signed addend transform.",
       "profile_obligations": [
         "Define single-rounding fused multiply-add variants for every accepted scalar format.",
         "Define NaN propagation and NV/OF/UF/NX flags."
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/scalar-tests.asl"]
     },
     {
@@ -84,7 +118,7 @@
         "Define rounding, saturation or indefinite results, exceptional inputs, and NV/NX flags for every accepted integer destination type."
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/scalar-tests.asl"]
     },
     {
@@ -96,7 +130,7 @@
         "Define floating format conversion, rounding, NaN payload handling, overflow, underflow, and flags for every accepted destination type."
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/scalar-tests.asl"]
     },
     {
@@ -108,7 +142,7 @@
         "Define integer-to-floating conversion, rounding, overflow, underflow, and NX flags for every accepted destination type."
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/scalar-tests.asl"]
     },
     {
@@ -120,7 +154,7 @@
         "Define per-data-type square-root encoding, accuracy, exceptional inputs, and rounding."
       ],
       "requirement": "PTO-REQ-TEPL-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -132,7 +166,7 @@
         "Define per-data-type logarithm encoding, base, accuracy, exceptional inputs, and rounding."
       ],
       "requirement": "PTO-REQ-TEPL-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -144,19 +178,19 @@
         "Define per-data-type reciprocal encoding, accuracy, division-by-zero behavior, and rounding."
       ],
       "requirement": "PTO-REQ-TEPL-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
       "domain": "tile-floating",
       "model": "asl/tile/elementwise.asl",
       "name": "TileExponential",
-      "portable_default": "Return the raw input payload.",
+      "portable_default": "Increment the raw input payload by one modulo XLEN.",
       "profile_obligations": [
         "Define per-data-type exponential encoding, base, accuracy, overflow, underflow, and rounding."
       ],
       "requirement": "PTO-REQ-TEPL-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -168,7 +202,7 @@
         "Define the exponential-difference formula, intermediate precision, exceptional inputs, and rounding for every accepted floating type."
       ],
       "requirement": "PTO-REQ-TEPL-EXPAND-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -180,7 +214,7 @@
         "Define every accepted floating/integer type pair, destination packing, rounding, saturation, and exceptional values."
       ],
       "requirement": "PTO-REQ-TEPL-CONVERT-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -192,7 +226,7 @@
         "Define scale and zero-point encodings, rounding, clamping, saturation, per-type legality, and zero-scale behavior."
       ],
       "requirement": "PTO-REQ-TEPL-CONVERT-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -204,7 +238,7 @@
         "Define scale and zero-point encodings, intermediate precision, destination rounding, and per-type legality."
       ],
       "requirement": "PTO-REQ-TEPL-CONVERT-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -216,7 +250,7 @@
         "Define address-class selection, translation, fault priority, and interaction with reservations for both hint values."
       ],
       "requirement": "PTO-REQ-SCALAR-AMO-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/scalar-tests.asl"]
     },
     {
@@ -229,20 +263,20 @@
         "Return a stable translated address for every repeated probe of one architectural access during an instruction."
       ],
       "requirement": "PTO-REQ-MEMORY-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/scalar-tests.asl", "tests/asl/tile-tests.asl"]
     },
     {
       "domain": "memory-permission",
       "model": "asl/scalar/memory.asl",
       "name": "DataAccessPermitted",
-      "portable_default": "Permit reads and writes wholly contained in the bounded model memory.",
+      "portable_default": "Permit machine/supervisor access to all bounded memory and user access to bytes 0 through 3071.",
       "profile_obligations": [
         "Define read/write permissions, bounds, access-size behavior, and permission-fault priority.",
         "Return a stable permission decision for every repeated probe of one architectural access during an instruction."
       ],
       "requirement": "PTO-REQ-MEMORY-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/scalar-tests.asl", "tests/asl/tile-tests.asl"]
     },
     {
@@ -254,7 +288,7 @@
         "Define per-type arithmetic, rounding, exceptional values, overflow, and underflow."
       ],
       "requirement": "PTO-REQ-TEPL-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -266,7 +300,7 @@
         "Define per-type arithmetic, rounding, exceptional values, overflow, and underflow."
       ],
       "requirement": "PTO-REQ-TEPL-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -278,7 +312,7 @@
         "Define per-type multiplication, addition, intermediate precision, rounding, and exceptional values."
       ],
       "requirement": "PTO-REQ-TEPL-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -290,7 +324,7 @@
         "Define per-type ordering, equality, NaN behavior, signed-zero behavior, and unordered results."
       ],
       "requirement": "PTO-REQ-TEPL-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -302,7 +336,7 @@
         "Define per-type identities, first-element handling, exceptional values, and empty-input legality."
       ],
       "requirement": "PTO-REQ-TEPL-REDUCE-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -314,7 +348,7 @@
         "Define per-type accumulation precision, rounding, ordering, exceptional values, and tie selection."
       ],
       "requirement": "PTO-REQ-TEPL-REDUCE-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -326,7 +360,7 @@
         "Define per-type broadcast arithmetic, rounding, exceptional values, overflow, and underflow."
       ],
       "requirement": "PTO-REQ-TEPL-EXPAND-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -338,7 +372,7 @@
         "Define per-type partial arithmetic, rounding, exceptional values, and missing-source behavior."
       ],
       "requirement": "PTO-REQ-TEPL-COMPLEX-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -350,7 +384,7 @@
         "Define per-type ordering, NaN behavior, signed-zero behavior, stability, and tie selection."
       ],
       "requirement": "PTO-REQ-TEPL-COMPLEX-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -362,7 +396,7 @@
         "Define accepted type triples, product and accumulator widths, rounding, saturation, and exceptional values."
       ],
       "requirement": "PTO-REQ-CUBE-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -374,7 +408,7 @@
         "Define accepted type pairs, bias conversion, rounding, saturation, and exceptional values."
       ],
       "requirement": "PTO-REQ-CUBE-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -386,9 +420,9 @@
         "Define accepted type triples, scale encodings, intermediate precision, rounding, saturation, and exceptional values."
       ],
       "requirement": "PTO-REQ-CUBE-001",
-      "status": "explicit-impdef",
+      "status": "implemented-by-pto-v0",
       "tests": ["tests/asl/tile-tests.asl"]
     }
   ],
-  "schema_version": 1
+  "schema_version": 2
 }

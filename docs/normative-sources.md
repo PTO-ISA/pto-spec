@@ -7,7 +7,8 @@ Instruction Set Architecture**.
 
 Sources are applied in this order:
 
-1. Normative ASL and accepted architecture decisions in this repository.
+1. Normative ASL, the selected PTO v0 implementation profile, and accepted
+   architecture decisions in this repository.
 2. PTO-owned machine-readable scalar and tile catalogs under `spec/catalog/`.
 3. The public PTO ISA manual and public `PTO_INST` declarations.
 4. An anonymized private tile-document snapshot as independent cross-check evidence.
@@ -39,6 +40,20 @@ generated ASL selector decoder witnesses every accepted operation.
 Neither catalog depends on an external repository or release label. Changes to
 them are normative PTO changes and require the same review and validation as ASL
 semantics.
+
+## Active implementation profile
+
+`spec/profile-hooks.json` names the active `pto-v0` profile and is the exact
+registry for implementation-defined interfaces. Its 34 entries must equal the
+ASL `impdef` declarations, the `implementation func` overrides in
+`asl/profiles/pto-v0.asl`, and the direct calls in
+`tests/asl/profile-tests.asl`. The profile fixes numeric, memory, privilege,
+time, and reset behavior; its deterministic raw numeric carrier is not an
+IEEE-754 claim. ADR-0005 records the selection and replacement rules.
+
+An alternative profile cannot silently alter PTO v0. It needs a distinct
+identity, a complete implementation of the registry, and conformance evidence
+for every replaced interface.
 
 ## External ISA comparison
 

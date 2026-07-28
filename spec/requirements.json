@@ -8,6 +8,20 @@
       "tests": ["tests/asl/state-tests.asl"]
     },
     {
+      "id": "PTO-REQ-PROFILE-001",
+      "model": [
+        "asl/profiles/pto-v0.asl",
+        "asl/scalar/system-registers.asl",
+        "asl/state.asl",
+        "asl/types.asl",
+        "docs/architecture-decisions/0005-pto-v0-concrete-reference-profile.md",
+        "spec/profile-hooks.json"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/profile-contracts.md",
+      "status": "implemented-by-pto-v0-profile",
+      "tests": ["scripts/check-catalogs", "tests/asl/profile-tests.asl"]
+    },
+    {
       "id": "PTO-REQ-FAULT-001",
       "model": ["asl/types.asl", "asl/state.asl", "asl/tile/legality.asl"],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
@@ -85,7 +99,7 @@
         "spec/profile-hooks.json"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
-      "status": "implemented-with-address-profile",
+      "status": "implemented-by-pto-v0-profile",
       "tests": ["tests/asl/scalar-tests.asl"]
     },
     {
@@ -96,7 +110,7 @@
         "spec/profile-hooks.json"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
-      "status": "implemented-with-platform-profile",
+      "status": "implemented-by-pto-v0-profile",
       "tests": ["tests/asl/scalar-tests.asl"]
     },
     {
@@ -118,7 +132,7 @@
         "spec/profile-hooks.json"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
-      "status": "implemented-with-numeric-profile-hooks",
+      "status": "implemented-by-pto-v0-profile",
       "tests": ["tests/asl/scalar-tests.asl"]
     },
     {
@@ -129,7 +143,7 @@
         "spec/profile-hooks.json"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
-      "status": "implemented-with-platform-profile",
+      "status": "implemented-by-pto-v0-profile",
       "tests": ["tests/asl/scalar-tests.asl"]
     },
     {
@@ -142,7 +156,7 @@
         "spec/profile-hooks.json"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
-      "status": "implemented-with-memory-profile",
+      "status": "implemented-by-pto-v0-profile",
       "tests": ["tests/asl/scalar-tests.asl", "tests/asl/tile-tests.asl"]
     },
     {
@@ -190,21 +204,21 @@
       "id": "PTO-REQ-TEPL-001",
       "model": ["asl/tile/elementwise.asl", "spec/profile-hooks.json"],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
-      "status": "implemented-with-numeric-profile-hooks",
+      "status": "implemented-by-pto-v0-profile",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
       "id": "PTO-REQ-TEPL-REDUCE-001",
       "model": ["asl/tile/reduction.asl", "spec/profile-hooks.json"],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
-      "status": "implemented-with-numeric-profile-hooks",
+      "status": "implemented-by-pto-v0-profile",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
       "id": "PTO-REQ-TEPL-EXPAND-001",
       "model": ["asl/tile/expansion.asl", "spec/profile-hooks.json"],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
-      "status": "implemented-with-numeric-profile-hooks",
+      "status": "implemented-by-pto-v0-profile",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -218,7 +232,7 @@
       "id": "PTO-REQ-TEPL-CONVERT-001",
       "model": ["asl/tile/conversion.asl", "spec/profile-hooks.json"],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
-      "status": "implemented-with-numeric-profile-hooks",
+      "status": "implemented-by-pto-v0-profile",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -232,7 +246,7 @@
       "id": "PTO-REQ-TEPL-COMPLEX-001",
       "model": ["asl/tile/complex.asl", "spec/profile-hooks.json"],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
-      "status": "implemented-with-numeric-profile-hooks",
+      "status": "implemented-by-pto-v0-profile",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
@@ -243,14 +257,14 @@
         "spec/profile-hooks.json"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
-      "status": "implemented-with-memory-profile-hooks",
+      "status": "implemented-by-pto-v0-profile",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {
       "id": "PTO-REQ-CUBE-001",
       "model": ["asl/tile/cube.asl", "spec/profile-hooks.json"],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
-      "status": "implemented-with-numeric-profile-hooks",
+      "status": "implemented-by-pto-v0-profile",
       "tests": ["tests/asl/tile-tests.asl"]
     },
     {

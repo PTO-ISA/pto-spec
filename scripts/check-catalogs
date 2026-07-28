@@ -390,8 +390,32 @@ def main() -> int:
     )
     require(
         specification["maturity"]["tile_semantics"]
-        == "decoded-with-explicit-legality-and-profile-hooks",
-        "tile maturity must record explicit decoded legality",
+        == "decoded-with-explicit-legality-and-pto-v0-reference-profile",
+        "tile maturity must record the active concrete profile",
+    )
+    require(
+        specification["maturity"]["scalar_semantics"]
+        == "complete-under-pto-v0-reference-profile",
+        "scalar maturity must record the active concrete profile",
+    )
+    require(
+        specification["maturity"]["system_state"]
+        == "implemented-with-explicit-privilege-time-and-reset",
+        "system maturity must record privilege, time, and reset closure",
+    )
+    require(
+        specification["profile"]
+        == {
+            "id": "pto-v0",
+            "implementation": "asl/profiles/pto-v0.asl",
+            "conformance_tests": "tests/asl/profile-tests.asl",
+            "numeric_model": "deterministic-raw-carrier-reference",
+            "memory_model": "identity-translation-with-user-protected-region",
+            "reset_model": "explicit-reference-reset",
+            "privilege_model": "user-supervisor-machine",
+            "time_model": "one-tick-per-decoded-attempt",
+        },
+        "specification active-profile record drift",
     )
     require(
         specification["architecture"]["scalar_forms"] == 473,
@@ -1332,10 +1356,31 @@ def main() -> int:
             )
 
     require(
-        set(profile_catalog) == {"hooks", "schema_version"},
+        set(profile_catalog) == {"active_profile", "hooks", "schema_version"},
         "profile-hook catalog top-level schema drift",
     )
-    require(profile_catalog["schema_version"] == 1, "unsupported profile-hook schema")
+    require(profile_catalog["schema_version"] == 2, "unsupported profile-hook schema")
+    active_profile = profile_catalog["active_profile"]
+    require(
+        active_profile
+        == {
+            "conformance_tests": "tests/asl/profile-tests.asl",
+            "id": "pto-v0",
+            "implementation": "asl/profiles/pto-v0.asl",
+            "status": "concrete-reference-profile",
+        },
+        "active profile identity drift",
+    )
+    profile_implementation_path = ROOT / active_profile["implementation"]
+    profile_test_path = ROOT / active_profile["conformance_tests"]
+    require(
+        profile_implementation_path.exists(), "missing active profile implementation"
+    )
+    require(profile_test_path.exists(), "missing active profile conformance tests")
+    profile_implementation_body = profile_implementation_path.read_text(
+        encoding="utf-8"
+    )
+    profile_test_body = profile_test_path.read_text(encoding="utf-8")
     profile_hooks = profile_catalog["hooks"]
     profile_names = [row["name"] for row in profile_hooks]
     requirements_by_id = {row["id"]: row for row in requirements}
@@ -1359,7 +1404,7 @@ def main() -> int:
             f"profile-hook schema drift for {hook.get('name', '<unknown>')}",
         )
         require(
-            hook["status"] == "explicit-impdef",
+            hook["status"] == "implemented-by-pto-v0",
             f"bad profile-hook status for {hook['name']}",
         )
         require(
@@ -1398,6 +1443,19 @@ def main() -> int:
             f"profile hook is not an impdef declaration: {hook['name']}",
         )
         require(
+            re.search(
+                rf"\bimplementation\s+func\s+{re.escape(hook['name'])}\b",
+                profile_implementation_body,
+            )
+            is not None,
+            f"profile hook lacks active implementation: {hook['name']}",
+        )
+        require(
+            re.search(rf"\b{re.escape(hook['name'])}\s*\(", profile_test_body)
+            is not None,
+            f"profile hook lacks direct conformance witness: {hook['name']}",
+        )
+        require(
             len(re.findall(rf"\b{re.escape(hook['name'])}\b", asl_text)) >= 2,
             f"profile hook has no ASL call site: {hook['name']}",
         )
@@ -1420,6 +1478,63 @@ def main() -> int:
     require(
         set(profile_names) == declared_profile_names,
         "profile-hook catalog does not exactly cover ASL impdef declarations",
+    )
+    implemented_profile_names = set(
+        re.findall(
+            r"\bimplementation\s+func\s+([A-Za-z][A-Za-z0-9_]*)\b",
+            profile_implementation_body,
+        )
+    )
+    require(
+        set(profile_names) == implemented_profile_names,
+        "active profile does not implement exactly the registered hooks",
+    )
+    profile_requirement = requirements_by_id.get("PTO-REQ-PROFILE-001")
+    require(profile_requirement is not None, "missing concrete-profile requirement")
+    require(
+        "docs/architecture-decisions/0005-pto-v0-concrete-reference-profile.md"
+        in profile_requirement["model"],
+        "concrete-profile requirement omits ADR-0005",
+    )
+    types_body = (ROOT / "asl" / "types.asl").read_text(encoding="utf-8")
+    state_body = (ROOT / "asl" / "state.asl").read_text(encoding="utf-8")
+    system_body = (ROOT / "asl" / "scalar" / "system.asl").read_text(encoding="utf-8")
+    system_register_body = (ROOT / "asl" / "scalar" / "system-registers.asl").read_text(
+        encoding="utf-8"
+    )
+    main_test_body = (ROOT / "tests" / "asl" / "main.asl").read_text(encoding="utf-8")
+    require(
+        all(
+            name in types_body
+            for name in (
+                "PrivilegeLevel",
+                "Privilege_User",
+                "Privilege_Supervisor",
+                "Privilege_Machine",
+            )
+        )
+        and "_CurrentPrivilege" in state_body
+        and "CurrentPrivilege()" in state_body,
+        "active profile lacks explicit privilege state",
+    )
+    require(
+        "SystemRegisterAccessPermitted(address, FALSE, CurrentPrivilege())"
+        in system_register_body
+        and "SystemRegisterAccessPermitted(address, TRUE, CurrentPrivilege())"
+        in system_register_body
+        and "Fault_IllegalInstruction" in system_register_body,
+        "system-register privilege checks are not enforced on read and write",
+    )
+    require(
+        "ResetProfileState();" in main_test_body
+        and "ResetProfileState();" in profile_test_body,
+        "active profile reset is not executed and tested",
+    )
+    require(
+        "func AdvanceArchitecturalTime()" in system_body
+        and "AdvanceArchitecturalTime();" in dispatch_body
+        and "AdvanceArchitecturalTime();" in generated_tile_dispatch,
+        "scalar and tile decoded attempts must advance architectural time",
     )
     for requirement in requirements:
         if "profile" in requirement["status"]:

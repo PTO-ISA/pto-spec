@@ -674,7 +674,7 @@ begin
     binary_profile[26:25] = '01';
     let binary_profile_status = ExecuteScalarInstruction(binary_profile, 32);
     assert binary_profile_status == ScalarExecution_Executed;
-    assert ReadGPR(11) == Zeros{PTO_XLEN} + 0x87654321;
+    assert ReadGPR(11) == Zeros{PTO_XLEN} + 0x98765432;
 
     WriteGPR(4, Zeros{PTO_XLEN} + 0x76543210);
     var fused_profile: bits(48) = Zeros{48} + 0x0000404b;
@@ -685,7 +685,7 @@ begin
     fused_profile[26:25] = '01';
     let fused_profile_status = ExecuteScalarInstruction(fused_profile, 32);
     assert fused_profile_status == ScalarExecution_Executed;
-    assert ReadGPR(12) == Zeros{PTO_XLEN} + 0x76543210;
+    assert ReadGPR(12) == Zeros{PTO_XLEN} + 0xd3b3d841;
 
     WriteGPR(2, Zeros{PTO_XLEN} + 0x1234567880000001);
     var signed_conversion: bits(48) = Zeros{48} + 0x0000506b;

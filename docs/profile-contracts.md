@@ -1,44 +1,84 @@
 # Architecture profile contracts
 
-PTO has one portable ASL model. An implementation profile may refine only a
-named `impdef` boundary; every other state transition and legality rule remains
-normative. The machine-readable authority is
-[`spec/profile-hooks.json`](../spec/profile-hooks.json).
+PTO retains named ASL `impdef` interfaces so an implementation profile is an
+auditable layer rather than hidden backend behavior. The normative repository
+selects one complete executable implementation, `pto-v0`, in
+`asl/profiles/pto-v0.asl`. Every registered interface has exactly one matching
+`implementation func` and a direct witness in `tests/asl/profile-tests.asl`.
+The machine-readable authority is `spec/profile-hooks.json`.
 
-Each hook records four things that must travel together:
+The interface declaration, active implementation, and conformance tests travel
+together. Removing, renaming, or adding a hook must update all three in one
+reviewable change. An alternative implementation is conforming only if it names
+the replaced hooks, satisfies every recorded obligation, preserves non-profile
+architecture behavior, and supplies raw input/output and state-effect tests.
 
-1. the ASL declaration and stable requirement ID;
-2. the deterministic portable default used by repository tests;
-3. the obligations a concrete profile must satisfy; and
-4. the executable evidence path that exercises the enclosing feature.
+## PTO v0 concrete behavior
 
-An override is conforming only when it names the hooks it replaces, specifies
-all listed obligations, preserves the non-hook architecture behavior, and adds
-raw input/output and state-effect tests. Backend behavior is not an implicit
-profile. Unlisted implementation choices are specification defects.
+### Reset, privilege, and time
+
+`ResetProfileState` clears GPRs and bounded memory, invalidates tile and pipe
+descriptors, clears defined extended system-register storage, resets faults,
+reservations, ordering and maintenance epochs, sets VERSION to 1, sets time to
+zero, and enters `Privilege_Machine`. Tile/pipe payload backing that becomes
+unobservable through invalid descriptors is not scrubbed.
+
+Privilege is explicit architecture state with User, Supervisor, and Machine
+levels. Base system registers are accessible at every level subject to their
+RO/WO/RW class. Context, translation, interrupt, and debug register families
+whose low index is at least `0xF00` require Machine privilege. A denied system
+register access raises `Fault_IllegalInstruction` before the access.
+
+The bounded reference memory is 4096 bytes. Machine and Supervisor can access
+the full range; User can access bytes 0 through 3071. Translation is identity.
+Permission and bounds failure use the existing data-page fault envelope.
+
+TIME and CYCLE return the same 64-bit modulo counter. Reset sets it to zero and
+each scalar or tile decoded execution attempt increments it once, including an
+attempt that is later rejected or faults.
+
+### Numeric carrier profile
+
+PTO v0 is a deterministic executable reference profile, not an IEEE-754 claim.
+Scalar and tile floating carriers use the documented raw payload widths. The
+profile fixes modular word arithmetic, signed raw ordering, normalization,
+tie-to-even integer rounding, division-by-zero results, and flag behavior so no
+host floating library can change execution.
+
+- The real-number exponential helper is an 18-term Taylor reference algorithm.
+- Scalar raw ADD/SUB/MUL/DIV and fused variants use modular XLEN carrier
+  arithmetic; zero DIV/reciprocal returns all ones and records DZ.
+- Scalar conversion hooks preserve the source carrier before the normative
+  destination-width normalization already defined in scalar ASL.
+- Tile arithmetic, reduction, expansion, partial, conversion, matrix, and
+  ordering hooks use the explicit raw-bitvector helpers in the normative model.
+- Tile SQRT and LOG preserve the raw carrier, EXP increments it, and reciprocal
+  uses unsigned all-ones division. Quantization and dequantization use the
+  declared scale and zero-point word operations.
+
+This profile makes the current formal model total and reproducible. A future
+IEEE or hardware numeric profile must be a separately named implementation; it
+must not silently reinterpret `pto-v0` results.
 
 ## Registered domains
 
-| Domain | Hooks | Portable boundary | Required refinement |
-| --- | --- | --- | --- |
-| System time | `ReadMonotonicTime` | architectural cycle counter | unit, monotonicity, rollover, reset |
-| Scalar mathematical helpers | `FloatingExponential`, `FloatingRoundNearest` | deterministic real-number defaults | approximation and tie rules |
-| Scalar raw floating arithmetic | `ScalarFPBinaryProfile`, `ScalarFPUnaryProfile`, `ScalarFPFusedProfile` | normalized identity/addend payloads, no new flags | correctly rounded encodings, exceptional values, sticky flags |
-| Scalar raw conversion | `ScalarFPToIntegerProfile`, `ScalarFPConvertProfile`, `ScalarIntegerToFPProfile` | identity payload before normative destination packing | type-pair legality, rounding, saturation, NaN/overflow/underflow, flags |
-| Atomic address class | `AtomicAddress` | preserve the decoded address | address-class selection, translation, faults, reservations |
-| Scalar and tile data access | `TranslateDataAddress`, `DataAccessPermitted` | identity translation into bounded read/write memory | translation, permissions, bounds, fault priority, and a stable decision across one instruction's preflight |
-| Tile floating functions | `TileSquareRoot`, `TileLogarithm`, `TileReciprocal`, `TileExponential`, `TileExpDifference` | deterministic raw-bitvector defaults | per-type encodings, accuracy, exceptional values, rounding |
-| Tile elementwise arithmetic | `TileProfileBinary`, `TileProfileUnary`, `TileProfileAxpy` | deterministic raw-bitvector arithmetic | per-type arithmetic, precision, rounding, exceptional values |
-| Tile comparison and ordering | `TileProfileCompare`, `TileProfileOrderLeft` | signed raw-payload ordering with stable ties | per-type ordering, equality, NaN and signed-zero behavior, ties |
-| Tile reduction | `TileProfileReductionInitial`, `TileProfileReductionStep` | deterministic raw-bitvector accumulation and selection | identities, precision, rounding, exceptional values, ties |
-| Tile expansion and partial operations | `TileProfileExpand`, `TileProfilePartialValue` | deterministic raw-bitvector arithmetic | per-type arithmetic, broadcasting, missing inputs, exceptional values |
-| Tile conversion | `TileProfileConvert`, `TileProfileQuantize`, `TileProfileDequantize` | deterministic raw-bitvector conversion defaults | scale/zero-point encodings, rounding, clamping, saturation, per-type legality |
-| Tile matrix arithmetic | `TileProfileMatrixAccumulate`, `TileProfileMatrixBias`, `TileProfileMatrixScale` | raw word-width multiply, accumulate, bias, and scale | accepted type combinations, intermediate widths, rounding, saturation, exceptional values |
+| Domain | Concrete boundary |
+| --- | --- |
+| Architecture reset | deterministic PTO v0 reset state |
+| Privilege | User/Supervisor/Machine memory and system-register policy |
+| System time | one modulo-64-bit tick per decoded execution attempt |
+| Scalar mathematical helpers | 18-term exponential and nearest-ties-even rounding |
+| Scalar carrier arithmetic/conversion | deterministic raw word operations and flags |
+| Atomic and data address | FAR-preserving, identity translation, explicit permissions |
+| Tile floating and elementwise | deterministic raw carrier operations |
+| Tile comparison, reduction, expansion, and partial | signed raw ordering and modular accumulation |
+| Tile conversion | raw normalization, quantization, and dequantization |
+| Tile matrix arithmetic | modular word-width multiply, bias, accumulate, and scale |
 
 ## Validation rule
 
-The repository checker extracts every `impdef func` declaration from `asl/`
-and requires an exact one-to-one match with the profile catalog. A new hook
-cannot land without a portable default, requirement owner, closure obligations,
-and executable feature evidence. Removing or renaming a hook requires updating
-the same contract in one reviewable change.
+The repository checker extracts every `impdef func` under `asl/`, every
+`implementation func` from the active profile, and every direct call in the
+profile conformance test. The three name sets must equal the 34-entry registry
+exactly. CI also requires the active profile identity in `specification.toml`
+and executes the complete ASL suite with the pinned ASLRef.

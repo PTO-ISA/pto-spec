@@ -8,11 +8,12 @@ flat, one-level machine.
 
 The current specification is a normative draft. Its complete accepted
 instruction surface, operand fields, architectural state, and scalar, TEPL,
-TMA, and CUBE semantic primitives execute under ASLRef. Numeric and system
-behaviors that require an implementation profile use named ASL `impdef` hooks
-rather than silent backend choices. Coverage and those remaining closure items
-are tracked in [docs/coverage.md](docs/coverage.md), with exact portable
-defaults and override obligations in
+TMA, and CUBE semantic primitives execute under ASLRef. Named ASL `impdef`
+interfaces isolate profile choices, and the repository selects a complete
+`pto-v0` implementation with explicit numeric, memory, time, reset, and
+privilege behavior. Coverage is tracked in
+[docs/coverage.md](docs/coverage.md), with exact behavior and alternative-profile
+obligations in
 [docs/profile-contracts.md](docs/profile-contracts.md).
 
 ## Canonical contract
@@ -23,13 +24,15 @@ The normative precedence and one-level boundary are defined in
 tile bridge is fixed by
 [ADR-0002](docs/architecture-decisions/0002-direct-reg5-tile-bridge.md), and
 [ADR-0004](docs/architecture-decisions/0004-catalog-owned-family-constraints.md)
-defines catalog-owned family legality.
+defines catalog-owned family legality. The concrete implementation boundary is
+selected by
+[ADR-0005](docs/architecture-decisions/0005-pto-v0-concrete-reference-profile.md).
 
 - 473 scalar forms are accepted across AGU, ALU, AMO, BRU, FSU, and SYS, with
   exact masks, matches, operand pieces, signedness, three form constraints, and
   two family constraints with 85 generated applications.
 - All 473 scalar forms have executable decoded state transitions, including
-  the 30 FSU forms and their explicit scalar numeric profile boundaries.
+  the 30 FSU forms under the concrete PTO v0 numeric carrier profile.
 - 111 direct tile operations are accepted: 97 TEPL, 6 TMA, and 8 CUBE.
 - 64 tile registers form T/U/M/N hands with 16 registers per hand.
 - The architecture contains no nested instruction bodies or body-local state.
@@ -61,6 +64,7 @@ work can fail fast before ASLRef is built. The complete gate also validates:
 
 - exact scalar, system-register, and tile catalogs;
 - generated scalar-form, operand-field, and tile-selector decoder witnesses;
+- exact 34-hook active-profile implementation and conformance-test closure;
 - one-level architecture and publication hygiene;
 - strict ASLRef type checking and executable semantic evidence;
 - gate and toolchain canaries that prove validation can fail correctly.
