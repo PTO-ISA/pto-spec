@@ -17,8 +17,9 @@ PTO instruction body.
 - Reg5 destinations 1..23 write GPRs, 0 and 24..29 discard the value, 30 writes
   U1 element (0,0), and 31 writes T1 element (0,0). Compressed `->t` forms use
   that same direct T1 bridge. No implicit push, pop, or body-local state exists.
-- PC, return address, commit argument, fault code/address, system state, and
-  memory-ordering state are introduced only where required by retained forms.
+- PC, return address, commit argument, predicate mask, fault code/address,
+  system state, and memory-ordering state are introduced only where required by
+  retained forms.
 
 ## Tile state
 
@@ -68,10 +69,11 @@ controls extension and scaling. Reg5 bridge behavior is defined in
 `asl/scalar/operands.asl`.
 
 `ExecuteScalarInstruction` is the decoded scalar execution boundary. Unknown or
-illegal encodings raise the illegal-instruction fault, all 107 ALU forms execute
-their checked-in state transitions, and recognized families without completed
-operand-to-effect bindings return `ScalarExecution_Unsupported` with no state
-change. This explicit result keeps partial executable coverage observable.
+illegal encodings raise the illegal-instruction fault, all 107 ALU and 66 BRU
+forms execute their checked-in state transitions, and recognized families
+without completed operand-to-effect bindings return
+`ScalarExecution_Unsupported` with no state change. This explicit result keeps
+partial executable coverage observable.
 
 ## Excluded implementation detail
 

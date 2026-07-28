@@ -109,7 +109,7 @@ def main() -> None:
     print("begin")
     execution_witness_index = 0
     for row in scalar:
-        if row["semantic_family"] != "ALU":
+        if row["semantic_family"] not in {"ALU", "BRU"}:
             continue
         match = bit_literal(int(row["encoding"][0]["match"], 16), 48)
         print("    ClearFault();")
@@ -123,7 +123,9 @@ def main() -> None:
         )
         print("    assert _LastFault == Fault_None;")
         execution_witness_index += 1
-    unsupported = next(row for row in scalar if row["semantic_family"] != "ALU")
+    unsupported = next(
+        row for row in scalar if row["semantic_family"] not in {"ALU", "BRU"}
+    )
     unsupported_match = bit_literal(int(unsupported["encoding"][0]["match"], 16), 48)
     print("    ClearFault();")
     print(

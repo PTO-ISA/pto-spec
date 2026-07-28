@@ -49,6 +49,50 @@ begin
     assert alias_status == ScalarExecution_Executed;
     assert _ReturnAddress == Zeros{PTO_XLEN} + 100;
     assert _LastFault == Fault_None;
+
+    WriteGPR(2, Zeros{PTO_XLEN} + 0x0f);
+    WriteGPR(3, Zeros{PTO_XLEN} + 0xf0);
+    var compare_and: bits(48) = Zeros{48} + 0x00002045;
+    compare_and[11:7] = Zeros{5} + 8;
+    compare_and[19:15] = Zeros{5} + 2;
+    compare_and[24:20] = Zeros{5} + 3;
+    let compare_and_zero_status = ExecuteScalarInstruction(compare_and, 32);
+    assert compare_and_zero_status == ScalarExecution_Executed;
+    assert ReadGPR(8) == Zeros{PTO_XLEN};
+    compare_and[26:25] = '11';
+    let compare_and_nonzero_status = ExecuteScalarInstruction(compare_and, 32);
+    assert compare_and_nonzero_status == ScalarExecution_Executed;
+    assert ReadGPR(8) == Zeros{PTO_XLEN} + 1;
+
+    WriteGPR(2, Zeros{PTO_XLEN} + 8);
+    var set_commit_immediate: bits(48) = Zeros{48} + 0x00000075;
+    set_commit_immediate[11:7] = Zeros{5} + 3;
+    set_commit_immediate[19:15] = Zeros{5} + 2;
+    set_commit_immediate[31:20] = Zeros{12} + 1;
+    let set_commit_status = ExecuteScalarInstruction(set_commit_immediate, 32);
+    assert set_commit_status == ScalarExecution_Executed;
+    assert _CommitArgument == Zeros{PTO_XLEN} + 1;
+
+    WritePredicateMask(Zeros{PTO_XLEN});
+    WritePC(Zeros{PTO_XLEN} + 100);
+    var branch_zero: bits(48) = Zeros{48} + 0x00001037;
+    branch_zero[31:15] = Zeros{17} + 3;
+    let branch_taken_status = ExecuteScalarInstruction(branch_zero, 32);
+    assert branch_taken_status == ScalarExecution_Executed;
+    assert ReadPC() == Zeros{PTO_XLEN} + 106;
+    WritePredicateMask(Zeros{PTO_XLEN} + 1);
+    WritePC(Zeros{PTO_XLEN} + 100);
+    let branch_fallthrough_status = ExecuteScalarInstruction(branch_zero, 32);
+    assert branch_fallthrough_status == ScalarExecution_Executed;
+    assert ReadPC() == Zeros{PTO_XLEN} + 104;
+
+    WriteGPR(2, Zeros{PTO_XLEN} + 200);
+    var jump_register: bits(48) = Zeros{48} + 0x00006027;
+    jump_register[19:15] = Zeros{5} + 2;
+    jump_register[31:25] = Zeros{7} + 2;
+    let jump_register_status = ExecuteScalarInstruction(jump_register, 32);
+    assert jump_register_status == ScalarExecution_Executed;
+    assert ReadPC() == Zeros{PTO_XLEN} + 204;
 end;
 
 func TestScalarInteger()
@@ -164,14 +208,18 @@ begin
     assert ReadGPR(8) == Zeros{PTO_XLEN} + 4;
     assert ReadGPR(9) == Zeros{PTO_XLEN} + 3;
 
-    WriteGPR(10, Zeros{PTO_XLEN} + 1);
-    ExecuteCompareLogical(10, ScalarCondition_EQ, Zeros{PTO_XLEN} + 1,
+    ExecuteCompareLogical(10, Zeros{PTO_XLEN} + 1,
         Zeros{PTO_XLEN} + 2, TRUE);
     assert ReadGPR(10) == Zeros{PTO_XLEN} + 1;
-    _CommitArgument = Zeros{PTO_XLEN} + 1;
-    ExecuteSetCommitLogical(ScalarCondition_EQ, Zeros{PTO_XLEN} + 1,
+    ExecuteCompareLogical(10, Zeros{PTO_XLEN} + 1,
+        Zeros{PTO_XLEN} + 2, FALSE);
+    assert ReadGPR(10) == Zeros{PTO_XLEN};
+    ExecuteSetCommitLogical(Zeros{PTO_XLEN} + 1,
         Zeros{PTO_XLEN} + 2, TRUE);
     assert _CommitArgument == Zeros{PTO_XLEN} + 1;
+    ExecuteSetCommitLogical(Zeros{PTO_XLEN} + 1,
+        Zeros{PTO_XLEN} + 2, FALSE);
+    assert _CommitArgument == Zeros{PTO_XLEN};
 
     WritePC(Zeros{PTO_XLEN} + 100);
     BranchRelative(ScalarCondition_EQ, Zeros{PTO_XLEN} + 7,

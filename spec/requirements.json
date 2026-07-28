@@ -29,7 +29,7 @@
         "spec/catalog/scalar-forms.json"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
-      "status": "implemented-alu-subset",
+      "status": "implemented-alu-bru-subset",
       "tests": [
         "scripts/check-catalogs",
         "tests/asl/main.asl",

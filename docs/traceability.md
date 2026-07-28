@@ -8,7 +8,7 @@ review-oriented projection.
 | PTO-REQ-STATE-001 | `asl/types.asl`, `asl/state.asl` | state tests | implemented baseline |
 | PTO-REQ-FAULT-001 | `asl/types.asl`, `asl/state.asl` | state/scalar tests | implemented baseline |
 | PTO-REQ-SCALAR-ALU-001 | `asl/scalar/integer.asl` | integer and edge-case tests | implemented subset |
-| PTO-REQ-SCALAR-DISPATCH-001 | `asl/scalar/dispatch.asl`, generated decode bindings | all 107 ALU canonical forms plus effect and rejection tests | implemented ALU subset |
+| PTO-REQ-SCALAR-DISPATCH-001 | `asl/scalar/dispatch.asl`, generated decode bindings | all 107 ALU and 66 BRU canonical forms plus effect and rejection tests | implemented ALU/BRU subset |
 | PTO-REQ-SCALAR-CONTROL-001 | `asl/scalar/control.asl` | compare/branch/commit tests | implemented subset |
 | PTO-REQ-SCALAR-OPERAND-001 | `asl/scalar/operands.asl` | GPR/direct T/U bridge tests | implemented |
 | PTO-REQ-SCALAR-ADDRESS-001 | `asl/scalar/addressing.asl` | address-mode tests | implemented |

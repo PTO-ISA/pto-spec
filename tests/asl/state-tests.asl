@@ -7,6 +7,8 @@ begin
 
     WritePC(Zeros{PTO_XLEN} + 16);
     assert ReadPC() == Zeros{PTO_XLEN} + 16;
+    WritePredicateMask(Zeros{PTO_XLEN} + 0xf0);
+    assert ReadPredicateMask() == Zeros{PTO_XLEN} + 0xf0;
     ClearFault();
     assert _LastFault == Fault_None;
 end;

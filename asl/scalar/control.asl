@@ -34,23 +34,21 @@ begin
     end;
 end;
 
-func ExecuteCompare(destination: GPRIndex, condition: ScalarCondition,
+func ExecuteCompare(destination: Reg5Selector, condition: ScalarCondition,
                     left: Word, right: Word)
 begin
     let result = if ConditionHolds(condition, left, right) then
         Zeros{PTO_XLEN} + 1 else Zeros{PTO_XLEN};
-    WriteGPR(destination, result);
+    WriteScalarDestination(destination, result);
 end;
 
-func ExecuteCompareLogical(destination: GPRIndex, condition: ScalarCondition,
-                           left: Word, right: Word, combine_or: boolean)
+func ExecuteCompareLogical(destination: Reg5Selector, left: Word,
+                           right: Word, combine_or: boolean)
 begin
-    let old_value = ReadGPR(destination);
-    let comparison = ConditionHolds(condition, left, right);
-    let old_predicate = !IsZero(old_value);
-    let result = if combine_or then old_predicate || comparison
-                 else old_predicate && comparison;
-    WriteGPR(destination, if result then Zeros{PTO_XLEN} + 1 else Zeros{PTO_XLEN});
+    let logical_result = if combine_or then left OR right else left AND right;
+    WriteScalarDestination(destination,
+        if IsZero(logical_result) then Zeros{PTO_XLEN}
+        else Zeros{PTO_XLEN} + 1);
 end;
 
 func ExecuteSetCommit(condition: ScalarCondition, left: Word, right: Word)
@@ -59,14 +57,11 @@ begin
         Zeros{PTO_XLEN} + 1 else Zeros{PTO_XLEN};
 end;
 
-func ExecuteSetCommitLogical(condition: ScalarCondition, left: Word,
-                             right: Word, combine_or: boolean)
+func ExecuteSetCommitLogical(left: Word, right: Word, combine_or: boolean)
 begin
-    let comparison = ConditionHolds(condition, left, right);
-    let old_predicate = !IsZero(_CommitArgument);
-    let result = if combine_or then old_predicate || comparison
-                 else old_predicate && comparison;
-    _CommitArgument = if result then Zeros{PTO_XLEN} + 1 else Zeros{PTO_XLEN};
+    let logical_result = if combine_or then left OR right else left AND right;
+    _CommitArgument = if IsZero(logical_result) then Zeros{PTO_XLEN}
+                      else Zeros{PTO_XLEN} + 1;
 end;
 
 func SetReturnAddress(halfword_offset: Word)
@@ -79,7 +74,7 @@ begin
     WritePC(ReadPC() + LSL(halfword_offset, 1));
 end;
 
-func AddToPC(destination: GPRIndex, halfword_offset: Word)
+func AddToPC(destination: Reg5Selector, halfword_offset: Word)
 begin
-    WriteGPR(destination, ReadPC() + LSL(halfword_offset, 1));
+    WriteScalarDestination(destination, ReadPC() + LSL(halfword_offset, 1));
 end;

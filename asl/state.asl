@@ -4,6 +4,7 @@ var _GPR : array [[PTO_SCALAR_REGISTER_COUNT]] of Word;
 var _PC : Word;
 var _ReturnAddress : Word;
 var _CommitArgument : Word;
+var _PredicateMask : Word;
 var _LastFault : FaultCode;
 var _FaultAddress : Word;
 var _Memory : array [[PTO_MODEL_MEMORY_BYTES]] of Byte;
@@ -67,6 +68,16 @@ end;
 func WritePC(value: Word)
 begin
     _PC = value;
+end;
+
+readonly func ReadPredicateMask() => Word
+begin
+    return _PredicateMask;
+end;
+
+func WritePredicateMask(value: Word)
+begin
+    _PredicateMask = value;
 end;
 
 func SetFault(code: FaultCode, address: Word)
