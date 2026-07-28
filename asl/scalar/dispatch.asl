@@ -1136,10 +1136,6 @@ begin
             ExecuteDecodedAtomicReadModifyWrite(instruction, form,
                 ScalarAtomicOperationForOperation(operation), 8, FALSE);
 
-        when ScalarOperation_DMA =>
-            DMA64(
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR));
         otherwise => unreachable;
     end;
 end;
@@ -1244,22 +1240,23 @@ func ExecuteDecodedAGULoadPair(
     instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1},
     address: Word, size_bytes: integer {1,2,4,8})
 begin
-    let first = LoadUnsigned(address, size_bytes);
-    if _LastFault == Fault_None then
-        let second = LoadUnsigned(
-            address + NaturalToWord(size_bytes as integer {0..262144}),
-            size_bytes);
-        if _LastFault == Fault_None then
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
-                NormalizeScalarLoadResult(first, size_bytes,
-                    ScalarAGUSignedLoadOfForm(form)));
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst1),
-                NormalizeScalarLoadResult(second, size_bytes,
-                    ScalarAGUSignedLoadOfForm(form)));
-        end;
-    end;
+    let second_address =
+        address + NaturalToWord(size_bytes as integer {0..262144});
+    let first_probe = ProbeDataAccess(address, size_bytes, size_bytes, FALSE);
+    if RaiseDataAccessFault(first_probe, address) then return; end;
+    let second_probe = ProbeDataAccess(
+        second_address, size_bytes, size_bytes, FALSE);
+    if RaiseDataAccessFault(second_probe, second_address) then return; end;
+    let first = LoadTranslatedUnsigned(first_probe.translated_address, size_bytes);
+    let second = LoadTranslatedUnsigned(second_probe.translated_address, size_bytes);
+    WriteScalarDestination(
+        ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
+        NormalizeScalarLoadResult(first, size_bytes,
+            ScalarAGUSignedLoadOfForm(form)));
+    WriteScalarDestination(
+        ScalarDecodedSelector(instruction, form, ScalarField_RegDst1),
+        NormalizeScalarLoadResult(second, size_bytes,
+            ScalarAGUSignedLoadOfForm(form)));
 end;
 
 readonly func ReadDecodedAGUStoreSource(
@@ -1291,13 +1288,17 @@ func ExecuteDecodedAGUStorePair(
     instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1},
     address: Word, size_bytes: integer {1,2,4,8})
 begin
-    Store(address, size_bytes,
+    let second_address =
+        address + NaturalToWord(size_bytes as integer {0..262144});
+    let first_probe = ProbeDataAccess(address, size_bytes, size_bytes, TRUE);
+    if RaiseDataAccessFault(first_probe, address) then return; end;
+    let second_probe = ProbeDataAccess(
+        second_address, size_bytes, size_bytes, TRUE);
+    if RaiseDataAccessFault(second_probe, second_address) then return; end;
+    StoreTranslated(address, first_probe.translated_address, size_bytes,
         ReadDecodedScalarRegister(instruction, form, ScalarField_SrcD));
-    if _LastFault == Fault_None then
-        Store(address + NaturalToWord(size_bytes as integer {0..262144}),
-            size_bytes,
-            ReadDecodedScalarRegister(instruction, form, ScalarField_SrcD1));
-    end;
+    StoreTranslated(second_address, second_probe.translated_address, size_bytes,
+        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcD1));
 end;
 
 func ExecuteDecodedAGUForm(instruction: bits(48),

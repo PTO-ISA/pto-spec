@@ -8,15 +8,16 @@ review-oriented projection.
 | PTO-REQ-STATE-001 | `asl/types.asl`, `asl/state.asl` | state tests | implemented portable model |
 | PTO-REQ-FAULT-001 | `asl/types.asl`, `asl/state.asl`, tile legality preflight | state/scalar/tile fault and no-partial-effect tests | implemented portable envelope |
 | PTO-REQ-SCALAR-ALU-001 | `asl/scalar/integer.asl` | integer and edge-case tests | implemented |
-| PTO-REQ-SCALAR-DISPATCH-001 | `asl/scalar/dispatch.asl`, generated decode bindings | all 474 canonical forms plus family effect and rejection tests | implemented |
+| PTO-REQ-SCALAR-DISPATCH-001 | `asl/scalar/dispatch.asl`, generated decode bindings | all 473 canonical forms plus family effect, removed-DMA, and rejection tests | implemented |
 | PTO-REQ-SCALAR-CONTROL-001 | `asl/scalar/control.asl` | compare/branch/commit tests | implemented |
 | PTO-REQ-SCALAR-OPERAND-001 | `asl/scalar/operands.asl` | GPR/direct T/U bridge tests | implemented |
 | PTO-REQ-SCALAR-ADDRESS-001 | `asl/scalar/addressing.asl`, generated AGU metadata, decoded dispatch | register/immediate/PC-relative/compressed, scaled/unscaled, pre/post, pair, and prefetch tests | implemented |
-| PTO-REQ-SCALAR-AMO-001 | `asl/scalar/atomic.asl`, `asl/scalar/dispatch.asl` | decoded LR/SC, CAS, RMW, ordering, and DMA tests | implemented with address profile |
+| PTO-REQ-SCALAR-AMO-001 | `asl/scalar/atomic.asl`, `asl/scalar/dispatch.asl` | decoded LR/SC, CAS, RMW, ordering, and removed-DMA tests | implemented with address profile |
 | PTO-REQ-SCALAR-SYS-001 | `asl/scalar/system.asl`, `asl/scalar/dispatch.asl` | decoded system/register/maintenance/fence/request/fault tests | implemented with platform profile |
 | PTO-REQ-SCALAR-SSR-001 | `asl/scalar/system-registers.asl`, system catalog | access/trap/address tests | implemented |
 | PTO-REQ-SCALAR-FP-001 | `asl/scalar/floating.asl`, decoded dispatch | carrier/type legality, comparison, NaN, signed-zero, flag, conversion, and mathematical tests | implemented with numeric profile hooks |
 | PTO-REQ-MEMORY-001 | `asl/scalar/memory.asl`, decoded dispatch | endian, alignment, signedness, pair, pre/post, and fault tests | implemented with platform profile |
+| PTO-REQ-MEMORY-COMPLETION-001 | shared access probe, scalar pair dispatch, tile memory | pair first/second and tile first/middle/last faults, preservation, and restart | implemented |
 | PTO-REQ-TILE-001 | `asl/types.asl`, `asl/tile/state.asl` | mapping/capacity/alias tests | implemented portable model |
 | PTO-REQ-TILE-DISPATCH-001 | generated tile decode bindings, `asl/types.asl` | all-selector binding witnesses, decoded TEPL/TMA/CUBE effects, result, and rejection tests | implemented |
 | PTO-REQ-TILE-LEGALITY-001 | `asl/tile/legality.asl`, generated tile and Reg5 preflight | data, descriptor, shape, pipe, composite, Reg5, fault-address, and no-partial-effect tests | implemented |

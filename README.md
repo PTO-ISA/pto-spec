@@ -23,9 +23,9 @@ The normative precedence and one-level boundary are defined in
 tile bridge is fixed by
 [ADR-0002](docs/architecture-decisions/0002-direct-reg5-tile-bridge.md).
 
-- 474 scalar forms are accepted across AGU, ALU, AMO, BRU, FSU, and SYS, with
+- 473 scalar forms are accepted across AGU, ALU, AMO, BRU, FSU, and SYS, with
   exact masks, matches, operand pieces, signedness, and legality constraints.
-- All 474 scalar forms have executable decoded state transitions, including
+- All 473 scalar forms have executable decoded state transitions, including
   the 30 FSU forms and their explicit scalar numeric profile boundaries.
 - 111 direct tile operations are accepted: 97 TEPL, 6 TMA, and 8 CUBE.
 - 64 tile registers form T/U/M/N hands with 16 registers per hand.

@@ -156,7 +156,6 @@ SCALAR_FAMILY_HANDLERS = {
         "StoreConditional",
         "AtomicReadModifyWrite",
         "CompareAndSwap",
-        "DMA64",
     },
     "BRU": {
         "ConditionHolds",
@@ -373,7 +372,7 @@ def main() -> int:
     )
     require(
         specification["maturity"]["instruction_dispatch"]
-        == "all-474-scalar-forms-and-111-tile-operations-executable",
+        == "all-473-scalar-forms-and-111-tile-operations-executable",
         "instruction dispatch maturity must match the complete checked catalogs",
     )
     require(
@@ -382,7 +381,7 @@ def main() -> int:
         "tile maturity must record explicit decoded legality",
     )
     require(
-        specification["architecture"]["scalar_forms"] == 474,
+        specification["architecture"]["scalar_forms"] == 473,
         "status record scalar count drift",
     )
     require(
@@ -396,26 +395,30 @@ def main() -> int:
 
     forms = scalar["forms"]
     require(scalar["isa"] == isa_name, "scalar catalog has wrong ISA identity")
-    require(scalar["form_count"] == len(forms) == 474, "scalar form count must be 474")
+    require(scalar["form_count"] == len(forms) == 473, "scalar form count must be 473")
     require(
         scalar["operand_field_count"] == 45, "scalar operand field count must be 45"
     )
     require(
-        scalar["operand_piece_count"] == 1867, "scalar operand piece count must be 1867"
+        scalar["operand_piece_count"] == 1865, "scalar operand piece count must be 1865"
     )
     require(
         scalar["constraint_count"] == 3, "scalar operand constraint count must be 3"
     )
     require(
-        scalar["semantic_handler_count"] == 68,
-        "scalar semantic handler count must be 68",
+        scalar["semantic_handler_count"] == 67,
+        "scalar semantic handler count must be 67",
+    )
+    require(
+        all(row["mnemonic"] != "DMA" for row in forms),
+        "DMA must remain outside the accepted scalar surface",
     )
     form_ids = [row["form_id"] for row in forms]
     require(len(form_ids) == len(set(form_ids)), "scalar form IDs must be unique")
     require(
         Counter(row["semantic_family"] for row in forms)
         == Counter(
-            {"AGU": 183, "ALU": 107, "AMO": 53, "BRU": 66, "FSU": 30, "SYS": 35}
+            {"AGU": 183, "ALU": 107, "AMO": 52, "BRU": 66, "FSU": 30, "SYS": 35}
         ),
         "scalar family counts changed",
     )
@@ -891,6 +894,30 @@ def main() -> int:
     asl_body = "\n".join(
         path.read_text(encoding="utf-8") for path in (ROOT / "asl").rglob("*.asl")
     )
+    require(
+        re.search(r"\bDMA64\b", asl_body) is None,
+        "removed DMA64 semantics remain in normative ASL",
+    )
+    for path in (ROOT / "asl").rglob("*.asl"):
+        if path == ROOT / "asl" / "state.asl" or path == (
+            ROOT / "asl" / "scalar" / "memory.asl"
+        ):
+            continue
+        body = path.read_text(encoding="utf-8")
+        require(
+            re.search(r"\b(?:ReadMemoryByte|WriteMemoryByte)\s*\(", body) is None,
+            f"normative memory access bypasses the profile probe boundary: {path.relative_to(ROOT)}",
+        )
+    for relative in (
+        "asl/scalar/addressing.asl",
+        "asl/scalar/dispatch.asl",
+        "asl/tile/memory.asl",
+    ):
+        body = (ROOT / relative).read_text(encoding="utf-8")
+        require(
+            "ProbeDataAccess(" in body,
+            f"multi-access completion path lacks profile preflight: {relative}",
+        )
     for handler, names in TILE_SEMANTIC_GROUPS.items():
         require(
             semantic_names.isdisjoint(names),
@@ -990,6 +1017,11 @@ def main() -> int:
         "readonly func ScalarRegisterOperandsLegal" in generated_tile_dispatch,
         "generated scalar Reg5 legality coverage is missing",
     )
+    require(
+        "DecodeScalarForm('000000000000000000000000000000000111000000001011', 32)"
+        in generated_tile_dispatch,
+        "removed DMA encoding lacks generated rejection evidence",
+    )
     scalar_operands_body = (ROOT / "asl" / "scalar" / "operands.asl").read_text(
         encoding="utf-8"
     )
@@ -1000,7 +1032,7 @@ def main() -> int:
     executable_family_counts = {
         "AGU": 183,
         "ALU": 107,
-        "AMO": 53,
+        "AMO": 52,
         "BRU": 66,
         "FSU": 30,
         "SYS": 35,
@@ -1057,6 +1089,15 @@ def main() -> int:
         and "TileExecution_Rejected" in test_body
         and "ScalarExecution_Rejected" in test_body,
         "tile and Reg5 legality lack executable rejection evidence",
+    )
+    require(
+        "TestScalarPairMemoryCompletion" in test_body
+        and "TestTileMemoryCompletionAndRestart" in test_body
+        and "first_status" in test_body
+        and "middle_status" in test_body
+        and "last_status" in test_body
+        and "restart_status" in test_body,
+        "memory completion lacks pair and first/middle/last restart evidence",
     )
     for handler in (
         "ReadSystemRegisterAddress",
@@ -1281,7 +1322,7 @@ def main() -> int:
     )
 
     print(
-        "catalog checks passed: 474 scalar forms, 45 operand fields, 1,867 field pieces, "
+        "catalog checks passed: 473 scalar forms, 45 operand fields, 1,865 field pieces, "
         "3 constrained overlaps, 52 system-register definitions, 13 trap numbers, and "
         "111 tile operations with complete handler and executable feature coverage; "
         f"{len(profile_names)} profile hooks are declared, invoked, and traceable"

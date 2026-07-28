@@ -26,6 +26,11 @@ type FaultCode of enumeration {
     Fault_TileLegality
 };
 
+type DataAccessProbe of record {
+    fault: FaultCode,
+    translated_address: Word
+};
+
 type MemoryOrder of enumeration {
     MemoryOrder_Relaxed,
     MemoryOrder_Acquire,

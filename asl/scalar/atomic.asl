@@ -1,4 +1,4 @@
-// PTO-REQ-SCALAR-AMO-001: LR/SC, CAS, RMW, and exact 64-byte DMA.
+// PTO-REQ-SCALAR-AMO-001: LR/SC, CAS, and atomic read-modify-write.
 
 readonly impdef func AtomicAddress(address: Word, far: boolean) => Word
 begin
@@ -37,13 +37,16 @@ func StoreConditional(address: Word, size_bytes: integer {1,2,4,8},
 begin
     let succeeds = _ReservationValid &&
         _ReservationAddress == address && _ReservationSize == size_bytes;
-    _ReservationValid = FALSE;
     if succeeds then
+        let probe = ProbeDataAccess(address, size_bytes, size_bytes, TRUE);
+        if RaiseDataAccessFault(probe, address) then return Zeros{PTO_XLEN}; end;
+        _ReservationValid = FALSE;
         ApplyMemoryOrderBefore(order);
-        Store(address, size_bytes, value);
+        StoreTranslated(address, probe.translated_address, size_bytes, value);
         ApplyMemoryOrderAfter(order);
         return Zeros{PTO_XLEN};
     else
+        _ReservationValid = FALSE;
         return Zeros{PTO_XLEN} + 1;
     end;
 end;
@@ -109,51 +112,33 @@ func AtomicReadModifyWrite(address: Word, size_bytes: integer {1,2,4,8},
                            op: AtomicOperation, operand: Word,
                            order: MemoryOrder) => Word
 begin
+    let read_probe = ProbeDataAccess(address, size_bytes, size_bytes, FALSE);
+    if RaiseDataAccessFault(read_probe, address) then return Zeros{PTO_XLEN}; end;
+    let write_probe = ProbeDataAccess(address, size_bytes, size_bytes, TRUE);
+    if RaiseDataAccessFault(write_probe, address) then return Zeros{PTO_XLEN}; end;
     ApplyMemoryOrderBefore(order);
-    let old_value = LoadUnsigned(address, size_bytes);
-    if _LastFault == Fault_None then
-        Store(address, size_bytes, AtomicValueSized(op, old_value, operand, size_bytes));
-        ApplyMemoryOrderAfter(order);
-    end;
+    let old_value = LoadTranslatedUnsigned(
+        read_probe.translated_address, size_bytes);
+    StoreTranslated(address, write_probe.translated_address, size_bytes,
+        AtomicValueSized(op, old_value, operand, size_bytes));
+    ApplyMemoryOrderAfter(order);
     return old_value;
 end;
 
 func CompareAndSwap(address: Word, size_bytes: integer {1,2,4,8},
                     expected: Word, desired: Word, order: MemoryOrder) => Word
 begin
+    let read_probe = ProbeDataAccess(address, size_bytes, size_bytes, FALSE);
+    if RaiseDataAccessFault(read_probe, address) then return Zeros{PTO_XLEN}; end;
+    let write_probe = ProbeDataAccess(address, size_bytes, size_bytes, TRUE);
+    if RaiseDataAccessFault(write_probe, address) then return Zeros{PTO_XLEN}; end;
     ApplyMemoryOrderBefore(order);
-    let old_value = LoadUnsigned(address, size_bytes);
-    if _LastFault == Fault_None &&
-       old_value == NormalizeAtomicUnsigned(expected, size_bytes) then
-        Store(address, size_bytes, desired);
+    let old_value = LoadTranslatedUnsigned(
+        read_probe.translated_address, size_bytes);
+    if old_value == NormalizeAtomicUnsigned(expected, size_bytes) then
+        StoreTranslated(address, write_probe.translated_address,
+            size_bytes, desired);
     end;
-    if _LastFault == Fault_None then ApplyMemoryOrderAfter(order); end;
+    ApplyMemoryOrderAfter(order);
     return old_value;
-end;
-
-func DMA64(source_address: Word, destination_address: Word)
-begin
-    if UInt(source_address) + 64 > PTO_MODEL_MEMORY_BYTES then
-        SetFault(Fault_DataPage, source_address);
-        return;
-    end;
-    if UInt(destination_address) + 64 > PTO_MODEL_MEMORY_BYTES then
-        SetFault(Fault_DataPage, destination_address);
-        return;
-    end;
-
-    // Snapshot before writing so overlapping ranges have memmove semantics and
-    // a preflight fault leaves the destination unchanged.
-    var snapshot: array [[64]] of Byte;
-    for byte_index = 0 to 63 do
-        let offset = NaturalToWord(byte_index as integer {0..262144});
-        snapshot[[byte_index]] = ReadMemoryByte(source_address + offset);
-    end;
-    for byte_index = 0 to 63 do
-        let offset = NaturalToWord(byte_index as integer {0..262144});
-        WriteMemoryByte(destination_address + offset, snapshot[[byte_index]]);
-    end;
-    _ReservationValid = FALSE;
-    _MemoryReleaseEpoch = _MemoryReleaseEpoch + 1;
-    _MemoryAcquireEpoch = _MemoryAcquireEpoch + 1;
 end;

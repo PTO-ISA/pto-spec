@@ -10,7 +10,7 @@ formal_model_issue = "https://github.com/PTO-ISA/pto-spec/issues/4"
 [architecture]
 profile = "pto-v0"
 xlen = 64
-scalar_forms = 474
+scalar_forms = 473
 system_register_definitions = 52
 trap_numbers = 13
 tile_model = "one-level"
@@ -25,7 +25,7 @@ system_state = "implemented"
 tile_state = "implemented"
 tile_semantics = "decoded-with-explicit-legality-and-profile-hooks"
 binary_decode = "executable-complete"
-instruction_dispatch = "all-474-scalar-forms-and-111-tile-operations-executable"
+instruction_dispatch = "all-473-scalar-forms-and-111-tile-operations-executable"
 
 [toolchain]
 aslref_repository = "https://github.com/herd/herdtools7.git"

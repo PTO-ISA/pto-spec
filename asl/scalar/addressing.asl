@@ -1,4 +1,5 @@
-// PTO-REQ-SCALAR-ADDRESS-001: scalar addressing and register writeback.
+// PTO-REQ-SCALAR-ADDRESS-001, PTO-REQ-MEMORY-COMPLETION-001: scalar addressing,
+// pair preflight, and fault-suppressed register writeback.
 
 pure func EffectiveAddress(base: Word, offset: Word, mode: AddressUpdateMode) => Word
 begin
@@ -44,16 +45,21 @@ begin
     let base = ReadGPR(base_register);
     let address = EffectiveAddress(base, offset, mode);
     let second_address = address + NaturalToWord(size_bytes as integer {0..262144});
-    let low = if signed_load then LoadSigned(address, size_bytes)
-              else LoadUnsigned(address, size_bytes);
-    let high = if signed_load then LoadSigned(second_address, size_bytes)
-               else LoadUnsigned(second_address, size_bytes);
-    if _LastFault == Fault_None then
-        WriteGPR(destination_low, low);
-        WriteGPR(destination_high, high);
-        if mode == AddressUpdate_PreIndex || mode == AddressUpdate_PostIndex then
-            WriteGPR(base_register, base + offset);
-        end;
+    let low_probe = ProbeDataAccess(address, size_bytes, size_bytes, FALSE);
+    if RaiseDataAccessFault(low_probe, address) then return; end;
+    let high_probe = ProbeDataAccess(
+        second_address, size_bytes, size_bytes, FALSE);
+    if RaiseDataAccessFault(high_probe, second_address) then return; end;
+    let low = NormalizeLoadedValue(
+        LoadTranslatedUnsigned(low_probe.translated_address, size_bytes),
+        size_bytes, signed_load);
+    let high = NormalizeLoadedValue(
+        LoadTranslatedUnsigned(high_probe.translated_address, size_bytes),
+        size_bytes, signed_load);
+    WriteGPR(destination_low, low);
+    WriteGPR(destination_high, high);
+    if mode == AddressUpdate_PreIndex || mode == AddressUpdate_PostIndex then
+        WriteGPR(base_register, base + offset);
     end;
 end;
 
@@ -64,10 +70,16 @@ begin
     let base = ReadGPR(base_register);
     let address = EffectiveAddress(base, offset, mode);
     let second_address = address + NaturalToWord(size_bytes as integer {0..262144});
-    Store(address, size_bytes, ReadGPR(source_low));
-    if _LastFault == Fault_None then Store(second_address, size_bytes, ReadGPR(source_high)); end;
-    if _LastFault == Fault_None &&
-       (mode == AddressUpdate_PreIndex || mode == AddressUpdate_PostIndex) then
+    let low_probe = ProbeDataAccess(address, size_bytes, size_bytes, TRUE);
+    if RaiseDataAccessFault(low_probe, address) then return; end;
+    let high_probe = ProbeDataAccess(
+        second_address, size_bytes, size_bytes, TRUE);
+    if RaiseDataAccessFault(high_probe, second_address) then return; end;
+    StoreTranslated(address, low_probe.translated_address,
+        size_bytes, ReadGPR(source_low));
+    StoreTranslated(second_address, high_probe.translated_address,
+        size_bytes, ReadGPR(source_high));
+    if mode == AddressUpdate_PreIndex || mode == AddressUpdate_PostIndex then
         WriteGPR(base_register, base + offset);
     end;
 end;

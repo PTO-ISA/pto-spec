@@ -18,7 +18,7 @@ instructions update the same architectural state. Tile registers are explicit
 operands, never implicit queue results. Direct instruction entrypoints carry all
 dimensions, addresses, sources, destinations, and attributes.
 
-The initial canonical catalogs contain 474 scalar forms and 111 tile operations.
+The canonical catalogs contain 473 scalar forms and 111 tile operations.
 Exact admission, selector allocation, reservation, and semantic coverage are
 machine checked.
 

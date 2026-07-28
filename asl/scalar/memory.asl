@@ -1,4 +1,5 @@
-// PTO-REQ-MEMORY-001: little-endian scalar memory helpers and visible faults.
+// PTO-REQ-MEMORY-001, PTO-REQ-MEMORY-COMPLETION-001: profile-backed,
+// little-endian memory with precise instruction-wide completion.
 
 readonly func RangesOverlap(left_address: Word, left_size: integer,
                             right_address: Word, right_size: integer) => boolean
@@ -39,18 +40,41 @@ begin
     end;
 end;
 
-func LoadUnsigned(address: Word, size_bytes: integer {1,2,4,8}) => Word
+func ProbeDataAccess(address: Word,
+                     size_bytes: integer {1..262144},
+                     alignment_bytes: integer {1,2,4,8},
+                     write: boolean) => DataAccessProbe
 begin
-    if UInt(address) MOD size_bytes != 0 then
-        SetFault(Fault_DataAlignment, address);
-        return Zeros{PTO_XLEN};
+    if UInt(address) MOD alignment_bytes != 0 then
+        return DataAccessProbe {
+            fault = Fault_DataAlignment,
+            translated_address = address
+        };
     end;
-    let translated_address = TranslateDataAddress(address, size_bytes, FALSE);
-    if !DataAccessPermitted(translated_address, size_bytes, FALSE) ||
+    let translated_address = TranslateDataAddress(address, size_bytes, write);
+    if !DataAccessPermitted(translated_address, size_bytes, write) ||
        UInt(translated_address) + size_bytes > PTO_MODEL_MEMORY_BYTES then
-        SetFault(Fault_DataPage, address);
-        return Zeros{PTO_XLEN};
+        return DataAccessProbe {
+            fault = Fault_DataPage,
+            translated_address = translated_address
+        };
     end;
+    return DataAccessProbe {
+        fault = Fault_None,
+        translated_address = translated_address
+    };
+end;
+
+func RaiseDataAccessFault(probe: DataAccessProbe, address: Word) => boolean
+begin
+    if probe.fault == Fault_None then return FALSE; end;
+    SetFault(probe.fault, address);
+    return TRUE;
+end;
+
+readonly func LoadTranslatedUnsigned(translated_address: Word,
+                                     size_bytes: integer {1,2,4,8}) => Word
+begin
     var result: Word = Zeros{PTO_XLEN};
     for byte_index = 0 to size_bytes - 1 do
         let byte_address = translated_address +
@@ -60,9 +84,11 @@ begin
     return result;
 end;
 
-func LoadSigned(address: Word, size_bytes: integer {1,2,4,8}) => Word
+pure func NormalizeLoadedValue(value: Word,
+                               size_bytes: integer {1,2,4,8},
+                               signed_load: boolean) => Word
 begin
-    let value = LoadUnsigned(address, size_bytes);
+    if !signed_load then return value; end;
     case size_bytes of
         when 1 => return SignExtend{PTO_XLEN}(value[7:0]);
         when 2 => return SignExtend{PTO_XLEN}(value[15:0]);
@@ -71,25 +97,37 @@ begin
     end;
 end;
 
-func Store(address: Word, size_bytes: integer {1,2,4,8}, value: Word)
+func StoreTranslated(original_address: Word, translated_address: Word,
+                     size_bytes: integer {1,2,4,8}, value: Word)
 begin
-    if UInt(address) MOD size_bytes != 0 then
-        SetFault(Fault_DataAlignment, address);
-        return;
-    end;
-    let translated_address = TranslateDataAddress(address, size_bytes, TRUE);
-    if !DataAccessPermitted(translated_address, size_bytes, TRUE) ||
-       UInt(translated_address) + size_bytes > PTO_MODEL_MEMORY_BYTES then
-        SetFault(Fault_DataPage, address);
-        return;
-    end;
     for byte_index = 0 to size_bytes - 1 do
         let byte_address = translated_address +
             NaturalToWord(byte_index as integer {0..262144});
         WriteMemoryByte(byte_address, value[(byte_index * 8) +: 8]);
     end;
     if _ReservationValid &&
-       RangesOverlap(address, size_bytes, _ReservationAddress, _ReservationSize) then
+       RangesOverlap(original_address, size_bytes,
+                     _ReservationAddress, _ReservationSize) then
         _ReservationValid = FALSE;
     end;
+end;
+
+func LoadUnsigned(address: Word, size_bytes: integer {1,2,4,8}) => Word
+begin
+    let probe = ProbeDataAccess(address, size_bytes, size_bytes, FALSE);
+    if RaiseDataAccessFault(probe, address) then return Zeros{PTO_XLEN}; end;
+    return LoadTranslatedUnsigned(probe.translated_address, size_bytes);
+end;
+
+func LoadSigned(address: Word, size_bytes: integer {1,2,4,8}) => Word
+begin
+    let value = LoadUnsigned(address, size_bytes);
+    return NormalizeLoadedValue(value, size_bytes, TRUE);
+end;
+
+func Store(address: Word, size_bytes: integer {1,2,4,8}, value: Word)
+begin
+    let probe = ProbeDataAccess(address, size_bytes, size_bytes, TRUE);
+    if RaiseDataAccessFault(probe, address) then return; end;
+    StoreTranslated(address, probe.translated_address, size_bytes, value);
 end;
