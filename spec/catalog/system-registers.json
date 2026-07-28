@@ -31,7 +31,7 @@
     {
       "access": "RO",
       "address": "0x0021",
-      "name": "LXLCID",
+      "name": "CORE_ID",
       "scope": "base"
     },
     {
@@ -49,13 +49,13 @@
     {
       "access": "RO",
       "address": "0x0024",
-      "name": "LCFR",
+      "name": "CORE_FEATURE",
       "scope": "base"
     },
     {
       "access": "RW",
       "address": "0x0025",
-      "name": "LCFR_EN",
+      "name": "CORE_FEATURE_ENABLE",
       "scope": "base"
     },
     {

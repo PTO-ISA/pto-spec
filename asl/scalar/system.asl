@@ -14,11 +14,12 @@ begin
         when SystemRegister_GP       => return _SystemRegisters.gp;
         when SystemRegister_TIME     => return ReadMonotonicTime();
         when SystemRegister_CSTATE   => return _SystemRegisters.cstate;
-        when SystemRegister_LXLCID   => return _SystemRegisters.lxlcid;
+        when SystemRegister_CORE_ID  => return _SystemRegisters.core_id;
         when SystemRegister_VENDOR   => return _SystemRegisters.vendor;
         when SystemRegister_VERSION  => return _SystemRegisters.version;
-        when SystemRegister_LCFR     => return _SystemRegisters.lcfr;
-        when SystemRegister_LCFR_EN  => return _SystemRegisters.lcfr_en;
+        when SystemRegister_CORE_FEATURE => return _SystemRegisters.core_feature;
+        when SystemRegister_CORE_FEATURE_ENABLE =>
+            return _SystemRegisters.core_feature_enable;
         when SystemRegister_BLOCKNUM => return _SystemRegisters.blocknum;
         when SystemRegister_BLOCKID  => return _SystemRegisters.blockid;
         when SystemRegister_CYCLE    => return _SystemRegisters.cycle;
@@ -28,7 +29,8 @@ end;
 func SystemRegisterIsWritable(reg: SystemRegister) => boolean
 begin
     return reg == SystemRegister_TP || reg == SystemRegister_GP ||
-           reg == SystemRegister_CSTATE || reg == SystemRegister_LCFR_EN;
+           reg == SystemRegister_CSTATE ||
+           reg == SystemRegister_CORE_FEATURE_ENABLE;
 end;
 
 func WriteSystemRegister(reg: SystemRegister, value: Word)
@@ -41,7 +43,8 @@ begin
         when SystemRegister_TP      => _SystemRegisters.tp = value;
         when SystemRegister_GP      => _SystemRegisters.gp = value;
         when SystemRegister_CSTATE  => _SystemRegisters.cstate = value;
-        when SystemRegister_LCFR_EN => _SystemRegisters.lcfr_en = value;
+        when SystemRegister_CORE_FEATURE_ENABLE =>
+            _SystemRegisters.core_feature_enable = value;
         otherwise => assert FALSE;
     end;
 end;

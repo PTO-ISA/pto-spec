@@ -23,11 +23,11 @@ begin
         when 0x0001 => return SystemRegister_GP;
         when 0x0010 => return SystemRegister_TIME;
         when 0x0020 => return SystemRegister_CSTATE;
-        when 0x0021 => return SystemRegister_LXLCID;
+        when 0x0021 => return SystemRegister_CORE_ID;
         when 0x0022 => return SystemRegister_VENDOR;
         when 0x0023 => return SystemRegister_VERSION;
-        when 0x0024 => return SystemRegister_LCFR;
-        when 0x0025 => return SystemRegister_LCFR_EN;
+        when 0x0024 => return SystemRegister_CORE_FEATURE;
+        when 0x0025 => return SystemRegister_CORE_FEATURE_ENABLE;
         when 0x0050 => return SystemRegister_BLOCKNUM;
         when 0x0051 => return SystemRegister_BLOCKID;
         when 0x0c00 => return SystemRegister_CYCLE;

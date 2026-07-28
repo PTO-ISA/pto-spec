@@ -60,7 +60,8 @@
       "id": "PTO-REQ-SCALAR-SSR-001",
       "model": [
         "asl/scalar/system-registers.asl",
-        "spec/catalog/system-registers.json"
+        "spec/catalog/system-registers.json",
+        "docs/architecture-decisions/0003-pto-owned-system-register-names.md"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/system-registers.json",
       "status": "implemented",
