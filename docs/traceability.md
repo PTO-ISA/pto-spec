@@ -8,11 +8,11 @@ review-oriented projection.
 | PTO-REQ-STATE-001 | `asl/types.asl`, `asl/state.asl` | state tests | implemented baseline |
 | PTO-REQ-FAULT-001 | `asl/types.asl`, `asl/state.asl` | state/scalar tests | implemented baseline |
 | PTO-REQ-SCALAR-ALU-001 | `asl/scalar/integer.asl` | integer and edge-case tests | implemented subset |
-| PTO-REQ-SCALAR-DISPATCH-001 | `asl/scalar/dispatch.asl`, generated decode bindings | all 107 ALU, 66 BRU, and 35 SYS canonical forms plus effect and rejection tests | implemented ALU/BRU/SYS subset |
+| PTO-REQ-SCALAR-DISPATCH-001 | `asl/scalar/dispatch.asl`, generated decode bindings | all 107 ALU, 53 AMO, 66 BRU, and 35 SYS canonical forms plus effect and rejection tests | implemented ALU/AMO/BRU/SYS subset |
 | PTO-REQ-SCALAR-CONTROL-001 | `asl/scalar/control.asl` | compare/branch/commit tests | implemented subset |
 | PTO-REQ-SCALAR-OPERAND-001 | `asl/scalar/operands.asl` | GPR/direct T/U bridge tests | implemented |
 | PTO-REQ-SCALAR-ADDRESS-001 | `asl/scalar/addressing.asl` | address-mode tests | implemented |
-| PTO-REQ-SCALAR-AMO-001 | `asl/scalar/atomic.asl` | LR/SC, CAS, RMW, DMA tests | implemented subset |
+| PTO-REQ-SCALAR-AMO-001 | `asl/scalar/atomic.asl`, `asl/scalar/dispatch.asl` | decoded LR/SC, CAS, RMW, ordering, and DMA tests | implemented subset |
 | PTO-REQ-SCALAR-SYS-001 | `asl/scalar/system.asl`, `asl/scalar/dispatch.asl` | decoded system/register/maintenance/fence/request/fault tests | implemented subset |
 | PTO-REQ-SCALAR-SSR-001 | `asl/scalar/system-registers.asl`, system catalog | access/trap/address tests | implemented |
 | PTO-REQ-SCALAR-FP-001 | `asl/scalar/floating.asl` | mathematical FP tests | implemented subset |

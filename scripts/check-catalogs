@@ -272,8 +272,8 @@ def main() -> int:
     )
     require(
         specification["maturity"]["instruction_dispatch"]
-        == "alu-107-bru-66-sys-35-executable-other-families-catalog-linked",
-        "instruction dispatch maturity must match the checked ALU, BRU, and SYS subset",
+        == "alu-107-amo-53-bru-66-sys-35-executable-other-families-catalog-linked",
+        "instruction dispatch maturity must match the checked ALU, AMO, BRU, and SYS subset",
     )
     require(
         specification["architecture"]["scalar_forms"] == 474,
@@ -738,7 +738,7 @@ def main() -> int:
         re.search(r"\bfunc\s+ExecuteScalarInstruction\b", dispatch_body) is not None,
         "missing public scalar execution entry point",
     )
-    executable_family_counts = {"ALU": 107, "BRU": 66, "SYS": 35}
+    executable_family_counts = {"ALU": 107, "AMO": 53, "BRU": 66, "SYS": 35}
     executable_forms = [
         row for row in forms if row["semantic_family"] in executable_family_counts
     ]

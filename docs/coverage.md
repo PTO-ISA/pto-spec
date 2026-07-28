@@ -8,7 +8,7 @@ closed.
 | Area | Accepted surface | Current ASL grade | Executable evidence | Remaining closure |
 | --- | ---: | --- | --- | --- |
 | Scalar state | 24 GPRs, PC, return, commit, predicate, trap, system state | implemented | reset, R0, predicate, trap envelope, and state tests | platform-specific exception routing |
-| Scalar forms | 474 | complete decode, operand extraction, and handler linkage; 208 ALU/BRU/SYS forms have decoded execution | one positive decode, every operand-field witness, one semantic-handler witness per form, and executable ALU/BRU/SYS canonical/effect witnesses | decoded execution for AGU, AMO, and FSU |
+| Scalar forms | 474 | complete decode, operand extraction, and handler linkage; 261 ALU/AMO/BRU/SYS forms have decoded execution | one positive decode, every operand-field witness, one semantic-handler witness per form, and executable ALU/AMO/BRU/SYS canonical/effect witnesses | decoded execution for AGU and FSU |
 | Scalar semantics | AGU, ALU, AMO, BRU, FSU, SYS | surface-complete draft | arithmetic, division, wide multiply, bitfields, control, memory, atomic, system, and mathematical FP tests | raw FP encoding, NaN/flag, and privileged profiles |
 | System registers | 52 definitions, 13 trap numbers | executable catalog | generated access witnesses and read/write/trap tests | platform-specific reset values |
 | Tile registers | 64 | implemented | hand mapping, descriptor, capacity, and alias tests | none in the portable state model |
@@ -32,9 +32,10 @@ and three form-legality constraints. Build generation emits strict ASL for:
 - operand width, signedness, presence, and form-legality queries;
 - one-level Reg5 mapping across GPR and direct T/U bridge selectors;
 - exact linkage of every scalar form to one of 68 checked ASL semantic handlers;
-- decoded execution for every one of the 107 ALU, 66 BRU, and 35 SYS forms,
-  including legality, operand binding, Reg5 reads, predicate/commit state,
-  system-register addressing, maintenance, fence, request, and fault effects;
+- decoded execution for every one of the 107 ALU, 53 AMO, 66 BRU, and 35 SYS
+  forms, including legality, operand binding, Reg5 reads, atomic width/order/
+  reservation effects, predicate/commit state, system-register addressing,
+  maintenance, fence, request, and fault effects;
 - all 111 direct tile operation selectors; and
 - positive witnesses for every accepted form, operand occurrence, and tile
   selector, every catalog-reserved and review-only tile code, plus
@@ -44,7 +45,7 @@ The repository checker independently rejects out-of-width masks, unmasked match
 bits, overlapping field pieces, non-contiguous reconstructed values, dangling
 constraints, ambiguous equal-priority encodings, and unreviewed overlaps.
 It also requires every one of the 68 scalar semantic primitives and all 51 tile
-handler groups to appear in executable ASL feature evidence, and every ALU/BRU/SYS
+handler groups to appear in executable ASL feature evidence, and every ALU/AMO/BRU/SYS
 form to have a checked-in decoded-operation binding. Handler-name presence in
 the normative sources alone is insufficient.
 
@@ -56,12 +57,14 @@ the normative sources alone is insufficient.
 - Backend availability is not evidence of portable semantics.
 - Mathematical floating semantics still require raw encoding, NaN payload,
   exception, and rounding-profile completion.
-- `ExecuteScalarInstruction` now runs every decoded ALU, BRU, and SYS form
+- `ExecuteScalarInstruction` now runs every decoded ALU, AMO, BRU, and SYS form
   through legality, operand binding, Reg5 access, and its architecture state
-  transition. The AGU, AMO, and FSU form-to-effect bindings remain open and return the
+  transition. The AGU and FSU form-to-effect bindings remain open and return the
   explicit `ScalarExecution_Unsupported` status without mutating state.
 - Translation, permission, restart, and some numeric conversion details remain
   named profiles rather than silent implementation behavior.
+- Platform-specific interpretation of the atomic FAR address-class hint remains
+  a named refinement of the portable flat-address baseline.
 
 These gaps remain machine-readable in
 `spec/evidence/independent-tile-crosscheck.json` and in ASL `impdef` declarations.

@@ -1,10 +1,29 @@
 // PTO-REQ-SCALAR-AMO-001: LR/SC, CAS, RMW, and exact 64-byte DMA.
 
+pure func AtomicAddress(address: Word, far: boolean) => Word
+begin
+    // The portable model has one flat address domain. FAR remains an explicit
+    // address-class hint so profiles can refine it without changing decoding.
+    if far then return address; else return address; end;
+end;
+
+pure func NormalizeAtomicReturn(value: Word,
+                                size_bytes: integer {1,2,4,8}) => Word
+begin
+    case size_bytes of
+        when 1 => return ZeroExtend{PTO_XLEN}(value[7:0]);
+        when 2 => return ZeroExtend{PTO_XLEN}(value[15:0]);
+        when 4 => return SignExtend{PTO_XLEN}(value[31:0]);
+        when 8 => return value;
+    end;
+end;
+
 func LoadReserved(address: Word, size_bytes: integer {1,2,4,8},
                   order: MemoryOrder) => Word
 begin
     let result = LoadUnsigned(address, size_bytes);
     if _LastFault == Fault_None then
+        ApplyMemoryOrderBefore(order);
         _ReservationValid = TRUE;
         _ReservationAddress = address;
         _ReservationSize = size_bytes;

@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
-EXECUTABLE_SCALAR_FAMILIES = {"ALU", "BRU", "SYS"}
+EXECUTABLE_SCALAR_FAMILIES = {"ALU", "AMO", "BRU", "SYS"}
 CANONICAL_EXECUTION_FAULTS = {
     "ASSERT": "Fault_Assert",
     "C.EBREAK": "Fault_SoftwareBreakpoint",

@@ -57,6 +57,10 @@ known independent-documentation conflict in favor of the canonical PTO contract.
 - Byte order is little-endian.
 - Scalar and tile memory share one architectural ordering domain.
 - The default memory model is TSO, with explicit acquire/release and fence rules.
+- Atomic `aq` and `rl` bits map to relaxed, acquire, release, or
+  acquire-release ordering. The portable one-level address model treats FAR as
+  an explicit address-class hint with identity address translation; a platform
+  profile may refine that address class without changing instruction decoding.
 - Misalignment, translation, permission, and restart behavior are visible when
   defined; implementation-dependent profiles must be named.
 - The bounded ASL byte array is executable-test infrastructure, not the
@@ -69,8 +73,8 @@ controls extension and scaling. Reg5 bridge behavior is defined in
 `asl/scalar/operands.asl`.
 
 `ExecuteScalarInstruction` is the decoded scalar execution boundary. Unknown or
-illegal encodings raise the illegal-instruction fault, all 107 ALU, 66 BRU, and
-35 SYS forms execute their checked-in state transitions, and recognized families
+illegal encodings raise the illegal-instruction fault, all 107 ALU, 53 AMO, 66
+BRU, and 35 SYS forms execute their checked-in state transitions, and recognized families
 without completed operand-to-effect bindings return
 `ScalarExecution_Unsupported` with no state change. This explicit result keeps
 partial executable coverage observable.

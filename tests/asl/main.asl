@@ -7,6 +7,7 @@ begin
     ValidateCanonicalScalarExecution();
     TestScalarDispatchEffects();
     TestScalarSystemDispatchEffects();
+    TestScalarAtomicDispatchEffects();
     TestScalarInteger();
     TestScalarMemory();
     TestScalarAtomics();
