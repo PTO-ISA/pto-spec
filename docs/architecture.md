@@ -1,51 +1,75 @@
-# Architecture design checklist
+# PTO architecture boundary
 
-## Purpose
+PTO is a 64-bit scalar and tile instruction set with one architectural execution
+level. Scalar instructions, direct tile instructions, and memory operations
+update a single architecture-visible state. No instruction launches another
+PTO instruction body.
 
-Use this document to define the PTO formal model before adding semantics. Replace the questions below with reviewed
-architecture decisions and links to the corresponding public PTO ISA requirements.
+## Scalar state
 
-## Normative source hierarchy
+- XLEN is 64.
+- There are 24 scalar GPRs, R0..R23; R0 is hardwired to zero.
+- ABI aliases are sp=R1, a0..a7=R2..R9, ra=R10,
+  s0/fp..s8=R11..R19, x0..x3=R20..R23.
+- Reg5 source selectors 24..27 read element (0,0) of T1..T4; selectors 28..31
+  read element (0,0) of U1..U4. They are direct references to the flat tile
+  register file, not additional GPRs or queue positions.
+- Reg5 destinations 1..23 write GPRs, 0 and 24..29 discard the value, 30 writes
+  U1 element (0,0), and 31 writes T1 element (0,0). Compressed `->t` forms use
+  that same direct T1 bridge. No implicit push, pop, or body-local state exists.
+- PC, return address, commit argument, fault code/address, system state, and
+  memory-ordering state are introduced only where required by retained forms.
 
-Before implementation, approve and record the precedence between the public PTO ISA manual, public API declarations,
-assembly syntax, and this executable ASL model. ASLRef defines how ASL1 programs are parsed, typed, and executed; it
-does not supply PTO architectural requirements.
+## Tile state
 
-Every modeled PTO behavior needs a stable requirement ID and public source link in `docs/traceability.md`. Conflicts
-between sources are architecture decisions and must not be resolved implicitly in code.
+- Six-bit tile indices select 64 registers.
+- T/U/M/N hands occupy codes 0..15, 16..31, 32..47, and 48..63.
+- A normal active tile has 256 bytes through 256 KiB capacity; zero is the empty
+  tile. Total active per-thread capacity is at most 512 KiB.
+- Shape, valid region, data type, layout, and location intent are visible.
+- Elements outside the valid region are not architecturally observable unless
+  an instruction explicitly defines them.
+- Source operands are snapshotted before destination writes, defining
+  read-before-write behavior for permitted aliases.
 
-## Model boundary
+The ASL payload array is bounded by `PTO_MODEL_TILE_ELEMENTS` for executable
+verification. This is not an architectural shape limit; descriptor capacity
+defines architectural legality.
 
-Decide which architecture-visible concepts the model will describe:
+## Direct tile families
 
-- architecture-visible tile shape, valid region, element type, and location intent;
-- instruction legality shared by all conforming targets;
-- deterministic result values and architecture-visible state transitions;
-- explicit ordering or fault behavior when the ISA defines it;
-- named target profiles where portable behavior genuinely differs.
+- TEPL contains 97 accepted element, reduction, expansion, layout, utility, and
+  pipe operations.
+- TMA contains TLOAD, TSTORE, TMOV, TPREFETCH, MGATHER, and MSCATTER.
+- CUBE contains TMATMUL/TGEMV base, bias, accumulate, and MX variants.
 
-Record what the model will deliberately exclude:
+The canonical selector and descriptor fields define encoding/operand facts, not
+a command queue. Direct PTO operations have explicit destinations,
+sources, dimensions, addresses, and attributes.
 
-- physical buffer addresses or allocation algorithms;
-- pipeline selection, event IDs, or backend intrinsic sequences;
-- implementation latency, throughput, or cost-model estimates;
-- C++ template dispatch and host-side launch mechanics;
-- behavior that is only an accident of CPU-SIM or one NPU generation.
+TPREFETCH is destination-free. It performs applicable address translation,
+permission, and fault checks but allocates and writes no tile. This resolves a
+known independent-documentation conflict in favor of the canonical PTO contract.
 
-## Decisions required before implementation
+## Memory and faults
 
-- What is the smallest architecture-visible state required by PTO?
-- Which tile bounds are normative, configurable, or verification-only?
-- How are invalid regions represented and observed?
-- Which legality failures are assertions, diagnostics, traps, or unspecified behavior?
-- Which arithmetic rules are shared across integer and floating-point element types?
-- What ordering state is visible for memory, events, and asynchronous communication?
-- Which A2/A3 or A5 differences belong in named profiles rather than the portable model?
+- Byte order is little-endian.
+- Scalar and tile memory share one architectural ordering domain.
+- The default memory model is TSO, with explicit acquire/release and fence rules.
+- Misalignment, translation, permission, and restart behavior are visible when
+  defined; implementation-dependent profiles must be named.
+- The bounded ASL byte array is executable-test infrastructure, not the
+  architectural address-space size.
 
-## Suggested implementation order
+Exact scalar form recognition and operand extraction are generated from the
+normative catalog. Split fields are reconstructed into contiguous values;
+signedness remains explicit metadata so instruction semantics, not the decoder,
+controls extension and scaling. Reg5 bridge behavior is defined in
+`asl/scalar/operands.asl`.
 
-1. Type domains and named architectural constants.
-2. Architecture-visible state and accessors.
-3. Shared legality predicates and semantic helpers.
-4. One representative instruction with executable tests.
-5. Additional instruction families, memory ordering, events, and target profiles.
+## Excluded implementation detail
+
+Physical tile addresses, allocation algorithms, pipelines, event IDs, backend
+intrinsics, latency, throughput, target-specific scheduling, and cost models are
+outside the portable ASL contract. A2/A3 and A5 differences belong in explicit
+profiles, not silent branches in portable semantics.

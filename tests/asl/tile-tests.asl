@@ -1,0 +1,372 @@
+func ConfigureTwoByTwo(index: TileIndex)
+begin
+    ConfigureTile(index, 256, 2, 2, 2, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+end;
+
+func TestTileElementwiseAndAliasing()
+begin
+    ConfigureTwoByTwo(0);
+    ConfigureTwoByTwo(1);
+    ConfigureTwoByTwo(2);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 10);
+    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 20);
+    WriteTileElement(1, 1, 0, Zeros{PTO_XLEN} + 30);
+    WriteTileElement(1, 1, 1, Zeros{PTO_XLEN} + 40);
+
+    ExecuteTileBinary(TileBinary_ADD, 2, 0, 1);
+    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 11;
+    assert ReadTileElement(2, 1, 1) == Zeros{PTO_XLEN} + 44;
+
+    // Destination aliases source_left. Both sources are snapshotted first.
+    ExecuteTileBinary(TileBinary_ADD, 0, 0, 1);
+    assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN} + 22;
+    assert ReadTileElement(0, 1, 1) == Zeros{PTO_XLEN} + 44;
+
+    ExecuteTileBinary(TileBinary_DIV, 2, 1, 0);
+    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN};
+    assert ReadTileElement(2, 0, 1) == Zeros{PTO_XLEN};
+    ExecuteTileFillScalar(2, Zeros{PTO_XLEN} + 3);
+    ExecuteTileAxpy(2, 1, Zeros{PTO_XLEN} + 2);
+    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 23;
+    assert ReadTileElement(2, 1, 1) == Zeros{PTO_XLEN} + 83;
+end;
+
+func TestTileMemory()
+begin
+    ConfigureTwoByTwo(3);
+    ConfigureTwoByTwo(4);
+    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 101);
+    WriteTileElement(3, 0, 1, Zeros{PTO_XLEN} + 102);
+    WriteTileElement(3, 1, 0, Zeros{PTO_XLEN} + 103);
+    WriteTileElement(3, 1, 1, Zeros{PTO_XLEN} + 104);
+    TSTORE(Zeros{PTO_XLEN} + 64, 3);
+    TLOAD(4, Zeros{PTO_XLEN} + 64);
+    assert ReadTileElement(4, 0, 0) == Zeros{PTO_XLEN} + 101;
+    assert ReadTileElement(4, 1, 1) == Zeros{PTO_XLEN} + 104;
+
+    let before_first = ReadTileElement(4, 0, 0);
+    let before_last = ReadTileElement(4, 1, 1);
+    TPREFETCH(Zeros{PTO_XLEN} + 64, 32);
+    assert ReadTileElement(4, 0, 0) == before_first;
+    assert ReadTileElement(4, 1, 1) == before_last;
+
+    ConfigureTwoByTwo(24);
+    ConfigureTwoByTwo(25);
+    WriteTileElement(24, 0, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(24, 0, 1, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(24, 1, 0, Zeros{PTO_XLEN} + 0);
+    WriteTileElement(24, 1, 1, Zeros{PTO_XLEN} + 2);
+    Store(Zeros{PTO_XLEN} + 256, 8, Zeros{PTO_XLEN} + 11);
+    Store(Zeros{PTO_XLEN} + 264, 8, Zeros{PTO_XLEN} + 22);
+    Store(Zeros{PTO_XLEN} + 272, 8, Zeros{PTO_XLEN} + 33);
+    Store(Zeros{PTO_XLEN} + 280, 8, Zeros{PTO_XLEN} + 44);
+    MGATHER(25, Zeros{PTO_XLEN} + 256, 24);
+    assert ReadTileElement(25, 0, 0) == Zeros{PTO_XLEN} + 44;
+    assert ReadTileElement(25, 1, 0) == Zeros{PTO_XLEN} + 11;
+    MSCATTER(Zeros{PTO_XLEN} + 320, 25, 24);
+    let scattered_first = LoadUnsigned(Zeros{PTO_XLEN} + 320, 8);
+    let scattered_last = LoadUnsigned(Zeros{PTO_XLEN} + 344, 8);
+    assert scattered_first == Zeros{PTO_XLEN} + 11;
+    assert scattered_last == Zeros{PTO_XLEN} + 44;
+end;
+
+func TestTileMatmul()
+begin
+    ConfigureTwoByTwo(5);
+    ConfigureTwoByTwo(6);
+    ConfigureTwoByTwo(7);
+    WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(5, 0, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(5, 1, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(5, 1, 1, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(6, 0, 0, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(6, 0, 1, Zeros{PTO_XLEN} + 6);
+    WriteTileElement(6, 1, 0, Zeros{PTO_XLEN} + 7);
+    WriteTileElement(6, 1, 1, Zeros{PTO_XLEN} + 8);
+    WriteTileElement(7, 0, 0, Zeros{PTO_XLEN});
+    WriteTileElement(7, 0, 1, Zeros{PTO_XLEN});
+    WriteTileElement(7, 1, 0, Zeros{PTO_XLEN});
+    WriteTileElement(7, 1, 1, Zeros{PTO_XLEN});
+
+    TMATMUL(7, 5, 6, FALSE);
+    assert ReadTileElement(7, 0, 0) == Zeros{PTO_XLEN} + 19;
+    assert ReadTileElement(7, 0, 1) == Zeros{PTO_XLEN} + 22;
+    assert ReadTileElement(7, 1, 0) == Zeros{PTO_XLEN} + 43;
+    assert ReadTileElement(7, 1, 1) == Zeros{PTO_XLEN} + 50;
+
+    ConfigureTile(26, 256, 1, 2, 1, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(26, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(26, 0, 1, Zeros{PTO_XLEN} + 2);
+    TMATMUL_BIAS(7, 5, 6, 26);
+    assert ReadTileElement(7, 0, 0) == Zeros{PTO_XLEN} + 20;
+    assert ReadTileElement(7, 1, 1) == Zeros{PTO_XLEN} + 52;
+    TMATMUL_ACC(7, 5, 6);
+    assert ReadTileElement(7, 0, 0) == Zeros{PTO_XLEN} + 39;
+
+    ConfigureTile(27, 256, 2, 1, 2, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(28, 256, 2, 1, 2, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(27, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(27, 1, 0, Zeros{PTO_XLEN} + 3);
+    TGEMV(28, 5, 27);
+    assert ReadTileElement(28, 0, 0) == Zeros{PTO_XLEN} + 8;
+    assert ReadTileElement(28, 1, 0) == Zeros{PTO_XLEN} + 18;
+end;
+
+func TestTileReduction()
+begin
+    ConfigureTwoByTwo(8);
+    ConfigureTile(9, 256, 2, 1, 2, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(10, 256, 1, 2, 1, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(8, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(8, 0, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(8, 1, 0, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(8, 1, 1, Zeros{PTO_XLEN} + 3);
+
+    ExecuteTileReduction(TileReduction_SUM, TileAxis_Row, 9, 8);
+    assert ReadTileElement(9, 0, 0) == Zeros{PTO_XLEN} + 3;
+    assert ReadTileElement(9, 1, 0) == Zeros{PTO_XLEN} + 7;
+
+    ExecuteTileReduction(TileReduction_ARGMAX, TileAxis_Column, 10, 8);
+    assert ReadTileElement(10, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(10, 0, 1) == Zeros{PTO_XLEN} + 1;
+end;
+
+func TestTileExpansion()
+begin
+    ConfigureTwoByTwo(11);
+    ConfigureTile(12, 256, 2, 1, 2, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTwoByTwo(13);
+    WriteTileElement(11, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(11, 0, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(11, 1, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(11, 1, 1, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(12, 0, 0, Zeros{PTO_XLEN} + 10);
+    WriteTileElement(12, 1, 0, Zeros{PTO_XLEN} + 20);
+
+    ExecuteTileExpand(TileExpand_ADD, TileAxis_Row, 13, 11, 12);
+    assert ReadTileElement(13, 0, 0) == Zeros{PTO_XLEN} + 11;
+    assert ReadTileElement(13, 0, 1) == Zeros{PTO_XLEN} + 12;
+    assert ReadTileElement(13, 1, 0) == Zeros{PTO_XLEN} + 23;
+    assert ReadTileElement(13, 1, 1) == Zeros{PTO_XLEN} + 24;
+
+    WriteTileElement(12, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(12, 1, 0, Zeros{PTO_XLEN} + 4);
+    ExecuteTileExpand(TileExpand_DIV, TileAxis_Row, 13, 11, 12);
+    assert ReadTileElement(13, 0, 1) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(13, 1, 1) == Zeros{PTO_XLEN} + 1;
+end;
+
+func TestTileGeneration()
+begin
+    ConfigureTwoByTwo(14);
+    TCI(14, Zeros{PTO_XLEN} + 5, FALSE);
+    assert ReadTileElement(14, 0, 0) == Zeros{PTO_XLEN} + 5;
+    assert ReadTileElement(14, 1, 1) == Zeros{PTO_XLEN} + 8;
+
+    TTRI(14, FALSE, 0);
+    assert ReadTileElement(14, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(14, 0, 1) == Zeros{PTO_XLEN};
+    assert ReadTileElement(14, 1, 1) == Zeros{PTO_XLEN} + 1;
+
+    ConfigureTile(15, 256, 3, 3, 3, 3, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    TFILLPAD(15, 14, Zeros{PTO_XLEN} + 9);
+    assert ReadTileElement(15, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(15, 0, 1) == Zeros{PTO_XLEN};
+    assert ReadTileElement(15, 2, 2) == Zeros{PTO_XLEN} + 9;
+end;
+
+func TestTileRearrangement()
+begin
+    ConfigureTwoByTwo(16);
+    WriteTileElement(16, 0, 0, Zeros{PTO_XLEN} + 10);
+    WriteTileElement(16, 0, 1, Zeros{PTO_XLEN} + 20);
+    WriteTileElement(16, 1, 0, Zeros{PTO_XLEN} + 30);
+    WriteTileElement(16, 1, 1, Zeros{PTO_XLEN} + 40);
+
+    ConfigureTile(17, 256, 1, 2, 1, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    TEXTRACT(17, 16, 1, 0);
+    assert ReadTileElement(17, 0, 0) == Zeros{PTO_XLEN} + 30;
+    assert ReadTileElement(17, 0, 1) == Zeros{PTO_XLEN} + 40;
+
+    ConfigureTwoByTwo(18);
+    TTRANS(18, 16);
+    assert ReadTileElement(18, 0, 1) == Zeros{PTO_XLEN} + 30;
+    assert ReadTileElement(18, 1, 0) == Zeros{PTO_XLEN} + 20;
+
+    ConfigureTile(19, 256, 1, 2, 1, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(19, 0, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(19, 0, 1, Zeros{PTO_XLEN});
+    ConfigureTile(20, 256, 1, 2, 1, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    TGATHER(20, 16, 19);
+    assert ReadTileElement(20, 0, 0) == Zeros{PTO_XLEN} + 40;
+    assert ReadTileElement(20, 0, 1) == Zeros{PTO_XLEN} + 10;
+
+    ConfigureTile(21, 256, 1, 4, 1, 4, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    TINTERLEAVE(21, 17, 20);
+    assert ReadTileElement(21, 0, 0) == Zeros{PTO_XLEN} + 30;
+    assert ReadTileElement(21, 0, 1) == Zeros{PTO_XLEN} + 40;
+    assert ReadTileElement(21, 0, 2) == Zeros{PTO_XLEN} + 40;
+    assert ReadTileElement(21, 0, 3) == Zeros{PTO_XLEN} + 10;
+
+    ConfigureTile(22, 256, 1, 2, 1, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(23, 256, 1, 2, 1, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    TDEINTERLEAVE(22, 23, 21);
+    assert ReadTileElement(22, 0, 1) == Zeros{PTO_XLEN} + 40;
+    assert ReadTileElement(23, 0, 1) == Zeros{PTO_XLEN} + 10;
+
+    ConfigureTile(43, 256, 3, 3, 3, 3, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(44, 256, 4, 4, 4, 4, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    TCI(43, Zeros{PTO_XLEN} + 1, FALSE);
+    TIMG2COL(44, 43, 2, 2, 1, 1, 0, 0, Zeros{PTO_XLEN});
+    assert ReadTileElement(44, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(44, 0, 3) == Zeros{PTO_XLEN} + 5;
+    assert ReadTileElement(44, 3, 0) == Zeros{PTO_XLEN} + 5;
+    assert ReadTileElement(44, 3, 3) == Zeros{PTO_XLEN} + 9;
+end;
+
+func TestTileComplex()
+begin
+    ConfigureTile(29, 256, 1, 3, 1, 3, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(30, 256, 1, 3, 1, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(31, 256, 1, 3, 1, 3, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(29, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(29, 0, 1, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(29, 0, 2, Zeros{PTO_XLEN} + 6);
+    WriteTileElement(30, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(30, 0, 1, Zeros{PTO_XLEN} + 3);
+    ExecuteTilePartial(TilePartial_ADD, 31, 29, 30);
+    assert ReadTileElement(31, 0, 0) == Zeros{PTO_XLEN} + 3;
+    assert ReadTileElement(31, 0, 1) == Zeros{PTO_XLEN} + 7;
+    assert ReadTileElement(31, 0, 2) == Zeros{PTO_XLEN} + 6;
+
+    ConfigureTile(45, 256, 1, 3, 1, 3, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(46, 256, 1, 3, 1, 3, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(47, 256, 1, 3, 1, 3, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(48, 256, 1, 3, 1, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    TCI(47, Zeros{PTO_XLEN} + 10, FALSE);
+    TCI(48, Zeros{PTO_XLEN} + 20, FALSE);
+    ExecuteTilePartialArg(TRUE, 45, 46, 29, 30, 47, 48);
+    assert ReadTileElement(45, 0, 0) == Zeros{PTO_XLEN} + 2;
+    assert ReadTileElement(46, 0, 0) == Zeros{PTO_XLEN} + 10;
+    assert ReadTileElement(45, 0, 2) == Zeros{PTO_XLEN} + 6;
+    assert ReadTileElement(46, 0, 2) == Zeros{PTO_XLEN} + 12;
+
+    ConfigureTile(32, 256, 1, 4, 1, 4, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(33, 256, 1, 4, 1, 4, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(32, 0, 0, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(32, 0, 1, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(32, 0, 2, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(32, 0, 3, Zeros{PTO_XLEN} + 2);
+    TSORT(33, 32, FALSE);
+    assert ReadTileElement(33, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(33, 0, 3) == Zeros{PTO_XLEN} + 4;
+
+    ConfigureTile(34, 256, 1, 2, 1, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(35, 256, 1, 2, 1, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(36, 256, 1, 4, 1, 4, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(34, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(34, 0, 1, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(35, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(35, 0, 1, Zeros{PTO_XLEN} + 3);
+    TMRGSORT(36, 34, 35, FALSE);
+    assert ReadTileElement(36, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(36, 0, 3) == Zeros{PTO_XLEN} + 4;
+
+    ConfigureTile(37, 2048, 1, 256, 1, 256, TileDataType_U32,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(49, 256, 3, 1, 3, 1, TileDataType_U8,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(50, 256, 1, 4, 1, 4, TileDataType_U32,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(49, 0, 0, Zeros{PTO_XLEN});
+    WriteTileElement(49, 1, 0, Zeros{PTO_XLEN});
+    WriteTileElement(49, 2, 0, Zeros{PTO_XLEN});
+    WriteTileElement(50, 0, 0, Zeros{PTO_XLEN});
+    WriteTileElement(50, 0, 1, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(50, 0, 2, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(50, 0, 3, Zeros{PTO_XLEN} + 3);
+    THISTOGRAM(37, 50, 49, 0);
+    assert ReadTileElement(37, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(37, 0, 1) == Zeros{PTO_XLEN} + 3;
+    assert ReadTileElement(37, 0, 2) == Zeros{PTO_XLEN} + 3;
+    assert ReadTileElement(37, 0, 3) == Zeros{PTO_XLEN} + 4;
+end;
+
+func TestTileManagement()
+begin
+    ConfigureTile(38, 256, 1, 2, 1, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Vector);
+    WriteTileElement(38, 0, 0, Zeros{PTO_XLEN} + 71);
+    WriteTileElement(38, 0, 1, Zeros{PTO_XLEN} + 72);
+    ConfigurePipe(0, Zeros{PTO_XLEN} + 1024, 64, 2);
+    TPUSH(0, 38);
+    assert _Pipes[[0]].count == 1;
+    TPOP(39, 0);
+    assert _Pipes[[0]].count == 0;
+    assert _Tiles[[39]].allocated;
+    assert ReadTileElement(39, 0, 0) == Zeros{PTO_XLEN} + 71;
+    assert ReadTileElement(39, 0, 1) == Zeros{PTO_XLEN} + 72;
+
+    let allocated_slot = TALLOC(0);
+    assert allocated_slot == Zeros{PTO_XLEN} + 1088;
+    Store(allocated_slot, 8, Zeros{PTO_XLEN} + 99);
+    TPUSHGlobal(0, allocated_slot);
+    assert _Pipes[[0]].count == 1;
+    let popped_slot = TPOPGlobal(0);
+    assert popped_slot == allocated_slot;
+    let popped_value = LoadUnsigned(popped_slot, 8);
+    assert popped_value == Zeros{PTO_XLEN} + 99;
+    TFREE(0);
+    assert _Pipes[[0]].count == 0;
+end;
+
+func TestTileConversion()
+begin
+    ConfigureTile(40, 256, 1, 2, 1, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Vector);
+    ConfigureTile(41, 256, 1, 2, 1, 2, TileDataType_U8,
+        TileLayout_RowMajor, TileLocation_Vector);
+    ConfigureTile(42, 256, 1, 2, 1, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Vector);
+    WriteTileElement(40, 0, 0, Zeros{PTO_XLEN} + 257);
+    WriteTileElement(40, 0, 1, Zeros{PTO_XLEN} + 100);
+    TCVT(41, 40);
+    assert ReadTileElement(41, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(41, 0, 1) == Zeros{PTO_XLEN} + 100;
+    TQUANT(41, 40, Zeros{PTO_XLEN} + 10, Zeros{PTO_XLEN} + 3);
+    assert ReadTileElement(41, 0, 1) == Zeros{PTO_XLEN} + 13;
+    TDEQUANT(42, 41, Zeros{PTO_XLEN} + 10, Zeros{PTO_XLEN} + 3);
+    assert ReadTileElement(42, 0, 1) == Zeros{PTO_XLEN} + 100;
+end;

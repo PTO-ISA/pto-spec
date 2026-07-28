@@ -1,0 +1,372 @@
+#!/usr/bin/env python3
+"""Generate deterministic ASL1 decode tables from the normative catalogs."""
+
+from __future__ import annotations
+
+import json
+import re
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def load(path: str):
+    return json.loads((ROOT / path).read_text(encoding="utf-8"))
+
+
+def hex_bits(value: int, width: int) -> str:
+    return f"0x{value:0{width // 4}x}"
+
+
+def bit_literal(value: int, width: int) -> str:
+    return f"'{value:0{width}b}'"
+
+
+def asl_identifier(value: str) -> str:
+    return re.sub(r"[^A-Za-z0-9_]", "_", value)
+
+
+def emit_enum(type_name: str, members: list[str], columns: int = 3) -> None:
+    print(f"type {type_name} of enumeration {{")
+    for offset in range(0, len(members), columns):
+        row = members[offset : offset + columns]
+        suffix = "," if offset + columns < len(members) else ""
+        print(f"    {', '.join(row)}{suffix}")
+    print("};")
+
+
+def main() -> None:
+    scalar = load("spec/catalog/scalar-forms.json")["forms"]
+    tile_catalog = load("spec/catalog/tile-operations.json")
+    tile = tile_catalog["operations"]
+    system_register_catalog = load("spec/catalog/system-registers.json")
+    system_registers = system_register_catalog["registers"]
+    operand_fields = sorted(
+        {field["name"] for row in scalar for field in row["fields"]}
+    )
+    scalar_operations = [
+        f"ScalarOperation_{asl_identifier(row['mnemonic'])}" for row in scalar
+    ]
+    scalar_handlers = sorted({row["semantic_handler"] for row in scalar})
+    tile_operations = [f"TileOperation_{asl_identifier(row['name'])}" for row in tile]
+    if len(scalar_operations) != len(set(scalar_operations)):
+        raise ValueError("scalar operation identifiers are not unique")
+    if len(tile_operations) != len(set(tile_operations)):
+        raise ValueError("tile operation identifiers are not unique")
+
+    print("// Generated from the normative PTO catalogs. Do not edit.")
+    print("// PTO-REQ-ENCODING-001: complete scalar and tile decode witnesses.")
+    print(f"constant PTO_SCALAR_FORM_COUNT = {len(scalar)};")
+    print(f"constant PTO_TILE_OPERATION_COUNT = {len(tile)};")
+    print(f"constant PTO_SYSTEM_REGISTER_DEFINITION_COUNT = {len(system_registers)};")
+    print(f"constant PTO_SCALAR_SEMANTIC_HANDLER_COUNT = {len(scalar_handlers)};")
+    print("type ScalarFormIndex of integer {0..PTO_SCALAR_FORM_COUNT};")
+    print("type TileOperationIndex of integer {0..PTO_TILE_OPERATION_COUNT};")
+    print("type TileDecodeFamily of enumeration {")
+    print("    TileDecode_TEPL, TileDecode_TMA, TileDecode_CUBE")
+    print("};")
+    print("type ScalarSemanticFamily of enumeration {")
+    print("    ScalarSemantic_AGU, ScalarSemantic_ALU, ScalarSemantic_AMO,")
+    print("    ScalarSemantic_BRU, ScalarSemantic_FSU, ScalarSemantic_SYS")
+    print("};")
+    emit_enum("ScalarOperation", scalar_operations)
+    emit_enum(
+        "ScalarSemanticHandler", [f"ScalarHandler_{name}" for name in scalar_handlers]
+    )
+    emit_enum("TileOperation", tile_operations)
+    emit_enum(
+        "ScalarOperandField", [f"ScalarField_{name}" for name in operand_fields], 4
+    )
+    print("type ScalarFieldSignedness of enumeration {")
+    print("    ScalarField_EncodingDefined, ScalarField_Signed, ScalarField_Unsigned")
+    print("};")
+    print()
+    print("pure func DecodeScalarForm(instruction: bits(48),")
+    print(
+        "                           length_bits: integer {16,32,48}) => ScalarFormIndex"
+    )
+    print("begin")
+    ordered = sorted(
+        enumerate(scalar),
+        key=lambda pair: (
+            -int(pair[1]["encoding"][0]["mask"], 16).bit_count(),
+            pair[1]["form_id"],
+        ),
+    )
+    for index, row in ordered:
+        encoding = row["encoding"][0]
+        mask = bit_literal(int(encoding["mask"], 16), 48)
+        match = bit_literal(int(encoding["match"], 16), 48)
+        print(
+            f"    if length_bits == {row['length_bits']} && "
+            f"(instruction AND {mask}) == {match} then return {index}; end;"
+        )
+    print("    return PTO_SCALAR_FORM_COUNT;")
+    print("end;")
+    print()
+    print("pure func ScalarFamilyOfForm(form: integer {0..PTO_SCALAR_FORM_COUNT-1})")
+    print("                             => ScalarSemanticFamily")
+    print("begin")
+    for index, row in enumerate(scalar):
+        print(
+            f"    if form == {index} then return ScalarSemantic_{row['semantic_family']}; end;"
+        )
+    print("    unreachable;")
+    print("end;")
+    print()
+    print("pure func SystemRegisterAccessOf(address: SystemRegisterAddress)")
+    print("                                 => SystemRegisterAccess")
+    print("begin")
+    access_names = {
+        "RO": "ReadOnly",
+        "WO": "WriteOnly",
+        "RW": "ReadWrite",
+    }
+    for row in system_registers:
+        access = access_names[row["access"]]
+        if row["scope"] == "base":
+            condition = f"address == {bit_literal(int(row['address'], 0), 24)}"
+        else:
+            low_index = int(row["low_index"], 0)
+            if "fixed_context" in row:
+                address = (row["fixed_context"] << 12) | low_index
+                condition = f"address == {bit_literal(address, 24)}"
+            else:
+                condition = (
+                    f"address[23:16] == Zeros{{8}} && "
+                    f"address[11:0] == {bit_literal(low_index, 12)}"
+                )
+        print(f"    if {condition} then return SystemRegisterAccess_{access}; end;")
+    print("    return SystemRegisterAccess_Unknown;")
+    print("end;")
+    print()
+    print("pure func ScalarOperationOfForm(form: integer {0..PTO_SCALAR_FORM_COUNT-1})")
+    print("                                => ScalarOperation")
+    print("begin")
+    for index, operation in enumerate(scalar_operations):
+        print(f"    if form == {index} then return {operation}; end;")
+    print("    unreachable;")
+    print("end;")
+    print()
+    print("pure func ScalarHandlerOfForm(form: integer {0..PTO_SCALAR_FORM_COUNT-1})")
+    print("                              => ScalarSemanticHandler")
+    print("begin")
+    for index, row in enumerate(scalar):
+        print(
+            f"    if form == {index} then return ScalarHandler_{row['semantic_handler']}; end;"
+        )
+    print("    unreachable;")
+    print("end;")
+    print()
+    print("pure func ScalarOperandPresent(form: integer {0..PTO_SCALAR_FORM_COUNT-1},")
+    print("                               field: ScalarOperandField) => boolean")
+    print("begin")
+    for index, row in enumerate(scalar):
+        for field in row["fields"]:
+            print(
+                f"    if form == {index} && field == ScalarField_{field['name']} then return TRUE; end;"
+            )
+    print("    return FALSE;")
+    print("end;")
+    print()
+    print("pure func ScalarOperandWidth(form: integer {0..PTO_SCALAR_FORM_COUNT-1},")
+    print("                             field: ScalarOperandField) => integer {0..48}")
+    print("begin")
+    for index, row in enumerate(scalar):
+        for field in row["fields"]:
+            print(
+                f"    if form == {index} && field == ScalarField_{field['name']} "
+                f"then return {field['width']}; end;"
+            )
+    print("    return 0;")
+    print("end;")
+    print()
+    print(
+        "pure func ScalarOperandSignedness(form: integer {0..PTO_SCALAR_FORM_COUNT-1},"
+    )
+    print(
+        "                                  field: ScalarOperandField) => ScalarFieldSignedness"
+    )
+    print("begin")
+    signedness_names = {
+        "encoding-defined": "EncodingDefined",
+        "signed": "Signed",
+        "unsigned": "Unsigned",
+    }
+    for index, row in enumerate(scalar):
+        for field in row["fields"]:
+            signedness = signedness_names[field["signedness"]]
+            print(
+                f"    if form == {index} && field == ScalarField_{field['name']} "
+                f"then return ScalarField_{signedness}; end;"
+            )
+    print("    return ScalarField_EncodingDefined;")
+    print("end;")
+    print()
+    print("pure func DecodeScalarOperandRaw(instruction: bits(48),")
+    print(
+        "                                 form: integer {0..PTO_SCALAR_FORM_COUNT-1},"
+    )
+    print("                                 field: ScalarOperandField) => bits(48)")
+    print("begin")
+    for index, row in enumerate(scalar):
+        for field in row["fields"]:
+            print(
+                f"    if form == {index} && field == ScalarField_{field['name']} then"
+            )
+            print("        var value = Zeros{48};")
+            for piece in field["pieces"]:
+                print(
+                    f"        value[{piece['value_lsb']} +: {piece['width']}] = "
+                    f"instruction[{piece['instruction_lsb']} +: {piece['width']}];"
+                )
+            print("        return value;")
+            print("    end;")
+    print("    return Zeros{48};")
+    print("end;")
+    print()
+    print("pure func ScalarFormOperandsLegal(instruction: bits(48),")
+    print(
+        "                                  form: integer {0..PTO_SCALAR_FORM_COUNT-1}) => boolean"
+    )
+    print("begin")
+    for index, row in enumerate(scalar):
+        for constraint in row["constraints"]:
+            if constraint["operator"] != "not-equal":
+                raise ValueError(
+                    f"unsupported scalar operand constraint: {constraint!r}"
+                )
+            print(
+                f"    if form == {index} && DecodeScalarOperandRaw(instruction, form, "
+                f"ScalarField_{constraint['field']}) == {bit_literal(constraint['value'], 48)} "
+                "then return FALSE; end;"
+            )
+    print("    return TRUE;")
+    print("end;")
+    print()
+    print("pure func DecodeTileOperation(family: TileDecodeFamily, code: bits(12))")
+    print("                              => TileOperationIndex")
+    print("begin")
+    for index, row in enumerate(tile):
+        value = (
+            int(row.get("selector", row.get("function")), 0)
+            if isinstance(row.get("selector", row.get("function")), str)
+            else row.get("selector", row.get("function"))
+        )
+        print(
+            f"    if family == TileDecode_{row['family']} && code == {bit_literal(value, 12)} "
+            f"then return {index}; end;"
+        )
+    print("    return PTO_TILE_OPERATION_COUNT;")
+    print("end;")
+    print()
+    print(
+        "pure func TileOperationOfIndex(operation: integer {0..PTO_TILE_OPERATION_COUNT-1})"
+    )
+    print("                               => TileOperation")
+    print("begin")
+    for index, operation in enumerate(tile_operations):
+        print(f"    if operation == {index} then return {operation}; end;")
+    print("    unreachable;")
+    print("end;")
+    print()
+    print("func ValidateCanonicalDecoders()")
+    print("begin")
+    for index, row in enumerate(scalar):
+        match = bit_literal(int(row["encoding"][0]["match"], 16), 48)
+        print(f"    assert DecodeScalarForm({match}, {row['length_bits']}) == {index};")
+        print(
+            f"    assert ScalarFamilyOfForm({index}) == ScalarSemantic_{row['semantic_family']};"
+        )
+        print(
+            f"    assert ScalarOperationOfForm({index}) == {scalar_operations[index]};"
+        )
+        print(
+            f"    assert ScalarHandlerOfForm({index}) == ScalarHandler_{row['semantic_handler']};"
+        )
+        for field in row["fields"]:
+            expected = bit_literal((1 << field["width"]) - 1, 48)
+            signedness = signedness_names[field["signedness"]]
+            print(
+                f"    assert ScalarOperandPresent({index}, ScalarField_{field['name']});"
+            )
+            print(
+                f"    assert ScalarOperandWidth({index}, ScalarField_{field['name']}) == {field['width']};"
+            )
+            print(
+                f"    assert ScalarOperandSignedness({index}, ScalarField_{field['name']}) "
+                f"== ScalarField_{signedness};"
+            )
+            print(
+                f"    assert DecodeScalarOperandRaw(Ones{{48}}, {index}, ScalarField_{field['name']}) "
+                f"== {expected};"
+            )
+        print(f"    assert ScalarFormOperandsLegal({match}, {index});")
+    for index, row in enumerate(tile):
+        raw = row.get("selector", row.get("function"))
+        value = int(raw, 0) if isinstance(raw, str) else raw
+        print(
+            f"    assert DecodeTileOperation(TileDecode_{row['family']}, {bit_literal(value, 12)}) == {index};"
+        )
+        print(f"    assert TileOperationOfIndex({index}) == {tile_operations[index]};")
+    for row in system_registers:
+        access = access_names[row["access"]]
+        if row["scope"] == "base":
+            address = int(row["address"], 0)
+        else:
+            context = row.get("fixed_context", 0)
+            address = (context << 12) | int(row["low_index"], 0)
+        print(
+            f"    assert SystemRegisterAccessOf({bit_literal(address, 24)}) "
+            f"== SystemRegisterAccess_{access};"
+        )
+    for length in (16, 32, 48):
+        print(
+            f"    assert DecodeScalarForm({bit_literal(0, 48)}, {length}) == PTO_SCALAR_FORM_COUNT;"
+        )
+    rejected_codes = {
+        family: [
+            int(value, 0) if isinstance(value, str) else value
+            for value in tile_catalog["rejected_review_only_codes"][family]
+        ]
+        for family in ("TEPL", "TMA", "CUBE")
+    }
+    for family, key in (
+        ("TEPL", "tepl_selector_ranges"),
+        ("TMA", "tma_functions"),
+        ("CUBE", "cube_functions_without_named_alias"),
+    ):
+        for entry in tile_catalog["reserved"][key]:
+            if isinstance(entry, int):
+                rejected_codes[family].append(entry)
+            else:
+                start = int(entry[0], 0) if isinstance(entry[0], str) else entry[0]
+                end = int(entry[1], 0) if isinstance(entry[1], str) else entry[1]
+                rejected_codes[family].extend(range(start, end + 1))
+    for family, values in rejected_codes.items():
+        for value in sorted(set(values)):
+            print(
+                f"    assert DecodeTileOperation(TileDecode_{family}, {bit_literal(value, 12)}) "
+                "== PTO_TILE_OPERATION_COUNT;"
+            )
+    print(
+        f"    assert DecodeTileOperation(TileDecode_TEPL, {bit_literal(0x400, 12)}) == PTO_TILE_OPERATION_COUNT;"
+    )
+    print(
+        f"    assert DecodeTileOperation(TileDecode_TMA, {bit_literal(32, 12)}) == PTO_TILE_OPERATION_COUNT;"
+    )
+    print(
+        f"    assert DecodeTileOperation(TileDecode_CUBE, {bit_literal(32, 12)}) == PTO_TILE_OPERATION_COUNT;"
+    )
+    print(
+        f"    assert SystemRegisterAccessOf({bit_literal(0x00FFFF, 24)}) == SystemRegisterAccess_Unknown;"
+    )
+    print(
+        f"    assert SystemRegisterAccessOf({bit_literal(0x100000, 24)}) == SystemRegisterAccess_Unknown;"
+    )
+    print("end;")
+
+
+if __name__ == "__main__":
+    main()

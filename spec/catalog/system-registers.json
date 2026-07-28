@@ -1,0 +1,383 @@
+{
+  "address_bits": 24,
+  "canonical_address_bits": 16,
+  "isa": "PTO Instruction Set Architecture",
+  "register_definition_count": 52,
+  "registers": [
+    {
+      "access": "RW",
+      "address": "0x0000",
+      "name": "TP",
+      "scope": "base"
+    },
+    {
+      "access": "RW",
+      "address": "0x0001",
+      "name": "GP",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x0010",
+      "name": "TIME",
+      "scope": "base"
+    },
+    {
+      "access": "RW",
+      "address": "0x0020",
+      "name": "CSTATE",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x0021",
+      "name": "LXLCID",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x0022",
+      "name": "VENDOR",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x0023",
+      "name": "VERSION",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x0024",
+      "name": "LCFR",
+      "scope": "base"
+    },
+    {
+      "access": "RW",
+      "address": "0x0025",
+      "name": "LCFR_EN",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x0050",
+      "name": "BLOCKNUM",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x0051",
+      "name": "BLOCKID",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x0C00",
+      "name": "CYCLE",
+      "scope": "base"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF00",
+      "name": "ECSTATE_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF01",
+      "name": "EVBASE_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF02",
+      "name": "TRAPNO_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF03",
+      "name": "TRAPARG0_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF05",
+      "name": "ETEMP_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF06",
+      "name": "ETEMP0_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF07",
+      "name": "ECONFIG_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF08",
+      "name": "IPENDING_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF09",
+      "name": "TOPEI_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "WO",
+      "low_index": "0xF0A",
+      "name": "EOIEI_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "fixed_context": 1,
+      "low_index": "0xF10",
+      "name": "TTBR0_ACR1",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "fixed_context": 1,
+      "low_index": "0xF11",
+      "name": "TTBR1_ACR1",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "fixed_context": 1,
+      "low_index": "0xF12",
+      "name": "TCR_ACR1",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "fixed_context": 1,
+      "low_index": "0xF13",
+      "name": "MAIR_ACR1",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "fixed_context": 1,
+      "low_index": "0xF14",
+      "name": "IOTTBR_ACR1",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "fixed_context": 1,
+      "low_index": "0xF15",
+      "name": "IOTCR_ACR1",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "fixed_context": 1,
+      "low_index": "0xF16",
+      "name": "IOMAIR_ACR1",
+      "scope": "context-family"
+    },
+    {
+      "access": "RO",
+      "low_index": "0xF20",
+      "name": "TIMER_TIME_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF21",
+      "name": "TIMER_TIMECMP_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF30",
+      "name": "XBINFO_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF31",
+      "name": "ACR_PARAM_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RO",
+      "low_index": "0xF80",
+      "name": "DBGID_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF90",
+      "name": "DBCR0_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF92",
+      "name": "DBCR1_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF94",
+      "name": "DBCR2_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF96",
+      "name": "DBCR3_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF91",
+      "name": "DBVR0_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF93",
+      "name": "DBVR1_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF95",
+      "name": "DBVR2_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xF97",
+      "name": "DBVR3_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xFA0",
+      "name": "DCCR0_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xFA1",
+      "name": "DCVR0_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xFB0",
+      "name": "DWCR0_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xFB2",
+      "name": "DWCR1_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xFB4",
+      "name": "DWCR2_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xFB6",
+      "name": "DWCR3_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xFB1",
+      "name": "DWVR0_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xFB3",
+      "name": "DWVR1_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xFB5",
+      "name": "DWVR2_ACRn",
+      "scope": "context-family"
+    },
+    {
+      "access": "RW",
+      "low_index": "0xFB7",
+      "name": "DWVR3_ACRn",
+      "scope": "context-family"
+    }
+  ],
+  "schema_version": 1,
+  "trap_count": 13,
+  "trap_numbers": [
+    {
+      "name": "EXEC_STATE_CHECK",
+      "number": 0
+    },
+    {
+      "name": "ILLEGAL_INST",
+      "number": 4
+    },
+    {
+      "name": "BLOCK_TRAP",
+      "number": 5
+    },
+    {
+      "name": "SCALL",
+      "number": 6
+    },
+    {
+      "name": "INST_PC_FAULT",
+      "number": 32
+    },
+    {
+      "name": "INST_PAGE_FAULT",
+      "number": 33
+    },
+    {
+      "name": "DATA_ALIGN_FAULT",
+      "number": 34
+    },
+    {
+      "name": "DATA_PAGE_FAULT",
+      "number": 35
+    },
+    {
+      "name": "INTERRUPT",
+      "number": 44
+    },
+    {
+      "name": "HW_BREAKPOINT",
+      "number": 49
+    },
+    {
+      "name": "SW_BREAKPOINT",
+      "number": 50
+    },
+    {
+      "name": "HW_WATCHPOINT",
+      "number": 51
+    },
+    {
+      "name": "ASSERT_FAIL",
+      "number": 52
+    }
+  ]
+}

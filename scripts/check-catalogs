@@ -1,0 +1,866 @@
+#!/usr/bin/env python3
+"""Fail closed on PTO canonical catalog, evidence, and traceability drift."""
+
+from __future__ import annotations
+
+import json
+import re
+import sys
+import tomllib
+from collections import Counter
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+TILE_SEMANTIC_GROUPS = {
+    "ExecuteTileBinary": {
+        "TADD",
+        "TSUB",
+        "TMUL",
+        "TMAX",
+        "TMIN",
+        "TAND",
+        "TOR",
+        "TXOR",
+        "TSHL",
+        "TSHR",
+        "TDIV",
+        "TREM",
+    },
+    "ExecuteTileCompare": {"TCMP"},
+    "ExecuteTileSelect": {"TSEL"},
+    "ExecuteTileUnary": {
+        "TABS",
+        "TNOT",
+        "TNEG",
+        "TRELU",
+        "TSQRT",
+        "TLOG",
+        "TRECIP",
+        "TEXP",
+        "TRSQRT",
+    },
+    "ExecuteTileScalar": {
+        "TADDS",
+        "TSUBS",
+        "TMULS",
+        "TDIVS",
+        "TMINS",
+        "TMAXS",
+        "TREMS",
+        "TANDS",
+        "TORS",
+        "TXORS",
+        "TSHLS",
+        "TSHRS",
+    },
+    "ExecuteTileAxpy": {"TAXPY"},
+    "ExecuteTileCompareScalar": {"TCMPS"},
+    "ExecuteTileSelectScalar": {"TSELS"},
+    "ExecuteTileReduction": {
+        "TROWSUM",
+        "TROWPROD",
+        "TROWMAX",
+        "TROWMIN",
+        "TROWARGMAX",
+        "TROWARGMIN",
+        "TCOLSUM",
+        "TCOLPROD",
+        "TCOLMAX",
+        "TCOLMIN",
+        "TCOLARGMAX",
+        "TCOLARGMIN",
+    },
+    "ExecuteTileExpand": {
+        "TROWEXPAND",
+        "TROWEXPANDADD",
+        "TROWEXPANDSUB",
+        "TROWEXPANDMUL",
+        "TROWEXPANDDIV",
+        "TROWEXPANDMAX",
+        "TROWEXPANDMIN",
+        "TROWEXPANDEXPDIF",
+        "TCOLEXPAND",
+        "TCOLEXPANDADD",
+        "TCOLEXPANDSUB",
+        "TCOLEXPANDMUL",
+        "TCOLEXPANDDIV",
+        "TCOLEXPANDMAX",
+        "TCOLEXPANDMIN",
+        "TCOLEXPANDEXPDIF",
+    },
+    "ExecuteTileFillScalar": {"TEXPANDS"},
+    "TCI": {"TCI"},
+    "TTRI": {"TTRI"},
+    "TFILLPAD": {"TFILLPAD"},
+    "TCVT": {"TCVT"},
+    "TQUANT": {"TQUANT"},
+    "TDEQUANT": {"TDEQUANT"},
+    "TEXTRACT": {"TEXTRACT"},
+    "TINSERT": {"TINSERT"},
+    "TGATHER": {"TGATHER"},
+    "TSCATTER": {"TSCATTER"},
+    "TCONCAT": {"TCONCAT"},
+    "TTRANS": {"TTRANS"},
+    "TIMG2COL": {"TIMG2COL"},
+    "TGATHERB": {"TGATHERB"},
+    "TDEINTERLEAVE": {"TDEINTERLEAVE"},
+    "TINTERLEAVE": {"TINTERLEAVE"},
+    "TRESHAPE": {"TRESHAPE"},
+    "TSORT": {"TSORT"},
+    "TMRGSORT": {"TMRGSORT"},
+    "THISTOGRAM": {"THISTOGRAM"},
+    "ExecuteTilePartial": {"TPARTADD", "TPARTMUL", "TPARTMAX", "TPARTMIN"},
+    "ExecuteTilePartialArg": {"TPARTARGMAX", "TPARTARGMIN"},
+    "TPUSH": {"TPUSH"},
+    "TPOP": {"TPOP"},
+    "TALLOC": {"TALLOC"},
+    "TFREE": {"TFREE"},
+    "TLOAD": {"TLOAD"},
+    "TSTORE": {"TSTORE"},
+    "TPREFETCH": {"TPREFETCH"},
+    "MGATHER": {"MGATHER"},
+    "MSCATTER": {"MSCATTER"},
+    "TMOV": {"TMOV"},
+    "TMATMUL": {"TMATMUL"},
+    "TMATMUL_BIAS": {"TMATMUL_BIAS"},
+    "TMATMUL_ACC": {"TMATMUL_ACC"},
+    "TMATMUL_MX": {"TMATMUL_MX"},
+    "TGEMV": {"TGEMV"},
+    "TGEMV_BIAS": {"TGEMV_BIAS"},
+    "TGEMV_ACC": {"TGEMV_ACC"},
+    "TGEMV_MX": {"TGEMV_MX"},
+}
+
+SCALAR_FAMILY_HANDLERS = {
+    "AGU": {
+        "ExecuteScalarLoad",
+        "ExecuteScalarStore",
+        "ExecuteScalarLoadPair",
+        "ExecuteScalarStorePair",
+        "ScalarPrefetch",
+    },
+    "ALU": {
+        "ScalarBinary",
+        "ScalarBinaryW",
+        "ExecuteScalarDividePair",
+        "ExecuteScalarMultiplyPair",
+        "ExtractBitfield",
+    },
+    "AMO": {
+        "LoadReserved",
+        "StoreConditional",
+        "AtomicReadModifyWrite",
+        "CompareAndSwap",
+        "DMA64",
+    },
+    "BRU": {
+        "ConditionHolds",
+        "ExecuteCompare",
+        "ExecuteSetCommit",
+        "BranchRelative",
+        "JumpRelative",
+        "JumpRegister",
+    },
+    "FSU": {
+        "FloatingBinary",
+        "FloatingUnary",
+        "FloatingFused",
+        "FloatingCompare",
+        "FloatingToInteger",
+    },
+    "SYS": {
+        "ReadSystemRegister",
+        "WriteSystemRegister",
+        "SwapSystemRegister",
+        "ExecuteMaintenance",
+        "ArchitectureAssert",
+    },
+}
+
+SCALAR_REGISTER_FIELDS = {
+    "RegDst",
+    "RegDst0",
+    "RegDst1",
+    "SrcA",
+    "SrcD",
+    "SrcD1",
+    "SrcL",
+    "SrcP",
+    "SrcR",
+    "SrcZero",
+}
+
+
+def load(relative: str):
+    return json.loads((ROOT / relative).read_text(encoding="utf-8"))
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise AssertionError(message)
+
+
+def extract_field(row: dict, field_name: str, instruction: int) -> int:
+    field = next(field for field in row["fields"] if field["name"] == field_name)
+    value = 0
+    for piece in field["pieces"]:
+        mask = (1 << piece["width"]) - 1
+        value |= ((instruction >> piece["instruction_lsb"]) & mask) << piece[
+            "value_lsb"
+        ]
+    return value
+
+
+def expand_number_entries(entries: list) -> set[int]:
+    values: set[int] = set()
+    for entry in entries:
+        if isinstance(entry, int):
+            values.add(entry)
+        else:
+            require(
+                isinstance(entry, list) and len(entry) == 2,
+                "invalid numeric range entry",
+            )
+            start = int(entry[0], 0) if isinstance(entry[0], str) else entry[0]
+            end = int(entry[1], 0) if isinstance(entry[1], str) else entry[1]
+            require(start <= end, "reversed numeric range entry")
+            values.update(range(start, end + 1))
+    return values
+
+
+def main() -> int:
+    scalar = load("spec/catalog/scalar-forms.json")
+    system_registers = load("spec/catalog/system-registers.json")
+    tile = load("spec/catalog/tile-operations.json")
+    crosscheck = load("spec/evidence/independent-tile-crosscheck.json")
+    requirements = load("spec/requirements.json")["requirements"]
+    specification = tomllib.loads(
+        (ROOT / "specification.toml").read_text(encoding="utf-8")
+    )
+
+    isa_name = "PTO Instruction Set Architecture"
+    require(
+        set(scalar)
+        == {
+            "constraint_count",
+            "form_count",
+            "forms",
+            "isa",
+            "operand_field_count",
+            "operand_piece_count",
+            "schema_version",
+            "semantic_handler_count",
+        },
+        "scalar catalog top-level schema drift",
+    )
+    require(scalar["schema_version"] == 1, "unsupported scalar catalog schema")
+    require(specification["specification"]["name"] == isa_name, "wrong ISA name")
+    require(
+        specification["specification"]["normative"] is True,
+        "specification must be normative",
+    )
+    require(
+        specification["architecture"]["tile_model"] == "one-level",
+        "tile model must be one-level",
+    )
+    require(
+        specification["architecture"]["hierarchical_calls"] is False,
+        "hierarchical calls must be disabled",
+    )
+    require(
+        specification["architecture"]["scalar_forms"] == 474,
+        "status record scalar count drift",
+    )
+    require(
+        specification["architecture"]["system_register_definitions"] == 52,
+        "status record system-register count drift",
+    )
+    require(
+        specification["architecture"]["trap_numbers"] == 13,
+        "status record trap count drift",
+    )
+
+    forms = scalar["forms"]
+    require(scalar["isa"] == isa_name, "scalar catalog has wrong ISA identity")
+    require(scalar["form_count"] == len(forms) == 474, "scalar form count must be 474")
+    require(
+        scalar["operand_field_count"] == 45, "scalar operand field count must be 45"
+    )
+    require(
+        scalar["operand_piece_count"] == 1867, "scalar operand piece count must be 1867"
+    )
+    require(
+        scalar["constraint_count"] == 3, "scalar operand constraint count must be 3"
+    )
+    require(
+        scalar["semantic_handler_count"] == 68,
+        "scalar semantic handler count must be 68",
+    )
+    form_ids = [row["form_id"] for row in forms]
+    require(len(form_ids) == len(set(form_ids)), "scalar form IDs must be unique")
+    require(
+        Counter(row["semantic_family"] for row in forms)
+        == Counter(
+            {"AGU": 183, "ALU": 107, "AMO": 53, "BRU": 66, "FSU": 30, "SYS": 35}
+        ),
+        "scalar family counts changed",
+    )
+    for row in forms:
+        require(
+            set(row)
+            == {
+                "asm",
+                "constraints",
+                "encoding",
+                "encoding_kind",
+                "fields",
+                "form_id",
+                "length_bits",
+                "mnemonic",
+                "semantic_family",
+                "semantic_group",
+                "semantic_handler",
+                "status",
+            },
+            f"scalar form schema drift for {row.get('form_id', '<unknown>')}",
+        )
+        require(
+            row["status"] == "accepted", f"non-accepted scalar form {row['form_id']}"
+        )
+        require(
+            row["length_bits"] in {16, 32, 48},
+            f"invalid scalar width for {row['form_id']}",
+        )
+        require(row["encoding"], f"missing encoding for {row['form_id']}")
+        for part in row["encoding"]:
+            require(
+                set(part) == {"index", "mask", "match", "width_bits"},
+                f"encoding schema drift for {row['form_id']}",
+            )
+            require(
+                part["index"] == 0,
+                f"multi-part scalar encoding is not supported for {row['form_id']}",
+            )
+            mask = int(part["mask"], 16)
+            match = int(part["match"], 16)
+            require(
+                part["width_bits"] == row["length_bits"],
+                f"encoding width drift for {row['form_id']}",
+            )
+            require(
+                mask < 1 << row["length_bits"],
+                f"mask exceeds width for {row['form_id']}",
+            )
+            require(
+                match < 1 << row["length_bits"],
+                f"match exceeds width for {row['form_id']}",
+            )
+            require(
+                match & ~mask == 0, f"match sets unmasked bits for {row['form_id']}"
+            )
+        field_names: set[str] = set()
+        for field in row["fields"]:
+            require(
+                set(field) == {"name", "pieces", "signedness", "width"},
+                f"field schema drift in {row['form_id']}",
+            )
+            require(
+                field["name"] not in field_names,
+                f"duplicate field {field['name']} in {row['form_id']}",
+            )
+            field_names.add(field["name"])
+            require(
+                field["signedness"] in {"encoding-defined", "signed", "unsigned"},
+                f"bad signedness in {row['form_id']}",
+            )
+            require(1 <= field["width"] <= 48, f"bad field width in {row['form_id']}")
+            if field["name"] in SCALAR_REGISTER_FIELDS:
+                require(
+                    field["width"] == 5,
+                    f"scalar register field must be five bits in {row['form_id']}",
+                )
+            covered_value_bits: set[int] = set()
+            covered_instruction_bits: set[int] = set()
+            for piece in field["pieces"]:
+                require(
+                    set(piece) == {"instruction_lsb", "value_lsb", "width"},
+                    f"piece schema drift in {row['form_id']}",
+                )
+                require(piece["width"] > 0, f"empty field piece in {row['form_id']}")
+                instruction_bits = set(
+                    range(
+                        piece["instruction_lsb"],
+                        piece["instruction_lsb"] + piece["width"],
+                    )
+                )
+                value_bits = set(
+                    range(piece["value_lsb"], piece["value_lsb"] + piece["width"])
+                )
+                require(
+                    max(instruction_bits) < row["length_bits"],
+                    f"field exceeds instruction in {row['form_id']}",
+                )
+                require(
+                    not covered_instruction_bits & instruction_bits,
+                    f"overlapping instruction pieces in {row['form_id']}",
+                )
+                require(
+                    not covered_value_bits & value_bits,
+                    f"overlapping value pieces in {row['form_id']}",
+                )
+                covered_instruction_bits.update(instruction_bits)
+                covered_value_bits.update(value_bits)
+            require(
+                covered_value_bits == set(range(field["width"])),
+                f"non-contiguous field value in {row['form_id']}",
+            )
+        for constraint in row["constraints"]:
+            require(
+                constraint["field"] in field_names,
+                f"constraint references absent field in {row['form_id']}",
+            )
+            require(
+                constraint["operator"] == "not-equal",
+                f"unsupported constraint in {row['form_id']}",
+            )
+            width = next(
+                field["width"]
+                for field in row["fields"]
+                if field["name"] == constraint["field"]
+            )
+            require(
+                0 <= constraint["value"] < 1 << width,
+                f"constraint value exceeds field in {row['form_id']}",
+            )
+
+    overlaps: list[tuple[dict, dict]] = []
+    for left_index, left in enumerate(forms):
+        left_encoding = left["encoding"][0]
+        left_mask = int(left_encoding["mask"], 16)
+        left_match = int(left_encoding["match"], 16)
+        for right in forms[left_index + 1 :]:
+            if left["length_bits"] != right["length_bits"]:
+                continue
+            right_encoding = right["encoding"][0]
+            right_mask = int(right_encoding["mask"], 16)
+            right_match = int(right_encoding["match"], 16)
+            common_mask = left_mask & right_mask
+            if (left_match & common_mask) != (right_match & common_mask):
+                continue
+            left_specificity = left_mask.bit_count()
+            right_specificity = right_mask.bit_count()
+            require(
+                left_specificity != right_specificity,
+                f"ambiguous equal-priority forms: {left['form_id']} and {right['form_id']}",
+            )
+            broad = left if left_specificity < right_specificity else right
+            narrow = right if broad is left else left
+            require(
+                broad["constraints"],
+                f"unreviewed scalar encoding overlap: {left['form_id']} and {right['form_id']}",
+            )
+            require(
+                all(
+                    constraint["operator"] == "not-equal"
+                    and extract_field(
+                        broad,
+                        constraint["field"],
+                        int(narrow["encoding"][0]["match"], 16),
+                    )
+                    == constraint["value"]
+                    for constraint in broad["constraints"]
+                ),
+                f"broad-form constraint does not exclude narrow form: {broad['form_id']} and {narrow['form_id']}",
+            )
+            overlaps.append((broad, narrow))
+    require(
+        len(overlaps) == 3,
+        "scalar overlap review set must contain exactly three constrained aliases",
+    )
+
+    operations = tile["operations"]
+    require(
+        set(tile)
+        == {
+            "isa",
+            "operation_count",
+            "operations",
+            "rejected_review_only_codes",
+            "rejected_review_only_names",
+            "reserved",
+            "schema_version",
+        },
+        "tile catalog top-level schema drift",
+    )
+    require(tile["schema_version"] == 1, "unsupported tile catalog schema")
+    require(tile["isa"] == isa_name, "tile catalog has wrong ISA identity")
+    require(
+        tile["operation_count"] == len(operations) == 111,
+        "tile operation count must be 111",
+    )
+    require(
+        len({row["name"] for row in operations}) == 111,
+        "tile operation names must be unique",
+    )
+    require(
+        Counter(row["family"] for row in operations)
+        == Counter({"TEPL": 97, "TMA": 6, "CUBE": 8}),
+        "tile family counts changed",
+    )
+    for family in ("TEPL", "TMA", "CUBE"):
+        rows = [row for row in operations if row["family"] == family]
+        key = "selector" if family == "TEPL" else "function"
+        values = [row[key] for row in rows]
+        require(len(values) == len(set(values)), f"duplicate {family} {key}")
+        for row in rows:
+            require(
+                set(row) == {"disposition", "family", "name", key},
+                f"tile operation schema drift for {row['name']}",
+            )
+            require(
+                row["disposition"] == "accepted-direct-operation",
+                f"invalid tile disposition for {row['name']}",
+            )
+            value = int(row[key], 0) if isinstance(row[key], str) else row[key]
+            require(
+                0 <= value < 1 << 12, f"tile selector exceeds 12 bits for {row['name']}"
+            )
+
+    tepl_accepted = {
+        int(row["selector"], 0) if isinstance(row["selector"], str) else row["selector"]
+        for row in operations
+        if row["family"] == "TEPL"
+    }
+    tepl_review = {
+        int(value, 0) if isinstance(value, str) else value
+        for value in tile["rejected_review_only_codes"]["TEPL"]
+    }
+    tepl_reserved = expand_number_entries(tile["reserved"]["tepl_selector_ranges"])
+    require(
+        not (
+            tepl_accepted & tepl_review
+            or tepl_accepted & tepl_reserved
+            or tepl_review & tepl_reserved
+        ),
+        "TEPL selector partitions overlap",
+    )
+    require(
+        tepl_accepted | tepl_review | tepl_reserved == set(range(1 << 10)),
+        "TEPL selector partition is incomplete",
+    )
+
+    tma_accepted = {row["function"] for row in operations if row["family"] == "TMA"}
+    tma_review = set(tile["rejected_review_only_codes"]["TMA"])
+    tma_reserved = expand_number_entries(tile["reserved"]["tma_functions"])
+    require(
+        tma_accepted | tma_review | tma_reserved == set(range(32)),
+        "TMA function partition is incomplete",
+    )
+    require(
+        not (
+            tma_accepted & tma_review
+            or tma_accepted & tma_reserved
+            or tma_review & tma_reserved
+        ),
+        "TMA function partitions overlap",
+    )
+
+    cube_accepted = {row["function"] for row in operations if row["family"] == "CUBE"}
+    cube_review = set(tile["rejected_review_only_codes"]["CUBE"])
+    cube_unassigned = expand_number_entries(
+        tile["reserved"]["cube_functions_without_named_alias"]
+    )
+    require(
+        cube_accepted | cube_review | cube_unassigned == set(range(32)),
+        "CUBE function partition is incomplete",
+    )
+    require(
+        not (
+            cube_accepted & cube_review
+            or cube_accepted & cube_unassigned
+            or cube_review & cube_unassigned
+        ),
+        "CUBE function partitions overlap",
+    )
+
+    require(
+        set(system_registers)
+        == {
+            "address_bits",
+            "canonical_address_bits",
+            "isa",
+            "register_definition_count",
+            "registers",
+            "schema_version",
+            "trap_count",
+            "trap_numbers",
+        },
+        "system-register catalog top-level schema drift",
+    )
+    require(
+        system_registers["schema_version"] == 1,
+        "unsupported system-register catalog schema",
+    )
+    require(
+        system_registers["isa"] == isa_name,
+        "system-register catalog has wrong ISA identity",
+    )
+    require(
+        system_registers["address_bits"] == 24,
+        "system-register address width must be 24",
+    )
+    require(
+        system_registers["canonical_address_bits"] == 16,
+        "canonical system-register address width must be 16",
+    )
+    register_rows = system_registers["registers"]
+    require(
+        system_registers["register_definition_count"] == len(register_rows) == 52,
+        "system-register definition count must be 52",
+    )
+    register_names: set[str] = set()
+    canonical_registers: set[int] = set()
+    for row in register_rows:
+        require(
+            row["name"] not in register_names,
+            f"duplicate system-register name {row['name']}",
+        )
+        register_names.add(row["name"])
+        require(
+            row["access"] in {"RO", "WO", "RW"}, f"invalid access for {row['name']}"
+        )
+        require(
+            row["scope"] in {"base", "context-family"},
+            f"invalid scope for {row['name']}",
+        )
+        if row["scope"] == "base":
+            require(
+                set(row) == {"access", "address", "name", "scope"},
+                f"base register schema drift for {row['name']}",
+            )
+            address = int(row["address"], 0)
+            require(
+                0 <= address < 1 << 16,
+                f"base register exceeds canonical address width: {row['name']}",
+            )
+        else:
+            require(
+                set(row)
+                in (
+                    {"access", "low_index", "name", "scope"},
+                    {"access", "fixed_context", "low_index", "name", "scope"},
+                ),
+                f"context register schema drift for {row['name']}",
+            )
+            low_index = int(row["low_index"], 0)
+            require(
+                0 <= low_index < 1 << 12,
+                f"context register low index exceeds 12 bits: {row['name']}",
+            )
+            context = row.get("fixed_context", 0)
+            require(
+                0 <= context < 16, f"fixed context exceeds four bits: {row['name']}"
+            )
+            address = context << 12 | low_index
+        require(
+            address not in canonical_registers,
+            f"duplicate canonical system-register address for {row['name']}",
+        )
+        canonical_registers.add(address)
+
+    trap_rows = system_registers["trap_numbers"]
+    require(
+        system_registers["trap_count"] == len(trap_rows) == 13,
+        "trap-number count must be 13",
+    )
+    require(len({row["name"] for row in trap_rows}) == 13, "trap names must be unique")
+    require(
+        len({row["number"] for row in trap_rows}) == 13, "trap numbers must be unique"
+    )
+    for row in trap_rows:
+        require(
+            set(row) == {"name", "number"},
+            f"trap schema drift for {row.get('name', '<unknown>')}",
+        )
+        require(
+            0 <= row["number"] < 64, f"trap number exceeds six bits for {row['name']}"
+        )
+
+    semantic_names: set[str] = set()
+    asl_body = "\n".join(
+        path.read_text(encoding="utf-8") for path in (ROOT / "asl").rglob("*.asl")
+    )
+    for handler, names in TILE_SEMANTIC_GROUPS.items():
+        require(
+            semantic_names.isdisjoint(names),
+            f"duplicate tile semantic mapping for {sorted(semantic_names & names)}",
+        )
+        semantic_names.update(names)
+        require(
+            re.search(rf"\bfunc\s+{re.escape(handler)}\b", asl_body) is not None,
+            f"missing ASL handler {handler}",
+        )
+    catalog_names = {row["name"] for row in operations}
+    require(
+        semantic_names == catalog_names,
+        f"tile semantic coverage drift: missing={sorted(catalog_names - semantic_names)}, extra={sorted(semantic_names - catalog_names)}",
+    )
+
+    for family, handlers in SCALAR_FAMILY_HANDLERS.items():
+        require(
+            any(row["semantic_family"] == family for row in forms),
+            f"unused scalar family mapping {family}",
+        )
+        for handler in handlers:
+            require(
+                re.search(rf"\bfunc\s+{re.escape(handler)}\b", asl_body) is not None,
+                f"missing scalar handler {handler}",
+            )
+    for row in forms:
+        require(
+            re.search(rf"\bfunc\s+{re.escape(row['semantic_handler'])}\b", asl_body)
+            is not None,
+            f"missing per-form semantic handler {row['semantic_handler']} for {row['form_id']}",
+        )
+    for handler in (
+        "ReadSystemRegisterAddress",
+        "WriteSystemRegisterAddress",
+        "SwapSystemRegisterAddress",
+        "PackTrapStatus",
+    ):
+        require(
+            re.search(rf"\bfunc\s+{re.escape(handler)}\b", asl_body) is not None,
+            f"missing system-state handler {handler}",
+        )
+
+    evidence_rows = crosscheck["operations"]
+    require(
+        set(crosscheck)
+        == {
+            "commit",
+            "license",
+            "operation_count",
+            "operations",
+            "policy",
+            "schema_version",
+            "source_class",
+            "worktree_dirty",
+        },
+        "independent evidence top-level schema drift",
+    )
+    require(crosscheck["schema_version"] == 1, "unsupported evidence schema")
+    require(
+        crosscheck["operation_count"] == len(evidence_rows) == 111,
+        "independent evidence must cover 111 operations",
+    )
+    require(
+        {row["name"] for row in evidence_rows} == {row["name"] for row in operations},
+        "evidence name drift",
+    )
+    require(
+        {row["disposition"] for row in evidence_rows}
+        <= {"agree", "conflict", "incomplete", "ignored"},
+        "invalid independent-evidence disposition",
+    )
+    require(
+        Counter(row["disposition"] for row in evidence_rows)
+        == Counter({"agree": 97, "incomplete": 13, "conflict": 1}),
+        "independent evidence disposition counts changed",
+    )
+    require(
+        re.fullmatch(r"[0-9a-f]{40}", crosscheck["commit"]) is not None,
+        "independent evidence commit must be full SHA",
+    )
+    require(
+        isinstance(crosscheck["worktree_dirty"], bool),
+        "independent evidence dirty flag must be boolean",
+    )
+    for row in evidence_rows:
+        require(
+            set(row) >= {"disposition", "name", "reason"},
+            f"evidence schema drift for {row.get('name', '<unknown>')}",
+        )
+        if "document" in row:
+            require(
+                re.fullmatch(r"[A-Z0-9_.]+\.md", row["document"]) is not None,
+                f"non-anonymized evidence document for {row['name']}",
+            )
+            require(
+                re.fullmatch(r"[0-9a-f]{64}", row["sha256"]) is not None,
+                f"bad evidence hash for {row['name']}",
+            )
+    require(
+        crosscheck["license"] == "proprietary-no-project-license",
+        "private evidence license must not be overstated",
+    )
+    require(
+        crosscheck["source_class"] == "private-independent-tile-reference",
+        "independent evidence source class drift",
+    )
+
+    requirement_ids = [row["id"] for row in requirements]
+    require(
+        load("spec/requirements.json")["schema_version"] == 1,
+        "unsupported requirement schema",
+    )
+    require(
+        len(requirement_ids) == len(set(requirement_ids)), "duplicate requirement IDs"
+    )
+    for requirement in requirements:
+        require(
+            re.fullmatch(r"PTO-REQ-[A-Z]+(?:-[A-Z]+)*-[0-9]{3}", requirement["id"])
+            is not None,
+            "bad requirement ID",
+        )
+        require(
+            requirement["source"].startswith("https://"),
+            f"non-public source for {requirement['id']}",
+        )
+        for relative in requirement["model"] + requirement["tests"]:
+            require(
+                (ROOT / relative).exists(), f"missing traceability path: {relative}"
+            )
+
+    used_ids: set[str] = set()
+    nested_names = (
+        "V" + "CALL",
+        "M" + "CALL",
+        "V" + "PAR",
+        "V" + "SEQ",
+        "M" + "PAR",
+        "M" + "SEQ",
+    )
+    for path in (ROOT / "asl").rglob("*.asl"):
+        body = path.read_text(encoding="utf-8")
+        used_ids.update(re.findall(r"PTO-REQ-[A-Z]+(?:-[A-Z]+)*-[0-9]{3}", body))
+        active = body.upper()
+        for forbidden in nested_names:
+            require(
+                re.search(
+                    rf"(?<![A-Z0-9_.]){re.escape(forbidden)}(?![A-Z0-9_.])", active
+                )
+                is None,
+                f"forbidden nested architecture surface in {path}",
+            )
+    require(
+        used_ids <= set(requirement_ids),
+        f"ASL uses unknown requirement IDs: {sorted(used_ids - set(requirement_ids))}",
+    )
+
+    print(
+        "catalog checks passed: 474 scalar forms, 45 operand fields, 1,867 field pieces, "
+        "3 constrained overlaps, 52 system-register definitions, 13 trap numbers, and "
+        "111 tile operations with complete handler coverage"
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main())
+    except (AssertionError, KeyError, ValueError) as error:
+        print(f"error: {error}", file=sys.stderr)
+        raise SystemExit(1)

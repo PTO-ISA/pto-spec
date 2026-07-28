@@ -1,0 +1,776 @@
+{
+  "commit": "3add900e51936e3ef468644464ae140d38f745b6",
+  "license": "proprietary-no-project-license",
+  "operation_count": 111,
+  "operations": [
+    {
+      "disposition": "agree",
+      "document": "TADD.md",
+      "name": "TADD",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "8061eb6ebc114a0f541aa4f6121eecc60b413f26797a5a8c8c57e54a3192fea4"
+    },
+    {
+      "disposition": "agree",
+      "document": "TSUB.md",
+      "name": "TSUB",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "8effbd2f7f1d29277cfb3fbf3f1738cd30aea1042865a0c09d7896ea3b685258"
+    },
+    {
+      "disposition": "agree",
+      "document": "TMUL.md",
+      "name": "TMUL",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "3e04c9f297b03220288a8781e8bde1c54ffd9b3595f0e7dd4050622e0bc1d230"
+    },
+    {
+      "disposition": "agree",
+      "document": "TMAX.md",
+      "name": "TMAX",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "b9a15e76eece7a5ab5ac020098924c4401c089e7f7d4d065b0b131e09ea0e871"
+    },
+    {
+      "disposition": "agree",
+      "document": "TMIN.md",
+      "name": "TMIN",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "38380b6db7583a4932b8419999adc6a5f2d2c36c404b24f95b7b2fb2df10182a"
+    },
+    {
+      "disposition": "agree",
+      "document": "TAND.md",
+      "name": "TAND",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "1519db3bd6f12091f3661ea9cfc7e48ca42207904c8484d1afe9502d843c43ae"
+    },
+    {
+      "disposition": "agree",
+      "document": "TOR.md",
+      "name": "TOR",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "24ca63e742e49442c10c0b52ae7806d0af7a054bc69c2c673d4684fcfab7892c"
+    },
+    {
+      "disposition": "agree",
+      "document": "TXOR.md",
+      "name": "TXOR",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "99a7604c537efb6f36053089741fb987108fecc9a2844683c4ce0e063c8f6d6d"
+    },
+    {
+      "disposition": "agree",
+      "document": "TSHL.md",
+      "name": "TSHL",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "b403eb27aadbb6dc6de4e7c3d69b9785c6345730a3aa9cf3a0eef378b505dfd9"
+    },
+    {
+      "disposition": "agree",
+      "document": "TSHR.md",
+      "name": "TSHR",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "869f01914f9b74d5b7257a75e475a869f093bfd4bb39a65f730877910beb29af"
+    },
+    {
+      "disposition": "agree",
+      "document": "TCMP.md",
+      "name": "TCMP",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "8ba7cf0a224bdba4f416bb3e1de870e67fe4a5d6170bb8699ed636bb1bc63e7d"
+    },
+    {
+      "disposition": "agree",
+      "document": "TSEL.md",
+      "name": "TSEL",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "6c65dc0a480228e4e2f80538ebd6070099e74bf064cfc4ce607361ab6ace2f3c"
+    },
+    {
+      "disposition": "agree",
+      "document": "TABS.md",
+      "name": "TABS",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "5610c726192506cb3e6ece924262866f74a535cc8ed67afa3f617a5b7dd6eaa5"
+    },
+    {
+      "disposition": "agree",
+      "document": "TNOT.md",
+      "name": "TNOT",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "69c868e3e0efe26b9464251e576fda2fd87cd84d8d80198b09074b86a9a22f44"
+    },
+    {
+      "disposition": "agree",
+      "document": "TNEG.md",
+      "name": "TNEG",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "1c25b8cbe13de68ff450c674156b982c4073a0410f7e018a3a9b37faead7758a"
+    },
+    {
+      "disposition": "agree",
+      "document": "TRELU.md",
+      "name": "TRELU",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "1bad13d505bdd1d73aa790acc5760d1ae5804c872a376331ba57898d6a1600e0"
+    },
+    {
+      "disposition": "agree",
+      "document": "TDIV.md",
+      "name": "TDIV",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "4837c50da7ddbcc5a4237a35d73396aee81c4113286b7a966292e0fe3de6e901"
+    },
+    {
+      "disposition": "agree",
+      "document": "TREM.md",
+      "name": "TREM",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "e22f1f22c7ec6df2e1cafadb6716d7a5ffbe639359d8fdbc1d01377f41fe39e0"
+    },
+    {
+      "disposition": "agree",
+      "document": "TSQRT.md",
+      "name": "TSQRT",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "cb2e3862def9062960055e7f11741d7b6e4ca3892fd62415df3ad66dbaa5dcfc"
+    },
+    {
+      "disposition": "agree",
+      "document": "TLOG.md",
+      "name": "TLOG",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "7ae908230bc664220c3f7eb2889fcb9599aee1ef2551882e59b0049f0ec6f8be"
+    },
+    {
+      "disposition": "agree",
+      "document": "TRECIP.md",
+      "name": "TRECIP",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "7728420fec05ae354ae33e707c38d35001944428748c84bbf9ba32f65a608226"
+    },
+    {
+      "disposition": "agree",
+      "document": "TEXP.md",
+      "name": "TEXP",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "f59a685fc8df253e22f41791f34f54c66c3727e6c26d66431eaa5b8da123d4d1"
+    },
+    {
+      "disposition": "agree",
+      "document": "TRSQRT.md",
+      "name": "TRSQRT",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "5867cf73b2ad0f6e3b38160280a1466b62fbfad96731eec86e0c9fcd574a20b7"
+    },
+    {
+      "disposition": "agree",
+      "document": "TADDS.md",
+      "name": "TADDS",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "0dc6528b4b3047dcd31e8ce68765e660ad2f9f22b53a4b70efd1b1bc341c2461"
+    },
+    {
+      "disposition": "incomplete",
+      "document": "TAXPY.md",
+      "name": "TAXPY",
+      "reason": "page has placeholder rather than operation-specific mathematics",
+      "sha256": "e016fc45d95bad0b68c359227cf223c9be44b81f0b0ee9f021b09ca373ee6011"
+    },
+    {
+      "disposition": "agree",
+      "document": "TSUBS.md",
+      "name": "TSUBS",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "e617970f665b66be7938f00798230811afd7bfc3745353bb6a4b0e8396770fb5"
+    },
+    {
+      "disposition": "agree",
+      "document": "TMULS.md",
+      "name": "TMULS",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "5137f762a1bce98ce10f4b1490e487a75ce9adb2cb933757c4b37cc5daffb2f7"
+    },
+    {
+      "disposition": "agree",
+      "document": "TDIVS.md",
+      "name": "TDIVS",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "d2e5a4c2e3b722ecddbcfb2d90b4d575b4cb32653ff5d9cf75054b8847c3e7eb"
+    },
+    {
+      "disposition": "agree",
+      "document": "TMINS.md",
+      "name": "TMINS",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "c02456dc0d655a750f0bece5f9a846682a6af415a5d217b541e3463c5b6850da"
+    },
+    {
+      "disposition": "agree",
+      "document": "TMAXS.md",
+      "name": "TMAXS",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "e2d0643760234589825c242204450508f731e5b999d33b4def6587d45f3ce0dc"
+    },
+    {
+      "disposition": "agree",
+      "document": "TREMS.md",
+      "name": "TREMS",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "43afe2add6f459dfd7a64e90821567f53a9fb3550a6e39ecf02e3ebfc1735163"
+    },
+    {
+      "disposition": "agree",
+      "document": "TANDS.md",
+      "name": "TANDS",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "898460c9d40648d112196c7022ec5a191875b4eaf0bc1d5a245e717f96ac93c5"
+    },
+    {
+      "disposition": "agree",
+      "document": "TORS.md",
+      "name": "TORS",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "9035a690e73f61fb7ffda608def4b5ea3129052008c6b74e2073ef4faa9cd9f5"
+    },
+    {
+      "disposition": "agree",
+      "document": "TXORS.md",
+      "name": "TXORS",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "88489ad6e489dae647b18f2cda35110a71e3279853c71e128d0b20e13ba087fa"
+    },
+    {
+      "disposition": "agree",
+      "document": "TCMPS.md",
+      "name": "TCMPS",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "d6b433589bf3b79a88919cda24dcdf65a6796afb772bc107a0de7960277e6e14"
+    },
+    {
+      "disposition": "agree",
+      "document": "TSELS.md",
+      "name": "TSELS",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "aec27d77290066bf5a85e13b04527951ebeea1d23c0645f97efc4f5279a15e2d"
+    },
+    {
+      "disposition": "agree",
+      "document": "TSHLS.md",
+      "name": "TSHLS",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "a5de0b154b7cc3115edd25dca66652ab6d64a8e2a7b9a84c95573f06b0c5ed2e"
+    },
+    {
+      "disposition": "agree",
+      "document": "TSHRS.md",
+      "name": "TSHRS",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "98475cc9091086a6e9f6c07ea38271cf7c83bc27700c4cf6988ac9370beee46a"
+    },
+    {
+      "disposition": "agree",
+      "document": "TROWSUM.md",
+      "name": "TROWSUM",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "7e90c5c11687f2d0840298ccaee74cc95cfe6126b2c9942f7e77dfdb21b8c324"
+    },
+    {
+      "disposition": "agree",
+      "document": "TROWPROD.md",
+      "name": "TROWPROD",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "2e097954d3bc33c2c131682577721e826ed7e305ade70845a9c862a548ac33b9"
+    },
+    {
+      "disposition": "agree",
+      "document": "TROWMAX.md",
+      "name": "TROWMAX",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "4ccb8a00f47075b5dcd22839066cdbef8d99a1ffe1429bb9963419436f350eeb"
+    },
+    {
+      "disposition": "agree",
+      "document": "TROWMIN.md",
+      "name": "TROWMIN",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "0c877452e91c6f26c6c37acbdabed6bfe04a299ed887f73f3e9a55164ce6fc4b"
+    },
+    {
+      "disposition": "agree",
+      "document": "TROWARGMAX.md",
+      "name": "TROWARGMAX",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "aba1c6c5b90c0249e82bb59f1230e33658076679fdad6c49aa81334cb5b4579f"
+    },
+    {
+      "disposition": "agree",
+      "document": "TROWARGMIN.md",
+      "name": "TROWARGMIN",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "77aa5acc458ac01183bed3a1339de7c0fd734cf9ef8eda26d87aa4225e524e80"
+    },
+    {
+      "disposition": "agree",
+      "document": "TCOLSUM.md",
+      "name": "TCOLSUM",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "03c83a6e12d3cd640fc495ceb09930ef307445f1c8652ee1bec4609f0a5c81e8"
+    },
+    {
+      "disposition": "agree",
+      "document": "TCOLPROD.md",
+      "name": "TCOLPROD",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "63940e966ab2a7da9590c3c66fab34aa93e1983e3f4135a99d2c11a58e5e6e27"
+    },
+    {
+      "disposition": "agree",
+      "document": "TCOLMAX.md",
+      "name": "TCOLMAX",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "1da8702daaa396984fa3d905b9adba844b21e60505847192e0ddb1985c07b658"
+    },
+    {
+      "disposition": "agree",
+      "document": "TCOLMIN.md",
+      "name": "TCOLMIN",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "e575a6c7ed3fab58e75a730536f362fa6c915716f8bc66962d9beb369af1dc8e"
+    },
+    {
+      "disposition": "agree",
+      "document": "TCOLARGMAX.md",
+      "name": "TCOLARGMAX",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "90d9092e4b7a77874d992df9b81aa275d85dca4f81665206a9dda6e25087456a"
+    },
+    {
+      "disposition": "agree",
+      "document": "TCOLARGMIN.md",
+      "name": "TCOLARGMIN",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "e74138c2d50eaf7d08e16eb8f0171cd442603f3d74fb05b1c4174139c4656174"
+    },
+    {
+      "disposition": "agree",
+      "document": "TROWEXPAND.md",
+      "name": "TROWEXPAND",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "d5245bdd6b43601222d472d4631c727cb56f09a9c3fb4bd5cb5e4308c5ad1ed9"
+    },
+    {
+      "disposition": "agree",
+      "document": "TROWEXPANDADD.md",
+      "name": "TROWEXPANDADD",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "428122068eefc10e8230633db5a52b419a929421ed0a3caf8758641d2908cdda"
+    },
+    {
+      "disposition": "agree",
+      "document": "TROWEXPANDSUB.md",
+      "name": "TROWEXPANDSUB",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "759dc23af70d936c46b6693c183b0f7c9686371cf8a95fd2942ef3e583d7822a"
+    },
+    {
+      "disposition": "agree",
+      "document": "TROWEXPANDMUL.md",
+      "name": "TROWEXPANDMUL",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "dc5768f8eafc51934f59238f5a9248df4f655257f49cf2a77a3167b7f9797831"
+    },
+    {
+      "disposition": "agree",
+      "document": "TROWEXPANDDIV.md",
+      "name": "TROWEXPANDDIV",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "39e911a1b7d9f31a898e5c0baa9430e27b6ae97accb2a6f15acffa73b7284c45"
+    },
+    {
+      "disposition": "agree",
+      "document": "TROWEXPANDMAX.md",
+      "name": "TROWEXPANDMAX",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "8cf33b8da45ba7e26f052c5f8667a464e4699992bb49326de1d549bbf3169948"
+    },
+    {
+      "disposition": "agree",
+      "document": "TROWEXPANDMIN.md",
+      "name": "TROWEXPANDMIN",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "b289eaf2f62f9c295d4e3d6efc31c0839c88c6273769025601dad2cc501774d5"
+    },
+    {
+      "disposition": "agree",
+      "document": "TROWEXPANDEXPDIF.md",
+      "name": "TROWEXPANDEXPDIF",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "7a62e0e3969a42ee725c37192cd59512dd5318bdbc2344c44181574b734303fc"
+    },
+    {
+      "disposition": "agree",
+      "document": "TCOLEXPAND.md",
+      "name": "TCOLEXPAND",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "de66efb14653f5d4e20e73d5f67792b97c0fba9666c55021c98ec190402aabf7"
+    },
+    {
+      "disposition": "agree",
+      "document": "TCOLEXPANDADD.md",
+      "name": "TCOLEXPANDADD",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "2c1c35de5a203cc9ed3e69140122b641d52ef0fb17ab5dc17cae6a94724566eb"
+    },
+    {
+      "disposition": "agree",
+      "document": "TCOLEXPANDSUB.md",
+      "name": "TCOLEXPANDSUB",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "390cf887c0f021078aeec784c31c11a142c095ba59f11f41e83134690be84da2"
+    },
+    {
+      "disposition": "agree",
+      "document": "TCOLEXPANDMUL.md",
+      "name": "TCOLEXPANDMUL",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "cba4fec83635250deb671187bd520b89a70a58d774856f53b23ee65f7871799f"
+    },
+    {
+      "disposition": "agree",
+      "document": "TCOLEXPANDDIV.md",
+      "name": "TCOLEXPANDDIV",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "a3025e262a44a71e3a7cec49ff33859870247a13f4825d438bdd688e3fa08e51"
+    },
+    {
+      "disposition": "agree",
+      "document": "TCOLEXPANDMAX.md",
+      "name": "TCOLEXPANDMAX",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "fdb87e49cf0223d7c96aa6954215cd328f192e6550651b904f6d4018988d4443"
+    },
+    {
+      "disposition": "agree",
+      "document": "TCOLEXPANDMIN.md",
+      "name": "TCOLEXPANDMIN",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "e39166e6e42c801cb183832c40d01bef117f8cda8f61a7bdfadd9cbe78366a25"
+    },
+    {
+      "disposition": "agree",
+      "document": "TCOLEXPANDEXPDIF.md",
+      "name": "TCOLEXPANDEXPDIF",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "01dca5b15de4690cc1278e728508e8b19980317718a37d0196bafe4dc6bdc3fa"
+    },
+    {
+      "disposition": "agree",
+      "document": "TMATMUL.md",
+      "name": "TMATMUL",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "d0de5cab871603c7f7d46b2b0eafb12ecee0cb409dd85637162a72ec07aaf948"
+    },
+    {
+      "disposition": "agree",
+      "document": "TMATMUL_BIAS.md",
+      "name": "TMATMUL_BIAS",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "e3eeea905ccac52ec1fb83b678f77711dd1c04938b6fb1338903f1454e1b13a8"
+    },
+    {
+      "disposition": "agree",
+      "document": "TMATMUL_ACC.md",
+      "name": "TMATMUL_ACC",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "c088382ff4d65ef944c6b0d90655616820054ea9ee2eb40ed8d936e2546b6cb3"
+    },
+    {
+      "disposition": "agree",
+      "document": "TMATMUL_MX.md",
+      "name": "TMATMUL_MX",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "66d9355a96bef11cbfe6a373f621a292592c0b2f337e96743f221346b53fdc93"
+    },
+    {
+      "disposition": "agree",
+      "document": "TGEMV.md",
+      "name": "TGEMV",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "205c63b78970e313ef53f01eb031fa8432676221a4956dea71fce7e965517853"
+    },
+    {
+      "disposition": "agree",
+      "document": "TGEMV_BIAS.md",
+      "name": "TGEMV_BIAS",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "b5b35c46cf92a47b14a3d65b5190cd057d80a6d73853afe6d660e24a287e5cc2"
+    },
+    {
+      "disposition": "agree",
+      "document": "TGEMV_ACC.md",
+      "name": "TGEMV_ACC",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "9ee1a5d9744bd3fec15fb528c68c45478ce01109d638387a51bf0efa066e83b5"
+    },
+    {
+      "disposition": "agree",
+      "document": "TGEMV_MX.md",
+      "name": "TGEMV_MX",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "5d3d864d4b343fd6396fbc48e559e423342480e2ff203b26ea71211cb4e19234"
+    },
+    {
+      "disposition": "agree",
+      "document": "TLOAD.md",
+      "name": "TLOAD",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "fcaa6a7a81a3c17fa0fefa24e1a672d592d8e982e546d33651dfb15e91a77d72"
+    },
+    {
+      "disposition": "agree",
+      "document": "TSTORE.md",
+      "name": "TSTORE",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "26df227be36fb6bd3e5724f373ecce7db69776b41bcbe7c1695a45fa7fe0b195"
+    },
+    {
+      "disposition": "conflict",
+      "document": "TPREFETCH.md",
+      "name": "TPREFETCH",
+      "reason": "the independent reference documents a destination tile while the higher-precedence canonical PTO contract makes TPREFETCH destination-free",
+      "sha256": "ae2f1cc19bfacbdf29c1b260d7f441bd6c2600ce30cf06e69884bbca9f6f9b12"
+    },
+    {
+      "disposition": "agree",
+      "document": "MGATHER.md",
+      "name": "MGATHER",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "88ef44afad007369041cf321bf152bd96bd7437cd2ef9eff7faddde0cfe921a6"
+    },
+    {
+      "disposition": "agree",
+      "document": "MSCATTER.md",
+      "name": "MSCATTER",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "acca82506c1d24bb802c452b0e9265216022e9ae3989ff2a29fa5b7d020495a7"
+    },
+    {
+      "disposition": "agree",
+      "document": "TEXPANDS.md",
+      "name": "TEXPANDS",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "92bdbebc93f9c5b1163c0739cafef55128213f4abac5e15d228283956ba55564"
+    },
+    {
+      "disposition": "agree",
+      "document": "TCI.md",
+      "name": "TCI",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "ccfe79ba80189886390ca0809b3880a3222d08fab01171a144eb9c95c7a9dab6"
+    },
+    {
+      "disposition": "agree",
+      "document": "TTRI.md",
+      "name": "TTRI",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "15da0300281b0046b6055444ec721d7a8df09d2afc33f47054c3eebf140c2b65"
+    },
+    {
+      "disposition": "agree",
+      "document": "TFILLPAD.md",
+      "name": "TFILLPAD",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "15473c00bc3777c72d2d9c7daf0064c3c70e397aecc382bbfea35f5793a32235"
+    },
+    {
+      "disposition": "agree",
+      "document": "TCVT.md",
+      "name": "TCVT",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "029eeba713fe13ee6510b0d837bc06be87bc25609dbca2980f26592eb82758dd"
+    },
+    {
+      "disposition": "agree",
+      "document": "TQUANT.md",
+      "name": "TQUANT",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "adf29e6d0d97dbc7d11b7198df8ddb847c6fcceeedf5b87dde4162f628c1ea1f"
+    },
+    {
+      "disposition": "incomplete",
+      "document": "TDEQUANT.md",
+      "name": "TDEQUANT",
+      "reason": "page has placeholder rather than operation-specific mathematics",
+      "sha256": "a9a80bc8fe4cc98a8bd53f74d9b48c3e47d17830a24cf246aede2a5522d6ca65"
+    },
+    {
+      "disposition": "agree",
+      "document": "TEXTRACT.md",
+      "name": "TEXTRACT",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "3e8052e51190dd7501fdea3cc88113aef9657bdb176283809fa7ccf0abc7b509"
+    },
+    {
+      "disposition": "agree",
+      "document": "TINSERT.md",
+      "name": "TINSERT",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "b4a0b63e89669f63f8b03f23083a137e976461c6dfcb7d082ee79595f405f2ff"
+    },
+    {
+      "disposition": "agree",
+      "document": "TGATHER.md",
+      "name": "TGATHER",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "998379b8a629fae006214d8db7306bbf3b52ea490e0c9c32e4722ba666ec6595"
+    },
+    {
+      "disposition": "agree",
+      "document": "TSCATTER.md",
+      "name": "TSCATTER",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "3d39c6956558582e4ef5afab76f0ea22030ad1a1567161bb089c4fd9f684f8f2"
+    },
+    {
+      "disposition": "incomplete",
+      "document": "TCONCAT.md",
+      "name": "TCONCAT",
+      "reason": "page has placeholder rather than operation-specific mathematics",
+      "sha256": "7398cff4649ceb64a021f2255dd3ed43d604ecc3bd7d5786982df443199a3d24"
+    },
+    {
+      "disposition": "agree",
+      "document": "TTRANS.md",
+      "name": "TTRANS",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "c7baba18b5cd0abdb23da659472233adb107cf9d2ca0923375fbd7ebcbaf8c89"
+    },
+    {
+      "disposition": "agree",
+      "document": "TIMG2COL.md",
+      "name": "TIMG2COL",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "dc25dcebb72b8e4469d2c21c16f143a2a8e6bcde172238a9a27d005da56a1955"
+    },
+    {
+      "disposition": "agree",
+      "document": "TMOV.md",
+      "name": "TMOV",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "3354cf9cf3cb15e5839fbd1d19136dd02b0a6489b5c53e2fa4eea7cfe23395f6"
+    },
+    {
+      "disposition": "agree",
+      "document": "TGATHERB.md",
+      "name": "TGATHERB",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "6e94cfabd936578eec0837eb76c2f911aad03f7b57adf7b2255a99a694651c15"
+    },
+    {
+      "disposition": "incomplete",
+      "name": "TDEINTERLEAVE",
+      "reason": "no matching English instruction page in the independent reference"
+    },
+    {
+      "disposition": "incomplete",
+      "name": "TINTERLEAVE",
+      "reason": "no matching English instruction page in the independent reference"
+    },
+    {
+      "disposition": "agree",
+      "document": "TRESHAPE.md",
+      "name": "TRESHAPE",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "f40df034dcfe2351987fa2374dcf8c91d28a2cf0685e8d11932bd5304d7990dc"
+    },
+    {
+      "disposition": "incomplete",
+      "name": "TSORT",
+      "reason": "no matching English instruction page in the independent reference"
+    },
+    {
+      "disposition": "agree",
+      "document": "TMRGSORT.md",
+      "name": "TMRGSORT",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "3e71e950009a8bbdfb5c85566c589c4fbfcc2e84d4f91fff7e2f4268820841c6"
+    },
+    {
+      "disposition": "incomplete",
+      "document": "THISTOGRAM.md",
+      "name": "THISTOGRAM",
+      "reason": "page has placeholder rather than operation-specific mathematics",
+      "sha256": "a8f7051bccd056a99d17fd0e5e34b1b2b88c39005f725d8ddb5c89f6dd9d2932"
+    },
+    {
+      "disposition": "agree",
+      "document": "TPARTADD.md",
+      "name": "TPARTADD",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "c973f0b508008ee85ea9c2cc6c5669176d1faae4ff4318c0dfec65cc15e43d30"
+    },
+    {
+      "disposition": "agree",
+      "document": "TPARTMUL.md",
+      "name": "TPARTMUL",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "e4758189f7167d21617588151e353c5408ef25b19c4e1d1ab19bedcbc07bddb2"
+    },
+    {
+      "disposition": "agree",
+      "document": "TPARTMAX.md",
+      "name": "TPARTMAX",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "32fe40b9305e7cc509dd1bdac4bdaa4a62ba6c4cf13fe4c39e8f36a4fed9265c"
+    },
+    {
+      "disposition": "agree",
+      "document": "TPARTMIN.md",
+      "name": "TPARTMIN",
+      "reason": "operation identity, operand role, and mathematical description agree; backend-only constraints are non-normative",
+      "sha256": "c5706720aa01945f240e51c30924d2e7d49a2574c55c11eac425975d7aa2515e"
+    },
+    {
+      "disposition": "incomplete",
+      "name": "TPARTARGMAX",
+      "reason": "no matching English instruction page in the independent reference"
+    },
+    {
+      "disposition": "incomplete",
+      "name": "TPARTARGMIN",
+      "reason": "no matching English instruction page in the independent reference"
+    },
+    {
+      "disposition": "incomplete",
+      "document": "TPUSH.md",
+      "name": "TPUSH",
+      "reason": "page has placeholder rather than operation-specific mathematics",
+      "sha256": "34e864a307a288efc88b43c8074c4fe831dc402b026a557b1a6350c8e3767840"
+    },
+    {
+      "disposition": "incomplete",
+      "document": "TPOP.md",
+      "name": "TPOP",
+      "reason": "page has placeholder rather than operation-specific mathematics",
+      "sha256": "618f69d77a16158bdd754d1c42993bfbd5869cffaa1b4bbe66d29b6151fa2349"
+    },
+    {
+      "disposition": "incomplete",
+      "name": "TALLOC",
+      "reason": "no matching English instruction page in the independent reference"
+    },
+    {
+      "disposition": "incomplete",
+      "document": "TFREE.md",
+      "name": "TFREE",
+      "reason": "page has placeholder rather than operation-specific mathematics",
+      "sha256": "8a325b3d9e572ee964203ad2654a969c96620dcb74e54d236d174ed65afc881b"
+    }
+  ],
+  "policy": "semantic cross-check only; no private prose, code, diagrams, names, or repository paths are redistributed",
+  "schema_version": 1,
+  "source_class": "private-independent-tile-reference",
+  "worktree_dirty": true
+}

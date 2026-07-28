@@ -1,0 +1,19 @@
+PTO Instruction Set Architecture formal specification
+Copyright (c) 2026, Kevin Zhou
+
+This repository is the self-contained golden architecture contract for PTO.
+
+External evidence used for independent review:
+
+- PTO Tile Library public architecture documentation and public instruction
+  declarations, CANN Open Software License Agreement Version 2.0.
+  https://github.com/PTO-ISA/pto-isa
+- Private tile documentation was used only for an independent semantic
+  cross-check. No private text, source, diagrams, project names, or repository
+  paths are redistributed here.
+- ASLRef and the ASL language reference, BSD 2-Clause License.
+  https://github.com/herd/herdtools7/tree/master/asllib
+
+Names, selectors, bit assignments, and operation behavior in the canonical PTO
+catalogs are architecture facts. See docs/normative-sources.md and
+docs/traceability.md for the review and evidence policy.

@@ -1,7 +1,7 @@
 # Contributing
 
-`pto-spec` is currently an implementation-free template. Normative PTO semantics require an approved architecture
-change proposal before code is added.
+`pto-spec` is a normative draft. Normative PTO semantics require an approved
+architecture change proposal before code is added.
 
 ## Before opening a pull request
 
@@ -17,11 +17,18 @@ Keep changes small and reviewable. Complete the pull request template, disclose 
 `build/` or `.cache/` content. Normative changes must update `docs/traceability.md` and include executable semantic
 evidence appropriate to the change.
 
+For an accepted scalar form, update its exact mask/match, operand pieces,
+signedness, constraints, and semantic family together. For a tile operation,
+update its selector, handler mapping, evidence disposition, and tests together.
+Do not hand-edit `build/decoders.asl`; it is reproduced from the canonical
+catalogs during every build.
+
 Commit messages should explain intent and record important constraints, rejected alternatives, verification, and known
 gaps. Use native Git trailers when those details are useful.
 
-## Licensing gate
+## Licensing
 
-No project license has been selected. Do not copy third-party specification text or source into this repository.
-External semantic contributions cannot be accepted until maintainers approve and add a project license and contribution
-terms.
+Contributions are accepted under the BSD 3-Clause License in `LICENSE`. Do not
+copy third-party specification prose, source, or diagrams unless their license
+is compatible and attribution is recorded in `NOTICE`. Private cross-check
+material must never be copied, named, or linked from this repository.

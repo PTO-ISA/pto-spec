@@ -1,0 +1,740 @@
+{
+  "isa": "PTO Instruction Set Architecture",
+  "operation_count": 111,
+  "rejected_review_only_codes": {
+    "CUBE": [
+      5,
+      6,
+      8,
+      21,
+      22
+    ],
+    "TEPL": [
+      "0x00C"
+    ],
+    "TMA": [
+      6,
+      7,
+      8
+    ]
+  },
+  "operations": [
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TADD",
+      "selector": "0x000"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TSUB",
+      "selector": "0x001"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TMUL",
+      "selector": "0x002"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TMAX",
+      "selector": "0x004"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TMIN",
+      "selector": "0x005"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TAND",
+      "selector": "0x006"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TOR",
+      "selector": "0x007"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TXOR",
+      "selector": "0x008"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TSHL",
+      "selector": "0x009"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TSHR",
+      "selector": "0x00A"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TCMP",
+      "selector": "0x02B"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TSEL",
+      "selector": "0x02C"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TABS",
+      "selector": "0x02D"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TNOT",
+      "selector": "0x02E"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TNEG",
+      "selector": "0x02F"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TRELU",
+      "selector": "0x00B"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TDIV",
+      "selector": "0x003"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TREM",
+      "selector": "0x030"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TSQRT",
+      "selector": "0x010"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TLOG",
+      "selector": "0x00F"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TRECIP",
+      "selector": "0x018"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TEXP",
+      "selector": "0x00E"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TRSQRT",
+      "selector": "0x011"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TADDS",
+      "selector": "0x020"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TAXPY",
+      "selector": "0x031"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TSUBS",
+      "selector": "0x021"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TMULS",
+      "selector": "0x022"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TDIVS",
+      "selector": "0x023"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TMINS",
+      "selector": "0x025"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TMAXS",
+      "selector": "0x024"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TREMS",
+      "selector": "0x032"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TANDS",
+      "selector": "0x026"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TORS",
+      "selector": "0x027"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TXORS",
+      "selector": "0x028"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TCMPS",
+      "selector": "0x033"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TSELS",
+      "selector": "0x034"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TSHLS",
+      "selector": "0x029"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TSHRS",
+      "selector": "0x02A"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TROWSUM",
+      "selector": "0x014"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TROWPROD",
+      "selector": "0x035"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TROWMAX",
+      "selector": "0x012"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TROWMIN",
+      "selector": "0x013"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TROWARGMAX",
+      "selector": "0x036"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TROWARGMIN",
+      "selector": "0x037"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TCOLSUM",
+      "selector": "0x017"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TCOLPROD",
+      "selector": "0x038"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TCOLMAX",
+      "selector": "0x015"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TCOLMIN",
+      "selector": "0x016"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TCOLARGMAX",
+      "selector": "0x039"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TCOLARGMIN",
+      "selector": "0x03A"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TROWEXPAND",
+      "selector": "0x01F"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TROWEXPANDADD",
+      "selector": "0x03B"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TROWEXPANDSUB",
+      "selector": "0x03C"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TROWEXPANDMUL",
+      "selector": "0x03D"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TROWEXPANDDIV",
+      "selector": "0x03E"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TROWEXPANDMAX",
+      "selector": "0x03F"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TROWEXPANDMIN",
+      "selector": "0x040"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TROWEXPANDEXPDIF",
+      "selector": "0x041"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TCOLEXPAND",
+      "selector": "0x01E"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TCOLEXPANDADD",
+      "selector": "0x042"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TCOLEXPANDSUB",
+      "selector": "0x043"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TCOLEXPANDMUL",
+      "selector": "0x044"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TCOLEXPANDDIV",
+      "selector": "0x045"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TCOLEXPANDMAX",
+      "selector": "0x046"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TCOLEXPANDMIN",
+      "selector": "0x047"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TCOLEXPANDEXPDIF",
+      "selector": "0x048"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "function": 0,
+      "name": "TMATMUL"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "function": 1,
+      "name": "TMATMUL_BIAS"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "function": 2,
+      "name": "TMATMUL_ACC"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "function": 4,
+      "name": "TMATMUL_MX"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "function": 16,
+      "name": "TGEMV"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "function": 17,
+      "name": "TGEMV_BIAS"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "function": 18,
+      "name": "TGEMV_ACC"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "function": 20,
+      "name": "TGEMV_MX"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TMA",
+      "function": 0,
+      "name": "TLOAD"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TMA",
+      "function": 1,
+      "name": "TSTORE"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TMA",
+      "function": 3,
+      "name": "TPREFETCH"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TMA",
+      "function": 4,
+      "name": "MGATHER"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TMA",
+      "function": 5,
+      "name": "MSCATTER"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TEXPANDS",
+      "selector": "0x019"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TCI",
+      "selector": "0x080"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TTRI",
+      "selector": "0x081"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TFILLPAD",
+      "selector": "0x082"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TCVT",
+      "selector": "0x00D"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TQUANT",
+      "selector": "0x083"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TDEQUANT",
+      "selector": "0x084"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TEXTRACT",
+      "selector": "0x085"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TINSERT",
+      "selector": "0x086"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TGATHER",
+      "selector": "0x01A"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TSCATTER",
+      "selector": "0x01B"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TCONCAT",
+      "selector": "0x087"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TTRANS",
+      "selector": "0x01D"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TIMG2COL",
+      "selector": "0x088"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TMA",
+      "function": 2,
+      "name": "TMOV"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TGATHERB",
+      "selector": "0x089"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TDEINTERLEAVE",
+      "selector": "0x08A"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TINTERLEAVE",
+      "selector": "0x08B"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TRESHAPE",
+      "selector": "0x01C"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TSORT",
+      "selector": "0x0C0"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TMRGSORT",
+      "selector": "0x0C1"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "THISTOGRAM",
+      "selector": "0x0C2"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TPARTADD",
+      "selector": "0x0C3"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TPARTMUL",
+      "selector": "0x0C4"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TPARTMAX",
+      "selector": "0x0C5"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TPARTMIN",
+      "selector": "0x0C6"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TPARTARGMAX",
+      "selector": "0x0C7"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TPARTARGMIN",
+      "selector": "0x0C8"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TPUSH",
+      "selector": "0x0E0"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TPOP",
+      "selector": "0x0E1"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TALLOC",
+      "selector": "0x0E2"
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TFREE",
+      "selector": "0x0E3"
+    }
+  ],
+  "rejected_review_only_names": [
+    "TEXRACT",
+    "TFILL/TEXPANDS",
+    "TFMOD",
+    "TFMODS",
+    "TLRELU\uff1f",
+    "TPOW",
+    "TPOWS",
+    "TPRELU\uff1f",
+    "TRANDOM"
+  ],
+  "reserved": {
+    "cube_functions_without_named_alias": [
+      3,
+      7,
+      [
+        9,
+        15
+      ],
+      19,
+      [
+        23,
+        31
+      ]
+    ],
+    "tepl_selector_ranges": [
+      [
+        "0x049",
+        "0x07F"
+      ],
+      [
+        "0x08C",
+        "0x0BF"
+      ],
+      [
+        "0x0C9",
+        "0x0DF"
+      ],
+      [
+        "0x0E4",
+        "0x3FF"
+      ]
+    ],
+    "tma_functions": [
+      [
+        9,
+        31
+      ]
+    ]
+  },
+  "schema_version": 1
+}

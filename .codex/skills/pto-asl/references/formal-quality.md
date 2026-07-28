@@ -26,6 +26,11 @@ Check:
   covered where applicable.
 - **Ordering**: memory, event, and asynchronous effects state their ordering guarantees.
 - **Portability**: backend constraints are not silently promoted to virtual-ISA rules.
+- **Decode closure**: every accepted encoding has a canonical positive witness, overlaps have reviewed priority, and
+  every catalog-reserved or review-only selector rejects.
+- **Catalog closure**: every accepted direct operation maps to exactly one semantic handler and validation feature.
+- **Evidence hygiene**: external comparison evidence records provenance and disposition without importing incompatible
+  material into the normative model.
 
 ## Test shape
 
@@ -43,6 +48,10 @@ Require the relevant subset of:
 
 Successful ASLRef execution proves consistency with the written model, not correctness of the model against the PTO
 architecture. Traceability and review supply that second proof obligation.
+
+For PTO instruction-set changes, `scripts/check-catalogs` is the minimum closure gate. It must prove scalar-form counts,
+tile-family counts, decode witnesses, exact tile handler coverage, traceability paths, and the one-level boundary before
+the ASLRef test result is considered meaningful.
 
 ## Change isolation
 
