@@ -89,6 +89,20 @@ known independent-documentation conflict in favor of the canonical PTO contract.
 - The bounded ASL byte array is executable-test infrastructure, not the
   architectural address-space size.
 
+Every retained data access first produces a profile-backed probe containing its
+translated address or architectural fault. A scalar pair or tile memory
+instruction probes its complete ordered access set before its first register,
+tile, memory, writeback, or reservation effect. The first failing original
+address is reported. A fault commits none of the instruction's accesses and
+records no hidden progress; restart means reissuing the same instruction from
+its first access after the faulting condition is removed. Single accesses use
+the same probe boundary before their byte effects. Translation and permission
+profiles must return a stable decision for all probes within one instruction.
+
+DMA64 is not part of the current accepted PTO scalar surface. Its former
+encoding is rejected as an illegal instruction; a future DMA contract requires
+an independently specified operation, completion rule, and public source.
+
 Exact scalar form recognition and operand extraction are generated from the
 normative catalog. Split fields are reconstructed into contiguous values;
 signedness remains explicit metadata so instruction semantics, not the decoder,
@@ -96,7 +110,7 @@ controls extension and scaling. Reg5 bridge behavior is defined in
 `asl/scalar/operands.asl`.
 
 `ExecuteScalarInstruction` is the decoded scalar execution boundary. Unknown or
-illegal encodings raise the illegal-instruction fault, and all 474 accepted
+illegal encodings raise the illegal-instruction fault, and all 473 accepted
 forms execute checked-in state transitions. `ScalarExecution_Unsupported` is
 reserved for a future recognized family that lacks a completed binding; no
 current catalog form returns it.

@@ -13,6 +13,7 @@ begin
     TestScalarTileLegalityFaults();
     TestScalarInteger();
     TestScalarMemory();
+    TestScalarPairMemoryCompletion();
     TestScalarAtomics();
     TestScalarSystem();
     TestScalarFloating();
@@ -29,5 +30,6 @@ begin
     TestTileHandlerClosure();
     TestDecodedTileExecution();
     TestDecodedTileLegalityFaults();
+    TestTileMemoryCompletionAndRestart();
     return 0;
 end;

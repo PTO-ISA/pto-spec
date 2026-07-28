@@ -129,6 +129,55 @@ begin
         TileLayout_RowMajor, TileLocation_Vector);
 end;
 
+// PTO-REQ-MEMORY-COMPLETION-001: pair accesses preflight both elements, expose
+// the first failing address, preserve all destinations, and restart by reissue.
+func TestScalarPairMemoryCompletion()
+begin
+    WriteGPR(2, Zeros{PTO_XLEN} + 4088);
+    WriteGPR(6, Zeros{PTO_XLEN} + 0x66);
+    WriteGPR(7, Zeros{PTO_XLEN} + 0x77);
+    Store(Zeros{PTO_XLEN} + 4088, 8, Zeros{PTO_XLEN} + 0x88);
+    ClearFault();
+    ExecuteScalarLoadPair(6, 7, 2, Zeros{PTO_XLEN}, 8, FALSE,
+        AddressUpdate_None);
+    assert _LastFault == Fault_DataPage;
+    assert _FaultAddress == Zeros{PTO_XLEN} + 4096;
+    assert ReadGPR(6) == Zeros{PTO_XLEN} + 0x66;
+    assert ReadGPR(7) == Zeros{PTO_XLEN} + 0x77;
+
+    WriteGPR(3, Zeros{PTO_XLEN} + 0x33);
+    WriteGPR(5, Zeros{PTO_XLEN} + 0x55);
+    ClearFault();
+    ExecuteScalarStorePair(3, 5, 2, Zeros{PTO_XLEN}, 8,
+        AddressUpdate_None);
+    assert _LastFault == Fault_DataPage;
+    assert _FaultAddress == Zeros{PTO_XLEN} + 4096;
+    ClearFault();
+    let preserved_first = LoadUnsigned(Zeros{PTO_XLEN} + 4088, 8);
+    assert preserved_first == Zeros{PTO_XLEN} + 0x88;
+
+    WriteGPR(2, Zeros{PTO_XLEN} + 4096);
+    WriteGPR(6, Zeros{PTO_XLEN} + 0x66);
+    WriteGPR(7, Zeros{PTO_XLEN} + 0x77);
+    ClearFault();
+    ExecuteScalarLoadPair(6, 7, 2, Zeros{PTO_XLEN}, 8, FALSE,
+        AddressUpdate_None);
+    assert _LastFault == Fault_DataPage;
+    assert _FaultAddress == Zeros{PTO_XLEN} + 4096;
+    assert ReadGPR(6) == Zeros{PTO_XLEN} + 0x66;
+    assert ReadGPR(7) == Zeros{PTO_XLEN} + 0x77;
+
+    Store(Zeros{PTO_XLEN} + 4000, 8, Zeros{PTO_XLEN} + 0x11);
+    Store(Zeros{PTO_XLEN} + 4008, 8, Zeros{PTO_XLEN} + 0x22);
+    WriteGPR(2, Zeros{PTO_XLEN} + 4000);
+    ClearFault();
+    ExecuteScalarLoadPair(6, 7, 2, Zeros{PTO_XLEN}, 8, FALSE,
+        AddressUpdate_None);
+    assert _LastFault == Fault_None;
+    assert ReadGPR(6) == Zeros{PTO_XLEN} + 0x11;
+    assert ReadGPR(7) == Zeros{PTO_XLEN} + 0x22;
+end;
+
 func TestScalarSystemDispatchEffects()
 begin
     ClearFault();
@@ -318,15 +367,17 @@ begin
     let compare_swap_value = LoadUnsigned(Zeros{PTO_XLEN} + 152, 4);
     assert compare_swap_value == Zeros{PTO_XLEN} + 9;
 
-    WriteMemoryByte(Zeros{PTO_XLEN} + 256, Zeros{8} + 0xa5);
+    ClearFault();
+    WriteMemoryByte(Zeros{PTO_XLEN} + 448, Zeros{8} + 0x5a);
     WriteGPR(2, Zeros{PTO_XLEN} + 256);
     WriteGPR(3, Zeros{PTO_XLEN} + 448);
-    var dma_instruction: bits(48) = Zeros{48} + 0x0000700b;
-    dma_instruction[19:15] = Zeros{5} + 2;
-    dma_instruction[24:20] = Zeros{5} + 3;
-    let dma_status = ExecuteScalarInstruction(dma_instruction, 32);
-    assert dma_status == ScalarExecution_Executed;
-    assert ReadMemoryByte(Zeros{PTO_XLEN} + 448) == Zeros{8} + 0xa5;
+    var removed_dma: bits(48) = Zeros{48} + 0x0000700b;
+    removed_dma[19:15] = Zeros{5} + 2;
+    removed_dma[24:20] = Zeros{5} + 3;
+    let removed_dma_status = ExecuteScalarInstruction(removed_dma, 32);
+    assert removed_dma_status == ScalarExecution_Rejected;
+    assert _LastFault == Fault_IllegalInstruction;
+    assert ReadMemoryByte(Zeros{PTO_XLEN} + 448) == Zeros{8} + 0x5a;
 end;
 
 func TestScalarAGUDispatchEffects()
@@ -832,14 +883,6 @@ begin
     assert old_signed_min == Zeros{PTO_XLEN} + 0xff;
     assert after_signed_min == Zeros{PTO_XLEN} + 0xff;
 
-    for byte_index = 0 to 63 do
-        let offset = NaturalToWord(byte_index as integer {0..262144});
-        WriteMemoryByte(Zeros{PTO_XLEN} + 256 + offset,
-            (Zeros{8} + byte_index) as Byte);
-    end;
-    DMA64(Zeros{PTO_XLEN} + 256, Zeros{PTO_XLEN} + 384);
-    assert ReadMemoryByte(Zeros{PTO_XLEN} + 384) == Zeros{8};
-    assert ReadMemoryByte(Zeros{PTO_XLEN} + 447) == Zeros{8} + 63;
 end;
 
 func TestScalarSystem()

@@ -225,11 +225,12 @@
       "name": "TranslateDataAddress",
       "portable_default": "Use identity translation for scalar data accesses.",
       "profile_obligations": [
-        "Define translation inputs, address-space selection, access-size behavior, and translation-fault priority."
+        "Define translation inputs, address-space selection, access-size behavior, and translation-fault priority.",
+        "Return a stable translated address for every repeated probe of one architectural access during an instruction."
       ],
       "requirement": "PTO-REQ-MEMORY-001",
       "status": "explicit-impdef",
-      "tests": ["tests/asl/scalar-tests.asl"]
+      "tests": ["tests/asl/scalar-tests.asl", "tests/asl/tile-tests.asl"]
     },
     {
       "domain": "memory-permission",
@@ -237,11 +238,12 @@
       "name": "DataAccessPermitted",
       "portable_default": "Permit reads and writes wholly contained in the bounded model memory.",
       "profile_obligations": [
-        "Define read/write permissions, bounds, access-size behavior, and permission-fault priority."
+        "Define read/write permissions, bounds, access-size behavior, and permission-fault priority.",
+        "Return a stable permission decision for every repeated probe of one architectural access during an instruction."
       ],
       "requirement": "PTO-REQ-MEMORY-001",
       "status": "explicit-impdef",
-      "tests": ["tests/asl/scalar-tests.asl"]
+      "tests": ["tests/asl/scalar-tests.asl", "tests/asl/tile-tests.asl"]
     },
     {
       "domain": "tile-elementwise",

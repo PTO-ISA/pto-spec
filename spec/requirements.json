@@ -121,6 +121,19 @@
       "tests": ["tests/asl/scalar-tests.asl"]
     },
     {
+      "id": "PTO-REQ-MEMORY-COMPLETION-001",
+      "model": [
+        "asl/scalar/addressing.asl",
+        "asl/scalar/dispatch.asl",
+        "asl/scalar/memory.asl",
+        "asl/tile/memory.asl",
+        "spec/profile-hooks.json"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
+      "status": "implemented-with-memory-profile",
+      "tests": ["tests/asl/scalar-tests.asl", "tests/asl/tile-tests.asl"]
+    },
+    {
       "id": "PTO-REQ-TILE-001",
       "model": ["asl/types.asl", "asl/tile/state.asl"],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",

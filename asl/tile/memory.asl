@@ -1,4 +1,5 @@
-// PTO-REQ-TMA-001: direct TLOAD/TSTORE/TMOV and destination-free TPREFETCH.
+// PTO-REQ-TMA-001, PTO-REQ-MEMORY-COMPLETION-001: precise, restartable direct
+// TLOAD/TSTORE/MGATHER/MSCATTER and destination-free TPREFETCH.
 
 func TMOV(destination: TileIndex, source: TileIndex)
 begin
@@ -13,17 +14,29 @@ begin
     let tile = _Tiles[[destination]];
     assert tile.allocated;
     let element_bytes = TileElementBytes(tile.data_type);
+    var translated_addresses: TilePayload;
+    // Instruction-wide preflight makes tile memory faults precise and
+    // restartable: no payload element changes until every access succeeds.
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
             let element = TileLinearIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let offset = (element * element_bytes) as integer {0..262144};
             let address = base_address + NaturalToWord(offset);
-            if TileDataTypeIsSigned(tile.data_type) then
-                _Tiles[[destination]].payload[[element]] = LoadSigned(address, element_bytes);
-            else
-                _Tiles[[destination]].payload[[element]] = LoadUnsigned(address, element_bytes);
-            end;
+            let probe = ProbeDataAccess(
+                address, element_bytes, element_bytes, FALSE);
+            if RaiseDataAccessFault(probe, address) then return; end;
+            translated_addresses[[element]] = probe.translated_address;
+        end;
+    end;
+    for row = 0 to tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
+            let element = TileLinearIndex(tile,
+                row as integer {0..65535}, column as integer {0..65535});
+            let value = LoadTranslatedUnsigned(
+                translated_addresses[[element]], element_bytes);
+            _Tiles[[destination]].payload[[element]] = NormalizeLoadedValue(
+                value, element_bytes, TileDataTypeIsSigned(tile.data_type));
         end;
     end;
 end;
@@ -34,13 +47,28 @@ begin
     assert tile.allocated;
     let element_bytes = TileElementBytes(tile.data_type);
     let payload = tile.payload;
+    var original_addresses: TilePayload;
+    var translated_addresses: TilePayload;
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
             let element = TileLinearIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let offset = (element * element_bytes) as integer {0..262144};
             let address = base_address + NaturalToWord(offset);
-            Store(address, element_bytes, payload[[element]]);
+            let probe = ProbeDataAccess(
+                address, element_bytes, element_bytes, TRUE);
+            if RaiseDataAccessFault(probe, address) then return; end;
+            original_addresses[[element]] = address;
+            translated_addresses[[element]] = probe.translated_address;
+        end;
+    end;
+    for row = 0 to tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
+            let element = TileLinearIndex(tile,
+                row as integer {0..65535}, column as integer {0..65535});
+            StoreTranslated(original_addresses[[element]],
+                translated_addresses[[element]], element_bytes,
+                payload[[element]]);
         end;
     end;
 end;
@@ -54,16 +82,27 @@ begin
     let index_payload = index_tile.payload;
     let element_bytes = TileElementBytes(destination_tile.data_type);
     let byte_width = NaturalToWord(element_bytes as integer {0..262144});
+    var translated_addresses: TilePayload;
     for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
             let element = TileLinearIndex(destination_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let address = base_address + MultiplyWord(index_payload[[element]], byte_width);
-            if TileDataTypeIsSigned(destination_tile.data_type) then
-                _Tiles[[destination]].payload[[element]] = LoadSigned(address, element_bytes);
-            else
-                _Tiles[[destination]].payload[[element]] = LoadUnsigned(address, element_bytes);
-            end;
+            let probe = ProbeDataAccess(
+                address, element_bytes, element_bytes, FALSE);
+            if RaiseDataAccessFault(probe, address) then return; end;
+            translated_addresses[[element]] = probe.translated_address;
+        end;
+    end;
+    for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
+            let element = TileLinearIndex(destination_tile,
+                row as integer {0..65535}, column as integer {0..65535});
+            let value = LoadTranslatedUnsigned(
+                translated_addresses[[element]], element_bytes);
+            _Tiles[[destination]].payload[[element]] = NormalizeLoadedValue(
+                value, element_bytes,
+                TileDataTypeIsSigned(destination_tile.data_type));
         end;
     end;
 end;
@@ -78,12 +117,27 @@ begin
     let index_payload = index_tile.payload;
     let element_bytes = TileElementBytes(source_tile.data_type);
     let byte_width = NaturalToWord(element_bytes as integer {0..262144});
+    var original_addresses: TilePayload;
+    var translated_addresses: TilePayload;
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
             let element = TileLinearIndex(source_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let address = base_address + MultiplyWord(index_payload[[element]], byte_width);
-            Store(address, element_bytes, source_payload[[element]]);
+            let probe = ProbeDataAccess(
+                address, element_bytes, element_bytes, TRUE);
+            if RaiseDataAccessFault(probe, address) then return; end;
+            original_addresses[[element]] = address;
+            translated_addresses[[element]] = probe.translated_address;
+        end;
+    end;
+    for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
+            let element = TileLinearIndex(source_tile,
+                row as integer {0..65535}, column as integer {0..65535});
+            StoreTranslated(original_addresses[[element]],
+                translated_addresses[[element]], element_bytes,
+                source_payload[[element]]);
         end;
     end;
 end;
@@ -94,11 +148,7 @@ begin
     // legality checks as a load but allocates and writes no tile state.
     if byte_count > 0 then
         let access_size = byte_count as integer {1..262144};
-        let translated_address = TranslateDataAddress(
-            base_address, access_size, FALSE);
-        if !DataAccessPermitted(translated_address, access_size, FALSE) ||
-           UInt(translated_address) + byte_count > PTO_MODEL_MEMORY_BYTES then
-            SetFault(Fault_DataPage, base_address);
-        end;
+        let probe = ProbeDataAccess(base_address, access_size, 1, FALSE);
+        - = RaiseDataAccessFault(probe, base_address);
     end;
 end;

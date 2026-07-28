@@ -19,7 +19,7 @@ are resolved by an architecture decision or remain explicitly incomplete in
 
 ## Golden catalog
 
-The scalar catalog contains 474 accepted forms across AGU, ALU, AMO, BRU, FSU,
+The scalar catalog contains 473 accepted forms across AGU, ALU, AMO, BRU, FSU,
 and SYS. Every row has a stable PTO form ID, assembly grammar, instruction width,
 semantic family/group, exact mask/match encoding, operand-field pieces,
 signedness, and form-legality constraints. The generated ASL decoder provides a

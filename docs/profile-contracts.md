@@ -26,7 +26,7 @@ profile. Unlisted implementation choices are specification defects.
 | Scalar raw floating arithmetic | `ScalarFPBinaryProfile`, `ScalarFPUnaryProfile`, `ScalarFPFusedProfile` | normalized identity/addend payloads, no new flags | correctly rounded encodings, exceptional values, sticky flags |
 | Scalar raw conversion | `ScalarFPToIntegerProfile`, `ScalarFPConvertProfile`, `ScalarIntegerToFPProfile` | identity payload before normative destination packing | type-pair legality, rounding, saturation, NaN/overflow/underflow, flags |
 | Atomic address class | `AtomicAddress` | preserve the decoded address | address-class selection, translation, faults, reservations |
-| Scalar and tile data access | `TranslateDataAddress`, `DataAccessPermitted` | identity translation into bounded read/write memory | translation, permissions, bounds, fault priority |
+| Scalar and tile data access | `TranslateDataAddress`, `DataAccessPermitted` | identity translation into bounded read/write memory | translation, permissions, bounds, fault priority, and a stable decision across one instruction's preflight |
 | Tile floating functions | `TileSquareRoot`, `TileLogarithm`, `TileReciprocal`, `TileExponential`, `TileExpDifference` | deterministic raw-bitvector defaults | per-type encodings, accuracy, exceptional values, rounding |
 | Tile elementwise arithmetic | `TileProfileBinary`, `TileProfileUnary`, `TileProfileAxpy` | deterministic raw-bitvector arithmetic | per-type arithmetic, precision, rounding, exceptional values |
 | Tile comparison and ordering | `TileProfileCompare`, `TileProfileOrderLeft` | signed raw-payload ordering with stable ties | per-type ordering, equality, NaN and signed-zero behavior, ties |
