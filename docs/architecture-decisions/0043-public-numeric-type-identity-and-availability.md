@@ -55,10 +55,11 @@ E5M2/E5M3FN conflict, define bit-exact payload and exceptional-value formats,
 complete the operation/type/profile legality matrix, and publish target
 availability vectors.
 
-The pinned Linx Sail model is only structural evidence here. Its scalar type
-fields corroborate carrier namespaces, while its tile numeric selectors do not
-execute payload arithmetic and use code spaces that conflict with PTO catalog
-names. It therefore supplies neither these public bindings nor a result oracle.
+The pinned independent executable model is only structural evidence here. Its
+scalar type fields corroborate carrier namespaces, while its tile numeric
+selectors do not execute payload arithmetic and use code spaces that conflict
+with PTO catalog names. It therefore supplies neither these public bindings nor
+a result oracle.
 
 ## Evidence
 

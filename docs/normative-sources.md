@@ -200,8 +200,18 @@ target-profile, and portability sources plus the closed namespace inventory.
 ADR 0043 makes all 16 published type identities, 11 unambiguous catalog
 bindings, and the 11-type A2/A3 / 16-type A5 availability baseline normative.
 It leaves six catalog names unbound and seven bit-exact format, legality, and
-vector residuals open. Its Linx Sail comparison is structural only and supplies
-no PTO type binding or numeric result.
+vector residuals open. Its independent-model comparison is structural only and
+supplies no PTO type binding or numeric result.
+
+`public-integer-conversion-contract.json` is generated from the pinned public
+type-system lines, the accepted public type baseline, the numeric ownership
+inventory, and executable PTO witnesses. ADR 0044 makes its three result rules
+and 48 unequal-width public integer `TCVT` tuples normative, conditional on a
+profile accepting the tuple. The pinned independent vector-conversion
+comparison is algorithmic corroboration only: its type codes, predicates,
+packing, and support rules are not PTO authority. Same-width and floating
+conversions, legality, rounding, saturation, exceptional values, and flags
+remain open.
 
 `numeric-profile-applicability-closure.json` is generated from the profile
 applicability catalog, direct tile catalog, PD-02 namespace ledger, pinned

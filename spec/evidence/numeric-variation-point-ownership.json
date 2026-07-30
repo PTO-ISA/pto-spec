@@ -9206,6 +9206,17 @@
     "result_rule_count": 0,
     "status": "accepted-support-rejection-separate-from-numeric-results"
   },
+  "bounded_result_subsets": [
+    {
+      "path": "spec/evidence/public-integer-conversion-contract.json",
+      "operation_key": "tile:TEPL:TCVT",
+      "domain": "tile-convert",
+      "result_rule_count": 3,
+      "tuple_count": 48,
+      "profile_support_rule_count": 0,
+      "status": "accepted-portable-results-only-after-profile-support"
+    }
+  ],
   "sources": [
     {
       "path": "spec/evidence/numeric-contracts.json",
@@ -9233,7 +9244,11 @@
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "3cd6d3b03075398287dfe5a3d114f593286b95691d498d9df9511ddaef3b5484"
+      "sha256": "9ee660158b15a403fa7e2d7c16aaa51f6b5475006f7440270de6521db306f8ed"
+    },
+    {
+      "path": "spec/evidence/public-integer-conversion-contract.json",
+      "sha256": "82849d0610e0ab02321025cfc41bd7794bbeef7ea94a8d88791a07375bf63927"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
@@ -9255,6 +9270,8 @@
     "portable_decision_owner_point_count": 99,
     "selected_route_count": 0,
     "accepted_result_rule_count": 0,
+    "accepted_bounded_result_subset_rule_count": 3,
+    "accepted_bounded_result_subset_tuple_count": 48,
     "accepted_unsupported_tuple_count": 114,
     "accepted_domain_result_rule_count": 0,
     "pd12_complete": false,

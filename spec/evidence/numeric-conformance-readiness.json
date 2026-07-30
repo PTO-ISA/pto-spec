@@ -23,6 +23,15 @@
     "accepted_result_rule_count": 0,
     "accepted_domain_rule_count": 0
   },
+  "public_integer_conversion": {
+    "path": "spec/evidence/public-integer-conversion-contract.json",
+    "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
+    "acceptance_record": "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
+    "accepted_result_rule_count": 3,
+    "accepted_unequal_width_tuple_count": 48,
+    "accepted_profile_support_rule_count": 0,
+    "accepted_domain_rule_count": 0
+  },
   "identity_framework": {
     "status": "closed:S5-T2-A1",
     "accepted_identity_count": 4,
@@ -47,7 +56,8 @@
       "closed_checkpoints": [
         "S5-T2-A1",
         "S5-T2-A4",
-        "S5-T2-A5"
+        "S5-T2-A5",
+        "S5-T2-A6"
       ]
     },
     {
@@ -581,6 +591,8 @@
     "accepted_selection_framework_rule_count": 5,
     "accepted_public_type_binding_count": 11,
     "public_type_identity_count": 16,
+    "accepted_bounded_result_rule_count": 3,
+    "accepted_bounded_result_tuple_count": 48,
     "profile_identity_count": 0,
     "qualified_oracle_count": 0,
     "vector_manifest_count": 0,

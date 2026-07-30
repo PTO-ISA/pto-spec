@@ -27,7 +27,10 @@ begin
     if TileDataTypeIsFloating(source_type) || TileDataTypeIsFloating(destination_type) then
         return TileProfileConvert(value, source_type, destination_type);
     else
-        return NormalizeTileInteger(value, destination_type);
+        // Integer conversion first interprets the source width/signedness,
+        // then truncates or extends into the destination representation.
+        return NormalizeTileInteger(
+            NormalizeTileInteger(value, source_type), destination_type);
     end;
 end;
 

@@ -203,7 +203,7 @@ open, and the repository remains at M4, until every sub-stage below closes.
 
 | Sub-stage | Current state | Clear target | Required exit evidence |
 | --- | --- | --- | --- |
-| `S5-T2-A` — profile decision | Checkpoints A1, A4, and A5 are closed; complete result decisions remain open | Apply the four accepted identities and fail-closed selection rules. Preserve the 99-point ownership ledger. Use the A5 public baseline of 16 identities, 11 accepted catalog bindings, 11 A2/A3 types, and 16 A5 types without treating availability as legality or result semantics. Resolve the remaining seven PD-02 residuals, all 12 decisions, all 20 domain rules, 19 profile-owned flag conditions, and every selected variation route/result bound. | Accepted records populate all 12 decisions and 20 domain rules; every non-portable point has one visible route and bounded result contract; all format, legality, flag, rounding, and target-support residuals have reproducible evidence. |
+| `S5-T2-A` — profile decision | Checkpoints A1, A4, A5, and A6 are closed; complete result decisions remain open | Apply the four accepted identities and fail-closed selection rules. Preserve the 99-point ownership ledger. Use the A5 public baseline of 16 identities, 11 accepted catalog bindings, 11 A2/A3 types, and 16 A5 types without treating availability as legality or result semantics. Preserve A6's three conditional result rules over all 48 unequal-width public integer `TCVT` pairs without turning them into support claims. Resolve the seven PD-02 and six PD-07 residuals, all 12 complete decisions, all 20 domain rules, 19 profile-owned flag conditions, and every broad selected variation route/result bound. | Accepted records populate all 12 decisions and 20 domain rules; every non-portable point has one visible route and bounded result contract; all format, legality, conversion, flag, rounding, and target-support residuals have reproducible evidence. |
 | `S5-T2-B` — oracle qualification | Waiting on A | Select an independent, versioned oracle for each lane. The implementation under test and the `pto-v0` reference are not independent oracles. | Reproducible oracle identity, version/digest, invocation, supported domain list, known limitations, and a reviewer-approved rule for any target behavior that requires hardware capture rather than a software arithmetic library. |
 | `S5-T2-C` — vector corpus | Waiting on A–B | Generate deterministic inputs for every operation and every open numeric dimension. | Normal, minimum/maximum, boundary, signed-zero, subnormal, infinity, NaN, tie, overflow, underflow, divide-by-zero, rounding, saturation, reduction-order, and accumulation cases as applicable; each vector links to one operation key, profile, oracle, and expected disposition. |
 | `S5-T2-D` — differential execution | Waiting on B–C | Run the six numeric lanes independently and preserve raw oracle and PTO results. | All 20 contract domains, 29 hooks, and 108 operations are assigned exactly once; every vector produces a reproducible match, mismatch, unsupported, or implementation-defined record; no lane is missing or duplicated. |
@@ -258,6 +258,15 @@ bindings, and fixes availability at 11 types for A2/A3 and 16 for A5. It keeps
 F64, FP8, FPL8, FP4, FPL4, and E8M0 unbound where the public contract is absent
 or ambiguous. Seven bit-exact format, legality, and vector residuals remain;
 accepted result and domain-rule counts remain zero.
+ADR 0044 and `spec/evidence/public-integer-conversion-contract.json` close
+`S5-T2-A6`, the first bounded PD-07 result checkpoint. Its 48 generated tuples
+cover every ordered unequal-width pair among the eight public integer types.
+Three portable rules define signed widening, unsigned widening, and narrowing
+only after the selected profile accepts the tuple. Six residuals keep
+same-width conversions, floating conversions, support legality,
+overflow/saturation and exceptional results, rounding/flags, and independent
+vectors open. PD-07, `tile-convert`, `S5-T2-A`, and M5 therefore remain open;
+the complete-decision and complete-domain-rule counts remain 0/12 and 0/20.
 
 #### Parallel numeric lanes
 
@@ -358,6 +367,10 @@ configuration from being confused with a passing release candidate.
   public identity/availability baseline. It closes 16 public identities, 11
   catalog bindings, and the two target partitions while retaining seven
   explicit format, legality, and vector residuals.
+- `spec/evidence/public-integer-conversion-contract.json` is the generated
+  PD-07 bounded-result package. It closes three portable rules across 48
+  unequal-width public integer `TCVT` tuples while keeping profile support and
+  six conversion residuals explicit.
 - `spec/evidence/numeric-profile-applicability-closure.json` is the generated
   PD-01 A2/A3 MX negative-applicability package. It closes 114 unsupported
   tuples and leaves result semantics open.

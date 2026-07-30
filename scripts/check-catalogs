@@ -677,6 +677,9 @@ def main() -> int:
     public_numeric_types = load(
         "spec/evidence/public-numeric-type-baseline.json"
     )
+    public_integer_conversion = load(
+        "spec/evidence/public-integer-conversion-contract.json"
+    )
     numeric_profile_applicability_closure = load(
         "spec/evidence/numeric-profile-applicability-closure.json"
     )
@@ -784,7 +787,7 @@ def main() -> int:
     )
     require(
         specification["maturity"]["numeric_profile_decisions"]
-        == "identity-framework-flag-lifecycle-rounding-selector-format-namespace-public-type-baseline-a2a3-mx-negative-applicability-and-variation-ownership-closed-stage-S5-T2-A-results-open",
+        == "identity-framework-flag-lifecycle-rounding-selector-format-namespace-public-type-baseline-public-integer-conversion-a2a3-mx-negative-applicability-and-variation-ownership-closed-stage-S5-T2-A-results-open",
         "numeric profile metadata must distinguish complete proposals from open acceptance",
     )
     require(
@@ -2846,6 +2849,180 @@ def main() -> int:
             for row in public_numeric_types["sources"]
         ),
         "public numeric type source line or hash contract drift",
+    )
+    require(
+        set(public_integer_conversion)
+        == {
+            "acceptance_record",
+            "checkpoint_id",
+            "conversion_tuples",
+            "decision_id",
+            "independent_comparison",
+            "open_residuals",
+            "operation",
+            "policy",
+            "result_rules",
+            "schema_version",
+            "source_line_contracts",
+            "sources",
+            "status",
+            "summary",
+            "target",
+            "tests",
+        }
+        and public_integer_conversion["schema_version"] == 1
+        and public_integer_conversion["target"] == "S5-T2-A6:PD-07-SC1"
+        and public_integer_conversion["decision_id"] == "PD-07"
+        and public_integer_conversion["checkpoint_id"] == "PD-07-SC1"
+        and public_integer_conversion["status"]
+        == "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open"
+        and public_integer_conversion["acceptance_record"]
+        == "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md"
+        and all(public_integer_conversion["policy"].values()),
+        "public integer conversion identity, schema, or policy drift",
+    )
+    integer_conversion_rules = {
+        row["id"]: row for row in public_integer_conversion["result_rules"]
+    }
+    require(
+        list(integer_conversion_rules)
+        == [
+            "PTO-NUM-INT-SIGN-EXTEND",
+            "PTO-NUM-INT-ZERO-EXTEND",
+            "PTO-NUM-INT-TRUNCATE-HIGH",
+        ]
+        and all(
+            row["status"] == "accepted-portable-result-rule"
+            and row["applicability"]
+            and row["result"]
+            for row in integer_conversion_rules.values()
+        ),
+        "public integer conversion result-rule drift",
+    )
+    integer_type_rows = {
+        row["id"]: row
+        for row in public_type_rows
+        if row["class"] == "integer"
+    }
+    integer_conversion_tuples = public_integer_conversion["conversion_tuples"]
+    require(
+        len(integer_conversion_tuples)
+        == len({row["id"] for row in integer_conversion_tuples})
+        == 48
+        and Counter(row["width_relation"] for row in integer_conversion_tuples)
+        == Counter({"widening": 24, "narrowing": 24})
+        and all(
+            row["operation_key"] == "tile:TEPL:TCVT"
+            and row["domain"] == "tile-convert"
+            and row["source_public_type_id"] in integer_type_rows
+            and row["destination_public_type_id"] in integer_type_rows
+            and row["source_bits"]
+            == integer_type_rows[row["source_public_type_id"]]["storage_bits"]
+            and row["destination_bits"]
+            == integer_type_rows[row["destination_public_type_id"]]["storage_bits"]
+            and row["source_signed"]
+            == integer_type_rows[row["source_public_type_id"]]["signed"]
+            and row["destination_signed"]
+            == integer_type_rows[row["destination_public_type_id"]]["signed"]
+            and row["source_catalog_type"]
+            == integer_type_rows[row["source_public_type_id"]]["catalog_binding"]
+            and row["destination_catalog_type"]
+            == integer_type_rows[row["destination_public_type_id"]]["catalog_binding"]
+            and row["source_bits"] != row["destination_bits"]
+            and row["result_rule_id"]
+            == (
+                "PTO-NUM-INT-TRUNCATE-HIGH"
+                if row["width_relation"] == "narrowing"
+                else (
+                    "PTO-NUM-INT-SIGN-EXTEND"
+                    if row["source_signed"]
+                    else "PTO-NUM-INT-ZERO-EXTEND"
+                )
+            )
+            and row["profile_support_status"]
+            == "operation-type-profile-legality-open"
+            and row["result_status"] == "accepted-if-profile-supported"
+            and row["result_acceptance_record"]
+            == public_integer_conversion["acceptance_record"]
+            for row in integer_conversion_tuples
+        ),
+        "public integer conversion tuple partition or support boundary drift",
+    )
+    require(
+        public_integer_conversion["operation"]
+        == {
+            "key": "tile:TEPL:TCVT",
+            "mnemonic": "TCVT",
+            "public_name": "pto.tcvt",
+            "domain": "tile-convert",
+            "semantic_handler": "TCVT",
+            "portable_result_function": "TileConvertValue",
+            "floating_profile_hook": "TileProfileConvert",
+        }
+        and public_integer_conversion["source_line_contracts"]
+        == [
+            {
+                "source_id": "public-type-system",
+                "sha256": next(
+                    row["sha256"]
+                    for row in numeric_profile_decisions["sources"]
+                    if row["id"] == "public-type-system"
+                ),
+                "line_ranges": ["100-107", "117-124"],
+                "claim": "integer widening/narrowing results and pto.tcvt operation identity",
+            }
+        ]
+        and public_integer_conversion["independent_comparison"]["status"]
+        == "algorithmic-corroboration-only-not-pto-authority"
+        and public_integer_conversion["independent_comparison"]["provenance_sha256"]
+        == executable_model_comparison["snapshot"]["revision_sha256"]
+        and [row["id"] for row in public_integer_conversion["open_residuals"]]
+        == [f"PD-07-R{index}" for index in range(1, 7)]
+        and public_integer_conversion["summary"]
+        == {
+            "public_integer_type_count": 8,
+            "candidate_ordered_pair_count": 64,
+            "same_width_pair_count": 16,
+            "accepted_unequal_width_tuple_count": 48,
+            "accepted_widening_tuple_count": 24,
+            "accepted_narrowing_tuple_count": 24,
+            "accepted_result_rule_count": 3,
+            "accepted_domain_rule_count": 0,
+            "accepted_profile_support_rule_count": 0,
+            "open_residual_count": 6,
+            "pd07_complete": False,
+            "tile_convert_domain_complete": False,
+            "s5_t2_a_complete": False,
+            "s5_t2_complete": False,
+        }
+        and all(
+            row["sha256"]
+            == hashlib.sha256((ROOT / row["path"]).read_bytes()).hexdigest()
+            for row in public_integer_conversion["sources"]
+        )
+        and public_integer_conversion["tests"]
+        == [
+            {
+                "path": "tests/asl/tile-tests.asl",
+                "function": "TestTileConversion",
+                "coverage": "signed widening, unsigned widening, narrowing, cross-signedness, 64-bit source, and direct TCVT execution",
+            }
+        ],
+        "public integer conversion provenance, residual, or summary drift",
+    )
+    integer_conversion_check = subprocess.run(
+        [
+            str(ROOT / "scripts/generate-public-integer-conversion-contract"),
+            "--check",
+        ],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    require(
+        integer_conversion_check.returncode == 0,
+        "public integer conversion evidence is not deterministic or is stale",
     )
     expected_applicability_functions = {
         "tile:CUBE:TMATMUL_MX": 4,
@@ -6367,6 +6544,11 @@ def main() -> int:
         and "public-numeric-type-baseline.json" in maturity_index_body
         and "public-numeric-type-baseline.json" in readme_body
         and "public-numeric-type-baseline.json" in coverage_body
+        and "public-integer-conversion-contract.json"
+        in numeric_profile_decision_body
+        and "public-integer-conversion-contract.json" in maturity_index_body
+        and "public-integer-conversion-contract.json" in readme_body
+        and "public-integer-conversion-contract.json" in coverage_body
         and "release-traceability-readiness.json" in maturity_index_body
         and "release-traceability-readiness.json" in readme_body
         and "release-traceability-readiness.json" in coverage_body
@@ -6451,6 +6633,12 @@ def main() -> int:
         and "scripts/generate-public-numeric-type-baseline"
         in closure_requirement["model"]
         and "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md"
+        in closure_requirement["model"]
+        and "spec/evidence/public-integer-conversion-contract.json"
+        in closure_requirement["model"]
+        and "scripts/generate-public-integer-conversion-contract"
+        in closure_requirement["model"]
+        and "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md"
         in closure_requirement["model"]
         and "spec/evidence/release-traceability-readiness.json"
         in closure_requirement["model"]
@@ -7178,6 +7366,7 @@ def main() -> int:
             "profile_decision_inputs",
             "profile_decision_proposals",
             "profile_identity_catalog",
+            "public_integer_conversion",
             "public_type_baseline",
             "identity_framework",
             "schema_version",
@@ -7227,6 +7416,19 @@ def main() -> int:
         "numeric-conformance readiness public type checkpoint drift",
     )
     require(
+        numeric_readiness["public_integer_conversion"]
+        == {
+            "path": "spec/evidence/public-integer-conversion-contract.json",
+            "status": public_integer_conversion["status"],
+            "acceptance_record": public_integer_conversion["acceptance_record"],
+            "accepted_result_rule_count": 3,
+            "accepted_unequal_width_tuple_count": 48,
+            "accepted_profile_support_rule_count": 0,
+            "accepted_domain_rule_count": 0,
+        },
+        "numeric-conformance readiness public integer conversion checkpoint drift",
+    )
+    require(
         numeric_readiness["variation_point_ownership"]
         == {
             "path": "spec/evidence/numeric-variation-point-ownership.json",
@@ -7251,7 +7453,11 @@ def main() -> int:
         "numeric-conformance readiness policy drift",
     )
     expected_numeric_sub_stages = {
-        "S5-T2-A": ("in-progress", [], ["S5-T2-A1", "S5-T2-A4", "S5-T2-A5"]),
+        "S5-T2-A": (
+            "in-progress",
+            [],
+            ["S5-T2-A1", "S5-T2-A4", "S5-T2-A5", "S5-T2-A6"],
+        ),
         "S5-T2-B": ("waiting-on-prerequisite", ["S5-T2-A"], []),
         "S5-T2-C": (
             "waiting-on-prerequisite",
@@ -7372,6 +7578,8 @@ def main() -> int:
             "accepted_configuration_identity_count": 4,
             "accepted_selection_framework_rule_count": 5,
             "accepted_public_type_binding_count": 11,
+            "accepted_bounded_result_rule_count": 3,
+            "accepted_bounded_result_tuple_count": 48,
             "public_type_identity_count": 16,
             "contract_domain_count": 20,
             "differential_result_count": 0,
@@ -7689,6 +7897,7 @@ def main() -> int:
         == {
             "acceptance_record",
             "artifact_id",
+            "bounded_result_subsets",
             "decision_id",
             "hooks",
             "operations",
@@ -7904,6 +8113,7 @@ def main() -> int:
         "spec/evidence/numeric-rounding-selector-contract.json",
         "spec/evidence/numeric-format-namespace-contract.json",
         "spec/evidence/public-numeric-type-baseline.json",
+        "spec/evidence/public-integer-conversion-contract.json",
         "spec/evidence/numeric-profile-applicability-closure.json",
         "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
     ]
@@ -7916,6 +8126,18 @@ def main() -> int:
             "result_rule_count": 0,
             "status": "accepted-support-rejection-separate-from-numeric-results",
         }
+        and numeric_variation_ownership["bounded_result_subsets"]
+        == [
+            {
+                "path": "spec/evidence/public-integer-conversion-contract.json",
+                "operation_key": "tile:TEPL:TCVT",
+                "domain": "tile-convert",
+                "result_rule_count": 3,
+                "tuple_count": 48,
+                "profile_support_rule_count": 0,
+                "status": "accepted-portable-results-only-after-profile-support",
+            }
+        ]
         and [row["path"] for row in numeric_variation_ownership["sources"]]
         == variation_source_paths
         and all(
@@ -7937,6 +8159,8 @@ def main() -> int:
             "accepted_result_rule_count": 0,
             "accepted_unsupported_tuple_count": 114,
             "accepted_domain_result_rule_count": 0,
+            "accepted_bounded_result_subset_rule_count": 3,
+            "accepted_bounded_result_subset_tuple_count": 48,
             "pd12_complete": False,
             "s5_t2_a_complete": False,
             "s5_t2_complete": False,
@@ -7968,6 +8192,7 @@ def main() -> int:
             "input",
             "policy",
             "profile_applicability_contract",
+            "public_integer_conversion",
             "public_type_baseline",
             "variation_point_contract",
             "profile_hooks",
@@ -7980,7 +8205,7 @@ def main() -> int:
             "summary",
             "target",
         }
-        and numeric_profile_proposals["schema_version"] == 8
+        and numeric_profile_proposals["schema_version"] == 9
         and numeric_profile_proposals["target"] == "S5-T2-A"
         and numeric_profile_proposals["status"] == "proposal-complete-decisions-open",
         "numeric profile proposal identity or schema drift",
@@ -8032,6 +8257,22 @@ def main() -> int:
             **public_numeric_types["summary"],
         },
         "numeric profile proposal public type checkpoint drift",
+    )
+    require(
+        numeric_profile_proposals["public_integer_conversion"]
+        == {
+            "path": "spec/evidence/public-integer-conversion-contract.json",
+            "sha256": hashlib.sha256(
+                (
+                    ROOT
+                    / "spec/evidence/public-integer-conversion-contract.json"
+                ).read_bytes()
+            ).hexdigest(),
+            "status": public_integer_conversion["status"],
+            "acceptance_record": public_integer_conversion["acceptance_record"],
+            **public_integer_conversion["summary"],
+        },
+        "numeric profile proposal public integer conversion checkpoint drift",
     )
     require(
         numeric_profile_proposals["profile_applicability_contract"]
@@ -8221,6 +8462,7 @@ def main() -> int:
             "S5-T2-A3",
             "S5-T2-A4",
             "S5-T2-A5",
+            "S5-T2-A6",
             "S5-T2-B",
             "S5-T2-C",
             "S5-T2-D",
@@ -8250,12 +8492,20 @@ def main() -> int:
             "status": "closed",
             "target": "bind every published numeric type identity and its target-availability baseline",
         }
+        and numeric_profile_proposals["promotion_residuals"][5]
+        == {
+            "current": 48,
+            "id": "S5-T2-A6",
+            "required": 48,
+            "status": "closed",
+            "target": "close every unequal-width public integer TCVT result tuple",
+        }
         and all(
             row["current"] == 0 and row["required"] > 0 and row["status"] == "open"
             for index, row in enumerate(
                 numeric_profile_proposals["promotion_residuals"]
             )
-            if index not in {0, 3, 4}
+            if index not in {0, 3, 4, 5}
         )
         and numeric_profile_proposals["summary"]
         == {
@@ -8274,6 +8524,8 @@ def main() -> int:
             "selected_variation_route_count": 0,
             "accepted_public_type_binding_count": 11,
             "public_type_identity_count": 16,
+            "accepted_bounded_result_rule_count": 3,
+            "accepted_bounded_result_tuple_count": 48,
         },
         "numeric profile proposal summary or residual drift",
     )
@@ -8316,6 +8568,12 @@ def main() -> int:
         and "scripts/generate-public-numeric-type-baseline"
         in s5_t2["evidence"]
         and "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md"
+        in s5_t2["evidence"]
+        and "spec/evidence/public-integer-conversion-contract.json"
+        in s5_t2["evidence"]
+        and "scripts/generate-public-integer-conversion-contract"
+        in s5_t2["evidence"]
+        and "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md"
         in s5_t2["evidence"]
         and next(gap for gap in s5_t2["gaps"] if gap["id"] == "S5-T2-G1")[
             "classification"
@@ -8378,6 +8636,20 @@ def main() -> int:
             and "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
             in requirements_by_id[requirement_id]["model"],
             f"numeric profile identity framework is not traceable from {requirement_id}",
+        )
+    for requirement_id in (
+        "PTO-REQ-PROFILE-001",
+        "PTO-REQ-TEPL-CONVERT-001",
+        "PTO-REQ-CLOSURE-001",
+    ):
+        require(
+            "spec/evidence/public-integer-conversion-contract.json"
+            in requirements_by_id[requirement_id]["model"]
+            and "scripts/generate-public-integer-conversion-contract"
+            in requirements_by_id[requirement_id]["model"]
+            and "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md"
+            in requirements_by_id[requirement_id]["model"],
+            f"public integer conversion checkpoint is not traceable from {requirement_id}",
         )
     for requirement_id in (
         "PTO-REQ-PROFILE-001",

@@ -29,6 +29,7 @@ SOURCE_PATHS = (
     "spec/evidence/numeric-profile-applicability-closure.json",
     "spec/evidence/numeric-variation-point-ownership.json",
     "spec/evidence/public-numeric-type-baseline.json",
+    "spec/evidence/public-integer-conversion-contract.json",
     "spec/evidence/numeric-rounding-selector-contract.json",
     "spec/evidence/scalar-effect-closure.json",
     "spec/evidence/bundle-command-totality.json",
@@ -570,6 +571,8 @@ def tile_operation_trace(row: dict[str, Any]) -> dict[str, list[str]]:
         )
         requirements.append(matching_groups[0]["requirement"])
         model.append(matching_groups[0]["model"])
+        if row["name"] == "TCVT":
+            model.append("spec/evidence/public-integer-conversion-contract.json")
         if row["name"] == "TALLOC":
             requirements.append("PTO-REQ-TILE-CAPACITY-001")
         if row["name"] in {"TPUSH", "TPOP", "TALLOC", "TFREE"}:

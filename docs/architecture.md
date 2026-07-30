@@ -154,6 +154,12 @@ published type identities to 11 unambiguous PTO catalog types and close public
 A2/A3-versus-A5 type availability. The six ambiguous or absent catalog names,
 bit-exact floating meanings, and operation/type legality remain profile
 decisions under `S5-T2`.
+ADR 0044 and `spec/evidence/public-integer-conversion-contract.json` define the
+portable result for every unequal-width public integer `TCVT` pair: interpret
+the source at its declared width and signedness, then sign-extend, zero-extend,
+or discard high bits to the destination width. The 48 result tuples are
+conditional on profile support; they do not define same-width signedness
+changes, target legality, floating conversions, rounding, saturation, or flags.
 ADR 0041 and `spec/evidence/numeric-profile-applicability-closure.json` close
 one such target-specific support rule: under `pto-a2a3-numeric-v1`, the six MX
 CUBE selectors reject for every `TileDataType` before effects. The portable

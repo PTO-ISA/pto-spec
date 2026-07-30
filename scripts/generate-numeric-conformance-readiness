@@ -19,6 +19,9 @@ NUMERIC_VARIATION_OWNERSHIP = (
 PUBLIC_NUMERIC_TYPE_BASELINE = (
     ROOT / "spec/evidence/public-numeric-type-baseline.json"
 )
+PUBLIC_INTEGER_CONVERSION = (
+    ROOT / "spec/evidence/public-integer-conversion-contract.json"
+)
 DEFAULT_OUTPUT = ROOT / "spec/evidence/numeric-conformance-readiness.json"
 
 
@@ -201,6 +204,7 @@ def build_evidence() -> dict[str, Any]:
     identity_catalog = load_json(NUMERIC_PROFILE_IDENTITIES)
     variation_ownership = load_json(NUMERIC_VARIATION_OWNERSHIP)
     public_type_baseline = load_json(PUBLIC_NUMERIC_TYPE_BASELINE)
+    integer_conversion = load_json(PUBLIC_INTEGER_CONVERSION)
     require(
         inventory.get("status") == "closed-inventory-and-ownership",
         "S5-T1 numeric inventory is not closed",
@@ -236,6 +240,23 @@ def build_evidence() -> dict[str, Any]:
         )
         == 0,
         "public numeric type baseline drift",
+    )
+    require(
+        integer_conversion.get("status")
+        == "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open"
+        and integer_conversion.get("summary", {}).get(
+            "accepted_unequal_width_tuple_count"
+        )
+        == 48
+        and integer_conversion.get("summary", {}).get(
+            "accepted_result_rule_count"
+        )
+        == 3
+        and integer_conversion.get("summary", {}).get(
+            "accepted_domain_rule_count"
+        )
+        == 0,
+        "public integer conversion subset drift",
     )
 
     domains = {row["id"]: row for row in inventory["contract_domains"]}
@@ -347,6 +368,15 @@ def build_evidence() -> dict[str, Any]:
             "accepted_result_rule_count": 0,
             "accepted_domain_rule_count": 0,
         },
+        "public_integer_conversion": {
+            "path": "spec/evidence/public-integer-conversion-contract.json",
+            "status": integer_conversion["status"],
+            "acceptance_record": integer_conversion["acceptance_record"],
+            "accepted_result_rule_count": 3,
+            "accepted_unequal_width_tuple_count": 48,
+            "accepted_profile_support_rule_count": 0,
+            "accepted_domain_rule_count": 0,
+        },
         "identity_framework": {
             "status": "closed:S5-T2-A1",
             "accepted_identity_count": 4,
@@ -368,7 +398,12 @@ def build_evidence() -> dict[str, Any]:
                 "status": "in-progress",
                 "target": "accept all numeric result decisions and domain rules under the closed identity framework",
                 "blocked_by": [],
-                "closed_checkpoints": ["S5-T2-A1", "S5-T2-A4", "S5-T2-A5"],
+                "closed_checkpoints": [
+                    "S5-T2-A1",
+                    "S5-T2-A4",
+                    "S5-T2-A5",
+                    "S5-T2-A6",
+                ],
             },
             {
                 "id": "S5-T2-B",
@@ -420,6 +455,8 @@ def build_evidence() -> dict[str, Any]:
             "accepted_selection_framework_rule_count": 5,
             "accepted_public_type_binding_count": 11,
             "public_type_identity_count": 16,
+            "accepted_bounded_result_rule_count": 3,
+            "accepted_bounded_result_tuple_count": 48,
             "profile_identity_count": 0,
             "qualified_oracle_count": 0,
             "vector_manifest_count": 0,

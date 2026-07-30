@@ -63,7 +63,11 @@
     },
     {
       "path": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
-      "sha256": "b16ffe904c8c813816fedf7a9dea1e397e7eb1cc2ba945e44b094846ff299b85"
+      "sha256": "7730954ebe136cd213d99e8b66749135b43fa3f2c223e320fcf4b28bf23c7cd4"
+    },
+    {
+      "path": "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
+      "sha256": "fe98df65bb6c86efc9206b0e50ff65f23494f79c6bf2a0389adb7288bc2cf42d"
     },
     {
       "path": "scripts/check-asl-test-shards",
@@ -75,7 +79,7 @@
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "6701eb252abdefcfd063729f9edc44daa4d5af50cd3d871db01e75966315af81"
+      "sha256": "9405681ad51a010553cf488d208232793e38683309cd808b8023854af962325f"
     },
     {
       "path": "scripts/check-publication-hygiene",
@@ -83,7 +87,7 @@
     },
     {
       "path": "scripts/check-repository",
-      "sha256": "d6e953089a18d353fa823c77d87bb57f4f473742646bca7a8e1a72c59055ef1e"
+      "sha256": "f932a1dff69b7ad9ae913477af75821b9eb051f8bbb2277fde5d125356dbb60b"
     },
     {
       "path": "scripts/check-toolchain",
@@ -99,19 +103,23 @@
     },
     {
       "path": "scripts/generate-numeric-variation-point-ownership",
-      "sha256": "665e23c9a0938bc8aca546fc6ce972767f8561651b82801f3bd99cc8c74d6ee9"
+      "sha256": "51d4b43e00d962abfdf2af4e8ea90f3c4b543d13966e84eb3f9e5af876f8b641"
     },
     {
       "path": "scripts/generate-public-numeric-type-baseline",
       "sha256": "f1fd7d2c10ae35440e8c1e766ab9ac85988cfcbdf4e64b511befc2d220444541"
     },
     {
+      "path": "scripts/generate-public-integer-conversion-contract",
+      "sha256": "dc25b8bf8035156fe7b5099af908428cf2b6351c2c74921a57026dbf82569f30"
+    },
+    {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "1c290fbcccbfb559992c800e118b27803b478de0c70ce64ef432caddef57d9e6"
+      "sha256": "b43cfa6c5dbc0fa1d017863e36af7474b6a876944467a8aadcf5337aa4662f0d"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "57b0f2639b275658a0f887e12b662a916cdc09eaa9b539eb4b97c91c272654e5"
+      "sha256": "7c334aed0bbb878c2dbd8cb7672fdbe19416347b5f37871a9cca6ebab72a1518"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -123,11 +131,15 @@
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "b56613289f421ee6811a6dc6af80c08376f7dbe969557930323feb37d51552b0"
+      "sha256": "8e7a3816733cbad5e2c1128f729d84aa087a5b68e324ae3ed646ed3d606c528c"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "3cd6d3b03075398287dfe5a3d114f593286b95691d498d9df9511ddaef3b5484"
+      "sha256": "9ee660158b15a403fa7e2d7c16aaa51f6b5475006f7440270de6521db306f8ed"
+    },
+    {
+      "path": "spec/evidence/public-integer-conversion-contract.json",
+      "sha256": "82849d0610e0ab02321025cfc41bd7794bbeef7ea94a8d88791a07375bf63927"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
@@ -139,11 +151,11 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "6d78265de310a15646885058a8c3c2ab9019442bb71cf51f222a458b4cb9c082"
+      "sha256": "406e181396093814b2e157b88817e6f81ca31cf55e20069fc597e0ae2e7cbeca"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "c04214316cace38ded23381d092ed493b85ef24ef02c2e8fcccf3032bb484f7d"
+      "sha256": "6c5ab21df430ddf7274960c029f10f55640ab70037c848b68e491ab8beb3631f"
     },
     {
       "path": "spec/catalog/numeric-profile-applicability.json",
@@ -155,7 +167,7 @@
     },
     {
       "path": "specification.toml",
-      "sha256": "25ffbb10fbac59cbd0c172a4059dc6211f91c9a6c4184f53ebbe34172a65183e"
+      "sha256": "c122b216aa8f2eb77672df7ea54a2701551ecfb01825b42282cad4638d427add"
     }
   ],
   "sub_stages": [

@@ -50,6 +50,14 @@ type identities, accept 11 unambiguous catalog bindings, and close the A2/A3
 (11 types) and A5 (16 types) availability baseline. Seven bit-exact format,
 legality, and vector obligations remain; no result rule is accepted, so PD-02
 and the M4 floor remain open.
+ADR 0044 and
+`spec/evidence/public-integer-conversion-contract.json` close the next bounded
+result checkpoint: all 48 unequal-width ordered pairs among the eight public
+integer types use source-signed sign extension, source-unsigned zero extension,
+or high-bit truncation. These are portable results only after a target profile
+accepts the `TCVT` tuple. Six PD-07 residuals—including same-width,
+floating-point, saturation, flags, and support legality—remain open; no complete
+domain rule or parent numeric decision is accepted.
 ADR 0041 and the generated
 `spec/evidence/numeric-profile-applicability-closure.json` ledger close one
 negative PD-01 applicability slice: A2/A3 rejects the six MX CUBE selectors

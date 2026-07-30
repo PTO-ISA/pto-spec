@@ -185,6 +185,13 @@ bindings are accepted, A2/A3 availability is fixed at 11 types, and A5
 availability is fixed at 16. Six catalog names and seven bit-exact format,
 legality, and vector residuals remain open; availability never implies an
 operation result rule.
+The generated `public-integer-conversion-contract.json` ledger and ADR 0044
+close `S5-T2-A6`: all 48 unequal-width ordered pairs among the eight public
+integer types have a portable sign-extension, zero-extension, or high-bit
+truncation result. A target profile must still accept the operation/type tuple
+before that result applies. Same-width signedness changes, floating and
+float/integer conversions, support matrices, overflow/saturation, rounding,
+flags, and independent vectors remain open, so PD-07 and `S5-T2-A` remain open.
 The generated `numeric-profile-applicability-closure.json` ledger records the
 accepted A2/A3 unsupported-in-profile disposition for the six MX CUBE
 selectors across all 19 `TileDataType` identities. It keeps result rules,

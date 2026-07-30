@@ -22,6 +22,9 @@ FORMAT_NAMESPACE_CONTRACT = (
     ROOT / "spec/evidence/numeric-format-namespace-contract.json"
 )
 PUBLIC_TYPE_BASELINE = ROOT / "spec/evidence/public-numeric-type-baseline.json"
+PUBLIC_INTEGER_CONVERSION = (
+    ROOT / "spec/evidence/public-integer-conversion-contract.json"
+)
 PROFILE_APPLICABILITY_CONTRACT = (
     ROOT / "spec/evidence/numeric-profile-applicability-closure.json"
 )
@@ -208,6 +211,7 @@ def generate() -> dict[str, Any]:
     rounding_selector_contract = load(ROUNDING_SELECTOR_CONTRACT)
     format_namespace_contract = load(FORMAT_NAMESPACE_CONTRACT)
     public_type_baseline = load(PUBLIC_TYPE_BASELINE)
+    public_integer_conversion = load(PUBLIC_INTEGER_CONVERSION)
     profile_applicability_contract = load(PROFILE_APPLICABILITY_CONTRACT)
     variation_point_contract = load(VARIATION_POINT_CONTRACT)
     require(inputs["target"] == "S5-T2-A", "decision-input target drift")
@@ -312,6 +316,32 @@ def generate() -> dict[str, Any]:
             "s5_t2_complete": False,
         },
         "public numeric type baseline drift",
+    )
+    require(
+        public_integer_conversion["schema_version"] == 1
+        and public_integer_conversion["target"] == "S5-T2-A6:PD-07-SC1"
+        and public_integer_conversion["decision_id"] == "PD-07"
+        and public_integer_conversion["checkpoint_id"] == "PD-07-SC1"
+        and public_integer_conversion["status"]
+        == "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open"
+        and public_integer_conversion["summary"]
+        == {
+            "public_integer_type_count": 8,
+            "candidate_ordered_pair_count": 64,
+            "same_width_pair_count": 16,
+            "accepted_unequal_width_tuple_count": 48,
+            "accepted_widening_tuple_count": 24,
+            "accepted_narrowing_tuple_count": 24,
+            "accepted_result_rule_count": 3,
+            "accepted_domain_rule_count": 0,
+            "accepted_profile_support_rule_count": 0,
+            "open_residual_count": 6,
+            "pd07_complete": False,
+            "tile_convert_domain_complete": False,
+            "s5_t2_a_complete": False,
+            "s5_t2_complete": False,
+        },
+        "public integer conversion contract drift",
     )
     require(
         profile_applicability_contract["schema_version"] == 1
@@ -430,7 +460,7 @@ def generate() -> dict[str, Any]:
     )
 
     return {
-        "schema_version": 8,
+        "schema_version": 9,
         "target": "S5-T2-A",
         "status": "proposal-complete-decisions-open",
         "input": {
@@ -479,6 +509,15 @@ def generate() -> dict[str, Any]:
             "status": public_type_baseline["status"],
             "acceptance_record": public_type_baseline["acceptance_record"],
             **public_type_baseline["summary"],
+        },
+        "public_integer_conversion": {
+            "path": "spec/evidence/public-integer-conversion-contract.json",
+            "sha256": hashlib.sha256(
+                PUBLIC_INTEGER_CONVERSION.read_bytes()
+            ).hexdigest(),
+            "status": public_integer_conversion["status"],
+            "acceptance_record": public_integer_conversion["acceptance_record"],
+            **public_integer_conversion["summary"],
         },
         "profile_applicability_contract": {
             "path": "spec/evidence/numeric-profile-applicability-closure.json",
@@ -577,6 +616,13 @@ def generate() -> dict[str, Any]:
                 "status": "closed",
             },
             {
+                "id": "S5-T2-A6",
+                "target": "close every unequal-width public integer TCVT result tuple",
+                "current": 48,
+                "required": 48,
+                "status": "closed",
+            },
+            {
                 "id": "S5-T2-B",
                 "target": "qualify an independent oracle for every conformance lane",
                 "current": 0,
@@ -627,6 +673,12 @@ def generate() -> dict[str, Any]:
             "public_type_identity_count": public_type_baseline["summary"][
                 "public_type_count"
             ],
+            "accepted_bounded_result_rule_count": public_integer_conversion[
+                "summary"
+            ]["accepted_result_rule_count"],
+            "accepted_bounded_result_tuple_count": public_integer_conversion[
+                "summary"
+            ]["accepted_unequal_width_tuple_count"],
             "can_close_s5_t2_a": False,
             "can_close_s5_t2": False,
         },

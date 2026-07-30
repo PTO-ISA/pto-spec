@@ -1,5 +1,5 @@
 {
-  "schema_version": 8,
+  "schema_version": 9,
   "target": "S5-T2-A",
   "status": "proposal-complete-decisions-open",
   "input": {
@@ -68,7 +68,7 @@
   },
   "public_type_baseline": {
     "path": "spec/evidence/public-numeric-type-baseline.json",
-    "sha256": "3cd6d3b03075398287dfe5a3d114f593286b95691d498d9df9511ddaef3b5484",
+    "sha256": "9ee660158b15a403fa7e2d7c16aaa51f6b5475006f7440270de6521db306f8ed",
     "status": "public-type-identity-and-target-availability-baseline-closed-result-and-legality-open",
     "acceptance_record": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
     "public_type_count": 16,
@@ -82,6 +82,26 @@
     "accepted_domain_rule_count": 0,
     "open_residual_count": 7,
     "pd02_complete": false,
+    "s5_t2_a_complete": false,
+    "s5_t2_complete": false
+  },
+  "public_integer_conversion": {
+    "path": "spec/evidence/public-integer-conversion-contract.json",
+    "sha256": "82849d0610e0ab02321025cfc41bd7794bbeef7ea94a8d88791a07375bf63927",
+    "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
+    "acceptance_record": "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
+    "public_integer_type_count": 8,
+    "candidate_ordered_pair_count": 64,
+    "same_width_pair_count": 16,
+    "accepted_unequal_width_tuple_count": 48,
+    "accepted_widening_tuple_count": 24,
+    "accepted_narrowing_tuple_count": 24,
+    "accepted_result_rule_count": 3,
+    "accepted_domain_rule_count": 0,
+    "accepted_profile_support_rule_count": 0,
+    "open_residual_count": 6,
+    "pd07_complete": false,
+    "tile_convert_domain_complete": false,
     "s5_t2_a_complete": false,
     "s5_t2_complete": false
   },
@@ -102,7 +122,7 @@
   },
   "variation_point_contract": {
     "path": "spec/evidence/numeric-variation-point-ownership.json",
-    "sha256": "b56613289f421ee6811a6dc6af80c08376f7dbe969557930323feb37d51552b0",
+    "sha256": "8e7a3816733cbad5e2c1128f729d84aa087a5b68e324ae3ed646ed3d606c528c",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
     "acceptance_record": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
     "variation_point_count": 99,
@@ -115,6 +135,8 @@
     "portable_decision_owner_point_count": 99,
     "selected_route_count": 0,
     "accepted_result_rule_count": 0,
+    "accepted_bounded_result_subset_rule_count": 3,
+    "accepted_bounded_result_subset_tuple_count": 48,
     "accepted_unsupported_tuple_count": 114,
     "accepted_domain_result_rule_count": 0,
     "pd12_complete": false,
@@ -1635,6 +1657,13 @@
       "status": "closed"
     },
     {
+      "id": "S5-T2-A6",
+      "target": "close every unequal-width public integer TCVT result tuple",
+      "current": 48,
+      "required": 48,
+      "status": "closed"
+    },
+    {
       "id": "S5-T2-B",
       "target": "qualify an independent oracle for every conformance lane",
       "current": 0,
@@ -1677,6 +1706,8 @@
     "selected_variation_route_count": 0,
     "accepted_public_type_binding_count": 11,
     "public_type_identity_count": 16,
+    "accepted_bounded_result_rule_count": 3,
+    "accepted_bounded_result_tuple_count": 48,
     "can_close_s5_t2_a": false,
     "can_close_s5_t2": false
   }

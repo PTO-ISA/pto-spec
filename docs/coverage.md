@@ -115,6 +115,14 @@ all 16 published public type identities, 11 exact catalog bindings, and public
 availability for 11 A2/A3 and 16 A5 types. Seven bit-exact format, catalog-role,
 legality, and vector residuals remain. No result or domain rule is accepted, so
 PD-02, S5-T2, and the M4 floor remain unchanged.
+ADR 0044 and the generated `public-integer-conversion-contract.json` ledger
+close `S5-T2-A6` for 48 unequal-width public integer `TCVT` tuples. Three
+portable result rules cover signed widening, unsigned widening, and narrowing;
+executable boundary witnesses confirm source-width interpretation. Profile
+support, same-width conversions, floating conversions, overflow/saturation,
+rounding, flags, and target vectors remain open. The accepted bounded subset
+does not increment the 0/12 complete-decision or 0/20 domain-rule counts, so
+PD-07, S5-T2, and the M4 floor remain unchanged.
 The generated `numeric-profile-applicability-closure.json` ledger and ADR 0041
 close one negative PD-01 slice: A2/A3 does not support the six MX CUBE
 selectors for any of the 19 `TileDataType` identities, and every one of the

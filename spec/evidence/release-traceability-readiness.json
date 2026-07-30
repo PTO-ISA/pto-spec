@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "c04214316cace38ded23381d092ed493b85ef24ef02c2e8fcccf3032bb484f7d"
+      "sha256": "6c5ab21df430ddf7274960c029f10f55640ab70037c848b68e491ab8beb3631f"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -43,11 +43,11 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "1c290fbcccbfb559992c800e118b27803b478de0c70ce64ef432caddef57d9e6"
+      "sha256": "b43cfa6c5dbc0fa1d017863e36af7474b6a876944467a8aadcf5337aa4662f0d"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "57b0f2639b275658a0f887e12b662a916cdc09eaa9b539eb4b97c91c272654e5"
+      "sha256": "7c334aed0bbb878c2dbd8cb7672fdbe19416347b5f37871a9cca6ebab72a1518"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -59,11 +59,15 @@
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "b56613289f421ee6811a6dc6af80c08376f7dbe969557930323feb37d51552b0"
+      "sha256": "8e7a3816733cbad5e2c1128f729d84aa087a5b68e324ae3ed646ed3d606c528c"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "3cd6d3b03075398287dfe5a3d114f593286b95691d498d9df9511ddaef3b5484"
+      "sha256": "9ee660158b15a403fa7e2d7c16aaa51f6b5475006f7440270de6521db306f8ed"
+    },
+    {
+      "path": "spec/evidence/public-integer-conversion-contract.json",
+      "sha256": "82849d0610e0ab02321025cfc41bd7794bbeef7ea94a8d88791a07375bf63927"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
@@ -171,7 +175,7 @@
     },
     {
       "path": "asl/tile/conversion.asl",
-      "sha256": "7f1d3302ea18a90b8c72e57ac082fa241294e97898aacab249e714be9ea1b059"
+      "sha256": "7dc8084113115bf50f01b580a8e90f7e4bfb735691b45d00e723cb7c33139cd4"
     },
     {
       "path": "asl/tile/cube.asl",
@@ -318,6 +322,7 @@
           "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
           "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
           "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
+          "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
           "asl/profiles/pto-v0.asl",
           "asl/scalar/system-registers.asl",
           "asl/state.asl",
@@ -332,6 +337,7 @@
           "scripts/generate-numeric-profile-decision-proposals",
           "scripts/generate-numeric-variation-point-ownership",
           "scripts/generate-public-numeric-type-baseline",
+          "scripts/generate-public-integer-conversion-contract",
           "scripts/generate-numeric-format-namespace-contract",
           "scripts/generate-numeric-profile-applicability-closure",
           "scripts/generate-numeric-rounding-selector-contract",
@@ -341,6 +347,7 @@
           "spec/evidence/numeric-profile-decision-proposals.json",
           "spec/evidence/numeric-variation-point-ownership.json",
           "spec/evidence/public-numeric-type-baseline.json",
+          "spec/evidence/public-integer-conversion-contract.json",
           "spec/evidence/numeric-format-namespace-contract.json",
           "spec/evidence/numeric-profile-applicability-closure.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
@@ -967,6 +974,7 @@
           "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
           "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
           "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
+          "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
           "asl/tile/conversion.asl",
           "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
@@ -974,12 +982,14 @@
           "scripts/generate-numeric-profile-decision-proposals",
           "scripts/generate-numeric-variation-point-ownership",
           "scripts/generate-public-numeric-type-baseline",
+          "scripts/generate-public-integer-conversion-contract",
           "spec/evidence/tepl-totality.json",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
           "spec/evidence/numeric-variation-point-ownership.json",
           "spec/evidence/public-numeric-type-baseline.json",
+          "spec/evidence/public-integer-conversion-contract.json",
           "spec/catalog/numeric-profile-identities.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
@@ -1233,6 +1243,7 @@
           "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
           "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
           "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
+          "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
           "docs/normative-sources.md",
           "docs/coverage.md",
           "docs/maturity-bringup-plan.md",
@@ -1248,6 +1259,7 @@
           "scripts/generate-numeric-profile-decision-proposals",
           "scripts/generate-numeric-variation-point-ownership",
           "scripts/generate-public-numeric-type-baseline",
+          "scripts/generate-public-integer-conversion-contract",
           "scripts/generate-numeric-format-namespace-contract",
           "scripts/generate-numeric-profile-applicability-closure",
           "scripts/generate-numeric-rounding-selector-contract",
@@ -1263,6 +1275,7 @@
           "spec/evidence/numeric-profile-decision-proposals.json",
           "spec/evidence/numeric-variation-point-ownership.json",
           "spec/evidence/public-numeric-type-baseline.json",
+          "spec/evidence/public-integer-conversion-contract.json",
           "spec/evidence/numeric-format-namespace-contract.json",
           "spec/evidence/numeric-profile-applicability-closure.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
@@ -17359,7 +17372,8 @@
           "spec/catalog/tile-operations.json",
           "asl/tile/legality.asl",
           "spec/evidence/tepl-totality.json",
-          "asl/tile/conversion.asl"
+          "asl/tile/conversion.asl",
+          "spec/evidence/public-integer-conversion-contract.json"
         ],
         "tests": [
           "tests/asl/tepl-totality-tests.asl",

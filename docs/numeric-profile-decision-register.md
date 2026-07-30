@@ -45,6 +45,11 @@ accepted architecture decisions remain authoritative.
   catalog bindings, and public availability for 11 A2/A3 and 16 A5 types.
   Six catalog names remain unbound and seven bit-exact format, legality, and
   vector residuals remain open. No result rule is accepted.
+- ADR 0044 and `spec/evidence/public-integer-conversion-contract.json` close
+  `S5-T2-A6`: three portable rules determine all 48 unequal-width public
+  integer `TCVT` results. Profile support remains a separate open decision;
+  six same-width, floating, support, overflow/saturation, rounding/flag, and
+  conformance-vector residuals keep PD-07 open.
 - ADR 0041 and `spec/evidence/numeric-profile-applicability-closure.json`
   close one PD-01 applicability checkpoint: A2/A3 rejects the six MX CUBE
   selectors for every `TileDataType` before effects. All result rules and the
@@ -141,6 +146,9 @@ semantics rather than numeric differential results.
 The four identities and five selection-framework rules close `S5-T2-A1`.
 The exhaustive variation-point ownership inventory closes `S5-T2-A4` without
 accepting a result rule.
+The public type baseline closes `S5-T2-A5`, and the conditional 48-tuple
+integer-conversion result subset closes `S5-T2-A6`; neither accepts a complete
+numeric domain rule or target support matrix.
 The PD-01 negative-applicability checkpoint and the PD-02, PD-03, and PD-06
 structural checkpoints do not accept any complete result decision. `S5-T2-A`
 closes only when all 12 decisions and each of the 20 domain rows have an
@@ -159,6 +167,7 @@ scripts/generate-scalar-numeric-flag-contract --check
 scripts/generate-numeric-rounding-selector-contract --check
 scripts/generate-numeric-format-namespace-contract --check
 scripts/generate-public-numeric-type-baseline --check
+scripts/generate-public-integer-conversion-contract --check
 scripts/generate-numeric-profile-applicability-closure --check
 scripts/generate-numeric-variation-point-ownership --check
 make repo-check
