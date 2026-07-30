@@ -47,6 +47,15 @@
 - Known coverage gaps and ASLRef limitations are disclosed.
 - Release review records one immutable commit, reviewer identity, review date,
   and disposition; empty review fields keep S6-T1 open.
+- `release-gate-readiness.json` keeps gate definitions distinct from candidate
+  results and rejects a release claim while any local, hosted, external-control,
+  or approval field is missing.
+- Local and hosted results name the same signed candidate commit; passing CI on
+  an earlier or moving branch head is not release evidence.
+- The candidate records a GitHub protection/repository snapshot covering the
+  required `validate` check, administrator enforcement, signatures, linear
+  history, conversation resolution, force-push/deletion protection, merge
+  authority/method, and web signoff.
 - Mnemonic spelling alone imports no semantics. Every retained rule must be
   stated in PTO ASL, catalog metadata, an accepted ADR, and executable tests.
 - Toolchain updates are isolated from normative changes, and any canary fixture they change is explained.

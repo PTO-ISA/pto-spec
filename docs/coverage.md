@@ -99,3 +99,13 @@ architectural state, bounded storage and ordering abstractions,
 architectural-effect abstractions, and verification-only instrumentation. The
 inventory and link package is closed; nine S5-T2-dependent requirements, 29
 numeric hooks, and the later immutable-commit review keep S6-T1 open.
+
+The generated `spec/evidence/release-gate-readiness.json` ledger closes the
+S6-T2 contract inventory independently of candidate execution. It defines ten
+clone-verifiable release gates, proves the pinned least-privilege hosted
+workflow and exact 34-shard/98-call/86-subprogram topology, and enumerates ten
+external repository controls plus the PTO architecture and formal-model review
+perspectives. All candidate commit, runtime result, hosted-run, control-snapshot,
+and approval fields remain null. S5-T2 and S6-T1 therefore block candidate
+freeze, and S6-T2 remains open without misrepresenting the current draft-branch
+validation as M6 evidence.

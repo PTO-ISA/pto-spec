@@ -323,9 +323,11 @@
       "title": "Close release traceability and claim hygiene"
     },
     {
-      "evidence": ["Makefile", "scripts/check-asl-test-shards", "scripts/check-repository", "docs/review-checklist.md", "GOVERNANCE.md"],
+      "evidence": ["Makefile", "scripts/check-asl-test-shards", "scripts/check-repository", "spec/evidence/release-gate-readiness.json", "scripts/generate-release-gate-readiness", "docs/review-checklist.md", "GOVERNANCE.md"],
       "gaps": [
-        {"acceptance_evidence": ["clean make ci", "git diff --check", "hosted validation", "recorded PTO architecture and formal-model approvals"], "classification": "release-governance", "id": "S6-T2-G1", "statement": "The architecturally-complete release gate and independent approvals are pending cumulative Stage 0 through Stage 5 closure."}
+        {"acceptance_evidence": ["closed S5-T2", "closed S6-T1", "signed immutable candidate commit"], "classification": "release-governance", "id": "S6-T2-G1", "statement": "S5-T2 and S6-T1 are open, so no immutable architecturally-complete candidate may be frozen."},
+        {"acceptance_evidence": ["clean make ci", "git diff --check", "passing hosted validate at the same candidate commit"], "classification": "release-governance", "id": "S6-T2-G2", "statement": "No frozen candidate has complete clean-tree local and hosted gate results."},
+        {"acceptance_evidence": ["content-addressed GitHub control snapshot", "accepted PTO architecture review", "accepted formal-model review"], "classification": "release-governance", "id": "S6-T2-G3", "statement": "Candidate-specific protected-branch evidence and PTO architecture/formal-model approvals are unrecorded."}
       ],
       "id": "S6-T2",
       "tracking": ["https://github.com/PTO-ISA/pto-spec/issues/4", "GOVERNANCE.md"],

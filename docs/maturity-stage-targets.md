@@ -65,7 +65,7 @@ parallel, but a later row cannot waive an earlier promotion gate.
 | 2 | `S5-T2` | Name the PTO target numeric profile and an independent, versioned oracle; cover normal, boundary, exceptional, rounding, saturation, and accumulation cases for every applicable numeric-contract row. | Differential report has no unclassified mismatch and does not treat the `pto-v0` raw-carrier model as hardware arithmetic. | Numeric conformance half of M5 |
 | 3 | `S5-T3` | Closed: the complete stable-ID comparison is regenerated from a clean content-addressed executable-model snapshot, all 701 dispositions remain classified, and every required gate result is archived. | Parser, executable backend, generated-status, coverage, architecture-contract, and documentation gates all pass. | Independent-comparison half of M5 |
 | 4 | `S6-T1` | Generated inventory and links closed: 937 exact units cover requirements, accepted forms and operations, registers, traps, profile hooks, and 70 state roots/199 leaves. Promotion remains open. | S5-T2 closes the nine dependent requirements and 29 hooks; then one immutable-commit claim-hygiene review fills every review identity and disposition. | Release review may start |
-| 5 | `S6-T2` | Reproduce the candidate from a clean tree and obtain independent PTO architecture and formal-model approvals. | Clean regeneration, ASLRef, repository, publication, hosted CI, `git diff --check`, and recorded approvals all pass. | M6 architecturally-complete candidate |
+| 5 | `S6-T2` | Gate contract/topology closed: ten release gates, ten external controls, two reviews, and the pinned 34-shard hosted path are exact. Candidate evidence remains open. | After S5-T2/S6-T1, freeze one signed commit; pass every local/hosted gate; snapshot GitHub controls; record both approvals. | M6 architecturally-complete candidate |
 
 Promotion rules are exact: M5 requires all three Stage 5 targets to be closed;
 M6 requires every Stage 0–5 target plus both Stage 6 targets to be closed or
@@ -213,7 +213,7 @@ documented as intentions.
 | Target | Current status | Closure target |
 | --- | --- | --- |
 | `S6-T1` | Open | Prove requirements-to-model-to-test traceability with no unsupported completeness claim. |
-| `S6-T2` | Open | Pass clean regeneration, ASLRef, repository, publication, and independent architecture/formal review gates. |
+| `S6-T2` | Open | Gate contract and hosted/parallel topology are closed; immutable candidate execution, protected-branch evidence, and architecture/formal approvals remain open. |
 
 ### S6-T1 release-traceability bring-up plan
 
@@ -229,6 +229,20 @@ release gate. S6-T1 stays open until all five sub-stages close.
 | `S6-T1-D` — claim-hygiene review | Waiting on C | Review one immutable candidate rather than a moving branch. | Reviewer identity, commit, date, and accepted disposition are all populated; no unsupported completeness claim remains. |
 | `S6-T1-E` — promotion | Waiting on C–D | Close S6-T1 and unlock the cumulative release gate. | Generated ledger, maturity ledger, requirements, coverage, README, and review record agree on closure. |
 
+### S6-T2 architecturally-complete gate plan
+
+The generated `spec/evidence/release-gate-readiness.json` ledger prevents gate
+configuration from being confused with a passing release candidate.
+
+| Sub-stage | Current state | Clear target | Required exit evidence |
+| --- | --- | --- | --- |
+| `S6-T2-A` — gate inventory | Closed | Freeze all candidate, hosted, external-control, and review obligations. | Ten gates, ten controls, and two review perspectives are unique, complete, and path-valid. |
+| `S6-T2-B` — execution topology | Closed | Prove the hosted workflow and parallel suite are bounded and exact. | Full action pins, contents-read permission, required `validate`, cancel-in-progress, 360-minute timeout, and 34 shards covering 98 calls/86 subprograms. |
+| `S6-T2-C` — candidate freeze | Blocked by S5-T2/S6-T1 | Name one signed immutable candidate. | Closed cumulative prerequisites, candidate commit/tree identity, clean-tree and signature evidence. |
+| `S6-T2-D` — candidate reproduction | Waiting on C | Execute every gate without moving the candidate. | Ten local results and passing hosted `validate` all name the candidate commit. |
+| `S6-T2-E` — controls and approvals | Waiting on C–D | Prove repository controls and both review perspectives. | Content-addressed GitHub API snapshot plus accepted architecture and formal-model dispositions. |
+| `S6-T2-F` — promotion | Waiting on C–E | Publish an M6 candidate without hidden exceptions. | All release surfaces and promotion metadata agree at the accepted commit. |
+
 ## Closure rule
 
 - A target closes only when its own evidence package passes.
@@ -242,3 +256,6 @@ release gate. S6-T1 stays open until all five sub-stages close.
 - `spec/evidence/release-traceability-readiness.json` is the generated S6-T1
   source of truth for exact release inventory, link coverage, state-boundary
   classification, cumulative blockers, and immutable-commit review readiness.
+- `spec/evidence/release-gate-readiness.json` is the generated S6-T2 source of
+  truth for gate configuration, hosted/parallel topology, external controls,
+  candidate results, approvals, and promotion readiness.

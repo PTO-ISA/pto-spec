@@ -793,6 +793,7 @@
         "scripts/generate-numeric-conformance-readiness",
         "scripts/generate-numeric-profile-decision-inputs",
         "scripts/generate-release-traceability-readiness",
+        "scripts/generate-release-gate-readiness",
         "spec/catalog/scalar-forms.json",
         "spec/catalog/command-forms.json",
         "spec/catalog/tile-operations.json",
@@ -801,7 +802,8 @@
         "spec/evidence/numeric-profile-decision-inputs.json",
         "spec/evidence/numeric-contracts.json",
         "spec/evidence/executable-model-comparison.json",
-        "spec/evidence/release-traceability-readiness.json"
+        "spec/evidence/release-traceability-readiness.json",
+        "spec/evidence/release-gate-readiness.json"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/normative-sources.md",
       "status": "m4-reference-closed-s5-conformance-in-progress-s6-release-open",

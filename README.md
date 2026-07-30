@@ -33,6 +33,12 @@ units: all requirements, accepted forms and operations, system registers,
 traps, profile hooks, and 70 ASL state roots expanded to 199 leaf fields. Its
 inventory and links are closed, while S6-T1 promotion remains explicitly open
 on S5-T2 and an immutable-commit claim-hygiene review.
+The generated `spec/evidence/release-gate-readiness.json` ledger separately
+closes the S6-T2 gate contract and hosted/parallel topology without treating a
+live draft-branch run as release proof. Ten candidate gates, ten external
+controls, and two review perspectives remain fail-closed until one signed,
+immutable post-S5-T2 candidate supplies matching local, hosted, protection, and
+approval evidence.
 
 ## Architecture scope
 
