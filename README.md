@@ -114,7 +114,7 @@ make ci
 | `repo-check` | Repository structure, catalogs, generated evidence, traceability, and publication hygiene | No |
 | `toolchain-check` | Pinned ASLRef accept/reject/execute canaries | Yes |
 | `check` | Strict type-checking of the assembled specification | Yes |
-| `test-parallel` | Seventeen focused shards covering every canonical executable architecture and boundary test exactly once | Yes |
+| `test-parallel` | Thirty-four focused shards covering every canonical executable architecture and boundary test exactly once | Yes |
 
 `make ci` uses four concurrent ASLRef jobs by default. Set
 `ASL_TEST_JOBS=<n>` to match the available CPU and memory. The canonical

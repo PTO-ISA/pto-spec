@@ -1,6 +1,6 @@
 func main() => integer
 begin
     ResetProfileState();
-    ValidateCanonicalScalarSYSRegisterTransfers0To255();
+    ValidateCanonicalScalarSYSRegisterTransfers1280To1535();
     return 0;
 end;

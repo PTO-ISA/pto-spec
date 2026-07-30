@@ -60,6 +60,23 @@ ASL_TEST_SHARD_MAINS := \
 	tests/asl/shards/scalar-agu-aliases.asl \
 	tests/asl/shards/scalar-fsu-totality.asl \
 	tests/asl/shards/scalar-sys-transfers.asl \
+	tests/asl/shards/scalar-sys-transfers-256-511.asl \
+	tests/asl/shards/scalar-sys-transfers-512-767.asl \
+	tests/asl/shards/scalar-sys-transfers-768-1023.asl \
+	tests/asl/shards/scalar-sys-transfers-1024-1279.asl \
+	tests/asl/shards/scalar-sys-transfers-1280-1535.asl \
+	tests/asl/shards/scalar-sys-transfers-1536-1791.asl \
+	tests/asl/shards/scalar-sys-transfers-1792-1936.asl \
+	tests/asl/shards/scalar-sys-aliases.asl \
+	tests/asl/shards/scalar-sys-swap-aliases-0-7.asl \
+	tests/asl/shards/scalar-sys-swap-aliases-8-15.asl \
+	tests/asl/shards/scalar-sys-swap-aliases-16-23.asl \
+	tests/asl/shards/scalar-sys-swap-aliases-24-31.asl \
+	tests/asl/shards/scalar-sys-fences.asl \
+	tests/asl/shards/scalar-sys-traps.asl \
+	tests/asl/shards/scalar-sys-requests.asl \
+	tests/asl/shards/scalar-sys-maintenance-selectors.asl \
+	tests/asl/shards/scalar-sys-maintenance-legality.asl \
 	tests/asl/shards/tepl-totality.asl \
 	tests/asl/shards/tma-totality.asl \
 	tests/asl/shards/cube-totality.asl \
@@ -95,6 +112,23 @@ ASL_TEST_LIB_scalar-fsu := tests/asl/scalar-tests.asl
 ASL_TEST_LIB_scalar-fsu-totality := tests/asl/scalar-tests.asl
 ASL_TEST_LIB_scalar-sys := tests/asl/scalar-tests.asl
 ASL_TEST_LIB_scalar-sys-transfers := tests/asl/scalar-tests.asl
+ASL_TEST_LIB_scalar-sys-transfers-256-511 := tests/asl/scalar-tests.asl
+ASL_TEST_LIB_scalar-sys-transfers-512-767 := tests/asl/scalar-tests.asl
+ASL_TEST_LIB_scalar-sys-transfers-768-1023 := tests/asl/scalar-tests.asl
+ASL_TEST_LIB_scalar-sys-transfers-1024-1279 := tests/asl/scalar-tests.asl
+ASL_TEST_LIB_scalar-sys-transfers-1280-1535 := tests/asl/scalar-tests.asl
+ASL_TEST_LIB_scalar-sys-transfers-1536-1791 := tests/asl/scalar-tests.asl
+ASL_TEST_LIB_scalar-sys-transfers-1792-1936 := tests/asl/scalar-tests.asl
+ASL_TEST_LIB_scalar-sys-aliases := tests/asl/scalar-tests.asl
+ASL_TEST_LIB_scalar-sys-swap-aliases-0-7 := tests/asl/scalar-tests.asl
+ASL_TEST_LIB_scalar-sys-swap-aliases-8-15 := tests/asl/scalar-tests.asl
+ASL_TEST_LIB_scalar-sys-swap-aliases-16-23 := tests/asl/scalar-tests.asl
+ASL_TEST_LIB_scalar-sys-swap-aliases-24-31 := tests/asl/scalar-tests.asl
+ASL_TEST_LIB_scalar-sys-fences := tests/asl/scalar-tests.asl
+ASL_TEST_LIB_scalar-sys-traps := tests/asl/scalar-tests.asl
+ASL_TEST_LIB_scalar-sys-requests := tests/asl/scalar-tests.asl
+ASL_TEST_LIB_scalar-sys-maintenance-selectors := tests/asl/scalar-tests.asl
+ASL_TEST_LIB_scalar-sys-maintenance-legality := tests/asl/scalar-tests.asl
 ASL_TEST_LIB_tile-ops := tests/asl/tile-tests.asl
 ASL_TEST_LIB_tile-lifecycle := tests/asl/tile-tests.asl
 ASL_TEST_LIB_tepl-totality := tests/asl/tepl-totality-tests.asl

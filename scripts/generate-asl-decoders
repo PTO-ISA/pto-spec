@@ -9805,7 +9805,7 @@ def main() -> None:
     print()
     print("// PTO-REQ-SCALAR-SYS-001, PTO-REQ-SCALAR-SSR-001: every concrete")
     print("// catalog address through every encoding-width-applicable SYS transfer.")
-    print("func ValidateCanonicalScalarSYSRegisterTransfers()")
+    print("func ValidateCanonicalScalarSYSRegisterTransfers0To255()")
     print("begin")
     active_form_id = None
     destination_sentinel = 0x5555555555555555
@@ -9816,6 +9816,18 @@ def main() -> None:
         address,
         address_field_name,
     ) in enumerate(scalar_sys_register_transfer_cases):
+        if case_index > 0 and case_index % 256 == 0:
+            print("    ResetProfileState();")
+            print("end;")
+            print()
+            last_case = min(
+                case_index + 255, len(scalar_sys_register_transfer_cases) - 1
+            )
+            print(
+                f"func ValidateCanonicalScalarSYSRegisterTransfers{case_index}To{last_case}()"
+            )
+            print("begin")
+            active_form_id = None
         if row["form_id"] != active_form_id:
             print("    ResetProfileState();")
             active_form_id = row["form_id"]
@@ -9998,7 +10010,7 @@ def main() -> None:
     print()
     print("// PTO-REQ-SCALAR-OPERAND-001: exhaustive Reg5 selector and alias")
     print("// coverage for every decoded SYS register-transfer shape.")
-    print("func ValidateCanonicalScalarSYSSelectorAliases()")
+    print("func ValidateCanonicalScalarSYSSelectorReadWriteAliases()")
     print("begin")
     selector_case_index = 0
     selector_state_base = 0x400000
@@ -10108,9 +10120,24 @@ def main() -> None:
             )
             selector_case_index += 1
 
+    if len(scalar_sys_selector_swap_rows) != 1:
+        raise ValueError("reviewed SYS swap-form inventory drift")
+    print("    ResetProfileState();")
+    print("end;")
+    print()
+    print("func ValidateCanonicalScalarSYSSwapAliases0To7()")
+    print("begin")
     for row in scalar_sys_selector_swap_rows:
         address_field = scalar_sys_register_address_field(row)["name"]
         for source in range(32):
+            if source in {8, 16, 24}:
+                print("    ResetProfileState();")
+                print("end;")
+                print()
+                print(
+                    f"func ValidateCanonicalScalarSYSSwapAliases{source}To{source + 7}()"
+                )
+                print("begin")
             for destination in range(32):
                 witness = scalar_sys_witness(
                     row,
@@ -10212,7 +10239,7 @@ def main() -> None:
     print()
     print("// PTO-REQ-SCALAR-SYS-001: decoded mask, tag, request, recovery,")
     print("// selector, maintenance privilege, and operand-boundary totality.")
-    print("func ValidateCanonicalScalarSYSControlTotality()")
+    print("func ValidateCanonicalScalarSYSFenceTotality()")
     print("begin")
     control_case_index = 0
 
@@ -10238,6 +10265,11 @@ def main() -> None:
             print(f"    assert _LastFenceSuccessor == {bit_literal(successor, 4)};")
             control_case_index += 1
 
+    print("    ResetProfileState();")
+    print("end;")
+    print()
+    print("func ValidateCanonicalScalarSYSTrapAndRecoveryTotality()")
+    print("begin")
     for mnemonic, tag_field, values in (
         ("C.EBREAK", "imm5", range(32)),
         ("EBREAK", "imm4", range(16)),
@@ -10398,6 +10430,11 @@ def main() -> None:
         print("    assert _LastFault == Fault_IllegalInstruction;")
         control_case_index += 1
 
+    print("    ResetProfileState();")
+    print("end;")
+    print()
+    print("func ValidateCanonicalScalarSYSRequestTotality()")
+    print("begin")
     assert_row = scalar_sys_by_mnemonic["ASSERT"]
     for source in range(32):
         values = (0,) if source == 0 else (0, 1)
@@ -10485,6 +10522,11 @@ def main() -> None:
         print(f"    assert _CommitArgument == Zeros{{PTO_XLEN}} + {value};")
         control_case_index += 1
 
+    print("    ResetProfileState();")
+    print("end;")
+    print()
+    print("func ValidateCanonicalScalarSYSMaintenanceSelectorTotality()")
+    print("begin")
     operand_maintenance_rows = [
         row
         for row in scalar_sys_effect_rows
@@ -10518,6 +10560,11 @@ def main() -> None:
             print(f"    assert _LastMaintenanceOperand == Zeros{{PTO_XLEN}} + {value};")
             control_case_index += 1
 
+    print("    ResetProfileState();")
+    print("end;")
+    print()
+    print("func ValidateCanonicalScalarSYSMaintenanceLegalityTotality()")
+    print("begin")
     tlb_rows = [
         row
         for row in scalar_sys_effect_rows

@@ -2,8 +2,6 @@ func main() => integer
 begin
     ResetProfileState();
     ValidateCanonicalScalarSYSEffects();
-    ValidateCanonicalScalarSYSSelectorAliases();
-    ValidateCanonicalScalarSYSControlTotality();
     TestScalarSystemDispatchEffects();
     TestScalarSystem();
     TestServiceRequestControl();

@@ -16,7 +16,7 @@ jobs:
   validate:
     name: validate
     runs-on: ubuntu-latest
-    # Seventeen strict shards include four large totality matrices.
+    # Thirty-four strict shards partition the large totality matrices.
     timeout-minutes: 360
     steps:
       - name: Check out repository

@@ -14,7 +14,7 @@ The final source defines exactly one `main` that returns zero on success.
 that do not exist.
 
 The canonical `main` remains the serial regression entry point for
-`make test`. Seventeen focused mains under `tests/asl/shards/` partition its
+`make test`. Thirty-four focused mains under `tests/asl/shards/` partition its
 calls by architecture family and heavy totality matrix for `make test-parallel`.
 Each shard assembles only the test libraries that define its calls. Run with a
 bounded job count:

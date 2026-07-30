@@ -3923,6 +3923,30 @@ def main() -> int:
         "TLB, ASSERT, ACRC, and ACRE rejection envelopes",
     )
     sys_stage4_markers = re.findall(r"// SYS-S4 ([^\n]+)", generated_tile_dispatch)
+    sys_transfer_partitions = (
+        ("ValidateCanonicalScalarSYSRegisterTransfers0To255", 256),
+        ("ValidateCanonicalScalarSYSRegisterTransfers256To511", 256),
+        ("ValidateCanonicalScalarSYSRegisterTransfers512To767", 256),
+        ("ValidateCanonicalScalarSYSRegisterTransfers768To1023", 256),
+        ("ValidateCanonicalScalarSYSRegisterTransfers1024To1279", 256),
+        ("ValidateCanonicalScalarSYSRegisterTransfers1280To1535", 256),
+        ("ValidateCanonicalScalarSYSRegisterTransfers1536To1791", 256),
+        ("ValidateCanonicalScalarSYSRegisterTransfers1792To1936", 145),
+    )
+    sys_selector_partitions = (
+        ("ValidateCanonicalScalarSYSSelectorReadWriteAliases", 160),
+        ("ValidateCanonicalScalarSYSSwapAliases0To7", 256),
+        ("ValidateCanonicalScalarSYSSwapAliases8To15", 256),
+        ("ValidateCanonicalScalarSYSSwapAliases16To23", 256),
+        ("ValidateCanonicalScalarSYSSwapAliases24To31", 256),
+    )
+    sys_control_partitions = (
+        ("ValidateCanonicalScalarSYSFenceTotality", 256),
+        ("ValidateCanonicalScalarSYSTrapAndRecoveryTotality", 326),
+        ("ValidateCanonicalScalarSYSRequestTotality", 223),
+        ("ValidateCanonicalScalarSYSMaintenanceSelectorTotality", 384),
+        ("ValidateCanonicalScalarSYSMaintenanceLegalityTotality", 91),
+    )
     require(
         "constant PTO_SCALAR_SYS_REGISTER_TRANSFER_CASE_COUNT = 1937;"
         in generated_tile_dispatch
@@ -3940,20 +3964,62 @@ def main() -> int:
             for marker in sys_stage4_markers
         )
         == 1280
-        and generated_tile_dispatch.count(
-            "func ValidateCanonicalScalarSYSRegisterTransfers()"
+        and all(
+            generated_tile_dispatch.count(f"func {function_name}()") == 1
+            for function_name, _ in sys_transfer_partitions
         )
-        == 1
-        and generated_tile_dispatch.count(
-            "func ValidateCanonicalScalarSYSSelectorAliases()"
+        and all(
+            generated_tile_dispatch.count(f"func {function_name}()") == 1
+            for function_name, _ in sys_selector_partitions
         )
-        == 1
-        and generated_tile_dispatch.count(
-            "func ValidateCanonicalScalarSYSControlTotality()"
-        )
-        == 1,
+        and all(
+            generated_tile_dispatch.count(f"func {function_name}()") == 1
+            for function_name, _ in sys_control_partitions
+        ),
         "generated scalar SYS Stage 4 count, marker, uniqueness, or function drift",
     )
+    transfer_partition_successors = [
+        *(function_name for function_name, _ in sys_transfer_partitions[1:]),
+        sys_selector_partitions[0][0],
+    ]
+    for (function_name, expected_cases), successor in zip(
+        sys_transfer_partitions, transfer_partition_successors, strict=True
+    ):
+        function_body = generated_tile_dispatch.split(f"func {function_name}()", 1)[
+            1
+        ].split(f"func {successor}()", 1)[0]
+        require(
+            function_body.count("// SYS-S4 ") == expected_cases,
+            f"generated scalar SYS transfer partition drift: {function_name}",
+        )
+    selector_partition_successors = [
+        *(function_name for function_name, _ in sys_selector_partitions[1:]),
+        sys_control_partitions[0][0],
+    ]
+    for (function_name, expected_cases), successor in zip(
+        sys_selector_partitions, selector_partition_successors, strict=True
+    ):
+        function_body = generated_tile_dispatch.split(f"func {function_name}()", 1)[
+            1
+        ].split(f"func {successor}()", 1)[0]
+        require(
+            function_body.count("// SYS-S4 ") == expected_cases,
+            f"generated scalar SYS selector partition drift: {function_name}",
+        )
+    partition_successors = [
+        *(function_name for function_name, _ in sys_control_partitions[1:]),
+        "ValidateCanonicalCommandExecution",
+    ]
+    for (function_name, expected_cases), successor in zip(
+        sys_control_partitions, partition_successors, strict=True
+    ):
+        function_body = generated_tile_dispatch.split(f"func {function_name}()", 1)[
+            1
+        ].split(f"func {successor}()", 1)[0]
+        require(
+            function_body.count("// SYS-S4 ") == expected_cases,
+            f"generated scalar SYS partition drift: {function_name}",
+        )
     for mnemonic, expected_cases in (
         ("c_ssrget_16_9d83a6f2749a", 3),
         ("hl_ssrget_48_fde37e58a3c4", 837),
@@ -3972,9 +4038,9 @@ def main() -> int:
             f"generated scalar SYS transfer inventory drift: {mnemonic}",
         )
     for function_name in (
-        "ValidateCanonicalScalarSYSRegisterTransfers",
-        "ValidateCanonicalScalarSYSSelectorAliases",
-        "ValidateCanonicalScalarSYSControlTotality",
+        *(function_name for function_name, _ in sys_transfer_partitions),
+        *(function_name for function_name, _ in sys_selector_partitions),
+        *(function_name for function_name, _ in sys_control_partitions),
     ):
         require(
             re.search(rf"\b{function_name}\s*\(\s*\)\s*;", main_test_body) is not None,
