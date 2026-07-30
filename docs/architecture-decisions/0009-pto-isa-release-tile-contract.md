@@ -33,6 +33,13 @@ encoding-manifest hash. A linker rejects mixed or mismatched identities. A
 loader rejects an absent or mismatched identity. A bare-metal image provides
 the same identity in its platform manifest.
 
+ELF objects and images carry that identity in `.note.pto.isa`. The note owner
+is the four-byte name `PTO\0`; `PTO_NT_ISA_IDENTITY` has owner-local numeric
+type `1`. Header fields, name, and descriptor are aligned to four bytes. The
+descriptor is the canonical UTF-8 JSON object named by the release manifest,
+without a trailing NUL byte. These wire details are normative so independent
+producers, linkers, and loaders cannot choose incompatible note encodings.
+
 ### Direct-operation inventory
 
 PTO ISA 0.57.1 contains exactly 120 base direct operations and no optional

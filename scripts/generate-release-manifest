@@ -523,7 +523,11 @@ def build_abi_vectors(encoding_hash: str) -> dict:
             "section": ".note.pto.isa",
             "note_name": "PTO",
             "note_type": "PTO_NT_ISA_IDENTITY",
+            "note_type_value": 1,
+            "alignment_bytes": 4,
+            "name_size_bytes": 4,
             "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
+            "descriptor_nul_terminated": False,
             "descriptor_fields": [
                 "release",
                 "encoding_abi",

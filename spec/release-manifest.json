@@ -142,7 +142,7 @@
     },
     {
       "path": "docs/architecture-decisions/0009-pto-isa-release-tile-contract.md",
-      "sha256": "e944dcfe7b57cd8841bda69247d97bacd0cd13461bd0166992180459d059f7a8"
+      "sha256": "3c0110e1a4730a9b98db11f3ff16d8fe2a46ed65dbc328a61e5f4844ee07c289"
     },
     {
       "path": "docs/architecture.md",
@@ -219,18 +219,22 @@
     },
     "tile_operations_total": 120
   },
-  "content_sha256": "3bdd4cb7b8ed48442ebffeb0fdf95c9454b0f823e08c0bcb985425434ad492df",
+  "content_sha256": "45575361fa5b180c454500360a3e4e75d34fba663e60f3741ef38dc9a514bc13",
   "elf_identity": {
+    "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
     "descriptor_fields": [
       "release",
       "encoding_abi",
       "encoding_projection_sha256"
     ],
+    "descriptor_nul_terminated": false,
     "link_policy": "all input identities must be present and exactly equal",
     "load_policy": "the image identity must exactly match the implementation identity",
+    "name_size_bytes": 4,
     "note_name": "PTO",
     "note_type": "PTO_NT_ISA_IDENTITY",
+    "note_type_value": 1,
     "section": ".note.pto.isa"
   },
   "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
@@ -307,7 +311,7 @@
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0571-abi-vectors.json",
-      "sha256": "a910f2e64d9ab96967a1c8f5235ea47e077120b5b024d38cdab31d4b21c8d57e"
+      "sha256": "2b1ebd9e972c42f48a03d83626969e0a4457e62fdcbc9303b1755be39898dd16"
     },
     {
       "kind": "generated-evidence",
