@@ -9,6 +9,26 @@ The authoritative detailed plan remains
 [Maturity bring-up plan](maturity-bringup-plan.md). The authoritative state for
 each target remains `../spec/evidence/maturity-closure.json`.
 
+## How to review a maturity stage
+
+Review one stage at a time and record the result against an immutable commit.
+
+1. Confirm that the stage entry gate is closed in the machine-readable maturity
+   ledger.
+2. Review every target in the stage; a target passes only when its inventory,
+   legality, architectural effect, fault behavior, ordering, and conformance
+   dimensions are either evidenced or explicitly not applicable.
+3. Reproduce the stage-specific evidence and the cumulative regression floor.
+   Aggregate CI is supporting evidence, not a substitute for a missing target
+   artifact.
+4. Record **pass**, **fail**, or **defer**. A pass promotes the maturity floor
+   only when every earlier stage also passes. A defer must name its owner,
+   missing evidence, and tracking record.
+
+The review unit is a target ID such as `S4-T3`, not a source file or a raw test
+count. Test counts help detect drift; they do not establish architectural
+closure by themselves.
+
 ## Current maturity floor
 
 The repository currently reports a maturity floor of M4.
@@ -54,6 +74,17 @@ is M4 because every Stage 4 target is closed.
 | 5 — conformance | 2 | 3 | Supply independent numeric conformance. |
 | 6 — release | 0 | 2 | Close cumulative traceability, validation, review, and publication gates. |
 | **Total** | **28** | **31** | **M4 is the published floor.** |
+
+## Active promotion work
+
+Only three targets remain open. This table is the short operational plan; the
+later sections define their complete evidence packages.
+
+| Priority | Target | Accountable owner | Immediate target | Promotion blocker |
+| ---: | --- | --- | --- | --- |
+| 1 | `S5-T2` | PTO numeric conformance maintainers | Accept the profile rules, qualify independent oracles, execute complete vectors, and adjudicate every result across 20 domains, 29 hooks, and 108 operations. | Twelve numeric decisions and 20 domain result rules are not yet accepted; independent oracle, vector, result, and review evidence is incomplete. |
+| 2 | `S6-T1` | PTO release maintainers | Close the nine Stage-5-dependent requirements and 29 numeric hooks, then review the 937-unit traceability ledger at one immutable commit. | Depends on `S5-T2`; immutable-commit claim-hygiene review is absent. |
+| 3 | `S6-T2` | PTO release maintainers | Freeze one signed candidate and reproduce all local, hosted, repository-control, and review gates against it. | Depends on `S5-T2` and `S6-T1`; candidate results and approvals are absent. |
 
 ## Stage evaluation contract
 
@@ -311,3 +342,25 @@ configuration from being confused with a passing release candidate.
 - `spec/evidence/release-gate-readiness.json` is the generated S6-T2 source of
   truth for gate configuration, hosted/parallel topology, external controls,
   candidate results, approvals, and promotion readiness.
+
+## Stage decision record
+
+Use this record for manual review. Store a completed record in the applicable
+tracking issue or release evidence package; do not edit a target to `closed`
+without the matching evidence and reviewer disposition.
+
+```text
+Stage / target:
+Candidate commit:
+Entry gate: pass | fail
+Inventory and decode evidence: pass | fail | not applicable
+Architectural state/effect evidence: pass | fail | not applicable
+Fault/restart evidence: pass | fail | not applicable
+Ordering evidence: pass | fail | not applicable
+Conformance/traceability evidence: pass | fail | not applicable
+Cumulative regression gate: pass | fail
+Open gaps and tracking records:
+Reviewer and perspective: architecture | formal model | conformance | release
+Decision: pass | fail | defer
+Decision date:
+```
