@@ -179,3 +179,9 @@ accepted five code namespaces, 19 carrier widths, reserved-code behavior, and
 four-bit packing without closing PD-02. It keeps eight format, exceptional
 value, operation/type/profile legality, target-availability, and vector
 residuals explicit.
+The generated `numeric-profile-applicability-closure.json` ledger records the
+accepted A2/A3 unsupported-in-profile disposition for the six MX CUBE
+selectors across all 19 `TileDataType` identities. It keeps result rules,
+remaining applicability tables, and `cube-matrix` conformance open.
+The executable selector is an accepted negative-rule set, not a complete A2/A3
+profile; an operation absent from that set is not thereby supported.

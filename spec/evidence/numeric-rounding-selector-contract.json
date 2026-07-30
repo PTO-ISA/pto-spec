@@ -766,7 +766,7 @@
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "681ed8e568a673351adacac6fa90422ca80ddaf2647cdad9ea0306d093b8d5e4"
+      "sha256": "3618784ae4b57e482d0e4f01b707b8e5b2bb70d446a837d5f1a96da31ddce9c1"
     },
     {
       "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",

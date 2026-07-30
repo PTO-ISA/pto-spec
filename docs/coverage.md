@@ -111,6 +111,11 @@ packed 4-bit low/high nibble cases are executable invariants. Eight residuals
 retain the bit-exact floating-format, exceptional-value, operation/type/profile
 legality, target-availability, and conformance-vector work. PD-02, S5-T2, and
 the M4 floor therefore remain unchanged.
+The generated `numeric-profile-applicability-closure.json` ledger and ADR 0041
+close one negative PD-01 slice: A2/A3 does not support the six MX CUBE
+selectors for any of the 19 `TileDataType` identities, and every one of the
+114 operation/type tuples rejects before effects. No result rule is selected,
+so PD-01, `cube-matrix`, S5-T2, and the M4 floor remain unchanged.
 
 Release traceability is independently fail-closed. The generated
 `spec/evidence/release-traceability-readiness.json` ledger assigns requirement,
@@ -126,7 +131,7 @@ numeric hooks, and the later immutable-commit review keep S6-T1 open.
 The generated `spec/evidence/release-gate-readiness.json` ledger closes the
 S6-T2 contract inventory independently of candidate execution. It defines ten
 clone-verifiable release gates, proves the pinned least-privilege hosted
-workflow and exact 34-shard/99-call/87-subprogram topology, and enumerates ten
+workflow and exact 34-shard/100-call/89-subprogram topology, and enumerates ten
 external repository controls plus the PTO architecture and formal-model review
 perspectives. All candidate commit, runtime result, hosted-run, control-snapshot,
 and approval fields remain null. S5-T2 and S6-T1 therefore block candidate

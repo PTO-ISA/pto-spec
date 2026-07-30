@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "b0005fd0597a14386ac68d9ef1f66b25fd719af42ba018bbad2a8ba18a70ed4e"
+      "sha256": "bed475b19ded4f368be77a14e090b4e08aee5425fbd5131cf2f9341839bbcd5f"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -34,24 +34,32 @@
       "sha256": "f2bf1bcfa9e6ce1006132ac6d9aec4a8c698990a20eeb7736d361d62ed6477ed"
     },
     {
+      "path": "spec/catalog/numeric-profile-applicability.json",
+      "sha256": "7553e7fa87b6aeb731f87ee8b91b0bb13c938c7323229f2f99645acdf1c9d7fe"
+    },
+    {
       "path": "spec/profile-hooks.json",
       "sha256": "1eb4293edbdb0c87fe28543a72c7265abc85ee1c04a8390a3f9555fc3d994f52"
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "ecdbdfced3565c4101ea9effde8870642a2c2f3bddfb096a3d4f0c4dd4cf727a"
+      "sha256": "d049bc0ed56d976c6d1c836651c5ef953052f10216fdd4847a922f155882fbaa"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "dd98581a31f998c084ac945d2f61138a6a268104c97c4e1d4cc42334a97316d6"
+      "sha256": "3ab8d37f5fcc275742fa22f1e685158627bc4714f4e4de25db0251fab8795630"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "80fbe8adca7982a705663e4aa00461a01b16f1e1d5282c310422844bb87c0fcc"
+      "sha256": "cad647e25c0f10dcaeada5106f26a2a437ef9c693dde17dba05c8c642c97aa53"
+    },
+    {
+      "path": "spec/evidence/numeric-profile-applicability-closure.json",
+      "sha256": "5e001c54c98858fa579f0b3da12245c801726280b1ed146aaba1547f6c51410a"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "88669d8651d20a50ee1fafd55d9448dafa6fc9ad98c25008c8436ea995e21f9c"
+      "sha256": "6f284ceccfe79347acf317c8d0263742bf508986120f64c6d93cae7a3c3dcfa3"
     },
     {
       "path": "spec/evidence/scalar-effect-closure.json",
@@ -75,7 +83,7 @@
     },
     {
       "path": "asl/types.asl",
-      "sha256": "bc685c122e4851f0df2f5815438ac745ebbfc604a14e1539108d86e94224153b"
+      "sha256": "1c6c7be26a0889af2a0e6d1bc27ffc18fd2dd663d0964b5d6343422420ec4dd0"
     },
     {
       "path": "asl/state.asl",
@@ -95,7 +103,7 @@
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "681ed8e568a673351adacac6fa90422ca80ddaf2647cdad9ea0306d093b8d5e4"
+      "sha256": "3618784ae4b57e482d0e4f01b707b8e5b2bb70d446a837d5f1a96da31ddce9c1"
     },
     {
       "path": "asl/concurrency.asl",
@@ -299,6 +307,7 @@
           "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
           "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
           "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+          "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
           "asl/profiles/pto-v0.asl",
           "asl/scalar/system-registers.asl",
           "asl/state.asl",
@@ -312,20 +321,25 @@
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
           "scripts/generate-numeric-format-namespace-contract",
+          "scripts/generate-numeric-profile-applicability-closure",
           "scripts/generate-numeric-rounding-selector-contract",
           "scripts/generate-scalar-numeric-flag-contract",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
           "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-profile-applicability-closure.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/catalog/numeric-profile-identities.json",
+          "spec/catalog/numeric-profile-applicability.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
         ],
         "tests": [
           "scripts/check-catalogs",
+          "tests/asl/bundle-tests.asl",
+          "tests/asl/cube-totality-tests.asl",
           "tests/asl/profile-tests.asl"
         ],
         "bounded_status": "open"
@@ -800,8 +814,12 @@
           "scripts/generate-asl-decoders",
           "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
           "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+          "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
           "scripts/generate-numeric-format-namespace-contract",
+          "scripts/generate-numeric-profile-applicability-closure",
           "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-profile-applicability-closure.json",
+          "spec/catalog/numeric-profile-applicability.json",
           "spec/evidence/tepl-totality.json"
         ],
         "tests": [
@@ -993,17 +1011,24 @@
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
           "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+          "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+          "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
           "asl/tile/cube.asl",
           "asl/tile/legality.asl",
           "docs/architecture-decisions/0034-cube-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
+          "scripts/generate-numeric-format-namespace-contract",
+          "scripts/generate-numeric-profile-applicability-closure",
           "spec/evidence/cube-totality.json",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-profile-applicability-closure.json",
           "spec/catalog/numeric-profile-identities.json",
+          "spec/catalog/numeric-profile-applicability.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
         ],
@@ -1068,10 +1093,14 @@
           "asl/state.asl",
           "asl/profiles/pto-v0.asl",
           "scripts/generate-asl-decoders",
+          "scripts/generate-numeric-profile-applicability-closure",
           "spec/catalog/command-forms.json",
+          "spec/catalog/numeric-profile-applicability.json",
           "spec/catalog/tile-operations.json",
           "docs/architecture-decisions/0022-bundle-operation-descriptor-and-commit.md",
           "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+          "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
+          "spec/evidence/numeric-profile-applicability-closure.json",
           "spec/evidence/bundle-command-totality.json"
         ],
         "tests": [
@@ -1144,6 +1173,7 @@
           "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
           "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
           "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+          "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
           "docs/normative-sources.md",
           "docs/coverage.md",
           "docs/maturity-bringup-plan.md",
@@ -1158,6 +1188,7 @@
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
           "scripts/generate-numeric-format-namespace-contract",
+          "scripts/generate-numeric-profile-applicability-closure",
           "scripts/generate-numeric-rounding-selector-contract",
           "scripts/generate-scalar-numeric-flag-contract",
           "scripts/generate-release-traceability-readiness",
@@ -1170,9 +1201,11 @@
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
           "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-profile-applicability-closure.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/catalog/numeric-profile-identities.json",
+          "spec/catalog/numeric-profile-applicability.json",
           "spec/evidence/numeric-contracts.json",
           "spec/evidence/executable-model-comparison.json",
           "spec/evidence/release-traceability-readiness.json",

@@ -309,6 +309,14 @@ type FloatingRoundingMode of enumeration {
     FloatingRound_Away
 };
 
+// Selects only a bounded set of accepted negative applicability rules. This
+// is not a complete target-profile selector: absence of a rejection does not
+// claim target support or select numeric result semantics.
+type NumericApplicabilityRuleSet of enumeration {
+    NumericApplicabilityRules_None,
+    NumericApplicabilityRules_A2A3MxRejection
+};
+
 type TileHand of enumeration {
     TileHand_T,
     TileHand_U,

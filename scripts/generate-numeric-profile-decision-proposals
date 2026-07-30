@@ -21,6 +21,9 @@ ROUNDING_SELECTOR_CONTRACT = (
 FORMAT_NAMESPACE_CONTRACT = (
     ROOT / "spec/evidence/numeric-format-namespace-contract.json"
 )
+PROFILE_APPLICABILITY_CONTRACT = (
+    ROOT / "spec/evidence/numeric-profile-applicability-closure.json"
+)
 OUTPUT = ROOT / "spec/evidence/numeric-profile-decision-proposals.json"
 
 
@@ -31,9 +34,9 @@ PROPOSALS: dict[str, dict[str, Any]] = {
             "named-target-profile-rule",
             "unsupported-in-profile",
         ],
-        "proposed_rule": "Legal PTO operations use pto-numeric-v1 results. A2A3 and A5 may reject documented operation/type tuples; any accepted target-dependent result must be selected by a named profile and bounded rule. CPU observations are never normative.",
+        "proposed_rule": "ADR 0041 closes the A2A3 unsupported-in-profile rule for all six MX CUBE selectors and all 19 TileDataType identities. Legal PTO operations otherwise use pto-numeric-v1 results. A2A3 and A5 may reject only documented operation/type tuples; any accepted target-dependent result must be selected by a named profile and bounded rule. CPU observations are never normative.",
         "open_items": [
-            "complete every domain operation/type applicability table",
+            "complete every remaining domain operation/type applicability table after the accepted A2A3 MX negative slice",
             "accept one portable or target disposition for every supported and rejected tuple",
         ],
     },
@@ -199,6 +202,7 @@ def generate() -> dict[str, Any]:
     scalar_flag_contract = load(SCALAR_FLAG_CONTRACT)
     rounding_selector_contract = load(ROUNDING_SELECTOR_CONTRACT)
     format_namespace_contract = load(FORMAT_NAMESPACE_CONTRACT)
+    profile_applicability_contract = load(PROFILE_APPLICABILITY_CONTRACT)
     require(inputs["target"] == "S5-T2-A", "decision-input target drift")
     require(
         inputs["status"]
@@ -277,6 +281,26 @@ def generate() -> dict[str, Any]:
             "pd02_complete": False,
         },
         "numeric format namespace contract drift",
+    )
+    require(
+        profile_applicability_contract["schema_version"] == 1
+        and profile_applicability_contract["artifact_id"]
+        == "numeric-profile-applicability-closure"
+        and profile_applicability_contract["status"]
+        == "a2a3-mx-unsupported-profile-tuples-closed-results-open"
+        and profile_applicability_contract["summary"]
+        == {
+            "rule_count": 6,
+            "operation_count": 6,
+            "selector_count": 6,
+            "tile_data_type_count": 19,
+            "tuple_count": 114,
+            "result_rule_count": 0,
+            "parent_pd01_complete": False,
+            "cube_matrix_complete": False,
+            "s5_t2_complete": False,
+        },
+        "numeric profile applicability contract drift",
     )
     profile_proposals = [
         {
@@ -375,7 +399,7 @@ def generate() -> dict[str, Any]:
     )
 
     return {
-        "schema_version": 5,
+        "schema_version": 6,
         "target": "S5-T2-A",
         "status": "proposal-complete-decisions-open",
         "input": {
@@ -417,6 +441,15 @@ def generate() -> dict[str, Any]:
             "status": format_namespace_contract["status"],
             "acceptance_record": format_namespace_contract["acceptance_record"],
             **format_namespace_contract["summary"],
+        },
+        "profile_applicability_contract": {
+            "path": "spec/evidence/numeric-profile-applicability-closure.json",
+            "sha256": hashlib.sha256(
+                PROFILE_APPLICABILITY_CONTRACT.read_bytes()
+            ).hexdigest(),
+            "status": profile_applicability_contract["status"],
+            "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
+            **profile_applicability_contract["summary"],
         },
         "policy": {
             "proposal_not_authority": "The identity and bounded-variation framework is accepted; question and domain proposals remain review inputs and do not select numeric results.",

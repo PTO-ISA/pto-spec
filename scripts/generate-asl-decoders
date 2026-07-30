@@ -6721,6 +6721,8 @@ def main() -> None:
     command = load("spec/catalog/command-forms.json")["forms"]
     tile_catalog = load("spec/catalog/tile-operations.json")
     tile = tile_catalog["operations"]
+    numeric_applicability = load("spec/catalog/numeric-profile-applicability.json")
+    numeric_applicability_rules = numeric_applicability["rules"]
     system_register_catalog = load("spec/catalog/system-registers.json")
     system_registers = system_register_catalog["registers"]
     system_register_behaviors = {
@@ -7216,6 +7218,31 @@ def main() -> None:
         raise ValueError("scalar operation identifiers are not unique")
     if len(tile_operations) != len(set(tile_operations)):
         raise ValueError("tile operation identifiers are not unique")
+    tile_indices_by_key = {
+        f"tile:{row['family']}:{row['name']}": index for index, row in enumerate(tile)
+    }
+    applicability_rule_set_asl = {
+        "pto-a2a3-numeric-v1": "NumericApplicabilityRules_A2A3MxRejection",
+    }
+    for rule in numeric_applicability_rules:
+        if rule["profile_id"] not in applicability_rule_set_asl:
+            raise ValueError(
+                f"unsupported numeric applicability profile: {rule['profile_id']}"
+            )
+        if rule["operation_key"] not in tile_indices_by_key:
+            raise ValueError(
+                "numeric applicability operation is not in the tile catalog: "
+                f"{rule['operation_key']}"
+            )
+        if (
+            rule["disposition"] != "unsupported-in-profile"
+            or rule["rejection"]["fault"] != "IllegalInstruction"
+            or rule["rejection"]["phase"] != "before-operation-effects"
+            or rule["result_rule_id"] is not None
+        ):
+            raise ValueError(
+                "numeric applicability decoder only accepts fail-closed rejection rules"
+            )
 
     print("// Generated from the normative PTO catalogs. Do not edit.")
     print("// PTO-REQ-ENCODING-001: complete scalar and tile decode witnesses.")
@@ -11147,10 +11174,26 @@ def main() -> None:
     print("    return FALSE;")
     print("end;")
     print()
-    print("func ExecuteTileInstructionWithoutTime(family: TileDecodeFamily,")
-    print("                                       code: bits(12),")
-    print("                                       operands: TileInstructionOperands)")
-    print("                                       => (TileExecutionStatus, Word)")
+    print("pure func TileOperationRejectedByAcceptedApplicabilityRules(")
+    print("    rules: NumericApplicabilityRuleSet,")
+    print("    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean")
+    print("begin")
+    for rule in numeric_applicability_rules:
+        rule_set = applicability_rule_set_asl[rule["profile_id"]]
+        operation = tile_indices_by_key[rule["operation_key"]]
+        print(
+            f"    if rules == {rule_set} && operation == {operation} then "
+            "return TRUE; end;"
+        )
+    print("    return FALSE;")
+    print("end;")
+    print()
+    print("func ExecuteTileInstructionWithoutTimeWithAcceptedApplicabilityRules(")
+    print("    rules: NumericApplicabilityRuleSet,")
+    print("    family: TileDecodeFamily,")
+    print("    code: bits(12),")
+    print("    operands: TileInstructionOperands)")
+    print("    => (TileExecutionStatus, Word)")
     print("begin")
     print("    let operation = DecodeTileOperation(family, code);")
     print("    if operation == PTO_TILE_OPERATION_COUNT then")
@@ -11160,6 +11203,13 @@ def main() -> None:
     print(
         "    let accepted_operation = operation as integer {0..PTO_TILE_OPERATION_COUNT-1};"
     )
+    print(
+        "    if TileOperationRejectedByAcceptedApplicabilityRules("
+        "rules, accepted_operation) then"
+    )
+    print("        SetFault(Fault_IllegalInstruction, ReadPC());")
+    print("        return (TileExecution_Rejected, Zeros{PTO_XLEN});")
+    print("    end;")
     print("    case TileOperationOfIndex(accepted_operation) of")
     for row, operation_name in zip(tile, tile_operations, strict=True):
         arguments = ", ".join(
@@ -11201,12 +11251,22 @@ def main() -> None:
     print("    end;")
     print("end;")
     print()
+    print("func ExecuteTileInstructionWithoutTime(family: TileDecodeFamily,")
+    print("                                       code: bits(12),")
+    print("                                       operands: TileInstructionOperands)")
+    print("                                       => (TileExecutionStatus, Word)")
+    print("begin")
+    print("    return ExecuteTileInstructionWithoutTimeWithAcceptedApplicabilityRules(")
+    print("        NumericApplicabilityRules_None, family, code, operands);")
+    print("end;")
+    print()
     print("func ExecuteTileInstruction(family: TileDecodeFamily, code: bits(12),")
     print("                            operands: TileInstructionOperands)")
     print("                            => (TileExecutionStatus, Word)")
     print("begin")
     print("    BeginArchitecturalInstructionAttempt();")
-    print("    return ExecuteTileInstructionWithoutTime(family, code, operands);")
+    print("    return ExecuteTileInstructionWithoutTimeWithAcceptedApplicabilityRules(")
+    print("        NumericApplicabilityRules_None, family, code, operands);")
     print("end;")
     print()
     print("func ValidateCanonicalDecoders()")

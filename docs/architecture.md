@@ -150,6 +150,13 @@ decoded independently; equal integers do not imply equal types. ADR 0040 and
 reserved code, all 19 `TileDataType` raw-carrier widths, and low-nibble-first
 packing for FP4, FPL4, S4, and U4. Exact floating meanings and target-specific
 operation/type availability remain profile decisions under `S5-T2`.
+ADR 0041 and `spec/evidence/numeric-profile-applicability-closure.json` close
+one such target-specific support rule: under `pto-a2a3-numeric-v1`, the six MX
+CUBE selectors reject for every `TileDataType` before effects. The portable
+selectors remain accepted PTO operations; MX arithmetic and other target
+profile result rules remain open. The ASL selector is deliberately named
+`NumericApplicabilityRules_A2A3MxRejection`: it applies only this accepted
+negative slice and must not be read as a complete executable A2/A3 profile.
 
 `ExecuteTileInstruction` is the decoded tile execution boundary. The normative
 tile catalog binds each accepted selector to a typed subset of

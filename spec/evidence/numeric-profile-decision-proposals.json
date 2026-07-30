@@ -1,5 +1,5 @@
 {
-  "schema_version": 5,
+  "schema_version": 6,
   "target": "S5-T2-A",
   "status": "proposal-complete-decisions-open",
   "input": {
@@ -26,7 +26,7 @@
   },
   "rounding_selector_contract": {
     "path": "spec/evidence/numeric-rounding-selector-contract.json",
-    "sha256": "88669d8651d20a50ee1fafd55d9448dafa6fc9ad98c25008c8436ea995e21f9c",
+    "sha256": "6f284ceccfe79347acf317c8d0263742bf508986120f64c6d93cae7a3c3dcfa3",
     "status": "selector-ownership-inventory-closed-result-rules-open",
     "acceptance_record": "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
     "scalar_active_selector_count": 8,
@@ -41,7 +41,7 @@
   },
   "format_namespace_contract": {
     "path": "spec/evidence/numeric-format-namespace-contract.json",
-    "sha256": "80fbe8adca7982a705663e4aa00461a01b16f1e1d5282c310422844bb87c0fcc",
+    "sha256": "cad647e25c0f10dcaeada5106f26a2a437ef9c693dde17dba05c8c642c97aa53",
     "status": "namespace-and-carrier-inventory-closed-format-rules-open",
     "acceptance_record": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
     "tile_data_type_count": 19,
@@ -65,6 +65,21 @@
     "four_bit_type_count": 4,
     "open_residual_count": 8,
     "pd02_complete": false
+  },
+  "profile_applicability_contract": {
+    "path": "spec/evidence/numeric-profile-applicability-closure.json",
+    "sha256": "5e001c54c98858fa579f0b3da12245c801726280b1ed146aaba1547f6c51410a",
+    "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
+    "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
+    "rule_count": 6,
+    "operation_count": 6,
+    "selector_count": 6,
+    "tile_data_type_count": 19,
+    "tuple_count": 114,
+    "result_rule_count": 0,
+    "parent_pd01_complete": false,
+    "cube_matrix_complete": false,
+    "s5_t2_complete": false
   },
   "policy": {
     "proposal_not_authority": "The identity and bounded-variation framework is accepted; question and domain proposals remain review inputs and do not select numeric results.",
@@ -242,9 +257,9 @@
         "named-target-profile-rule",
         "unsupported-in-profile"
       ],
-      "proposed_rule": "Legal PTO operations use pto-numeric-v1 results. A2A3 and A5 may reject documented operation/type tuples; any accepted target-dependent result must be selected by a named profile and bounded rule. CPU observations are never normative.",
+      "proposed_rule": "ADR 0041 closes the A2A3 unsupported-in-profile rule for all six MX CUBE selectors and all 19 TileDataType identities. Legal PTO operations otherwise use pto-numeric-v1 results. A2A3 and A5 may reject only documented operation/type tuples; any accepted target-dependent result must be selected by a named profile and bounded rule. CPU observations are never normative.",
       "open_items": [
-        "complete every domain operation/type applicability table",
+        "complete every remaining domain operation/type applicability table after the accepted A2A3 MX negative slice",
         "accept one portable or target disposition for every supported and rejected tuple"
       ],
       "acceptance_evidence": [

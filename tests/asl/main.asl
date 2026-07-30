@@ -18,6 +18,7 @@ begin
     TestDecodedBundleStartAndStop();
     TestBundleCommandTotalityBoundaries();
     TestBundleOperationDescriptorFields();
+    TestA2A3CubeMxBundleRejectionMatrix();
     TestBundleTileCommitLifecycle();
     TestBundleTileCommitRollback();
     TestTileRegisterMapping();

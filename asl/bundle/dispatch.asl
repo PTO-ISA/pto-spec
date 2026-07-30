@@ -268,6 +268,26 @@ begin
     end;
 end;
 
+pure func BundleOperationDescriptorRejectedByAcceptedApplicabilityRules(
+    rules: NumericApplicabilityRuleSet,
+    descriptor: BundleOperationDescriptor) => boolean
+begin
+    case descriptor.operation_class of
+        when BundleOperation_TileElement,
+             BundleOperation_TileMemory,
+             BundleOperation_TileMatrix =>
+            if !descriptor.selector_valid then return FALSE; end;
+            let decoded = DecodeTileOperation(
+                BundleTileDecodeFamily(descriptor.operation_class),
+                BundleSelectorCode(descriptor));
+            if decoded == PTO_TILE_OPERATION_COUNT then return FALSE; end;
+            let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
+            return TileOperationRejectedByAcceptedApplicabilityRules(
+                rules, operation);
+        otherwise => return FALSE;
+    end;
+end;
+
 readonly func BundleOperationBindingsComplete(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -318,7 +338,8 @@ begin
     return TRUE;
 end;
 
-func ExecuteBundleTileOperation() => boolean
+func ExecuteBundleTileOperationWithAcceptedApplicabilityRules(
+    rules: NumericApplicabilityRuleSet) => boolean
 begin
     let family = BundleTileDecodeFamily(_BundleOperation.operation_class);
     let code = BundleSelectorCode(_BundleOperation);
@@ -342,11 +363,20 @@ begin
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;
     end;
-    let (status, -) = ExecuteTileInstructionWithoutTime(family, code, operands);
+    let (status, -) =
+        ExecuteTileInstructionWithoutTimeWithAcceptedApplicabilityRules(
+            rules, family, code, operands);
     return status == TileExecution_Executed;
 end;
 
-func CompleteBundleAt(continuation: Word) => boolean
+func ExecuteBundleTileOperation() => boolean
+begin
+    return ExecuteBundleTileOperationWithAcceptedApplicabilityRules(
+        NumericApplicabilityRules_None);
+end;
+
+func CompleteBundleAtWithAcceptedApplicabilityRules(
+    rules: NumericApplicabilityRuleSet, continuation: Word) => boolean
 begin
     if !_BundleActive then
         SetFault(Fault_BundleControl, ReadTPC());
@@ -356,7 +386,10 @@ begin
         if _BundleOperation.operation_class == BundleOperation_TileElement ||
            _BundleOperation.operation_class == BundleOperation_TileMemory ||
            _BundleOperation.operation_class == BundleOperation_TileMatrix then
-            if !ExecuteBundleTileOperation() then return FALSE; end;
+            if !ExecuteBundleTileOperationWithAcceptedApplicabilityRules(
+                rules) then
+                return FALSE;
+            end;
         elsif _BundleOperation.operation_class == BundleOperation_FixedPoint then
             SetFault(Fault_IllegalInstruction, ReadTPC());
             return FALSE;
@@ -364,6 +397,12 @@ begin
     end;
     StopBundleAt(continuation);
     return _LastFault == Fault_None;
+end;
+
+func CompleteBundleAt(continuation: Word) => boolean
+begin
+    return CompleteBundleAtWithAcceptedApplicabilityRules(
+        NumericApplicabilityRules_None, continuation);
 end;
 
 readonly func CommandDecodedBundleTarget(
@@ -374,13 +413,20 @@ begin
     return ReadTPC() + LSL(offset, 1);
 end;
 
-func ExecuteDecodedBundleStart(instruction: bits(64),
-                              form: integer {0..PTO_COMMAND_FORM_COUNT-1},
-                              length_bits: integer {16,32,48,64})
+func ExecuteDecodedBundleStartWithAcceptedApplicabilityRules(
+    rules: NumericApplicabilityRuleSet,
+    instruction: bits(64),
+    form: integer {0..PTO_COMMAND_FORM_COUNT-1},
+    length_bits: integer {16,32,48,64})
 begin
     let kind = CommandBundleKindOfForm(form);
     let descriptor = DecodeBundleOperationDescriptor(instruction, form);
     if !BundleOperationDescriptorLegal(descriptor) then
+        SetFault(Fault_IllegalInstruction, ReadTPC());
+        return;
+    end;
+    if BundleOperationDescriptorRejectedByAcceptedApplicabilityRules(
+        rules, descriptor) then
         SetFault(Fault_IllegalInstruction, ReadTPC());
         return;
     end;
@@ -406,7 +452,8 @@ begin
         SetFault(Fault_InstructionPC, target);
         return;
     end;
-    if _BundleActive && !CompleteBundleAt(ReadTPC()) then
+    if _BundleActive && !CompleteBundleAtWithAcceptedApplicabilityRules(
+        rules, ReadTPC()) then
         return;
     end;
     ClearBundleHeaderState();
@@ -414,6 +461,14 @@ begin
     if _LastFault == Fault_None then
         InstallBundleOperationDescriptor(descriptor);
     end;
+end;
+
+func ExecuteDecodedBundleStart(instruction: bits(64),
+                              form: integer {0..PTO_COMMAND_FORM_COUNT-1},
+                              length_bits: integer {16,32,48,64})
+begin
+    ExecuteDecodedBundleStartWithAcceptedApplicabilityRules(
+        NumericApplicabilityRules_None, instruction, form, length_bits);
 end;
 
 func ExecuteDecodedBundleCommand(instruction: bits(64),

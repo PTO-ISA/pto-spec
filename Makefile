@@ -155,6 +155,7 @@ build: $(SPEC)
 
 $(DECODER_SPEC): scripts/generate-asl-decoders spec/catalog/scalar-forms.json \
 		spec/catalog/command-forms.json \
+		spec/catalog/numeric-profile-applicability.json \
 		spec/catalog/system-registers.json spec/catalog/tile-operations.json
 	@mkdir -p build
 	@./scripts/generate-asl-decoders > $@

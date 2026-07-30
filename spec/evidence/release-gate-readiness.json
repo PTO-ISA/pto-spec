@@ -31,7 +31,7 @@
     },
     {
       "path": "Makefile",
-      "sha256": "35068127f85d3a424505fd2d388df7c329f22dc1a85ea1ee861084d353722f5e"
+      "sha256": "ec32b51072b6c0d2a63f0b329c4a6b04c0d5e54a82ee0668161b1f3700c81eb0"
     },
     {
       "path": "docs/review-checklist.md",
@@ -54,6 +54,10 @@
       "sha256": "be234bc101e738b6a26db40b219f4ff1b186f1622deec1d7b037276b2f3f1591"
     },
     {
+      "path": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
+      "sha256": "4fa6c28e08858cab52b5c5482d670518c16700eb78489b246727ede8fe9cd1c4"
+    },
+    {
       "path": "scripts/check-asl-test-shards",
       "sha256": "7ab9174587cc29b39f676ced8ca8f5b3f433d4171c992a20f86fc2598034c3b1"
     },
@@ -63,7 +67,7 @@
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "5c9aff58b4ed92f7420c5c08c44a5ad76e77961fcb66b4e650949cd5347beaf5"
+      "sha256": "c7847f2952fa89beecd54cfae5142f2f1873b6a49e69f1e51dab88c88ff31b7b"
     },
     {
       "path": "scripts/check-publication-hygiene",
@@ -71,7 +75,7 @@
     },
     {
       "path": "scripts/check-repository",
-      "sha256": "df34dadec701d30ef61c560f953a39d68f9758f7aec77b8fd525af2c43220fb9"
+      "sha256": "141802b54955d6ca55b7dbce771de8ab2c9785d6be12f3dc85aa2159c09e95f8"
     },
     {
       "path": "scripts/check-toolchain",
@@ -82,20 +86,28 @@
       "sha256": "083beeeb8cd941757c2a9fdc590ec4bd2e1df9db7ee2e7a2f2996e7876cb467e"
     },
     {
+      "path": "scripts/generate-numeric-profile-applicability-closure",
+      "sha256": "6333d878b4af5c94224b30f3d43430353a762cfafb5302044fb909aeeb068db1"
+    },
+    {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "ecdbdfced3565c4101ea9effde8870642a2c2f3bddfb096a3d4f0c4dd4cf727a"
+      "sha256": "d049bc0ed56d976c6d1c836651c5ef953052f10216fdd4847a922f155882fbaa"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "dd98581a31f998c084ac945d2f61138a6a268104c97c4e1d4cc42334a97316d6"
+      "sha256": "3ab8d37f5fcc275742fa22f1e685158627bc4714f4e4de25db0251fab8795630"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "80fbe8adca7982a705663e4aa00461a01b16f1e1d5282c310422844bb87c0fcc"
+      "sha256": "cad647e25c0f10dcaeada5106f26a2a437ef9c693dde17dba05c8c642c97aa53"
+    },
+    {
+      "path": "spec/evidence/numeric-profile-applicability-closure.json",
+      "sha256": "5e001c54c98858fa579f0b3da12245c801726280b1ed146aaba1547f6c51410a"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "88669d8651d20a50ee1fafd55d9448dafa6fc9ad98c25008c8436ea995e21f9c"
+      "sha256": "6f284ceccfe79347acf317c8d0263742bf508986120f64c6d93cae7a3c3dcfa3"
     },
     {
       "path": "spec/evidence/scalar-numeric-flag-contract.json",
@@ -103,11 +115,15 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "77f6379bae9378b72b123a0c2baa5d1097e1708806929785af9c232b55ad0ca4"
+      "sha256": "b1e679c7e204f048419c2cfa28b2370778ae68193f00e120fe79e9ce099071d3"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "b0005fd0597a14386ac68d9ef1f66b25fd719af42ba018bbad2a8ba18a70ed4e"
+      "sha256": "bed475b19ded4f368be77a14e090b4e08aee5425fbd5131cf2f9341839bbcd5f"
+    },
+    {
+      "path": "spec/catalog/numeric-profile-applicability.json",
+      "sha256": "7553e7fa87b6aeb731f87ee8b91b0bb13c938c7323229f2f99645acdf1c9d7fe"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
@@ -115,7 +131,7 @@
     },
     {
       "path": "specification.toml",
-      "sha256": "8b04812a47448fdeed21356ae03e7352848fb2a8a14f54b0cd3fee232c418063"
+      "sha256": "03e3073bddf99573af940a2fb4f75d1d8f6921ea6bcc93ee5e439276557a69b2"
     }
   ],
   "sub_stages": [
@@ -329,8 +345,8 @@
       "tests/asl/shards/concurrency-profile.asl"
     ],
     "shard_count": 34,
-    "canonical_call_count": 99,
-    "reachable_test_subprogram_count": 87,
+    "canonical_call_count": 100,
+    "reachable_test_subprogram_count": 89,
     "default_parallel_jobs": 4,
     "partition_status": "closed",
     "candidate_runtime_result": null
@@ -633,8 +649,8 @@
     "required_approval_count": 2,
     "required_external_control_count": 10,
     "shard_count": 34,
-    "canonical_call_count": 99,
-    "reachable_test_subprogram_count": 87,
+    "canonical_call_count": 100,
+    "reachable_test_subprogram_count": 89,
     "open_prerequisite_targets": [
       "S5-T2",
       "S6-T1"

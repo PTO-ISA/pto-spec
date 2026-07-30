@@ -27,6 +27,7 @@ SOURCE_PATHS = (
     "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
     "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
     "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+    "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
     "scripts/check-asl-test-shards",
     "scripts/check-binary-closure",
     "scripts/check-catalogs",
@@ -34,13 +35,16 @@ SOURCE_PATHS = (
     "scripts/check-repository",
     "scripts/check-toolchain",
     "scripts/generate-numeric-format-namespace-contract",
+    "scripts/generate-numeric-profile-applicability-closure",
     "spec/evidence/maturity-closure.json",
     "spec/evidence/numeric-profile-decision-proposals.json",
     "spec/evidence/numeric-format-namespace-contract.json",
+    "spec/evidence/numeric-profile-applicability-closure.json",
     "spec/evidence/numeric-rounding-selector-contract.json",
     "spec/evidence/scalar-numeric-flag-contract.json",
     "spec/evidence/release-traceability-readiness.json",
     "spec/requirements.json",
+    "spec/catalog/numeric-profile-applicability.json",
     "spec/catalog/numeric-profile-identities.json",
     "specification.toml",
 )
@@ -51,8 +55,8 @@ EXPECTED_COUNTS = {
     "required_approval_count": 2,
     "required_external_control_count": 10,
     "shard_count": 34,
-    "canonical_call_count": 99,
-    "reachable_test_subprogram_count": 87,
+    "canonical_call_count": 100,
+    "reachable_test_subprogram_count": 89,
 }
 
 GATE_SPECS: tuple[dict[str, Any], ...] = (

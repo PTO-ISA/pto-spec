@@ -1547,7 +1547,7 @@
     },
     {
       "path": "asl/types.asl",
-      "sha256": "bc685c122e4851f0df2f5815438ac745ebbfc604a14e1539108d86e94224153b"
+      "sha256": "1c6c7be26a0889af2a0e6d1bc27ffc18fd2dd663d0964b5d6343422420ec4dd0"
     },
     {
       "path": "asl/scalar/floating.asl",
@@ -1563,7 +1563,7 @@
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "681ed8e568a673351adacac6fa90422ca80ddaf2647cdad9ea0306d093b8d5e4"
+      "sha256": "3618784ae4b57e482d0e4f01b707b8e5b2bb70d446a837d5f1a96da31ddce9c1"
     },
     {
       "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",

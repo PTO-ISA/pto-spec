@@ -195,6 +195,13 @@ boundaries, all 19 raw-carrier widths, mapped/reserved code tables, and packed
 exceptional values, complete legality matrix, or target availability; those
 remain eight explicit PD-02 residuals.
 
+`numeric-profile-applicability-closure.json` is generated from the profile
+applicability catalog, direct tile catalog, PD-02 namespace ledger, pinned
+public profile evidence, public intrinsic inventory, and independent structural
+comparison. ADR 0041 makes six A2/A3 MX CUBE unsupported rules normative for
+all 19 `TileDataType` identities. The comparison is selector/decode
+corroboration only; it does not define MX arithmetic or close `cube-matrix`.
+
 `release-traceability-readiness.json` is the generated input to S6-T1. It
 enumerates every requirement, accepted scalar and command form, direct tile
 operation, system register, trap, profile hook, and top-level ASL state root.

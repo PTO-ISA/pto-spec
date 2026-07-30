@@ -1,0 +1,328 @@
+#!/usr/bin/env python3
+"""Generate the fail-closed PD-01 A2/A3 MX applicability checkpoint."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+CATALOG = ROOT / "spec/catalog/numeric-profile-applicability.json"
+PROFILE_IDENTITIES = ROOT / "spec/catalog/numeric-profile-identities.json"
+TILE_OPERATIONS = ROOT / "spec/catalog/tile-operations.json"
+FORMAT_NAMESPACE = ROOT / "spec/evidence/numeric-format-namespace-contract.json"
+DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
+RECONCILIATION = ROOT / "spec/evidence/public-source-reconciliation.json"
+EXECUTABLE_COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
+OUTPUT = ROOT / "spec/evidence/numeric-profile-applicability-closure.json"
+
+ACCEPTANCE_RECORD = "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+EXPECTED_PROFILE = "pto-a2a3-numeric-v1"
+EXPECTED_FUNCTIONS = {
+    "tile:CUBE:TMATMUL_MX": 4,
+    "tile:CUBE:TMATMUL_MX_BIAS": 5,
+    "tile:CUBE:TMATMUL_MX_ACC": 6,
+    "tile:CUBE:TGEMV_MX": 20,
+    "tile:CUBE:TGEMV_MX_BIAS": 21,
+    "tile:CUBE:TGEMV_MX_ACC": 22,
+}
+EXPECTED_SOURCE_IDS = [
+    "public-target-profiles",
+    "public-portability-rules",
+    "a2a3-matrix",
+    "a5-matrix",
+    "public-intrinsic-api",
+    "executable-model-comparison",
+]
+
+
+def load(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise SystemExit(f"numeric profile applicability generation failed: {message}")
+
+
+def source(path: str) -> dict[str, str]:
+    absolute = ROOT / path
+    return {"path": path, "sha256": hashlib.sha256(absolute.read_bytes()).hexdigest()}
+
+
+def operation_key(operation: dict[str, Any]) -> str:
+    return f"tile:{operation['family']}:{operation['name']}"
+
+
+def source_by_id(
+    inputs: dict[str, Any], reconciliation: dict[str, Any]
+) -> dict[str, dict[str, Any]]:
+    sources = {row["id"]: row for row in inputs["sources"]}
+    sources.update({row["id"]: row for row in reconciliation["public_sources"]})
+    return sources
+
+
+def direct_tile_comparison_rows(comparison: dict[str, Any]) -> list[dict[str, Any]]:
+    expected_names = {key.rsplit(":", maxsplit=1)[1] for key in EXPECTED_FUNCTIONS}
+    rows = [
+        row
+        for row in comparison["rows"]
+        if row["surface"] == "direct-tile" and row["mnemonic"] in expected_names
+    ]
+    require(len(rows) == 6, "independent MX direct-tile comparison row count drift")
+    require(
+        all(row["independent_status"] == "header-manifest" for row in rows),
+        "independent MX rows must stay structural/header-only",
+    )
+    for row in rows:
+        key = f"tile:CUBE:{row['mnemonic']}"
+        selector = f"0x{EXPECTED_FUNCTIONS[key]:03x}"
+        require(row["family"] == "CUBE", f"independent family drift for {key}")
+        require(
+            row["selector"] == selector and row["selector_match"] is True,
+            f"independent selector drift for {key}",
+        )
+        require(
+            row["stable_id"] == f"cube:{selector}:{row['mnemonic']}",
+            f"independent stable identity drift for {key}",
+        )
+        require(
+            row["classification"] == "non-comparable"
+            and row["bundle_bridge_representable"] is False,
+            f"independent structural-only boundary drift for {key}",
+        )
+    return rows
+
+
+def generate() -> dict[str, Any]:
+    catalog = load(CATALOG)
+    identities = load(PROFILE_IDENTITIES)
+    operations = load(TILE_OPERATIONS)
+    format_namespace = load(FORMAT_NAMESPACE)
+    inputs = load(DECISION_INPUTS)
+    reconciliation = load(RECONCILIATION)
+    comparison = load(EXECUTABLE_COMPARISON)
+
+    tile_types = [row["asl_enumerator"] for row in format_namespace["tile_data_types"]]
+    require(len(tile_types) == 19, "TileDataType count drift")
+
+    operation_by_key = {operation_key(row): row for row in operations["operations"]}
+    rules = catalog["rules"]
+    require(catalog["schema_version"] == 1, "catalog schema drift")
+    require(catalog["target"] == "S5-T2-A3:PD-01", "catalog target drift")
+    require(
+        catalog["open_parent_decisions"] == ["PD-01", "cube-matrix", "S5-T2"],
+        "parent decision drift",
+    )
+    require(len(catalog["profiles"]) == 1, "profile count drift")
+    require(
+        catalog["profiles"][0]["profile_id"] == EXPECTED_PROFILE,
+        "profile identity drift",
+    )
+    require(len(rules) == 6, "rule count drift")
+    require(
+        {rule["operation_key"]: rule["function"] for rule in rules}
+        == EXPECTED_FUNCTIONS,
+        "operation/function rule drift",
+    )
+    profile_identity = next(
+        (row for row in identities["identities"] if row["id"] == EXPECTED_PROFILE),
+        None,
+    )
+    require(profile_identity is not None, "A2/A3 numeric profile identity missing")
+    require(
+        profile_identity["partition_id"] == "a2a3-target"
+        and profile_identity["kind"] == "target-numeric-profile"
+        and profile_identity["normative_identity"] is True,
+        "A2/A3 numeric profile identity boundary drift",
+    )
+
+    input_sources = source_by_id(inputs, reconciliation)
+    required_sources = {
+        source_id: input_sources[source_id] for source_id in EXPECTED_SOURCE_IDS[:-2]
+    }
+    comparison_rows = direct_tile_comparison_rows(comparison)
+    independent_rows = [
+        {
+            "surface": row["surface"],
+            "stable_id": row["stable_id"],
+            "operation_key": f"tile:CUBE:{row['mnemonic']}",
+            "selector": row["selector"],
+            "independent_status": row["independent_status"],
+        }
+        for row in comparison_rows
+    ]
+
+    expanded_tuples = []
+    for rule in rules:
+        key = rule["operation_key"]
+        operation = operation_by_key.get(key)
+        require(operation is not None, f"missing tile operation {key}")
+        require(
+            operation["family"] == rule["family"] == "CUBE", f"family drift for {key}"
+        )
+        require(operation["function"] == rule["function"], f"function drift for {key}")
+        require(
+            operation["disposition"] == "accepted-direct-operation",
+            f"operation {key} is no longer accepted",
+        )
+        require(rule["profile_id"] == EXPECTED_PROFILE, f"profile drift for {key}")
+        require(
+            rule["type_scope"]
+            == {"kind": "all_tile_data_types", "tile_data_type_count": 19},
+            f"type scope drift for {key}",
+        )
+        require(
+            rule["disposition"] == "unsupported-in-profile",
+            f"disposition drift for {key}",
+        )
+        require(
+            rule["rejection"]
+            == {"fault": "IllegalInstruction", "phase": "before-operation-effects"},
+            f"rejection drift for {key}",
+        )
+        require(
+            rule["result_rule_id"] is None,
+            f"result rule unexpectedly accepted for {key}",
+        )
+        require(
+            rule["source_ids"] == EXPECTED_SOURCE_IDS, f"source IDs drift for {key}"
+        )
+        require(
+            rule["acceptance_record"] == ACCEPTANCE_RECORD,
+            f"acceptance record drift for {key}",
+        )
+        for tile_type in tile_types:
+            expanded_tuples.append(
+                {
+                    "profile_id": EXPECTED_PROFILE,
+                    "operation_key": key,
+                    "function": rule["function"],
+                    "tile_data_type": tile_type,
+                    "disposition": "unsupported-in-profile",
+                    "rejection": rule["rejection"],
+                    "result_rule_id": None,
+                }
+            )
+
+    pd01 = next(row for row in inputs["decision_questions"] if row["id"] == "PD-01")
+    cube_matrix = next(
+        row for row in inputs["domain_matrix"] if row["domain"] == "cube-matrix"
+    )
+    require(
+        pd01["selected_disposition"] is None, "PD-01 parent decision must remain open"
+    )
+    require(pd01["decision_record"] is None, "PD-01 decision record must remain open")
+    require(
+        cube_matrix["status"] == "profile-rule-required"
+        and cube_matrix["selected_profile_rule"] is None,
+        "cube-matrix parent domain must remain open",
+    )
+
+    return {
+        "schema_version": 1,
+        "artifact_id": "numeric-profile-applicability-closure",
+        "target": "S5-T2-A3:PD-01",
+        "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
+        "acceptance_record": ACCEPTANCE_RECORD,
+        "policy": {
+            "support_boundary": "Applicability rules decide whether a profile supports an operation/type tuple. They do not define numeric result semantics.",
+            "rejection_boundary": "The six A2/A3 MX CUBE rules reject with IllegalInstruction before operand legality, handler dispatch, or operation effects.",
+            "parent_boundary": "This checkpoint closes only a negative A2/A3 support slice. PD-01, cube-matrix result rules, and S5-T2 remain open.",
+        },
+        "profiles": catalog["profiles"],
+        "rules": rules,
+        "expanded_tuples": expanded_tuples,
+        "source_evidence": {
+            "public_repository": inputs["public_repository"],
+            "public_commit": inputs["public_commit"],
+            "profile_identity": profile_identity,
+            "decision_input_sources": required_sources,
+            "public_intrinsic_api": input_sources["public-intrinsic-api"],
+            "independent_executable_model": {
+                "role": "structural corroboration only; no tile payload or numeric result oracle",
+                "snapshot_revision_sha256": comparison["snapshot"]["revision_sha256"],
+                "rows": independent_rows,
+            },
+        },
+        "executable_evidence": {
+            "guard_generator": "scripts/generate-asl-decoders",
+            "guard_symbol": "TileOperationRejectedByAcceptedApplicabilityRules",
+            "rule_set_type": {
+                "path": "asl/types.asl",
+                "symbol": "NumericApplicabilityRuleSet",
+            },
+            "bundle_guard": {
+                "path": "asl/bundle/dispatch.asl",
+                "symbol": "BundleOperationDescriptorRejectedByAcceptedApplicabilityRules",
+            },
+            "direct_test": {
+                "path": "tests/asl/cube-totality-tests.asl",
+                "symbol": "TestA2A3CubeMxDirectRejectionMatrix",
+            },
+            "bundle_test": {
+                "path": "tests/asl/bundle-tests.asl",
+                "symbol": "TestA2A3CubeMxBundleRejectionMatrix",
+            },
+        },
+        "tests": [
+            "tests/asl/bundle-tests.asl",
+            "tests/asl/cube-totality-tests.asl",
+        ],
+        "source_hashes": [
+            source("spec/catalog/numeric-profile-applicability.json"),
+            source("spec/catalog/numeric-profile-identities.json"),
+            source("spec/catalog/tile-operations.json"),
+            source("spec/evidence/numeric-format-namespace-contract.json"),
+            source("spec/evidence/numeric-profile-decision-inputs.json"),
+            source("spec/evidence/public-source-reconciliation.json"),
+            source("spec/evidence/executable-model-comparison.json"),
+            source("scripts/generate-asl-decoders"),
+            source("asl/types.asl"),
+            source("asl/bundle/dispatch.asl"),
+            source("tests/asl/bundle-tests.asl"),
+            source("tests/asl/cube-totality-tests.asl"),
+            source(ACCEPTANCE_RECORD),
+        ],
+        "open_parent_decisions": catalog["open_parent_decisions"],
+        "summary": {
+            "rule_count": 6,
+            "operation_count": 6,
+            "selector_count": 6,
+            "tile_data_type_count": 19,
+            "tuple_count": 114,
+            "result_rule_count": 0,
+            "parent_pd01_complete": False,
+            "cube_matrix_complete": False,
+            "s5_t2_complete": False,
+        },
+    }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--write", action="store_true", help="write generated artifact")
+    parser.add_argument(
+        "--check", action="store_true", help="check generated artifact is current"
+    )
+    args = parser.parse_args()
+    artifact = generate()
+    text = json.dumps(artifact, indent=2, sort_keys=False) + "\n"
+    if args.write:
+        OUTPUT.write_text(text, encoding="utf-8")
+    elif args.check:
+        existing = OUTPUT.read_text(encoding="utf-8")
+        require(
+            existing == text,
+            f"{OUTPUT.relative_to(ROOT)} is stale; run this script with --write",
+        )
+    else:
+        print(text, end="")
+
+
+if __name__ == "__main__":
+    main()

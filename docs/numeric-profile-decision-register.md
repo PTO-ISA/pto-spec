@@ -41,6 +41,10 @@ accepted architecture decisions remain authoritative.
   raw-carrier widths, every mapped/reserved code, and low-nibble-first packing
   for all four 4-bit types. Eight format, exceptional-value, legality,
   target-availability, and vector residuals remain open.
+- ADR 0041 and `spec/evidence/numeric-profile-applicability-closure.json`
+  close one PD-01 applicability checkpoint: A2/A3 rejects the six MX CUBE
+  selectors for every `TileDataType` before effects. All result rules and the
+  rest of the applicability matrix remain open.
 - The current maturity floor remains M4. This register improves decision
   readiness; it does not close `S5-T2-A` or numeric conformance.
 
@@ -72,7 +76,7 @@ acceptance-record fields.
 
 | ID | Proposed disposition | Review target |
 | --- | --- | --- |
-| `PD-01` | Portable results plus named support restrictions and bounded target variations | Complete the applicability matrix for the accepted identities; keep CPU observational |
+| `PD-01` | ADR 0041 fixes the A2/A3 unsupported-in-profile MX CUBE slice; portable results plus other named support restrictions and bounded target variations remain open | Complete the full applicability matrix for the accepted identities; keep CPU observational |
 | `PD-02` | ADR 0040 fixes five separate code namespaces, all 19 raw-carrier widths, reserved rejection, and packed four-bit order; numeric meanings remain profile-bound | Resolve bit-exact floating meanings, exceptional values, the complete operation/type/profile legality matrix, target availability, and positive/reserved vectors |
 | `PD-03` | Selector namespaces and owners fixed by ADR 0039; portable core is RNE/RTZ/RTP/RTM | Decide active codes 4–7, map named bundle/public/matrix/stochastic controls, and define all domain rounding and saturation-order rules |
 | `PD-04` | Named input/result subnormal rules selected by visible mode state or a fixed target profile | Define reset, lifetime, transitions, operation applicability, and unknown-mode rejection |
@@ -127,9 +131,10 @@ semantics rather than numeric differential results.
 ## Promotion path
 
 The four identities and five selection-framework rules close `S5-T2-A1`.
-The PD-02, PD-03, and PD-06 structural checkpoints do not accept any complete
-result decision. `S5-T2-A` closes only when all 12 decisions and each of the 20 domain
-rows have an accepted profile rule and decision record. Only then
+The PD-01 negative-applicability checkpoint and the PD-02, PD-03, and PD-06
+structural checkpoints do not accept any complete result decision. `S5-T2-A`
+closes only when all 12 decisions and each of the 20 domain rows have an
+accepted profile rule and decision record. Only then
 may `S5-T2-B` qualify an independent oracle for each numeric lane. Oracle,
 vector, result, adjudication, and review evidence remain separate promotion
 gates.
@@ -143,5 +148,6 @@ scripts/generate-numeric-profile-decision-proposals --check
 scripts/generate-scalar-numeric-flag-contract --check
 scripts/generate-numeric-rounding-selector-contract --check
 scripts/generate-numeric-format-namespace-contract --check
+scripts/generate-numeric-profile-applicability-closure --check
 make repo-check
 ```
