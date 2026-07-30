@@ -537,10 +537,10 @@
     {
       "domain": "tile-matrix",
       "model": "asl/tile/cube.asl",
-      "name": "TileProfileMatrixScale",
-      "portable_default": "Apply row and column scales with raw word-width multiplication.",
+      "name": "TileProfileMatrixScaledAccumulate",
+      "portable_default": "Scale the left and right raw operands at word width, multiply the scaled operands, and add the term to the unscaled prior accumulator.",
       "profile_obligations": [
-        "Define accepted type triples, scale encodings, intermediate precision, rounding, saturation, and exceptional values."
+        "Define the exact MX operand pairs, E8M0 decoding, K-block indexing, pre-FMA scale application, accumulator precision, rounding, saturation, and exceptional values."
       ],
       "requirement": "PTO-REQ-CUBE-001",
       "status": "implemented-by-pto-v0",

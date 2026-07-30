@@ -166,6 +166,18 @@ begin
            data_type == TileDataType_HiF4X2;
 end;
 
+// CUBE command headers name the logical matrix/result type. ACC stores the
+// wider physical class selected by that logical type.
+pure func TileMatrixAccumulatorDataType(data_type: TileDataType) => TileDataType
+begin
+    if data_type == TileDataType_FP64 then return TileDataType_FP64; end;
+    if TileDataTypeIsSigned(data_type) then return TileDataType_S64; end;
+    if data_type == TileDataType_U64 || data_type == TileDataType_U32 ||
+       data_type == TileDataType_U16 || data_type == TileDataType_U8 ||
+       data_type == TileDataType_U4X2 then return TileDataType_U64; end;
+    return TileDataType_FP32;
+end;
+
 // Portable safe materialization for B.DATR padding. Integer extrema are exact.
 // The raw-carrier reference profile uses all-ones/one-sign-bit sentinels for
 // floating Max/Min; a hardware IEEE profile refines those carrier encodings.

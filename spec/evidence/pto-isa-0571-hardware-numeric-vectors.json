@@ -1,6 +1,6 @@
 {
   "hardware_profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
-  "hardware_profile_sha256": "856bdeb29f8d6ab3cbaf8cf20889b4853eabaf5215aa8410ce42716d2260648f",
+  "hardware_profile_sha256": "becfbefcc7a31408e5e5293802493f833f68a2fccebb3f9e8008d8b9f4e7658c",
   "implementation_conformance_status": "unproven-in-repository",
   "reference_profile": {
     "hardware_conformance_claim": false,
@@ -42,7 +42,7 @@
       },
       {
         "data_type": "HiF8",
-        "expected": "0x7F",
+        "expected": "0x80",
         "input_class": "any-NaN"
       },
       {
@@ -56,33 +56,8 @@
         "input_class": "any-NaN"
       },
       {
-        "data_type": "E3M2",
-        "expected": "0x1E",
-        "input_class": "any-NaN"
-      },
-      {
-        "data_type": "E2M3",
-        "expected": "0x1C",
-        "input_class": "any-NaN"
-      },
-      {
-        "data_type": "E2M1X2",
-        "expected": "0x7",
-        "input_class": "any-NaN"
-      },
-      {
-        "data_type": "E1M2X2",
-        "expected": "0x6",
-        "input_class": "any-NaN"
-      },
-      {
         "data_type": "E8M0",
         "expected": "0xFF",
-        "input_class": "any-NaN"
-      },
-      {
-        "data_type": "HiF4X2",
-        "expected": "0x7",
         "input_class": "any-NaN"
       }
     ],
@@ -118,6 +93,166 @@
           "1"
         ],
         "mode": "GE"
+      }
+    ],
+    "invalid_float_to_integer": [
+      {
+        "destination": "S64",
+        "expected_raw": "0x8000000000000000",
+        "input": "qNaN",
+        "sat": false
+      },
+      {
+        "destination": "S32",
+        "expected_raw": "0x80000000",
+        "input": "+infinity",
+        "sat": false
+      },
+      {
+        "destination": "S4X2",
+        "expected_lane_raw": "0x8",
+        "input": "qNaN",
+        "sat": false
+      },
+      {
+        "destination": "U64",
+        "expected_raw": "0xFFFFFFFFFFFFFFFF",
+        "input": "qNaN",
+        "sat": false
+      },
+      {
+        "destination": "U8",
+        "expected_raw": "0xFF",
+        "input": "-infinity",
+        "sat": false
+      },
+      {
+        "destination": "U4X2",
+        "expected_lane_raw": "0xF",
+        "input": "qNaN",
+        "sat": false
+      }
+    ],
+    "low_precision_encoding": [
+      {
+        "data_type": "HiF8",
+        "expected": "+0",
+        "raw": "0x00"
+      },
+      {
+        "data_type": "HiF8",
+        "expected": "2^-22",
+        "raw": "0x01"
+      },
+      {
+        "data_type": "HiF8",
+        "expected": "2^-16",
+        "raw": "0x07"
+      },
+      {
+        "data_type": "HiF8",
+        "expected": "1",
+        "raw": "0x08"
+      },
+      {
+        "data_type": "HiF8",
+        "expected": "32768",
+        "raw": "0x6E"
+      },
+      {
+        "data_type": "HiF8",
+        "expected": "+infinity",
+        "raw": "0x6F"
+      },
+      {
+        "data_type": "HiF8",
+        "expected": "NaN",
+        "raw": "0x80"
+      },
+      {
+        "data_type": "HiF8",
+        "expected": "-infinity",
+        "raw": "0xEF"
+      },
+      {
+        "data_type": "E4M3",
+        "expected": "2^-9",
+        "raw": "0x01"
+      },
+      {
+        "data_type": "E4M3",
+        "expected": "448",
+        "raw": "0x7E"
+      },
+      {
+        "data_type": "E4M3",
+        "expected": "NaN",
+        "raw": "0x7F"
+      },
+      {
+        "data_type": "E5M2",
+        "expected": "2^-16",
+        "raw": "0x01"
+      },
+      {
+        "data_type": "E5M2",
+        "expected": "57344",
+        "raw": "0x7B"
+      },
+      {
+        "data_type": "E5M2",
+        "expected": "+infinity",
+        "raw": "0x7C"
+      },
+      {
+        "data_type": "E5M2",
+        "expected": "NaN",
+        "raw": "0x7E"
+      },
+      {
+        "data_type": "E3M2",
+        "expected": "0.0625",
+        "raw": "0x01"
+      },
+      {
+        "data_type": "E3M2",
+        "expected": "28",
+        "raw": "0x1F"
+      },
+      {
+        "data_type": "E2M3",
+        "expected": "0.125",
+        "raw": "0x01"
+      },
+      {
+        "data_type": "E2M3",
+        "expected": "7.5",
+        "raw": "0x1F"
+      },
+      {
+        "data_type": "E8M0",
+        "expected": "2^-127",
+        "raw": "0x00"
+      },
+      {
+        "data_type": "E8M0",
+        "expected": "1",
+        "raw": "0x7F"
+      },
+      {
+        "data_type": "E8M0",
+        "expected": "2",
+        "raw": "0x80"
+      },
+      {
+        "data_type": "E8M0",
+        "expected": "2^127",
+        "raw": "0xFE"
+      },
+      {
+        "data_type": "E8M0",
+        "expected": "NaN",
+        "raw": "0xFF"
       }
     ],
     "matrix": [
@@ -194,6 +329,66 @@
         "e8m0": "0x80",
         "expected": "3.0",
         "id": "mx-e8m0-scale"
+      },
+      {
+        "expected_acc": "40",
+        "expected_acc_with_bias_2": "42",
+        "expected_acc_with_prior_3": "43",
+        "id": "mx-k-block-33",
+        "left_type": "E4M3",
+        "logical_shape": {
+          "K": 33,
+          "M": 1,
+          "N": 1
+        },
+        "order": "scale-inputs-before-each-fma",
+        "right_type": "E5M2",
+        "scale_a": [
+          "0x7F",
+          "0x80"
+        ],
+        "scale_a_shape": [
+          1,
+          2
+        ],
+        "scale_b": [
+          "0x7F",
+          "0x81"
+        ],
+        "scale_b_shape": [
+          2,
+          1
+        ],
+        "unscaled_inputs": "all-one"
+      }
+    ],
+    "packed_lane_order": [
+      {
+        "data_type": "E1M2X2",
+        "expected_logical_lanes": [
+          "+0.25",
+          "-0.25"
+        ],
+        "raw_byte": "0x91",
+        "rule": "low-nibble-even-high-nibble-odd"
+      },
+      {
+        "data_type": "HiF4X2",
+        "expected_logical_lanes": [
+          "+0.25",
+          "-0.25"
+        ],
+        "raw_byte": "0x91",
+        "rule": "low-nibble-even-high-nibble-odd"
+      },
+      {
+        "data_type": "E2M1X2",
+        "expected_logical_lanes": [
+          "+0.5",
+          "-0.5"
+        ],
+        "raw_byte": "0x91",
+        "rule": "low-nibble-even-high-nibble-odd"
       }
     ],
     "reduction": [
@@ -276,6 +471,12 @@
         "expected": "3",
         "input": "2.25",
         "mode": "RTO"
+      },
+      {
+        "destination": "S32",
+        "expected": "3",
+        "input": "2.5",
+        "mode": "RHB"
       },
       {
         "destination": "S32",

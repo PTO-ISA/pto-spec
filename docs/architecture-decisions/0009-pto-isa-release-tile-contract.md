@@ -189,11 +189,16 @@ and restore include ACC.
 
 ### Numeric and sort conformance
 
-The PTO ISA 0.57.1 hardware-conformance profile uses IEEE-754 behavior,
-canonical quiet NaN, and IEEE signed zero. Operation legality and B.DATR select
-rounding and saturation. The deterministic raw-carrier profile remains a
-separately identified reference-test profile and cannot claim hardware
-conformance.
+The PTO ISA 0.57.1 hardware-conformance profile defines exact OCP and HiF
+low-precision encodings, logical packed-lane order, available canonical NaNs,
+signed-zero behavior, invalid integer results, and RHB ties toward positive
+infinity. Ordinary matrix operands/header/bias use one non-E8M0 numeric type
+and map to FP64, FP32, S64, or U64 physical ACC. MX uses the accepted FP8 or
+FP4 ordered pairs, FP32 header/ACC/bias, and E8M0 scales per 32 logical K
+elements. ScaleA is `M x ceil(K/32)`, ScaleB is `ceil(K/32) x N`, and both
+inputs are scaled before FMA. `.ACC` adds the scaled new dot product to old ACC.
+The deterministic raw-carrier profile remains a separately identified
+reference-test profile and cannot claim hardware conformance.
 
 TSORT processes stable 32-element groups and produces each value with its U32
 original index. Equal values retain original-index order. NaNs follow numeric

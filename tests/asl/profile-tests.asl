@@ -147,16 +147,19 @@ begin
         TileDataType_U64, TileDataType_U64, TileDataType_U64);
     let matrix_bias = TileProfileMatrixBias(Zeros{PTO_XLEN} + 7,
         Zeros{PTO_XLEN} + 2, TileDataType_U64, TileDataType_U64);
-    let matrix_scale = TileProfileMatrixScale(Zeros{PTO_XLEN} + 2,
+    let matrix_scaled_accumulate = TileProfileMatrixScaledAccumulate(
+        Zeros{PTO_XLEN} + 5, Zeros{PTO_XLEN} + 2,
         Zeros{PTO_XLEN} + 3, Zeros{PTO_XLEN} + 4,
-        TileDataType_U64, TileDataType_U64, TileDataType_U64);
+        Zeros{PTO_XLEN} + 6, TileDataType_FP32,
+        TileDataType_E4M3, TileDataType_E5M2,
+        TileDataType_E8M0, TileDataType_E8M0);
     assert tile_expand == Zeros{PTO_XLEN} + 9;
     assert tile_partial == Zeros{PTO_XLEN} + 20;
     assert tile_order_left;
     assert !raw_profile_nan;
     assert matrix_accumulate == Zeros{PTO_XLEN} + 7;
     assert matrix_bias == Zeros{PTO_XLEN} + 9;
-    assert matrix_scale == Zeros{PTO_XLEN} + 24;
+    assert matrix_scaled_accumulate == Zeros{PTO_XLEN} + 149;
 
     WriteTPC(Zeros{PTO_XLEN} + 0x120);
     WriteBPC(Zeros{PTO_XLEN} + 0x100);

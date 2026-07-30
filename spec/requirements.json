@@ -464,6 +464,11 @@
       "id": "PTO-REQ-HARDWARE-NUMERIC-001",
       "model": [
         "spec/hardware-conformance-profile.json",
+        "asl/tile/cube.asl",
+        "asl/tile/legality.asl",
+        "asl/tile/state.asl",
+        "asl/types.asl",
+        "spec/profile-hooks.json",
         "docs/profile-contracts.md",
         "docs/coverage.md",
         "docs/normative-sources.md",
@@ -473,6 +478,8 @@
       "status": "normative-hardware-contract-defined-conformance-unproven",
       "tests": [
         "scripts/check-release-manifest",
+        "tests/asl/profile-tests.asl",
+        "tests/asl/tile-tests.asl",
         "spec/evidence/pto-isa-0571-hardware-numeric-vectors.json"
       ]
     },

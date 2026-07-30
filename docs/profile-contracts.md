@@ -35,12 +35,19 @@ does not claim that the raw-carrier ASL implementation passes them.
 ## Hardware numeric contract
 
 The machine-readable profile freezes all 25 accepted DataType codes and the six
-reserved codes. It records storage width, packed-lane count, format identity,
-integer extrema, and the canonical qNaN for every floating or scale format.
-Subnormal values are supported and flush-to-zero behavior is non-conforming.
-Floating operations use IEEE 754-2019 semantics, detect tininess after rounding,
-preserve signed zero, and replace every produced NaN with the destination
-format's canonical quiet NaN.
+reserved codes. It records storage width, logical packed-lane count, format
+identity, integer extrema, and every available canonical NaN. E4M3, E5M2,
+E3M2, E2M3, E2M1, and E8M0 use their exact OCP encodings. HiF8 uses the exact
+variable-width Dot/Exponent/Mantissa prefix encoding, including its single zero,
+NaN, infinities, and denormal exponent extension. `E1M2X2` and `HiF4X2` remain
+distinct DataType identities even though both use the public 16-value E1M2 lane
+table. Formats without a NaN or infinity encoding are not assigned one by PTO.
+
+For every X2 DataType, Tile dimensions count logical lanes. Logical even lane
+`2*i` occupies byte `i` bits 3:0 and logical odd lane `2*i+1` occupies bits 7:4.
+An unused high nibble in an odd logical extent is reserved and zero on
+publication. Subnormal values are supported by each format that defines them;
+flush-to-zero behavior is non-conforming for those formats.
 
 B.DATR has the following hardware-profile meaning:
 
@@ -49,8 +56,9 @@ B.DATR has the following hardware-profile meaning:
   Codes 1 through 7 select RNE, RTZ, RDN, RUP, RNA, RTO, and RHB exactly as
   defined by the machine-readable profile.
 - With `Sat=0`, integer arithmetic wraps, floating overflow produces infinity,
-  and invalid float-to-integer conversion produces the destination indefinite
-  value. With `Sat=1`, integer and conversion results clamp, NaN-to-integer
+  and invalid float-to-integer conversion produces the exact destination
+  indefinite value: the signed minimum or unsigned maximum, independently per
+  packed lane. With `Sat=1`, integer and conversion results clamp, NaN-to-integer
   produces zero, and floating overflow clamps to maximum finite.
 - `Canonicalize=1` canonicalizes NaN inputs before the operation.
   `Canonicalize=0` preserves source classification and payload while reading,
@@ -72,17 +80,26 @@ TSORT processes exactly 32 elements, returns each value with its U32 original
 index, remains stable for equal values and signed zeros, and places stable NaNs
 after all numeric values for either direction.
 
-Matrix dot products advance in increasing K order. Each term uses a fused
-multiply-add with one rounding to the declared ACC type. FP64 uses FP64 ACC;
-other floating types use FP32 ACC; signed and unsigned integer inputs use S64
-and U64 ACC respectively. E8M0 MX scaling is an exact power of two. ACCCVT
-performs the destination rounding once and releases ACC only after successful
+Matrix dot products advance in increasing logical K order. Ordinary matrix
+forms accept every assigned numeric DataType except E8M0; left, right, command
+header, and bias use the same logical type. FP64 uses physical FP64 ACC; other
+floating types use FP32 ACC; signed and unsigned integers use S64 and U64 ACC.
+
+MX forms use an FP32 command header, FP32 ACC, FP32 bias, and E8M0 scales. Their
+accepted operand pairs are the four ordered E4M3/E5M2 combinations and the four
+ordered E2M1X2/HiF4X2 combinations. K is partitioned into blocks of 32 logical
+elements: ScaleA has shape `M x ceil(K/32)` and ScaleB has shape
+`ceil(K/32) x N`. Each input is scaled by its K-block scale before the fused
+multiply-add. A `.ACC` form computes old ACC plus this newly scaled dot product;
+it never scales the old ACC. Bias is added after the complete dot product.
+ACCCVT rounds once to the destination type and releases ACC only after complete
 Tile publication.
 
 `spec/evidence/pto-isa-0571-hardware-numeric-vectors.json` is generated from
 this profile. It covers canonical NaNs, signed zero, every rounding mode,
 saturation, unordered comparisons, reduction ties/NaNs, stable 32-element sort,
-and matrix initialization/bias/accumulate/MX boundaries.
+low-format encodings, packed lane order, integer indefinite results, and matrix
+initialization/bias/accumulate/MX K-block boundaries.
 
 ## PTO v0 reference-test behavior
 

@@ -67,10 +67,12 @@ evidence for every replaced interface.
 ## Hardware numeric profile
 
 `spec/hardware-conformance-profile.json` is the machine-readable authority for
-PTO ISA 0.57.1 hardware numeric claims. It freezes DataType identities,
-canonical qNaNs, signed-zero behavior, B.DATR comparison/round/saturation/
-canonicalization rules, reductions, stable 32-element TSORT, and matrix/ACC
-rounding. Its identity is distinct from `pto-v0`.
+PTO ISA 0.57.1 hardware numeric claims. It freezes exact low-precision raw
+encodings, distinct DataType identities, logical packed-lane order, available
+canonical NaNs, signed-zero behavior, B.DATR comparison/round/saturation/
+canonicalization rules, integer conversion indefinite values, reductions,
+stable 32-element TSORT, and ordinary/MX matrix types, scaling, bias, ACC, and
+publication order. Its identity is distinct from `pto-v0`.
 
 The repository generates
 `spec/evidence/pto-isa-0571-hardware-numeric-vectors.json` and binds its profile

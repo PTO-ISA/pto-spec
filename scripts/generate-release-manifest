@@ -468,7 +468,7 @@ def build_totality_evidence(encoding_hash: str) -> dict:
         }
     )
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "release": RELEASE,
         "encoding_abi": ENCODING_ABI,
         "encoding_projection_sha256": encoding_hash,
@@ -567,11 +567,13 @@ def validate_numeric_profile() -> dict:
         "b_datr",
         "claim_scope",
         "comparisons",
+        "conversion",
         "data_types",
         "implementation_conformance",
         "isa_release",
         "matrix",
         "min_max",
+        "packed_storage",
         "profile_id",
         "reductions",
         "reference_model_relation",
@@ -581,8 +583,8 @@ def validate_numeric_profile() -> dict:
     }
     if set(profile) != expected_keys:
         raise SystemExit("hardware numeric profile top-level schema drift")
-    if profile["schema_version"] != 1 or profile["isa_release"] != RELEASE:
-        raise SystemExit("hardware numeric profile must identify schema 1 and release 0.57.1")
+    if profile["schema_version"] != 2 or profile["isa_release"] != RELEASE:
+        raise SystemExit("hardware numeric profile must identify schema 2 and release 0.57.1")
     if profile["profile_id"] != NUMERIC_PROFILE_ID:
         raise SystemExit(f"hardware numeric profile ID must be {NUMERIC_PROFILE_ID}")
     reference = profile["reference_model_relation"]
@@ -604,12 +606,97 @@ def validate_numeric_profile() -> dict:
         )
     if profile["reserved_data_type_codes"] != list(RESERVED_DATATYPES):
         raise SystemExit("hardware numeric profile reserved DataType codes drift")
-    floating_rows = [
-        row for row in data_types
-        if row["class"] in {"floating", "packed-floating", "scale"}
+    nan_capable_names = {
+        "FP64", "FP32", "TF32", "HF32", "FP16", "BF16",
+        "HiF8", "E4M3", "E5M2", "E8M0",
+    }
+    actual_nan_names = {
+        row["name"] for row in data_types if "canonical_qnan" in row
+    }
+    if actual_nan_names != nan_capable_names:
+        raise SystemExit(
+            "canonical NaN registry must match the exact NaN-capable format set"
+        )
+
+    low_format_names = {
+        "HiF8", "E4M3", "E5M2", "E3M2", "E2M3",
+        "E2M1X2", "E1M2X2", "E8M0", "HiF4X2",
+    }
+    low_rows = {row["name"]: row for row in data_types if row["name"] in low_format_names}
+    if set(low_rows) != low_format_names or any("encoding" not in row for row in low_rows.values()):
+        raise SystemExit("every low-precision DataType must define an exact encoding")
+    if low_rows["E3M2"].get("payload_bits") != 6 or low_rows["E2M3"].get("payload_bits") != 6:
+        raise SystemExit("FP6 formats must use a six-bit payload in the eight-bit carrier")
+    expected_e1m2_values = {
+        "0x0": "+0", "0x1": "+0.25", "0x2": "+0.5", "0x3": "+0.75",
+        "0x4": "+1", "0x5": "+1.25", "0x6": "+1.5", "0x7": "+1.75",
+        "0x8": "-0", "0x9": "-0.25", "0xA": "-0.5", "0xB": "-0.75",
+        "0xC": "-1", "0xD": "-1.25", "0xE": "-1.5", "0xF": "-1.75",
+    }
+    for name in ("E1M2X2", "HiF4X2"):
+        if low_rows[name]["encoding"].get("lane_raw_values") != expected_e1m2_values:
+            raise SystemExit(f"{name} must define the exact public E1M2 value table")
+    if low_rows["HiF4X2"]["encoding"].get("distinct_identity_from") != "E1M2X2":
+        raise SystemExit("HiF4X2 and E1M2X2 must remain distinct DataType identities")
+
+    packed = profile["packed_storage"]
+    if packed.get("applies_to") != ["E2M1X2", "E1M2X2", "HiF4X2", "S4X2", "U4X2"]:
+        raise SystemExit("packed logical-lane type registry drift")
+    if "Logical lane 2*i is bits 3:0" not in packed.get("lane_order", ""):
+        raise SystemExit("packed lane order must keep even lanes in the low nibble")
+
+    ordinary = profile["matrix"].get("ordinary_type_table", [])
+    ordinary_names = {row.get("header_data_type") for row in ordinary}
+    expected_ordinary_names = set(EXPECTED_DATA_TYPE_NAMES.values()) - {"E8M0"}
+    if len(ordinary) != 24 or ordinary_names != expected_ordinary_names:
+        raise SystemExit("ordinary matrix type table must contain every assigned DataType except E8M0")
+    if any(
+        row["left_type"] != row["header_data_type"] or
+        row["right_type"] != row["header_data_type"] or
+        row["bias_type"] != row["header_data_type"]
+        for row in ordinary
+    ):
+        raise SystemExit("ordinary matrix operands, header, and bias must use one logical type")
+    expected_acc = {
+        **{name: "FP32" for name in (
+            "FP32", "TF32", "HF32", "FP16", "BF16", "HiF8", "E4M3",
+            "E5M2", "E3M2", "E2M3", "E2M1X2", "E1M2X2", "HiF4X2",
+        )},
+        "FP64": "FP64",
+        **{name: "S64" for name in ("S64", "S32", "S16", "S8", "S4X2")},
+        **{name: "U64" for name in ("U64", "U32", "U16", "U8", "U4X2")},
+    }
+    if any(expected_acc[row["header_data_type"]] != row["acc_type"] for row in ordinary):
+        raise SystemExit("ordinary matrix physical ACC class drift")
+
+    mx = profile["matrix"].get("mx", {})
+    expected_mx_pairs = [
+        ["E4M3", "E4M3"], ["E4M3", "E5M2"],
+        ["E5M2", "E4M3"], ["E5M2", "E5M2"],
+        ["E2M1X2", "E2M1X2"], ["E2M1X2", "HiF4X2"],
+        ["HiF4X2", "E2M1X2"], ["HiF4X2", "HiF4X2"],
     ]
-    if not floating_rows or any("canonical_qnan" not in row for row in floating_rows):
-        raise SystemExit("every floating or scale DataType must define a canonical qNaN")
+    if mx.get("allowed_operand_pairs") != expected_mx_pairs:
+        raise SystemExit("MX matrix operand-pair table drift")
+    if (
+        mx.get("header_data_type") != "FP32" or mx.get("acc_type") != "FP32" or
+        mx.get("bias_type") != "FP32" or mx.get("scale_types") != ["E8M0", "E8M0"] or
+        mx.get("scale_block_logical_k_elements") != 32 or
+        mx.get("scale_a_shape") != "M x ceil(K/32)" or
+        mx.get("scale_b_shape") != "ceil(K/32) x N"
+    ):
+        raise SystemExit("MX header/ACC/bias/scale contract drift")
+
+    invalid = profile["conversion"].get("float_to_integer_invalid", {}).get("sat_disabled", {})
+    if invalid != {
+        "S4X2": {"lane_raw": "0x8", "packed_all_lanes_raw": "0x88"},
+        "S8": "0x80", "S16": "0x8000", "S32": "0x80000000",
+        "S64": "0x8000000000000000",
+        "U4X2": {"lane_raw": "0xF", "packed_all_lanes_raw": "0xFF"},
+        "U8": "0xFF", "U16": "0xFFFF", "U32": "0xFFFFFFFF",
+        "U64": "0xFFFFFFFFFFFFFFFF",
+    }:
+        raise SystemExit("float-to-integer invalid-result table drift")
 
     expected_comparisons = {
         "0": "EQ",
@@ -643,7 +730,7 @@ def validate_numeric_profile() -> dict:
         raise SystemExit("hardware TSORT group size must remain exactly 32")
     if profile["sort"].get("output") != "value paired with U32 original index":
         raise SystemExit("hardware TSORT output must retain U32 original indices")
-    if profile["arithmetic"].get("standard") != "IEEE 754-2019 operation semantics":
+    if not profile["arithmetic"].get("standard", "").startswith("IEEE 754-2019"):
         raise SystemExit("hardware numeric profile must use IEEE 754-2019 semantics")
     return profile
 
@@ -677,6 +764,52 @@ def build_numeric_vectors(profile: dict) -> dict:
         },
         "vector_groups": {
             "canonical_nan": canonical_nan,
+            "low_precision_encoding": [
+                {"data_type": "HiF8", "raw": "0x00", "expected": "+0"},
+                {"data_type": "HiF8", "raw": "0x01", "expected": "2^-22"},
+                {"data_type": "HiF8", "raw": "0x07", "expected": "2^-16"},
+                {"data_type": "HiF8", "raw": "0x08", "expected": "1"},
+                {"data_type": "HiF8", "raw": "0x6E", "expected": "32768"},
+                {"data_type": "HiF8", "raw": "0x6F", "expected": "+infinity"},
+                {"data_type": "HiF8", "raw": "0x80", "expected": "NaN"},
+                {"data_type": "HiF8", "raw": "0xEF", "expected": "-infinity"},
+                {"data_type": "E4M3", "raw": "0x01", "expected": "2^-9"},
+                {"data_type": "E4M3", "raw": "0x7E", "expected": "448"},
+                {"data_type": "E4M3", "raw": "0x7F", "expected": "NaN"},
+                {"data_type": "E5M2", "raw": "0x01", "expected": "2^-16"},
+                {"data_type": "E5M2", "raw": "0x7B", "expected": "57344"},
+                {"data_type": "E5M2", "raw": "0x7C", "expected": "+infinity"},
+                {"data_type": "E5M2", "raw": "0x7E", "expected": "NaN"},
+                {"data_type": "E3M2", "raw": "0x01", "expected": "0.0625"},
+                {"data_type": "E3M2", "raw": "0x1F", "expected": "28"},
+                {"data_type": "E2M3", "raw": "0x01", "expected": "0.125"},
+                {"data_type": "E2M3", "raw": "0x1F", "expected": "7.5"},
+                {"data_type": "E8M0", "raw": "0x00", "expected": "2^-127"},
+                {"data_type": "E8M0", "raw": "0x7F", "expected": "1"},
+                {"data_type": "E8M0", "raw": "0x80", "expected": "2"},
+                {"data_type": "E8M0", "raw": "0xFE", "expected": "2^127"},
+                {"data_type": "E8M0", "raw": "0xFF", "expected": "NaN"},
+            ],
+            "packed_lane_order": [
+                {
+                    "data_type": "E1M2X2",
+                    "raw_byte": "0x91",
+                    "expected_logical_lanes": ["+0.25", "-0.25"],
+                    "rule": "low-nibble-even-high-nibble-odd",
+                },
+                {
+                    "data_type": "HiF4X2",
+                    "raw_byte": "0x91",
+                    "expected_logical_lanes": ["+0.25", "-0.25"],
+                    "rule": "low-nibble-even-high-nibble-odd",
+                },
+                {
+                    "data_type": "E2M1X2",
+                    "raw_byte": "0x91",
+                    "expected_logical_lanes": ["+0.5", "-0.5"],
+                    "rule": "low-nibble-even-high-nibble-odd",
+                },
+            ],
             "signed_zero": [
                 {"id": "fp32-negative-zero-multiply", "operation": "multiply", "inputs": ["-0", "2"], "expected": "0x80000000"},
                 {"id": "fp32-exact-cancellation-rne", "operation": "add", "inputs": ["+1", "-1"], "rounding": "RNE", "expected": "0x00000000"},
@@ -691,7 +824,16 @@ def build_numeric_vectors(profile: dict) -> dict:
                 {"mode": "RUP", "input": "1.1", "destination": "S32", "expected": "2"},
                 {"mode": "RNA", "input": "-2.5", "destination": "S32", "expected": "-3"},
                 {"mode": "RTO", "input": "2.25", "destination": "S32", "expected": "3"},
+                {"mode": "RHB", "input": "2.5", "destination": "S32", "expected": "3"},
                 {"mode": "RHB", "input": "-2.5", "destination": "S32", "expected": "-2"},
+            ],
+            "invalid_float_to_integer": [
+                {"input": "qNaN", "destination": "S64", "sat": False, "expected_raw": "0x8000000000000000"},
+                {"input": "+infinity", "destination": "S32", "sat": False, "expected_raw": "0x80000000"},
+                {"input": "qNaN", "destination": "S4X2", "sat": False, "expected_lane_raw": "0x8"},
+                {"input": "qNaN", "destination": "U64", "sat": False, "expected_raw": "0xFFFFFFFFFFFFFFFF"},
+                {"input": "-infinity", "destination": "U8", "sat": False, "expected_raw": "0xFF"},
+                {"input": "qNaN", "destination": "U4X2", "sat": False, "expected_lane_raw": "0xF"},
             ],
             "saturation": [
                 {"input": "130", "destination": "S8", "sat": True, "expected": "127"},
@@ -725,6 +867,21 @@ def build_numeric_vectors(profile: dict) -> dict:
                 {"id": "fp32-matmul-bias", "dot_products": ["19", "22"], "bias": ["1", "-2"], "expected_acc": ["20", "20"]},
                 {"id": "fp32-matmul-acc", "prior_acc": ["10", "20"], "dot_products": ["19", "22"], "expected_acc": ["29", "42"]},
                 {"id": "mx-e8m0-scale", "base": "1.5", "e8m0": "0x80", "expected": "3.0"},
+                {
+                    "id": "mx-k-block-33",
+                    "logical_shape": {"M": 1, "K": 33, "N": 1},
+                    "left_type": "E4M3",
+                    "right_type": "E5M2",
+                    "scale_a_shape": [1, 2],
+                    "scale_b_shape": [2, 1],
+                    "scale_a": ["0x7F", "0x80"],
+                    "scale_b": ["0x7F", "0x81"],
+                    "unscaled_inputs": "all-one",
+                    "expected_acc": "40",
+                    "expected_acc_with_prior_3": "43",
+                    "expected_acc_with_bias_2": "42",
+                    "order": "scale-inputs-before-each-fma",
+                },
             ],
         },
     }

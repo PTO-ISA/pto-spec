@@ -26,7 +26,7 @@
     },
     {
       "path": "asl/profiles/pto-v0.asl",
-      "sha256": "9f71ebf7ecf6fdf8515245bb229cfa1d63684f68f36986a851f23ba802282f5a"
+      "sha256": "f1a7da0a76fc15ede5c47a08286b4bce30037f62669b688fd6c121cabd9ffd13"
     },
     {
       "path": "asl/scalar/addressing.asl",
@@ -82,7 +82,7 @@
     },
     {
       "path": "asl/tile/cube.asl",
-      "sha256": "ed673e26616ac12b0629f58e77818d28c85976d349a8f99156ee9539c32197ee"
+      "sha256": "da051e45af05da80d09535b5fc4a1650964bea0a3b1546a103d5d033b0d50373"
     },
     {
       "path": "asl/tile/elementwise.asl",
@@ -98,7 +98,7 @@
     },
     {
       "path": "asl/tile/legality.asl",
-      "sha256": "c99d4a32c6214e33198a30991c86f395f8d3b094b3ccc1cf3f426264c55278b4"
+      "sha256": "8f03dbf72291e33fa49e0814d7c06d397063caff8d4e040fd5a8092c6706bae1"
     },
     {
       "path": "asl/tile/memory.asl",
@@ -114,11 +114,11 @@
     },
     {
       "path": "asl/tile/state.asl",
-      "sha256": "0232fb50965ca12ce41ef301c3d7e6a52757009ea6c368bc54ba1eea2509c863"
+      "sha256": "a3f60492114d24f76734eba9228c596b4838dfc07eda05610c0e1c127d85d684"
     },
     {
       "path": "asl/types.asl",
-      "sha256": "0786b6255468b75c812ccef01cd4f28905e3436d335d066bdf235fdbf84eff71"
+      "sha256": "01fbf6812bf68c9a71d6c00ea6a729e8729bae364ef5061c23bdcc9a5139d7c8"
     },
     {
       "path": "docs/architecture-decisions/0001-pto-architecture-scope.md",
@@ -142,7 +142,7 @@
     },
     {
       "path": "docs/architecture-decisions/0009-pto-isa-release-tile-contract.md",
-      "sha256": "3c0110e1a4730a9b98db11f3ff16d8fe2a46ed65dbc328a61e5f4844ee07c289"
+      "sha256": "3472477e2c26f9f9afe0e7aace43f92c54528e03ba6a6c60cdb7a36c760dd221"
     },
     {
       "path": "docs/architecture.md",
@@ -150,7 +150,7 @@
     },
     {
       "path": "docs/coverage.md",
-      "sha256": "25350a9319fbb1a7ca3f80c8866c4eaafbdb3e95e5aaaa06af9eda087055eefe"
+      "sha256": "d2011a427636785ade7ab368be51b35473e4a610108c767da3215eaa92686995"
     },
     {
       "path": "docs/memory-model.md",
@@ -162,11 +162,11 @@
     },
     {
       "path": "docs/normative-sources.md",
-      "sha256": "045ff99bab8ac145056014f0fb8ad62aefd6c1e7d147cc64a59c1c3c7bc3296f"
+      "sha256": "c7b3f56ffda31ca6bd0977600d3bdc59fa230290d9986a3c422efc2cb72b1940"
     },
     {
       "path": "docs/profile-contracts.md",
-      "sha256": "c466743dc5ddd5f7431c99f1e12c7d0712cd5400120e47adf2980b6c6b1d8b5e"
+      "sha256": "33f21a9db40711e9ab03fa2439ea41d9f6021e5db3f41eca3e8e9ef82aa5cbdb"
     },
     {
       "path": "spec/catalog/command-forms.json",
@@ -186,15 +186,15 @@
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "856bdeb29f8d6ab3cbaf8cf20889b4853eabaf5215aa8410ce42716d2260648f"
+      "sha256": "becfbefcc7a31408e5e5293802493f833f68a2fccebb3f9e8008d8b9f4e7658c"
     },
     {
       "path": "spec/profile-hooks.json",
-      "sha256": "5c996bc5b39681588962179f616f94a9b944430f5a8cefdba1289d999f0ce76b"
+      "sha256": "8a82a9c3816e0324ee5fedf1a85f3c1a0e31894621d1d619eb45f787f599bac4"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "29a4b45f388bee1012348801ec26182f25f823122768abb99676d19743eb055f"
+      "sha256": "d3b50eef4a57bd091445daa0613a55ee02b0cf99cb706cce614300707e4652e4"
     },
     {
       "path": "specification.toml",
@@ -219,7 +219,7 @@
     },
     "tile_operations_total": 120
   },
-  "content_sha256": "45575361fa5b180c454500360a3e4e75d34fba663e60f3741ef38dc9a514bc13",
+  "content_sha256": "5d75f42d191478aef9fa1ef1d73fb18dc48cf83468dc79c9054cb4ae21387354",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -244,7 +244,7 @@
     "path": "spec/hardware-conformance-profile.json",
     "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
     "repository_implementation_conformance": "unproven",
-    "sha256": "856bdeb29f8d6ab3cbaf8cf20889b4853eabaf5215aa8410ce42716d2260648f"
+    "sha256": "becfbefcc7a31408e5e5293802493f833f68a2fccebb3f9e8008d8b9f4e7658c"
   },
   "hash_contract": {
     "algorithm": "SHA-256",
@@ -316,12 +316,12 @@
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0571-encoding-totality.json",
-      "sha256": "45b6951b34e511061ca6c80745f6f997554c2f19e3555b488bc3307653cafe52"
+      "sha256": "59e60e21d2ead14d2adb3e092a6fbf9c32a9247ad4298151780bb11c1a824e76"
     },
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0571-hardware-numeric-vectors.json",
-      "sha256": "d0bd12e46215ed902e3775c83e8b2f7861167cedca421fef9421330e655039e5"
+      "sha256": "b9f908deb9cfec412388e95f4532563cf4e462032b43d15996f0f7b4b93b4ec9"
     }
   ],
   "release": "0.57.1",

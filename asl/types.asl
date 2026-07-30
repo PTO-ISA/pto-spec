@@ -466,6 +466,7 @@ type TileInfo of record {
 
 type AccumulatorState of record {
     live: boolean,
+    logical_data_type: TileDataType,
     info: TileInfo
 };
 

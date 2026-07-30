@@ -58,6 +58,7 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xacc);
     _Accumulator.live = TRUE;
+    _Accumulator.logical_data_type = TileDataType_U64;
     _Accumulator.info = _Tiles[[0]];
     BeginBlock(BlockKind_Standard, BlockTransfer_Direct,
         Zeros{PTO_XLEN} + 0x500, Zeros{PTO_XLEN} + 0x304,

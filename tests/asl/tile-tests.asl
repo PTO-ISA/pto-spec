@@ -135,6 +135,94 @@ begin
     assert ReadAccumulatorElement(1, 0) == Zeros{PTO_XLEN} + 18;
 end;
 
+// PTO-REQ-HARDWARE-NUMERIC-001: MX legality uses exact FP8/FP4 pairs and
+// logical-K scale blocks; the executable raw profile witnesses operation order.
+func TestMatrixNumericContractLegality()
+begin
+    SetBlockTileOperationSelection('10', '000000000000', '00001');
+    ConfigureTile(40, 256, 1, 33, 1, 33, TileDataType_E4M3,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(41, 256, 33, 1, 33, 1, TileDataType_E5M2,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(42, 256, 1, 2, 1, 2, TileDataType_E8M0,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(43, 256, 2, 1, 2, 1, TileDataType_E8M0,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(44, 256, 1, 1, 1, 1, TileDataType_FP32,
+        TileLayout_RowMajor, TileLocation_Any);
+    for inner = 0 to 32 do
+        WriteTileElement(40, 0, inner as integer {0..65535},
+            Zeros{PTO_XLEN} + 1);
+        WriteTileElement(41, inner as integer {0..65535}, 0,
+            Zeros{PTO_XLEN} + 1);
+    end;
+    WriteTileElement(42, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(42, 0, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(43, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(43, 1, 0, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(44, 0, 0, Zeros{PTO_XLEN} + 2);
+
+    assert TileOperandsLegal_TMATMUL_MX(40, 41, 42, 43);
+    TMATMUL_MX(40, 41, 42, 43);
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 40;
+    TMATMUL_MX_ACC(40, 41, 42, 43);
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 80;
+    TMATMUL_MX_BIAS(40, 41, 42, 43, 44);
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 42;
+
+    ConfigureTile(42, 256, 1, 1, 1, 1, TileDataType_E8M0,
+        TileLayout_RowMajor, TileLocation_Any);
+    assert !TileOperandsLegal_TMATMUL_MX(40, 41, 42, 43);
+    ConfigureTile(42, 256, 1, 2, 1, 2, TileDataType_FP32,
+        TileLayout_RowMajor, TileLocation_Any);
+    assert !TileOperandsLegal_TMATMUL_MX(40, 41, 42, 43);
+    SetBlockTileOperationSelection('10', '000000000000', '00111');
+    assert !TileOperandsLegal_TMATMUL_MX(40, 41, 42, 43);
+end;
+
+func TestMatrixPhysicalAccumulatorClasses()
+begin
+    SetBlockTileOperationSelection('10', '000000000000', '00111');
+    ConfigureTile(45, 256, 1, 1, 1, 1, TileDataType_E4M3,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(46, 256, 1, 1, 1, 1, TileDataType_E4M3,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(47, 256, 1, 1, 1, 1, TileDataType_E4M3,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(45, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(46, 0, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(47, 0, 0, Zeros{PTO_XLEN} + 1);
+    TMATMUL_BIAS(45, 46, 47);
+    assert _Accumulator.logical_data_type == TileDataType_E4M3;
+    assert _Accumulator.info.data_type == TileDataType_FP32;
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 7;
+    ACCCVT(47);
+    assert !_Accumulator.live;
+    assert ReadTileElement(47, 0, 0) == Zeros{PTO_XLEN} + 7;
+
+    SetBlockTileOperationSelection('10', '000000000000', '10011');
+    ConfigureTile(45, 256, 1, 1, 1, 1, TileDataType_S8,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(46, 256, 1, 1, 1, 1, TileDataType_S8,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(45, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(46, 0, 0, Zeros{PTO_XLEN} + 3);
+    TMATMUL(45, 46, FALSE);
+    assert _Accumulator.logical_data_type == TileDataType_S8;
+    assert _Accumulator.info.data_type == TileDataType_S64;
+
+    SetBlockTileOperationSelection('10', '000000000000', '11011');
+    ConfigureTile(45, 256, 1, 1, 1, 1, TileDataType_U8,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(46, 256, 1, 1, 1, 1, TileDataType_U8,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(45, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(46, 0, 0, Zeros{PTO_XLEN} + 3);
+    TMATMUL(45, 46, FALSE);
+    assert _Accumulator.logical_data_type == TileDataType_U8;
+    assert _Accumulator.info.data_type == TileDataType_U64;
+end;
+
 func TestTileReduction()
 begin
     ConfigureTwoByTwo(8);
@@ -439,25 +527,46 @@ begin
     TMOV(62, 55);
     assert ReadTileElement(62, 1, 1) == Zeros{PTO_XLEN} + 8;
 
+    SetBlockTileOperationSelection('10', '000000000000', '11000');
     ConfigureTile(61, 256, 2, 1, 2, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(62, 256, 1, 2, 1, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(63, 256, 1, 1, 1, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(61, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(61, 1, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(62, 0, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(62, 0, 1, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(63, 0, 0, Zeros{PTO_XLEN} + 1);
-    TMATMUL_MX(5, 6, 61, 62);
-    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 19;
     TGEMV_BIAS(5, 27, 61);
     assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 9;
     assert ReadAccumulatorElement(1, 0) == Zeros{PTO_XLEN} + 19;
     TGEMV_ACC(5, 27);
     assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 17;
     assert ReadAccumulatorElement(1, 0) == Zeros{PTO_XLEN} + 37;
+
+    SetBlockTileOperationSelection('10', '000000000000', '00001');
+    ConfigureTile(5, 256, 2, 2, 2, 2, TileDataType_E4M3,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(6, 256, 2, 2, 2, 2, TileDataType_E5M2,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(27, 256, 2, 1, 2, 1, TileDataType_E5M2,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(61, 256, 2, 1, 2, 1, TileDataType_E8M0,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(62, 256, 1, 2, 1, 2, TileDataType_E8M0,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(63, 256, 1, 1, 1, 1, TileDataType_E8M0,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(5, 0, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(5, 1, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(5, 1, 1, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(6, 0, 0, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(6, 0, 1, Zeros{PTO_XLEN} + 6);
+    WriteTileElement(6, 1, 0, Zeros{PTO_XLEN} + 7);
+    WriteTileElement(6, 1, 1, Zeros{PTO_XLEN} + 8);
+    WriteTileElement(27, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(27, 1, 0, Zeros{PTO_XLEN} + 3);
+    ExecuteTileFillScalar(61, Zeros{PTO_XLEN} + 1);
+    ExecuteTileFillScalar(62, Zeros{PTO_XLEN} + 1);
+    ExecuteTileFillScalar(63, Zeros{PTO_XLEN} + 1);
+    TMATMUL_MX(5, 6, 61, 62);
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 19;
     TGEMV_MX(5, 27, 61, 63);
     assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 8;
     assert ReadAccumulatorElement(1, 0) == Zeros{PTO_XLEN} + 18;
@@ -559,14 +668,18 @@ begin
     assert cas_middle == Zeros{PTO_XLEN} + 22;
     assert cas_last == Zeros{PTO_XLEN} + 333;
 
-    ConfigureTwoByTwo(2);
-    ConfigureTwoByTwo(3);
+    SetBlockTileOperationSelection('10', '000000000000', '00001');
+    ConfigureTile(2, 256, 2, 2, 2, 2, TileDataType_E4M3,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(3, 256, 2, 2, 2, 2, TileDataType_E5M2,
+        TileLayout_RowMajor, TileLocation_Any);
     ConfigureTwoByTwo(4);
-    ConfigureTile(5, 256, 2, 1, 2, 1, TileDataType_U64,
+    ConfigureTile(5, 256, 2, 1, 2, 1, TileDataType_E8M0,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(6, 256, 1, 2, 1, 2, TileDataType_U64,
+    ConfigureTile(6, 256, 1, 2, 1, 2, TileDataType_E8M0,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTwoByTwo(7);
+    ConfigureTile(7, 256, 2, 2, 2, 2, TileDataType_FP32,
+        TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(2, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(2, 1, 0, Zeros{PTO_XLEN} + 3);
@@ -586,17 +699,19 @@ begin
     assert ReadTileElement(7, 1, 1) == Zeros{PTO_XLEN} + 102;
     assert !_Accumulator.live;
 
-    ConfigureTile(8, 256, 2, 1, 2, 1, TileDataType_U64,
+    ConfigureTile(8, 256, 2, 1, 2, 1, TileDataType_E5M2,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(9, 256, 1, 1, 1, 1, TileDataType_U64,
+    ConfigureTile(9, 256, 1, 1, 1, 1, TileDataType_E8M0,
         TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(8, 0, 0, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(8, 1, 0, Zeros{PTO_XLEN} + 3);
+    ConfigureTile(10, 256, 2, 1, 2, 1, TileDataType_FP32,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(8, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(8, 1, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(9, 0, 0, Zeros{PTO_XLEN} + 1);
-    ExecuteTileFillScalar(5, Zeros{PTO_XLEN} + 1);
-    TGEMV_MX_BIAS(2, 5, 5, 9, 5);
+    ExecuteTileFillScalar(10, Zeros{PTO_XLEN} + 1);
+    TGEMV_MX_BIAS(2, 8, 5, 9, 10);
     assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 4;
-    TGEMV_MX_ACC(2, 5, 5, 9);
+    TGEMV_MX_ACC(2, 8, 5, 9);
     assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 7;
 end;
 
@@ -642,6 +757,7 @@ begin
     ConfigureTwoByTwo(4);
     ConfigureTwoByTwo(5);
     ConfigureTwoByTwo(6);
+    SetBlockTileOperationSelection('10', '000000000000', '11000');
     WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(4, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(4, 1, 0, Zeros{PTO_XLEN} + 3);

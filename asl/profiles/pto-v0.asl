@@ -34,6 +34,7 @@ begin
         _Tiles[[index]].location = TileLocation_Any;
     end;
     _Accumulator.live = FALSE;
+    _Accumulator.logical_data_type = TileDataType_U64;
     _Accumulator.info.allocated = FALSE;
     _Accumulator.info.contents_defined = FALSE;
     _Accumulator.info.capacity_bytes = 0;
@@ -470,10 +471,14 @@ begin
     return value + bias;
 end;
 
-implementation func TileProfileMatrixScale(
-    value: Word, row_scale: Word, column_scale: Word,
-    destination_type: TileDataType, row_type: TileDataType,
-    column_type: TileDataType) => Word
+implementation func TileProfileMatrixScaledAccumulate(
+    accumulator: Word, left: Word, right: Word,
+    left_scale: Word, right_scale: Word,
+    destination_type: TileDataType, left_type: TileDataType,
+    right_type: TileDataType, left_scale_type: TileDataType,
+    right_scale_type: TileDataType) => Word
 begin
-    return MultiplyWord(MultiplyWord(value, row_scale), column_scale);
+    let scaled_left = MultiplyWord(left, left_scale);
+    let scaled_right = MultiplyWord(right, right_scale);
+    return accumulator + MultiplyWord(scaled_left, scaled_right);
 end;
