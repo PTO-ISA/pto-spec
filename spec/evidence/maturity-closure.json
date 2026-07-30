@@ -282,9 +282,13 @@
       "title": "Own every target-dependent numeric contract"
     },
     {
-      "evidence": ["spec/evidence/numeric-contracts.json", "spec/profile-hooks.json", "tests/asl/profile-tests.asl"],
+      "evidence": ["spec/evidence/numeric-contracts.json", "spec/profile-hooks.json", "tests/asl/profile-tests.asl", "docs/maturity-stage-targets.md"],
       "gaps": [
-        {"acceptance_evidence": ["named and versioned independent numeric oracle", "normal, boundary, exceptional, rounding, and saturation differential report"], "classification": "evidence-gap", "id": "S5-T2-G1", "statement": "No independent oracle currently validates a target numeric profile."}
+        {"acceptance_evidence": ["accepted architecture decision naming and versioning each target numeric profile", "complete disposition of formats, rounding, exceptional values, subnormals, flags, saturation, accumulation width, and implementation-defined dimensions"], "classification": "profile-decision", "id": "S5-T2-G1", "statement": "No named target numeric profile currently separates portable numeric rules from target-specific behavior."},
+        {"acceptance_evidence": ["independent oracle identity and immutable version or digest for every numeric lane", "reproducible invocation, supported-domain statement, limitations, and hardware-capture rule where software arithmetic is insufficient"], "classification": "evidence-gap", "id": "S5-T2-G2", "statement": "No independent, versioned numeric oracle is qualified for the six conformance lanes."},
+        {"acceptance_evidence": ["deterministic vector corpus linked to every applicable operation key, profile, oracle, and expected disposition", "normal, boundary, exceptional, rounding, saturation, reduction-order, and accumulation coverage as applicable"], "classification": "evidence-gap", "id": "S5-T2-G3", "statement": "The target-profile differential vector corpus has not been published."},
+        {"acceptance_evidence": ["raw oracle and PTO results for all 20 contract domains, 29 hooks, and 108 operations", "zero missing, duplicate, or unclassified differential records across the six numeric lanes"], "classification": "evidence-gap", "id": "S5-T2-G4", "statement": "Complete target-profile differential execution evidence does not yet exist."},
+        {"acceptance_evidence": ["reviewed disposition and regression evidence for every mismatch, unsupported result, and implementation-defined result", "clean-tree reproduction plus numeric-architecture and formal-model approvals"], "classification": "release-governance", "id": "S5-T2-G5", "statement": "Numeric mismatch adjudication, reproducibility, and independent promotion approvals remain open."}
       ],
       "id": "S5-T2",
       "tracking": ["https://github.com/PTO-ISA/pto-spec/issues/4"],

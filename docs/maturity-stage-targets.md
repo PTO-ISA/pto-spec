@@ -146,6 +146,60 @@ audited without introducing extra target IDs.
 | `S5-T2` | Open | Validate PTO numeric behavior against a named independent oracle without importing third-party semantics as PTO authority. |
 | `S5-T3` | Closed | The exhaustive 701-row disposition matrix is complete and all eight clean-snapshot repository gates plus the pinned Sail parser/C-backend gate pass. |
 
+### S5-T2 numeric-conformance bring-up plan
+
+`S5-T2` is intentionally split into promotion-ordered sub-stages. The
+sub-stages are execution checkpoints, not new maturity claims: `S5-T2` remains
+open, and the repository remains at M4, until every sub-stage below closes.
+
+| Sub-stage | Current state | Clear target | Required exit evidence |
+| --- | --- | --- | --- |
+| `S5-T2-A` — profile decision | Open | Name and version each numeric target profile. Separate portable rules from A2/A3-, A5-, or other target-specific rules instead of treating the `pto-v0` raw-carrier reference as hardware arithmetic. | Accepted architecture decision defining formats, rounding modes, exceptional values, subnormals, flags, saturation, accumulation widths, and implementation-defined dimensions for every applicable numeric-contract domain. |
+| `S5-T2-B` — oracle qualification | Waiting on A | Select an independent, versioned oracle for each lane. The implementation under test and the `pto-v0` reference are not independent oracles. | Reproducible oracle identity, version/digest, invocation, supported domain list, known limitations, and a reviewer-approved rule for any target behavior that requires hardware capture rather than a software arithmetic library. |
+| `S5-T2-C` — vector corpus | Waiting on A–B | Generate deterministic inputs for every operation and every open numeric dimension. | Normal, minimum/maximum, boundary, signed-zero, subnormal, infinity, NaN, tie, overflow, underflow, divide-by-zero, rounding, saturation, reduction-order, and accumulation cases as applicable; each vector links to one operation key, profile, oracle, and expected disposition. |
+| `S5-T2-D` — differential execution | Waiting on B–C | Run the six numeric lanes independently and preserve raw oracle and PTO results. | All 20 contract domains, 29 hooks, and 108 operations are assigned exactly once; every vector produces a reproducible match, mismatch, unsupported, or implementation-defined record; no lane is missing or duplicated. |
+| `S5-T2-E` — mismatch adjudication | Waiting on D | Resolve every differential result without silently changing PTO semantics to match an external implementation. | Zero unclassified results. Each mismatch is fixed as a PTO defect, accepted as a target-profile rule, rejected as an oracle limitation, or bounded by an architecture decision with regression evidence. |
+| `S5-T2-F` — promotion | Waiting on A–E | Freeze the conformance package and promote Stage 5 only after independent review. | Clean-tree reproduction, immutable profile/oracle/vector/result identities, repository gates, numeric-architecture approval, formal-model approval, and an updated closure ledger with no remaining `S5-T2` gaps. |
+
+The sub-stages may prepare independent artifacts concurrently, but promotion is
+strictly ordered: profile scope controls oracle selection; profile and oracle
+scope control vector expectations; results cannot be adjudicated before the
+corresponding oracle and vector identities are frozen.
+
+#### Parallel numeric lanes
+
+These lanes partition the closed `S5-T1` inventory exactly once. Counts are
+closure invariants: future inventory changes must update the numeric-contract
+ledger and this plan together before conformance execution.
+
+| Lane | Contract domains | Operations | Hooks | Required numeric focus |
+| --- | --- | ---: | ---: | --- |
+| N1 — scalar arithmetic | `scalar-binary`, `scalar-unary`, `scalar-fused` | 11 | 4 | arithmetic and fused precision, elementary functions, rounding, flags, signed zero, subnormals, NaN, infinity, overflow, and underflow |
+| N2 — scalar conversion | `scalar-fp-to-integer`, `scalar-fp-convert`, `scalar-integer-to-fp` | 8 | 4 | format mapping, signedness, all rounding directions, inexact results, out-of-range behavior, saturation or indefinite results, and exception flags |
+| N3 — tile elementwise | `tile-binary`, `tile-unary`, `tile-axpy`, `tile-prelu`, `tile-compare`, `tile-expand` | 53 | 11 | carrier interpretation, transcendental helpers, comparison ordering, divide/domain errors, multiply-add precision, rounding, saturation, and exceptional values |
+| N4 — tile conversion | `tile-convert`, `cube-convert`, `tile-quantize`, `tile-dequantize` | 4 | 3 | source/destination formats, scale and zero point, rounding, clamping, NaN payloads, overflow, and underflow |
+| N5 — reductions and ordering | `tile-reduction`, `tile-partial`, `tile-order` | 20 | 4 | accumulation width and order, tie-breaking, stability, NaN placement, signed zero, partial-result precision, and ascending/descending behavior |
+| N6 — matrix arithmetic | `cube-matrix` | 12 | 3 | product precision, accumulation width, bias and MX scaling, rounding, saturation, NaN, infinity, overflow, and underflow |
+| **Total** | **20 domains** | **108** | **29** | **Complete `S5-T1` numeric inventory** |
+
+#### S5-T2 promotion checklist
+
+The numeric target closes only when all answers below are evidenced, not merely
+documented as intentions.
+
+- Which named profile is tested, and which rules are portable versus
+  target-specific?
+- Which independent oracle and immutable version validates each lane?
+- Does every one of the 108 operation keys have applicable normal, boundary,
+  exceptional, rounding, saturation, reduction, and accumulation vectors?
+- Are unsupported and implementation-defined cases explicit and bounded?
+- Are raw oracle inputs, outputs, tool logs, comparison results, and mismatch
+  dispositions reproducible from a clean checkout?
+- Did independent numeric-architecture and formal-model reviewers approve the
+  profile boundary and every remaining divergence?
+- Do all Stage 0–4 regression gates and the closed `S5-T3` comparison remain
+  green after the numeric profile is added?
+
 ## Stage 6 target register
 
 | Target | Current status | Closure target |
