@@ -10,7 +10,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 EXPECTED_FORM_COUNT = 581
-EXPECTED_FINGERPRINT = "a57d3cfaaf6c26c2034642c14fac45e3a4491b0b5eedd6241d22cf6371f8cbdf"
+EXPECTED_FINGERPRINT = (
+    "a2023d295ca8c1355fd4a6ff4d5b0d15d7a33a8af08fb1fb263e760514054ca2"
+)
 PROJECTION_KEYS = (
     "form_id",
     "mnemonic",
@@ -42,9 +44,9 @@ def main() -> int:
         {key: row[key] for key in PROJECTION_KEYS}
         for row in sorted(forms, key=lambda row: row["form_id"])
     ]
-    payload = json.dumps(
-        projection, sort_keys=True, separators=(",", ":")
-    ).encode("utf-8")
+    payload = json.dumps(projection, sort_keys=True, separators=(",", ":")).encode(
+        "utf-8"
+    )
     fingerprint = hashlib.sha256(payload).hexdigest()
     if fingerprint != EXPECTED_FINGERPRINT:
         raise SystemExit(

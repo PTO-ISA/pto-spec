@@ -76,6 +76,8 @@ begin
     let ring = UInt(address[15:12]) as AccessControlRing;
     if low_index == 0x0f02 then return PackTrapStatus(ring); end;
     if low_index == 0x0f03 then return _ACRTrapArgument0[[ring]]; end;
+    if low_index == 0x0f08 then return ReadInterruptPending(ring); end;
+    if low_index == 0x0f09 then return ReadTopPendingInterrupt(ring); end;
     if low_index == 0x0f20 then return ReadMonotonicTime(); end;
     return _ExtendedSystemRegisters[[SystemRegisterFileIndexOf(address)]];
 end;
@@ -104,16 +106,26 @@ begin
     elsif low_index == 0x0f03 then
         _ACRTrapArgument0[[ring]] = value;
     else
-        _ExtendedSystemRegisters[[SystemRegisterFileIndexOf(address)]] = value;
         if low_index == 0x0f0a then
-            _ACRTrapAsynchronous[[ring]] = FALSE;
-            _ACRTrapArgumentValid[[ring]] = FALSE;
+            EndOfInterrupt(ring, value);
+        else
+            _ExtendedSystemRegisters[[SystemRegisterFileIndexOf(address)]] = value;
+            if low_index == 0x0f21 then RefreshTimerPending(ring); end;
         end;
     end;
 end;
 
 func SwapSystemRegisterAddress(address: SystemRegisterAddress, value: Word) => Word
 begin
+    // A swap is a read/write transaction.  Preflight both permissions and the
+    // access class before reading so a rejected swap cannot trigger read-side
+    // effects such as timer-pending refresh on a read-only register.
+    if !SystemRegisterAccessPermitted(address, FALSE, CurrentACR()) ||
+       !SystemRegisterAccessPermitted(address, TRUE, CurrentACR()) ||
+       SystemRegisterAccessOf(address) != SystemRegisterAccess_ReadWrite then
+        SetFault(Fault_IllegalInstruction, ReadPC());
+        return Zeros{PTO_XLEN};
+    end;
     let old_value = ReadSystemRegisterAddress(address);
     if _LastFault == Fault_None then WriteSystemRegisterAddress(address, value); end;
     return old_value;

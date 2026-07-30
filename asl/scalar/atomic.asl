@@ -31,19 +31,34 @@ begin
     if RaiseDataAccessFault(destination_probe, destination_address) then return; end;
 
     let snapshot = LoadTranslatedBytes64(source_probe.translated_address);
+    var event_values: array [[8]] of Word;
+    for chunk = 0 to 7 do
+        let offset = (chunk * 8) as integer {0..262144};
+        let translated_source = source_probe.translated_address +
+            NaturalToWord(offset);
+        event_values[[chunk]] = LoadTranslatedUnsigned(translated_source, 8);
+        RecordLoadEvent(translated_source, 8, event_values[[chunk]],
+            MemoryOrder_Relaxed);
+    end;
     StoreTranslatedBytes64(destination_address, destination_probe.translated_address,
                            snapshot);
+    for chunk = 0 to 7 do
+        let offset = (chunk * 8) as integer {0..262144};
+        RecordStoreEvent(destination_probe.translated_address +
+            NaturalToWord(offset), 8, event_values[[chunk]],
+            MemoryOrder_Relaxed);
+    end;
 end;
 
 func LoadReserved(address: Word, size_bytes: integer {1,2,4,8},
                   order: MemoryOrder) => Word
 begin
-    let result = LoadUnsigned(address, size_bytes);
+    let result = LoadWithOrder(address, size_bytes, order);
+    // A fault has no LR reservation effect. In particular, it preserves an
+    // older reservation rather than replacing or clearing it.
     if _LastFault == Fault_None then
         _ReservationValid = TRUE;
-        _ReservationAddress = address - NaturalToWord(
-            (UInt(address) MOD PTO_RESERVATION_GRANULE_BYTES) as
-                integer {0..262144});
+        _ReservationAddress = address;
         _ReservationSize = size_bytes;
     end;
     return result;
@@ -52,17 +67,25 @@ end;
 func StoreConditional(address: Word, size_bytes: integer {1,2,4,8},
                       value: Word, order: MemoryOrder) => Word
 begin
-    let granule_address = address - NaturalToWord(
+    let reservation_granule = ReservationGranuleAddress();
+    let requested_granule = address - NaturalToWord(
         (UInt(address) MOD PTO_RESERVATION_GRANULE_BYTES) as
             integer {0..262144});
-    let succeeds = _ReservationValid && _ReservationAddress == granule_address;
+    // PTO's local exclusive monitor is cache-line based: SC width and exact
+    // byte address do not narrow the reservation once the 64-byte line matches.
+    let succeeds = _ReservationValid && reservation_granule == requested_granule;
     if succeeds then
+        // Every SC attempt clears the local monitor, including a successful
+        // reservation check followed by an access fault.
+        _ReservationValid = FALSE;
         let probe = ProbeDataAccess(address, size_bytes, size_bytes, TRUE);
         if RaiseDataAccessFault(probe, address) then return Zeros{PTO_XLEN}; end;
-        _ReservationValid = FALSE;
         StoreTranslated(address, probe.translated_address, size_bytes, value);
+        RecordStoreEvent(probe.translated_address, size_bytes, value, order);
         return Zeros{PTO_XLEN};
     else
+        // A reservation miss is deliberately probe-free, even when address is
+        // misaligned or outside the active access domain.
         _ReservationValid = FALSE;
         return Zeros{PTO_XLEN} + 1;
     end;
@@ -133,10 +156,17 @@ begin
     if RaiseDataAccessFault(read_probe, address) then return Zeros{PTO_XLEN}; end;
     let write_probe = ProbeDataAccess(address, size_bytes, size_bytes, TRUE);
     if RaiseDataAccessFault(write_probe, address) then return Zeros{PTO_XLEN}; end;
+    if read_probe.translated_address != write_probe.translated_address then
+        SetFault(Fault_DataPage, address);
+        return Zeros{PTO_XLEN};
+    end;
     let old_value = LoadTranslatedUnsigned(
         read_probe.translated_address, size_bytes);
+    let new_value = AtomicValueSized(op, old_value, operand, size_bytes);
     StoreTranslated(address, write_probe.translated_address, size_bytes,
-        AtomicValueSized(op, old_value, operand, size_bytes));
+        new_value);
+    RecordAtomicEvent(write_probe.translated_address, size_bytes, old_value,
+        new_value, order, TRUE);
     return old_value;
 end;
 
@@ -147,11 +177,18 @@ begin
     if RaiseDataAccessFault(read_probe, address) then return Zeros{PTO_XLEN}; end;
     let write_probe = ProbeDataAccess(address, size_bytes, size_bytes, TRUE);
     if RaiseDataAccessFault(write_probe, address) then return Zeros{PTO_XLEN}; end;
+    if read_probe.translated_address != write_probe.translated_address then
+        SetFault(Fault_DataPage, address);
+        return Zeros{PTO_XLEN};
+    end;
     let old_value = LoadTranslatedUnsigned(
         read_probe.translated_address, size_bytes);
-    if old_value == NormalizeAtomicUnsigned(expected, size_bytes) then
+    let succeeds = old_value == NormalizeAtomicUnsigned(expected, size_bytes);
+    if succeeds then
         StoreTranslated(address, write_probe.translated_address,
             size_bytes, desired);
     end;
+    RecordAtomicEvent(write_probe.translated_address, size_bytes, old_value,
+        NormalizeAtomicUnsigned(desired, size_bytes), order, succeeds);
     return old_value;
 end;

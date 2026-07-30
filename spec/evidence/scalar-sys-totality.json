@@ -1,0 +1,111 @@
+{
+  "accepted_form_count": 35,
+  "architecture_contract": {
+    "acre_modes": "Request types zero and one are exact PTO-v0 aliases that recover the same complete visible context. Unsupported types take ILLEGAL_INST before context validation; missing or malformed context for an accepted type takes EXEC_STATE_CHECK.",
+    "acrc_boundary": "Instruction-local request legality, routing, trap state, and failure precedence are closed here. Bundle-placement legality remains owned by S4-T7.",
+    "control_requests": "BSE, BWE, BWI, and BWT retire after publishing a nonblocking scheduling request and its exact operand. PTO-v0 defines no additional architectural wait or wake state.",
+    "maintenance": "Cache operations are synchronous local epoch completions with an opaque 64-bit scope token. TLB operations are root-ring-only; IV/IAV require canonical VA48, IA requires a zero upper 48-bit ASID encoding, and IALL has no operand.",
+    "profile_storage": "Translation, XB, ACR-parameter, and debug registers are deterministic storage-only state in the named pto-v0 profile. Activating MMU or debug-trigger behavior requires another profile identity.",
+    "swap_preflight": "SSRSWAP preflights read permission, write permission, and RW access class before reading, so rejected RO/WO/denied swaps have no register read-side effect."
+  },
+  "component_case_counts": {
+    "control_and_maintenance_totality": 1280,
+    "register_transfer_matrix": 1937,
+    "reg5_selector_and_alias": 1184,
+    "retained_stage1": 35
+  },
+  "control_totality_breakdown": {
+    "acrc_ring_request_cross_product": 256,
+    "acre_success_missing_malformed_odd_and_invalid": 22,
+    "assert_selector_values": 63,
+    "breakpoint_tags": 48,
+    "cache_operand_boundaries": 18,
+    "commit_source_selectors": 32,
+    "control_request_source_selectors": 128,
+    "fence_data_mask_cross_product": 256,
+    "maintenance_source_selectors": 384,
+    "tlb_operand_boundaries": 13,
+    "tlb_privilege_rejections": 60
+  },
+  "decoded_totality_test": "scripts/generate-asl-decoders:ValidateCanonicalScalarSYSRegisterTransfers,ValidateCanonicalScalarSYSSelectorAliases,ValidateCanonicalScalarSYSControlTotality",
+  "effect_class_ids": [
+    "scalar-system-register-read",
+    "scalar-system-register-write",
+    "scalar-system-register-swap",
+    "scalar-cache-maintenance",
+    "scalar-tlb-maintenance",
+    "scalar-execution-control-request",
+    "scalar-software-breakpoint",
+    "scalar-data-fence",
+    "scalar-instruction-fence",
+    "scalar-architecture-assert",
+    "scalar-architecture-close-request",
+    "scalar-architecture-enter-request",
+    "scalar-set-commit-target"
+  ],
+  "independent_comparison": {
+    "comparison_scope": {
+      "executable_subset": 35,
+      "shared_form_count": 35
+    },
+    "divergences": [
+      "comparison-cache-maintenance-and-fences-are-staged-no-ops",
+      "comparison-execution-control-requests-are-staged-no-ops",
+      "comparison-tlb-privilege-denies-only-cstate-two-while-pto-v0-requires-root-acr",
+      "comparison-tlb-maintenance-has-gates-but-no-modeled-invalidation-effect"
+    ],
+    "matched_contracts": [
+      "system-register-read-write-swap-shapes-and-unknown-id-rejection",
+      "tlb-canonical-va48-and-asid-upper-bit-operand-gates",
+      "acrc-service-request-and-acre-visible-context-recovery-boundary",
+      "software-breakpoint-and-zero-assert-traps",
+      "setc-target-source-value-transfer"
+    ],
+    "non_comparable_contracts": [
+      "pto-cache-tlb-epoch-completion-and-scope-token-state",
+      "pto-data-fence-events-reservation-invalidation-and-instruction-visibility-epoch",
+      "pto-nonblocking-scheduling-request-record",
+      "pto-extended-acr-routing-and-complete-context-envelope"
+    ],
+    "provenance_sha256": "acba335de3ba55e3819bc48d3a876b07e100916d151d728a2d85b7cd1a088422",
+    "pto_disposition": "The independent executable model corroborates the shared decode, transfer, operand-gate, service-request, breakpoint, and assert shapes. PTO ASL and ADR 0031 remain authoritative for epochs, fences, Reg5, privilege, full context, and the nonblocking request disposition.",
+    "status": "reviewed"
+  },
+  "register_inventory": {
+    "access_classes": {
+      "RO_definition_count": 14,
+      "RW_definition_count": 57,
+      "WO_definition_count": 1
+    },
+    "bank_expanded_address_count": 837,
+    "behavior_class_count": 25,
+    "definition_count": 72
+  },
+  "register_transfer_breakdown": {
+    "C.SSRGET": {"RO": 1, "RW": 2, "WO": 0, "cases": 3},
+    "HL.SSRGET": {"RO": 74, "RW": 747, "WO": 16, "cases": 837},
+    "HL.SSRSET": {"RO": 74, "RW": 747, "WO": 16, "cases": 837},
+    "LSRGET": {"RO": 14, "RW": 50, "WO": 1, "cases": 65},
+    "SSRGET": {"RO": 14, "RW": 50, "WO": 1, "cases": 65},
+    "SSRSET": {"RO": 14, "RW": 50, "WO": 1, "cases": 65},
+    "SSRSWAP": {"RO": 14, "RW": 50, "WO": 1, "cases": 65}
+  },
+  "requirement_ids": [
+    "PTO-REQ-SCALAR-SYS-001",
+    "PTO-REQ-SCALAR-SSR-001",
+    "PTO-REQ-ACRC-001",
+    "PTO-REQ-FAULT-001",
+    "PTO-REQ-INTERRUPT-001",
+    "PTO-REQ-SCALAR-OPERAND-001"
+  ],
+  "schema_version": 1,
+  "selector_alias_breakdown": {
+    "read_destination_selectors": 96,
+    "swap_source_destination_cross_product": 1024,
+    "write_source_selectors": 64
+  },
+  "stage4_case_count": 4401,
+  "status": "closed",
+  "target": "S4-T6",
+  "total_executable_case_count": 4436
+}

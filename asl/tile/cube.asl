@@ -28,7 +28,10 @@ func TMATMUL(destination: TileIndex, left: TileIndex, right: TileIndex,
 begin
     let left_tile = _Tiles[[left]];
     let right_tile = _Tiles[[right]];
-    assert left_tile.allocated && right_tile.allocated;
+    assert _Tiles[[destination]].allocated;
+    assert left_tile.allocated && left_tile.contents_defined;
+    assert right_tile.allocated && right_tile.contents_defined;
+    assert !accumulate || _Tiles[[destination]].contents_defined;
     assert left_tile.valid_columns == right_tile.valid_rows;
     assert _Tiles[[destination]].valid_rows == left_tile.valid_rows;
     assert _Tiles[[destination]].valid_columns == right_tile.valid_columns;
@@ -59,14 +62,15 @@ begin
     end;
 end;
 
-func AddMatrixBias(destination: TileIndex, bias: TileIndex)
+func AddMatrixBiasSnapshot(destination: TileIndex, bias_tile: TileInfo,
+                           bias_payload: TilePayload)
 begin
     let destination_tile = _Tiles[[destination]];
-    let bias_tile = _Tiles[[bias]];
+    assert destination_tile.allocated && destination_tile.contents_defined;
+    assert bias_tile.allocated && bias_tile.contents_defined;
     assert bias_tile.valid_rows == 1 || bias_tile.valid_rows == destination_tile.valid_rows;
     assert bias_tile.valid_columns == 1 || bias_tile.valid_columns == destination_tile.valid_columns;
     let destination_payload = destination_tile.payload;
-    let bias_payload = bias_tile.payload;
     for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
             let destination_element = TileLinearIndex(destination_tile,
@@ -80,21 +84,30 @@ begin
                 destination_tile.data_type, bias_tile.data_type);
         end;
     end;
-    _Tiles[[destination]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(destination);
 end;
 
-func ScaleMatrixResult(destination: TileIndex, row_scale: TileIndex, column_scale: TileIndex)
+func AddMatrixBias(destination: TileIndex, bias: TileIndex)
+begin
+    let bias_tile = _Tiles[[bias]];
+    AddMatrixBiasSnapshot(destination, bias_tile, bias_tile.payload);
+end;
+
+func ScaleMatrixResultSnapshot(destination: TileIndex,
+                               row_scale_tile: TileInfo,
+                               column_scale_tile: TileInfo,
+                               row_scale_payload: TilePayload,
+                               column_scale_payload: TilePayload)
 begin
     let destination_tile = _Tiles[[destination]];
-    let row_scale_tile = _Tiles[[row_scale]];
-    let column_scale_tile = _Tiles[[column_scale]];
+    assert destination_tile.allocated && destination_tile.contents_defined;
+    assert row_scale_tile.allocated && row_scale_tile.contents_defined;
+    assert column_scale_tile.allocated && column_scale_tile.contents_defined;
     assert row_scale_tile.valid_rows == destination_tile.valid_rows;
     assert row_scale_tile.valid_columns == 1;
     assert column_scale_tile.valid_rows == 1;
     assert column_scale_tile.valid_columns == destination_tile.valid_columns;
     let destination_payload = destination_tile.payload;
-    let row_scale_payload = row_scale_tile.payload;
-    let column_scale_payload = column_scale_tile.payload;
     for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
             let destination_element = TileLinearIndex(destination_tile,
@@ -109,13 +122,24 @@ begin
                 row_scale_tile.data_type, column_scale_tile.data_type);
         end;
     end;
-    _Tiles[[destination]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(destination);
+end;
+
+func ScaleMatrixResult(destination: TileIndex, row_scale: TileIndex,
+                       column_scale: TileIndex)
+begin
+    let row_scale_tile = _Tiles[[row_scale]];
+    let column_scale_tile = _Tiles[[column_scale]];
+    ScaleMatrixResultSnapshot(destination, row_scale_tile, column_scale_tile,
+        row_scale_tile.payload, column_scale_tile.payload);
 end;
 
 func TMATMUL_BIAS(destination: TileIndex, left: TileIndex, right: TileIndex, bias: TileIndex)
 begin
+    let bias_tile = _Tiles[[bias]];
+    let bias_payload = bias_tile.payload;
     TMATMUL(destination, left, right, FALSE);
-    AddMatrixBias(destination, bias);
+    AddMatrixBiasSnapshot(destination, bias_tile, bias_payload);
 end;
 
 func TMATMUL_ACC(destination: TileIndex, left: TileIndex, right: TileIndex)
@@ -126,28 +150,47 @@ end;
 func TMATMUL_MX(destination: TileIndex, left: TileIndex, right: TileIndex,
                 row_scale: TileIndex, column_scale: TileIndex)
 begin
+    let row_scale_tile = _Tiles[[row_scale]];
+    let column_scale_tile = _Tiles[[column_scale]];
+    let row_scale_payload = row_scale_tile.payload;
+    let column_scale_payload = column_scale_tile.payload;
     TMATMUL(destination, left, right, FALSE);
-    ScaleMatrixResult(destination, row_scale, column_scale);
+    ScaleMatrixResultSnapshot(destination, row_scale_tile, column_scale_tile,
+        row_scale_payload, column_scale_payload);
 end;
 
 func TMATMUL_MX_BIAS(destination: TileIndex, left: TileIndex, right: TileIndex,
                      row_scale: TileIndex, column_scale: TileIndex,
                      bias: TileIndex)
 begin
+    let row_scale_tile = _Tiles[[row_scale]];
+    let column_scale_tile = _Tiles[[column_scale]];
+    let bias_tile = _Tiles[[bias]];
+    let row_scale_payload = row_scale_tile.payload;
+    let column_scale_payload = column_scale_tile.payload;
+    let bias_payload = bias_tile.payload;
     TMATMUL(destination, left, right, FALSE);
-    ScaleMatrixResult(destination, row_scale, column_scale);
-    AddMatrixBias(destination, bias);
+    ScaleMatrixResultSnapshot(destination, row_scale_tile, column_scale_tile,
+        row_scale_payload, column_scale_payload);
+    AddMatrixBiasSnapshot(destination, bias_tile, bias_payload);
 end;
 
 func TMATMUL_MX_ACC(destination: TileIndex, left: TileIndex, right: TileIndex,
                     row_scale: TileIndex, column_scale: TileIndex)
 begin
+    let row_scale_tile = _Tiles[[row_scale]];
+    let column_scale_tile = _Tiles[[column_scale]];
+    let row_scale_payload = row_scale_tile.payload;
+    let column_scale_payload = column_scale_tile.payload;
     TMATMUL(destination, left, right, TRUE);
-    ScaleMatrixResult(destination, row_scale, column_scale);
+    ScaleMatrixResultSnapshot(destination, row_scale_tile, column_scale_tile,
+        row_scale_payload, column_scale_payload);
 end;
 
 func ACCCVT(destination: TileIndex, source: TileIndex)
 begin
+    assert _Tiles[[destination]].allocated;
+    assert _Tiles[[source]].allocated && _Tiles[[source]].contents_defined;
     TCVT(destination, source);
 end;
 
@@ -159,8 +202,10 @@ end;
 
 func TGEMV_BIAS(destination: TileIndex, matrix: TileIndex, vector: TileIndex, bias: TileIndex)
 begin
+    let bias_tile = _Tiles[[bias]];
+    let bias_payload = bias_tile.payload;
     TGEMV(destination, matrix, vector);
-    AddMatrixBias(destination, bias);
+    AddMatrixBiasSnapshot(destination, bias_tile, bias_payload);
 end;
 
 func TGEMV_ACC(destination: TileIndex, matrix: TileIndex, vector: TileIndex)
@@ -172,21 +217,38 @@ end;
 func TGEMV_MX(destination: TileIndex, matrix: TileIndex, vector: TileIndex,
               row_scale: TileIndex, column_scale: TileIndex)
 begin
+    let row_scale_tile = _Tiles[[row_scale]];
+    let column_scale_tile = _Tiles[[column_scale]];
+    let row_scale_payload = row_scale_tile.payload;
+    let column_scale_payload = column_scale_tile.payload;
     TGEMV(destination, matrix, vector);
-    ScaleMatrixResult(destination, row_scale, column_scale);
+    ScaleMatrixResultSnapshot(destination, row_scale_tile, column_scale_tile,
+        row_scale_payload, column_scale_payload);
 end;
 
 func TGEMV_MX_BIAS(destination: TileIndex, matrix: TileIndex, vector: TileIndex,
                    row_scale: TileIndex, column_scale: TileIndex, bias: TileIndex)
 begin
+    let row_scale_tile = _Tiles[[row_scale]];
+    let column_scale_tile = _Tiles[[column_scale]];
+    let bias_tile = _Tiles[[bias]];
+    let row_scale_payload = row_scale_tile.payload;
+    let column_scale_payload = column_scale_tile.payload;
+    let bias_payload = bias_tile.payload;
     TGEMV(destination, matrix, vector);
-    ScaleMatrixResult(destination, row_scale, column_scale);
-    AddMatrixBias(destination, bias);
+    ScaleMatrixResultSnapshot(destination, row_scale_tile, column_scale_tile,
+        row_scale_payload, column_scale_payload);
+    AddMatrixBiasSnapshot(destination, bias_tile, bias_payload);
 end;
 
 func TGEMV_MX_ACC(destination: TileIndex, matrix: TileIndex, vector: TileIndex,
                   row_scale: TileIndex, column_scale: TileIndex)
 begin
+    let row_scale_tile = _Tiles[[row_scale]];
+    let column_scale_tile = _Tiles[[column_scale]];
+    let row_scale_payload = row_scale_tile.payload;
+    let column_scale_payload = column_scale_tile.payload;
     TGEMV_ACC(destination, matrix, vector);
-    ScaleMatrixResult(destination, row_scale, column_scale);
+    ScaleMatrixResultSnapshot(destination, row_scale_tile, column_scale_tile,
+        row_scale_payload, column_scale_payload);
 end;

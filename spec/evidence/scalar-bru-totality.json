@@ -1,0 +1,241 @@
+{
+  "accepted_form_count": 66,
+  "alias_fault_contracts": [
+    {
+      "dimensions": [
+        "source-destination-overlap",
+        "discard-destination",
+        "T/U-source-snapshot",
+        "T/U-destination-push",
+        "compressed-implicit-T-source",
+        "ordered-control-state-update"
+      ],
+      "effect_classes": [
+        "scalar-compare-value",
+        "scalar-commit-value",
+        "scalar-pc-relative-value",
+        "scalar-return-address"
+      ],
+      "id": "reg5-alias-and-snapshot",
+      "test": "scripts/generate-asl-decoders:ValidateCanonicalScalarBRUAliasAndFaults"
+    },
+    {
+      "dimensions": [
+        "commit-argument-outside-bundle",
+        "P0-inside-bundle",
+        "P0-precedence",
+        "successful-branch-bundle-preservation"
+      ],
+      "effect_classes": [
+        "scalar-branch-control"
+      ],
+      "id": "predicate-and-bundle-selection",
+      "test": "scripts/generate-asl-decoders:ValidateCanonicalScalarBRUAliasAndFaults"
+    },
+    {
+      "dimensions": [
+        "SrcZero-zero-versus-maximum-alias",
+        "odd-target-fault-outside-bundle",
+        "odd-target-fault-inside-bundle",
+        "pre-instruction-context-save",
+        "no-target-install-on-fault"
+      ],
+      "effect_classes": [
+        "scalar-jump-control"
+      ],
+      "id": "indirect-target-alias-and-fault",
+      "test": "scripts/generate-asl-decoders:ValidateCanonicalScalarBRUAliasAndFaults"
+    }
+  ],
+  "boundary_contracts": [
+    {
+      "dimensions": [
+        "EQ/NE-bit-equality",
+        "signed-LT/GE",
+        "unsigned-LTU/GEU",
+        "Z-only-zero",
+        "NZ-all-nonzero",
+        "canonical-zero-or-one",
+        "signed-and-unsigned-immediate-limits",
+        "SrcRType-01-sign-extend-low32",
+        "SrcRType-10-zero-extend-low32",
+        "relational-SrcRType-11-unmodified-alias",
+        "logical-SrcRType-11-bitwise-NOT"
+      ],
+      "effect_classes": [
+        "scalar-compare-value"
+      ],
+      "id": "comparison-truth-and-modifiers",
+      "test": "scripts/generate-asl-decoders:ValidateCanonicalScalarBRUTotality"
+    },
+    {
+      "dimensions": [
+        "canonical-zero-or-one",
+        "signed-and-unsigned-immediate-limits",
+        "SrcRType-modifiers",
+        "five-bit-shift-maximum",
+        "64-bit-shift-wrap"
+      ],
+      "effect_classes": [
+        "scalar-commit-value"
+      ],
+      "id": "commit-values-and-shifts",
+      "test": "scripts/generate-asl-decoders:ValidateCanonicalScalarBRUTotality"
+    },
+    {
+      "dimensions": [
+        "taken",
+        "not-taken",
+        "signed-minimum-offset",
+        "signed-maximum-offset",
+        "halfword-scaling",
+        "pre-increment-TPC-base",
+        "sequential-fallthrough",
+        "64-bit-target-wrap"
+      ],
+      "effect_classes": [
+        "scalar-branch-control"
+      ],
+      "id": "conditional-relative-targets",
+      "test": "scripts/generate-asl-decoders:ValidateCanonicalScalarBRUTotality"
+    },
+    {
+      "dimensions": [
+        "signed-minimum-offset",
+        "signed-maximum-offset",
+        "halfword-scaling",
+        "pre-increment-TPC-base",
+        "64-bit-target-wrap",
+        "even-indirect-target",
+        "odd-indirect-target-fault",
+        "ignored-SrcZero-alias"
+      ],
+      "effect_classes": [
+        "scalar-jump-control"
+      ],
+      "id": "direct-and-indirect-targets",
+      "test": "scripts/generate-asl-decoders:ValidateCanonicalScalarBRUTotality"
+    },
+    {
+      "dimensions": [
+        "signed-20-bit-immediate",
+        "signed-32-bit-immediate",
+        "halfword-scaling",
+        "pre-increment-TPC-base",
+        "64-bit-wrap",
+        "normal-Reg5-destination"
+      ],
+      "effect_classes": [
+        "scalar-pc-relative-value"
+      ],
+      "id": "addtpc-values",
+      "test": "scripts/generate-asl-decoders:ValidateCanonicalScalarBRUTotality"
+    },
+    {
+      "dimensions": [
+        "unsigned-20-bit-immediate",
+        "unsigned-32-bit-immediate",
+        "halfword-scaling",
+        "pre-increment-TPC-base",
+        "64-bit-wrap",
+        "synchronized-R10-and-bundle-return-address"
+      ],
+      "effect_classes": [
+        "scalar-return-address"
+      ],
+      "id": "setret-values",
+      "test": "scripts/generate-asl-decoders:ValidateCanonicalScalarBRUTotality"
+    }
+  ],
+  "decoded_alias_fault_case_count": 32,
+  "decoded_alias_fault_case_ids": [
+    "compare-dst-overlaps-left",
+    "compare-dst-overlaps-right",
+    "compare-destination-discard",
+    "compare-push-t-source-snapshot",
+    "compare-push-u-source-snapshot",
+    "source-selector-t1",
+    "source-selector-t2",
+    "source-selector-t3",
+    "source-selector-t4",
+    "source-selector-u1",
+    "source-selector-u2",
+    "source-selector-u3",
+    "source-selector-u4",
+    "compressed-implicit-t-source-push",
+    "commit-queue-sources",
+    "branch-queue-sources",
+    "addtpc-destination-discard",
+    "addtpc-push-t",
+    "addtpc-push-u",
+    "setret-overwrites-r10-and-return",
+    "b-z-outside-zero",
+    "b-z-outside-one",
+    "b-z-outside-all-ones",
+    "b-nz-outside-zero",
+    "b-nz-outside-one",
+    "b-nz-outside-all-ones",
+    "b-z-p0-precedence",
+    "b-nz-p0-precedence",
+    "successful-branch-preserves-bundle-state",
+    "jr-srczero-zero-max-alias",
+    "jr-odd-fault-outside",
+    "jr-odd-fault-inside-bundle"
+  ],
+  "decoded_alias_fault_test": "scripts/generate-asl-decoders:ValidateCanonicalScalarBRUAliasAndFaults",
+  "decoded_totality_case_count": 284,
+  "decoded_totality_form_count": 66,
+  "decoded_totality_labels": [
+    "zero",
+    "lower",
+    "upper",
+    "modifier-01",
+    "modifier-10",
+    "modifier-11",
+    "shamt-max",
+    "lower-not-taken",
+    "upper-not-taken",
+    "srczero-max-alias",
+    "odd-target-fault",
+    "wrap"
+  ],
+  "decoded_totality_test": "scripts/generate-asl-decoders:ValidateCanonicalScalarBRUTotality",
+  "effect_class_ids": [
+    "scalar-compare-value",
+    "scalar-commit-value",
+    "scalar-branch-control",
+    "scalar-jump-control",
+    "scalar-pc-relative-value",
+    "scalar-return-address"
+  ],
+  "independent_comparison": {
+    "intentional_differences": [
+      "pto-portable-target-policy-has-no-start-marker-check",
+      "pto-jr-rejects-odd-target-at-instruction-boundary"
+    ],
+    "matched_contracts": [
+      "condition-truth-and-canonical-booleans",
+      "relational-and-logical-source-modifiers",
+      "immediate-sign-zero-extension-and-shift",
+      "signed-halfword-relative-targets",
+      "wrapped-pc-relative-arithmetic"
+    ],
+    "non_comparable_contracts": [
+      "pto-reg5-t-u-queue-namespace",
+      "pto-commit-versus-p0-source-selection",
+      "pto-bundle-return-address-mirror"
+    ],
+    "provenance_sha256": "5bdca2befb72eb7e5a060bd50036dca26d11d7352c8b3c793bdc8134d1e33931",
+    "pto_disposition": "The independent executable comparison corroborates shared arithmetic and condition rules. PTO-owned semantics remain authoritative: the portable model has no instruction-memory marker state, defines its own Reg5 queue and bundle-predicate rules, rejects odd JR targets, and mirrors SETRET into bundle return state.",
+    "status": "reviewed"
+  },
+  "requirement_ids": [
+    "PTO-REQ-SCALAR-CONTROL-001",
+    "PTO-REQ-SCALAR-EXECUTION-001",
+    "PTO-REQ-BUNDLE-STATE-001",
+    "PTO-REQ-SCALAR-OPERAND-001"
+  ],
+  "schema_version": 1,
+  "status": "closed",
+  "target": "S4-T4"
+}

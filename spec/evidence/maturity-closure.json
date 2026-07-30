@@ -1,0 +1,337 @@
+{
+  "current_level": "M4-reference-semantics-closed",
+  "schema_version": 1,
+  "stages": [
+    {"id": 0, "status": "closed", "targets": ["S0-T1", "S0-T2", "S0-T3"]},
+    {"id": 1, "status": "closed", "targets": ["S1-T1", "S1-T2", "S1-T3", "S1-T4", "S1-T5"]},
+    {"id": 2, "status": "closed", "targets": ["S2-T1", "S2-T2", "S2-T3", "S2-T4", "S2-T5", "S2-T6"]},
+    {"id": 3, "status": "closed", "targets": ["S3-T1", "S3-T2"]},
+    {"id": 4, "status": "closed", "targets": ["S4-T1", "S4-T2", "S4-T3", "S4-T4", "S4-T5", "S4-T6", "S4-T7", "S4-T8", "S4-T9", "S4-T10"]},
+    {"id": 5, "status": "in-progress", "targets": ["S5-T1", "S5-T2", "S5-T3"]},
+    {"id": 6, "status": "open", "targets": ["S6-T1", "S6-T2"]}
+  ],
+  "targets": [
+    {
+      "evidence": ["spec/catalog/", "scripts/check-catalogs", "scripts/check-binary-closure"],
+      "gaps": [],
+      "id": "S0-T1",
+      "owner": "PTO architecture and formal-model maintainers",
+      "requirements": ["PTO-REQ-ENCODING-001", "PTO-REQ-CLOSURE-001"],
+      "stage": 0,
+      "status": "closed",
+      "title": "Freeze the accepted architecture inventories"
+    },
+    {
+      "evidence": ["spec/evidence/maturity-closure.json", "scripts/check-catalogs", "docs/maturity-bringup-plan.md"],
+      "gaps": [],
+      "id": "S0-T2",
+      "owner": "PTO architecture and formal-model maintainers",
+      "requirements": ["PTO-REQ-CLOSURE-001"],
+      "stage": 0,
+      "status": "closed",
+      "title": "Classify and own every known maturity gap"
+    },
+    {
+      "evidence": ["README.md", "docs/coverage.md", "docs/maturity-bringup-plan.md", "specification.toml", "spec/requirements.json", "scripts/check-catalogs"],
+      "gaps": [],
+      "id": "S0-T3",
+      "owner": "PTO architecture and formal-model maintainers",
+      "requirements": ["PTO-REQ-CLOSURE-001"],
+      "stage": 0,
+      "status": "closed",
+      "title": "Reconcile all published maturity claims"
+    },
+    {
+      "evidence": ["docs/architecture-decisions/0022-bundle-operation-descriptor-and-commit.md", "scripts/generate-asl-decoders", "tests/asl/bundle-tests.asl"],
+      "gaps": [],
+      "id": "S1-T1",
+      "owner": "PTO bundle architecture maintainers",
+      "requirements": ["PTO-REQ-BUNDLE-DISPATCH-001", "PTO-REQ-BUNDLE-OPERATION-001"],
+      "stage": 1,
+      "status": "closed",
+      "title": "Bind every bundle start to an operation-bearing descriptor"
+    },
+    {
+      "evidence": ["docs/architecture-decisions/0022-bundle-operation-descriptor-and-commit.md", "tests/asl/bundle-tests.asl", "tests/asl/dispatch-tests.asl"],
+      "gaps": [],
+      "id": "S1-T2",
+      "owner": "PTO bundle architecture maintainers",
+      "requirements": ["PTO-REQ-BUNDLE-STATE-001", "PTO-REQ-BUNDLE-OPERATION-001"],
+      "stage": 1,
+      "status": "closed",
+      "title": "Close bundle start, header, launch, stop, and rollback paths"
+    },
+    {
+      "evidence": ["spec/evidence/scalar-effect-closure.json", "scripts/generate-asl-decoders", "tests/asl/main.asl"],
+      "gaps": [],
+      "id": "S1-T3",
+      "owner": "PTO scalar architecture maintainers",
+      "requirements": ["PTO-REQ-SCALAR-EFFECT-CLOSURE-001", "PTO-REQ-SCALAR-DISPATCH-001"],
+      "stage": 1,
+      "status": "closed",
+      "title": "Close decoded effects for all 474 scalar forms"
+    },
+    {
+      "evidence": ["docs/architecture-decisions/0023-uniform-instruction-attempt-status.md", "tests/asl/dispatch-tests.asl", "scripts/generate-asl-decoders"],
+      "gaps": [],
+      "id": "S1-T4",
+      "owner": "PTO architecture and formal-model maintainers",
+      "requirements": ["PTO-REQ-EXECUTION-STATUS-001", "PTO-REQ-INSTRUCTION-DISPATCH-001"],
+      "stage": 1,
+      "status": "closed",
+      "title": "Use one execution-attempt status and timing contract"
+    },
+    {
+      "evidence": ["spec/catalog/tile-operations.json", "scripts/generate-asl-decoders", "tests/asl/main.asl"],
+      "gaps": [],
+      "id": "S1-T5",
+      "owner": "PTO tile architecture maintainers",
+      "requirements": ["PTO-REQ-TILE-DISPATCH-001", "PTO-REQ-TILE-LEGALITY-001"],
+      "stage": 1,
+      "status": "closed",
+      "title": "Bind all 120 direct tile selectors and operands"
+    },
+    {
+      "evidence": ["spec/catalog/system-registers.json", "docs/architecture-decisions/0017-system-register-behavior-classes.md", "tests/asl/state-tests.asl", "scripts/generate-asl-decoders"],
+      "gaps": [],
+      "id": "S2-T1",
+      "owner": "PTO system architecture maintainers",
+      "requirements": ["PTO-REQ-SCALAR-SSR-001", "PTO-REQ-STATE-001"],
+      "stage": 2,
+      "status": "closed",
+      "title": "Close the 72-register visible state inventory"
+    },
+    {
+      "evidence": ["docs/architecture-decisions/0010-acr-routing-and-context-reset.md", "tests/asl/state-tests.asl", "tests/asl/profile-tests.asl"],
+      "gaps": [],
+      "id": "S2-T2",
+      "owner": "PTO system architecture maintainers",
+      "requirements": ["PTO-REQ-STATE-001", "PTO-REQ-PROFILE-001"],
+      "stage": 2,
+      "status": "closed",
+      "title": "Define reset for all architectural state"
+    },
+    {
+      "evidence": ["docs/architecture-decisions/0018-pto-v0-trap-disposition.md", "spec/catalog/system-registers.json", "tests/asl/state-tests.asl"],
+      "gaps": [],
+      "id": "S2-T3",
+      "owner": "PTO system architecture maintainers",
+      "requirements": ["PTO-REQ-FAULT-001", "PTO-REQ-ACRC-001"],
+      "stage": 2,
+      "status": "closed",
+      "title": "Close all trap entry, routing, recovery, and no-trigger envelopes"
+    },
+    {
+      "evidence": ["docs/architecture-decisions/0019-predicate-register-contract.md", "tests/asl/state-tests.asl", "tests/asl/bundle-tests.asl", "tests/asl/scalar-tests.asl"],
+      "gaps": [],
+      "id": "S2-T4",
+      "owner": "PTO scalar architecture maintainers",
+      "requirements": ["PTO-REQ-PREDICATE-001"],
+      "stage": 2,
+      "status": "closed",
+      "title": "Define P0 through P7 architectural behavior"
+    },
+    {
+      "evidence": ["docs/architecture-decisions/0013-tile-capacity-and-packed-storage.md", "tests/asl/state-tests.asl", "tests/asl/tile-tests.asl"],
+      "gaps": [],
+      "id": "S2-T5",
+      "owner": "PTO tile architecture maintainers",
+      "requirements": ["PTO-REQ-TILE-CAPACITY-001"],
+      "stage": 2,
+      "status": "closed",
+      "title": "Close tile capacity and packed-storage legality"
+    },
+    {
+      "evidence": ["docs/architecture-decisions/0014-element-level-tile-definedness.md", "docs/architecture-decisions/0015-explicit-tile-handoff-slots.md", "tests/asl/tile-tests.asl"],
+      "gaps": [],
+      "id": "S2-T6",
+      "owner": "PTO tile architecture maintainers",
+      "requirements": ["PTO-REQ-TILE-DEFINEDNESS-001", "PTO-REQ-TILE-MANAGEMENT-001"],
+      "stage": 2,
+      "status": "closed",
+      "title": "Close tile definedness, layouts, aliases, and explicit handoff"
+    },
+    {
+      "evidence": ["docs/architecture-decisions/0020-production-memory-events-and-atomic-corners.md", "asl/concurrency.asl", "tests/asl/concurrency-tests.asl"],
+      "gaps": [],
+      "id": "S3-T1",
+      "owner": "PTO memory-model maintainers",
+      "requirements": ["PTO-REQ-MEMORY-TSO-001", "PTO-REQ-MEMORY-COMPLETION-001"],
+      "stage": 3,
+      "status": "closed",
+      "title": "Connect production memory effects to PTO-TSO events"
+    },
+    {
+      "evidence": ["docs/architecture-decisions/0020-production-memory-events-and-atomic-corners.md", "tests/asl/concurrency-tests.asl", "tests/asl/scalar-tests.asl", "tests/asl/tile-tests.asl"],
+      "gaps": [],
+      "id": "S3-T2",
+      "owner": "PTO memory-model maintainers",
+      "requirements": ["PTO-REQ-MEMORY-TSO-001", "PTO-REQ-SCALAR-AMO-001", "PTO-REQ-TMA-001"],
+      "stage": 3,
+      "status": "closed",
+      "title": "Close ordering, reservation, prefetch, gather-CAS, and mixed-size decisions"
+    },
+    {
+      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/scalar-agu-totality.json", "scripts/generate-asl-decoders", "tests/asl/main.asl", "tests/asl/scalar-tests.asl", "docs/architecture-decisions/0024-pc-relative-and-unscaled-agu-addressing.md", "docs/architecture-decisions/0029-scalar-agu-totality-and-restart.md"],
+      "gaps": [],
+      "id": "S4-T1",
+      "owner": "PTO scalar memory architecture maintainers",
+      "requirements": ["PTO-REQ-SCALAR-ADDRESS-001", "PTO-REQ-MEMORY-COMPLETION-001"],
+      "stage": 4,
+      "status": "closed",
+      "title": "Close AGU reference semantics"
+    },
+    {
+      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/scalar-alu-totality.json", "scripts/generate-asl-decoders", "tests/asl/scalar-tests.asl", "docs/architecture-decisions/0025-scalar-bitfield-and-reverse-bounds.md", "docs/architecture-decisions/0026-scalar-alu-totality-and-alias-order.md"],
+      "gaps": [],
+      "id": "S4-T2",
+      "owner": "PTO scalar arithmetic architecture maintainers",
+      "requirements": ["PTO-REQ-SCALAR-ALU-001", "PTO-REQ-SCALAR-OPERAND-001"],
+      "stage": 4,
+      "status": "closed",
+      "title": "Close ALU reference semantics"
+    },
+    {
+      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/scalar-amo-totality.json", "scripts/generate-asl-decoders", "tests/asl/main.asl", "tests/asl/scalar-tests.asl", "tests/asl/concurrency-tests.asl", "docs/architecture-decisions/0020-production-memory-events-and-atomic-corners.md", "docs/architecture-decisions/0030-scalar-amo-totality-and-reservation.md"],
+      "gaps": [],
+      "id": "S4-T3",
+      "owner": "PTO scalar atomic and memory-model maintainers",
+      "requirements": ["PTO-REQ-SCALAR-AMO-001", "PTO-REQ-MEMORY-TSO-001", "PTO-REQ-MEMORY-COMPLETION-001"],
+      "stage": 4,
+      "status": "closed",
+      "title": "Close AMO reference semantics"
+    },
+    {
+      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/scalar-bru-totality.json", "scripts/generate-asl-decoders", "tests/asl/scalar-tests.asl", "tests/asl/bundle-tests.asl", "docs/architecture-decisions/0021-scalar-pc-relative-and-return-address.md", "docs/architecture-decisions/0027-scalar-bru-totality-and-target-legality.md"],
+      "gaps": [],
+      "id": "S4-T4",
+      "owner": "PTO scalar control architecture maintainers",
+      "requirements": ["PTO-REQ-SCALAR-CONTROL-001", "PTO-REQ-SCALAR-EXECUTION-001", "PTO-REQ-BUNDLE-STATE-001", "PTO-REQ-SCALAR-OPERAND-001"],
+      "stage": 4,
+      "status": "closed",
+      "title": "Close BRU reference semantics"
+    },
+    {
+      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/scalar-fsu-totality.json", "scripts/generate-asl-decoders", "tests/asl/main.asl", "spec/profile-hooks.json", "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md"],
+      "gaps": [],
+      "id": "S4-T5",
+      "owner": "PTO scalar numeric architecture maintainers",
+      "requirements": ["PTO-REQ-SCALAR-FP-001", "PTO-REQ-PROFILE-001"],
+      "stage": 4,
+      "status": "closed",
+      "title": "Close FSU reference semantics and its profile boundary"
+    },
+    {
+      "evidence": ["spec/catalog/system-registers.json", "spec/evidence/scalar-effect-closure.json", "spec/evidence/scalar-sys-totality.json", "scripts/generate-asl-decoders", "tests/asl/main.asl", "tests/asl/state-tests.asl", "tests/asl/scalar-tests.asl", "docs/architecture-decisions/0012-acrc-service-request.md", "docs/architecture-decisions/0017-system-register-behavior-classes.md", "docs/architecture-decisions/0018-pto-v0-trap-disposition.md", "docs/architecture-decisions/0031-scalar-sys-totality-and-profile-boundaries.md"],
+      "gaps": [],
+      "id": "S4-T6",
+      "owner": "PTO system and privilege architecture maintainers",
+      "requirements": ["PTO-REQ-SCALAR-SYS-001", "PTO-REQ-SCALAR-SSR-001", "PTO-REQ-FAULT-001", "PTO-REQ-INTERRUPT-001"],
+      "stage": 4,
+      "status": "closed",
+      "title": "Close SYS and system-register instruction semantics"
+    },
+    {
+      "evidence": ["spec/catalog/command-forms.json", "scripts/generate-asl-decoders", "scripts/generate-bundle-command-totality", "spec/evidence/bundle-command-totality.json", "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md", "tests/asl/bundle-tests.asl"],
+      "gaps": [],
+      "id": "S4-T7",
+      "owner": "PTO bundle architecture maintainers",
+      "requirements": ["PTO-REQ-BUNDLE-DISPATCH-001", "PTO-REQ-BUNDLE-OPERATION-001", "PTO-REQ-BUNDLE-STATE-001"],
+      "stage": 4,
+      "status": "closed",
+      "title": "Close all bundle-command semantics"
+    },
+    {
+      "evidence": ["spec/catalog/tile-operations.json", "spec/evidence/tepl-totality.json", "scripts/generate-asl-decoders", "tests/asl/tile-tests.asl", "tests/asl/tepl-totality-tests.asl", "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"],
+      "gaps": [],
+      "id": "S4-T8",
+      "owner": "PTO tile element architecture maintainers",
+      "requirements": ["PTO-REQ-TEPL-001", "PTO-REQ-TEPL-REDUCE-001", "PTO-REQ-TEPL-EXPAND-001", "PTO-REQ-TEPL-GENERATE-001", "PTO-REQ-TEPL-CONVERT-001", "PTO-REQ-TEPL-REARRANGE-001", "PTO-REQ-TEPL-COMPLEX-001"],
+      "stage": 4,
+      "status": "closed",
+      "title": "Close TEPL reference semantics"
+    },
+    {
+      "evidence": ["spec/catalog/tile-operations.json", "asl/tile/memory.asl", "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md", "spec/evidence/tma-totality.json", "tests/asl/tile-tests.asl", "tests/asl/tma-totality-tests.asl", "tests/asl/concurrency-tests.asl"],
+      "gaps": [],
+      "id": "S4-T9",
+      "owner": "PTO tile memory and memory-model maintainers",
+      "requirements": ["PTO-REQ-TMA-001", "PTO-REQ-MEMORY-COMPLETION-001", "PTO-REQ-MEMORY-TSO-001"],
+      "stage": 4,
+      "status": "closed",
+      "title": "Close TMA reference semantics"
+    },
+    {
+      "evidence": ["spec/catalog/tile-operations.json", "asl/tile/cube.asl", "asl/tile/legality.asl", "docs/architecture-decisions/0034-cube-raw-carrier-totality.md", "spec/evidence/cube-totality.json", "tests/asl/cube-totality-tests.asl", "tests/asl/tile-tests.asl"],
+      "gaps": [],
+      "id": "S4-T10",
+      "owner": "PTO matrix architecture maintainers",
+      "requirements": ["PTO-REQ-CUBE-001", "PTO-REQ-TILE-LEGALITY-001"],
+      "stage": 4,
+      "status": "closed",
+      "title": "Close CUBE reference semantics"
+    },
+    {
+      "evidence": ["spec/evidence/numeric-contracts.json", "spec/profile-hooks.json", "docs/profile-contracts.md", "scripts/check-catalogs"],
+      "gaps": [],
+      "id": "S5-T1",
+      "owner": "PTO numeric architecture maintainers",
+      "requirements": ["PTO-REQ-PROFILE-001", "PTO-REQ-SCALAR-FP-001", "PTO-REQ-TEPL-001", "PTO-REQ-TEPL-REDUCE-001", "PTO-REQ-TEPL-EXPAND-001", "PTO-REQ-TEPL-CONVERT-001", "PTO-REQ-TEPL-COMPLEX-001", "PTO-REQ-CUBE-001"],
+      "stage": 5,
+      "status": "closed",
+      "title": "Own every target-dependent numeric contract"
+    },
+    {
+      "evidence": ["spec/evidence/numeric-contracts.json", "spec/profile-hooks.json", "tests/asl/profile-tests.asl"],
+      "gaps": [
+        {"acceptance_evidence": ["named and versioned independent numeric oracle", "normal, boundary, exceptional, rounding, and saturation differential report"], "classification": "evidence-gap", "id": "S5-T2-G1", "statement": "No independent oracle currently validates a target numeric profile."}
+      ],
+      "id": "S5-T2",
+      "tracking": ["https://github.com/PTO-ISA/pto-spec/issues/4"],
+      "owner": "PTO numeric conformance maintainers",
+      "requirements": ["PTO-REQ-PROFILE-001", "PTO-REQ-SCALAR-FP-001", "PTO-REQ-TEPL-CONVERT-001", "PTO-REQ-CUBE-001"],
+      "stage": 5,
+      "status": "open",
+      "title": "Close independent numeric conformance"
+    },
+    {
+      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/public-source-reconciliation.json", "spec/evidence/executable-model-comparison.json", "scripts/generate-executable-model-comparison", "docs/architecture-decisions/0036-executable-model-comparison-dispositions.md"],
+      "gaps": [
+        {"acceptance_evidence": ["clean pinned comparison snapshot identified by an anonymized content hash", "successful parser, executable backend, generated-status, coverage, architecture-contract, and documentation gates archived with the comparison report"], "classification": "evidence-gap", "id": "S5-T3-G2", "statement": "The comparison report does not yet archive a clean full executable and documentation gate for its pinned independent model."}
+      ],
+      "id": "S5-T3",
+      "tracking": ["https://github.com/PTO-ISA/pto-spec/issues/4"],
+      "owner": "PTO architecture and formal-model maintainers",
+      "requirements": ["PTO-REQ-CLOSURE-001", "PTO-REQ-SCALAR-EFFECT-CLOSURE-001"],
+      "stage": 5,
+      "status": "in-progress",
+      "title": "Close executable-ISA semantic comparison dispositions"
+    },
+    {
+      "evidence": ["spec/requirements.json", "spec/evidence/maturity-closure.json", "docs/review-checklist.md"],
+      "gaps": [
+        {"acceptance_evidence": ["closed requirement-to-model-to-test ledger with no unsupported completeness status"], "classification": "release-governance", "id": "S6-T1-G1", "statement": "Traceability cannot close until every Stage 4 and Stage 5 target is closed or excluded by an accepted PTO decision."}
+      ],
+      "id": "S6-T1",
+      "tracking": ["https://github.com/PTO-ISA/pto-spec/issues/4", "docs/review-checklist.md"],
+      "owner": "PTO release maintainers",
+      "requirements": ["PTO-REQ-CLOSURE-001"],
+      "stage": 6,
+      "status": "open",
+      "title": "Close release traceability and claim hygiene"
+    },
+    {
+      "evidence": ["Makefile", "scripts/check-asl-test-shards", "scripts/check-repository", "docs/review-checklist.md", "GOVERNANCE.md"],
+      "gaps": [
+        {"acceptance_evidence": ["clean make ci", "git diff --check", "hosted validation", "recorded PTO architecture and formal-model approvals"], "classification": "release-governance", "id": "S6-T2-G1", "statement": "The architecturally-complete release gate and independent approvals are pending cumulative Stage 0 through Stage 5 closure."}
+      ],
+      "id": "S6-T2",
+      "tracking": ["https://github.com/PTO-ISA/pto-spec/issues/4", "GOVERNANCE.md"],
+      "owner": "PTO release maintainers",
+      "requirements": ["PTO-REQ-CLOSURE-001"],
+      "stage": 6,
+      "status": "open",
+      "title": "Pass the architecturally-complete release gate"
+    }
+  ]
+}

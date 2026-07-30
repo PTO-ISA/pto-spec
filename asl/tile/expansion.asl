@@ -55,5 +55,5 @@ begin
                 broadcast_payload[[broadcast_element]]);
         end;
     end;
-    _Tiles[[destination]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(destination);
 end;

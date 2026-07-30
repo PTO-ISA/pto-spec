@@ -216,11 +216,11 @@ TILE_LAYER_RESOLUTIONS = {
     ),
     "TPUSH": (
         "explicit-layer-difference",
-        "The typed source helper is a producer-side API; the direct architecture operation updates explicit TileInfo state and has no hidden pipe state.",
+        "The typed source helper is a producer-side API; the direct architecture operation publishes a defined source into an explicit free TileInfo slot, preserves the producer, and has no hidden pipe state.",
     ),
     "TPOP": (
         "explicit-layer-difference",
-        "The typed source helper is a consumer-side API; the direct architecture operation updates explicit TileInfo state and has no hidden pipe state.",
+        "The typed source helper is a consumer-side API; the direct architecture operation copies an explicit source slot into a matching configured consumer and then releases that source slot, with no hidden pipe state.",
     ),
     "TALLOC": (
         "explicit-layer-difference",
@@ -232,8 +232,7 @@ TILE_LAYER_RESOLUTIONS = {
     ),
 }
 
-EXCLUDED_PUBLIC_TILE_OPERATIONS = {
-}
+EXCLUDED_PUBLIC_TILE_OPERATIONS = {}
 
 
 def load(relative: str):
@@ -302,8 +301,10 @@ def tile_rows(operations: list[dict]) -> list[dict]:
                 "closure_basis": closure_basis,
                 "public_symbol": public_symbol,
                 "public_symbol_relation": (
-                    "documented-spelling-mapping" if name == "TSORT"
-                    else "exact-name" if public_symbol in PUBLIC_TILE_SYMBOLS
+                    "documented-spelling-mapping"
+                    if name == "TSORT"
+                    else "exact-name"
+                    if public_symbol in PUBLIC_TILE_SYMBOLS
                     else "catalog-defined"
                 ),
                 "resolution": resolution,
@@ -346,9 +347,19 @@ def generate() -> dict:
             "public_api_use": "The pinned public PTO repository is source-API and lowering evidence; matching names do not import unmodeled operands or behavior.",
         },
         "public_layer_sources": {
-            "shared-scalar-source-layer": ["public-shared-scalar-arith", "public-scalar-control"],
-            "scalar-control-or-lowering-layer": ["public-scalar-control", "public-source-precedence"],
-            "typed-tile-intrinsic-layer": ["public-intrinsic-api", "public-isa-scope", "public-assembly-model"],
+            "shared-scalar-source-layer": [
+                "public-shared-scalar-arith",
+                "public-scalar-control",
+            ],
+            "scalar-control-or-lowering-layer": [
+                "public-scalar-control",
+                "public-source-precedence",
+            ],
+            "typed-tile-intrinsic-layer": [
+                "public-intrinsic-api",
+                "public-isa-scope",
+                "public-assembly-model",
+            ],
         },
         "summary": {
             "scalar_forms": {"count": len(scalars), "closed": len(scalars), "open": 0},
@@ -356,9 +367,12 @@ def generate() -> dict:
                 "count": len(tiles),
                 "closed": len(tiles),
                 "open": 0,
-                "public_exact_name": sum(row["public_symbol_relation"] == "exact-name" for row in tiles),
+                "public_exact_name": sum(
+                    row["public_symbol_relation"] == "exact-name" for row in tiles
+                ),
                 "public_spelling_mapping": sum(
-                    row["public_symbol_relation"] == "documented-spelling-mapping" for row in tiles
+                    row["public_symbol_relation"] == "documented-spelling-mapping"
+                    for row in tiles
                 ),
             },
             "excluded_public_tile_operations": {
@@ -370,9 +384,12 @@ def generate() -> dict:
                     row["closure_basis"] == "public-source-supported" for row in tiles
                 ),
                 "catalog_defined_direct_binary": sum(
-                    row["closure_basis"] == "catalog-defined-direct-binary" for row in tiles
+                    row["closure_basis"] == "catalog-defined-direct-binary"
+                    for row in tiles
                 ),
-                "public_api_aligned": sum(row["closure_basis"] == "public-api-aligned" for row in tiles),
+                "public_api_aligned": sum(
+                    row["closure_basis"] == "public-api-aligned" for row in tiles
+                ),
                 "explicit_layer_difference": sum(
                     row["closure_basis"] == "explicit-layer-difference" for row in tiles
                 ),

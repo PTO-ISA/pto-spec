@@ -27,6 +27,8 @@ required_files=(
     docs/coverage.md
     docs/memory-model.md
     docs/modeling-conventions.md
+    docs/maturity-bringup-plan.md
+    docs/maturity-stage-targets.md
     docs/normative-sources.md
     docs/profile-contracts.md
     docs/review-checklist.md
@@ -37,6 +39,20 @@ required_files=(
     spec/catalog/system-registers.json
     spec/catalog/tile-operations.json
     spec/evidence/public-source-reconciliation.json
+    spec/evidence/maturity-closure.json
+    spec/evidence/numeric-contracts.json
+    spec/evidence/bundle-command-totality.json
+    spec/evidence/cube-totality.json
+    spec/evidence/executable-model-comparison.json
+    spec/evidence/scalar-agu-totality.json
+    spec/evidence/scalar-alu-totality.json
+    spec/evidence/scalar-bru-totality.json
+    spec/evidence/scalar-fsu-totality.json
+    spec/evidence/scalar-effect-closure.json
+    spec/evidence/tepl-totality.json
+    spec/evidence/tma-totality.json
+    scripts/generate-bundle-command-totality
+    scripts/generate-executable-model-comparison
     scripts/generate-instruction-reference
     scripts/generate-public-source-reconciliation
     tests/README.md
@@ -130,5 +146,6 @@ for script in scripts/*; do
 done
 
 python3 scripts/check-catalogs
+./scripts/generate-bundle-command-totality --check
 python3 scripts/generate-instruction-reference --check
 python3 scripts/check-publication-hygiene

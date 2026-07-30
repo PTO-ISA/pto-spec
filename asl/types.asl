@@ -10,9 +10,9 @@ type Reg5Selector of integer {0..31};
 type TileIndex of integer {0..PTO_TILE_REGISTER_COUNT-1};
 type TemporaryQueueIndex of integer {0..PTO_TEMPORARY_QUEUE_DEPTH-1};
 type PredicateIndex of integer {0..PTO_PREDICATE_REGISTER_COUNT-1};
-type BlockDimensionIndex of integer {0..PTO_BLOCK_DIMENSION_COUNT-1};
-type BlockScalarBindingIndex of integer {0..PTO_BLOCK_SCALAR_BINDING_COUNT-1};
-type BlockTileBindingIndex of integer {0..PTO_BLOCK_TILE_BINDING_COUNT-1};
+type BundleDimensionIndex of integer {0..PTO_BUNDLE_DIMENSION_COUNT-1};
+type BundleScalarBindingIndex of integer {0..PTO_BUNDLE_SCALAR_BINDING_COUNT-1};
+type BundleTileBindingIndex of integer {0..PTO_BUNDLE_TILE_BINDING_COUNT-1};
 type TileBaseIndex of integer {0..PTO_TILE_BASE_COUNT-1};
 type ModelTileElementIndex of integer {0..PTO_MODEL_TILE_ELEMENTS-1};
 type ModelAddress of integer {0..PTO_MODEL_MEMORY_BYTES-1};
@@ -22,43 +22,121 @@ type TrapNumber of bits(6);
 
 type FaultCode of enumeration {
     Fault_None,
+    Fault_ExecutionStateCheck,
     Fault_IllegalInstruction,
     Fault_InstructionPC,
     Fault_InstructionPage,
     Fault_DataAlignment,
     Fault_DataPage,
     Fault_SoftwareBreakpoint,
+    Fault_HardwareBreakpoint,
+    Fault_HardwareWatchpoint,
     Fault_Assert,
     Fault_TileLegality,
-    Fault_BlockControl
+    Fault_BundleControl,
+    Fault_ServiceRequest
 };
 
-type BlockKind of enumeration {
-    BlockKind_Standard,
-    BlockKind_Floating,
-    BlockKind_System,
-    BlockKind_MachineParallel,
-    BlockKind_MachineSequential,
-    BlockKind_TileElement,
-    BlockKind_TileMemory,
-    BlockKind_TileMatrix,
-    BlockKind_FrameTemplate
+type BundleKind of enumeration {
+    BundleKind_Standard,
+    BundleKind_Floating,
+    BundleKind_System,
+    BundleKind_MachineParallel,
+    BundleKind_MachineSequential,
+    BundleKind_TileElement,
+    BundleKind_TileMemory,
+    BundleKind_TileMatrix,
+    BundleKind_FrameTemplate
 };
 
-type BlockTransfer of enumeration {
-    BlockTransfer_Fallthrough,
-    BlockTransfer_Direct,
-    BlockTransfer_Conditional,
-    BlockTransfer_Call,
-    BlockTransfer_Return,
-    BlockTransfer_Indirect,
-    BlockTransfer_IndirectCall
+type BundleTransfer of enumeration {
+    BundleTransfer_Fallthrough,
+    BundleTransfer_Direct,
+    BundleTransfer_Conditional,
+    BundleTransfer_Call,
+    BundleTransfer_Return,
+    BundleTransfer_Indirect,
+    BundleTransfer_IndirectCall
+};
+
+// A bundle start always installs one descriptor. Control-only starts retain
+// their exact form and modifiers, while operation-bearing starts additionally
+// carry the selector consumed when the bundle is committed.
+// PTO-REQ-BUNDLE-OPERATION-001: exact start fields survive decode and commit.
+type BundleOperationClass of enumeration {
+    BundleOperation_Control,
+    BundleOperation_Machine,
+    BundleOperation_TileElement,
+    BundleOperation_TileMemory,
+    BundleOperation_TileMatrix,
+    BundleOperation_FixedPoint
+};
+
+type BundleOperationDescriptor of record {
+    valid: boolean,
+    form_identity: bits(7),
+    operation_class: BundleOperationClass,
+    selector_valid: boolean,
+    selector: bits(10),
+    data_type_valid: boolean,
+    data_type: bits(5),
+    mode_valid: boolean,
+    mode: bits(2),
+    branch_type_valid: boolean,
+    branch_type: bits(3)
+};
+
+type BundleScalarBinding of record {
+    valid: boolean,
+    destination: Reg5Selector,
+    source0: Reg5Selector,
+    source1: Reg5Selector,
+    source2: Reg5Selector,
+    source_count: integer {0..3}
+};
+
+type BundleTileBinding of record {
+    valid: boolean,
+    destination_valid: boolean,
+    destination: TileIndex,
+    destination_size: integer {0..15},
+    source0_valid: boolean,
+    source1_valid: boolean,
+    source0: TileIndex,
+    source1: TileIndex,
+    source0_reuse: boolean,
+    source1_reuse: boolean,
+    last: boolean
+};
+
+type BundleControlAttributes of record {
+    trap_enabled: boolean,
+    atomic: boolean,
+    acquire: boolean,
+    release: boolean,
+    far: boolean,
+    direct_register: boolean
+};
+
+type BundleDataAttributes of record {
+    data_type: bits(5),
+    data_layout: bits(5),
+    pad_value: bits(5),
+    conversion_mode: bits(3),
+    rounding_mode: bits(3),
+    saturating: boolean
 };
 
 // ACR0 is the root ring. The active profile defines permissions and the
 // implemented Access Control Ring subtree.
 type AccessControlRing of integer {0..15};
 type TemporaryQueueSnapshot of array [[PTO_TEMPORARY_QUEUE_DEPTH]] of Word;
+type PredicateSnapshot of array [[PTO_PREDICATE_REGISTER_COUNT]] of Word;
+type BundleDimensionSnapshot of array [[PTO_BUNDLE_DIMENSION_COUNT]] of Word;
+type BundleScalarBindingSnapshot of array [[PTO_BUNDLE_SCALAR_BINDING_COUNT]]
+    of BundleScalarBinding;
+type BundleTileBindingSnapshot of array [[PTO_BUNDLE_TILE_BINDING_COUNT]]
+    of BundleTileBinding;
 
 type TrapContext of record {
     valid: boolean,
@@ -66,12 +144,26 @@ type TrapContext of record {
     tpc: Word,
     bpc: Word,
     core_state: Word,
-    block_argument: Word,
+    bundle_argument: Word,
     commit_argument: Word,
-    block_active: boolean,
-    block_body_active: boolean,
+    bundle_active: boolean,
+    bundle_body_active: boolean,
+    bundle_kind: BundleKind,
+    bundle_transfer: BundleTransfer,
+    bundle_condition: boolean,
+    bundle_target: Word,
+    bundle_fallthrough: Word,
+    bundle_return_target: Word,
+    bundle_body_address: Word,
+    bundle_operation: BundleOperationDescriptor,
+    bundle_dimensions: BundleDimensionSnapshot,
+    bundle_scalar_bindings: BundleScalarBindingSnapshot,
+    bundle_tile_bindings: BundleTileBindingSnapshot,
+    bundle_control_attributes: BundleControlAttributes,
+    bundle_data_attributes: BundleDataAttributes,
     t_queue: TemporaryQueueSnapshot,
-    u_queue: TemporaryQueueSnapshot
+    u_queue: TemporaryQueueSnapshot,
+    predicates: PredicateSnapshot
 };
 
 type DataAccessProbe of record {
@@ -105,6 +197,7 @@ type MemoryEvent of record {
     size_bytes: integer {1,2,4,8},
     read_value: Word,
     write_value: Word,
+    write_performed: boolean,
     order: MemoryOrder,
     read_from: MemoryEventIndex,
     coherence_rank: MemoryCoherenceRank,
@@ -210,8 +303,8 @@ type FloatingFusedOperation of enumeration {
 
 type FloatingRoundingMode of enumeration {
     FloatingRound_Nearest,
-    FloatingRound_Up,
     FloatingRound_Down,
+    FloatingRound_Up,
     FloatingRound_TowardsZero,
     FloatingRound_Away
 };
@@ -432,6 +525,8 @@ type TilePayload of array [[PTO_MODEL_TILE_ELEMENTS]] of Word;
 type TileInfo of record {
     allocated: boolean,
     contents_defined: boolean,
+    defined_elements: bits(PTO_MODEL_TILE_ELEMENTS),
+    defined_valid_elements: integer {0..4096},
     capacity_bytes: integer {0..524288},
     rows: integer {0..65535},
     columns: integer {0..65535},

@@ -1,0 +1,79 @@
+# ADR-0020: Production memory events and atomic corners
+
+- Status: Accepted
+- Date: 2026-07-29
+- Requirement: PTO-REQ-MEMORY-TSO-001
+
+## Context
+
+The PTO-TSO checker initially accepted only candidates assembled directly by
+tests. Production scalar and tile semantics changed memory without exposing the
+corresponding event kind, location, value, agent, or ordering annotation. The
+architecture also needed one owned answer for reservation scope, failed store-
+conditional behavior, conditional CAS writes, tile prefetch, gather-CAS lane
+atomicity, and mixed-size overlap.
+
+Comparison implementations are not consistent enough to serve as PTO
+authority. Available models disagree between line-granular and exact-address
+reservations, omit ordering modifiers, and leave mixed-size coherence unstated.
+PTO therefore defines and tests the rules below directly.
+
+## Decision
+
+Production semantics use the same `MemoryEvent` record and PTO-TSO relations as
+manually constructed candidates. Event capture is an explicit verification
+mode selected with a bounded agent identifier. It is disabled during ordinary
+architectural execution, so exhausting the 16-event checker bound cannot become
+an ISA-visible exception. Event indices give program order only for events with
+the same selected agent.
+
+Events use the translated address. Successful scalar singles, pairs, LR/SC,
+RMW, CAS, DMA, `FENCE.D`, and tile memory operations record at their commit
+points after complete access preflight. Raw values are normalized to the event
+size before reads-from comparison. A concrete sequential capture assigns the
+next observed coherence rank and resolves a read from the latest matching
+captured write; manually constructed concurrent candidates retain explicit
+reads-from and coherence control.
+
+The remaining rules are:
+
+- `aq=0,rl=0` is relaxed, `aq` is acquire, `rl` is release, and both bits are
+  acquire-release. These annotations never weaken PTO-TSO.
+- `FENCE.D` emits one masked fence event. `FENCE.I` has instruction-visibility
+  and reservation effects but no data-memory event.
+- The local LR/SC reservation granule is 64 bytes. LR records its exact access
+  address and size for inspection, while SC success depends on the containing
+  64-byte line. A different byte address or width in the same line can succeed.
+- Any completed store overlapping the reserved line invalidates it. Every SC
+  attempt clears it. An SC whose reservation check fails performs no alignment,
+  translation, or permission probe and emits no event. When the line check
+  succeeds, the store access is probed; a resulting fault clears the reservation
+  and emits no event.
+- RMW and successful CAS emit one indivisible read/write atomic event. Failed
+  CAS emits one atomic event with `write_performed = FALSE`; it participates as
+  a read and ordering point but contributes no coherence write.
+- DMA is represented as eight ordered 8-byte loads followed by eight ordered
+  8-byte stores. This exactly fills the current verification bound and does not
+  change its single-instruction, snapshot-before-commit behavior.
+- Each active gather-CAS lane emits one atomic event. The complete instruction
+  is not globally atomic. The portable profile uses logical row-major lane
+  order, including duplicate addresses, after instruction-wide preflight.
+- Scalar prefetch is a non-faulting hint and emits no event. Tile `TPREFETCH`
+  is deliberately different: it preflights the complete footprint, faults and
+  restarts like a tile load, and records one byte-load event per footprint byte
+  when capture is enabled.
+- PTO-TSO locations remain exact translated address-and-size pairs. A candidate
+  with mixed-size or partially overlapping accesses fails validity until PTO
+  owns a byte-level coherence extension.
+
+## Consequences
+
+- Production and litmus evidence now exercise one normative event taxonomy.
+- Faulting multi-access instructions leave no partial event prefix.
+- The bounded recorder is verification infrastructure, not hidden
+  architectural state or an implementation capacity.
+- Line-granular cross-width SC, no-probe failed SC, row-major gather-CAS lanes,
+  and faulting tile prefetch are deliberate PTO choices and require an ADR
+  change plus updated executable witnesses to revise.
+- Wider DMA events, byte-level mixed-size coherence, and alternative tile-lane
+  schedules require explicit model extensions rather than silent inference.

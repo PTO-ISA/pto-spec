@@ -1,0 +1,149 @@
+{
+  "accepted_form_count": 107,
+  "decoded_boundary_case_count": 337,
+  "decoded_boundary_form_count": 107,
+  "decoded_boundary_labels": [
+    "zero",
+    "lower",
+    "upper",
+    "modifier-two",
+    "predicate-true",
+    "shift-31",
+    "shift-32",
+    "shift-63",
+    "shift-64",
+    "shift-127"
+  ],
+  "decoded_boundary_test": "scripts/generate-asl-decoders:ValidateCanonicalScalarALUTotality",
+  "decoded_alias_case_count": 35,
+  "decoded_alias_case_ids": [
+    "gpr-destination-overlaps-left",
+    "gpr-destination-overlaps-right",
+    "r0-source-and-destination-discard",
+    "temporary-destination-discards-24-through-29",
+    "queue-source-t1",
+    "queue-source-t2",
+    "queue-source-t3",
+    "queue-source-t4",
+    "queue-source-u1",
+    "queue-source-u2",
+    "queue-source-u3",
+    "queue-source-u4",
+    "cross-queue-source-pair",
+    "push-t-snapshots-t-source",
+    "push-u-snapshots-u-source",
+    "ternary-destination-overlaps-addend",
+    "ternary-destination-overlaps-left",
+    "ternary-destination-overlaps-right",
+    "bitfield-destination-overlaps-base",
+    "bitfield-destination-overlaps-insert",
+    "select-destination-overlaps-true",
+    "select-destination-overlaps-false",
+    "select-destination-overlaps-predicate",
+    "select-queue-sources-and-push",
+    "materialize-push-u",
+    "materialize-push-t",
+    "move-t4-to-gpr",
+    "move-u4-push-u",
+    "control-t2-source",
+    "control-u3-source",
+    "implicit-t-source-and-push",
+    "pair-destinations-overlap-sources",
+    "pair-destinations-same-gpr",
+    "pair-destinations-cross-queue",
+    "pair-destinations-same-queue"
+  ],
+  "decoded_alias_test": "tests/asl/scalar-tests.asl:TestScalarALUAliasMatrix",
+  "alias_contracts": [
+    {
+      "id": "single-result-source-snapshot",
+      "selector_classes": ["R0", "R1-R23", "T#1-T#4", "U#1-U#4"],
+      "destination_classes": ["discard-0", "R1-R23", "discard-24-29", "push-U-30", "push-T-31"],
+      "test": "tests/asl/scalar-tests.asl:TestScalarALUAliasMatrix"
+    },
+    {
+      "id": "pair-result-ordered-destinations",
+      "selector_classes": ["distinct-GPR", "source-overlap-GPR", "same-GPR", "discard", "push-T", "push-U", "T/U-source-snapshot"],
+      "destination_order": ["destination-zero", "destination-one"],
+      "test": "tests/asl/scalar-tests.asl:TestScalarALUAliasMatrix"
+    }
+  ],
+  "boundary_contracts": [
+    {
+      "dimensions": ["zero", "ones", "signed-min", "signed-max", "wrap", "word-sign-extension", "shift-0", "shift-width-minus-1", "shift-width"],
+      "effect_classes": ["scalar-binary-value"],
+      "id": "fixed-width-binary",
+      "test": "tests/asl/scalar-tests.asl:TestScalarALUBoundaryMatrix"
+    },
+    {
+      "dimensions": ["zero", "one", "signed-min", "signed-max", "unsigned-max", "multiply-wrap", "divide-by-zero", "signed-min-div-negative-one", "word-sign-extension"],
+      "effect_classes": ["scalar-arithmetic-value"],
+      "id": "multiply-divide-and-remainder",
+      "test": "tests/asl/scalar-tests.asl:TestScalarALUBoundaryMatrix"
+    },
+    {
+      "dimensions": ["low-high-result", "zero-divisor", "signed-min-div-negative-one", "shift-0", "shift-63", "shift-64", "shift-127", "same-destination-order"],
+      "effect_classes": ["scalar-pair-value"],
+      "id": "pair-results",
+      "test": "tests/asl/scalar-tests.asl:TestScalarALUBoundaryMatrix"
+    },
+    {
+      "dimensions": ["width-1", "width-64", "offset-0", "offset-63", "wrap", "signed-extension", "all-zero", "all-one", "non-byte-reverse", "full-width-insert"],
+      "effect_classes": ["scalar-bitfield-value"],
+      "id": "bitfields",
+      "test": "tests/asl/scalar-tests.asl:TestScalarALUBoundaryMatrix"
+    },
+    {
+      "dimensions": ["zero", "signed-min", "signed-max", "unsigned-max", "byte", "halfword", "word", "sign-extension", "zero-extension"],
+      "effect_classes": ["scalar-materialize-value"],
+      "id": "materialization-and-extension",
+      "test": "tests/asl/scalar-tests.asl:TestScalarALUBoundaryMatrix"
+    },
+    {
+      "dimensions": ["predicate-zero", "predicate-one", "predicate-all-ones", "right-unmodified-alias-00", "right-unmodified-alias-01", "right-unmodified-alias-10", "right-negation-11"],
+      "effect_classes": ["scalar-select-value"],
+      "id": "conditional-select",
+      "test": "tests/asl/scalar-tests.asl:TestScalarALUBoundaryMatrix"
+    },
+    {
+      "dimensions": ["zero", "maximum-immediate", "TPC-wrap", "R10-return-alias"],
+      "effect_classes": ["scalar-control-value"],
+      "id": "catalogued-control-effects",
+      "test": "tests/asl/scalar-tests.asl:TestScalarALUBoundaryMatrix"
+    }
+  ],
+  "effect_class_ids": [
+    "scalar-binary-value",
+    "scalar-arithmetic-value",
+    "scalar-pair-value",
+    "scalar-bitfield-value",
+    "scalar-materialize-value",
+    "scalar-select-value",
+    "scalar-control-value"
+  ],
+  "independent_comparison": {
+    "matched_contracts": [
+      "fixed-width-wrap-and-word-sign-extension",
+      "shift-count-reduction",
+      "signed-and-unsigned-minmax",
+      "non-trapping-division-corners",
+      "ordered-pair-result-writes",
+      "concatenation-boundaries",
+      "bitfield-wrap-and-non-byte-reverse",
+      "conditional-select-modifier-aliases"
+    ],
+    "non_comparable_contracts": [
+      "pto-reg5-t-u-source-snapshot-and-destination-push-discard"
+    ],
+    "provenance_sha256": "9e601ae1a3f1a7025b048aa6108b04b445a3ccbc68fc77ea4b76d7befa2e46b8",
+    "pto_disposition": "The independent model corroborates shared value rules but uses a flat register namespace. PTO queue semantics remain PTO-owned and close only through decoded PTO alias evidence.",
+    "status": "reviewed"
+  },
+  "requirement_ids": [
+    "PTO-REQ-SCALAR-ALU-001",
+    "PTO-REQ-SCALAR-OPERAND-001"
+  ],
+  "schema_version": 1,
+  "status": "closed",
+  "target": "S4-T2"
+}

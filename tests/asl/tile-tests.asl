@@ -118,6 +118,40 @@ begin
     TGEMV(28, 5, 27);
     assert ReadTileElement(28, 0, 0) == Zeros{PTO_XLEN} + 8;
     assert ReadTileElement(28, 1, 0) == Zeros{PTO_XLEN} + 18;
+
+    // Decoded MX-bias must reject an undefined bias even though the catalog
+    // carries it in destination1, and permitted destination/bias aliasing uses
+    // the source snapshot taken before the matrix destination is overwritten.
+    for index = 32 to 37 do
+        ConfigureTile(index as TileIndex, 256, 1, 1, 1, 1,
+            TileDataType_U64, TileLayout_RowMajor, TileLocation_Any);
+    end;
+    WriteTileElement(32, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(33, 0, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(34, 0, 0, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(35, 0, 0, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(36, 0, 0, Zeros{PTO_XLEN} + 1);
+    var mx_bias_operands = DefaultTileInstructionOperands();
+    mx_bias_operands.destination0 = 36;
+    mx_bias_operands.source0 = 32;
+    mx_bias_operands.source1 = 33;
+    mx_bias_operands.source2 = 34;
+    mx_bias_operands.source3 = 35;
+    mx_bias_operands.destination1 = 37;
+    ClearFault();
+    let (undefined_bias_status, -) = ExecuteTileInstruction(
+        TileDecode_CUBE, '000000000101', mx_bias_operands);
+    assert undefined_bias_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTileElement(36, 0, 0) == Zeros{PTO_XLEN} + 1;
+
+    mx_bias_operands.destination1 = 36;
+    ClearFault();
+    let (alias_bias_status, -) = ExecuteTileInstruction(
+        TileDecode_CUBE, '000000000101', mx_bias_operands);
+    assert alias_bias_status == TileExecution_Executed;
+    assert _LastFault == Fault_None;
+    assert ReadTileElement(36, 0, 0) == Zeros{PTO_XLEN} + 121;
 end;
 
 func TestTileReduction()
@@ -460,10 +494,14 @@ begin
     assert _Tiles[[63]].allocated;
     assert !_Tiles[[63]].contents_defined;
     assert _Tiles[[63]].data_type == TileDataType_U64;
+    TFREE(63);
+    ConfigureTwoByTwo(62);
     TPUSH(63, 1);
     assert ReadTileElement(63, 1, 1) == Zeros{PTO_XLEN} + 6;
+    assert ReadTileElement(1, 1, 1) == Zeros{PTO_XLEN} + 6;
     TPOP(62, 63);
     assert ReadTileElement(62, 0, 0) == Zeros{PTO_XLEN} - 6;
+    assert !_Tiles[[63]].allocated;
 
     ConfigureTile(55, 256, 1, 3, 1, 3, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
@@ -566,8 +604,12 @@ begin
     ConfigureTwoByTwo(1);
     ConfigureTwoByTwo(2);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN});
+    WriteTileElement(0, 1, 0, Zeros{PTO_XLEN});
     WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 5);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 7);
+    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN});
+    WriteTileElement(1, 1, 0, Zeros{PTO_XLEN});
     WriteTileElement(1, 1, 1, Zeros{PTO_XLEN} + 11);
 
     var tepl_operands = DefaultTileInstructionOperands();
@@ -625,6 +667,277 @@ begin
     assert _LastFault == Fault_IllegalInstruction;
 end;
 
+// PTO-REQ-TILE-CAPACITY-001: allocation legality is decided before the first
+// descriptor or payload effect, including packed storage and aggregate limits.
+func TestTileCapacityLegality()
+begin
+    ResetProfileState();
+    assert TileOperandsLegal_TALLOC(20, 262144, 1, 1, 1, 1,
+        Zeros{PTO_XLEN} + 24, FALSE);
+    ConfigureTile(20, 524288, 1, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    assert _Tiles[[20]].capacity_bytes == 524288;
+    ReleaseTile(20);
+
+    _SystemRegisters.tile_capacity = Zeros{PTO_XLEN} + 768;
+
+    ConfigureTile(20, 256, 1, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(20, 0, 0, Zeros{PTO_XLEN} + 0x55);
+
+    var allocation = DefaultTileInstructionOperands();
+    allocation.destination0 = 20;
+    allocation.positive0 = 1;
+    allocation.positive1 = 1;
+    allocation.natural0 = 1;
+    allocation.natural1 = 1;
+    allocation.scalar0 = Zeros{PTO_XLEN} + 24;
+
+    // Zero and sub-minimum capacities are rejected without converting an
+    // allocated destination into a free or partially reconfigured tile.
+    allocation.byte_count = 0;
+    ClearFault();
+    let (zero_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000011100010', allocation);
+    assert zero_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert _Tiles[[20]].capacity_bytes == 256;
+    assert _Tiles[[20]].rows == 1;
+    assert _Tiles[[20]].contents_defined;
+    assert ReadTileElement(20, 0, 0) == Zeros{PTO_XLEN} + 0x55;
+
+    allocation.byte_count = 255;
+    ClearFault();
+    let (small_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000011100010', allocation);
+    assert small_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert _Tiles[[20]].capacity_bytes == 256;
+    assert ReadTileElement(20, 0, 0) == Zeros{PTO_XLEN} + 0x55;
+
+    // 33 U64 elements need 264 bytes, so a 256-byte descriptor is illegal.
+    allocation.byte_count = 256;
+    allocation.positive0 = 33;
+    ClearFault();
+    let (storage_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000011100010', allocation);
+    assert storage_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert _Tiles[[20]].rows == 1;
+    assert ReadTileElement(20, 0, 0) == Zeros{PTO_XLEN} + 0x55;
+
+    // Exact-capacity allocation succeeds and makes the payload undefined.
+    allocation.positive0 = 32;
+    allocation.natural0 = 32;
+    ClearFault();
+    let (exact_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000011100010', allocation);
+    assert exact_status == TileExecution_Executed;
+    assert _LastFault == Fault_None;
+    assert _Tiles[[20]].capacity_bytes == 256;
+    assert _Tiles[[20]].rows == 32;
+    assert !_Tiles[[20]].contents_defined;
+
+    // Reconfiguration replaces, rather than double-counts, the destination's
+    // old capacity. A third allocation beyond the aggregate limit is rejected.
+    ConfigureTile(21, 256, 1, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    allocation.destination0 = 20;
+    allocation.byte_count = 512;
+    allocation.positive0 = 1;
+    allocation.natural0 = 1;
+    ClearFault();
+    let (replace_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000011100010', allocation);
+    assert replace_status == TileExecution_Executed;
+    assert TileCapacityInUseExcept(63) == 768;
+
+    allocation.destination0 = 22;
+    allocation.byte_count = 256;
+    ClearFault();
+    let (aggregate_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000011100010', allocation);
+    assert aggregate_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert !_Tiles[[22]].allocated;
+    assert _Tiles[[20]].capacity_bytes == 512;
+    assert _Tiles[[21]].capacity_bytes == 256;
+
+    ReleaseTile(20);
+    assert TileCapacityInUseExcept(63) == 256;
+    ResetProfileState();
+end;
+
+// PTO-REQ-TILE-DEFINEDNESS-001: one element write defines only that element;
+// whole-region consumers reject until every valid element is defined.
+func TestTileElementDefinedness()
+begin
+    ResetProfileState();
+    ConfigureTwoByTwo(0);
+    ConfigureTwoByTwo(1);
+    ConfigureTwoByTwo(2);
+    ExecuteTileFillScalar(1, Zeros{PTO_XLEN} + 10);
+    ExecuteTileFillScalar(2, Zeros{PTO_XLEN} + 0x5a);
+
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);
+    assert TileElementDefined(0, 0, 0);
+    assert !TileElementDefined(0, 0, 1);
+    assert _Tiles[[0]].defined_valid_elements == 1;
+    assert !_Tiles[[0]].contents_defined;
+    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 1;
+
+    var add = DefaultTileInstructionOperands();
+    add.destination0 = 2;
+    add.source0 = 0;
+    add.source1 = 1;
+    ClearFault();
+    let (partial_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000000000000', add);
+    assert partial_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 0x5a;
+    assert ReadTileElement(2, 1, 1) == Zeros{PTO_XLEN} + 0x5a;
+
+    ConfigureTile(3, 256, 2, 1, 2, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ExecuteTileFillScalar(3, Zeros{PTO_XLEN} + 0x66);
+    var reduction = DefaultTileInstructionOperands();
+    reduction.destination0 = 3;
+    reduction.source0 = 0;
+    ClearFault();
+    let (partial_reduction_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000000010100', reduction);
+    assert partial_reduction_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTileElement(3, 0, 0) == Zeros{PTO_XLEN} + 0x66;
+    assert ReadTileElement(3, 1, 0) == Zeros{PTO_XLEN} + 0x66;
+
+    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 4);
+    assert _Tiles[[0]].defined_valid_elements == 4;
+    assert _Tiles[[0]].contents_defined;
+    ClearFault();
+    let (complete_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000000000000', add);
+    assert complete_status == TileExecution_Executed;
+    assert _LastFault == Fault_None;
+    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 11;
+    assert ReadTileElement(2, 1, 1) == Zeros{PTO_XLEN} + 14;
+
+    ConfigureTwoByTwo(0);
+    assert _Tiles[[0]].defined_valid_elements == 0;
+    assert !TileElementDefined(0, 0, 0);
+    assert !_Tiles[[0]].contents_defined;
+    ReleaseTile(0);
+    assert _Tiles[[0]].defined_elements == Zeros{PTO_MODEL_TILE_ELEMENTS};
+    ResetProfileState();
+end;
+
+// PTO-REQ-TILE-MANAGEMENT-001: explicit slots replace hidden pipe state.
+// Push preserves its producer; pop consumes its selected slot after copying.
+func TestTileManagementHandoff()
+begin
+    ResetProfileState();
+    _SystemRegisters.tile_capacity = Zeros{PTO_XLEN} + 256;
+    ConfigureTwoByTwo(1);
+    ExecuteTileFillScalar(1, Zeros{PTO_XLEN} + 11);
+
+    var push = DefaultTileInstructionOperands();
+    push.destination0 = 60;
+    push.source0 = 1;
+    ClearFault();
+    let (capacity_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000011100000', push);
+    assert capacity_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert !_Tiles[[60]].allocated;
+    assert _Tiles[[1]].allocated;
+    assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 11;
+
+    _SystemRegisters.tile_capacity = Zeros{PTO_XLEN} + 1536;
+    ClearFault();
+    let (push_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000011100000', push);
+    assert push_status == TileExecution_Executed;
+    assert _Tiles[[1]].allocated;
+    assert _Tiles[[60]].allocated;
+    assert ReadTileElement(60, 1, 1) == Zeros{PTO_XLEN} + 11;
+
+    // A full slot rejects a second publication and preserves its first value.
+    ExecuteTileFillScalar(1, Zeros{PTO_XLEN} + 22);
+    ClearFault();
+    let (full_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000011100000', push);
+    assert full_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTileElement(60, 0, 0) == Zeros{PTO_XLEN} + 11;
+    assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 22;
+    assert !TileOperandsLegal_TPUSH(1, 1);
+
+    ConfigureTwoByTwo(3);
+    ExecuteTileFillScalar(3, Zeros{PTO_XLEN} + 33);
+    push.destination0 = 61;
+    push.source0 = 3;
+    ClearFault();
+    let (second_push_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000011100000', push);
+    assert second_push_status == TileExecution_Executed;
+    assert ReadTileElement(61, 0, 0) == Zeros{PTO_XLEN} + 33;
+
+    ConfigureTwoByTwo(2);
+    ExecuteTileFillScalar(2, Zeros{PTO_XLEN} + 0x5a);
+    var pop = DefaultTileInstructionOperands();
+    pop.destination0 = 2;
+    pop.source0 = 60;
+    ClearFault();
+    let (pop_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000011100001', pop);
+    assert pop_status == TileExecution_Executed;
+    assert _LastFault == Fault_None;
+    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 11;
+    assert !_Tiles[[60]].allocated;
+
+    // The source operand selects the explicit slot; there is no implicit FIFO
+    // cursor. A mismatched consumer rejects and keeps the selected slot held.
+    ConfigureTile(4, 256, 1, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    pop.destination0 = 4;
+    pop.source0 = 61;
+    ClearFault();
+    let (shape_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000011100001', pop);
+    assert shape_status == TileExecution_Rejected;
+    assert _Tiles[[61]].allocated;
+    ConfigureTwoByTwo(4);
+    ClearFault();
+    let (second_pop_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000011100001', pop);
+    assert second_pop_status == TileExecution_Executed;
+    assert ReadTileElement(4, 0, 0) == Zeros{PTO_XLEN} + 33;
+    assert !_Tiles[[61]].allocated;
+    assert !TileOperandsLegal_TPOP(4, 4);
+
+    // Consuming the released slot again and freeing it again both fail before
+    // changing the configured consumer.
+    ClearFault();
+    let (empty_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000011100001', pop);
+    assert empty_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTileElement(2, 1, 1) == Zeros{PTO_XLEN} + 11;
+
+    var free = DefaultTileInstructionOperands();
+    free.destination0 = 60;
+    ClearFault();
+    let (double_free_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000011100011', free);
+    assert double_free_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTileElement(2, 1, 1) == Zeros{PTO_XLEN} + 11;
+    ResetProfileState();
+end;
+
 // PTO-REQ-TILE-LEGALITY-001: all legality failures are decided before the
 // first destination or composite matrix effect.
 func TestDecodedTileLegalityFaults()
@@ -662,8 +975,7 @@ begin
     assert ReadTileElement(9, 0, 0) == Zeros{PTO_XLEN} + 0x5a;
     assert ReadTileElement(9, 0, 1) == Zeros{PTO_XLEN} + 0x5a;
 
-    ConfigureTile(8, 0, 0, 0, 0, 0, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+    ReleaseTile(8);
     ClearFault();
     let (shape_status, -) = ExecuteTileInstruction(
         TileDecode_TEPL, '000000000000', division_operands);
@@ -717,7 +1029,7 @@ begin
     ClearFault();
     let (first_status, -) = ExecuteTileInstruction(
         TileDecode_TMA, '000000000100', gather_operands);
-    assert first_status == TileExecution_Executed;
+    assert first_status == TileExecution_Rejected;
     assert _LastFault == Fault_DataPage;
     assert _FaultAddress == Zeros{PTO_XLEN} + 4096;
     assert ReadTileElement(14, 0, 0) == Zeros{PTO_XLEN} + 0x5a;
@@ -729,7 +1041,7 @@ begin
     ClearFault();
     let (middle_status, -) = ExecuteTileInstruction(
         TileDecode_TMA, '000000000100', gather_operands);
-    assert middle_status == TileExecution_Executed;
+    assert middle_status == TileExecution_Rejected;
     assert _LastFault == Fault_DataPage;
     assert _FaultAddress == Zeros{PTO_XLEN} + 4096;
     assert ReadTileElement(14, 0, 0) == Zeros{PTO_XLEN} + 0x5a;
@@ -741,7 +1053,7 @@ begin
     ClearFault();
     let (last_status, -) = ExecuteTileInstruction(
         TileDecode_TMA, '000000000100', gather_operands);
-    assert last_status == TileExecution_Executed;
+    assert last_status == TileExecution_Rejected;
     assert _LastFault == Fault_DataPage;
     assert _FaultAddress == Zeros{PTO_XLEN} + 4096;
     assert ReadTileElement(14, 0, 0) == Zeros{PTO_XLEN} + 0x5a;
@@ -778,7 +1090,7 @@ begin
     ClearFault();
     let (scatter_fault_status, -) = ExecuteTileInstruction(
         TileDecode_TMA, '000000000101', scatter_operands);
-    assert scatter_fault_status == TileExecution_Executed;
+    assert scatter_fault_status == TileExecution_Rejected;
     assert _LastFault == Fault_DataPage;
     assert _FaultAddress == Zeros{PTO_XLEN} + 4096;
     ClearFault();

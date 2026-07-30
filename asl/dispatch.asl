@@ -25,7 +25,7 @@ begin
             return PTOInstruction_Rejected;
         end;
     else
-        AdvanceArchitecturalTime();
+        BeginArchitecturalInstructionAttempt();
         SetFault(Fault_IllegalInstruction, ReadTPC());
         return PTOInstruction_Rejected;
     end;

@@ -28,19 +28,22 @@ signedness, form-local constraints, and semantic handler. The generated ASL
 decoder provides a positive witness for every form and every operand
 extraction.
 
-The block/command catalog contains 107 accepted forms. It covers block start,
+The bundle/command catalog contains 107 accepted forms. It covers bundle start,
 split, argument, dimension, control attribute, data attribute, scalar IO, tile
-IO, hint, stop, and context-control forms. Vector-only block and queue forms are
-not part of the PTO ISA.
+IO, hint, stop, and context-control forms. Vector-only bundle and queue forms are
+not part of the PTO ISA. The retained `BSTART`, `BSTOP`, `B.*`, and BPC
+spellings use `B` for bundle. Separately, `BLOCKNUM`, `BLOCKID`, and
+`CROSS_BID` identify virtual core blocks rather than bundles.
 
 The direct tile catalog contains exactly 120 operations: 98 TEPL, 9 TMA, and 13
 CUBE. Allocated and reserved selectors are part of the PTO contract, and the
 generated ASL selector decoder witnesses every accepted operation.
 
-The system-register catalog defines 54 base, context-family, translation,
-interrupt, and debug-register entries in a canonical 24-bit address domain,
-plus 13 trap-number identities. Generated ASL witnesses validate every register
-access class.
+The system-register catalog defines 72 base, context-family, trap-snapshot,
+translation, interrupt, and debug-register entries in a canonical 24-bit
+address domain, plus 13 trap-number identities. The 18-entry `EBARG` range is
+part of the visible context-family contract. Generated ASL witnesses validate
+every register access class.
 
 Catalog changes are normative PTO changes and require the same review and
 validation as ASL semantics.
@@ -50,8 +53,16 @@ validation as ASL semantics.
 `spec/profile-hooks.json` names the active `pto-v0` profile and is the exact
 registry for implementation-defined interfaces. Its entries must equal the ASL
 `impdef` declarations, the `implementation func` overrides in
-`asl/profiles/pto-v0.asl`, and the direct calls in
+`asl/profiles/pto-v0.asl`, and the direct profile-test calls in
 `tests/asl/profile-tests.asl`.
+
+Hook implementation, numeric-contract ownership, and target conformance are
+separate grades. PTO-v0 implements all registered hooks deterministically. The
+registry marks eight non-numeric reference contracts closed. The checked
+`spec/evidence/numeric-contracts.json` inventory closes `S5-T1` by assigning 19
+scalar forms and 89 direct-tile operations to all 29 numeric hooks and a profile
+owner. Those hooks remain open toward `S5-T2`; a direct PTO-v0 test does not
+establish hardware or IEEE numeric conformance.
 
 The profile fixes numeric, memory, ACR, time, and reset behavior. Its
 deterministic raw numeric carrier is not an IEEE-754 claim. An alternative
@@ -68,8 +79,8 @@ same change.
 
 ## Architecture ownership
 
-PTO operations execute directly against explicit scalar, block, memory, and tile
-state. Block control state is visible through TPC, BPC, block active/body flags,
+PTO operations execute directly against explicit scalar, bundle, memory, and tile
+state. Bundle control state is visible through TPC, BPC, bundle active/body flags,
 arguments, dimensions, IO bindings, and attributes. Direct tile operations have
 explicit destinations, sources, dimensions, addresses, and attributes.
 
@@ -84,6 +95,58 @@ not outrank the PTO-owned ASL, catalogs, or accepted architecture decisions.
 Do not publish non-public repository names, local paths, third-party prose,
 source code, diagrams, or comparison-specific identities as normative PTO
 material.
+
+`scalar-effect-closure.json` is the fail-closed semantic-maturity ledger. Its
+members are stable scalar form IDs, and its grades record executable decoded
+before/after evidence rather than mnemonic or handler-name presence. Catalog
+checks require every closed member to exist exactly once and require the stated
+class total to agree with the 474-form inventory.
+
+`scalar-agu-totality.json` is the Stage 4 address, completion, prefetch, alias,
+fault, and restart contract. It derives exact inventories from all 183 AGU form
+IDs and binds them to 1,464 decoded totality cases, 4,296 decoded alias cases,
+and the retained 360 Stage 1 cases. Its independent executable-model comparison
+is corroborating evidence only; ADR 0029 and the PTO ASL remain authoritative.
+
+`scalar-alu-totality.json` is the Stage 4 ALU boundary and alias contract. It
+binds the seven ALU effect classes and all 107 accepted ALU form IDs to reviewed
+fixed-width boundary dimensions and Reg5 alias equivalence classes. Its 337 raw
+decoded boundary cases and 35 decoded alias cases close `S4-T2`; pure helper
+vectors alone would not satisfy that closure rule.
+
+`scalar-bru-totality.json` is the Stage 4 BRU totality, alias, predicate, target,
+and fault contract. It binds all six BRU effect classes and all 66 accepted form
+IDs to 284 raw decoded totality cases and 32 decoded alias/fault obligations.
+The evidence includes all Reg5 queue sources and destinations, bundle versus
+non-bundle predicate selection, the ignored `JR.SrcZero` alias field, signed
+halfword target limits and wrapping, odd-target trap context, and synchronized
+return state. These executable cases and ADR 0027 close `S4-T4`.
+
+`scalar-fsu-totality.json` is the Stage 4 FSU carrier, legality, boundary,
+rounding-selection, Reg5-alias, sticky-flag, and fault contract. Its format-code
+table names Stage 4 raw carriers without claiming target numerical encodings;
+the recorded independent comparison is evidence, while PTO ASL and ADR 0028
+remain authoritative.
+
+`scalar-amo-totality.json` is the Stage 4 AMO modifier, value, Reg5-alias,
+fault/restart, reservation, and DMA contract. It binds 2,474 unique decoded
+Stage 4 attempts plus 66 retained Stage 1 attempts to ADR 0030. Its independent
+comparison disposition corroborates shared value and reservation-line behavior;
+PTO ASL remains authoritative for ordering, faults, restart, reservation
+invalidation, Reg5 queues, and executable DMA behavior.
+
+`maturity-closure.json` is the fail-closed stage ledger. It assigns every
+target an owner, affected requirement IDs, current evidence, status, and—for
+every non-closed target—tracked, classified gaps with explicit acceptance
+evidence. The repository checker derives the cumulative maturity floor from
+the contiguous closed stages and rejects disagreement with the plan, coverage,
+README, requirement metadata, or `specification.toml`.
+
+`numeric-contracts.json` is the fail-closed numeric ownership ledger. It
+distinguishes primary portable-profile boundaries from PTO-v0 reference helpers,
+binds every affected catalog identity to one numeric contract and owner, and
+keeps every target-dependent arithmetic dimension explicitly open under
+`S5-T2` until independent conformance evidence exists.
 
 Where evidence and PTO-owned semantics disagree, the PTO ASL and catalogs
 prevail after a reviewed architecture decision.

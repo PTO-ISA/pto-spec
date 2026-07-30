@@ -1,0 +1,130 @@
+{
+  "accepted_form_count": 183,
+  "address_kind_counts": {
+    "compressed": 4,
+    "immediate": 98,
+    "pc-relative": 22,
+    "register": 59
+  },
+  "alias_case_breakdown": {
+    "destination-special-selectors": 1719,
+    "load-pair-destination-order": 95,
+    "source-temporary-selectors": 2440,
+    "store-pair-source-snapshot": 42
+  },
+  "architecture_contract": {
+    "address_arithmetic": "All base, offset, scale, and update arithmetic is modulo 2^64. PC-relative forms align TPC down to four bytes before adding the four-byte-scaled displacement.",
+    "fault_precedence": [
+      "alignment",
+      "translation",
+      "permission-or-bounded-memory"
+    ],
+    "pair_completion": "Both original addresses preflight before either architectural element commits. The first failing original address is reported and restart is full reissue.",
+    "permission_fault": "PTO v0 identity translation has no translation-fault outcome. Permission and bounded-memory failures both report Fault_DataPage.",
+    "prefetch": "Every model value is legal portable hint metadata. Prefetch forms an address but performs no translation, permission check, event, reservation, or memory effect; address-returning forms publish the formed address.",
+    "reg5_order": "All sources are snapshotted before effects. Pair destinations write in encoded order; repeated GPR or queue destinations therefore retain that order.",
+    "writeback": "Pre-index accesses the updated address, post-index accesses the original base, and writeback publishes only after successful completion. Decoded pairs have no writeback mode."
+  },
+  "boundary_fault_case_breakdown": {
+    "address-wrap": 183,
+    "alignment-precedence": 132,
+    "immediate-min-max": 248,
+    "naturally-aligned-page-precedence": 45,
+    "pair-first-access-fault": 33,
+    "pair-second-access-fault": 33,
+    "permission-page-fault": 177,
+    "prefetch-address-return-wrap": 4,
+    "prefetch-invalid-address-nonfaulting": 6,
+    "prefetch-model-values": 128,
+    "register-modifiers": 236,
+    "restart-by-reissue": 177,
+    "shamt-min-max": 62
+  },
+  "component_case_counts": {
+    "alias_topology": 4296,
+    "boundary_fault_restart": 1464,
+    "retained_stage1": 360
+  },
+  "decoded_alias_case_count": 4296,
+  "decoded_alias_test": "scripts/generate-asl-decoders:ValidateCanonicalScalarAGUAliases",
+  "decoded_boundary_fault_case_count": 1464,
+  "decoded_totality_test": "scripts/generate-asl-decoders:ValidateCanonicalScalarAGUTotality",
+  "effect_class_ids": [
+    "scalar-agu-load",
+    "scalar-agu-load-writeback",
+    "scalar-agu-load-pair",
+    "scalar-agu-store",
+    "scalar-agu-store-writeback",
+    "scalar-agu-store-pair",
+    "scalar-agu-prefetch",
+    "scalar-agu-prefetch-address"
+  ],
+  "independent_comparison": {
+    "actionable_harness_checks": [
+      "pc-relative-current-tpc-versus-comparison-pc-stand-in"
+    ],
+    "divergences": [
+      "pto-transactional-pair-preflight-versus-sequential-comparison-accesses",
+      "pto-unscaled-upr-upo-store-writeback-versus-scaled-comparison-aliases"
+    ],
+    "matched_contracts": [
+      "address-base-selection",
+      "immediate-sign-extension-and-scaled-unscaled-split",
+      "srcrtype-modifiers-before-scaling",
+      "explicit-shamt-and-implicit-form-scale",
+      "pre-post-index-address-and-success-only-writeback",
+      "load-store-width-and-signedness-matrix",
+      "nonfaulting-prefetch-and-address-return"
+    ],
+    "non_comparable_contracts": [
+      "pto-full-reissue-restart-and-fault-precedence",
+      "pto-reg5-t-u-queue-source-destination-topology",
+      "pto-permission-event-and-trap-envelope"
+    ],
+    "provenance_sha256": "a0fb5ff038c56ce4425061caca4f3e4d25379af045d3b5e511b70fabffa22c5f",
+    "pto_disposition": "The independent executable ISA/model comparison corroborates shared address formation, modifier, indexing, width, and prefetch rules. PTO keeps transactional pair preflight and genuinely unscaled UPR/UPO store writeback as explicit PTO-owned behavior. PTO-native evidence remains authoritative for Reg5 queues, events, permission faults, traps, and restart.",
+    "status": "reviewed"
+  },
+  "inventory": {
+    "action_counts": {
+      "load": 85,
+      "load-pair": 19,
+      "prefetch": 6,
+      "store": 59,
+      "store-pair": 14
+    },
+    "destination_field_occurrences": 191,
+    "fault_capable_forms": 177,
+    "immediate_field_forms": 124,
+    "register_address_forms": 59,
+    "register_shamt_forms": 31,
+    "source_field_occurrences": 305
+  },
+  "new_stage4_case_count": 5760,
+  "requirement_ids": [
+    "PTO-REQ-SCALAR-ADDRESS-001",
+    "PTO-REQ-SCALAR-OPERAND-001",
+    "PTO-REQ-MEMORY-001",
+    "PTO-REQ-MEMORY-COMPLETION-001",
+    "PTO-REQ-SCALAR-EXECUTION-001"
+  ],
+  "schema_version": 1,
+  "stage1_retained_case_counts": {
+    "fault-no-partial-effect": 177,
+    "nominal-success": 183
+  },
+  "status": "closed",
+  "target": "S4-T1",
+  "total_executable_case_count": 6120,
+  "update_mode_counts": {
+    "none": 117,
+    "post-index": 33,
+    "pre-index": 33
+  },
+  "width_counts": {
+    "1-byte": 39,
+    "2-byte": 52,
+    "4-byte": 54,
+    "8-byte": 38
+  }
+}

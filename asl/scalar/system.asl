@@ -14,6 +14,15 @@ begin
     _SystemRegisters.cycle = _SystemRegisters.cycle + 1;
 end;
 
+// PTO-REQ-EXECUTION-STATUS-001: each public decoded execution boundary starts
+// a fresh result attempt without erasing the visible trap-bank record.
+func BeginArchitecturalInstructionAttempt()
+begin
+    _LastFault = Fault_None;
+    _FaultAddress = Zeros{PTO_XLEN};
+    AdvanceArchitecturalTime();
+end;
+
 func ReadSystemRegister(reg: SystemRegister) => Word
 begin
     case reg of
@@ -69,6 +78,7 @@ begin
     if predecessor[3] == '1' || successor[3] == '1' then
         _InstructionCacheEpoch = _InstructionCacheEpoch + 1;
     end;
+    RecordDataFenceEvent(predecessor, successor);
 end;
 
 func FenceInstruction()
@@ -101,8 +111,24 @@ begin
     end;
 end;
 
+pure func MaintenanceAccessPermitted(operation: MaintenanceOperation,
+                                     ring: AccessControlRing) => boolean
+begin
+    // Cache maintenance is a local hint in PTO v0. Translation maintenance is
+    // manager state and is therefore restricted to the root access ring.
+    case operation of
+        when Maintenance_TLB_IV, Maintenance_TLB_IAV,
+             Maintenance_TLB_IA, Maintenance_TLB_IALL => return ring == 0;
+        otherwise => return TRUE;
+    end;
+end;
+
 func ExecuteMaintenance(operation: MaintenanceOperation, operand: Word)
 begin
+    if !MaintenanceAccessPermitted(operation, CurrentACR()) then
+        SetFault(Fault_IllegalInstruction, ReadPC());
+        return;
+    end;
     case operation of
         when Maintenance_DC_IALL, Maintenance_DC_IVA, Maintenance_DC_ISW,
              Maintenance_DC_ZVA, Maintenance_DC_CVA, Maintenance_DC_CIVA,
@@ -111,7 +137,7 @@ begin
         when Maintenance_IC_IALL, Maintenance_IC_IVA =>
             _InstructionCacheEpoch = _InstructionCacheEpoch + 1;
         when Maintenance_BC_IALL, Maintenance_BC_IVA =>
-            _BlockCacheEpoch = _BlockCacheEpoch + 1;
+            _BundleCacheEpoch = _BundleCacheEpoch + 1;
         when Maintenance_TLB_IV, Maintenance_TLB_IAV =>
             if !IsCanonicalAddress48(operand) then
                 SetFault(Fault_DataPage, operand);
@@ -126,6 +152,12 @@ begin
             end;
         when Maintenance_TLB_IALL => _TLBEpoch = _TLBEpoch + 1;
     end;
+    if _LastFault == Fault_None then
+        // Epochs are the executable PTO-v0 completion effect; retaining the
+        // exact operation and operand makes scope-token handling auditable.
+        _LastMaintenanceOperation = operation;
+        _LastMaintenanceOperand = operand;
+    end;
 end;
 
 func ArchitectureAssert(value: Word)
@@ -133,30 +165,42 @@ begin
     if IsZero(value) then SetFault(Fault_Assert, ReadPC()); end;
 end;
 
-func BlockTransformHint()
+func BundleTransformHint()
 begin
-    _BlockHintEpoch = _BlockHintEpoch + 1;
+    _BundleHintEpoch = _BundleHintEpoch + 1;
 end;
 
 func ArchitectureCloseRequest(request_type: bits(4))
 begin
-    _ArchitectureRequestEpoch = _ArchitectureRequestEpoch + 1;
-    _ControlRequestOperand[3:0] = request_type;
-end;
-
-func ArchitectureEnterRequest(request_type: bits(4))
-begin
-    if request_type != '0000' && request_type != '0001' then
-        SetFault(Fault_IllegalInstruction, ReadPC());
-    else
-        let recovered = RecoverTrapContext(CurrentACR());
+    if RaiseServiceRequest(request_type) then
         _ArchitectureRequestEpoch = _ArchitectureRequestEpoch + 1;
         _ControlRequestOperand[3:0] = request_type;
     end;
 end;
 
+func ArchitectureEnterRequest(request_type: bits(4))
+begin
+    // Request types 0 and 1 are architectural aliases in PTO v0. Both restore
+    // the same complete visible snapshot; a future profile must use a distinct
+    // identity before assigning different recovery behavior.
+    if request_type != '0000' && request_type != '0001' then
+        SetFault(Fault_IllegalInstruction, ReadPC());
+    else
+        let recovered = RecoverTrapContext(CurrentACR());
+        if !recovered then
+            SetFault(Fault_ExecutionStateCheck, ReadPC());
+        else
+            _ArchitectureRequestEpoch = _ArchitectureRequestEpoch + 1;
+            _ControlRequestOperand[3:0] = request_type;
+        end;
+    end;
+end;
+
 func ExecuteControlRequest(request: ExecutionControlRequest, operand: Word)
 begin
+    // PTO v0 exposes a nonblocking scheduling handoff. BSE/BWE/BWI/BWT retire
+    // after publishing the exact request and operand; suspension and wakeup do
+    // not add architecture-visible state in this reference profile.
     _LastControlRequest = request;
     _ControlRequestOperand = operand;
     _ArchitectureRequestEpoch = _ArchitectureRequestEpoch + 1;

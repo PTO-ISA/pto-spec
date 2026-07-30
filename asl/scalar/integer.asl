@@ -272,6 +272,13 @@ begin
     return ZeroExtend{PTO_XLEN}(immediate);
 end;
 
+// The move primitive is explicit so catalog handler identity and decoded
+// operand-to-effect binding do not rely on an unrelated modifier helper.
+pure func MoveScalarValue(value: Word) => Word
+begin
+    return value;
+end;
+
 pure func ExtendScalarValue(value: Word, width: integer {8,16,32},
                             signed_result: boolean) => Word
 begin

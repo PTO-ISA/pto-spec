@@ -1,4 +1,4 @@
-# ADR-0001: Define PTO as a scalar, block/command, and tile ISA
+# ADR-0001: Define PTO as a scalar, bundle/command, and tile ISA
 
 - Status: accepted
 - Formal-model issue: [#4](https://github.com/PTO-ISA/pto-spec/issues/4)
@@ -6,19 +6,19 @@
 
 ## Context
 
-PTO needs scalar execution, visible block/command state, and direct tile
+PTO needs scalar execution, visible bundle/command state, and direct tile
 operations in one coherent architectural state. The ISA must define exact
 instruction encodings and state transitions without depending on backend
 pipelines, hidden command streams, or implementation scheduling.
 
 ## Decision
 
-Scalar instructions, block/command forms, and direct tile instructions update
-the same architecture-visible state. Block state is explicit through TPC, BPC,
+Scalar instructions, bundle/command forms, and direct tile instructions update
+the same architecture-visible state. Bundle state is explicit through TPC, BPC,
 active/body flags, arguments, dimensions, IO bindings, and attributes. Tile
 registers are explicit operands.
 
-The canonical catalogs contain 474 scalar forms, 107 block/command forms, and
+The canonical catalogs contain 474 scalar forms, 107 bundle/command forms, and
 120 direct tile operations. Exact admission, selector allocation, reservation,
 and semantic coverage are machine checked.
 

@@ -28,16 +28,16 @@ SCALAR_FAMILY_DESCRIPTIONS = {
 COMMAND_GROUP_ORDER = (
     "General",
     "General Manager",
-    "Block Argument",
-    "Block Dimension",
-    "Block Data Attribute",
-    "Block Control Attribute",
-    "Block Offset",
-    "Block Input & Output",
-    "Block Hint",
+    "Bundle Argument",
+    "Bundle Dimension",
+    "Bundle Data Attribute",
+    "Bundle Control Attribute",
+    "Bundle Offset",
+    "Bundle Input & Output",
+    "Bundle Hint",
     "BSTART",
     "C.BSTART",
-    "Block Split",
+    "Bundle Split",
 )
 
 TILE_FAMILY_DESCRIPTIONS = {
@@ -71,7 +71,9 @@ def table(headers: list[str], rows: list[list[object]]) -> str:
         "| " + " | ".join(md_escape(header) for header in headers) + " |",
         "| " + " | ".join("---" for _ in headers) + " |",
     ]
-    lines.extend("| " + " | ".join(md_escape(cell) for cell in row) + " |" for row in rows)
+    lines.extend(
+        "| " + " | ".join(md_escape(cell) for cell in row) + " |" for row in rows
+    )
     return "\n".join(lines)
 
 
@@ -140,9 +142,10 @@ def tile_sort_key(row: dict) -> tuple[int, str]:
 def register_address(row: dict) -> str:
     if "address" in row:
         return row["address"]
+    low_index = int(row["low_index"], 16)
     if "fixed_context" in row:
-        return f"{row['low_index']}+ACR{row['fixed_context']}"
-    return f"{row['low_index']}+ACRn"
+        return f"0x{row['fixed_context']:X}{low_index:03X}"
+    return f"0x{{n}}{low_index:03X}"
 
 
 def register_sort_key(row: dict) -> tuple[int, int, str]:
@@ -175,7 +178,9 @@ def scalar_page_rows(forms: list[dict]) -> list[list[object]]:
             format_fields(row),
             format_constraints(row),
         ]
-        for row in sorted(forms, key=lambda item: (item["mnemonic"], item["asm"], item["form_id"]))
+        for row in sorted(
+            forms, key=lambda item: (item["mnemonic"], item["asm"], item["form_id"])
+        )
     ]
 
 
@@ -195,33 +200,60 @@ def render_index(scalar: dict, command: dict, tile: dict, system: dict) -> str:
             table(
                 ["Surface", "Count", "Reference"],
                 [
-                    ["Scalar encoded forms", len(scalar_forms), link("scalar summary", "scalar.md")],
-                    ["Block/command encoded forms", len(command_forms), link("block/command", "block-command.md")],
-                    ["Direct tile operations", len(tile_ops), link("tile operations", "tile.md")],
-                    ["System registers", len(system_regs), link("system registers", "system-registers.md")],
+                    [
+                        "Scalar encoded forms",
+                        len(scalar_forms),
+                        link("scalar summary", "scalar.md"),
+                    ],
+                    [
+                        "Bundle/command encoded forms",
+                        len(command_forms),
+                        link("bundle/command", "bundle-command.md"),
+                    ],
+                    [
+                        "Direct tile operations",
+                        len(tile_ops),
+                        link("tile operations", "tile.md"),
+                    ],
+                    [
+                        "System registers",
+                        len(system_regs),
+                        link("system registers", "system-registers.md"),
+                    ],
                 ],
             ),
             "",
             f"The PTO encoded instruction catalog contains {len(scalar_forms) + len(command_forms)} forms: "
-            f"{len(scalar_forms)} scalar forms and {len(command_forms)} block/command forms. "
+            f"{len(scalar_forms)} scalar forms and {len(command_forms)} bundle/command forms. "
             "Direct tile operations are selector-catalog operations with explicit decoded operands and effects. "
             "The separate vector execution instruction class is outside the PTO ISA scope.",
+            "",
+            "Bundle is the grouped-execution term used throughout this specification. The stable `BSTART`, "
+            "`BSTOP`, `B.*`, and BPC spellings use `B` for bundle. Separately, `BLOCKNUM`, `BLOCKID`, and "
+            "`CROSS_BID` identify virtual core blocks. Their encodings and operand layouts are unchanged.",
             "",
             "## Scalar families",
             "",
             table(
                 ["Family", "Forms", "Page"],
                 [
-                    [family, scalar_family_counts[family], link(family, f"scalar-{family.lower()}.md")]
+                    [
+                        family,
+                        scalar_family_counts[family],
+                        link(family, f"scalar-{family.lower()}.md"),
+                    ]
                     for family in SCALAR_FAMILY_ORDER
                 ],
             ),
             "",
-            "## Block/command families",
+            "## Bundle/command families",
             "",
             table(
                 ["Family", "Forms"],
-                [[family, command_family_counts[family]] for family in sorted(command_family_counts)]
+                [
+                    [family, command_family_counts[family]]
+                    for family in sorted(command_family_counts)
+                ],
             ),
             "",
             "## Tile families",
@@ -229,7 +261,11 @@ def render_index(scalar: dict, command: dict, tile: dict, system: dict) -> str:
             table(
                 ["Family", "Operations", "Role"],
                 [
-                    [family, tile_family_counts[family], TILE_FAMILY_DESCRIPTIONS[family]]
+                    [
+                        family,
+                        tile_family_counts[family],
+                        TILE_FAMILY_DESCRIPTIONS[family],
+                    ]
                     for family in ("TEPL", "TMA", "CUBE")
                 ],
             ),
@@ -258,7 +294,10 @@ def render_scalar_summary(scalar: dict) -> str:
                     ["Semantic handlers", scalar["semantic_handler_count"]],
                     [
                         "Lengths",
-                        ", ".join(f"{bits}b={length_counts[bits]}" for bits in sorted(length_counts)),
+                        ", ".join(
+                            f"{bits}b={length_counts[bits]}"
+                            for bits in sorted(length_counts)
+                        ),
                     ],
                 ],
             ),
@@ -300,7 +339,10 @@ def render_scalar_family(scalar: dict, family: str) -> str:
             "",
             "## Groups",
             "",
-            table(["Group", "Forms"], [[group, count] for group, count in sorted(group_counts.items())]),
+            table(
+                ["Group", "Forms"],
+                [[group, count] for group, count in sorted(group_counts.items())],
+            ),
             "",
             "## Forms",
             "",
@@ -333,11 +375,15 @@ def render_command(command: dict) -> str:
         by_group[row["semantic_group"]].append(row)
     ordered_groups = [group for group in COMMAND_GROUP_ORDER if group in by_group]
     ordered_groups.extend(sorted(set(by_group) - set(ordered_groups)))
-    lines = generated_header("Block/command instruction forms")
+    lines = generated_header("Bundle/command instruction forms")
     lines.extend(
         [
-            "Block/command forms update the block descriptor, block arguments, block-visible attributes, "
-            "and block-control transfer state. They are encoded instruction forms, not direct tile selectors.",
+            "Bundle/command forms update the bundle descriptor, bundle arguments, bundle-visible attributes, "
+            "and bundle-control transfer state. They are encoded instruction forms, not direct tile selectors.",
+            "",
+            "The `B` prefix in `BSTART`, `BSTOP`, `C.BSTART`, `C.BSTOP`, and `B.*` means bundle. BPC is the "
+            "bundle-body program counter. `BID` in `CROSS_BID` instead means virtual core-block identifier. "
+            "These are stable ISA spellings.",
             "",
             "## Summary",
             "",
@@ -353,11 +399,17 @@ def render_command(command: dict) -> str:
             "",
             "## Groups",
             "",
-            table(["Group", "Forms"], [[group, group_counts[group]] for group in ordered_groups]),
+            table(
+                ["Group", "Forms"],
+                [[group, group_counts[group]] for group in ordered_groups],
+            ),
             "",
             "## Handler coverage",
             "",
-            table(["Handler", "Forms"], [[handler, count] for handler, count in sorted(handler_counts.items())]),
+            table(
+                ["Handler", "Forms"],
+                [[handler, count] for handler, count in sorted(handler_counts.items())],
+            ),
             "",
         ]
     )
@@ -390,7 +442,14 @@ def render_command(command: dict) -> str:
                             format_fields(row),
                             format_constraints(row),
                         ]
-                        for row in sorted(by_group[group], key=lambda item: (item["mnemonic"], item["asm"], item["form_id"]))
+                        for row in sorted(
+                            by_group[group],
+                            key=lambda item: (
+                                item["mnemonic"],
+                                item["asm"],
+                                item["form_id"],
+                            ),
+                        )
                     ],
                 ),
                 "",
@@ -456,6 +515,11 @@ def render_tile(tile: dict) -> str:
 def render_system_registers(system: dict) -> str:
     registers = system["registers"]
     traps = system["trap_numbers"]
+    behavior_by_register = {
+        register: behavior
+        for behavior in system["behavior_classes"]
+        for register in behavior["registers"]
+    }
     scope_counts = Counter(row["scope"] for row in registers)
     access_counts = Counter(row["access"] for row in registers)
     lines = generated_header("System registers and trap numbers")
@@ -470,27 +534,87 @@ def render_system_registers(system: dict) -> str:
                     ["Canonical address bits", system["canonical_address_bits"]],
                     ["Register definitions", system["register_definition_count"]],
                     ["Trap numbers", system["trap_count"]],
-                    ["Scopes", ", ".join(f"{scope}={scope_counts[scope]}" for scope in sorted(scope_counts))],
-                    ["Access classes", ", ".join(f"{access}={access_counts[access]}" for access in sorted(access_counts))],
+                    [
+                        "Scopes",
+                        ", ".join(
+                            f"{scope}={scope_counts[scope]}"
+                            for scope in sorted(scope_counts)
+                        ),
+                    ],
+                    [
+                        "Access classes",
+                        ", ".join(
+                            f"{access}={access_counts[access]}"
+                            for access in sorted(access_counts)
+                        ),
+                    ],
                 ],
             ),
             "",
             "## Registers",
             "",
             table(
-                ["Name", "Address", "Access", "Scope"],
                 [
-                    [row["name"], register_address(row), row["access"], row["scope"]]
+                    "Name",
+                    "Address",
+                    "Access",
+                    "Scope",
+                    "Reset",
+                    "Read",
+                    "Write",
+                    "Profile status",
+                ],
+                [
+                    [
+                        row["name"],
+                        register_address(row),
+                        row["access"],
+                        row["scope"],
+                        behavior_by_register[row["name"]]["reset"],
+                        behavior_by_register[row["name"]]["read"],
+                        behavior_by_register[row["name"]]["write"],
+                        behavior_by_register[row["name"]]["profile_status"],
+                    ]
                     for row in sorted(registers, key=register_sort_key)
+                ],
+            ),
+            "",
+            "## Behavior classes",
+            "",
+            table(
+                ["Class", "Registers", "Side effects"],
+                [
+                    [
+                        behavior["id"],
+                        ", ".join(behavior["registers"]),
+                        ", ".join(behavior["side_effects"]) or "none",
+                    ]
+                    for behavior in system["behavior_classes"]
                 ],
             ),
             "",
             "## Trap numbers",
             "",
             table(
-                ["Name", "Value"],
                 [
-                    [row["name"], row["number"]]
+                    "Name",
+                    "Value",
+                    "PTO v0 status",
+                    "Producer",
+                    "Cause",
+                    "Argument",
+                    "Restart",
+                ],
+                [
+                    [
+                        row["name"],
+                        row["number"],
+                        row["pto_v0_status"],
+                        ", ".join(row["producers"]),
+                        row["cause"],
+                        row["argument"],
+                        row["restart"],
+                    ]
                     for row in sorted(traps, key=lambda item: item["number"])
                 ],
             ),
@@ -508,12 +632,14 @@ def build_pages() -> dict[Path, str]:
     pages = {
         OUT_DIR / "index.md": render_index(scalar, command, tile, system),
         OUT_DIR / "scalar.md": render_scalar_summary(scalar),
-        OUT_DIR / "block-command.md": render_command(command),
+        OUT_DIR / "bundle-command.md": render_command(command),
         OUT_DIR / "tile.md": render_tile(tile),
         OUT_DIR / "system-registers.md": render_system_registers(system),
     }
     for family in SCALAR_FAMILY_ORDER:
-        pages[OUT_DIR / f"scalar-{family.lower()}.md"] = render_scalar_family(scalar, family)
+        pages[OUT_DIR / f"scalar-{family.lower()}.md"] = render_scalar_family(
+            scalar, family
+        )
     return pages
 
 
@@ -535,7 +661,11 @@ def write_generated(pages: dict[Path, str]) -> None:
 
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--check", action="store_true", help="fail if generated instruction docs are stale")
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="fail if generated instruction docs are stale",
+    )
     args = parser.parse_args(argv)
 
     pages = build_pages()
@@ -543,7 +673,10 @@ def main(argv: list[str]) -> int:
         stale = check_generated(pages)
         if stale:
             for path in stale:
-                print(f"stale generated instruction reference: {path.relative_to(ROOT)}", file=sys.stderr)
+                print(
+                    f"stale generated instruction reference: {path.relative_to(ROOT)}",
+                    file=sys.stderr,
+                )
             print("run scripts/generate-instruction-reference", file=sys.stderr)
             return 1
         return 0

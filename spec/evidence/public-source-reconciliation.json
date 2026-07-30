@@ -4637,7 +4637,7 @@
       "closure_basis": "explicit-layer-difference",
       "public_symbol": "TPUSH",
       "public_symbol_relation": "exact-name",
-      "resolution": "The typed source helper is a producer-side API; the direct architecture operation updates explicit TileInfo state and has no hidden pipe state."
+      "resolution": "The typed source helper is a producer-side API; the direct architecture operation publishes a defined source into an explicit free TileInfo slot, preserves the producer, and has no hidden pipe state."
     },
     {
       "name": "TPOP",
@@ -4647,7 +4647,7 @@
       "closure_basis": "explicit-layer-difference",
       "public_symbol": "TPOP",
       "public_symbol_relation": "exact-name",
-      "resolution": "The typed source helper is a consumer-side API; the direct architecture operation updates explicit TileInfo state and has no hidden pipe state."
+      "resolution": "The typed source helper is a consumer-side API; the direct architecture operation copies an explicit source slot into a matching configured consumer and then releases that source slot, with no hidden pipe state."
     },
     {
       "name": "TALLOC",
