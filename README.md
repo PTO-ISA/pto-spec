@@ -10,8 +10,9 @@ profiles, and memory ordering in one executable model.
 The repository is a normative draft at maturity M4. Its accepted catalogs,
 decoded execution paths, architectural state/fault envelopes, ordering model,
 and all scalar, bundle, TEPL, TMA, and CUBE reference semantics are cumulatively
-closed through Stage 4. Target numeric conformance, the final independent-model
-documentation gate, and release closure remain staged work; see the
+closed through Stage 4. The independent executable-model comparison is also
+closed under `S5-T3`; target numeric conformance and release closure remain
+staged work. See the
 [maturity bring-up plan](docs/maturity-bringup-plan.md),
 [maturity stage and target index](docs/maturity-stage-targets.md), and
 [formal model coverage](docs/coverage.md).
@@ -20,9 +21,9 @@ The Stage 5 numeric ownership inventory is already closed: 19 scalar forms and
 89 direct-tile operations are assigned to all 29 numeric profile hooks in
 `spec/evidence/numeric-contracts.json`. This inventory does not claim numerical
 or target-hardware conformance; those obligations remain open under `S5-T2`.
-The executable-model comparison also has an exhaustive 701-row disposition
-matrix; `S5-T3` remains in progress until its independent documentation gate is
-clean.
+The executable-model comparison has an exhaustive 701-row disposition matrix
+and a clean content-addressed snapshot whose generation, validation,
+documentation, Sail parser, and Sail C-backend gates all pass.
 
 ## Architecture scope
 

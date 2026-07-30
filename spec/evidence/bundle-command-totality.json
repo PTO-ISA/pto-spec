@@ -3557,7 +3557,7 @@
     "executable_subset": 91,
     "decode_only": 16,
     "authority": "non-normative structural comparison only",
-    "limitation": "The comparison snapshot has local modifications and stages bundle payload execution, so it cannot close S5-T3."
+    "limitation": "The independent model stages bundle payload execution, so it does not validate PTO tile payload effects; those remain closed by PTO-owned ASL evidence."
   },
   "requirement_ids": [
     "PTO-REQ-BUNDLE-DISPATCH-001",

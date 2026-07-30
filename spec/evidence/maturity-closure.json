@@ -296,15 +296,12 @@
     },
     {
       "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/public-source-reconciliation.json", "spec/evidence/executable-model-comparison.json", "scripts/generate-executable-model-comparison", "docs/architecture-decisions/0036-executable-model-comparison-dispositions.md"],
-      "gaps": [
-        {"acceptance_evidence": ["clean pinned comparison snapshot identified by an anonymized content hash", "successful parser, executable backend, generated-status, coverage, architecture-contract, and documentation gates archived with the comparison report"], "classification": "evidence-gap", "id": "S5-T3-G2", "statement": "The comparison report does not yet archive a clean full executable and documentation gate for its pinned independent model."}
-      ],
+      "gaps": [],
       "id": "S5-T3",
-      "tracking": ["https://github.com/PTO-ISA/pto-spec/issues/4"],
       "owner": "PTO architecture and formal-model maintainers",
       "requirements": ["PTO-REQ-CLOSURE-001", "PTO-REQ-SCALAR-EFFECT-CLOSURE-001"],
       "stage": 5,
-      "status": "in-progress",
+      "status": "closed",
       "title": "Close executable-ISA semantic comparison dispositions"
     },
     {

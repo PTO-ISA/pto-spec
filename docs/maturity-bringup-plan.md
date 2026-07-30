@@ -105,7 +105,7 @@ The status vocabulary is deliberately strict:
 | Stage 2 | Closed | The 72-register behavior and all-bank reset contract (`S2-T1`), complete nonzero-seed architectural reset (`S2-T2`), all 13 trap dispositions and extended recovery envelopes (`S2-T3`), P0 producer/consumer and P1..P7 reserved-state contract (`S2-T4`), precise tile capacity/storage (`S2-T5`), element-level definedness, and explicit tile handoff (`S2-T6`) execute. | No Stage 2 target remains open; later instruction-family and ordering refinements remain in Stages 3–5. |
 | Stage 3 | Closed | Production scalar, DMA, atomic, fence, tile, gather-CAS, and tile-prefetch paths emit the normative PTO-TSO stream; atomic, reservation, prefetch, and mixed-size corners have executable decisions. | No Stage 3 target remains open; byte-level mixed-size coherence is an explicit future extension, not an unclassified gap. |
 | Stage 4 | Closed | All scalar, bundle, TEPL, TMA, and CUBE targets have checked selector/form inventories, legality, state/effect, alias, boundary, and pre-effect rejection evidence under `pto-v0`. | No Stage 4 target remains open; target numerical conformance remains in Stage 5. |
-| Stage 5 | In progress | The checked numeric-contract matrix owns all 19 scalar and 89 direct-tile operations that cross 29 numeric hooks. The exhaustive 701-row executable-model matrix closes every stable-ID disposition and records all model limits. | No independent hardware/numeric oracle is closed, and the pinned executable-model snapshot still fails its documentation freshness gate. |
+| Stage 5 | In progress | The checked numeric-contract matrix owns all 19 scalar and 89 direct-tile operations that cross 29 numeric hooks. The exhaustive 701-row executable-model matrix closes every stable-ID disposition, records all model limits, and archives a clean snapshot with all eight repository gates plus the pinned Sail parser/C-backend gate passing. | No independent hardware/numeric oracle is closed. |
 | Stage 6 | Open | Release mechanics and review obligations are documented. | Stage 5 is not closed. |
 
 Update this table only from the exit evidence defined below. A stage may move to
@@ -124,9 +124,9 @@ authority for why a target is or is not closed.
 | 2 — state and faults | 6 | 6 | None |
 | 3 — ordering | 2 | 2 | None |
 | 4 — instruction semantics | 10 | 10 | None |
-| 5 — conformance | 1 | 3 | An independent numeric oracle and the remaining comparison documentation gate |
+| 5 — conformance | 2 | 3 | An independent numeric oracle and complete differential report |
 | 6 — release | 0 | 2 | Cumulative closure and independent review |
-| **Total** | **27** | **31** | Maturity is M4; Stage 5 conformance blocks M5 |
+| **Total** | **28** | **31** | Maturity is M4; Stage 5 numeric conformance blocks M5 |
 
 ## Bring-up target register
 
@@ -170,7 +170,7 @@ closure; **open** means no closure claim is made.
 | `S4-T10` | 4 | Closed | Close CUBE type/shape combinations, accumulation, rounding, saturation, aliases, and composite preflight. | ADR 0034; all-13 decoded selector matrix; all-19 raw-carrier types; mixed layout/location, alias, and composite no-partial-effect matrices; numeric conformance remains S5-T2 |
 | `S5-T1` | 5 | Closed | Inventory every operation whose result depends on numeric behavior beyond the raw-carrier reference profile. | Checked `spec/evidence/numeric-contracts.json`: 19 scalar forms, 89 direct-tile operations, 29 hooks, an owner per row, and explicit `S5-T2` conformance obligations |
 | `S5-T2` | 5 | Open | Validate PTO numeric behavior against a named independent oracle without importing third-party semantics as PTO authority. | Differential report covering normal, boundary, exceptional, rounding, and saturation vectors |
-| `S5-T3` | 5 | In progress | Cross-check every shared scalar mnemonic and architectural pattern against a pinned independent executable ISA model, then resolve each difference as a PTO rule, profile difference, defect, or intentional non-equivalence. | The 701-row publication-safe disposition matrix is complete; promotion awaits a clean independent documentation gate for the pinned snapshot |
+| `S5-T3` | 5 | Closed | Cross-check every shared scalar mnemonic and architectural pattern against a pinned independent executable ISA model, then resolve each difference as a PTO rule, profile difference, defect, or intentional non-equivalence. | The 701-row publication-safe disposition matrix is complete; the clean content-addressed snapshot passes all eight repository gates and the pinned Sail parser/C-backend gate |
 | `S6-T1` | 6 | Open | Prove requirements-to-model-to-test traceability with no unsupported completeness claim. | Closed requirements ledger and evidence-hygiene review |
 | `S6-T2` | 6 | Open | Pass clean regeneration, ASLRef, repository, publication, and independent architecture/formal review gates. | Clean `make ci`, `git diff --check`, and recorded approvals |
 
@@ -587,8 +587,8 @@ The next work should follow this dependency order:
    re-pass its target-specific closure matrix.
 2. Close `S5-T2` by naming the target numeric profile and independent oracle,
    then publish normal, boundary, exceptional, rounding, and saturation vectors.
-3. Close the `S5-T3` documentation-freshness gate for the pinned executable-model
-   snapshot without publishing restricted source identity or material.
+3. Preserve the closed `S5-T3` content-addressed comparison and all archived
+   independent gates whenever either specification changes.
 4. Reconcile requirements, model, tests, coverage, and release metadata for
    `S6-T1`, then obtain the independent formal/architecture reviews and clean CI
    evidence required by `S6-T2`.

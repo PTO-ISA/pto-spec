@@ -74,9 +74,10 @@ The comparison explicitly records these model limits:
 
 The exhaustive comparison-disposition obligation `S5-T3-G1` is closed because
 every PTO row is classified and linked to PTO-owned evidence. The aggregate
-`S5-T3` target remains in progress: its `S5-T3-G2` clean-gate criterion is not
-satisfied by the current independent snapshot. Neither obligation is a numeric,
-hardware, or full independent tile-payload conformance claim.
+`S5-T3` target is also closed: its clean, content-addressed independent snapshot
+passes every archived repository, parser, and executable-backend gate. Neither
+obligation is a numeric, hardware, or full independent tile-payload conformance
+claim.
 
 The comparison snapshot passed the available clean generation, validation,
 canonical encoding, operation-manifest, decode-regeneration, semantic-status,
@@ -84,10 +85,9 @@ semantic-coverage, Sail parser, and Sail C-backend gates. These results are
 archived from commands executed against the clean snapshot by
 `scripts/generate-executable-model-comparison`; missing tools, nonzero exits,
 or timeouts are recorded as gate failures rather than assumed success. The
-snapshot documentation gate still reports stale translation freshness metadata,
-while generated instruction pages and diagrams are current. PTO therefore
-records that limitation and does not promote the aggregate comparison target
-until a clean snapshot passes the documentation gate as well.
+snapshot documentation gate includes translation-freshness metadata, generated
+instruction pages, and generated diagrams. All are current in the archived
+clean-snapshot result, so the former `S5-T3-G2` evidence gap is closed.
 
 Future work that changes scalar forms, command forms, or direct tile selectors
 must regenerate the comparison matrix and either preserve these dispositions or

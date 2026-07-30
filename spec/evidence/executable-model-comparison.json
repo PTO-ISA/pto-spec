@@ -2,10 +2,8 @@
   "authority": "PTO ASL, catalogs, requirements, and accepted ADRs remain normative. The independent executable model is corroborating evidence only.",
   "closure_judgment": {
     "basis": "The exhaustive row-disposition obligation S5-T3-G1 is complete: every PTO scalar form, command form, and direct tile operation has a stable classification and PTO-owned evidence. S5-T3 closes only when the clean independent snapshot passes every archived parser, executable-backend, generated-status, coverage, and documentation gate.",
-    "can_close_s5_t3": false,
-    "remaining_blockers": [
-      "documentation-check returned fail (exit=1); see archived command result."
-    ]
+    "can_close_s5_t3": true,
+    "remaining_blockers": []
   },
   "model_limits": [
     {
@@ -14752,7 +14750,7 @@
     "content_hashes": {
       "coverage_summary": "f9088d2cdf03280df5de001425b70546d5743a848597af74c2ddb9d09342714b",
       "engine_operation_manifest": "248a0b1cf2d79c0b88932e05f0b71251ed805ff5d75c3d89cc228394b79a73e2",
-      "format_catalog": "9fded3bec2a2bb85adf088f20a95e089bc84e09eefc0cf60db0c40dce05ebecf",
+      "format_catalog": "b70058e1575db90f300e2cc85745d0588aba5f2957bb630c0ccdd2723e3cfc71",
       "pto_operation_map": "fc52236b831edcc15f15e80836374087de029a42d5fec076e2217ae637e1dd74",
       "status_matrix": "792d4dac142b0aa5d6b5bc11bff566c3ec225040b01564360a271fc2da7f62cd"
     },
@@ -14831,13 +14829,12 @@
       },
       {
         "command": "<independent-gate:documentation-check>",
-        "disposition": "Independent documentation gate failed when regenerated from the clean snapshot; S5-T3 must remain open until this gate passes.",
-        "exit_code": 1,
+        "exit_code": 0,
         "id": "documentation-check",
-        "output_excerpt": "ok: 770 generated SVGs are current\nok: 770 generated SVGs are current\nok: 731 instruction pages and 67 group pages are current\nOK\nOK\nerror: stale translation freshness metadata: <independent-root>/docs/zh/translation-manifest.json\nerror: Chinese translation source/translation hashes are stale\nGenerated 770 SVGs in <host-temp>\nGenerated 770 SVGs in <host-temp>",
-        "result": "fail",
-        "stderr_sha256": "9f839328ae1c601ffd0191a795af89452ab7e04fd0c693b9390cb9f25bce582f",
-        "stdout_sha256": "64c902f105386fdd315d811300ea6b00f78d656a07948aca572fb38cc8c45236"
+        "output_excerpt": "OK\nok: 770 generated SVGs are current\nok: 770 generated SVGs are current\nok: 731 instruction pages and 67 group pages are current\nOK\nOK\nok: documentation integrity checks passed\nGenerated 770 SVGs in <host-temp>\nGenerated 770 SVGs in <host-temp>",
+        "result": "pass",
+        "stderr_sha256": "316bc1a8900abbf9da5ee43bc9ef9a770f297a9eacbbc4d7a96631d750896f86",
+        "stdout_sha256": "6752d729b7a5c3b18e0f8c9ccf0ccd4a06f1cb62e1067eaa8d96c1aecff71910"
       }
     ],
     "kind": "content-addressed independent executable ISA snapshot",
@@ -14852,10 +14849,10 @@
         "stdout_sha256": "6c0c521edec4b4cb04b87ce492a09f0312d7ec5fdb27fcce0a9a14190cab5764"
       }
     ],
-    "revision_sha256": "563c477f677b5ccd1b22440932ad685ec2d7366f24ca3ccafcb0907b087c8ad7",
+    "revision_sha256": "136039628feefaff1f33495408449092cefa59dcdee2501e8c9ffef0b3dafa7c",
     "worktree_clean": true
   },
-  "status": "comparison-matrix-closed-gate-open:S5-T3-G2",
+  "status": "comparison-matrix-closed-clean-gates-passed:S5-T3",
   "summary": {
     "classification_counts": {
       "comparable-match": 649,

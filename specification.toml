@@ -48,7 +48,7 @@ binary_decode = "mechanically-closed"
 instruction_dispatch = "bundle-status-and-all-scalar-effects-closed-stage-M1-closed"
 memory_order = "production-connected-candidate-graph-stage-M3-closed"
 numeric_contracts = "inventory-owned-stage-S5-T1-closed-target-conformance-stage-S5-T2-open"
-source_reconciliation = "exhaustive-comparison-matrix-closed-documentation-gate-in-progress"
+source_reconciliation = "exhaustive-comparison-matrix-and-clean-gates-stage-S5-T3-closed"
 architectural_completion = "open"
 
 [toolchain]

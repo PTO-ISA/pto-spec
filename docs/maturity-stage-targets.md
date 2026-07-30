@@ -40,7 +40,7 @@ decision.
 ## Target scorecard
 
 Targets, rather than files or test counts, are the unit of maturity closure.
-The current score is 27 closed targets out of 31; the cumulative maturity floor
+The current score is 28 closed targets out of 31; the cumulative maturity floor
 is M4 because every Stage 4 target is closed.
 
 | Stage | Closed | Total | Next gate |
@@ -50,9 +50,9 @@ is M4 because every Stage 4 target is closed.
 | 2 — state and faults | 6 | 6 | Closed |
 | 3 — ordering | 2 | 2 | Closed |
 | 4 — instruction semantics | 10 | 10 | Closed |
-| 5 — conformance | 1 | 3 | Supply independent numeric conformance and close the comparison documentation gate. |
+| 5 — conformance | 2 | 3 | Supply independent numeric conformance. |
 | 6 — release | 0 | 2 | Close cumulative traceability, validation, review, and publication gates. |
-| **Total** | **27** | **31** | **M4 is the published floor.** |
+| **Total** | **28** | **31** | **M4 is the published floor.** |
 
 ## Remaining bring-up sequence
 
@@ -63,7 +63,7 @@ parallel, but a later row cannot waive an earlier promotion gate.
 | ---: | --- | --- | --- | --- |
 | 1 | M4 regression floor | Preserve the closed 474 scalar, 107 bundle/command, 120 direct-tile, 72 system-register, and 13-trap inventories while later evidence is added. | Catalog/repository checks, deterministic generation, ASLRef shards, and all Stage 0–4 target evidence remain green. | Safe Stage 5 development |
 | 2 | `S5-T2` | Name the PTO target numeric profile and an independent, versioned oracle; cover normal, boundary, exceptional, rounding, saturation, and accumulation cases for every applicable numeric-contract row. | Differential report has no unclassified mismatch and does not treat the `pto-v0` raw-carrier model as hardware arithmetic. | Numeric conformance half of M5 |
-| 3 | `S5-T3` | Regenerate the complete stable-ID comparison from a clean pinned executable-model snapshot and archive every required gate result. Eight of nine gates pass; independent translation-freshness metadata is the sole remaining failure. | Parser, executable backend, generated-status, coverage, architecture-contract, and documentation gates all pass; all 701 dispositions remain classified. | Independent-comparison half of M5 |
+| 3 | `S5-T3` | Closed: the complete stable-ID comparison is regenerated from a clean content-addressed executable-model snapshot, all 701 dispositions remain classified, and every required gate result is archived. | Parser, executable backend, generated-status, coverage, architecture-contract, and documentation gates all pass. | Independent-comparison half of M5 |
 | 4 | `S6-T1` | Produce fail-closed requirement-to-model-to-test traceability for accepted forms, registers, traps, visible state, and profile hooks. | No surface lacks a requirement, normative implementation path, executable witness, or bounded status claim. | Release review may start |
 | 5 | `S6-T2` | Reproduce the candidate from a clean tree and obtain independent PTO architecture and formal-model approvals. | Clean regeneration, ASLRef, repository, publication, hosted CI, `git diff --check`, and recorded approvals all pass. | M6 architecturally-complete candidate |
 
@@ -144,7 +144,7 @@ audited without introducing extra target IDs.
 | --- | --- | --- |
 | `S5-T1` | Closed | Inventory every operation whose result depends on numeric behavior beyond the raw-carrier reference profile. |
 | `S5-T2` | Open | Validate PTO numeric behavior against a named independent oracle without importing third-party semantics as PTO authority. |
-| `S5-T3` | In progress | The exhaustive 701-row disposition matrix is complete and eight of nine clean-snapshot gates pass; close the remaining independent translation-freshness gate. |
+| `S5-T3` | Closed | The exhaustive 701-row disposition matrix is complete and all eight clean-snapshot repository gates plus the pinned Sail parser/C-backend gate pass. |
 
 ## Stage 6 target register
 

@@ -2848,7 +2848,7 @@ def main() -> int:
         == "pto.executable-model-comparison.v1"
         and executable_model_comparison["target"] == "S5-T3"
         and executable_model_comparison["status"]
-        == "comparison-matrix-closed-gate-open:S5-T3-G2"
+        == "comparison-matrix-closed-clean-gates-passed:S5-T3"
         and len(comparison_rows) == len(comparison_stable_ids) == 701
         and len(set(comparison_stable_ids)) == 701
         and set(comparison_stable_ids) == expected_comparison_stable_ids
@@ -2874,6 +2874,9 @@ def main() -> int:
     )
     comparison_snapshot = executable_model_comparison["snapshot"]
     comparison_gates = {row["id"]: row for row in comparison_snapshot["gates"]}
+    comparison_toolchain_checks = {
+        row["id"]: row for row in comparison_snapshot["required_toolchain_checks"]
+    }
     require(
         comparison_snapshot["worktree_clean"] is True
         and re.fullmatch(r"[0-9a-f]{64}", comparison_snapshot["revision_sha256"])
@@ -2894,15 +2897,11 @@ def main() -> int:
             "semantic-coverage-check",
             "semantic-status-check",
         }
-        and comparison_gates["documentation-check"]["result"] == "fail"
-        and all(
-            row["result"] == "pass"
-            for gate_id, row in comparison_gates.items()
-            if gate_id != "documentation-check"
-        )
-        and executable_model_comparison["closure_judgment"]["can_close_s5_t3"] is False
-        and len(executable_model_comparison["closure_judgment"]["remaining_blockers"])
-        == 1
+        and all(row["result"] == "pass" for row in comparison_gates.values())
+        and set(comparison_toolchain_checks) == {"sail-parser-c-backend-check"}
+        and all(row["result"] == "pass" for row in comparison_toolchain_checks.values())
+        and executable_model_comparison["closure_judgment"]["can_close_s5_t3"] is True
+        and executable_model_comparison["closure_judgment"]["remaining_blockers"] == []
         and {row["id"] for row in executable_model_comparison["model_limits"]}
         == {
             "bundle-bridge-operand-boundary",
@@ -5154,12 +5153,12 @@ def main() -> int:
         and targets_by_id["S4-T8"]["status"] == "closed"
         and targets_by_id["S4-T9"]["status"] == "closed"
         and targets_by_id["S4-T10"]["status"] == "closed"
-        and targets_by_id["S5-T3"]["status"] == "in-progress"
-        and [gap["id"] for gap in targets_by_id["S5-T3"]["gaps"]] == ["S5-T3-G2"]
+        and targets_by_id["S5-T3"]["status"] == "closed"
+        and targets_by_id["S5-T3"]["gaps"] == []
         and "spec/evidence/executable-model-comparison.json"
         in targets_by_id["S5-T3"]["evidence"]
-        and "| **Total** | **27** | **31** |" in maturity_plan_body
-        and "| **Total** | **27** | **31** |" in maturity_index_body
+        and "| **Total** | **28** | **31** |" in maturity_plan_body
+        and "| **Total** | **28** | **31** |" in maturity_index_body
         and "| `S4-T1` | AGU | Closed |" in maturity_index_body
         and "| `S4-T3` | AMO | Closed |" in maturity_index_body
         and "| `S4-T6` | SYS | Closed |" in maturity_index_body
