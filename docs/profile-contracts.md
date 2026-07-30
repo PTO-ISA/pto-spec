@@ -133,3 +133,10 @@ inventory. Every domain, hook, and operation key must occur in exactly one
 numeric lane. A lane cannot become promotion-ready merely because the active
 raw-carrier profile test passes; it must acquire independent profile, oracle,
 vector, differential-result, and review evidence in dependency order.
+
+The generated `numeric-profile-decision-inputs.json` ledger is the first
+dependency. It records 12 open questions covering profile identity, formats,
+rounding, FTZ, special values, flags, conversion overflow, elementary-function
+accuracy, reduction/order, quantization, matrix arithmetic, and bounded
+implementation-defined behavior. Its CPU, A2A3, and A5 observations are
+implementation evidence only. They cannot silently become PTO semantics.

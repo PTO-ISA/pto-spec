@@ -154,7 +154,7 @@ open, and the repository remains at M4, until every sub-stage below closes.
 
 | Sub-stage | Current state | Clear target | Required exit evidence |
 | --- | --- | --- | --- |
-| `S5-T2-A` — profile decision | Open | Name and version each numeric target profile. Separate portable rules from A2/A3-, A5-, or other target-specific rules instead of treating the `pto-v0` raw-carrier reference as hardware arithmetic. | Accepted architecture decision defining formats, rounding modes, exceptional values, subnormals, flags, saturation, accumulation widths, and implementation-defined dimensions for every applicable numeric-contract domain. |
+| `S5-T2-A` — profile decision | Decision inputs closed; decisions open | Name and version each numeric target profile. Separate portable rules from A2/A3-, A5-, or other target-specific rules instead of treating the `pto-v0` raw-carrier reference as hardware arithmetic. | Accepted architecture decisions resolve all 12 generated questions and define formats, rounding modes, exceptional values, subnormals, flags, saturation, accuracy, accumulation, quantization, matrix arithmetic, and implementation-defined dimensions for all 20 domains. |
 | `S5-T2-B` — oracle qualification | Waiting on A | Select an independent, versioned oracle for each lane. The implementation under test and the `pto-v0` reference are not independent oracles. | Reproducible oracle identity, version/digest, invocation, supported domain list, known limitations, and a reviewer-approved rule for any target behavior that requires hardware capture rather than a software arithmetic library. |
 | `S5-T2-C` — vector corpus | Waiting on A–B | Generate deterministic inputs for every operation and every open numeric dimension. | Normal, minimum/maximum, boundary, signed-zero, subnormal, infinity, NaN, tie, overflow, underflow, divide-by-zero, rounding, saturation, reduction-order, and accumulation cases as applicable; each vector links to one operation key, profile, oracle, and expected disposition. |
 | `S5-T2-D` — differential execution | Waiting on B–C | Run the six numeric lanes independently and preserve raw oracle and PTO results. | All 20 contract domains, 29 hooks, and 108 operations are assigned exactly once; every vector produces a reproducible match, mismatch, unsupported, or implementation-defined record; no lane is missing or duplicated. |
@@ -165,6 +165,11 @@ The sub-stages may prepare independent artifacts concurrently, but promotion is
 strictly ordered: profile scope controls oracle selection; profile and oracle
 scope control vector expectations; results cannot be adjudicated before the
 corresponding oracle and vector identities are frozen.
+
+The [numeric profile decision register](numeric-profile-decision-register.md)
+records the 12 open S5-T2-A questions and the pinned public-contract and
+implementation evidence that exposed them. Its generated domain matrix covers
+all 20 numeric domains without selecting a result rule.
 
 #### Parallel numeric lanes
 

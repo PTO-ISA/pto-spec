@@ -3,6 +3,7 @@
   "target": "S5-T2",
   "status": "readiness-defined-conformance-open",
   "source_inventory": "spec/evidence/numeric-contracts.json",
+  "profile_decision_inputs": "spec/evidence/numeric-profile-decision-inputs.json",
   "policy": {
     "authority": "PTO-owned target profiles and accepted architecture decisions define PTO numeric semantics.",
     "active_reference_profile_role": "The active raw-carrier reference proves executable totality but is not a hardware or independent numeric oracle.",

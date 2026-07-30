@@ -670,6 +670,9 @@ def main() -> int:
     maturity_closure = load("spec/evidence/maturity-closure.json")
     numeric_readiness = load("spec/evidence/numeric-conformance-readiness.json")
     numeric_contracts = load("spec/evidence/numeric-contracts.json")
+    numeric_profile_decisions = load(
+        "spec/evidence/numeric-profile-decision-inputs.json"
+    )
     requirements = load("spec/requirements.json")["requirements"]
     profile_catalog = load("spec/profile-hooks.json")
     specification = tomllib.loads(
@@ -5117,6 +5120,9 @@ def main() -> int:
     maturity_index_body = (ROOT / "docs" / "maturity-stage-targets.md").read_text(
         encoding="utf-8"
     )
+    numeric_profile_decision_body = (
+        ROOT / "docs" / "numeric-profile-decision-register.md"
+    ).read_text(encoding="utf-8")
     documented_targets = {}
     for target_id, stage_text, status_text in re.findall(
         r"\| `(S[0-6]-T(?:10|[1-9]))` \| ([0-6]) \| ([^|]+) \|",
@@ -5161,6 +5167,12 @@ def main() -> int:
         and "numeric-conformance-readiness.json" in maturity_index_body
         and "numeric-conformance-readiness.json" in readme_body
         and "numeric-conformance-readiness.json" in coverage_body
+        and "numeric-profile-decision-register.md" in readme_body
+        and "numeric-profile-decision-register.md" in maturity_index_body
+        and "numeric-profile-decision-inputs.json" in numeric_profile_decision_body
+        and "| `PD-12` |" in numeric_profile_decision_body
+        and "No target profile identity or domain rule has been selected."
+        in numeric_profile_decision_body
         and "| **Total** | **28** | **31** |" in maturity_plan_body
         and "| **Total** | **28** | **31** |" in maturity_index_body
         and "| `S4-T1` | AGU | Closed |" in maturity_index_body
@@ -5186,6 +5198,10 @@ def main() -> int:
         and "spec/evidence/numeric-conformance-readiness.json"
         in closure_requirement["model"]
         and "scripts/generate-numeric-conformance-readiness"
+        in closure_requirement["model"]
+        and "spec/evidence/numeric-profile-decision-inputs.json"
+        in closure_requirement["model"]
+        and "scripts/generate-numeric-profile-decision-inputs"
         in closure_requirement["model"]
         and "scripts/check-asl-test-shards" in closure_requirement["model"]
         and "scripts/check-asl-test-shards" in closure_requirement["tests"]
@@ -5737,6 +5753,7 @@ def main() -> int:
             "blocking_gap_ids",
             "lanes",
             "policy",
+            "profile_decision_inputs",
             "schema_version",
             "source_inventory",
             "status",
@@ -5751,7 +5768,9 @@ def main() -> int:
         and numeric_readiness["target"] == "S5-T2"
         and numeric_readiness["status"] == "readiness-defined-conformance-open"
         and numeric_readiness["source_inventory"]
-        == "spec/evidence/numeric-contracts.json",
+        == "spec/evidence/numeric-contracts.json"
+        and numeric_readiness["profile_decision_inputs"]
+        == "spec/evidence/numeric-profile-decision-inputs.json",
         "numeric-conformance readiness identity or status drift",
     )
     require(
@@ -5895,13 +5914,226 @@ def main() -> int:
         },
         "numeric-conformance readiness summary drift",
     )
+
+    require(
+        set(numeric_profile_decisions)
+        == {
+            "decision_questions",
+            "domain_matrix",
+            "policy",
+            "profile_partition_inputs",
+            "public_commit",
+            "public_repository",
+            "schema_version",
+            "sources",
+            "status",
+            "summary",
+            "target",
+        },
+        "numeric profile decision-input top-level schema drift",
+    )
+    require(
+        numeric_profile_decisions["schema_version"] == 1
+        and numeric_profile_decisions["target"] == "S5-T2-A"
+        and numeric_profile_decisions["status"]
+        == "decision-inputs-closed-profile-decisions-open"
+        and numeric_profile_decisions["public_repository"]
+        == reconciliation["public_repository"]
+        and numeric_profile_decisions["public_commit"]
+        == reconciliation["public_commit"],
+        "numeric profile decision-input identity or public source pin drift",
+    )
+    require(
+        set(numeric_profile_decisions["policy"])
+        == {
+            "authority",
+            "cpu_role",
+            "independent_comparison_role",
+            "no_implicit_choice",
+            "profile_boundary",
+        }
+        and all(numeric_profile_decisions["policy"].values()),
+        "numeric profile decision-input policy drift",
+    )
+    profile_partition_inputs = numeric_profile_decisions["profile_partition_inputs"]
+    require(
+        [row["id"] for row in profile_partition_inputs]
+        == ["portable-numeric", "cpu-observation", "a2a3-target", "a5-target"],
+        "numeric profile partition input identity drift",
+    )
+    for row in profile_partition_inputs:
+        require(
+            set(row) == {"id", "role", "status"}
+            and isinstance(row["role"], str)
+            and row["role"]
+            and row["status"] in {"identity-and-rules-required", "not-an-oracle"},
+            f"numeric profile partition input drift for {row.get('id', '<unknown>')}",
+        )
+
+    profile_source_rows = numeric_profile_decisions["sources"]
+    profile_sources_by_id = {row["id"]: row for row in profile_source_rows}
+    require(
+        len(profile_sources_by_id) == len(profile_source_rows) == 24,
+        "numeric profile source identity or count drift",
+    )
+    for source_id, row in profile_sources_by_id.items():
+        require(
+            set(row) == {"id", "layer", "path", "role", "sha256", "url"}
+            and row["layer"] in {"public-contract", "implementation-evidence"}
+            and isinstance(row["path"], str)
+            and row["path"]
+            and isinstance(row["role"], str)
+            and row["role"]
+            and re.fullmatch(r"[0-9a-f]{64}", row["sha256"]) is not None
+            and row["url"]
+            == f"{numeric_profile_decisions['public_repository']}/blob/{numeric_profile_decisions['public_commit']}/{row['path']}",
+            f"numeric profile source drift for {source_id}",
+        )
+
+    decision_rows = numeric_profile_decisions["decision_questions"]
+    decisions_by_id = {row["id"]: row for row in decision_rows}
+    require(
+        [row["id"] for row in decision_rows]
+        == [f"PD-{index:02d}" for index in range(1, 13)]
+        and len(decisions_by_id) == len(decision_rows),
+        "numeric profile decision question identity or ordering drift",
+    )
+    allowed_profile_dispositions = {
+        "correctly-rounded-portable-rule",
+        "implementation-defined-with-explicit-allowed-set",
+        "named-profile-error-bound",
+        "named-target-profile-rule",
+        "portable-normative-rule",
+        "unsupported-in-profile",
+    }
+    decision_source_membership: Counter[str] = Counter()
+    decision_domain_membership: Counter[str] = Counter()
+    for decision_id, row in decisions_by_id.items():
+        require(
+            set(row)
+            == {
+                "acceptance_evidence",
+                "classification",
+                "decision_record",
+                "domains",
+                "finding",
+                "id",
+                "permitted_dispositions",
+                "selected_disposition",
+                "source_ids",
+                "status",
+                "title",
+                "unresolved_rule",
+            }
+            and row["classification"] in {"architecture-decision", "profile-decision"}
+            and row["status"] == "decision-required"
+            and row["selected_disposition"] is None
+            and row["decision_record"] is None
+            and all(
+                isinstance(row[key], str) and row[key]
+                for key in ("finding", "title", "unresolved_rule")
+            )
+            and row["domains"]
+            and set(row["domains"]) <= set(numeric_domains_by_id)
+            and row["source_ids"]
+            and set(row["source_ids"]) <= set(profile_sources_by_id)
+            and row["permitted_dispositions"]
+            and set(row["permitted_dispositions"]) <= allowed_profile_dispositions
+            and row["acceptance_evidence"]
+            and len(row["acceptance_evidence"]) == len(set(row["acceptance_evidence"])),
+            f"numeric profile decision question drift for {decision_id}",
+        )
+        decision_source_membership.update(row["source_ids"])
+        decision_domain_membership.update(row["domains"])
+    require(
+        set(decision_source_membership) == set(profile_sources_by_id)
+        and set(decision_domain_membership) == set(numeric_domains_by_id),
+        "numeric profile decision questions do not cover every source and domain",
+    )
+
+    readiness_lane_by_domain = {
+        domain_id: lane["id"]
+        for lane in numeric_lanes
+        for domain_id in lane["contract_domains"]
+    }
+    profile_domain_rows = numeric_profile_decisions["domain_matrix"]
+    profile_domains_by_id = {row["domain"]: row for row in profile_domain_rows}
+    require(
+        len(profile_domains_by_id) == len(profile_domain_rows) == 20
+        and set(profile_domains_by_id) == set(numeric_domains_by_id),
+        "numeric profile domain decision matrix identity drift",
+    )
+    for domain_id, row in profile_domains_by_id.items():
+        expected_operations = sorted(
+            operation["key"]
+            for operation in numeric_operation_rows
+            if operation["numeric_contract"] == domain_id
+        )
+        expected_hooks = sorted(
+            {
+                hook_name
+                for operation in numeric_operation_rows
+                if operation["numeric_contract"] == domain_id
+                for hook_name in operation["primary_hooks"]
+                + operation["reference_helpers"]
+            }
+        )
+        require(
+            set(row)
+            == {
+                "decision_question_ids",
+                "domain",
+                "hooks",
+                "lane",
+                "open_numeric_dimensions",
+                "operation_count",
+                "operation_keys",
+                "selected_profile_rule",
+                "source_ids",
+                "status",
+            }
+            and row["lane"] == readiness_lane_by_domain[domain_id]
+            and row["operation_count"] == len(expected_operations)
+            and row["operation_keys"] == expected_operations
+            and row["hooks"] == expected_hooks
+            and row["open_numeric_dimensions"]
+            == numeric_domains_by_id[domain_id]["open_numeric_dimensions"]
+            and row["decision_question_ids"]
+            and set(row["decision_question_ids"]) <= set(decisions_by_id)
+            and row["source_ids"]
+            and set(row["source_ids"]) <= set(profile_sources_by_id)
+            and row["status"] == "profile-rule-required"
+            and row["selected_profile_rule"] is None,
+            f"numeric profile domain decision drift for {domain_id}",
+        )
+    require(
+        numeric_profile_decisions["summary"]
+        == {
+            "decision_question_count": 12,
+            "implementation_evidence_source_count": 21,
+            "numeric_domain_count": 20,
+            "open_decision_question_count": 12,
+            "open_numeric_domain_count": 20,
+            "profile_identity_count": 0,
+            "public_contract_source_count": 3,
+            "selected_profile_rule_count": 0,
+            "source_count": 24,
+        },
+        "numeric profile decision-input summary drift",
+    )
     s5_t2 = targets_by_id["S5-T2"]
     require(
         s5_t2["status"] == "open"
         and numeric_readiness["blocking_gap_ids"]
         == [gap["id"] for gap in s5_t2["gaps"]]
         and "spec/evidence/numeric-conformance-readiness.json" in s5_t2["evidence"]
-        and "scripts/generate-numeric-conformance-readiness" in s5_t2["evidence"],
+        and "scripts/generate-numeric-conformance-readiness" in s5_t2["evidence"]
+        and "spec/evidence/numeric-profile-decision-inputs.json" in s5_t2["evidence"]
+        and "scripts/generate-numeric-profile-decision-inputs" in s5_t2["evidence"]
+        and next(gap for gap in s5_t2["gaps"] if gap["id"] == "S5-T2-G1")[
+            "classification"
+        ]
+        == "profile-decision",
         "S5-T2 readiness evidence, status, and classified gaps disagree",
     )
     numeric_requirement_ids = {spec[0] for spec in numeric_domain_specs.values()} | {
@@ -5920,6 +6152,13 @@ def main() -> int:
             and "scripts/generate-numeric-conformance-readiness"
             in requirements_by_id[requirement_id]["model"],
             f"numeric-conformance readiness is not traceable from {requirement_id}",
+        )
+        require(
+            "spec/evidence/numeric-profile-decision-inputs.json"
+            in requirements_by_id[requirement_id]["model"]
+            and "scripts/generate-numeric-profile-decision-inputs"
+            in requirements_by_id[requirement_id]["model"],
+            f"numeric profile decision inputs are not traceable from {requirement_id}",
         )
     require(
         targets_by_id["S5-T1"]["status"] == "closed"

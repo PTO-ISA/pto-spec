@@ -29,6 +29,7 @@ required_files=(
     docs/modeling-conventions.md
     docs/maturity-bringup-plan.md
     docs/maturity-stage-targets.md
+    docs/numeric-profile-decision-register.md
     docs/normative-sources.md
     docs/profile-contracts.md
     docs/review-checklist.md
@@ -42,6 +43,7 @@ required_files=(
     spec/evidence/maturity-closure.json
     spec/evidence/numeric-conformance-readiness.json
     spec/evidence/numeric-contracts.json
+    spec/evidence/numeric-profile-decision-inputs.json
     spec/evidence/bundle-command-totality.json
     spec/evidence/cube-totality.json
     spec/evidence/executable-model-comparison.json
@@ -56,6 +58,7 @@ required_files=(
     scripts/generate-executable-model-comparison
     scripts/generate-instruction-reference
     scripts/generate-numeric-conformance-readiness
+    scripts/generate-numeric-profile-decision-inputs
     scripts/generate-public-source-reconciliation
     tests/README.md
 )
@@ -150,5 +153,6 @@ done
 python3 scripts/check-catalogs
 ./scripts/generate-bundle-command-totality --check
 ./scripts/generate-numeric-conformance-readiness --check
+./scripts/generate-numeric-profile-decision-inputs --check
 python3 scripts/generate-instruction-reference --check
 python3 scripts/check-publication-hygiene

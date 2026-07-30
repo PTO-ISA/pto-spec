@@ -95,6 +95,7 @@ contracts:
 | [Profile contracts](docs/profile-contracts.md) | `pto-v0` behavior and alternate-profile obligations |
 | [Maturity bring-up plan](docs/maturity-bringup-plan.md) | Staged targets and exit gates from executable draft to architectural completeness |
 | [Maturity stage and target index](docs/maturity-stage-targets.md) | Compact stage map and target register for bring-up review |
+| [Numeric profile decision register](docs/numeric-profile-decision-register.md) | Open S5-T2-A format, rounding, exception, reduction, quantization, and matrix decisions |
 | [Modeling conventions](docs/modeling-conventions.md) | ASL organization and normative modeling rules |
 | [Formal review checklist](docs/review-checklist.md) | Required evidence for normative review |
 

@@ -84,4 +84,7 @@ closed and the 29 numeric raw-carrier hooks remain assigned to `S5-T2`. Green
 validation does not turn PTO v0 into an IEEE or hardware profile. The generated
 `spec/evidence/numeric-conformance-readiness.json` ledger makes the remaining
 six-lane partition and its absent profile/oracle/vector/result/review evidence
-fail closed before expensive runtime validation begins.
+fail closed before expensive runtime validation begins. The generated
+`numeric-profile-decision-inputs.json` ledger further covers all 20 domains
+with 12 explicit open profile questions and 24 content-addressed public
+evidence sources; it does not yet select any profile rule.

@@ -156,5 +156,13 @@ review fields explicitly empty until their evidence exists. Generation fails
 if the inventory is missing, duplicated, stale, or prematurely claims
 conformance.
 
+`numeric-profile-decision-inputs.json` is the fail-closed input to S5-T2-A.
+It pins 24 public contract and CPU/A2A3/A5 implementation-evidence sources,
+classifies 12 unresolved architecture/profile questions, and links every one
+of the 20 numeric domains to the exact questions and source evidence that must
+be resolved. Implementation evidence exposes variation; it does not select a
+PTO result rule. Every selected disposition and decision record remains null
+until architecture review accepts it.
+
 Where evidence and PTO-owned semantics disagree, the PTO ASL and catalogs
 prevail after a reviewed architecture decision.
