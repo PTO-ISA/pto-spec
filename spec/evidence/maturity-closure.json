@@ -309,9 +309,10 @@
       "title": "Close executable-ISA semantic comparison dispositions"
     },
     {
-      "evidence": ["spec/requirements.json", "spec/evidence/maturity-closure.json", "docs/review-checklist.md"],
+      "evidence": ["spec/requirements.json", "spec/evidence/maturity-closure.json", "spec/evidence/release-traceability-readiness.json", "scripts/generate-release-traceability-readiness", "docs/review-checklist.md"],
       "gaps": [
-        {"acceptance_evidence": ["closed requirement-to-model-to-test ledger with no unsupported completeness status"], "classification": "release-governance", "id": "S6-T1-G1", "statement": "Traceability cannot close until every Stage 4 and Stage 5 target is closed or excluded by an accepted PTO decision."}
+        {"acceptance_evidence": ["closed S5-T2 conformance package and closed dependent requirement statuses"], "classification": "release-governance", "id": "S6-T1-G1", "statement": "S5-T2 target numeric conformance is open, so cumulative release traceability cannot close."},
+        {"acceptance_evidence": ["reviewer identity, immutable commit, review date, and accepted disposition"], "classification": "release-governance", "id": "S6-T1-G2", "statement": "Independent claim-hygiene review is intentionally unassigned until cumulative requirement closure."}
       ],
       "id": "S6-T1",
       "tracking": ["https://github.com/PTO-ISA/pto-spec/issues/4", "docs/review-checklist.md"],

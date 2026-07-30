@@ -8,6 +8,14 @@
   `spec/requirements.json`.
 - Every accepted form or operation has a catalog entry, generated witness,
   semantic handler, and requirement/test trace.
+- `release-traceability-readiness.json` regenerates without missing, duplicate,
+  or stale rows across requirements, forms, operations, registers, traps,
+  hooks, and ASL state roots.
+- Composite state leaves are recursively inventoried, and every state root is
+  classified as architectural state, an architectural abstraction, or
+  verification-only instrumentation.
+- Every open requirement or hook names its exact maturity blocker; no reference
+  totality status is presented as target numeric or release conformance.
 
 ## Semantics
 
@@ -37,6 +45,8 @@
 - Memory-model changes include both allowed and forbidden litmus outcomes and
   state whether mixed-size or overlapping accesses are modeled or rejected.
 - Known coverage gaps and ASLRef limitations are disclosed.
+- Release review records one immutable commit, reviewer identity, review date,
+  and disposition; empty review fields keep S6-T1 open.
 - Mnemonic spelling alone imports no semantics. Every retained rule must be
   stated in PTO ASL, catalog metadata, an accepted ADR, and executable tests.
 - Toolchain updates are isolated from normative changes, and any canary fixture they change is explained.

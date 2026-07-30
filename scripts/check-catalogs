@@ -673,6 +673,7 @@ def main() -> int:
     numeric_profile_decisions = load(
         "spec/evidence/numeric-profile-decision-inputs.json"
     )
+    release_traceability = load("spec/evidence/release-traceability-readiness.json")
     requirements = load("spec/requirements.json")["requirements"]
     profile_catalog = load("spec/profile-hooks.json")
     specification = tomllib.loads(
@@ -5170,6 +5171,9 @@ def main() -> int:
         and "numeric-profile-decision-register.md" in readme_body
         and "numeric-profile-decision-register.md" in maturity_index_body
         and "numeric-profile-decision-inputs.json" in numeric_profile_decision_body
+        and "release-traceability-readiness.json" in maturity_index_body
+        and "release-traceability-readiness.json" in readme_body
+        and "release-traceability-readiness.json" in coverage_body
         and "| `PD-12` |" in numeric_profile_decision_body
         and "No target profile identity or domain rule has been selected."
         in numeric_profile_decision_body
@@ -5203,6 +5207,10 @@ def main() -> int:
         in closure_requirement["model"]
         and "scripts/generate-numeric-profile-decision-inputs"
         in closure_requirement["model"]
+        and "spec/evidence/release-traceability-readiness.json"
+        in closure_requirement["model"]
+        and "scripts/generate-release-traceability-readiness"
+        in closure_requirement["model"]
         and "scripts/check-asl-test-shards" in closure_requirement["model"]
         and "scripts/check-asl-test-shards" in closure_requirement["tests"]
         and "scripts/check-catalogs" in closure_requirement["tests"],
@@ -5225,6 +5233,87 @@ def main() -> int:
     require(
         not release_status_claimed or release_targets_closed,
         "closure requirement cannot claim release completion before all Stage 6 targets close",
+    )
+    require(
+        set(release_traceability)
+        == {
+            "blocking_gaps",
+            "inventories",
+            "policy",
+            "review",
+            "schema_version",
+            "sources",
+            "status",
+            "sub_stages",
+            "summary",
+            "target",
+        }
+        and release_traceability["schema_version"] == 1
+        and release_traceability["target"] == "S6-T1"
+        and release_traceability["status"]
+        == "inventory-and-links-closed-promotion-open",
+        "release-traceability readiness identity or schema drift",
+    )
+    release_inventory_counts = {
+        "requirements": 44,
+        "scalar_forms": 474,
+        "command_forms": 107,
+        "tile_operations": 120,
+        "system_registers": 72,
+        "traps": 13,
+        "profile_hooks": 37,
+        "state_roots": 70,
+    }
+    require(
+        set(release_traceability["inventories"]) == set(release_inventory_counts)
+        and all(
+            len(release_traceability["inventories"][name]) == count
+            for name, count in release_inventory_counts.items()
+        ),
+        "release-traceability inventory count drift",
+    )
+    release_item_ids = [
+        row["id"]
+        for rows in release_traceability["inventories"].values()
+        for row in rows
+    ]
+    require(
+        len(release_item_ids)
+        == len(set(release_item_ids))
+        == release_traceability["summary"]["traceability_item_count"]
+        == 937
+        and release_traceability["summary"]["state_leaf_count"] == 199
+        and release_traceability["summary"]["open_requirement_count"] == 9
+        and release_traceability["summary"]["open_profile_hook_count"] == 29
+        and release_traceability["summary"]["closed_prerequisite_targets"] == 28
+        and release_traceability["summary"]["open_prerequisite_targets"] == ["S5-T2"]
+        and release_traceability["summary"]["inventory_and_link_status"] == "closed"
+        and release_traceability["summary"]["release_traceability_status"]
+        == "open:S6-T1",
+        "release-traceability summary or identity drift",
+    )
+    require(
+        [row["id"] for row in release_traceability["sub_stages"]]
+        == ["S6-T1-A", "S6-T1-B", "S6-T1-C", "S6-T1-D", "S6-T1-E"]
+        and [row["status"] for row in release_traceability["sub_stages"]]
+        == [
+            "closed",
+            "closed",
+            "blocked-by-prerequisite",
+            "waiting-on-prerequisite",
+            "waiting-on-prerequisite",
+        ]
+        and all(value is None for value in release_traceability["review"].values()),
+        "release-traceability promotion or review state drift",
+    )
+    s6_t1 = targets_by_id["S6-T1"]
+    require(
+        s6_t1["status"] == "open"
+        and [gap["id"] for gap in s6_t1["gaps"]]
+        == [gap["id"] for gap in release_traceability["blocking_gaps"]]
+        and "spec/evidence/release-traceability-readiness.json" in s6_t1["evidence"]
+        and "scripts/generate-release-traceability-readiness" in s6_t1["evidence"],
+        "S6-T1 readiness evidence, status, and classified gaps disagree",
     )
     require(
         load("spec/requirements.json")["schema_version"] == 1,

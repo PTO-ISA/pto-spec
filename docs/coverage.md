@@ -88,3 +88,14 @@ fail closed before expensive runtime validation begins. The generated
 `numeric-profile-decision-inputs.json` ledger further covers all 20 domains
 with 12 explicit open profile questions and 24 content-addressed public
 evidence sources; it does not yet select any profile rule.
+
+Release traceability is independently fail-closed. The generated
+`spec/evidence/release-traceability-readiness.json` ledger assigns requirement,
+model, executable witness, and bounded status links to 937 exact units. It
+covers all 474 scalar forms, 107 command forms, 120 direct tile operations, 72
+system registers, 13 traps, 37 profile hooks, 44 requirements, and 70 top-level
+ASL state roots expanded to 199 leaf fields. State rows distinguish direct
+architectural state, bounded storage and ordering abstractions,
+architectural-effect abstractions, and verification-only instrumentation. The
+inventory and link package is closed; nine S5-T2-dependent requirements, 29
+numeric hooks, and the later immutable-commit review keep S6-T1 open.

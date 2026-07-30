@@ -41,6 +41,7 @@ required_files=(
     spec/catalog/tile-operations.json
     spec/evidence/public-source-reconciliation.json
     spec/evidence/maturity-closure.json
+    spec/evidence/release-traceability-readiness.json
     spec/evidence/numeric-conformance-readiness.json
     spec/evidence/numeric-contracts.json
     spec/evidence/numeric-profile-decision-inputs.json
@@ -60,6 +61,7 @@ required_files=(
     scripts/generate-numeric-conformance-readiness
     scripts/generate-numeric-profile-decision-inputs
     scripts/generate-public-source-reconciliation
+    scripts/generate-release-traceability-readiness
     tests/README.md
 )
 
@@ -154,5 +156,6 @@ python3 scripts/check-catalogs
 ./scripts/generate-bundle-command-totality --check
 ./scripts/generate-numeric-conformance-readiness --check
 ./scripts/generate-numeric-profile-decision-inputs --check
+./scripts/generate-release-traceability-readiness --check
 python3 scripts/generate-instruction-reference --check
 python3 scripts/check-publication-hygiene

@@ -106,7 +106,7 @@ The status vocabulary is deliberately strict:
 | Stage 3 | Closed | Production scalar, DMA, atomic, fence, tile, gather-CAS, and tile-prefetch paths emit the normative PTO-TSO stream; atomic, reservation, prefetch, and mixed-size corners have executable decisions. | No Stage 3 target remains open; byte-level mixed-size coherence is an explicit future extension, not an unclassified gap. |
 | Stage 4 | Closed | All scalar, bundle, TEPL, TMA, and CUBE targets have checked selector/form inventories, legality, state/effect, alias, boundary, and pre-effect rejection evidence under `pto-v0`. | No Stage 4 target remains open; target numerical conformance remains in Stage 5. |
 | Stage 5 | In progress | The checked numeric-contract matrix owns all 19 scalar and 89 direct-tile operations that cross 29 numeric hooks. The exhaustive 701-row executable-model matrix closes every stable-ID disposition, records all model limits, and archives a clean snapshot with all eight repository gates plus the pinned Sail parser/C-backend gate passing. | No independent hardware/numeric oracle is closed. |
-| Stage 6 | Open | Release mechanics and review obligations are documented. | Stage 5 is not closed. |
+| Stage 6 | Open | The generated S6-T1 readiness ledger closes exact inventory and link coverage across 937 units, including 70 ASL state roots and 199 leaf fields; release mechanics and review obligations are documented. | S5-T2 leaves nine requirements and 29 hooks open; immutable-commit claim-hygiene and architecture/formal approvals remain unrecorded. |
 
 Update this table only from the exit evidence defined below. A stage may move to
 closed only when all of its exit criteria are satisfied.
@@ -171,7 +171,7 @@ closure; **open** means no closure claim is made.
 | `S5-T1` | 5 | Closed | Inventory every operation whose result depends on numeric behavior beyond the raw-carrier reference profile. | Checked `spec/evidence/numeric-contracts.json`: 19 scalar forms, 89 direct-tile operations, 29 hooks, an owner per row, and explicit `S5-T2` conformance obligations |
 | `S5-T2` | 5 | Open | Validate PTO numeric behavior against a named independent oracle without importing third-party semantics as PTO authority. | Generated readiness ledger partitions all 20 domains, 29 hooks, and 108 operations exactly once; the decision-input ledger exposes 12 unresolved questions from 24 pinned public sources; closure requires accepted profile decisions, populated profile/oracle/vector/result/review evidence, and a complete differential report |
 | `S5-T3` | 5 | Closed | Cross-check every shared scalar mnemonic and architectural pattern against a pinned independent executable ISA model, then resolve each difference as a PTO rule, profile difference, defect, or intentional non-equivalence. | The 701-row publication-safe disposition matrix is complete; the clean content-addressed snapshot passes all eight repository gates and the pinned Sail parser/C-backend gate |
-| `S6-T1` | 6 | Open | Prove requirements-to-model-to-test traceability with no unsupported completeness claim. | Closed requirements ledger and evidence-hygiene review |
+| `S6-T1` | 6 | Open | Prove requirements-to-model-to-test traceability with no unsupported completeness claim. Exact inventory and link sub-stages are closed over 937 units; cumulative closure and review remain open. | Generated release-traceability readiness ledger; closed S5-T2-dependent requirement statuses; immutable-commit evidence-hygiene review |
 | `S6-T2` | 6 | Open | Pass clean regeneration, ASLRef, repository, publication, and independent architecture/formal review gates. | Clean `make ci`, `git diff --check`, and recorded approvals |
 
 ### Delivery order and dependencies
@@ -550,6 +550,27 @@ Exit criteria:
 
 **Target:** produce a reviewable `architecturally-complete` candidate without
 hidden exceptions.
+
+### S6-T1 traceability promotion stages
+
+`spec/evidence/release-traceability-readiness.json` is the fail-closed S6-T1
+promotion input. It covers 937 globally unique traceability units: 44
+requirements, 474 scalar forms, 107 bundle/command forms, 120 direct tile
+operations, 72 system registers, 13 traps, 37 profile hooks, and 70 top-level
+ASL state roots. Composite roots expand to 199 leaf fields so nested bundle,
+trap-context, memory-event, system-register, and `TileInfo` fields remain
+visible to review.
+
+| Sub-stage | Current state | Target | Exit evidence |
+| --- | --- | --- | --- |
+| `S6-T1-A` | Closed | Exact, duplicate-free release inventory | Every catalog identity, requirement, hook, and ASL state root appears exactly once. |
+| `S6-T1-B` | Closed | Existing requirement, model, test, and bounded-status links | Every path exists; state roots distinguish architectural state and abstractions from verification-only instrumentation. |
+| `S6-T1-C` | Blocked by S5-T2 | Cumulative Stage 0–5 closure | The nine S5-T2-dependent requirement rows and all 29 numeric hooks close with accepted conformance evidence. |
+| `S6-T1-D` | Waiting on C | Immutable-commit claim-hygiene approval | Reviewer identity, reviewed commit, date, and disposition are populated. |
+| `S6-T1-E` | Waiting on C–D | S6-T1 promotion | All release surfaces agree and no completeness status exceeds its evidence. |
+
+The inventory and links are therefore ready, but S6-T1 is not closed. The
+generated review fields remain null until a stable post-S5-T2 candidate exists.
 
 Required release evidence:
 

@@ -164,5 +164,16 @@ be resolved. Implementation evidence exposes variation; it does not select a
 PTO result rule. Every selected disposition and decision record remains null
 until architecture review accepts it.
 
+`release-traceability-readiness.json` is the generated input to S6-T1. It
+enumerates every requirement, accepted scalar and command form, direct tile
+operation, system register, trap, profile hook, and top-level ASL state root.
+Composite state types are recursively expanded so nested trap-context, bundle,
+memory-event, system-register, and `TileInfo` fields cannot disappear silently.
+Each unit links to one or more PTO requirements, model paths, executable
+witnesses, and a bounded status. State classifications prevent memory-event
+capture controls or other verification instrumentation from being published as
+ISA registers. The ledger is evidence and claim-hygiene control; it does not
+outrank the ASL, catalogs, or accepted architecture decisions.
+
 Where evidence and PTO-owned semantics disagree, the PTO ASL and catalogs
 prevail after a reviewed architecture decision.

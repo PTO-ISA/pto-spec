@@ -64,7 +64,7 @@ parallel, but a later row cannot waive an earlier promotion gate.
 | 1 | M4 regression floor | Preserve the closed 474 scalar, 107 bundle/command, 120 direct-tile, 72 system-register, and 13-trap inventories while later evidence is added. | Catalog/repository checks, deterministic generation, ASLRef shards, and all Stage 0–4 target evidence remain green. | Safe Stage 5 development |
 | 2 | `S5-T2` | Name the PTO target numeric profile and an independent, versioned oracle; cover normal, boundary, exceptional, rounding, saturation, and accumulation cases for every applicable numeric-contract row. | Differential report has no unclassified mismatch and does not treat the `pto-v0` raw-carrier model as hardware arithmetic. | Numeric conformance half of M5 |
 | 3 | `S5-T3` | Closed: the complete stable-ID comparison is regenerated from a clean content-addressed executable-model snapshot, all 701 dispositions remain classified, and every required gate result is archived. | Parser, executable backend, generated-status, coverage, architecture-contract, and documentation gates all pass. | Independent-comparison half of M5 |
-| 4 | `S6-T1` | Produce fail-closed requirement-to-model-to-test traceability for accepted forms, registers, traps, visible state, and profile hooks. | No surface lacks a requirement, normative implementation path, executable witness, or bounded status claim. | Release review may start |
+| 4 | `S6-T1` | Generated inventory and links closed: 937 exact units cover requirements, accepted forms and operations, registers, traps, profile hooks, and 70 state roots/199 leaves. Promotion remains open. | S5-T2 closes the nine dependent requirements and 29 hooks; then one immutable-commit claim-hygiene review fills every review identity and disposition. | Release review may start |
 | 5 | `S6-T2` | Reproduce the candidate from a clean tree and obtain independent PTO architecture and formal-model approvals. | Clean regeneration, ASLRef, repository, publication, hosted CI, `git diff --check`, and recorded approvals all pass. | M6 architecturally-complete candidate |
 
 Promotion rules are exact: M5 requires all three Stage 5 targets to be closed;
@@ -215,6 +215,20 @@ documented as intentions.
 | `S6-T1` | Open | Prove requirements-to-model-to-test traceability with no unsupported completeness claim. |
 | `S6-T2` | Open | Pass clean regeneration, ASLRef, repository, publication, and independent architecture/formal review gates. |
 
+### S6-T1 release-traceability bring-up plan
+
+The generated `spec/evidence/release-traceability-readiness.json` ledger makes
+the release inventory and its residual blockers reviewable before the expensive
+release gate. S6-T1 stays open until all five sub-stages close.
+
+| Sub-stage | Current state | Clear target | Required exit evidence |
+| --- | --- | --- | --- |
+| `S6-T1-A` — exact inventory | Closed | Enumerate every release-traceability unit exactly once. | 44 requirements, 474 scalar forms, 107 command forms, 120 tile operations, 72 system registers, 13 traps, 37 hooks, and 70 state roots are present with globally unique IDs. |
+| `S6-T1-B` — links and boundaries | Closed | Attach PTO requirement, model, executable witness, and bounded status to every unit without turning instrumentation into ISA state. | All paths exist; 70 state roots expand to 199 leaf fields and classify architectural state, storage/ordering/effect abstractions, or verification-only state. |
+| `S6-T1-C` — cumulative closure | Blocked by S5-T2 | Close every Stage 0–5 prerequisite and dependent requirement status. | S5-T2 closes; the nine currently open requirement rows and 29 numeric hooks receive accepted conformance evidence. |
+| `S6-T1-D` — claim-hygiene review | Waiting on C | Review one immutable candidate rather than a moving branch. | Reviewer identity, commit, date, and accepted disposition are all populated; no unsupported completeness claim remains. |
+| `S6-T1-E` — promotion | Waiting on C–D | Close S6-T1 and unlock the cumulative release gate. | Generated ledger, maturity ledger, requirements, coverage, README, and review record agree on closure. |
+
 ## Closure rule
 
 - A target closes only when its own evidence package passes.
@@ -225,3 +239,6 @@ documented as intentions.
 - `spec/evidence/numeric-conformance-readiness.json` is the generated S5-T2
   source of truth for sub-stage dependencies, exact parallel-lane membership,
   evidence slots, and promotion readiness.
+- `spec/evidence/release-traceability-readiness.json` is the generated S6-T1
+  source of truth for exact release inventory, link coverage, state-boundary
+  classification, cumulative blockers, and immutable-commit review readiness.

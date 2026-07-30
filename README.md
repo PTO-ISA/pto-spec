@@ -27,6 +27,12 @@ profile, oracle, vector, result, and review identity explicit.
 The executable-model comparison has an exhaustive 701-row disposition matrix
 and a clean content-addressed snapshot whose generation, validation,
 documentation, Sail parser, and Sail C-backend gates all pass.
+Release traceability is now generated rather than inferred from prose. The
+`spec/evidence/release-traceability-readiness.json` ledger covers 937 exact
+units: all requirements, accepted forms and operations, system registers,
+traps, profile hooks, and 70 ASL state roots expanded to 199 leaf fields. Its
+inventory and links are closed, while S6-T1 promotion remains explicitly open
+on S5-T2 and an immutable-commit claim-hygiene review.
 
 ## Architecture scope
 
