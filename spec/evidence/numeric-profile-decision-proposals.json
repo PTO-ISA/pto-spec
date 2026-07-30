@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "target": "S5-T2-A",
   "status": "proposal-complete-decisions-open",
   "input": {
@@ -38,6 +38,33 @@
     "affected_hook_count": 25,
     "accepted_domain_rounding_rule_count": 0,
     "pd03_complete": false
+  },
+  "format_namespace_contract": {
+    "path": "spec/evidence/numeric-format-namespace-contract.json",
+    "sha256": "80fbe8adca7982a705663e4aa00461a01b16f1e1d5282c310422844bb87c0fcc",
+    "status": "namespace-and-carrier-inventory-closed-format-rules-open",
+    "acceptance_record": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+    "tile_data_type_count": 19,
+    "tile_storage_width_counts": {
+      "4": 4,
+      "8": 5,
+      "16": 4,
+      "32": 3,
+      "64": 3
+    },
+    "scalar_source_mapped_count": 2,
+    "scalar_source_reserved_count": 2,
+    "scalar_floating_destination_mapped_count": 15,
+    "scalar_floating_destination_reserved_count": 17,
+    "scalar_integer_destination_mapped_count": 15,
+    "scalar_integer_destination_reserved_count": 17,
+    "tma_talloc_mapped_count": 18,
+    "tma_talloc_reserved_count": 46,
+    "bundle_mapped_count": 18,
+    "bundle_reserved_count": 14,
+    "four_bit_type_count": 4,
+    "open_residual_count": 8,
+    "pd02_complete": false
   },
   "policy": {
     "proposal_not_authority": "The identity and bounded-variation framework is accepted; question and domain proposals remain review inputs and do not select numeric results.",
@@ -265,11 +292,12 @@
         "named-target-profile-rule",
         "unsupported-in-profile"
       ],
-      "proposed_rule": "Freeze bit-level encodings in the portable contract and publish positive support tables per target. Reserved formats and absent operation/type tuples reject before effects; backend carrier types cannot create implicit PTO formats.",
+      "proposed_rule": "ADR 0040 closes five distinct code namespaces, all 19 TileDataType raw widths, scalar carrier codes, TMA/TALLOC and bundle mappings, reserved codes, and packed four-bit order. Bit-exact floating formats and operation/type/profile legality remain open. Backend carrier types cannot create implicit PTO formats.",
       "open_items": [
-        "bit-exact table for all 19 TileDataType identities",
+        "bind every floating raw carrier to a bit-exact numeric format and exceptional-value class",
         "complete scalar and tile operation/type legality matrix",
-        "resolve the E5M2/E5M3FN naming conflict, specialized eight-bit encodings, packed four-bit nibble order, and whether E8M0 is architectural"
+        "resolve the E5M2/E5M3FN conflict, specialized eight-bit and four-bit bindings, and the architectural role of E8M0",
+        "publish target availability and positive/reserved vectors for every accepted tuple"
       ],
       "acceptance_evidence": [
         "bit-level format table",

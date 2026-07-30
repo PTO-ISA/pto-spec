@@ -36,6 +36,11 @@ accepted architecture decisions remain authoritative.
   fixed conversion overrides, eight bundle `RMode` codes, four external
   selector classes, 18 domains, 102 operations, and 25 hooks. All domain
   rounding and saturation-order rules remain open.
+- ADR 0040 and `spec/evidence/numeric-format-namespace-contract.json` close
+  the PD-02 namespace/carrier checkpoint: five separate code spaces, all 19
+  raw-carrier widths, every mapped/reserved code, and low-nibble-first packing
+  for all four 4-bit types. Eight format, exceptional-value, legality,
+  target-availability, and vector residuals remain open.
 - The current maturity floor remains M4. This register improves decision
   readiness; it does not close `S5-T2-A` or numeric conformance.
 
@@ -68,7 +73,7 @@ acceptance-record fields.
 | ID | Proposed disposition | Review target |
 | --- | --- | --- |
 | `PD-01` | Portable results plus named support restrictions and bounded target variations | Complete the applicability matrix for the accepted identities; keep CPU observational |
-| `PD-02` | Portable bit encodings plus per-profile operation/type support | Resolve all 19 type identities, specialized eight-bit names, packed four-bit order, and reserved rejection |
+| `PD-02` | ADR 0040 fixes five separate code namespaces, all 19 raw-carrier widths, reserved rejection, and packed four-bit order; numeric meanings remain profile-bound | Resolve bit-exact floating meanings, exceptional values, the complete operation/type/profile legality matrix, target availability, and positive/reserved vectors |
 | `PD-03` | Selector namespaces and owners fixed by ADR 0039; portable core is RNE/RTZ/RTP/RTM | Decide active codes 4–7, map named bundle/public/matrix/stochastic controls, and define all domain rounding and saturation-order rules |
 | `PD-04` | Named input/result subnormal rules selected by visible mode state or a fixed target profile | Define reset, lifetime, transitions, operation applicability, and unknown-mode rejection |
 | `PD-05` | Bit-exact special-value rules or an enumerated target result set | Choose canonicalization/payload, signaling, infinity, signed-zero, and flag interactions |
@@ -85,7 +90,7 @@ acceptance-record fields.
 | ID | Decision required | Evidence finding | Closure target |
 | --- | --- | --- | --- |
 | `PD-01` | Profile identity and support-versus-semantics boundary | Published profiles are described as support narrowing, but the numeric contract also permits target-dependent results. | Versioned profile taxonomy and complete domain-to-profile applicability matrix |
-| `PD-02` | Numeric format encodings and availability | Public and backend surfaces span IEEE, BF16, FP8, specialized eight-bit, four-bit, and integer carriers with different target availability. | Bit-exact format table and complete operation/type legality matrix |
+| `PD-02` | Numeric format encodings and availability | ADR 0040 closes structural namespace/carrier ownership, but public and backend surfaces still conflict or remain incomplete for FP8, FPL8, FP4, FPL4, E8M0, exceptional values, and target support. | Bit-exact format table, complete operation/type/profile legality matrix, target availability, and positive/reserved vectors |
 | `PD-03` | Rounding taxonomy, selection, and ties | ADR 0039 inventories every known selector namespace and owner. Scalar RNE/RTM/RTP/RTZ plus fixed FCVT overrides are structurally bound; active codes 4–7 and all cross-namespace/domain result mappings remain decisions. | Accepted per-domain mapping, saturation order, and signed halfway vectors for all 18 affected domains |
 | `PD-04` | Subnormal handling, FTZ, and mode state | Default FTZ, target controls, and selected explicit subnormal paths coexist. | Input/result FTZ rules plus reset, visibility, lifetime, and override behavior for mode state |
 | `PD-05` | NaN, infinity, signed zero, and payloads | Quieting, propagation, sentinel, payload, infinity, and signed-zero behavior is not defined uniformly across operations. | Bit-exact special-value table covering every numeric family |
@@ -122,8 +127,8 @@ semantics rather than numeric differential results.
 ## Promotion path
 
 The four identities and five selection-framework rules close `S5-T2-A1`.
-The PD-03 and PD-06 structural checkpoints do not accept either result
-decision. `S5-T2-A` closes only when all 12 decisions and each of the 20 domain
+The PD-02, PD-03, and PD-06 structural checkpoints do not accept any complete
+result decision. `S5-T2-A` closes only when all 12 decisions and each of the 20 domain
 rows have an accepted profile rule and decision record. Only then
 may `S5-T2-B` qualify an independent oracle for each numeric lane. Oracle,
 vector, result, adjudication, and review evidence remain separate promotion
@@ -137,5 +142,6 @@ scripts/generate-numeric-profile-decision-inputs --check
 scripts/generate-numeric-profile-decision-proposals --check
 scripts/generate-scalar-numeric-flag-contract --check
 scripts/generate-numeric-rounding-selector-contract --check
+scripts/generate-numeric-format-namespace-contract --check
 make repo-check
 ```

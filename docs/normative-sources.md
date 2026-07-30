@@ -187,6 +187,14 @@ normative. It does not choose active scalar codes 4–7, map target controls, or
 define per-domain rounding and saturation-order results; those remain PD-03
 profile decisions.
 
+`numeric-format-namespace-contract.json` is generated from the accepted ASL
+carrier types, scalar and command catalogs, TMA closure ledger, pinned public
+evidence, and independent model comparison. ADR 0040 makes the five namespace
+boundaries, all 19 raw-carrier widths, mapped/reserved code tables, and packed
+4-bit order normative. It does not define the unresolved floating formats,
+exceptional values, complete legality matrix, or target availability; those
+remain eight explicit PD-02 residuals.
+
 `release-traceability-readiness.json` is the generated input to S6-T1. It
 enumerates every requirement, accepted scalar and command form, direct tile
 operation, system register, trap, profile hook, and top-level ASL state root.

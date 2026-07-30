@@ -50,6 +50,10 @@
       "sha256": "9eba031999786c1dc5e34dd54090f6e77a30409f15c9d2396acbc3400ae50bb3"
     },
     {
+      "path": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+      "sha256": "be234bc101e738b6a26db40b219f4ff1b186f1622deec1d7b037276b2f3f1591"
+    },
+    {
       "path": "scripts/check-asl-test-shards",
       "sha256": "7ab9174587cc29b39f676ced8ca8f5b3f433d4171c992a20f86fc2598034c3b1"
     },
@@ -59,7 +63,7 @@
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "3641552ebbccc620bfdc8991e0c4e04a87bc607d07d78acf6ba8dbad3107f6c5"
+      "sha256": "5c9aff58b4ed92f7420c5c08c44a5ad76e77961fcb66b4e650949cd5347beaf5"
     },
     {
       "path": "scripts/check-publication-hygiene",
@@ -67,19 +71,27 @@
     },
     {
       "path": "scripts/check-repository",
-      "sha256": "80e8a2beba1ef5fdb784c752a3968dc9fc7f19b7f69e8b34f5cc3d00039d50c4"
+      "sha256": "df34dadec701d30ef61c560f953a39d68f9758f7aec77b8fd525af2c43220fb9"
     },
     {
       "path": "scripts/check-toolchain",
       "sha256": "bd1c7bd659e12f24140f0f1f9680d8742caeeb489d447469a943f592365f73cb"
     },
     {
+      "path": "scripts/generate-numeric-format-namespace-contract",
+      "sha256": "083beeeb8cd941757c2a9fdc590ec4bd2e1df9db7ee2e7a2f2996e7876cb467e"
+    },
+    {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "79740bb34227387d73d2b342fe334c32be370560af1f62e932429f157fc7a86a"
+      "sha256": "ecdbdfced3565c4101ea9effde8870642a2c2f3bddfb096a3d4f0c4dd4cf727a"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "1e41150503871c1aee62d0525b91f3c262cb68dbcd4fbf03a075edfafa121ab3"
+      "sha256": "dd98581a31f998c084ac945d2f61138a6a268104c97c4e1d4cc42334a97316d6"
+    },
+    {
+      "path": "spec/evidence/numeric-format-namespace-contract.json",
+      "sha256": "80fbe8adca7982a705663e4aa00461a01b16f1e1d5282c310422844bb87c0fcc"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
@@ -91,11 +103,11 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "53bd05819e5afbef498069e25f17050f9f67e29afa30a8481811112892c5ae99"
+      "sha256": "77f6379bae9378b72b123a0c2baa5d1097e1708806929785af9c232b55ad0ca4"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "e2aac11f1277a720cffd729aa25db3d9d352bcbfd14116c643003ac3329a47ce"
+      "sha256": "b0005fd0597a14386ac68d9ef1f66b25fd719af42ba018bbad2a8ba18a70ed4e"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
@@ -103,7 +115,7 @@
     },
     {
       "path": "specification.toml",
-      "sha256": "267cdf303b1f83a6b89f771c50e5153f820abb2d6dcdbf2fb5ec1b47e1d149ca"
+      "sha256": "8b04812a47448fdeed21356ae03e7352848fb2a8a14f54b0cd3fee232c418063"
     }
   ],
   "sub_stages": [

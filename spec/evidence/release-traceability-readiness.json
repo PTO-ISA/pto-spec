@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "e2aac11f1277a720cffd729aa25db3d9d352bcbfd14116c643003ac3329a47ce"
+      "sha256": "b0005fd0597a14386ac68d9ef1f66b25fd719af42ba018bbad2a8ba18a70ed4e"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -39,11 +39,15 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "79740bb34227387d73d2b342fe334c32be370560af1f62e932429f157fc7a86a"
+      "sha256": "ecdbdfced3565c4101ea9effde8870642a2c2f3bddfb096a3d4f0c4dd4cf727a"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "1e41150503871c1aee62d0525b91f3c262cb68dbcd4fbf03a075edfafa121ab3"
+      "sha256": "dd98581a31f998c084ac945d2f61138a6a268104c97c4e1d4cc42334a97316d6"
+    },
+    {
+      "path": "spec/evidence/numeric-format-namespace-contract.json",
+      "sha256": "80fbe8adca7982a705663e4aa00461a01b16f1e1d5282c310422844bb87c0fcc"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
@@ -294,6 +298,7 @@
           "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
           "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
           "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
+          "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
           "asl/profiles/pto-v0.asl",
           "asl/scalar/system-registers.asl",
           "asl/state.asl",
@@ -306,11 +311,13 @@
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
+          "scripts/generate-numeric-format-namespace-contract",
           "scripts/generate-numeric-rounding-selector-contract",
           "scripts/generate-scalar-numeric-flag-contract",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/evidence/numeric-format-namespace-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/catalog/numeric-profile-identities.json",
@@ -602,18 +609,21 @@
           "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
           "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
           "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
+          "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
           "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
+          "scripts/generate-numeric-format-namespace-contract",
           "scripts/generate-numeric-rounding-selector-contract",
           "scripts/generate-scalar-numeric-flag-contract",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/evidence/numeric-format-namespace-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/catalog/numeric-profile-identities.json",
@@ -789,6 +799,9 @@
           "asl/tile/legality.asl",
           "scripts/generate-asl-decoders",
           "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
+          "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+          "scripts/generate-numeric-format-namespace-contract",
+          "spec/evidence/numeric-format-namespace-contract.json",
           "spec/evidence/tepl-totality.json"
         ],
         "tests": [
@@ -962,6 +975,9 @@
           "asl/tile/memory.asl",
           "asl/scalar/memory.asl",
           "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
+          "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+          "scripts/generate-numeric-format-namespace-contract",
+          "spec/evidence/numeric-format-namespace-contract.json",
           "spec/evidence/tma-totality.json",
           "spec/profile-hooks.json"
         ],
@@ -1008,7 +1024,10 @@
           "docs/architecture-decisions/0027-scalar-bru-totality-and-target-legality.md",
           "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md",
           "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
+          "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+          "scripts/generate-numeric-format-namespace-contract",
           "spec/evidence/bundle-command-totality.json",
+          "spec/evidence/numeric-format-namespace-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
           "spec/evidence/scalar-bru-totality.json"
         ],
@@ -1124,6 +1143,7 @@
           "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
           "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
           "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
+          "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
           "docs/normative-sources.md",
           "docs/coverage.md",
           "docs/maturity-bringup-plan.md",
@@ -1137,6 +1157,7 @@
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
+          "scripts/generate-numeric-format-namespace-contract",
           "scripts/generate-numeric-rounding-selector-contract",
           "scripts/generate-scalar-numeric-flag-contract",
           "scripts/generate-release-traceability-readiness",
@@ -1148,6 +1169,7 @@
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/evidence/numeric-format-namespace-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/catalog/numeric-profile-identities.json",
@@ -3415,7 +3437,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3441,7 +3464,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3467,7 +3491,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3493,7 +3518,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3519,7 +3545,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3545,7 +3572,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3571,7 +3599,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3597,7 +3626,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3623,7 +3653,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3697,7 +3728,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3723,7 +3755,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3749,7 +3782,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3775,7 +3809,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3801,7 +3836,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3827,7 +3863,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3853,7 +3890,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3879,7 +3917,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3905,7 +3944,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3931,7 +3971,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3957,7 +3998,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3983,7 +4025,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4009,7 +4052,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4035,7 +4079,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4061,7 +4106,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4087,7 +4133,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4113,7 +4160,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4139,7 +4187,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4165,7 +4214,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -10693,7 +10743,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -12525,7 +12576,8 @@
           "asl/scalar/dispatch.asl",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
-          "spec/evidence/numeric-rounding-selector-contract.json"
+          "spec/evidence/numeric-rounding-selector-contract.json",
+          "spec/evidence/numeric-format-namespace-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",

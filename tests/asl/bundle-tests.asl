@@ -74,6 +74,37 @@ begin
     assert _BundleOperation.selector == Zeros{10} + 0x2b;
     assert _BundleOperation.data_type == Zeros{5} + 24;
 
+    for data_type_code = 0 to 31 do
+        let data_type = Zeros{5} + data_type_code;
+        let expected = data_type_code == 0 || data_type_code == 1 ||
+                       data_type_code == 4 || data_type_code == 5 ||
+                       data_type_code == 7 || data_type_code == 8 ||
+                       data_type_code == 13 || data_type_code == 14 ||
+                       (16 <= data_type_code && data_type_code <= 20) ||
+                       (24 <= data_type_code && data_type_code <= 28);
+        assert BundleDataTypeSupported(data_type) == expected;
+    end;
+    assert BundleTileDataType(Zeros{5}) == TileDataType_F64;
+    assert BundleTileDataType(Zeros{5} + 1) == TileDataType_F32;
+    assert BundleTileDataType(Zeros{5} + 4) == TileDataType_F16;
+    assert BundleTileDataType(Zeros{5} + 5) == TileDataType_BF16;
+    assert BundleTileDataType(Zeros{5} + 7) == TileDataType_FP8;
+    assert BundleTileDataType(Zeros{5} + 8) == TileDataType_FPL8;
+    assert BundleTileDataType(Zeros{5} + 13) == TileDataType_E8M0;
+    assert BundleTileDataType(Zeros{5} + 14) == TileDataType_FPL4;
+    assert BundleTileDataType(Zeros{5} + 16) == TileDataType_S64;
+    assert BundleTileDataType(Zeros{5} + 17) == TileDataType_S32;
+    assert BundleTileDataType(Zeros{5} + 18) == TileDataType_S16;
+    assert BundleTileDataType(Zeros{5} + 19) == TileDataType_S8;
+    assert BundleTileDataType(Zeros{5} + 20) == TileDataType_S4;
+    assert BundleTileDataType(Zeros{5} + 24) == TileDataType_U64;
+    assert BundleTileDataType(Zeros{5} + 25) == TileDataType_U32;
+    assert BundleTileDataType(Zeros{5} + 26) == TileDataType_U16;
+    assert BundleTileDataType(Zeros{5} + 27) == TileDataType_U8;
+    assert BundleTileDataType(Zeros{5} + 28) == TileDataType_U4;
+    assert !BundleDataTypeSupported(Zeros{5} + 11);
+    assert !BundleDataTypeSupported(Zeros{5} + 12);
+
     // MPAR Mode is architectural descriptor state, including all encodings.
     for mode = 0 to 3 do
         ResetBundleControlState();

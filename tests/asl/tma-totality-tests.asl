@@ -82,12 +82,13 @@ end;
 
 func TestTmaAllFourBitTypes()
 begin
-    ConfigurePackedTmaTileType(33, 1, TileDataType_FP4);
-    ConfigurePackedTmaTileType(34, 1, TileDataType_FPL4);
-    ConfigurePackedTmaTileType(35, 1, TileDataType_S4);
-    ConfigurePackedTmaTileType(36, 1, TileDataType_U4);
-    ConfigureIndexTmaTile(37, 1);
+    ConfigurePackedTmaTileType(33, 2, TileDataType_FP4);
+    ConfigurePackedTmaTileType(34, 2, TileDataType_FPL4);
+    ConfigurePackedTmaTileType(35, 2, TileDataType_S4);
+    ConfigurePackedTmaTileType(36, 2, TileDataType_U4);
+    ConfigureIndexTmaTile(37, 2);
     WriteTileElement(37, 0, 0, Zeros{PTO_XLEN});
+    WriteTileElement(37, 0, 1, Zeros{PTO_XLEN} + 1);
 
     for tile_offset = 0 to 3 do
         let tile = (33 + tile_offset) as TileIndex;
@@ -95,16 +96,20 @@ begin
         Store(address, 1, Zeros{PTO_XLEN} + 0xaf);
         TLOAD(tile, address);
         assert ReadTileElement(tile, 0, 0) == Zeros{PTO_XLEN} + 0xf;
+        assert ReadTileElement(tile, 0, 1) == Zeros{PTO_XLEN} + 0xa;
 
         WriteTileElement(tile, 0, 0, Zeros{PTO_XLEN} + tile_offset + 1);
+        WriteTileElement(tile, 0, 1, Zeros{PTO_XLEN} + tile_offset + 5);
         TSTORE(address, tile);
         let stored = LoadUnsigned(address, 1);
-        assert stored == Zeros{PTO_XLEN} + 0xa0 + tile_offset + 1;
+        assert stored == Zeros{PTO_XLEN} +
+            (tile_offset + 5) * 16 + tile_offset + 1;
 
         Store(address, 1, Zeros{PTO_XLEN} + 0xa8 + tile_offset);
         MGATHER(tile, address, 37);
         assert ReadTileElement(tile, 0, 0) ==
             Zeros{PTO_XLEN} + 8 + tile_offset;
+        assert ReadTileElement(tile, 0, 1) == Zeros{PTO_XLEN} + 0xa;
     end;
 end;
 

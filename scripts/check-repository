@@ -33,6 +33,7 @@ required_files=(
     docs/maturity-bringup-plan.md
     docs/maturity-stage-targets.md
     docs/numeric-profile-decision-register.md
+    docs/architecture-decisions/0040-numeric-format-namespace-ownership.md
     docs/normative-sources.md
     docs/profile-contracts.md
     docs/review-checklist.md
@@ -51,6 +52,7 @@ required_files=(
     spec/evidence/numeric-contracts.json
     spec/evidence/numeric-profile-decision-inputs.json
     spec/evidence/numeric-profile-decision-proposals.json
+    spec/evidence/numeric-format-namespace-contract.json
     spec/evidence/numeric-rounding-selector-contract.json
     spec/evidence/bundle-command-totality.json
     spec/evidence/cube-totality.json
@@ -69,6 +71,7 @@ required_files=(
     scripts/generate-numeric-conformance-readiness
     scripts/generate-numeric-profile-decision-inputs
     scripts/generate-numeric-profile-decision-proposals
+    scripts/generate-numeric-format-namespace-contract
     scripts/generate-numeric-rounding-selector-contract
     scripts/generate-public-source-reconciliation
     scripts/generate-release-gate-readiness
@@ -170,6 +173,7 @@ python3 scripts/check-catalogs
 ./scripts/generate-numeric-profile-decision-inputs --check
 ./scripts/generate-scalar-numeric-flag-contract --check
 ./scripts/generate-numeric-rounding-selector-contract --check
+./scripts/generate-numeric-format-namespace-contract --check
 ./scripts/generate-numeric-profile-decision-proposals --check
 ./scripts/generate-release-traceability-readiness --check
 ./scripts/generate-release-gate-readiness --check

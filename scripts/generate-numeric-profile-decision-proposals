@@ -18,6 +18,9 @@ SCALAR_FLAG_CONTRACT = ROOT / "spec/evidence/scalar-numeric-flag-contract.json"
 ROUNDING_SELECTOR_CONTRACT = (
     ROOT / "spec/evidence/numeric-rounding-selector-contract.json"
 )
+FORMAT_NAMESPACE_CONTRACT = (
+    ROOT / "spec/evidence/numeric-format-namespace-contract.json"
+)
 OUTPUT = ROOT / "spec/evidence/numeric-profile-decision-proposals.json"
 
 
@@ -40,11 +43,12 @@ PROPOSALS: dict[str, dict[str, Any]] = {
             "named-target-profile-rule",
             "unsupported-in-profile",
         ],
-        "proposed_rule": "Freeze bit-level encodings in the portable contract and publish positive support tables per target. Reserved formats and absent operation/type tuples reject before effects; backend carrier types cannot create implicit PTO formats.",
+        "proposed_rule": "ADR 0040 closes five distinct code namespaces, all 19 TileDataType raw widths, scalar carrier codes, TMA/TALLOC and bundle mappings, reserved codes, and packed four-bit order. Bit-exact floating formats and operation/type/profile legality remain open. Backend carrier types cannot create implicit PTO formats.",
         "open_items": [
-            "bit-exact table for all 19 TileDataType identities",
+            "bind every floating raw carrier to a bit-exact numeric format and exceptional-value class",
             "complete scalar and tile operation/type legality matrix",
-            "resolve the E5M2/E5M3FN naming conflict, specialized eight-bit encodings, packed four-bit nibble order, and whether E8M0 is architectural",
+            "resolve the E5M2/E5M3FN conflict, specialized eight-bit and four-bit bindings, and the architectural role of E8M0",
+            "publish target availability and positive/reserved vectors for every accepted tuple",
         ],
     },
     "PD-03": {
@@ -194,6 +198,7 @@ def generate() -> dict[str, Any]:
     identity_catalog = load(IDENTITY_CATALOG)
     scalar_flag_contract = load(SCALAR_FLAG_CONTRACT)
     rounding_selector_contract = load(ROUNDING_SELECTOR_CONTRACT)
+    format_namespace_contract = load(FORMAT_NAMESPACE_CONTRACT)
     require(inputs["target"] == "S5-T2-A", "decision-input target drift")
     require(
         inputs["status"]
@@ -241,6 +246,37 @@ def generate() -> dict[str, Any]:
             "pd03_complete": False,
         },
         "numeric rounding selector contract drift",
+    )
+    require(
+        format_namespace_contract["schema_version"] == 1
+        and format_namespace_contract["decision_id"] == "PD-02"
+        and format_namespace_contract["status"]
+        == "namespace-and-carrier-inventory-closed-format-rules-open"
+        and format_namespace_contract["summary"]
+        == {
+            "tile_data_type_count": 19,
+            "tile_storage_width_counts": {
+                "4": 4,
+                "8": 5,
+                "16": 4,
+                "32": 3,
+                "64": 3,
+            },
+            "scalar_source_mapped_count": 2,
+            "scalar_source_reserved_count": 2,
+            "scalar_floating_destination_mapped_count": 15,
+            "scalar_floating_destination_reserved_count": 17,
+            "scalar_integer_destination_mapped_count": 15,
+            "scalar_integer_destination_reserved_count": 17,
+            "tma_talloc_mapped_count": 18,
+            "tma_talloc_reserved_count": 46,
+            "bundle_mapped_count": 18,
+            "bundle_reserved_count": 14,
+            "four_bit_type_count": 4,
+            "open_residual_count": 8,
+            "pd02_complete": False,
+        },
+        "numeric format namespace contract drift",
     )
     profile_proposals = [
         {
@@ -339,7 +375,7 @@ def generate() -> dict[str, Any]:
     )
 
     return {
-        "schema_version": 4,
+        "schema_version": 5,
         "target": "S5-T2-A",
         "status": "proposal-complete-decisions-open",
         "input": {
@@ -372,6 +408,15 @@ def generate() -> dict[str, Any]:
             "status": rounding_selector_contract["status"],
             "acceptance_record": rounding_selector_contract["acceptance_record"],
             **rounding_selector_contract["summary"],
+        },
+        "format_namespace_contract": {
+            "path": "spec/evidence/numeric-format-namespace-contract.json",
+            "sha256": hashlib.sha256(
+                FORMAT_NAMESPACE_CONTRACT.read_bytes()
+            ).hexdigest(),
+            "status": format_namespace_contract["status"],
+            "acceptance_record": format_namespace_contract["acceptance_record"],
+            **format_namespace_contract["summary"],
         },
         "policy": {
             "proposal_not_authority": "The identity and bounded-variation framework is accepted; question and domain proposals remain review inputs and do not select numeric results.",

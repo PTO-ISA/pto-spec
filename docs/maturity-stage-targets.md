@@ -172,7 +172,7 @@ open, and the repository remains at M4, until every sub-stage below closes.
 
 | Sub-stage | Current state | Clear target | Required exit evidence |
 | --- | --- | --- | --- |
-| `S5-T2-A` — profile decision | Identity/selection framework closed; scalar flag lifecycle/ownership closed; result decisions open | Apply the four accepted numeric identities and fail-closed selection rules, then resolve proposed dispositions for all 12 decisions and exact rules for all 20 domains. The PD-06 flag matrix already assigns all 30 FSU forms; fill the 19 profile-owned conditions. Separate portable rules from A2A3-, A5-, or other target-specific rules instead of treating the `pto-v0` raw-carrier reference as hardware arithmetic. | Accepted architecture decisions resolve all 12 generated questions and define formats, rounding modes, exceptional values, subnormals, flags, saturation, accuracy, accumulation, quantization, matrix arithmetic, and implementation-defined dimensions for all 20 domains. All 12 decision and 20 domain acceptance records are populated. |
+| `S5-T2-A` — profile decision | Identity/selection framework, scalar flag lifecycle/ownership, rounding-selector ownership, and numeric namespace/carrier ownership closed; result decisions open | Apply the four accepted numeric identities and fail-closed selection rules, then resolve proposed dispositions for all 12 decisions and exact rules for all 20 domains. The PD-02 checkpoint already separates five code namespaces, fixes all 19 carrier widths and four-bit packing, and keeps eight format/legality residuals explicit. The PD-06 flag matrix already assigns all 30 FSU forms; fill the 19 profile-owned conditions. Separate portable rules from A2A3-, A5-, or other target-specific rules instead of treating the `pto-v0` raw-carrier reference as hardware arithmetic. | Accepted architecture decisions resolve all 12 generated questions and define formats, rounding modes, exceptional values, subnormals, flags, saturation, accuracy, accumulation, quantization, matrix arithmetic, and implementation-defined dimensions for all 20 domains. All 12 decision and 20 domain acceptance records are populated. |
 | `S5-T2-B` — oracle qualification | Waiting on A | Select an independent, versioned oracle for each lane. The implementation under test and the `pto-v0` reference are not independent oracles. | Reproducible oracle identity, version/digest, invocation, supported domain list, known limitations, and a reviewer-approved rule for any target behavior that requires hardware capture rather than a software arithmetic library. |
 | `S5-T2-C` — vector corpus | Waiting on A–B | Generate deterministic inputs for every operation and every open numeric dimension. | Normal, minimum/maximum, boundary, signed-zero, subnormal, infinity, NaN, tie, overflow, underflow, divide-by-zero, rounding, saturation, reduction-order, and accumulation cases as applicable; each vector links to one operation key, profile, oracle, and expected disposition. |
 | `S5-T2-D` — differential execution | Waiting on B–C | Run the six numeric lanes independently and preserve raw oracle and PTO results. | All 20 contract domains, 29 hooks, and 108 operations are assigned exactly once; every vector produces a reproducible match, mismatch, unsupported, or implementation-defined record; no lane is missing or duplicated. |
@@ -202,6 +202,13 @@ codes, five fixed conversion overrides, eight bundle `RMode` codes, four
 external selector classes, 18 domains, 102 operations, and 25 hooks. Every
 per-domain rounding and saturation-order rule remains null, so PD-03 likewise
 does not increment the S5-T2-A2 decision count.
+ADR 0040 and `spec/evidence/numeric-format-namespace-contract.json` close the
+PD-02 structural checkpoint: five independent code spaces, all 19
+`TileDataType` raw-carrier widths, complete mapped/reserved tables, and
+low-nibble-first packing for FP4, FPL4, S4, and U4. Eight residuals keep exact
+floating formats, exceptional values, operation/type/profile legality, target
+availability, and vectors open. PD-02 likewise does not increment the
+S5-T2-A2 decision count.
 
 #### Parallel numeric lanes
 
@@ -295,6 +302,9 @@ configuration from being confused with a passing release candidate.
 - `spec/evidence/numeric-rounding-selector-contract.json` is the generated
   PD-03 selector-ownership inventory. It closes discovery and namespace
   separation while retaining all 18 affected domain result rules.
+- `spec/evidence/numeric-format-namespace-contract.json` is the generated
+  PD-02 namespace/carrier inventory. It closes structural ownership while
+  retaining eight explicit format, legality, target, and vector residuals.
 - `spec/evidence/release-traceability-readiness.json` is the generated S6-T1
   source of truth for exact release inventory, link coverage, state-boundary
   classification, cumulative blockers, and immutable-commit review readiness.

@@ -174,3 +174,8 @@ flag lifecycle and 30/30 producer-owner matrix without closing PD-06.
 The generated `numeric-rounding-selector-contract.json` ledger records the
 accepted selector namespaces and owners without closing PD-03. It keeps all 18
 affected domain rounding and saturation-order rules explicitly null.
+The generated `numeric-format-namespace-contract.json` ledger records the
+accepted five code namespaces, 19 carrier widths, reserved-code behavior, and
+four-bit packing without closing PD-02. It keeps eight format, exceptional
+value, operation/type/profile legality, target-availability, and vector
+residuals explicit.

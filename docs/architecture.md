@@ -142,6 +142,15 @@ The canonical selector and descriptor fields define encoding and operand facts.
 Direct PTO tile operations have explicit destinations, sources, dimensions,
 addresses, and attributes. Pipe state is not architectural.
 
+Numeric format codes are namespace-local, not one shared enumeration. Scalar
+2-bit source types, scalar 5-bit floating destinations, scalar 5-bit integer
+destinations, 6-bit TMA/TALLOC types, and 5-bit bundle `DataType` fields are
+decoded independently; equal integers do not imply equal types. ADR 0040 and
+`spec/evidence/numeric-format-namespace-contract.json` define every mapped and
+reserved code, all 19 `TileDataType` raw-carrier widths, and low-nibble-first
+packing for FP4, FPL4, S4, and U4. Exact floating meanings and target-specific
+operation/type availability remain profile decisions under `S5-T2`.
+
 `ExecuteTileInstruction` is the decoded tile execution boundary. The normative
 tile catalog binds each accepted selector to a typed subset of
 `TileInstructionOperands`, an ordered semantic-handler argument list, and an

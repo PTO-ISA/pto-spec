@@ -24,6 +24,7 @@ SOURCE_PATHS = (
     "spec/profile-hooks.json",
     "spec/evidence/maturity-closure.json",
     "spec/evidence/numeric-profile-decision-proposals.json",
+    "spec/evidence/numeric-format-namespace-contract.json",
     "spec/evidence/numeric-rounding-selector-contract.json",
     "spec/evidence/scalar-effect-closure.json",
     "spec/evidence/bundle-command-totality.json",
@@ -117,6 +118,7 @@ SCALAR_TRACE = {
             "spec/evidence/scalar-fsu-totality.json",
             "spec/evidence/scalar-numeric-flag-contract.json",
             "spec/evidence/numeric-rounding-selector-contract.json",
+            "spec/evidence/numeric-format-namespace-contract.json",
         ],
     },
     "SYS": {

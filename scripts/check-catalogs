@@ -668,6 +668,9 @@ def main() -> int:
     numeric_rounding_selectors = load(
         "spec/evidence/numeric-rounding-selector-contract.json"
     )
+    numeric_format_namespaces = load(
+        "spec/evidence/numeric-format-namespace-contract.json"
+    )
     scalar_sys_totality = load("spec/evidence/scalar-sys-totality.json")
     tepl_totality = load("spec/evidence/tepl-totality.json")
     tma_totality = load("spec/evidence/tma-totality.json")
@@ -769,7 +772,7 @@ def main() -> int:
     )
     require(
         specification["maturity"]["numeric_profile_decisions"]
-        == "identity-framework-flag-lifecycle-rounding-selector-ownership-closed-stage-S5-T2-A-results-open",
+        == "identity-framework-flag-lifecycle-rounding-selector-and-format-namespace-ownership-closed-stage-S5-T2-A-results-open",
         "numeric profile metadata must distinguish complete proposals from open acceptance",
     )
     require(
@@ -2441,6 +2444,282 @@ def main() -> int:
         require(
             witness in rounding_profile_test_body,
             f"numeric rounding halfway witness missing: {witness}",
+        )
+    expected_format_sources = [
+        "spec/evidence/numeric-profile-decision-inputs.json",
+        "spec/evidence/scalar-fsu-totality.json",
+        "spec/evidence/tma-totality.json",
+        "spec/evidence/executable-model-comparison.json",
+        "spec/catalog/command-forms.json",
+        "asl/types.asl",
+        "asl/scalar/floating.asl",
+        "asl/tile/state.asl",
+        "asl/tile/memory.asl",
+        "asl/bundle/dispatch.asl",
+        "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
+        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
+        "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+    ]
+    require(
+        set(numeric_format_namespaces)
+        == {
+            "acceptance_record",
+            "bundle_data_type",
+            "checkpoint_id",
+            "decision_id",
+            "four_bit_packing",
+            "independent_comparison",
+            "open_residuals",
+            "policy",
+            "public_evidence",
+            "scalar_floating_destination_type",
+            "scalar_integer_destination_type",
+            "scalar_source_type",
+            "schema_version",
+            "sources",
+            "status",
+            "summary",
+            "target",
+            "tests",
+            "tile_data_types",
+            "tma_talloc_data_type",
+        }
+        and numeric_format_namespaces["schema_version"] == 1
+        and numeric_format_namespaces["target"] == "S5-T2-A2:PD-02"
+        and numeric_format_namespaces["decision_id"] == "PD-02"
+        and numeric_format_namespaces["checkpoint_id"] == "PD-02-SC1"
+        and numeric_format_namespaces["status"]
+        == "namespace-and-carrier-inventory-closed-format-rules-open"
+        and numeric_format_namespaces["acceptance_record"]
+        == "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md"
+        and (ROOT / numeric_format_namespaces["acceptance_record"]).is_file(),
+        "numeric format namespace identity or schema drift",
+    )
+    require(
+        [row["path"] for row in numeric_format_namespaces["sources"]]
+        == expected_format_sources
+        and all(
+            set(row) == {"path", "sha256"}
+            and row["sha256"]
+            == hashlib.sha256((ROOT / row["path"]).read_bytes()).hexdigest()
+            for row in numeric_format_namespaces["sources"]
+        ),
+        "numeric format namespace source identity or hash drift",
+    )
+    expected_tile_types = [
+        ("F64", 64, "floating-raw-carrier", 0, 0, "public-binding-open"),
+        ("S8", 8, "signed-integer", 19, 19, "width-and-signedness-closed"),
+        ("U8", 8, "unsigned-integer", 27, 27, "width-and-signedness-closed"),
+        ("S16", 16, "signed-integer", 18, 18, "width-and-signedness-closed"),
+        ("U16", 16, "unsigned-integer", 26, 26, "width-and-signedness-closed"),
+        ("S32", 32, "signed-integer", 17, 17, "width-and-signedness-closed"),
+        ("U32", 32, "unsigned-integer", 25, 25, "width-and-signedness-closed"),
+        ("S64", 64, "signed-integer", 16, 16, "width-and-signedness-closed"),
+        ("U64", 64, "unsigned-integer", 24, 24, "width-and-signedness-closed"),
+        ("F16", 16, "floating-raw-carrier", 2, 4, "format-rule-open"),
+        ("BF16", 16, "floating-raw-carrier", 6, 5, "format-rule-open"),
+        ("F32", 32, "floating-raw-carrier", 1, 1, "format-rule-open"),
+        ("FP8", 8, "floating-raw-carrier", 3, 7, "e4m3-versus-e5m2-binding-open"),
+        ("FPL8", 8, "floating-raw-carrier", 7, 8, "hifloat8-binding-open"),
+        ("FP4", 4, "floating-raw-carrier", 11, None, "e1m2-versus-e2m1-binding-open"),
+        ("FPL4", 4, "floating-raw-carrier", 12, 14, "e1m2-versus-e2m1-binding-open"),
+        ("S4", 4, "signed-integer", 20, 20, "width-and-signedness-closed"),
+        ("U4", 4, "unsigned-integer", 28, 28, "width-and-signedness-closed"),
+        ("E8M0", 8, "floating-raw-carrier", None, 13, "architectural-role-open"),
+    ]
+    tile_type_rows = numeric_format_namespaces["tile_data_types"]
+    require(
+        [
+            (
+                row["name"],
+                row["storage_bits"],
+                row["raw_class"],
+                row["tma_talloc_code"],
+                row["bundle_code"],
+                row["numeric_semantics_status"],
+            )
+            for row in tile_type_rows
+        ]
+        == expected_tile_types
+        and all(
+            row["asl_enumerator"] == f"TileDataType_{row['name']}"
+            for row in tile_type_rows
+        ),
+        "numeric tile type inventory, width, or namespace binding drift",
+    )
+    format_codes = scalar_fsu_totality["format_code_contract"]
+    expected_source_codes = {row["code"]: row for row in format_codes["source_codes"]}
+    require(
+        [row["code"] for row in numeric_format_namespaces["scalar_source_type"]]
+        == list(range(4))
+        and all(
+            row["namespace"] == "scalar-fsu-source-type"
+            and row["bits"] == format(row["code"], "02b")
+            and row["status"]
+            == (
+                "mapped"
+                if row["code"] in expected_source_codes
+                else "reserved-before-effects"
+            )
+            and row["carrier_width"]
+            == (
+                expected_source_codes[row["code"]]["carrier_width"]
+                if row["code"] in expected_source_codes
+                else None
+            )
+            for row in numeric_format_namespaces["scalar_source_type"]
+        ),
+        "numeric scalar source namespace drift",
+    )
+    for key, namespace, source_key in (
+        (
+            "scalar_floating_destination_type",
+            "scalar-fsu-floating-destination-type",
+            "floating_destination_codes",
+        ),
+        (
+            "scalar_integer_destination_type",
+            "scalar-fsu-integer-destination-type",
+            "integer_destination_codes",
+        ),
+    ):
+        source_rows = {row["code"]: row for row in format_codes[source_key]}
+        rows = numeric_format_namespaces[key]
+        require(
+            [row["code"] for row in rows] == list(range(32))
+            and all(
+                row["namespace"] == namespace
+                and row["bits"] == format(row["code"], "05b")
+                and row["status"]
+                == (
+                    "mapped"
+                    if row["code"] in source_rows
+                    else "reserved-before-effects"
+                )
+                and row["carrier_width"]
+                == (
+                    source_rows[row["code"]]["carrier_width"]
+                    if row["code"] in source_rows
+                    else None
+                )
+                and row["stage4_name"]
+                == (
+                    source_rows[row["code"]]["stage4_name"]
+                    if row["code"] in source_rows
+                    else None
+                )
+                for row in rows
+            ),
+            f"numeric scalar destination namespace drift: {namespace}",
+        )
+    expected_tma_mapping = {
+        row["tma_talloc_code"]: row["name"]
+        for row in tile_type_rows
+        if row["tma_talloc_code"] is not None
+    }
+    expected_bundle_mapping = {
+        row["bundle_code"]: row["name"]
+        for row in tile_type_rows
+        if row["bundle_code"] is not None
+    }
+    for key, namespace, width, mapping in (
+        ("tma_talloc_data_type", "tma-talloc-data-type", 6, expected_tma_mapping),
+        ("bundle_data_type", "bundle-data-type", 5, expected_bundle_mapping),
+    ):
+        rows = numeric_format_namespaces[key]
+        require(
+            [row["code"] for row in rows] == list(range(1 << width))
+            and all(
+                row["namespace"] == namespace
+                and row["bits"] == format(row["code"], f"0{width}b")
+                and row["status"]
+                == ("mapped" if row["code"] in mapping else "reserved-before-effects")
+                and row["tile_data_type"] == mapping.get(row["code"])
+                for row in rows
+            ),
+            f"numeric tile data-type namespace drift: {namespace}",
+        )
+    require(
+        13 not in expected_tma_mapping
+        and expected_bundle_mapping[13] == "E8M0"
+        and expected_tma_mapping[11] == "FP4"
+        and 11 not in expected_bundle_mapping
+        and numeric_format_namespaces["four_bit_packing"]
+        == {
+            "types": ["FP4", "FPL4", "S4", "U4"],
+            "even_element": "low-nibble[3:0]",
+            "odd_element": "high-nibble[7:4]",
+            "indexed_selector": "index_value[0]",
+            "load_extension": "zero-extend-selected-nibble",
+            "store_rule": "replace-selected-nibble-preserve-sibling-nibble",
+            "status": "closed",
+        },
+        "numeric namespace separation or four-bit packing drift",
+    )
+    require(
+        numeric_format_namespaces["public_evidence"]
+        == {
+            "source_ids": next(
+                row
+                for row in numeric_profile_decisions["decision_questions"]
+                if row["id"] == "PD-02"
+            )["source_ids"],
+            "pinned_repository": numeric_profile_decisions["public_repository"],
+            "pinned_commit": numeric_profile_decisions["public_commit"],
+            "status": "names-and-target-availability-observed-format-bindings-open",
+        }
+        and numeric_format_namespaces["independent_comparison"]["provenance_sha256"]
+        == executable_model_comparison["snapshot"]["revision_sha256"]
+        and [row["id"] for row in numeric_format_namespaces["open_residuals"]]
+        == [f"PD-02-R{index}" for index in range(1, 9)]
+        and numeric_format_namespaces["summary"]
+        == {
+            "tile_data_type_count": 19,
+            "tile_storage_width_counts": {
+                "4": 4,
+                "8": 5,
+                "16": 4,
+                "32": 3,
+                "64": 3,
+            },
+            "scalar_source_mapped_count": 2,
+            "scalar_source_reserved_count": 2,
+            "scalar_floating_destination_mapped_count": 15,
+            "scalar_floating_destination_reserved_count": 17,
+            "scalar_integer_destination_mapped_count": 15,
+            "scalar_integer_destination_reserved_count": 17,
+            "tma_talloc_mapped_count": 18,
+            "tma_talloc_reserved_count": 46,
+            "bundle_mapped_count": 18,
+            "bundle_reserved_count": 14,
+            "four_bit_type_count": 4,
+            "open_residual_count": 8,
+            "pd02_complete": False,
+        },
+        "numeric format evidence boundary or summary drift",
+    )
+    format_test_bodies = "\n".join(
+        (ROOT / path).read_text(encoding="utf-8")
+        for path in (
+            "tests/asl/state-tests.asl",
+            "tests/asl/scalar-tests.asl",
+            "tests/asl/bundle-tests.asl",
+            "tests/asl/tma-totality-tests.asl",
+        )
+    )
+    for witness in (
+        "TileElementBits(TileDataType_E8M0) == 8",
+        "TileDataTypeFromEncoding(Zeros{PTO_XLEN} + 11) == TileDataType_FP4",
+        "!TileDataTypeEncodingValid(Zeros{PTO_XLEN} + 13)",
+        "ScalarFPSourceTypeCode('10') == '11111'",
+        "!ScalarFPTypeCodeSupported(Zeros{5} + 15)",
+        "BundleTileDataType(Zeros{5} + 13) == TileDataType_E8M0",
+        "!BundleDataTypeSupported(Zeros{5} + 11)",
+        "ReadTileElement(tile, 0, 1) == Zeros{PTO_XLEN} + 0xa",
+    ):
+        require(
+            witness in format_test_bodies,
+            f"numeric format namespace executable witness missing: {witness}",
         )
     require(
         set(scalar_sys_totality)
@@ -5569,6 +5848,10 @@ def main() -> int:
         and "numeric-rounding-selector-contract.json" in maturity_index_body
         and "numeric-rounding-selector-contract.json" in readme_body
         and "numeric-rounding-selector-contract.json" in coverage_body
+        and "numeric-format-namespace-contract.json" in numeric_profile_decision_body
+        and "numeric-format-namespace-contract.json" in maturity_index_body
+        and "numeric-format-namespace-contract.json" in readme_body
+        and "numeric-format-namespace-contract.json" in coverage_body
         and "release-traceability-readiness.json" in maturity_index_body
         and "release-traceability-readiness.json" in readme_body
         and "release-traceability-readiness.json" in coverage_body
@@ -5627,6 +5910,12 @@ def main() -> int:
         and "scripts/generate-numeric-rounding-selector-contract"
         in closure_requirement["model"]
         and "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md"
+        in closure_requirement["model"]
+        and "spec/evidence/numeric-format-namespace-contract.json"
+        in closure_requirement["model"]
+        and "scripts/generate-numeric-format-namespace-contract"
+        in closure_requirement["model"]
+        and "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md"
         in closure_requirement["model"]
         and "spec/evidence/release-traceability-readiness.json"
         in closure_requirement["model"]
@@ -6837,6 +7126,7 @@ def main() -> int:
             "decision_proposals",
             "domain_proposals",
             "framework_acceptance",
+            "format_namespace_contract",
             "identity_catalog",
             "input",
             "policy",
@@ -6850,10 +7140,45 @@ def main() -> int:
             "summary",
             "target",
         }
-        and numeric_profile_proposals["schema_version"] == 4
+        and numeric_profile_proposals["schema_version"] == 5
         and numeric_profile_proposals["target"] == "S5-T2-A"
         and numeric_profile_proposals["status"] == "proposal-complete-decisions-open",
         "numeric profile proposal identity or schema drift",
+    )
+    require(
+        numeric_profile_proposals["format_namespace_contract"]
+        == {
+            "path": "spec/evidence/numeric-format-namespace-contract.json",
+            "sha256": hashlib.sha256(
+                (
+                    ROOT / "spec/evidence/numeric-format-namespace-contract.json"
+                ).read_bytes()
+            ).hexdigest(),
+            "status": "namespace-and-carrier-inventory-closed-format-rules-open",
+            "acceptance_record": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+            "tile_data_type_count": 19,
+            "tile_storage_width_counts": {
+                "4": 4,
+                "8": 5,
+                "16": 4,
+                "32": 3,
+                "64": 3,
+            },
+            "scalar_source_mapped_count": 2,
+            "scalar_source_reserved_count": 2,
+            "scalar_floating_destination_mapped_count": 15,
+            "scalar_floating_destination_reserved_count": 17,
+            "scalar_integer_destination_mapped_count": 15,
+            "scalar_integer_destination_reserved_count": 17,
+            "tma_talloc_mapped_count": 18,
+            "tma_talloc_reserved_count": 46,
+            "bundle_mapped_count": 18,
+            "bundle_reserved_count": 14,
+            "four_bit_type_count": 4,
+            "open_residual_count": 8,
+            "pd02_complete": False,
+        },
+        "numeric profile proposal format namespace checkpoint drift",
     )
     require(
         numeric_profile_proposals["scalar_flag_contract"]
@@ -7055,6 +7380,10 @@ def main() -> int:
         and "scripts/generate-numeric-rounding-selector-contract" in s5_t2["evidence"]
         and "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md"
         in s5_t2["evidence"]
+        and "spec/evidence/numeric-format-namespace-contract.json" in s5_t2["evidence"]
+        and "scripts/generate-numeric-format-namespace-contract" in s5_t2["evidence"]
+        and "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md"
+        in s5_t2["evidence"]
         and next(gap for gap in s5_t2["gaps"] if gap["id"] == "S5-T2-G1")[
             "classification"
         ]
@@ -7121,6 +7450,23 @@ def main() -> int:
             and "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md"
             in requirements_by_id[requirement_id]["model"],
             f"numeric rounding selector checkpoint is not traceable from {requirement_id}",
+        )
+    for requirement_id in (
+        "PTO-REQ-PROFILE-001",
+        "PTO-REQ-SCALAR-FP-001",
+        "PTO-REQ-BUNDLE-STATE-001",
+        "PTO-REQ-TMA-001",
+        "PTO-REQ-TILE-LEGALITY-001",
+        "PTO-REQ-CLOSURE-001",
+    ):
+        require(
+            "spec/evidence/numeric-format-namespace-contract.json"
+            in requirements_by_id[requirement_id]["model"]
+            and "scripts/generate-numeric-format-namespace-contract"
+            in requirements_by_id[requirement_id]["model"]
+            and "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md"
+            in requirements_by_id[requirement_id]["model"],
+            f"numeric format namespace checkpoint is not traceable from {requirement_id}",
         )
     require(
         "spec/evidence/numeric-rounding-selector-contract.json"

@@ -1919,6 +1919,23 @@ end;
 
 func TestScalarFloating()
 begin
+    assert ScalarFPSourceTypeCode('00') == '00000';
+    assert ScalarFPSourceTypeCode('01') == '00001';
+    assert ScalarFPSourceTypeCode('10') == '11111';
+    assert ScalarFPSourceTypeCode('11') == '11111';
+    assert ScalarSignedIntegerSourceTypeCode('00') == '01000';
+    assert ScalarSignedIntegerSourceTypeCode('01') == '01001';
+    assert ScalarUnsignedIntegerSourceTypeCode('00') == '00000';
+    assert ScalarUnsignedIntegerSourceTypeCode('01') == '00001';
+    assert ScalarFPTypeCodeSupported(Zeros{5});
+    assert ScalarFPTypeCodeSupported(Zeros{5} + 14);
+    assert !ScalarFPTypeCodeSupported(Zeros{5} + 15);
+    assert !ScalarFPTypeCodeSupported(Ones{5});
+    assert ScalarIntegerTypeCodeSupported(Zeros{5});
+    assert ScalarIntegerTypeCodeSupported(Zeros{5} + 14);
+    assert !ScalarIntegerTypeCodeSupported(Zeros{5} + 15);
+    assert !ScalarIntegerTypeCodeSupported(Ones{5});
+
     assert FloatingBinary(FloatingBinary_ADD, 1.5, 2.25) == 3.75;
     assert FloatingBinary(FloatingBinary_MUL, -2.0, 4.0) == -8.0;
     assert FloatingCompare(FloatingCompare_LT, -1.0, 0.0);

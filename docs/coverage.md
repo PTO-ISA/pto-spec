@@ -104,6 +104,13 @@ scalar codes, five fixed overrides, eight bundle codes, four external selector
 classes, 18 domains, 102 operations, and 25 hooks. All domain rounding and
 saturation-order rules remain open, so this checkpoint does not increment the
 accepted-decision count or change the M4 floor.
+The generated `numeric-format-namespace-contract.json` ledger and ADR 0040
+close the structural namespace portion of PD-02. Five code spaces remain
+distinct; all 19 raw-carrier widths, every mapped/reserved code, and all four
+packed 4-bit low/high nibble cases are executable invariants. Eight residuals
+retain the bit-exact floating-format, exceptional-value, operation/type/profile
+legality, target-availability, and conformance-vector work. PD-02, S5-T2, and
+the M4 floor therefore remain unchanged.
 
 Release traceability is independently fail-closed. The generated
 `spec/evidence/release-traceability-readiness.json` ledger assigns requirement,
