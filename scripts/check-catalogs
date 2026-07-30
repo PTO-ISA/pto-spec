@@ -655,6 +655,7 @@ def main() -> int:
     command = load("spec/catalog/command-forms.json")
     system_registers = load("spec/catalog/system-registers.json")
     tile = load("spec/catalog/tile-operations.json")
+    numeric_profile_identities = load("spec/catalog/numeric-profile-identities.json")
     reconciliation = load("spec/evidence/public-source-reconciliation.json")
     scalar_effect_closure = load("spec/evidence/scalar-effect-closure.json")
     scalar_agu_totality = load("spec/evidence/scalar-agu-totality.json")
@@ -763,7 +764,7 @@ def main() -> int:
     )
     require(
         specification["maturity"]["numeric_profile_decisions"]
-        == "four-identities-twelve-decisions-twenty-domains-proposed-stage-S5-T2-A-acceptance-open",
+        == "four-identities-and-five-selection-rules-closed-stage-S5-T2-A1-results-open",
         "numeric profile metadata must distinguish complete proposals from open acceptance",
     )
     require(
@@ -5198,7 +5199,7 @@ def main() -> int:
         and "release-gate-readiness.json" in readme_body
         and "release-gate-readiness.json" in coverage_body
         and "| `PD-12` |" in numeric_profile_decision_body
-        and "No target profile identity, question disposition, or domain rule has been\n  accepted."
+        and "no question or domain result rule is accepted. Their\n  acceptance-record fields remain null."
         in numeric_profile_decision_body
         and "| **Total** | **28** | **31** |" in maturity_plan_body
         and "| **Total** | **28** | **31** |" in maturity_index_body
@@ -5233,6 +5234,10 @@ def main() -> int:
         and "spec/evidence/numeric-profile-decision-proposals.json"
         in closure_requirement["model"]
         and "scripts/generate-numeric-profile-decision-proposals"
+        in closure_requirement["model"]
+        and "spec/catalog/numeric-profile-identities.json"
+        in closure_requirement["model"]
+        and "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
         in closure_requirement["model"]
         and "spec/evidence/release-traceability-readiness.json"
         in closure_requirement["model"]
@@ -5959,6 +5964,8 @@ def main() -> int:
             "policy",
             "profile_decision_inputs",
             "profile_decision_proposals",
+            "profile_identity_catalog",
+            "identity_framework",
             "schema_version",
             "source_inventory",
             "status",
@@ -5977,7 +5984,18 @@ def main() -> int:
         and numeric_readiness["profile_decision_inputs"]
         == "spec/evidence/numeric-profile-decision-inputs.json"
         and numeric_readiness["profile_decision_proposals"]
-        == "spec/evidence/numeric-profile-decision-proposals.json",
+        == "spec/evidence/numeric-profile-decision-proposals.json"
+        and numeric_readiness["profile_identity_catalog"]
+        == "spec/catalog/numeric-profile-identities.json"
+        and numeric_readiness["identity_framework"]
+        == {
+            "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+            "accepted_domain_rule_count": 0,
+            "accepted_identity_count": 4,
+            "accepted_selection_rule_count": 5,
+            "result_decision_count": 0,
+            "status": "closed:S5-T2-A1",
+        },
         "numeric-conformance readiness identity or status drift",
     )
     require(
@@ -5993,20 +6011,23 @@ def main() -> int:
         "numeric-conformance readiness policy drift",
     )
     expected_numeric_sub_stages = {
-        "S5-T2-A": ("open", []),
-        "S5-T2-B": ("waiting-on-prerequisite", ["S5-T2-A"]),
+        "S5-T2-A": ("in-progress", [], ["S5-T2-A1"]),
+        "S5-T2-B": ("waiting-on-prerequisite", ["S5-T2-A"], []),
         "S5-T2-C": (
             "waiting-on-prerequisite",
             ["S5-T2-A", "S5-T2-B"],
+            [],
         ),
         "S5-T2-D": (
             "waiting-on-prerequisite",
             ["S5-T2-B", "S5-T2-C"],
+            [],
         ),
-        "S5-T2-E": ("waiting-on-prerequisite", ["S5-T2-D"]),
+        "S5-T2-E": ("waiting-on-prerequisite", ["S5-T2-D"], []),
         "S5-T2-F": (
             "waiting-on-prerequisite",
             ["S5-T2-A", "S5-T2-B", "S5-T2-C", "S5-T2-D", "S5-T2-E"],
+            [],
         ),
     }
     numeric_sub_stages = numeric_readiness["sub_stages"]
@@ -6016,8 +6037,8 @@ def main() -> int:
     )
     for row in numeric_sub_stages:
         require(
-            set(row) == {"blocked_by", "id", "status", "target"}
-            and (row["status"], row["blocked_by"])
+            set(row) == {"blocked_by", "closed_checkpoints", "id", "status", "target"}
+            and (row["status"], row["blocked_by"], row["closed_checkpoints"])
             == expected_numeric_sub_stages[row["id"]]
             and isinstance(row["target"], str)
             and row["target"],
@@ -6108,6 +6129,8 @@ def main() -> int:
     require(
         numeric_readiness["summary"]
         == {
+            "accepted_configuration_identity_count": 4,
+            "accepted_selection_framework_rule_count": 5,
             "contract_domain_count": 20,
             "differential_result_count": 0,
             "hook_count": 29,
@@ -6143,7 +6166,7 @@ def main() -> int:
         numeric_profile_decisions["schema_version"] == 1
         and numeric_profile_decisions["target"] == "S5-T2-A"
         and numeric_profile_decisions["status"]
-        == "decision-inputs-closed-profile-decisions-open"
+        == "decision-inputs-and-identities-closed-profile-decisions-open"
         and numeric_profile_decisions["public_repository"]
         == reconciliation["public_repository"]
         and numeric_profile_decisions["public_commit"]
@@ -6173,7 +6196,11 @@ def main() -> int:
             set(row) == {"id", "role", "status"}
             and isinstance(row["role"], str)
             and row["role"]
-            and row["status"] in {"identity-and-rules-required", "not-an-oracle"},
+            and row["status"]
+            in {
+                "identity-accepted-rules-required",
+                "identity-accepted-observation-schema-required-not-an-oracle",
+            },
             f"numeric profile partition input drift for {row.get('id', '<unknown>')}",
         )
 
@@ -6321,7 +6348,7 @@ def main() -> int:
             "numeric_domain_count": 20,
             "open_decision_question_count": 12,
             "open_numeric_domain_count": 20,
-            "profile_identity_count": 0,
+            "profile_identity_count": 4,
             "public_contract_source_count": 3,
             "selected_profile_rule_count": 0,
             "source_count": 24,
@@ -6329,10 +6356,99 @@ def main() -> int:
         "numeric profile decision-input summary drift",
     )
     require(
+        set(numeric_profile_identities)
+        == {
+            "active_reference_profile",
+            "identities",
+            "policy",
+            "schema_version",
+            "status",
+            "summary",
+        }
+        and numeric_profile_identities["schema_version"] == 1
+        and numeric_profile_identities["status"]
+        == "identity-framework-closed-rules-open"
+        and numeric_profile_identities["active_reference_profile"] == "pto-v0"
+        and set(numeric_profile_identities["policy"])
+        == {
+            "authority",
+            "bounded_variation",
+            "cpu_observation",
+            "support_boundary",
+            "unknown_selection",
+        }
+        and all(numeric_profile_identities["policy"].values()),
+        "numeric profile identity catalog schema or policy drift",
+    )
+    identity_rows = numeric_profile_identities["identities"]
+    identity_rows_by_partition = {row["partition_id"]: row for row in identity_rows}
+    require(
+        len(identity_rows_by_partition) == len(identity_rows) == 4
+        and list(identity_rows_by_partition)
+        == ["portable-numeric", "cpu-observation", "a2a3-target", "a5-target"]
+        and [row["id"] for row in identity_rows]
+        == [
+            "pto-numeric-v1",
+            "pto-cpu-observation-v1",
+            "pto-a2a3-numeric-v1",
+            "pto-a5-numeric-v1",
+        ]
+        and [row["kind"] for row in identity_rows]
+        == [
+            "portable-numeric-contract",
+            "observation-only",
+            "target-numeric-profile",
+            "target-numeric-profile",
+        ]
+        and all(
+            set(row)
+            == {
+                "acceptance_record",
+                "id",
+                "kind",
+                "normative_identity",
+                "partition_id",
+                "relation_to_pto_v0",
+                "role",
+                "rule_status",
+                "selection",
+                "source_ids",
+            }
+            and row["acceptance_record"]
+            == "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+            and (ROOT / row["acceptance_record"]).is_file()
+            and row["source_ids"]
+            and set(row["source_ids"]) <= set(profile_sources_by_id)
+            and row["role"]
+            and row["selection"]
+            and row["relation_to_pto_v0"]
+            and row["rule_status"]
+            in {"decision-required", "observation-schema-required"}
+            for row in identity_rows
+        )
+        and identity_rows[1]["normative_identity"] is False
+        and all(
+            row["normative_identity"] is True
+            for row in identity_rows[0:1] + identity_rows[2:]
+        )
+        and numeric_profile_identities["summary"]
+        == {
+            "accepted_identity_count": 4,
+            "complete_rule_count": 0,
+            "identity_count": 4,
+            "observation_only_count": 1,
+            "portable_contract_count": 1,
+            "target_profile_count": 2,
+        },
+        "numeric profile identity catalog membership or acceptance drift",
+    )
+    require(
         set(numeric_profile_proposals)
         == {
             "decision_proposals",
             "domain_proposals",
+            "framework_acceptance",
+            "identity_catalog",
             "input",
             "policy",
             "profile_hooks",
@@ -6343,7 +6459,7 @@ def main() -> int:
             "summary",
             "target",
         }
-        and numeric_profile_proposals["schema_version"] == 1
+        and numeric_profile_proposals["schema_version"] == 2
         and numeric_profile_proposals["target"] == "S5-T2-A"
         and numeric_profile_proposals["status"] == "proposal-complete-decisions-open",
         "numeric profile proposal identity or schema drift",
@@ -6365,10 +6481,14 @@ def main() -> int:
             "pto-a5-numeric-v1",
         ]
         and all(
-            row["isa_profile"] == "pto-v0"
-            and row["status"] == "review-required"
-            and row["acceptance_record"] is None
-            for row in proposed_profiles
+            row["kind"] == identity_rows[index]["kind"]
+            and row["normative"] == identity_rows[index]["normative_identity"]
+            and row["selection"] == identity_rows[index]["selection"]
+            and row["relation_to_pto_v0"] == identity_rows[index]["relation_to_pto_v0"]
+            and row["rule_status"] == identity_rows[index]["rule_status"]
+            and row["status"] == "identity-accepted-rules-open"
+            and row["acceptance_record"] == identity_rows[index]["acceptance_record"]
+            for index, row in enumerate(proposed_profiles)
         )
         and proposed_profiles[1]["normative"] is False
         and all(
@@ -6376,6 +6496,33 @@ def main() -> int:
             for row in proposed_profiles[0:1] + proposed_profiles[2:]
         ),
         "numeric profile identity proposal drift",
+    )
+    expected_framework_rules = {
+        "PF-01": "PTO specifications are authoritative and backend behavior is evidence only",
+        "PF-02": "support restriction is distinct from result semantics",
+        "PF-03": "delegated numeric variation is named, visible, and bounded",
+        "PF-04": "unknown or missing numeric selections reject before effects",
+        "PF-05": "CPU observation is neither architecture nor an independent oracle",
+    }
+    require(
+        numeric_profile_proposals["identity_catalog"]["path"]
+        == "spec/catalog/numeric-profile-identities.json"
+        and numeric_profile_proposals["identity_catalog"]["status"]
+        == "identity-framework-closed-rules-open"
+        and numeric_profile_proposals["identity_catalog"]["acceptance_record"]
+        == "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+        and len(numeric_profile_proposals["identity_catalog"]["sha256"]) == 64
+        and [row["id"] for row in numeric_profile_proposals["framework_acceptance"]]
+        == list(expected_framework_rules)
+        and all(
+            set(row) == {"acceptance_record", "id", "rule", "status"}
+            and row["rule"] == expected_framework_rules[row["id"]]
+            and row["status"] == "accepted"
+            and row["acceptance_record"]
+            == "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+            for row in numeric_profile_proposals["framework_acceptance"]
+        ),
+        "numeric profile framework acceptance drift",
     )
     proposal_decisions_by_id = {
         row["id"]: row for row in numeric_profile_proposals["decision_proposals"]
@@ -6424,16 +6571,33 @@ def main() -> int:
         numeric_profile_proposals["profile_hooks"]
         == sorted(expected_numeric_hook_names)
         and [row["id"] for row in numeric_profile_proposals["promotion_residuals"]]
-        == ["S5-T2-A1", "S5-T2-A2", "S5-T2-B", "S5-T2-C", "S5-T2-D", "S5-T2-E"]
+        == [
+            "S5-T2-A1",
+            "S5-T2-A2",
+            "S5-T2-A3",
+            "S5-T2-B",
+            "S5-T2-C",
+            "S5-T2-D",
+            "S5-T2-E",
+        ]
+        and numeric_profile_proposals["promotion_residuals"][0]
+        == {
+            "current": 9,
+            "id": "S5-T2-A1",
+            "required": 9,
+            "status": "closed",
+            "target": "accept all numeric configuration identities and selection-framework rules",
+        }
         and all(
-            row["current"] == 0 and row["required"] > 0
-            for row in numeric_profile_proposals["promotion_residuals"]
+            row["current"] == 0 and row["required"] > 0 and row["status"] == "open"
+            for row in numeric_profile_proposals["promotion_residuals"][1:]
         )
         and numeric_profile_proposals["summary"]
         == {
             "accepted_decision_count": 0,
             "accepted_domain_rule_count": 0,
-            "accepted_profile_count": 0,
+            "accepted_framework_rule_count": 5,
+            "accepted_profile_identity_count": 4,
             "can_close_s5_t2": False,
             "can_close_s5_t2_a": False,
             "decision_proposal_count": 12,
@@ -6491,6 +6655,13 @@ def main() -> int:
             and "scripts/generate-numeric-profile-decision-proposals"
             in requirements_by_id[requirement_id]["model"],
             f"numeric profile decision proposals are not traceable from {requirement_id}",
+        )
+        require(
+            "spec/catalog/numeric-profile-identities.json"
+            in requirements_by_id[requirement_id]["model"]
+            and "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+            in requirements_by_id[requirement_id]["model"],
+            f"numeric profile identity framework is not traceable from {requirement_id}",
         )
     require(
         targets_by_id["S5-T1"]["status"] == "closed"

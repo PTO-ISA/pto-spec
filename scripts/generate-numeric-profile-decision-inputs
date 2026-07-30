@@ -662,7 +662,7 @@ def generate() -> dict[str, Any]:
     return {
         "schema_version": 1,
         "target": "S5-T2-A",
-        "status": "decision-inputs-closed-profile-decisions-open",
+        "status": "decision-inputs-and-identities-closed-profile-decisions-open",
         "public_repository": PUBLIC_REPOSITORY,
         "public_commit": PUBLIC_COMMIT,
         "policy": {
@@ -676,22 +676,22 @@ def generate() -> dict[str, Any]:
             {
                 "id": "portable-numeric",
                 "role": "portable result contract",
-                "status": "identity-and-rules-required",
+                "status": "identity-accepted-rules-required",
             },
             {
                 "id": "cpu-observation",
                 "role": "implementation-under-test observation only",
-                "status": "not-an-oracle",
+                "status": "identity-accepted-observation-schema-required-not-an-oracle",
             },
             {
                 "id": "a2a3-target",
                 "role": "named target profile candidate",
-                "status": "identity-and-rules-required",
+                "status": "identity-accepted-rules-required",
             },
             {
                 "id": "a5-target",
                 "role": "named target profile candidate",
-                "status": "identity-and-rules-required",
+                "status": "identity-accepted-rules-required",
             },
         ],
         "sources": list(SOURCES),
@@ -710,7 +710,7 @@ def generate() -> dict[str, Any]:
             "numeric_domain_count": len(domain_matrix),
             "open_numeric_domain_count": len(domain_matrix),
             "selected_profile_rule_count": 0,
-            "profile_identity_count": 0,
+            "profile_identity_count": 4,
         },
     }
 

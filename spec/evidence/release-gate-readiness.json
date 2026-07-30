@@ -38,6 +38,10 @@
       "sha256": "0768e306a54a5512018450567bddead28d5cf140956589340b249bd4accdf08a"
     },
     {
+      "path": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+      "sha256": "e4b8ec913ebe63322fca7985e2421b7e8cb894c06ed73c652a6179d63121c63b"
+    },
+    {
       "path": "scripts/check-asl-test-shards",
       "sha256": "7ab9174587cc29b39f676ced8ca8f5b3f433d4171c992a20f86fc2598034c3b1"
     },
@@ -47,7 +51,7 @@
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "87f1b9ce81ebe4bd7c3cab09b49647b2d05ae14f212518c2edaf0a5bfef1e6b6"
+      "sha256": "55ca0b1efc2a1055412fdf0d8723afdfc2fc56c3ef10c4b41e25db09e0c9ecd4"
     },
     {
       "path": "scripts/check-publication-hygiene",
@@ -55,7 +59,7 @@
     },
     {
       "path": "scripts/check-repository",
-      "sha256": "621175585e4402bf559fbc508cf30067fbe27b7deaac7aeb477dd2fca031bc61"
+      "sha256": "8700bc82f051c3c858c06382b91f22b98bd3989fcaf9e7ffeb6b6c62ce8bd7fd"
     },
     {
       "path": "scripts/check-toolchain",
@@ -63,19 +67,27 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "9c58db9eea0120dd8fdfd1a741acd6e8bfefefab5eea787a3c9248c402f5b5eb"
+      "sha256": "a170667a45ad21ac76394cc01280a18e0acb663a9f4b7b5871079cbdda2db1f6"
+    },
+    {
+      "path": "spec/evidence/numeric-profile-decision-proposals.json",
+      "sha256": "8b3da6cb0ee5ef997da388d62806f48c4dc60277de529f04853c68935a3f5dc2"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "71d7e6d1575f8672cbca13f7f25316ff9af2e1d87465369d332f6d833825fe66"
+      "sha256": "b82a7b936bf39af3b9acaf6fd4be19a83b1f7ec5ccee6b13a5592227eb67f0ee"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "f0740865ac14aa4f69a473e78fc1086dcf68608bcb971fb045e36116739f37f4"
+      "sha256": "17cb66d9e5e6228b9803776bc9a61760791afe0eb153810963a8671b3c443650"
+    },
+    {
+      "path": "spec/catalog/numeric-profile-identities.json",
+      "sha256": "f2bf1bcfa9e6ce1006132ac6d9aec4a8c698990a20eeb7736d361d62ed6477ed"
     },
     {
       "path": "specification.toml",
-      "sha256": "506d5eb9f6d252fbb331e0c127100c9b8caf5bdf28a2e3e649de1445c75874ea"
+      "sha256": "274a32a25e3042fa8d949327e583454d9542c47a2561e6133c3d2f1546fabd63"
     }
   ],
   "sub_stages": [

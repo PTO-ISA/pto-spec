@@ -23,6 +23,7 @@ SOURCE_PATHS = (
     "GOVERNANCE.md",
     "Makefile",
     "docs/review-checklist.md",
+    "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
     "scripts/check-asl-test-shards",
     "scripts/check-binary-closure",
     "scripts/check-catalogs",
@@ -30,8 +31,10 @@ SOURCE_PATHS = (
     "scripts/check-repository",
     "scripts/check-toolchain",
     "spec/evidence/maturity-closure.json",
+    "spec/evidence/numeric-profile-decision-proposals.json",
     "spec/evidence/release-traceability-readiness.json",
     "spec/requirements.json",
+    "spec/catalog/numeric-profile-identities.json",
     "specification.toml",
 )
 

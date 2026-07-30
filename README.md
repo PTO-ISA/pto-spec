@@ -25,9 +25,10 @@ The generated `spec/evidence/numeric-conformance-readiness.json` ledger
 partitions that work across six parallel lanes and keeps every unavailable
 profile, oracle, vector, result, and review identity explicit.
 The generated `spec/evidence/numeric-profile-decision-proposals.json` ledger
-then proposes four versioned profile identities, dispositions for all 12 open
-numeric decisions, and mappings for all 20 domains. It is deliberately
-non-authoritative: every acceptance field is null and S5-T2 remains open.
+imports four versioned identities and five selection rules accepted by ADR
+0037, then proposes dispositions for all 12 open numeric decisions and mappings
+for all 20 domains. Every result-decision and domain-rule acceptance field is
+null, so S5-T2 remains open.
 The executable-model comparison has an exhaustive 701-row disposition matrix
 and a clean content-addressed snapshot whose generation, validation,
 documentation, Sail parser, and Sail C-backend gates all pass.

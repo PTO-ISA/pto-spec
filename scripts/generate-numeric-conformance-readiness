@@ -12,6 +12,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 NUMERIC_CONTRACTS = ROOT / "spec/evidence/numeric-contracts.json"
+NUMERIC_PROFILE_IDENTITIES = ROOT / "spec/catalog/numeric-profile-identities.json"
 DEFAULT_OUTPUT = ROOT / "spec/evidence/numeric-conformance-readiness.json"
 
 
@@ -191,6 +192,7 @@ def require(condition: bool, message: str) -> None:
 
 def build_evidence() -> dict[str, Any]:
     inventory = load_json(NUMERIC_CONTRACTS)
+    identity_catalog = load_json(NUMERIC_PROFILE_IDENTITIES)
     require(
         inventory.get("status") == "closed-inventory-and-ownership",
         "S5-T1 numeric inventory is not closed",
@@ -198,6 +200,12 @@ def build_evidence() -> dict[str, Any]:
     require(
         inventory.get("summary", {}).get("target_conformance_status") == "open:S5-T2",
         "numeric inventory no longer reports S5-T2 open",
+    )
+    require(
+        identity_catalog.get("status") == "identity-framework-closed-rules-open"
+        and identity_catalog.get("summary", {}).get("accepted_identity_count") == 4
+        and identity_catalog.get("summary", {}).get("complete_rule_count") == 0,
+        "numeric identity framework is not closed with result rules open",
     )
 
     domains = {row["id"]: row for row in inventory["contract_domains"]}
@@ -289,8 +297,17 @@ def build_evidence() -> dict[str, Any]:
         "target": "S5-T2",
         "status": "readiness-defined-conformance-open",
         "source_inventory": "spec/evidence/numeric-contracts.json",
+        "profile_identity_catalog": "spec/catalog/numeric-profile-identities.json",
         "profile_decision_inputs": "spec/evidence/numeric-profile-decision-inputs.json",
         "profile_decision_proposals": "spec/evidence/numeric-profile-decision-proposals.json",
+        "identity_framework": {
+            "status": "closed:S5-T2-A1",
+            "accepted_identity_count": 4,
+            "accepted_selection_rule_count": 5,
+            "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+            "result_decision_count": 0,
+            "accepted_domain_rule_count": 0,
+        },
         "policy": {
             "authority": "PTO-owned target profiles and accepted architecture decisions define PTO numeric semantics.",
             "active_reference_profile_role": "The active raw-carrier reference proves executable totality but is not a hardware or independent numeric oracle.",
@@ -301,39 +318,45 @@ def build_evidence() -> dict[str, Any]:
         "sub_stages": [
             {
                 "id": "S5-T2-A",
-                "status": "open",
-                "target": "name and version portable and target-specific numeric profiles",
+                "status": "in-progress",
+                "target": "accept all numeric result decisions and domain rules under the closed identity framework",
                 "blocked_by": [],
+                "closed_checkpoints": ["S5-T2-A1"],
             },
             {
                 "id": "S5-T2-B",
                 "status": "waiting-on-prerequisite",
                 "target": "qualify an independent versioned oracle for every lane",
                 "blocked_by": ["S5-T2-A"],
+                "closed_checkpoints": [],
             },
             {
                 "id": "S5-T2-C",
                 "status": "waiting-on-prerequisite",
                 "target": "publish deterministic linked vectors for every applicable numeric dimension",
                 "blocked_by": ["S5-T2-A", "S5-T2-B"],
+                "closed_checkpoints": [],
             },
             {
                 "id": "S5-T2-D",
                 "status": "waiting-on-prerequisite",
                 "target": "execute every lane and archive raw PTO and oracle results",
                 "blocked_by": ["S5-T2-B", "S5-T2-C"],
+                "closed_checkpoints": [],
             },
             {
                 "id": "S5-T2-E",
                 "status": "waiting-on-prerequisite",
                 "target": "classify and resolve every differential disposition",
                 "blocked_by": ["S5-T2-D"],
+                "closed_checkpoints": [],
             },
             {
                 "id": "S5-T2-F",
                 "status": "waiting-on-prerequisite",
                 "target": "reproduce, review, and promote the complete conformance package",
                 "blocked_by": ["S5-T2-A", "S5-T2-B", "S5-T2-C", "S5-T2-D", "S5-T2-E"],
+                "closed_checkpoints": [],
             },
         ],
         "blocking_gap_ids": [
@@ -346,6 +369,8 @@ def build_evidence() -> dict[str, Any]:
         "lanes": lanes,
         "summary": {
             **actual_counts,
+            "accepted_configuration_identity_count": 4,
+            "accepted_selection_framework_rule_count": 5,
             "profile_identity_count": 0,
             "qualified_oracle_count": 0,
             "vector_manifest_count": 0,

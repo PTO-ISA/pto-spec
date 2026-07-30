@@ -13,51 +13,8 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 INPUT = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
 READINESS = ROOT / "spec/evidence/numeric-conformance-readiness.json"
+IDENTITY_CATALOG = ROOT / "spec/catalog/numeric-profile-identities.json"
 OUTPUT = ROOT / "spec/evidence/numeric-profile-decision-proposals.json"
-
-
-PROFILE_PROPOSALS: tuple[dict[str, Any], ...] = (
-    {
-        "partition_id": "portable-numeric",
-        "proposed_id": "pto-numeric-v1",
-        "isa_profile": "pto-v0",
-        "role": "portable result and rejection contract for every accepted operation/type tuple",
-        "normative": True,
-        "selection": "implicit for every PTO program; a target profile may only narrow support",
-        "status": "review-required",
-        "acceptance_record": None,
-    },
-    {
-        "partition_id": "cpu-observation",
-        "proposed_id": "pto-cpu-observation-v1",
-        "isa_profile": "pto-v0",
-        "role": "non-normative implementation-under-test observations and developer diagnostics",
-        "normative": False,
-        "selection": "never selected as an architectural oracle or target result contract",
-        "status": "review-required",
-        "acceptance_record": None,
-    },
-    {
-        "partition_id": "a2a3-target",
-        "proposed_id": "pto-a2a3-numeric-v1",
-        "isa_profile": "pto-v0",
-        "role": "A2A3 support restrictions and explicitly bounded numeric variation points",
-        "normative": True,
-        "selection": "named target profile plus a complete operation/type legality and rule table",
-        "status": "review-required",
-        "acceptance_record": None,
-    },
-    {
-        "partition_id": "a5-target",
-        "proposed_id": "pto-a5-numeric-v1",
-        "isa_profile": "pto-v0",
-        "role": "A5 support restrictions and explicitly bounded numeric variation points",
-        "normative": True,
-        "selection": "named target profile plus a complete operation/type legality and rule table",
-        "status": "review-required",
-        "acceptance_record": None,
-    },
-)
 
 
 PROPOSALS: dict[str, dict[str, Any]] = {
@@ -69,8 +26,8 @@ PROPOSALS: dict[str, dict[str, Any]] = {
         ],
         "proposed_rule": "Legal PTO operations use pto-numeric-v1 results. A2A3 and A5 may reject documented operation/type tuples; any accepted target-dependent result must be selected by a named profile and bounded rule. CPU observations are never normative.",
         "open_items": [
-            "accept the four proposed identities",
             "complete every domain operation/type applicability table",
+            "accept one portable or target disposition for every supported and rejected tuple",
         ],
     },
     "PD-02": {
@@ -229,9 +186,11 @@ def require(condition: bool, message: str) -> None:
 def generate() -> dict[str, Any]:
     inputs = load(INPUT)
     readiness = load(READINESS)
+    identity_catalog = load(IDENTITY_CATALOG)
     require(inputs["target"] == "S5-T2-A", "decision-input target drift")
     require(
-        inputs["status"] == "decision-inputs-closed-profile-decisions-open",
+        inputs["status"]
+        == "decision-inputs-and-identities-closed-profile-decisions-open",
         "decision-input status drift",
     )
     questions = inputs["decision_questions"]
@@ -240,12 +199,33 @@ def generate() -> dict[str, Any]:
         {row["id"] for row in questions} == set(PROPOSALS),
         "question proposal coverage drift",
     )
+    require(identity_catalog["schema_version"] == 1, "identity catalog schema drift")
     require(
-        len(PROFILE_PROPOSALS) == len(inputs["profile_partition_inputs"]),
+        identity_catalog["status"] == "identity-framework-closed-rules-open",
+        "identity framework status drift",
+    )
+    profile_proposals = [
+        {
+            "partition_id": row["partition_id"],
+            "proposed_id": row["id"],
+            "kind": row["kind"],
+            "role": row["role"],
+            "normative": row["normative_identity"],
+            "selection": row["selection"],
+            "relation_to_pto_v0": row["relation_to_pto_v0"],
+            "rule_status": row["rule_status"],
+            "source_ids": row["source_ids"],
+            "status": "identity-accepted-rules-open",
+            "acceptance_record": row["acceptance_record"],
+        }
+        for row in identity_catalog["identities"]
+    ]
+    require(
+        len(profile_proposals) == len(inputs["profile_partition_inputs"]),
         "profile partition count drift",
     )
     require(
-        {row["partition_id"] for row in PROFILE_PROPOSALS}
+        {row["partition_id"] for row in profile_proposals}
         == {row["id"] for row in inputs["profile_partition_inputs"]},
         "profile partition identity drift",
     )
@@ -279,7 +259,7 @@ def generate() -> dict[str, Any]:
             }
         )
 
-    proposed_profile_ids = [row["proposed_id"] for row in PROFILE_PROPOSALS]
+    proposed_profile_ids = [row["proposed_id"] for row in profile_proposals]
     domain_proposals = []
     for domain in domains:
         require(
@@ -321,7 +301,7 @@ def generate() -> dict[str, Any]:
     )
 
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "target": "S5-T2-A",
         "status": "proposal-complete-decisions-open",
         "input": {
@@ -330,58 +310,111 @@ def generate() -> dict[str, Any]:
             "public_repository": inputs["public_repository"],
             "public_commit": inputs["public_commit"],
         },
+        "identity_catalog": {
+            "path": "spec/catalog/numeric-profile-identities.json",
+            "sha256": hashlib.sha256(IDENTITY_CATALOG.read_bytes()).hexdigest(),
+            "status": identity_catalog["status"],
+            "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+        },
         "policy": {
-            "proposal_not_authority": "This package proposes reviewable dispositions; it does not accept a numeric rule or change PTO ASL semantics.",
-            "support_boundary": "A target profile may narrow support. An accepted operation has portable semantics unless an accepted named rule bounds a visible variation point.",
-            "cpu_boundary": "CPU results are observations from an implementation under test, never an independent oracle.",
-            "fail_closed": "Unknown profiles, modes, formats, operation/type tuples, and missing numeric rules reject before architectural effects.",
+            "proposal_not_authority": "The identity and bounded-variation framework is accepted; question and domain proposals remain review inputs and do not select numeric results.",
+            "support_boundary": identity_catalog["policy"]["support_boundary"],
+            "bounded_variation": identity_catalog["policy"]["bounded_variation"],
+            "cpu_boundary": identity_catalog["policy"]["cpu_observation"],
+            "fail_closed": identity_catalog["policy"]["unknown_selection"],
             "promotion": "S5-T2-A remains open until every proposal has an accepted PTO decision record and every domain has an accepted rule.",
         },
-        "profile_proposals": list(PROFILE_PROPOSALS),
+        "framework_acceptance": [
+            {
+                "id": "PF-01",
+                "rule": "PTO specifications are authoritative and backend behavior is evidence only",
+                "status": "accepted",
+                "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+            },
+            {
+                "id": "PF-02",
+                "rule": "support restriction is distinct from result semantics",
+                "status": "accepted",
+                "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+            },
+            {
+                "id": "PF-03",
+                "rule": "delegated numeric variation is named, visible, and bounded",
+                "status": "accepted",
+                "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+            },
+            {
+                "id": "PF-04",
+                "rule": "unknown or missing numeric selections reject before effects",
+                "status": "accepted",
+                "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+            },
+            {
+                "id": "PF-05",
+                "rule": "CPU observation is neither architecture nor an independent oracle",
+                "status": "accepted",
+                "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+            },
+        ],
+        "profile_proposals": profile_proposals,
         "profile_hooks": profile_hooks,
         "decision_proposals": decision_proposals,
         "domain_proposals": domain_proposals,
         "promotion_residuals": [
             {
                 "id": "S5-T2-A1",
-                "target": "accept all profile identities and all 12 decision records",
-                "current": 0,
-                "required": 16,
+                "target": "accept all numeric configuration identities and selection-framework rules",
+                "current": 9,
+                "required": 9,
+                "status": "closed",
             },
             {
                 "id": "S5-T2-A2",
+                "target": "accept all numeric decision records",
+                "current": 0,
+                "required": 12,
+                "status": "open",
+            },
+            {
+                "id": "S5-T2-A3",
                 "target": "populate accepted rules for every numeric domain",
                 "current": 0,
                 "required": 20,
+                "status": "open",
             },
             {
                 "id": "S5-T2-B",
                 "target": "qualify an independent oracle for every conformance lane",
                 "current": 0,
                 "required": 6,
+                "status": "open",
             },
             {
                 "id": "S5-T2-C",
                 "target": "publish normal, boundary, exceptional, and adversarial vectors for every domain",
                 "current": 0,
                 "required": 20,
+                "status": "open",
             },
             {
                 "id": "S5-T2-D",
                 "target": "record local CPU plus independent A2A3 and A5 target results",
                 "current": 0,
                 "required": 60,
+                "status": "open",
             },
             {
                 "id": "S5-T2-E",
                 "target": "adjudicate every differential and obtain architecture/formal review",
                 "current": 0,
                 "required": 22,
+                "status": "open",
             },
         ],
         "summary": {
-            "profile_proposal_count": len(PROFILE_PROPOSALS),
-            "accepted_profile_count": 0,
+            "profile_proposal_count": len(profile_proposals),
+            "accepted_profile_identity_count": len(profile_proposals),
+            "accepted_framework_rule_count": 5,
             "decision_proposal_count": len(decision_proposals),
             "accepted_decision_count": 0,
             "numeric_domain_count": len(domain_proposals),

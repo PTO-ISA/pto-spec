@@ -1,60 +1,125 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": "S5-T2-A",
   "status": "proposal-complete-decisions-open",
   "input": {
     "path": "spec/evidence/numeric-profile-decision-inputs.json",
-    "sha256": "08553954e5e95715bd6389fbca27ff578602f85e70367d86ee550a0aedea4033",
+    "sha256": "94865e7c29c2a14a63627390d51cc6c3b698a91700d6ce71785b2928bb3bd39f",
     "public_repository": "https://github.com/hw-native-sys/pto-isa",
     "public_commit": "712cbe9f23df5d5362be5e8327599f4285317473"
   },
+  "identity_catalog": {
+    "path": "spec/catalog/numeric-profile-identities.json",
+    "sha256": "f2bf1bcfa9e6ce1006132ac6d9aec4a8c698990a20eeb7736d361d62ed6477ed",
+    "status": "identity-framework-closed-rules-open",
+    "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+  },
   "policy": {
-    "proposal_not_authority": "This package proposes reviewable dispositions; it does not accept a numeric rule or change PTO ASL semantics.",
-    "support_boundary": "A target profile may narrow support. An accepted operation has portable semantics unless an accepted named rule bounds a visible variation point.",
-    "cpu_boundary": "CPU results are observations from an implementation under test, never an independent oracle.",
-    "fail_closed": "Unknown profiles, modes, formats, operation/type tuples, and missing numeric rules reject before architectural effects.",
+    "proposal_not_authority": "The identity and bounded-variation framework is accepted; question and domain proposals remain review inputs and do not select numeric results.",
+    "support_boundary": "A target profile may reject an operation/type tuple, but it may not silently change the portable result of an accepted tuple.",
+    "bounded_variation": "A portable rule may delegate a result dimension only to a named target profile or visible numeric mode with a finite or mathematically testable allowed-result contract.",
+    "cpu_boundary": "CPU observations are implementation-under-test diagnostics and are never an architectural profile or independent oracle.",
+    "fail_closed": "Unknown identities, modes, formats, operation/type tuples, and missing delegated rules reject before architectural effects.",
     "promotion": "S5-T2-A remains open until every proposal has an accepted PTO decision record and every domain has an accepted rule."
   },
+  "framework_acceptance": [
+    {
+      "id": "PF-01",
+      "rule": "PTO specifications are authoritative and backend behavior is evidence only",
+      "status": "accepted",
+      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+    },
+    {
+      "id": "PF-02",
+      "rule": "support restriction is distinct from result semantics",
+      "status": "accepted",
+      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+    },
+    {
+      "id": "PF-03",
+      "rule": "delegated numeric variation is named, visible, and bounded",
+      "status": "accepted",
+      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+    },
+    {
+      "id": "PF-04",
+      "rule": "unknown or missing numeric selections reject before effects",
+      "status": "accepted",
+      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+    },
+    {
+      "id": "PF-05",
+      "rule": "CPU observation is neither architecture nor an independent oracle",
+      "status": "accepted",
+      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+    }
+  ],
   "profile_proposals": [
     {
       "partition_id": "portable-numeric",
       "proposed_id": "pto-numeric-v1",
-      "isa_profile": "pto-v0",
-      "role": "portable result and rejection contract for every accepted operation/type tuple",
+      "kind": "portable-numeric-contract",
+      "role": "Portable result, legality, and pre-effect rejection contract for accepted numeric operation/type tuples.",
       "normative": true,
-      "selection": "implicit for every PTO program; a target profile may only narrow support",
-      "status": "review-required",
-      "acceptance_record": null
+      "selection": "Applies to every PTO numeric operation; target profiles may only narrow support or implement an explicitly delegated bounded variation point.",
+      "relation_to_pto_v0": "Distinct from the deterministic pto-v0 raw-carrier implementation profile; it supplies the future target-conformance contract rather than changing pto-v0.",
+      "rule_status": "decision-required",
+      "source_ids": [
+        "public-portability-rules",
+        "public-target-profiles"
+      ],
+      "status": "identity-accepted-rules-open",
+      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
     },
     {
       "partition_id": "cpu-observation",
       "proposed_id": "pto-cpu-observation-v1",
-      "isa_profile": "pto-v0",
-      "role": "non-normative implementation-under-test observations and developer diagnostics",
+      "kind": "observation-only",
+      "role": "Versioned implementation-under-test observations and developer diagnostics.",
       "normative": false,
-      "selection": "never selected as an architectural oracle or target result contract",
-      "status": "review-required",
-      "acceptance_record": null
+      "selection": "Cannot be selected as an architectural numeric profile or independent conformance oracle.",
+      "relation_to_pto_v0": "May observe pto-v0 or a CPU backend but defines neither one.",
+      "rule_status": "observation-schema-required",
+      "source_ids": [
+        "public-portability-rules",
+        "public-target-profiles"
+      ],
+      "status": "identity-accepted-rules-open",
+      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
     },
     {
       "partition_id": "a2a3-target",
       "proposed_id": "pto-a2a3-numeric-v1",
-      "isa_profile": "pto-v0",
-      "role": "A2A3 support restrictions and explicitly bounded numeric variation points",
+      "kind": "target-numeric-profile",
+      "role": "A2A3 support restrictions and explicitly delegated bounded numeric rules.",
       "normative": true,
-      "selection": "named target profile plus a complete operation/type legality and rule table",
-      "status": "review-required",
-      "acceptance_record": null
+      "selection": "Requires a complete A2A3 operation/type legality matrix and one accepted result rule for every supported tuple.",
+      "relation_to_pto_v0": "Future alternative target profile distinct from pto-v0; pto-v0 raw-carrier results are not inherited as hardware arithmetic.",
+      "rule_status": "decision-required",
+      "source_ids": [
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "identity-accepted-rules-open",
+      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
     },
     {
       "partition_id": "a5-target",
       "proposed_id": "pto-a5-numeric-v1",
-      "isa_profile": "pto-v0",
-      "role": "A5 support restrictions and explicitly bounded numeric variation points",
+      "kind": "target-numeric-profile",
+      "role": "A5 support restrictions and explicitly delegated bounded numeric rules.",
       "normative": true,
-      "selection": "named target profile plus a complete operation/type legality and rule table",
-      "status": "review-required",
-      "acceptance_record": null
+      "selection": "Requires a complete A5 operation/type legality matrix and one accepted result rule for every supported tuple.",
+      "relation_to_pto_v0": "Future alternative target profile distinct from pto-v0; pto-v0 raw-carrier results are not inherited as hardware arithmetic.",
+      "rule_status": "decision-required",
+      "source_ids": [
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "identity-accepted-rules-open",
+      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
     }
   ],
   "profile_hooks": [
@@ -127,8 +192,8 @@
       ],
       "proposed_rule": "Legal PTO operations use pto-numeric-v1 results. A2A3 and A5 may reject documented operation/type tuples; any accepted target-dependent result must be selected by a named profile and bounded rule. CPU observations are never normative.",
       "open_items": [
-        "accept the four proposed identities",
-        "complete every domain operation/type applicability table"
+        "complete every domain operation/type applicability table",
+        "accept one portable or target disposition for every supported and rejected tuple"
       ],
       "acceptance_evidence": [
         "accepted profile taxonomy and version identifiers",
@@ -1426,44 +1491,58 @@
   "promotion_residuals": [
     {
       "id": "S5-T2-A1",
-      "target": "accept all profile identities and all 12 decision records",
-      "current": 0,
-      "required": 16
+      "target": "accept all numeric configuration identities and selection-framework rules",
+      "current": 9,
+      "required": 9,
+      "status": "closed"
     },
     {
       "id": "S5-T2-A2",
+      "target": "accept all numeric decision records",
+      "current": 0,
+      "required": 12,
+      "status": "open"
+    },
+    {
+      "id": "S5-T2-A3",
       "target": "populate accepted rules for every numeric domain",
       "current": 0,
-      "required": 20
+      "required": 20,
+      "status": "open"
     },
     {
       "id": "S5-T2-B",
       "target": "qualify an independent oracle for every conformance lane",
       "current": 0,
-      "required": 6
+      "required": 6,
+      "status": "open"
     },
     {
       "id": "S5-T2-C",
       "target": "publish normal, boundary, exceptional, and adversarial vectors for every domain",
       "current": 0,
-      "required": 20
+      "required": 20,
+      "status": "open"
     },
     {
       "id": "S5-T2-D",
       "target": "record local CPU plus independent A2A3 and A5 target results",
       "current": 0,
-      "required": 60
+      "required": 60,
+      "status": "open"
     },
     {
       "id": "S5-T2-E",
       "target": "adjudicate every differential and obtain architecture/formal review",
       "current": 0,
-      "required": 22
+      "required": 22,
+      "status": "open"
     }
   ],
   "summary": {
     "profile_proposal_count": 4,
-    "accepted_profile_count": 0,
+    "accepted_profile_identity_count": 4,
+    "accepted_framework_rule_count": 5,
     "decision_proposal_count": 12,
     "accepted_decision_count": 0,
     "numeric_domain_count": 20,

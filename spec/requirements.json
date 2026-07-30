@@ -36,6 +36,7 @@
     {
       "id": "PTO-REQ-PROFILE-001",
       "model": [
+        "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
         "asl/profiles/pto-v0.asl",
         "asl/scalar/system-registers.asl",
         "asl/state.asl",
@@ -51,6 +52,7 @@
         "spec/evidence/numeric-conformance-readiness.json",
         "spec/evidence/numeric-profile-decision-inputs.json",
         "spec/evidence/numeric-profile-decision-proposals.json",
+        "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-contracts.json",
         "spec/profile-hooks.json"
       ],
@@ -321,6 +323,7 @@
     {
       "id": "PTO-REQ-SCALAR-FP-001",
       "model": [
+        "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
         "asl/scalar/floating.asl",
         "asl/scalar/dispatch.asl",
         "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
@@ -331,6 +334,7 @@
         "spec/evidence/numeric-conformance-readiness.json",
         "spec/evidence/numeric-profile-decision-inputs.json",
         "spec/evidence/numeric-profile-decision-proposals.json",
+        "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-contracts.json",
         "spec/profile-hooks.json"
       ],
@@ -508,6 +512,7 @@
     {
       "id": "PTO-REQ-TEPL-001",
       "model": [
+        "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
         "asl/tile/elementwise.asl",
         "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
         "scripts/generate-numeric-conformance-readiness",
@@ -517,6 +522,7 @@
         "spec/evidence/numeric-conformance-readiness.json",
         "spec/evidence/numeric-profile-decision-inputs.json",
         "spec/evidence/numeric-profile-decision-proposals.json",
+        "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-contracts.json",
         "spec/profile-hooks.json"
       ],
@@ -530,6 +536,7 @@
     {
       "id": "PTO-REQ-TEPL-REDUCE-001",
       "model": [
+        "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
         "asl/tile/reduction.asl",
         "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
         "scripts/generate-numeric-conformance-readiness",
@@ -539,6 +546,7 @@
         "spec/evidence/numeric-conformance-readiness.json",
         "spec/evidence/numeric-profile-decision-inputs.json",
         "spec/evidence/numeric-profile-decision-proposals.json",
+        "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-contracts.json",
         "spec/profile-hooks.json"
       ],
@@ -552,6 +560,7 @@
     {
       "id": "PTO-REQ-TEPL-EXPAND-001",
       "model": [
+        "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
         "asl/tile/expansion.asl",
         "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
         "scripts/generate-numeric-conformance-readiness",
@@ -561,6 +570,7 @@
         "spec/evidence/numeric-conformance-readiness.json",
         "spec/evidence/numeric-profile-decision-inputs.json",
         "spec/evidence/numeric-profile-decision-proposals.json",
+        "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-contracts.json",
         "spec/profile-hooks.json"
       ],
@@ -588,6 +598,7 @@
     {
       "id": "PTO-REQ-TEPL-CONVERT-001",
       "model": [
+        "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
         "asl/tile/conversion.asl",
         "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
         "scripts/generate-numeric-conformance-readiness",
@@ -597,6 +608,7 @@
         "spec/evidence/numeric-conformance-readiness.json",
         "spec/evidence/numeric-profile-decision-inputs.json",
         "spec/evidence/numeric-profile-decision-proposals.json",
+        "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-contracts.json",
         "spec/profile-hooks.json"
       ],
@@ -624,6 +636,7 @@
     {
       "id": "PTO-REQ-TEPL-COMPLEX-001",
       "model": [
+        "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
         "asl/tile/complex.asl",
         "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
         "scripts/generate-numeric-conformance-readiness",
@@ -633,6 +646,7 @@
         "spec/evidence/numeric-conformance-readiness.json",
         "spec/evidence/numeric-profile-decision-inputs.json",
         "spec/evidence/numeric-profile-decision-proposals.json",
+        "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-contracts.json",
         "spec/profile-hooks.json"
       ],
@@ -662,6 +676,7 @@
     {
       "id": "PTO-REQ-CUBE-001",
       "model": [
+        "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
         "asl/tile/cube.asl",
         "asl/tile/legality.asl",
         "docs/architecture-decisions/0034-cube-raw-carrier-totality.md",
@@ -672,6 +687,7 @@
         "spec/evidence/numeric-conformance-readiness.json",
         "spec/evidence/numeric-profile-decision-inputs.json",
         "spec/evidence/numeric-profile-decision-proposals.json",
+        "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-contracts.json",
         "spec/profile-hooks.json"
       ],
@@ -796,6 +812,7 @@
     {
       "id": "PTO-REQ-CLOSURE-001",
       "model": [
+        "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
         "docs/normative-sources.md",
         "docs/coverage.md",
         "docs/maturity-bringup-plan.md",
@@ -818,6 +835,7 @@
         "spec/evidence/numeric-conformance-readiness.json",
         "spec/evidence/numeric-profile-decision-inputs.json",
         "spec/evidence/numeric-profile-decision-proposals.json",
+        "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-contracts.json",
         "spec/evidence/executable-model-comparison.json",
         "spec/evidence/release-traceability-readiness.json",

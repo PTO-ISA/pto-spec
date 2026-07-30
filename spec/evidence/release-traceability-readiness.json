@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "f0740865ac14aa4f69a473e78fc1086dcf68608bcb971fb045e36116739f37f4"
+      "sha256": "17cb66d9e5e6228b9803776bc9a61760791afe0eb153810963a8671b3c443650"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -30,12 +30,20 @@
       "sha256": "f81a7638a4117937775585e43e922ac4ad972bccc192d5af05aba03bc8179e94"
     },
     {
+      "path": "spec/catalog/numeric-profile-identities.json",
+      "sha256": "f2bf1bcfa9e6ce1006132ac6d9aec4a8c698990a20eeb7736d361d62ed6477ed"
+    },
+    {
       "path": "spec/profile-hooks.json",
       "sha256": "1eb4293edbdb0c87fe28543a72c7265abc85ee1c04a8390a3f9555fc3d994f52"
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "9c58db9eea0120dd8fdfd1a741acd6e8bfefefab5eea787a3c9248c402f5b5eb"
+      "sha256": "a170667a45ad21ac76394cc01280a18e0acb663a9f4b7b5871079cbdda2db1f6"
+    },
+    {
+      "path": "spec/evidence/numeric-profile-decision-proposals.json",
+      "sha256": "8b3da6cb0ee5ef997da388d62806f48c4dc60277de529f04853c68935a3f5dc2"
     },
     {
       "path": "spec/evidence/scalar-effect-closure.json",
@@ -279,6 +287,7 @@
         "status": "pto-v0-reference-implemented-target-conformance-open:S5-T2",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/profile-contracts.md",
         "model": [
+          "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
           "asl/profiles/pto-v0.asl",
           "asl/scalar/system-registers.asl",
           "asl/state.asl",
@@ -294,6 +303,7 @@
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/catalog/numeric-profile-identities.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
         ],
@@ -579,6 +589,7 @@
         "status": "raw-carrier-reference-totality-closed:S4-T5-conformance-open:S5-T2",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
         "model": [
+          "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
           "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
@@ -589,6 +600,7 @@
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/catalog/numeric-profile-identities.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
         ],
@@ -776,6 +788,7 @@
         "status": "raw-carrier-reference-totality-closed:S4-T8-conformance-open:S5-T2",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
+          "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
           "asl/tile/elementwise.asl",
           "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
@@ -785,6 +798,7 @@
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/catalog/numeric-profile-identities.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
         ],
@@ -799,6 +813,7 @@
         "status": "raw-carrier-reference-totality-closed:S4-T8-conformance-open:S5-T2",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
+          "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
           "asl/tile/reduction.asl",
           "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
@@ -808,6 +823,7 @@
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/catalog/numeric-profile-identities.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
         ],
@@ -822,6 +838,7 @@
         "status": "raw-carrier-reference-totality-closed:S4-T8-conformance-open:S5-T2",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
+          "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
           "asl/tile/expansion.asl",
           "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
@@ -831,6 +848,7 @@
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/catalog/numeric-profile-identities.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
         ],
@@ -860,6 +878,7 @@
         "status": "raw-carrier-reference-totality-closed:S4-T8-conformance-open:S5-T2",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
+          "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
           "asl/tile/conversion.asl",
           "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
@@ -869,6 +888,7 @@
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/catalog/numeric-profile-identities.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
         ],
@@ -898,6 +918,7 @@
         "status": "raw-carrier-reference-totality-closed:S4-T8-conformance-open:S5-T2",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
+          "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
           "asl/tile/complex.asl",
           "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
@@ -907,6 +928,7 @@
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/catalog/numeric-profile-identities.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
         ],
@@ -938,6 +960,7 @@
         "status": "raw-carrier-reference-totality-closed:S4-T10-conformance-open:S5-T2",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
+          "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
           "asl/tile/cube.asl",
           "asl/tile/legality.asl",
           "docs/architecture-decisions/0034-cube-raw-carrier-totality.md",
@@ -948,6 +971,7 @@
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/catalog/numeric-profile-identities.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
         ],
@@ -1079,6 +1103,7 @@
         "status": "m4-reference-closed-s5-conformance-in-progress-s6-release-open",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/normative-sources.md",
         "model": [
+          "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
           "docs/normative-sources.md",
           "docs/coverage.md",
           "docs/maturity-bringup-plan.md",
@@ -1101,6 +1126,7 @@
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/catalog/numeric-profile-identities.json",
           "spec/evidence/numeric-contracts.json",
           "spec/evidence/executable-model-comparison.json",
           "spec/evidence/release-traceability-readiness.json",

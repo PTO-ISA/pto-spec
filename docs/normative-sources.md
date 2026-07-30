@@ -45,6 +45,11 @@ address domain, plus 13 trap-number identities. The 18-entry `EBARG` range is
 part of the visible context-family contract. Generated ASL witnesses validate
 every register access class.
 
+The numeric-profile identity catalog defines four stable configuration
+identities and the accepted fail-closed selection boundary from ADR 0037. The
+identity catalog does not define numeric results: its rule-status fields remain
+open until the corresponding S5-T2 decisions and domain contracts are accepted.
+
 Catalog changes are normative PTO changes and require the same review and
 validation as ASL semantics.
 
@@ -163,6 +168,11 @@ of the 20 numeric domains to the exact questions and source evidence that must
 be resolved. Implementation evidence exposes variation; it does not select a
 PTO result rule. Every selected disposition and decision record remains null
 until architecture review accepts it.
+
+`numeric-profile-decision-proposals.json` imports the accepted identity catalog,
+records the five accepted selection-framework rules, and proposes dispositions
+for all 12 questions and 20 domains. Accepted identities do not imply accepted
+numeric results; question and domain acceptance fields remain null.
 
 `release-traceability-readiness.json` is the generated input to S6-T1. It
 enumerates every requirement, accepted scalar and command form, direct tile

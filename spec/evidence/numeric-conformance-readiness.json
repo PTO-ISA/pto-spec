@@ -3,8 +3,17 @@
   "target": "S5-T2",
   "status": "readiness-defined-conformance-open",
   "source_inventory": "spec/evidence/numeric-contracts.json",
+  "profile_identity_catalog": "spec/catalog/numeric-profile-identities.json",
   "profile_decision_inputs": "spec/evidence/numeric-profile-decision-inputs.json",
   "profile_decision_proposals": "spec/evidence/numeric-profile-decision-proposals.json",
+  "identity_framework": {
+    "status": "closed:S5-T2-A1",
+    "accepted_identity_count": 4,
+    "accepted_selection_rule_count": 5,
+    "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+    "result_decision_count": 0,
+    "accepted_domain_rule_count": 0
+  },
   "policy": {
     "authority": "PTO-owned target profiles and accepted architecture decisions define PTO numeric semantics.",
     "active_reference_profile_role": "The active raw-carrier reference proves executable totality but is not a hardware or independent numeric oracle.",
@@ -15,9 +24,12 @@
   "sub_stages": [
     {
       "id": "S5-T2-A",
-      "status": "open",
-      "target": "name and version portable and target-specific numeric profiles",
-      "blocked_by": []
+      "status": "in-progress",
+      "target": "accept all numeric result decisions and domain rules under the closed identity framework",
+      "blocked_by": [],
+      "closed_checkpoints": [
+        "S5-T2-A1"
+      ]
     },
     {
       "id": "S5-T2-B",
@@ -25,7 +37,8 @@
       "target": "qualify an independent versioned oracle for every lane",
       "blocked_by": [
         "S5-T2-A"
-      ]
+      ],
+      "closed_checkpoints": []
     },
     {
       "id": "S5-T2-C",
@@ -34,7 +47,8 @@
       "blocked_by": [
         "S5-T2-A",
         "S5-T2-B"
-      ]
+      ],
+      "closed_checkpoints": []
     },
     {
       "id": "S5-T2-D",
@@ -43,7 +57,8 @@
       "blocked_by": [
         "S5-T2-B",
         "S5-T2-C"
-      ]
+      ],
+      "closed_checkpoints": []
     },
     {
       "id": "S5-T2-E",
@@ -51,7 +66,8 @@
       "target": "classify and resolve every differential disposition",
       "blocked_by": [
         "S5-T2-D"
-      ]
+      ],
+      "closed_checkpoints": []
     },
     {
       "id": "S5-T2-F",
@@ -63,7 +79,8 @@
         "S5-T2-C",
         "S5-T2-D",
         "S5-T2-E"
-      ]
+      ],
+      "closed_checkpoints": []
     }
   ],
   "blocking_gap_ids": [
@@ -541,6 +558,8 @@
     "hook_count": 29,
     "lane_count": 6,
     "operation_count": 108,
+    "accepted_configuration_identity_count": 4,
+    "accepted_selection_framework_rule_count": 5,
     "profile_identity_count": 0,
     "qualified_oracle_count": 0,
     "vector_manifest_count": 0,

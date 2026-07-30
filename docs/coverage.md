@@ -89,9 +89,11 @@ fail closed before expensive runtime validation begins. The generated
 with 12 explicit open profile questions and 24 content-addressed public
 evidence sources. The generated
 `numeric-profile-decision-proposals.json` ledger adds four versioned profile
-identity proposals, proposed dispositions for all 12 questions, and an exact
-mapping for all 20 domains, while keeping every acceptance field null. It does
-not select any profile rule or close S5-T2-A.
+identities, proposed dispositions for all 12 questions, and an exact mapping
+for all 20 domains. ADR 0037 and
+`spec/catalog/numeric-profile-identities.json` now close the four identity and
+five selection-framework records. Every question and domain result-rule
+acceptance field remains null, so S5-T2-A and numeric conformance remain open.
 
 Release traceability is independently fail-closed. The generated
 `spec/evidence/release-traceability-readiness.json` ledger assigns requirement,

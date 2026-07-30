@@ -22,6 +22,26 @@ implementation is conforming only if it names the replaced hooks, satisfies
 every recorded obligation, preserves non-profile architecture behavior, and
 supplies raw input/output and state-effect tests.
 
+## Numeric identity and selection framework
+
+ADR 0037 and `spec/catalog/numeric-profile-identities.json` accept four stable
+identities without claiming that their numeric rules are complete:
+
+| Identity | Contract |
+| --- | --- |
+| `pto-numeric-v1` | Portable numeric legality, result, bounded-variation, and pre-effect rejection contract. |
+| `pto-cpu-observation-v1` | Observation-only CPU implementation evidence; never architecture or an independent oracle. |
+| `pto-a2a3-numeric-v1` | A2A3 support restrictions and explicitly delegated bounded result rules. |
+| `pto-a5-numeric-v1` | A5 support restrictions and explicitly delegated bounded result rules. |
+
+The identity framework is fail-closed. A target may narrow support but cannot
+silently change the portable result of an accepted tuple. A delegated variation
+must name a target profile or visible mode and provide a finite or
+mathematically testable allowed-result contract. Unknown profiles, modes,
+formats, tuples, and missing delegated rules reject before architectural
+effects. The identity spellings and selection rules are closed; the 12 numeric
+decisions and all 20 domain rules remain open.
+
 ## PTO v0 concrete behavior
 
 ### Reset, access-control rings, and time
@@ -140,3 +160,6 @@ rounding, FTZ, special values, flags, conversion overflow, elementary-function
 accuracy, reduction/order, quantization, matrix arithmetic, and bounded
 implementation-defined behavior. Its CPU, A2A3, and A5 observations are
 implementation evidence only. They cannot silently become PTO semantics.
+The generated `numeric-profile-decision-proposals.json` ledger imports the
+accepted identity catalog and records `S5-T2-A1` closed while keeping every
+question acceptance and domain result rule null.

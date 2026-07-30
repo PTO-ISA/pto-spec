@@ -24,6 +24,7 @@ required_files=(
     .codex/skills/pto-asl/SKILL.md
     asl/architecture.asl
     docs/architecture.md
+    docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md
     docs/coverage.md
     docs/memory-model.md
     docs/modeling-conventions.md
@@ -37,6 +38,7 @@ required_files=(
     spec/requirements.json
     spec/catalog/scalar-forms.json
     spec/catalog/command-forms.json
+    spec/catalog/numeric-profile-identities.json
     spec/catalog/system-registers.json
     spec/catalog/tile-operations.json
     spec/evidence/public-source-reconciliation.json
