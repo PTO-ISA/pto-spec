@@ -18,104 +18,104 @@ Direct tile operations are selected by the tile operation catalog and execute ag
 
 | Name | Selector | Handler | Operands | Arguments |
 | --- | --- | --- | --- | --- |
-| TADD | 0x000 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_ADD&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TSUB | 0x001 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_SUB&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TMUL | 0x002 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_MUL&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TDIV | 0x003 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_DIV&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TMAX | 0x004 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_MAX&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TMIN | 0x005 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_MIN&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TAND | 0x006 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_AND&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TOR | 0x007 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_OR&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TXOR | 0x008 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_XOR&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TSHL | 0x009 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_SHL&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TSHR | 0x00A | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_SHR&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TRELU | 0x00B | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_RELU&lt;br&gt;destination0&lt;br&gt;source0 |
-| TPRELU | 0x00C | TPRELU | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:negative-slope | destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
-| TCVT | 0x00D | TCVT | destination0:destination&lt;br&gt;source0:source | destination0&lt;br&gt;source0 |
-| TEXP | 0x00E | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_EXP&lt;br&gt;destination0&lt;br&gt;source0 |
-| TLOG | 0x00F | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_LOG&lt;br&gt;destination0&lt;br&gt;source0 |
-| TSQRT | 0x010 | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_SQRT&lt;br&gt;destination0&lt;br&gt;source0 |
-| TRSQRT | 0x011 | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_RSQRT&lt;br&gt;destination0&lt;br&gt;source0 |
-| TROWMAX | 0x012 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_MAX&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0 |
-| TROWMIN | 0x013 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_MIN&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0 |
-| TROWSUM | 0x014 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_SUM&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0 |
-| TCOLMAX | 0x015 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_MAX&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0 |
-| TCOLMIN | 0x016 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_MIN&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0 |
-| TCOLSUM | 0x017 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_SUM&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0 |
-| TRECIP | 0x018 | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_RECIP&lt;br&gt;destination0&lt;br&gt;source0 |
-| TEXPANDS | 0x019 | ExecuteTileFillScalar | destination0:destination&lt;br&gt;scalar0:scalar | destination0&lt;br&gt;scalar0 |
-| TGATHER | 0x01A | TGATHER | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:indices | destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TSCATTER | 0x01B | TSCATTER | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:indices | destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TRESHAPE | 0x01C | TRESHAPE | destination0:destination&lt;br&gt;source0:source | destination0&lt;br&gt;source0 |
-| TTRANS | 0x01D | TTRANS | destination0:destination&lt;br&gt;source0:source | destination0&lt;br&gt;source0 |
-| TCOLEXPAND | 0x01E | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_COPY&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TROWEXPAND | 0x01F | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_COPY&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TADDS | 0x020 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_ADD&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
-| TSUBS | 0x021 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_SUB&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
-| TMULS | 0x022 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_MUL&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
-| TDIVS | 0x023 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_DIV&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
-| TMAXS | 0x024 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_MAX&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
-| TMINS | 0x025 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_MIN&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
-| TANDS | 0x026 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_AND&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
-| TORS | 0x027 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_OR&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
-| TXORS | 0x028 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_XOR&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
-| TSHLS | 0x029 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_SHL&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
-| TSHRS | 0x02A | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_SHR&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
-| TCMP | 0x02B | ExecuteTileCompare | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right&lt;br&gt;comparison:comparison | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;comparison |
-| TSEL | 0x02C | ExecuteTileSelect | destination0:destination&lt;br&gt;source0:mask&lt;br&gt;source1:source-true&lt;br&gt;source2:source-false | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2 |
-| TABS | 0x02D | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_ABS&lt;br&gt;destination0&lt;br&gt;source0 |
-| TNOT | 0x02E | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_NOT&lt;br&gt;destination0&lt;br&gt;source0 |
-| TNEG | 0x02F | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_NEG&lt;br&gt;destination0&lt;br&gt;source0 |
-| TREM | 0x030 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_REM&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TAXPY | 0x031 | ExecuteTileAxpy | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
-| TREMS | 0x032 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_REM&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
-| TCMPS | 0x033 | ExecuteTileCompareScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar&lt;br&gt;comparison:comparison | destination0&lt;br&gt;source0&lt;br&gt;scalar0&lt;br&gt;comparison |
-| TSELS | 0x034 | ExecuteTileSelectScalar | destination0:destination&lt;br&gt;source0:mask&lt;br&gt;source1:source-true&lt;br&gt;scalar0:scalar-false | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;scalar0 |
-| TROWPROD | 0x035 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_PRODUCT&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0 |
-| TROWARGMAX | 0x036 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_ARGMAX&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0 |
-| TROWARGMIN | 0x037 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_ARGMIN&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0 |
-| TCOLPROD | 0x038 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_PRODUCT&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0 |
-| TCOLARGMAX | 0x039 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_ARGMAX&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0 |
-| TCOLARGMIN | 0x03A | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_ARGMIN&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0 |
-| TROWEXPANDADD | 0x03B | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_ADD&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TROWEXPANDSUB | 0x03C | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_SUB&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TROWEXPANDMUL | 0x03D | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_MUL&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TROWEXPANDDIV | 0x03E | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_DIV&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TROWEXPANDMAX | 0x03F | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_MAX&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TROWEXPANDMIN | 0x040 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_MIN&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TROWEXPANDEXPDIF | 0x041 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_EXPDIF&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TCOLEXPANDADD | 0x042 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_ADD&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TCOLEXPANDSUB | 0x043 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_SUB&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TCOLEXPANDMUL | 0x044 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_MUL&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TCOLEXPANDDIV | 0x045 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_DIV&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TCOLEXPANDMAX | 0x046 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_MAX&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TCOLEXPANDMIN | 0x047 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_MIN&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TCOLEXPANDEXPDIF | 0x048 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_EXPDIF&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TCI | 0x080 | TCI | destination0:destination&lt;br&gt;scalar0:start&lt;br&gt;flag0:descending | destination0&lt;br&gt;scalar0&lt;br&gt;flag0 |
-| TTRI | 0x081 | TTRI | destination0:destination&lt;br&gt;flag0:upper&lt;br&gt;diagonal:diagonal | destination0&lt;br&gt;flag0&lt;br&gt;diagonal |
-| TFILLPAD | 0x082 | TFILLPAD | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:padding | destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
-| TQUANT | 0x083 | TQUANT | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scale&lt;br&gt;scalar1:zero-point | destination0&lt;br&gt;source0&lt;br&gt;scalar0&lt;br&gt;scalar1 |
-| TDEQUANT | 0x084 | TDEQUANT | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scale&lt;br&gt;scalar1:zero-point | destination0&lt;br&gt;source0&lt;br&gt;scalar0&lt;br&gt;scalar1 |
-| TEXTRACT | 0x085 | TEXTRACT | destination0:destination&lt;br&gt;source0:source&lt;br&gt;natural0:row-offset&lt;br&gt;natural1:column-offset | destination0&lt;br&gt;source0&lt;br&gt;natural0&lt;br&gt;natural1 |
-| TINSERT | 0x086 | TINSERT | destination0:destination&lt;br&gt;source0:source&lt;br&gt;natural0:row-offset&lt;br&gt;natural1:column-offset | destination0&lt;br&gt;source0&lt;br&gt;natural0&lt;br&gt;natural1 |
-| TCONCAT | 0x087 | TCONCAT | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right&lt;br&gt;axis:axis | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;axis |
-| TIMG2COL | 0x088 | TIMG2COL | destination0:destination&lt;br&gt;source0:source&lt;br&gt;positive0:kernel-rows&lt;br&gt;positive1:kernel-columns&lt;br&gt;positive2:stride-rows&lt;br&gt;positive3:stride-columns&lt;br&gt;natural0:pad-rows&lt;br&gt;natural1:pad-columns&lt;br&gt;scalar0:padding | destination0&lt;br&gt;source0&lt;br&gt;positive0&lt;br&gt;positive1&lt;br&gt;positive2&lt;br&gt;positive3&lt;br&gt;natural0&lt;br&gt;natural1&lt;br&gt;scalar0 |
-| TGATHERB | 0x089 | TGATHERB | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:byte-offsets | destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TDEINTERLEAVE | 0x08A | TDEINTERLEAVE | destination0:destination-even&lt;br&gt;destination1:destination-odd&lt;br&gt;source0:source | destination0&lt;br&gt;destination1&lt;br&gt;source0 |
-| TINTERLEAVE | 0x08B | TINTERLEAVE | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TSORT | 0x0C0 | TSORT | destination0:destination&lt;br&gt;source0:source&lt;br&gt;flag0:descending | destination0&lt;br&gt;source0&lt;br&gt;flag0 |
-| TMRGSORT | 0x0C1 | TMRGSORT | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right&lt;br&gt;flag0:descending | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;flag0 |
-| THISTOGRAM | 0x0C2 | THISTOGRAM | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:indices&lt;br&gt;selected_byte:selected-byte | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;selected_byte |
-| TPARTADD | 0x0C3 | ExecuteTilePartial | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TilePartial_ADD&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TPARTMUL | 0x0C4 | ExecuteTilePartial | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TilePartial_MUL&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TPARTMAX | 0x0C5 | ExecuteTilePartial | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TilePartial_MAX&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TPARTMIN | 0x0C6 | ExecuteTilePartial | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TilePartial_MIN&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TPARTARGMAX | 0x0C7 | ExecuteTilePartialArg | destination0:destination&lt;br&gt;destination1:destination-indices&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right&lt;br&gt;source2:left-indices&lt;br&gt;source3:right-indices | TRUE&lt;br&gt;destination0&lt;br&gt;destination1&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |
-| TPARTARGMIN | 0x0C8 | ExecuteTilePartialArg | destination0:destination&lt;br&gt;destination1:destination-indices&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right&lt;br&gt;source2:left-indices&lt;br&gt;source3:right-indices | FALSE&lt;br&gt;destination0&lt;br&gt;destination1&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |
-| TPUSH | 0x0E0 | TPUSH | destination0:destination&lt;br&gt;source0:source | destination0&lt;br&gt;source0 |
-| TPOP | 0x0E1 | TPOP | destination0:destination&lt;br&gt;source0:source | destination0&lt;br&gt;source0 |
-| TALLOC | 0x0E2 | TALLOC | destination0:destination&lt;br&gt;byte_count:capacity-bytes&lt;br&gt;positive0:rows&lt;br&gt;positive1:columns&lt;br&gt;natural0:valid-rows&lt;br&gt;natural1:valid-columns&lt;br&gt;scalar0:data-type-code&lt;br&gt;flag0:implementation-defined-layout | destination0&lt;br&gt;byte_count&lt;br&gt;positive0&lt;br&gt;positive1&lt;br&gt;natural0&lt;br&gt;natural1&lt;br&gt;scalar0&lt;br&gt;flag0 |
-| TFREE | 0x0E3 | TFREE | destination0:destination | destination0 |
+| TADD | mode=0, function=0, selector=0x000 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_ADD&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TSUB | mode=0, function=1, selector=0x001 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_SUB&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TMUL | mode=0, function=2, selector=0x002 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_MUL&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TDIV | mode=0, function=3, selector=0x003 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_DIV&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TREM | mode=0, function=4, selector=0x004 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_REM&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TAND | mode=0, function=6, selector=0x006 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_AND&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TOR | mode=0, function=7, selector=0x007 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_OR&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TXOR | mode=0, function=8, selector=0x008 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_XOR&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TSHL | mode=0, function=9, selector=0x009 | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_SHL&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TSHR | mode=0, function=10, selector=0x00A | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_SHR&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TMAX | mode=0, function=11, selector=0x00B | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_MAX&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TMIN | mode=0, function=12, selector=0x00C | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_MIN&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TCMP | mode=0, function=13, selector=0x00D | ExecuteTileCompare | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right&lt;br&gt;comparison:comparison | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;comparison |
+| TPRELU | mode=0, function=14, selector=0x00E | TPRELU | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:negative-slope | destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
+| TABS | mode=0, function=15, selector=0x00F | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_ABS&lt;br&gt;destination0&lt;br&gt;source0 |
+| TNOT | mode=0, function=16, selector=0x010 | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_NOT&lt;br&gt;destination0&lt;br&gt;source0 |
+| TNEG | mode=0, function=17, selector=0x011 | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_NEG&lt;br&gt;destination0&lt;br&gt;source0 |
+| TEXP | mode=0, function=18, selector=0x012 | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_EXP&lt;br&gt;destination0&lt;br&gt;source0 |
+| TLOG | mode=0, function=19, selector=0x013 | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_LOG&lt;br&gt;destination0&lt;br&gt;source0 |
+| TRECIP | mode=0, function=20, selector=0x014 | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_RECIP&lt;br&gt;destination0&lt;br&gt;source0 |
+| TSQRT | mode=0, function=21, selector=0x015 | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_SQRT&lt;br&gt;destination0&lt;br&gt;source0 |
+| TRSQRT | mode=0, function=22, selector=0x016 | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_RSQRT&lt;br&gt;destination0&lt;br&gt;source0 |
+| TRELU | mode=0, function=23, selector=0x017 | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_RELU&lt;br&gt;destination0&lt;br&gt;source0 |
+| TSEL | mode=0, function=26, selector=0x01A | ExecuteTileSelect | destination0:destination&lt;br&gt;source0:mask&lt;br&gt;source1:source-true&lt;br&gt;source2:source-false | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2 |
+| TCVT | mode=0, function=27, selector=0x01B | TCVT | destination0:destination&lt;br&gt;source0:source | destination0&lt;br&gt;source0 |
+| TADDS | mode=1, function=0, selector=0x020 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_ADD&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
+| TSUBS | mode=1, function=1, selector=0x021 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_SUB&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
+| TMULS | mode=1, function=2, selector=0x022 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_MUL&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
+| TDIVS | mode=1, function=3, selector=0x023 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_DIV&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
+| TREMS | mode=1, function=4, selector=0x024 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_REM&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
+| TANDS | mode=1, function=6, selector=0x026 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_AND&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
+| TORS | mode=1, function=7, selector=0x027 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_OR&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
+| TXORS | mode=1, function=8, selector=0x028 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_XOR&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
+| TSHLS | mode=1, function=9, selector=0x029 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_SHL&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
+| TSHRS | mode=1, function=10, selector=0x02A | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_SHR&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
+| TMAXS | mode=1, function=11, selector=0x02B | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_MAX&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
+| TMINS | mode=1, function=12, selector=0x02C | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_MIN&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
+| TCMPS | mode=1, function=13, selector=0x02D | ExecuteTileCompareScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar&lt;br&gt;comparison:comparison | destination0&lt;br&gt;source0&lt;br&gt;scalar0&lt;br&gt;comparison |
+| TAXPY | mode=1, function=15, selector=0x02F | ExecuteTileAxpy | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
+| TSELS | mode=1, function=26, selector=0x03A | ExecuteTileSelectScalar | destination0:destination&lt;br&gt;source0:mask&lt;br&gt;source1:source-true&lt;br&gt;scalar0:scalar-false | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;scalar0 |
+| TEXPANDS | mode=1, function=27, selector=0x03B | ExecuteTileFillScalar | destination0:destination&lt;br&gt;scalar0:scalar | destination0&lt;br&gt;scalar0 |
+| TROWSUM | mode=2, function=0, selector=0x040 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_SUM&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0 |
+| TROWMAX | mode=2, function=1, selector=0x041 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_MAX&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0 |
+| TROWMIN | mode=2, function=2, selector=0x042 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_MIN&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0 |
+| TROWPROD | mode=2, function=3, selector=0x043 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_PRODUCT&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0 |
+| TROWEXPAND | mode=2, function=4, selector=0x044 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_COPY&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TROWEXPANDADD | mode=2, function=5, selector=0x045 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_ADD&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TROWEXPANDSUB | mode=2, function=6, selector=0x046 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_SUB&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TROWEXPANDMUL | mode=2, function=7, selector=0x047 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_MUL&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TROWEXPANDDIV | mode=2, function=8, selector=0x048 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_DIV&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TROWEXPANDMAX | mode=2, function=9, selector=0x049 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_MAX&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TROWEXPANDMIN | mode=2, function=10, selector=0x04A | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_MIN&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TROWEXPANDEXPDIF | mode=2, function=11, selector=0x04B | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_EXPDIF&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TROWARGMAX | mode=2, function=12, selector=0x04C | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_ARGMAX&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0 |
+| TROWARGMIN | mode=2, function=13, selector=0x04D | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_ARGMIN&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0 |
+| TCOLSUM | mode=2, function=16, selector=0x050 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_SUM&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0 |
+| TCOLMAX | mode=2, function=17, selector=0x051 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_MAX&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0 |
+| TCOLMIN | mode=2, function=18, selector=0x052 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_MIN&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0 |
+| TCOLPROD | mode=2, function=19, selector=0x053 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_PRODUCT&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0 |
+| TCOLEXPAND | mode=2, function=20, selector=0x054 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_COPY&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TCOLEXPANDADD | mode=2, function=21, selector=0x055 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_ADD&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TCOLEXPANDSUB | mode=2, function=22, selector=0x056 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_SUB&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TCOLEXPANDMUL | mode=2, function=23, selector=0x057 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_MUL&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TCOLEXPANDDIV | mode=2, function=24, selector=0x058 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_DIV&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TCOLEXPANDMAX | mode=2, function=25, selector=0x059 | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_MAX&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TCOLEXPANDMIN | mode=2, function=26, selector=0x05A | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_MIN&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TCOLEXPANDEXPDIF | mode=2, function=27, selector=0x05B | ExecuteTileExpand | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:broadcast-source | TileExpand_EXPDIF&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TCOLARGMAX | mode=2, function=28, selector=0x05C | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_ARGMAX&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0 |
+| TCOLARGMIN | mode=2, function=29, selector=0x05D | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_ARGMIN&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0 |
+| TCONCAT | mode=3, function=0, selector=0x060 | TCONCAT | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right&lt;br&gt;axis:axis | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;axis |
+| TGATHERB | mode=3, function=1, selector=0x061 | TGATHERB | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:byte-offsets | destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TEXTRACT | mode=3, function=2, selector=0x062 | TEXTRACT | destination0:destination&lt;br&gt;source0:source&lt;br&gt;natural0:row-offset&lt;br&gt;natural1:column-offset | destination0&lt;br&gt;source0&lt;br&gt;natural0&lt;br&gt;natural1 |
+| TINSERT | mode=3, function=3, selector=0x063 | TINSERT | destination0:destination&lt;br&gt;source0:source&lt;br&gt;natural0:row-offset&lt;br&gt;natural1:column-offset | destination0&lt;br&gt;source0&lt;br&gt;natural0&lt;br&gt;natural1 |
+| TIMG2COL | mode=3, function=4, selector=0x064 | TIMG2COL | destination0:destination&lt;br&gt;source0:source&lt;br&gt;positive0:kernel-rows&lt;br&gt;positive1:kernel-columns&lt;br&gt;positive2:stride-rows&lt;br&gt;positive3:stride-columns&lt;br&gt;natural0:pad-rows&lt;br&gt;natural1:pad-columns&lt;br&gt;scalar0:padding | destination0&lt;br&gt;source0&lt;br&gt;positive0&lt;br&gt;positive1&lt;br&gt;positive2&lt;br&gt;positive3&lt;br&gt;natural0&lt;br&gt;natural1&lt;br&gt;scalar0 |
+| TFILLPAD | mode=3, function=5, selector=0x065 | TFILLPAD | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:padding | destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
+| TCI | mode=3, function=6, selector=0x066 | TCI | destination0:destination&lt;br&gt;scalar0:start&lt;br&gt;flag0:descending | destination0&lt;br&gt;scalar0&lt;br&gt;flag0 |
+| TTRI | mode=3, function=7, selector=0x067 | TTRI | destination0:destination&lt;br&gt;flag0:upper&lt;br&gt;diagonal:diagonal | destination0&lt;br&gt;flag0&lt;br&gt;diagonal |
+| THISTOGRAM | mode=3, function=8, selector=0x068 | THISTOGRAM | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:indices&lt;br&gt;selected_byte:selected-byte | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;selected_byte |
+| TQUANT | mode=3, function=10, selector=0x06A | TQUANT | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scale&lt;br&gt;scalar1:zero-point | destination0&lt;br&gt;source0&lt;br&gt;scalar0&lt;br&gt;scalar1 |
+| TDEQUANT | mode=3, function=11, selector=0x06B | TDEQUANT | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scale&lt;br&gt;scalar1:zero-point | destination0&lt;br&gt;source0&lt;br&gt;scalar0&lt;br&gt;scalar1 |
+| TSORT | mode=3, function=12, selector=0x06C | TSORT | destination0:destination&lt;br&gt;destination1:original-indices-u32&lt;br&gt;source0:source&lt;br&gt;flag0:descending | destination0&lt;br&gt;destination1&lt;br&gt;source0&lt;br&gt;flag0 |
+| TMRGSORT | mode=3, function=13, selector=0x06D | TMRGSORT | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right&lt;br&gt;flag0:descending | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;flag0 |
+| TTRANS | mode=3, function=14, selector=0x06E | TTRANS | destination0:destination&lt;br&gt;source0:source | destination0&lt;br&gt;source0 |
+| TGATHER | mode=3, function=15, selector=0x06F | TGATHER | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:indices | destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TSCATTER | mode=3, function=16, selector=0x070 | TSCATTER | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:indices | destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TPARTADD | mode=3, function=17, selector=0x071 | ExecuteTilePartial | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TilePartial_ADD&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TPARTMUL | mode=3, function=18, selector=0x072 | ExecuteTilePartial | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TilePartial_MUL&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TPARTMAX | mode=3, function=19, selector=0x073 | ExecuteTilePartial | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TilePartial_MAX&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TPARTMIN | mode=3, function=20, selector=0x074 | ExecuteTilePartial | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TilePartial_MIN&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TPARTARGMAX | mode=3, function=21, selector=0x075 | ExecuteTilePartialArg | destination0:destination&lt;br&gt;destination1:destination-indices&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right&lt;br&gt;source2:left-indices&lt;br&gt;source3:right-indices | TRUE&lt;br&gt;destination0&lt;br&gt;destination1&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |
+| TPARTARGMIN | mode=3, function=22, selector=0x076 | ExecuteTilePartialArg | destination0:destination&lt;br&gt;destination1:destination-indices&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right&lt;br&gt;source2:left-indices&lt;br&gt;source3:right-indices | FALSE&lt;br&gt;destination0&lt;br&gt;destination1&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |
+| TRESHAPE | mode=3, function=23, selector=0x077 | TRESHAPE | destination0:destination&lt;br&gt;source0:source | destination0&lt;br&gt;source0 |
+| TDEINTERLEAVE | mode=3, function=24, selector=0x078 | TDEINTERLEAVE | destination0:destination-even&lt;br&gt;destination1:destination-odd&lt;br&gt;source0:source | destination0&lt;br&gt;destination1&lt;br&gt;source0 |
+| TINTERLEAVE | mode=3, function=25, selector=0x079 | TINTERLEAVE | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TPUSH | mode=3, function=26, selector=0x07A | TPUSH | destination0:destination&lt;br&gt;source0:source | destination0&lt;br&gt;source0 |
+| TPOP | mode=3, function=27, selector=0x07B | TPOP | destination0:destination&lt;br&gt;source0:source | destination0&lt;br&gt;source0 |
+| TALLOC | mode=3, function=28, selector=0x07C | TALLOC | destination0:destination&lt;br&gt;byte_count:capacity-bytes&lt;br&gt;positive0:rows&lt;br&gt;positive1:columns&lt;br&gt;natural0:valid-rows&lt;br&gt;natural1:valid-columns&lt;br&gt;scalar0:data-type-code&lt;br&gt;flag0:implementation-defined-layout | destination0&lt;br&gt;byte_count&lt;br&gt;positive0&lt;br&gt;positive1&lt;br&gt;natural0&lt;br&gt;natural1&lt;br&gt;scalar0&lt;br&gt;flag0 |
+| TFREE | mode=3, function=29, selector=0x07D | TFREE | destination0:destination | destination0 |
 
 ## TMA
 
@@ -127,7 +127,7 @@ Direct tile operations are selected by the tile operation catalog and execute ag
 | TPREFETCH | function=3 | TPREFETCH | address:base-address&lt;br&gt;byte_count:byte-count | address&lt;br&gt;byte_count |
 | MGATHER | function=4 | MGATHER | destination0:destination&lt;br&gt;address:base-address&lt;br&gt;source0:indices | destination0&lt;br&gt;address&lt;br&gt;source0 |
 | MSCATTER | function=5 | MSCATTER | address:base-address&lt;br&gt;source0:source&lt;br&gt;source1:indices | address&lt;br&gt;source0&lt;br&gt;source1 |
-| MGATHER_MASK | function=6 | MGATHER_MASK | destination0:destination&lt;br&gt;address:base-address&lt;br&gt;source0:indices&lt;br&gt;source1:mask | destination0&lt;br&gt;address&lt;br&gt;source0&lt;br&gt;source1 |
+| MGATHER_MASK | function=6 | MGATHER_MASK | destination0:destination&lt;br&gt;address:base-address&lt;br&gt;source0:indices&lt;br&gt;source1:mask | destination0&lt;br&gt;address&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;{"runtime": "CurrentBlockPadValue"} |
 | MSCATTER_MASK | function=7 | MSCATTER_MASK | address:base-address&lt;br&gt;source0:source&lt;br&gt;source1:indices&lt;br&gt;source2:mask | address&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2 |
 | MGATHER_CAS | function=8 | MGATHER_CAS | destination0:destination&lt;br&gt;address:base-address&lt;br&gt;source0:indices&lt;br&gt;source1:expected&lt;br&gt;source2:replacement | destination0&lt;br&gt;address&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2 |
 
@@ -135,16 +135,16 @@ Direct tile operations are selected by the tile operation catalog and execute ag
 
 | Name | Selector | Handler | Operands | Arguments |
 | --- | --- | --- | --- | --- |
-| TMATMUL | function=0 | TMATMUL | destination0:destination&lt;br&gt;source0:left&lt;br&gt;source1:right | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;FALSE |
-| TMATMUL_BIAS | function=1 | TMATMUL_BIAS | destination0:destination&lt;br&gt;source0:left&lt;br&gt;source1:right&lt;br&gt;source2:bias | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2 |
-| TMATMUL_ACC | function=2 | TMATMUL_ACC | destination0:destination&lt;br&gt;source0:left&lt;br&gt;source1:right | destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TMATMUL_MX | function=4 | TMATMUL_MX | destination0:destination&lt;br&gt;source0:left&lt;br&gt;source1:right&lt;br&gt;source2:row-scale&lt;br&gt;source3:column-scale | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |
-| TMATMUL_MX_BIAS | function=5 | TMATMUL_MX_BIAS | destination0:destination&lt;br&gt;source0:left&lt;br&gt;source1:right&lt;br&gt;source2:row-scale&lt;br&gt;source3:column-scale&lt;br&gt;destination1:bias | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3&lt;br&gt;destination1 |
-| TMATMUL_MX_ACC | function=6 | TMATMUL_MX_ACC | destination0:destination&lt;br&gt;source0:left&lt;br&gt;source1:right&lt;br&gt;source2:row-scale&lt;br&gt;source3:column-scale | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |
-| ACCCVT | function=8 | ACCCVT | destination0:destination&lt;br&gt;source0:source | destination0&lt;br&gt;source0 |
-| TGEMV | function=16 | TGEMV | destination0:destination&lt;br&gt;source0:matrix&lt;br&gt;source1:vector | destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TGEMV_BIAS | function=17 | TGEMV_BIAS | destination0:destination&lt;br&gt;source0:matrix&lt;br&gt;source1:vector&lt;br&gt;source2:bias | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2 |
-| TGEMV_ACC | function=18 | TGEMV_ACC | destination0:destination&lt;br&gt;source0:matrix&lt;br&gt;source1:vector | destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TGEMV_MX | function=20 | TGEMV_MX | destination0:destination&lt;br&gt;source0:matrix&lt;br&gt;source1:vector&lt;br&gt;source2:row-scale&lt;br&gt;source3:column-scale | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |
-| TGEMV_MX_BIAS | function=21 | TGEMV_MX_BIAS | destination0:destination&lt;br&gt;source0:matrix&lt;br&gt;source1:vector&lt;br&gt;source2:row-scale&lt;br&gt;source3:column-scale&lt;br&gt;destination1:bias | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3&lt;br&gt;destination1 |
-| TGEMV_MX_ACC | function=22 | TGEMV_MX_ACC | destination0:destination&lt;br&gt;source0:matrix&lt;br&gt;source1:vector&lt;br&gt;source2:row-scale&lt;br&gt;source3:column-scale | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |
+| TMATMUL | function=0 | TMATMUL | source0:left&lt;br&gt;source1:right | source0&lt;br&gt;source1&lt;br&gt;FALSE |
+| TMATMUL_BIAS | function=1 | TMATMUL_BIAS | source0:left&lt;br&gt;source1:right&lt;br&gt;source2:bias | source0&lt;br&gt;source1&lt;br&gt;source2 |
+| TMATMUL_ACC | function=2 | TMATMUL_ACC | source0:left&lt;br&gt;source1:right | source0&lt;br&gt;source1 |
+| TMATMUL_MX | function=4 | TMATMUL_MX | source0:left&lt;br&gt;source1:right&lt;br&gt;source2:row-scale&lt;br&gt;source3:column-scale | source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |
+| TMATMUL_MX_BIAS | function=5 | TMATMUL_MX_BIAS | source0:left&lt;br&gt;source1:right&lt;br&gt;source2:row-scale&lt;br&gt;source3:column-scale&lt;br&gt;source4:bias | source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3&lt;br&gt;source4 |
+| TMATMUL_MX_ACC | function=6 | TMATMUL_MX_ACC | source0:left&lt;br&gt;source1:right&lt;br&gt;source2:row-scale&lt;br&gt;source3:column-scale | source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |
+| ACCCVT | function=8 | ACCCVT | destination0:destination | destination0 |
+| TGEMV | function=16 | TGEMV | source0:matrix&lt;br&gt;source1:vector | source0&lt;br&gt;source1 |
+| TGEMV_BIAS | function=17 | TGEMV_BIAS | source0:matrix&lt;br&gt;source1:vector&lt;br&gt;source2:bias | source0&lt;br&gt;source1&lt;br&gt;source2 |
+| TGEMV_ACC | function=18 | TGEMV_ACC | source0:matrix&lt;br&gt;source1:vector | source0&lt;br&gt;source1 |
+| TGEMV_MX | function=20 | TGEMV_MX | source0:matrix&lt;br&gt;source1:vector&lt;br&gt;source2:row-scale&lt;br&gt;source3:column-scale | source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |
+| TGEMV_MX_BIAS | function=21 | TGEMV_MX_BIAS | source0:matrix&lt;br&gt;source1:vector&lt;br&gt;source2:row-scale&lt;br&gt;source3:column-scale&lt;br&gt;source4:bias | source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3&lt;br&gt;source4 |
+| TGEMV_MX_ACC | function=22 | TGEMV_MX_ACC | source0:matrix&lt;br&gt;source1:vector&lt;br&gt;source2:row-scale&lt;br&gt;source3:column-scale | source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |

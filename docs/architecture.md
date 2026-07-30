@@ -3,7 +3,8 @@
 PTO is a 64-bit scalar, block/command, and tile instruction set. The ASL files
 and machine-readable catalogs in this repository are the normative definition of
 the architecture. They define accepted encodings, architectural state, legality,
-faults, completion, ordering, and the active `pto-v0` profile.
+faults, completion, ordering, and named conformance profiles. PTO ISA 0.57.1
+release identity and profile identity are separate machine-readable fields.
 
 PTO does not define vector instructions. Encodings and block forms that exist
 only to host vector execution are outside the accepted PTO ISA surface.
@@ -13,7 +14,7 @@ only to host vector execution are outside the accepted PTO ISA surface.
 | Surface | Count | Scope |
 | --- | ---: | --- |
 | Scalar forms | 474 | AGU, ALU, AMO, BRU, FSU, and SYS |
-| Block/command forms | 107 | block start, split, argument, dimension, control, data, IO, hint, stop, and context forms |
+| Block/command forms | 99 | block start, split, argument, dimension, control, data, IO, hint, stop, and context forms |
 | Direct tile operations | 120 | 98 TEPL, 9 TMA, and 13 CUBE operations |
 | System registers | 54 | base, context, translation, interrupt, and debug registers |
 
@@ -63,14 +64,15 @@ catalog because PTO has no vector instruction execution surface.
 - T/U/M/N hands occupy codes 0..15, 16..31, 32..47, and 48..63.
 - Each register has a `TileInfo` record containing allocation, capacity, shape,
   valid region, data type, layout, location intent, and definedness.
-- A normal active tile has at least 256 bytes and cannot exceed the read-only
-  `TILE_CAPACITY` system register. The sum of active capacities must also stay
-  within `TILE_CAPACITY`. PTO v0 resets it to 512 KiB.
+- Architectural CELL size is 128 bytes. B.IOT size codes 3 through 9 allocate
+  128 bytes through 8 KiB. Each PE exposes 2048 CELL, or 256 KiB, through the
+  read-only `TILE_CAPACITY` system register. Allocation failure is precise and
+  never evicts or overwrites a live Tile.
 - Allocation or reconfiguration makes tile contents undefined. A source read
   is illegal until an architectural write defines the contents.
-- Implementations may configure `TileLayout_ImplementationDefined`. Generic
-  row/column indexing rejects that layout; only a profile-specific operation
-  that defines its mapping may access it.
+- NORM layout is mandatory. ND, DN, ZN, and NZ conversions require an
+  advertised layout capability. An unsupported accepted layout faults before
+  effects and is never silently interpreted as NORM.
 - Elements outside the valid region are not architecturally observable unless
   an instruction explicitly defines them.
 - Source operands are snapshotted before destination writes, defining
@@ -87,11 +89,13 @@ bound is not an architectural shape limit.
 - TMA contains 9 accepted tile memory operations, including load, store, move,
   prefetch, gather, scatter, masked gather/scatter, and gather-CAS forms.
 - CUBE contains 13 accepted matrix operations, including base, bias,
-  accumulate, MX, ACCCVT, and matrix/vector variants.
+  accumulate, MX, ACCCVT, and matrix/vector variants. ACC is implicit
+  architectural state selected by the CUBE function; it has no B.IOT code.
 
 The canonical selector and descriptor fields define encoding and operand facts.
-Direct PTO tile operations have explicit destinations, sources, dimensions,
-addresses, and attributes. Pipe state is not architectural.
+Direct PTO tile operations have cataloged explicit operands plus declared
+implicit state such as ACC, dimensions, addresses, and attributes. Pipe state
+is not architectural.
 
 `ExecuteTileInstruction` is the decoded tile execution boundary. The normative
 tile catalog binds each accepted selector to a typed subset of
@@ -102,9 +106,10 @@ optional scalar result. Unknown family-selector combinations raise
 Before a recognized tile operation executes, its complete operand set passes a
 read-only legality predicate. Descriptor availability, logical shapes, data
 types, divisor values, index ranges, and matrix/broadcast dimensions are
-checked as applicable. Failure raises `Fault_TileLegality`, reports the current
-TPC, returns `TileExecution_Rejected`, and performs no destination or memory
-effect.
+checked as applicable. Failure raises the applicable precise fault, reports the
+current TPC, returns an explicit faulted outcome, and performs no destination,
+memory, ACC, queue, or lifetime effect. A zero reuse bit releases its source
+only after successful commit; fault, retry, and squash preserve it.
 
 ## Memory, faults, and ordering
 
@@ -150,7 +155,10 @@ selects a 64-bit carrier and `01` selects a zero-extended 32-bit carrier; the
 other source encodings are illegal. CORE_STATE[39:37] supplies the rounding
 mode; CORE_STATE bits 32 through 36 accumulate sticky NV, DZ, OF, UF, and NX
 flags. PTO v0 supplies deterministic raw-carrier numeric behavior; alternate
-numeric profiles require a distinct profile identity and evidence.
+numeric profiles require a distinct profile identity and evidence. PTO ISA
+0.57.1 hardware conformance uses IEEE-754 behavior, canonical quiet NaN, and
+IEEE signed zero; `pto-v0` remains a separately identified deterministic
+reference-test profile.
 
 ## System registers
 

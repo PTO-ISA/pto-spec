@@ -1,0 +1,326 @@
+{
+  "canonical_inputs": [
+    {
+      "path": ".aslref-version",
+      "sha256": "943437e8563813c276417b022296f0c51b34fadbb8da49ca70dbac7f6589db63"
+    },
+    {
+      "path": "asl/architecture.asl",
+      "sha256": "cc312660d9aedf041bd3d8d30e9c4664cd77789996433b7d763b753359068aef"
+    },
+    {
+      "path": "asl/block/dispatch.asl",
+      "sha256": "b8baf2bb7050d0bee7c7952a269da95459f5c5c7e7614c65942b521eb7e2088e"
+    },
+    {
+      "path": "asl/block/state.asl",
+      "sha256": "16d8af715bc2bf44020f3a5ae56f3648aa82c0b4ad1925cf8e2bd8eaea57882c"
+    },
+    {
+      "path": "asl/concurrency.asl",
+      "sha256": "46ba583bd117fe6bfd36bf860af72ba1c7c4eaa829370ca669c80bba19cb57d1"
+    },
+    {
+      "path": "asl/dispatch.asl",
+      "sha256": "c91a58f2a6f074e3a72e7b7e551e1b0403a6a463b0ce8ec67f60b9e431e17216"
+    },
+    {
+      "path": "asl/profiles/pto-v0.asl",
+      "sha256": "9f71ebf7ecf6fdf8515245bb229cfa1d63684f68f36986a851f23ba802282f5a"
+    },
+    {
+      "path": "asl/scalar/addressing.asl",
+      "sha256": "c18eeeac61fe7c94ee09e306c5c3322d72d69d079b67ab9cde9a4c721f83aba4"
+    },
+    {
+      "path": "asl/scalar/atomic.asl",
+      "sha256": "9fa4a7497682bdb7f67c28a84244349c3ff351e7993794b241ad312d24cde053"
+    },
+    {
+      "path": "asl/scalar/control.asl",
+      "sha256": "ec3d6c80b9035d658f39ab475e7f6b7b3b68c964c51ce289b8a5b8589ad3667f"
+    },
+    {
+      "path": "asl/scalar/dispatch.asl",
+      "sha256": "6f1e9ccf1958b01441b13a3ffd1cf78fc8290784cd012e949af2061d8be9abcd"
+    },
+    {
+      "path": "asl/scalar/floating.asl",
+      "sha256": "2088b3a15e913c5a6220eddb28b01292216e15e26e6e3d73023f0f37f7eac2a7"
+    },
+    {
+      "path": "asl/scalar/integer.asl",
+      "sha256": "4f25b599cd09c05bb5908ad365dc0c37eebfed86ae9a2ccce954a06f85621e06"
+    },
+    {
+      "path": "asl/scalar/memory.asl",
+      "sha256": "ea8da95e6cf9474e52c9db357fc71101a4fb983c41eee8074e998e9af87c6c85"
+    },
+    {
+      "path": "asl/scalar/operands.asl",
+      "sha256": "e24e26f63e0d2d3c9487c34ce3cad9b65823936354fae3aad9d0443979c7327a"
+    },
+    {
+      "path": "asl/scalar/system-registers.asl",
+      "sha256": "eb50f128cb283c537a3cf39f85d23cf128fd1c59435734ced5cc574958b940d7"
+    },
+    {
+      "path": "asl/scalar/system.asl",
+      "sha256": "a056f1cdd495e78a59e3755fc262260e88b743f5840ed694b374fd6852d0b137"
+    },
+    {
+      "path": "asl/state.asl",
+      "sha256": "f13e7f324a792ede53ae44a56c4204286b7bca65249db0ed63943705f7a827b3"
+    },
+    {
+      "path": "asl/tile/complex.asl",
+      "sha256": "0a428d53302ade0be5b3b450ec442551718d938c312987f0d8c93be8f9a2b000"
+    },
+    {
+      "path": "asl/tile/conversion.asl",
+      "sha256": "19daedb75e9da7065d7bdc14a7d67cca3c576bc39e6fbab2aa055a3f07b59363"
+    },
+    {
+      "path": "asl/tile/cube.asl",
+      "sha256": "ed673e26616ac12b0629f58e77818d28c85976d349a8f99156ee9539c32197ee"
+    },
+    {
+      "path": "asl/tile/elementwise.asl",
+      "sha256": "7c0835a90d2b3b6e77e4cd328035c6d3e8df32c20bc46018b3be8716905def9e"
+    },
+    {
+      "path": "asl/tile/expansion.asl",
+      "sha256": "f9217720ee807aa161814d4d56a8e12cc6932a94e85c18ddb9d7e2b6bce30651"
+    },
+    {
+      "path": "asl/tile/generation.asl",
+      "sha256": "5a3d4b6ed489e9c677138357aad0c5b5ab964373e34c3b0b3ba099c371f2ec31"
+    },
+    {
+      "path": "asl/tile/legality.asl",
+      "sha256": "c99d4a32c6214e33198a30991c86f395f8d3b094b3ccc1cf3f426264c55278b4"
+    },
+    {
+      "path": "asl/tile/memory.asl",
+      "sha256": "ef7783226891f1ffd100709bda8858d09be80c4cc63ff1d62a4c317b8fb95aec"
+    },
+    {
+      "path": "asl/tile/rearrangement.asl",
+      "sha256": "e9d09f69fc078a23033eb0bdfed037db6859fd3a00ec4d523c1ac5abe855388a"
+    },
+    {
+      "path": "asl/tile/reduction.asl",
+      "sha256": "f70a0b5a39b85602fd7af8046c45a40576a595560814ca52187a91f09ea0b4b1"
+    },
+    {
+      "path": "asl/tile/state.asl",
+      "sha256": "0232fb50965ca12ce41ef301c3d7e6a52757009ea6c368bc54ba1eea2509c863"
+    },
+    {
+      "path": "asl/types.asl",
+      "sha256": "0786b6255468b75c812ccef01cd4f28905e3436d335d066bdf235fdbf84eff71"
+    },
+    {
+      "path": "docs/architecture-decisions/0001-pto-architecture-scope.md",
+      "sha256": "3fdba90010dac1096046224184c9fde5f71b2b5c973ac36d2d96b783c95fe7d7"
+    },
+    {
+      "path": "docs/architecture-decisions/0003-pto-owned-system-register-names.md",
+      "sha256": "3cf6f664f696fd967bd89f391f83d3e12055c1fa050f28d6ec2ea381fdc0e0ee"
+    },
+    {
+      "path": "docs/architecture-decisions/0005-pto-v0-concrete-reference-profile.md",
+      "sha256": "3355afdfeb955f1e7f061e2d2224500774ed9fe572d6df2056d02de28209bd70"
+    },
+    {
+      "path": "docs/architecture-decisions/0006-pto-total-store-order.md",
+      "sha256": "e20cf0096f723924bd86925d182f9e2c664beb2975fbfe5415fd6c82fa0ddcc7"
+    },
+    {
+      "path": "docs/architecture-decisions/0008-architectural-state-contract.md",
+      "sha256": "2bf8984f2f10210ea1eac4cae2e9f15042316b4ef3372706086dbca99d48c8d2"
+    },
+    {
+      "path": "docs/architecture-decisions/0009-pto-isa-release-tile-contract.md",
+      "sha256": "e944dcfe7b57cd8841bda69247d97bacd0cd13461bd0166992180459d059f7a8"
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "b341a845da0f5e5c684fbf4f47d694bc1ab92d811e78a00667d08770b91aee78"
+    },
+    {
+      "path": "docs/coverage.md",
+      "sha256": "25350a9319fbb1a7ca3f80c8866c4eaafbdb3e95e5aaaa06af9eda087055eefe"
+    },
+    {
+      "path": "docs/memory-model.md",
+      "sha256": "e4310b920f8cc026e1f30a97b6aea89df3ecb23f659d90d2bbc6224845573502"
+    },
+    {
+      "path": "docs/modeling-conventions.md",
+      "sha256": "d0eedfbedf34481efa09fb3294657dfa8b6a58295ddfd2e947ce71f4fbc5cae8"
+    },
+    {
+      "path": "docs/normative-sources.md",
+      "sha256": "045ff99bab8ac145056014f0fb8ad62aefd6c1e7d147cc64a59c1c3c7bc3296f"
+    },
+    {
+      "path": "docs/profile-contracts.md",
+      "sha256": "c466743dc5ddd5f7431c99f1e12c7d0712cd5400120e47adf2980b6c6b1d8b5e"
+    },
+    {
+      "path": "spec/catalog/command-forms.json",
+      "sha256": "c53db18b30fbf53676f1d733e215122f65ad681a778ae0728cc6c4a3674df61e"
+    },
+    {
+      "path": "spec/catalog/scalar-forms.json",
+      "sha256": "4fd9ca5ba5aebc4d4976f90f3c28fc6516ce0ae04e4ead6bece5326443542289"
+    },
+    {
+      "path": "spec/catalog/system-registers.json",
+      "sha256": "d6895e782c60a7a14015bbcb4213ad21c8a2278297ac6229e36a7de4b35f1d75"
+    },
+    {
+      "path": "spec/catalog/tile-operations.json",
+      "sha256": "2a49616fbbd34ee4ff00b971d56de6dd7b8c1698fa7312db0b20b6119965bc26"
+    },
+    {
+      "path": "spec/hardware-conformance-profile.json",
+      "sha256": "856bdeb29f8d6ab3cbaf8cf20889b4853eabaf5215aa8410ce42716d2260648f"
+    },
+    {
+      "path": "spec/profile-hooks.json",
+      "sha256": "5c996bc5b39681588962179f616f94a9b944430f5a8cefdba1289d999f0ce76b"
+    },
+    {
+      "path": "spec/requirements.json",
+      "sha256": "29a4b45f388bee1012348801ec26182f25f823122768abb99676d19743eb055f"
+    },
+    {
+      "path": "specification.toml",
+      "sha256": "36f47ff0145287f34e700821ac3f185502247a7c8aa7bfd0ce064b8a26b3d089"
+    }
+  ],
+  "catalog_counts": {
+    "command_form_families": {
+      "BBD": 25,
+      "CMD": 74
+    },
+    "command_forms": 99,
+    "contract_status_counts": {
+      "reviewed-complete": 120
+    },
+    "pending_base_operations": 0,
+    "scalar_forms": 474,
+    "tile_operations": {
+      "CUBE": 13,
+      "TEPL": 98,
+      "TMA": 9
+    },
+    "tile_operations_total": 120
+  },
+  "content_sha256": "3bdd4cb7b8ed48442ebffeb0fdf95c9454b0f823e08c0bcb985425434ad492df",
+  "elf_identity": {
+    "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
+    "descriptor_fields": [
+      "release",
+      "encoding_abi",
+      "encoding_projection_sha256"
+    ],
+    "link_policy": "all input identities must be present and exactly equal",
+    "load_policy": "the image identity must exactly match the implementation identity",
+    "note_name": "PTO",
+    "note_type": "PTO_NT_ISA_IDENTITY",
+    "section": ".note.pto.isa"
+  },
+  "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+  "encoding_projection_sha256": "34f6602cf29ea6363d41d896111dad4de0f70ec36517138aa89e292857909da4",
+  "hardware_conformance_profile": {
+    "evidence": "spec/evidence/pto-isa-0571-hardware-numeric-vectors.json",
+    "path": "spec/hardware-conformance-profile.json",
+    "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
+    "repository_implementation_conformance": "unproven",
+    "sha256": "856bdeb29f8d6ab3cbaf8cf20889b4853eabaf5215aa8410ce42716d2260648f"
+  },
+  "hash_contract": {
+    "algorithm": "SHA-256",
+    "content_projection": "object mapping each canonical input path to its file SHA-256",
+    "encoding_projection": "encoding ABI ID plus scalar/command forms, tile selector/function assignments, and system-register locations",
+    "json_encoding": "UTF-8 JSON with lexicographically sorted keys and separators ',' ':'"
+  },
+  "owned_artifacts": [
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/block-command.md",
+      "sha256": "8dd1cde4b7ec1015e9b07e21311ce90692a89fb9c94884423ce7f49f1970dfc6"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/index.md",
+      "sha256": "5b14ed4d35ea6d3bf4daa906b49773085e87618b70ce45868eb1dd23eabbcae9"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/scalar-agu.md",
+      "sha256": "8404d610bb653356e4bdfdcbfe03041fa707c3876797f18d21dab96ee41e9910"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/scalar-alu.md",
+      "sha256": "e15ce22804cd628ab91ffc9ca3b14b2c851fcd9e221e41894419ccf6e8437823"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/scalar-amo.md",
+      "sha256": "74932feb29c5df7994b1b7c918278fe40b9d1288fd5333198804dbe0a685a060"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/scalar-bru.md",
+      "sha256": "440318ee1e93315579fddb211ecf103e9d9a98d1bb4282a40e110b78e53f1fdc"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/scalar-fsu.md",
+      "sha256": "0ea3ef3f8df6e908d3a260ce097564ff596bf83dc8ceaf561defd9c2c3d35267"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/scalar-sys.md",
+      "sha256": "e07ed2adb5f0f503fa5615d48aa59150a9baca904fa52f541fb44742da1dc0b8"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/scalar.md",
+      "sha256": "dc195281464e187638504d94c5b789d7fc670b26935452e0ea036b574b182912"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/system-registers.md",
+      "sha256": "f820371479fbf97e06f4004e71e5322169086a0c1b012b43013bfd4801d74748"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/tile.md",
+      "sha256": "941838cd0f460d99a498d75344d5d6e768688b25c6182676a1a3044384793e5b"
+    },
+    {
+      "kind": "generated-evidence",
+      "path": "spec/evidence/pto-isa-0571-abi-vectors.json",
+      "sha256": "a910f2e64d9ab96967a1c8f5235ea47e077120b5b024d38cdab31d4b21c8d57e"
+    },
+    {
+      "kind": "generated-evidence",
+      "path": "spec/evidence/pto-isa-0571-encoding-totality.json",
+      "sha256": "45b6951b34e511061ca6c80745f6f997554c2f19e3555b488bc3307653cafe52"
+    },
+    {
+      "kind": "generated-evidence",
+      "path": "spec/evidence/pto-isa-0571-hardware-numeric-vectors.json",
+      "sha256": "d0bd12e46215ed902e3775c83e8b2f7861167cedca421fef9421330e655039e5"
+    }
+  ],
+  "release": "0.57.1",
+  "schema_version": 1,
+  "specification_status": "draft"
+}

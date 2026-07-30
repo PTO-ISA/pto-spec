@@ -32,6 +32,23 @@ begin
     end;
 end;
 
+impdef func TileProfileValueIsNaN(value: Word,
+                                  data_type: TileDataType) => boolean
+begin
+    return FALSE;
+end;
+
+func TileSortLeftBefore(left: Word, right: Word,
+                        descending: boolean,
+                        data_type: TileDataType) => boolean
+begin
+    let left_nan = TileProfileValueIsNaN(left, data_type);
+    let right_nan = TileProfileValueIsNaN(right, data_type);
+    if left_nan then return right_nan; end;
+    if right_nan then return TRUE; end;
+    return TileProfileOrderLeft(left, right, descending, data_type);
+end;
+
 func ExecuteTilePartial(op: TilePartialOperation, destination: TileIndex,
                         source_left: TileIndex, source_right: TileIndex)
 begin
@@ -123,31 +140,56 @@ begin
     end;
 end;
 
-func TSORT(destination: TileIndex, source: TileIndex, descending: boolean)
+func TSORT(destination: TileIndex, destination_indices: TileIndex,
+           source: TileIndex, descending: boolean)
 begin
     let source_tile = _Tiles[[source]];
     let destination_tile = _Tiles[[destination]];
+    let index_tile = _Tiles[[destination_indices]];
     let extent: integer = source_tile.valid_rows * source_tile.valid_columns;
     assert destination_tile.valid_rows * destination_tile.valid_columns == extent;
+    assert index_tile.valid_rows * index_tile.valid_columns == extent;
     assert destination_tile.data_type == source_tile.data_type;
     var values: TilePayload = source_tile.payload;
-    for sort_pass = 0 to extent - 1 looplimit 4096 do
-        for element = 0 to extent - 2 looplimit 4096 do
-            let left = values[[element as ModelTileElementIndex]];
-            let right = values[[(element + 1) as ModelTileElementIndex]];
-            let swap = !TileProfileOrderLeft(
-                left, right, descending, source_tile.data_type);
-            if swap then
-                values[[element as ModelTileElementIndex]] = right;
-                values[[(element + 1) as ModelTileElementIndex]] = left;
+    var indices: TilePayload;
+    for element = 0 to extent - 1 looplimit 4096 do
+        indices[[element as ModelTileElementIndex]] =
+            Zeros{PTO_XLEN} + (element MOD 32);
+    end;
+    let group_count: integer = (extent + 31) DIVRM 32;
+    for group = 0 to group_count - 1 looplimit 128 do
+        let group_begin: integer = group * 32;
+        let group_end: integer = if group_begin + 32 < extent then
+            group_begin + 32 else extent;
+        for sort_pass = 0 to 31 do
+            for offset = 0 to 30 do
+                let element: integer = group_begin + offset;
+                if element + 1 < group_end then
+                    let left = values[[element as ModelTileElementIndex]];
+                    let right = values[[(element + 1) as ModelTileElementIndex]];
+                    let swap = !TileSortLeftBefore(
+                        left, right, descending, source_tile.data_type);
+                    if swap then
+                        values[[element as ModelTileElementIndex]] = right;
+                        values[[(element + 1) as ModelTileElementIndex]] = left;
+                        let left_index = indices[[element as ModelTileElementIndex]];
+                        indices[[element as ModelTileElementIndex]] =
+                            indices[[(element + 1) as ModelTileElementIndex]];
+                        indices[[(element + 1) as ModelTileElementIndex]] =
+                            left_index;
+                    end;
+                end;
             end;
         end;
     end;
     for element = 0 to extent - 1 looplimit 4096 do
         _Tiles[[destination]].payload[[element as ModelTileElementIndex]] =
             values[[element as ModelTileElementIndex]];
+        _Tiles[[destination_indices]].payload[[element as ModelTileElementIndex]] =
+            indices[[element as ModelTileElementIndex]];
     end;
     _Tiles[[destination]].contents_defined = TRUE;
+    _Tiles[[destination_indices]].contents_defined = TRUE;
 end;
 
 func TMRGSORT(destination: TileIndex, source_left: TileIndex, source_right: TileIndex,

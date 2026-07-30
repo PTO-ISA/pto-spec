@@ -140,6 +140,8 @@ begin
         TileDataType_U64, Zeros{PTO_XLEN} + 4, Zeros{PTO_XLEN} + 5);
     let tile_order_left = TileProfileOrderLeft(Zeros{PTO_XLEN} + 4,
         Zeros{PTO_XLEN} + 5, FALSE, TileDataType_S64);
+    let raw_profile_nan = TileProfileValueIsNaN(
+        Zeros{PTO_XLEN} + 0x7ff8000000000000, TileDataType_FP64);
     let matrix_accumulate = TileProfileMatrixAccumulate(
         Zeros{PTO_XLEN} + 1, Zeros{PTO_XLEN} + 2, Zeros{PTO_XLEN} + 3,
         TileDataType_U64, TileDataType_U64, TileDataType_U64);
@@ -151,6 +153,7 @@ begin
     assert tile_expand == Zeros{PTO_XLEN} + 9;
     assert tile_partial == Zeros{PTO_XLEN} + 20;
     assert tile_order_left;
+    assert !raw_profile_nan;
     assert matrix_accumulate == Zeros{PTO_XLEN} + 7;
     assert matrix_bias == Zeros{PTO_XLEN} + 9;
     assert matrix_scale == Zeros{PTO_XLEN} + 24;

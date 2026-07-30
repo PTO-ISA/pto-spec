@@ -13,6 +13,8 @@ type BlockTileBinding of record {
     valid: boolean,
     destination_valid: boolean,
     destination: TileIndex,
+    destination_hand: bits(2),
+    destination_allocated_by_block: boolean,
     destination_size: integer {0..15},
     source0_valid: boolean,
     source1_valid: boolean,
@@ -21,6 +23,15 @@ type BlockTileBinding of record {
     source0_reuse: boolean,
     source1_reuse: boolean,
     last: boolean
+};
+
+type BlockTileOperationSelection of record {
+    valid: boolean,
+    // 0=TEPL, 1=TMA, 2=CUBE. The generated decoder owns the public enum;
+    // block state stores the stable encoded identity without depending on it.
+    family: bits(2),
+    code: bits(12),
+    data_type: bits(5)
 };
 
 type BlockControlAttributes of record {
@@ -35,10 +46,11 @@ type BlockControlAttributes of record {
 type BlockDataAttributes of record {
     data_type: bits(5),
     data_layout: bits(5),
-    pad_value: bits(5),
+    pad_value: bits(2),
     conversion_mode: bits(3),
     rounding_mode: bits(3),
-    saturating: boolean
+    saturating: boolean,
+    canonicalize: boolean
 };
 
 var _BlockKind : BlockKind;
@@ -56,6 +68,10 @@ var _BlockTileBindings : array [[PTO_BLOCK_TILE_BINDING_COUNT]]
     of BlockTileBinding;
 var _BlockControlAttributes : BlockControlAttributes;
 var _BlockDataAttributes : BlockDataAttributes;
+var _BlockTileOperation : BlockTileOperationSelection;
+// Bit zero (NORM) is always enabled. Other accepted layout bits are set only
+// by a profile/platform capability advertisement.
+var _TileDataLayoutCapabilities : bits(32);
 var _FrameDepth : integer {0..PTO_MODEL_MEMORY_EVENTS};
 var _LastFrameBegin : Reg5Selector;
 var _LastFrameEnd : Reg5Selector;
@@ -95,6 +111,8 @@ begin
         _BlockTileBindings[[index]].valid = FALSE;
         _BlockTileBindings[[index]].destination_valid = FALSE;
         _BlockTileBindings[[index]].destination = 0;
+        _BlockTileBindings[[index]].destination_hand = Zeros{2};
+        _BlockTileBindings[[index]].destination_allocated_by_block = FALSE;
         _BlockTileBindings[[index]].destination_size = 0;
         _BlockTileBindings[[index]].source0_valid = FALSE;
         _BlockTileBindings[[index]].source1_valid = FALSE;
@@ -112,10 +130,17 @@ begin
     _BlockControlAttributes.direct_register = FALSE;
     _BlockDataAttributes.data_type = Zeros{5};
     _BlockDataAttributes.data_layout = Zeros{5};
-    _BlockDataAttributes.pad_value = Zeros{5};
+    _BlockDataAttributes.pad_value = Zeros{2};
     _BlockDataAttributes.conversion_mode = Zeros{3};
     _BlockDataAttributes.rounding_mode = Zeros{3};
     _BlockDataAttributes.saturating = FALSE;
+    _BlockDataAttributes.canonicalize = FALSE;
+    _BlockTileOperation.valid = FALSE;
+    _BlockTileOperation.family = Zeros{2};
+    _BlockTileOperation.code = Zeros{12};
+    _BlockTileOperation.data_type = Zeros{5};
+    _TileDataLayoutCapabilities = Zeros{32};
+    _TileDataLayoutCapabilities[0] = '1';
     for ring = 0 to PTO_ACR_COUNT - 1 do
         _TrapContexts[[ring]].valid = FALSE;
         _TrapContexts[[ring]].source_acr = 0;
@@ -202,9 +227,17 @@ func SetBlockTileBinding(index: BlockTileBindingIndex,
                          source1_reuse: boolean,
                          last: boolean)
 begin
+    if destination_valid &&
+       (destination > 3 || !TileSizeCodeIsLegal(destination_size)) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return;
+    end;
     _BlockTileBindings[[index]].valid = TRUE;
     _BlockTileBindings[[index]].destination_valid = destination_valid;
     _BlockTileBindings[[index]].destination = destination;
+    _BlockTileBindings[[index]].destination_hand =
+        Zeros{2} + (destination MOD 4);
+    _BlockTileBindings[[index]].destination_allocated_by_block = FALSE;
     _BlockTileBindings[[index]].destination_size = destination_size;
     _BlockTileBindings[[index]].source0_valid = source0_valid;
     _BlockTileBindings[[index]].source1_valid = source1_valid;
@@ -213,6 +246,112 @@ begin
     _BlockTileBindings[[index]].source0_reuse = source0_reuse;
     _BlockTileBindings[[index]].source1_reuse = source1_reuse;
     _BlockTileBindings[[index]].last = last;
+end;
+
+func AddBlockTileBinding(destination_valid: boolean,
+                         destination: TileIndex,
+                         destination_size: integer {0..15},
+                         source0_valid: boolean,
+                         source1_valid: boolean,
+                         source0: TileIndex,
+                         source1: TileIndex,
+                         source0_reuse: boolean,
+                         source1_reuse: boolean,
+                         last: boolean)
+begin
+    var added = FALSE;
+    for binding = 0 to PTO_BLOCK_TILE_BINDING_COUNT - 1 do
+        if !added && !_BlockTileBindings[[binding]].valid then
+            SetBlockTileBinding(binding as BlockTileBindingIndex,
+                destination_valid, destination, destination_size,
+                source0_valid, source1_valid, source0, source1,
+                source0_reuse, source1_reuse, last);
+            added = TRUE;
+        end;
+    end;
+    if !added then SetFault(Fault_TileLegality, ReadTPC()); end;
+end;
+
+func SetBlockTileOperationSelection(family: bits(2), code: bits(12),
+                                    data_type: bits(5))
+begin
+    _BlockTileOperation.valid = TRUE;
+    _BlockTileOperation.family = family;
+    _BlockTileOperation.code = code;
+    _BlockTileOperation.data_type = data_type;
+end;
+
+readonly func BlockTileOperationSelected() => boolean
+begin
+    return _BlockTileOperation.valid;
+end;
+
+readonly func BlockTileDescriptorReady() => boolean
+begin
+    if _BlockScalarBindings[[0]].valid then return TRUE; end;
+    for binding = 0 to PTO_BLOCK_TILE_BINDING_COUNT - 1 do
+        if _BlockTileBindings[[binding]].valid then return TRUE; end;
+    end;
+    return FALSE;
+end;
+
+readonly func CurrentBlockTileOperationDataTypeCode() => bits(5)
+begin
+    assert _BlockTileOperation.valid;
+    return _BlockTileOperation.data_type;
+end;
+
+func ClearBlockTileOperationSelection()
+begin
+    _BlockTileOperation.valid = FALSE;
+    _BlockTileOperation.family = Zeros{2};
+    _BlockTileOperation.code = Zeros{12};
+    _BlockTileOperation.data_type = Zeros{5};
+end;
+
+readonly func BlockTileDestinationSizeLegal(
+    binding: BlockTileBindingIndex) => boolean
+begin
+    if !_BlockTileBindings[[binding]].destination_valid then return TRUE; end;
+    return TileSizeCodeIsLegal(_BlockTileBindings[[binding]].destination_size);
+end;
+
+readonly func BlockTileDestinationSizeBytes(
+    binding: BlockTileBindingIndex) => integer {0,128,256,512,1024,2048,4096,8192}
+begin
+    if !_BlockTileBindings[[binding]].destination_valid then return 0; end;
+    assert BlockTileDestinationSizeLegal(binding);
+    return TileSizeCodeBytes(
+        _BlockTileBindings[[binding]].destination_size as integer {3..9});
+end;
+
+// The generated/direct execution boundary invokes this only after an explicit
+// successful commit. Faulted, retried, or squashed attempts never call it.
+func CommitBlockTileSourceLifetime(binding: BlockTileBindingIndex)
+begin
+    if _BlockTileBindings[[binding]].source0_valid &&
+       !_BlockTileBindings[[binding]].source0_reuse then
+        ReleaseTile(_BlockTileBindings[[binding]].source0);
+    end;
+    if _BlockTileBindings[[binding]].source1_valid &&
+       !_BlockTileBindings[[binding]].source1_reuse &&
+       (!_BlockTileBindings[[binding]].source0_valid ||
+        _BlockTileBindings[[binding]].source1 !=
+            _BlockTileBindings[[binding]].source0) then
+        ReleaseTile(_BlockTileBindings[[binding]].source1);
+    end;
+end;
+
+func FinalizeBlockTileAttempt(status: TileExecutionStatus)
+begin
+    if status == TileExecution_Executed then
+        for binding = 0 to PTO_BLOCK_TILE_BINDING_COUNT - 1 do
+            if _BlockTileBindings[[binding]].valid then
+                CommitBlockTileSourceLifetime(
+                    binding as BlockTileBindingIndex);
+            end;
+        end;
+    end;
 end;
 
 func SetBlockControlAttributeState(trap_enabled: boolean, atomic: boolean,
@@ -227,16 +366,83 @@ begin
     _BlockControlAttributes.direct_register = direct_register;
 end;
 
-func SetBlockDataAttributeState(data_type: bits(5), data_layout: bits(5),
-                                pad_value: bits(5), conversion_mode: bits(3),
-                                rounding_mode: bits(3), saturating: boolean)
+readonly func CurrentBlockAtomic() => boolean
 begin
+    return _BlockControlAttributes.atomic;
+end;
+
+readonly func CurrentBlockMemoryOrder() => MemoryOrder
+begin
+    if _BlockControlAttributes.acquire &&
+       _BlockControlAttributes.release then
+        return MemoryOrder_AcquireRelease;
+    elsif _BlockControlAttributes.acquire then
+        return MemoryOrder_Acquire;
+    elsif _BlockControlAttributes.release then
+        return MemoryOrder_Release;
+    else
+        return MemoryOrder_Relaxed;
+    end;
+end;
+
+pure func TileDataLayoutCodeAccepted(data_layout: bits(5)) => boolean
+begin
+    let code = UInt(data_layout);
+    return code == 0 || code == 1 || code == 3 || code == 4 ||
+           code == 6 || code == 8 || code == 9 || code == 17 ||
+           code == 18 || code == 20 || code == 27 || code == 28 ||
+           code == 30;
+end;
+
+readonly func TileDataLayoutCodeSupported(data_layout: bits(5)) => boolean
+begin
+    if !TileDataLayoutCodeAccepted(data_layout) then return FALSE; end;
+    return _TileDataLayoutCapabilities[UInt(data_layout)] == '1';
+end;
+
+func AdvertiseTileDataLayout(data_layout: bits(5))
+begin
+    assert TileDataLayoutCodeAccepted(data_layout);
+    _TileDataLayoutCapabilities[UInt(data_layout)] = '1';
+end;
+
+readonly func CurrentBlockPadValue() => TilePadValue
+begin
+    case UInt(_BlockDataAttributes.pad_value) of
+        when 0 => return TilePad_Zero;
+        when 1 => return TilePad_Max;
+        when 2 => return TilePad_Min;
+        when 3 => return TilePad_Null;
+    end;
+end;
+
+readonly func CurrentBlockDataTypeCode() => bits(5)
+begin
+    return _BlockDataAttributes.data_type;
+end;
+
+readonly func CurrentBlockCanonicalize() => boolean
+begin
+    return _BlockDataAttributes.canonicalize;
+end;
+
+func SetBlockDataAttributeState0571(
+    data_type: bits(5), data_layout: bits(5), pad_value: bits(2),
+    conversion_mode: bits(3), rounding_mode: bits(3), saturating: boolean,
+    canonicalize: boolean)
+begin
+    if !TileDataTypeEncodingValid(ZeroExtend{PTO_XLEN}(data_type)) ||
+       !TileDataLayoutCodeSupported(data_layout) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return;
+    end;
     _BlockDataAttributes.data_type = data_type;
     _BlockDataAttributes.data_layout = data_layout;
     _BlockDataAttributes.pad_value = pad_value;
     _BlockDataAttributes.conversion_mode = conversion_mode;
     _BlockDataAttributes.rounding_mode = rounding_mode;
     _BlockDataAttributes.saturating = saturating;
+    _BlockDataAttributes.canonicalize = canonicalize;
 end;
 
 func BeginBlock(kind: BlockKind, transfer: BlockTransfer, target: Word,

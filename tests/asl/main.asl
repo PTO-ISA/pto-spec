@@ -10,6 +10,9 @@ begin
     TestTrapContextRouteAndRecover();
     TestBlockConfigurationState();
     TestDecodedBlockStartAndStop();
+    TestDecodedBlockTileExecutionBridge();
+    TestDecodedBlockDATRApplicability();
+    TestBlockTileAllocationFaultPreservesSources();
     TestTileRegisterMapping();
     TestScalarTemporaryQueues();
     TestTileAllocationState();

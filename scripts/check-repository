@@ -36,9 +36,14 @@ required_files=(
     spec/catalog/command-forms.json
     spec/catalog/system-registers.json
     spec/catalog/tile-operations.json
-    spec/evidence/public-source-reconciliation.json
+    spec/hardware-conformance-profile.json
+    spec/release-manifest.json
+    spec/evidence/pto-isa-0571-abi-vectors.json
+    spec/evidence/pto-isa-0571-encoding-totality.json
+    spec/evidence/pto-isa-0571-hardware-numeric-vectors.json
+    scripts/check-release-manifest
+    scripts/generate-release-manifest
     scripts/generate-instruction-reference
-    scripts/generate-public-source-reconciliation
     tests/README.md
 )
 
@@ -131,4 +136,5 @@ done
 
 python3 scripts/check-catalogs
 python3 scripts/generate-instruction-reference --check
+./scripts/check-release-manifest
 python3 scripts/check-publication-hygiene

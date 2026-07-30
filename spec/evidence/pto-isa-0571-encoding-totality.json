@@ -1,0 +1,387 @@
+{
+  "contract_status_counts": {
+    "reviewed-complete": 120
+  },
+  "cube": {
+    "function_map": {
+      "0": "TMATMUL",
+      "1": "TMATMUL_BIAS",
+      "16": "TGEMV",
+      "17": "TGEMV_BIAS",
+      "18": "TGEMV_ACC",
+      "2": "TMATMUL_ACC",
+      "20": "TGEMV_MX",
+      "21": "TGEMV_MX_BIAS",
+      "22": "TGEMV_MX_ACC",
+      "4": "TMATMUL_MX",
+      "5": "TMATMUL_MX_BIAS",
+      "6": "TMATMUL_MX_ACC",
+      "8": "ACCCVT"
+    }
+  },
+  "deleted_tepl_operations": [
+    "TFMA",
+    "TFMOD",
+    "TFMODS",
+    "TADDC",
+    "TSUBC",
+    "TADDSC",
+    "TSUBSC",
+    "TLRELU",
+    "TRANDOM"
+  ],
+  "dispatch_outcome_contract": {
+    "recognized_operation_legality_or_handler_failure": "TileExecution_Faulted",
+    "unknown_or_reserved_selector": "TileExecution_Rejected"
+  },
+  "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+  "encoding_projection_sha256": "34f6602cf29ea6363d41d896111dad4de0f70ec36517138aa89e292857909da4",
+  "family_counts": {
+    "CUBE": 13,
+    "TEPL": 98,
+    "TMA": 9,
+    "total": 120
+  },
+  "negative_raw_vectors": [
+    {
+      "datatype": "U64",
+      "expected": "reserved-reject",
+      "former_name": "TFMA",
+      "function": 5,
+      "mode": 0,
+      "raw": "0xC0519181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "reserved-reject",
+      "former_name": "TFMOD",
+      "function": 24,
+      "mode": 0,
+      "raw": "0xC1819181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "reserved-reject",
+      "former_name": "TFMODS",
+      "function": 25,
+      "mode": 0,
+      "raw": "0xC1919181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "reserved-reject",
+      "former_name": "TADDC",
+      "function": 28,
+      "mode": 0,
+      "raw": "0xC1C19181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "reserved-reject",
+      "former_name": "TSUBC",
+      "function": 5,
+      "mode": 1,
+      "raw": "0xC2519181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "reserved-reject",
+      "former_name": "TADDSC",
+      "function": 14,
+      "mode": 1,
+      "raw": "0xC2E19181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "reserved-reject",
+      "former_name": "TSUBSC",
+      "function": 24,
+      "mode": 1,
+      "raw": "0xC3819181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "reserved-reject",
+      "former_name": "TLRELU",
+      "function": 25,
+      "mode": 1,
+      "raw": "0xC3919181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "reserved-reject",
+      "former_name": "TRANDOM",
+      "function": 9,
+      "mode": 3,
+      "raw": "0xC6919181"
+    },
+    {
+      "expected": "encoding-abi-reject",
+      "former_encoding": "pre-0.57.1-TADD",
+      "raw": "0xC2001181"
+    }
+  ],
+  "optional_base_operations": 0,
+  "pending_base_operations": [],
+  "positive_raw_vectors": [
+    {
+      "datatype": "U64",
+      "expected": "accepted",
+      "function": 0,
+      "mode": 0,
+      "name": "TADD",
+      "raw": "0xC0019181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "accepted",
+      "function": 21,
+      "mode": 3,
+      "name": "TPARTARGMAX",
+      "raw": "0xC7519181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "accepted",
+      "function": 22,
+      "mode": 3,
+      "name": "TPARTARGMIN",
+      "raw": "0xC7619181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "accepted",
+      "function": 23,
+      "mode": 3,
+      "name": "TRESHAPE",
+      "raw": "0xC7719181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "accepted",
+      "function": 24,
+      "mode": 3,
+      "name": "TDEINTERLEAVE",
+      "raw": "0xC7819181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "accepted",
+      "function": 25,
+      "mode": 3,
+      "name": "TINTERLEAVE",
+      "raw": "0xC7919181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "accepted",
+      "function": 26,
+      "mode": 3,
+      "name": "TPUSH",
+      "raw": "0xC7A19181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "accepted",
+      "function": 27,
+      "mode": 3,
+      "name": "TPOP",
+      "raw": "0xC7B19181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "accepted",
+      "function": 28,
+      "mode": 3,
+      "name": "TALLOC",
+      "raw": "0xC7C19181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "accepted",
+      "function": 29,
+      "mode": 3,
+      "name": "TFREE",
+      "raw": "0xC7D19181"
+    }
+  ],
+  "release": "0.57.1",
+  "schema_version": 1,
+  "tepl": {
+    "accepted_functions": {
+      "0": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        26,
+        27
+      ],
+      "1": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        15,
+        26,
+        27
+      ],
+      "2": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      "3": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29
+      ]
+    },
+    "datatype_codes": {
+      "accepted": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        16,
+        17,
+        18,
+        19,
+        20,
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "illegal": [
+        31
+      ],
+      "reserved": [
+        15,
+        21,
+        22,
+        23,
+        29,
+        30
+      ]
+    },
+    "mode_counts": {
+      "0": 25,
+      "1": 16,
+      "2": 28,
+      "3": 29
+    },
+    "raw_space": {
+      "accepted": 2450,
+      "classification_sha256": "7d8b19cf0056e0f52d1991fb6779c5a6e4890faf20fb0cd982e52bbb12771496",
+      "illegal": 128,
+      "reserved": 1518,
+      "total": 4096
+    },
+    "selector_count": 98
+  },
+  "tma": {
+    "function_map": {
+      "0": "TLOAD",
+      "1": "TSTORE",
+      "2": "TMOV",
+      "3": "TPREFETCH",
+      "4": "MGATHER",
+      "5": "MSCATTER",
+      "6": "MGATHER_MASK",
+      "7": "MSCATTER_MASK",
+      "8": "MGATHER_CAS"
+    }
+  }
+}

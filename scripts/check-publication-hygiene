@@ -13,12 +13,12 @@ from urllib.parse import unquote, urlsplit
 ROOT = Path(__file__).resolve().parent.parent
 FORBIDDEN_TERMS = (
     "li" + "nx",
-    "0" + "." + "57",
     "v" + "call",
     "m" + "call",
     "da" + "vincioo",
     "heng" + "liao1972",
 )
+LEGACY_RELEASE = re.compile(r"(?<![0-9.])v?0\.57(?!\.1(?:\b|[^0-9]))")
 STALE_URL_PREFIXES = (
     "https://developer." + "arm.com/architectures/architecture-specification-language",
     "https://developer." + "arm.com/documentation/",
@@ -54,7 +54,7 @@ def main() -> int:
     for path in files:
         relative = path.relative_to(ROOT)
         lower_path = str(relative).lower()
-        if any(term in lower_path for term in FORBIDDEN_TERMS):
+        if any(term in lower_path for term in FORBIDDEN_TERMS) or LEGACY_RELEASE.search(lower_path):
             failures.append(f"forbidden source identity in path: {relative}")
             continue
         if not path.is_file():
@@ -65,7 +65,7 @@ def main() -> int:
             continue
 
         lower_body = body.lower()
-        if any(term in lower_body for term in FORBIDDEN_TERMS):
+        if any(term in lower_body for term in FORBIDDEN_TERMS) or LEGACY_RELEASE.search(lower_body):
             failures.append(f"forbidden source identity in file: {relative}")
         for prefix in STALE_URL_PREFIXES:
             if prefix in body:

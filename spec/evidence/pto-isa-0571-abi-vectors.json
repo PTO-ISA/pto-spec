@@ -1,0 +1,189 @@
+{
+  "bare_metal_identity": {
+    "format": "PTO release manifest identity object",
+    "policy": "the supplied identity must exactly match the implementation identity",
+    "required_fields": [
+      "release",
+      "encoding_abi",
+      "encoding_projection_sha256"
+    ]
+  },
+  "cases": [
+    {
+      "expected": "accept",
+      "id": "elf-link-match",
+      "inputs": [
+        {
+          "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+          "encoding_projection_sha256": "34f6602cf29ea6363d41d896111dad4de0f70ec36517138aa89e292857909da4",
+          "release": "0.57.1"
+        },
+        {
+          "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+          "encoding_projection_sha256": "34f6602cf29ea6363d41d896111dad4de0f70ec36517138aa89e292857909da4",
+          "release": "0.57.1"
+        }
+      ],
+      "stage": "link"
+    },
+    {
+      "expected": "reject",
+      "id": "elf-link-missing-identity",
+      "inputs": [
+        {
+          "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+          "encoding_projection_sha256": "34f6602cf29ea6363d41d896111dad4de0f70ec36517138aa89e292857909da4",
+          "release": "0.57.1"
+        },
+        null
+      ],
+      "reason": "missing-identity",
+      "stage": "link"
+    },
+    {
+      "expected": "reject",
+      "id": "elf-link-release-mismatch",
+      "inputs": [
+        {
+          "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+          "encoding_projection_sha256": "34f6602cf29ea6363d41d896111dad4de0f70ec36517138aa89e292857909da4",
+          "release": "0.57.1"
+        },
+        {
+          "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+          "encoding_projection_sha256": "34f6602cf29ea6363d41d896111dad4de0f70ec36517138aa89e292857909da4",
+          "release": "0.58.0"
+        }
+      ],
+      "reason": "release-mismatch",
+      "stage": "link"
+    },
+    {
+      "expected": "reject",
+      "id": "elf-link-abi-mismatch",
+      "inputs": [
+        {
+          "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+          "encoding_projection_sha256": "34f6602cf29ea6363d41d896111dad4de0f70ec36517138aa89e292857909da4",
+          "release": "0.57.1"
+        },
+        {
+          "encoding_abi": "pto-isa-0.57.1-legacy-selector-v0",
+          "encoding_projection_sha256": "34f6602cf29ea6363d41d896111dad4de0f70ec36517138aa89e292857909da4",
+          "release": "0.57.1"
+        }
+      ],
+      "reason": "encoding-abi-mismatch",
+      "stage": "link"
+    },
+    {
+      "expected": "reject",
+      "id": "elf-link-hash-mismatch",
+      "inputs": [
+        {
+          "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+          "encoding_projection_sha256": "34f6602cf29ea6363d41d896111dad4de0f70ec36517138aa89e292857909da4",
+          "release": "0.57.1"
+        },
+        {
+          "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+          "encoding_projection_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "release": "0.57.1"
+        }
+      ],
+      "reason": "encoding-hash-mismatch",
+      "stage": "link"
+    },
+    {
+      "expected": "accept",
+      "id": "elf-load-match",
+      "image": {
+        "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+        "encoding_projection_sha256": "34f6602cf29ea6363d41d896111dad4de0f70ec36517138aa89e292857909da4",
+        "release": "0.57.1"
+      },
+      "implementation": {
+        "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+        "encoding_projection_sha256": "34f6602cf29ea6363d41d896111dad4de0f70ec36517138aa89e292857909da4",
+        "release": "0.57.1"
+      },
+      "stage": "load"
+    },
+    {
+      "expected": "reject",
+      "id": "elf-load-missing-identity",
+      "image": null,
+      "implementation": {
+        "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+        "encoding_projection_sha256": "34f6602cf29ea6363d41d896111dad4de0f70ec36517138aa89e292857909da4",
+        "release": "0.57.1"
+      },
+      "reason": "missing-identity",
+      "stage": "load"
+    },
+    {
+      "expected": "reject",
+      "id": "elf-load-hash-mismatch",
+      "image": {
+        "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+        "encoding_projection_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "release": "0.57.1"
+      },
+      "implementation": {
+        "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+        "encoding_projection_sha256": "34f6602cf29ea6363d41d896111dad4de0f70ec36517138aa89e292857909da4",
+        "release": "0.57.1"
+      },
+      "reason": "encoding-hash-mismatch",
+      "stage": "load"
+    },
+    {
+      "expected": "accept",
+      "id": "bare-metal-manifest-match",
+      "image": {
+        "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+        "encoding_projection_sha256": "34f6602cf29ea6363d41d896111dad4de0f70ec36517138aa89e292857909da4",
+        "release": "0.57.1"
+      },
+      "implementation": {
+        "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+        "encoding_projection_sha256": "34f6602cf29ea6363d41d896111dad4de0f70ec36517138aa89e292857909da4",
+        "release": "0.57.1"
+      },
+      "stage": "bare-metal-load"
+    },
+    {
+      "expected": "reject",
+      "id": "bare-metal-manifest-mismatch",
+      "image": {
+        "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+        "encoding_projection_sha256": "34f6602cf29ea6363d41d896111dad4de0f70ec36517138aa89e292857909da4",
+        "release": "0.58.0"
+      },
+      "implementation": {
+        "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+        "encoding_projection_sha256": "34f6602cf29ea6363d41d896111dad4de0f70ec36517138aa89e292857909da4",
+        "release": "0.57.1"
+      },
+      "reason": "release-mismatch",
+      "stage": "bare-metal-load"
+    }
+  ],
+  "elf_identity": {
+    "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
+    "descriptor_fields": [
+      "release",
+      "encoding_abi",
+      "encoding_projection_sha256"
+    ],
+    "link_policy": "all input identities must be present and exactly equal",
+    "load_policy": "the image identity must exactly match the implementation identity",
+    "note_name": "PTO",
+    "note_type": "PTO_NT_ISA_IDENTITY",
+    "section": ".note.pto.isa"
+  },
+  "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+  "encoding_projection_sha256": "34f6602cf29ea6363d41d896111dad4de0f70ec36517138aa89e292857909da4",
+  "release": "0.57.1",
+  "schema_version": 1
+}

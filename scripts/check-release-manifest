@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+"""Check the generated PTO ISA release manifest and evidence artifacts."""
+
+from __future__ import annotations
+
+from pathlib import Path
+import subprocess
+import sys
+
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def main() -> int:
+    result = subprocess.run(
+        [str(ROOT / "scripts/generate-release-manifest"), "--check"],
+        cwd=ROOT,
+        text=True,
+    )
+    return result.returncode
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

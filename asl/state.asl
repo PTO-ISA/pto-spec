@@ -39,6 +39,7 @@ var _ACRTrapNumber : array [[PTO_ACR_COUNT]] of TrapNumber;
 var _ACRTrapArgument0 : array [[PTO_ACR_COUNT]] of Word;
 var _TrapContexts : array [[PTO_ACR_COUNT]] of TrapContext;
 var _CurrentACR : AccessControlRing;
+var _Accumulator : AccumulatorState;
 
 type BaseSystemRegisterState of record {
     thread_ptr: Word,
@@ -189,6 +190,7 @@ begin
         _TrapContexts[[target]].t_queue[[index]] = _TQueue[[index]];
         _TrapContexts[[target]].u_queue[[index]] = _UQueue[[index]];
     end;
+    _TrapContexts[[target]].accumulator = _Accumulator;
 end;
 
 impdef func RecoverTrapContext(target: AccessControlRing) => boolean
@@ -206,6 +208,7 @@ begin
         _TQueue[[index]] = _TrapContexts[[target]].t_queue[[index]];
         _UQueue[[index]] = _TrapContexts[[target]].u_queue[[index]];
     end;
+    _Accumulator = _TrapContexts[[target]].accumulator;
     _CurrentACR = _TrapContexts[[target]].source_acr;
     _TrapContexts[[target]].valid = FALSE;
     return TRUE;
@@ -234,6 +237,7 @@ begin
         when Fault_SoftwareBreakpoint => _ACRTrapNumber[[ring]] = Zeros{6} + 50;
         when Fault_Assert => _ACRTrapNumber[[ring]] = Zeros{6} + 52;
         when Fault_TileLegality => _ACRTrapNumber[[ring]] = Zeros{6} + 5;
+        when Fault_TileAllocation => _ACRTrapNumber[[ring]] = Zeros{6} + 5;
         when Fault_BlockControl => _ACRTrapNumber[[ring]] = Zeros{6} + 6;
     end;
     _ACRTrapArgument0[[ring]] = address;

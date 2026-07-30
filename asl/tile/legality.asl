@@ -492,14 +492,22 @@ begin
 end;
 
 readonly func TileOperandsLegal_TSORT(destination: TileIndex,
+                                      destination_indices: TileIndex,
                                       source: TileIndex,
                                       descending: boolean) => boolean
 begin
-    return TileDescriptorLegal(destination) && TileDescriptorLegal(source) &&
+    return destination != destination_indices &&
+           TileDescriptorLegal(destination) &&
+           TileDescriptorLegal(destination_indices) &&
+           TileDescriptorLegal(source) &&
            _Tiles[[destination]].valid_rows *
                _Tiles[[destination]].valid_columns ==
                _Tiles[[source]].valid_rows * _Tiles[[source]].valid_columns &&
-           _Tiles[[destination]].data_type == _Tiles[[source]].data_type;
+           _Tiles[[destination_indices]].valid_rows *
+               _Tiles[[destination_indices]].valid_columns ==
+               _Tiles[[source]].valid_rows * _Tiles[[source]].valid_columns &&
+           _Tiles[[destination]].data_type == _Tiles[[source]].data_type &&
+           _Tiles[[destination_indices]].data_type == TileDataType_U32;
 end;
 
 readonly func TileOperandsLegal_TMRGSORT(
@@ -576,11 +584,10 @@ end;
 
 readonly func TileOperandsLegal_MGATHER_MASK(
     destination: TileIndex, base_address: Word,
-    indices: TileIndex, mask: TileIndex) => boolean
+    indices: TileIndex, mask: TileIndex, pad_value: TilePadValue) => boolean
 begin
     return TileLogicalShapeMatch(destination, indices) &&
-           TileLogicalShapeMatch(destination, mask) &&
-           _Tiles[[destination]].contents_defined;
+           TileLogicalShapeMatch(destination, mask);
 end;
 
 readonly func TileOperandsLegal_MSCATTER_MASK(
@@ -627,9 +634,8 @@ begin
     return TileDataTypeEncodingValid(data_type_code) &&
            valid_rows <= rows && valid_columns <= columns &&
            rows * columns <= PTO_MODEL_TILE_ELEMENTS &&
-           TileCapacityIsLegal(capacity_bytes as integer {0..524288}) &&
-           TileCapacityInUseExcept(destination) + capacity_bytes <=
-               TileCapacityLimitBytes();
+           capacity_bytes != 0 &&
+           TileCapacityIsLegal(capacity_bytes as integer {0..262144});
 end;
 
 readonly func TileOperandsLegal_TFREE(destination: TileIndex) => boolean
@@ -637,140 +643,152 @@ begin
     return TRUE;
 end;
 
-readonly func TileMatrixOperandsLegal(destination: TileIndex,
-                                      left: TileIndex,
+readonly func TileMatrixOperandsLegal(left: TileIndex,
                                       right: TileIndex) => boolean
 begin
-    return TileDescriptorLegal(destination) && TileDescriptorLegal(left) &&
+    return BlockTileOperationSelected() && TileDescriptorLegal(left) &&
            TileDescriptorLegal(right) &&
            _Tiles[[left]].valid_columns == _Tiles[[right]].valid_rows &&
-           _Tiles[[destination]].valid_rows == _Tiles[[left]].valid_rows &&
-           _Tiles[[destination]].valid_columns == _Tiles[[right]].valid_columns;
+           _Tiles[[left]].valid_rows * _Tiles[[right]].valid_columns <=
+               PTO_MODEL_TILE_ELEMENTS;
 end;
 
-readonly func TileMatrixBiasLegal(destination: TileIndex,
+readonly func TileMatrixBiasLegal(left: TileIndex, right: TileIndex,
                                   bias: TileIndex) => boolean
 begin
-    return TileDescriptorLegal(destination) && TileDescriptorLegal(bias) &&
+    return TileMatrixOperandsLegal(left, right) && TileDescriptorLegal(bias) &&
            (_Tiles[[bias]].valid_rows == 1 ||
-            _Tiles[[bias]].valid_rows == _Tiles[[destination]].valid_rows) &&
+            _Tiles[[bias]].valid_rows == _Tiles[[left]].valid_rows) &&
            (_Tiles[[bias]].valid_columns == 1 ||
-            _Tiles[[bias]].valid_columns == _Tiles[[destination]].valid_columns);
+            _Tiles[[bias]].valid_columns == _Tiles[[right]].valid_columns);
 end;
 
-readonly func TileMatrixScaleLegal(destination: TileIndex,
+readonly func TileMatrixScaleLegal(left: TileIndex, right: TileIndex,
                                    row_scale: TileIndex,
                                    column_scale: TileIndex) => boolean
 begin
-    return TileDescriptorLegal(destination) &&
+    return TileMatrixOperandsLegal(left, right) &&
            TileDescriptorLegal(row_scale) &&
            TileDescriptorLegal(column_scale) &&
-           _Tiles[[row_scale]].valid_rows == _Tiles[[destination]].valid_rows &&
+           _Tiles[[row_scale]].valid_rows == _Tiles[[left]].valid_rows &&
            _Tiles[[row_scale]].valid_columns == 1 &&
            _Tiles[[column_scale]].valid_rows == 1 &&
            _Tiles[[column_scale]].valid_columns ==
-               _Tiles[[destination]].valid_columns;
+               _Tiles[[right]].valid_columns;
+end;
+
+readonly func TileAccumulatorMatches(left: TileIndex,
+                                     right: TileIndex) => boolean
+begin
+    if !_Accumulator.live || !TileMatrixOperandsLegal(left, right) then
+        return FALSE;
+    end;
+    let selected_type = TileDataTypeFromEncoding(
+        ZeroExtend{PTO_XLEN}(CurrentBlockTileOperationDataTypeCode()));
+    return _Accumulator.info.valid_rows == _Tiles[[left]].valid_rows &&
+           _Accumulator.info.valid_columns == _Tiles[[right]].valid_columns &&
+           _Accumulator.info.data_type == selected_type;
 end;
 
 readonly func TileOperandsLegal_TMATMUL(
-    destination: TileIndex, left: TileIndex, right: TileIndex,
+    left: TileIndex, right: TileIndex,
     accumulate: boolean) => boolean
 begin
-    return TileMatrixOperandsLegal(destination, left, right) &&
-           (!accumulate || _Tiles[[destination]].contents_defined);
+    return if accumulate then TileAccumulatorMatches(left, right)
+           else TileMatrixOperandsLegal(left, right);
 end;
 
 readonly func TileOperandsLegal_TMATMUL_BIAS(
-    destination: TileIndex, left: TileIndex, right: TileIndex,
-    bias: TileIndex) => boolean
+    left: TileIndex, right: TileIndex, bias: TileIndex) => boolean
 begin
-    return TileMatrixOperandsLegal(destination, left, right) &&
-           TileMatrixBiasLegal(destination, bias);
+    return TileMatrixBiasLegal(left, right, bias);
 end;
 
 readonly func TileOperandsLegal_TMATMUL_ACC(
-    destination: TileIndex, left: TileIndex, right: TileIndex) => boolean
+    left: TileIndex, right: TileIndex) => boolean
 begin
-    return TileMatrixOperandsLegal(destination, left, right) &&
-           _Tiles[[destination]].contents_defined;
+    return TileAccumulatorMatches(left, right);
 end;
 
 readonly func TileOperandsLegal_TMATMUL_MX(
-    destination: TileIndex, left: TileIndex, right: TileIndex,
+    left: TileIndex, right: TileIndex,
     row_scale: TileIndex, column_scale: TileIndex) => boolean
 begin
-    return TileMatrixOperandsLegal(destination, left, right) &&
-           TileMatrixScaleLegal(destination, row_scale, column_scale);
+    return TileMatrixScaleLegal(left, right, row_scale, column_scale);
 end;
 
 readonly func TileOperandsLegal_TMATMUL_MX_BIAS(
-    destination: TileIndex, left: TileIndex, right: TileIndex,
+    left: TileIndex, right: TileIndex,
     row_scale: TileIndex, column_scale: TileIndex, bias: TileIndex) => boolean
 begin
-    return TileOperandsLegal_TMATMUL_MX(destination, left, right,
+    return TileOperandsLegal_TMATMUL_MX(left, right,
                row_scale, column_scale) &&
-           TileMatrixBiasLegal(destination, bias);
+           TileMatrixBiasLegal(left, right, bias);
 end;
 
 readonly func TileOperandsLegal_TMATMUL_MX_ACC(
-    destination: TileIndex, left: TileIndex, right: TileIndex,
+    left: TileIndex, right: TileIndex,
     row_scale: TileIndex, column_scale: TileIndex) => boolean
 begin
-    return TileMatrixOperandsLegal(destination, left, right) &&
-           TileMatrixScaleLegal(destination, row_scale, column_scale) &&
-           _Tiles[[destination]].contents_defined;
+    return TileAccumulatorMatches(left, right) &&
+           TileMatrixScaleLegal(left, right, row_scale, column_scale);
 end;
 
-readonly func TileOperandsLegal_ACCCVT(destination: TileIndex,
-                                       source: TileIndex) => boolean
+readonly func TileOperandsLegal_ACCCVT(destination: TileIndex) => boolean
 begin
-    return TileOperandsLegal_TCVT(destination, source);
+    if !_Accumulator.live || !TileDescriptorLegal(destination) ||
+       !BlockTileOperationSelected() then return FALSE; end;
+    let destination_type = TileDataTypeFromEncoding(
+        ZeroExtend{PTO_XLEN}(CurrentBlockTileOperationDataTypeCode()));
+    return _Tiles[[destination]].valid_rows == _Accumulator.info.valid_rows &&
+           _Tiles[[destination]].valid_columns ==
+               _Accumulator.info.valid_columns &&
+           _Tiles[[destination]].data_type == destination_type;
 end;
 
 readonly func TileOperandsLegal_TGEMV(
-    destination: TileIndex, matrix: TileIndex, vector: TileIndex) => boolean
+    matrix: TileIndex, vector: TileIndex) => boolean
 begin
-    return TileMatrixOperandsLegal(destination, matrix, vector) &&
+    return TileMatrixOperandsLegal(matrix, vector) &&
            _Tiles[[vector]].valid_columns == 1;
 end;
 
 readonly func TileOperandsLegal_TGEMV_BIAS(
-    destination: TileIndex, matrix: TileIndex, vector: TileIndex,
-    bias: TileIndex) => boolean
+    matrix: TileIndex, vector: TileIndex, bias: TileIndex) => boolean
 begin
-    return TileOperandsLegal_TGEMV(destination, matrix, vector) &&
-           TileMatrixBiasLegal(destination, bias);
+    return TileOperandsLegal_TGEMV(matrix, vector) &&
+           TileMatrixBiasLegal(matrix, vector, bias);
 end;
 
 readonly func TileOperandsLegal_TGEMV_ACC(
-    destination: TileIndex, matrix: TileIndex, vector: TileIndex) => boolean
+    matrix: TileIndex, vector: TileIndex) => boolean
 begin
-    return TileOperandsLegal_TGEMV(destination, matrix, vector) &&
-           _Tiles[[destination]].contents_defined;
+    return TileOperandsLegal_TGEMV(matrix, vector) &&
+           TileAccumulatorMatches(matrix, vector);
 end;
 
 readonly func TileOperandsLegal_TGEMV_MX(
-    destination: TileIndex, matrix: TileIndex, vector: TileIndex,
+    matrix: TileIndex, vector: TileIndex,
     row_scale: TileIndex, column_scale: TileIndex) => boolean
 begin
-    return TileOperandsLegal_TGEMV(destination, matrix, vector) &&
-           TileMatrixScaleLegal(destination, row_scale, column_scale);
+    return TileOperandsLegal_TGEMV(matrix, vector) &&
+           TileMatrixScaleLegal(matrix, vector, row_scale, column_scale);
 end;
 
 readonly func TileOperandsLegal_TGEMV_MX_BIAS(
-    destination: TileIndex, matrix: TileIndex, vector: TileIndex,
+    matrix: TileIndex, vector: TileIndex,
     row_scale: TileIndex, column_scale: TileIndex, bias: TileIndex) => boolean
 begin
-    return TileOperandsLegal_TGEMV_MX(destination, matrix, vector,
+    return TileOperandsLegal_TGEMV_MX(matrix, vector,
                row_scale, column_scale) &&
-           TileMatrixBiasLegal(destination, bias);
+           TileMatrixBiasLegal(matrix, vector, bias);
 end;
 
 readonly func TileOperandsLegal_TGEMV_MX_ACC(
-    destination: TileIndex, matrix: TileIndex, vector: TileIndex,
+    matrix: TileIndex, vector: TileIndex,
     row_scale: TileIndex, column_scale: TileIndex) => boolean
 begin
-    return TileOperandsLegal_TGEMV(destination, matrix, vector) &&
-           TileMatrixScaleLegal(destination, row_scale, column_scale) &&
-           _Tiles[[destination]].contents_defined;
+    return TileOperandsLegal_TGEMV(matrix, vector) &&
+           TileMatrixScaleLegal(matrix, vector, row_scale, column_scale) &&
+           TileAccumulatorMatches(matrix, vector);
 end;

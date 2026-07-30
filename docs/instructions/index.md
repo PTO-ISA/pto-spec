@@ -9,11 +9,11 @@ This page is generated from the canonical PTO catalogs under `spec/catalog/`.
 | Surface | Count | Reference |
 | --- | --- | --- |
 | Scalar encoded forms | 474 | [scalar summary](scalar.md) |
-| Block/command encoded forms | 107 | [block/command](block-command.md) |
+| Block/command encoded forms | 99 | [block/command](block-command.md) |
 | Direct tile operations | 120 | [tile operations](tile.md) |
 | System registers | 54 | [system registers](system-registers.md) |
 
-The PTO encoded instruction catalog contains 581 forms: 474 scalar forms and 107 block/command forms. Direct tile operations are selector-catalog operations with explicit decoded operands and effects. The separate vector execution instruction class is outside the PTO ISA scope.
+The PTO encoded instruction catalog contains 573 forms: 474 scalar forms and 99 block/command forms. Direct tile operations are selector-catalog operations with explicit decoded operands and effects. The separate vector execution instruction class is outside the PTO ISA scope.
 
 ## Scalar families
 
@@ -31,7 +31,7 @@ The PTO encoded instruction catalog contains 581 forms: 474 scalar forms and 107
 | Family | Forms |
 | --- | --- |
 | BBD | 25 |
-| CMD | 82 |
+| CMD | 74 |
 
 ## Tile families
 

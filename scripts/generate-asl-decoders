@@ -41,6 +41,20 @@ SCALAR_IMPLICIT_T_BRIDGE_FORMS = {
     "C.ZEXT.H",
     "C.ZEXT.W",
 }
+TILE_DATR_FIELD_ORDER = (
+    "CMode",
+    "PadValueOrByteId",
+    "Sat",
+    "Canonicalize",
+    "DataType",
+    "RMode",
+    "Layout",
+)
+TILE_DATR_PAD_UNION_ENUM = {
+    "pad-value": "TileDATRPadUnion_PadValue",
+    "histogram-byte-id": "TileDATRPadUnion_HistogramByteId",
+    "must-zero": "TileDATRPadUnion_MustZero",
+}
 
 
 def load(path: str):
@@ -53,6 +67,19 @@ def hex_bits(value: int, width: int) -> str:
 
 def bit_literal(value: int, width: int) -> str:
     return f"'{value:0{width}b}'"
+
+
+def tile_operation_code(row: dict) -> int:
+    if row["family"] == "TEPL":
+        mode = row["mode"]
+        function = row["function"]
+        selector = int(row["selector"], 0)
+        if selector != (mode << 5) | function:
+            raise ValueError(
+                f"TEPL mode/function/selector formula drift for {row['name']}"
+            )
+        return (mode << 5) | function
+    return row["function"]
 
 
 def decode_field(row: dict, field_name: str, instruction: int) -> int:
@@ -137,6 +164,11 @@ def tile_argument_expression(argument: dict) -> str:
         return f"operands.{argument['operand']}"
     if set(argument) == {"constant"}:
         return argument["constant"]
+    if set(argument) == {"runtime"}:
+        runtime = argument["runtime"]
+        if runtime == "CurrentBlockPadValue":
+            return "CurrentBlockPadValue()"
+        raise ValueError(f"unknown tile runtime binding: {runtime}")
     raise ValueError(f"invalid tile binding argument: {argument!r}")
 
 
@@ -275,12 +307,19 @@ def encoded_form_witness(row: dict) -> int:
     for part in row["encoding"]:
         instruction |= int(part["match"], 16) << (part["index"] * 32)
     for constraint in row["constraints"]:
-        if constraint["operator"] != "not-equal":
+        operator = constraint["operator"]
+        field_name = constraint["field"]
+        if operator == "not-equal":
+            if decode_field(row, field_name, instruction) == constraint["value"]:
+                field = next(field for field in row["fields"] if field["name"] == field_name)
+                replacement = (constraint["value"] + 1) % (1 << field["width"])
+                instruction = encode_field(row, field_name, instruction, replacement)
+        elif operator == "one-of":
+            allowed = constraint["values"]
+            if decode_field(row, field_name, instruction) not in allowed:
+                instruction = encode_field(row, field_name, instruction, allowed[0])
+        else:
             raise ValueError(f"unsupported encoded-form constraint: {constraint!r}")
-        if decode_field(row, constraint["field"], instruction) == constraint["value"]:
-            field = next(field for field in row["fields"] if field["name"] == constraint["field"])
-            replacement = (constraint["value"] + 1) % (1 << field["width"])
-            instruction = encode_field(row, constraint["field"], instruction, replacement)
     return instruction
 
 
@@ -469,17 +508,27 @@ def emit_encoded_catalog(prefix: str, rows: list[dict]) -> None:
     print("begin")
     for index, row in enumerate(rows):
         for constraint in row["constraints"]:
-            if constraint["operator"] != "not-equal":
-                raise ValueError(f"unsupported {prefix} constraint: {constraint!r}")
             width = next(
                 field["width"] for field in row["fields"]
                 if field["name"] == constraint["field"]
             )
-            print(
-                f"    if form == {index} && Decode{prefix}OperandRaw(instruction, form, "
-                f"{prefix}Field_{asl_identifier(constraint['field'])})[{width - 1}:0] == "
-                f"{bit_literal(constraint['value'], width)} then return FALSE; end;"
+            decoded = (
+                f"Decode{prefix}OperandRaw(instruction, form, "
+                f"{prefix}Field_{asl_identifier(constraint['field'])})[{width - 1}:0]"
             )
+            if constraint["operator"] == "not-equal":
+                print(
+                    f"    if form == {index} && {decoded} == "
+                    f"{bit_literal(constraint['value'], width)} then return FALSE; end;"
+                )
+            elif constraint["operator"] == "one-of":
+                allowed = " || ".join(
+                    f"{decoded} == {bit_literal(value, width)}"
+                    for value in constraint["values"]
+                )
+                print(f"    if form == {index} && !({allowed}) then return FALSE; end;")
+            else:
+                raise ValueError(f"unsupported {prefix} constraint: {constraint!r}")
     print("    return TRUE;")
     print("end;")
     print()
@@ -536,6 +585,24 @@ def main() -> None:
         raise ValueError("scalar operation identifiers are not unique")
     if len(tile_operations) != len(set(tile_operations)):
         raise ValueError("tile operation identifiers are not unique")
+    command_indices_by_mnemonic: dict[str, list[int]] = {}
+    for index, row in enumerate(command):
+        command_indices_by_mnemonic.setdefault(row["mnemonic"], []).append(index)
+    tile_command_mnemonics = {row["command_mnemonic"] for row in tile}
+    for mnemonic in tile_command_mnemonics:
+        if len(command_indices_by_mnemonic.get(mnemonic, [])) != 1:
+            raise ValueError(
+                f"tile command mnemonic must identify exactly one form: {mnemonic}"
+            )
+    tile_command_rows = [
+        (
+            command_indices_by_mnemonic[mnemonic][0],
+            next(row for row in command if row["mnemonic"] == mnemonic),
+            "TEPL" if mnemonic == "BSTART.TEPL" else
+            next(row["family"] for row in tile if row["command_mnemonic"] == mnemonic),
+        )
+        for mnemonic in sorted(tile_command_mnemonics)
+    ]
 
     print("// Generated from the normative PTO catalogs. Do not edit.")
     print("// PTO-REQ-ENCODING-001: complete scalar and tile decode witnesses.")
@@ -562,6 +629,18 @@ def main() -> None:
     )
     emit_enum("TileOperation", tile_operations)
     emit_enum("TileSemanticHandler", [f"TileHandler_{name}" for name in tile_handlers])
+    emit_enum(
+        "TileDATRField",
+        [f"TileDATRField_{name}" for name in TILE_DATR_FIELD_ORDER],
+    )
+    emit_enum(
+        "TileDATRPadUnion",
+        [
+            "TileDATRPadUnion_PadValue",
+            "TileDATRPadUnion_HistogramByteId",
+            "TileDATRPadUnion_MustZero",
+        ],
+    )
     emit_enum(
         "TileOperandField", [f"TileOperand_{name}" for name in tile_operand_fields], 4
     )
@@ -930,16 +1009,120 @@ def main() -> None:
     print("                              => TileOperationIndex")
     print("begin")
     for index, row in enumerate(tile):
-        value = (
-            int(row.get("selector", row.get("function")), 0)
-            if isinstance(row.get("selector", row.get("function")), str)
-            else row.get("selector", row.get("function"))
-        )
+        value = tile_operation_code(row)
         print(
             f"    if family == TileDecode_{row['family']} && code == {bit_literal(value, 12)} "
             f"then return {index}; end;"
         )
     print("    return PTO_TILE_OPERATION_COUNT;")
+    print("end;")
+    print()
+    print("pure func TileOperationDATRFieldApplicable(")
+    print("    operation: integer {0..PTO_TILE_OPERATION_COUNT-1},")
+    print("    field: TileDATRField) => boolean")
+    print("begin")
+    for index, row in enumerate(tile):
+        for field in row["datr_contract"]["allowed_nonzero_fields"]:
+            print(
+                f"    if operation == {index} && field == TileDATRField_{field} "
+                "then return TRUE; end;"
+            )
+    print("    return FALSE;")
+    print("end;")
+    print()
+    print("pure func TileOperationDATRPadUnion(")
+    print("    operation: integer {0..PTO_TILE_OPERATION_COUNT-1})")
+    print("    => TileDATRPadUnion")
+    print("begin")
+    for index, row in enumerate(tile):
+        pad_union = TILE_DATR_PAD_UNION_ENUM[row["datr_contract"]["pad_union"]]
+        print(f"    if operation == {index} then return {pad_union}; end;")
+    print("    unreachable;")
+    print("end;")
+    print()
+    print("pure func TileOperationDATRFieldsLegal(")
+    print("    operation: integer {0..PTO_TILE_OPERATION_COUNT-1},")
+    print("    c_mode: bits(3), pad_value_or_byte_id: bits(2),")
+    print("    saturating: boolean, canonicalize: boolean,")
+    print("    data_type: bits(5), rounding_mode: bits(3),")
+    print("    data_layout: bits(5)) => boolean")
+    print("begin")
+    datr_checks = (
+        ("c_mode != Zeros{3}", "CMode"),
+        ("pad_value_or_byte_id != Zeros{2}", "PadValueOrByteId"),
+        ("saturating", "Sat"),
+        ("canonicalize", "Canonicalize"),
+        ("data_type != Zeros{5}", "DataType"),
+        ("rounding_mode != Zeros{3}", "RMode"),
+        ("data_layout != Zeros{5}", "Layout"),
+    )
+    for nonzero, field in datr_checks:
+        print(
+            f"    if {nonzero} && !TileOperationDATRFieldApplicable(operation, "
+            f"TileDATRField_{field}) then return FALSE; end;"
+        )
+    print("    return TRUE;")
+    print("end;")
+    print()
+    print("pure func CommandFormSelectsTileOperation(")
+    print("    form: integer {0..PTO_COMMAND_FORM_COUNT-1}) => boolean")
+    print("begin")
+    for command_index, _, _ in tile_command_rows:
+        print(f"    if form == {command_index} then return TRUE; end;")
+    print("    return FALSE;")
+    print("end;")
+    print()
+    print("pure func CommandTileFamilyOfForm(")
+    print("    form: integer {0..PTO_COMMAND_FORM_COUNT-1}) => TileDecodeFamily")
+    print("begin")
+    for command_index, _, family in tile_command_rows:
+        print(
+            f"    if form == {command_index} then return TileDecode_{family}; end;"
+        )
+    print("    unreachable;")
+    print("end;")
+    print()
+    print("pure func CommandTileCodeOfForm(")
+    print("    instruction: bits(64),")
+    print("    form: integer {0..PTO_COMMAND_FORM_COUNT-1}) => bits(12)")
+    print("begin")
+    for command_index, command_row, family in tile_command_rows:
+        if family == "TEPL":
+            print(f"    if form == {command_index} then")
+            print("        var code = Zeros{12};")
+            print(
+                "        code[6:5] = DecodeCommandOperandRaw(instruction, form, "
+                "CommandField_Mode)[1:0];"
+            )
+            print(
+                "        code[4:0] = DecodeCommandOperandRaw(instruction, form, "
+                "CommandField_Function)[4:0];"
+            )
+            print("        return code;")
+            print("    end;")
+        else:
+            operation = next(
+                row for row in tile
+                if row["command_mnemonic"] == command_row["mnemonic"]
+            )
+            print(
+                f"    if form == {command_index} then return "
+                f"{bit_literal(operation['function'], 12)}; end;"
+            )
+    print("    unreachable;")
+    print("end;")
+    print()
+    print("pure func CommandTileDataTypeOfForm(")
+    print("    instruction: bits(64),")
+    print("    form: integer {0..PTO_COMMAND_FORM_COUNT-1}) => bits(5)")
+    print("begin")
+    for command_index, _, _ in tile_command_rows:
+        print(
+            f"    if form == {command_index} then return "
+            "DecodeCommandOperandRaw(instruction, form, "
+            "CommandField_DataType)[4:0]; end;"
+        )
+    print("    unreachable;")
     print("end;")
     print()
     print(
@@ -1007,19 +1190,25 @@ def main() -> None:
             )
             print(f"            if {undefined_sources} then")
             print("                SetFault(Fault_TileLegality, ReadPC());")
-            print("                return (TileExecution_Rejected, Zeros{PTO_XLEN});")
+            print("                return (TileExecution_Faulted, Zeros{PTO_XLEN});")
             print("            end;")
         print(
             f"            if !TileOperandsLegal_{row['semantic_handler']}({arguments}) then"
         )
         print("                SetFault(Fault_TileLegality, ReadPC());")
-        print("                return (TileExecution_Rejected, Zeros{PTO_XLEN});")
+        print("                return (TileExecution_Faulted, Zeros{PTO_XLEN});")
         print("            end;")
         if row.get("result") == "value":
             print(f"            let value = {row['semantic_handler']}({arguments});")
+            print("            if _LastFault != Fault_None then")
+            print("                return (TileExecution_Faulted, Zeros{PTO_XLEN});")
+            print("            end;")
             print("            return (TileExecution_Executed, value);")
         else:
             print(f"            {row['semantic_handler']}({arguments});")
+            print("            if _LastFault != Fault_None then")
+            print("                return (TileExecution_Faulted, Zeros{PTO_XLEN});")
+            print("            end;")
             print("            return (TileExecution_Executed, Zeros{PTO_XLEN});")
     print("    end;")
     print("end;")
@@ -1082,8 +1271,7 @@ def main() -> None:
                 f"    assert !ScalarFormOperandsLegal({bit_literal(invalid_instruction, 48)}, {index});"
             )
     for index, row in enumerate(tile):
-        raw = row.get("selector", row.get("function"))
-        value = int(raw, 0) if isinstance(raw, str) else raw
+        value = tile_operation_code(row)
         print(
             f"    assert DecodeTileOperation(TileDecode_{row['family']}, {bit_literal(value, 12)}) == {index};"
         )
@@ -1095,6 +1283,70 @@ def main() -> None:
             print(
                 f"    assert TileOperandPresent({index}, TileOperand_{operand['field']});"
             )
+        allowed_datr = set(row["datr_contract"]["allowed_nonzero_fields"])
+        print(
+            f"    assert TileOperationDATRPadUnion({index}) == "
+            f"{TILE_DATR_PAD_UNION_ENUM[row['datr_contract']['pad_union']]};"
+        )
+        datr_values = {
+            "CMode": "'001'",
+            "PadValueOrByteId": "'01'",
+            "Sat": "TRUE",
+            "Canonicalize": "TRUE",
+            "DataType": "'00001'",
+            "RMode": "'001'",
+            "Layout": "'00001'",
+        }
+        datr_defaults = {
+            "CMode": "Zeros{3}",
+            "PadValueOrByteId": "Zeros{2}",
+            "Sat": "FALSE",
+            "Canonicalize": "FALSE",
+            "DataType": "Zeros{5}",
+            "RMode": "Zeros{3}",
+            "Layout": "Zeros{5}",
+        }
+        for field in TILE_DATR_FIELD_ORDER:
+            print(
+                f"    assert TileOperationDATRFieldApplicable({index}, "
+                f"TileDATRField_{field}) == "
+                f"{'TRUE' if field in allowed_datr else 'FALSE'};"
+            )
+            arguments = [
+                datr_values[item] if item == field else datr_defaults[item]
+                for item in TILE_DATR_FIELD_ORDER
+            ]
+            print(
+                f"    assert {'' if field in allowed_datr else '!'}"
+                f"TileOperationDATRFieldsLegal({index}, {', '.join(arguments)});"
+            )
+        command_index = command_indices_by_mnemonic[row["command_mnemonic"]][0]
+        command_row = command[command_index]
+        if row["family"] == "TEPL":
+            command_raw = (value << 20) | 0x00019181
+        else:
+            command_raw = int(command_row["encoding"][0]["match"], 16)
+        command_literal = bit_literal(command_raw, 64)
+        print(
+            f"    assert DecodeCommandForm({command_literal}, 32) == {command_index};"
+        )
+        print(f"    assert CommandFormSelectsTileOperation({command_index});")
+        print(
+            f"    assert CommandTileFamilyOfForm({command_index}) == "
+            f"TileDecode_{row['family']};"
+        )
+        print(
+            f"    assert CommandTileCodeOfForm({command_literal}, {command_index}) == "
+            f"{bit_literal(value, 12)};"
+        )
+        print(
+            f"    assert CommandTileDataTypeOfForm({command_literal}, {command_index}) "
+            "== '00000';"
+        )
+        print(
+            f"    assert DecodeTileOperation(TileDecode_{row['family']}, "
+            f"CommandTileCodeOfForm({command_literal}, {command_index})) == {index};"
+        )
     for row in system_registers:
         access = access_names[row["access"]]
         if row["scope"] == "base":

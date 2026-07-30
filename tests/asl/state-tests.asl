@@ -26,10 +26,15 @@ begin
     assert TileIndexWithinHand(63) == 16;
 
     assert TileCapacityIsLegal(0);
+    assert TileCapacityIsLegal(128);
     assert TileCapacityIsLegal(256);
     assert TileCapacityIsLegal(262144);
-    assert TileCapacityIsLegal(524288);
+    assert !TileCapacityIsLegal(192);
     assert !TileCapacityIsLegal(32);
+    assert TileSizeCodeBytes(3) == 128;
+    assert TileSizeCodeBytes(9) == 8192;
+    assert !TileSizeCodeIsLegal(2);
+    assert !TileSizeCodeIsLegal(10);
 end;
 
 func TestScalarTemporaryQueues()
@@ -67,4 +72,20 @@ begin
     WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 9);
     assert _Tiles[[5]].contents_defined;
     assert ReadTileElement(5, 0, 0) == Zeros{PTO_XLEN} + 9;
+
+    ReleaseTile(5);
+    ConfigureTile(5, PTO_TILE_CAPACITY_BYTES, 1, 1, 1, 1,
+        TileDataType_U64, TileLayout_RowMajor, TileLocation_Any);
+    ClearFault();
+    TALLOC(6, 128, 1, 1, 1, 1, Zeros{PTO_XLEN} + 24, FALSE);
+    assert _LastFault == Fault_TileAllocation;
+    assert !_Tiles[[6]].allocated;
+    assert _Tiles[[5]].allocated;
+
+    ReleaseTile(5);
+    ClearFault();
+    TALLOC(6, 128, 1, 1, 1, 1, Zeros{PTO_XLEN} + 24, FALSE);
+    assert _LastFault == Fault_None;
+    assert _Tiles[[6]].allocated;
+    ReleaseTile(6);
 end;

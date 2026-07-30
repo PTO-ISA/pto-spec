@@ -30,6 +30,7 @@ type FaultCode of enumeration {
     Fault_SoftwareBreakpoint,
     Fault_Assert,
     Fault_TileLegality,
+    Fault_TileAllocation,
     Fault_BlockControl
 };
 
@@ -59,20 +60,6 @@ type BlockTransfer of enumeration {
 // implemented Access Control Ring subtree.
 type AccessControlRing of integer {0..15};
 type TemporaryQueueSnapshot of array [[PTO_TEMPORARY_QUEUE_DEPTH]] of Word;
-
-type TrapContext of record {
-    valid: boolean,
-    source_acr: AccessControlRing,
-    tpc: Word,
-    bpc: Word,
-    core_state: Word,
-    block_argument: Word,
-    commit_argument: Word,
-    block_active: boolean,
-    block_body_active: boolean,
-    t_queue: TemporaryQueueSnapshot,
-    u_queue: TemporaryQueueSnapshot
-};
 
 type DataAccessProbe of record {
     fault: FaultCode,
@@ -224,25 +211,56 @@ type TileHand of enumeration {
 };
 
 type TileDataType of enumeration {
-    TileDataType_F64,
-    TileDataType_S8,
-    TileDataType_U8,
-    TileDataType_S16,
-    TileDataType_U16,
-    TileDataType_S32,
-    TileDataType_U32,
-    TileDataType_S64,
-    TileDataType_U64,
-    TileDataType_F16,
+    TileDataType_FP64,
+    TileDataType_FP32,
+    TileDataType_TF32,
+    TileDataType_HF32,
+    TileDataType_FP16,
     TileDataType_BF16,
-    TileDataType_F32,
-    TileDataType_FP8,
-    TileDataType_FPL8,
-    TileDataType_FP4,
-    TileDataType_FPL4,
-    TileDataType_S4,
-    TileDataType_U4,
-    TileDataType_E8M0
+    TileDataType_HiF8,
+    TileDataType_E4M3,
+    TileDataType_E5M2,
+    TileDataType_E3M2,
+    TileDataType_E2M3,
+    TileDataType_E2M1X2,
+    TileDataType_E1M2X2,
+    TileDataType_E8M0,
+    TileDataType_HiF4X2,
+    TileDataType_S64,
+    TileDataType_S32,
+    TileDataType_S16,
+    TileDataType_S8,
+    TileDataType_S4X2,
+    TileDataType_U64,
+    TileDataType_U32,
+    TileDataType_U16,
+    TileDataType_U8,
+    TileDataType_U4X2
+};
+
+// B.DATR Layout identities. NORM is mandatory; every conversion identity is
+// capability-gated by block state before it can become active.
+type TileDataLayout of enumeration {
+    TileDataLayout_NORM,
+    TileDataLayout_ND2DN,
+    TileDataLayout_ND2ZN,
+    TileDataLayout_ND2NZ,
+    TileDataLayout_DN2ND,
+    TileDataLayout_DN2ZN,
+    TileDataLayout_DN2NZ,
+    TileDataLayout_ZN2ND,
+    TileDataLayout_ZN2DN,
+    TileDataLayout_ZN2NZ,
+    TileDataLayout_NZ2ND,
+    TileDataLayout_NZ2DN,
+    TileDataLayout_NZ2ZN
+};
+
+type TilePadValue of enumeration {
+    TilePad_Zero,
+    TilePad_Max,
+    TilePad_Min,
+    TilePad_Null
 };
 
 type TileLayout of enumeration {
@@ -370,6 +388,7 @@ type TileExpandOperation of enumeration {
 
 type TileExecutionStatus of enumeration {
     TileExecution_Executed,
+    TileExecution_Faulted,
     TileExecution_Rejected
 };
 
@@ -383,6 +402,7 @@ type TileInstructionOperands of record {
     source1: TileIndex,
     source2: TileIndex,
     source3: TileIndex,
+    source4: TileIndex,
     address: Word,
     scalar0: Word,
     scalar1: Word,
@@ -409,6 +429,7 @@ begin
         source1 = 0,
         source2 = 0,
         source3 = 0,
+        source4 = 0,
         address = Zeros{PTO_XLEN},
         scalar0 = Zeros{PTO_XLEN},
         scalar1 = Zeros{PTO_XLEN},
@@ -432,7 +453,7 @@ type TilePayload of array [[PTO_MODEL_TILE_ELEMENTS]] of Word;
 type TileInfo of record {
     allocated: boolean,
     contents_defined: boolean,
-    capacity_bytes: integer {0..524288},
+    capacity_bytes: integer {0..262144},
     rows: integer {0..65535},
     columns: integer {0..65535},
     valid_rows: integer {0..65535},
@@ -441,4 +462,24 @@ type TileInfo of record {
     layout: TileLayout,
     location: TileLocation,
     payload: TilePayload
+};
+
+type AccumulatorState of record {
+    live: boolean,
+    info: TileInfo
+};
+
+type TrapContext of record {
+    valid: boolean,
+    source_acr: AccessControlRing,
+    tpc: Word,
+    bpc: Word,
+    core_state: Word,
+    block_argument: Word,
+    commit_argument: Word,
+    block_active: boolean,
+    block_body_active: boolean,
+    t_queue: TemporaryQueueSnapshot,
+    u_queue: TemporaryQueueSnapshot,
+    accumulator: AccumulatorState
 };

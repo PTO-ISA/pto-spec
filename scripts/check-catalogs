@@ -211,6 +211,7 @@ TILE_OPERAND_FIELDS = {
     "source1",
     "source2",
     "source3",
+    "source4",
     "address",
     "scalar0",
     "scalar1",
@@ -233,6 +234,137 @@ TILE_BINDING_CONSTANT = re.compile(
     r"TileBinary_[A-Z]+|TileUnary_[A-Z]+|TileReduction_[A-Z]+|"
     r"TileExpand_[A-Z]+|TilePartial_[A-Z]+)"
 )
+
+TEPL_V0571_SELECTORS = {
+    "TADD": 0x000,
+    "TSUB": 0x001,
+    "TMUL": 0x002,
+    "TDIV": 0x003,
+    "TREM": 0x004,
+    "TAND": 0x006,
+    "TOR": 0x007,
+    "TXOR": 0x008,
+    "TSHL": 0x009,
+    "TSHR": 0x00A,
+    "TMAX": 0x00B,
+    "TMIN": 0x00C,
+    "TCMP": 0x00D,
+    "TPRELU": 0x00E,
+    "TABS": 0x00F,
+    "TNOT": 0x010,
+    "TNEG": 0x011,
+    "TEXP": 0x012,
+    "TLOG": 0x013,
+    "TRECIP": 0x014,
+    "TSQRT": 0x015,
+    "TRSQRT": 0x016,
+    "TRELU": 0x017,
+    "TSEL": 0x01A,
+    "TCVT": 0x01B,
+    "TADDS": 0x020,
+    "TSUBS": 0x021,
+    "TMULS": 0x022,
+    "TDIVS": 0x023,
+    "TREMS": 0x024,
+    "TANDS": 0x026,
+    "TORS": 0x027,
+    "TXORS": 0x028,
+    "TSHLS": 0x029,
+    "TSHRS": 0x02A,
+    "TMAXS": 0x02B,
+    "TMINS": 0x02C,
+    "TCMPS": 0x02D,
+    "TAXPY": 0x02F,
+    "TSELS": 0x03A,
+    "TEXPANDS": 0x03B,
+    "TROWSUM": 0x040,
+    "TROWMAX": 0x041,
+    "TROWMIN": 0x042,
+    "TROWPROD": 0x043,
+    "TROWEXPAND": 0x044,
+    "TROWEXPANDADD": 0x045,
+    "TROWEXPANDSUB": 0x046,
+    "TROWEXPANDMUL": 0x047,
+    "TROWEXPANDDIV": 0x048,
+    "TROWEXPANDMAX": 0x049,
+    "TROWEXPANDMIN": 0x04A,
+    "TROWEXPANDEXPDIF": 0x04B,
+    "TROWARGMAX": 0x04C,
+    "TROWARGMIN": 0x04D,
+    "TCOLSUM": 0x050,
+    "TCOLMAX": 0x051,
+    "TCOLMIN": 0x052,
+    "TCOLPROD": 0x053,
+    "TCOLEXPAND": 0x054,
+    "TCOLEXPANDADD": 0x055,
+    "TCOLEXPANDSUB": 0x056,
+    "TCOLEXPANDMUL": 0x057,
+    "TCOLEXPANDDIV": 0x058,
+    "TCOLEXPANDMAX": 0x059,
+    "TCOLEXPANDMIN": 0x05A,
+    "TCOLEXPANDEXPDIF": 0x05B,
+    "TCOLARGMAX": 0x05C,
+    "TCOLARGMIN": 0x05D,
+    "TCONCAT": 0x060,
+    "TGATHERB": 0x061,
+    "TEXTRACT": 0x062,
+    "TINSERT": 0x063,
+    "TIMG2COL": 0x064,
+    "TFILLPAD": 0x065,
+    "TCI": 0x066,
+    "TTRI": 0x067,
+    "THISTOGRAM": 0x068,
+    "TQUANT": 0x06A,
+    "TDEQUANT": 0x06B,
+    "TSORT": 0x06C,
+    "TMRGSORT": 0x06D,
+    "TTRANS": 0x06E,
+    "TGATHER": 0x06F,
+    "TSCATTER": 0x070,
+    "TPARTADD": 0x071,
+    "TPARTMUL": 0x072,
+    "TPARTMAX": 0x073,
+    "TPARTMIN": 0x074,
+    "TPARTARGMAX": 0x075,
+    "TPARTARGMIN": 0x076,
+    "TRESHAPE": 0x077,
+    "TDEINTERLEAVE": 0x078,
+    "TINTERLEAVE": 0x079,
+    "TPUSH": 0x07A,
+    "TPOP": 0x07B,
+    "TALLOC": 0x07C,
+    "TFREE": 0x07D,
+}
+
+TILE_DATR_FIELD_ORDER = (
+    "CMode",
+    "PadValueOrByteId",
+    "Sat",
+    "Canonicalize",
+    "DataType",
+    "RMode",
+    "Layout",
+)
+TILE_DATR_APPLICABILITY = {
+    "CMode": {"TCMP", "TCMPS"},
+    "PadValueOrByteId": {"TFILLPAD", "MGATHER_MASK", "THISTOGRAM"},
+    "Sat": {"TCVT", "TQUANT", "TDEQUANT", "ACCCVT"},
+    "Canonicalize": {"TCVT", "TQUANT", "TDEQUANT", "ACCCVT"},
+    "DataType": {"TCVT", "TQUANT", "TDEQUANT", "ACCCVT", "THISTOGRAM"},
+    "RMode": {"TCVT", "TQUANT", "TDEQUANT", "ACCCVT"},
+    "Layout": {
+        "TLOAD", "TSTORE", "TMOV", "MGATHER", "MSCATTER",
+        "MGATHER_MASK", "MSCATTER_MASK", "MGATHER_CAS", "TCVT",
+        "TQUANT", "TDEQUANT", "ACCCVT", "TEXTRACT", "TINSERT",
+        "TGATHER", "TSCATTER", "TCONCAT", "TTRANS", "TIMG2COL",
+        "TGATHERB", "TDEINTERLEAVE", "TINTERLEAVE", "TRESHAPE",
+        "TFILLPAD",
+    },
+}
+TILE_DATR_PAD_UNIONS = {
+    "pad-value": {"TFILLPAD", "MGATHER_MASK"},
+    "histogram-byte-id": {"THISTOGRAM"},
+}
 
 
 def load(relative: str):
@@ -349,12 +481,38 @@ def expand_number_entries(entries: list) -> set[int]:
     return values
 
 
+def aggregate_encoding(row: dict) -> tuple[int, int]:
+    mask = 0
+    match = 0
+    for part in row["encoding"]:
+        shift = part["index"] * 32
+        mask |= int(part["mask"], 16) << shift
+        match |= int(part["match"], 16) << shift
+    return mask, match
+
+
+def field_shape(row: dict) -> dict[str, tuple[int, tuple[tuple[int, int, int], ...]]]:
+    return {
+        field["name"]: (
+            field["width"],
+            tuple(
+                (
+                    piece["instruction_lsb"],
+                    piece["value_lsb"],
+                    piece["width"],
+                )
+                for piece in field["pieces"]
+            ),
+        )
+        for field in row["fields"]
+    }
+
+
 def main() -> int:
     scalar = load("spec/catalog/scalar-forms.json")
     command = load("spec/catalog/command-forms.json")
     system_registers = load("spec/catalog/system-registers.json")
     tile = load("spec/catalog/tile-operations.json")
-    reconciliation = load("spec/evidence/public-source-reconciliation.json")
     requirements = load("spec/requirements.json")["requirements"]
     profile_catalog = load("spec/profile-hooks.json")
     specification = tomllib.loads(
@@ -384,17 +542,19 @@ def main() -> int:
         set(command)
         == {
             "form_count",
+            "form_constraint_count",
             "forms",
             "isa",
             "operand_field_count",
             "operand_piece_count",
+            "reviewed_encoding_overlaps",
             "schema_version",
             "semantic_handler_count",
             "surface",
         },
         "command catalog top-level schema drift",
     )
-    require(command["schema_version"] == 1, "unsupported command catalog schema")
+    require(command["schema_version"] == 2, "unsupported command catalog schema")
     require(specification["specification"]["name"] == isa_name, "wrong ISA name")
     require(
         specification["specification"]["normative"] is True,
@@ -410,7 +570,7 @@ def main() -> int:
     )
     require(
         specification["maturity"]["instruction_dispatch"]
-        == "all-474-scalar-forms-107-command-forms-and-120-tile-operations-executable",
+        == "all-474-scalar-forms-99-command-forms-and-120-tile-operations-executable",
         "instruction dispatch maturity must match the complete checked catalogs",
     )
     require(
@@ -464,7 +624,7 @@ def main() -> int:
         "status record scalar count drift",
     )
     require(
-        specification["architecture"]["command_forms"] == 107,
+        specification["architecture"]["command_forms"] == 99,
         "status record command count drift",
     )
     require(
@@ -802,20 +962,21 @@ def main() -> int:
     require(command["isa"] == isa_name, "command catalog has wrong ISA identity")
     require(command["surface"] == "command-and-boundary", "wrong command surface")
     require(
-        command["form_count"] == len(command_forms) == 107,
-        "command form count must be 107",
+        command["form_count"] == len(command_forms) == 99,
+        "command form count must be 99",
     )
-    require(command["operand_field_count"] == 58, "command operand-field count drift")
-    require(command["operand_piece_count"] == 197, "command operand-piece count drift")
-    require(command["semantic_handler_count"] == 22, "command handler count drift")
+    require(command["form_constraint_count"] == 35, "command constraint count drift")
+    require(command["operand_field_count"] == 57, "command operand-field count drift")
+    require(command["operand_piece_count"] == 190, "command operand-piece count drift")
+    require(command["semantic_handler_count"] == 21, "command handler count drift")
     require(
         Counter(row["semantic_family"] for row in command_forms)
-        == Counter({"CMD": 82, "BBD": 25}),
+        == Counter({"CMD": 74, "BBD": 25}),
         "command family counts changed",
     )
     require(
         Counter(row["length_bits"] for row in command_forms)
-        == Counter({16: 10, 32: 75, 48: 13, 64: 9}),
+        == Counter({16: 10, 32: 67, 48: 13, 64: 9}),
         "command length distribution changed",
     )
     command_ids = [row["form_id"] for row in command_forms]
@@ -876,8 +1037,38 @@ def main() -> int:
                 f"non-contiguous command value {row['form_id']}",
             )
         for constraint in row["constraints"]:
-            require(set(constraint) == {"field", "operator", "value"}, f"command constraint schema drift {row['form_id']}")
-            require(constraint["field"] in field_names and constraint["operator"] == "not-equal", f"invalid command constraint {row['form_id']}")
+            require(
+                constraint["field"] in field_names,
+                f"command constraint references absent field {row['form_id']}",
+            )
+            width = next(
+                field["width"] for field in row["fields"]
+                if field["name"] == constraint["field"]
+            )
+            if constraint["operator"] == "not-equal":
+                require(
+                    set(constraint) == {"field", "operator", "value"}
+                    and 0 <= constraint["value"] < 1 << width,
+                    f"command not-equal constraint drift {row['form_id']}",
+                )
+            elif constraint["operator"] == "one-of":
+                values = constraint["values"]
+                require(
+                    set(constraint) == {"field", "operator", "values"}
+                    and values
+                    and len(values) == len(set(values))
+                    and values == sorted(values)
+                    and all(0 <= value < 1 << width for value in values),
+                    f"command one-of constraint drift {row['form_id']}",
+                )
+            else:
+                require(False, f"unsupported command constraint {row['form_id']}")
+
+    require(
+        sum(len(row["constraints"]) for row in command_forms)
+        == command["form_constraint_count"],
+        "command form constraint total drift",
+    )
 
     for scalar_row in forms:
         scalar_mask = int(scalar_row["encoding"][0]["mask"], 16)
@@ -897,21 +1088,143 @@ def main() -> int:
                 f"scalar/command decode overlap: {scalar_row['form_id']} and {command_row['form_id']}",
             )
 
+    command_by_id = {row["form_id"]: row for row in command_forms}
+    reviewed_command_overlaps: set[tuple[str, str]] = set()
+    for overlap in command["reviewed_encoding_overlaps"]:
+        require(
+            set(overlap) == {"broad_form_id", "narrow_form_id", "reason"}
+            and overlap["broad_form_id"] in command_by_id
+            and overlap["narrow_form_id"] in command_by_id
+            and overlap["reason"].strip(),
+            "command reviewed-overlap schema drift",
+        )
+        pair = (overlap["broad_form_id"], overlap["narrow_form_id"])
+        require(pair not in reviewed_command_overlaps, "duplicate reviewed command overlap")
+        reviewed_command_overlaps.add(pair)
+
+    actual_command_overlaps: set[tuple[str, str]] = set()
+    for left_index, left in enumerate(command_forms):
+        left_mask = sum(
+            int(part["mask"], 16) << (part["index"] * 32)
+            for part in left["encoding"]
+        )
+        left_match = sum(
+            int(part["match"], 16) << (part["index"] * 32)
+            for part in left["encoding"]
+        )
+        for right in command_forms[left_index + 1 :]:
+            if left["length_bits"] != right["length_bits"]:
+                continue
+            right_mask = sum(
+                int(part["mask"], 16) << (part["index"] * 32)
+                for part in right["encoding"]
+            )
+            right_match = sum(
+                int(part["match"], 16) << (part["index"] * 32)
+                for part in right["encoding"]
+            )
+            common = left_mask & right_mask
+            if left_match & common != right_match & common:
+                continue
+            require(
+                left_mask.bit_count() != right_mask.bit_count(),
+                f"ambiguous equal-priority command forms: {left['form_id']} and {right['form_id']}",
+            )
+            broad, narrow = (
+                (left, right)
+                if left_mask.bit_count() < right_mask.bit_count()
+                else (right, left)
+            )
+            actual_command_overlaps.add((broad["form_id"], narrow["form_id"]))
+    require(
+        actual_command_overlaps == reviewed_command_overlaps,
+        "command encoding overlap review set drift: "
+        f"actual={sorted(actual_command_overlaps)}, "
+        f"reviewed={sorted(reviewed_command_overlaps)}",
+    )
+
+    tepl_command = next(row for row in command_forms if row["mnemonic"] == "BSTART.TEPL")
+    require(
+        aggregate_encoding(tepl_command) == (0x000FFFFF, 0x00019181)
+        and field_shape(tepl_command)
+        == {
+            "DataType": (5, ((27, 0, 5),)),
+            "Mode": (2, ((25, 0, 2),)),
+            "Function": (5, ((20, 0, 5),)),
+        },
+        "PTO ISA 0.57.1 BSTART.TEPL raw contract drift",
+    )
+
+    datr = next(row for row in command_forms if row["mnemonic"] == "B.DATR")
+    require(
+        aggregate_encoding(datr) == (0x000C707F, 0x00001023)
+        and field_shape(datr)
+        == {
+            "CMode": (3, ((29, 0, 3),)),
+            "PadValueOrByteId": (2, ((27, 0, 2),)),
+            "Sat": (1, ((26, 0, 1),)),
+            "Canonicalize": (1, ((25, 0, 1),)),
+            "DataType": (5, ((20, 0, 5),)),
+            "RMode": (3, ((15, 0, 3),)),
+            "Layout": (5, ((7, 0, 5),)),
+        },
+        "PTO ISA 0.57.1 B.DATR raw contract drift",
+    )
+
+    catr = next(row for row in command_forms if row["mnemonic"] == "B.CATR")
+    require(
+        aggregate_encoding(catr) == (0xFBF07FFF, 0x00000023)
+        and field_shape(catr)
+        == {
+            "DR": (1, ((26, 0, 1),)),
+            "trap": (1, ((19, 0, 1),)),
+            "far": (1, ((18, 0, 1),)),
+            "atom": (1, ((17, 0, 1),)),
+            "aq": (1, ((16, 0, 1),)),
+            "rl": (1, ((15, 0, 1),)),
+        },
+        "PTO ISA 0.57.1 B.CATR raw contract drift",
+    )
+
+    iot_forms = [row for row in command_forms if row["mnemonic"] == "B.IOT"]
+    iot_contract = {
+        ("SrcTile0", "L", "imm4", "S0R", "DstTile"):
+            (0xFC00787F, 0x00005013),
+        ("SrcTile1", "SrcTile0", "L", "S1R", "S0R"):
+            (0x0007F3FF, 0x00004013),
+        ("SrcTile1", "SrcTile0", "L", "imm4", "S1R", "S0R", "DstTile"):
+            (0x0000707F, 0x00004013),
+        ("SrcTile0", "L", "S0R"):
+            (0xFC07FBFF, 0x00005013),
+        ("L", "imm4", "DstTile"):
+            (0xFFF07C7F, 0x00006013),
+    }
+    require(
+        len(iot_forms) == 5
+        and {
+            tuple(field["name"] for field in row["fields"]): aggregate_encoding(row)
+            for row in iot_forms
+        }
+        == iot_contract,
+        "PTO ISA 0.57.1 B.IOT five-form raw contract drift",
+    )
+
     operations = tile["operations"]
     require(
         set(tile)
         == {
+            "deleted_names",
             "isa",
             "operation_count",
             "operations",
             "rejected_review_only_codes",
-            "rejected_review_only_names",
+            "rejected_names",
             "reserved",
             "schema_version",
         },
         "tile catalog top-level schema drift",
     )
-    require(tile["schema_version"] == 2, "unsupported tile catalog schema")
+    require(tile["schema_version"] == 3, "unsupported tile catalog schema")
     require(tile["isa"] == isa_name, "tile catalog has wrong ISA identity")
     require(
         tile["operation_count"] == len(operations) == 120,
@@ -926,6 +1239,15 @@ def main() -> int:
         == Counter({"TEPL": 98, "TMA": 9, "CUBE": 13}),
         "tile family counts changed",
     )
+    require(
+        len(tile["deleted_names"]) == len(set(tile["deleted_names"])) == 9
+        and len(tile["rejected_names"]) == len(set(tile["rejected_names"]))
+        and set(tile["deleted_names"]).isdisjoint(tile["rejected_names"])
+        and (set(tile["deleted_names"]) | set(tile["rejected_names"])).isdisjoint(
+            row["name"] for row in operations
+        ),
+        "deleted/rejected tile identity partition drift",
+    )
     for family in ("TEPL", "TMA", "CUBE"):
         rows = [row for row in operations if row["family"] == family]
         key = "selector" if family == "TEPL" else "function"
@@ -933,16 +1255,28 @@ def main() -> int:
         require(len(values) == len(set(values)), f"duplicate {family} {key}")
         for row in rows:
             expected_keys = {
+                "command_mnemonic",
+                "contract_status",
+                "datr_contract",
                 "disposition",
+                "effect_contract",
                 "family",
+                "fault_contract",
+                "legality_handler",
                 "name",
                 key,
+                "restart_contract",
                 "semantic_handler",
+                "state_effects",
                 "operands",
                 "arguments",
             }
+            if family == "TEPL":
+                expected_keys.update({"mode", "function"})
             if row.get("result") is not None:
                 expected_keys.add("result")
+            if family == "CUBE":
+                expected_keys.add("acc_effect")
             require(
                 set(row) == expected_keys,
                 f"tile operation schema drift for {row['name']}",
@@ -952,9 +1286,77 @@ def main() -> int:
                 f"invalid tile disposition for {row['name']}",
             )
             value = int(row[key], 0) if isinstance(row[key], str) else row[key]
+            width = 7 if family == "TEPL" else 5
+            require(0 <= value < 1 << width, f"tile selector width drift for {row['name']}")
+            if family == "TEPL":
+                require(
+                    isinstance(row["mode"], int)
+                    and 0 <= row["mode"] < 4
+                    and isinstance(row["function"], int)
+                    and 0 <= row["function"] < 32
+                    and value == (row["mode"] << 5) | row["function"],
+                    f"TEPL mode/function/selector formula drift for {row['name']}",
+                )
             require(
-                0 <= value < 1 << 12, f"tile selector exceeds 12 bits for {row['name']}"
+                row["contract_status"] == "reviewed-complete"
+                and row["legality_handler"]
+                == f"TileOperandsLegal_{row['semantic_handler']}"
+                and row["effect_contract"] == row["semantic_handler"]
+                and row["fault_contract"] == "ExecuteTileInstruction"
+                and row["restart_contract"] == "FinalizeBlockTileAttempt"
+                and isinstance(row["state_effects"], list)
+                and row["state_effects"]
+                and all(isinstance(effect, str) and effect for effect in row["state_effects"]),
+                f"incomplete reviewed semantic contract for {row['name']}",
             )
+            datr_contract = row["datr_contract"]
+            require(
+                set(datr_contract) == {"allowed_nonzero_fields", "pad_union"}
+                and datr_contract["pad_union"]
+                in {"pad-value", "histogram-byte-id", "must-zero"}
+                and datr_contract["allowed_nonzero_fields"]
+                == [
+                    field for field in TILE_DATR_FIELD_ORDER
+                    if row["name"] in TILE_DATR_APPLICABILITY[field]
+                ],
+                f"B.DATR applicability contract drift for {row['name']}",
+            )
+            expected_pad_union = next(
+                (
+                    union for union, names in TILE_DATR_PAD_UNIONS.items()
+                    if row["name"] in names
+                ),
+                "must-zero",
+            )
+            require(
+                datr_contract["pad_union"] == expected_pad_union
+                and (
+                    "PadValueOrByteId" in datr_contract["allowed_nonzero_fields"]
+                )
+                == (expected_pad_union != "must-zero"),
+                f"B.DATR PadValue/ByteId union drift for {row['name']}",
+            )
+            expected_state_effects = [
+                f"operand:{operand['field']}:{operand['role']}"
+                for operand in row["operands"]
+            ]
+            if family == "CUBE":
+                expected_state_effects.append(f"implicit:ACC:{row['acc_effect']}")
+            require(
+                row["state_effects"] == expected_state_effects,
+                f"machine-readable state-effect contract drift for {row['name']}",
+            )
+            require(
+                isinstance(row["command_mnemonic"], str)
+                and row["command_mnemonic"].startswith("BSTART."),
+                f"invalid tile command mnemonic for {row['name']}",
+            )
+            if family == "CUBE":
+                require(
+                    row["acc_effect"]
+                    in {"write-initialize", "read-write", "read-release-on-commit"},
+                    f"invalid ACC effect for {row['name']}",
+                )
             matching_handlers = [
                 handler
                 for handler, operation_names in TILE_SEMANTIC_GROUPS.items()
@@ -985,7 +1387,7 @@ def main() -> int:
             referenced_operands: list[str] = []
             for argument in row["arguments"]:
                 require(
-                    set(argument) in ({"operand"}, {"constant"}),
+                    set(argument) in ({"operand"}, {"constant"}, {"runtime"}),
                     f"tile argument schema drift for {row['name']}",
                 )
                 if "operand" in argument:
@@ -994,17 +1396,113 @@ def main() -> int:
                         f"undeclared tile operand argument for {row['name']}: {argument['operand']}",
                     )
                     referenced_operands.append(argument["operand"])
-                else:
+                elif "constant" in argument:
                     require(
                         TILE_BINDING_CONSTANT.fullmatch(argument["constant"])
                         is not None,
                         f"invalid tile binding constant for {row['name']}: {argument['constant']}",
+                    )
+                else:
+                    require(
+                        row["name"] == "MGATHER_MASK"
+                        and argument["runtime"] == "CurrentBlockPadValue",
+                        f"invalid tile runtime binding for {row['name']}",
                     )
             require(
                 set(referenced_operands) == set(operand_fields),
                 f"unused tile operand metadata for {row['name']}",
             )
             require("result" not in row, f"direct tile operation returns a scalar for {row['name']}")
+
+    tepl_by_name = {
+        row["name"]: int(row["selector"], 0)
+        if isinstance(row["selector"], str) else row["selector"]
+        for row in operations if row["family"] == "TEPL"
+    }
+    require(tepl_by_name == TEPL_V0571_SELECTORS, "PTO ISA 0.57.1 TEPL map drift")
+    for field, expected_names in TILE_DATR_APPLICABILITY.items():
+        require(
+            {
+                row["name"] for row in operations
+                if field in row["datr_contract"]["allowed_nonzero_fields"]
+            }
+            == expected_names,
+            f"exact B.DATR {field} operation set drift",
+        )
+    for union, expected_names in TILE_DATR_PAD_UNIONS.items():
+        require(
+            {
+                row["name"] for row in operations
+                if row["datr_contract"]["pad_union"] == union
+            }
+            == expected_names,
+            f"exact B.DATR {union} operation set drift",
+        )
+    require(
+        {row["command_mnemonic"] for row in operations if row["family"] == "TEPL"}
+        == {"BSTART.TEPL"},
+        "TEPL command mapping drift",
+    )
+    named_tile_commands = [
+        row["command_mnemonic"] for row in operations if row["family"] != "TEPL"
+    ]
+    require(
+        len(named_tile_commands) == len(set(named_tile_commands)) == 22,
+        "TMA/CUBE command mappings must be unique",
+    )
+    command_mnemonics = Counter(row["mnemonic"] for row in command_forms)
+    require(
+        all(command_mnemonics[mnemonic] == 1 for mnemonic in {"BSTART.TEPL", *named_tile_commands}),
+        "tile command mapping does not identify one command form",
+    )
+    require(
+        not ({"B.ARG", "BSTART.CUBE", "BSTART.FIXP"} & set(command_mnemonics)),
+        "legacy tile descriptor or generic direct-operation command remains active",
+    )
+    for operation in operations:
+        if operation["family"] == "TEPL":
+            continue
+        command_form = next(
+            row for row in command_forms
+            if row["mnemonic"] == operation["command_mnemonic"]
+        )
+        base = 0x00011181 if operation["family"] == "TMA" else 0x00031181
+        require(
+            aggregate_encoding(command_form)
+            == (0x07FFFFFF, (operation["function"] << 20) | base)
+            and field_shape(command_form)
+            == {"DataType": (5, ((27, 0, 5),))},
+            f"named {operation['family']} command raw contract drift: "
+            f"{operation['command_mnemonic']}",
+        )
+
+    cube_rows = {row["name"]: row for row in operations if row["family"] == "CUBE"}
+    require(
+        all(
+            not any(operand["field"] == "destination0" for operand in row["operands"])
+            for name, row in cube_rows.items() if name != "ACCCVT"
+        ),
+        "CUBE must model ACC implicitly rather than as destination0",
+    )
+    require(
+        [operand["field"] for operand in cube_rows["ACCCVT"]["operands"]]
+        == ["destination0"]
+        and cube_rows["ACCCVT"]["arguments"] == [{"operand": "destination0"}],
+        "ACCCVT must publish one Tile from implicit ACC",
+    )
+    sort_row = next(row for row in operations if row["name"] == "TSORT")
+    require(
+        [operand["field"] for operand in sort_row["operands"]]
+        == ["destination0", "destination1", "source0", "flag0"]
+        and sort_row["arguments"][:2]
+        == [{"operand": "destination0"}, {"operand": "destination1"}],
+        "TSORT value/index destination contract drift",
+    )
+    gather_mask_row = next(row for row in operations if row["name"] == "MGATHER_MASK")
+    require(
+        gather_mask_row["arguments"][-1] == {"runtime": "CurrentBlockPadValue"},
+        "masked gather must consume the current B.DATR pad value",
+    )
 
     tepl_accepted = {
         int(row["selector"], 0) if isinstance(row["selector"], str) else row["selector"]
@@ -1016,6 +1514,30 @@ def main() -> int:
         for value in tile["rejected_review_only_codes"]["TEPL"]
     }
     tepl_reserved = expand_number_entries(tile["reserved"]["tepl_selector_ranges"])
+    deleted_tepl = {
+        "TFMA": 0x005,
+        "TFMOD": 0x018,
+        "TFMODS": 0x019,
+        "TADDC": 0x01C,
+        "TSUBC": 0x025,
+        "TADDSC": 0x02E,
+        "TSUBSC": 0x038,
+        "TLRELU": 0x039,
+        "TRANDOM": 0x069,
+    }
+    require(
+        set(deleted_tepl) == set(tile["deleted_names"])
+        and set(tile["rejected_names"]).isdisjoint(deleted_tepl)
+        and set(deleted_tepl).isdisjoint(row["name"] for row in operations)
+        and set(deleted_tepl.values()) <= tepl_reserved,
+        "deleted PTO ISA 0.57.1 TEPL identities must remain absent and reserved",
+    )
+    require(
+        tepl_review == set()
+        and tile["rejected_review_only_codes"]["TMA"] == []
+        and tile["rejected_review_only_codes"]["CUBE"] == [],
+        "PTO ISA 0.57.1 has no review-only executable tile allocation",
+    )
     require(
         not (
             tepl_accepted & tepl_review
@@ -1025,7 +1547,7 @@ def main() -> int:
         "TEPL selector partitions overlap",
     )
     require(
-        tepl_accepted | tepl_review | tepl_reserved == set(range(1 << 10)),
+        tepl_accepted | tepl_review | tepl_reserved == set(range(1 << 7)),
         "TEPL selector partition is incomplete",
     )
 
@@ -1061,6 +1583,53 @@ def main() -> int:
             or cube_review & cube_unassigned
         ),
         "CUBE function partitions overlap",
+    )
+
+    valid_tepl_data_types = {
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+        16, 17, 18, 19, 20, 24, 25, 26, 27, 28,
+    }
+    scalar_l32 = [row for row in forms if row["length_bits"] == 32]
+    non_tepl_l32 = [
+        row for row in command_forms
+        if row["length_bits"] == 32 and row["form_id"] != tepl_command["form_id"]
+    ]
+    tepl_classification = Counter()
+    for data_type in range(32):
+        for selector in range(128):
+            raw = (data_type << 27) | (selector << 20) | 0x00019181
+            require(
+                raw & 0x000FFFFF == 0x00019181,
+                "TEPL raw-word construction no longer selects BSTART.TEPL",
+            )
+            scalar_collisions = [
+                row["form_id"] for row in scalar_l32
+                if raw & aggregate_encoding(row)[0] == aggregate_encoding(row)[1]
+            ]
+            command_collisions = [
+                row["form_id"] for row in non_tepl_l32
+                if raw & aggregate_encoding(row)[0] == aggregate_encoding(row)[1]
+            ]
+            require(
+                not scalar_collisions and not command_collisions,
+                "TEPL raw collision at "
+                f"datatype={data_type}, selector=0x{selector:03x}: "
+                f"scalar={scalar_collisions}, command={command_collisions}",
+            )
+            if data_type not in valid_tepl_data_types:
+                tepl_classification["illegal-datatype"] += 1
+            elif selector in tepl_accepted:
+                tepl_classification["accepted"] += 1
+            else:
+                require(
+                    selector in tepl_reserved,
+                    f"unclassified TEPL selector 0x{selector:03x}",
+                )
+                tepl_classification["reserved"] += 1
+    require(
+        tepl_classification
+        == Counter({"accepted": 2450, "reserved": 750, "illegal-datatype": 896}),
+        "4096-word TEPL accepted/reserved/illegal partition drift",
     )
 
     require(
@@ -1248,6 +1817,37 @@ def main() -> int:
         is not None,
         "missing generated tile execution entry point",
     )
+    for stable_interface in (
+        "CommandFormSelectsTileOperation",
+        "CommandTileFamilyOfForm",
+        "CommandTileCodeOfForm",
+        "CommandTileDataTypeOfForm",
+        "TileOperationDATRFieldApplicable",
+        "TileOperationDATRPadUnion",
+        "TileOperationDATRFieldsLegal",
+    ):
+        require(
+            re.search(rf"\bfunc\s+{stable_interface}\b", generated_tile_dispatch)
+            is not None,
+            f"missing generated tile-command interface {stable_interface}",
+        )
+    require(
+        "if _LastFault != Fault_None then" in generated_tile_dispatch
+        and "return (TileExecution_Faulted, Zeros{PTO_XLEN});"
+        in generated_tile_dispatch,
+        "generated tile dispatch may report success after a handler fault",
+    )
+    require(
+        generated_tile_dispatch.count(
+            "return (TileExecution_Rejected, Zeros{PTO_XLEN});"
+        )
+        == 1,
+        "recognized tile operations must fault; only an unknown selector is rejected",
+    )
+    require(
+        re.search(r"\bfunc\s+FinalizeBlockTileAttempt\b", asl_body) is not None,
+        "catalog restart contract target is absent",
+    )
     for index, row in enumerate(operations):
         operation = re.sub(r"[^A-Za-z0-9_]", "_", row["name"])
         require(
@@ -1266,6 +1866,16 @@ def main() -> int:
             f"tile operation lacks decoded legality binding: {row['name']}",
         )
         require(
+            re.search(rf"\bfunc\s+{re.escape(row['legality_handler'])}\b", asl_body)
+            is not None
+            and re.search(rf"\bfunc\s+{re.escape(row['effect_contract'])}\b", asl_body)
+            is not None
+            and row["fault_contract"] in generated_tile_dispatch
+            and re.search(rf"\bfunc\s+{re.escape(row['restart_contract'])}\b", asl_body)
+            is not None,
+            f"catalog semantic contract target is absent for {row['name']}",
+        )
+        require(
             f"assert TileHandlerOfIndex({index}) == "
             f"TileHandler_{row['semantic_handler']};" in generated_tile_dispatch,
             f"tile operation lacks handler-identity evidence: {row['name']}",
@@ -1276,6 +1886,17 @@ def main() -> int:
                 f"TileOperand_{operand['field']});" in generated_tile_dispatch,
                 f"tile operation lacks operand-presence evidence: {row['name']}/{operand['field']}",
             )
+        datr_witnesses = re.findall(
+            rf"assert\s+(!?)TileOperationDATRFieldsLegal\({index},[^;]+;",
+            generated_tile_dispatch,
+        )
+        require(
+            len(datr_witnesses) == len(TILE_DATR_FIELD_ORDER)
+            and datr_witnesses.count("!")
+            == len(TILE_DATR_FIELD_ORDER)
+            - len(row["datr_contract"]["allowed_nonzero_fields"]),
+            f"B.DATR positive/negative applicability witnesses drift for {row['name']}",
+        )
 
     for family, handlers in SCALAR_FAMILY_HANDLERS.items():
         require(
@@ -1429,272 +2050,6 @@ def main() -> int:
             re.search(rf"\bfunc\s+{re.escape(handler)}\b", asl_body) is not None,
             f"missing system-state handler {handler}",
         )
-
-    reconciliation_check = subprocess.run(
-        [str(ROOT / "scripts" / "generate-public-source-reconciliation"), "--check"],
-        cwd=ROOT,
-        check=False,
-        capture_output=True,
-        text=True,
-    )
-    require(
-        reconciliation_check.returncode == 0,
-        "public source reconciliation is not deterministic or is stale",
-    )
-    require(
-        set(reconciliation)
-        == {
-            "policy",
-            "public_commit",
-            "public_layer_sources",
-            "public_repository",
-            "public_sources",
-            "public_tile_symbol_inventory",
-            "excluded_public_tile_operations",
-            "scalar_forms",
-            "schema_version",
-            "summary",
-            "tile_operations",
-        },
-        "public source reconciliation top-level schema drift",
-    )
-    require(reconciliation["schema_version"] == 1, "unsupported reconciliation schema")
-    public_commit = "712cbe9f23df5d5362be5e8327599f4285317473"
-    public_repository = "https://github.com/hw-native-sys/pto-isa"
-    require(reconciliation["public_commit"] == public_commit, "public source pin drift")
-    require(
-        reconciliation["public_repository"] == public_repository,
-        "public source repository drift",
-    )
-    require(
-        set(reconciliation["policy"])
-        == {"authority", "public_api_use"},
-        "public reconciliation policy schema drift",
-    )
-    require(
-        all(
-            isinstance(statement, str) and statement
-            for statement in reconciliation["policy"].values()
-        ),
-        "public reconciliation policy statements must be non-empty",
-    )
-    expected_public_hashes = {
-        "include/pto/common/pto_instr.hpp": "6fbd4bfb068606ee7cd00cb0b98d38e8550a026779d3d723d9a08934400e0e98",
-        "docs/isa/reference/source-of-truth.md": "50ffe6f25a9f54f8c3ad63016dba9ccb1025182338fda456107993c7948d849e",
-        "docs/isa/introduction/current-isa-scope.md": "df65fc48325f478fbf6e1b7fe1a04f418673ae11e25b6612f506bf64c4da87fe",
-        "docs/isa/syntax-and-operands/assembly-model.md": "381c2dfe4b6b0031178a87b0a37de09836c90b73d7f952859fa22d350e8777ba",
-        "docs/isa/scalar/shared-arith.md": "f8ed82355f975e1ba7d54f8027b404f2d3be9a1b340b9a3824f967d401d799cf",
-        "docs/isa/instruction-families/scalar-and-control-families.md": "24a2919faaf0fcb6a1915ce5847f3cce3e471b7de4bc71ac9c4ae3f40fe28864",
-    }
-    public_sources = reconciliation["public_sources"]
-    require(len(public_sources) == 6, "public source inventory must contain six audited files")
-    require(
-        {row["path"]: row["sha256"] for row in public_sources} == expected_public_hashes,
-        "public source content hashes drifted",
-    )
-    source_ids = {row["id"] for row in public_sources}
-    require(len(source_ids) == len(public_sources), "duplicate public source IDs")
-    for row in public_sources:
-        require(
-            set(row) == {"id", "path", "role", "sha256", "url"},
-            f"public source schema drift for {row.get('path', '<unknown>')}",
-        )
-        require(
-            row["url"] == f"{public_repository}/blob/{public_commit}/{row['path']}",
-            f"unpinned public source URL for {row['path']}",
-        )
-        require(
-            re.fullmatch(r"[0-9a-f]{64}", row["sha256"]) is not None,
-            f"bad public source hash for {row['path']}",
-        )
-    public_symbol_inventory = reconciliation["public_tile_symbol_inventory"]
-    require(
-        set(public_symbol_inventory) == {"count", "source_id", "source_sha256", "symbols"},
-        "public tile symbol inventory schema drift",
-    )
-    public_symbols = public_symbol_inventory["symbols"]
-    require(
-        public_symbol_inventory["count"] == len(public_symbols) == len(set(public_symbols)) == 111,
-        "public tile symbol inventory must contain 111 unique audited names",
-    )
-    require(public_symbols == sorted(public_symbols), "public tile symbol inventory must be sorted")
-    require(
-        public_symbol_inventory["source_id"] == "public-intrinsic-api",
-        "public tile symbol inventory must identify the intrinsic header",
-    )
-    require(
-        public_symbol_inventory["source_sha256"]
-        == expected_public_hashes["include/pto/common/pto_instr.hpp"],
-        "public tile symbol inventory is not tied to the audited header hash",
-    )
-    expected_public_layer_sources = {
-        "shared-scalar-source-layer": ["public-shared-scalar-arith", "public-scalar-control"],
-        "scalar-control-or-lowering-layer": ["public-scalar-control", "public-source-precedence"],
-        "typed-tile-intrinsic-layer": [
-            "public-intrinsic-api",
-            "public-isa-scope",
-            "public-assembly-model",
-        ],
-    }
-    require(
-        reconciliation["public_layer_sources"] == expected_public_layer_sources,
-        "public layer source mapping drift",
-    )
-    for layer, ids in expected_public_layer_sources.items():
-        require(ids and set(ids) <= source_ids, f"unknown source ID in public layer {layer}")
-
-    scalar_reconciliation = reconciliation["scalar_forms"]
-    require(
-        len(scalar_reconciliation) == len(forms) == 474,
-        "public reconciliation must cover all 474 scalar forms",
-    )
-    scalar_by_id = {row["form_id"]: row for row in scalar_reconciliation}
-    require(len(scalar_by_id) == 474, "duplicate reconciled scalar form ID")
-    require(
-        set(scalar_by_id) == {row["form_id"] for row in forms},
-        "reconciled scalar form IDs drifted from the catalog",
-    )
-    for form in forms:
-        row = scalar_by_id[form["form_id"]]
-        require(
-            set(row) == {"closure_status", "form_id", "mnemonic", "public_layer", "semantic_family"},
-            f"scalar reconciliation schema drift for {form['form_id']}",
-        )
-        require(row["closure_status"] == "closed", f"open scalar source disposition: {form['form_id']}")
-        require(row["mnemonic"] == form["mnemonic"], f"scalar mnemonic drift for {form['form_id']}")
-        require(
-            row["semantic_family"] == form["semantic_family"],
-            f"scalar family drift for {form['form_id']}",
-        )
-        expected_layer = (
-            "shared-scalar-source-layer"
-            if form["semantic_family"] in {"ALU", "FSU"}
-            else "scalar-control-or-lowering-layer"
-        )
-        require(row["public_layer"] == expected_layer, f"wrong source layer for {form['form_id']}")
-
-    tile_reconciliation = reconciliation["tile_operations"]
-    require(
-        len(tile_reconciliation) == len(operations) == 120,
-        "public reconciliation must cover all 120 direct tile operations",
-    )
-    tile_reconciliation_by_name = {row["name"]: row for row in tile_reconciliation}
-    require(len(tile_reconciliation_by_name) == 120, "duplicate reconciled tile operation")
-    require(
-        set(tile_reconciliation_by_name) == {row["name"] for row in operations},
-        "reconciled tile operation names drifted from the catalog",
-    )
-    public_aligned = {
-        "TAXPY",
-        "TDEINTERLEAVE",
-        "THISTOGRAM",
-        "TPARTARGMAX",
-        "TPARTARGMIN",
-    }
-    explicit_layer_difference = {
-        "TPREFETCH",
-        "TDEQUANT",
-        "TCONCAT",
-        "TINTERLEAVE",
-        "TSORT",
-        "TPUSH",
-        "TPOP",
-        "TALLOC",
-        "TFREE",
-    }
-    excluded_public_rows = reconciliation["excluded_public_tile_operations"]
-    excluded_by_name = {row["name"]: row for row in excluded_public_rows}
-    require(
-        set(excluded_by_name) == set(),
-        "source-API-only tile exclusion set drift",
-    )
-    for name, row in excluded_by_name.items():
-        require(
-            set(row) == {"disposition", "name", "public_symbol", "resolution"},
-            f"excluded public tile schema drift for {name}",
-        )
-        require(row["public_symbol"] == name and row["public_symbol"] in public_symbols,
-                f"excluded public tile symbol drift for {name}")
-        require(row["disposition"] == "source-api-only-not-a-direct-operation" and row["resolution"],
-                f"excluded public tile disposition is not closed for {name}")
-    for operation in operations:
-        name = operation["name"]
-        row = tile_reconciliation_by_name[name]
-        require(
-            set(row)
-            == {
-                "closure_basis",
-                "closure_status",
-                "family",
-                "name",
-                "public_symbol",
-                "public_symbol_relation",
-                "resolution",
-                "selector",
-            },
-            f"tile reconciliation schema drift for {name}",
-        )
-        require(row["closure_status"] == "closed", f"open tile source disposition: {name}")
-        require(row["family"] == operation["family"], f"tile family drift for {name}")
-        require(row["selector"] == operation.get("selector"), f"tile selector drift for {name}")
-        expected_symbol = "TSORT32" if name == "TSORT" else name
-        expected_basis = (
-            "public-api-aligned"
-            if name in public_aligned
-            else "explicit-layer-difference"
-            if name in explicit_layer_difference
-            else "catalog-defined-direct-binary"
-            if expected_symbol not in public_symbols
-            else "public-source-supported"
-        )
-        require(row["closure_basis"] == expected_basis, f"wrong closure basis for {name}")
-        expected_symbol_relation = (
-            "documented-spelling-mapping" if name == "TSORT"
-            else "catalog-defined" if expected_basis == "catalog-defined-direct-binary"
-            else "exact-name"
-        )
-        require(row["public_symbol"] == expected_symbol, f"wrong public symbol for {name}")
-        if expected_basis != "catalog-defined-direct-binary":
-            require(
-                row["public_symbol"] in public_symbols,
-                f"public symbol is absent from the audited inventory for {name}",
-            )
-        require(
-            row["public_symbol_relation"] == expected_symbol_relation,
-            f"wrong public symbol relation for {name}",
-        )
-        require(bool(row["resolution"]), f"missing public reconciliation rationale for {name}")
-    require(
-        {
-            row["public_symbol"]
-            for row in tile_reconciliation
-            if row["public_symbol_relation"] != "catalog-defined"
-        }
-        == set(public_symbols),
-        "audited public tile symbol inventory is not used exactly once",
-    )
-    expected_reconciliation_summary = {
-        "scalar_forms": {"count": 474, "closed": 474, "open": 0},
-        "tile_operations": {
-            "count": 120,
-            "closed": 120,
-            "open": 0,
-            "public_exact_name": 110,
-            "public_spelling_mapping": 1,
-        },
-        "excluded_public_tile_operations": {"count": 0, "closed": 0},
-        "closure_basis": {
-            "public_source_supported": 97,
-            "catalog_defined_direct_binary": 9,
-            "public_api_aligned": 5,
-            "explicit_layer_difference": 9,
-            "open": 0,
-        },
-    }
-    require(
-        reconciliation["summary"] == expected_reconciliation_summary,
-        "public source reconciliation summary drift",
-    )
 
     requirement_ids = [row["id"] for row in requirements]
     require(
@@ -1946,7 +2301,8 @@ def main() -> int:
         "catalog checks passed: 474 scalar forms, 45 operand fields, 1,867 field pieces, "
         "3 form constraints, no family constraints, "
         "3 constrained overlaps, 54 system-register definitions, 13 trap numbers, and "
-        "107 command forms and 120 tile operations with complete handler and executable feature coverage; "
+        f"{len(command_forms)} command forms, 120 tile operations, and "
+        f"{len(reviewed_command_overlaps)} reviewed command containment overlaps with complete handler and executable feature coverage; "
         f"{len(profile_names)} profile hooks are declared, invoked, and traceable"
     )
     return 0

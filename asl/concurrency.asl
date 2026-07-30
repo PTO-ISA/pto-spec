@@ -147,6 +147,93 @@ begin
     });
 end;
 
+readonly func MemoryEventCapacityAvailable(
+    additional_events: integer {0..PTO_MODEL_TILE_ELEMENTS}) => boolean
+begin
+    return _MemoryEventCount + additional_events <= PTO_MODEL_MEMORY_EVENTS;
+end;
+
+readonly func NextMemoryCoherenceRank(address: Word,
+                                      size_bytes: integer {1,2,4,8})
+                                      => MemoryCoherenceRank
+begin
+    var rank: integer = 0;
+    for event_number = 0 to _MemoryEventCount - 1 do
+        let event = _MemoryEvents[[event_number]];
+        if MemoryEventIsWrite(event) && event.address == address &&
+           event.size_bytes == size_bytes && event.coherence_rank > rank then
+            rank = event.coherence_rank;
+        end;
+    end;
+    assert rank + 1 < PTO_MODEL_MEMORY_EVENTS;
+    return (rank + 1) as MemoryCoherenceRank;
+end;
+
+func RecordCompletedLoadEvent(address: Word,
+                              size_bytes: integer {1,2,4,8},
+                              value: Word, order: MemoryOrder)
+begin
+    assert _MemoryEventCount < PTO_MODEL_MEMORY_EVENTS;
+    let load = AddLoadEvent(0, address, size_bytes, value, order);
+    var source_found = FALSE;
+    var source: MemoryEventIndex = 0;
+    var source_rank: integer = -1;
+    for event_number = 0 to load - 1 do
+        let candidate = event_number as MemoryEventIndex;
+        let event = _MemoryEvents[[candidate]];
+        if MemoryEventIsWrite(event) && event.address == address &&
+           event.size_bytes == size_bytes && event.write_value == value &&
+           event.coherence_rank > source_rank then
+            source = candidate;
+            source_rank = event.coherence_rank;
+            source_found = TRUE;
+        end;
+    end;
+    if source_found then SetMemoryReadFrom(load, source); end;
+end;
+
+func RecordCompletedStoreEvent(address: Word,
+                               size_bytes: integer {1,2,4,8},
+                               value: Word, order: MemoryOrder)
+begin
+    assert _MemoryEventCount < PTO_MODEL_MEMORY_EVENTS;
+    - = AddStoreEvent(0, address, size_bytes, value, order,
+        NextMemoryCoherenceRank(address, size_bytes));
+end;
+
+func RecordCompletedAtomicEvent(address: Word,
+                                size_bytes: integer {1,2,4,8},
+                                read_value: Word, write_value: Word,
+                                order: MemoryOrder)
+begin
+    assert _MemoryEventCount < PTO_MODEL_MEMORY_EVENTS;
+    let atomic = AddAtomicEvent(0, address, size_bytes, read_value,
+        write_value, order, NextMemoryCoherenceRank(address, size_bytes));
+    var source_found = FALSE;
+    var source: MemoryEventIndex = 0;
+    var source_rank: integer = -1;
+    for event_number = 0 to atomic - 1 do
+        let candidate = event_number as MemoryEventIndex;
+        let event = _MemoryEvents[[candidate]];
+        if MemoryEventIsWrite(event) && event.address == address &&
+           event.size_bytes == size_bytes &&
+           event.write_value == read_value &&
+           event.coherence_rank > source_rank then
+            source = candidate;
+            source_rank = event.coherence_rank;
+            source_found = TRUE;
+        end;
+    end;
+    if source_found then SetMemoryReadFrom(atomic, source); end;
+end;
+
+// Dependency metadata is a scheduling relation only. Applying it creates no
+// candidate event and, in particular, never synthesizes a FENCE.D event.
+func NoteDependencyMetadata()
+begin
+    return;
+end;
+
 func SetMemoryReadFrom(read: MemoryEventIndex, source: MemoryEventIndex)
 begin
     assert read < _MemoryEventCount && source < _MemoryEventCount;

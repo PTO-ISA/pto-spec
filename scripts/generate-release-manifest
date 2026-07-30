@@ -1,0 +1,892 @@
+#!/usr/bin/env python3
+"""Generate the reproducible PTO ISA 0.57.1 release identity artifacts."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from collections import Counter
+from pathlib import Path
+import sys
+import tomllib
+
+
+ROOT = Path(__file__).resolve().parent.parent
+RELEASE = "0.57.1"
+ENCODING_ABI = "pto-isa-0.57.1-mode-function-v1"
+MANIFEST_PATH = Path("spec/release-manifest.json")
+TOTALITY_PATH = Path("spec/evidence/pto-isa-0571-encoding-totality.json")
+ABI_VECTORS_PATH = Path("spec/evidence/pto-isa-0571-abi-vectors.json")
+NUMERIC_PROFILE_PATH = Path("spec/hardware-conformance-profile.json")
+NUMERIC_VECTORS_PATH = Path("spec/evidence/pto-isa-0571-hardware-numeric-vectors.json")
+NUMERIC_PROFILE_ID = "pto-hardware-numeric-0.57.1-ieee-v1"
+
+FAMILY_COUNTS = {"TEPL": 98, "TMA": 9, "CUBE": 13}
+FORM_COUNTS = {"scalar_forms": 474, "command_forms": 99}
+COMMAND_FAMILY_COUNTS = {"CMD": 74, "BBD": 25}
+VALID_DATATYPES = tuple(range(0, 15)) + tuple(range(16, 21)) + tuple(range(24, 29))
+RESERVED_DATATYPES = (15, 21, 22, 23, 29, 30)
+ILLEGAL_DATATYPES = (31,)
+EXPECTED_DATA_TYPE_NAMES = {
+    0: "FP64",
+    1: "FP32",
+    2: "TF32",
+    3: "HF32",
+    4: "FP16",
+    5: "BF16",
+    6: "HiF8",
+    7: "E4M3",
+    8: "E5M2",
+    9: "E3M2",
+    10: "E2M3",
+    11: "E2M1X2",
+    12: "E1M2X2",
+    13: "E8M0",
+    14: "HiF4X2",
+    16: "S64",
+    17: "S32",
+    18: "S16",
+    19: "S8",
+    20: "S4X2",
+    24: "U64",
+    25: "U32",
+    26: "U16",
+    27: "U8",
+    28: "U4X2",
+}
+
+# Each line is selector:name. Keeping the reviewed map here makes regenerating
+# the manifest a verification action, not a way to bless arbitrary ABI drift.
+EXPECTED_TEPL_MAP_TEXT = """
+000:TADD 001:TSUB 002:TMUL 003:TDIV 004:TREM 006:TAND 007:TOR 008:TXOR
+009:TSHL 00A:TSHR 00B:TMAX 00C:TMIN 00D:TCMP 00E:TPRELU 00F:TABS
+010:TNOT 011:TNEG 012:TEXP 013:TLOG 014:TRECIP 015:TSQRT 016:TRSQRT
+017:TRELU 01A:TSEL 01B:TCVT
+020:TADDS 021:TSUBS 022:TMULS 023:TDIVS 024:TREMS 026:TANDS 027:TORS
+028:TXORS 029:TSHLS 02A:TSHRS 02B:TMAXS 02C:TMINS 02D:TCMPS
+02F:TAXPY 03A:TSELS 03B:TEXPANDS
+040:TROWSUM 041:TROWMAX 042:TROWMIN 043:TROWPROD 044:TROWEXPAND
+045:TROWEXPANDADD 046:TROWEXPANDSUB 047:TROWEXPANDMUL
+048:TROWEXPANDDIV 049:TROWEXPANDMAX 04A:TROWEXPANDMIN
+04B:TROWEXPANDEXPDIF 04C:TROWARGMAX 04D:TROWARGMIN 050:TCOLSUM
+051:TCOLMAX 052:TCOLMIN 053:TCOLPROD 054:TCOLEXPAND
+055:TCOLEXPANDADD 056:TCOLEXPANDSUB 057:TCOLEXPANDMUL
+058:TCOLEXPANDDIV 059:TCOLEXPANDMAX 05A:TCOLEXPANDMIN
+05B:TCOLEXPANDEXPDIF 05C:TCOLARGMAX 05D:TCOLARGMIN
+060:TCONCAT 061:TGATHERB 062:TEXTRACT 063:TINSERT 064:TIMG2COL
+065:TFILLPAD 066:TCI 067:TTRI 068:THISTOGRAM 06A:TQUANT
+06B:TDEQUANT 06C:TSORT 06D:TMRGSORT 06E:TTRANS 06F:TGATHER
+070:TSCATTER 071:TPARTADD 072:TPARTMUL 073:TPARTMAX 074:TPARTMIN
+075:TPARTARGMAX 076:TPARTARGMIN 077:TRESHAPE 078:TDEINTERLEAVE
+079:TINTERLEAVE 07A:TPUSH 07B:TPOP 07C:TALLOC 07D:TFREE
+"""
+EXPECTED_TEPL_MAP = {
+    int(token.split(":", 1)[0], 16): token.split(":", 1)[1]
+    for token in EXPECTED_TEPL_MAP_TEXT.split()
+}
+EXPECTED_TMA_MAP = {
+    0: "TLOAD",
+    1: "TSTORE",
+    2: "TMOV",
+    3: "TPREFETCH",
+    4: "MGATHER",
+    5: "MSCATTER",
+    6: "MGATHER_MASK",
+    7: "MSCATTER_MASK",
+    8: "MGATHER_CAS",
+}
+EXPECTED_CUBE_MAP = {
+    0: "TMATMUL",
+    1: "TMATMUL_BIAS",
+    2: "TMATMUL_ACC",
+    4: "TMATMUL_MX",
+    5: "TMATMUL_MX_BIAS",
+    6: "TMATMUL_MX_ACC",
+    8: "ACCCVT",
+    16: "TGEMV",
+    17: "TGEMV_BIAS",
+    18: "TGEMV_ACC",
+    20: "TGEMV_MX",
+    21: "TGEMV_MX_BIAS",
+    22: "TGEMV_MX_ACC",
+}
+EXPECTED_NON_TEPL_COMMANDS = {
+    "TLOAD": "BSTART.TLOAD",
+    "TSTORE": "BSTART.TSTORE",
+    "TMOV": "BSTART.TMOV",
+    "TPREFETCH": "BSTART.TPREFETCH",
+    "MGATHER": "BSTART.MGATHER",
+    "MSCATTER": "BSTART.MSCATTER",
+    "MGATHER_MASK": "BSTART.MGATHER.MASK",
+    "MSCATTER_MASK": "BSTART.MSCATTER.MASK",
+    "MGATHER_CAS": "BSTART.MGATHER.CAS",
+    "TMATMUL": "BSTART.TMATMUL",
+    "TMATMUL_BIAS": "BSTART.TMATMUL.BIAS",
+    "TMATMUL_ACC": "BSTART.TMATMUL.ACC",
+    "TMATMUL_MX": "BSTART.TMATMULMX",
+    "TMATMUL_MX_BIAS": "BSTART.TMATMULMX.BIAS",
+    "TMATMUL_MX_ACC": "BSTART.TMATMULMX.ACC",
+    "ACCCVT": "BSTART.ACCCVT",
+    "TGEMV": "BSTART.TGEMV",
+    "TGEMV_BIAS": "BSTART.TGEMV.BIAS",
+    "TGEMV_ACC": "BSTART.TGEMV.ACC",
+    "TGEMV_MX": "BSTART.TGEMVMX",
+    "TGEMV_MX_BIAS": "BSTART.TGEMVMX.BIAS",
+    "TGEMV_MX_ACC": "BSTART.TGEMVMX.ACC",
+}
+DELETED_TEPL_NAMES = (
+    "TFMA",
+    "TFMOD",
+    "TFMODS",
+    "TADDC",
+    "TSUBC",
+    "TADDSC",
+    "TSUBSC",
+    "TLRELU",
+    "TRANDOM",
+)
+
+GENERATED_DOCS = (
+    "docs/instructions/block-command.md",
+    "docs/instructions/index.md",
+    "docs/instructions/scalar-agu.md",
+    "docs/instructions/scalar-alu.md",
+    "docs/instructions/scalar-amo.md",
+    "docs/instructions/scalar-bru.md",
+    "docs/instructions/scalar-fsu.md",
+    "docs/instructions/scalar-sys.md",
+    "docs/instructions/scalar.md",
+    "docs/instructions/system-registers.md",
+    "docs/instructions/tile.md",
+)
+EVIDENCE_FILES = (
+    str(ABI_VECTORS_PATH),
+    str(TOTALITY_PATH),
+    str(NUMERIC_VECTORS_PATH),
+)
+CANONICAL_STATIC_INPUTS = (
+    ".aslref-version",
+    "specification.toml",
+    "spec/profile-hooks.json",
+    "spec/hardware-conformance-profile.json",
+    "spec/requirements.json",
+    "spec/catalog/command-forms.json",
+    "spec/catalog/scalar-forms.json",
+    "spec/catalog/system-registers.json",
+    "spec/catalog/tile-operations.json",
+    "docs/architecture.md",
+    "docs/coverage.md",
+    "docs/memory-model.md",
+    "docs/modeling-conventions.md",
+    "docs/normative-sources.md",
+    "docs/profile-contracts.md",
+    "docs/architecture-decisions/0009-pto-isa-release-tile-contract.md",
+)
+FORM_PROJECTION_KEYS = (
+    "form_id",
+    "mnemonic",
+    "asm",
+    "length_bits",
+    "encoding_kind",
+    "encoding",
+    "fields",
+    "constraints",
+)
+
+
+def normalized_json_bytes(value: object) -> bytes:
+    return json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8")
+
+
+def pretty_json_bytes(value: object) -> bytes:
+    return (json.dumps(value, indent=2, sort_keys=True) + "\n").encode("utf-8")
+
+
+def sha256_bytes(value: bytes) -> str:
+    return hashlib.sha256(value).hexdigest()
+
+
+def load_json(relative: str) -> dict:
+    return json.loads((ROOT / relative).read_text(encoding="utf-8"))
+
+
+def parse_int(value: object, label: str) -> int:
+    if isinstance(value, int):
+        return value
+    if isinstance(value, str):
+        return int(value, 0)
+    raise SystemExit(f"{label} must be an integer or an integer string")
+
+
+def operation_function(row: dict) -> int:
+    if "function" not in row:
+        raise SystemExit(f"operation {row.get('name', '<unnamed>')} has no function")
+    return parse_int(row["function"], f"{row.get('name', '<unnamed>')}.function")
+
+
+def operation_selector(row: dict) -> int:
+    function = operation_function(row)
+    if row.get("family") != "TEPL":
+        return function
+    if "mode" not in row or "selector" not in row:
+        raise SystemExit(
+            f"TEPL operation {row.get('name', '<unnamed>')} must carry mode, function, and selector"
+        )
+    mode = parse_int(row["mode"], f"{row.get('name', '<unnamed>')}.mode")
+    if not 0 <= mode <= 3 or not 0 <= function <= 31:
+        raise SystemExit(f"{row['name']} mode/function is outside the 2-bit/5-bit encoding")
+    selector = (mode << 5) | function
+    if parse_int(row["selector"], f"{row['name']}.selector") != selector:
+        raise SystemExit(f"{row['name']} selector does not equal (mode << 5) | function")
+    return selector
+
+
+def validate_release_metadata() -> dict:
+    metadata = tomllib.loads((ROOT / "specification.toml").read_text(encoding="utf-8"))
+    release = metadata.get("release", {})
+    expected = {
+        "architecture_version": RELEASE,
+        "encoding_abi": ENCODING_ABI,
+        "manifest": str(MANIFEST_PATH),
+    }
+    for key, value in expected.items():
+        if release.get(key) != value:
+            raise SystemExit(f"release.{key} must be {value!r}")
+    return metadata
+
+
+def validate_tile_catalog() -> tuple[dict, dict[str, list[dict]]]:
+    catalog = load_json("spec/catalog/tile-operations.json")
+    operations = catalog.get("operations")
+    if not isinstance(operations, list):
+        raise SystemExit("tile catalog operations must be an array")
+    by_family = {
+        family: [row for row in operations if row.get("family") == family]
+        for family in FAMILY_COUNTS
+    }
+    actual_counts = {family: len(rows) for family, rows in by_family.items()}
+    if actual_counts != FAMILY_COUNTS or len(operations) != sum(FAMILY_COUNTS.values()):
+        raise SystemExit(
+            f"tile operation closure must be exactly {FAMILY_COUNTS}, got {actual_counts}"
+        )
+    if catalog.get("operation_count") != sum(FAMILY_COUNTS.values()):
+        raise SystemExit("tile operation_count must be exactly 120")
+    names = [row.get("name") for row in operations]
+    if None in names or len(names) != len(set(names)):
+        raise SystemExit("tile operation names must be present and globally unique")
+
+    tepl_map = {operation_selector(row): row["name"] for row in by_family["TEPL"]}
+    if len(tepl_map) != FAMILY_COUNTS["TEPL"]:
+        raise SystemExit("TEPL selectors must be unique")
+    if tepl_map != EXPECTED_TEPL_MAP:
+        missing = sorted(set(EXPECTED_TEPL_MAP.items()) - set(tepl_map.items()))
+        extra = sorted(set(tepl_map.items()) - set(EXPECTED_TEPL_MAP.items()))
+        raise SystemExit(f"TEPL 0.57.1 map mismatch; missing={missing}, unexpected={extra}")
+
+    for family, expected in (
+        ("TMA", EXPECTED_TMA_MAP),
+        ("CUBE", EXPECTED_CUBE_MAP),
+    ):
+        actual = {operation_function(row): row["name"] for row in by_family[family]}
+        if actual != expected:
+            raise SystemExit(f"{family} 0.57.1 function map must be {expected}, got {actual}")
+
+    for row in operations:
+        expected_command = (
+            "BSTART.TEPL"
+            if row["family"] == "TEPL"
+            else EXPECTED_NON_TEPL_COMMANDS[row["name"]]
+        )
+        if row.get("command_mnemonic") != expected_command:
+            raise SystemExit(
+                f"{row['name']} must map to command mnemonic {expected_command}, "
+                f"got {row.get('command_mnemonic')}"
+            )
+
+    forbidden = sorted(set(names).intersection(DELETED_TEPL_NAMES))
+    if forbidden:
+        raise SystemExit(f"deleted D-class operations remain in the base ISA: {forbidden}")
+    non_accepted = {
+        row["name"]: row.get("disposition")
+        for row in operations
+        if row.get("disposition") != "accepted-direct-operation"
+    }
+    if non_accepted:
+        raise SystemExit(
+            "all base ISA operations must have disposition "
+            f"'accepted-direct-operation'; got {non_accepted}"
+        )
+    contract_status_counts = dict(Counter(row.get("contract_status") for row in operations))
+    if contract_status_counts != {"reviewed-complete": sum(FAMILY_COUNTS.values())}:
+        raise SystemExit(
+            "all 120 base ISA operations must have contract_status 'reviewed-complete'; "
+            f"got {contract_status_counts}"
+        )
+    return catalog, by_family
+
+
+def encoding_projection(tile_catalog: dict) -> dict:
+    forms: list[dict] = []
+    for label, relative in (
+        ("scalar_forms", "spec/catalog/scalar-forms.json"),
+        ("command_forms", "spec/catalog/command-forms.json"),
+    ):
+        catalog = load_json(relative)
+        if catalog.get("form_count") != FORM_COUNTS[label] or len(catalog.get("forms", [])) != FORM_COUNTS[label]:
+            raise SystemExit(f"{label} closure must remain exactly {FORM_COUNTS[label]}")
+        if label == "command_forms":
+            families = dict(Counter(row.get("semantic_family") for row in catalog["forms"]))
+            if families != COMMAND_FAMILY_COUNTS:
+                raise SystemExit(
+                    f"command form families must remain exactly {COMMAND_FAMILY_COUNTS}, got {families}"
+                )
+        forms.extend(catalog["forms"])
+    form_projection = [
+        {key: row[key] for key in FORM_PROJECTION_KEYS}
+        for row in sorted(forms, key=lambda row: row["form_id"])
+    ]
+    tile_projection = [
+        {
+            "family": row["family"],
+            "name": row["name"],
+            "command_mnemonic": row["command_mnemonic"],
+            "mode": (
+                parse_int(row["mode"], f"{row['name']}.mode")
+                if row["family"] == "TEPL"
+                else None
+            ),
+            "function": operation_function(row),
+            "selector": operation_selector(row) if row["family"] == "TEPL" else None,
+        }
+        for row in sorted(
+            tile_catalog["operations"],
+            key=lambda row: (row["family"], operation_selector(row), row["name"]),
+        )
+    ]
+    register_projection = [
+        {
+            key: row[key]
+            for key in ("name", "address", "low_index", "fixed_context", "access", "scope")
+            if key in row
+        }
+        for row in sorted(
+            load_json("spec/catalog/system-registers.json")["registers"],
+            key=lambda row: (
+                parse_int(row.get("address", row.get("low_index")), "register location"),
+                row["name"],
+            ),
+        )
+    ]
+    return {
+        "encoding_abi": ENCODING_ABI,
+        "scalar_and_command_forms": form_projection,
+        "system_registers": register_projection,
+        "tile_operations": tile_projection,
+    }
+
+
+def raw_tepl_word(datatype: int, mode: int, function: int) -> str:
+    return f"0x{((datatype << 27) | (mode << 25) | (function << 20) | 0x19181):08X}"
+
+
+def build_totality_evidence(encoding_hash: str) -> dict:
+    accepted_functions = {
+        str(mode): sorted(selector & 0x1F for selector in EXPECTED_TEPL_MAP if selector >> 5 == mode)
+        for mode in range(4)
+    }
+    classifications = []
+    accepted_count = reserved_count = illegal_count = 0
+    for datatype in range(32):
+        for mode in range(4):
+            for function in range(32):
+                if datatype in ILLEGAL_DATATYPES:
+                    label = "illegal-datatype"
+                    illegal_count += 1
+                elif datatype in RESERVED_DATATYPES or function not in accepted_functions[str(mode)]:
+                    label = "reserved"
+                    reserved_count += 1
+                else:
+                    label = "accepted"
+                    accepted_count += 1
+                classifications.append(label)
+
+    positive_names = (
+        "TADD",
+        "TPARTARGMAX",
+        "TPARTARGMIN",
+        "TRESHAPE",
+        "TDEINTERLEAVE",
+        "TINTERLEAVE",
+        "TPUSH",
+        "TPOP",
+        "TALLOC",
+        "TFREE",
+    )
+    positive_vectors = []
+    inverse = {name: selector for selector, name in EXPECTED_TEPL_MAP.items()}
+    for name in positive_names:
+        selector = inverse[name]
+        positive_vectors.append(
+            {
+                "name": name,
+                "datatype": "U64",
+                "mode": selector >> 5,
+                "function": selector & 0x1F,
+                "raw": raw_tepl_word(24, selector >> 5, selector & 0x1F),
+                "expected": "accepted",
+            }
+        )
+
+    deleted_selectors = {
+        "TFMA": (0, 5),
+        "TFMOD": (0, 24),
+        "TFMODS": (0, 25),
+        "TADDC": (0, 28),
+        "TSUBC": (1, 5),
+        "TADDSC": (1, 14),
+        "TSUBSC": (1, 24),
+        "TLRELU": (1, 25),
+        "TRANDOM": (3, 9),
+    }
+    negative_vectors = [
+        {
+            "former_name": name,
+            "datatype": "U64",
+            "mode": mode,
+            "function": function,
+            "raw": raw_tepl_word(24, mode, function),
+            "expected": "reserved-reject",
+        }
+        for name, (mode, function) in deleted_selectors.items()
+    ]
+    negative_vectors.append(
+        {
+            "former_encoding": "pre-0.57.1-TADD",
+            "raw": "0xC2001181",
+            "expected": "encoding-abi-reject",
+        }
+    )
+    return {
+        "schema_version": 1,
+        "release": RELEASE,
+        "encoding_abi": ENCODING_ABI,
+        "encoding_projection_sha256": encoding_hash,
+        "family_counts": {**FAMILY_COUNTS, "total": sum(FAMILY_COUNTS.values())},
+        "optional_base_operations": 0,
+        "pending_base_operations": [],
+        "contract_status_counts": {"reviewed-complete": sum(FAMILY_COUNTS.values())},
+        "dispatch_outcome_contract": {
+            "recognized_operation_legality_or_handler_failure": "TileExecution_Faulted",
+            "unknown_or_reserved_selector": "TileExecution_Rejected",
+        },
+        "tepl": {
+            "selector_count": len(EXPECTED_TEPL_MAP),
+            "mode_counts": {
+                str(mode): sum(selector >> 5 == mode for selector in EXPECTED_TEPL_MAP)
+                for mode in range(4)
+            },
+            "accepted_functions": accepted_functions,
+            "datatype_codes": {
+                "accepted": list(VALID_DATATYPES),
+                "reserved": list(RESERVED_DATATYPES),
+                "illegal": list(ILLEGAL_DATATYPES),
+            },
+            "raw_space": {
+                "total": len(classifications),
+                "accepted": accepted_count,
+                "reserved": reserved_count,
+                "illegal": illegal_count,
+                "classification_sha256": sha256_bytes(normalized_json_bytes(classifications)),
+            },
+        },
+        "tma": {"function_map": {str(key): value for key, value in EXPECTED_TMA_MAP.items()}},
+        "cube": {"function_map": {str(key): value for key, value in EXPECTED_CUBE_MAP.items()}},
+        "deleted_tepl_operations": list(DELETED_TEPL_NAMES),
+        "positive_raw_vectors": positive_vectors,
+        "negative_raw_vectors": negative_vectors,
+    }
+
+
+def build_abi_vectors(encoding_hash: str) -> dict:
+    identity = {
+        "release": RELEASE,
+        "encoding_abi": ENCODING_ABI,
+        "encoding_projection_sha256": encoding_hash,
+    }
+    return {
+        "schema_version": 1,
+        "release": RELEASE,
+        "encoding_abi": ENCODING_ABI,
+        "encoding_projection_sha256": encoding_hash,
+        "elf_identity": {
+            "section": ".note.pto.isa",
+            "note_name": "PTO",
+            "note_type": "PTO_NT_ISA_IDENTITY",
+            "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
+            "descriptor_fields": [
+                "release",
+                "encoding_abi",
+                "encoding_projection_sha256",
+            ],
+            "link_policy": "all input identities must be present and exactly equal",
+            "load_policy": "the image identity must exactly match the implementation identity",
+        },
+        "bare_metal_identity": {
+            "format": "PTO release manifest identity object",
+            "required_fields": [
+                "release",
+                "encoding_abi",
+                "encoding_projection_sha256",
+            ],
+            "policy": "the supplied identity must exactly match the implementation identity",
+        },
+        "cases": [
+            {"id": "elf-link-match", "stage": "link", "inputs": [identity, identity], "expected": "accept"},
+            {"id": "elf-link-missing-identity", "stage": "link", "inputs": [identity, None], "expected": "reject", "reason": "missing-identity"},
+            {"id": "elf-link-release-mismatch", "stage": "link", "inputs": [identity, {**identity, "release": "0.58.0"}], "expected": "reject", "reason": "release-mismatch"},
+            {"id": "elf-link-abi-mismatch", "stage": "link", "inputs": [identity, {**identity, "encoding_abi": "pto-isa-0.57.1-legacy-selector-v0"}], "expected": "reject", "reason": "encoding-abi-mismatch"},
+            {"id": "elf-link-hash-mismatch", "stage": "link", "inputs": [identity, {**identity, "encoding_projection_sha256": "0" * 64}], "expected": "reject", "reason": "encoding-hash-mismatch"},
+            {"id": "elf-load-match", "stage": "load", "image": identity, "implementation": identity, "expected": "accept"},
+            {"id": "elf-load-missing-identity", "stage": "load", "image": None, "implementation": identity, "expected": "reject", "reason": "missing-identity"},
+            {"id": "elf-load-hash-mismatch", "stage": "load", "image": {**identity, "encoding_projection_sha256": "f" * 64}, "implementation": identity, "expected": "reject", "reason": "encoding-hash-mismatch"},
+            {"id": "bare-metal-manifest-match", "stage": "bare-metal-load", "image": identity, "implementation": identity, "expected": "accept"},
+            {"id": "bare-metal-manifest-mismatch", "stage": "bare-metal-load", "image": {**identity, "release": "0.58.0"}, "implementation": identity, "expected": "reject", "reason": "release-mismatch"},
+        ],
+    }
+
+
+def validate_numeric_profile() -> dict:
+    profile = load_json(str(NUMERIC_PROFILE_PATH))
+    expected_keys = {
+        "arithmetic",
+        "b_datr",
+        "claim_scope",
+        "comparisons",
+        "data_types",
+        "implementation_conformance",
+        "isa_release",
+        "matrix",
+        "min_max",
+        "profile_id",
+        "reductions",
+        "reference_model_relation",
+        "reserved_data_type_codes",
+        "schema_version",
+        "sort",
+    }
+    if set(profile) != expected_keys:
+        raise SystemExit("hardware numeric profile top-level schema drift")
+    if profile["schema_version"] != 1 or profile["isa_release"] != RELEASE:
+        raise SystemExit("hardware numeric profile must identify schema 1 and release 0.57.1")
+    if profile["profile_id"] != NUMERIC_PROFILE_ID:
+        raise SystemExit(f"hardware numeric profile ID must be {NUMERIC_PROFILE_ID}")
+    reference = profile["reference_model_relation"]
+    if reference != {
+        "hardware_conformance_claim": False,
+        "profile_id": "pto-v0",
+        "role": "deterministic raw-carrier ASL reference-test profile",
+        "rule": "pto-v0 output values are not hardware numeric conformance evidence",
+    }:
+        raise SystemExit("pto-v0 must remain a non-hardware reference-test profile")
+    if profile["implementation_conformance"].get("repository_claim") != "contract-and-vector-definition-only":
+        raise SystemExit("repository must not claim hardware numeric implementation conformance")
+
+    data_types = profile["data_types"]
+    actual_names = {row.get("code"): row.get("name") for row in data_types}
+    if actual_names != EXPECTED_DATA_TYPE_NAMES or len(data_types) != len(EXPECTED_DATA_TYPE_NAMES):
+        raise SystemExit(
+            f"hardware numeric DataType map must be exactly {EXPECTED_DATA_TYPE_NAMES}, got {actual_names}"
+        )
+    if profile["reserved_data_type_codes"] != list(RESERVED_DATATYPES):
+        raise SystemExit("hardware numeric profile reserved DataType codes drift")
+    floating_rows = [
+        row for row in data_types
+        if row["class"] in {"floating", "packed-floating", "scale"}
+    ]
+    if not floating_rows or any("canonical_qnan" not in row for row in floating_rows):
+        raise SystemExit("every floating or scale DataType must define a canonical qNaN")
+
+    expected_comparisons = {
+        "0": "EQ",
+        "1": "NE",
+        "2": "LT",
+        "3": "GT",
+        "4": "LE",
+        "5": "GE",
+    }
+    if profile["b_datr"].get("comparison_modes") != expected_comparisons:
+        raise SystemExit("B.DATR comparison-mode map drift")
+    if profile["b_datr"].get("comparison_reserved") != [6, 7]:
+        raise SystemExit("B.DATR comparison modes 6 and 7 must remain reserved")
+    rounding = profile["b_datr"].get("rounding_modes", {})
+    expected_round_names = {
+        "0": "NONE",
+        "1": "RNE",
+        "2": "RTZ",
+        "3": "RDN",
+        "4": "RUP",
+        "5": "RNA",
+        "6": "RTO",
+        "7": "RHB",
+    }
+    if set(rounding) != set(expected_round_names) or any(
+        not rounding[code].startswith(name + ":")
+        for code, name in expected_round_names.items()
+    ):
+        raise SystemExit("B.DATR rounding-mode map drift")
+    if profile["sort"].get("group_size") != 32:
+        raise SystemExit("hardware TSORT group size must remain exactly 32")
+    if profile["sort"].get("output") != "value paired with U32 original index":
+        raise SystemExit("hardware TSORT output must retain U32 original indices")
+    if profile["arithmetic"].get("standard") != "IEEE 754-2019 operation semantics":
+        raise SystemExit("hardware numeric profile must use IEEE 754-2019 semantics")
+    return profile
+
+
+def build_numeric_vectors(profile: dict) -> dict:
+    profile_hash = sha256_bytes((ROOT / NUMERIC_PROFILE_PATH).read_bytes())
+    canonical_nan = [
+        {
+            "data_type": row["name"],
+            "input_class": "any-NaN",
+            "expected": row["canonical_qnan"],
+        }
+        for row in profile["data_types"]
+        if "canonical_qnan" in row
+    ]
+    sort_input = [
+        "3", "+0", "qNaN#0", "-0", "2", "2", "-1", "qNaN#1",
+        "4", "-4", "5", "-5", "6", "-6", "7", "-7",
+        "8", "-8", "9", "-9", "10", "-10", "11", "-11",
+        "12", "-12", "13", "-13", "14", "-14", "15", "-15",
+    ]
+    return {
+        "schema_version": 1,
+        "release": RELEASE,
+        "hardware_profile_id": NUMERIC_PROFILE_ID,
+        "hardware_profile_sha256": profile_hash,
+        "implementation_conformance_status": "unproven-in-repository",
+        "reference_profile": {
+            "profile_id": "pto-v0",
+            "hardware_conformance_claim": False,
+        },
+        "vector_groups": {
+            "canonical_nan": canonical_nan,
+            "signed_zero": [
+                {"id": "fp32-negative-zero-multiply", "operation": "multiply", "inputs": ["-0", "2"], "expected": "0x80000000"},
+                {"id": "fp32-exact-cancellation-rne", "operation": "add", "inputs": ["+1", "-1"], "rounding": "RNE", "expected": "0x00000000"},
+                {"id": "fp32-min-zero", "operation": "minimum", "inputs": ["+0", "-0"], "expected": "0x80000000"},
+                {"id": "fp32-max-zero", "operation": "maximum", "inputs": ["+0", "-0"], "expected": "0x00000000"},
+            ],
+            "rounding": [
+                {"mode": "RNE", "input": "2.5", "destination": "S32", "expected": "2"},
+                {"mode": "RNE", "input": "3.5", "destination": "S32", "expected": "4"},
+                {"mode": "RTZ", "input": "-1.9", "destination": "S32", "expected": "-1"},
+                {"mode": "RDN", "input": "-1.1", "destination": "S32", "expected": "-2"},
+                {"mode": "RUP", "input": "1.1", "destination": "S32", "expected": "2"},
+                {"mode": "RNA", "input": "-2.5", "destination": "S32", "expected": "-3"},
+                {"mode": "RTO", "input": "2.25", "destination": "S32", "expected": "3"},
+                {"mode": "RHB", "input": "-2.5", "destination": "S32", "expected": "-2"},
+            ],
+            "saturation": [
+                {"input": "130", "destination": "S8", "sat": True, "expected": "127"},
+                {"input": "-129", "destination": "S8", "sat": True, "expected": "-128"},
+                {"input": "-1", "destination": "U8", "sat": True, "expected": "0"},
+                {"input": "+infinity", "destination": "FP16", "sat": True, "expected": "0x7BFF"},
+                {"input": "qNaN", "destination": "S32", "sat": True, "expected": "0"},
+            ],
+            "comparison": [
+                {"mode": "EQ", "inputs": ["+0", "-0"], "expected": 1},
+                {"mode": "LT", "inputs": ["-0", "+0"], "expected": 0},
+                {"mode": "NE", "inputs": ["qNaN", "1"], "expected": 1},
+                {"mode": "GE", "inputs": ["qNaN", "1"], "expected": 0},
+            ],
+            "reduction": [
+                {"operation": "ARGMAX", "inputs": ["5", "7", "7", "3"], "expected_index": 1},
+                {"operation": "MIN", "inputs": ["qNaN", "4", "-2"], "expected": "-2"},
+                {"operation": "SUM", "inputs": ["1", "qNaN", "2"], "expected": "canonical-qNaN"},
+                {"operation": "MAX", "inputs": ["-0", "+0"], "expected": "+0"},
+            ],
+            "sort": [
+                {
+                    "data_type": "FP32",
+                    "input_values": sort_input,
+                    "ascending_expected_original_indices": [31, 29, 27, 25, 23, 21, 19, 17, 15, 13, 11, 9, 6, 1, 3, 4, 5, 0, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 2, 7],
+                    "descending_expected_original_indices": [30, 28, 26, 24, 22, 20, 18, 16, 14, 12, 10, 8, 0, 4, 5, 1, 3, 6, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 2, 7],
+                }
+            ],
+            "matrix": [
+                {"id": "fp32-matmul-2x2", "left": [["1", "2"], ["3", "4"]], "right": [["5", "6"], ["7", "8"]], "expected": [["19", "22"], ["43", "50"]], "accumulator": "FP32", "k_order": [0, 1]},
+                {"id": "fp32-matmul-bias", "dot_products": ["19", "22"], "bias": ["1", "-2"], "expected_acc": ["20", "20"]},
+                {"id": "fp32-matmul-acc", "prior_acc": ["10", "20"], "dot_products": ["19", "22"], "expected_acc": ["29", "42"]},
+                {"id": "mx-e8m0-scale", "base": "1.5", "e8m0": "0x80", "expected": "3.0"},
+            ],
+        },
+    }
+
+
+def canonical_input_paths() -> list[str]:
+    asl = sorted(str(path.relative_to(ROOT)) for path in (ROOT / "asl").rglob("*.asl"))
+    decisions = sorted(
+        str(path.relative_to(ROOT))
+        for path in (ROOT / "docs/architecture-decisions").glob("*.md")
+    )
+    paths = sorted(set(CANONICAL_STATIC_INPUTS).union(asl, decisions))
+    missing = [path for path in paths if not (ROOT / path).is_file()]
+    if missing:
+        raise SystemExit(f"canonical release inputs are missing: {missing}")
+    return paths
+
+
+def validate_owned_set() -> None:
+    actual_docs = tuple(
+        sorted(str(path.relative_to(ROOT)) for path in (ROOT / "docs/instructions").glob("*.md"))
+    )
+    if actual_docs != GENERATED_DOCS:
+        raise SystemExit(
+            f"owned generated documentation set drift: expected {GENERATED_DOCS}, got {actual_docs}"
+        )
+    actual_evidence = tuple(
+        sorted(str(path.relative_to(ROOT)) for path in (ROOT / "spec/evidence").glob("*0571*.json"))
+    )
+    unexpected_evidence = tuple(sorted(set(actual_evidence) - set(EVIDENCE_FILES)))
+    if unexpected_evidence:
+        raise SystemExit(
+            f"unexpected owned 0.57.1 evidence files: {unexpected_evidence}"
+        )
+
+
+def build_artifacts() -> dict[str, dict]:
+    metadata = validate_release_metadata()
+    tile_catalog, _ = validate_tile_catalog()
+    numeric_profile = validate_numeric_profile()
+    validate_owned_set()
+    projection = encoding_projection(tile_catalog)
+    encoding_hash = sha256_bytes(normalized_json_bytes(projection))
+    totality = build_totality_evidence(encoding_hash)
+    abi_vectors = build_abi_vectors(encoding_hash)
+    numeric_vectors = build_numeric_vectors(numeric_profile)
+    evidence_bytes = {
+        str(TOTALITY_PATH): pretty_json_bytes(totality),
+        str(ABI_VECTORS_PATH): pretty_json_bytes(abi_vectors),
+        str(NUMERIC_VECTORS_PATH): pretty_json_bytes(numeric_vectors),
+    }
+
+    canonical_inputs = []
+    input_hashes = {}
+    for relative in canonical_input_paths():
+        digest = sha256_bytes((ROOT / relative).read_bytes())
+        canonical_inputs.append({"path": relative, "sha256": digest})
+        input_hashes[relative] = digest
+    content_hash = sha256_bytes(normalized_json_bytes(input_hashes))
+
+    owned_artifacts = []
+    for relative in GENERATED_DOCS:
+        owned_artifacts.append(
+            {"path": relative, "kind": "generated-documentation", "sha256": sha256_bytes((ROOT / relative).read_bytes())}
+        )
+    for relative in EVIDENCE_FILES:
+        owned_artifacts.append(
+            {"path": relative, "kind": "generated-evidence", "sha256": sha256_bytes(evidence_bytes[relative])}
+        )
+
+    manifest = {
+        "schema_version": 1,
+        "release": RELEASE,
+        "specification_status": metadata["specification"]["status"],
+        "encoding_abi": ENCODING_ABI,
+        "content_sha256": content_hash,
+        "encoding_projection_sha256": encoding_hash,
+        "hardware_conformance_profile": {
+            "profile_id": NUMERIC_PROFILE_ID,
+            "path": str(NUMERIC_PROFILE_PATH),
+            "sha256": sha256_bytes((ROOT / NUMERIC_PROFILE_PATH).read_bytes()),
+            "evidence": str(NUMERIC_VECTORS_PATH),
+            "repository_implementation_conformance": "unproven",
+        },
+        "hash_contract": {
+            "algorithm": "SHA-256",
+            "json_encoding": "UTF-8 JSON with lexicographically sorted keys and separators ',' ':'",
+            "content_projection": "object mapping each canonical input path to its file SHA-256",
+            "encoding_projection": "encoding ABI ID plus scalar/command forms, tile selector/function assignments, and system-register locations",
+        },
+        "catalog_counts": {
+            **FORM_COUNTS,
+            "command_form_families": COMMAND_FAMILY_COUNTS,
+            "tile_operations": FAMILY_COUNTS,
+            "tile_operations_total": sum(FAMILY_COUNTS.values()),
+            "pending_base_operations": 0,
+            "contract_status_counts": {"reviewed-complete": sum(FAMILY_COUNTS.values())},
+        },
+        "elf_identity": abi_vectors["elf_identity"],
+        "canonical_inputs": canonical_inputs,
+        "owned_artifacts": sorted(owned_artifacts, key=lambda row: row["path"]),
+    }
+    return {
+        str(TOTALITY_PATH): totality,
+        str(ABI_VECTORS_PATH): abi_vectors,
+        str(NUMERIC_VECTORS_PATH): numeric_vectors,
+        str(MANIFEST_PATH): manifest,
+    }
+
+
+def check_artifacts(artifacts: dict[str, dict]) -> None:
+    failures = []
+    for relative, expected in artifacts.items():
+        path = ROOT / relative
+        if not path.is_file():
+            failures.append(f"missing {relative}")
+            continue
+        try:
+            actual = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            failures.append(f"invalid {relative}: {error}")
+            continue
+        if actual != expected:
+            failures.append(f"stale {relative}")
+    if failures:
+        raise SystemExit(
+            "release artifacts are not reproducible:\n- "
+            + "\n- ".join(failures)
+            + "\nrun ./scripts/generate-release-manifest"
+        )
+
+
+def write_artifacts(artifacts: dict[str, dict]) -> None:
+    for relative in (
+        str(TOTALITY_PATH),
+        str(ABI_VECTORS_PATH),
+        str(NUMERIC_VECTORS_PATH),
+        str(MANIFEST_PATH),
+    ):
+        path = ROOT / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(pretty_json_bytes(artifacts[relative]))
+        print(f"wrote {relative}")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--check", action="store_true", help="fail if artifacts are absent or stale")
+    parser.add_argument("--print-encoding-hash", action="store_true", help="print only the computed encoding hash")
+    args = parser.parse_args()
+    artifacts = build_artifacts()
+    if args.print_encoding_hash:
+        print(artifacts[str(MANIFEST_PATH)]["encoding_projection_sha256"])
+    elif args.check:
+        check_artifacts(artifacts)
+        print(
+            f"release manifest passed: PTO ISA {RELEASE}, "
+            f"encoding {artifacts[str(MANIFEST_PATH)]['encoding_projection_sha256']}"
+        )
+    else:
+        write_artifacts(artifacts)
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main())
+    except BrokenPipeError:
+        sys.exit(1)

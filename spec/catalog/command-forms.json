@@ -1,158 +1,14 @@
 {
-  "form_count": 107,
+  "form_count": 99,
+  "form_constraint_count": 35,
   "forms": [
-    {
-      "asm": "B.ARG NORM.normal",
-      "constraints": [],
-      "encoding": [
-        {
-          "index": 0,
-          "mask": "0xffffffff",
-          "match": "0x000fa023",
-          "width_bits": 32
-        }
-      ],
-      "encoding_kind": "L32",
-      "fields": [],
-      "form_id": "b_arg_32_374ec956affe",
-      "length_bits": 32,
-      "mnemonic": "B.ARG",
-      "semantic_family": "CMD",
-      "semantic_group": "Block Argument",
-      "semantic_handler": "SetBlockArgument",
-      "semantic_summary": "Updates the block argument or format state selected by the encoded argument kind.",
-      "status": "accepted"
-    },
-    {
-      "asm": "B.ARG format",
-      "constraints": [],
-      "encoding": [
-        {
-          "index": 0,
-          "mask": "0xfffff07f",
-          "match": "0x00003043",
-          "width_bits": 32
-        }
-      ],
-      "encoding_kind": "L32",
-      "fields": [
-        {
-          "name": "format",
-          "pieces": [
-            {
-              "instruction_lsb": 7,
-              "value_lsb": 0,
-              "width": 5
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 5
-        }
-      ],
-      "form_id": "b_arg_32_47e8ac50ac96",
-      "length_bits": 32,
-      "mnemonic": "B.ARG",
-      "semantic_family": "CMD",
-      "semantic_group": "Block Argument",
-      "semantic_handler": "SetBlockArgument",
-      "semantic_summary": "Updates the block argument or format state selected by the encoded argument kind.",
-      "status": "accepted"
-    },
-    {
-      "asm": "B.ARG NZ2DN.canon",
-      "constraints": [],
-      "encoding": [
-        {
-          "index": 0,
-          "mask": "0xffffffff",
-          "match": "0x020fae23",
-          "width_bits": 32
-        }
-      ],
-      "encoding_kind": "L32",
-      "fields": [],
-      "form_id": "b_arg_32_5c8bfa662370",
-      "length_bits": 32,
-      "mnemonic": "B.ARG",
-      "semantic_family": "CMD",
-      "semantic_group": "Block Argument",
-      "semantic_handler": "SetBlockArgument",
-      "semantic_summary": "Updates the block argument or format state selected by the encoded argument kind.",
-      "status": "accepted"
-    },
-    {
-      "asm": "B.ARG ND2ZN.normal, FP16, Null",
-      "constraints": [],
-      "encoding": [
-        {
-          "index": 0,
-          "mask": "0xffffffff",
-          "match": "0x180221a3",
-          "width_bits": 32
-        }
-      ],
-      "encoding_kind": "L32",
-      "fields": [],
-      "form_id": "b_arg_32_95152c29a268",
-      "length_bits": 32,
-      "mnemonic": "B.ARG",
-      "semantic_family": "CMD",
-      "semantic_group": "Block Argument",
-      "semantic_handler": "SetBlockArgument",
-      "semantic_summary": "Updates the block argument or format state selected by the encoded argument kind.",
-      "status": "accepted"
-    },
-    {
-      "asm": "B.ARG DN2ZN.normal, FP16, Null",
-      "constraints": [],
-      "encoding": [
-        {
-          "index": 0,
-          "mask": "0xffffffff",
-          "match": "0x18022423",
-          "width_bits": 32
-        }
-      ],
-      "encoding_kind": "L32",
-      "fields": [],
-      "form_id": "b_arg_32_c6d5c49a4ad7",
-      "length_bits": 32,
-      "mnemonic": "B.ARG",
-      "semantic_family": "CMD",
-      "semantic_group": "Block Argument",
-      "semantic_handler": "SetBlockArgument",
-      "semantic_summary": "Updates the block argument or format state selected by the encoded argument kind.",
-      "status": "accepted"
-    },
-    {
-      "asm": "B.ARG DN2NZ.normal, FP32, Null",
-      "constraints": [],
-      "encoding": [
-        {
-          "index": 0,
-          "mask": "0xffffffff",
-          "match": "0x1800a4a3",
-          "width_bits": 32
-        }
-      ],
-      "encoding_kind": "L32",
-      "fields": [],
-      "form_id": "b_arg_32_f19d18f2126b",
-      "length_bits": 32,
-      "mnemonic": "B.ARG",
-      "semantic_family": "CMD",
-      "semantic_group": "Block Argument",
-      "semantic_handler": "SetBlockArgument",
-      "semantic_summary": "Updates the block argument or format state selected by the encoded argument kind.",
-      "status": "accepted"
-    },
     {
       "asm": "B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}",
       "constraints": [],
       "encoding": [
         {
           "index": 0,
-          "mask": "0x03ffffff",
+          "mask": "0xfbf07fff",
           "match": "0x00000023",
           "width_bits": 32
         }
@@ -172,22 +28,10 @@
           "width": 1
         },
         {
-          "name": "aq",
+          "name": "trap",
           "pieces": [
             {
-              "instruction_lsb": 29,
-              "value_lsb": 0,
-              "width": 1
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 1
-        },
-        {
-          "name": "atom",
-          "pieces": [
-            {
-              "instruction_lsb": 30,
+              "instruction_lsb": 19,
               "value_lsb": 0,
               "width": 1
             }
@@ -199,7 +43,31 @@
           "name": "far",
           "pieces": [
             {
-              "instruction_lsb": 27,
+              "instruction_lsb": 18,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
+        },
+        {
+          "name": "atom",
+          "pieces": [
+            {
+              "instruction_lsb": 17,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
+        },
+        {
+          "name": "aq",
+          "pieces": [
+            {
+              "instruction_lsb": 16,
               "value_lsb": 0,
               "width": 1
             }
@@ -211,19 +79,7 @@
           "name": "rl",
           "pieces": [
             {
-              "instruction_lsb": 28,
-              "value_lsb": 0,
-              "width": 1
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 1
-        },
-        {
-          "name": "trap",
-          "pieces": [
-            {
-              "instruction_lsb": 31,
+              "instruction_lsb": 15,
               "value_lsb": 0,
               "width": 1
             }
@@ -242,12 +98,75 @@
       "status": "accepted"
     },
     {
-      "asm": "B.DATR {layout.{canon, normal}, datatype, padvalue, cmode, rmode, sat}",
-      "constraints": [],
+      "asm": "B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize}",
+      "constraints": [
+        {
+          "field": "CMode",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        },
+        {
+          "field": "Layout",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            3,
+            4,
+            6,
+            8,
+            9,
+            17,
+            18,
+            20,
+            27,
+            28,
+            30
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
-          "mask": "0x0000707f",
+          "mask": "0x000c707f",
           "match": "0x00001023",
           "width_bits": 32
         }
@@ -258,7 +177,7 @@
           "name": "CMode",
           "pieces": [
             {
-              "instruction_lsb": 25,
+              "instruction_lsb": 29,
               "value_lsb": 0,
               "width": 3
             }
@@ -267,16 +186,40 @@
           "width": 3
         },
         {
-          "name": "DataLayout",
+          "name": "PadValueOrByteId",
           "pieces": [
             {
-              "instruction_lsb": 7,
+              "instruction_lsb": 27,
               "value_lsb": 0,
-              "width": 5
+              "width": 2
             }
           ],
           "signedness": "encoding-defined",
-          "width": 5
+          "width": 2
+        },
+        {
+          "name": "Sat",
+          "pieces": [
+            {
+              "instruction_lsb": 26,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
+        },
+        {
+          "name": "Canonicalize",
+          "pieces": [
+            {
+              "instruction_lsb": 25,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
         },
         {
           "name": "DataType",
@@ -291,22 +234,10 @@
           "width": 5
         },
         {
-          "name": "PadValue",
-          "pieces": [
-            {
-              "instruction_lsb": 15,
-              "value_lsb": 0,
-              "width": 5
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 5
-        },
-        {
           "name": "RMode",
           "pieces": [
             {
-              "instruction_lsb": 28,
+              "instruction_lsb": 15,
               "value_lsb": 0,
               "width": 3
             }
@@ -315,16 +246,16 @@
           "width": 3
         },
         {
-          "name": "Sat",
+          "name": "Layout",
           "pieces": [
             {
-              "instruction_lsb": 31,
+              "instruction_lsb": 7,
               "value_lsb": 0,
-              "width": 1
+              "width": 5
             }
           ],
           "signedness": "encoding-defined",
-          "width": 1
+          "width": 5
         }
       ],
       "form_id": "b_datr_32_c161a042ff38",
@@ -674,14 +605,32 @@
       "constraints": [
         {
           "field": "DstTile",
-          "operator": "not-equal",
-          "value": 7
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "field": "imm4",
+          "operator": "one-of",
+          "values": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
         }
       ],
       "encoding": [
         {
           "index": 0,
-          "mask": "0x803f707f",
+          "mask": "0xfc00787f",
           "match": "0x00005013",
           "width_bits": 32
         }
@@ -689,69 +638,64 @@
       "encoding_kind": "L32",
       "fields": [
         {
-          "name": "DstTile",
-          "pieces": [
-            {
-              "instruction_lsb": 22,
-              "value_lsb": 0,
-              "width": 3
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 3
-        },
-        {
-          "name": "L",
-          "pieces": [
-            {
-              "instruction_lsb": 29,
-              "value_lsb": 0,
-              "width": 1
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 1
-        },
-        {
-          "name": "S0R",
-          "pieces": [
-            {
-              "instruction_lsb": 30,
-              "value_lsb": 0,
-              "width": 1
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 1
-        },
-        {
           "name": "SrcTile0",
           "pieces": [
             {
-              "instruction_lsb": 7,
+              "instruction_lsb": 20,
               "value_lsb": 0,
-              "width": 5
-            },
-            {
-              "instruction_lsb": 15,
-              "value_lsb": 5,
-              "width": 1
+              "width": 6
             }
           ],
           "signedness": "encoding-defined",
           "width": 6
         },
         {
+          "name": "L",
+          "pieces": [
+            {
+              "instruction_lsb": 19,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
+        },
+        {
           "name": "imm4",
           "pieces": [
             {
-              "instruction_lsb": 25,
+              "instruction_lsb": 15,
               "value_lsb": 0,
               "width": 4
             }
           ],
           "signedness": "encoding-defined",
           "width": 4
+        },
+        {
+          "name": "S0R",
+          "pieces": [
+            {
+              "instruction_lsb": 10,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
+        },
+        {
+          "name": "DstTile",
+          "pieces": [
+            {
+              "instruction_lsb": 7,
+              "value_lsb": 0,
+              "width": 3
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 3
         }
       ],
       "form_id": "b_iot_32_10db6db84f5d",
@@ -769,30 +713,42 @@
       "encoding": [
         {
           "index": 0,
-          "mask": "0x1fc0707f",
-          "match": "0x01c04013",
+          "mask": "0x0007f3ff",
+          "match": "0x00004013",
           "width_bits": 32
         }
       ],
       "encoding_kind": "L32",
       "fields": [
         {
-          "name": "L",
+          "name": "SrcTile1",
           "pieces": [
             {
-              "instruction_lsb": 29,
+              "instruction_lsb": 26,
               "value_lsb": 0,
-              "width": 1
+              "width": 6
             }
           ],
           "signedness": "encoding-defined",
-          "width": 1
+          "width": 6
         },
         {
-          "name": "S0R",
+          "name": "SrcTile0",
           "pieces": [
             {
-              "instruction_lsb": 30,
+              "instruction_lsb": 20,
+              "value_lsb": 0,
+              "width": 6
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 6
+        },
+        {
+          "name": "L",
+          "pieces": [
+            {
+              "instruction_lsb": 19,
               "value_lsb": 0,
               "width": 1
             }
@@ -804,7 +760,7 @@
           "name": "S1R",
           "pieces": [
             {
-              "instruction_lsb": 31,
+              "instruction_lsb": 11,
               "value_lsb": 0,
               "width": 1
             }
@@ -813,33 +769,16 @@
           "width": 1
         },
         {
-          "name": "SrcTile0",
+          "name": "S0R",
           "pieces": [
             {
-              "instruction_lsb": 7,
+              "instruction_lsb": 10,
               "value_lsb": 0,
-              "width": 5
-            },
-            {
-              "instruction_lsb": 15,
-              "value_lsb": 5,
               "width": 1
             }
           ],
           "signedness": "encoding-defined",
-          "width": 6
-        },
-        {
-          "name": "SrcTile1",
-          "pieces": [
-            {
-              "instruction_lsb": 16,
-              "value_lsb": 0,
-              "width": 6
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 6
+          "width": 1
         }
       ],
       "form_id": "b_iot_32_2c07e7177fad",
@@ -856,8 +795,26 @@
       "constraints": [
         {
           "field": "DstTile",
-          "operator": "not-equal",
-          "value": 7
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "field": "imm4",
+          "operator": "one-of",
+          "values": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
         }
       ],
       "encoding": [
@@ -871,22 +828,58 @@
       "encoding_kind": "L32",
       "fields": [
         {
-          "name": "DstTile",
+          "name": "SrcTile1",
           "pieces": [
             {
-              "instruction_lsb": 22,
+              "instruction_lsb": 26,
               "value_lsb": 0,
-              "width": 3
+              "width": 6
             }
           ],
           "signedness": "encoding-defined",
-          "width": 3
+          "width": 6
+        },
+        {
+          "name": "SrcTile0",
+          "pieces": [
+            {
+              "instruction_lsb": 20,
+              "value_lsb": 0,
+              "width": 6
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 6
         },
         {
           "name": "L",
           "pieces": [
             {
-              "instruction_lsb": 29,
+              "instruction_lsb": 19,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
+        },
+        {
+          "name": "imm4",
+          "pieces": [
+            {
+              "instruction_lsb": 15,
+              "value_lsb": 0,
+              "width": 4
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 4
+        },
+        {
+          "name": "S1R",
+          "pieces": [
+            {
+              "instruction_lsb": 11,
               "value_lsb": 0,
               "width": 1
             }
@@ -898,7 +891,7 @@
           "name": "S0R",
           "pieces": [
             {
-              "instruction_lsb": 30,
+              "instruction_lsb": 10,
               "value_lsb": 0,
               "width": 1
             }
@@ -907,57 +900,16 @@
           "width": 1
         },
         {
-          "name": "S1R",
-          "pieces": [
-            {
-              "instruction_lsb": 31,
-              "value_lsb": 0,
-              "width": 1
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 1
-        },
-        {
-          "name": "SrcTile0",
+          "name": "DstTile",
           "pieces": [
             {
               "instruction_lsb": 7,
               "value_lsb": 0,
-              "width": 5
-            },
-            {
-              "instruction_lsb": 15,
-              "value_lsb": 5,
-              "width": 1
+              "width": 3
             }
           ],
           "signedness": "encoding-defined",
-          "width": 6
-        },
-        {
-          "name": "SrcTile1",
-          "pieces": [
-            {
-              "instruction_lsb": 16,
-              "value_lsb": 0,
-              "width": 6
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 6
-        },
-        {
-          "name": "imm4",
-          "pieces": [
-            {
-              "instruction_lsb": 25,
-              "value_lsb": 0,
-              "width": 4
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 4
+          "width": 3
         }
       ],
       "form_id": "b_iot_32_8b8bce6bffe8",
@@ -975,18 +927,30 @@
       "encoding": [
         {
           "index": 0,
-          "mask": "0x9fff707f",
-          "match": "0x01c05013",
+          "mask": "0xfc07fbff",
+          "match": "0x00005013",
           "width_bits": 32
         }
       ],
       "encoding_kind": "L32",
       "fields": [
         {
+          "name": "SrcTile0",
+          "pieces": [
+            {
+              "instruction_lsb": 20,
+              "value_lsb": 0,
+              "width": 6
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 6
+        },
+        {
           "name": "L",
           "pieces": [
             {
-              "instruction_lsb": 29,
+              "instruction_lsb": 19,
               "value_lsb": 0,
               "width": 1
             }
@@ -998,30 +962,13 @@
           "name": "S0R",
           "pieces": [
             {
-              "instruction_lsb": 30,
+              "instruction_lsb": 10,
               "value_lsb": 0,
               "width": 1
             }
           ],
           "signedness": "encoding-defined",
           "width": 1
-        },
-        {
-          "name": "SrcTile0",
-          "pieces": [
-            {
-              "instruction_lsb": 7,
-              "value_lsb": 0,
-              "width": 5
-            },
-            {
-              "instruction_lsb": 15,
-              "value_lsb": 5,
-              "width": 1
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 6
         }
       ],
       "form_id": "b_iot_32_c11eb189dd83",
@@ -1035,11 +982,35 @@
     },
     {
       "asm": "B.IOT <last>, ->DstTile<Size>",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DstTile",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "field": "imm4",
+          "operator": "one-of",
+          "values": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
-          "mask": "0xc03fffff",
+          "mask": "0xfff07c7f",
           "match": "0x00006013",
           "width_bits": 32
         }
@@ -1047,22 +1018,10 @@
       "encoding_kind": "L32",
       "fields": [
         {
-          "name": "DstTile",
-          "pieces": [
-            {
-              "instruction_lsb": 22,
-              "value_lsb": 0,
-              "width": 3
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 3
-        },
-        {
           "name": "L",
           "pieces": [
             {
-              "instruction_lsb": 29,
+              "instruction_lsb": 19,
               "value_lsb": 0,
               "width": 1
             }
@@ -1074,13 +1033,25 @@
           "name": "imm4",
           "pieces": [
             {
-              "instruction_lsb": 25,
+              "instruction_lsb": 15,
               "value_lsb": 0,
               "width": 4
             }
           ],
           "signedness": "encoding-defined",
           "width": 4
+        },
+        {
+          "name": "DstTile",
+          "pieces": [
+            {
+              "instruction_lsb": 7,
+              "value_lsb": 0,
+              "width": 3
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 3
         }
       ],
       "form_id": "b_iot_32_efa0fe3fe49a",
@@ -1246,7 +1217,39 @@
     },
     {
       "asm": "BSTART.ACCCVT DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -1273,166 +1276,6 @@
       "form_id": "bstart_acccvt_32_56c3ce3838c5",
       "length_bits": 32,
       "mnemonic": "BSTART.ACCCVT",
-      "semantic_family": "CMD",
-      "semantic_group": "Block Split",
-      "semantic_handler": "ExecuteBlockStart",
-      "semantic_summary": "Closes the current block, initializes the next block descriptor, and selects its transfer and execution kind.",
-      "status": "accepted"
-    },
-    {
-      "asm": "BSTART.CUBE Function, DataType",
-      "constraints": [
-        {
-          "field": "Function",
-          "operator": "not-equal",
-          "value": 0
-        },
-        {
-          "field": "Function",
-          "operator": "not-equal",
-          "value": 1
-        },
-        {
-          "field": "Function",
-          "operator": "not-equal",
-          "value": 2
-        },
-        {
-          "field": "Function",
-          "operator": "not-equal",
-          "value": 4
-        },
-        {
-          "field": "Function",
-          "operator": "not-equal",
-          "value": 5
-        },
-        {
-          "field": "Function",
-          "operator": "not-equal",
-          "value": 6
-        },
-        {
-          "field": "Function",
-          "operator": "not-equal",
-          "value": 8
-        },
-        {
-          "field": "Function",
-          "operator": "not-equal",
-          "value": 16
-        },
-        {
-          "field": "Function",
-          "operator": "not-equal",
-          "value": 17
-        },
-        {
-          "field": "Function",
-          "operator": "not-equal",
-          "value": 18
-        },
-        {
-          "field": "Function",
-          "operator": "not-equal",
-          "value": 20
-        },
-        {
-          "field": "Function",
-          "operator": "not-equal",
-          "value": 21
-        },
-        {
-          "field": "Function",
-          "operator": "not-equal",
-          "value": 22
-        }
-      ],
-      "encoding": [
-        {
-          "index": 0,
-          "mask": "0x060fffff",
-          "match": "0x00031181",
-          "width_bits": 32
-        }
-      ],
-      "encoding_kind": "L32",
-      "fields": [
-        {
-          "name": "DataType",
-          "pieces": [
-            {
-              "instruction_lsb": 27,
-              "value_lsb": 0,
-              "width": 5
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 5
-        },
-        {
-          "name": "Function",
-          "pieces": [
-            {
-              "instruction_lsb": 20,
-              "value_lsb": 0,
-              "width": 5
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 5
-        }
-      ],
-      "form_id": "bstart_cube_32_bd3f337acb9d",
-      "length_bits": 32,
-      "mnemonic": "BSTART.CUBE",
-      "semantic_family": "CMD",
-      "semantic_group": "Block Split",
-      "semantic_handler": "ExecuteBlockStart",
-      "semantic_summary": "Closes the current block, initializes the next block descriptor, and selects its transfer and execution kind.",
-      "status": "accepted"
-    },
-    {
-      "asm": "BSTART.FIXP TileOp, DataType",
-      "constraints": [],
-      "encoding": [
-        {
-          "index": 0,
-          "mask": "0x060fffff",
-          "match": "0x00039181",
-          "width_bits": 32
-        }
-      ],
-      "encoding_kind": "L32",
-      "fields": [
-        {
-          "name": "DataType",
-          "pieces": [
-            {
-              "instruction_lsb": 27,
-              "value_lsb": 0,
-              "width": 5
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 5
-        },
-        {
-          "name": "Function",
-          "pieces": [
-            {
-              "instruction_lsb": 20,
-              "value_lsb": 0,
-              "width": 5
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 5
-        }
-      ],
-      "form_id": "bstart_fixp_32_3b0ae11126a6",
-      "length_bits": 32,
-      "mnemonic": "BSTART.FIXP",
       "semantic_family": "CMD",
       "semantic_group": "Block Split",
       "semantic_handler": "ExecuteBlockStart",
@@ -1647,7 +1490,39 @@
     },
     {
       "asm": "BSTART.MGATHER DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -1682,7 +1557,39 @@
     },
     {
       "asm": "BSTART.MGATHER.CAS DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -1717,7 +1624,39 @@
     },
     {
       "asm": "BSTART.MGATHER.MASK DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -1787,7 +1726,39 @@
     },
     {
       "asm": "BSTART.MSCATTER DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -1822,7 +1793,39 @@
     },
     {
       "asm": "BSTART.MSCATTER.MASK DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -2132,13 +2135,45 @@
       "status": "accepted"
     },
     {
-      "asm": "BSTART.TEPL TileOpcode, DataType",
-      "constraints": [],
+      "asm": "BSTART.TEPL Mode, Function, DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
-          "mask": "0x06007fff",
-          "match": "0x02001181",
+          "mask": "0x000fffff",
+          "match": "0x00019181",
           "width_bits": 32
         }
       ],
@@ -2157,16 +2192,28 @@
           "width": 5
         },
         {
-          "name": "TileOpcode",
+          "name": "Mode",
           "pieces": [
             {
-              "instruction_lsb": 15,
+              "instruction_lsb": 25,
               "value_lsb": 0,
-              "width": 10
+              "width": 2
             }
           ],
           "signedness": "encoding-defined",
-          "width": 10
+          "width": 2
+        },
+        {
+          "name": "Function",
+          "pieces": [
+            {
+              "instruction_lsb": 20,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
         }
       ],
       "form_id": "bstart_tepl_32_d022db6dacb3",
@@ -2180,7 +2227,39 @@
     },
     {
       "asm": "BSTART.TGEMV DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -2215,7 +2294,39 @@
     },
     {
       "asm": "BSTART.TGEMV.ACC DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -2250,7 +2361,39 @@
     },
     {
       "asm": "BSTART.TGEMV.BIAS DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -2285,7 +2428,39 @@
     },
     {
       "asm": "BSTART.TGEMVMX DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -2320,7 +2495,39 @@
     },
     {
       "asm": "BSTART.TGEMVMX.ACC DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -2355,7 +2562,39 @@
     },
     {
       "asm": "BSTART.TGEMVMX.BIAS DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -2390,7 +2629,39 @@
     },
     {
       "asm": "BSTART.TLOAD DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -2425,7 +2696,39 @@
     },
     {
       "asm": "BSTART.TMATMUL DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -2460,7 +2763,39 @@
     },
     {
       "asm": "BSTART.TMATMUL.ACC DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -2495,7 +2830,39 @@
     },
     {
       "asm": "BSTART.TMATMUL.BIAS DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -2530,7 +2897,39 @@
     },
     {
       "asm": "BSTART.TMATMULMX DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -2565,7 +2964,39 @@
     },
     {
       "asm": "BSTART.TMATMULMX.ACC DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -2600,7 +3031,39 @@
     },
     {
       "asm": "BSTART.TMATMULMX.BIAS DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -2635,7 +3098,39 @@
     },
     {
       "asm": "BSTART.TMOV DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -2670,7 +3165,39 @@
     },
     {
       "asm": "BSTART.TPREFETCH DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -2705,7 +3232,39 @@
     },
     {
       "asm": "BSTART.TSTORE DataType",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -4759,9 +5318,31 @@
     }
   ],
   "isa": "PTO Instruction Set Architecture",
-  "operand_field_count": 58,
-  "operand_piece_count": 197,
-  "schema_version": 1,
-  "semantic_handler_count": 22,
+  "operand_field_count": 57,
+  "operand_piece_count": 190,
+  "reviewed_encoding_overlaps": [
+    {
+      "broad_form_id": "b_iot_32_10db6db84f5d",
+      "narrow_form_id": "b_iot_32_c11eb189dd83",
+      "reason": "destination-free form fixes DstTile and imm4 to zero; destination form requires DstTile 0..3 and imm4 3..9"
+    },
+    {
+      "broad_form_id": "b_iot_32_8b8bce6bffe8",
+      "narrow_form_id": "b_iot_32_2c07e7177fad",
+      "reason": "destination-free form fixes DstTile and imm4 to zero; destination form requires DstTile 0..3 and imm4 3..9"
+    },
+    {
+      "broad_form_id": "c_b_dimi_16_3f1b113c76ce",
+      "narrow_form_id": "c_b_dim_16_14f1b8fba5e6",
+      "reason": "register form fixes the immediate-form LoopNest projection to excluded value 3"
+    },
+    {
+      "broad_form_id": "c_bstart_std_16_8b40f078c14a",
+      "narrow_form_id": "c_bstop_16_ca4743d8a95e",
+      "reason": "C.BSTOP fixes the broad C.BSTART.STD BrType field to excluded value 0"
+    }
+  ],
+  "schema_version": 2,
+  "semantic_handler_count": 21,
   "surface": "command-and-boundary"
 }

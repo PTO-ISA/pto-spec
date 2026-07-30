@@ -1,0 +1,143 @@
+{
+  "arithmetic": {
+    "canonical_nan_output": "Every floating NaN result is the destination format canonical quiet NaN.",
+    "exception_model": "IEEE-754 invalid, divide-by-zero, overflow, underflow, and inexact conditions are reported through the operation-defined architectural status; host traps are not observable.",
+    "fused_operations": "A fused operation rounds once after the exact multiply-add expression.",
+    "signed_zero": "IEEE signed zero is preserved; exact cancellation follows the selected rounding mode and min/max use -0 for minimum and +0 for maximum.",
+    "standard": "IEEE 754-2019 operation semantics",
+    "subnormals": "supported; flush-to-zero and denormals-are-zero are non-conforming",
+    "tininess_detection": "after-rounding"
+  },
+  "b_datr": {
+    "canonicalize": {
+      "0": "Do not pre-canonicalize source NaN payloads; every produced NaN is still the canonical destination qNaN.",
+      "1": "Replace every NaN source by its source-format canonical qNaN before the operation; signed zero is unchanged."
+    },
+    "comparison_modes": {
+      "0": "EQ",
+      "1": "NE",
+      "2": "LT",
+      "3": "GT",
+      "4": "LE",
+      "5": "GE"
+    },
+    "comparison_reserved": [
+      6,
+      7
+    ],
+    "rounding_modes": {
+      "0": "NONE: use the operation-defined default; the hardware numeric default is RNE",
+      "1": "RNE: nearest, ties to even",
+      "2": "RTZ: toward zero",
+      "3": "RDN: toward negative infinity",
+      "4": "RUP: toward positive infinity",
+      "5": "RNA: nearest, ties away from zero",
+      "6": "RTO: round to odd when inexact",
+      "7": "RHB: nearest, halfway toward positive infinity"
+    },
+    "saturation": {
+      "disabled": "Integer arithmetic wraps to destination width; floating overflow follows IEEE infinity; invalid float-to-integer conversion returns the destination indefinite value.",
+      "enabled": "Integer arithmetic and conversion clamp to destination minimum/maximum; NaN converts to zero; floating overflow clamps to the destination maximum finite value."
+    }
+  },
+  "claim_scope": "PTO ISA 0.57.1 hardware numeric conformance",
+  "comparisons": {
+    "nan": {
+      "EQ": false,
+      "GE": false,
+      "GT": false,
+      "LE": false,
+      "LT": false,
+      "NE": true,
+      "signaling_nan_reports_invalid": true
+    },
+    "signed_zero": "+0 and -0 compare equal and neither is less than the other",
+    "true_result": 1,
+    "false_result": 0
+  },
+  "data_types": [
+    {"canonical_qnan": "0x7FF8000000000000", "class": "floating", "code": 0, "format": "IEEE-binary64", "lanes_per_storage": 1, "name": "FP64", "storage_bits": 64},
+    {"canonical_qnan": "0x7FC00000", "class": "floating", "code": 1, "format": "IEEE-binary32", "lanes_per_storage": 1, "name": "FP32", "storage_bits": 32},
+    {"canonical_qnan": "0x7FC00000", "class": "floating", "code": 2, "format": "e8m10 in a 32-bit carrier; discarded fraction bits are zero", "lanes_per_storage": 1, "name": "TF32", "storage_bits": 32},
+    {"canonical_qnan": "0x7FC00000", "class": "floating", "code": 3, "format": "e8m11 in a 32-bit carrier; discarded fraction bits are zero", "lanes_per_storage": 1, "name": "HF32", "storage_bits": 32},
+    {"canonical_qnan": "0x7E00", "class": "floating", "code": 4, "format": "IEEE-binary16", "lanes_per_storage": 1, "name": "FP16", "storage_bits": 16},
+    {"canonical_qnan": "0x7FC0", "class": "floating", "code": 5, "format": "bfloat16-e8m7", "lanes_per_storage": 1, "name": "BF16", "storage_bits": 16},
+    {"canonical_qnan": "0x7F", "class": "floating", "code": 6, "format": "e4m3 with operation-defined MX scaling", "lanes_per_storage": 1, "name": "HiF8", "storage_bits": 8},
+    {"canonical_qnan": "0x7F", "class": "floating", "code": 7, "format": "e4m3", "lanes_per_storage": 1, "name": "E4M3", "storage_bits": 8},
+    {"canonical_qnan": "0x7E", "class": "floating", "code": 8, "format": "e5m2", "lanes_per_storage": 1, "name": "E5M2", "storage_bits": 8},
+    {"canonical_qnan": "0x1E", "class": "floating", "code": 9, "format": "e3m2 in the low six bits", "lanes_per_storage": 1, "name": "E3M2", "storage_bits": 8},
+    {"canonical_qnan": "0x1C", "class": "floating", "code": 10, "format": "e2m3 in the low six bits", "lanes_per_storage": 1, "name": "E2M3", "storage_bits": 8},
+    {"canonical_qnan": "0x7", "class": "packed-floating", "code": 11, "format": "two e2m1 lanes; lane 0 is bits 3:0 and lane 1 is bits 7:4", "lanes_per_storage": 2, "name": "E2M1X2", "storage_bits": 8},
+    {"canonical_qnan": "0x6", "class": "packed-floating", "code": 12, "format": "two e1m2 lanes; lane 0 is bits 3:0 and lane 1 is bits 7:4", "lanes_per_storage": 2, "name": "E1M2X2", "storage_bits": 8},
+    {"canonical_qnan": "0xFF", "class": "scale", "code": 13, "format": "unsigned e8m0 power-of-two scale; 0xFF is NaN", "lanes_per_storage": 1, "name": "E8M0", "storage_bits": 8},
+    {"canonical_qnan": "0x7", "class": "packed-floating", "code": 14, "format": "two e1m2 lanes with operation-defined MX scaling; lane 0 is bits 3:0 and lane 1 is bits 7:4", "lanes_per_storage": 2, "name": "HiF4X2", "storage_bits": 8},
+    {"class": "signed-integer", "code": 16, "lanes_per_storage": 1, "maximum": "9223372036854775807", "minimum": "-9223372036854775808", "name": "S64", "storage_bits": 64},
+    {"class": "signed-integer", "code": 17, "lanes_per_storage": 1, "maximum": "2147483647", "minimum": "-2147483648", "name": "S32", "storage_bits": 32},
+    {"class": "signed-integer", "code": 18, "lanes_per_storage": 1, "maximum": "32767", "minimum": "-32768", "name": "S16", "storage_bits": 16},
+    {"class": "signed-integer", "code": 19, "lanes_per_storage": 1, "maximum": "127", "minimum": "-128", "name": "S8", "storage_bits": 8},
+    {"class": "packed-signed-integer", "code": 20, "lanes_per_storage": 2, "maximum": "7", "minimum": "-8", "name": "S4X2", "storage_bits": 8},
+    {"class": "unsigned-integer", "code": 24, "lanes_per_storage": 1, "maximum": "18446744073709551615", "minimum": "0", "name": "U64", "storage_bits": 64},
+    {"class": "unsigned-integer", "code": 25, "lanes_per_storage": 1, "maximum": "4294967295", "minimum": "0", "name": "U32", "storage_bits": 32},
+    {"class": "unsigned-integer", "code": 26, "lanes_per_storage": 1, "maximum": "65535", "minimum": "0", "name": "U16", "storage_bits": 16},
+    {"class": "unsigned-integer", "code": 27, "lanes_per_storage": 1, "maximum": "255", "minimum": "0", "name": "U8", "storage_bits": 8},
+    {"class": "packed-unsigned-integer", "code": 28, "lanes_per_storage": 2, "maximum": "15", "minimum": "0", "name": "U4X2", "storage_bits": 8}
+  ],
+  "implementation_conformance": {
+    "claim_requires": [
+      "the exact profile ID and release content hash",
+      "all generated hardware numeric boundary vectors",
+      "operation-level legality and exception evidence",
+      "independent downstream byte and effect parity"
+    ],
+    "repository_claim": "contract-and-vector-definition-only"
+  },
+  "isa_release": "0.57.1",
+  "matrix": {
+    "accumulator_initialization": "Ordinary, BIAS, and MX variants initialize ACC; .ACC variants begin with the existing ACC value.",
+    "accumulator_type": "FP64 inputs accumulate in FP64; other floating inputs accumulate in FP32; signed integers accumulate in S64; unsigned integers accumulate in U64.",
+    "dot_order": "Products are accumulated in increasing K index order with one fused multiply-add rounding to the declared ACC type per term.",
+    "mx_scale": "E8M0 scale is an exact power of two applied before multiplication; 0xFF produces canonical qNaN.",
+    "publication": "ACCCVT rounds once to the destination type and releases ACC only after successful Tile publication."
+  },
+  "min_max": {
+    "both_nan": "canonical destination qNaN",
+    "one_nan": "the numeric operand",
+    "signed_zero_max": "+0",
+    "signed_zero_min": "-0"
+  },
+  "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
+  "reductions": {
+    "arg_tie": "lowest original logical index",
+    "empty_input": "illegal before effects",
+    "evaluation_order": "increasing logical row-major index; no reassociation",
+    "max_min_nan": "ignore a NaN when a numeric operand exists; all-NaN input returns canonical qNaN",
+    "product_sum_nan": "any NaN produces canonical qNaN",
+    "rounding": "round to the declared accumulator type after each step"
+  },
+  "reference_model_relation": {
+    "hardware_conformance_claim": false,
+    "profile_id": "pto-v0",
+    "role": "deterministic raw-carrier ASL reference-test profile",
+    "rule": "pto-v0 output values are not hardware numeric conformance evidence"
+  },
+  "reserved_data_type_codes": [
+    15,
+    21,
+    22,
+    23,
+    29,
+    30
+  ],
+  "schema_version": 1,
+  "sort": {
+    "directions": [
+      "ascending",
+      "descending"
+    ],
+    "equal_values": "stable by original index",
+    "group_size": 32,
+    "nan_order": "after all numeric values and stable by original index in both directions",
+    "output": "value paired with U32 original index",
+    "signed_zero_order": "+0 and -0 compare equal; original index controls their stable order"
+  }
+}

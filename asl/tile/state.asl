@@ -2,11 +2,11 @@
 
 var _Tiles : array [[PTO_TILE_REGISTER_COUNT]] of TileInfo;
 
-readonly func TileCapacityLimitBytes() => integer {0..524288}
+readonly func TileCapacityLimitBytes() => integer {0..262144}
 begin
     assert UInt(_SystemRegisters.tile_capacity) <=
         PTO_MODEL_MAX_TILE_CAPACITY_BYTES;
-    return UInt(_SystemRegisters.tile_capacity) as integer {0..524288};
+    return UInt(_SystemRegisters.tile_capacity) as integer {0..262144};
 end;
 
 readonly func TileCapacityInUseExcept(excluded: TileIndex) => integer
@@ -14,6 +14,17 @@ begin
     var total: integer = 0;
     for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
         if index != excluded && _Tiles[[index]].allocated then
+            total = total + _Tiles[[index]].capacity_bytes;
+        end;
+    end;
+    return total;
+end;
+
+readonly func TileCapacityInUse() => integer
+begin
+    var total: integer = 0;
+    for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
+        if _Tiles[[index]].allocated then
             total = total + _Tiles[[index]].capacity_bytes;
         end;
     end;
@@ -34,14 +45,34 @@ begin
     return ((index MOD 16) + 1) as integer {1..16};
 end;
 
-readonly func TileCapacityIsLegal(capacity_bytes: integer {0..524288}) => boolean
+readonly func TileCapacityIsLegal(capacity_bytes: integer {0..262144}) => boolean
 begin
     return capacity_bytes == 0 ||
-           (capacity_bytes >= 256 &&
+           (capacity_bytes >= PTO_TILE_CELL_BYTES &&
+            capacity_bytes MOD PTO_TILE_CELL_BYTES == 0 &&
             capacity_bytes <= TileCapacityLimitBytes());
 end;
 
-func ConfigureTile(index: TileIndex, capacity_bytes: integer {0..524288},
+pure func TileSizeCodeIsLegal(size_code: integer {0..15}) => boolean
+begin
+    return 3 <= size_code && size_code <= 9;
+end;
+
+pure func TileSizeCodeBytes(size_code: integer {3..9})
+                            => integer {128,256,512,1024,2048,4096,8192}
+begin
+    case size_code of
+        when 3 => return 128;
+        when 4 => return 256;
+        when 5 => return 512;
+        when 6 => return 1024;
+        when 7 => return 2048;
+        when 8 => return 4096;
+        when 9 => return 8192;
+    end;
+end;
+
+func ConfigureTile(index: TileIndex, capacity_bytes: integer {0..262144},
                    rows: integer {0..65535}, columns: integer {0..65535},
                    valid_rows: integer {0..65535}, valid_columns: integer {0..65535},
                    data_type: TileDataType, layout: TileLayout, location: TileLocation)
@@ -66,6 +97,17 @@ begin
     _Tiles[[index]].location = location;
 end;
 
+func ReleaseTile(index: TileIndex)
+begin
+    _Tiles[[index]].allocated = FALSE;
+    _Tiles[[index]].contents_defined = FALSE;
+    _Tiles[[index]].capacity_bytes = 0;
+    _Tiles[[index]].rows = 0;
+    _Tiles[[index]].columns = 0;
+    _Tiles[[index]].valid_rows = 0;
+    _Tiles[[index]].valid_columns = 0;
+end;
+
 readonly func TileGenericIndexingPermitted(tile: TileInfo) => boolean
 begin
     return tile.layout != TileLayout_ImplementationDefined;
@@ -88,12 +130,18 @@ end;
 pure func TileElementBytes(data_type: TileDataType) => integer {1,2,4,8}
 begin
     case data_type of
-        when TileDataType_S8, TileDataType_U8, TileDataType_FP8,
-             TileDataType_FPL8, TileDataType_FP4, TileDataType_FPL4,
-             TileDataType_S4, TileDataType_U4, TileDataType_E8M0 => return 1;
-        when TileDataType_S16, TileDataType_U16, TileDataType_F16, TileDataType_BF16 => return 2;
-        when TileDataType_S32, TileDataType_U32, TileDataType_F32 => return 4;
-        when TileDataType_S64, TileDataType_U64, TileDataType_F64 => return 8;
+        when TileDataType_S8, TileDataType_U8, TileDataType_HiF8,
+             TileDataType_E4M3, TileDataType_E5M2, TileDataType_E3M2,
+             TileDataType_E2M3, TileDataType_E2M1X2,
+             TileDataType_E1M2X2, TileDataType_E8M0,
+             TileDataType_HiF4X2, TileDataType_S4X2,
+             TileDataType_U4X2 => return 1;
+        when TileDataType_S16, TileDataType_U16,
+             TileDataType_FP16, TileDataType_BF16 => return 2;
+        when TileDataType_S32, TileDataType_U32, TileDataType_FP32,
+             TileDataType_TF32, TileDataType_HF32 => return 4;
+        when TileDataType_S64, TileDataType_U64,
+             TileDataType_FP64 => return 8;
     end;
 end;
 
@@ -101,47 +149,92 @@ pure func TileDataTypeIsSigned(data_type: TileDataType) => boolean
 begin
     return data_type == TileDataType_S8 || data_type == TileDataType_S16 ||
            data_type == TileDataType_S32 || data_type == TileDataType_S64 ||
-           data_type == TileDataType_S4;
+           data_type == TileDataType_S4X2;
 end;
 
 pure func TileDataTypeIsFloating(data_type: TileDataType) => boolean
 begin
-    return data_type == TileDataType_F64 ||
-           data_type == TileDataType_F16 || data_type == TileDataType_BF16 ||
-           data_type == TileDataType_F32 || data_type == TileDataType_FP8 ||
-           data_type == TileDataType_FPL8 || data_type == TileDataType_FP4 ||
-           data_type == TileDataType_FPL4 || data_type == TileDataType_E8M0;
+    return data_type == TileDataType_FP64 ||
+           data_type == TileDataType_FP32 || data_type == TileDataType_TF32 ||
+           data_type == TileDataType_HF32 || data_type == TileDataType_FP16 ||
+           data_type == TileDataType_BF16 || data_type == TileDataType_HiF8 ||
+           data_type == TileDataType_E4M3 || data_type == TileDataType_E5M2 ||
+           data_type == TileDataType_E3M2 || data_type == TileDataType_E2M3 ||
+           data_type == TileDataType_E2M1X2 ||
+           data_type == TileDataType_E1M2X2 ||
+           data_type == TileDataType_E8M0 ||
+           data_type == TileDataType_HiF4X2;
+end;
+
+// Portable safe materialization for B.DATR padding. Integer extrema are exact.
+// The raw-carrier reference profile uses all-ones/one-sign-bit sentinels for
+// floating Max/Min; a hardware IEEE profile refines those carrier encodings.
+pure func TilePadValueForDataType(pad_value: TilePadValue,
+                                  data_type: TileDataType) => Word
+begin
+    if pad_value == TilePad_Zero || pad_value == TilePad_Null then
+        return Zeros{PTO_XLEN};
+    end;
+    if pad_value == TilePad_Max then
+        case data_type of
+            when TileDataType_U8 => return Zeros{PTO_XLEN} + 0xff;
+            when TileDataType_U16 => return Zeros{PTO_XLEN} + 0xffff;
+            when TileDataType_U32 => return Zeros{PTO_XLEN} + 0xffffffff;
+            when TileDataType_U64 => return Ones{PTO_XLEN};
+            when TileDataType_S8 => return Zeros{PTO_XLEN} + 0x7f;
+            when TileDataType_S16 => return Zeros{PTO_XLEN} + 0x7fff;
+            when TileDataType_S32 => return Zeros{PTO_XLEN} + 0x7fffffff;
+            when TileDataType_S64 =>
+                return Zeros{PTO_XLEN} + 0x7fffffffffffffff;
+            otherwise => return Ones{PTO_XLEN};
+        end;
+    end;
+    case data_type of
+        when TileDataType_U8, TileDataType_U16, TileDataType_U32,
+             TileDataType_U64, TileDataType_U4X2 => return Zeros{PTO_XLEN};
+        when TileDataType_S8 => return Zeros{PTO_XLEN} + 0x80;
+        when TileDataType_S16 => return Zeros{PTO_XLEN} + 0x8000;
+        when TileDataType_S32 => return Zeros{PTO_XLEN} + 0x80000000;
+        when TileDataType_S64 => return Zeros{PTO_XLEN} + 0x8000000000000000;
+        otherwise => return Zeros{PTO_XLEN} + 0x8000000000000000;
+    end;
 end;
 
 pure func TileDataTypeEncodingValid(encoded: Word) => boolean
 begin
     let code = UInt(encoded[5:0]);
-    return code == 0 || code == 1 || code == 2 || code == 3 ||
-           code == 6 || code == 7 || code == 11 || code == 12 ||
+    return (0 <= code && code <= 14) ||
            (16 <= code && code <= 20) || (24 <= code && code <= 28);
 end;
 
 pure func TileDataTypeFromEncoding(encoded: Word) => TileDataType
 begin
     case UInt(encoded[5:0]) of
-        when 0 => return TileDataType_F64;
-        when 1 => return TileDataType_F32;
-        when 2 => return TileDataType_F16;
-        when 3 => return TileDataType_FP8;
-        when 6 => return TileDataType_BF16;
-        when 7 => return TileDataType_FPL8;
-        when 11 => return TileDataType_FP4;
-        when 12 => return TileDataType_FPL4;
+        when 0 => return TileDataType_FP64;
+        when 1 => return TileDataType_FP32;
+        when 2 => return TileDataType_TF32;
+        when 3 => return TileDataType_HF32;
+        when 4 => return TileDataType_FP16;
+        when 5 => return TileDataType_BF16;
+        when 6 => return TileDataType_HiF8;
+        when 7 => return TileDataType_E4M3;
+        when 8 => return TileDataType_E5M2;
+        when 9 => return TileDataType_E3M2;
+        when 10 => return TileDataType_E2M3;
+        when 11 => return TileDataType_E2M1X2;
+        when 12 => return TileDataType_E1M2X2;
+        when 13 => return TileDataType_E8M0;
+        when 14 => return TileDataType_HiF4X2;
         when 16 => return TileDataType_S64;
         when 17 => return TileDataType_S32;
         when 18 => return TileDataType_S16;
         when 19 => return TileDataType_S8;
-        when 20 => return TileDataType_S4;
+        when 20 => return TileDataType_S4X2;
         when 24 => return TileDataType_U64;
         when 25 => return TileDataType_U32;
         when 26 => return TileDataType_U16;
         when 27 => return TileDataType_U8;
-        when 28 => return TileDataType_U4;
+        when 28 => return TileDataType_U4X2;
         otherwise => return TileDataType_U8;
     end;
 end;

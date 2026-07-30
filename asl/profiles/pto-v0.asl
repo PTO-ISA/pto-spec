@@ -33,6 +33,17 @@ begin
         _Tiles[[index]].layout = TileLayout_RowMajor;
         _Tiles[[index]].location = TileLocation_Any;
     end;
+    _Accumulator.live = FALSE;
+    _Accumulator.info.allocated = FALSE;
+    _Accumulator.info.contents_defined = FALSE;
+    _Accumulator.info.capacity_bytes = 0;
+    _Accumulator.info.rows = 0;
+    _Accumulator.info.columns = 0;
+    _Accumulator.info.valid_rows = 0;
+    _Accumulator.info.valid_columns = 0;
+    _Accumulator.info.data_type = TileDataType_U64;
+    _Accumulator.info.layout = TileLayout_RowMajor;
+    _Accumulator.info.location = TileLocation_Any;
     _PC = Zeros{PTO_XLEN};
     _BPC = Zeros{PTO_XLEN};
     _BlockActive = FALSE;
@@ -74,6 +85,7 @@ begin
             _TrapContexts[[ring]].t_queue[[queue_index]] = Zeros{PTO_XLEN};
             _TrapContexts[[ring]].u_queue[[queue_index]] = Zeros{PTO_XLEN};
         end;
+        _TrapContexts[[ring]].accumulator = _Accumulator;
     end;
     _SystemRegisters.thread_ptr = Zeros{PTO_XLEN};
     _SystemRegisters.global_ptr = Zeros{PTO_XLEN};
@@ -325,6 +337,7 @@ begin
         _TrapContexts[[target]].t_queue[[index]] = _TQueue[[index]];
         _TrapContexts[[target]].u_queue[[index]] = _UQueue[[index]];
     end;
+    _TrapContexts[[target]].accumulator = _Accumulator;
 end;
 
 implementation func RecoverTrapContext(target: AccessControlRing) => boolean
@@ -343,6 +356,7 @@ begin
         _TQueue[[index]] = _TrapContexts[[target]].t_queue[[index]];
         _UQueue[[index]] = _TrapContexts[[target]].u_queue[[index]];
     end;
+    _Accumulator = _TrapContexts[[target]].accumulator;
     _CurrentACR = _TrapContexts[[target]].source_acr;
     _TrapContexts[[target]].valid = FALSE;
     return TRUE;
@@ -432,6 +446,13 @@ begin
     if descending then return SInt(left) >= SInt(right);
     else return SInt(left) <= SInt(right);
     end;
+end;
+
+implementation func TileProfileValueIsNaN(value: Word,
+                                           data_type: TileDataType) => boolean
+begin
+    // The deterministic raw-carrier reference profile has no NaN class.
+    return FALSE;
 end;
 
 implementation func TileProfileMatrixAccumulate(

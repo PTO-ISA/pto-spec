@@ -7,17 +7,20 @@ Architecture. It specifies a 64-bit scalar ISA, block/command forms, direct
 tile operations, visible architectural state, legality, faults, completion,
 profiles, and memory ordering in one executable model.
 
-The repository is a normative draft. The accepted instruction surface is
-complete and executable under the `pto-v0` reference profile; explicit model
+The repository is the normative draft of PTO ISA 0.57.1. The accepted
+instruction surface is complete and executable under the `pto-v0` reference
+profile; release identity and profile identity are distinct. Explicit model
 limits and profile boundaries remain visible in
 [formal model coverage](docs/coverage.md).
 
 ## Architecture scope
 
 - 474 scalar forms across AGU, ALU, AMO, BRU, FSU, and SYS.
-- 107 block/command forms for block start, split, argument, dimension,
+- 99 block/command forms for block start, split, argument, dimension,
   attributes, IO binding, hints, stop, and context handling.
 - 120 direct tile operations: 98 TEPL, 9 TMA, and 13 CUBE.
+- PTO ISA 0.57.1 Mode/Function tile encoding with a checked release-manifest
+  identity; untagged legacy decode is not supported.
 - A 32-code scalar namespace: 24 absolute GPRs plus four-entry T and U
   temporary queues, eight predicate registers, and 64 flat T/U/M/N tiles.
 - 54 architecturally visible system registers, including THREAD_PTR,

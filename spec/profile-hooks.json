@@ -493,6 +493,20 @@
       ]
     },
     {
+      "domain": "tile-ordering",
+      "model": "asl/tile/complex.asl",
+      "name": "TileProfileValueIsNaN",
+      "portable_default": "Classify no raw carrier as NaN in the deterministic PTO v0 reference profile.",
+      "profile_obligations": [
+        "Define NaN classification for every floating Tile data type used by stable TSORT ordering."
+      ],
+      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+      "status": "implemented-by-pto-v0",
+      "tests": [
+        "tests/asl/profile-tests.asl"
+      ]
+    },
+    {
       "domain": "tile-matrix",
       "model": "asl/tile/cube.asl",
       "name": "TileProfileMatrixAccumulate",

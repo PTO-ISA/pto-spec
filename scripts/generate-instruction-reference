@@ -100,9 +100,13 @@ def format_fields(row: dict) -> str:
 def format_constraints(row: dict) -> str:
     constraints = []
     for constraint in row.get("constraints", []):
-        constraints.append(
-            f"{constraint['field']} {constraint['operator']} {constraint['value']}"
-        )
+        if constraint["operator"] == "not-equal":
+            value = constraint["value"]
+        elif constraint["operator"] == "one-of":
+            value = "{" + ", ".join(str(item) for item in constraint["values"]) + "}"
+        else:
+            raise ValueError(f"unsupported form constraint: {constraint['operator']}")
+        constraints.append(f"{constraint['field']} {constraint['operator']} {value}")
     return "<br>".join(constraints) if constraints else "none"
 
 
@@ -126,14 +130,17 @@ def format_arguments(row: dict) -> str:
 
 
 def tile_selector(row: dict) -> str:
-    if "selector" in row:
-        return row["selector"]
+    if row["family"] == "TEPL":
+        return (
+            f"mode={row['mode']}, function={row['function']}, "
+            f"selector={row['selector']}"
+        )
     return f"function={row['function']}"
 
 
 def tile_sort_key(row: dict) -> tuple[int, str]:
-    if "selector" in row:
-        return (int(row["selector"], 16), row["name"])
+    if row["family"] == "TEPL":
+        return ((row["mode"] << 5) | row["function"], row["name"])
     return (int(row["function"]), row["name"])
 
 

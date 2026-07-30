@@ -435,12 +435,56 @@
       ]
     },
     {
+      "id": "PTO-REQ-RELEASE-ISA-001",
+      "model": [
+        "docs/architecture-decisions/0009-pto-isa-release-tile-contract.md",
+        "specification.toml",
+        "spec/release-manifest.json",
+        "spec/catalog/command-forms.json",
+        "spec/catalog/tile-operations.json",
+        "asl/block/state.asl",
+        "asl/block/dispatch.asl",
+        "asl/tile/state.asl",
+        "asl/tile/legality.asl",
+        "asl/tile/memory.asl",
+        "asl/tile/cube.asl"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0009-pto-isa-release-tile-contract.md",
+      "status": "accepted-implementation-in-progress",
+      "tests": [
+        "scripts/check-catalogs",
+        "scripts/check-binary-closure",
+        "scripts/check-release-manifest",
+        "tests/asl/block-tests.asl",
+        "tests/asl/tile-tests.asl",
+        "tests/asl/main.asl"
+      ]
+    },
+    {
+      "id": "PTO-REQ-HARDWARE-NUMERIC-001",
+      "model": [
+        "spec/hardware-conformance-profile.json",
+        "docs/profile-contracts.md",
+        "docs/coverage.md",
+        "docs/normative-sources.md",
+        "spec/release-manifest.json"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/hardware-conformance-profile.json",
+      "status": "normative-hardware-contract-defined-conformance-unproven",
+      "tests": [
+        "scripts/check-release-manifest",
+        "spec/evidence/pto-isa-0571-hardware-numeric-vectors.json"
+      ]
+    },
+    {
       "id": "PTO-REQ-CLOSURE-001",
       "model": [
         "docs/normative-sources.md",
         "docs/coverage.md",
         "scripts/check-binary-closure",
+        "scripts/check-release-manifest",
         "scripts/check-repository",
+        "spec/release-manifest.json",
         "spec/catalog/scalar-forms.json",
         "spec/catalog/command-forms.json",
         "spec/catalog/tile-operations.json"

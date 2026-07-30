@@ -52,7 +52,8 @@ SPEC := build/pto-spec.asl
 DECODER_SPEC := build/decoders.asl
 TEST_SPEC := build/pto-tests.asl
 
-.PHONY: all setup build repo-check toolchain-check check test ci clean \
+.PHONY: all setup build release-manifest release-check repo-check \
+	toolchain-check check test ci clean \
 	print-asl-sources print-asl-tests
 
 all: ci
@@ -73,6 +74,13 @@ $(SPEC): $(ASL_SOURCES) $(DECODER_SPEC) scripts/assemble-asl Makefile
 
 $(TEST_SPEC): $(SPEC) $(ASL_TESTS) scripts/assemble-asl Makefile
 	./scripts/assemble-asl $@ $(SPEC) $(ASL_TESTS)
+
+release-manifest:
+	./scripts/generate-release-manifest
+
+release-check:
+	./scripts/check-release-manifest
+	./scripts/check-binary-closure
 
 repo-check: $(SPEC)
 	./scripts/check-repository
