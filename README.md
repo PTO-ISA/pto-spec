@@ -14,7 +14,7 @@ closed through Stage 4. The independent executable-model comparison is also
 closed under `S5-T3`; target numeric conformance and release closure remain
 staged work. See the
 [maturity bring-up plan](docs/maturity-bringup-plan.md),
-[maturity stage and target index](docs/maturity-stage-targets.md), and
+[maturity evaluation and staged targets](docs/maturity-stage-targets.md), and
 [formal model coverage](docs/coverage.md).
 
 The Stage 5 numeric ownership inventory is already closed: 19 scalar forms and
@@ -32,6 +32,12 @@ null. ADR 0038 and the generated
 `spec/evidence/scalar-numeric-flag-contract.json` ledger separately close the
 scalar flag lifecycle and 30/30 producer-owner matrix while leaving exact
 conditions open for 19 profile-owned forms, so PD-06 and S5-T2 remain open.
+ADR 0039 and the generated
+`spec/evidence/numeric-rounding-selector-contract.json` ledger separately map
+all scalar, fixed-conversion, bundle, public, matrix, stochastic, and
+backend-only rounding selector namespaces. The inventory covers 18 domains,
+102 operations, and 25 hooks without accepting a numeric result rule, so PD-03
+and S5-T2 also remain open.
 The executable-model comparison has an exhaustive 701-row disposition matrix
 and a clean content-addressed snapshot whose generation, validation,
 documentation, Sail parser, and Sail C-backend gates all pass.
@@ -114,7 +120,7 @@ contracts:
 | [Memory model](docs/memory-model.md) | PTO-TSO events, relations, axioms, and executable evidence |
 | [Profile contracts](docs/profile-contracts.md) | `pto-v0` behavior and alternate-profile obligations |
 | [Maturity bring-up plan](docs/maturity-bringup-plan.md) | Staged targets and exit gates from executable draft to architectural completeness |
-| [Maturity stage and target index](docs/maturity-stage-targets.md) | Compact stage map and target register for bring-up review |
+| [Maturity evaluation and staged targets](docs/maturity-stage-targets.md) | Reviewer-oriented entry gates, measurable targets, exit evidence, and promotion order |
 | [Numeric profile decision register](docs/numeric-profile-decision-register.md) | Open S5-T2-A format, rounding, exception, reduction, quantization, and matrix decisions |
 | [Modeling conventions](docs/modeling-conventions.md) | ASL organization and normative modeling rules |
 | [Formal review checklist](docs/review-checklist.md) | Required evidence for normative review |

@@ -180,6 +180,13 @@ envelope, and 30-form producer-owner partition normative. The ledger keeps 19
 profile-owned flag conditions explicitly open and is not a target arithmetic
 or independent-oracle claim.
 
+`numeric-rounding-selector-contract.json` is generated from the scalar and
+bundle catalogs, accepted profile identities, and numeric decision inputs.
+ADR 0039 makes selector discovery, namespace separation, and ownership
+normative. It does not choose active scalar codes 4–7, map target controls, or
+define per-domain rounding and saturation-order results; those remain PD-03
+profile decisions.
+
 `release-traceability-readiness.json` is the generated input to S6-T1. It
 enumerates every requirement, accepted scalar and command form, direct tile
 operation, system register, trap, profile hook, and top-level ASL state root.

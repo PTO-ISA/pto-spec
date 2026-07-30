@@ -171,3 +171,6 @@ accepted identity catalog and records `S5-T2-A1` closed while keeping every
 question acceptance and domain result rule null.
 The generated `scalar-numeric-flag-contract.json` ledger records the accepted
 flag lifecycle and 30/30 producer-owner matrix without closing PD-06.
+The generated `numeric-rounding-selector-contract.json` ledger records the
+accepted selector namespaces and owners without closing PD-03. It keeps all 18
+affected domain rounding and saturation-order rules explicitly null.

@@ -1,8 +1,9 @@
-# PTO ASL maturity stage and target index
+# PTO ASL maturity evaluation and bring-up targets
 
-This document is the compact navigation layer for PTO ASL maturity bring-up.
-It splits the evaluation into stages, gives each stage a clear closure target,
-and points to the detailed evidence ledger and rationale.
+This is the manual review plan for PTO ASL maturity. It splits the evaluation
+into cumulative stages, gives every stage a measurable target and exit gate,
+and names the evidence that permits a promotion. Work may be prepared in
+parallel, but no later stage can waive an earlier exit gate.
 
 The authoritative detailed plan remains
 [Maturity bring-up plan](maturity-bringup-plan.md). The authoritative state for
@@ -54,22 +55,22 @@ is M4 because every Stage 4 target is closed.
 | 6 — release | 0 | 2 | Close cumulative traceability, validation, review, and publication gates. |
 | **Total** | **28** | **31** | **M4 is the published floor.** |
 
-## Evaluation-to-bring-up plan map
+## Stage evaluation contract
 
-Each evaluation area maps to one maturity stage and one closure target set. A
-row is closed only when its target evidence exists in the generated ledgers and
-the applicable repository checks pass.
+Reviewers evaluate one row at a time. `Entry gate` says what must already be
+true, `Measurable target` defines the work package, and `Exit gate` is the
+minimum evidence required to close the row. A green aggregate CI run is
+necessary, but it cannot substitute for a missing stage-specific artifact.
 
-| Evaluation area | Stage | Target set | Current status | Clear next target |
+| Stage | Entry gate | Measurable target | Exit gate | Status |
 | --- | --- | --- | --- | --- |
-| Claim hygiene and gap ownership | Stage 0 | `S0-T1`–`S0-T3` | Closed | Preserve a single source of truth across README, coverage, requirements, status metadata, and `maturity-closure.json`. |
-| Decode reachability and visible effects | Stage 1 | `S1-T1`–`S1-T5` | Closed | Keep every accepted scalar form, bundle/command form, and direct tile selector bound to exactly one checked effect or explicit pre-effect rejection. |
-| State, reset, faults, and recovery | Stage 2 | `S2-T1`–`S2-T6` | Closed | Keep all visible state, 72 system registers, P0–P7, tile descriptors, trap banks, and 13 traps covered by reset, transition, and preservation evidence. |
-| Memory ordering | Stage 3 | `S3-T1`–`S3-T2` | Closed | Preserve the PTO-TSO event stream and closed acquire/release, reservation, gather-CAS, and mixed-size dispositions. |
-| Reference instruction semantics | Stage 4 | `S4-T1`–`S4-T10` | Closed | Preserve per-family totality for AGU, ALU, AMO, BRU, FSU, SYS, bundle commands, TEPL, TMA, and CUBE under `pto-v0`. |
-| Numeric and target conformance | Stage 5 | `S5-T1`–`S5-T3` | In progress | Close `S5-T2`: accept all 12 numeric decisions, all 20 domain rules, the 19 remaining profile-owned scalar flag conditions, independent oracle identities, vectors, differential results, and review dispositions. |
-| Release traceability | Stage 6 | `S6-T1` | Open | After `S5-T2`, close the nine dependent requirement rows and 29 hooks, then complete the immutable-commit claim-hygiene review. |
-| Architecturally-complete release gate | Stage 6 | `S6-T2` | Open | After `S5-T2` and `S6-T1`, freeze one signed candidate and attach clean local/hosted gate results, GitHub control evidence, and both required approvals. |
+| 0 — baseline (`S0-T1`–`S0-T3`) | Repository catalogs and tests are discoverable. | Account for every accepted identity and classify every known gap; make all published maturity surfaces agree. | Deterministic catalogs plus one checked ownership ledger with no unowned gap or conflicting claim. | Closed |
+| 1 — execution paths (`S1-T1`–`S1-T5`) | Stage 0 closed. | Bind all 474 scalar forms, 107 bundle/command forms, and 120 direct-tile selectors to one visible effect or pre-effect rejection. | Generated decode/effect matrices are total, unique, executable, and reject reserved encodings before effects. | Closed |
+| 2 — state and faults (`S2-T1`–`S2-T6`) | Stage 1 effect paths stable. | Cover all architectural state, 72 system registers, P0–P7, tile state, 16 ACR banks, and 13 traps. | Reset, transition, preservation, trap, recovery, restart, capacity, and definedness matrices are complete. | Closed |
+| 3 — ordering (`S3-T1`–`S3-T2`) | Stage 2 fault/restart rules stable. | Connect every production memory effect to PTO-TSO and close atomic, reservation, gather-CAS, prefetch, and mixed-size corners. | Event extraction and allowed/forbidden litmus evidence agree with the normative ordering model. | Closed |
+| 4 — reference semantics (`S4-T1`–`S4-T10`) | Stages 0–3 closed. | Make AGU, ALU, AMO, BRU, FSU, SYS, bundle, TEPL, TMA, and CUBE total under `pto-v0`. | Every family has checked legality, operand, value/effect, alias, boundary, fault, restart, and pre-effect-rejection evidence. | Closed |
+| 5 — conformance (`S5-T1`–`S5-T3`) | M4 regression floor remains green. | Independently validate all 20 numeric domains, 29 hooks, and 108 operations, while retaining the closed 701-row executable-model comparison. | All 12 numeric decisions and 20 domain rules are accepted; six oracles, complete vectors/results, zero unclassified mismatches, and two reviews are recorded. | In progress: `S5-T2` open |
+| 6 — release (`S6-T1`–`S6-T2`) | Stage 5 closed. | Close cumulative traceability and reproduce every release gate at one signed immutable candidate. | Nine dependent requirements and 29 hooks close; all 937 trace units, ten gates, ten controls, hosted validation, and both approvals name the same commit. | Open |
 
 ## Remaining bring-up sequence
 
@@ -195,6 +196,12 @@ ADR 0038 and `spec/evidence/scalar-numeric-flag-contract.json` additionally
 close flag state/lifecycle and the 30/30 FSU producer-owner matrix. Eleven
 architecture-owned conditions are exact; 19 profile-owned conditions keep
 PD-06 open and do not increment the S5-T2-A2 decision count.
+ADR 0039 and `spec/evidence/numeric-rounding-selector-contract.json` close the
+PD-03 selector-discovery and ownership inventory across eight active scalar
+codes, five fixed conversion overrides, eight bundle `RMode` codes, four
+external selector classes, 18 domains, 102 operations, and 25 hooks. Every
+per-domain rounding and saturation-order rule remains null, so PD-03 likewise
+does not increment the S5-T2-A2 decision count.
 
 #### Parallel numeric lanes
 
@@ -285,6 +292,9 @@ configuration from being confused with a passing release candidate.
 - `spec/evidence/scalar-numeric-flag-contract.json` is the generated PD-06
   state/lifecycle and producer-owner matrix. It closes 30 ownership rows and 11
   architecture-owned conditions while retaining 19 profile-owned conditions.
+- `spec/evidence/numeric-rounding-selector-contract.json` is the generated
+  PD-03 selector-ownership inventory. It closes discovery and namespace
+  separation while retaining all 18 affected domain result rules.
 - `spec/evidence/release-traceability-readiness.json` is the generated S6-T1
   source of truth for exact release inventory, link coverage, state-boundary
   classification, cumulative blockers, and immutable-commit review readiness.

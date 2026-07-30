@@ -46,6 +46,10 @@
       "sha256": "adf0e2b0462c70c882e1eeb6052e4c6a72b1965e82059783ade0b799b560218e"
     },
     {
+      "path": "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
+      "sha256": "9eba031999786c1dc5e34dd54090f6e77a30409f15c9d2396acbc3400ae50bb3"
+    },
+    {
       "path": "scripts/check-asl-test-shards",
       "sha256": "7ab9174587cc29b39f676ced8ca8f5b3f433d4171c992a20f86fc2598034c3b1"
     },
@@ -55,7 +59,7 @@
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "d57d1b55f15122863f584db03f5e9ddb1ed81b8d32e51cf1517141c22bef3458"
+      "sha256": "3641552ebbccc620bfdc8991e0c4e04a87bc607d07d78acf6ba8dbad3107f6c5"
     },
     {
       "path": "scripts/check-publication-hygiene",
@@ -63,7 +67,7 @@
     },
     {
       "path": "scripts/check-repository",
-      "sha256": "532a8b0f3e99a6dc260f6a9059a08b96803fd54113e99ac5a963b0600886b6e8"
+      "sha256": "80e8a2beba1ef5fdb784c752a3968dc9fc7f19b7f69e8b34f5cc3d00039d50c4"
     },
     {
       "path": "scripts/check-toolchain",
@@ -71,11 +75,15 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "52d5b9348488077e0bf6706a0a7ac1f0b18b7f1423980453468f2810005cdb03"
+      "sha256": "79740bb34227387d73d2b342fe334c32be370560af1f62e932429f157fc7a86a"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "b5d3d361b0f1bea70b8d2783589df842d20766eeabf5c19dc6984b4731815413"
+      "sha256": "1e41150503871c1aee62d0525b91f3c262cb68dbcd4fbf03a075edfafa121ab3"
+    },
+    {
+      "path": "spec/evidence/numeric-rounding-selector-contract.json",
+      "sha256": "88669d8651d20a50ee1fafd55d9448dafa6fc9ad98c25008c8436ea995e21f9c"
     },
     {
       "path": "spec/evidence/scalar-numeric-flag-contract.json",
@@ -83,11 +91,11 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "b7f3c996173a4e55cd6063b8ebe10850177b89bee466dee2a7526743b3b5a907"
+      "sha256": "53bd05819e5afbef498069e25f17050f9f67e29afa30a8481811112892c5ae99"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "fc94bef86f6d50488fad4659b2bad9c274d49956a8b887564c34e4b9ba50780a"
+      "sha256": "e2aac11f1277a720cffd729aa25db3d9d352bcbfd14116c643003ac3329a47ce"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
@@ -95,7 +103,7 @@
     },
     {
       "path": "specification.toml",
-      "sha256": "e94256a4d4582226d27d4e3e817c37e388cf811722f2eab25c93d6c550d9dc06"
+      "sha256": "267cdf303b1f83a6b89f771c50e5153f820abb2d6dcdbf2fb5ec1b47e1d149ca"
     }
   ],
   "sub_stages": [

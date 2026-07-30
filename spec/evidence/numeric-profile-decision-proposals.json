@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "target": "S5-T2-A",
   "status": "proposal-complete-decisions-open",
   "input": {
@@ -23,6 +23,21 @@
     "architecture_condition_closed_form_count": 11,
     "profile_condition_open_form_count": 19,
     "pd06_complete": false
+  },
+  "rounding_selector_contract": {
+    "path": "spec/evidence/numeric-rounding-selector-contract.json",
+    "sha256": "88669d8651d20a50ee1fafd55d9448dafa6fc9ad98c25008c8436ea995e21f9c",
+    "status": "selector-ownership-inventory-closed-result-rules-open",
+    "acceptance_record": "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
+    "scalar_active_selector_count": 8,
+    "scalar_fixed_override_count": 5,
+    "bundle_rmode_selector_count": 8,
+    "external_selector_class_count": 4,
+    "affected_domain_count": 18,
+    "affected_operation_count": 102,
+    "affected_hook_count": 25,
+    "accepted_domain_rounding_rule_count": 0,
+    "pd03_complete": false
   },
   "policy": {
     "proposal_not_authority": "The identity and bounded-variation framework is accepted; question and domain proposals remain review inputs and do not select numeric results.",
@@ -300,10 +315,11 @@
         "named-target-profile-rule",
         "unsupported-in-profile"
       ],
-      "proposed_rule": "The portable rounding taxonomy is RNE, RTZ, RTP, and RTM with exact ties-to-even behavior for RNE. Backend-only odd, part, and compound saturation controls reject unless a named PTO profile assigns an encoding and exact operation-local rule.",
+      "proposed_rule": "ADR 0039 closes discovery and namespace ownership for scalar FRM, fixed FCVT overrides, bundle RMode, public conversion modes, matrix controls, stochastic controls, and backend-only controls. The portable rounding core is RNE, RTZ, RTP, and RTM with exact ties-to-even behavior for RNE. Numeric result rules remain open for all 18 affected domains, 102 operations, and 25 hooks.",
       "open_items": [
-        "map every encoded selector and operation override",
-        "decide whether any backend-only modes enter a named profile",
+        "accept the active scalar code-4 rule and the code-5-through-7 rejection-or-fallback disposition",
+        "map public, bundle, matrix, stochastic, and backend-only controls only where a named profile owns the mapping",
+        "assign exact per-domain rounding and saturation-order rules",
         "publish signed halfway and rounding-before-saturation vectors"
       ],
       "acceptance_evidence": [

@@ -98,6 +98,12 @@ acceptance field remains null. The generated
 state/lifecycle and assign all 30 FSU forms to one producer owner; exact flag
 conditions remain open for 19 profile-owned forms. PD-06, S5-T2-A, and numeric
 conformance therefore remain open.
+The generated `numeric-rounding-selector-contract.json` ledger and ADR 0039
+close PD-03 selector discovery and namespace ownership across eight active
+scalar codes, five fixed overrides, eight bundle codes, four external selector
+classes, 18 domains, 102 operations, and 25 hooks. All domain rounding and
+saturation-order rules remain open, so this checkpoint does not increment the
+accepted-decision count or change the M4 floor.
 
 Release traceability is independently fail-closed. The generated
 `spec/evidence/release-traceability-readiness.json` ledger assigns requirement,

@@ -665,6 +665,9 @@ def main() -> int:
     scalar_bru_totality = load("spec/evidence/scalar-bru-totality.json")
     scalar_fsu_totality = load("spec/evidence/scalar-fsu-totality.json")
     scalar_numeric_flags = load("spec/evidence/scalar-numeric-flag-contract.json")
+    numeric_rounding_selectors = load(
+        "spec/evidence/numeric-rounding-selector-contract.json"
+    )
     scalar_sys_totality = load("spec/evidence/scalar-sys-totality.json")
     tepl_totality = load("spec/evidence/tepl-totality.json")
     tma_totality = load("spec/evidence/tma-totality.json")
@@ -766,7 +769,7 @@ def main() -> int:
     )
     require(
         specification["maturity"]["numeric_profile_decisions"]
-        == "identity-framework-and-scalar-flag-lifecycle-closed-stage-S5-T2-A-results-open",
+        == "identity-framework-flag-lifecycle-rounding-selector-ownership-closed-stage-S5-T2-A-results-open",
         "numeric profile metadata must distinguish complete proposals from open acceptance",
     )
     require(
@@ -2252,6 +2255,193 @@ def main() -> int:
         and len(flag_comparison["limits"]) == 3,
         "scalar numeric flag independent-comparison disposition drift",
     )
+    expected_rounding_sources = [
+        "spec/catalog/scalar-forms.json",
+        "spec/catalog/command-forms.json",
+        "spec/catalog/numeric-profile-identities.json",
+        "spec/evidence/numeric-profile-decision-inputs.json",
+        "spec/evidence/scalar-fsu-totality.json",
+        "asl/scalar/floating.asl",
+        "asl/scalar/dispatch.asl",
+        "asl/bundle/state.asl",
+        "asl/bundle/dispatch.asl",
+        "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
+        "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+    ]
+    require(
+        set(numeric_rounding_selectors)
+        == {
+            "acceptance_record",
+            "bundle_rmode",
+            "decision_id",
+            "domains",
+            "external_selector_classes",
+            "independent_comparison",
+            "policy",
+            "scalar_active_rounding",
+            "scalar_fixed_conversion_overrides",
+            "schema_version",
+            "sources",
+            "status",
+            "summary",
+            "target",
+            "tests",
+        }
+        and numeric_rounding_selectors["schema_version"] == 1
+        and numeric_rounding_selectors["target"] == "S5-T2-A2:PD-03"
+        and numeric_rounding_selectors["decision_id"] == "PD-03"
+        and numeric_rounding_selectors["status"]
+        == "selector-ownership-inventory-closed-result-rules-open"
+        and numeric_rounding_selectors["acceptance_record"]
+        == "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md"
+        and (ROOT / numeric_rounding_selectors["acceptance_record"]).is_file(),
+        "numeric rounding selector identity or schema drift",
+    )
+    require(
+        [row["path"] for row in numeric_rounding_selectors["sources"]]
+        == expected_rounding_sources
+        and all(
+            set(row) == {"path", "sha256"}
+            and row["sha256"]
+            == hashlib.sha256((ROOT / row["path"]).read_bytes()).hexdigest()
+            for row in numeric_rounding_selectors["sources"]
+        ),
+        "numeric rounding selector source identity or hash drift",
+    )
+    active_rounding = numeric_rounding_selectors["scalar_active_rounding"]
+    require(
+        [row["code"] for row in active_rounding] == list(range(8))
+        and [row["portable_name"] for row in active_rounding]
+        == ["RNE", "RTM", "RTP", "RTZ", "RTA", None, None, None]
+        and all(
+            row["selector_namespace"] == "scalar-core-state-frm"
+            and row["system_register"] == "CORE_STATE"
+            and row["bit_range"] == "39:37"
+            and row["pto_v0_behavior"]
+            == (
+                "passes-code-to-active-profile-hook"
+                if row["code"] <= 4
+                else "normalizes-to-RNE"
+            )
+            for row in active_rounding
+        )
+        and [row["selection_status"] for row in active_rounding]
+        == [
+            "portable-core",
+            "portable-core",
+            "portable-core",
+            "portable-core",
+            "active-versus-fixed-scope-decision-required",
+            "reserved-fallback-versus-rejection-decision-required",
+            "reserved-fallback-versus-rejection-decision-required",
+            "reserved-fallback-versus-rejection-decision-required",
+        ],
+        "scalar active rounding selector ownership drift",
+    )
+    scalar_forms_by_mnemonic = {row["mnemonic"]: row for row in forms}
+    fixed_rounding = numeric_rounding_selectors["scalar_fixed_conversion_overrides"]
+    expected_fixed_rounding = [
+        ("FCVTA", 4, "RTA"),
+        ("FCVTM", 1, "RTM"),
+        ("FCVTN", 0, "RNE"),
+        ("FCVTP", 2, "RTP"),
+        ("FCVTZ", 3, "RTZ"),
+    ]
+    require(
+        [(row["mnemonic"], row["code"], row["portable_name"]) for row in fixed_rounding]
+        == expected_fixed_rounding
+        and all(
+            row["form_id"] == scalar_forms_by_mnemonic[row["mnemonic"]]["form_id"]
+            and row["selector_namespace"] == "scalar-fixed-conversion-override"
+            and row["selection_status"] == "closed"
+            and row["numeric_result_status"] == "operation-type-rule-required"
+            for row in fixed_rounding
+        ),
+        "fixed conversion rounding selector ownership drift",
+    )
+    bundle_datr = next(row for row in command["forms"] if row["mnemonic"] == "B.DATR")
+    require(
+        [row["code"] for row in numeric_rounding_selectors["bundle_rmode"]]
+        == list(range(8))
+        and all(
+            row["form_id"] == bundle_datr["form_id"]
+            and row["mnemonic"] == "B.DATR"
+            and row["selector_namespace"] == "bundle-data-attribute-rmode"
+            and row["binding"] == "BundleDataAttributes.rounding_mode"
+            and row["selection_status"] == "encoding-and-state-binding-closed"
+            and row["numeric_result_status"] == "named-profile-rule-required"
+            for row in numeric_rounding_selectors["bundle_rmode"]
+        ),
+        "bundle rounding selector ownership drift",
+    )
+    pd03 = next(
+        row
+        for row in numeric_profile_decisions["decision_questions"]
+        if row["id"] == "PD-03"
+    )
+    pd03_domains = numeric_rounding_selectors["domains"]
+    profile_domains_by_name = {
+        row["domain"]: row for row in numeric_profile_decisions["domain_matrix"]
+    }
+    require(
+        [row["domain"] for row in pd03_domains] == pd03["domains"]
+        and all(
+            row["lane"] == profile_domains_by_name[row["domain"]]["lane"]
+            and row["operation_count"]
+            == profile_domains_by_name[row["domain"]]["operation_count"]
+            and row["operation_keys"]
+            == profile_domains_by_name[row["domain"]]["operation_keys"]
+            and row["hooks"] == profile_domains_by_name[row["domain"]]["hooks"]
+            and row["selector_owner"] is None
+            and row["rounding_rule"] is None
+            and row["saturation_order_rule"] is None
+            and row["status"] == "profile-rule-required"
+            for row in pd03_domains
+        )
+        and numeric_rounding_selectors["summary"]
+        == {
+            "scalar_active_selector_count": 8,
+            "scalar_fixed_override_count": 5,
+            "bundle_rmode_selector_count": 8,
+            "external_selector_class_count": 4,
+            "affected_domain_count": 18,
+            "affected_operation_count": 102,
+            "affected_hook_count": 25,
+            "accepted_domain_rounding_rule_count": 0,
+            "pd03_complete": False,
+        },
+        "numeric rounding domain ownership or open-result boundary drift",
+    )
+    rounding_comparison = numeric_rounding_selectors["independent_comparison"]
+    require(
+        rounding_comparison["status"]
+        == "scalar-selection-structure-corroborated-not-numeric-oracle"
+        and rounding_comparison["provenance_sha256"]
+        == "9e601ae1a3f1a7025b048aa6108b04b445a3ccbc68fc77ea4b76d7befa2e46b8"
+        and len(rounding_comparison["matched_contracts"]) == 3
+        and len(rounding_comparison["limits"]) == 3
+        and len(numeric_rounding_selectors["external_selector_classes"]) == 4,
+        "numeric rounding comparison or external namespace boundary drift",
+    )
+    rounding_profile_test_body = (
+        ROOT / "tests" / "asl" / "profile-tests.asl"
+    ).read_text(encoding="utf-8")
+    for witness in (
+        "FloatingRoundNearest(-2.5)",
+        "FloatingRoundNearest(-3.5)",
+        "let rne_positive = FloatingToInteger(2.5, FloatingRound_Nearest);",
+        "let rne_negative = FloatingToInteger(-2.5, FloatingRound_Nearest);",
+        "let away_positive = FloatingToInteger(2.5, FloatingRound_Away);",
+        "let away_negative = FloatingToInteger(-2.5, FloatingRound_Away);",
+        "assert rne_positive == 2;",
+        "assert rne_negative == -2;",
+        "assert away_positive == 3;",
+        "assert away_negative == -3;",
+    ):
+        require(
+            witness in rounding_profile_test_body,
+            f"numeric rounding halfway witness missing: {witness}",
+        )
     require(
         set(scalar_sys_totality)
         == {
@@ -5375,6 +5565,10 @@ def main() -> int:
         and "scalar-numeric-flag-contract.json" in numeric_profile_decision_body
         and "scalar-numeric-flag-contract.json" in readme_body
         and "scalar-numeric-flag-contract.json" in coverage_body
+        and "numeric-rounding-selector-contract.json" in numeric_profile_decision_body
+        and "numeric-rounding-selector-contract.json" in maturity_index_body
+        and "numeric-rounding-selector-contract.json" in readme_body
+        and "numeric-rounding-selector-contract.json" in coverage_body
         and "release-traceability-readiness.json" in maturity_index_body
         and "release-traceability-readiness.json" in readme_body
         and "release-traceability-readiness.json" in coverage_body
@@ -5427,6 +5621,12 @@ def main() -> int:
         and "scripts/generate-scalar-numeric-flag-contract"
         in closure_requirement["model"]
         and "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md"
+        in closure_requirement["model"]
+        and "spec/evidence/numeric-rounding-selector-contract.json"
+        in closure_requirement["model"]
+        and "scripts/generate-numeric-rounding-selector-contract"
+        in closure_requirement["model"]
+        and "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md"
         in closure_requirement["model"]
         and "spec/evidence/release-traceability-readiness.json"
         in closure_requirement["model"]
@@ -6643,13 +6843,14 @@ def main() -> int:
             "profile_hooks",
             "profile_proposals",
             "promotion_residuals",
+            "rounding_selector_contract",
             "scalar_flag_contract",
             "schema_version",
             "status",
             "summary",
             "target",
         }
-        and numeric_profile_proposals["schema_version"] == 3
+        and numeric_profile_proposals["schema_version"] == 4
         and numeric_profile_proposals["target"] == "S5-T2-A"
         and numeric_profile_proposals["status"] == "proposal-complete-decisions-open",
         "numeric profile proposal identity or schema drift",
@@ -6669,6 +6870,29 @@ def main() -> int:
             "pd06_complete": False,
         },
         "numeric profile proposal scalar flag checkpoint drift",
+    )
+    require(
+        numeric_profile_proposals["rounding_selector_contract"]
+        == {
+            "path": "spec/evidence/numeric-rounding-selector-contract.json",
+            "sha256": hashlib.sha256(
+                (
+                    ROOT / "spec/evidence/numeric-rounding-selector-contract.json"
+                ).read_bytes()
+            ).hexdigest(),
+            "status": "selector-ownership-inventory-closed-result-rules-open",
+            "acceptance_record": "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
+            "scalar_active_selector_count": 8,
+            "scalar_fixed_override_count": 5,
+            "bundle_rmode_selector_count": 8,
+            "external_selector_class_count": 4,
+            "affected_domain_count": 18,
+            "affected_operation_count": 102,
+            "affected_hook_count": 25,
+            "accepted_domain_rounding_rule_count": 0,
+            "pd03_complete": False,
+        },
+        "numeric profile proposal rounding checkpoint drift",
     )
     proposed_profiles = numeric_profile_proposals["profile_proposals"]
     require(
@@ -6827,6 +7051,10 @@ def main() -> int:
         and "scripts/generate-numeric-profile-decision-proposals" in s5_t2["evidence"]
         and "spec/evidence/scalar-numeric-flag-contract.json" in s5_t2["evidence"]
         and "scripts/generate-scalar-numeric-flag-contract" in s5_t2["evidence"]
+        and "spec/evidence/numeric-rounding-selector-contract.json" in s5_t2["evidence"]
+        and "scripts/generate-numeric-rounding-selector-contract" in s5_t2["evidence"]
+        and "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md"
+        in s5_t2["evidence"]
         and next(gap for gap in s5_t2["gaps"] if gap["id"] == "S5-T2-G1")[
             "classification"
         ]
@@ -6885,6 +7113,22 @@ def main() -> int:
             in requirements_by_id[requirement_id]["model"],
             f"scalar numeric flag checkpoint is not traceable from {requirement_id}",
         )
+        require(
+            "spec/evidence/numeric-rounding-selector-contract.json"
+            in requirements_by_id[requirement_id]["model"]
+            and "scripts/generate-numeric-rounding-selector-contract"
+            in requirements_by_id[requirement_id]["model"]
+            and "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md"
+            in requirements_by_id[requirement_id]["model"],
+            f"numeric rounding selector checkpoint is not traceable from {requirement_id}",
+        )
+    require(
+        "spec/evidence/numeric-rounding-selector-contract.json"
+        in requirements_by_id["PTO-REQ-BUNDLE-STATE-001"]["model"]
+        and "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md"
+        in requirements_by_id["PTO-REQ-BUNDLE-STATE-001"]["model"],
+        "bundle RMode selector ownership is not requirement-traceable",
+    )
     require(
         targets_by_id["S5-T1"]["status"] == "closed"
         and targets_by_id["S5-T1"]["gaps"] == []

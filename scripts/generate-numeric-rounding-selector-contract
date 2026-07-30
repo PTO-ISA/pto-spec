@@ -1,0 +1,271 @@
+#!/usr/bin/env python3
+"""Generate the fail-closed numeric rounding selector ownership contract."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SCALAR_CATALOG = ROOT / "spec/catalog/scalar-forms.json"
+COMMAND_CATALOG = ROOT / "spec/catalog/command-forms.json"
+DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
+IDENTITY_CATALOG = ROOT / "spec/catalog/numeric-profile-identities.json"
+OUTPUT = ROOT / "spec/evidence/numeric-rounding-selector-contract.json"
+ACCEPTANCE_RECORD = (
+    "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md"
+)
+
+ACTIVE_ROUNDING = (
+    (0, "RNE", "nearest-ties-even", "portable-core"),
+    (1, "RTM", "toward-negative-infinity", "portable-core"),
+    (2, "RTP", "toward-positive-infinity", "portable-core"),
+    (3, "RTZ", "toward-zero", "portable-core"),
+    (4, "RTA", "away-from-zero", "active-versus-fixed-scope-decision-required"),
+    (5, None, None, "reserved-fallback-versus-rejection-decision-required"),
+    (6, None, None, "reserved-fallback-versus-rejection-decision-required"),
+    (7, None, None, "reserved-fallback-versus-rejection-decision-required"),
+)
+
+FIXED_CONVERSIONS = (
+    ("FCVTA", 4, "RTA", "away-from-zero"),
+    ("FCVTM", 1, "RTM", "toward-negative-infinity"),
+    ("FCVTN", 0, "RNE", "nearest-ties-even"),
+    ("FCVTP", 2, "RTP", "toward-positive-infinity"),
+    ("FCVTZ", 3, "RTZ", "toward-zero"),
+)
+
+
+def load(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise SystemExit(message)
+
+
+def source(path: str) -> dict[str, str]:
+    absolute = ROOT / path
+    return {
+        "path": path,
+        "sha256": hashlib.sha256(absolute.read_bytes()).hexdigest(),
+    }
+
+
+def generate() -> dict[str, Any]:
+    scalar = load(SCALAR_CATALOG)
+    command = load(COMMAND_CATALOG)
+    inputs = load(DECISION_INPUTS)
+    identities = load(IDENTITY_CATALOG)
+
+    pd03 = next(row for row in inputs["decision_questions"] if row["id"] == "PD-03")
+    require(pd03["status"] == "decision-required", "PD-03 status drift")
+    require(
+        pd03["selected_disposition"] is None and pd03["decision_record"] is None,
+        "PD-03 must remain unaccepted while result rules are open",
+    )
+
+    scalar_forms = {row["mnemonic"]: row for row in scalar["forms"]}
+    fixed_rows = []
+    for mnemonic, code, name, rule in FIXED_CONVERSIONS:
+        form = scalar_forms[mnemonic]
+        require(form["semantic_family"] == "FSU", f"{mnemonic} family drift")
+        fixed_rows.append(
+            {
+                "form_id": form["form_id"],
+                "mnemonic": mnemonic,
+                "selector_namespace": "scalar-fixed-conversion-override",
+                "code": code,
+                "portable_name": name,
+                "mathematical_rule": rule,
+                "selection_status": "closed",
+                "numeric_result_status": "operation-type-rule-required",
+            }
+        )
+
+    command_form = next(row for row in command["forms"] if row["mnemonic"] == "B.DATR")
+    rmode = next(field for field in command_form["fields"] if field["name"] == "RMode")
+    require(rmode["width"] == 3, "B.DATR RMode width drift")
+    command_rows = [
+        {
+            "form_id": command_form["form_id"],
+            "mnemonic": command_form["mnemonic"],
+            "selector_namespace": "bundle-data-attribute-rmode",
+            "code": code,
+            "binding": "BundleDataAttributes.rounding_mode",
+            "selection_status": "encoding-and-state-binding-closed",
+            "numeric_result_status": "named-profile-rule-required",
+        }
+        for code in range(1 << rmode["width"])
+    ]
+
+    active_rows = [
+        {
+            "selector_namespace": "scalar-core-state-frm",
+            "system_register": "CORE_STATE",
+            "bit_range": "39:37",
+            "code": code,
+            "portable_name": name,
+            "mathematical_rule": rule,
+            "selection_status": status,
+            "pto_v0_behavior": (
+                "passes-code-to-active-profile-hook"
+                if code <= 4
+                else "normalizes-to-RNE"
+            ),
+        }
+        for code, name, rule, status in ACTIVE_ROUNDING
+    ]
+
+    domain_rows_by_name = {}
+    for row in inputs["domain_matrix"]:
+        if "PD-03" not in row["decision_question_ids"]:
+            continue
+        domain_rows_by_name[row["domain"]] = {
+            "domain": row["domain"],
+            "lane": row["lane"],
+            "operation_count": row["operation_count"],
+            "operation_keys": row["operation_keys"],
+            "hooks": row["hooks"],
+            "candidate_profile_ids": [
+                identity["id"]
+                for identity in identities["identities"]
+                if identity["kind"] != "observation-only"
+            ],
+            "selector_owner": None,
+            "rounding_rule": None,
+            "saturation_order_rule": None,
+            "status": "profile-rule-required",
+        }
+
+    domain_rows = [domain_rows_by_name[name] for name in pd03["domains"]]
+
+    require(
+        set(domain_rows_by_name) == set(pd03["domains"]),
+        "PD-03 domain ordering or membership drift",
+    )
+    hooks = sorted({hook for row in domain_rows for hook in row["hooks"]})
+
+    return {
+        "schema_version": 1,
+        "target": "S5-T2-A2:PD-03",
+        "decision_id": "PD-03",
+        "status": "selector-ownership-inventory-closed-result-rules-open",
+        "acceptance_record": ACCEPTANCE_RECORD,
+        "policy": {
+            "namespace_separation": "Scalar FRM, scalar fixed conversion overrides, bundle RMode, public API modes, matrix controls, and stochastic controls are distinct selector namespaces unless an accepted rule maps them.",
+            "no_backend_inheritance": "Backend CAST, ROUND, PART, and stochastic-control values are evidence only and cannot create portable PTO encodings.",
+            "unknown_selection": "Unknown or unmapped selectors and missing delegated rounding rules reject before architectural effects under ADR 0037.",
+            "saturation_order": "Rounding selection and saturation selection are independent inputs; each accepted conversion or quantization rule must define their order.",
+            "pd03_boundary": "This artifact closes selector discovery and ownership only. PD-03 remains open until all affected domains have exact rounding and saturation-order rules plus vectors.",
+        },
+        "scalar_active_rounding": active_rows,
+        "scalar_fixed_conversion_overrides": fixed_rows,
+        "bundle_rmode": command_rows,
+        "external_selector_classes": [
+            {
+                "class": "public-conversion-round-mode",
+                "source_ids": [
+                    "public-type-system",
+                    "cpu-conversion",
+                    "a2a3-conversion",
+                    "a5-conversion",
+                ],
+                "status": "mapping-decision-required",
+            },
+            {
+                "class": "matrix-tf32-hf32-rounding-control",
+                "source_ids": ["public-target-profiles", "a2a3-matrix", "a5-matrix"],
+                "status": "named-target-profile-rule-required",
+            },
+            {
+                "class": "quantization-stochastic-control",
+                "source_ids": ["a2a3-quantization", "a5-quantization"],
+                "status": "state-or-bounded-result-decision-required",
+            },
+            {
+                "class": "backend-only-cast-round-part-controls",
+                "source_ids": ["cpu-conversion", "a2a3-conversion", "a5-conversion"],
+                "status": "non-normative-unless-profile-mapped",
+            },
+        ],
+        "domains": domain_rows,
+        "independent_comparison": {
+            "status": "scalar-selection-structure-corroborated-not-numeric-oracle",
+            "provenance_sha256": "9e601ae1a3f1a7025b048aa6108b04b445a3ccbc68fc77ea4b76d7befa2e46b8",
+            "matched_contracts": [
+                "scalar-FRM-field-location",
+                "RNE-RTM-RTP-RTZ-code-order",
+                "fixed-conversion-rounding-overrides",
+            ],
+            "limits": [
+                "independent-numeric-helpers-are-not-a-PTO-oracle",
+                "bundle-RMode-has-no-independent-semantic-mapping",
+                "target-conversion-matrix-and-stochastic-controls-are-not-closed",
+            ],
+        },
+        "tests": [
+            "tests/asl/profile-tests.asl:TestConcreteProfile",
+            "tests/asl/scalar-tests.asl:TestScalarFloating",
+            "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUFlagAndRoundingHelpers",
+            "scripts/generate-bundle-command-totality:ValidateCanonicalBundleCommandTotality",
+        ],
+        "sources": [
+            source("spec/catalog/scalar-forms.json"),
+            source("spec/catalog/command-forms.json"),
+            source("spec/catalog/numeric-profile-identities.json"),
+            source("spec/evidence/numeric-profile-decision-inputs.json"),
+            source("spec/evidence/scalar-fsu-totality.json"),
+            source("asl/scalar/floating.asl"),
+            source("asl/scalar/dispatch.asl"),
+            source("asl/bundle/state.asl"),
+            source("asl/bundle/dispatch.asl"),
+            source(
+                "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md"
+            ),
+            source(
+                "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+            ),
+        ],
+        "summary": {
+            "scalar_active_selector_count": len(active_rows),
+            "scalar_fixed_override_count": len(fixed_rows),
+            "bundle_rmode_selector_count": len(command_rows),
+            "external_selector_class_count": 4,
+            "affected_domain_count": len(domain_rows),
+            "affected_operation_count": sum(
+                row["operation_count"] for row in domain_rows
+            ),
+            "affected_hook_count": len(hooks),
+            "accepted_domain_rounding_rule_count": 0,
+            "pd03_complete": False,
+        },
+    }
+
+
+def serialized() -> str:
+    return json.dumps(generate(), indent=2, ensure_ascii=False) + "\n"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    action = parser.add_mutually_exclusive_group(required=True)
+    action.add_argument("--check", action="store_true")
+    action.add_argument("--write", action="store_true")
+    args = parser.parse_args()
+    expected = serialized()
+    if args.write:
+        OUTPUT.write_text(expected, encoding="utf-8")
+        return 0
+    if not OUTPUT.is_file() or OUTPUT.read_text(encoding="utf-8") != expected:
+        raise SystemExit(f"stale generated evidence: {OUTPUT.relative_to(ROOT)}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -15,8 +15,33 @@ begin
     assert exponential_zero == 1.0;
     let rounded_even_low = FloatingRoundNearest(2.5);
     let rounded_even_high = FloatingRoundNearest(3.5);
+    let rounded_even_negative_low = FloatingRoundNearest(-2.5);
+    let rounded_even_negative_high = FloatingRoundNearest(-3.5);
     assert rounded_even_low == 2;
     assert rounded_even_high == 4;
+    assert rounded_even_negative_low == -2;
+    assert rounded_even_negative_high == -4;
+
+    let rne_positive = FloatingToInteger(2.5, FloatingRound_Nearest);
+    let rne_negative = FloatingToInteger(-2.5, FloatingRound_Nearest);
+    let down_positive = FloatingToInteger(2.5, FloatingRound_Down);
+    let down_negative = FloatingToInteger(-2.5, FloatingRound_Down);
+    let up_positive = FloatingToInteger(2.5, FloatingRound_Up);
+    let up_negative = FloatingToInteger(-2.5, FloatingRound_Up);
+    let zero_positive = FloatingToInteger(2.5, FloatingRound_TowardsZero);
+    let zero_negative = FloatingToInteger(-2.5, FloatingRound_TowardsZero);
+    let away_positive = FloatingToInteger(2.5, FloatingRound_Away);
+    let away_negative = FloatingToInteger(-2.5, FloatingRound_Away);
+    assert rne_positive == 2;
+    assert rne_negative == -2;
+    assert down_positive == 2;
+    assert down_negative == -3;
+    assert up_positive == 3;
+    assert up_negative == -2;
+    assert zero_positive == 2;
+    assert zero_negative == -2;
+    assert away_positive == 3;
+    assert away_negative == -3;
 
     let (fp_binary, fp_binary_flags) = ScalarFPBinaryProfile(
         FloatingBinary_ADD, Zeros{3}, Zeros{5},
