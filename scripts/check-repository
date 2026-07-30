@@ -40,6 +40,7 @@ required_files=(
     spec/catalog/tile-operations.json
     spec/evidence/public-source-reconciliation.json
     spec/evidence/maturity-closure.json
+    spec/evidence/numeric-conformance-readiness.json
     spec/evidence/numeric-contracts.json
     spec/evidence/bundle-command-totality.json
     spec/evidence/cube-totality.json
@@ -54,6 +55,7 @@ required_files=(
     scripts/generate-bundle-command-totality
     scripts/generate-executable-model-comparison
     scripts/generate-instruction-reference
+    scripts/generate-numeric-conformance-readiness
     scripts/generate-public-source-reconciliation
     tests/README.md
 )
@@ -147,5 +149,6 @@ done
 
 python3 scripts/check-catalogs
 ./scripts/generate-bundle-command-totality --check
+./scripts/generate-numeric-conformance-readiness --check
 python3 scripts/generate-instruction-reference --check
 python3 scripts/check-publication-hygiene

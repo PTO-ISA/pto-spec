@@ -170,7 +170,10 @@ corresponding oracle and vector identities are frozen.
 
 These lanes partition the closed `S5-T1` inventory exactly once. Counts are
 closure invariants: future inventory changes must update the numeric-contract
-ledger and this plan together before conformance execution.
+ledger and this plan together before conformance execution. The generated
+`spec/evidence/numeric-conformance-readiness.json` ledger contains the complete
+operation-key and hook assignment for each lane; CI regenerates it from
+`numeric-contracts.json` and rejects missing, duplicate, or stale membership.
 
 | Lane | Contract domains | Operations | Hooks | Required numeric focus |
 | --- | --- | ---: | ---: | --- |
@@ -214,3 +217,6 @@ documented as intentions.
 - `docs/maturity-bringup-plan.md` explains the rationale and sequencing.
 - `spec/evidence/maturity-closure.json` is the machine-readable source of truth
   for target state, evidence, and gaps.
+- `spec/evidence/numeric-conformance-readiness.json` is the generated S5-T2
+  source of truth for sub-stage dependencies, exact parallel-lane membership,
+  evidence slots, and promotion readiness.

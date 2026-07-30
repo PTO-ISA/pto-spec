@@ -44,6 +44,8 @@
         "docs/architecture-decisions/0011-visible-ebarg-snapshot.md",
         "docs/architecture-decisions/0034-cube-raw-carrier-totality.md",
         "spec/evidence/cube-totality.json",
+        "scripts/generate-numeric-conformance-readiness",
+        "spec/evidence/numeric-conformance-readiness.json",
         "spec/evidence/numeric-contracts.json",
         "spec/profile-hooks.json"
       ],
@@ -317,7 +319,9 @@
         "asl/scalar/floating.asl",
         "asl/scalar/dispatch.asl",
         "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
+        "scripts/generate-numeric-conformance-readiness",
         "spec/evidence/scalar-fsu-totality.json",
+        "spec/evidence/numeric-conformance-readiness.json",
         "spec/evidence/numeric-contracts.json",
         "spec/profile-hooks.json"
       ],
@@ -497,7 +501,9 @@
       "model": [
         "asl/tile/elementwise.asl",
         "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
+        "scripts/generate-numeric-conformance-readiness",
         "spec/evidence/tepl-totality.json",
+        "spec/evidence/numeric-conformance-readiness.json",
         "spec/evidence/numeric-contracts.json",
         "spec/profile-hooks.json"
       ],
@@ -513,7 +519,9 @@
       "model": [
         "asl/tile/reduction.asl",
         "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
+        "scripts/generate-numeric-conformance-readiness",
         "spec/evidence/tepl-totality.json",
+        "spec/evidence/numeric-conformance-readiness.json",
         "spec/evidence/numeric-contracts.json",
         "spec/profile-hooks.json"
       ],
@@ -529,7 +537,9 @@
       "model": [
         "asl/tile/expansion.asl",
         "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
+        "scripts/generate-numeric-conformance-readiness",
         "spec/evidence/tepl-totality.json",
+        "spec/evidence/numeric-conformance-readiness.json",
         "spec/evidence/numeric-contracts.json",
         "spec/profile-hooks.json"
       ],
@@ -559,7 +569,9 @@
       "model": [
         "asl/tile/conversion.asl",
         "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
+        "scripts/generate-numeric-conformance-readiness",
         "spec/evidence/tepl-totality.json",
+        "spec/evidence/numeric-conformance-readiness.json",
         "spec/evidence/numeric-contracts.json",
         "spec/profile-hooks.json"
       ],
@@ -589,7 +601,9 @@
       "model": [
         "asl/tile/complex.asl",
         "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
+        "scripts/generate-numeric-conformance-readiness",
         "spec/evidence/tepl-totality.json",
+        "spec/evidence/numeric-conformance-readiness.json",
         "spec/evidence/numeric-contracts.json",
         "spec/profile-hooks.json"
       ],
@@ -622,7 +636,9 @@
         "asl/tile/cube.asl",
         "asl/tile/legality.asl",
         "docs/architecture-decisions/0034-cube-raw-carrier-totality.md",
+        "scripts/generate-numeric-conformance-readiness",
         "spec/evidence/cube-totality.json",
+        "spec/evidence/numeric-conformance-readiness.json",
         "spec/evidence/numeric-contracts.json",
         "spec/profile-hooks.json"
       ],
@@ -756,10 +772,12 @@
         "scripts/check-catalogs",
         "scripts/check-repository",
         "scripts/generate-executable-model-comparison",
+        "scripts/generate-numeric-conformance-readiness",
         "spec/catalog/scalar-forms.json",
         "spec/catalog/command-forms.json",
         "spec/catalog/tile-operations.json",
         "spec/evidence/maturity-closure.json",
+        "spec/evidence/numeric-conformance-readiness.json",
         "spec/evidence/numeric-contracts.json",
         "spec/evidence/executable-model-comparison.json"
       ],

@@ -21,6 +21,9 @@ The Stage 5 numeric ownership inventory is already closed: 19 scalar forms and
 89 direct-tile operations are assigned to all 29 numeric profile hooks in
 `spec/evidence/numeric-contracts.json`. This inventory does not claim numerical
 or target-hardware conformance; those obligations remain open under `S5-T2`.
+The generated `spec/evidence/numeric-conformance-readiness.json` ledger
+partitions that work across six parallel lanes and keeps every unavailable
+profile, oracle, vector, result, and review identity explicit.
 The executable-model comparison has an exhaustive 701-row disposition matrix
 and a clean content-addressed snapshot whose generation, validation,
 documentation, Sail parser, and Sail C-backend gates all pass.

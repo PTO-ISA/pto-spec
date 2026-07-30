@@ -14,7 +14,10 @@ from target-conformance status: all 37 hooks have deterministic PTO-v0
 implementations, and eight non-numeric hooks close their reference contracts.
 The checked `S5-T1` inventory assigns all 29 numeric hooks to their affected
 scalar and tile operations. Those hooks retain `S5-T2` target-conformance
-obligations. An alternative
+obligations. The generated
+`spec/evidence/numeric-conformance-readiness.json` ledger divides those
+obligations into six exact parallel lanes and keeps every unavailable profile,
+oracle, vector, result, and review identity null. An alternative
 implementation is conforming only if it names the replaced hooks, satisfies
 every recorded obligation, preserves non-profile architecture behavior, and
 supplies raw input/output and state-effect tests.
@@ -124,3 +127,9 @@ exactly. It also freezes the eight closed non-numeric versus 29 raw-carrier
 implemented, target-conformance-open classifications. CI requires the active
 profile identity in `specification.toml` and executes the complete ASL suite
 with the pinned ASLRef.
+
+The same gate regenerates the S5-T2 readiness ledger from the numeric-contract
+inventory. Every domain, hook, and operation key must occur in exactly one
+numeric lane. A lane cannot become promotion-ready merely because the active
+raw-carrier profile test passes; it must acquire independent profile, oracle,
+vector, differential-result, and review evidence in dependency order.

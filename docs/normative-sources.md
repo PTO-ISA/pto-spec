@@ -148,5 +148,13 @@ binds every affected catalog identity to one numeric contract and owner, and
 keeps every target-dependent arithmetic dimension explicitly open under
 `S5-T2` until independent conformance evidence exists.
 
+`numeric-conformance-readiness.json` is generated from that ownership ledger.
+It partitions all 20 numeric domains, 29 hooks, and 108 affected operations
+exactly once across six parallel lanes, records the ordered S5-T2 promotion
+dependencies, and leaves profile, oracle, vector, differential-result, and
+review fields explicitly empty until their evidence exists. Generation fails
+if the inventory is missing, duplicated, stale, or prematurely claims
+conformance.
+
 Where evidence and PTO-owned semantics disagree, the PTO ASL and catalogs
 prevail after a reviewed architecture decision.

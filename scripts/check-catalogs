@@ -668,6 +668,7 @@ def main() -> int:
     cube_totality = load("spec/evidence/cube-totality.json")
     executable_model_comparison = load("spec/evidence/executable-model-comparison.json")
     maturity_closure = load("spec/evidence/maturity-closure.json")
+    numeric_readiness = load("spec/evidence/numeric-conformance-readiness.json")
     numeric_contracts = load("spec/evidence/numeric-contracts.json")
     requirements = load("spec/requirements.json")["requirements"]
     profile_catalog = load("spec/profile-hooks.json")
@@ -5157,6 +5158,9 @@ def main() -> int:
         and targets_by_id["S5-T3"]["gaps"] == []
         and "spec/evidence/executable-model-comparison.json"
         in targets_by_id["S5-T3"]["evidence"]
+        and "numeric-conformance-readiness.json" in maturity_index_body
+        and "numeric-conformance-readiness.json" in readme_body
+        and "numeric-conformance-readiness.json" in coverage_body
         and "| **Total** | **28** | **31** |" in maturity_plan_body
         and "| **Total** | **28** | **31** |" in maturity_index_body
         and "| `S4-T1` | AGU | Closed |" in maturity_index_body
@@ -5178,6 +5182,10 @@ def main() -> int:
         and "spec/evidence/executable-model-comparison.json"
         in closure_requirement["model"]
         and "scripts/generate-executable-model-comparison"
+        in closure_requirement["model"]
+        and "spec/evidence/numeric-conformance-readiness.json"
+        in closure_requirement["model"]
+        and "scripts/generate-numeric-conformance-readiness"
         in closure_requirement["model"]
         and "scripts/check-asl-test-shards" in closure_requirement["model"]
         and "scripts/check-asl-test-shards" in closure_requirement["tests"]
@@ -5722,6 +5730,180 @@ def main() -> int:
         },
         "numeric-contract summary drift",
     )
+
+    require(
+        set(numeric_readiness)
+        == {
+            "blocking_gap_ids",
+            "lanes",
+            "policy",
+            "schema_version",
+            "source_inventory",
+            "status",
+            "sub_stages",
+            "summary",
+            "target",
+        },
+        "numeric-conformance readiness top-level schema drift",
+    )
+    require(
+        numeric_readiness["schema_version"] == 1
+        and numeric_readiness["target"] == "S5-T2"
+        and numeric_readiness["status"] == "readiness-defined-conformance-open"
+        and numeric_readiness["source_inventory"]
+        == "spec/evidence/numeric-contracts.json",
+        "numeric-conformance readiness identity or status drift",
+    )
+    require(
+        set(numeric_readiness["policy"])
+        == {
+            "active_reference_profile_role",
+            "authority",
+            "closure_rule",
+            "implementation_under_test_role",
+            "independent_executable_model_role",
+        }
+        and all(numeric_readiness["policy"].values()),
+        "numeric-conformance readiness policy drift",
+    )
+    expected_numeric_sub_stages = {
+        "S5-T2-A": ("open", []),
+        "S5-T2-B": ("waiting-on-prerequisite", ["S5-T2-A"]),
+        "S5-T2-C": (
+            "waiting-on-prerequisite",
+            ["S5-T2-A", "S5-T2-B"],
+        ),
+        "S5-T2-D": (
+            "waiting-on-prerequisite",
+            ["S5-T2-B", "S5-T2-C"],
+        ),
+        "S5-T2-E": ("waiting-on-prerequisite", ["S5-T2-D"]),
+        "S5-T2-F": (
+            "waiting-on-prerequisite",
+            ["S5-T2-A", "S5-T2-B", "S5-T2-C", "S5-T2-D", "S5-T2-E"],
+        ),
+    }
+    numeric_sub_stages = numeric_readiness["sub_stages"]
+    require(
+        [row["id"] for row in numeric_sub_stages] == list(expected_numeric_sub_stages),
+        "numeric-conformance sub-stage identity or ordering drift",
+    )
+    for row in numeric_sub_stages:
+        require(
+            set(row) == {"blocked_by", "id", "status", "target"}
+            and (row["status"], row["blocked_by"])
+            == expected_numeric_sub_stages[row["id"]]
+            and isinstance(row["target"], str)
+            and row["target"],
+            f"numeric-conformance sub-stage drift for {row.get('id', '<unknown>')}",
+        )
+
+    numeric_lanes = numeric_readiness["lanes"]
+    require(
+        [row["id"] for row in numeric_lanes] == ["N1", "N2", "N3", "N4", "N5", "N6"],
+        "numeric-conformance lane identity or ordering drift",
+    )
+    lane_domain_membership: Counter[str] = Counter()
+    lane_hook_membership: Counter[str] = Counter()
+    lane_operation_membership: Counter[str] = Counter()
+    parallel_shards: list[str] = []
+    for lane in numeric_lanes:
+        require(
+            set(lane)
+            == {
+                "contract_domains",
+                "counts",
+                "differential_result",
+                "hooks",
+                "id",
+                "open_numeric_dimensions",
+                "oracle_identity",
+                "oracle_requirement",
+                "operation_keys",
+                "parallel_shard",
+                "profile_identity",
+                "required_vector_classes",
+                "review_disposition",
+                "status",
+                "title",
+                "vector_manifest",
+            },
+            f"numeric-conformance lane schema drift for {lane.get('id', '<unknown>')}",
+        )
+        require(
+            lane["status"] == "profile-and-oracle-required"
+            and re.fullmatch(r"numeric-[a-z-]+", lane["parallel_shard"]) is not None
+            and isinstance(lane["oracle_requirement"], str)
+            and lane["oracle_requirement"]
+            and lane["required_vector_classes"]
+            and len(lane["required_vector_classes"])
+            == len(set(lane["required_vector_classes"]))
+            and lane["open_numeric_dimensions"]
+            and lane["open_numeric_dimensions"]
+            == sorted(set(lane["open_numeric_dimensions"])),
+            f"numeric-conformance lane contract drift for {lane['id']}",
+        )
+        require(
+            all(
+                lane[key] is None
+                for key in (
+                    "profile_identity",
+                    "oracle_identity",
+                    "vector_manifest",
+                    "differential_result",
+                    "review_disposition",
+                )
+            ),
+            f"numeric-conformance lane {lane['id']} claims unavailable evidence",
+        )
+        require(
+            lane["counts"]
+            == {
+                "contract_domains": len(lane["contract_domains"]),
+                "hooks": len(lane["hooks"]),
+                "operations": len(lane["operation_keys"]),
+            },
+            f"numeric-conformance lane count drift for {lane['id']}",
+        )
+        lane_domain_membership.update(lane["contract_domains"])
+        lane_hook_membership.update(lane["hooks"])
+        lane_operation_membership.update(lane["operation_keys"])
+        parallel_shards.append(lane["parallel_shard"])
+    require(
+        lane_domain_membership
+        == Counter({domain_id: 1 for domain_id in numeric_domains_by_id})
+        and lane_hook_membership
+        == Counter({hook_name: 1 for hook_name in numeric_hooks_by_name})
+        and lane_operation_membership
+        == Counter({key: 1 for key in numeric_operations_by_key})
+        and len(parallel_shards) == len(set(parallel_shards)),
+        "numeric-conformance lanes do not partition domains, hooks, operations, and shards exactly once",
+    )
+    require(
+        numeric_readiness["summary"]
+        == {
+            "contract_domain_count": 20,
+            "differential_result_count": 0,
+            "hook_count": 29,
+            "lane_count": 6,
+            "operation_count": 108,
+            "profile_identity_count": 0,
+            "promotion_ready": False,
+            "qualified_oracle_count": 0,
+            "reviewed_lane_count": 0,
+            "vector_manifest_count": 0,
+        },
+        "numeric-conformance readiness summary drift",
+    )
+    s5_t2 = targets_by_id["S5-T2"]
+    require(
+        s5_t2["status"] == "open"
+        and numeric_readiness["blocking_gap_ids"]
+        == [gap["id"] for gap in s5_t2["gaps"]]
+        and "spec/evidence/numeric-conformance-readiness.json" in s5_t2["evidence"]
+        and "scripts/generate-numeric-conformance-readiness" in s5_t2["evidence"],
+        "S5-T2 readiness evidence, status, and classified gaps disagree",
+    )
     numeric_requirement_ids = {spec[0] for spec in numeric_domain_specs.values()} | {
         "PTO-REQ-PROFILE-001",
         "PTO-REQ-CLOSURE-001",
@@ -5731,6 +5913,13 @@ def main() -> int:
             "spec/evidence/numeric-contracts.json"
             in requirements_by_id[requirement_id]["model"],
             f"numeric-contract evidence is not traceable from {requirement_id}",
+        )
+        require(
+            "spec/evidence/numeric-conformance-readiness.json"
+            in requirements_by_id[requirement_id]["model"]
+            and "scripts/generate-numeric-conformance-readiness"
+            in requirements_by_id[requirement_id]["model"],
+            f"numeric-conformance readiness is not traceable from {requirement_id}",
         )
     require(
         targets_by_id["S5-T1"]["status"] == "closed"

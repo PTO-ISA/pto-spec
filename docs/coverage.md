@@ -81,4 +81,7 @@ closed: `spec/evidence/numeric-contracts.json` assigns all 19 scalar and 89
 direct-tile numeric-dependent operations to 29 hooks and an explicit profile
 owner. Target conformance is graded separately: eight non-numeric contracts are
 closed and the 29 numeric raw-carrier hooks remain assigned to `S5-T2`. Green
-validation does not turn PTO v0 into an IEEE or hardware profile.
+validation does not turn PTO v0 into an IEEE or hardware profile. The generated
+`spec/evidence/numeric-conformance-readiness.json` ledger makes the remaining
+six-lane partition and its absent profile/oracle/vector/result/review evidence
+fail closed before expensive runtime validation begins.

@@ -282,7 +282,7 @@
       "title": "Own every target-dependent numeric contract"
     },
     {
-      "evidence": ["spec/evidence/numeric-contracts.json", "spec/profile-hooks.json", "tests/asl/profile-tests.asl", "docs/maturity-stage-targets.md"],
+      "evidence": ["spec/evidence/numeric-contracts.json", "spec/evidence/numeric-conformance-readiness.json", "scripts/generate-numeric-conformance-readiness", "spec/profile-hooks.json", "tests/asl/profile-tests.asl", "docs/maturity-stage-targets.md"],
       "gaps": [
         {"acceptance_evidence": ["accepted architecture decision naming and versioning each target numeric profile", "complete disposition of formats, rounding, exceptional values, subnormals, flags, saturation, accumulation width, and implementation-defined dimensions"], "classification": "profile-decision", "id": "S5-T2-G1", "statement": "No named target numeric profile currently separates portable numeric rules from target-specific behavior."},
         {"acceptance_evidence": ["independent oracle identity and immutable version or digest for every numeric lane", "reproducible invocation, supported-domain statement, limitations, and hardware-capture rule where software arithmetic is insufficient"], "classification": "evidence-gap", "id": "S5-T2-G2", "statement": "No independent, versioned numeric oracle is qualified for the six conformance lanes."},
@@ -293,7 +293,7 @@
       "id": "S5-T2",
       "tracking": ["https://github.com/PTO-ISA/pto-spec/issues/4"],
       "owner": "PTO numeric conformance maintainers",
-      "requirements": ["PTO-REQ-PROFILE-001", "PTO-REQ-SCALAR-FP-001", "PTO-REQ-TEPL-CONVERT-001", "PTO-REQ-CUBE-001"],
+      "requirements": ["PTO-REQ-PROFILE-001", "PTO-REQ-SCALAR-FP-001", "PTO-REQ-TEPL-001", "PTO-REQ-TEPL-REDUCE-001", "PTO-REQ-TEPL-EXPAND-001", "PTO-REQ-TEPL-CONVERT-001", "PTO-REQ-TEPL-COMPLEX-001", "PTO-REQ-CUBE-001"],
       "stage": 5,
       "status": "open",
       "title": "Close independent numeric conformance"

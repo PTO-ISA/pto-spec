@@ -169,7 +169,7 @@ closure; **open** means no closure claim is made.
 | `S4-T9` | 4 | Closed | Close TMA precise accesses, masks, restart, atomicity, ordering, fault precedence, and sub-byte transfer disposition. | ADR 0033; all-nine decoded-selector matrix; packed nibble, duplicate-index, masked, CAS, event, and first/middle/last fault-preflight evidence |
 | `S4-T10` | 4 | Closed | Close CUBE type/shape combinations, accumulation, rounding, saturation, aliases, and composite preflight. | ADR 0034; all-13 decoded selector matrix; all-19 raw-carrier types; mixed layout/location, alias, and composite no-partial-effect matrices; numeric conformance remains S5-T2 |
 | `S5-T1` | 5 | Closed | Inventory every operation whose result depends on numeric behavior beyond the raw-carrier reference profile. | Checked `spec/evidence/numeric-contracts.json`: 19 scalar forms, 89 direct-tile operations, 29 hooks, an owner per row, and explicit `S5-T2` conformance obligations |
-| `S5-T2` | 5 | Open | Validate PTO numeric behavior against a named independent oracle without importing third-party semantics as PTO authority. | Differential report covering normal, boundary, exceptional, rounding, and saturation vectors |
+| `S5-T2` | 5 | Open | Validate PTO numeric behavior against a named independent oracle without importing third-party semantics as PTO authority. | Generated readiness ledger partitions all 20 domains, 29 hooks, and 108 operations exactly once; closure requires populated profile/oracle/vector/result/review evidence and a differential report covering normal, boundary, exceptional, rounding, saturation, reduction, and accumulation vectors |
 | `S5-T3` | 5 | Closed | Cross-check every shared scalar mnemonic and architectural pattern against a pinned independent executable ISA model, then resolve each difference as a PTO rule, profile difference, defect, or intentional non-equivalence. | The 701-row publication-safe disposition matrix is complete; the clean content-addressed snapshot passes all eight repository gates and the pinned Sail parser/C-backend gate |
 | `S6-T1` | 6 | Open | Prove requirements-to-model-to-test traceability with no unsupported completeness claim. | Closed requirements ledger and evidence-hygiene review |
 | `S6-T2` | 6 | Open | Pass clean regeneration, ASLRef, repository, publication, and independent architecture/formal review gates. | Clean `make ci`, `git diff --check`, and recorded approvals |
@@ -200,7 +200,7 @@ cross-family normative decisions.
 
 | Decision | Blocks | Classification | Required PTO decision | Closure witness |
 | --- | --- | --- | --- | --- |
-| `MD-08` | `S5-T2` | Profile decision | Define target numeric results beyond the closed `pto-v0` raw-carrier boundary: exceptional values, rounding, saturation, accumulation width, and conversion rules. | Named target numeric profile plus boundary and exceptional-value vectors checked against an independent oracle |
+| `MD-08` | `S5-T2` | Profile decision | Define target numeric results beyond the closed `pto-v0` raw-carrier boundary: exceptional values, rounding, saturation, accumulation width, and conversion rules. | Named target numeric profile plus boundary and exceptional-value vectors checked against an independent oracle; every generated readiness-lane evidence slot is populated and reviewed |
 
 Resolved decisions: ADR 0017 closes the former `MD-01` translation-register
 classification by making it explicit storage-only behavior in `pto-v0`. ADR
@@ -586,7 +586,8 @@ The next work should follow this dependency order:
 1. Preserve Stages 0–4 as regression gates; any semantic change must update and
    re-pass its target-specific closure matrix.
 2. Close `S5-T2` by naming the target numeric profile and independent oracle,
-   then publish normal, boundary, exceptional, rounding, and saturation vectors.
+   then populate the generated six-lane readiness ledger with normal, boundary,
+   exceptional, rounding, saturation, reduction, and accumulation evidence.
 3. Preserve the closed `S5-T3` content-addressed comparison and all archived
    independent gates whenever either specification changes.
 4. Reconcile requirements, model, tests, coverage, and release metadata for
