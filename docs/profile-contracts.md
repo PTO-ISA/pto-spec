@@ -42,6 +42,12 @@ formats, tuples, and missing delegated rules reject before architectural
 effects. The identity spellings and selection rules are closed; the 12 numeric
 decisions and all 20 domain rules remain open.
 
+ADR 0038 fixes the shared scalar exception-state envelope independently of
+target arithmetic. `CORE_STATE[36:32]` stores sticky NV/DZ/OF/UF/NX; reset,
+software replacement, simultaneous OR, rejected-operation preservation, and
+trap recovery are portable. The 30-form ownership matrix is complete, but 19
+profile-owned forms still require exact flag-production rules and vectors.
+
 ## PTO v0 concrete behavior
 
 ### Reset, access-control rings, and time
@@ -163,3 +169,5 @@ implementation evidence only. They cannot silently become PTO semantics.
 The generated `numeric-profile-decision-proposals.json` ledger imports the
 accepted identity catalog and records `S5-T2-A1` closed while keeping every
 question acceptance and domain result rule null.
+The generated `scalar-numeric-flag-contract.json` ledger records the accepted
+flag lifecycle and 30/30 producer-owner matrix without closing PD-06.

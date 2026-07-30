@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "target": "S5-T2-A",
   "status": "proposal-complete-decisions-open",
   "input": {
@@ -13,6 +13,16 @@
     "sha256": "f2bf1bcfa9e6ce1006132ac6d9aec4a8c698990a20eeb7736d361d62ed6477ed",
     "status": "identity-framework-closed-rules-open",
     "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+  },
+  "scalar_flag_contract": {
+    "path": "spec/evidence/scalar-numeric-flag-contract.json",
+    "sha256": "4b577b6d700b706618ade06f1b52531f24fd2b7679baaefeedb78f3ec3de1aeb",
+    "status": "state-owner-matrix-closed-profile-production-open",
+    "acceptance_record": "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
+    "producer_owner_closed_form_count": 30,
+    "architecture_condition_closed_form_count": 11,
+    "profile_condition_open_form_count": 19,
+    "pd06_complete": false
   },
   "policy": {
     "proposal_not_authority": "The identity and bounded-variation framework is accepted; question and domain proposals remain review inputs and do not select numeric results.",
@@ -420,11 +430,11 @@
       "proposed_dispositions": [
         "portable-normative-rule"
       ],
-      "proposed_rule": "NV, DZ, OF, UF, and NX are portable sticky architectural flags. Every scalar numeric form must define produced flag sets, simultaneous production, reset, trap preservation, and whether a rejected operation leaves flags unchanged.",
+      "proposed_rule": "NV, DZ, OF, UF, and NX are portable sticky architectural flags with the state, lifecycle, trap envelope, and 30-form producer ownership fixed by ADR 0038. Each of the 19 profile-owned forms still requires an exact produced flag set for every supported operation/type rule.",
       "open_items": [
-        "complete per-form producer matrix",
-        "define tininess detection and NX coupling",
-        "define simultaneous flags and trap interaction"
+        "accept exact flag conditions for all 19 profile-owned scalar forms",
+        "define tininess detection and NX coupling in every affected operation/type rule",
+        "publish independent simultaneous-flag and special-value vectors"
       ],
       "acceptance_evidence": [
         "flag production matrix",

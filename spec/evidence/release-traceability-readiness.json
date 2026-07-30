@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "17cb66d9e5e6228b9803776bc9a61760791afe0eb153810963a8671b3c443650"
+      "sha256": "fc94bef86f6d50488fad4659b2bad9c274d49956a8b887564c34e4b9ba50780a"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -39,11 +39,11 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "a170667a45ad21ac76394cc01280a18e0acb663a9f4b7b5871079cbdda2db1f6"
+      "sha256": "52d5b9348488077e0bf6706a0a7ac1f0b18b7f1423980453468f2810005cdb03"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "8b3da6cb0ee5ef997da388d62806f48c4dc60277de529f04853c68935a3f5dc2"
+      "sha256": "b5d3d361b0f1bea70b8d2783589df842d20766eeabf5c19dc6984b4731815413"
     },
     {
       "path": "spec/evidence/scalar-effect-closure.json",
@@ -288,6 +288,7 @@
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/profile-contracts.md",
         "model": [
           "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+          "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
           "asl/profiles/pto-v0.asl",
           "asl/scalar/system-registers.asl",
           "asl/state.asl",
@@ -300,9 +301,11 @@
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
+          "scripts/generate-scalar-numeric-flag-contract",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/catalog/numeric-profile-identities.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
@@ -590,16 +593,19 @@
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
         "model": [
           "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+          "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
           "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
+          "scripts/generate-scalar-numeric-flag-contract",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/catalog/numeric-profile-identities.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
@@ -1104,6 +1110,7 @@
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/normative-sources.md",
         "model": [
           "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+          "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
           "docs/normative-sources.md",
           "docs/coverage.md",
           "docs/maturity-bringup-plan.md",
@@ -1117,6 +1124,7 @@
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
+          "scripts/generate-scalar-numeric-flag-contract",
           "scripts/generate-release-traceability-readiness",
           "scripts/generate-release-gate-readiness",
           "spec/catalog/scalar-forms.json",
@@ -1126,6 +1134,7 @@
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/catalog/numeric-profile-identities.json",
           "spec/evidence/numeric-contracts.json",
           "spec/evidence/executable-model-comparison.json",
@@ -3389,7 +3398,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3413,7 +3423,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3437,7 +3448,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3461,7 +3473,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3485,7 +3498,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3509,7 +3523,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3533,7 +3548,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3557,7 +3573,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3581,7 +3598,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3653,7 +3671,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3677,7 +3696,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3701,7 +3721,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3725,7 +3746,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3749,7 +3771,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3773,7 +3796,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3797,7 +3821,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3821,7 +3846,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3845,7 +3871,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3869,7 +3896,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3893,7 +3921,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3917,7 +3946,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3941,7 +3971,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3965,7 +3996,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3989,7 +4021,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4013,7 +4046,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4037,7 +4071,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4061,7 +4096,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4085,7 +4121,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -10611,7 +10648,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -12441,7 +12479,8 @@
           "spec/catalog/scalar-forms.json",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
-          "spec/evidence/scalar-fsu-totality.json"
+          "spec/evidence/scalar-fsu-totality.json",
+          "spec/evidence/scalar-numeric-flag-contract.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",

@@ -114,6 +114,7 @@ SCALAR_TRACE = {
             "asl/scalar/floating.asl",
             "asl/scalar/dispatch.asl",
             "spec/evidence/scalar-fsu-totality.json",
+            "spec/evidence/scalar-numeric-flag-contract.json",
         ],
     },
     "SYS": {

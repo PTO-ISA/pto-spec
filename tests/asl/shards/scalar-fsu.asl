@@ -5,6 +5,7 @@ begin
     ValidateCanonicalScalarFSUAliases();
     ValidateCanonicalScalarFSUFlagAndRoundingHelpers();
     TestScalarFPDispatchEffects();
+    TestScalarFPFlagLifecycle();
     TestScalarFloating();
     return 0;
 end;

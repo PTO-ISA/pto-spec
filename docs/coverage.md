@@ -93,7 +93,11 @@ identities, proposed dispositions for all 12 questions, and an exact mapping
 for all 20 domains. ADR 0037 and
 `spec/catalog/numeric-profile-identities.json` now close the four identity and
 five selection-framework records. Every question and domain result-rule
-acceptance field remains null, so S5-T2-A and numeric conformance remain open.
+acceptance field remains null. The generated
+`scalar-numeric-flag-contract.json` ledger and ADR 0038 close the scalar flag
+state/lifecycle and assign all 30 FSU forms to one producer owner; exact flag
+conditions remain open for 19 profile-owned forms. PD-06, S5-T2-A, and numeric
+conformance therefore remain open.
 
 Release traceability is independently fail-closed. The generated
 `spec/evidence/release-traceability-readiness.json` ledger assigns requirement,
@@ -109,7 +113,7 @@ numeric hooks, and the later immutable-commit review keep S6-T1 open.
 The generated `spec/evidence/release-gate-readiness.json` ledger closes the
 S6-T2 contract inventory independently of candidate execution. It defines ten
 clone-verifiable release gates, proves the pinned least-privilege hosted
-workflow and exact 34-shard/98-call/86-subprogram topology, and enumerates ten
+workflow and exact 34-shard/99-call/87-subprogram topology, and enumerates ten
 external repository controls plus the PTO architecture and formal-model review
 perspectives. All candidate commit, runtime result, hosted-run, control-snapshot,
 and approval fields remain null. S5-T2 and S6-T1 therefore block candidate

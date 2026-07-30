@@ -65,6 +65,7 @@ begin
     TestScalarAtomicDispatchEffects();
     TestScalarAGUDispatchEffects();
     TestScalarFPDispatchEffects();
+    TestScalarFPFlagLifecycle();
     TestScalarQueueDispatch();
     TestScalarAliasingOrder();
     TestScalarInteger();

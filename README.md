@@ -28,7 +28,10 @@ The generated `spec/evidence/numeric-profile-decision-proposals.json` ledger
 imports four versioned identities and five selection rules accepted by ADR
 0037, then proposes dispositions for all 12 open numeric decisions and mappings
 for all 20 domains. Every result-decision and domain-rule acceptance field is
-null, so S5-T2 remains open.
+null. ADR 0038 and the generated
+`spec/evidence/scalar-numeric-flag-contract.json` ledger separately close the
+scalar flag lifecycle and 30/30 producer-owner matrix while leaving exact
+conditions open for 19 profile-owned forms, so PD-06 and S5-T2 remain open.
 The executable-model comparison has an exhaustive 701-row disposition matrix
 and a clean content-addressed snapshot whose generation, validation,
 documentation, Sail parser, and Sail C-backend gates all pass.

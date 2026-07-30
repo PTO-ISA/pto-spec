@@ -27,6 +27,10 @@ accepted architecture decisions remain authoritative.
 - All 12 question dispositions and all 20 domain-to-profile mappings have
   review proposals, but no question or domain result rule is accepted. Their
   acceptance-record fields remain null.
+- ADR 0038 and `spec/evidence/scalar-numeric-flag-contract.json` close the
+  scalar flag state/lifecycle and assign all 30 FSU forms to one producer
+  owner. Eleven architecture-owned flag conditions are exact; 19
+  profile-owned conditions keep PD-06 open.
 - The current maturity floor remains M4. This register improves decision
   readiness; it does not close `S5-T2-A` or numeric conformance.
 
@@ -63,7 +67,7 @@ acceptance-record fields.
 | `PD-03` | Portable RNE/RTZ/RTP/RTM taxonomy; reject backend-only modes until named | Map every selector and override, including ties, odd, away, and saturation ordering |
 | `PD-04` | Named input/result subnormal rules selected by visible mode state or a fixed target profile | Define reset, lifetime, transitions, operation applicability, and unknown-mode rejection |
 | `PD-05` | Bit-exact special-value rules or an enumerated target result set | Choose canonicalization/payload, signaling, infinity, signed-zero, and flag interactions |
-| `PD-06` | Portable sticky NV/DZ/OF/UF/NX state if retained by the architecture | Accept a producer/reset/trap matrix or explicitly revise the visible-state contract |
+| `PD-06` | Portable sticky NV/DZ/OF/UF/NX state; lifecycle and producer owners fixed by ADR 0038 | Accept exact flag conditions and independent vectors for all 19 profile-owned forms |
 | `PD-07` | Deterministic conversion, enumerated target result set, or pre-effect rejection | Eliminate unbounded overflow; complete saturation-on/off/default and narrowing tables |
 | `PD-08` | Versioned independent oracle with per-profile error bounds | Set accuracy, domains, monotonicity, and special-value rules per operation/type |
 | `PD-09` | Exact integer/order rules plus exact or bounded floating reduction trees | Freeze widths, ordering, ties, NaNs, zeros, overflow, and partial merges |
@@ -80,7 +84,7 @@ acceptance-record fields.
 | `PD-03` | Rounding taxonomy, selection, and ties | Public prose names four directional modes; backend paths expose additional round, odd, part, and saturation combinations. | Exact encoding and operation mapping with positive and negative halfway vectors |
 | `PD-04` | Subnormal handling, FTZ, and mode state | Default FTZ, target controls, and selected explicit subnormal paths coexist. | Input/result FTZ rules plus reset, visibility, lifetime, and override behavior for mode state |
 | `PD-05` | NaN, infinity, signed zero, and payloads | Quieting, propagation, sentinel, payload, infinity, and signed-zero behavior is not defined uniformly across operations. | Bit-exact special-value table covering every numeric family |
-| `PD-06` | Scalar numeric exception flags | The formal model exposes NV, DZ, OF, UF, and NX, but the public contract lacks a complete production and priority table. | Producer, simultaneous-flag, stickiness, reset, and trap-preservation rules |
+| `PD-06` | Scalar numeric exception flags | ADR 0038 closes CORE_STATE storage, reset, sticky OR, software replacement, rejection, no-numeric-trap, trap recovery, and all 30 producer owners. | Exact NV/DZ/OF/UF/NX conditions, simultaneous cases, tininess/NX coupling, and independent vectors for 19 profile-owned forms |
 | `PD-07` | Conversion overflow, saturation, wrap, and indefinite results | Public hardware overflow may be undefined while CPU paths may saturate; target paths also expose non-saturating wrap and control combinations. | Deterministic result or explicit bounded result set for the complete conversion cross-product |
 | `PD-08` | Elementary-function accuracy and domains | CPU and target paths use different libraries, intrinsics, or approximations. Shared names do not prove equal results. | Correct-rounding rule or profile-specific error bound, plus domain and monotonicity vectors |
 | `PD-09` | Reduction width, order, ties, and stability | Reduction trees and optimized grouping differ; selected integer reductions widen and later narrow. | Accumulation/order contract, allowed-result set if needed, and permutation/tie/overflow evidence |
@@ -125,5 +129,6 @@ Regenerate and validate the decision inputs with:
 scripts/generate-numeric-conformance-readiness --check
 scripts/generate-numeric-profile-decision-inputs --check
 scripts/generate-numeric-profile-decision-proposals --check
+scripts/generate-scalar-numeric-flag-contract --check
 make repo-check
 ```

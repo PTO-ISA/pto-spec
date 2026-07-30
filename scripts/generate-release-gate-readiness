@@ -24,6 +24,7 @@ SOURCE_PATHS = (
     "Makefile",
     "docs/review-checklist.md",
     "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+    "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
     "scripts/check-asl-test-shards",
     "scripts/check-binary-closure",
     "scripts/check-catalogs",
@@ -32,6 +33,7 @@ SOURCE_PATHS = (
     "scripts/check-toolchain",
     "spec/evidence/maturity-closure.json",
     "spec/evidence/numeric-profile-decision-proposals.json",
+    "spec/evidence/scalar-numeric-flag-contract.json",
     "spec/evidence/release-traceability-readiness.json",
     "spec/requirements.json",
     "spec/catalog/numeric-profile-identities.json",
@@ -44,8 +46,8 @@ EXPECTED_COUNTS = {
     "required_approval_count": 2,
     "required_external_control_count": 10,
     "shard_count": 34,
-    "canonical_call_count": 98,
-    "reachable_test_subprogram_count": 86,
+    "canonical_call_count": 99,
+    "reachable_test_subprogram_count": 87,
 }
 
 GATE_SPECS: tuple[dict[str, Any], ...] = (

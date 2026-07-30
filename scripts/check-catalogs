@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import re
@@ -663,6 +664,7 @@ def main() -> int:
     scalar_amo_totality = load("spec/evidence/scalar-amo-totality.json")
     scalar_bru_totality = load("spec/evidence/scalar-bru-totality.json")
     scalar_fsu_totality = load("spec/evidence/scalar-fsu-totality.json")
+    scalar_numeric_flags = load("spec/evidence/scalar-numeric-flag-contract.json")
     scalar_sys_totality = load("spec/evidence/scalar-sys-totality.json")
     tepl_totality = load("spec/evidence/tepl-totality.json")
     tma_totality = load("spec/evidence/tma-totality.json")
@@ -764,7 +766,7 @@ def main() -> int:
     )
     require(
         specification["maturity"]["numeric_profile_decisions"]
-        == "four-identities-and-five-selection-rules-closed-stage-S5-T2-A1-results-open",
+        == "identity-framework-and-scalar-flag-lifecycle-closed-stage-S5-T2-A-results-open",
         "numeric profile metadata must distinguish complete proposals from open acceptance",
     )
     require(
@@ -2072,6 +2074,184 @@ def main() -> int:
             re.search(rf"\b{function_name}\s*\(\s*\)\s*;", main_test_body) is not None,
             f"decoded scalar FSU closure witness is not executable: {function_name}",
         )
+    flag_names = ["NV", "DZ", "OF", "UF", "NX"]
+    expected_flag_sources = [
+        "spec/catalog/scalar-forms.json",
+        "spec/catalog/system-registers.json",
+        "spec/evidence/numeric-contracts.json",
+        "asl/scalar/floating.asl",
+        "asl/scalar/dispatch.asl",
+        "asl/profiles/pto-v0.asl",
+        "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
+    ]
+    require(
+        set(scalar_numeric_flags)
+        == {
+            "acceptance_record",
+            "architecture_contract",
+            "decision_id",
+            "forms",
+            "independent_comparison",
+            "schema_version",
+            "sources",
+            "status",
+            "summary",
+            "target",
+            "tests",
+        }
+        and scalar_numeric_flags["schema_version"] == 1
+        and scalar_numeric_flags["target"] == "S5-T2-A2:PD-06"
+        and scalar_numeric_flags["decision_id"] == "PD-06"
+        and scalar_numeric_flags["status"]
+        == "state-owner-matrix-closed-profile-production-open"
+        and scalar_numeric_flags["acceptance_record"]
+        == "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md"
+        and (ROOT / scalar_numeric_flags["acceptance_record"]).is_file(),
+        "scalar numeric flag contract identity or schema drift",
+    )
+    require(
+        scalar_numeric_flags["architecture_contract"]
+        == {
+            "storage": {
+                "system_register": "CORE_STATE",
+                "address": "0x0020",
+                "bit_range": "36:32",
+                "low_to_high": flag_names,
+            },
+            "reset": "ResetProfileState sets all five flags to zero.",
+            "numeric_update": "A completed scalar numeric form ORs its produced five-bit vector into the old flags; it never clears a previously set flag.",
+            "software_write": "A permitted full CORE_STATE system-register write replaces the flag field and may therefore clear flags.",
+            "simultaneous": "The five bits are independent and have no priority; every produced bit is accumulated in the same update.",
+            "rejected_operation": "An illegal or rejected scalar form leaves every flag unchanged and performs no profile-producer call.",
+            "numeric_exception_trap": "Numeric exception outcomes do not themselves raise a synchronous PTO trap; encoding and legality faults remain separate pre-effect failures.",
+            "trap_context": "Trap entry snapshots the complete CORE_STATE; successful recovery restores the manager-visible ECSTATE value, including all five flags.",
+            "profile_boundary": "Architecture-owned forms have exact conditions below. Each supported profile-owned operation/type rule must return an exact flag vector; a missing rule rejects before effects under ADR 0037.",
+        },
+        "scalar numeric flag architecture contract drift",
+    )
+    flag_source_rows = scalar_numeric_flags["sources"]
+    require(
+        [row["path"] for row in flag_source_rows] == expected_flag_sources
+        and all(
+            set(row) == {"path", "sha256"}
+            and row["sha256"]
+            == hashlib.sha256((ROOT / row["path"]).read_bytes()).hexdigest()
+            for row in flag_source_rows
+        ),
+        "scalar numeric flag source identity or hash drift",
+    )
+    fsu_forms = [form for form in forms if form["semantic_family"] == "FSU"]
+    fsu_forms_by_id = {form["form_id"]: form for form in fsu_forms}
+    scalar_numeric_operations = {
+        operation["catalog_identity"]: operation
+        for operation in numeric_contracts["operations"]
+        if operation["surface"] == "scalar-form"
+    }
+    flag_form_rows = scalar_numeric_flags["forms"]
+    require(
+        [row["form_id"] for row in flag_form_rows]
+        == [form["form_id"] for form in fsu_forms]
+        and len(flag_form_rows) == len(fsu_forms_by_id) == 30,
+        "scalar numeric flag form identity or ordering drift",
+    )
+    quiet_comparisons = {"FEQ", "FGE", "FLT", "FNE"}
+    signaling_comparisons = {"FEQS", "FGES", "FLTS", "FNES"}
+    for row in flag_form_rows:
+        form = fsu_forms_by_id[row["form_id"]]
+        require(
+            set(row)
+            == {
+                "condition",
+                "exact_condition_status",
+                "form_id",
+                "mnemonic",
+                "numeric_contract",
+                "possible_flags",
+                "producer_interface",
+                "producer_owner",
+                "semantic_handler",
+            }
+            and row["mnemonic"] == form["mnemonic"]
+            and row["semantic_handler"] == form["semantic_handler"],
+            f"scalar numeric flag row schema or catalog binding drift for {row['form_id']}",
+        )
+        operation = scalar_numeric_operations.get(row["form_id"])
+        if operation is not None:
+            require(
+                row["producer_owner"] == "named-numeric-profile"
+                and row["producer_interface"] == operation["primary_hooks"][0]
+                and row["numeric_contract"] == operation["numeric_contract"]
+                and row["possible_flags"] == flag_names
+                and row["condition"]
+                == "the accepted operation/type result rule must define the exact five-bit flag set"
+                and row["exact_condition_status"] == "profile-rule-required",
+                f"profile-owned scalar numeric flag row drift for {row['form_id']}",
+            )
+        else:
+            mnemonic = row["mnemonic"]
+            if mnemonic == "FABS":
+                interface = "ExecuteDecodedFPUnary:FABS"
+                condition = "never produces a numeric exception flag"
+                possible_flags = []
+            elif mnemonic in {"FMIN", "FMAX"}:
+                interface = "ExecuteDecodedFPBinary:FMIN/FMAX"
+                condition = "produces NV exactly when either source is a signaling NaN"
+                possible_flags = ["NV"]
+            elif mnemonic in quiet_comparisons:
+                interface = "ExecuteDecodedFPCompare:quiet"
+                condition = "produces NV exactly when either source is a signaling NaN"
+                possible_flags = ["NV"]
+            else:
+                require(
+                    mnemonic in signaling_comparisons,
+                    f"unclassified architecture-owned scalar flag form: {mnemonic}",
+                )
+                interface = "ExecuteDecodedFPCompare:signaling"
+                condition = "produces NV exactly when either source is any NaN"
+                possible_flags = ["NV"]
+            require(
+                row["producer_owner"] == "portable-architecture"
+                and row["producer_interface"] == interface
+                and row["numeric_contract"] is None
+                and row["possible_flags"] == possible_flags
+                and row["condition"] == condition
+                and row["exact_condition_status"] == "closed",
+                f"architecture-owned scalar numeric flag row drift for {row['form_id']}",
+            )
+    require(
+        scalar_numeric_flags["summary"]
+        == {
+            "architecture_condition_closed_form_count": 11,
+            "form_count": 30,
+            "pd06_complete": False,
+            "producer_owner_closed_form_count": 30,
+            "profile_condition_open_form_count": 19,
+            "profile_domain_count": 6,
+            "profile_hook_count": 6,
+        }
+        and scalar_numeric_flags["tests"]
+        == [
+            "tests/asl/scalar-tests.asl:TestScalarFPFlagLifecycle",
+            "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUTotality",
+            "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUFlagAndRoundingHelpers",
+        ]
+        and re.search(r"\bTestScalarFPFlagLifecycle\s*\(\s*\)\s*;", main_test_body)
+        is not None,
+        "scalar numeric flag summary or executable lifecycle witness drift",
+    )
+    flag_comparison = scalar_numeric_flags["independent_comparison"]
+    require(
+        set(flag_comparison)
+        == {"divergences", "limits", "matched_contracts", "provenance_sha256", "status"}
+        and flag_comparison["status"]
+        == "structure-corroborated-producer-oracle-unavailable"
+        and flag_comparison["provenance_sha256"]
+        == "c34df32b3b14517e8cd1dec9720308c8bf1e30f5d64629288634e182a34ec0a1"
+        and len(flag_comparison["matched_contracts"]) == 5
+        and len(flag_comparison["divergences"]) == 2
+        and len(flag_comparison["limits"]) == 3,
+        "scalar numeric flag independent-comparison disposition drift",
+    )
     require(
         set(scalar_sys_totality)
         == {
@@ -5192,6 +5372,9 @@ def main() -> int:
         and "numeric-profile-decision-register.md" in maturity_index_body
         and "numeric-profile-decision-inputs.json" in numeric_profile_decision_body
         and "numeric-profile-decision-proposals.json" in numeric_profile_decision_body
+        and "scalar-numeric-flag-contract.json" in numeric_profile_decision_body
+        and "scalar-numeric-flag-contract.json" in readme_body
+        and "scalar-numeric-flag-contract.json" in coverage_body
         and "release-traceability-readiness.json" in maturity_index_body
         and "release-traceability-readiness.json" in readme_body
         and "release-traceability-readiness.json" in coverage_body
@@ -5238,6 +5421,12 @@ def main() -> int:
         and "spec/catalog/numeric-profile-identities.json"
         in closure_requirement["model"]
         and "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+        in closure_requirement["model"]
+        and "spec/evidence/scalar-numeric-flag-contract.json"
+        in closure_requirement["model"]
+        and "scripts/generate-scalar-numeric-flag-contract"
+        in closure_requirement["model"]
+        and "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md"
         in closure_requirement["model"]
         and "spec/evidence/release-traceability-readiness.json"
         in closure_requirement["model"]
@@ -5380,8 +5569,8 @@ def main() -> int:
         and release_summary["required_approval_count"] == 2
         and release_summary["required_external_control_count"] == 10
         and release_summary["shard_count"] == 34
-        and release_summary["canonical_call_count"] == 98
-        and release_summary["reachable_test_subprogram_count"] == 86
+        and release_summary["canonical_call_count"] == 99
+        and release_summary["reachable_test_subprogram_count"] == 87
         and release_summary["open_prerequisite_targets"] == ["S5-T2", "S6-T1"]
         and release_summary["closed_gate_contract_count"] == 10
         and release_summary["candidate_gate_result_count"] == 0
@@ -6454,15 +6643,32 @@ def main() -> int:
             "profile_hooks",
             "profile_proposals",
             "promotion_residuals",
+            "scalar_flag_contract",
             "schema_version",
             "status",
             "summary",
             "target",
         }
-        and numeric_profile_proposals["schema_version"] == 2
+        and numeric_profile_proposals["schema_version"] == 3
         and numeric_profile_proposals["target"] == "S5-T2-A"
         and numeric_profile_proposals["status"] == "proposal-complete-decisions-open",
         "numeric profile proposal identity or schema drift",
+    )
+    require(
+        numeric_profile_proposals["scalar_flag_contract"]
+        == {
+            "path": "spec/evidence/scalar-numeric-flag-contract.json",
+            "sha256": hashlib.sha256(
+                (ROOT / "spec/evidence/scalar-numeric-flag-contract.json").read_bytes()
+            ).hexdigest(),
+            "status": "state-owner-matrix-closed-profile-production-open",
+            "acceptance_record": "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
+            "producer_owner_closed_form_count": 30,
+            "architecture_condition_closed_form_count": 11,
+            "profile_condition_open_form_count": 19,
+            "pd06_complete": False,
+        },
+        "numeric profile proposal scalar flag checkpoint drift",
     )
     proposed_profiles = numeric_profile_proposals["profile_proposals"]
     require(
@@ -6619,6 +6825,8 @@ def main() -> int:
         and "scripts/generate-numeric-profile-decision-inputs" in s5_t2["evidence"]
         and "spec/evidence/numeric-profile-decision-proposals.json" in s5_t2["evidence"]
         and "scripts/generate-numeric-profile-decision-proposals" in s5_t2["evidence"]
+        and "spec/evidence/scalar-numeric-flag-contract.json" in s5_t2["evidence"]
+        and "scripts/generate-scalar-numeric-flag-contract" in s5_t2["evidence"]
         and next(gap for gap in s5_t2["gaps"] if gap["id"] == "S5-T2-G1")[
             "classification"
         ]
@@ -6662,6 +6870,20 @@ def main() -> int:
             and "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
             in requirements_by_id[requirement_id]["model"],
             f"numeric profile identity framework is not traceable from {requirement_id}",
+        )
+    for requirement_id in (
+        "PTO-REQ-PROFILE-001",
+        "PTO-REQ-SCALAR-FP-001",
+        "PTO-REQ-CLOSURE-001",
+    ):
+        require(
+            "spec/evidence/scalar-numeric-flag-contract.json"
+            in requirements_by_id[requirement_id]["model"]
+            and "scripts/generate-scalar-numeric-flag-contract"
+            in requirements_by_id[requirement_id]["model"]
+            and "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md"
+            in requirements_by_id[requirement_id]["model"],
+            f"scalar numeric flag checkpoint is not traceable from {requirement_id}",
         )
     require(
         targets_by_id["S5-T1"]["status"] == "closed"

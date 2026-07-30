@@ -54,6 +54,23 @@ is M4 because every Stage 4 target is closed.
 | 6 — release | 0 | 2 | Close cumulative traceability, validation, review, and publication gates. |
 | **Total** | **28** | **31** | **M4 is the published floor.** |
 
+## Evaluation-to-bring-up plan map
+
+Each evaluation area maps to one maturity stage and one closure target set. A
+row is closed only when its target evidence exists in the generated ledgers and
+the applicable repository checks pass.
+
+| Evaluation area | Stage | Target set | Current status | Clear next target |
+| --- | --- | --- | --- | --- |
+| Claim hygiene and gap ownership | Stage 0 | `S0-T1`–`S0-T3` | Closed | Preserve a single source of truth across README, coverage, requirements, status metadata, and `maturity-closure.json`. |
+| Decode reachability and visible effects | Stage 1 | `S1-T1`–`S1-T5` | Closed | Keep every accepted scalar form, bundle/command form, and direct tile selector bound to exactly one checked effect or explicit pre-effect rejection. |
+| State, reset, faults, and recovery | Stage 2 | `S2-T1`–`S2-T6` | Closed | Keep all visible state, 72 system registers, P0–P7, tile descriptors, trap banks, and 13 traps covered by reset, transition, and preservation evidence. |
+| Memory ordering | Stage 3 | `S3-T1`–`S3-T2` | Closed | Preserve the PTO-TSO event stream and closed acquire/release, reservation, gather-CAS, and mixed-size dispositions. |
+| Reference instruction semantics | Stage 4 | `S4-T1`–`S4-T10` | Closed | Preserve per-family totality for AGU, ALU, AMO, BRU, FSU, SYS, bundle commands, TEPL, TMA, and CUBE under `pto-v0`. |
+| Numeric and target conformance | Stage 5 | `S5-T1`–`S5-T3` | In progress | Close `S5-T2`: accept all 12 numeric decisions, all 20 domain rules, the 19 remaining profile-owned scalar flag conditions, independent oracle identities, vectors, differential results, and review dispositions. |
+| Release traceability | Stage 6 | `S6-T1` | Open | After `S5-T2`, close the nine dependent requirement rows and 29 hooks, then complete the immutable-commit claim-hygiene review. |
+| Architecturally-complete release gate | Stage 6 | `S6-T2` | Open | After `S5-T2` and `S6-T1`, freeze one signed candidate and attach clean local/hosted gate results, GitHub control evidence, and both required approvals. |
+
 ## Remaining bring-up sequence
 
 The remaining work is ordered by promotion dependency. Work may run in
@@ -154,7 +171,7 @@ open, and the repository remains at M4, until every sub-stage below closes.
 
 | Sub-stage | Current state | Clear target | Required exit evidence |
 | --- | --- | --- | --- |
-| `S5-T2-A` — profile decision | Identity/selection framework closed; result decisions open | Apply the four accepted numeric identities and fail-closed selection rules, then resolve proposed dispositions for all 12 decisions and exact rules for all 20 domains. Separate portable rules from A2A3-, A5-, or other target-specific rules instead of treating the `pto-v0` raw-carrier reference as hardware arithmetic. | Accepted architecture decisions resolve all 12 generated questions and define formats, rounding modes, exceptional values, subnormals, flags, saturation, accuracy, accumulation, quantization, matrix arithmetic, and implementation-defined dimensions for all 20 domains. All 12 decision and 20 domain acceptance records are populated. |
+| `S5-T2-A` — profile decision | Identity/selection framework closed; scalar flag lifecycle/ownership closed; result decisions open | Apply the four accepted numeric identities and fail-closed selection rules, then resolve proposed dispositions for all 12 decisions and exact rules for all 20 domains. The PD-06 flag matrix already assigns all 30 FSU forms; fill the 19 profile-owned conditions. Separate portable rules from A2A3-, A5-, or other target-specific rules instead of treating the `pto-v0` raw-carrier reference as hardware arithmetic. | Accepted architecture decisions resolve all 12 generated questions and define formats, rounding modes, exceptional values, subnormals, flags, saturation, accuracy, accumulation, quantization, matrix arithmetic, and implementation-defined dimensions for all 20 domains. All 12 decision and 20 domain acceptance records are populated. |
 | `S5-T2-B` — oracle qualification | Waiting on A | Select an independent, versioned oracle for each lane. The implementation under test and the `pto-v0` reference are not independent oracles. | Reproducible oracle identity, version/digest, invocation, supported domain list, known limitations, and a reviewer-approved rule for any target behavior that requires hardware capture rather than a software arithmetic library. |
 | `S5-T2-C` — vector corpus | Waiting on A–B | Generate deterministic inputs for every operation and every open numeric dimension. | Normal, minimum/maximum, boundary, signed-zero, subnormal, infinity, NaN, tie, overflow, underflow, divide-by-zero, rounding, saturation, reduction-order, and accumulation cases as applicable; each vector links to one operation key, profile, oracle, and expected disposition. |
 | `S5-T2-D` — differential execution | Waiting on B–C | Run the six numeric lanes independently and preserve raw oracle and PTO results. | All 20 contract domains, 29 hooks, and 108 operations are assigned exactly once; every vector produces a reproducible match, mismatch, unsupported, or implementation-defined record; no lane is missing or duplicated. |
@@ -174,6 +191,10 @@ all 20 numeric domains without selecting a result rule. The generated
 disposition and mapping while importing the four identities accepted in
 `spec/catalog/numeric-profile-identities.json`. `S5-T2-A1` is closed; all 12
 question and 20 domain result-rule acceptance records remain null.
+ADR 0038 and `spec/evidence/scalar-numeric-flag-contract.json` additionally
+close flag state/lifecycle and the 30/30 FSU producer-owner matrix. Eleven
+architecture-owned conditions are exact; 19 profile-owned conditions keep
+PD-06 open and do not increment the S5-T2-A2 decision count.
 
 #### Parallel numeric lanes
 
@@ -241,7 +262,7 @@ configuration from being confused with a passing release candidate.
 | Sub-stage | Current state | Clear target | Required exit evidence |
 | --- | --- | --- | --- |
 | `S6-T2-A` — gate inventory | Closed | Freeze all candidate, hosted, external-control, and review obligations. | Ten gates, ten controls, and two review perspectives are unique, complete, and path-valid. |
-| `S6-T2-B` — execution topology | Closed | Prove the hosted workflow and parallel suite are bounded and exact. | Full action pins, contents-read permission, required `validate`, cancel-in-progress, 360-minute timeout, and 34 shards covering 98 calls/86 subprograms. |
+| `S6-T2-B` — execution topology | Closed | Prove the hosted workflow and parallel suite are bounded and exact. | Full action pins, contents-read permission, required `validate`, cancel-in-progress, 360-minute timeout, and 34 shards covering 99 calls/87 subprograms. |
 | `S6-T2-C` — candidate freeze | Blocked by S5-T2/S6-T1 | Name one signed immutable candidate. | Closed cumulative prerequisites, candidate commit/tree identity, clean-tree and signature evidence. |
 | `S6-T2-D` — candidate reproduction | Waiting on C | Execute every gate without moving the candidate. | Ten local results and passing hosted `validate` all name the candidate commit. |
 | `S6-T2-E` — controls and approvals | Waiting on C–D | Prove repository controls and both review perspectives. | Content-addressed GitHub API snapshot plus accepted architecture and formal-model dispositions. |
@@ -261,6 +282,9 @@ configuration from being confused with a passing release candidate.
   S5-T2-A review package for four accepted identities, 12 proposed
   dispositions, 20 domain mappings, and the still-null result-rule acceptance
   records.
+- `spec/evidence/scalar-numeric-flag-contract.json` is the generated PD-06
+  state/lifecycle and producer-owner matrix. It closes 30 ownership rows and 11
+  architecture-owned conditions while retaining 19 profile-owned conditions.
 - `spec/evidence/release-traceability-readiness.json` is the generated S6-T1
   source of truth for exact release inventory, link coverage, state-boundary
   classification, cumulative blockers, and immutable-commit review readiness.
