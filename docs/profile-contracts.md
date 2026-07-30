@@ -185,3 +185,8 @@ selectors across all 19 `TileDataType` identities. It keeps result rules,
 remaining applicability tables, and `cube-matrix` conformance open.
 The executable selector is an accepted negative-rule set, not a complete A2/A3
 profile; an operation absent from that set is not thereby supported.
+The generated `numeric-variation-point-ownership.json` ledger records the
+accepted `S5-T2-A4` discovery and ownership checkpoint. It enumerates 99
+domain/dimension points, proves reachability across all 108 operations and 29
+hooks, and keeps every selected route and result rule null. A missing target
+rule never falls back to `pto-v0` or a backend observation.

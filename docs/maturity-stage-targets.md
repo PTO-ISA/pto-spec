@@ -203,7 +203,7 @@ open, and the repository remains at M4, until every sub-stage below closes.
 
 | Sub-stage | Current state | Clear target | Required exit evidence |
 | --- | --- | --- | --- |
-| `S5-T2-A` — profile decision | Identity/selection framework, scalar flag lifecycle/ownership, rounding-selector ownership, numeric namespace/carrier ownership, and the A2/A3 MX negative-applicability slice are closed; result decisions open | Apply the four accepted numeric identities and fail-closed selection rules, then resolve proposed dispositions for all 12 decisions and exact rules for all 20 domains. The PD-02 checkpoint already separates five code namespaces, fixes all 19 carrier widths and four-bit packing, and keeps eight format/legality residuals explicit. The PD-01 checkpoint rejects the six MX CUBE selectors on A2/A3 for all 19 `TileDataType` identities before effects, but the remaining support matrix is still open. The PD-06 flag matrix already assigns all 30 FSU forms; fill the 19 profile-owned conditions. Separate portable rules from A2A3-, A5-, or other target-specific rules instead of treating the `pto-v0` raw-carrier reference as hardware arithmetic. | Accepted architecture decisions resolve all 12 generated questions and define formats, rounding modes, exceptional values, subnormals, flags, saturation, accuracy, accumulation, quantization, matrix arithmetic, and implementation-defined dimensions for all 20 domains. All 12 decision and 20 domain acceptance records are populated. |
+| `S5-T2-A` — profile decision | Identity/selection framework, scalar flag lifecycle/ownership, rounding-selector ownership, numeric namespace/carrier ownership, the A2/A3 MX negative-applicability slice, and the 99-point variation ownership inventory are closed; result decisions open | Apply the four accepted numeric identities and fail-closed selection rules, then resolve proposed dispositions for all 12 decisions and exact rules for all 20 domains. The PD-02 checkpoint separates five code namespaces, fixes all 19 carrier widths and four-bit packing, and keeps eight format/legality residuals explicit. The PD-01 checkpoint rejects the six MX CUBE selectors on A2/A3 for all 19 `TileDataType` identities before effects. The PD-12 checkpoint assigns every open point to the portable decision owner but leaves all selected routes and result bounds null. The PD-06 flag matrix assigns all 30 FSU forms; fill the 19 profile-owned conditions. Separate portable rules from target-specific rules instead of treating the `pto-v0` raw-carrier reference as hardware arithmetic. | Accepted architecture decisions resolve all 12 generated questions and define formats, rounding modes, exceptional values, subnormals, flags, saturation, accuracy, accumulation, quantization, matrix arithmetic, and implementation-defined dimensions for all 20 domains. All 12 decision and 20 domain acceptance records are populated; every non-portable variation point has a selected route and bounded result contract. |
 | `S5-T2-B` — oracle qualification | Waiting on A | Select an independent, versioned oracle for each lane. The implementation under test and the `pto-v0` reference are not independent oracles. | Reproducible oracle identity, version/digest, invocation, supported domain list, known limitations, and a reviewer-approved rule for any target behavior that requires hardware capture rather than a software arithmetic library. |
 | `S5-T2-C` — vector corpus | Waiting on A–B | Generate deterministic inputs for every operation and every open numeric dimension. | Normal, minimum/maximum, boundary, signed-zero, subnormal, infinity, NaN, tie, overflow, underflow, divide-by-zero, rounding, saturation, reduction-order, and accumulation cases as applicable; each vector links to one operation key, profile, oracle, and expected disposition. |
 | `S5-T2-D` — differential execution | Waiting on B–C | Run the six numeric lanes independently and preserve raw oracle and PTO results. | All 20 contract domains, 29 hooks, and 108 operations are assigned exactly once; every vector produces a reproducible match, mismatch, unsupported, or implementation-defined record; no lane is missing or duplicated. |
@@ -246,6 +246,11 @@ a bounded PD-01 checkpoint within `S5-T2-A3`: A2/A3 rejects
 `TGEMV_MX_BIAS`, and `TGEMV_MX_ACC` for every one of the 19 `TileDataType`
 identities before effects. It records 114 unsupported tuples and zero result
 rules, so the rest of PD-01 and `cube-matrix` remain open.
+ADR 0042 and `spec/evidence/numeric-variation-point-ownership.json` close
+`S5-T2-A4`, the PD-12 discovery and current-owner checkpoint. Its 99 stable
+domain/dimension rows cover all 20 domains, 108 operations, and 29 hooks. All
+selected routes, result rules, and result acceptance records remain null, so
+PD-12 and S5-T2 remain open.
 
 #### Parallel numeric lanes
 
@@ -345,6 +350,9 @@ configuration from being confused with a passing release candidate.
 - `spec/evidence/numeric-profile-applicability-closure.json` is the generated
   PD-01 A2/A3 MX negative-applicability package. It closes 114 unsupported
   tuples and leaves result semantics open.
+- `spec/evidence/numeric-variation-point-ownership.json` is the generated
+  PD-12 discovery and decision-owner package. It closes 99-row ownership
+  coverage while retaining every route, allowed result, and result rule.
 - `spec/evidence/release-traceability-readiness.json` is the generated S6-T1
   source of truth for exact release inventory, link coverage, state-boundary
   classification, cumulative blockers, and immutable-commit review readiness.

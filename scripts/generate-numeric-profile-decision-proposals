@@ -24,6 +24,9 @@ FORMAT_NAMESPACE_CONTRACT = (
 PROFILE_APPLICABILITY_CONTRACT = (
     ROOT / "spec/evidence/numeric-profile-applicability-closure.json"
 )
+VARIATION_POINT_CONTRACT = (
+    ROOT / "spec/evidence/numeric-variation-point-ownership.json"
+)
 OUTPUT = ROOT / "spec/evidence/numeric-profile-decision-proposals.json"
 
 
@@ -176,10 +179,10 @@ PROPOSALS: dict[str, dict[str, Any]] = {
             "implementation-defined-with-explicit-allowed-set",
             "unsupported-in-profile",
         ],
-        "proposed_rule": "No numeric result is unbounded implementation-defined behavior. Each variation point names a profile or visible mode, enumerates or mathematically bounds allowed results, and has discovery metadata. Generic validation rejects unknown profiles, unknown modes, and missing rules before effects.",
+        "proposed_rule": "ADR 0042 inventories all 99 domain/dimension variation points and assigns their current decision owner to pto-numeric-v1. No numeric result is unbounded implementation-defined behavior. A future delegation must name a profile or visible mode, enumerate or mathematically bound allowed results, and provide discovery metadata. Generic validation rejects unknown profiles, unknown modes, and missing rules before effects.",
         "open_items": [
-            "define discovery and selection contract",
-            "list every variation point and allowed set",
+            "select one admissible route for every non-portable variation point",
+            "populate a bounded allowed-result contract for every selected delegation",
             "add unknown-profile, unknown-mode, and missing-rule rejection vectors",
         ],
     },
@@ -203,6 +206,7 @@ def generate() -> dict[str, Any]:
     rounding_selector_contract = load(ROUNDING_SELECTOR_CONTRACT)
     format_namespace_contract = load(FORMAT_NAMESPACE_CONTRACT)
     profile_applicability_contract = load(PROFILE_APPLICABILITY_CONTRACT)
+    variation_point_contract = load(VARIATION_POINT_CONTRACT)
     require(inputs["target"] == "S5-T2-A", "decision-input target drift")
     require(
         inputs["status"]
@@ -399,7 +403,7 @@ def generate() -> dict[str, Any]:
     )
 
     return {
-        "schema_version": 6,
+        "schema_version": 7,
         "target": "S5-T2-A",
         "status": "proposal-complete-decisions-open",
         "input": {
@@ -450,6 +454,13 @@ def generate() -> dict[str, Any]:
             "status": profile_applicability_contract["status"],
             "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
             **profile_applicability_contract["summary"],
+        },
+        "variation_point_contract": {
+            "path": "spec/evidence/numeric-variation-point-ownership.json",
+            "sha256": hashlib.sha256(VARIATION_POINT_CONTRACT.read_bytes()).hexdigest(),
+            "status": variation_point_contract["status"],
+            "acceptance_record": variation_point_contract["acceptance_record"],
+            **variation_point_contract["summary"],
         },
         "policy": {
             "proposal_not_authority": "The identity and bounded-variation framework is accepted; question and domain proposals remain review inputs and do not select numeric results.",
@@ -518,6 +529,13 @@ def generate() -> dict[str, Any]:
                 "status": "open",
             },
             {
+                "id": "S5-T2-A4",
+                "target": "inventory and assign the current owner for every numeric variation point",
+                "current": 99,
+                "required": 99,
+                "status": "closed",
+            },
+            {
                 "id": "S5-T2-B",
                 "target": "qualify an independent oracle for every conformance lane",
                 "current": 0,
@@ -556,6 +574,12 @@ def generate() -> dict[str, Any]:
             "accepted_domain_rule_count": 0,
             "numeric_operation_count": operation_count,
             "numeric_hook_count": len(profile_hooks),
+            "numeric_variation_point_count": variation_point_contract["summary"][
+                "variation_point_count"
+            ],
+            "selected_variation_route_count": variation_point_contract["summary"][
+                "selected_route_count"
+            ],
             "can_close_s5_t2_a": False,
             "can_close_s5_t2": False,
         },

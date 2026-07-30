@@ -6,6 +6,14 @@
   "profile_identity_catalog": "spec/catalog/numeric-profile-identities.json",
   "profile_decision_inputs": "spec/evidence/numeric-profile-decision-inputs.json",
   "profile_decision_proposals": "spec/evidence/numeric-profile-decision-proposals.json",
+  "variation_point_ownership": {
+    "path": "spec/evidence/numeric-variation-point-ownership.json",
+    "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
+    "acceptance_record": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
+    "variation_point_count": 99,
+    "selected_route_count": 0,
+    "accepted_result_rule_count": 0
+  },
   "identity_framework": {
     "status": "closed:S5-T2-A1",
     "accepted_identity_count": 4,
@@ -28,7 +36,8 @@
       "target": "accept all numeric result decisions and domain rules under the closed identity framework",
       "blocked_by": [],
       "closed_checkpoints": [
-        "S5-T2-A1"
+        "S5-T2-A1",
+        "S5-T2-A4"
       ]
     },
     {

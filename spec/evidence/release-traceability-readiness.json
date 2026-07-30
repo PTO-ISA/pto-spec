@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "650db8b4c1308a0b3cf76ef794d313de63d3500d098dd6fd86b6fc6cd7cd9833"
+      "sha256": "f85637533ef0dd9d8ca462f98c1b8a1321eb06ebf17c2ebd5c6971ecaecccfbe"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -43,11 +43,11 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "d049bc0ed56d976c6d1c836651c5ef953052f10216fdd4847a922f155882fbaa"
+      "sha256": "6a4dc23e9c33552121dc754f05d41532ec2405711165475ed4c0b6224daa6320"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "f358e9fafc535e415cd35d98415a95e8e7be0b40fb04cc0d2d884b2c5fb1dfcc"
+      "sha256": "a06e4f8c9a0ef4fce86852280a3854dfa8dbe4a62abdac79a6c59a6a6cc6add8"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -56,6 +56,10 @@
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
       "sha256": "2232608ed5f1c56ef9ccf9c52ae368df5d7223b7bc53cbe08274cf2760f3aa83"
+    },
+    {
+      "path": "spec/evidence/numeric-variation-point-ownership.json",
+      "sha256": "18d0e7db92083c50f89d242e3235f17a5f845bd40c20b6f532d04100081deb90"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
@@ -308,6 +312,7 @@
           "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
           "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
           "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
+          "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
           "asl/profiles/pto-v0.asl",
           "asl/scalar/system-registers.asl",
           "asl/state.asl",
@@ -320,6 +325,7 @@
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
+          "scripts/generate-numeric-variation-point-ownership",
           "scripts/generate-numeric-format-namespace-contract",
           "scripts/generate-numeric-profile-applicability-closure",
           "scripts/generate-numeric-rounding-selector-contract",
@@ -327,6 +333,7 @@
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/evidence/numeric-variation-point-ownership.json",
           "spec/evidence/numeric-format-namespace-contract.json",
           "spec/evidence/numeric-profile-applicability-closure.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
@@ -622,6 +629,7 @@
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
         "model": [
           "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+          "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
           "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
           "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
           "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
@@ -631,6 +639,7 @@
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
+          "scripts/generate-numeric-variation-point-ownership",
           "scripts/generate-numeric-format-namespace-contract",
           "scripts/generate-numeric-rounding-selector-contract",
           "scripts/generate-scalar-numeric-flag-contract",
@@ -638,6 +647,7 @@
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/evidence/numeric-variation-point-ownership.json",
           "spec/evidence/numeric-format-namespace-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
@@ -837,15 +847,18 @@
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
           "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+          "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
           "asl/tile/elementwise.asl",
           "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
+          "scripts/generate-numeric-variation-point-ownership",
           "spec/evidence/tepl-totality.json",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/evidence/numeric-variation-point-ownership.json",
           "spec/catalog/numeric-profile-identities.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
@@ -862,15 +875,18 @@
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
           "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+          "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
           "asl/tile/reduction.asl",
           "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
+          "scripts/generate-numeric-variation-point-ownership",
           "spec/evidence/tepl-totality.json",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/evidence/numeric-variation-point-ownership.json",
           "spec/catalog/numeric-profile-identities.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
@@ -887,15 +903,18 @@
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
           "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+          "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
           "asl/tile/expansion.asl",
           "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
+          "scripts/generate-numeric-variation-point-ownership",
           "spec/evidence/tepl-totality.json",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/evidence/numeric-variation-point-ownership.json",
           "spec/catalog/numeric-profile-identities.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
@@ -927,15 +946,18 @@
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
           "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+          "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
           "asl/tile/conversion.asl",
           "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
+          "scripts/generate-numeric-variation-point-ownership",
           "spec/evidence/tepl-totality.json",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/evidence/numeric-variation-point-ownership.json",
           "spec/catalog/numeric-profile-identities.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
@@ -967,15 +989,18 @@
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
           "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+          "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
           "asl/tile/complex.asl",
           "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
+          "scripts/generate-numeric-variation-point-ownership",
           "spec/evidence/tepl-totality.json",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/evidence/numeric-variation-point-ownership.json",
           "spec/catalog/numeric-profile-identities.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
@@ -1014,18 +1039,21 @@
           "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
           "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
           "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
+          "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
           "asl/tile/cube.asl",
           "asl/tile/legality.asl",
           "docs/architecture-decisions/0034-cube-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
+          "scripts/generate-numeric-variation-point-ownership",
           "scripts/generate-numeric-format-namespace-contract",
           "scripts/generate-numeric-profile-applicability-closure",
           "spec/evidence/cube-totality.json",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/evidence/numeric-variation-point-ownership.json",
           "spec/evidence/numeric-format-namespace-contract.json",
           "spec/evidence/numeric-profile-applicability-closure.json",
           "spec/catalog/numeric-profile-identities.json",
@@ -1175,6 +1203,7 @@
           "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
           "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
           "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
+          "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
           "docs/normative-sources.md",
           "docs/coverage.md",
           "docs/maturity-bringup-plan.md",
@@ -1188,6 +1217,7 @@
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
+          "scripts/generate-numeric-variation-point-ownership",
           "scripts/generate-numeric-format-namespace-contract",
           "scripts/generate-numeric-profile-applicability-closure",
           "scripts/generate-numeric-rounding-selector-contract",
@@ -1201,6 +1231,7 @@
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
           "spec/evidence/numeric-profile-decision-proposals.json",
+          "spec/evidence/numeric-variation-point-ownership.json",
           "spec/evidence/numeric-format-namespace-contract.json",
           "spec/evidence/numeric-profile-applicability-closure.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
@@ -3472,7 +3503,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3499,7 +3531,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3526,7 +3559,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3553,7 +3587,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3580,7 +3615,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3607,7 +3643,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3634,7 +3671,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3661,7 +3699,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3688,7 +3727,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3763,7 +3803,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3790,7 +3831,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3817,7 +3859,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3844,7 +3887,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3871,7 +3915,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3898,7 +3943,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3925,7 +3971,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3952,7 +3999,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -3979,7 +4027,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4006,7 +4055,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4033,7 +4083,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4060,7 +4111,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4087,7 +4139,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4114,7 +4167,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4141,7 +4195,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4168,7 +4223,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4195,7 +4251,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4222,7 +4279,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -4249,7 +4307,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -10778,7 +10837,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",
@@ -12611,7 +12671,8 @@
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/scalar-numeric-flag-contract.json",
           "spec/evidence/numeric-rounding-selector-contract.json",
-          "spec/evidence/numeric-format-namespace-contract.json"
+          "spec/evidence/numeric-format-namespace-contract.json",
+          "spec/evidence/numeric-variation-point-ownership.json"
         ],
         "tests": [
           "tests/asl/scalar-tests.asl",

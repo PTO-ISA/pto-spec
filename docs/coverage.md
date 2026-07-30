@@ -116,6 +116,11 @@ close one negative PD-01 slice: A2/A3 does not support the six MX CUBE
 selectors for any of the 19 `TileDataType` identities, and every one of the
 114 operation/type tuples rejects before effects. No result rule is selected,
 so PD-01, `cube-matrix`, S5-T2, and the M4 floor remain unchanged.
+The generated `numeric-variation-point-ownership.json` ledger and ADR 0042
+close PD-12 discovery and current-owner assignment for 99 stable
+domain/dimension rows. The rows reach all 108 numeric operations and 29 hooks,
+including the two library-only helpers. All selected routes, result rules, and
+acceptance records remain null, so PD-12, S5-T2, and M4 remain unchanged.
 
 Release traceability is independently fail-closed. The generated
 `spec/evidence/release-traceability-readiness.json` ledger assigns requirement,

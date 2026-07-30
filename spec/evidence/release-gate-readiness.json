@@ -58,6 +58,10 @@
       "sha256": "4fa6c28e08858cab52b5c5482d670518c16700eb78489b246727ede8fe9cd1c4"
     },
     {
+      "path": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
+      "sha256": "78378a8adcfa5d40fc74ed95950ae7da81550649ec99ee1f22b1c3c9ab7ddead"
+    },
+    {
       "path": "scripts/check-asl-test-shards",
       "sha256": "7ab9174587cc29b39f676ced8ca8f5b3f433d4171c992a20f86fc2598034c3b1"
     },
@@ -67,7 +71,7 @@
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "7d95b3978a5080c6b1b8097b0517afec5fa7054cdfafe5d32ec480c10e2eb3b3"
+      "sha256": "442662f5c2b15ce2a989345f21174a0ccc20373fe5792929186b7b8ff5e72bcf"
     },
     {
       "path": "scripts/check-publication-hygiene",
@@ -75,7 +79,7 @@
     },
     {
       "path": "scripts/check-repository",
-      "sha256": "141802b54955d6ca55b7dbce771de8ab2c9785d6be12f3dc85aa2159c09e95f8"
+      "sha256": "8d14996c374dfb4a712da0b9519cafcb0aa0b743d1ddbbe96e85996bf62de6b7"
     },
     {
       "path": "scripts/check-toolchain",
@@ -90,12 +94,16 @@
       "sha256": "6333d878b4af5c94224b30f3d43430353a762cfafb5302044fb909aeeb068db1"
     },
     {
+      "path": "scripts/generate-numeric-variation-point-ownership",
+      "sha256": "8947b26d4a71ce634a29c55ba856762eaac6f33f62071bbc9531c463d7f75f25"
+    },
+    {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "d049bc0ed56d976c6d1c836651c5ef953052f10216fdd4847a922f155882fbaa"
+      "sha256": "6a4dc23e9c33552121dc754f05d41532ec2405711165475ed4c0b6224daa6320"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "f358e9fafc535e415cd35d98415a95e8e7be0b40fb04cc0d2d884b2c5fb1dfcc"
+      "sha256": "a06e4f8c9a0ef4fce86852280a3854dfa8dbe4a62abdac79a6c59a6a6cc6add8"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -104,6 +112,10 @@
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
       "sha256": "2232608ed5f1c56ef9ccf9c52ae368df5d7223b7bc53cbe08274cf2760f3aa83"
+    },
+    {
+      "path": "spec/evidence/numeric-variation-point-ownership.json",
+      "sha256": "18d0e7db92083c50f89d242e3235f17a5f845bd40c20b6f532d04100081deb90"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
@@ -115,11 +127,11 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "4b0f1ffc0fe4e078f07413b783fb5f6fb8197dce312132f2e96c568f7e43a864"
+      "sha256": "40350264d5f5c35405d68591ef7f84a4bb81369c49228e826903a6bafaac2034"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "650db8b4c1308a0b3cf76ef794d313de63d3500d098dd6fd86b6fc6cd7cd9833"
+      "sha256": "f85637533ef0dd9d8ca462f98c1b8a1321eb06ebf17c2ebd5c6971ecaecccfbe"
     },
     {
       "path": "spec/catalog/numeric-profile-applicability.json",
@@ -131,7 +143,7 @@
     },
     {
       "path": "specification.toml",
-      "sha256": "03e3073bddf99573af940a2fb4f75d1d8f6921ea6bcc93ee5e439276557a69b2"
+      "sha256": "14d305e84bf547a7c36843fed26447e44e01d0a243713312af4afc0e4fb0b3c9"
     }
   ],
   "sub_stages": [

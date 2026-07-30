@@ -1,5 +1,5 @@
 {
-  "schema_version": 6,
+  "schema_version": 7,
   "target": "S5-T2-A",
   "status": "proposal-complete-decisions-open",
   "input": {
@@ -79,6 +79,27 @@
     "result_rule_count": 0,
     "parent_pd01_complete": false,
     "cube_matrix_complete": false,
+    "s5_t2_complete": false
+  },
+  "variation_point_contract": {
+    "path": "spec/evidence/numeric-variation-point-ownership.json",
+    "sha256": "18d0e7db92083c50f89d242e3235f17a5f845bd40c20b6f532d04100081deb90",
+    "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
+    "acceptance_record": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
+    "variation_point_count": 99,
+    "unique_dimension_count": 41,
+    "domain_count": 20,
+    "operation_count": 108,
+    "hook_count": 29,
+    "primary_operation_hook_edge_count": 130,
+    "reference_helper_operation_edge_count": 8,
+    "portable_decision_owner_point_count": 99,
+    "selected_route_count": 0,
+    "accepted_result_rule_count": 0,
+    "accepted_unsupported_tuple_count": 114,
+    "accepted_domain_result_rule_count": 0,
+    "pd12_complete": false,
+    "s5_t2_a_complete": false,
     "s5_t2_complete": false
   },
   "policy": {
@@ -725,10 +746,10 @@
         "implementation-defined-with-explicit-allowed-set",
         "unsupported-in-profile"
       ],
-      "proposed_rule": "No numeric result is unbounded implementation-defined behavior. Each variation point names a profile or visible mode, enumerates or mathematically bounds allowed results, and has discovery metadata. Generic validation rejects unknown profiles, unknown modes, and missing rules before effects.",
+      "proposed_rule": "ADR 0042 inventories all 99 domain/dimension variation points and assigns their current decision owner to pto-numeric-v1. No numeric result is unbounded implementation-defined behavior. A future delegation must name a profile or visible mode, enumerate or mathematically bound allowed results, and provide discovery metadata. Generic validation rejects unknown profiles, unknown modes, and missing rules before effects.",
       "open_items": [
-        "define discovery and selection contract",
-        "list every variation point and allowed set",
+        "select one admissible route for every non-portable variation point",
+        "populate a bounded allowed-result contract for every selected delegation",
         "add unknown-profile, unknown-mode, and missing-rule rejection vectors"
       ],
       "acceptance_evidence": [
@@ -1580,6 +1601,13 @@
       "status": "open"
     },
     {
+      "id": "S5-T2-A4",
+      "target": "inventory and assign the current owner for every numeric variation point",
+      "current": 99,
+      "required": 99,
+      "status": "closed"
+    },
+    {
       "id": "S5-T2-B",
       "target": "qualify an independent oracle for every conformance lane",
       "current": 0,
@@ -1618,6 +1646,8 @@
     "accepted_domain_rule_count": 0,
     "numeric_operation_count": 108,
     "numeric_hook_count": 29,
+    "numeric_variation_point_count": 99,
+    "selected_variation_route_count": 0,
     "can_close_s5_t2_a": false,
     "can_close_s5_t2": false
   }

@@ -45,6 +45,10 @@ accepted architecture decisions remain authoritative.
   close one PD-01 applicability checkpoint: A2/A3 rejects the six MX CUBE
   selectors for every `TileDataType` before effects. All result rules and the
   rest of the applicability matrix remain open.
+- ADR 0042 and `spec/evidence/numeric-variation-point-ownership.json` close
+  PD-12 discovery and current-owner assignment: 99 stable variation points
+  cover all 20 domains, 108 operations, and 29 hooks. Every selected route,
+  result rule, and result acceptance remains null.
 - The current maturity floor remains M4. This register improves decision
   readiness; it does not close `S5-T2-A` or numeric conformance.
 
@@ -131,6 +135,8 @@ semantics rather than numeric differential results.
 ## Promotion path
 
 The four identities and five selection-framework rules close `S5-T2-A1`.
+The exhaustive variation-point ownership inventory closes `S5-T2-A4` without
+accepting a result rule.
 The PD-01 negative-applicability checkpoint and the PD-02, PD-03, and PD-06
 structural checkpoints do not accept any complete result decision. `S5-T2-A`
 closes only when all 12 decisions and each of the 20 domain rows have an
@@ -149,5 +155,6 @@ scripts/generate-scalar-numeric-flag-contract --check
 scripts/generate-numeric-rounding-selector-contract --check
 scripts/generate-numeric-format-namespace-contract --check
 scripts/generate-numeric-profile-applicability-closure --check
+scripts/generate-numeric-variation-point-ownership --check
 make repo-check
 ```

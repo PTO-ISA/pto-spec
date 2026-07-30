@@ -50,6 +50,12 @@ ADR 0041 and the generated
 negative PD-01 applicability slice: A2/A3 rejects the six MX CUBE selectors
 for all 19 `TileDataType` identities with `IllegalInstruction` before effects.
 It accepts no result rule, so PD-01, `cube-matrix`, and S5-T2 remain open.
+ADR 0042 and the generated
+`spec/evidence/numeric-variation-point-ownership.json` ledger enumerate all 99
+open domain/dimension variation points and map them to all 108 numeric
+operations and 29 hooks. Every point remains owned by `pto-numeric-v1`; no
+delegation, allowed-result contract, or domain result rule is accepted, so
+PD-12 and S5-T2 remain open.
 The executable-model comparison has an exhaustive 701-row disposition matrix
 and a clean content-addressed snapshot whose generation, validation,
 documentation, Sail parser, and Sail C-backend gates all pass.

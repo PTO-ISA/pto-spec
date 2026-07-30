@@ -158,6 +158,13 @@ profile result rules remain open. The ASL selector is deliberately named
 `NumericApplicabilityRules_A2A3MxRejection`: it applies only this accepted
 negative slice and must not be read as a complete executable A2/A3 profile.
 
+ADR 0042 and `spec/evidence/numeric-variation-point-ownership.json` make every
+open numeric variation point explicit. The 99 stable domain/dimension rows
+cover all 108 operations and 29 hooks. `pto-numeric-v1` owns each decision
+until an accepted PTO record selects a portable rule, named target profile,
+visible selector, or unsupported tuple. No backend or independent-model
+fallback supplies a missing rule.
+
 `ExecuteTileInstruction` is the decoded tile execution boundary. The normative
 tile catalog binds each accepted selector to a typed subset of
 `TileInstructionOperands`, an ordered semantic-handler argument list, and an

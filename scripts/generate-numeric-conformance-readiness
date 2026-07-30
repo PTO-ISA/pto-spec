@@ -13,6 +13,9 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 NUMERIC_CONTRACTS = ROOT / "spec/evidence/numeric-contracts.json"
 NUMERIC_PROFILE_IDENTITIES = ROOT / "spec/catalog/numeric-profile-identities.json"
+NUMERIC_VARIATION_OWNERSHIP = (
+    ROOT / "spec/evidence/numeric-variation-point-ownership.json"
+)
 DEFAULT_OUTPUT = ROOT / "spec/evidence/numeric-conformance-readiness.json"
 
 
@@ -193,6 +196,7 @@ def require(condition: bool, message: str) -> None:
 def build_evidence() -> dict[str, Any]:
     inventory = load_json(NUMERIC_CONTRACTS)
     identity_catalog = load_json(NUMERIC_PROFILE_IDENTITIES)
+    variation_ownership = load_json(NUMERIC_VARIATION_OWNERSHIP)
     require(
         inventory.get("status") == "closed-inventory-and-ownership",
         "S5-T1 numeric inventory is not closed",
@@ -206,6 +210,14 @@ def build_evidence() -> dict[str, Any]:
         and identity_catalog.get("summary", {}).get("accepted_identity_count") == 4
         and identity_catalog.get("summary", {}).get("complete_rule_count") == 0,
         "numeric identity framework is not closed with result rules open",
+    )
+    require(
+        variation_ownership.get("status")
+        == "variation-point-discovery-and-ownership-closed-result-bounds-open"
+        and variation_ownership.get("summary", {}).get("variation_point_count")
+        == 99
+        and variation_ownership.get("summary", {}).get("selected_route_count") == 0,
+        "numeric variation-point ownership checkpoint drift",
     )
 
     domains = {row["id"]: row for row in inventory["contract_domains"]}
@@ -300,6 +312,14 @@ def build_evidence() -> dict[str, Any]:
         "profile_identity_catalog": "spec/catalog/numeric-profile-identities.json",
         "profile_decision_inputs": "spec/evidence/numeric-profile-decision-inputs.json",
         "profile_decision_proposals": "spec/evidence/numeric-profile-decision-proposals.json",
+        "variation_point_ownership": {
+            "path": "spec/evidence/numeric-variation-point-ownership.json",
+            "status": variation_ownership["status"],
+            "acceptance_record": variation_ownership["acceptance_record"],
+            "variation_point_count": 99,
+            "selected_route_count": 0,
+            "accepted_result_rule_count": 0,
+        },
         "identity_framework": {
             "status": "closed:S5-T2-A1",
             "accepted_identity_count": 4,
@@ -321,7 +341,7 @@ def build_evidence() -> dict[str, Any]:
                 "status": "in-progress",
                 "target": "accept all numeric result decisions and domain rules under the closed identity framework",
                 "blocked_by": [],
-                "closed_checkpoints": ["S5-T2-A1"],
+                "closed_checkpoints": ["S5-T2-A1", "S5-T2-A4"],
             },
             {
                 "id": "S5-T2-B",

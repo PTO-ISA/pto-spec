@@ -202,6 +202,13 @@ comparison. ADR 0041 makes six A2/A3 MX CUBE unsupported rules normative for
 all 19 `TileDataType` identities. The comparison is selector/decode
 corroboration only; it does not define MX arithmetic or close `cube-matrix`.
 
+`numeric-variation-point-ownership.json` is generated from the closed numeric
+inventory, decision inputs, profile identities, hook registry, selector and
+format contracts, and accepted applicability slice. ADR 0042 makes the 99-row
+variation-point inventory and current portable decision owner normative. Its
+admissible routes are review choices, not accepted results: all selected-route,
+result-rule, and result-acceptance fields remain null.
+
 `release-traceability-readiness.json` is the generated input to S6-T1. It
 enumerates every requirement, accepted scalar and command form, direct tile
 operation, system register, trap, profile hook, and top-level ASL state root.
