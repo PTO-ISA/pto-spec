@@ -433,9 +433,12 @@ does not consume them. An address written as `0x{n}F40` selects the bank for
 ACR `n`; the ACR nibble is part of the 16-bit canonical address, not an
 arithmetic offset.
 
-The ACR interrupt registers form one visible subsystem. `IPENDING` is a 64-bit
-pending-ID bitmap, `TOPEI` reports the lowest pending ID, and `EOIEI` clears the
-ID it names. `ECONFIG[0]` and `[1]` enable external and timer entry. A nonzero
+The ACR interrupt registers form one visible subsystem. Architectural interrupt
+injection accepts exactly IDs 0 through 63 through the constrained
+`InterruptID` type; wider source values are outside the architectural event
+domain. `IPENDING` is the corresponding 64-bit pending-ID bitmap, `TOPEI`
+reports the lowest pending ID, and `EOIEI` clears the ID it names.
+`ECONFIG[0]` and `[1]` enable external and timer entry. A nonzero
 `TIMER_TIMECMP` asserts the bank's timer pending bit when architectural time
 reaches it; acknowledgement reasserts while the comparison remains reached,
 and writing a zero comparison disables the timer source.

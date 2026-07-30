@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "bed475b19ded4f368be77a14e090b4e08aee5425fbd5131cf2f9341839bbcd5f"
+      "sha256": "650db8b4c1308a0b3cf76ef794d313de63d3500d098dd6fd86b6fc6cd7cd9833"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -47,15 +47,15 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "3ab8d37f5fcc275742fa22f1e685158627bc4714f4e4de25db0251fab8795630"
+      "sha256": "f358e9fafc535e415cd35d98415a95e8e7be0b40fb04cc0d2d884b2c5fb1dfcc"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "cad647e25c0f10dcaeada5106f26a2a437ef9c693dde17dba05c8c642c97aa53"
+      "sha256": "ccf96bbc5f71cdc224a512313d7c461176ed6a6888947ba6a0d6364086bb3fa6"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "5e001c54c98858fa579f0b3da12245c801726280b1ed146aaba1547f6c51410a"
+      "sha256": "2232608ed5f1c56ef9ccf9c52ae368df5d7223b7bc53cbe08274cf2760f3aa83"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
@@ -83,11 +83,11 @@
     },
     {
       "path": "asl/types.asl",
-      "sha256": "1c6c7be26a0889af2a0e6d1bc27ffc18fd2dd663d0964b5d6343422420ec4dd0"
+      "sha256": "d6cb4340d9be626dde6db716b0d4808c68827fdf81391520ced7ebf8f59dc2bf"
     },
     {
       "path": "asl/state.asl",
-      "sha256": "7ddc24347c4ac059d107c2d7f6aa0948229c074ab4fe34332144d3652cbc7ca3"
+      "sha256": "2d1a615d72f17292e3404ce07ec2d8829368e58421732f4d1163a480941a1189"
     },
     {
       "path": "asl/bundle/state.asl",
@@ -371,6 +371,7 @@
         "status": "implemented-by-pto-v0-profile",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0016-interrupt-pending-and-timer-state.md",
         "model": [
+          "asl/types.asl",
           "asl/state.asl",
           "asl/scalar/system-registers.asl",
           "asl/profiles/pto-v0.asl",

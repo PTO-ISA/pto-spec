@@ -67,7 +67,7 @@
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "c7847f2952fa89beecd54cfae5142f2f1873b6a49e69f1e51dab88c88ff31b7b"
+      "sha256": "7d95b3978a5080c6b1b8097b0517afec5fa7054cdfafe5d32ec480c10e2eb3b3"
     },
     {
       "path": "scripts/check-publication-hygiene",
@@ -95,15 +95,15 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "3ab8d37f5fcc275742fa22f1e685158627bc4714f4e4de25db0251fab8795630"
+      "sha256": "f358e9fafc535e415cd35d98415a95e8e7be0b40fb04cc0d2d884b2c5fb1dfcc"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "cad647e25c0f10dcaeada5106f26a2a437ef9c693dde17dba05c8c642c97aa53"
+      "sha256": "ccf96bbc5f71cdc224a512313d7c461176ed6a6888947ba6a0d6364086bb3fa6"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "5e001c54c98858fa579f0b3da12245c801726280b1ed146aaba1547f6c51410a"
+      "sha256": "2232608ed5f1c56ef9ccf9c52ae368df5d7223b7bc53cbe08274cf2760f3aa83"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
@@ -115,11 +115,11 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "b1e679c7e204f048419c2cfa28b2370778ae68193f00e120fe79e9ce099071d3"
+      "sha256": "4b0f1ffc0fe4e078f07413b783fb5f6fb8197dce312132f2e96c568f7e43a864"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "bed475b19ded4f368be77a14e090b4e08aee5425fbd5131cf2f9341839bbcd5f"
+      "sha256": "650db8b4c1308a0b3cf76ef794d313de63d3500d098dd6fd86b6fc6cd7cd9833"
     },
     {
       "path": "spec/catalog/numeric-profile-applicability.json",

@@ -126,7 +126,7 @@ begin
     return ((ring * 4096) + low_index) as SystemRegisterFileIndex;
 end;
 
-pure func TimerInterruptId(ring: AccessControlRing) => integer {1,3}
+pure func TimerInterruptId(ring: AccessControlRing) => InterruptID
 begin
     return if ring == 0 then 1 else 3;
 end;
@@ -136,10 +136,10 @@ begin
     let pending = _ExtendedSystemRegisters[[
         ContextRegisterIndex(ring, 0x0f08)]];
     var found = FALSE;
-    var top: integer {0..63} = 0;
+    var top: InterruptID = 0;
     for interrupt_id = 0 to 63 do
         if !found && pending[interrupt_id] == '1' then
-            top = interrupt_id as integer {0..63};
+            top = interrupt_id as InterruptID;
             found = TRUE;
         end;
     end;
@@ -148,7 +148,7 @@ begin
 end;
 
 func SetInterruptPending(ring: AccessControlRing,
-                         interrupt_id: integer {0..63})
+                         interrupt_id: InterruptID)
 begin
     let index = ContextRegisterIndex(ring, 0x0f08);
     _ExtendedSystemRegisters[[index]][interrupt_id] = '1';
@@ -156,7 +156,7 @@ begin
 end;
 
 func ClearInterruptPending(ring: AccessControlRing,
-                           interrupt_id: integer {0..63})
+                           interrupt_id: InterruptID)
 begin
     let index = ContextRegisterIndex(ring, 0x0f08);
     _ExtendedSystemRegisters[[index]][interrupt_id] = '0';
@@ -164,7 +164,7 @@ begin
 end;
 
 readonly func InterruptEnabled(ring: AccessControlRing,
-                               interrupt_id: integer {0..63}) => boolean
+                               interrupt_id: InterruptID) => boolean
 begin
     let interrupt_config = _ExtendedSystemRegisters[[
         ContextRegisterIndex(ring, 0x0f07)]];
@@ -202,7 +202,7 @@ end;
 func EndOfInterrupt(ring: AccessControlRing, value: Word)
 begin
     if value[63:6] == Zeros{58} then
-        ClearInterruptPending(ring, UInt(value[5:0]) as integer {0..63});
+        ClearInterruptPending(ring, UInt(value[5:0]) as InterruptID);
     end;
     _ACRTrapAsynchronous[[ring]] = FALSE;
     _ACRTrapArgumentValid[[ring]] = FALSE;
@@ -434,14 +434,12 @@ begin
     _ACRTrapArgument0[[ring]] = Zeros{PTO_XLEN};
 end;
 
-func RaiseInterrupt(interrupt_id: Word, cause: bits(24))
+func RaiseInterrupt(interrupt_id: InterruptID, cause: bits(24))
 begin
     let source_ring = CurrentACR();
     let ring = TrapTargetForInterrupt(source_ring);
-    assert UInt(interrupt_id) < 64;
-    let pending_id = UInt(interrupt_id) as integer {0..63};
-    SetInterruptPending(ring, pending_id);
-    if !InterruptEnabled(ring, pending_id) then return; end;
+    SetInterruptPending(ring, interrupt_id);
+    if !InterruptEnabled(ring, interrupt_id) then return; end;
     SaveTrapContext(ring, source_ring);
     _LastFault = Fault_None;
     _FaultAddress = Zeros{PTO_XLEN};
@@ -449,7 +447,8 @@ begin
     _ACRTrapArgumentValid[[ring]] = TRUE;
     _ACRTrapCause[[ring]] = cause;
     _ACRTrapNumber[[ring]] = Zeros{6} + 44;
-    _ACRTrapArgument0[[ring]] = interrupt_id;
+    _ACRTrapArgument0[[ring]] =
+        NaturalToWord(interrupt_id as integer {0..262144});
     SetCurrentACR(ring);
     WriteTPC(TrapVectorEntry(ring, ReadTPC()));
 end;

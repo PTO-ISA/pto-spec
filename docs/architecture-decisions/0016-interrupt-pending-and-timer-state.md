@@ -20,6 +20,9 @@ and reassertion.
 
 - `IPENDING_ACRn` is a read-only 64-bit bitmap. Bit `i` records pending
   interrupt ID `i` for the selected ACR.
+- The complete architectural interrupt injection domain is ID 0 through ID 63,
+  represented by the `InterruptID` type. Values outside that domain are not
+  architectural interrupt events and do not enter the trap or fault model.
 - `TOPEI_ACRn` is read-only and returns the numerically lowest set pending ID.
   It returns zero when the bitmap is empty; software uses `IPENDING` to
   distinguish no interrupt from pending ID zero.
@@ -46,6 +49,7 @@ tested.
 ## Consequences
 
 Pending, top priority, enable, acknowledgement, timer threshold, reassertion,
-all-bank reset, and trap entry are one coherent executable subsystem. Writes to
-`IPENDING` and `TOPEI` now fault through their catalog-declared read-only access
+all-bank reset, and trap entry are one coherent executable subsystem. Endpoint
+IDs 0 and 63 have direct injection and acknowledgement witnesses. Writes to
+`IPENDING` and `TOPEI` fault through their catalog-declared read-only access
 class.

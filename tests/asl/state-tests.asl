@@ -148,10 +148,10 @@ begin
     ResetProfileState();
     SetCurrentACR(15);
     WriteTPC(Zeros{PTO_XLEN} + 0x3000);
-    RaiseInterrupt(Zeros{PTO_XLEN} + 7, Zeros{24} + 0x55);
+    RaiseInterrupt(63, Zeros{24} + 0x55);
     assert CurrentACR() == 1;
     assert _ACRTrapNumber[[1]] == Zeros{6} + 44;
-    assert _ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 7;
+    assert _ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 63;
     assert _ACRTrapCause[[1]] == Zeros{24} + 0x55;
     assert _ACRTrapAsynchronous[[1]];
     assert _ACRTrapArgumentValid[[1]];
@@ -387,14 +387,31 @@ begin
     let acknowledged_pending = ReadSystemRegisterAddress(Zeros{24} + 0x0f08);
     assert acknowledged_pending == Zeros{PTO_XLEN};
 
-    // A disabled external interrupt becomes pending without taking a trap.
+    // Both endpoints of the architectural interrupt-ID domain become pending
+    // without taking a trap when external interrupt entry is disabled.
     WriteSystemRegisterAddress(Zeros{24} + 0x0f07, Zeros{PTO_XLEN} + 2);
-    RaiseInterrupt(Zeros{PTO_XLEN} + 7, Zeros{24} + 0x55);
+    ClearFault();
+    WriteTPC(Zeros{PTO_XLEN} + 0x5150);
+    RaiseInterrupt(0, Zeros{24} + 0x50);
+    RaiseInterrupt(63, Zeros{24} + 0x5f);
+    assert _LastFault == Fault_None;
+    assert CurrentACR() == 0;
+    assert ReadTPC() == Zeros{PTO_XLEN} + 0x5150;
     assert _ACRTrapNumber[[0]] == Zeros{6};
-    let disabled_pending = ReadSystemRegisterAddress(Zeros{24} + 0x0f08);
-    assert disabled_pending[7] == '1';
+    assert !_ACRTrapAsynchronous[[0]];
+    assert !_TrapContexts[[0]].valid;
+    let boundary_pending = ReadSystemRegisterAddress(Zeros{24} + 0x0f08);
+    let zero_is_top = ReadSystemRegisterAddress(Zeros{24} + 0x0f09);
+    assert boundary_pending[0] == '1' && boundary_pending[63] == '1';
+    assert zero_is_top == Zeros{PTO_XLEN};
     WriteSystemRegisterAddress(Zeros{24} + 0x0f0a,
-        Zeros{PTO_XLEN} + 7);
+        Zeros{PTO_XLEN});
+    let maximum_is_top = ReadSystemRegisterAddress(Zeros{24} + 0x0f09);
+    assert maximum_is_top == Zeros{PTO_XLEN} + 63;
+    WriteSystemRegisterAddress(Zeros{24} + 0x0f0a,
+        Zeros{PTO_XLEN} + 63);
+    let boundary_acknowledged = ReadSystemRegisterAddress(Zeros{24} + 0x0f08);
+    assert boundary_acknowledged == Zeros{PTO_XLEN};
 
     // Ring-one timer interrupt ID 3 follows the compare value. Acknowledge can
     // clear it transiently, but it reasserts until software clears comparison.

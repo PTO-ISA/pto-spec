@@ -102,6 +102,7 @@
     {
       "id": "PTO-REQ-INTERRUPT-001",
       "model": [
+        "asl/types.asl",
         "asl/state.asl",
         "asl/scalar/system-registers.asl",
         "asl/profiles/pto-v0.asl",

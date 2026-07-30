@@ -1802,7 +1802,7 @@ begin
     assert _LastFault == Fault_IllegalInstruction;
 
     ClearFault();
-    RaiseInterrupt(Zeros{PTO_XLEN} + 7, Zeros{24} + 9);
+    RaiseInterrupt(7, Zeros{24} + 9);
     assert PackTrapStatus(CurrentACR())[63] == '1';
     assert PackTrapStatus(CurrentACR())[5:0] == Zeros{6} + 44;
     WriteSystemRegisterAddress(Zeros{24} + 0x0f0a, Zeros{PTO_XLEN} + 7);

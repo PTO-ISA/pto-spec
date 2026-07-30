@@ -7957,16 +7957,52 @@ def main() -> int:
     )
     types_body = (ROOT / "asl" / "types.asl").read_text(encoding="utf-8")
     state_body = (ROOT / "asl" / "state.asl").read_text(encoding="utf-8")
+    state_test_source = (ROOT / "tests" / "asl" / "state-tests.asl").read_text(
+        encoding="utf-8"
+    )
     system_body = (ROOT / "asl" / "scalar" / "system.asl").read_text(encoding="utf-8")
     system_register_body = (ROOT / "asl" / "scalar" / "system-registers.asl").read_text(
         encoding="utf-8"
     )
     main_test_body = (ROOT / "tests" / "asl" / "main.asl").read_text(encoding="utf-8")
     require(
-        all(name in types_body for name in ("AccessControlRing",))
+        all(name in types_body for name in ("AccessControlRing", "InterruptID"))
         and "_CurrentACR" in state_body
         and "CurrentACR()" in state_body,
         "active profile lacks explicit access-control-ring state",
+    )
+    interrupt_requirement = requirements_by_id.get("PTO-REQ-INTERRUPT-001")
+    raise_interrupt_body = state_body.split(
+        "func RaiseInterrupt(interrupt_id: InterruptID, cause: bits(24))", 1
+    )[1].split("readonly func PackTrapStatus", 1)[0]
+    interrupt_register_test = state_test_source.split(
+        "func TestInterruptRegisterState()", 1
+    )[1].split("func Test", 1)[0]
+    complete_trap_test = state_test_source.split(
+        "func TestCompleteTrapEnvelope()", 1
+    )[1].split("func Test", 1)[0]
+    require(
+        "type InterruptID of integer {0..63};" in types_body
+        and interrupt_requirement is not None
+        and "asl/types.asl" in interrupt_requirement["model"]
+        and "assert" not in raise_interrupt_body
+        and "SetFault(" not in raise_interrupt_body
+        and raise_interrupt_body.index("SetInterruptPending(ring, interrupt_id);")
+        < raise_interrupt_body.index("InterruptEnabled(ring, interrupt_id)")
+        and "NaturalToWord(interrupt_id as integer {0..262144})"
+        in raise_interrupt_body
+        and "RaiseInterrupt(0," in interrupt_register_test
+        and "RaiseInterrupt(63," in interrupt_register_test
+        and "boundary_pending[0] == '1' && boundary_pending[63] == '1'"
+        in interrupt_register_test
+        and "_LastFault == Fault_None" in interrupt_register_test
+        and "ReadTPC() == Zeros{PTO_XLEN} + 0x5150" in interrupt_register_test
+        and "!_TrapContexts[[0]].valid" in interrupt_register_test
+        and "RaiseInterrupt(63," in complete_trap_test
+        and "_ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 63"
+        in complete_trap_test
+        and "TestInterruptRegisterState();" in main_test_body,
+        "interrupt injection must constrain IDs to 0..63 and witness both boundaries",
     )
     require(
         "SystemRegisterAccessPermitted(address, FALSE, CurrentACR())"
