@@ -203,7 +203,7 @@ open, and the repository remains at M4, until every sub-stage below closes.
 
 | Sub-stage | Current state | Clear target | Required exit evidence |
 | --- | --- | --- | --- |
-| `S5-T2-A` — profile decision | Identity/selection framework, scalar flag lifecycle/ownership, rounding-selector ownership, numeric namespace/carrier ownership, the A2/A3 MX negative-applicability slice, and the 99-point variation ownership inventory are closed; result decisions open | Apply the four accepted numeric identities and fail-closed selection rules, then resolve proposed dispositions for all 12 decisions and exact rules for all 20 domains. The PD-02 checkpoint separates five code namespaces, fixes all 19 carrier widths and four-bit packing, and keeps eight format/legality residuals explicit. The PD-01 checkpoint rejects the six MX CUBE selectors on A2/A3 for all 19 `TileDataType` identities before effects. The PD-12 checkpoint assigns every open point to the portable decision owner but leaves all selected routes and result bounds null. The PD-06 flag matrix assigns all 30 FSU forms; fill the 19 profile-owned conditions. Separate portable rules from target-specific rules instead of treating the `pto-v0` raw-carrier reference as hardware arithmetic. | Accepted architecture decisions resolve all 12 generated questions and define formats, rounding modes, exceptional values, subnormals, flags, saturation, accuracy, accumulation, quantization, matrix arithmetic, and implementation-defined dimensions for all 20 domains. All 12 decision and 20 domain acceptance records are populated; every non-portable variation point has a selected route and bounded result contract. |
+| `S5-T2-A` — profile decision | Checkpoints A1, A4, and A5 are closed; complete result decisions remain open | Apply the four accepted identities and fail-closed selection rules. Preserve the 99-point ownership ledger. Use the A5 public baseline of 16 identities, 11 accepted catalog bindings, 11 A2/A3 types, and 16 A5 types without treating availability as legality or result semantics. Resolve the remaining seven PD-02 residuals, all 12 decisions, all 20 domain rules, 19 profile-owned flag conditions, and every selected variation route/result bound. | Accepted records populate all 12 decisions and 20 domain rules; every non-portable point has one visible route and bounded result contract; all format, legality, flag, rounding, and target-support residuals have reproducible evidence. |
 | `S5-T2-B` — oracle qualification | Waiting on A | Select an independent, versioned oracle for each lane. The implementation under test and the `pto-v0` reference are not independent oracles. | Reproducible oracle identity, version/digest, invocation, supported domain list, known limitations, and a reviewer-approved rule for any target behavior that requires hardware capture rather than a software arithmetic library. |
 | `S5-T2-C` — vector corpus | Waiting on A–B | Generate deterministic inputs for every operation and every open numeric dimension. | Normal, minimum/maximum, boundary, signed-zero, subnormal, infinity, NaN, tie, overflow, underflow, divide-by-zero, rounding, saturation, reduction-order, and accumulation cases as applicable; each vector links to one operation key, profile, oracle, and expected disposition. |
 | `S5-T2-D` — differential execution | Waiting on B–C | Run the six numeric lanes independently and preserve raw oracle and PTO results. | All 20 contract domains, 29 hooks, and 108 operations are assigned exactly once; every vector produces a reproducible match, mismatch, unsupported, or implementation-defined record; no lane is missing or duplicated. |
@@ -251,6 +251,13 @@ ADR 0042 and `spec/evidence/numeric-variation-point-ownership.json` close
 domain/dimension rows cover all 20 domains, 108 operations, and 29 hooks. All
 selected routes, result rules, and result acceptance records remain null, so
 PD-12 and S5-T2 remain open.
+ADR 0043 and `spec/evidence/public-numeric-type-baseline.json` close
+`S5-T2-A5`, the PD-02 public identity and target-availability checkpoint. The
+baseline enumerates all 16 published types, accepts 11 unambiguous catalog
+bindings, and fixes availability at 11 types for A2/A3 and 16 for A5. It keeps
+F64, FP8, FPL8, FP4, FPL4, and E8M0 unbound where the public contract is absent
+or ambiguous. Seven bit-exact format, legality, and vector residuals remain;
+accepted result and domain-rule counts remain zero.
 
 #### Parallel numeric lanes
 
@@ -346,7 +353,11 @@ configuration from being confused with a passing release candidate.
   separation while retaining all 18 affected domain result rules.
 - `spec/evidence/numeric-format-namespace-contract.json` is the generated
   PD-02 namespace/carrier inventory. It closes structural ownership while
-  retaining eight explicit format, legality, target, and vector residuals.
+  handing its eight residuals to later PD-02 checkpoints.
+- `spec/evidence/public-numeric-type-baseline.json` is the generated PD-02
+  public identity/availability baseline. It closes 16 public identities, 11
+  catalog bindings, and the two target partitions while retaining seven
+  explicit format, legality, and vector residuals.
 - `spec/evidence/numeric-profile-applicability-closure.json` is the generated
   PD-01 A2/A3 MX negative-applicability package. It closes 114 unsupported
   tuples and leaves result semantics open.

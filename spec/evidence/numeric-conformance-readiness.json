@@ -14,6 +14,15 @@
     "selected_route_count": 0,
     "accepted_result_rule_count": 0
   },
+  "public_type_baseline": {
+    "path": "spec/evidence/public-numeric-type-baseline.json",
+    "status": "public-type-identity-and-target-availability-baseline-closed-result-and-legality-open",
+    "acceptance_record": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
+    "public_type_count": 16,
+    "accepted_catalog_binding_count": 11,
+    "accepted_result_rule_count": 0,
+    "accepted_domain_rule_count": 0
+  },
   "identity_framework": {
     "status": "closed:S5-T2-A1",
     "accepted_identity_count": 4,
@@ -37,7 +46,8 @@
       "blocked_by": [],
       "closed_checkpoints": [
         "S5-T2-A1",
-        "S5-T2-A4"
+        "S5-T2-A4",
+        "S5-T2-A5"
       ]
     },
     {
@@ -569,6 +579,8 @@
     "operation_count": 108,
     "accepted_configuration_identity_count": 4,
     "accepted_selection_framework_rule_count": 5,
+    "accepted_public_type_binding_count": 11,
+    "public_type_identity_count": 16,
     "profile_identity_count": 0,
     "qualified_oracle_count": 0,
     "vector_manifest_count": 0,

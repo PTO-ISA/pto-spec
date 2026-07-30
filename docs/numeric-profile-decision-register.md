@@ -39,8 +39,12 @@ accepted architecture decisions remain authoritative.
 - ADR 0040 and `spec/evidence/numeric-format-namespace-contract.json` close
   the PD-02 namespace/carrier checkpoint: five separate code spaces, all 19
   raw-carrier widths, every mapped/reserved code, and low-nibble-first packing
-  for all four 4-bit types. Eight format, exceptional-value, legality,
-  target-availability, and vector residuals remain open.
+  for all four 4-bit types.
+- ADR 0043 and `spec/evidence/public-numeric-type-baseline.json` close the
+  next PD-02 checkpoint: all 16 published type identities, 11 unambiguous
+  catalog bindings, and public availability for 11 A2/A3 and 16 A5 types.
+  Six catalog names remain unbound and seven bit-exact format, legality, and
+  vector residuals remain open. No result rule is accepted.
 - ADR 0041 and `spec/evidence/numeric-profile-applicability-closure.json`
   close one PD-01 applicability checkpoint: A2/A3 rejects the six MX CUBE
   selectors for every `TileDataType` before effects. All result rules and the
@@ -154,6 +158,7 @@ scripts/generate-numeric-profile-decision-proposals --check
 scripts/generate-scalar-numeric-flag-contract --check
 scripts/generate-numeric-rounding-selector-contract --check
 scripts/generate-numeric-format-namespace-contract --check
+scripts/generate-public-numeric-type-baseline --check
 scripts/generate-numeric-profile-applicability-closure --check
 scripts/generate-numeric-variation-point-ownership --check
 make repo-check

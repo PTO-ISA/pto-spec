@@ -178,7 +178,13 @@ The generated `numeric-format-namespace-contract.json` ledger records the
 accepted five code namespaces, 19 carrier widths, reserved-code behavior, and
 four-bit packing without closing PD-02. It keeps eight format, exceptional
 value, operation/type/profile legality, target-availability, and vector
-residuals explicit.
+residuals explicit at that checkpoint.
+The generated `public-numeric-type-baseline.json` ledger and ADR 0043 close
+`S5-T2-A5`: all 16 published types are identified, 11 unambiguous catalog
+bindings are accepted, A2/A3 availability is fixed at 11 types, and A5
+availability is fixed at 16. Six catalog names and seven bit-exact format,
+legality, and vector residuals remain open; availability never implies an
+operation result rule.
 The generated `numeric-profile-applicability-closure.json` ledger records the
 accepted A2/A3 unsupported-in-profile disposition for the six MX CUBE
 selectors across all 19 `TileDataType` identities. It keeps result rules,

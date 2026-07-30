@@ -109,8 +109,12 @@ close the structural namespace portion of PD-02. Five code spaces remain
 distinct; all 19 raw-carrier widths, every mapped/reserved code, and all four
 packed 4-bit low/high nibble cases are executable invariants. Eight residuals
 retain the bit-exact floating-format, exceptional-value, operation/type/profile
-legality, target-availability, and conformance-vector work. PD-02, S5-T2, and
-the M4 floor therefore remain unchanged.
+legality, target-availability, and conformance-vector work at that checkpoint.
+ADR 0043 and the generated `public-numeric-type-baseline.json` ledger close
+all 16 published public type identities, 11 exact catalog bindings, and public
+availability for 11 A2/A3 and 16 A5 types. Seven bit-exact format, catalog-role,
+legality, and vector residuals remain. No result or domain rule is accepted, so
+PD-02, S5-T2, and the M4 floor remain unchanged.
 The generated `numeric-profile-applicability-closure.json` ledger and ADR 0041
 close one negative PD-01 slice: A2/A3 does not support the six MX CUBE
 selectors for any of the 19 `TileDataType` identities, and every one of the

@@ -30,6 +30,7 @@ required_files=(
     docs/architecture-decisions/0040-numeric-format-namespace-ownership.md
     docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md
     docs/architecture-decisions/0042-numeric-variation-point-ownership.md
+    docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md
     docs/coverage.md
     docs/memory-model.md
     docs/modeling-conventions.md
@@ -55,6 +56,7 @@ required_files=(
     spec/evidence/numeric-contracts.json
     spec/evidence/numeric-profile-decision-inputs.json
     spec/evidence/numeric-profile-decision-proposals.json
+    spec/evidence/public-numeric-type-baseline.json
     spec/evidence/numeric-format-namespace-contract.json
     spec/evidence/numeric-profile-applicability-closure.json
     spec/evidence/numeric-variation-point-ownership.json
@@ -76,6 +78,7 @@ required_files=(
     scripts/generate-numeric-conformance-readiness
     scripts/generate-numeric-profile-decision-inputs
     scripts/generate-numeric-profile-decision-proposals
+    scripts/generate-public-numeric-type-baseline
     scripts/generate-numeric-format-namespace-contract
     scripts/generate-numeric-profile-applicability-closure
     scripts/generate-numeric-variation-point-ownership
@@ -181,6 +184,7 @@ python3 scripts/check-catalogs
 ./scripts/generate-scalar-numeric-flag-contract --check
 ./scripts/generate-numeric-rounding-selector-contract --check
 ./scripts/generate-numeric-format-namespace-contract --check
+./scripts/generate-public-numeric-type-baseline --check
 ./scripts/generate-numeric-profile-applicability-closure --check
 ./scripts/generate-numeric-variation-point-ownership --check
 ./scripts/generate-numeric-profile-decision-proposals --check

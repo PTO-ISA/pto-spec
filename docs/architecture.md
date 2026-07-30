@@ -148,8 +148,12 @@ destinations, 6-bit TMA/TALLOC types, and 5-bit bundle `DataType` fields are
 decoded independently; equal integers do not imply equal types. ADR 0040 and
 `spec/evidence/numeric-format-namespace-contract.json` define every mapped and
 reserved code, all 19 `TileDataType` raw-carrier widths, and low-nibble-first
-packing for FP4, FPL4, S4, and U4. Exact floating meanings and target-specific
-operation/type availability remain profile decisions under `S5-T2`.
+packing for FP4, FPL4, S4, and U4. ADR 0043 and
+`spec/evidence/public-numeric-type-baseline.json` additionally bind the 16
+published type identities to 11 unambiguous PTO catalog types and close public
+A2/A3-versus-A5 type availability. The six ambiguous or absent catalog names,
+bit-exact floating meanings, and operation/type legality remain profile
+decisions under `S5-T2`.
 ADR 0041 and `spec/evidence/numeric-profile-applicability-closure.json` close
 one such target-specific support rule: under `pto-a2a3-numeric-v1`, the six MX
 CUBE selectors reject for every `TileDataType` before effects. The portable

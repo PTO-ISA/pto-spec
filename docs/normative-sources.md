@@ -193,7 +193,15 @@ evidence, and independent model comparison. ADR 0040 makes the five namespace
 boundaries, all 19 raw-carrier widths, mapped/reserved code tables, and packed
 4-bit order normative. It does not define the unresolved floating formats,
 exceptional values, complete legality matrix, or target availability; those
-remain eight explicit PD-02 residuals.
+remain explicit PD-02 work until the next accepted checkpoint.
+
+`public-numeric-type-baseline.json` is generated from the pinned public type,
+target-profile, and portability sources plus the closed namespace inventory.
+ADR 0043 makes all 16 published type identities, 11 unambiguous catalog
+bindings, and the 11-type A2/A3 / 16-type A5 availability baseline normative.
+It leaves six catalog names unbound and seven bit-exact format, legality, and
+vector residuals open. Its Linx Sail comparison is structural only and supplies
+no PTO type binding or numeric result.
 
 `numeric-profile-applicability-closure.json` is generated from the profile
 applicability catalog, direct tile catalog, PD-02 namespace ledger, pinned

@@ -16,6 +16,9 @@ NUMERIC_PROFILE_IDENTITIES = ROOT / "spec/catalog/numeric-profile-identities.jso
 NUMERIC_VARIATION_OWNERSHIP = (
     ROOT / "spec/evidence/numeric-variation-point-ownership.json"
 )
+PUBLIC_NUMERIC_TYPE_BASELINE = (
+    ROOT / "spec/evidence/public-numeric-type-baseline.json"
+)
 DEFAULT_OUTPUT = ROOT / "spec/evidence/numeric-conformance-readiness.json"
 
 
@@ -197,6 +200,7 @@ def build_evidence() -> dict[str, Any]:
     inventory = load_json(NUMERIC_CONTRACTS)
     identity_catalog = load_json(NUMERIC_PROFILE_IDENTITIES)
     variation_ownership = load_json(NUMERIC_VARIATION_OWNERSHIP)
+    public_type_baseline = load_json(PUBLIC_NUMERIC_TYPE_BASELINE)
     require(
         inventory.get("status") == "closed-inventory-and-ownership",
         "S5-T1 numeric inventory is not closed",
@@ -218,6 +222,20 @@ def build_evidence() -> dict[str, Any]:
         == 99
         and variation_ownership.get("summary", {}).get("selected_route_count") == 0,
         "numeric variation-point ownership checkpoint drift",
+    )
+    require(
+        public_type_baseline.get("status")
+        == "public-type-identity-and-target-availability-baseline-closed-result-and-legality-open"
+        and public_type_baseline.get("summary", {}).get("public_type_count") == 16
+        and public_type_baseline.get("summary", {}).get(
+            "accepted_catalog_binding_count"
+        )
+        == 11
+        and public_type_baseline.get("summary", {}).get(
+            "accepted_result_rule_count"
+        )
+        == 0,
+        "public numeric type baseline drift",
     )
 
     domains = {row["id"]: row for row in inventory["contract_domains"]}
@@ -320,6 +338,15 @@ def build_evidence() -> dict[str, Any]:
             "selected_route_count": 0,
             "accepted_result_rule_count": 0,
         },
+        "public_type_baseline": {
+            "path": "spec/evidence/public-numeric-type-baseline.json",
+            "status": public_type_baseline["status"],
+            "acceptance_record": public_type_baseline["acceptance_record"],
+            "public_type_count": 16,
+            "accepted_catalog_binding_count": 11,
+            "accepted_result_rule_count": 0,
+            "accepted_domain_rule_count": 0,
+        },
         "identity_framework": {
             "status": "closed:S5-T2-A1",
             "accepted_identity_count": 4,
@@ -341,7 +368,7 @@ def build_evidence() -> dict[str, Any]:
                 "status": "in-progress",
                 "target": "accept all numeric result decisions and domain rules under the closed identity framework",
                 "blocked_by": [],
-                "closed_checkpoints": ["S5-T2-A1", "S5-T2-A4"],
+                "closed_checkpoints": ["S5-T2-A1", "S5-T2-A4", "S5-T2-A5"],
             },
             {
                 "id": "S5-T2-B",
@@ -391,6 +418,8 @@ def build_evidence() -> dict[str, Any]:
             **actual_counts,
             "accepted_configuration_identity_count": 4,
             "accepted_selection_framework_rule_count": 5,
+            "accepted_public_type_binding_count": 11,
+            "public_type_identity_count": 16,
             "profile_identity_count": 0,
             "qualified_oracle_count": 0,
             "vector_manifest_count": 0,

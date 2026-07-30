@@ -89,7 +89,8 @@
       ],
       "selector_dependencies": [
         "spec/catalog/numeric-profile-identities.json",
-        "spec/evidence/numeric-format-namespace-contract.json"
+        "spec/evidence/numeric-format-namespace-contract.json",
+        "spec/evidence/public-numeric-type-baseline.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -1055,7 +1056,8 @@
       ],
       "selector_dependencies": [
         "spec/catalog/numeric-profile-identities.json",
-        "spec/evidence/numeric-format-namespace-contract.json"
+        "spec/evidence/numeric-format-namespace-contract.json",
+        "spec/evidence/public-numeric-type-baseline.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -1961,7 +1963,8 @@
       ],
       "selector_dependencies": [
         "spec/catalog/numeric-profile-identities.json",
-        "spec/evidence/numeric-format-namespace-contract.json"
+        "spec/evidence/numeric-format-namespace-contract.json",
+        "spec/evidence/public-numeric-type-baseline.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -2026,7 +2029,8 @@
       ],
       "selector_dependencies": [
         "spec/catalog/numeric-profile-identities.json",
-        "spec/evidence/numeric-format-namespace-contract.json"
+        "spec/evidence/numeric-format-namespace-contract.json",
+        "spec/evidence/public-numeric-type-baseline.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -2879,7 +2883,8 @@
       ],
       "selector_dependencies": [
         "spec/catalog/numeric-profile-identities.json",
-        "spec/evidence/numeric-format-namespace-contract.json"
+        "spec/evidence/numeric-format-namespace-contract.json",
+        "spec/evidence/public-numeric-type-baseline.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -3442,7 +3447,8 @@
       ],
       "selector_dependencies": [
         "spec/catalog/numeric-profile-identities.json",
-        "spec/evidence/numeric-format-namespace-contract.json"
+        "spec/evidence/numeric-format-namespace-contract.json",
+        "spec/evidence/public-numeric-type-baseline.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -3506,7 +3512,8 @@
       ],
       "selector_dependencies": [
         "spec/catalog/numeric-profile-identities.json",
-        "spec/evidence/numeric-format-namespace-contract.json"
+        "spec/evidence/numeric-format-namespace-contract.json",
+        "spec/evidence/public-numeric-type-baseline.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -4111,7 +4118,8 @@
       ],
       "selector_dependencies": [
         "spec/catalog/numeric-profile-identities.json",
-        "spec/evidence/numeric-format-namespace-contract.json"
+        "spec/evidence/numeric-format-namespace-contract.json",
+        "spec/evidence/public-numeric-type-baseline.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -4486,7 +4494,8 @@
       ],
       "selector_dependencies": [
         "spec/catalog/numeric-profile-identities.json",
-        "spec/evidence/numeric-format-namespace-contract.json"
+        "spec/evidence/numeric-format-namespace-contract.json",
+        "spec/evidence/public-numeric-type-baseline.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -4777,7 +4786,8 @@
       ],
       "selector_dependencies": [
         "spec/catalog/numeric-profile-identities.json",
-        "spec/evidence/numeric-format-namespace-contract.json"
+        "spec/evidence/numeric-format-namespace-contract.json",
+        "spec/evidence/public-numeric-type-baseline.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -6028,7 +6038,8 @@
       ],
       "selector_dependencies": [
         "spec/catalog/numeric-profile-identities.json",
-        "spec/evidence/numeric-format-namespace-contract.json"
+        "spec/evidence/numeric-format-namespace-contract.json",
+        "spec/evidence/public-numeric-type-baseline.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -9219,6 +9230,10 @@
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
       "sha256": "ccf96bbc5f71cdc224a512313d7c461176ed6a6888947ba6a0d6364086bb3fa6"
+    },
+    {
+      "path": "spec/evidence/public-numeric-type-baseline.json",
+      "sha256": "3cd6d3b03075398287dfe5a3d114f593286b95691d498d9df9511ddaef3b5484"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",

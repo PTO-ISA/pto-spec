@@ -21,6 +21,7 @@ ROUNDING_SELECTOR_CONTRACT = (
 FORMAT_NAMESPACE_CONTRACT = (
     ROOT / "spec/evidence/numeric-format-namespace-contract.json"
 )
+PUBLIC_TYPE_BASELINE = ROOT / "spec/evidence/public-numeric-type-baseline.json"
 PROFILE_APPLICABILITY_CONTRACT = (
     ROOT / "spec/evidence/numeric-profile-applicability-closure.json"
 )
@@ -49,12 +50,13 @@ PROPOSALS: dict[str, dict[str, Any]] = {
             "named-target-profile-rule",
             "unsupported-in-profile",
         ],
-        "proposed_rule": "ADR 0040 closes five distinct code namespaces, all 19 TileDataType raw widths, scalar carrier codes, TMA/TALLOC and bundle mappings, reserved codes, and packed four-bit order. Bit-exact floating formats and operation/type/profile legality remain open. Backend carrier types cannot create implicit PTO formats.",
+        "proposed_rule": "ADR 0040 closes five distinct code namespaces, all 19 TileDataType raw widths, reserved codes, and packed four-bit order. ADR 0043 additionally closes 16 published type identities, 11 unambiguous catalog bindings, and the A2/A3-versus-A5 public type-availability baseline. Bit-exact floating formats and operation/type/profile legality remain open. Backend carrier types cannot create implicit PTO formats.",
         "open_items": [
-            "bind every floating raw carrier to a bit-exact numeric format and exceptional-value class",
+            "bind the specialized floating raw carriers and decide the public roles of F64 and E8M0",
+            "publish bit-exact payload fields and exceptional-value classes for every floating type",
             "complete scalar and tile operation/type legality matrix",
-            "resolve the E5M2/E5M3FN conflict, specialized eight-bit and four-bit bindings, and the architectural role of E8M0",
-            "publish target availability and positive/reserved vectors for every accepted tuple",
+            "resolve the E5M2/E5M3FN spelling conflict",
+            "publish positive and negative target-availability vectors for every accepted tuple",
         ],
     },
     "PD-03": {
@@ -205,6 +207,7 @@ def generate() -> dict[str, Any]:
     scalar_flag_contract = load(SCALAR_FLAG_CONTRACT)
     rounding_selector_contract = load(ROUNDING_SELECTOR_CONTRACT)
     format_namespace_contract = load(FORMAT_NAMESPACE_CONTRACT)
+    public_type_baseline = load(PUBLIC_TYPE_BASELINE)
     profile_applicability_contract = load(PROFILE_APPLICABILITY_CONTRACT)
     variation_point_contract = load(VARIATION_POINT_CONTRACT)
     require(inputs["target"] == "S5-T2-A", "decision-input target drift")
@@ -285,6 +288,30 @@ def generate() -> dict[str, Any]:
             "pd02_complete": False,
         },
         "numeric format namespace contract drift",
+    )
+    require(
+        public_type_baseline["schema_version"] == 1
+        and public_type_baseline["decision_id"] == "PD-02"
+        and public_type_baseline["checkpoint_id"] == "PD-02-SC2"
+        and public_type_baseline["status"]
+        == "public-type-identity-and-target-availability-baseline-closed-result-and-legality-open"
+        and public_type_baseline["summary"]
+        == {
+            "public_type_count": 16,
+            "public_floating_type_count": 8,
+            "public_integer_type_count": 8,
+            "a2a3_available_type_count": 11,
+            "a5_available_type_count": 16,
+            "accepted_catalog_binding_count": 11,
+            "unresolved_catalog_type_count": 6,
+            "accepted_result_rule_count": 0,
+            "accepted_domain_rule_count": 0,
+            "open_residual_count": 7,
+            "pd02_complete": False,
+            "s5_t2_a_complete": False,
+            "s5_t2_complete": False,
+        },
+        "public numeric type baseline drift",
     )
     require(
         profile_applicability_contract["schema_version"] == 1
@@ -403,7 +430,7 @@ def generate() -> dict[str, Any]:
     )
 
     return {
-        "schema_version": 7,
+        "schema_version": 8,
         "target": "S5-T2-A",
         "status": "proposal-complete-decisions-open",
         "input": {
@@ -445,6 +472,13 @@ def generate() -> dict[str, Any]:
             "status": format_namespace_contract["status"],
             "acceptance_record": format_namespace_contract["acceptance_record"],
             **format_namespace_contract["summary"],
+        },
+        "public_type_baseline": {
+            "path": "spec/evidence/public-numeric-type-baseline.json",
+            "sha256": hashlib.sha256(PUBLIC_TYPE_BASELINE.read_bytes()).hexdigest(),
+            "status": public_type_baseline["status"],
+            "acceptance_record": public_type_baseline["acceptance_record"],
+            **public_type_baseline["summary"],
         },
         "profile_applicability_contract": {
             "path": "spec/evidence/numeric-profile-applicability-closure.json",
@@ -536,6 +570,13 @@ def generate() -> dict[str, Any]:
                 "status": "closed",
             },
             {
+                "id": "S5-T2-A5",
+                "target": "bind every published numeric type identity and its target-availability baseline",
+                "current": 16,
+                "required": 16,
+                "status": "closed",
+            },
+            {
                 "id": "S5-T2-B",
                 "target": "qualify an independent oracle for every conformance lane",
                 "current": 0,
@@ -579,6 +620,12 @@ def generate() -> dict[str, Any]:
             ],
             "selected_variation_route_count": variation_point_contract["summary"][
                 "selected_route_count"
+            ],
+            "accepted_public_type_binding_count": public_type_baseline["summary"][
+                "accepted_catalog_binding_count"
+            ],
+            "public_type_identity_count": public_type_baseline["summary"][
+                "public_type_count"
             ],
             "can_close_s5_t2_a": False,
             "can_close_s5_t2": False,

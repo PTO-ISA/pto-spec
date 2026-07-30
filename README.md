@@ -44,7 +44,12 @@ structural part of PD-02: five independent code namespaces, all 19
 `TileDataType` raw-carrier widths, every mapped and reserved code, and the
 low-nibble-first packing rule for all four 4-bit types. Eight format-binding,
 exceptional-value, legality, target-availability, and vector obligations remain
-open, so this checkpoint does not accept PD-02 or promote the M4 floor.
+open at that checkpoint. ADR 0043 and
+`spec/evidence/public-numeric-type-baseline.json` then bind all 16 published
+type identities, accept 11 unambiguous catalog bindings, and close the A2/A3
+(11 types) and A5 (16 types) availability baseline. Seven bit-exact format,
+legality, and vector obligations remain; no result rule is accepted, so PD-02
+and the M4 floor remain open.
 ADR 0041 and the generated
 `spec/evidence/numeric-profile-applicability-closure.json` ledger close one
 negative PD-01 applicability slice: A2/A3 rejects the six MX CUBE selectors
