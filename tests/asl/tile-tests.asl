@@ -452,6 +452,26 @@ begin
     TMOV(62, 55);
     assert ReadTileElement(62, 1, 1) == Zeros{PTO_XLEN} + 8;
 
+    // This closure test owns its matrix fixture. It must not inherit tiles
+    // configured by TestTileMatmul when executed as an independent shard.
+    ConfigureTwoByTwo(5);
+    ConfigureTwoByTwo(6);
+    ConfigureTwoByTwo(7);
+    ConfigureTile(27, 256, 2, 1, 2, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(28, 256, 2, 1, 2, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(5, 0, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(5, 1, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(5, 1, 1, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(6, 0, 0, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(6, 0, 1, Zeros{PTO_XLEN} + 6);
+    WriteTileElement(6, 1, 0, Zeros{PTO_XLEN} + 7);
+    WriteTileElement(6, 1, 1, Zeros{PTO_XLEN} + 8);
+    WriteTileElement(27, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(27, 1, 0, Zeros{PTO_XLEN} + 3);
+
     ConfigureTile(61, 256, 2, 1, 2, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigureTile(62, 256, 1, 2, 1, 2, TileDataType_U64,
