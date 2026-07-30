@@ -47,7 +47,7 @@
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "fdf2716415d97c166c7fff2de11c15b668ed4f2dfe431faa55c73030659538d3"
+      "sha256": "87f1b9ce81ebe4bd7c3cab09b49647b2d05ae14f212518c2edaf0a5bfef1e6b6"
     },
     {
       "path": "scripts/check-publication-hygiene",
@@ -55,7 +55,7 @@
     },
     {
       "path": "scripts/check-repository",
-      "sha256": "8a7584abf21f19fe6801520e6624ec0cde723f3f3020e1ef096a711426d8403b"
+      "sha256": "621175585e4402bf559fbc508cf30067fbe27b7deaac7aeb477dd2fca031bc61"
     },
     {
       "path": "scripts/check-toolchain",
@@ -63,19 +63,19 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "0a1704a6a2f5b0fe20511cb27d89d8aa0b106b2ac764f3d582ef9a861bbf2a22"
+      "sha256": "9c58db9eea0120dd8fdfd1a741acd6e8bfefefab5eea787a3c9248c402f5b5eb"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "017ce04fa2a397e958cd6f89344e416cdb40e83a3d81163e29f7c3985994b5d5"
+      "sha256": "71d7e6d1575f8672cbca13f7f25316ff9af2e1d87465369d332f6d833825fe66"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "fc008efece9059d739b5a5252a32f3b054b5ac022bb54a63d7726d465e18221c"
+      "sha256": "f0740865ac14aa4f69a473e78fc1086dcf68608bcb971fb045e36116739f37f4"
     },
     {
       "path": "specification.toml",
-      "sha256": "f72637cbcc494d0670669a281be247a6d71ca6e479c1b9a50baadb4440f83fb0"
+      "sha256": "506d5eb9f6d252fbb331e0c127100c9b8caf5bdf28a2e3e649de1445c75874ea"
     }
   ],
   "sub_stages": [

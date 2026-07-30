@@ -24,6 +24,10 @@ or target-hardware conformance; those obligations remain open under `S5-T2`.
 The generated `spec/evidence/numeric-conformance-readiness.json` ledger
 partitions that work across six parallel lanes and keeps every unavailable
 profile, oracle, vector, result, and review identity explicit.
+The generated `spec/evidence/numeric-profile-decision-proposals.json` ledger
+then proposes four versioned profile identities, dispositions for all 12 open
+numeric decisions, and mappings for all 20 domains. It is deliberately
+non-authoritative: every acceptance field is null and S5-T2 remains open.
 The executable-model comparison has an exhaustive 701-row disposition matrix
 and a clean content-addressed snapshot whose generation, validation,
 documentation, Sail parser, and Sail C-backend gates all pass.

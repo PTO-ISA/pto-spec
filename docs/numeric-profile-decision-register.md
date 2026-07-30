@@ -5,12 +5,15 @@ numeric architecture choices that must be accepted before PTO can qualify an
 independent oracle or publish target-conformance vectors. It does not choose
 numeric results from an implementation.
 
-The generated
-`../spec/evidence/numeric-profile-decision-inputs.json` ledger is the
-machine-readable source of truth. It is derived against the pinned public PTO
-contract and implementation-evidence revision already used by source
-reconciliation. The PTO ASL, catalogs, and accepted architecture decisions
-remain authoritative.
+The generated input ledger
+`../spec/evidence/numeric-profile-decision-inputs.json` is the
+machine-readable source of truth for the questions and their evidence. The
+generated proposal ledger
+`../spec/evidence/numeric-profile-decision-proposals.json` adds a complete,
+reviewable disposition and domain mapping without accepting it. Both are
+derived against the pinned public PTO contract and implementation-evidence
+revision already used by source reconciliation. The PTO ASL, catalogs, and
+accepted architecture decisions remain authoritative.
 
 ## Current result
 
@@ -19,24 +22,53 @@ remain authoritative.
 - 12 cross-cutting architecture or profile questions remain open.
 - Every one of the 20 numeric-contract domains is linked to its exact S5-T2
   lane, operation keys, hooks, open dimensions, questions, and evidence.
-- No target profile identity or domain rule has been selected.
+- Four versioned profile identities, all 12 question dispositions, and all 20
+  domain-to-profile mappings now have fail-closed review proposals.
+- No target profile identity, question disposition, or domain rule has been
+  accepted. All acceptance-record fields remain null.
 - The current maturity floor remains M4. This register improves decision
   readiness; it does not close `S5-T2-A` or numeric conformance.
 
 ## Profile partitions requiring a decision
 
-| Partition input | Role | Current status |
-| --- | --- | --- |
-| Portable numeric contract | Results shared by every conforming target | Identity and rules required |
-| CPU observation | Implementation-under-test evidence and developer diagnostics | Not an oracle |
-| A2A3 target | Candidate named target profile | Identity and rules required |
-| A5 target | Candidate named target profile | Identity and rules required |
+| Partition input | Proposed identity | Role | Current status |
+| --- | --- | --- | --- |
+| Portable numeric contract | `pto-numeric-v1` | Results and pre-effect rejection rules shared by every conforming target | Review required |
+| CPU observation | `pto-cpu-observation-v1` | Implementation-under-test evidence and developer diagnostics | Review required; never an oracle |
+| A2A3 target | `pto-a2a3-numeric-v1` | Support restrictions and explicitly bounded variation points | Review required |
+| A5 target | `pto-a5-numeric-v1` | Support restrictions and explicitly bounded variation points | Review required |
 
 A support restriction and a result-semantic difference are not the same
 thing. A target may reject a type or operation through a named profile. If it
 accepts an operation but produces a target-dependent result, that result needs
 a named profile rule or an explicit, bounded implementation-defined result
 set.
+
+The proposal applies one fail-closed rule everywhere: an unknown profile,
+numeric mode, format, operation/type tuple, or missing numeric rule rejects
+before architectural effects. A backend default is not an architectural
+default.
+
+## Proposed dispositions for review
+
+These rows are proposals, not accepted PTO semantics. The generated ledger
+contains the complete affected-domain, source, residual-evidence, and null
+acceptance-record fields.
+
+| ID | Proposed disposition | Review target |
+| --- | --- | --- |
+| `PD-01` | Portable results plus named support restrictions and bounded target variations | Accept versioned identities and the complete applicability matrix; keep CPU observational |
+| `PD-02` | Portable bit encodings plus per-profile operation/type support | Resolve all 19 type identities, specialized eight-bit names, packed four-bit order, and reserved rejection |
+| `PD-03` | Portable RNE/RTZ/RTP/RTM taxonomy; reject backend-only modes until named | Map every selector and override, including ties, odd, away, and saturation ordering |
+| `PD-04` | Named input/result subnormal rules selected by visible mode state or a fixed target profile | Define reset, lifetime, transitions, operation applicability, and unknown-mode rejection |
+| `PD-05` | Bit-exact special-value rules or an enumerated target result set | Choose canonicalization/payload, signaling, infinity, signed-zero, and flag interactions |
+| `PD-06` | Portable sticky NV/DZ/OF/UF/NX state if retained by the architecture | Accept a producer/reset/trap matrix or explicitly revise the visible-state contract |
+| `PD-07` | Deterministic conversion, enumerated target result set, or pre-effect rejection | Eliminate unbounded overflow; complete saturation-on/off/default and narrowing tables |
+| `PD-08` | Versioned independent oracle with per-profile error bounds | Set accuracy, domains, monotonicity, and special-value rules per operation/type |
+| `PD-09` | Exact integer/order rules plus exact or bounded floating reduction trees | Freeze widths, ordering, ties, NaNs, zeros, overflow, and partial merges |
+| `PD-10` | Format-specific equations; reject formats without a complete profile rule | Define scaling, grouping, tails, packing, sentinels, clamping, and inverse behavior |
+| `PD-11` | Type-tuple/profile matrix with explicit product and accumulation arithmetic | Define rounding, saturation, bias/source-accumulator order, MX scales, and exceptions |
+| `PD-12` | Every variation point has a named selector and testable allowed set | Define discovery and reject unknown profiles, modes, and absent rules |
 
 ## Open decision questions
 
@@ -79,8 +111,9 @@ semantics rather than numeric differential results.
 
 ## Promotion path
 
-When all 12 decisions are accepted, `S5-T2-A` may close and each domain row in
-the generated ledger must contain a profile rule and decision record. Only then
+When all four profile identities and all 12 decisions are accepted, `S5-T2-A`
+may close and each of the 20 domain rows in the generated inputs must contain
+an accepted profile rule and decision record. Only then
 may `S5-T2-B` qualify an independent oracle for each numeric lane. Oracle,
 vector, result, adjudication, and review evidence remain separate promotion
 gates.
@@ -90,5 +123,6 @@ Regenerate and validate the decision inputs with:
 ```bash
 scripts/generate-numeric-conformance-readiness --check
 scripts/generate-numeric-profile-decision-inputs --check
+scripts/generate-numeric-profile-decision-proposals --check
 make repo-check
 ```

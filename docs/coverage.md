@@ -87,7 +87,11 @@ six-lane partition and its absent profile/oracle/vector/result/review evidence
 fail closed before expensive runtime validation begins. The generated
 `numeric-profile-decision-inputs.json` ledger further covers all 20 domains
 with 12 explicit open profile questions and 24 content-addressed public
-evidence sources; it does not yet select any profile rule.
+evidence sources. The generated
+`numeric-profile-decision-proposals.json` ledger adds four versioned profile
+identity proposals, proposed dispositions for all 12 questions, and an exact
+mapping for all 20 domains, while keeping every acceptance field null. It does
+not select any profile rule or close S5-T2-A.
 
 Release traceability is independently fail-closed. The generated
 `spec/evidence/release-traceability-readiness.json` ledger assigns requirement,

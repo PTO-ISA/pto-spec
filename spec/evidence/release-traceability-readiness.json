@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "fc008efece9059d739b5a5252a32f3b054b5ac022bb54a63d7726d465e18221c"
+      "sha256": "f0740865ac14aa4f69a473e78fc1086dcf68608bcb971fb045e36116739f37f4"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -35,7 +35,7 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "0a1704a6a2f5b0fe20511cb27d89d8aa0b106b2ac764f3d582ef9a861bbf2a22"
+      "sha256": "9c58db9eea0120dd8fdfd1a741acd6e8bfefefab5eea787a3c9248c402f5b5eb"
     },
     {
       "path": "spec/evidence/scalar-effect-closure.json",
@@ -290,8 +290,10 @@
           "spec/evidence/cube-totality.json",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
+          "scripts/generate-numeric-profile-decision-proposals",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
+          "spec/evidence/numeric-profile-decision-proposals.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
         ],
@@ -582,9 +584,11 @@
           "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
+          "scripts/generate-numeric-profile-decision-proposals",
           "spec/evidence/scalar-fsu-totality.json",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
+          "spec/evidence/numeric-profile-decision-proposals.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
         ],
@@ -776,9 +780,11 @@
           "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
+          "scripts/generate-numeric-profile-decision-proposals",
           "spec/evidence/tepl-totality.json",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
+          "spec/evidence/numeric-profile-decision-proposals.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
         ],
@@ -797,9 +803,11 @@
           "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
+          "scripts/generate-numeric-profile-decision-proposals",
           "spec/evidence/tepl-totality.json",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
+          "spec/evidence/numeric-profile-decision-proposals.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
         ],
@@ -818,9 +826,11 @@
           "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
+          "scripts/generate-numeric-profile-decision-proposals",
           "spec/evidence/tepl-totality.json",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
+          "spec/evidence/numeric-profile-decision-proposals.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
         ],
@@ -854,9 +864,11 @@
           "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
+          "scripts/generate-numeric-profile-decision-proposals",
           "spec/evidence/tepl-totality.json",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
+          "spec/evidence/numeric-profile-decision-proposals.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
         ],
@@ -890,9 +902,11 @@
           "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
+          "scripts/generate-numeric-profile-decision-proposals",
           "spec/evidence/tepl-totality.json",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
+          "spec/evidence/numeric-profile-decision-proposals.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
         ],
@@ -929,9 +943,11 @@
           "docs/architecture-decisions/0034-cube-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
+          "scripts/generate-numeric-profile-decision-proposals",
           "spec/evidence/cube-totality.json",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
+          "spec/evidence/numeric-profile-decision-proposals.json",
           "spec/evidence/numeric-contracts.json",
           "spec/profile-hooks.json"
         ],
@@ -1075,6 +1091,7 @@
           "scripts/generate-executable-model-comparison",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
+          "scripts/generate-numeric-profile-decision-proposals",
           "scripts/generate-release-traceability-readiness",
           "scripts/generate-release-gate-readiness",
           "spec/catalog/scalar-forms.json",
@@ -1083,6 +1100,7 @@
           "spec/evidence/maturity-closure.json",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/evidence/numeric-profile-decision-inputs.json",
+          "spec/evidence/numeric-profile-decision-proposals.json",
           "spec/evidence/numeric-contracts.json",
           "spec/evidence/executable-model-comparison.json",
           "spec/evidence/release-traceability-readiness.json",

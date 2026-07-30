@@ -1,0 +1,419 @@
+#!/usr/bin/env python3
+"""Generate the fail-closed S5-T2-A numeric profile proposal package."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+INPUT = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
+READINESS = ROOT / "spec/evidence/numeric-conformance-readiness.json"
+OUTPUT = ROOT / "spec/evidence/numeric-profile-decision-proposals.json"
+
+
+PROFILE_PROPOSALS: tuple[dict[str, Any], ...] = (
+    {
+        "partition_id": "portable-numeric",
+        "proposed_id": "pto-numeric-v1",
+        "isa_profile": "pto-v0",
+        "role": "portable result and rejection contract for every accepted operation/type tuple",
+        "normative": True,
+        "selection": "implicit for every PTO program; a target profile may only narrow support",
+        "status": "review-required",
+        "acceptance_record": None,
+    },
+    {
+        "partition_id": "cpu-observation",
+        "proposed_id": "pto-cpu-observation-v1",
+        "isa_profile": "pto-v0",
+        "role": "non-normative implementation-under-test observations and developer diagnostics",
+        "normative": False,
+        "selection": "never selected as an architectural oracle or target result contract",
+        "status": "review-required",
+        "acceptance_record": None,
+    },
+    {
+        "partition_id": "a2a3-target",
+        "proposed_id": "pto-a2a3-numeric-v1",
+        "isa_profile": "pto-v0",
+        "role": "A2A3 support restrictions and explicitly bounded numeric variation points",
+        "normative": True,
+        "selection": "named target profile plus a complete operation/type legality and rule table",
+        "status": "review-required",
+        "acceptance_record": None,
+    },
+    {
+        "partition_id": "a5-target",
+        "proposed_id": "pto-a5-numeric-v1",
+        "isa_profile": "pto-v0",
+        "role": "A5 support restrictions and explicitly bounded numeric variation points",
+        "normative": True,
+        "selection": "named target profile plus a complete operation/type legality and rule table",
+        "status": "review-required",
+        "acceptance_record": None,
+    },
+)
+
+
+PROPOSALS: dict[str, dict[str, Any]] = {
+    "PD-01": {
+        "proposed_dispositions": [
+            "portable-normative-rule",
+            "named-target-profile-rule",
+            "unsupported-in-profile",
+        ],
+        "proposed_rule": "Legal PTO operations use pto-numeric-v1 results. A2A3 and A5 may reject documented operation/type tuples; any accepted target-dependent result must be selected by a named profile and bounded rule. CPU observations are never normative.",
+        "open_items": [
+            "accept the four proposed identities",
+            "complete every domain operation/type applicability table",
+        ],
+    },
+    "PD-02": {
+        "proposed_dispositions": [
+            "portable-normative-rule",
+            "named-target-profile-rule",
+            "unsupported-in-profile",
+        ],
+        "proposed_rule": "Freeze bit-level encodings in the portable contract and publish positive support tables per target. Reserved formats and absent operation/type tuples reject before effects; backend carrier types cannot create implicit PTO formats.",
+        "open_items": [
+            "bit-exact table for all 19 TileDataType identities",
+            "complete scalar and tile operation/type legality matrix",
+            "resolve the E5M2/E5M3FN naming conflict, specialized eight-bit encodings, packed four-bit nibble order, and whether E8M0 is architectural",
+        ],
+    },
+    "PD-03": {
+        "proposed_dispositions": [
+            "portable-normative-rule",
+            "named-target-profile-rule",
+            "unsupported-in-profile",
+        ],
+        "proposed_rule": "The portable rounding taxonomy is RNE, RTZ, RTP, and RTM with exact ties-to-even behavior for RNE. Backend-only odd, part, and compound saturation controls reject unless a named PTO profile assigns an encoding and exact operation-local rule.",
+        "open_items": [
+            "map every encoded selector and operation override",
+            "decide whether any backend-only modes enter a named profile",
+            "publish signed halfway and rounding-before-saturation vectors",
+        ],
+    },
+    "PD-04": {
+        "proposed_dispositions": [
+            "named-target-profile-rule",
+            "implementation-defined-with-explicit-allowed-set",
+        ],
+        "proposed_rule": "Input denormal handling and result underflow handling are separate per-operation-class rules. Any configurable FTZ behavior must be selected by visible architectural mode state with reset, lifetime, and transition semantics; otherwise the target profile fixes one behavior. Unknown mode combinations reject.",
+        "open_items": [
+            "identify or add the visible HF32/TF32 numeric mode state",
+            "define A2A3 and A5 input/result FTZ matrices, including A5 division paths that explicitly normalize subnormals",
+            "bound CPU observation modes without treating them as architecture",
+        ],
+    },
+    "PD-05": {
+        "proposed_dispositions": [
+            "portable-normative-rule",
+            "named-target-profile-rule",
+            "implementation-defined-with-explicit-allowed-set",
+        ],
+        "proposed_rule": "Define results by special-value class for every numeric family. Canonicalization or payload preservation, signaling quieting, infinity production, and signed-zero selection must be bit-exact or an enumerated target-profile result set; unconstrained host propagation is not conforming evidence.",
+        "open_items": [
+            "choose canonical versus payload-preserving NaNs per family",
+            "define signaling and flag interaction",
+            "publish bit-exact infinity and signed-zero tables",
+        ],
+    },
+    "PD-06": {
+        "proposed_dispositions": ["portable-normative-rule"],
+        "proposed_rule": "NV, DZ, OF, UF, and NX are portable sticky architectural flags. Every scalar numeric form must define produced flag sets, simultaneous production, reset, trap preservation, and whether a rejected operation leaves flags unchanged.",
+        "open_items": [
+            "complete per-form producer matrix",
+            "define tininess detection and NX coupling",
+            "define simultaneous flags and trap interaction",
+        ],
+    },
+    "PD-07": {
+        "proposed_dispositions": [
+            "portable-normative-rule",
+            "named-target-profile-rule",
+            "implementation-defined-with-explicit-allowed-set",
+            "unsupported-in-profile",
+        ],
+        "proposed_rule": "Every conversion cross-product has one deterministic result, an enumerated profile-specific allowed-result set, or pre-effect rejection. The public undefined-overflow wording and CPU-only saturation cannot remain architectural outcomes.",
+        "open_items": [
+            "complete source/destination/rounding/saturation cross-product",
+            "resolve the public CPU-saturation versus implementation default-OFF conflict",
+            "choose overflow, NaN, and infinity results",
+            "define non-saturating narrowing, wrap behavior, and omitted-saturation defaults per profile/type pair",
+        ],
+    },
+    "PD-08": {
+        "proposed_dispositions": [
+            "named-profile-error-bound",
+            "unsupported-in-profile",
+        ],
+        "proposed_rule": "Each elementary function uses a versioned independent high-precision oracle plus a named per-profile ULP or relative-error bound, domain table, monotonicity rule, and special-value table. CPU host-library and hardware primitive results are observations, not the oracle.",
+        "open_items": [
+            "choose oracle and version",
+            "set per-operation/type/profile error bounds",
+            "define domain boundaries and monotonic intervals",
+        ],
+    },
+    "PD-09": {
+        "proposed_dispositions": [
+            "portable-normative-rule",
+            "named-target-profile-rule",
+            "implementation-defined-with-explicit-allowed-set",
+        ],
+        "proposed_rule": "Integer widths, overflow, comparison order, arg ties, and stable ordering are portable and exact. Floating reductions must define an exact tree per profile or a finite/testable allowed-result contract, including NaNs, signed zero, and partial merge order.",
+        "open_items": [
+            "freeze accumulator widths and trees",
+            "define arg and equal-value ties",
+            "bound floating permutation sensitivity and partial merges",
+        ],
+    },
+    "PD-10": {
+        "proposed_dispositions": [
+            "portable-normative-rule",
+            "named-target-profile-rule",
+            "unsupported-in-profile",
+        ],
+        "proposed_rule": "Every accepted quantized format receives equations for scale, zero point, grouping, exponent selection, rounding, clamping, packing, tails, special values, and inverse dequantization. Formats without a complete rule reject in that profile.",
+        "open_items": [
+            "resolve whether the affine parameter is scale or inverse-scale/pre-quant multiplier",
+            "freeze format-specific equations and stochastic-rounding state",
+            "define group axes, sizes, and tails",
+            "define sentinels, packing, round-trip tolerances, and whether SET_QUANT configuration is architectural state",
+        ],
+    },
+    "PD-11": {
+        "proposed_dispositions": [
+            "portable-normative-rule",
+            "named-target-profile-rule",
+            "unsupported-in-profile",
+        ],
+        "proposed_rule": "Publish legal type tuples and, for each tuple/profile, product precision, accumulator width/order, intermediate rounding, saturation, source-accumulator and bias order, MX scale interpretation, and special-value results. Unsupported MX tuples reject before effects.",
+        "open_items": [
+            "complete legal type-tuple table",
+            "freeze dot-product, HF32/TF32 selection, and accumulation arithmetic",
+            "resolve the public A5 MX E4M3-only versus implementation FP4/mixed-FP8 conflict",
+            "define MX scale layout, logical versus capacity K multiples, and non-A5 rejection",
+        ],
+    },
+    "PD-12": {
+        "proposed_dispositions": [
+            "named-target-profile-rule",
+            "implementation-defined-with-explicit-allowed-set",
+            "unsupported-in-profile",
+        ],
+        "proposed_rule": "No numeric result is unbounded implementation-defined behavior. Each variation point names a profile or visible mode, enumerates or mathematically bounds allowed results, and has discovery metadata. Generic validation rejects unknown profiles, unknown modes, and missing rules before effects.",
+        "open_items": [
+            "define discovery and selection contract",
+            "list every variation point and allowed set",
+            "add unknown-profile, unknown-mode, and missing-rule rejection vectors",
+        ],
+    },
+}
+
+
+def load(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise SystemExit(f"numeric profile proposal generation failed: {message}")
+
+
+def generate() -> dict[str, Any]:
+    inputs = load(INPUT)
+    readiness = load(READINESS)
+    require(inputs["target"] == "S5-T2-A", "decision-input target drift")
+    require(
+        inputs["status"] == "decision-inputs-closed-profile-decisions-open",
+        "decision-input status drift",
+    )
+    questions = inputs["decision_questions"]
+    domains = inputs["domain_matrix"]
+    require(
+        {row["id"] for row in questions} == set(PROPOSALS),
+        "question proposal coverage drift",
+    )
+    require(
+        len(PROFILE_PROPOSALS) == len(inputs["profile_partition_inputs"]),
+        "profile partition count drift",
+    )
+    require(
+        {row["partition_id"] for row in PROFILE_PROPOSALS}
+        == {row["id"] for row in inputs["profile_partition_inputs"]},
+        "profile partition identity drift",
+    )
+
+    decision_proposals = []
+    for question in questions:
+        proposal = PROPOSALS[question["id"]]
+        require(
+            set(proposal["proposed_dispositions"]).issubset(
+                question["permitted_dispositions"]
+            ),
+            f"{question['id']} proposes a forbidden disposition",
+        )
+        require(
+            question["selected_disposition"] is None
+            and question["decision_record"] is None,
+            f"{question['id']} was accepted outside this proposal layer",
+        )
+        decision_proposals.append(
+            {
+                "id": question["id"],
+                "title": question["title"],
+                "classification": question["classification"],
+                "source_ids": question["source_ids"],
+                "affected_domains": question["domains"],
+                **proposal,
+                "acceptance_evidence": question["acceptance_evidence"],
+                "status": "review-required",
+                "accepted": False,
+                "acceptance_record": None,
+            }
+        )
+
+    proposed_profile_ids = [row["proposed_id"] for row in PROFILE_PROPOSALS]
+    domain_proposals = []
+    for domain in domains:
+        require(
+            domain["selected_profile_rule"] is None,
+            f"{domain['domain']} was accepted outside this proposal layer",
+        )
+        domain_proposals.append(
+            {
+                "domain": domain["domain"],
+                "lane": domain["lane"],
+                "operation_count": domain["operation_count"],
+                "operation_keys": domain["operation_keys"],
+                "hooks": domain["hooks"],
+                "decision_question_ids": domain["decision_question_ids"],
+                "proposed_profile_ids": proposed_profile_ids,
+                "portable_rule_status": "rule-required",
+                "a2a3_support_status": "operation-type-matrix-required",
+                "a5_support_status": "operation-type-matrix-required",
+                "cpu_observation_status": "capture-plan-required-not-oracle",
+                "independent_oracle_status": "qualification-required",
+                "vector_status": "generation-required",
+                "result_status": "capture-required",
+                "review_status": "acceptance-required",
+                "accepted_profile_rule": None,
+                "status": "proposal-mapped-conformance-open",
+            }
+        )
+
+    operation_count = sum(row["operation_count"] for row in domain_proposals)
+    profile_hooks = sorted(
+        {hook for lane in readiness["lanes"] for hook in lane["hooks"]}
+    )
+    require(len(domain_proposals) == 20, "numeric domain count drift")
+    require(operation_count == 108, "numeric operation count drift")
+    require(len(profile_hooks) == 29, "numeric hook count drift")
+    require(
+        readiness["summary"]["operation_count"] == operation_count,
+        "readiness operation count drift",
+    )
+
+    return {
+        "schema_version": 1,
+        "target": "S5-T2-A",
+        "status": "proposal-complete-decisions-open",
+        "input": {
+            "path": "spec/evidence/numeric-profile-decision-inputs.json",
+            "sha256": hashlib.sha256(INPUT.read_bytes()).hexdigest(),
+            "public_repository": inputs["public_repository"],
+            "public_commit": inputs["public_commit"],
+        },
+        "policy": {
+            "proposal_not_authority": "This package proposes reviewable dispositions; it does not accept a numeric rule or change PTO ASL semantics.",
+            "support_boundary": "A target profile may narrow support. An accepted operation has portable semantics unless an accepted named rule bounds a visible variation point.",
+            "cpu_boundary": "CPU results are observations from an implementation under test, never an independent oracle.",
+            "fail_closed": "Unknown profiles, modes, formats, operation/type tuples, and missing numeric rules reject before architectural effects.",
+            "promotion": "S5-T2-A remains open until every proposal has an accepted PTO decision record and every domain has an accepted rule.",
+        },
+        "profile_proposals": list(PROFILE_PROPOSALS),
+        "profile_hooks": profile_hooks,
+        "decision_proposals": decision_proposals,
+        "domain_proposals": domain_proposals,
+        "promotion_residuals": [
+            {
+                "id": "S5-T2-A1",
+                "target": "accept all profile identities and all 12 decision records",
+                "current": 0,
+                "required": 16,
+            },
+            {
+                "id": "S5-T2-A2",
+                "target": "populate accepted rules for every numeric domain",
+                "current": 0,
+                "required": 20,
+            },
+            {
+                "id": "S5-T2-B",
+                "target": "qualify an independent oracle for every conformance lane",
+                "current": 0,
+                "required": 6,
+            },
+            {
+                "id": "S5-T2-C",
+                "target": "publish normal, boundary, exceptional, and adversarial vectors for every domain",
+                "current": 0,
+                "required": 20,
+            },
+            {
+                "id": "S5-T2-D",
+                "target": "record local CPU plus independent A2A3 and A5 target results",
+                "current": 0,
+                "required": 60,
+            },
+            {
+                "id": "S5-T2-E",
+                "target": "adjudicate every differential and obtain architecture/formal review",
+                "current": 0,
+                "required": 22,
+            },
+        ],
+        "summary": {
+            "profile_proposal_count": len(PROFILE_PROPOSALS),
+            "accepted_profile_count": 0,
+            "decision_proposal_count": len(decision_proposals),
+            "accepted_decision_count": 0,
+            "numeric_domain_count": len(domain_proposals),
+            "accepted_domain_rule_count": 0,
+            "numeric_operation_count": operation_count,
+            "numeric_hook_count": len(profile_hooks),
+            "can_close_s5_t2_a": False,
+            "can_close_s5_t2": False,
+        },
+    }
+
+
+def serialized() -> str:
+    return json.dumps(generate(), indent=2, ensure_ascii=False) + "\n"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    action = parser.add_mutually_exclusive_group(required=True)
+    action.add_argument("--check", action="store_true")
+    action.add_argument("--write", action="store_true")
+    args = parser.parse_args()
+    expected = serialized()
+    if args.write:
+        OUTPUT.write_text(expected, encoding="utf-8")
+        return 0
+    if not OUTPUT.exists() or OUTPUT.read_text(encoding="utf-8") != expected:
+        raise SystemExit(
+            "numeric profile decision proposals are stale; run scripts/generate-numeric-profile-decision-proposals --write"
+        )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
