@@ -231,8 +231,14 @@ def generate() -> dict[str, Any]:
             ],
         },
         "tests": {
-            "source": "tests/asl/profile-tests.asl",
-            "entrypoint": "ValidateNumericFormatClassification",
+            "sources": [
+                "tests/asl/profile-tests.asl",
+                "tests/asl/scalar-tests.asl",
+            ],
+            "entrypoints": [
+                "ValidateNumericFormatClassification",
+                "TestScalarFPDispatchEffects",
+            ],
             "assertion_helpers": [
                 "AssertHardwareNumericNaNSpecialRules",
                 "AssertHardwareNumericSignedZeroSpecialRules",
@@ -246,6 +252,7 @@ def generate() -> dict[str, Any]:
                 "all-thirteen-signed-zero-formats-mixed-orders-and-equal-sign-ties",
                 "all-twelve-no-signed-zero-formats",
                 "invalid-internal-encoding-rejects-before-special-result",
+                "scalar-fp32-fp64-equal-sign-zero-minmax",
             ],
         },
         "sources": [

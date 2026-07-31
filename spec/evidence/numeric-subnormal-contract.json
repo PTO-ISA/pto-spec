@@ -2628,7 +2628,7 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "913765605c4ac6f9d4023155d0c9b484df45e0024e333853681b6b006479aa61"
+      "sha256": "14b13f6f6bb9c23acd01d80d25a3733d8640137de102c1f75596546769c175d6"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",

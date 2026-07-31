@@ -126,7 +126,8 @@ Executable assertions cover:
 - both mixed-sign operand orders and both equal-sign ties for all thirteen
   signed-zero formats;
 - every format without a signed-zero pair;
-- invalid internal encodings combined with otherwise-special operands; and
+- invalid internal encodings combined with otherwise-special operands;
+- decoded scalar FP32 plus direct scalar FP64 equal-sign MIN/MAX zero cases; and
 - the signaling-invalid output independently from the result carrier.
 
 The generated contract enumerates all eight affected operation identities and

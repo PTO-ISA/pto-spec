@@ -552,8 +552,14 @@
     ]
   },
   "tests": {
-    "source": "tests/asl/profile-tests.asl",
-    "entrypoint": "ValidateNumericFormatClassification",
+    "sources": [
+      "tests/asl/profile-tests.asl",
+      "tests/asl/scalar-tests.asl"
+    ],
+    "entrypoints": [
+      "ValidateNumericFormatClassification",
+      "TestScalarFPDispatchEffects"
+    ],
     "assertion_helpers": [
       "AssertHardwareNumericNaNSpecialRules",
       "AssertHardwareNumericSignedZeroSpecialRules",
@@ -566,13 +572,14 @@
       "left-right-and-two-NaN-minmax",
       "all-thirteen-signed-zero-formats-mixed-orders-and-equal-sign-ties",
       "all-twelve-no-signed-zero-formats",
-      "invalid-internal-encoding-rejects-before-special-result"
+      "invalid-internal-encoding-rejects-before-special-result",
+      "scalar-fp32-fp64-equal-sign-zero-minmax"
     ]
   },
   "sources": [
     {
       "path": "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
-      "sha256": "7c9f27fbccea8bec91238781adf7060a57cf774db59c67766a75e867551fe561"
+      "sha256": "574e32ef5d4d7de785a801c5af6b00fe0c2b0cb832aec3cc2920ea4e17cd4dd5"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -580,7 +587,7 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "913765605c4ac6f9d4023155d0c9b484df45e0024e333853681b6b006479aa61"
+      "sha256": "14b13f6f6bb9c23acd01d80d25a3733d8640137de102c1f75596546769c175d6"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
@@ -600,7 +607,7 @@
     },
     {
       "path": "asl/scalar/floating.asl",
-      "sha256": "343bf5c522269034372b2fe916fb011556043fdff142862a0f6ea8738118184b"
+      "sha256": "cc2b1fd8a53e840295363ae45335ca426385565d6f797b4829d760e3e65ba71f"
     },
     {
       "path": "asl/scalar/dispatch.asl",

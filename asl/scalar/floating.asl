@@ -425,14 +425,20 @@ begin
         let left32 = left[31:0];
         let right32 = right[31:0];
         if ScalarFP32IsZero(left32) && ScalarFP32IsZero(right32) then
-            if operation == FloatingBinary_MAX then return Zeros{PTO_XLEN};
+            if operation == FloatingBinary_MAX && left32[31] == '1' &&
+               right32[31] == '1' then
+                return Zeros{PTO_XLEN} + 0x80000000;
+            elsif operation == FloatingBinary_MAX then return Zeros{PTO_XLEN};
             elsif left32[31] == '1' || right32[31] == '1' then
                 return Zeros{PTO_XLEN} + 0x80000000;
             else return Zeros{PTO_XLEN};
             end;
         end;
     elsif ScalarFP64IsZero(left) && ScalarFP64IsZero(right) then
-        if operation == FloatingBinary_MAX then return Zeros{PTO_XLEN};
+        if operation == FloatingBinary_MAX && left[63] == '1' &&
+           right[63] == '1' then
+            return Zeros{PTO_XLEN} + 0x8000000000000000;
+        elsif operation == FloatingBinary_MAX then return Zeros{PTO_XLEN};
         elsif left[63] == '1' || right[63] == '1' then
             return Zeros{PTO_XLEN} + 0x8000000000000000;
         else return Zeros{PTO_XLEN};
