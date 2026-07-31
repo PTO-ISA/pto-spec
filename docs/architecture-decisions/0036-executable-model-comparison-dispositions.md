@@ -15,7 +15,7 @@ source identity, prose, code, or diagrams from the comparison source.
 PTO currently defines:
 
 - 474 scalar forms;
-- 107 bundle/command forms;
+- 99 bundle/command forms;
 - 120 direct tile operations: 98 TEPL, 9 TMA, and 13 CUBE.
 
 The independent evidence is useful for scalar and command stable form IDs, and
@@ -42,12 +42,12 @@ The allowed row classifications are:
 - `intentional-extension`: PTO owns the operation without an independent
   equivalent.
 
-The current matrix classifies 701 rows:
+The current matrix classifies 693 rows:
 
 | Classification | Rows | Disposition |
 | --- | ---: | --- |
-| `comparable-match` | 649 | Stable scalar/command identities or tile selector/header patterns agree. |
-| `divergence` | 12 | PTO-v0 rejects these command forms before effects or routes semantics through PTO-owned direct tile dispatch. |
+| `comparable-match` | 557 | Stable scalar/command identities or tile selector/header patterns agree. |
+| `divergence` | 96 | 79 TEPL and 7 command rows record the issue-18/ADR-0045 0.57.1 ABI break; 10 command rows retain intentional pre-effect rejection. |
 | `non-comparable` | 39 | Independent evidence is decode-only, header-only, or lacks payload execution. |
 | `intentional-extension` | 1 | `TPRELU` is a PTO-owned TEPL extension. |
 
@@ -61,8 +61,9 @@ The comparison explicitly records these model limits:
   The bundle bridge can represent 63 TEPL, 1 TMA, and 5 CUBE direct operations;
   other direct operations either use direct tile dispatch or reject at bundle
   commit before effects.
-- TEPL comparison covers 97 shared selector/pattern rows after PTO spelling
-  normalization for transpose. `TPRELU` is the one PTO-owned extension.
+- TEPL comparison records 18 comparable selector/pattern rows and 79 approved
+  issue-18/ADR-0045 ABI-remap divergences after PTO spelling normalization for
+  transpose. `TPRELU` is the one PTO-owned extension.
 - The independent engine manifest contains 9 TMA and 13 CUBE functions, but
   those rows are header/function evidence, not independent tile payload
   execution.

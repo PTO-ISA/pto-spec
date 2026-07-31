@@ -179,7 +179,7 @@ LANE_SPECS: tuple[dict[str, Any], ...] = (
 
 EXPECTED_COUNTS = {
     "contract_domain_count": 20,
-    "hook_count": 29,
+    "hook_count": 30,
     "lane_count": 6,
     "operation_count": 108,
 }
@@ -229,12 +229,12 @@ def build_evidence() -> dict[str, Any]:
     )
     require(
         public_type_baseline.get("status")
-        == "public-type-identity-and-target-availability-baseline-closed-result-and-legality-open"
+        == "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open"
         and public_type_baseline.get("summary", {}).get("public_type_count") == 16
         and public_type_baseline.get("summary", {}).get(
             "accepted_catalog_binding_count"
         )
-        == 11
+        == 16
         and public_type_baseline.get("summary", {}).get(
             "accepted_result_rule_count"
         )
@@ -364,7 +364,7 @@ def build_evidence() -> dict[str, Any]:
             "status": public_type_baseline["status"],
             "acceptance_record": public_type_baseline["acceptance_record"],
             "public_type_count": 16,
-            "accepted_catalog_binding_count": 11,
+            "accepted_catalog_binding_count": 16,
             "accepted_result_rule_count": 0,
             "accepted_domain_rule_count": 0,
         },
@@ -453,7 +453,7 @@ def build_evidence() -> dict[str, Any]:
             **actual_counts,
             "accepted_configuration_identity_count": 4,
             "accepted_selection_framework_rule_count": 5,
-            "accepted_public_type_binding_count": 11,
+            "accepted_public_type_binding_count": 16,
             "public_type_identity_count": 16,
             "accepted_bounded_result_rule_count": 3,
             "accepted_bounded_result_tuple_count": 48,

@@ -32,6 +32,7 @@ required_files=(
     docs/architecture-decisions/0042-numeric-variation-point-ownership.md
     docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md
     docs/architecture-decisions/0044-public-integer-conversion-result-subset.md
+    docs/architecture-decisions/0045-pto-isa-release-tile-contract.md
     docs/coverage.md
     docs/memory-model.md
     docs/modeling-conventions.md
@@ -49,6 +50,11 @@ required_files=(
     spec/catalog/numeric-profile-applicability.json
     spec/catalog/system-registers.json
     spec/catalog/tile-operations.json
+    spec/hardware-conformance-profile.json
+    spec/release-manifest.json
+    spec/evidence/pto-isa-0571-abi-vectors.json
+    spec/evidence/pto-isa-0571-encoding-totality.json
+    spec/evidence/pto-isa-0571-hardware-numeric-vectors.json
     spec/evidence/public-source-reconciliation.json
     spec/evidence/maturity-closure.json
     spec/evidence/release-gate-readiness.json
@@ -88,9 +94,11 @@ required_files=(
     scripts/generate-numeric-rounding-selector-contract
     scripts/generate-public-source-reconciliation
     scripts/generate-release-gate-readiness
+    scripts/generate-release-manifest
     scripts/generate-release-traceability-readiness
     scripts/generate-scalar-numeric-flag-contract
     tests/README.md
+    scripts/check-release-manifest
 )
 
 for path in "${required_files[@]}"; do
@@ -195,4 +203,5 @@ python3 scripts/check-catalogs
 ./scripts/generate-release-traceability-readiness --check
 ./scripts/generate-release-gate-readiness --check
 python3 scripts/generate-instruction-reference --check
+./scripts/check-release-manifest
 python3 scripts/check-publication-hygiene

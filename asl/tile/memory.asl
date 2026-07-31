@@ -2,6 +2,8 @@
 // PTO-REQ-MEMORY-TSO-001: precise, restartable direct
 // TLOAD/TSTORE/MGATHER/MSCATTER and destination-free TPREFETCH.
 
+type ScatterLaneOrder of array [[PTO_MODEL_TILE_ELEMENTS]] of Word;
+
 func TMOV(destination: TileIndex, source: TileIndex)
 begin
     let source_tile = _Tiles[[source]];
@@ -46,9 +48,14 @@ func TALLOC(destination: TileIndex, capacity_bytes: integer {0..262144},
             data_type_code: Word, implementation_defined_layout: boolean)
 begin
     assert TileDataTypeEncodingValid(data_type_code);
+    if TileCapacityInUseExcept(destination) + capacity_bytes >
+       TileCapacityLimitBytes() then
+        SetFault(Fault_TileAllocation, ReadTPC());
+        return;
+    end;
     let layout = if implementation_defined_layout then
         TileLayout_ImplementationDefined else TileLayout_RowMajor;
-    ConfigureTile(destination, capacity_bytes as integer {0..524288},
+    ConfigureTile(destination, capacity_bytes,
         rows as integer {0..65535}, columns as integer {0..65535},
         valid_rows, valid_columns, TileDataTypeFromEncoding(data_type_code),
         layout, TileLocation_Any);
@@ -182,7 +189,7 @@ begin
                 TileMemoryElementBytes(tile.data_type));
             RecordLoadEvent(translated_addresses[[element]],
                 TileMemoryElementBytes(tile.data_type), raw,
-                MemoryOrder_Relaxed);
+                CurrentBundleMemoryOrder());
             _Tiles[[destination]].payload[[element]] =
                 LoadTileMemoryElement(translated_addresses[[element]],
                     tile.data_type, high_nibble);
@@ -224,7 +231,7 @@ begin
                 payload[[element]]);
             RecordStoreEvent(translated_addresses[[element]],
                 TileMemoryElementBytes(tile.data_type), stored_value,
-                MemoryOrder_Relaxed);
+                CurrentBundleMemoryOrder());
         end;
     end;
 end;
@@ -263,13 +270,59 @@ begin
                 TileMemoryElementBytes(destination_tile.data_type));
             RecordLoadEvent(translated_addresses[[element]],
                 TileMemoryElementBytes(destination_tile.data_type), raw,
-                MemoryOrder_Relaxed);
+                CurrentBundleMemoryOrder());
             _Tiles[[destination]].payload[[element]] =
                 LoadTileMemoryElement(translated_addresses[[element]],
                     destination_tile.data_type, high_nibbles[element] == '1');
         end;
     end;
     MarkTileValidRegionDefined(destination);
+end;
+
+func CommitScatterLanes(source_tile: TileInfo,
+                        source_payload: TilePayload,
+                        lane_order: ScatterLaneOrder,
+                        lane_count: integer {0..PTO_MODEL_TILE_ELEMENTS},
+                        original_addresses: TilePayload,
+                        translated_addresses: TilePayload,
+                        high_nibbles: bits(PTO_MODEL_TILE_ELEMENTS))
+begin
+    // Non-atomic duplicate-address lanes have an unspecified winner. Atomic
+    // bundle execution retains descriptor order and contributes ordered events.
+    var commit_order = lane_order;
+    if lane_count > 0 then
+        for position = 0 to lane_count - 1
+            looplimit PTO_MODEL_TILE_ELEMENTS do
+            var selected_position:
+                integer {0..PTO_MODEL_TILE_ELEMENTS-1} =
+                    position as integer {0..PTO_MODEL_TILE_ELEMENTS-1};
+            if !CurrentBundleAtomic() then
+                var selected = FALSE;
+                for candidate_position = position to lane_count - 1
+                    looplimit PTO_MODEL_TILE_ELEMENTS do
+                    if !selected then
+                        if ARBITRARY: boolean then
+                            selected_position = candidate_position as
+                                integer {0..PTO_MODEL_TILE_ELEMENTS-1};
+                            selected = TRUE;
+                        end;
+                    end;
+                end;
+            end;
+            let selected_element = commit_order[[selected_position]];
+            commit_order[[selected_position]] = commit_order[[position]];
+            commit_order[[position]] = selected_element;
+            let element = UInt(commit_order[[position]]) as
+                ModelTileElementIndex;
+            let stored_value = StoreTileMemoryElement(
+                original_addresses[[element]], translated_addresses[[element]],
+                source_tile.data_type, high_nibbles[element] == '1',
+                source_payload[[element]]);
+            RecordStoreEvent(translated_addresses[[element]],
+                TileMemoryElementBytes(source_tile.data_type), stored_value,
+                CurrentBundleMemoryOrder());
+        end;
+    end;
 end;
 
 func MSCATTER(base_address: Word, source: TileIndex, indices: TileIndex)
@@ -282,6 +335,8 @@ begin
     assert source_tile.valid_columns == index_tile.valid_columns;
     let source_payload = source_tile.payload;
     let index_payload = index_tile.payload;
+    var lane_order: ScatterLaneOrder;
+    var lane_count: integer {0..PTO_MODEL_TILE_ELEMENTS} = 0;
     var original_addresses: TilePayload;
     var translated_addresses: TilePayload;
     var high_nibbles: bits(PTO_MODEL_TILE_ELEMENTS);
@@ -299,30 +354,23 @@ begin
             high_nibbles[element] =
                 if TileMemoryIndexedHighNibble(index_payload[[element]],
                     source_tile.data_type) then '1' else '0';
+            lane_order[[lane_count]] =
+                NaturalToWord(element as integer {0..262144});
+            lane_count = (lane_count + 1) as
+                integer {0..PTO_MODEL_TILE_ELEMENTS};
         end;
     end;
-    for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(source_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            let stored_value = StoreTileMemoryElement(
-                original_addresses[[element]], translated_addresses[[element]],
-                source_tile.data_type, high_nibbles[element] == '1',
-                source_payload[[element]]);
-            RecordStoreEvent(translated_addresses[[element]],
-                TileMemoryElementBytes(source_tile.data_type), stored_value,
-                MemoryOrder_Relaxed);
-        end;
-    end;
+    CommitScatterLanes(source_tile, source_payload, lane_order, lane_count,
+        original_addresses, translated_addresses, high_nibbles);
 end;
 
 func MGATHER_MASK(destination: TileIndex, base_address: Word, indices: TileIndex,
-                  mask: TileIndex)
+                  mask: TileIndex, pad_value: TilePadValue)
 begin
     let destination_tile = _Tiles[[destination]];
     let index_tile = _Tiles[[indices]];
     let mask_payload = _Tiles[[mask]].payload;
-    assert destination_tile.allocated && destination_tile.contents_defined;
+    assert destination_tile.allocated;
     assert index_tile.allocated && index_tile.contents_defined;
     assert _Tiles[[mask]].allocated && _Tiles[[mask]].contents_defined;
     assert destination_tile.valid_rows == index_tile.valid_rows;
@@ -356,11 +404,15 @@ begin
                     TileMemoryElementBytes(destination_tile.data_type));
                 RecordLoadEvent(translated_addresses[[element]],
                     TileMemoryElementBytes(destination_tile.data_type), raw,
-                    MemoryOrder_Relaxed);
+                    CurrentBundleMemoryOrder());
                 _Tiles[[destination]].payload[[element]] =
                     LoadTileMemoryElement(translated_addresses[[element]],
                         destination_tile.data_type,
                         high_nibbles[element] == '1');
+            else
+                _Tiles[[destination]].payload[[element]] =
+                    TilePadValueForDataType(
+                        pad_value, destination_tile.data_type);
             end;
         end;
     end;
@@ -380,6 +432,8 @@ begin
     assert source_tile.valid_columns == index_tile.valid_columns;
     let source_payload = source_tile.payload;
     let index_payload = index_tile.payload;
+    var lane_order: ScatterLaneOrder;
+    var lane_count: integer {0..PTO_MODEL_TILE_ELEMENTS} = 0;
     var original_addresses: TilePayload;
     var translated_addresses: TilePayload;
     var high_nibbles: bits(PTO_MODEL_TILE_ELEMENTS);
@@ -398,24 +452,15 @@ begin
                 high_nibbles[element] =
                     if TileMemoryIndexedHighNibble(index_payload[[element]],
                         source_tile.data_type) then '1' else '0';
+                lane_order[[lane_count]] =
+                    NaturalToWord(element as integer {0..262144});
+                lane_count = (lane_count + 1) as
+                    integer {0..PTO_MODEL_TILE_ELEMENTS};
             end;
         end;
     end;
-    for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(source_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            if !IsZero(mask_payload[[element]]) then
-                let stored_value = StoreTileMemoryElement(
-                    original_addresses[[element]],
-                    translated_addresses[[element]], source_tile.data_type,
-                    high_nibbles[element] == '1', source_payload[[element]]);
-                RecordStoreEvent(translated_addresses[[element]],
-                    TileMemoryElementBytes(source_tile.data_type),
-                    stored_value, MemoryOrder_Relaxed);
-            end;
-        end;
-    end;
+    CommitScatterLanes(source_tile, source_payload, lane_order, lane_count,
+        original_addresses, translated_addresses, high_nibbles);
 end;
 
 func MGATHER_CAS(destination: TileIndex, base_address: Word, indices: TileIndex,
@@ -499,7 +544,7 @@ begin
             end;
             RecordAtomicEvent(write_translated_addresses[[element]],
                 TileMemoryElementBytes(destination_tile.data_type), old_raw,
-                write_value, MemoryOrder_Relaxed, succeeds);
+                write_value, CurrentBundleMemoryOrder(), succeeds);
         end;
     end;
     MarkTileValidRegionDefined(destination);
@@ -507,19 +552,21 @@ end;
 
 func TPREFETCH(base_address: Word, byte_count: integer {0..262144})
 begin
-    // Unlike scalar prefetch, tile prefetch is a faulting, restartable
-    // footprint read. Preflight the complete footprint before recording any
-    // byte access so a fault contributes no partial event prefix.
-    if byte_count > 0 then
-        let access_size = byte_count as integer {1..262144};
-        let probe = ProbeDataAccess(base_address, access_size, 1, FALSE);
-        if RaiseDataAccessFault(probe, base_address) then return; end;
-        for byte_index = 0 to byte_count - 1 looplimit 262145 do
-            let translated_address = probe.translated_address +
-                NaturalToWord(byte_index as integer {0..262144});
-            let value = LoadTranslatedUnsigned(translated_address, 1);
-            RecordLoadEvent(translated_address, 1, value,
-                MemoryOrder_Relaxed);
-        end;
+    // Probe each original byte before recording any event so the first failing
+    // address is precise and a failed footprint has no partial event prefix.
+    for byte_index = 0 to byte_count - 1 looplimit 262144 do
+        let address = base_address +
+            NaturalToWord(byte_index as integer {0..262144});
+        let probe = ProbeDataAccess(address, 1, 1, FALSE);
+        if RaiseDataAccessFault(probe, address) then return; end;
+    end;
+    for byte_index = 0 to byte_count - 1 looplimit 262144 do
+        let address = base_address +
+            NaturalToWord(byte_index as integer {0..262144});
+        let probe = ProbeDataAccess(address, 1, 1, FALSE);
+        assert probe.fault == Fault_None;
+        let value = LoadTranslatedUnsigned(probe.translated_address, 1);
+        RecordLoadEvent(probe.translated_address, 1, value,
+            CurrentBundleMemoryOrder());
     end;
 end;

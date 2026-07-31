@@ -3562,7 +3562,7 @@
     {
       "name": "TMAX",
       "family": "TEPL",
-      "selector": "0x004",
+      "selector": "0x00B",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TMAX",
@@ -3572,7 +3572,7 @@
     {
       "name": "TMIN",
       "family": "TEPL",
-      "selector": "0x005",
+      "selector": "0x00C",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TMIN",
@@ -3632,7 +3632,7 @@
     {
       "name": "TCMP",
       "family": "TEPL",
-      "selector": "0x02B",
+      "selector": "0x00D",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TCMP",
@@ -3642,7 +3642,7 @@
     {
       "name": "TSEL",
       "family": "TEPL",
-      "selector": "0x02C",
+      "selector": "0x01A",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TSEL",
@@ -3652,7 +3652,7 @@
     {
       "name": "TABS",
       "family": "TEPL",
-      "selector": "0x02D",
+      "selector": "0x00F",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TABS",
@@ -3662,7 +3662,7 @@
     {
       "name": "TNOT",
       "family": "TEPL",
-      "selector": "0x02E",
+      "selector": "0x010",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TNOT",
@@ -3672,7 +3672,7 @@
     {
       "name": "TNEG",
       "family": "TEPL",
-      "selector": "0x02F",
+      "selector": "0x011",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TNEG",
@@ -3682,7 +3682,7 @@
     {
       "name": "TRELU",
       "family": "TEPL",
-      "selector": "0x00B",
+      "selector": "0x017",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TRELU",
@@ -3692,7 +3692,7 @@
     {
       "name": "TPRELU",
       "family": "TEPL",
-      "selector": "0x00C",
+      "selector": "0x00E",
       "closure_status": "closed",
       "closure_basis": "catalog-defined-direct-binary",
       "public_symbol": "TPRELU",
@@ -3712,7 +3712,7 @@
     {
       "name": "TREM",
       "family": "TEPL",
-      "selector": "0x030",
+      "selector": "0x004",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TREM",
@@ -3722,7 +3722,7 @@
     {
       "name": "TSQRT",
       "family": "TEPL",
-      "selector": "0x010",
+      "selector": "0x015",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TSQRT",
@@ -3732,7 +3732,7 @@
     {
       "name": "TLOG",
       "family": "TEPL",
-      "selector": "0x00F",
+      "selector": "0x013",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TLOG",
@@ -3742,7 +3742,7 @@
     {
       "name": "TRECIP",
       "family": "TEPL",
-      "selector": "0x018",
+      "selector": "0x014",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TRECIP",
@@ -3752,7 +3752,7 @@
     {
       "name": "TEXP",
       "family": "TEPL",
-      "selector": "0x00E",
+      "selector": "0x012",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TEXP",
@@ -3762,7 +3762,7 @@
     {
       "name": "TRSQRT",
       "family": "TEPL",
-      "selector": "0x011",
+      "selector": "0x016",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TRSQRT",
@@ -3782,7 +3782,7 @@
     {
       "name": "TAXPY",
       "family": "TEPL",
-      "selector": "0x031",
+      "selector": "0x02F",
       "closure_status": "closed",
       "closure_basis": "public-api-aligned",
       "public_symbol": "TAXPY",
@@ -3822,7 +3822,7 @@
     {
       "name": "TMINS",
       "family": "TEPL",
-      "selector": "0x025",
+      "selector": "0x02C",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TMINS",
@@ -3832,7 +3832,7 @@
     {
       "name": "TMAXS",
       "family": "TEPL",
-      "selector": "0x024",
+      "selector": "0x02B",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TMAXS",
@@ -3842,7 +3842,7 @@
     {
       "name": "TREMS",
       "family": "TEPL",
-      "selector": "0x032",
+      "selector": "0x024",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TREMS",
@@ -3882,7 +3882,7 @@
     {
       "name": "TCMPS",
       "family": "TEPL",
-      "selector": "0x033",
+      "selector": "0x02D",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TCMPS",
@@ -3892,7 +3892,7 @@
     {
       "name": "TSELS",
       "family": "TEPL",
-      "selector": "0x034",
+      "selector": "0x03A",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TSELS",
@@ -3922,7 +3922,7 @@
     {
       "name": "TROWSUM",
       "family": "TEPL",
-      "selector": "0x014",
+      "selector": "0x040",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TROWSUM",
@@ -3932,7 +3932,7 @@
     {
       "name": "TROWPROD",
       "family": "TEPL",
-      "selector": "0x035",
+      "selector": "0x043",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TROWPROD",
@@ -3942,7 +3942,7 @@
     {
       "name": "TROWMAX",
       "family": "TEPL",
-      "selector": "0x012",
+      "selector": "0x041",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TROWMAX",
@@ -3952,7 +3952,7 @@
     {
       "name": "TROWMIN",
       "family": "TEPL",
-      "selector": "0x013",
+      "selector": "0x042",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TROWMIN",
@@ -3962,7 +3962,7 @@
     {
       "name": "TROWARGMAX",
       "family": "TEPL",
-      "selector": "0x036",
+      "selector": "0x04C",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TROWARGMAX",
@@ -3972,7 +3972,7 @@
     {
       "name": "TROWARGMIN",
       "family": "TEPL",
-      "selector": "0x037",
+      "selector": "0x04D",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TROWARGMIN",
@@ -3982,7 +3982,7 @@
     {
       "name": "TCOLSUM",
       "family": "TEPL",
-      "selector": "0x017",
+      "selector": "0x050",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TCOLSUM",
@@ -3992,7 +3992,7 @@
     {
       "name": "TCOLPROD",
       "family": "TEPL",
-      "selector": "0x038",
+      "selector": "0x053",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TCOLPROD",
@@ -4002,7 +4002,7 @@
     {
       "name": "TCOLMAX",
       "family": "TEPL",
-      "selector": "0x015",
+      "selector": "0x051",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TCOLMAX",
@@ -4012,7 +4012,7 @@
     {
       "name": "TCOLMIN",
       "family": "TEPL",
-      "selector": "0x016",
+      "selector": "0x052",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TCOLMIN",
@@ -4022,7 +4022,7 @@
     {
       "name": "TCOLARGMAX",
       "family": "TEPL",
-      "selector": "0x039",
+      "selector": "0x05C",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TCOLARGMAX",
@@ -4032,7 +4032,7 @@
     {
       "name": "TCOLARGMIN",
       "family": "TEPL",
-      "selector": "0x03A",
+      "selector": "0x05D",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TCOLARGMIN",
@@ -4042,7 +4042,7 @@
     {
       "name": "TROWEXPAND",
       "family": "TEPL",
-      "selector": "0x01F",
+      "selector": "0x044",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TROWEXPAND",
@@ -4052,7 +4052,7 @@
     {
       "name": "TROWEXPANDADD",
       "family": "TEPL",
-      "selector": "0x03B",
+      "selector": "0x045",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TROWEXPANDADD",
@@ -4062,7 +4062,7 @@
     {
       "name": "TROWEXPANDSUB",
       "family": "TEPL",
-      "selector": "0x03C",
+      "selector": "0x046",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TROWEXPANDSUB",
@@ -4072,7 +4072,7 @@
     {
       "name": "TROWEXPANDMUL",
       "family": "TEPL",
-      "selector": "0x03D",
+      "selector": "0x047",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TROWEXPANDMUL",
@@ -4082,7 +4082,7 @@
     {
       "name": "TROWEXPANDDIV",
       "family": "TEPL",
-      "selector": "0x03E",
+      "selector": "0x048",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TROWEXPANDDIV",
@@ -4092,7 +4092,7 @@
     {
       "name": "TROWEXPANDMAX",
       "family": "TEPL",
-      "selector": "0x03F",
+      "selector": "0x049",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TROWEXPANDMAX",
@@ -4102,7 +4102,7 @@
     {
       "name": "TROWEXPANDMIN",
       "family": "TEPL",
-      "selector": "0x040",
+      "selector": "0x04A",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TROWEXPANDMIN",
@@ -4112,7 +4112,7 @@
     {
       "name": "TROWEXPANDEXPDIF",
       "family": "TEPL",
-      "selector": "0x041",
+      "selector": "0x04B",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TROWEXPANDEXPDIF",
@@ -4122,7 +4122,7 @@
     {
       "name": "TCOLEXPAND",
       "family": "TEPL",
-      "selector": "0x01E",
+      "selector": "0x054",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TCOLEXPAND",
@@ -4132,7 +4132,7 @@
     {
       "name": "TCOLEXPANDADD",
       "family": "TEPL",
-      "selector": "0x042",
+      "selector": "0x055",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TCOLEXPANDADD",
@@ -4142,7 +4142,7 @@
     {
       "name": "TCOLEXPANDSUB",
       "family": "TEPL",
-      "selector": "0x043",
+      "selector": "0x056",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TCOLEXPANDSUB",
@@ -4152,7 +4152,7 @@
     {
       "name": "TCOLEXPANDMUL",
       "family": "TEPL",
-      "selector": "0x044",
+      "selector": "0x057",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TCOLEXPANDMUL",
@@ -4162,7 +4162,7 @@
     {
       "name": "TCOLEXPANDDIV",
       "family": "TEPL",
-      "selector": "0x045",
+      "selector": "0x058",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TCOLEXPANDDIV",
@@ -4172,7 +4172,7 @@
     {
       "name": "TCOLEXPANDMAX",
       "family": "TEPL",
-      "selector": "0x046",
+      "selector": "0x059",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TCOLEXPANDMAX",
@@ -4182,7 +4182,7 @@
     {
       "name": "TCOLEXPANDMIN",
       "family": "TEPL",
-      "selector": "0x047",
+      "selector": "0x05A",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TCOLEXPANDMIN",
@@ -4192,7 +4192,7 @@
     {
       "name": "TCOLEXPANDEXPDIF",
       "family": "TEPL",
-      "selector": "0x048",
+      "selector": "0x05B",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TCOLEXPANDEXPDIF",
@@ -4412,7 +4412,7 @@
     {
       "name": "TEXPANDS",
       "family": "TEPL",
-      "selector": "0x019",
+      "selector": "0x03B",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TEXPANDS",
@@ -4422,7 +4422,7 @@
     {
       "name": "TCI",
       "family": "TEPL",
-      "selector": "0x080",
+      "selector": "0x066",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TCI",
@@ -4432,7 +4432,7 @@
     {
       "name": "TTRI",
       "family": "TEPL",
-      "selector": "0x081",
+      "selector": "0x067",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TTRI",
@@ -4442,7 +4442,7 @@
     {
       "name": "TFILLPAD",
       "family": "TEPL",
-      "selector": "0x082",
+      "selector": "0x065",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TFILLPAD",
@@ -4452,7 +4452,7 @@
     {
       "name": "TCVT",
       "family": "TEPL",
-      "selector": "0x00D",
+      "selector": "0x01B",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TCVT",
@@ -4462,7 +4462,7 @@
     {
       "name": "TQUANT",
       "family": "TEPL",
-      "selector": "0x083",
+      "selector": "0x06A",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TQUANT",
@@ -4472,7 +4472,7 @@
     {
       "name": "TDEQUANT",
       "family": "TEPL",
-      "selector": "0x084",
+      "selector": "0x06B",
       "closure_status": "closed",
       "closure_basis": "explicit-layer-difference",
       "public_symbol": "TDEQUANT",
@@ -4482,7 +4482,7 @@
     {
       "name": "TEXTRACT",
       "family": "TEPL",
-      "selector": "0x085",
+      "selector": "0x062",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TEXTRACT",
@@ -4492,7 +4492,7 @@
     {
       "name": "TINSERT",
       "family": "TEPL",
-      "selector": "0x086",
+      "selector": "0x063",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TINSERT",
@@ -4502,7 +4502,7 @@
     {
       "name": "TGATHER",
       "family": "TEPL",
-      "selector": "0x01A",
+      "selector": "0x06F",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TGATHER",
@@ -4512,7 +4512,7 @@
     {
       "name": "TSCATTER",
       "family": "TEPL",
-      "selector": "0x01B",
+      "selector": "0x070",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TSCATTER",
@@ -4522,7 +4522,7 @@
     {
       "name": "TCONCAT",
       "family": "TEPL",
-      "selector": "0x087",
+      "selector": "0x060",
       "closure_status": "closed",
       "closure_basis": "explicit-layer-difference",
       "public_symbol": "TCONCAT",
@@ -4532,7 +4532,7 @@
     {
       "name": "TTRANS",
       "family": "TEPL",
-      "selector": "0x01D",
+      "selector": "0x06E",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TTRANS",
@@ -4542,7 +4542,7 @@
     {
       "name": "TIMG2COL",
       "family": "TEPL",
-      "selector": "0x088",
+      "selector": "0x064",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TIMG2COL",
@@ -4562,7 +4562,7 @@
     {
       "name": "TGATHERB",
       "family": "TEPL",
-      "selector": "0x089",
+      "selector": "0x061",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TGATHERB",
@@ -4572,7 +4572,7 @@
     {
       "name": "TDEINTERLEAVE",
       "family": "TEPL",
-      "selector": "0x08A",
+      "selector": "0x078",
       "closure_status": "closed",
       "closure_basis": "public-api-aligned",
       "public_symbol": "TDEINTERLEAVE",
@@ -4582,7 +4582,7 @@
     {
       "name": "TINTERLEAVE",
       "family": "TEPL",
-      "selector": "0x08B",
+      "selector": "0x079",
       "closure_status": "closed",
       "closure_basis": "explicit-layer-difference",
       "public_symbol": "TINTERLEAVE",
@@ -4592,7 +4592,7 @@
     {
       "name": "TRESHAPE",
       "family": "TEPL",
-      "selector": "0x01C",
+      "selector": "0x077",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TRESHAPE",
@@ -4602,7 +4602,7 @@
     {
       "name": "TSORT",
       "family": "TEPL",
-      "selector": "0x0C0",
+      "selector": "0x06C",
       "closure_status": "closed",
       "closure_basis": "explicit-layer-difference",
       "public_symbol": "TSORT32",
@@ -4612,7 +4612,7 @@
     {
       "name": "TMRGSORT",
       "family": "TEPL",
-      "selector": "0x0C1",
+      "selector": "0x06D",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TMRGSORT",
@@ -4622,7 +4622,7 @@
     {
       "name": "THISTOGRAM",
       "family": "TEPL",
-      "selector": "0x0C2",
+      "selector": "0x068",
       "closure_status": "closed",
       "closure_basis": "public-api-aligned",
       "public_symbol": "THISTOGRAM",
@@ -4632,7 +4632,7 @@
     {
       "name": "TPUSH",
       "family": "TEPL",
-      "selector": "0x0E0",
+      "selector": "0x07A",
       "closure_status": "closed",
       "closure_basis": "explicit-layer-difference",
       "public_symbol": "TPUSH",
@@ -4642,7 +4642,7 @@
     {
       "name": "TPOP",
       "family": "TEPL",
-      "selector": "0x0E1",
+      "selector": "0x07B",
       "closure_status": "closed",
       "closure_basis": "explicit-layer-difference",
       "public_symbol": "TPOP",
@@ -4652,7 +4652,7 @@
     {
       "name": "TALLOC",
       "family": "TEPL",
-      "selector": "0x0E2",
+      "selector": "0x07C",
       "closure_status": "closed",
       "closure_basis": "explicit-layer-difference",
       "public_symbol": "TALLOC",
@@ -4662,7 +4662,7 @@
     {
       "name": "TFREE",
       "family": "TEPL",
-      "selector": "0x0E3",
+      "selector": "0x07D",
       "closure_status": "closed",
       "closure_basis": "explicit-layer-difference",
       "public_symbol": "TFREE",
@@ -4672,7 +4672,7 @@
     {
       "name": "TPARTADD",
       "family": "TEPL",
-      "selector": "0x0C3",
+      "selector": "0x071",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TPARTADD",
@@ -4682,7 +4682,7 @@
     {
       "name": "TPARTMUL",
       "family": "TEPL",
-      "selector": "0x0C4",
+      "selector": "0x072",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TPARTMUL",
@@ -4692,7 +4692,7 @@
     {
       "name": "TPARTMAX",
       "family": "TEPL",
-      "selector": "0x0C5",
+      "selector": "0x073",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TPARTMAX",
@@ -4702,7 +4702,7 @@
     {
       "name": "TPARTMIN",
       "family": "TEPL",
-      "selector": "0x0C6",
+      "selector": "0x074",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TPARTMIN",
@@ -4712,7 +4712,7 @@
     {
       "name": "TPARTARGMAX",
       "family": "TEPL",
-      "selector": "0x0C7",
+      "selector": "0x075",
       "closure_status": "closed",
       "closure_basis": "public-api-aligned",
       "public_symbol": "TPARTARGMAX",
@@ -4722,7 +4722,7 @@
     {
       "name": "TPARTARGMIN",
       "family": "TEPL",
-      "selector": "0x0C8",
+      "selector": "0x076",
       "closure_status": "closed",
       "closure_basis": "public-api-aligned",
       "public_symbol": "TPARTARGMIN",

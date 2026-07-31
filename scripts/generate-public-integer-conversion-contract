@@ -52,7 +52,7 @@ def generate() -> dict[str, Any]:
     )
     require(
         types["summary"]["public_integer_type_count"] == 8
-        and types["summary"]["accepted_catalog_binding_count"] == 11
+        and types["summary"]["accepted_catalog_binding_count"] == 16
         and types["summary"]["accepted_result_rule_count"] == 0,
         "public type baseline drift",
     )

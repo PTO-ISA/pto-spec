@@ -299,7 +299,7 @@
       "hooks": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "candidate_profile_ids": [
         "pto-numeric-v1",
@@ -738,7 +738,7 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "4a0eaf6248bc881afdeec379398952b406494fdb253e5af6e07f6c6afb9d31f6"
+      "sha256": "e5a98441098fdd88c0f5837bb3e1367d7b272ebc2ba506275e9e2be1b4c1978a"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
@@ -746,7 +746,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "94865e7c29c2a14a63627390d51cc6c3b698a91700d6ce71785b2928bb3bd39f"
+      "sha256": "9bcb979388b28cbc9e1ff9bdfbf5e479a268a616e5a2bf514ab206fb27107d54"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
@@ -762,11 +762,11 @@
     },
     {
       "path": "asl/bundle/state.asl",
-      "sha256": "b5a37ae7cc43d84695b6f81cba3d23c29e609b78167adaff42c16e718d63b6bf"
+      "sha256": "d8b924265ea5823809009b3dc4d300b74d13d8bfd160d0365b99e0dafe09b6af"
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "3618784ae4b57e482d0e4f01b707b8e5b2bb70d446a837d5f1a96da31ddce9c1"
+      "sha256": "b74bf48403e9ff66d71d2aaa538fb92f5118dc879cd1072c6e05f266b6209fb2"
     },
     {
       "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",

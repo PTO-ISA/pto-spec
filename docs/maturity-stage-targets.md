@@ -82,8 +82,8 @@ later sections define their complete evidence packages.
 
 | Priority | Target | Accountable owner | Immediate target | Promotion blocker |
 | ---: | --- | --- | --- | --- |
-| 1 | `S5-T2` | PTO numeric conformance maintainers | Accept the profile rules, qualify independent oracles, execute complete vectors, and adjudicate every result across 20 domains, 29 hooks, and 108 operations. | Twelve numeric decisions and 20 domain result rules are not yet accepted; independent oracle, vector, result, and review evidence is incomplete. |
-| 2 | `S6-T1` | PTO release maintainers | Close the nine Stage-5-dependent requirements and 29 numeric hooks, then review the 937-unit traceability ledger at one immutable commit. | Depends on `S5-T2`; immutable-commit claim-hygiene review is absent. |
+| 1 | `S5-T2` | PTO numeric conformance maintainers | Accept the profile rules, qualify independent oracles, execute complete vectors, and adjudicate every result across 20 domains, 30 hooks, and 108 operations. | Twelve numeric decisions and 20 domain result rules are not yet accepted; independent oracle, vector, result, and review evidence is incomplete. |
+| 2 | `S6-T1` | PTO release maintainers | Close the 11 Stage-5-dependent requirements and 30 numeric hooks, then review the 934-unit traceability ledger at one immutable commit. | Depends on `S5-T2`; immutable-commit claim-hygiene review is absent. |
 | 3 | `S6-T2` | PTO release maintainers | Freeze one signed candidate and reproduce all local, hosted, repository-control, and review gates against it. | Depends on `S5-T2` and `S6-T1`; candidate results and approvals are absent. |
 
 ## Stage evaluation contract
@@ -96,12 +96,12 @@ necessary, but it cannot substitute for a missing stage-specific artifact.
 | Stage | Entry gate | Measurable target | Exit gate | Status |
 | --- | --- | --- | --- | --- |
 | 0 — baseline (`S0-T1`–`S0-T3`) | Repository catalogs and tests are discoverable. | Account for every accepted identity and classify every known gap; make all published maturity surfaces agree. | Deterministic catalogs plus one checked ownership ledger with no unowned gap or conflicting claim. | Closed |
-| 1 — execution paths (`S1-T1`–`S1-T5`) | Stage 0 closed. | Bind all 474 scalar forms, 107 bundle/command forms, and 120 direct-tile selectors to one visible effect or pre-effect rejection. | Generated decode/effect matrices are total, unique, executable, and reject reserved encodings before effects. | Closed |
+| 1 — execution paths (`S1-T1`–`S1-T5`) | Stage 0 closed. | Bind all 474 scalar forms, 99 bundle/command forms, and 120 direct-tile selectors to one visible effect or pre-effect rejection. | Generated decode/effect matrices are total, unique, executable, and reject reserved encodings before effects. | Closed |
 | 2 — state and faults (`S2-T1`–`S2-T6`) | Stage 1 effect paths stable. | Cover all architectural state, 72 system registers, P0–P7, tile state, 16 ACR banks, and 13 traps. | Reset, transition, preservation, trap, recovery, restart, capacity, and definedness matrices are complete. | Closed |
 | 3 — ordering (`S3-T1`–`S3-T2`) | Stage 2 fault/restart rules stable. | Connect every production memory effect to PTO-TSO and close atomic, reservation, gather-CAS, prefetch, and mixed-size corners. | Event extraction and allowed/forbidden litmus evidence agree with the normative ordering model. | Closed |
 | 4 — reference semantics (`S4-T1`–`S4-T10`) | Stages 0–3 closed. | Make AGU, ALU, AMO, BRU, FSU, SYS, bundle, TEPL, TMA, and CUBE total under `pto-v0`. | Every family has checked legality, operand, value/effect, alias, boundary, fault, restart, and pre-effect-rejection evidence. | Closed |
-| 5 — conformance (`S5-T1`–`S5-T3`) | M4 regression floor remains green. | Independently validate all 20 numeric domains, 29 hooks, and 108 operations, while retaining the closed 701-row executable-model comparison. | All 12 numeric decisions and 20 domain rules are accepted; six oracles, complete vectors/results, zero unclassified mismatches, and two reviews are recorded. | In progress: `S5-T2` open |
-| 6 — release (`S6-T1`–`S6-T2`) | Stage 5 closed. | Close cumulative traceability and reproduce every release gate at one signed immutable candidate. | Nine dependent requirements and 29 hooks close; all 937 trace units, ten gates, ten controls, hosted validation, and both approvals name the same commit. | Open |
+| 5 — conformance (`S5-T1`–`S5-T3`) | M4 regression floor remains green. | Independently validate all 20 numeric domains, 30 hooks, and 108 operations, while retaining the closed 693-row executable-model comparison: 557 exact matches, 96 classified divergences, 39 non-comparable rows, and one intentional extension. | All 12 numeric decisions and 20 domain rules are accepted; six oracles, complete vectors/results, zero unclassified mismatches, and two reviews are recorded. | In progress: `S5-T2` open |
+| 6 — release (`S6-T1`–`S6-T2`) | Stage 5 closed. | Close cumulative traceability and reproduce every release gate at one signed immutable candidate. | Eleven dependent requirements and 30 hooks close; all 934 trace units, ten gates, ten controls, hosted validation, and both approvals name the same commit. | Open |
 
 ## Remaining bring-up sequence
 
@@ -110,10 +110,10 @@ parallel, but a later row cannot waive an earlier promotion gate.
 
 | Order | Target | Concrete bring-up result | Acceptance gate | Promotion unlocked |
 | ---: | --- | --- | --- | --- |
-| 1 | M4 regression floor | Preserve the closed 474 scalar, 107 bundle/command, 120 direct-tile, 72 system-register, and 13-trap inventories while later evidence is added. | Catalog/repository checks, deterministic generation, ASLRef shards, and all Stage 0–4 target evidence remain green. | Safe Stage 5 development |
+| 1 | M4 regression floor | Preserve the closed 474 scalar, 99 bundle/command, 120 direct-tile, 72 system-register, and 13-trap inventories while later evidence is added. | Catalog/repository checks, deterministic generation, ASLRef shards, and all Stage 0–4 target evidence remain green. | Safe Stage 5 development |
 | 2 | `S5-T2` | Name the PTO target numeric profile and an independent, versioned oracle; cover normal, boundary, exceptional, rounding, saturation, and accumulation cases for every applicable numeric-contract row. | Differential report has no unclassified mismatch and does not treat the `pto-v0` raw-carrier model as hardware arithmetic. | Numeric conformance half of M5 |
-| 3 | `S5-T3` | Closed: the complete stable-ID comparison is regenerated from a clean content-addressed executable-model snapshot, all 701 dispositions remain classified, and every required gate result is archived. | Parser, executable backend, generated-status, coverage, architecture-contract, and documentation gates all pass. | Independent-comparison half of M5 |
-| 4 | `S6-T1` | Generated inventory and links closed: 937 exact units cover requirements, accepted forms and operations, registers, traps, profile hooks, and 70 state roots/199 leaves. Promotion remains open. | S5-T2 closes the nine dependent requirements and 29 hooks; then one immutable-commit claim-hygiene review fills every review identity and disposition. | Release review may start |
+| 3 | `S5-T3` | Closed: the complete stable-ID comparison is regenerated from a clean content-addressed executable-model snapshot; all 693 dispositions remain classified as 557 exact matches, 96 divergences (86 issue-18/ADR-0045 ABI-break remaps and 10 intentional rejected-command differences), 39 non-comparable rows, and one intentional extension. | Parser, executable backend, generated-status, coverage, architecture-contract, and documentation gates all pass. | Independent-comparison half of M5 |
+| 4 | `S6-T1` | Generated inventory and links closed: 934 exact units cover requirements, accepted forms and operations, registers, traps, profile hooks, and 72 state roots/236 leaves. Promotion remains open. | S5-T2 closes the 11 dependent requirements and 30 hooks; then one immutable-commit claim-hygiene review fills every review identity and disposition. | Release review may start |
 | 5 | `S6-T2` | Gate contract/topology closed: ten release gates, ten external controls, two reviews, and the pinned 34-shard hosted path are exact. Candidate evidence remains open. | After S5-T2/S6-T1, freeze one signed commit; pass every local/hosted gate; snapshot GitHub controls; record both approvals. | M6 architecturally-complete candidate |
 
 Promotion rules are exact: M5 requires all three Stage 5 targets to be closed;
@@ -167,10 +167,10 @@ memory, bundle, tile, and compute decisions.
 | `S4-T4` | BRU | Closed | Close conditions, targets, calls, returns, alignment, and bundle interaction. |
 | `S4-T5` | FSU | Closed | Close raw-carrier reference effects and keep target arithmetic profile-scoped until Stage 5 supplies numeric conformance. |
 | `S4-T6` | SYS | Closed | ADR 0031 and `scalar-sys-totality.json` close all 35 forms with 4,401 unique Stage 4 transfer, Reg5, fence, request, recovery, privilege, and maintenance cases plus 35 retained Stage 1 effects. |
-| `S4-T7` | Bundle commands | Closed | All 107 forms have generated consumed-field and effect-or-rejection dispositions; bridge limitations are explicit and commit-fail-closed. |
-| `S4-T8` | TEPL | Closed | ADR 0035 and `tepl-totality.json` close all 98 accepted selectors, 926 reserved selectors, carrier/layout rules, aliases, regions, indices, sort/merge, histogram, and management effects. |
+| `S4-T7` | Bundle commands | Closed | All 99 forms have generated consumed-field and effect-or-rejection dispositions; bridge limitations are explicit and commit-fail-closed. |
+| `S4-T8` | TEPL | Closed | ADR 0035 and `tepl-totality.json` close all 98 accepted selectors, 30 reserved selectors, carrier/layout rules, aliases, regions, indices, sort/merge, histogram, and management effects. |
 | `S4-T9` | TMA | Closed | All nine selectors have decoded effects plus packed four-bit, duplicate-lane, event, restart, and first/middle/last preflight-fault evidence. |
-| `S4-T10` | CUBE | Closed | All 13 selectors, 19 raw-carrier types, logical layouts/locations, aliases, and composite preflight are closed; hardware numeric conformance remains S5-T2. |
+| `S4-T10` | CUBE | Closed | All 13 selectors, 25 raw-carrier types, logical layouts/locations, aliases, and composite preflight are closed; hardware numeric conformance remains S5-T2. |
 
 ### Stage 4 SYS sub-areas
 
@@ -193,7 +193,7 @@ audited without introducing extra target IDs.
 | --- | --- | --- |
 | `S5-T1` | Closed | Inventory every operation whose result depends on numeric behavior beyond the raw-carrier reference profile. |
 | `S5-T2` | Open | Validate PTO numeric behavior against a named independent oracle without importing third-party semantics as PTO authority. |
-| `S5-T3` | Closed | The exhaustive 701-row disposition matrix is complete and all eight clean-snapshot repository gates plus the pinned Sail parser/C-backend gate pass. |
+| `S5-T3` | Closed | The exhaustive 693-row disposition matrix is complete: 557 exact matches, 96 explicit divergences comprising 79 TEPL plus 7 command ABI-break remaps approved by issue 18/ADR 0045 and 10 intentional rejected-command differences, 39 non-comparable rows, and one intentional extension. All eight clean-snapshot repository gates plus the pinned Sail parser/C-backend gate pass. |
 
 ### S5-T2 numeric-conformance bring-up plan
 
@@ -206,7 +206,7 @@ open, and the repository remains at M4, until every sub-stage below closes.
 | `S5-T2-A` — profile decision | Checkpoints A1, A4, A5, and A6 are closed; complete result decisions remain open | Apply the four accepted identities and fail-closed selection rules. Preserve the 99-point ownership ledger. Use the A5 public baseline of 16 identities, 11 accepted catalog bindings, 11 A2/A3 types, and 16 A5 types without treating availability as legality or result semantics. Preserve A6's three conditional result rules over all 48 unequal-width public integer `TCVT` pairs without turning them into support claims. Resolve the seven PD-02 and six PD-07 residuals, all 12 complete decisions, all 20 domain rules, 19 profile-owned flag conditions, and every broad selected variation route/result bound. | Accepted records populate all 12 decisions and 20 domain rules; every non-portable point has one visible route and bounded result contract; all format, legality, conversion, flag, rounding, and target-support residuals have reproducible evidence. |
 | `S5-T2-B` — oracle qualification | Waiting on A | Select an independent, versioned oracle for each lane. The implementation under test and the `pto-v0` reference are not independent oracles. | Reproducible oracle identity, version/digest, invocation, supported domain list, known limitations, and a reviewer-approved rule for any target behavior that requires hardware capture rather than a software arithmetic library. |
 | `S5-T2-C` — vector corpus | Waiting on A–B | Generate deterministic inputs for every operation and every open numeric dimension. | Normal, minimum/maximum, boundary, signed-zero, subnormal, infinity, NaN, tie, overflow, underflow, divide-by-zero, rounding, saturation, reduction-order, and accumulation cases as applicable; each vector links to one operation key, profile, oracle, and expected disposition. |
-| `S5-T2-D` — differential execution | Waiting on B–C | Run the six numeric lanes independently and preserve raw oracle and PTO results. | All 20 contract domains, 29 hooks, and 108 operations are assigned exactly once; every vector produces a reproducible match, mismatch, unsupported, or implementation-defined record; no lane is missing or duplicated. |
+| `S5-T2-D` — differential execution | Waiting on B–C | Run the six numeric lanes independently and preserve raw oracle and PTO results. | All 20 contract domains, 30 hooks, and 108 operations are assigned exactly once; every vector produces a reproducible match, mismatch, unsupported, or implementation-defined record; no lane is missing or duplicated. |
 | `S5-T2-E` — mismatch adjudication | Waiting on D | Resolve every differential result without silently changing PTO semantics to match an external implementation. | Zero unclassified results. Each mismatch is fixed as a PTO defect, accepted as a target-profile rule, rejected as an oracle limitation, or bounded by an architecture decision with regression evidence. |
 | `S5-T2-F` — promotion | Waiting on A–E | Freeze the conformance package and promote Stage 5 only after independent review. | Clean-tree reproduction, immutable profile/oracle/vector/result identities, repository gates, numeric-architecture approval, formal-model approval, and an updated closure ledger with no remaining `S5-T2` gaps. |
 
@@ -244,11 +244,11 @@ ADR 0041 and `spec/evidence/numeric-profile-applicability-closure.json` close
 a bounded PD-01 checkpoint within `S5-T2-A3`: A2/A3 rejects
 `TMATMUL_MX`, `TMATMUL_MX_BIAS`, `TMATMUL_MX_ACC`, `TGEMV_MX`,
 `TGEMV_MX_BIAS`, and `TGEMV_MX_ACC` for every one of the 19 `TileDataType`
-identities before effects. It records 114 unsupported tuples and zero result
+identities before effects. It records 150 unsupported tuples and zero result
 rules, so the rest of PD-01 and `cube-matrix` remain open.
 ADR 0042 and `spec/evidence/numeric-variation-point-ownership.json` close
 `S5-T2-A4`, the PD-12 discovery and current-owner checkpoint. Its 99 stable
-domain/dimension rows cover all 20 domains, 108 operations, and 29 hooks. All
+domain/dimension rows cover all 20 domains, 108 operations, and 30 hooks. All
 selected routes, result rules, and result acceptance records remain null, so
 PD-12 and S5-T2 remain open.
 ADR 0043 and `spec/evidence/public-numeric-type-baseline.json` close
@@ -320,9 +320,9 @@ release gate. S6-T1 stays open until all five sub-stages close.
 
 | Sub-stage | Current state | Clear target | Required exit evidence |
 | --- | --- | --- | --- |
-| `S6-T1-A` — exact inventory | Closed | Enumerate every release-traceability unit exactly once. | 44 requirements, 474 scalar forms, 107 command forms, 120 tile operations, 72 system registers, 13 traps, 37 hooks, and 70 state roots are present with globally unique IDs. |
-| `S6-T1-B` — links and boundaries | Closed | Attach PTO requirement, model, executable witness, and bounded status to every unit without turning instrumentation into ISA state. | All paths exist; 70 state roots expand to 199 leaf fields and classify architectural state, storage/ordering/effect abstractions, or verification-only state. |
-| `S6-T1-C` — cumulative closure | Blocked by S5-T2 | Close every Stage 0–5 prerequisite and dependent requirement status. | S5-T2 closes; the nine currently open requirement rows and 29 numeric hooks receive accepted conformance evidence. |
+| `S6-T1-A` — exact inventory | Closed | Enumerate every release-traceability unit exactly once. | 46 requirements, 474 scalar forms, 99 command forms, 120 tile operations, 72 system registers, 13 traps, 38 hooks, and 72 state roots are present with globally unique IDs. |
+| `S6-T1-B` — links and boundaries | Closed | Attach PTO requirement, model, executable witness, and bounded status to every unit without turning instrumentation into ISA state. | All paths exist; 72 state roots expand to 236 leaf fields and classify architectural state, storage/ordering/effect abstractions, or verification-only state. |
+| `S6-T1-C` — cumulative closure | Blocked by S5-T2 | Close every Stage 0–5 prerequisite and dependent requirement status. | S5-T2 closes; the 11 currently open requirement rows and 30 numeric hooks receive accepted conformance evidence. |
 | `S6-T1-D` — claim-hygiene review | Waiting on C | Review one immutable candidate rather than a moving branch. | Reviewer identity, commit, date, and accepted disposition are all populated; no unsupported completeness claim remains. |
 | `S6-T1-E` — promotion | Waiting on C–D | Close S6-T1 and unlock the cumulative release gate. | Generated ledger, maturity ledger, requirements, coverage, README, and review record agree on closure. |
 
@@ -372,7 +372,7 @@ configuration from being confused with a passing release candidate.
   unequal-width public integer `TCVT` tuples while keeping profile support and
   six conversion residuals explicit.
 - `spec/evidence/numeric-profile-applicability-closure.json` is the generated
-  PD-01 A2/A3 MX negative-applicability package. It closes 114 unsupported
+  PD-01 A2/A3 MX negative-applicability package. It closes 150 unsupported
   tuples and leaves result semantics open.
 - `spec/evidence/numeric-variation-point-ownership.json` is the generated
   PD-12 discovery and decision-owner package. It closes 99-row ownership

@@ -34,7 +34,7 @@ state. Older bridge and pipe-management wording did not match that contract.
   portable generic indexing operation rejects that layout. A profile-specific
   operation must define any access to it.
 - Aggregate tile capacity is bounded by the read-only `TILE_CAPACITY` system
-  register. PTO v0 sets that register to 512 KiB; the ASL verification model
+  register. PTO v0 sets that register to 256 KiB; the ASL verification model
   supports values up to that bound.
 - Pipe state is not architectural. PTO models allocation, definedness, and
   handoff through scalar queues, bundle bindings, and `TileInfo`.

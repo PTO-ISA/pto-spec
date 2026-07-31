@@ -563,6 +563,22 @@
       ]
     },
     {
+      "domain": "tile-ordering",
+      "model": "asl/tile/complex.asl",
+      "name": "TileProfileValueIsNaN",
+      "portable_default": "Classify no raw carrier as NaN in the deterministic PTO v0 reference profile.",
+      "profile_obligations": [
+        "Define NaN classification for every floating Tile data type used by stable TSORT ordering."
+      ],
+      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+      "implementation_status": "implemented-by-pto-v0",
+      "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
+      "maturity_target": "S5-T2",
+      "tests": [
+        "tests/asl/profile-tests.asl"
+      ]
+    },
+    {
       "domain": "tile-matrix",
       "model": "asl/tile/cube.asl",
       "name": "TileProfileMatrixAccumulate",
@@ -597,10 +613,10 @@
     {
       "domain": "tile-matrix",
       "model": "asl/tile/cube.asl",
-      "name": "TileProfileMatrixScale",
-      "portable_default": "Apply row and column scales with raw word-width multiplication.",
+      "name": "TileProfileMatrixScaledAccumulate",
+      "portable_default": "Scale the left and right raw operands at word width, multiply the scaled operands, and add the term to the unscaled prior accumulator.",
       "profile_obligations": [
-        "Define accepted type triples, scale encodings, intermediate precision, rounding, saturation, and exceptional values."
+        "Define the exact MX operand pairs, E8M0 decoding, K-block indexing, pre-FMA scale application, accumulator precision, rounding, saturation, and exceptional values."
       ],
       "requirement": "PTO-REQ-CUBE-001",
       "implementation_status": "implemented-by-pto-v0",

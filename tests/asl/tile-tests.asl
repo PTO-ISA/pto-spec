@@ -4,6 +4,31 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
 end;
 
+readonly func ReadAccumulatorElement(row: integer {0..65535},
+                                     column: integer {0..65535}) => Word
+begin
+    assert _Accumulator.live && _Accumulator.info.contents_defined;
+    let element = TileLinearIndex(_Accumulator.info, row, column);
+    return _Accumulator.info.payload[[element]];
+end;
+
+func SelectTestCUBEDataType(data_type: bits(5))
+begin
+    InstallBundleOperationDescriptor(BundleOperationDescriptor {
+        valid = TRUE,
+        form_identity = Zeros{7},
+        operation_class = BundleOperation_TileMatrix,
+        selector_valid = TRUE,
+        selector = Zeros{10},
+        data_type_valid = TRUE,
+        data_type = data_type,
+        mode_valid = FALSE,
+        mode = Zeros{2},
+        branch_type_valid = FALSE,
+        branch_type = Zeros{3}
+    });
+end;
+
 func TestTileElementwiseAndAliasing()
 begin
     ConfigureTwoByTwo(0);
@@ -77,6 +102,7 @@ end;
 
 func TestTileMatmul()
 begin
+    SelectTestCUBEDataType('11000');
     ConfigureTwoByTwo(5);
     ConfigureTwoByTwo(6);
     ConfigureTwoByTwo(7);
@@ -93,21 +119,26 @@ begin
     WriteTileElement(7, 1, 0, Zeros{PTO_XLEN});
     WriteTileElement(7, 1, 1, Zeros{PTO_XLEN});
 
-    TMATMUL(7, 5, 6, FALSE);
-    assert ReadTileElement(7, 0, 0) == Zeros{PTO_XLEN} + 19;
-    assert ReadTileElement(7, 0, 1) == Zeros{PTO_XLEN} + 22;
-    assert ReadTileElement(7, 1, 0) == Zeros{PTO_XLEN} + 43;
-    assert ReadTileElement(7, 1, 1) == Zeros{PTO_XLEN} + 50;
+    TMATMUL(5, 6, FALSE);
+    assert _Accumulator.live;
+    assert _Accumulator.info.data_type == TileDataType_U64;
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 19;
+    assert ReadAccumulatorElement(0, 1) == Zeros{PTO_XLEN} + 22;
+    assert ReadAccumulatorElement(1, 0) == Zeros{PTO_XLEN} + 43;
+    assert ReadAccumulatorElement(1, 1) == Zeros{PTO_XLEN} + 50;
+    // CUBE arithmetic does not publish a Tile until ACCCVT commits.
+    assert ReadTileElement(7, 0, 0) == Zeros{PTO_XLEN};
+    assert ReadTileElement(7, 1, 1) == Zeros{PTO_XLEN};
 
     ConfigureTile(26, 256, 1, 2, 1, 2, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(26, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(26, 0, 1, Zeros{PTO_XLEN} + 2);
-    TMATMUL_BIAS(7, 5, 6, 26);
-    assert ReadTileElement(7, 0, 0) == Zeros{PTO_XLEN} + 20;
-    assert ReadTileElement(7, 1, 1) == Zeros{PTO_XLEN} + 52;
-    TMATMUL_ACC(7, 5, 6);
-    assert ReadTileElement(7, 0, 0) == Zeros{PTO_XLEN} + 39;
+    TMATMUL_BIAS(5, 6, 26);
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 20;
+    assert ReadAccumulatorElement(1, 1) == Zeros{PTO_XLEN} + 52;
+    TMATMUL_ACC(5, 6);
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 39;
 
     ConfigureTile(27, 256, 2, 1, 2, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
@@ -115,43 +146,98 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(27, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(27, 1, 0, Zeros{PTO_XLEN} + 3);
-    TGEMV(28, 5, 27);
-    assert ReadTileElement(28, 0, 0) == Zeros{PTO_XLEN} + 8;
-    assert ReadTileElement(28, 1, 0) == Zeros{PTO_XLEN} + 18;
+    TGEMV(5, 27);
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 8;
+    assert ReadAccumulatorElement(1, 0) == Zeros{PTO_XLEN} + 18;
 
-    // Decoded MX-bias must reject an undefined bias even though the catalog
-    // carries it in destination1, and permitted destination/bias aliasing uses
-    // the source snapshot taken before the matrix destination is overwritten.
-    for index = 32 to 37 do
-        ConfigureTile(index as TileIndex, 256, 1, 1, 1, 1,
-            TileDataType_U64, TileLayout_RowMajor, TileLocation_Any);
+end;
+
+// PTO-REQ-HARDWARE-NUMERIC-001: MX legality uses exact FP8 pairs and
+// logical-K scale blocks; the executable raw profile witnesses operation order.
+func TestMatrixNumericContractLegality()
+begin
+    SelectTestCUBEDataType('00001');
+    ConfigureTile(40, 256, 1, 33, 1, 33, TileDataType_E4M3,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(41, 256, 33, 1, 33, 1, TileDataType_E5M2,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(42, 256, 1, 2, 1, 2, TileDataType_E8M0,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(43, 256, 2, 1, 2, 1, TileDataType_E8M0,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(44, 256, 1, 1, 1, 1, TileDataType_FP32,
+        TileLayout_RowMajor, TileLocation_Any);
+    for inner = 0 to 32 do
+        WriteTileElement(40, 0, inner as integer {0..65535},
+            Zeros{PTO_XLEN} + 1);
+        WriteTileElement(41, inner as integer {0..65535}, 0,
+            Zeros{PTO_XLEN} + 1);
     end;
-    WriteTileElement(32, 0, 0, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(33, 0, 0, Zeros{PTO_XLEN} + 3);
-    WriteTileElement(34, 0, 0, Zeros{PTO_XLEN} + 4);
-    WriteTileElement(35, 0, 0, Zeros{PTO_XLEN} + 5);
-    WriteTileElement(36, 0, 0, Zeros{PTO_XLEN} + 1);
-    var mx_bias_operands = DefaultTileInstructionOperands();
-    mx_bias_operands.destination0 = 36;
-    mx_bias_operands.source0 = 32;
-    mx_bias_operands.source1 = 33;
-    mx_bias_operands.source2 = 34;
-    mx_bias_operands.source3 = 35;
-    mx_bias_operands.destination1 = 37;
-    ClearFault();
-    let (undefined_bias_status, -) = ExecuteTileInstruction(
-        TileDecode_CUBE, '000000000101', mx_bias_operands);
-    assert undefined_bias_status == TileExecution_Rejected;
-    assert _LastFault == Fault_TileLegality;
-    assert ReadTileElement(36, 0, 0) == Zeros{PTO_XLEN} + 1;
+    WriteTileElement(42, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(42, 0, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(43, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(43, 1, 0, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(44, 0, 0, Zeros{PTO_XLEN} + 2);
 
-    mx_bias_operands.destination1 = 36;
-    ClearFault();
-    let (alias_bias_status, -) = ExecuteTileInstruction(
-        TileDecode_CUBE, '000000000101', mx_bias_operands);
-    assert alias_bias_status == TileExecution_Executed;
-    assert _LastFault == Fault_None;
-    assert ReadTileElement(36, 0, 0) == Zeros{PTO_XLEN} + 121;
+    assert TileOperandsLegal_TMATMUL_MX(40, 41, 42, 43);
+    TMATMUL_MX(40, 41, 42, 43);
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 40;
+    TMATMUL_MX_ACC(40, 41, 42, 43);
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 80;
+    TMATMUL_MX_BIAS(40, 41, 42, 43, 44);
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 42;
+
+    ConfigureTile(42, 256, 1, 1, 1, 1, TileDataType_E8M0,
+        TileLayout_RowMajor, TileLocation_Any);
+    assert !TileOperandsLegal_TMATMUL_MX(40, 41, 42, 43);
+    ConfigureTile(42, 256, 1, 2, 1, 2, TileDataType_FP32,
+        TileLayout_RowMajor, TileLocation_Any);
+    assert !TileOperandsLegal_TMATMUL_MX(40, 41, 42, 43);
+    SelectTestCUBEDataType('00111');
+    assert !TileOperandsLegal_TMATMUL_MX(40, 41, 42, 43);
+end;
+
+func TestMatrixPhysicalAccumulatorClasses()
+begin
+    SelectTestCUBEDataType('00111');
+    ConfigureTile(45, 256, 1, 1, 1, 1, TileDataType_E4M3,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(46, 256, 1, 1, 1, 1, TileDataType_E4M3,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(47, 256, 1, 1, 1, 1, TileDataType_E4M3,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(45, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(46, 0, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(47, 0, 0, Zeros{PTO_XLEN} + 1);
+    TMATMUL_BIAS(45, 46, 47);
+    assert _Accumulator.logical_data_type == TileDataType_E4M3;
+    assert _Accumulator.info.data_type == TileDataType_FP32;
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 7;
+    ACCCVT(47);
+    assert !_Accumulator.live;
+    assert ReadTileElement(47, 0, 0) == Zeros{PTO_XLEN} + 7;
+
+    SelectTestCUBEDataType('10011');
+    ConfigureTile(45, 256, 1, 1, 1, 1, TileDataType_S8,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(46, 256, 1, 1, 1, 1, TileDataType_S8,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(45, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(46, 0, 0, Zeros{PTO_XLEN} + 3);
+    TMATMUL(45, 46, FALSE);
+    assert _Accumulator.logical_data_type == TileDataType_S8;
+    assert _Accumulator.info.data_type == TileDataType_S64;
+
+    SelectTestCUBEDataType('11011');
+    ConfigureTile(45, 256, 1, 1, 1, 1, TileDataType_U8,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(46, 256, 1, 1, 1, 1, TileDataType_U8,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(45, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(46, 0, 0, Zeros{PTO_XLEN} + 3);
+    TMATMUL(45, 46, FALSE);
+    assert _Accumulator.logical_data_type == TileDataType_U8;
+    assert _Accumulator.info.data_type == TileDataType_U64;
 end;
 
 func TestTileReduction()
@@ -316,13 +402,17 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
     ConfigureTile(33, 256, 1, 4, 1, 4, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(38, 256, 1, 4, 1, 4, TileDataType_U32,
+        TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(32, 0, 0, Zeros{PTO_XLEN} + 4);
     WriteTileElement(32, 0, 1, Zeros{PTO_XLEN} + 1);
     WriteTileElement(32, 0, 2, Zeros{PTO_XLEN} + 3);
     WriteTileElement(32, 0, 3, Zeros{PTO_XLEN} + 2);
-    TSORT(33, 32, FALSE);
+    TSORT(33, 38, 32, FALSE);
     assert ReadTileElement(33, 0, 0) == Zeros{PTO_XLEN} + 1;
     assert ReadTileElement(33, 0, 3) == Zeros{PTO_XLEN} + 4;
+    assert ReadTileElement(38, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(38, 0, 3) == Zeros{PTO_XLEN};
 
     ConfigureTile(34, 256, 1, 2, 1, 2, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
@@ -518,17 +608,18 @@ begin
     WriteTileElement(62, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(62, 0, 1, Zeros{PTO_XLEN} + 1);
     WriteTileElement(63, 0, 0, Zeros{PTO_XLEN} + 1);
-    TMATMUL_MX(7, 5, 6, 61, 62);
-    assert ReadTileElement(7, 0, 0) == Zeros{PTO_XLEN} + 19;
-    TGEMV_BIAS(28, 5, 27, 61);
-    assert ReadTileElement(28, 0, 0) == Zeros{PTO_XLEN} + 9;
-    assert ReadTileElement(28, 1, 0) == Zeros{PTO_XLEN} + 19;
-    TGEMV_ACC(28, 5, 27);
-    assert ReadTileElement(28, 0, 0) == Zeros{PTO_XLEN} + 17;
-    assert ReadTileElement(28, 1, 0) == Zeros{PTO_XLEN} + 37;
-    TGEMV_MX(28, 5, 27, 61, 63);
-    assert ReadTileElement(28, 0, 0) == Zeros{PTO_XLEN} + 8;
-    assert ReadTileElement(28, 1, 0) == Zeros{PTO_XLEN} + 18;
+    SelectTestCUBEDataType('11000');
+    TMATMUL_MX(5, 6, 61, 62);
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 19;
+    TGEMV_BIAS(5, 27, 61);
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 9;
+    assert ReadAccumulatorElement(1, 0) == Zeros{PTO_XLEN} + 19;
+    TGEMV_ACC(5, 27);
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 17;
+    assert ReadAccumulatorElement(1, 0) == Zeros{PTO_XLEN} + 37;
+    TGEMV_MX(5, 27, 61, 63);
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 8;
+    assert ReadAccumulatorElement(1, 0) == Zeros{PTO_XLEN} + 18;
 end;
 
 func TestTileSelectorClosureExtensions()
@@ -574,9 +665,9 @@ begin
     Store(Zeros{PTO_XLEN} + 1536, 8, Zeros{PTO_XLEN} + 11);
     Store(Zeros{PTO_XLEN} + 1544, 8, Zeros{PTO_XLEN} + 22);
     Store(Zeros{PTO_XLEN} + 1552, 8, Zeros{PTO_XLEN} + 33);
-    MGATHER_MASK(55, Zeros{PTO_XLEN} + 1536, 56, 57);
+    MGATHER_MASK(55, Zeros{PTO_XLEN} + 1536, 56, 57, TilePad_Zero);
     assert ReadTileElement(55, 0, 0) == Zeros{PTO_XLEN} + 11;
-    assert ReadTileElement(55, 0, 1) == Zeros{PTO_XLEN} + 0xaa;
+    assert ReadTileElement(55, 0, 1) == Zeros{PTO_XLEN};
     assert ReadTileElement(55, 0, 2) == Zeros{PTO_XLEN} + 33;
 
     Store(Zeros{PTO_XLEN} + 2048, 8, Zeros{PTO_XLEN});
@@ -630,11 +721,12 @@ begin
     ExecuteTileFillScalar(5, Zeros{PTO_XLEN} + 1);
     ExecuteTileFillScalar(6, Zeros{PTO_XLEN} + 1);
     ExecuteTileFillScalar(7, Zeros{PTO_XLEN} + 2);
-    TMATMUL_MX_BIAS(4, 2, 3, 5, 6, 7);
-    assert ReadTileElement(4, 0, 0) == Zeros{PTO_XLEN} + 21;
-    TMATMUL_MX_ACC(4, 2, 3, 5, 6);
-    assert ReadTileElement(4, 0, 0) == Zeros{PTO_XLEN} + 40;
-    ACCCVT(7, 4);
+    SelectTestCUBEDataType('00001');
+    TMATMUL_MX_BIAS(2, 3, 5, 6, 7);
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 21;
+    TMATMUL_MX_ACC(2, 3, 5, 6);
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 40;
+    ACCCVT(7);
     assert ReadTileElement(7, 1, 1) == Zeros{PTO_XLEN} + 102;
 
     ConfigureTile(8, 256, 2, 1, 2, 1, TileDataType_U64,
@@ -645,10 +737,10 @@ begin
     WriteTileElement(8, 1, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(9, 0, 0, Zeros{PTO_XLEN} + 1);
     ExecuteTileFillScalar(5, Zeros{PTO_XLEN} + 1);
-    TGEMV_MX_BIAS(8, 2, 5, 5, 9, 5);
-    assert ReadTileElement(8, 0, 0) == Zeros{PTO_XLEN} + 4;
-    TGEMV_MX_ACC(8, 2, 5, 5, 9);
-    assert ReadTileElement(8, 0, 0) == Zeros{PTO_XLEN} + 7;
+    TGEMV_MX_BIAS(2, 5, 5, 9, 5);
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 4;
+    TGEMV_MX_ACC(2, 5, 5, 9);
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 7;
 end;
 
 // PTO-REQ-TILE-DISPATCH-001: representative decoded effects cover every
@@ -708,10 +800,16 @@ begin
     cube_operands.destination0 = 6;
     cube_operands.source0 = 4;
     cube_operands.source1 = 5;
+    SelectTestCUBEDataType('11000');
     let (cube_status, cube_value) = ExecuteTileInstruction(
         TileDecode_CUBE, '000000000000', cube_operands);
     assert cube_status == TileExecution_Executed;
     assert cube_value == Zeros{PTO_XLEN};
+    assert ReadAccumulatorElement(0, 0) == Zeros{PTO_XLEN} + 19;
+    assert ReadAccumulatorElement(1, 1) == Zeros{PTO_XLEN} + 50;
+    let (convert_status, -) = ExecuteTileInstruction(
+        TileDecode_CUBE, '000000001000', cube_operands);
+    assert convert_status == TileExecution_Executed;
     assert ReadTileElement(6, 0, 0) == Zeros{PTO_XLEN} + 19;
     assert ReadTileElement(6, 1, 1) == Zeros{PTO_XLEN} + 50;
 
@@ -729,9 +827,9 @@ begin
     ResetProfileState();
     assert TileOperandsLegal_TALLOC(20, 262144, 1, 1, 1, 1,
         Zeros{PTO_XLEN} + 24, FALSE);
-    ConfigureTile(20, 524288, 1, 1, 1, 1, TileDataType_U64,
+    ConfigureTile(20, 262144, 1, 1, 1, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
-    assert _Tiles[[20]].capacity_bytes == 524288;
+    assert _Tiles[[20]].capacity_bytes == 262144;
     ReleaseTile(20);
 
     _SystemRegisters.tile_capacity = Zeros{PTO_XLEN} + 768;
@@ -753,7 +851,7 @@ begin
     allocation.byte_count = 0;
     ClearFault();
     let (zero_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011100010', allocation);
+        TileDecode_TEPL, '000001111100', allocation);
     assert zero_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
     assert _Tiles[[20]].capacity_bytes == 256;
@@ -764,7 +862,7 @@ begin
     allocation.byte_count = 255;
     ClearFault();
     let (small_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011100010', allocation);
+        TileDecode_TEPL, '000001111100', allocation);
     assert small_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
     assert _Tiles[[20]].capacity_bytes == 256;
@@ -775,7 +873,7 @@ begin
     allocation.positive0 = 33;
     ClearFault();
     let (storage_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011100010', allocation);
+        TileDecode_TEPL, '000001111100', allocation);
     assert storage_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
     assert _Tiles[[20]].rows == 1;
@@ -786,7 +884,7 @@ begin
     allocation.natural0 = 32;
     ClearFault();
     let (exact_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011100010', allocation);
+        TileDecode_TEPL, '000001111100', allocation);
     assert exact_status == TileExecution_Executed;
     assert _LastFault == Fault_None;
     assert _Tiles[[20]].capacity_bytes == 256;
@@ -803,7 +901,7 @@ begin
     allocation.natural0 = 1;
     ClearFault();
     let (replace_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011100010', allocation);
+        TileDecode_TEPL, '000001111100', allocation);
     assert replace_status == TileExecution_Executed;
     assert TileCapacityInUseExcept(63) == 768;
 
@@ -811,9 +909,9 @@ begin
     allocation.byte_count = 256;
     ClearFault();
     let (aggregate_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011100010', allocation);
+        TileDecode_TEPL, '000001111100', allocation);
     assert aggregate_status == TileExecution_Rejected;
-    assert _LastFault == Fault_TileLegality;
+    assert _LastFault == Fault_TileAllocation;
     assert !_Tiles[[22]].allocated;
     assert _Tiles[[20]].capacity_bytes == 512;
     assert _Tiles[[21]].capacity_bytes == 256;
@@ -861,7 +959,7 @@ begin
     reduction.source0 = 0;
     ClearFault();
     let (partial_reduction_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000000010100', reduction);
+        TileDecode_TEPL, '000001000000', reduction);
     assert partial_reduction_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
     assert ReadTileElement(3, 0, 0) == Zeros{PTO_XLEN} + 0x66;
@@ -903,7 +1001,7 @@ begin
     push.source0 = 1;
     ClearFault();
     let (capacity_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011100000', push);
+        TileDecode_TEPL, '000001111010', push);
     assert capacity_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
     assert !_Tiles[[60]].allocated;
@@ -913,7 +1011,7 @@ begin
     _SystemRegisters.tile_capacity = Zeros{PTO_XLEN} + 1536;
     ClearFault();
     let (push_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011100000', push);
+        TileDecode_TEPL, '000001111010', push);
     assert push_status == TileExecution_Executed;
     assert _Tiles[[1]].allocated;
     assert _Tiles[[60]].allocated;
@@ -923,7 +1021,7 @@ begin
     ExecuteTileFillScalar(1, Zeros{PTO_XLEN} + 22);
     ClearFault();
     let (full_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011100000', push);
+        TileDecode_TEPL, '000001111010', push);
     assert full_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
     assert ReadTileElement(60, 0, 0) == Zeros{PTO_XLEN} + 11;
@@ -936,7 +1034,7 @@ begin
     push.source0 = 3;
     ClearFault();
     let (second_push_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011100000', push);
+        TileDecode_TEPL, '000001111010', push);
     assert second_push_status == TileExecution_Executed;
     assert ReadTileElement(61, 0, 0) == Zeros{PTO_XLEN} + 33;
 
@@ -947,7 +1045,7 @@ begin
     pop.source0 = 60;
     ClearFault();
     let (pop_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011100001', pop);
+        TileDecode_TEPL, '000001111011', pop);
     assert pop_status == TileExecution_Executed;
     assert _LastFault == Fault_None;
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 11;
@@ -961,13 +1059,13 @@ begin
     pop.source0 = 61;
     ClearFault();
     let (shape_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011100001', pop);
+        TileDecode_TEPL, '000001111011', pop);
     assert shape_status == TileExecution_Rejected;
     assert _Tiles[[61]].allocated;
     ConfigureTwoByTwo(4);
     ClearFault();
     let (second_pop_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011100001', pop);
+        TileDecode_TEPL, '000001111011', pop);
     assert second_pop_status == TileExecution_Executed;
     assert ReadTileElement(4, 0, 0) == Zeros{PTO_XLEN} + 33;
     assert !_Tiles[[61]].allocated;
@@ -977,7 +1075,7 @@ begin
     // changing the configured consumer.
     ClearFault();
     let (empty_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011100001', pop);
+        TileDecode_TEPL, '000001111011', pop);
     assert empty_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
     assert ReadTileElement(2, 1, 1) == Zeros{PTO_XLEN} + 11;
@@ -986,7 +1084,7 @@ begin
     free.destination0 = 60;
     ClearFault();
     let (double_free_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011100011', free);
+        TileDecode_TEPL, '000001111101', free);
     assert double_free_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
     assert ReadTileElement(2, 1, 1) == Zeros{PTO_XLEN} + 11;
@@ -1052,6 +1150,7 @@ begin
     matrix_operands.source0 = 10;
     matrix_operands.source1 = 11;
     matrix_operands.source2 = 13;
+    SelectTestCUBEDataType('11000');
     ClearFault();
     let (matrix_status, -) = ExecuteTileInstruction(
         TileDecode_CUBE, '000000000001', matrix_operands);

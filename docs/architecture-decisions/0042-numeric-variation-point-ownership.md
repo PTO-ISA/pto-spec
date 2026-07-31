@@ -10,7 +10,7 @@ remain open.
 `PD-12` requires every target-dependent or implementation-defined numeric
 result to have a discoverable selector and a finite or mathematically testable
 allowed-result contract. The closed numeric inventory already assigns 108
-operations to 20 domains and 29 hooks, but it did not enumerate the individual
+operations to 20 domains and 30 hooks, but it did not enumerate the individual
 open dimensions within those domains. That made it possible to discuss a
 profile or hook without proving ownership of every unresolved result choice.
 
@@ -35,7 +35,7 @@ fail-closed discovery and ownership checkpoint for `PD-12`.
    point to a named target profile or visible numeric selector, or marks the
    applicable operation/type/profile tuple unsupported.
 3. The ledger maps every point to its complete operation and hook reachability.
-   Separate operation and hook tables prove that all 108 operations and all 29
+   Separate operation and hook tables prove that all 108 operations and all 30
    hooks, including two library-only helpers, have one explicit owner boundary.
 4. A target profile identity, selector namespace, backend behavior, or equal
    numeric code does not create a result rule. Delegation requires an accepted
@@ -43,7 +43,7 @@ fail-closed discovery and ownership checkpoint for `PD-12`.
    contract.
 5. Unknown profiles, modes, formats, tuples, or missing delegated rules reject
    before architectural effects. The existing A2/A3 MX applicability decision
-   remains the only accepted unsupported numeric slice: 114 tuples and zero
+   remains the only accepted unsupported numeric slice: 150 tuples and zero
    result rules.
 
 ## Consequences

@@ -29,7 +29,7 @@ imported as PTO arithmetic semantics.
 ## Decision
 
 For `pto-a2a3-numeric-v1`, the following direct CUBE operation selectors are
-unsupported for every one of the 19 architectural `TileDataType` identities:
+unsupported for every one of the 25 architectural `TileDataType` identities:
 
 | Operation key | Function |
 | --- | ---: |
@@ -42,7 +42,7 @@ unsupported for every one of the 19 architectural `TileDataType` identities:
 
 Each tuple rejects as `IllegalInstruction` before operand legality checks,
 semantic-handler dispatch, destination writes, memory effects, or result-rule
-selection. `result_rule_id` is therefore null for all 114 tuples.
+selection. `result_rule_id` is therefore null for all 150 tuples.
 
 The ASL represents this bounded decision with
 `NumericApplicabilityRules_A2A3MxRejection`, an accepted negative-rule set,

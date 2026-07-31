@@ -352,7 +352,7 @@ begin
     StopMemoryEventCapture();
 
     StartMemoryEventCapture(1);
-    MGATHER_MASK(40, source_address, 42, 43);
+    MGATHER_MASK(40, source_address, 42, 43, TilePad_Zero);
     assert _MemoryEventCount == 1;
     assert _MemoryEvents[[0]].kind == MemoryEvent_Load;
     StopMemoryEventCapture();
@@ -438,6 +438,137 @@ begin
     assert MemoryExecutionAllowedTSO();
 end;
 
+func RunTileCASOrderCase(bundle_atomic: boolean, acquire: boolean,
+                         release: boolean, expected_order: MemoryOrder)
+begin
+    StopMemoryEventCapture();
+    Store(Zeros{PTO_XLEN} + 256, 8, Zeros{PTO_XLEN} + 10);
+    StartMemoryEventCapture(0);
+    let initial = AddInitialWriteEvent(Zeros{PTO_XLEN} + 256, 8,
+        Zeros{PTO_XLEN} + 10);
+    SetBundleControlAttributeState(FALSE, bundle_atomic, acquire, release,
+        FALSE, FALSE);
+    assert CurrentBundleAtomic() == bundle_atomic;
+    assert CurrentBundleMemoryOrder() == expected_order;
+    ClearFault();
+    MGATHER_CAS(0, Zeros{PTO_XLEN} + 256, 1, 2, 3);
+    assert _LastFault == Fault_None;
+    assert _MemoryEventCount == 2;
+    assert _MemoryEvents[[1]].kind == MemoryEvent_Atomic;
+    assert _MemoryEvents[[1]].order == expected_order;
+    assert _MemoryEvents[[1]].read_value == Zeros{PTO_XLEN} + 10;
+    assert _MemoryEvents[[1]].write_value == Zeros{PTO_XLEN} + 11;
+    assert _MemoryEvents[[1]].read_from == initial;
+    assert MemoryCandidateExecutionValid();
+    StopMemoryEventCapture();
+end;
+
+func TestTileMemoryEventOrdering()
+begin
+    ResetProfileState();
+    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(2, 128, 1, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(3, 128, 1, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN});
+    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 10);
+    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 11);
+
+    // MGATHER.CAS is represented as an indivisible atomic event even without
+    // the bundle-atomic hint. aq/rl select the exact event order.
+    RunTileCASOrderCase(FALSE, FALSE, FALSE, MemoryOrder_Relaxed);
+    RunTileCASOrderCase(TRUE, TRUE, FALSE, MemoryOrder_Acquire);
+    RunTileCASOrderCase(TRUE, FALSE, TRUE, MemoryOrder_Release);
+    RunTileCASOrderCase(TRUE, TRUE, TRUE, MemoryOrder_AcquireRelease);
+
+    ConfigureTile(4, 128, 1, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    StopMemoryEventCapture();
+    Store(Zeros{PTO_XLEN} + 320, 8, Zeros{PTO_XLEN} + 0x55);
+    StartMemoryEventCapture(0);
+    - = AddInitialWriteEvent(Zeros{PTO_XLEN} + 320, 8,
+        Zeros{PTO_XLEN} + 0x55);
+    SetBundleControlAttributeState(FALSE, FALSE, TRUE, FALSE, FALSE, FALSE);
+    TLOAD(4, Zeros{PTO_XLEN} + 320);
+    assert _MemoryEventCount == 2;
+    assert _MemoryEvents[[1]].kind == MemoryEvent_Load;
+    assert _MemoryEvents[[1]].order == MemoryOrder_Acquire;
+    StopMemoryEventCapture();
+
+    StartMemoryEventCapture(0);
+    - = AddInitialWriteEvent(Zeros{PTO_XLEN} + 328, 8,
+        Zeros{PTO_XLEN});
+    SetBundleControlAttributeState(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE);
+    TSTORE(Zeros{PTO_XLEN} + 328, 4);
+    assert _MemoryEventCount == 2;
+    assert _MemoryEvents[[1]].kind == MemoryEvent_Store;
+    assert _MemoryEvents[[1]].order == MemoryOrder_Release;
+    StopMemoryEventCapture();
+
+    ConfigureTile(5, 128, 1, 2, 1, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(6, 128, 1, 2, 1, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 21);
+    WriteTileElement(5, 0, 1, Zeros{PTO_XLEN} + 22);
+    WriteTileElement(6, 0, 0, Zeros{PTO_XLEN});
+    WriteTileElement(6, 0, 1, Zeros{PTO_XLEN});
+    Store(Zeros{PTO_XLEN} + 384, 8, Zeros{PTO_XLEN});
+    StartMemoryEventCapture(0);
+    - = AddInitialWriteEvent(Zeros{PTO_XLEN} + 384, 8,
+        Zeros{PTO_XLEN});
+    SetBundleControlAttributeState(FALSE, TRUE, TRUE, TRUE, FALSE, FALSE);
+    MSCATTER(Zeros{PTO_XLEN} + 384, 5, 6);
+    assert _MemoryEventCount == 3;
+    assert _MemoryEvents[[1]].kind == MemoryEvent_Store;
+    assert _MemoryEvents[[2]].kind == MemoryEvent_Store;
+    assert _MemoryEvents[[1]].order == MemoryOrder_AcquireRelease;
+    assert _MemoryEvents[[2]].order == MemoryOrder_AcquireRelease;
+    assert _MemoryEvents[[1]].coherence_rank == 1;
+    assert _MemoryEvents[[2]].coherence_rank == 2;
+    assert MemoryCandidateExecutionValid();
+    StopMemoryEventCapture();
+
+    ClearFault();
+    StartMemoryEventCapture(0);
+    TLOAD(4, Zeros{PTO_XLEN} + 4096);
+    assert _LastFault == Fault_DataPage;
+    assert _MemoryEventCount == 0;
+    StopMemoryEventCapture();
+end;
+
+func TestDependencyMetadataIsNotFence()
+begin
+    StopMemoryEventCapture();
+    ResetMemoryExecution();
+    let initial_x = AddInitialWriteEvent(Zeros{PTO_XLEN}, 8,
+        Zeros{PTO_XLEN});
+    let initial_y = AddInitialWriteEvent(Zeros{PTO_XLEN} + 8, 8,
+        Zeros{PTO_XLEN});
+    // Dependency annotations are scheduling metadata, not architectural
+    // events. The candidate therefore contains only the memory operations.
+    - = AddStoreEvent(0, Zeros{PTO_XLEN}, 8, Zeros{PTO_XLEN} + 1,
+        MemoryOrder_Relaxed, 1);
+    - = AddStoreEvent(1, Zeros{PTO_XLEN} + 8, 8,
+        Zeros{PTO_XLEN} + 1, MemoryOrder_Relaxed, 1);
+    let read_y = AddLoadEvent(0, Zeros{PTO_XLEN} + 8, 8,
+        Zeros{PTO_XLEN}, MemoryOrder_Relaxed);
+    let read_x = AddLoadEvent(1, Zeros{PTO_XLEN}, 8,
+        Zeros{PTO_XLEN}, MemoryOrder_Relaxed);
+    SetMemoryReadFrom(read_y, initial_y);
+    SetMemoryReadFrom(read_x, initial_x);
+    assert _MemoryEventCount == 6;
+    for event_number = 0 to _MemoryEventCount - 1 do
+        assert _MemoryEvents[[event_number]].kind != MemoryEvent_Fence;
+    end;
+    assert MemoryCandidateExecutionValid();
+    assert MemoryExecutionAllowedTSO();
+end;
+
 func TestTSOConcurrency()
 begin
     StopMemoryEventCapture();
@@ -451,5 +582,7 @@ begin
     TestProductionPairAndDMAEventExtraction();
     TestProductionTileEventExtraction();
     TestTSOMixedSizeAndConditionalAtomicPolicy();
+    TestTileMemoryEventOrdering();
+    TestDependencyMetadataIsNotFence();
     StopMemoryEventCapture();
 end;

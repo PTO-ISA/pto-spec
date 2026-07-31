@@ -43,6 +43,20 @@ begin
         _Tiles[[index]].layout = TileLayout_RowMajor;
         _Tiles[[index]].location = TileLocation_Any;
     end;
+    _Accumulator.live = FALSE;
+    _Accumulator.logical_data_type = TileDataType_U64;
+    _Accumulator.info.allocated = FALSE;
+    _Accumulator.info.contents_defined = FALSE;
+    _Accumulator.info.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
+    _Accumulator.info.defined_valid_elements = 0;
+    _Accumulator.info.capacity_bytes = 0;
+    _Accumulator.info.rows = 0;
+    _Accumulator.info.columns = 0;
+    _Accumulator.info.valid_rows = 0;
+    _Accumulator.info.valid_columns = 0;
+    _Accumulator.info.data_type = TileDataType_U64;
+    _Accumulator.info.layout = TileLayout_RowMajor;
+    _Accumulator.info.location = TileLocation_Any;
     _PC = Zeros{PTO_XLEN};
     _BPC = Zeros{PTO_XLEN};
     _BundleActive = FALSE;
@@ -87,6 +101,7 @@ begin
         _TrapContexts[[ring]].t_queue = _TQueue;
         _TrapContexts[[ring]].u_queue = _UQueue;
         _TrapContexts[[ring]].predicates = _PredicateRegisters;
+        _TrapContexts[[ring]].accumulator = _Accumulator;
     end;
     _SystemRegisters.thread_ptr = Zeros{PTO_XLEN};
     _SystemRegisters.global_ptr = Zeros{PTO_XLEN};
@@ -438,6 +453,7 @@ begin
     _TrapContexts[[target]].t_queue = _TQueue;
     _TrapContexts[[target]].u_queue = _UQueue;
     _TrapContexts[[target]].predicates = _PredicateRegisters;
+    _TrapContexts[[target]].accumulator = _Accumulator;
 
     var ecstate = _SystemRegisters.core_state;
     ecstate[3:0] = Zeros{4} + source;
@@ -506,6 +522,7 @@ begin
         _UQueue[[index]] = PTOv0ReadContextRegister(target, 0x0f49 + index);
     end;
     _PredicateRegisters = _TrapContexts[[target]].predicates;
+    _Accumulator = _TrapContexts[[target]].accumulator;
     _CurrentACR = UInt(ecstate[3:0]) as AccessControlRing;
     control[4] = '0';
     PTOv0WriteContextRegister(target, 0x0f40, control);
@@ -599,6 +616,13 @@ begin
     end;
 end;
 
+implementation func TileProfileValueIsNaN(value: Word,
+                                           data_type: TileDataType) => boolean
+begin
+    // The deterministic raw-carrier reference profile has no NaN class.
+    return FALSE;
+end;
+
 implementation func TileProfileMatrixAccumulate(
     accumulator: Word, left: Word, right: Word,
     destination_type: TileDataType, left_type: TileDataType,
@@ -614,10 +638,14 @@ begin
     return value + bias;
 end;
 
-implementation func TileProfileMatrixScale(
-    value: Word, row_scale: Word, column_scale: Word,
-    destination_type: TileDataType, row_type: TileDataType,
-    column_type: TileDataType) => Word
+implementation func TileProfileMatrixScaledAccumulate(
+    accumulator: Word, left: Word, right: Word,
+    left_scale: Word, right_scale: Word,
+    destination_type: TileDataType, left_type: TileDataType,
+    right_type: TileDataType, left_scale_type: TileDataType,
+    right_scale_type: TileDataType) => Word
 begin
-    return MultiplyWord(MultiplyWord(value, row_scale), column_scale);
+    let scaled_left = MultiplyWord(left, left_scale);
+    let scaled_right = MultiplyWord(right, right_scale);
+    return accumulator + MultiplyWord(scaled_left, scaled_right);
 end;

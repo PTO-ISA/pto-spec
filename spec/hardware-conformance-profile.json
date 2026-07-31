@@ -1,0 +1,292 @@
+{
+  "arithmetic": {
+    "canonical_nan_output": "When the destination format has a NaN encoding, every produced NaN is replaced by that format's canonical NaN encoding.",
+    "exception_model": "IEEE-754 invalid, divide-by-zero, overflow, underflow, and inexact conditions are reported through the operation-defined architectural status; host traps are not observable.",
+    "fused_operations": "A fused operation rounds once after the exact multiply-add expression.",
+    "signed_zero": "IEEE signed zero is preserved by formats that encode both signs of zero; HiF8 has one zero encoding. Exact cancellation follows the selected rounding mode and min/max use -0 for minimum and +0 for maximum when the destination format has signed zero.",
+    "standard": "IEEE 754-2019 operation semantics with the explicitly enumerated low-precision format refinements",
+    "subnormals": "supported by each format that defines subnormal encodings; flush-to-zero and denormals-are-zero are non-conforming for those formats",
+    "tininess_detection": "after-rounding"
+  },
+  "b_datr": {
+    "canonicalize": {
+      "0": "Do not pre-canonicalize source NaN payloads; every produced NaN in a NaN-capable destination is still canonical.",
+      "1": "Replace every NaN source by its source-format canonical NaN before the operation; signed zero is unchanged."
+    },
+    "comparison_modes": {
+      "0": "EQ",
+      "1": "NE",
+      "2": "LT",
+      "3": "GT",
+      "4": "LE",
+      "5": "GE"
+    },
+    "comparison_reserved": [6, 7],
+    "rounding_modes": {
+      "0": "NONE: use the operation-defined default; the hardware numeric default is RNE",
+      "1": "RNE: nearest, ties to even",
+      "2": "RTZ: toward zero",
+      "3": "RDN: toward negative infinity",
+      "4": "RUP: toward positive infinity",
+      "5": "RNA: nearest, ties away from zero",
+      "6": "RTO: round to odd when inexact",
+      "7": "RHB: nearest, with an exact halfway result selecting the numerically greater candidate toward positive infinity"
+    },
+    "saturation": {
+      "disabled": "Integer arithmetic wraps to destination width; floating overflow follows the destination format; invalid float-to-integer conversion returns the exact destination indefinite value in conversion.float_to_integer_invalid.",
+      "enabled": "Integer arithmetic and conversion clamp to destination minimum/maximum; NaN converts to zero; floating overflow clamps to the destination maximum finite value."
+    }
+  },
+  "claim_scope": "PTO ISA 0.57.1 hardware numeric conformance",
+  "comparisons": {
+    "false_result": 0,
+    "nan": {
+      "EQ": false,
+      "GE": false,
+      "GT": false,
+      "LE": false,
+      "LT": false,
+      "NE": true,
+      "signaling_nan_reports_invalid": true
+    },
+    "signed_zero": "+0 and -0 compare equal and neither is less than the other for formats with signed zero",
+    "true_result": 1
+  },
+  "conversion": {
+    "float_to_integer_invalid": {
+      "packed_rule": "Each logical lane is converted independently; an invalid lane receives the lane-width indefinite value without changing another lane.",
+      "sat_disabled": {
+        "S4X2": {"lane_raw": "0x8", "packed_all_lanes_raw": "0x88"},
+        "S8": "0x80",
+        "S16": "0x8000",
+        "S32": "0x80000000",
+        "S64": "0x8000000000000000",
+        "U4X2": {"lane_raw": "0xF", "packed_all_lanes_raw": "0xFF"},
+        "U8": "0xFF",
+        "U16": "0xFFFF",
+        "U32": "0xFFFFFFFF",
+        "U64": "0xFFFFFFFFFFFFFFFF"
+      },
+      "signed_rule": "The indefinite value is the minimum signed value of the destination lane.",
+      "unsigned_rule": "The indefinite value is the maximum unsigned value of the destination lane."
+    },
+    "rhb": {
+      "definition": "Round to the nearest representable value; if the source is exactly halfway between two candidates, select the numerically greater candidate.",
+      "negative_halfway_example": {"input": "-2.5", "destination": "S32", "expected": "-2"},
+      "positive_halfway_example": {"input": "2.5", "destination": "S32", "expected": "3"}
+    }
+  },
+  "data_types": [
+    {"canonical_qnan": "0x7FF8000000000000", "class": "floating", "code": 0, "format": "IEEE-binary64", "lanes_per_storage": 1, "name": "FP64", "storage_bits": 64},
+    {"canonical_qnan": "0x7FC00000", "class": "floating", "code": 1, "format": "IEEE-binary32", "lanes_per_storage": 1, "name": "FP32", "storage_bits": 32},
+    {"canonical_qnan": "0x7FC00000", "class": "floating", "code": 2, "format": "e8m10 in a 32-bit carrier; discarded fraction bits are zero", "lanes_per_storage": 1, "name": "TF32", "storage_bits": 32},
+    {"canonical_qnan": "0x7FC00000", "class": "floating", "code": 3, "format": "e8m11 in a 32-bit carrier; discarded fraction bits are zero", "lanes_per_storage": 1, "name": "HF32", "storage_bits": 32},
+    {"canonical_qnan": "0x7E00", "class": "floating", "code": 4, "format": "IEEE-binary16", "lanes_per_storage": 1, "name": "FP16", "storage_bits": 16},
+    {"canonical_qnan": "0x7FC0", "class": "floating", "code": 5, "format": "bfloat16-e8m7", "lanes_per_storage": 1, "name": "BF16", "storage_bits": 16},
+    {
+      "canonical_qnan": "0x80",
+      "class": "floating",
+      "code": 6,
+      "encoding": {
+        "denormal": {"condition": "dot prefix 0000 and M in 1..7", "formula": "(-1)^S * 2^(M-23)", "exponent_range": [-22, -16]},
+        "dot_prefixes": [
+          {"D": "DML", "exponent_bits": 0, "mantissa_bits": 3, "prefix": "0000"},
+          {"D": 0, "exponent_bits": 0, "mantissa_bits": 3, "prefix": "0001"},
+          {"D": 1, "exponent_bits": 1, "mantissa_bits": 3, "prefix": "001"},
+          {"D": 2, "exponent_bits": 2, "mantissa_bits": 3, "prefix": "01"},
+          {"D": 3, "exponent_bits": 3, "mantissa_bits": 2, "prefix": "10"},
+          {"D": 4, "exponent_bits": 4, "mantissa_bits": 1, "prefix": "11"}
+        ],
+        "exponent": "For D>0 Em contains exponent sign Se followed by D-1 stored magnitude bits; prepend an implicit magnitude bit 1. Se=0 is positive and Se=1 is negative. D=0 means E=0.",
+        "layout": "sign S in bit 7, then a variable-length dot prefix, D exponent bits, and the remaining mantissa bits",
+        "normal": {"formula": "(-1)^S * 2^E * (1 + M/2^mantissa_bits)", "exponent_range": [-15, 15]},
+        "special_raw": {"negative_infinity": "0xEF", "nan": "0x80", "positive_infinity": "0x6F", "zero": "0x00"}
+      },
+      "format": "HiF8 dynamic Dot/Exponent/Mantissa",
+      "lanes_per_storage": 1,
+      "name": "HiF8",
+      "storage_bits": 8
+    },
+    {
+      "canonical_qnan": "0x7F",
+      "class": "floating",
+      "code": 7,
+      "encoding": {"bias": 7, "bit_fields": {"exponent": "6:3", "mantissa": "2:0", "sign": "7"}, "infinity": "none", "nan": "E=15 and M=7", "normal": "E in 1..15 except E=15,M=7; (-1)^S * 2^(E-7) * (1+M/8)", "subnormal": "E=0; (-1)^S * 2^-6 * (M/8)", "zero": "E=0 and M=0"},
+      "format": "OCP OFP8 E4M3",
+      "lanes_per_storage": 1,
+      "name": "E4M3",
+      "storage_bits": 8
+    },
+    {
+      "canonical_qnan": "0x7E",
+      "class": "floating",
+      "code": 8,
+      "encoding": {"bias": 15, "bit_fields": {"exponent": "6:2", "mantissa": "1:0", "sign": "7"}, "infinity": "E=31 and M=0", "nan": "E=31 and M!=0", "normal": "E in 1..30; (-1)^S * 2^(E-15) * (1+M/4)", "subnormal": "E=0; (-1)^S * 2^-14 * (M/4)", "zero": "E=0 and M=0"},
+      "format": "OCP OFP8 E5M2",
+      "lanes_per_storage": 1,
+      "name": "E5M2",
+      "storage_bits": 8
+    },
+    {
+      "class": "floating",
+      "code": 9,
+      "encoding": {"bias": 3, "bit_fields": {"exponent": "4:2", "mantissa": "1:0", "sign": "5"}, "finite_only": true, "maximum_finite": "28", "minimum_positive_subnormal": "0.0625", "normal": "E in 1..7; (-1)^S * 2^(E-3) * (1+M/4)", "storage_constraint": "bits 7:6 MUST be zero", "subnormal": "E=0; (-1)^S * 2^-2 * (M/4)", "zero": "E=0 and M=0"},
+      "format": "OCP MX FP6 E3M2 in a zero-extended 8-bit carrier",
+      "lanes_per_storage": 1,
+      "name": "E3M2",
+      "payload_bits": 6,
+      "storage_bits": 8
+    },
+    {
+      "class": "floating",
+      "code": 10,
+      "encoding": {"bias": 1, "bit_fields": {"exponent": "4:3", "mantissa": "2:0", "sign": "5"}, "finite_only": true, "maximum_finite": "7.5", "minimum_positive_subnormal": "0.125", "normal": "E in 1..3; (-1)^S * 2^(E-1) * (1+M/8)", "storage_constraint": "bits 7:6 MUST be zero", "subnormal": "E=0; (-1)^S * (M/8)", "zero": "E=0 and M=0"},
+      "format": "OCP MX FP6 E2M3 in a zero-extended 8-bit carrier",
+      "lanes_per_storage": 1,
+      "name": "E2M3",
+      "payload_bits": 6,
+      "storage_bits": 8
+    },
+    {
+      "class": "packed-floating",
+      "code": 11,
+      "encoding": {"finite_only": true, "lane_bit_fields": {"exponent": "2:1", "mantissa": "0", "sign": "3"}, "lane_raw_values": {"0x0": "+0", "0x1": "+0.5", "0x2": "+1", "0x3": "+1.5", "0x4": "+2", "0x5": "+3", "0x6": "+4", "0x7": "+6", "0x8": "-0", "0x9": "-0.5", "0xA": "-1", "0xB": "-1.5", "0xC": "-2", "0xD": "-3", "0xE": "-4", "0xF": "-6"}},
+      "format": "two OCP MX FP4 E2M1 logical lanes",
+      "lanes_per_storage": 2,
+      "name": "E2M1X2",
+      "storage_bits": 8
+    },
+    {
+      "class": "packed-floating",
+      "code": 12,
+      "encoding": {"finite_only": true, "lane_bit_fields": {"exponent": "2", "mantissa": "1:0", "sign": "3"}, "lane_raw_values": {"0x0": "+0", "0x1": "+0.25", "0x2": "+0.5", "0x3": "+0.75", "0x4": "+1", "0x5": "+1.25", "0x6": "+1.5", "0x7": "+1.75", "0x8": "-0", "0x9": "-0.25", "0xA": "-0.5", "0xB": "-0.75", "0xC": "-1", "0xD": "-1.25", "0xE": "-1.5", "0xF": "-1.75"}},
+      "format": "two public E1M2 logical lanes",
+      "lanes_per_storage": 2,
+      "name": "E1M2X2",
+      "storage_bits": 8
+    },
+    {
+      "canonical_qnan": "0xFF",
+      "class": "scale",
+      "code": 13,
+      "encoding": {"finite": "raw 0x00..0xFE represents 2^(raw-127)", "nan": "raw 0xFF", "sign": "none", "zero": "none"},
+      "format": "OCP MX E8M0 power-of-two scale",
+      "lanes_per_storage": 1,
+      "name": "E8M0",
+      "storage_bits": 8
+    },
+    {
+      "class": "packed-floating",
+      "code": 14,
+      "encoding": {"distinct_identity_from": "E1M2X2", "finite_only": true, "lane_bit_fields": {"exponent": "2", "mantissa": "1:0", "sign": "3"}, "lane_raw_values": {"0x0": "+0", "0x1": "+0.25", "0x2": "+0.5", "0x3": "+0.75", "0x4": "+1", "0x5": "+1.25", "0x6": "+1.5", "0x7": "+1.75", "0x8": "-0", "0x9": "-0.25", "0xA": "-0.5", "0xB": "-0.75", "0xC": "-1", "0xD": "-1.25", "0xE": "-1.5", "0xF": "-1.75"}},
+      "format": "two public HiF4 E1M2 logical lanes; a distinct DataType identity used by MX",
+      "lanes_per_storage": 2,
+      "name": "HiF4X2",
+      "storage_bits": 8
+    },
+    {"class": "signed-integer", "code": 16, "lanes_per_storage": 1, "maximum": "9223372036854775807", "minimum": "-9223372036854775808", "name": "S64", "storage_bits": 64},
+    {"class": "signed-integer", "code": 17, "lanes_per_storage": 1, "maximum": "2147483647", "minimum": "-2147483648", "name": "S32", "storage_bits": 32},
+    {"class": "signed-integer", "code": 18, "lanes_per_storage": 1, "maximum": "32767", "minimum": "-32768", "name": "S16", "storage_bits": 16},
+    {"class": "signed-integer", "code": 19, "lanes_per_storage": 1, "maximum": "127", "minimum": "-128", "name": "S8", "storage_bits": 8},
+    {"class": "packed-signed-integer", "code": 20, "lanes_per_storage": 2, "maximum": "7", "minimum": "-8", "name": "S4X2", "storage_bits": 8},
+    {"class": "unsigned-integer", "code": 24, "lanes_per_storage": 1, "maximum": "18446744073709551615", "minimum": "0", "name": "U64", "storage_bits": 64},
+    {"class": "unsigned-integer", "code": 25, "lanes_per_storage": 1, "maximum": "4294967295", "minimum": "0", "name": "U32", "storage_bits": 32},
+    {"class": "unsigned-integer", "code": 26, "lanes_per_storage": 1, "maximum": "65535", "minimum": "0", "name": "U16", "storage_bits": 16},
+    {"class": "unsigned-integer", "code": 27, "lanes_per_storage": 1, "maximum": "255", "minimum": "0", "name": "U8", "storage_bits": 8},
+    {"class": "packed-unsigned-integer", "code": 28, "lanes_per_storage": 2, "maximum": "15", "minimum": "0", "name": "U4X2", "storage_bits": 8}
+  ],
+  "implementation_conformance": {
+    "claim_requires": [
+      "the exact profile ID and release content hash",
+      "all generated hardware numeric boundary vectors",
+      "operation-level legality and exception evidence",
+      "independent downstream byte and effect parity"
+    ],
+    "repository_claim": "contract-and-vector-definition-only"
+  },
+  "isa_release": "0.57.1",
+  "matrix": {
+    "accumulator_initialization": "Ordinary, BIAS, and MX variants initialize ACC to zero before the new dot product; .ACC variants initialize the computation from the existing ACC value.",
+    "acccvt": "ACCCVT rounds each logical ACC lane once to the selected destination DataType, publishes the complete destination Tile, then releases ACC. A fault preserves ACC and the destination.",
+    "bias_order": "BIAS is added in logical result type after the complete dot product; MX BIAS is FP32 and is added after the scaled dot product.",
+    "dot_order": "Products are accumulated in increasing logical K index order with one fused multiply-add rounding to the declared physical ACC type per term.",
+    "mx": {
+      "acc_type": "FP32",
+      "allowed_operand_pairs": [
+        ["E4M3", "E4M3"], ["E4M3", "E5M2"], ["E5M2", "E4M3"], ["E5M2", "E5M2"],
+        ["E2M1X2", "E2M1X2"], ["E2M1X2", "HiF4X2"], ["HiF4X2", "E2M1X2"], ["HiF4X2", "HiF4X2"]
+      ],
+      "bias_type": "FP32",
+      "header_data_type": "FP32",
+      "scale_a_shape": "M x ceil(K/32)",
+      "scale_b_shape": "ceil(K/32) x N",
+      "scale_block_logical_k_elements": 32,
+      "scale_indexing": "ScaleA[m,floor(k/32)] and ScaleB[floor(k/32),n]",
+      "scale_order": "Decode both E8M0 scales and multiply each corresponding logical input by its scale before the fused multiply-add. A 0xFF scale makes the FP32 term and resulting ACC lane canonical NaN.",
+      "scale_types": ["E8M0", "E8M0"]
+    },
+    "ordinary_type_table": [
+      {"acc_type": "FP64", "bias_type": "FP64", "header_data_type": "FP64", "left_type": "FP64", "right_type": "FP64"},
+      {"acc_type": "FP32", "bias_type": "FP32", "header_data_type": "FP32", "left_type": "FP32", "right_type": "FP32"},
+      {"acc_type": "FP32", "bias_type": "TF32", "header_data_type": "TF32", "left_type": "TF32", "right_type": "TF32"},
+      {"acc_type": "FP32", "bias_type": "HF32", "header_data_type": "HF32", "left_type": "HF32", "right_type": "HF32"},
+      {"acc_type": "FP32", "bias_type": "FP16", "header_data_type": "FP16", "left_type": "FP16", "right_type": "FP16"},
+      {"acc_type": "FP32", "bias_type": "BF16", "header_data_type": "BF16", "left_type": "BF16", "right_type": "BF16"},
+      {"acc_type": "FP32", "bias_type": "HiF8", "header_data_type": "HiF8", "left_type": "HiF8", "right_type": "HiF8"},
+      {"acc_type": "FP32", "bias_type": "E4M3", "header_data_type": "E4M3", "left_type": "E4M3", "right_type": "E4M3"},
+      {"acc_type": "FP32", "bias_type": "E5M2", "header_data_type": "E5M2", "left_type": "E5M2", "right_type": "E5M2"},
+      {"acc_type": "FP32", "bias_type": "E3M2", "header_data_type": "E3M2", "left_type": "E3M2", "right_type": "E3M2"},
+      {"acc_type": "FP32", "bias_type": "E2M3", "header_data_type": "E2M3", "left_type": "E2M3", "right_type": "E2M3"},
+      {"acc_type": "FP32", "bias_type": "E2M1X2", "header_data_type": "E2M1X2", "left_type": "E2M1X2", "right_type": "E2M1X2"},
+      {"acc_type": "FP32", "bias_type": "E1M2X2", "header_data_type": "E1M2X2", "left_type": "E1M2X2", "right_type": "E1M2X2"},
+      {"acc_type": "FP32", "bias_type": "HiF4X2", "header_data_type": "HiF4X2", "left_type": "HiF4X2", "right_type": "HiF4X2"},
+      {"acc_type": "S64", "bias_type": "S64", "header_data_type": "S64", "left_type": "S64", "right_type": "S64"},
+      {"acc_type": "S64", "bias_type": "S32", "header_data_type": "S32", "left_type": "S32", "right_type": "S32"},
+      {"acc_type": "S64", "bias_type": "S16", "header_data_type": "S16", "left_type": "S16", "right_type": "S16"},
+      {"acc_type": "S64", "bias_type": "S8", "header_data_type": "S8", "left_type": "S8", "right_type": "S8"},
+      {"acc_type": "S64", "bias_type": "S4X2", "header_data_type": "S4X2", "left_type": "S4X2", "right_type": "S4X2"},
+      {"acc_type": "U64", "bias_type": "U64", "header_data_type": "U64", "left_type": "U64", "right_type": "U64"},
+      {"acc_type": "U64", "bias_type": "U32", "header_data_type": "U32", "left_type": "U32", "right_type": "U32"},
+      {"acc_type": "U64", "bias_type": "U16", "header_data_type": "U16", "left_type": "U16", "right_type": "U16"},
+      {"acc_type": "U64", "bias_type": "U8", "header_data_type": "U8", "left_type": "U8", "right_type": "U8"},
+      {"acc_type": "U64", "bias_type": "U4X2", "header_data_type": "U4X2", "left_type": "U4X2", "right_type": "U4X2"}
+    ]
+  },
+  "min_max": {
+    "both_nan": "canonical destination NaN when the destination format has NaN",
+    "one_nan": "the numeric operand",
+    "signed_zero_max": "+0",
+    "signed_zero_min": "-0"
+  },
+  "packed_storage": {
+    "applies_to": ["E2M1X2", "E1M2X2", "HiF4X2", "S4X2", "U4X2"],
+    "dimensions": "Tile rows, columns, valid rows, valid columns, matrix M/N/K, and scale-block K count are logical-lane dimensions, not byte-carrier dimensions.",
+    "lane_order": "Logical lane 2*i is bits 3:0 of storage byte i; logical lane 2*i+1 is bits 7:4 of storage byte i.",
+    "partial_final_byte": "When a logical extent is odd, the unused high nibble of the final storage byte is reserved and MUST be zero on publication. Consumers ignore it."
+  },
+  "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
+  "reductions": {
+    "arg_tie": "lowest original logical index",
+    "empty_input": "illegal before effects",
+    "evaluation_order": "increasing logical row-major index; no reassociation",
+    "max_min_nan": "ignore a NaN when a numeric operand exists; all-NaN input returns canonical NaN",
+    "product_sum_nan": "any NaN produces canonical NaN",
+    "rounding": "round to the declared accumulator type after each step"
+  },
+  "reference_model_relation": {
+    "hardware_conformance_claim": false,
+    "profile_id": "pto-v0",
+    "role": "deterministic raw-carrier ASL reference-test profile",
+    "rule": "pto-v0 output values are not hardware numeric conformance evidence"
+  },
+  "reserved_data_type_codes": [15, 21, 22, 23, 29, 30],
+  "schema_version": 2,
+  "sort": {
+    "directions": ["ascending", "descending"],
+    "equal_values": "stable by original index",
+    "group_size": 32,
+    "nan_order": "after all numeric values and stable by original index in both directions",
+    "output": "value paired with U32 original index",
+    "signed_zero_order": "+0 and -0 compare equal; original index controls their stable order"
+  }
+}

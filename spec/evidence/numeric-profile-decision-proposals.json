@@ -4,7 +4,7 @@
   "status": "proposal-complete-decisions-open",
   "input": {
     "path": "spec/evidence/numeric-profile-decision-inputs.json",
-    "sha256": "94865e7c29c2a14a63627390d51cc6c3b698a91700d6ce71785b2928bb3bd39f",
+    "sha256": "9bcb979388b28cbc9e1ff9bdfbf5e479a268a616e5a2bf514ab206fb27107d54",
     "public_repository": "https://github.com/hw-native-sys/pto-isa",
     "public_commit": "712cbe9f23df5d5362be5e8327599f4285317473"
   },
@@ -16,7 +16,7 @@
   },
   "scalar_flag_contract": {
     "path": "spec/evidence/scalar-numeric-flag-contract.json",
-    "sha256": "4b577b6d700b706618ade06f1b52531f24fd2b7679baaefeedb78f3ec3de1aeb",
+    "sha256": "0eebde6ca8ef2f5bbbaebcf9276226b8b1cc1b673394ec43440ebd0ac09012ce",
     "status": "state-owner-matrix-closed-profile-production-open",
     "acceptance_record": "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
     "producer_owner_closed_form_count": 30,
@@ -26,7 +26,7 @@
   },
   "rounding_selector_contract": {
     "path": "spec/evidence/numeric-rounding-selector-contract.json",
-    "sha256": "6f284ceccfe79347acf317c8d0263742bf508986120f64c6d93cae7a3c3dcfa3",
+    "sha256": "94ac3b70f25e720528c170472e6b9e81bee3fbd3a745f4174bca6145f7e0ba31",
     "status": "selector-ownership-inventory-closed-result-rules-open",
     "acceptance_record": "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
     "scalar_active_selector_count": 8,
@@ -41,15 +41,15 @@
   },
   "format_namespace_contract": {
     "path": "spec/evidence/numeric-format-namespace-contract.json",
-    "sha256": "ccf96bbc5f71cdc224a512313d7c461176ed6a6888947ba6a0d6364086bb3fa6",
+    "sha256": "931472f8f33ef893e473db825b9523dc82c41408c81f7fd9e608a2751e9dbef2",
     "status": "namespace-and-carrier-inventory-closed-format-rules-open",
     "acceptance_record": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
-    "tile_data_type_count": 19,
+    "tile_data_type_count": 25,
     "tile_storage_width_counts": {
-      "4": 4,
-      "8": 5,
+      "4": 5,
+      "8": 8,
       "16": 4,
-      "32": 3,
+      "32": 5,
       "64": 3
     },
     "scalar_source_mapped_count": 2,
@@ -58,36 +58,36 @@
     "scalar_floating_destination_reserved_count": 17,
     "scalar_integer_destination_mapped_count": 15,
     "scalar_integer_destination_reserved_count": 17,
-    "tma_talloc_mapped_count": 18,
-    "tma_talloc_reserved_count": 46,
-    "bundle_mapped_count": 18,
-    "bundle_reserved_count": 14,
-    "four_bit_type_count": 4,
+    "tma_talloc_mapped_count": 25,
+    "tma_talloc_reserved_count": 39,
+    "bundle_mapped_count": 25,
+    "bundle_reserved_count": 7,
+    "four_bit_type_count": 5,
     "open_residual_count": 8,
     "pd02_complete": false
   },
   "public_type_baseline": {
     "path": "spec/evidence/public-numeric-type-baseline.json",
-    "sha256": "9ee660158b15a403fa7e2d7c16aaa51f6b5475006f7440270de6521db306f8ed",
-    "status": "public-type-identity-and-target-availability-baseline-closed-result-and-legality-open",
+    "sha256": "3d89bdb88ced41225cd4016f41e2a0bfc88eb38e72555a27d6791fb2a8548edb",
+    "status": "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
     "acceptance_record": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
     "public_type_count": 16,
     "public_floating_type_count": 8,
     "public_integer_type_count": 8,
     "a2a3_available_type_count": 11,
     "a5_available_type_count": 16,
-    "accepted_catalog_binding_count": 11,
-    "unresolved_catalog_type_count": 6,
+    "accepted_catalog_binding_count": 16,
+    "non_public_catalog_type_count": 9,
     "accepted_result_rule_count": 0,
     "accepted_domain_rule_count": 0,
-    "open_residual_count": 7,
+    "open_residual_count": 4,
     "pd02_complete": false,
     "s5_t2_a_complete": false,
     "s5_t2_complete": false
   },
   "public_integer_conversion": {
     "path": "spec/evidence/public-integer-conversion-contract.json",
-    "sha256": "82849d0610e0ab02321025cfc41bd7794bbeef7ea94a8d88791a07375bf63927",
+    "sha256": "2be575e8984f1fdead54d570e4261cccde0cd9b8fde8c96d573577843190fa84",
     "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
     "acceptance_record": "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
     "public_integer_type_count": 8,
@@ -107,14 +107,17 @@
   },
   "profile_applicability_contract": {
     "path": "spec/evidence/numeric-profile-applicability-closure.json",
-    "sha256": "2232608ed5f1c56ef9ccf9c52ae368df5d7223b7bc53cbe08274cf2760f3aa83",
+    "sha256": "7939cf794640efca743816f75a0e71faa2eb840bf398c63e427a729093ac951b",
     "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
     "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
     "rule_count": 6,
     "operation_count": 6,
     "selector_count": 6,
-    "tile_data_type_count": 19,
-    "tuple_count": 114,
+    "tile_data_type_count": 25,
+    "tuple_count": 150,
+    "bundle_execution_tuple_count": 150,
+    "bundle_command_form_count": 6,
+    "accepted_command_form_count": 99,
     "result_rule_count": 0,
     "parent_pd01_complete": false,
     "cube_matrix_complete": false,
@@ -122,22 +125,22 @@
   },
   "variation_point_contract": {
     "path": "spec/evidence/numeric-variation-point-ownership.json",
-    "sha256": "8e7a3816733cbad5e2c1128f729d84aa087a5b68e324ae3ed646ed3d606c528c",
+    "sha256": "295b36f19172f44ce608313194c02f1470144a5dea35b053f8277960269f2679",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
     "acceptance_record": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
     "variation_point_count": 99,
     "unique_dimension_count": 41,
     "domain_count": 20,
     "operation_count": 108,
-    "hook_count": 29,
-    "primary_operation_hook_edge_count": 130,
+    "hook_count": 30,
+    "primary_operation_hook_edge_count": 134,
     "reference_helper_operation_edge_count": 8,
     "portable_decision_owner_point_count": 99,
     "selected_route_count": 0,
     "accepted_result_rule_count": 0,
     "accepted_bounded_result_subset_rule_count": 3,
     "accepted_bounded_result_subset_tuple_count": 48,
-    "accepted_unsupported_tuple_count": 114,
+    "accepted_unsupported_tuple_count": 150,
     "accepted_domain_result_rule_count": 0,
     "pd12_complete": false,
     "s5_t2_a_complete": false,
@@ -271,7 +274,7 @@
     "TileProfileExpand",
     "TileProfileMatrixAccumulate",
     "TileProfileMatrixBias",
-    "TileProfileMatrixScale",
+    "TileProfileMatrixScaledAccumulate",
     "TileProfileOrderLeft",
     "TileProfilePReLU",
     "TileProfilePartialValue",
@@ -279,6 +282,7 @@
     "TileProfileReductionInitial",
     "TileProfileReductionStep",
     "TileProfileUnary",
+    "TileProfileValueIsNaN",
     "TileReciprocal",
     "TileSquareRoot"
   ],
@@ -319,7 +323,7 @@
         "named-target-profile-rule",
         "unsupported-in-profile"
       ],
-      "proposed_rule": "ADR 0041 closes the A2A3 unsupported-in-profile rule for all six MX CUBE selectors and all 19 TileDataType identities. Legal PTO operations otherwise use pto-numeric-v1 results. A2A3 and A5 may reject only documented operation/type tuples; any accepted target-dependent result must be selected by a named profile and bounded rule. CPU observations are never normative.",
+      "proposed_rule": "ADR 0041 closes the A2A3 unsupported-in-profile rule for all six MX CUBE selectors and all 25 TileDataType identities. Legal PTO operations otherwise use pto-numeric-v1 results. A2A3 and A5 may reject only documented operation/type tuples; any accepted target-dependent result must be selected by a named profile and bounded rule. CPU observations are never normative.",
       "open_items": [
         "complete every remaining domain operation/type applicability table after the accepted A2A3 MX negative slice",
         "accept one portable or target disposition for every supported and rejected tuple"
@@ -369,7 +373,7 @@
         "named-target-profile-rule",
         "unsupported-in-profile"
       ],
-      "proposed_rule": "ADR 0040 closes five distinct code namespaces, all 19 TileDataType raw widths, reserved codes, and packed four-bit order. ADR 0043 additionally closes 16 published type identities, 11 unambiguous catalog bindings, and the A2/A3-versus-A5 public type-availability baseline. Bit-exact floating formats and operation/type/profile legality remain open. Backend carrier types cannot create implicit PTO formats.",
+      "proposed_rule": "The 0.57.1 contract closes five distinct code namespaces and all 25 TileDataType identities, raw widths, reserved codes, and packed four-bit order. All 16 published public type identities have unambiguous catalog bindings and retain the A2/A3-versus-A5 availability baseline. Operation/type/profile legality and implementation conformance remain open. Backend carrier types cannot create implicit PTO formats.",
       "open_items": [
         "bind the specialized floating raw carriers and decide the public roles of F64 and E8M0",
         "publish bit-exact payload fields and exceptional-value classes for every floating type",
@@ -1544,7 +1548,8 @@
         "tile:TEPL:TSORT"
       ],
       "hooks": [
-        "TileProfileOrderLeft"
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
       ],
       "decision_question_ids": [
         "PD-01",
@@ -1591,7 +1596,7 @@
       "hooks": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "decision_question_ids": [
         "PD-01",
@@ -1688,7 +1693,7 @@
       "id": "S5-T2-E",
       "target": "adjudicate every differential and obtain architecture/formal review",
       "current": 0,
-      "required": 22,
+      "required": 23,
       "status": "open"
     }
   ],
@@ -1701,10 +1706,10 @@
     "numeric_domain_count": 20,
     "accepted_domain_rule_count": 0,
     "numeric_operation_count": 108,
-    "numeric_hook_count": 29,
+    "numeric_hook_count": 30,
     "numeric_variation_point_count": 99,
     "selected_variation_route_count": 0,
-    "accepted_public_type_binding_count": 11,
+    "accepted_public_type_binding_count": 16,
     "public_type_identity_count": 16,
     "accepted_bounded_result_rule_count": 3,
     "accepted_bounded_result_tuple_count": 48,

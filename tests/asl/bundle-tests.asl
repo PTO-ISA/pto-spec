@@ -1,8 +1,9 @@
 pure func BundleTestTEPLStart(selector: bits(10), data_type: bits(5))
         => bits(64)
 begin
-    var instruction: bits(64) = Zeros{64} + 0x02001181;
-    instruction[24:15] = selector;
+    var instruction: bits(64) = Zeros{64} + 0x00019181;
+    instruction[26:25] = selector[6:5];
+    instruction[24:20] = selector[4:0];
     instruction[31:27] = data_type;
     return instruction;
 end;
@@ -72,11 +73,11 @@ pure func BundleTestTileBinding(destination: bits(3), source0: bits(6),
                                source1: bits(6), last: boolean) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00004013;
-    instruction[24:22] = destination;
-    instruction[11:7] = source0[4:0];
-    instruction[15] = source0[5];
-    instruction[21:16] = source1;
-    instruction[29] = if last then '1' else '0';
+    instruction[9:7] = destination;
+    instruction[18:15] = Zeros{4} + 3;
+    instruction[25:20] = source0;
+    instruction[31:26] = source1;
+    instruction[19] = if last then '1' else '0';
     return instruction;
 end;
 
@@ -121,42 +122,43 @@ begin
         BundleTestTEPLStart(Zeros{10} + 0x2b, Zeros{5} + 24), 32);
     assert tepl == CommandExecution_Executed;
     assert _BundleOperation.valid;
-    assert _BundleOperation.form_identity == Zeros{7} + 48;
+    assert _BundleOperation.form_identity == Zeros{7} + 40;
     assert _BundleOperation.operation_class == BundleOperation_TileElement;
     assert _BundleOperation.selector == Zeros{10} + 0x2b;
     assert _BundleOperation.data_type == Zeros{5} + 24;
 
     for data_type_code = 0 to 31 do
         let data_type = Zeros{5} + data_type_code;
-        let expected = data_type_code == 0 || data_type_code == 1 ||
-                       data_type_code == 4 || data_type_code == 5 ||
-                       data_type_code == 7 || data_type_code == 8 ||
-                       data_type_code == 13 || data_type_code == 14 ||
+        let expected = data_type_code <= 14 ||
                        (16 <= data_type_code && data_type_code <= 20) ||
                        (24 <= data_type_code && data_type_code <= 28);
         assert BundleDataTypeSupported(data_type) == expected;
     end;
-    assert BundleTileDataType(Zeros{5}) == TileDataType_F64;
-    assert BundleTileDataType(Zeros{5} + 1) == TileDataType_F32;
-    assert BundleTileDataType(Zeros{5} + 4) == TileDataType_F16;
+    assert BundleTileDataType(Zeros{5}) == TileDataType_FP64;
+    assert BundleTileDataType(Zeros{5} + 1) == TileDataType_FP32;
+    assert BundleTileDataType(Zeros{5} + 2) == TileDataType_TF32;
+    assert BundleTileDataType(Zeros{5} + 3) == TileDataType_HF32;
+    assert BundleTileDataType(Zeros{5} + 4) == TileDataType_FP16;
     assert BundleTileDataType(Zeros{5} + 5) == TileDataType_BF16;
-    assert BundleTileDataType(Zeros{5} + 7) == TileDataType_FP8;
-    assert BundleTileDataType(Zeros{5} + 8) == TileDataType_FPL8;
+    assert BundleTileDataType(Zeros{5} + 6) == TileDataType_HiF8;
+    assert BundleTileDataType(Zeros{5} + 7) == TileDataType_E4M3;
+    assert BundleTileDataType(Zeros{5} + 8) == TileDataType_E5M2;
+    assert BundleTileDataType(Zeros{5} + 9) == TileDataType_E3M2;
+    assert BundleTileDataType(Zeros{5} + 10) == TileDataType_E2M3;
+    assert BundleTileDataType(Zeros{5} + 11) == TileDataType_E2M1X2;
+    assert BundleTileDataType(Zeros{5} + 12) == TileDataType_E1M2X2;
     assert BundleTileDataType(Zeros{5} + 13) == TileDataType_E8M0;
-    assert BundleTileDataType(Zeros{5} + 14) == TileDataType_FPL4;
+    assert BundleTileDataType(Zeros{5} + 14) == TileDataType_HiF4X2;
     assert BundleTileDataType(Zeros{5} + 16) == TileDataType_S64;
     assert BundleTileDataType(Zeros{5} + 17) == TileDataType_S32;
     assert BundleTileDataType(Zeros{5} + 18) == TileDataType_S16;
     assert BundleTileDataType(Zeros{5} + 19) == TileDataType_S8;
-    assert BundleTileDataType(Zeros{5} + 20) == TileDataType_S4;
+    assert BundleTileDataType(Zeros{5} + 20) == TileDataType_S4X2;
     assert BundleTileDataType(Zeros{5} + 24) == TileDataType_U64;
     assert BundleTileDataType(Zeros{5} + 25) == TileDataType_U32;
     assert BundleTileDataType(Zeros{5} + 26) == TileDataType_U16;
     assert BundleTileDataType(Zeros{5} + 27) == TileDataType_U8;
-    assert BundleTileDataType(Zeros{5} + 28) == TileDataType_U4;
-    assert !BundleDataTypeSupported(Zeros{5} + 11);
-    assert !BundleDataTypeSupported(Zeros{5} + 12);
-
+    assert BundleTileDataType(Zeros{5} + 28) == TileDataType_U4X2;
     // MPAR Mode is architectural descriptor state, including all encodings.
     for mode = 0 to 3 do
         ResetBundleControlState();
@@ -206,7 +208,7 @@ begin
     ResetProfileState();
     WriteTPC(Zeros{PTO_XLEN} + 0x400);
     let reserved_selector = ExecuteCommandInstruction(
-        BundleTestTEPLStart(Zeros{10} + 73, Zeros{5} + 24), 32);
+        BundleTestTEPLStart(Zeros{10} + 105, Zeros{5} + 24), 32);
     assert reserved_selector == CommandExecution_Rejected;
     assert _LastFault == Fault_IllegalInstruction;
     assert !_TrapContexts[[0]].bundle_operation.valid;
@@ -381,7 +383,11 @@ begin
     assert stop == CommandExecution_Executed;
     assert !BundleIsActive();
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x10c;
-    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 16;
+    // DstTile selects hand 2, not physical tile 2. The first free tile in
+    // hand 2 is tile 32; the pre-existing physical tile 2 is preserved.
+    assert _Tiles[[32]].allocated;
+    assert ReadTileElement(32, 0, 0) == Zeros{PTO_XLEN} + 16;
+    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 99;
     assert _SystemRegisters.cycle == Zeros{PTO_XLEN} + 3;
 
     // A following BSTART is also a commit boundary and installs only the next
@@ -404,7 +410,9 @@ begin
     assert first_start == CommandExecution_Executed;
     assert first_binding == CommandExecution_Executed;
     assert next_status == CommandExecution_Executed;
-    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 5;
+    assert _Tiles[[32]].allocated;
+    assert ReadTileElement(32, 0, 0) == Zeros{PTO_XLEN} + 5;
+    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 99;
     assert _BundleOperation.operation_class == BundleOperation_Control;
     assert !_BundleOperation.selector_valid;
     assert BundleIsActive();
@@ -449,26 +457,6 @@ begin
     StopMemoryEventCapture();
     assert _TrapContexts[[0]].bundle_operation.valid;
 
-    // DataType mismatch is rejected before the direct tile operation mutates.
-    ResetProfileState();
-    BundleTestConfigureTile(0, TileDataType_U64);
-    BundleTestConfigureTile(1, TileDataType_U64);
-    BundleTestConfigureTile(2, TileDataType_U32);
-    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 3);
-    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 99);
-    WriteTPC(Zeros{PTO_XLEN} + 0x200);
-    let mismatch_start = ExecuteCommandInstruction(
-        BundleTestTEPLStart(Zeros{10}, Zeros{5} + 24), 32);
-    let mismatch_binding = ExecuteCommandInstruction(BundleTestTileBinding(
-        '010', Zeros{6}, Zeros{6} + 1, TRUE), 32);
-    let mismatch_stop = ExecuteCommandInstruction(Zeros{64} + 1, 32);
-    assert mismatch_start == CommandExecution_Executed;
-    assert mismatch_binding == CommandExecution_Executed;
-    assert mismatch_stop == CommandExecution_Rejected;
-    assert _LastFault == Fault_BundleControl;
-    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 99;
-
     // A faulting next start is validated before it can commit the live bundle.
     ResetProfileState();
     BundleTestConfigureTile(0, TileDataType_U64);
@@ -483,7 +471,7 @@ begin
     let live_binding = ExecuteCommandInstruction(BundleTestTileBinding(
         '010', Zeros{6}, Zeros{6} + 1, TRUE), 32);
     let invalid_next = ExecuteCommandInstruction(
-        BundleTestTEPLStart(Zeros{10} + 73, Zeros{5} + 24), 32);
+        BundleTestTEPLStart(Zeros{10} + 105, Zeros{5} + 24), 32);
     assert live_start == CommandExecution_Executed;
     assert live_binding == CommandExecution_Executed;
     assert invalid_next == CommandExecution_Rejected;
@@ -491,6 +479,137 @@ begin
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 99;
     assert _TrapContexts[[0]].bundle_active;
     assert _TrapContexts[[0]].bundle_operation.selector == Zeros{10};
+end;
+
+func TestBundleDataAttributes0571()
+begin
+    ResetProfileState();
+    assert TileDataLayoutCodeAccepted(Zeros{5});
+    assert TileDataLayoutCodeAccepted(Zeros{5} + 1);
+    assert TileDataLayoutCodeAccepted(Zeros{5} + 30);
+    assert !TileDataLayoutCodeAccepted(Zeros{5} + 2);
+    assert TileDataLayoutCodeSupported(Zeros{5});
+    assert !TileDataLayoutCodeSupported(Zeros{5} + 1);
+
+    ClearFault();
+    SetBundleDataAttributeState0571(Zeros{5} + 24, Zeros{5}, '11',
+        Zeros{3} + 1, Zeros{3} + 2, TRUE, TRUE);
+    assert _LastFault == Fault_None;
+    assert CurrentBundleDataTypeCode() == Zeros{5} + 24;
+    assert CurrentBundlePadValue() == TilePad_Null;
+    assert CurrentBundleCanonicalize();
+
+    // Accepted implementation-defined layouts are rejected by generic
+    // indexing until the implementation advertises support.
+    ClearFault();
+    SetBundleDataAttributeState0571(Zeros{5} + 24, Zeros{5} + 1, '00',
+        Zeros{3}, Zeros{3}, FALSE, FALSE);
+    assert _LastFault == Fault_TileLegality;
+    assert CurrentBundleDataTypeCode() == Zeros{5} + 24;
+    AdvertiseTileDataLayout(Zeros{5} + 1);
+    ClearFault();
+    SetBundleDataAttributeState0571(Zeros{5} + 24, Zeros{5} + 1, '00',
+        Zeros{3}, Zeros{3}, FALSE, FALSE);
+    assert _LastFault == Fault_None;
+    assert TileDataLayoutCodeSupported(Zeros{5} + 1);
+
+    ClearFault();
+    SetBundleDataAttributeState0571(Zeros{5} + 15, Zeros{5}, '00',
+        Zeros{3}, Zeros{3}, FALSE, FALSE);
+    assert _LastFault == Fault_TileLegality;
+end;
+
+func TestBundleTileAllocationAndLifetime()
+begin
+    ResetProfileState();
+    BundleTestConfigureTile(0, TileDataType_U64);
+    BundleTestConfigureTile(1, TileDataType_U64);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 7);
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 9);
+    InstallBundleOperationDescriptor(BundleOperationDescriptor {
+        valid = TRUE,
+        form_identity = Zeros{7},
+        operation_class = BundleOperation_TileElement,
+        selector_valid = TRUE,
+        selector = Zeros{10},
+        data_type_valid = TRUE,
+        data_type = Zeros{5} + 24,
+        mode_valid = FALSE,
+        mode = Zeros{2},
+        branch_type_valid = FALSE,
+        branch_type = Zeros{3}
+    });
+    AddBundleTileBinding(TRUE, 0, 3, TRUE, TRUE, 0, 1,
+        FALSE, TRUE, TRUE);
+    assert _LastFault == Fault_None;
+    assert BundleTileDestinationSizeLegal(0);
+    assert BundleTileDestinationSizeBytes(0) == 128;
+
+    // Allocation makes the selected destination undefined. Rejection rolls
+    // back both the allocation and the pending source lifetime transition.
+    let rejected_resolved = ResolveBundleTileDestinations();
+    assert rejected_resolved;
+    let rejected_destination = _BundleTileBindings[[0]].destination;
+    assert rejected_destination == 2;
+    assert _Tiles[[rejected_destination]].allocated;
+    assert !_Tiles[[rejected_destination]].contents_defined;
+    FinalizeBundleTileAttempt(TileExecution_Rejected);
+    RollBackBundleTileDestinations();
+    assert !_Tiles[[rejected_destination]].allocated;
+    assert _Tiles[[0]].allocated;
+    assert _Tiles[[1]].allocated;
+
+    // A successful attempt retains the destination, consumes a non-reused
+    // source, and preserves a source explicitly marked for reuse.
+    let committed_resolved = ResolveBundleTileDestinations();
+    assert committed_resolved;
+    let committed_destination = _BundleTileBindings[[0]].destination;
+    FinalizeBundleTileAttempt(TileExecution_Executed);
+    assert _Tiles[[committed_destination]].allocated;
+    assert !_Tiles[[0]].allocated;
+    assert _Tiles[[1]].allocated;
+
+    ResetBundleControlState();
+    ClearFault();
+    AddBundleTileBinding(TRUE, 0, 2, FALSE, FALSE, 0, 0,
+        FALSE, FALSE, TRUE);
+    assert _LastFault == Fault_TileLegality;
+end;
+
+func TestBundleTileUndersizedAllocation()
+begin
+    ResetProfileState();
+    ConfigureTile(16, 256, 32, 1, 32, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    for row = 0 to 31 do
+        WriteTileElement(16, row as integer {0..65535}, 0,
+            Zeros{PTO_XLEN} + row);
+    end;
+    InstallBundleOperationDescriptor(BundleOperationDescriptor {
+        valid = TRUE,
+        form_identity = Zeros{7},
+        operation_class = BundleOperation_TileElement,
+        selector_valid = TRUE,
+        selector = Zeros{10},
+        data_type_valid = TRUE,
+        data_type = Zeros{5} + 24,
+        mode_valid = FALSE,
+        mode = Zeros{2},
+        branch_type_valid = FALSE,
+        branch_type = Zeros{3}
+    });
+    AddBundleTileBinding(TRUE, 0, 3, TRUE, FALSE, 16, 0,
+        FALSE, FALSE, TRUE);
+    ClearFault();
+    let undersized_resolved = ResolveBundleTileDestinations();
+    assert !undersized_resolved;
+    assert _LastFault == Fault_TileAllocation;
+    assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
+    assert _Tiles[[16]].allocated;
+    assert ReadTileElement(16, 31, 0) == Zeros{PTO_XLEN} + 31;
+    for candidate = 0 to 15 do
+        assert !_Tiles[[candidate]].allocated;
+    end;
 end;
 
 func TestBundleFaults()
@@ -532,11 +651,11 @@ begin
     EnterBundleBody();
     SetBundleDimension(2, Zeros{PTO_XLEN} + 0x33);
     SetBundleScalarBinding(31, 5, 2, 3, 4, 3);
-    SetBundleTileBinding(15, TRUE, 6, 8, TRUE, TRUE, 10, 11,
+    SetBundleTileBinding(15, TRUE, 2, 8, TRUE, TRUE, 10, 11,
         TRUE, FALSE, TRUE);
     SetBundleControlAttributeState(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE);
     SetBundleDataAttributeState(Zeros{5} + 1, Zeros{5} + 2,
-        Zeros{5} + 3, Zeros{3} + 1, Zeros{3} + 2, TRUE);
+        Zeros{2} + 3, Zeros{3} + 1, Zeros{3} + 2, TRUE);
 
     SetFault(Fault_DataPage, Zeros{PTO_XLEN} + 0x2222);
     assert CurrentACR() == 1;
@@ -556,7 +675,7 @@ begin
     assert _TrapContexts[[1]].bundle_dimensions[[2]] ==
         Zeros{PTO_XLEN} + 0x33;
     assert _TrapContexts[[1]].bundle_scalar_bindings[[31]].destination == 5;
-    assert _TrapContexts[[1]].bundle_tile_bindings[[15]].destination == 6;
+    assert _TrapContexts[[1]].bundle_tile_bindings[[15]].destination == 2;
     assert _TrapContexts[[1]].bundle_control_attributes.atomic;
     assert _TrapContexts[[1]].bundle_data_attributes.saturating;
     assert _TrapContexts[[1]].t_queue[[0]] == Zeros{PTO_XLEN} + 0x11;
@@ -569,7 +688,7 @@ begin
     SetBundleTileBinding(15, FALSE, 1, 1, FALSE, FALSE, 1, 1,
         FALSE, FALSE, FALSE);
     SetBundleControlAttributeState(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE);
-    SetBundleDataAttributeState(Zeros{5}, Zeros{5}, Zeros{5},
+    SetBundleDataAttributeState(Zeros{5}, Zeros{5}, Zeros{2},
         Zeros{3}, Zeros{3}, FALSE);
     ArchitectureEnterRequest('0001');
     assert CurrentACR() == 2;
@@ -587,7 +706,7 @@ begin
     assert _BundleDimensions[[2]] == Zeros{PTO_XLEN} + 0x33;
     assert _BundleScalarBindings[[31]].destination == 5;
     assert _BundleScalarBindings[[31]].source_count == 3;
-    assert _BundleTileBindings[[15]].destination == 6;
+    assert _BundleTileBindings[[15]].destination == 2;
     assert _BundleTileBindings[[15]].source0_reuse;
     assert _BundleControlAttributes.atomic;
     assert _BundleControlAttributes.release;
@@ -608,11 +727,11 @@ begin
     assert _BundleScalarBindings[[0]].destination == 5;
     assert _BundleScalarBindings[[0]].source2 == 4;
 
-    SetBundleTileBinding(0, TRUE, 6, 8, TRUE, TRUE, 10, 11,
+    SetBundleTileBinding(0, TRUE, 2, 8, TRUE, TRUE, 10, 11,
         TRUE, FALSE, TRUE);
     assert _BundleTileBindings[[0]].valid;
     assert _BundleTileBindings[[0]].destination_valid;
-    assert _BundleTileBindings[[0]].destination == 6;
+    assert _BundleTileBindings[[0]].destination == 2;
     assert _BundleTileBindings[[0]].source0 == 10;
     assert _BundleTileBindings[[0]].source0_reuse;
     assert _BundleTileBindings[[0]].last;
@@ -666,21 +785,31 @@ begin
     assert _ReturnAddress == Zeros{PTO_XLEN} + 0x308;
 end;
 
+readonly func FirstCommandFormWithHandler(handler: CommandSemanticHandler)
+    => integer {0..PTO_COMMAND_FORM_COUNT-1}
+begin
+    var selected: integer {0..PTO_COMMAND_FORM_COUNT-1} = 0;
+    var found = FALSE;
+    for form = 0 to PTO_COMMAND_FORM_COUNT - 1 do
+        if !found &&
+           CommandHandlerOfForm(
+               form as integer {0..PTO_COMMAND_FORM_COUNT-1}) == handler then
+            selected = form as integer {0..PTO_COMMAND_FORM_COUNT-1};
+            found = TRUE;
+        end;
+    end;
+    assert found;
+    return selected;
+end;
+
 func TestBundleCommandTotalityBoundaries()
 begin
     ResetProfileState();
-    WriteTPC(Zeros{PTO_XLEN} + 0x100);
-    let unsupported_status = ExecuteDecodedBundleCommand(
-        Zeros{64}, 76, 32);
-    assert unsupported_status == CommandExecution_Rejected;
-    assert _LastFault == Fault_IllegalInstruction;
-    assert ReadTPC() == Zeros{PTO_XLEN} + 0x100;
-    assert _LastMemoryCommandAddress == Zeros{PTO_XLEN};
-
-    ResetProfileState();
     WriteTPC(Zeros{PTO_XLEN} + 0x200);
+    let memory_copy_form =
+        FirstCommandFormWithHandler(CommandHandler_ExecuteMemoryCopy);
     let memory_command_status = ExecuteDecodedBundleCommand(
-        Zeros{64}, 104, 32);
+        Zeros{64}, memory_copy_form, 32);
     assert memory_command_status == CommandExecution_Executed;
     assert _LastFault == Fault_None;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x204;
@@ -723,19 +852,13 @@ begin
 
     ResetProfileState();
     WriteTPC(Zeros{PTO_XLEN} + 0x300);
-    let argument_zero_status = ExecuteDecodedBundleCommand(Zeros{64}, 0, 32);
-    assert argument_zero_status == CommandExecution_Executed;
-    assert _BundleArgumentKind == '000';
-    assert ReadTPC() == Zeros{PTO_XLEN} + 0x304;
-    let argument_two_status = ExecuteDecodedBundleCommand(Zeros{64}, 2, 32);
-    assert argument_two_status == CommandExecution_Executed;
-    assert _BundleArgumentKind == '010';
-    assert ReadTPC() == Zeros{PTO_XLEN} + 0x308;
-
     let hint_instruction = Ones{64};
-    let hint_status = ExecuteDecodedBundleCommand(hint_instruction, 11, 32);
+    let hint_form =
+        FirstCommandFormWithHandler(CommandHandler_SetBundleHint);
+    let hint_status =
+        ExecuteDecodedBundleCommand(hint_instruction, hint_form, 32);
     assert hint_status == CommandExecution_Executed;
     assert _LastBundleHintPayload == hint_instruction;
     assert _BundleHintEpoch == 1;
-    assert ReadTPC() == Zeros{PTO_XLEN} + 0x30C;
+    assert ReadTPC() == Zeros{PTO_XLEN} + 0x304;
 end;

@@ -415,9 +415,18 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
         ) == encoding_triples(independent)
         pto_row = command_disposition.get(form_id, {})
         pto_effect = pto_row.get("disposition", "unknown")
-        if independent is None or not encoding_match:
+        abi_change_acceptance = None
+        if independent is None:
             classification = "divergence"
-            disposition = "PTO command catalog is authoritative; mismatch requires reconciliation."
+            disposition = "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence."
+        elif not encoding_match:
+            classification = "divergence"
+            disposition = "The independent snapshot retains the superseded command encoding. PTO ISA 0.57.1 intentionally changes this mask/match under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest encoding divergence."
+            abi_change_acceptance = {
+                "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+                "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+                "kind": "accepted-0.57.1-command-encoding-break",
+            }
         elif (
             pto_effect == "pto-v0-rejected"
             and row["semantic_handler"] == "ExecuteBundleStart"
@@ -446,6 +455,7 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
                 "classification": classification,
                 "independent_status": status,
                 "encoding_match": encoding_match,
+                "abi_change_acceptance": abi_change_acceptance,
                 "pto_command_disposition": pto_effect,
                 "pto_disposition": disposition,
                 "requirements": [
@@ -493,6 +503,7 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
         elif engine_entry is not None:
             selector_match = int(engine_entry["function"]) == selector_value
 
+        abi_change_acceptance = None
         if family == "TEPL" and name == "TPRELU":
             classification = "intentional-extension"
             disposition = "PTO-owned TEPL extension with raw-carrier semantics; no independent payload row is available."
@@ -503,9 +514,12 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
             )
         elif not selector_match:
             classification = "divergence"
-            disposition = (
-                "PTO selector differs from the independent operation manifest."
-            )
+            disposition = "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.57.1 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence."
+            abi_change_acceptance = {
+                "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+                "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+                "kind": "accepted-0.57.1-compact-tepl-selector-break",
+            }
         elif family == "TEPL":
             classification = "comparable-match"
             disposition = "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics."
@@ -525,6 +539,7 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
                 "classification": classification,
                 "independent_status": independent_status if engine_entry else "missing",
                 "selector_match": selector_match,
+                "abi_change_acceptance": abi_change_acceptance,
                 "bundle_bridge_representable": bridge_row.get("representable"),
                 "pto_disposition": disposition,
                 "requirements": reqs,
@@ -591,12 +606,16 @@ def build(snapshot_root: Path) -> dict[str, Any]:
         },
         "scope": {
             "scalar_forms": 474,
-            "command_forms": 107,
+            "command_forms": 99,
             "direct_tile_operations": 120,
-            "total_rows": 701,
+            "total_rows": 693,
             "direct_tile_breakdown": {"TEPL": 98, "TMA": 9, "CUBE": 13},
         },
         "model_limits": [
+            {
+                "id": "accepted-0.57.1-abi-break",
+                "disposition": "The immutable independent snapshot predates the approved 0.57.1 command-encoding and compact TEPL-selector ABI. The matrix therefore preserves 7 command encoding divergences and 79 TEPL selector divergences, each traced to ADR 0045 and issue #18, instead of relabeling them as exact matches.",
+            },
             {
                 "id": "reg5-flat-model-mismatch",
                 "disposition": "PTO models Reg5 selectors 24..31 as T/U queue reads and only selectors 30/31 as queue-push destinations; the independent executable subset is a flat-form comparison and does not by itself validate queue payload ordering.",
@@ -636,8 +655,24 @@ def build(snapshot_root: Path) -> dict[str, Any]:
             ],
         },
     }
-    if summary["row_count"] != 701:
-        raise SystemExit(f"expected 701 rows, got {summary['row_count']}")
+    if summary["row_count"] != 693:
+        raise SystemExit(f"expected 693 rows, got {summary['row_count']}")
+    if summary["classification_counts"] != {
+        "comparable-match": 557,
+        "divergence": 96,
+        "intentional-extension": 1,
+        "non-comparable": 39,
+    }:
+        raise SystemExit(
+            f"unexpected comparison classification counts: {summary['classification_counts']}"
+        )
+    accepted_abi_breaks = [
+        row for row in rows if row.get("abi_change_acceptance") is not None
+    ]
+    if Counter(row["surface"] for row in accepted_abi_breaks) != Counter(
+        {"command": 7, "direct-tile": 79}
+    ):
+        raise SystemExit("expected exactly 7 command and 79 TEPL accepted ABI divergences")
     return data
 
 

@@ -7,6 +7,12 @@ normative = true
 entry_point = "asl/architecture.asl"
 formal_model_issue = "https://github.com/PTO-ISA/pto-spec/issues/4"
 
+[release]
+architecture_version = "0.57.1"
+encoding_abi = "pto-isa-0.57.1-mode-function-v1"
+manifest = "spec/release-manifest.json"
+formal_model_issue = "https://github.com/PTO-ISA/pto-spec/issues/18"
+
 [profile]
 id = "pto-v0"
 implementation = "asl/profiles/pto-v0.asl"
@@ -21,7 +27,7 @@ time_model = "one-tick-per-decoded-attempt"
 profile = "pto-v0"
 xlen = 64
 scalar_forms = 474
-command_forms = 107
+command_forms = 99
 system_register_definitions = 72
 trap_numbers = 13
 tile_model = "one-level"

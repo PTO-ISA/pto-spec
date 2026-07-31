@@ -168,11 +168,13 @@ def build_evidence() -> dict:
         "independent_comparison": {
             "source": "content-addressed independent executable ISA snapshot",
             "aggregate_sha256": "1f8862ef90ee72d0e917398b2d96b2799f541f2e7198c103d9fc47af998a54ec",
-            "matched_form_ids": 107,
-            "executable_subset": 91,
-            "decode_only": 16,
+            "matched_form_ids": 99,
+            "exact_encoding_matches": 92,
+            "accepted_abi_encoding_divergences": 7,
+            "executable_subset": 85,
+            "decode_only": 14,
             "authority": "non-normative structural comparison only",
-            "limitation": "The independent model stages bundle payload execution, so it does not validate PTO tile payload effects; those remain closed by PTO-owned ASL evidence.",
+            "limitation": "The independent snapshot predates seven accepted PTO 0.57.1 command encoding changes and stages bundle payload execution, so it neither matches those masks nor validates PTO tile payload effects; ADR 0045, the PTO catalogs, and PTO-owned ASL evidence remain authoritative.",
         },
         "requirement_ids": [
             "PTO-REQ-BUNDLE-DISPATCH-001",

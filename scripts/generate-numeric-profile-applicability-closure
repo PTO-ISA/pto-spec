@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / "spec/catalog/numeric-profile-applicability.json"
 PROFILE_IDENTITIES = ROOT / "spec/catalog/numeric-profile-identities.json"
 TILE_OPERATIONS = ROOT / "spec/catalog/tile-operations.json"
+COMMAND_FORMS = ROOT / "spec/catalog/command-forms.json"
 FORMAT_NAMESPACE = ROOT / "spec/evidence/numeric-format-namespace-contract.json"
 DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
 RECONCILIATION = ROOT / "spec/evidence/public-source-reconciliation.json"
@@ -102,13 +103,22 @@ def generate() -> dict[str, Any]:
     catalog = load(CATALOG)
     identities = load(PROFILE_IDENTITIES)
     operations = load(TILE_OPERATIONS)
+    command_forms = load(COMMAND_FORMS)
     format_namespace = load(FORMAT_NAMESPACE)
     inputs = load(DECISION_INPUTS)
     reconciliation = load(RECONCILIATION)
     comparison = load(EXECUTABLE_COMPARISON)
 
-    tile_types = [row["asl_enumerator"] for row in format_namespace["tile_data_types"]]
-    require(len(tile_types) == 19, "TileDataType count drift")
+    tile_type_rows = format_namespace["tile_data_types"]
+    tile_types = [row["asl_enumerator"] for row in tile_type_rows]
+    require(len(tile_types) == 25, "TileDataType count drift")
+    require(
+        len(command_forms["forms"]) == 99,
+        "accepted command-form count drift",
+    )
+    command_by_mnemonic = {
+        row["mnemonic"]: row for row in command_forms["forms"]
+    }
 
     operation_by_key = {operation_key(row): row for row in operations["operations"]}
     rules = catalog["rules"]
@@ -158,6 +168,7 @@ def generate() -> dict[str, Any]:
     ]
 
     expanded_tuples = []
+    bundle_execution_matrix = []
     for rule in rules:
         key = rule["operation_key"]
         operation = operation_by_key.get(key)
@@ -173,7 +184,7 @@ def generate() -> dict[str, Any]:
         require(rule["profile_id"] == EXPECTED_PROFILE, f"profile drift for {key}")
         require(
             rule["type_scope"]
-            == {"kind": "all_tile_data_types", "tile_data_type_count": 19},
+            == {"kind": "all_tile_data_types", "tile_data_type_count": 25},
             f"type scope drift for {key}",
         )
         require(
@@ -196,7 +207,37 @@ def generate() -> dict[str, Any]:
             rule["acceptance_record"] == ACCEPTANCE_RECORD,
             f"acceptance record drift for {key}",
         )
-        for tile_type in tile_types:
+        command_mnemonic = operation["command_mnemonic"]
+        command = command_by_mnemonic.get(command_mnemonic)
+        require(command is not None, f"missing bundle command form for {key}")
+        require(
+            command["status"] == "accepted"
+            and command["semantic_handler"] == "ExecuteBundleStart"
+            and command["length_bits"] == 32
+            and [row["name"] for row in command["fields"]] == ["DataType"],
+            f"bundle command ABI drift for {key}",
+        )
+        require(
+            len(command["encoding"]) == 1
+            and command["encoding"][0]["width_bits"] == 32,
+            f"bundle command encoding drift for {key}",
+        )
+        accepted_codes = next(
+            (
+                constraint["values"]
+                for constraint in command["constraints"]
+                if constraint["field"] == "DataType"
+                and constraint["operator"] == "one-of"
+            ),
+            None,
+        )
+        require(
+            accepted_codes
+            == [row["bundle_code"] for row in tile_type_rows],
+            f"bundle DataType namespace drift for {key}",
+        )
+        for tile_type_row in tile_type_rows:
+            tile_type = tile_type_row["asl_enumerator"]
             expanded_tuples.append(
                 {
                     "profile_id": EXPECTED_PROFILE,
@@ -205,6 +246,25 @@ def generate() -> dict[str, Any]:
                     "tile_data_type": tile_type,
                     "disposition": "unsupported-in-profile",
                     "rejection": rule["rejection"],
+                    "result_rule_id": None,
+                }
+            )
+            bundle_execution_matrix.append(
+                {
+                    "profile_id": EXPECTED_PROFILE,
+                    "operation_key": key,
+                    "function": rule["function"],
+                    "tile_data_type": tile_type,
+                    "data_type_code": tile_type_row["bundle_code"],
+                    "command_form_id": command["form_id"],
+                    "command_mnemonic": command_mnemonic,
+                    "command_encoding": command["encoding"][0],
+                    "accumulator_access": operation["acc_effect"],
+                    "disposition": "unsupported-in-profile",
+                    "rejection": {
+                        "fault": "IllegalInstruction",
+                        "phase": "before-bundle-descriptor-installation",
+                    },
                     "result_rule_id": None,
                 }
             )
@@ -237,6 +297,7 @@ def generate() -> dict[str, Any]:
         "profiles": catalog["profiles"],
         "rules": rules,
         "expanded_tuples": expanded_tuples,
+        "bundle_execution_matrix": bundle_execution_matrix,
         "source_evidence": {
             "public_repository": inputs["public_repository"],
             "public_commit": inputs["public_commit"],
@@ -277,6 +338,7 @@ def generate() -> dict[str, Any]:
             source("spec/catalog/numeric-profile-applicability.json"),
             source("spec/catalog/numeric-profile-identities.json"),
             source("spec/catalog/tile-operations.json"),
+            source("spec/catalog/command-forms.json"),
             source("spec/evidence/numeric-format-namespace-contract.json"),
             source("spec/evidence/numeric-profile-decision-inputs.json"),
             source("spec/evidence/public-source-reconciliation.json"),
@@ -293,8 +355,11 @@ def generate() -> dict[str, Any]:
             "rule_count": 6,
             "operation_count": 6,
             "selector_count": 6,
-            "tile_data_type_count": 19,
-            "tuple_count": 114,
+            "tile_data_type_count": 25,
+            "tuple_count": 150,
+            "bundle_execution_tuple_count": 150,
+            "bundle_command_form_count": 6,
+            "accepted_command_form_count": 99,
             "result_rule_count": 0,
             "parent_pd01_complete": False,
             "cube_matrix_complete": False,

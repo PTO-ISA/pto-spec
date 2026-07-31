@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "6c5ab21df430ddf7274960c029f10f55640ab70037c848b68e491ab8beb3631f"
+      "sha256": "0735933dd44abee66584fc17012457f7e33bff115dfea71a17beea58c244e177"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -19,11 +19,11 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "4a0eaf6248bc881afdeec379398952b406494fdb253e5af6e07f6c6afb9d31f6"
+      "sha256": "e5a98441098fdd88c0f5837bb3e1367d7b272ebc2ba506275e9e2be1b4c1978a"
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "0e0a2cb4e9c2e5e21eaa19ec262690c4b2e0515d2676950bbbe7b04710037882"
+      "sha256": "e77c762122dd776ea8b1b2113e6d095b2db0fe24b5b98d0c26012db9fb98e64e"
     },
     {
       "path": "spec/catalog/system-registers.json",
@@ -35,11 +35,11 @@
     },
     {
       "path": "spec/catalog/numeric-profile-applicability.json",
-      "sha256": "7553e7fa87b6aeb731f87ee8b91b0bb13c938c7323229f2f99645acdf1c9d7fe"
+      "sha256": "567127cf30879734e81a7664ff2db9e25b3c2a8539444c65fbcff25fcb284902"
     },
     {
       "path": "spec/profile-hooks.json",
-      "sha256": "1eb4293edbdb0c87fe28543a72c7265abc85ee1c04a8390a3f9555fc3d994f52"
+      "sha256": "fcf921cc49579c5150a77e9b3f81dee782de893e84a88da83952ac023cb08584"
     },
     {
       "path": "spec/evidence/maturity-closure.json",
@@ -47,31 +47,31 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "7c334aed0bbb878c2dbd8cb7672fdbe19416347b5f37871a9cca6ebab72a1518"
+      "sha256": "c19d41ba8264c2cd38e1b48a6082c081a9d0c6db4f36677579d3a15dc0c36c69"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "ccf96bbc5f71cdc224a512313d7c461176ed6a6888947ba6a0d6364086bb3fa6"
+      "sha256": "931472f8f33ef893e473db825b9523dc82c41408c81f7fd9e608a2751e9dbef2"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "2232608ed5f1c56ef9ccf9c52ae368df5d7223b7bc53cbe08274cf2760f3aa83"
+      "sha256": "7939cf794640efca743816f75a0e71faa2eb840bf398c63e427a729093ac951b"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "8e7a3816733cbad5e2c1128f729d84aa087a5b68e324ae3ed646ed3d606c528c"
+      "sha256": "295b36f19172f44ce608313194c02f1470144a5dea35b053f8277960269f2679"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "9ee660158b15a403fa7e2d7c16aaa51f6b5475006f7440270de6521db306f8ed"
+      "sha256": "3d89bdb88ced41225cd4016f41e2a0bfc88eb38e72555a27d6791fb2a8548edb"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "82849d0610e0ab02321025cfc41bd7794bbeef7ea94a8d88791a07375bf63927"
+      "sha256": "2be575e8984f1fdead54d570e4261cccde0cd9b8fde8c96d573577843190fa84"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "6f284ceccfe79347acf317c8d0263742bf508986120f64c6d93cae7a3c3dcfa3"
+      "sha256": "94ac3b70f25e720528c170472e6b9e81bee3fbd3a745f4174bca6145f7e0ba31"
     },
     {
       "path": "spec/evidence/scalar-effect-closure.json",
@@ -79,11 +79,11 @@
     },
     {
       "path": "spec/evidence/bundle-command-totality.json",
-      "sha256": "ecd65b31dee77053a835d0c8c09ef21dac4c524631c190590603e07afc314b63"
+      "sha256": "49abac7a2a2958d1127e0f311f4b867dd1e7878d27ffec9309017bce5c7d5c99"
     },
     {
       "path": "spec/evidence/tepl-totality.json",
-      "sha256": "14a28b6bb2b778af026b626b004ea0aedd614d7b44fd048165431d5736884d54"
+      "sha256": "a8e956cc88f6f21a8cb02bb5ffd94b553929feec42fda1fea73380b65ae0de43"
     },
     {
       "path": "spec/evidence/tma-totality.json",
@@ -91,31 +91,31 @@
     },
     {
       "path": "spec/evidence/cube-totality.json",
-      "sha256": "fff8eed3a2d95a319ad15e298377a8377cd5093be74f27a7bb598c072a40af99"
+      "sha256": "4f17f7da1225d2f2c2ad4eac3ff6eb05ee0b4a3529cf4f44389d96a8f1f37abc"
     },
     {
       "path": "asl/types.asl",
-      "sha256": "d6cb4340d9be626dde6db716b0d4808c68827fdf81391520ced7ebf8f59dc2bf"
+      "sha256": "2f2801230cac12c7835ee705b506f83191dfba1e4ad1565f470ff401adb6e83b"
     },
     {
       "path": "asl/state.asl",
-      "sha256": "2d1a615d72f17292e3404ce07ec2d8829368e58421732f4d1163a480941a1189"
+      "sha256": "e8c32d3d6d86cb2e8dc39c0ba643af506940994779aa70b75bdb9592f7cc3bca"
     },
     {
       "path": "asl/bundle/state.asl",
-      "sha256": "b5a37ae7cc43d84695b6f81cba3d23c29e609b78167adaff42c16e718d63b6bf"
+      "sha256": "d8b924265ea5823809009b3dc4d300b74d13d8bfd160d0365b99e0dafe09b6af"
     },
     {
       "path": "asl/tile/state.asl",
-      "sha256": "29587d05bbc886467345cb589e781336a136c44634966e2134457f24cf839971"
+      "sha256": "8fe56df1f993a81c451d0420aec31e993b84ecb296e84b809eef2c794159f245"
     },
     {
       "path": "asl/architecture.asl",
-      "sha256": "af67a20b3e85af4856538eaac3e9c1408e99d7d33b1ea25112eab48356f395a4"
+      "sha256": "b67de1f2227f2305f0b7f56eceba59165efe1bfeb9737186d44dfbb902ca0ea2"
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "3618784ae4b57e482d0e4f01b707b8e5b2bb70d446a837d5f1a96da31ddce9c1"
+      "sha256": "b74bf48403e9ff66d71d2aaa538fb92f5118dc879cd1072c6e05f266b6209fb2"
     },
     {
       "path": "asl/concurrency.asl",
@@ -127,7 +127,7 @@
     },
     {
       "path": "asl/profiles/pto-v0.asl",
-      "sha256": "86cfe2cab8e077e4d4ae50b694c6b831242b99cff40c08666222359aefa2bde2"
+      "sha256": "c8ec4b448d7cf5d4be7af6784f8b49d7cfd5da8947a7d614dfbf4b84b7bc3084"
     },
     {
       "path": "asl/scalar/addressing.asl",
@@ -171,7 +171,7 @@
     },
     {
       "path": "asl/tile/complex.asl",
-      "sha256": "02b76d7def5a8850d2133c8cabab7dde1a9fcfdb98de567422558d0f5d37e618"
+      "sha256": "dcd81b56bae377cc418f6c5721abb1a20d56b28f80aa55fa9fc9245c6106b1fb"
     },
     {
       "path": "asl/tile/conversion.asl",
@@ -179,7 +179,7 @@
     },
     {
       "path": "asl/tile/cube.asl",
-      "sha256": "92e4de53abf1967925e86a5e56631c96ce2cc7299801b45e29ff6281e37637d3"
+      "sha256": "27a8a9659e97d383e62049b3d0be340a19756c94143cc1919db45049919fff46"
     },
     {
       "path": "asl/tile/elementwise.asl",
@@ -195,11 +195,11 @@
     },
     {
       "path": "asl/tile/legality.asl",
-      "sha256": "7e06a42132ad4ac97a7b8b1541e6d482dca59b06308e6a6fd3873686d6cf8879"
+      "sha256": "1092631e2e746524309fb875b60183c5bbe59b8ff987572bafb1bb5813ba0657"
     },
     {
       "path": "asl/tile/memory.asl",
-      "sha256": "670eee69f86bd1e3e3bedbf3f2db4bcf152c612d0219f124496abcb1d5d97cc5"
+      "sha256": "04a523c7d759c55761ab4cb48767ea199c0e2f21fd8e69a5fc6b86fb5cc3c027"
     },
     {
       "path": "asl/tile/rearrangement.asl",
@@ -1232,6 +1232,63 @@
         "bounded_status": "closed"
       },
       {
+        "id": "PTO-REQ-RELEASE-ISA-001",
+        "status": "accepted-implementation-in-progress",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "model": [
+          "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+          "specification.toml",
+          "spec/release-manifest.json",
+          "spec/catalog/command-forms.json",
+          "spec/catalog/tile-operations.json",
+          "spec/evidence/pto-isa-0571-abi-vectors.json",
+          "spec/evidence/pto-isa-0571-encoding-totality.json",
+          "asl/bundle/state.asl",
+          "asl/bundle/dispatch.asl",
+          "asl/tile/state.asl",
+          "asl/tile/legality.asl",
+          "asl/tile/memory.asl",
+          "asl/tile/cube.asl",
+          "scripts/generate-release-manifest"
+        ],
+        "tests": [
+          "scripts/check-catalogs",
+          "scripts/check-binary-closure",
+          "scripts/check-release-manifest",
+          "tests/asl/bundle-tests.asl",
+          "tests/asl/tile-tests.asl",
+          "tests/asl/main.asl"
+        ],
+        "bounded_status": "open"
+      },
+      {
+        "id": "PTO-REQ-HARDWARE-NUMERIC-001",
+        "status": "candidate-profile-contract-defined-conformance-open:S5-T2",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/hardware-conformance-profile.json",
+        "model": [
+          "spec/hardware-conformance-profile.json",
+          "spec/evidence/pto-isa-0571-hardware-numeric-vectors.json",
+          "asl/tile/cube.asl",
+          "asl/tile/legality.asl",
+          "asl/tile/state.asl",
+          "asl/types.asl",
+          "spec/profile-hooks.json",
+          "docs/profile-contracts.md",
+          "docs/coverage.md",
+          "docs/normative-sources.md",
+          "docs/numeric-profile-decision-register.md",
+          "spec/evidence/numeric-contracts.json",
+          "spec/evidence/numeric-conformance-readiness.json",
+          "spec/release-manifest.json"
+        ],
+        "tests": [
+          "scripts/check-release-manifest",
+          "tests/asl/profile-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "open"
+      },
+      {
         "id": "PTO-REQ-CLOSURE-001",
         "status": "m4-reference-closed-s5-conformance-in-progress-s6-release-open",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/normative-sources.md",
@@ -1252,6 +1309,7 @@
           "scripts/check-asl-test-shards",
           "scripts/check-binary-closure",
           "scripts/check-catalogs",
+          "scripts/check-release-manifest",
           "scripts/check-repository",
           "scripts/generate-executable-model-comparison",
           "scripts/generate-numeric-conformance-readiness",
@@ -1285,12 +1343,14 @@
           "spec/evidence/numeric-contracts.json",
           "spec/evidence/executable-model-comparison.json",
           "spec/evidence/release-traceability-readiness.json",
-          "spec/evidence/release-gate-readiness.json"
+          "spec/evidence/release-gate-readiness.json",
+          "spec/release-manifest.json"
         ],
         "tests": [
           "scripts/check-asl-test-shards",
           "scripts/check-binary-closure",
           "scripts/check-catalogs",
+          "scripts/check-release-manifest",
           "scripts/check-repository"
         ],
         "bounded_status": "open"
@@ -12849,138 +12909,6 @@
     ],
     "command_forms": [
       {
-        "id": "b_arg_32_374ec956affe",
-        "mnemonic": "B.ARG",
-        "group": "Bundle Argument",
-        "handler": "SetBundleArgument",
-        "requirements": [
-          "PTO-REQ-BUNDLE-STATE-001",
-          "PTO-REQ-BUNDLE-DISPATCH-001",
-          "PTO-REQ-BUNDLE-OPERATION-001"
-        ],
-        "model": [
-          "spec/catalog/command-forms.json",
-          "asl/bundle/dispatch.asl",
-          "asl/bundle/state.asl",
-          "spec/evidence/bundle-command-totality.json"
-        ],
-        "tests": [
-          "tests/asl/bundle-tests.asl",
-          "tests/asl/main.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "b_arg_32_47e8ac50ac96",
-        "mnemonic": "B.ARG",
-        "group": "Bundle Argument",
-        "handler": "SetBundleArgument",
-        "requirements": [
-          "PTO-REQ-BUNDLE-STATE-001",
-          "PTO-REQ-BUNDLE-DISPATCH-001",
-          "PTO-REQ-BUNDLE-OPERATION-001"
-        ],
-        "model": [
-          "spec/catalog/command-forms.json",
-          "asl/bundle/dispatch.asl",
-          "asl/bundle/state.asl",
-          "spec/evidence/bundle-command-totality.json"
-        ],
-        "tests": [
-          "tests/asl/bundle-tests.asl",
-          "tests/asl/main.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "b_arg_32_5c8bfa662370",
-        "mnemonic": "B.ARG",
-        "group": "Bundle Argument",
-        "handler": "SetBundleArgument",
-        "requirements": [
-          "PTO-REQ-BUNDLE-STATE-001",
-          "PTO-REQ-BUNDLE-DISPATCH-001",
-          "PTO-REQ-BUNDLE-OPERATION-001"
-        ],
-        "model": [
-          "spec/catalog/command-forms.json",
-          "asl/bundle/dispatch.asl",
-          "asl/bundle/state.asl",
-          "spec/evidence/bundle-command-totality.json"
-        ],
-        "tests": [
-          "tests/asl/bundle-tests.asl",
-          "tests/asl/main.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "b_arg_32_95152c29a268",
-        "mnemonic": "B.ARG",
-        "group": "Bundle Argument",
-        "handler": "SetBundleArgument",
-        "requirements": [
-          "PTO-REQ-BUNDLE-STATE-001",
-          "PTO-REQ-BUNDLE-DISPATCH-001",
-          "PTO-REQ-BUNDLE-OPERATION-001"
-        ],
-        "model": [
-          "spec/catalog/command-forms.json",
-          "asl/bundle/dispatch.asl",
-          "asl/bundle/state.asl",
-          "spec/evidence/bundle-command-totality.json"
-        ],
-        "tests": [
-          "tests/asl/bundle-tests.asl",
-          "tests/asl/main.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "b_arg_32_c6d5c49a4ad7",
-        "mnemonic": "B.ARG",
-        "group": "Bundle Argument",
-        "handler": "SetBundleArgument",
-        "requirements": [
-          "PTO-REQ-BUNDLE-STATE-001",
-          "PTO-REQ-BUNDLE-DISPATCH-001",
-          "PTO-REQ-BUNDLE-OPERATION-001"
-        ],
-        "model": [
-          "spec/catalog/command-forms.json",
-          "asl/bundle/dispatch.asl",
-          "asl/bundle/state.asl",
-          "spec/evidence/bundle-command-totality.json"
-        ],
-        "tests": [
-          "tests/asl/bundle-tests.asl",
-          "tests/asl/main.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "b_arg_32_f19d18f2126b",
-        "mnemonic": "B.ARG",
-        "group": "Bundle Argument",
-        "handler": "SetBundleArgument",
-        "requirements": [
-          "PTO-REQ-BUNDLE-STATE-001",
-          "PTO-REQ-BUNDLE-DISPATCH-001",
-          "PTO-REQ-BUNDLE-OPERATION-001"
-        ],
-        "model": [
-          "spec/catalog/command-forms.json",
-          "asl/bundle/dispatch.asl",
-          "asl/bundle/state.asl",
-          "spec/evidence/bundle-command-totality.json"
-        ],
-        "tests": [
-          "tests/asl/bundle-tests.asl",
-          "tests/asl/main.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
         "id": "b_catr_32_e90bd52fa480",
         "mnemonic": "B.CATR",
         "group": "Bundle Control Attribute",
@@ -13357,50 +13285,6 @@
       {
         "id": "bstart_acccvt_32_56c3ce3838c5",
         "mnemonic": "BSTART.ACCCVT",
-        "group": "Bundle Split",
-        "handler": "ExecuteBundleStart",
-        "requirements": [
-          "PTO-REQ-BUNDLE-STATE-001",
-          "PTO-REQ-BUNDLE-DISPATCH-001",
-          "PTO-REQ-BUNDLE-OPERATION-001"
-        ],
-        "model": [
-          "spec/catalog/command-forms.json",
-          "asl/bundle/dispatch.asl",
-          "asl/bundle/state.asl",
-          "spec/evidence/bundle-command-totality.json"
-        ],
-        "tests": [
-          "tests/asl/bundle-tests.asl",
-          "tests/asl/main.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "bstart_cube_32_bd3f337acb9d",
-        "mnemonic": "BSTART.CUBE",
-        "group": "Bundle Split",
-        "handler": "ExecuteBundleStart",
-        "requirements": [
-          "PTO-REQ-BUNDLE-STATE-001",
-          "PTO-REQ-BUNDLE-DISPATCH-001",
-          "PTO-REQ-BUNDLE-OPERATION-001"
-        ],
-        "model": [
-          "spec/catalog/command-forms.json",
-          "asl/bundle/dispatch.asl",
-          "asl/bundle/state.asl",
-          "spec/evidence/bundle-command-totality.json"
-        ],
-        "tests": [
-          "tests/asl/bundle-tests.asl",
-          "tests/asl/main.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "bstart_fixp_32_3b0ae11126a6",
-        "mnemonic": "BSTART.FIXP",
         "group": "Bundle Split",
         "handler": "ExecuteBundleStart",
         "requirements": [
@@ -15274,10 +15158,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x004:TMAX",
+        "id": "TEPL:0x00B:TMAX",
         "name": "TMAX",
         "family": "TEPL",
-        "selector_or_function": "0x004",
+        "selector_or_function": "0x00B",
         "handler": "ExecuteTileBinary",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15297,10 +15181,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x005:TMIN",
+        "id": "TEPL:0x00C:TMIN",
         "name": "TMIN",
         "family": "TEPL",
-        "selector_or_function": "0x005",
+        "selector_or_function": "0x00C",
         "handler": "ExecuteTileBinary",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15435,10 +15319,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x02B:TCMP",
+        "id": "TEPL:0x00D:TCMP",
         "name": "TCMP",
         "family": "TEPL",
-        "selector_or_function": "0x02B",
+        "selector_or_function": "0x00D",
         "handler": "ExecuteTileCompare",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15458,10 +15342,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x02C:TSEL",
+        "id": "TEPL:0x01A:TSEL",
         "name": "TSEL",
         "family": "TEPL",
-        "selector_or_function": "0x02C",
+        "selector_or_function": "0x01A",
         "handler": "ExecuteTileSelect",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15481,10 +15365,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x02D:TABS",
+        "id": "TEPL:0x00F:TABS",
         "name": "TABS",
         "family": "TEPL",
-        "selector_or_function": "0x02D",
+        "selector_or_function": "0x00F",
         "handler": "ExecuteTileUnary",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15504,10 +15388,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x02E:TNOT",
+        "id": "TEPL:0x010:TNOT",
         "name": "TNOT",
         "family": "TEPL",
-        "selector_or_function": "0x02E",
+        "selector_or_function": "0x010",
         "handler": "ExecuteTileUnary",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15527,10 +15411,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x02F:TNEG",
+        "id": "TEPL:0x011:TNEG",
         "name": "TNEG",
         "family": "TEPL",
-        "selector_or_function": "0x02F",
+        "selector_or_function": "0x011",
         "handler": "ExecuteTileUnary",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15550,10 +15434,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x00B:TRELU",
+        "id": "TEPL:0x017:TRELU",
         "name": "TRELU",
         "family": "TEPL",
-        "selector_or_function": "0x00B",
+        "selector_or_function": "0x017",
         "handler": "ExecuteTileUnary",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15573,10 +15457,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x00C:TPRELU",
+        "id": "TEPL:0x00E:TPRELU",
         "name": "TPRELU",
         "family": "TEPL",
-        "selector_or_function": "0x00C",
+        "selector_or_function": "0x00E",
         "handler": "TPRELU",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15619,10 +15503,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x030:TREM",
+        "id": "TEPL:0x004:TREM",
         "name": "TREM",
         "family": "TEPL",
-        "selector_or_function": "0x030",
+        "selector_or_function": "0x004",
         "handler": "ExecuteTileBinary",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15642,10 +15526,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x010:TSQRT",
+        "id": "TEPL:0x015:TSQRT",
         "name": "TSQRT",
         "family": "TEPL",
-        "selector_or_function": "0x010",
+        "selector_or_function": "0x015",
         "handler": "ExecuteTileUnary",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15665,10 +15549,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x00F:TLOG",
+        "id": "TEPL:0x013:TLOG",
         "name": "TLOG",
         "family": "TEPL",
-        "selector_or_function": "0x00F",
+        "selector_or_function": "0x013",
         "handler": "ExecuteTileUnary",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15688,10 +15572,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x018:TRECIP",
+        "id": "TEPL:0x014:TRECIP",
         "name": "TRECIP",
         "family": "TEPL",
-        "selector_or_function": "0x018",
+        "selector_or_function": "0x014",
         "handler": "ExecuteTileUnary",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15711,10 +15595,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x00E:TEXP",
+        "id": "TEPL:0x012:TEXP",
         "name": "TEXP",
         "family": "TEPL",
-        "selector_or_function": "0x00E",
+        "selector_or_function": "0x012",
         "handler": "ExecuteTileUnary",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15734,10 +15618,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x011:TRSQRT",
+        "id": "TEPL:0x016:TRSQRT",
         "name": "TRSQRT",
         "family": "TEPL",
-        "selector_or_function": "0x011",
+        "selector_or_function": "0x016",
         "handler": "ExecuteTileUnary",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15780,10 +15664,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x031:TAXPY",
+        "id": "TEPL:0x02F:TAXPY",
         "name": "TAXPY",
         "family": "TEPL",
-        "selector_or_function": "0x031",
+        "selector_or_function": "0x02F",
         "handler": "ExecuteTileAxpy",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15872,10 +15756,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x025:TMINS",
+        "id": "TEPL:0x02C:TMINS",
         "name": "TMINS",
         "family": "TEPL",
-        "selector_or_function": "0x025",
+        "selector_or_function": "0x02C",
         "handler": "ExecuteTileScalar",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15895,10 +15779,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x024:TMAXS",
+        "id": "TEPL:0x02B:TMAXS",
         "name": "TMAXS",
         "family": "TEPL",
-        "selector_or_function": "0x024",
+        "selector_or_function": "0x02B",
         "handler": "ExecuteTileScalar",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15918,10 +15802,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x032:TREMS",
+        "id": "TEPL:0x024:TREMS",
         "name": "TREMS",
         "family": "TEPL",
-        "selector_or_function": "0x032",
+        "selector_or_function": "0x024",
         "handler": "ExecuteTileScalar",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -16010,10 +15894,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x033:TCMPS",
+        "id": "TEPL:0x02D:TCMPS",
         "name": "TCMPS",
         "family": "TEPL",
-        "selector_or_function": "0x033",
+        "selector_or_function": "0x02D",
         "handler": "ExecuteTileCompareScalar",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -16033,10 +15917,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x034:TSELS",
+        "id": "TEPL:0x03A:TSELS",
         "name": "TSELS",
         "family": "TEPL",
-        "selector_or_function": "0x034",
+        "selector_or_function": "0x03A",
         "handler": "ExecuteTileSelectScalar",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -16102,10 +15986,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x014:TROWSUM",
+        "id": "TEPL:0x040:TROWSUM",
         "name": "TROWSUM",
         "family": "TEPL",
-        "selector_or_function": "0x014",
+        "selector_or_function": "0x040",
         "handler": "ExecuteTileReduction",
         "requirements": [
           "PTO-REQ-TEPL-REDUCE-001",
@@ -16125,10 +16009,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x035:TROWPROD",
+        "id": "TEPL:0x043:TROWPROD",
         "name": "TROWPROD",
         "family": "TEPL",
-        "selector_or_function": "0x035",
+        "selector_or_function": "0x043",
         "handler": "ExecuteTileReduction",
         "requirements": [
           "PTO-REQ-TEPL-REDUCE-001",
@@ -16148,10 +16032,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x012:TROWMAX",
+        "id": "TEPL:0x041:TROWMAX",
         "name": "TROWMAX",
         "family": "TEPL",
-        "selector_or_function": "0x012",
+        "selector_or_function": "0x041",
         "handler": "ExecuteTileReduction",
         "requirements": [
           "PTO-REQ-TEPL-REDUCE-001",
@@ -16171,10 +16055,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x013:TROWMIN",
+        "id": "TEPL:0x042:TROWMIN",
         "name": "TROWMIN",
         "family": "TEPL",
-        "selector_or_function": "0x013",
+        "selector_or_function": "0x042",
         "handler": "ExecuteTileReduction",
         "requirements": [
           "PTO-REQ-TEPL-REDUCE-001",
@@ -16194,10 +16078,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x036:TROWARGMAX",
+        "id": "TEPL:0x04C:TROWARGMAX",
         "name": "TROWARGMAX",
         "family": "TEPL",
-        "selector_or_function": "0x036",
+        "selector_or_function": "0x04C",
         "handler": "ExecuteTileReduction",
         "requirements": [
           "PTO-REQ-TEPL-REDUCE-001",
@@ -16217,10 +16101,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x037:TROWARGMIN",
+        "id": "TEPL:0x04D:TROWARGMIN",
         "name": "TROWARGMIN",
         "family": "TEPL",
-        "selector_or_function": "0x037",
+        "selector_or_function": "0x04D",
         "handler": "ExecuteTileReduction",
         "requirements": [
           "PTO-REQ-TEPL-REDUCE-001",
@@ -16240,10 +16124,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x017:TCOLSUM",
+        "id": "TEPL:0x050:TCOLSUM",
         "name": "TCOLSUM",
         "family": "TEPL",
-        "selector_or_function": "0x017",
+        "selector_or_function": "0x050",
         "handler": "ExecuteTileReduction",
         "requirements": [
           "PTO-REQ-TEPL-REDUCE-001",
@@ -16263,10 +16147,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x038:TCOLPROD",
+        "id": "TEPL:0x053:TCOLPROD",
         "name": "TCOLPROD",
         "family": "TEPL",
-        "selector_or_function": "0x038",
+        "selector_or_function": "0x053",
         "handler": "ExecuteTileReduction",
         "requirements": [
           "PTO-REQ-TEPL-REDUCE-001",
@@ -16286,10 +16170,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x015:TCOLMAX",
+        "id": "TEPL:0x051:TCOLMAX",
         "name": "TCOLMAX",
         "family": "TEPL",
-        "selector_or_function": "0x015",
+        "selector_or_function": "0x051",
         "handler": "ExecuteTileReduction",
         "requirements": [
           "PTO-REQ-TEPL-REDUCE-001",
@@ -16309,10 +16193,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x016:TCOLMIN",
+        "id": "TEPL:0x052:TCOLMIN",
         "name": "TCOLMIN",
         "family": "TEPL",
-        "selector_or_function": "0x016",
+        "selector_or_function": "0x052",
         "handler": "ExecuteTileReduction",
         "requirements": [
           "PTO-REQ-TEPL-REDUCE-001",
@@ -16332,10 +16216,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x039:TCOLARGMAX",
+        "id": "TEPL:0x05C:TCOLARGMAX",
         "name": "TCOLARGMAX",
         "family": "TEPL",
-        "selector_or_function": "0x039",
+        "selector_or_function": "0x05C",
         "handler": "ExecuteTileReduction",
         "requirements": [
           "PTO-REQ-TEPL-REDUCE-001",
@@ -16355,10 +16239,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x03A:TCOLARGMIN",
+        "id": "TEPL:0x05D:TCOLARGMIN",
         "name": "TCOLARGMIN",
         "family": "TEPL",
-        "selector_or_function": "0x03A",
+        "selector_or_function": "0x05D",
         "handler": "ExecuteTileReduction",
         "requirements": [
           "PTO-REQ-TEPL-REDUCE-001",
@@ -16378,261 +16262,8 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x01F:TROWEXPAND",
+        "id": "TEPL:0x044:TROWEXPAND",
         "name": "TROWEXPAND",
-        "family": "TEPL",
-        "selector_or_function": "0x01F",
-        "handler": "ExecuteTileExpand",
-        "requirements": [
-          "PTO-REQ-TEPL-EXPAND-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/expansion.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x03B:TROWEXPANDADD",
-        "name": "TROWEXPANDADD",
-        "family": "TEPL",
-        "selector_or_function": "0x03B",
-        "handler": "ExecuteTileExpand",
-        "requirements": [
-          "PTO-REQ-TEPL-EXPAND-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/expansion.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x03C:TROWEXPANDSUB",
-        "name": "TROWEXPANDSUB",
-        "family": "TEPL",
-        "selector_or_function": "0x03C",
-        "handler": "ExecuteTileExpand",
-        "requirements": [
-          "PTO-REQ-TEPL-EXPAND-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/expansion.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x03D:TROWEXPANDMUL",
-        "name": "TROWEXPANDMUL",
-        "family": "TEPL",
-        "selector_or_function": "0x03D",
-        "handler": "ExecuteTileExpand",
-        "requirements": [
-          "PTO-REQ-TEPL-EXPAND-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/expansion.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x03E:TROWEXPANDDIV",
-        "name": "TROWEXPANDDIV",
-        "family": "TEPL",
-        "selector_or_function": "0x03E",
-        "handler": "ExecuteTileExpand",
-        "requirements": [
-          "PTO-REQ-TEPL-EXPAND-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/expansion.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x03F:TROWEXPANDMAX",
-        "name": "TROWEXPANDMAX",
-        "family": "TEPL",
-        "selector_or_function": "0x03F",
-        "handler": "ExecuteTileExpand",
-        "requirements": [
-          "PTO-REQ-TEPL-EXPAND-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/expansion.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x040:TROWEXPANDMIN",
-        "name": "TROWEXPANDMIN",
-        "family": "TEPL",
-        "selector_or_function": "0x040",
-        "handler": "ExecuteTileExpand",
-        "requirements": [
-          "PTO-REQ-TEPL-EXPAND-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/expansion.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x041:TROWEXPANDEXPDIF",
-        "name": "TROWEXPANDEXPDIF",
-        "family": "TEPL",
-        "selector_or_function": "0x041",
-        "handler": "ExecuteTileExpand",
-        "requirements": [
-          "PTO-REQ-TEPL-EXPAND-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/expansion.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x01E:TCOLEXPAND",
-        "name": "TCOLEXPAND",
-        "family": "TEPL",
-        "selector_or_function": "0x01E",
-        "handler": "ExecuteTileExpand",
-        "requirements": [
-          "PTO-REQ-TEPL-EXPAND-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/expansion.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x042:TCOLEXPANDADD",
-        "name": "TCOLEXPANDADD",
-        "family": "TEPL",
-        "selector_or_function": "0x042",
-        "handler": "ExecuteTileExpand",
-        "requirements": [
-          "PTO-REQ-TEPL-EXPAND-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/expansion.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x043:TCOLEXPANDSUB",
-        "name": "TCOLEXPANDSUB",
-        "family": "TEPL",
-        "selector_or_function": "0x043",
-        "handler": "ExecuteTileExpand",
-        "requirements": [
-          "PTO-REQ-TEPL-EXPAND-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/expansion.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x044:TCOLEXPANDMUL",
-        "name": "TCOLEXPANDMUL",
         "family": "TEPL",
         "selector_or_function": "0x044",
         "handler": "ExecuteTileExpand",
@@ -16654,8 +16285,8 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x045:TCOLEXPANDDIV",
-        "name": "TCOLEXPANDDIV",
+        "id": "TEPL:0x045:TROWEXPANDADD",
+        "name": "TROWEXPANDADD",
         "family": "TEPL",
         "selector_or_function": "0x045",
         "handler": "ExecuteTileExpand",
@@ -16677,8 +16308,8 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x046:TCOLEXPANDMAX",
-        "name": "TCOLEXPANDMAX",
+        "id": "TEPL:0x046:TROWEXPANDSUB",
+        "name": "TROWEXPANDSUB",
         "family": "TEPL",
         "selector_or_function": "0x046",
         "handler": "ExecuteTileExpand",
@@ -16700,8 +16331,8 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x047:TCOLEXPANDMIN",
-        "name": "TCOLEXPANDMIN",
+        "id": "TEPL:0x047:TROWEXPANDMUL",
+        "name": "TROWEXPANDMUL",
         "family": "TEPL",
         "selector_or_function": "0x047",
         "handler": "ExecuteTileExpand",
@@ -16723,10 +16354,263 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x048:TCOLEXPANDEXPDIF",
-        "name": "TCOLEXPANDEXPDIF",
+        "id": "TEPL:0x048:TROWEXPANDDIV",
+        "name": "TROWEXPANDDIV",
         "family": "TEPL",
         "selector_or_function": "0x048",
+        "handler": "ExecuteTileExpand",
+        "requirements": [
+          "PTO-REQ-TEPL-EXPAND-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/expansion.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x049:TROWEXPANDMAX",
+        "name": "TROWEXPANDMAX",
+        "family": "TEPL",
+        "selector_or_function": "0x049",
+        "handler": "ExecuteTileExpand",
+        "requirements": [
+          "PTO-REQ-TEPL-EXPAND-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/expansion.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x04A:TROWEXPANDMIN",
+        "name": "TROWEXPANDMIN",
+        "family": "TEPL",
+        "selector_or_function": "0x04A",
+        "handler": "ExecuteTileExpand",
+        "requirements": [
+          "PTO-REQ-TEPL-EXPAND-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/expansion.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x04B:TROWEXPANDEXPDIF",
+        "name": "TROWEXPANDEXPDIF",
+        "family": "TEPL",
+        "selector_or_function": "0x04B",
+        "handler": "ExecuteTileExpand",
+        "requirements": [
+          "PTO-REQ-TEPL-EXPAND-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/expansion.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x054:TCOLEXPAND",
+        "name": "TCOLEXPAND",
+        "family": "TEPL",
+        "selector_or_function": "0x054",
+        "handler": "ExecuteTileExpand",
+        "requirements": [
+          "PTO-REQ-TEPL-EXPAND-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/expansion.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x055:TCOLEXPANDADD",
+        "name": "TCOLEXPANDADD",
+        "family": "TEPL",
+        "selector_or_function": "0x055",
+        "handler": "ExecuteTileExpand",
+        "requirements": [
+          "PTO-REQ-TEPL-EXPAND-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/expansion.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x056:TCOLEXPANDSUB",
+        "name": "TCOLEXPANDSUB",
+        "family": "TEPL",
+        "selector_or_function": "0x056",
+        "handler": "ExecuteTileExpand",
+        "requirements": [
+          "PTO-REQ-TEPL-EXPAND-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/expansion.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x057:TCOLEXPANDMUL",
+        "name": "TCOLEXPANDMUL",
+        "family": "TEPL",
+        "selector_or_function": "0x057",
+        "handler": "ExecuteTileExpand",
+        "requirements": [
+          "PTO-REQ-TEPL-EXPAND-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/expansion.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x058:TCOLEXPANDDIV",
+        "name": "TCOLEXPANDDIV",
+        "family": "TEPL",
+        "selector_or_function": "0x058",
+        "handler": "ExecuteTileExpand",
+        "requirements": [
+          "PTO-REQ-TEPL-EXPAND-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/expansion.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x059:TCOLEXPANDMAX",
+        "name": "TCOLEXPANDMAX",
+        "family": "TEPL",
+        "selector_or_function": "0x059",
+        "handler": "ExecuteTileExpand",
+        "requirements": [
+          "PTO-REQ-TEPL-EXPAND-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/expansion.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x05A:TCOLEXPANDMIN",
+        "name": "TCOLEXPANDMIN",
+        "family": "TEPL",
+        "selector_or_function": "0x05A",
+        "handler": "ExecuteTileExpand",
+        "requirements": [
+          "PTO-REQ-TEPL-EXPAND-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/expansion.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x05B:TCOLEXPANDEXPDIF",
+        "name": "TCOLEXPANDEXPDIF",
+        "family": "TEPL",
+        "selector_or_function": "0x05B",
         "handler": "ExecuteTileExpand",
         "requirements": [
           "PTO-REQ-TEPL-EXPAND-001",
@@ -17266,10 +17150,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x019:TEXPANDS",
+        "id": "TEPL:0x03B:TEXPANDS",
         "name": "TEXPANDS",
         "family": "TEPL",
-        "selector_or_function": "0x019",
+        "selector_or_function": "0x03B",
         "handler": "ExecuteTileFillScalar",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -17289,10 +17173,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x080:TCI",
+        "id": "TEPL:0x066:TCI",
         "name": "TCI",
         "family": "TEPL",
-        "selector_or_function": "0x080",
+        "selector_or_function": "0x066",
         "handler": "TCI",
         "requirements": [
           "PTO-REQ-TEPL-GENERATE-001",
@@ -17312,10 +17196,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x081:TTRI",
+        "id": "TEPL:0x067:TTRI",
         "name": "TTRI",
         "family": "TEPL",
-        "selector_or_function": "0x081",
+        "selector_or_function": "0x067",
         "handler": "TTRI",
         "requirements": [
           "PTO-REQ-TEPL-GENERATE-001",
@@ -17335,10 +17219,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x082:TFILLPAD",
+        "id": "TEPL:0x065:TFILLPAD",
         "name": "TFILLPAD",
         "family": "TEPL",
-        "selector_or_function": "0x082",
+        "selector_or_function": "0x065",
         "handler": "TFILLPAD",
         "requirements": [
           "PTO-REQ-TEPL-GENERATE-001",
@@ -17358,10 +17242,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x00D:TCVT",
+        "id": "TEPL:0x01B:TCVT",
         "name": "TCVT",
         "family": "TEPL",
-        "selector_or_function": "0x00D",
+        "selector_or_function": "0x01B",
         "handler": "TCVT",
         "requirements": [
           "PTO-REQ-TEPL-CONVERT-001",
@@ -17382,10 +17266,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x083:TQUANT",
+        "id": "TEPL:0x06A:TQUANT",
         "name": "TQUANT",
         "family": "TEPL",
-        "selector_or_function": "0x083",
+        "selector_or_function": "0x06A",
         "handler": "TQUANT",
         "requirements": [
           "PTO-REQ-TEPL-CONVERT-001",
@@ -17405,10 +17289,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x084:TDEQUANT",
+        "id": "TEPL:0x06B:TDEQUANT",
         "name": "TDEQUANT",
         "family": "TEPL",
-        "selector_or_function": "0x084",
+        "selector_or_function": "0x06B",
         "handler": "TDEQUANT",
         "requirements": [
           "PTO-REQ-TEPL-CONVERT-001",
@@ -17428,10 +17312,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x085:TEXTRACT",
+        "id": "TEPL:0x062:TEXTRACT",
         "name": "TEXTRACT",
         "family": "TEPL",
-        "selector_or_function": "0x085",
+        "selector_or_function": "0x062",
         "handler": "TEXTRACT",
         "requirements": [
           "PTO-REQ-TEPL-REARRANGE-001",
@@ -17451,10 +17335,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x086:TINSERT",
+        "id": "TEPL:0x063:TINSERT",
         "name": "TINSERT",
         "family": "TEPL",
-        "selector_or_function": "0x086",
+        "selector_or_function": "0x063",
         "handler": "TINSERT",
         "requirements": [
           "PTO-REQ-TEPL-REARRANGE-001",
@@ -17474,10 +17358,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x01A:TGATHER",
+        "id": "TEPL:0x06F:TGATHER",
         "name": "TGATHER",
         "family": "TEPL",
-        "selector_or_function": "0x01A",
+        "selector_or_function": "0x06F",
         "handler": "TGATHER",
         "requirements": [
           "PTO-REQ-TEPL-REARRANGE-001",
@@ -17497,10 +17381,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x01B:TSCATTER",
+        "id": "TEPL:0x070:TSCATTER",
         "name": "TSCATTER",
         "family": "TEPL",
-        "selector_or_function": "0x01B",
+        "selector_or_function": "0x070",
         "handler": "TSCATTER",
         "requirements": [
           "PTO-REQ-TEPL-REARRANGE-001",
@@ -17520,10 +17404,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x087:TCONCAT",
+        "id": "TEPL:0x060:TCONCAT",
         "name": "TCONCAT",
         "family": "TEPL",
-        "selector_or_function": "0x087",
+        "selector_or_function": "0x060",
         "handler": "TCONCAT",
         "requirements": [
           "PTO-REQ-TEPL-REARRANGE-001",
@@ -17543,10 +17427,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x01D:TTRANS",
+        "id": "TEPL:0x06E:TTRANS",
         "name": "TTRANS",
         "family": "TEPL",
-        "selector_or_function": "0x01D",
+        "selector_or_function": "0x06E",
         "handler": "TTRANS",
         "requirements": [
           "PTO-REQ-TEPL-REARRANGE-001",
@@ -17566,10 +17450,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x088:TIMG2COL",
+        "id": "TEPL:0x064:TIMG2COL",
         "name": "TIMG2COL",
         "family": "TEPL",
-        "selector_or_function": "0x088",
+        "selector_or_function": "0x064",
         "handler": "TIMG2COL",
         "requirements": [
           "PTO-REQ-TEPL-REARRANGE-001",
@@ -17615,10 +17499,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x089:TGATHERB",
+        "id": "TEPL:0x061:TGATHERB",
         "name": "TGATHERB",
         "family": "TEPL",
-        "selector_or_function": "0x089",
+        "selector_or_function": "0x061",
         "handler": "TGATHERB",
         "requirements": [
           "PTO-REQ-TEPL-REARRANGE-001",
@@ -17638,10 +17522,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x08A:TDEINTERLEAVE",
+        "id": "TEPL:0x078:TDEINTERLEAVE",
         "name": "TDEINTERLEAVE",
         "family": "TEPL",
-        "selector_or_function": "0x08A",
+        "selector_or_function": "0x078",
         "handler": "TDEINTERLEAVE",
         "requirements": [
           "PTO-REQ-TEPL-REARRANGE-001",
@@ -17661,10 +17545,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x08B:TINTERLEAVE",
+        "id": "TEPL:0x079:TINTERLEAVE",
         "name": "TINTERLEAVE",
         "family": "TEPL",
-        "selector_or_function": "0x08B",
+        "selector_or_function": "0x079",
         "handler": "TINTERLEAVE",
         "requirements": [
           "PTO-REQ-TEPL-REARRANGE-001",
@@ -17684,10 +17568,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x01C:TRESHAPE",
+        "id": "TEPL:0x077:TRESHAPE",
         "name": "TRESHAPE",
         "family": "TEPL",
-        "selector_or_function": "0x01C",
+        "selector_or_function": "0x077",
         "handler": "TRESHAPE",
         "requirements": [
           "PTO-REQ-TEPL-REARRANGE-001",
@@ -17707,10 +17591,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x0C0:TSORT",
+        "id": "TEPL:0x06C:TSORT",
         "name": "TSORT",
         "family": "TEPL",
-        "selector_or_function": "0x0C0",
+        "selector_or_function": "0x06C",
         "handler": "TSORT",
         "requirements": [
           "PTO-REQ-TEPL-COMPLEX-001",
@@ -17730,10 +17614,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x0C1:TMRGSORT",
+        "id": "TEPL:0x06D:TMRGSORT",
         "name": "TMRGSORT",
         "family": "TEPL",
-        "selector_or_function": "0x0C1",
+        "selector_or_function": "0x06D",
         "handler": "TMRGSORT",
         "requirements": [
           "PTO-REQ-TEPL-COMPLEX-001",
@@ -17753,10 +17637,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x0C2:THISTOGRAM",
+        "id": "TEPL:0x068:THISTOGRAM",
         "name": "THISTOGRAM",
         "family": "TEPL",
-        "selector_or_function": "0x0C2",
+        "selector_or_function": "0x068",
         "handler": "THISTOGRAM",
         "requirements": [
           "PTO-REQ-TEPL-COMPLEX-001",
@@ -17776,10 +17660,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x0E0:TPUSH",
+        "id": "TEPL:0x07A:TPUSH",
         "name": "TPUSH",
         "family": "TEPL",
-        "selector_or_function": "0x0E0",
+        "selector_or_function": "0x07A",
         "handler": "TPUSH",
         "requirements": [
           "PTO-REQ-TILE-DEFINEDNESS-001",
@@ -17800,10 +17684,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x0E1:TPOP",
+        "id": "TEPL:0x07B:TPOP",
         "name": "TPOP",
         "family": "TEPL",
-        "selector_or_function": "0x0E1",
+        "selector_or_function": "0x07B",
         "handler": "TPOP",
         "requirements": [
           "PTO-REQ-TILE-DEFINEDNESS-001",
@@ -17824,10 +17708,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x0E2:TALLOC",
+        "id": "TEPL:0x07C:TALLOC",
         "name": "TALLOC",
         "family": "TEPL",
-        "selector_or_function": "0x0E2",
+        "selector_or_function": "0x07C",
         "handler": "TALLOC",
         "requirements": [
           "PTO-REQ-TILE-CAPACITY-001",
@@ -17849,10 +17733,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x0E3:TFREE",
+        "id": "TEPL:0x07D:TFREE",
         "name": "TFREE",
         "family": "TEPL",
-        "selector_or_function": "0x0E3",
+        "selector_or_function": "0x07D",
         "handler": "TFREE",
         "requirements": [
           "PTO-REQ-TILE-DEFINEDNESS-001",
@@ -17873,10 +17757,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x0C3:TPARTADD",
+        "id": "TEPL:0x071:TPARTADD",
         "name": "TPARTADD",
         "family": "TEPL",
-        "selector_or_function": "0x0C3",
+        "selector_or_function": "0x071",
         "handler": "ExecuteTilePartial",
         "requirements": [
           "PTO-REQ-TEPL-COMPLEX-001",
@@ -17896,10 +17780,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x0C4:TPARTMUL",
+        "id": "TEPL:0x072:TPARTMUL",
         "name": "TPARTMUL",
         "family": "TEPL",
-        "selector_or_function": "0x0C4",
+        "selector_or_function": "0x072",
         "handler": "ExecuteTilePartial",
         "requirements": [
           "PTO-REQ-TEPL-COMPLEX-001",
@@ -17919,10 +17803,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x0C5:TPARTMAX",
+        "id": "TEPL:0x073:TPARTMAX",
         "name": "TPARTMAX",
         "family": "TEPL",
-        "selector_or_function": "0x0C5",
+        "selector_or_function": "0x073",
         "handler": "ExecuteTilePartial",
         "requirements": [
           "PTO-REQ-TEPL-COMPLEX-001",
@@ -17942,10 +17826,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x0C6:TPARTMIN",
+        "id": "TEPL:0x074:TPARTMIN",
         "name": "TPARTMIN",
         "family": "TEPL",
-        "selector_or_function": "0x0C6",
+        "selector_or_function": "0x074",
         "handler": "ExecuteTilePartial",
         "requirements": [
           "PTO-REQ-TEPL-COMPLEX-001",
@@ -17965,10 +17849,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x0C7:TPARTARGMAX",
+        "id": "TEPL:0x075:TPARTARGMAX",
         "name": "TPARTARGMAX",
         "family": "TEPL",
-        "selector_or_function": "0x0C7",
+        "selector_or_function": "0x075",
         "handler": "ExecuteTilePartialArg",
         "requirements": [
           "PTO-REQ-TEPL-COMPLEX-001",
@@ -17988,10 +17872,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x0C8:TPARTARGMIN",
+        "id": "TEPL:0x076:TPARTARGMIN",
         "name": "TPARTARGMIN",
         "family": "TEPL",
-        "selector_or_function": "0x0C8",
+        "selector_or_function": "0x076",
         "handler": "ExecuteTilePartialArg",
         "requirements": [
           "PTO-REQ-TEPL-COMPLEX-001",
@@ -20406,6 +20290,24 @@
         "bounded_status": "target-conformance-open"
       },
       {
+        "id": "profile-hook:TileProfileValueIsNaN",
+        "name": "TileProfileValueIsNaN",
+        "domain": "tile-ordering",
+        "requirements": [
+          "PTO-REQ-TEPL-COMPLEX-001"
+        ],
+        "model": [
+          "asl/tile/complex.asl",
+          "spec/profile-hooks.json"
+        ],
+        "tests": [
+          "tests/asl/profile-tests.asl"
+        ],
+        "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
+        "maturity_target": "S5-T2",
+        "bounded_status": "target-conformance-open"
+      },
+      {
         "id": "profile-hook:TileProfileMatrixAccumulate",
         "name": "TileProfileMatrixAccumulate",
         "domain": "tile-matrix",
@@ -20442,8 +20344,8 @@
         "bounded_status": "target-conformance-open"
       },
       {
-        "id": "profile-hook:TileProfileMatrixScale",
-        "name": "TileProfileMatrixScale",
+        "id": "profile-hook:TileProfileMatrixScaledAccumulate",
+        "name": "TileProfileMatrixScaledAccumulate",
         "domain": "tile-matrix",
         "requirements": [
           "PTO-REQ-CUBE-001"
@@ -20622,7 +20524,7 @@
           },
           {
             "path": "_BundleDataAttributes.pad_value",
-            "type": "bits(5)"
+            "type": "bits(2)"
           },
           {
             "path": "_BundleDataAttributes.conversion_mode",
@@ -20634,6 +20536,10 @@
           },
           {
             "path": "_BundleDataAttributes.saturating",
+            "type": "boolean"
+          },
+          {
+            "path": "_BundleDataAttributes.canonicalize",
             "type": "boolean"
           }
         ],
@@ -20903,6 +20809,14 @@
           {
             "path": "_BundleTileBindings[].destination",
             "type": "TileIndex"
+          },
+          {
+            "path": "_BundleTileBindings[].destination_hand",
+            "type": "bits(2)"
+          },
+          {
+            "path": "_BundleTileBindings[].destination_allocated_by_bundle",
+            "type": "boolean"
           },
           {
             "path": "_BundleTileBindings[].destination_size",
@@ -21277,6 +21191,34 @@
         "bounded_status": "reference-model-closed"
       },
       {
+        "id": "state:_TileDataLayoutCapabilities",
+        "root": "_TileDataLayoutCapabilities",
+        "type": "bits(32)",
+        "classification": "architectural-state",
+        "leaf_fields": [
+          {
+            "path": "_TileDataLayoutCapabilities",
+            "type": "bits(32)"
+          }
+        ],
+        "requirements": [
+          "PTO-REQ-BUNDLE-OPERATION-001",
+          "PTO-REQ-BUNDLE-STATE-001",
+          "PTO-REQ-RELEASE-ISA-001",
+          "PTO-REQ-STATE-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "asl/bundle/state.asl"
+        ],
+        "tests": [
+          "tests/asl/bundle-tests.asl",
+          "tests/asl/state-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-model-closed"
+      },
+      {
         "id": "state:_ACRTrapArgument0",
         "root": "_ACRTrapArgument0",
         "type": "array [[PTO_ACR_COUNT]] of Word",
@@ -21393,6 +21335,88 @@
         ],
         "tests": [
           "tests/asl/state-tests.asl"
+        ],
+        "bounded_status": "reference-model-closed"
+      },
+      {
+        "id": "state:_Accumulator",
+        "root": "_Accumulator",
+        "type": "AccumulatorState",
+        "classification": "architectural-state",
+        "leaf_fields": [
+          {
+            "path": "_Accumulator.live",
+            "type": "boolean"
+          },
+          {
+            "path": "_Accumulator.logical_data_type",
+            "type": "TileDataType"
+          },
+          {
+            "path": "_Accumulator.info.allocated",
+            "type": "boolean"
+          },
+          {
+            "path": "_Accumulator.info.contents_defined",
+            "type": "boolean"
+          },
+          {
+            "path": "_Accumulator.info.defined_elements",
+            "type": "bits(PTO_MODEL_TILE_ELEMENTS)"
+          },
+          {
+            "path": "_Accumulator.info.defined_valid_elements",
+            "type": "integer {0..4096}"
+          },
+          {
+            "path": "_Accumulator.info.capacity_bytes",
+            "type": "integer {0..262144}"
+          },
+          {
+            "path": "_Accumulator.info.rows",
+            "type": "integer {0..65535}"
+          },
+          {
+            "path": "_Accumulator.info.columns",
+            "type": "integer {0..65535}"
+          },
+          {
+            "path": "_Accumulator.info.valid_rows",
+            "type": "integer {0..65535}"
+          },
+          {
+            "path": "_Accumulator.info.valid_columns",
+            "type": "integer {0..65535}"
+          },
+          {
+            "path": "_Accumulator.info.data_type",
+            "type": "TileDataType"
+          },
+          {
+            "path": "_Accumulator.info.layout",
+            "type": "TileLayout"
+          },
+          {
+            "path": "_Accumulator.info.location",
+            "type": "TileLocation"
+          },
+          {
+            "path": "_Accumulator.info.payload",
+            "type": "TilePayload"
+          }
+        ],
+        "requirements": [
+          "PTO-REQ-CUBE-001",
+          "PTO-REQ-PROFILE-001",
+          "PTO-REQ-STATE-001"
+        ],
+        "model": [
+          "asl/state.asl"
+        ],
+        "tests": [
+          "tests/asl/cube-totality-tests.asl",
+          "tests/asl/state-tests.asl",
+          "tests/asl/tile-tests.asl"
         ],
         "bounded_status": "reference-model-closed"
       },
@@ -22473,6 +22497,14 @@
             "type": "TileIndex"
           },
           {
+            "path": "_TrapContexts[].bundle_tile_bindings[].destination_hand",
+            "type": "bits(2)"
+          },
+          {
+            "path": "_TrapContexts[].bundle_tile_bindings[].destination_allocated_by_bundle",
+            "type": "boolean"
+          },
+          {
             "path": "_TrapContexts[].bundle_tile_bindings[].destination_size",
             "type": "integer {0..15}"
           },
@@ -22538,7 +22570,7 @@
           },
           {
             "path": "_TrapContexts[].bundle_data_attributes.pad_value",
-            "type": "bits(5)"
+            "type": "bits(2)"
           },
           {
             "path": "_TrapContexts[].bundle_data_attributes.conversion_mode",
@@ -22553,6 +22585,10 @@
             "type": "boolean"
           },
           {
+            "path": "_TrapContexts[].bundle_data_attributes.canonicalize",
+            "type": "boolean"
+          },
+          {
             "path": "_TrapContexts[].t_queue[]",
             "type": "Word"
           },
@@ -22563,6 +22599,66 @@
           {
             "path": "_TrapContexts[].predicates[]",
             "type": "Word"
+          },
+          {
+            "path": "_TrapContexts[].accumulator.live",
+            "type": "boolean"
+          },
+          {
+            "path": "_TrapContexts[].accumulator.logical_data_type",
+            "type": "TileDataType"
+          },
+          {
+            "path": "_TrapContexts[].accumulator.info.allocated",
+            "type": "boolean"
+          },
+          {
+            "path": "_TrapContexts[].accumulator.info.contents_defined",
+            "type": "boolean"
+          },
+          {
+            "path": "_TrapContexts[].accumulator.info.defined_elements",
+            "type": "bits(PTO_MODEL_TILE_ELEMENTS)"
+          },
+          {
+            "path": "_TrapContexts[].accumulator.info.defined_valid_elements",
+            "type": "integer {0..4096}"
+          },
+          {
+            "path": "_TrapContexts[].accumulator.info.capacity_bytes",
+            "type": "integer {0..262144}"
+          },
+          {
+            "path": "_TrapContexts[].accumulator.info.rows",
+            "type": "integer {0..65535}"
+          },
+          {
+            "path": "_TrapContexts[].accumulator.info.columns",
+            "type": "integer {0..65535}"
+          },
+          {
+            "path": "_TrapContexts[].accumulator.info.valid_rows",
+            "type": "integer {0..65535}"
+          },
+          {
+            "path": "_TrapContexts[].accumulator.info.valid_columns",
+            "type": "integer {0..65535}"
+          },
+          {
+            "path": "_TrapContexts[].accumulator.info.data_type",
+            "type": "TileDataType"
+          },
+          {
+            "path": "_TrapContexts[].accumulator.info.layout",
+            "type": "TileLayout"
+          },
+          {
+            "path": "_TrapContexts[].accumulator.info.location",
+            "type": "TileLocation"
+          },
+          {
+            "path": "_TrapContexts[].accumulator.info.payload",
+            "type": "TilePayload"
           }
         ],
         "requirements": [
@@ -22624,7 +22720,7 @@
           },
           {
             "path": "_Tiles[].capacity_bytes",
-            "type": "integer {0..524288}"
+            "type": "integer {0..262144}"
           },
           {
             "path": "_Tiles[].rows",
@@ -22678,17 +22774,17 @@
     ]
   },
   "summary": {
-    "requirement_count": 44,
+    "requirement_count": 46,
     "scalar_form_count": 474,
-    "command_form_count": 107,
+    "command_form_count": 99,
     "tile_operation_count": 120,
     "system_register_count": 72,
     "trap_count": 13,
-    "profile_hook_count": 37,
-    "state_root_count": 70,
-    "state_leaf_count": 199,
-    "traceability_item_count": 937,
-    "open_requirement_count": 9,
+    "profile_hook_count": 38,
+    "state_root_count": 72,
+    "state_leaf_count": 236,
+    "traceability_item_count": 934,
+    "open_requirement_count": 11,
     "open_requirement_ids": [
       "PTO-REQ-PROFILE-001",
       "PTO-REQ-SCALAR-FP-001",
@@ -22698,9 +22794,11 @@
       "PTO-REQ-TEPL-CONVERT-001",
       "PTO-REQ-TEPL-COMPLEX-001",
       "PTO-REQ-CUBE-001",
+      "PTO-REQ-RELEASE-ISA-001",
+      "PTO-REQ-HARDWARE-NUMERIC-001",
       "PTO-REQ-CLOSURE-001"
     ],
-    "open_profile_hook_count": 29,
+    "open_profile_hook_count": 30,
     "open_profile_hooks": [
       "FloatingExponential",
       "FloatingRoundNearest",
@@ -22728,9 +22826,10 @@
       "TileProfileExpand",
       "TileProfilePartialValue",
       "TileProfileOrderLeft",
+      "TileProfileValueIsNaN",
       "TileProfileMatrixAccumulate",
       "TileProfileMatrixBias",
-      "TileProfileMatrixScale"
+      "TileProfileMatrixScaledAccumulate"
     ],
     "closed_prerequisite_targets": 28,
     "open_prerequisite_targets": [

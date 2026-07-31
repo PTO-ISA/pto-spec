@@ -217,7 +217,7 @@ def generate() -> dict[str, Any]:
     integer_conversion = load(INTEGER_CONVERSION_CONTRACT)
     applicability = load(APPLICABILITY_CONTRACT)
 
-    require(inventory["summary"]["numeric_hook_count"] == 29, "hook count drift")
+    require(inventory["summary"]["numeric_hook_count"] == 30, "hook count drift")
     require(inventory["summary"]["decoded_operation_count"] == 108, "operation count drift")
     require(len(inventory["contract_domains"]) == 20, "domain count drift")
     require(identities["summary"]["accepted_identity_count"] == 4, "identity drift")
@@ -226,12 +226,12 @@ def generate() -> dict[str, Any]:
     require(
         public_types["target"] == "S5-T2-A5:PD-02-SC2"
         and public_types["status"]
-        == "public-type-identity-and-target-availability-baseline-closed-result-and-legality-open",
+        == "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
         "public type baseline identity drift",
     )
     require(
         public_types["summary"]["public_type_count"] == 16
-        and public_types["summary"]["accepted_catalog_binding_count"] == 11
+        and public_types["summary"]["accepted_catalog_binding_count"] == 16
         and public_types["summary"]["accepted_result_rule_count"] == 0,
         "public type baseline summary drift",
     )
@@ -245,7 +245,7 @@ def generate() -> dict[str, Any]:
         and integer_conversion["summary"]["accepted_domain_rule_count"] == 0,
         "public integer conversion subset drift",
     )
-    require(applicability["summary"]["tuple_count"] == 114, "applicability tuple drift")
+    require(applicability["summary"]["tuple_count"] == 150, "applicability tuple drift")
     require(applicability["summary"]["result_rule_count"] == 0, "applicability result rule unexpectedly accepted")
 
     pd12 = next(row for row in decisions["decision_questions"] if row["id"] == "PD-12")
@@ -380,14 +380,14 @@ def generate() -> dict[str, Any]:
     require(len(variation_points) == 99, "variation-point count drift")
     require(len({row["id"] for row in variation_points}) == 99, "duplicate variation point")
     require(len(operation_rows) == 108, "operation ownership coverage drift")
-    require(len(hook_rows) == 29, "hook ownership coverage drift")
+    require(len(hook_rows) == 30, "hook ownership coverage drift")
     require(
         Counter(row["domain"] for row in operation_rows)
         == Counter(row["numeric_contract"] for row in operations.values()),
         "operation domain mapping drift",
     )
     require(
-        sum(len(row["primary_hooks"]) for row in operations.values()) == 130
+        sum(len(row["primary_hooks"]) for row in operations.values()) == 134
         and sum(len(row["reference_helpers"]) for row in operations.values()) == 8,
         "operation-to-hook edge count drift",
     )
@@ -395,7 +395,7 @@ def generate() -> dict[str, Any]:
         Counter(row["role"] for row in hook_rows)
         == Counter(
             {
-                "portable-profile-boundary": 22,
+                "portable-profile-boundary": 23,
                 "pto-v0-reference-helper": 5,
                 "numeric-library-helper-no-decoded-operation": 2,
             }
@@ -440,7 +440,7 @@ def generate() -> dict[str, Any]:
         "support_rules": {
             "path": "spec/evidence/numeric-profile-applicability-closure.json",
             "rule_count": 6,
-            "tuple_count": 114,
+            "tuple_count": 150,
             "result_rule_count": 0,
             "status": "accepted-support-rejection-separate-from-numeric-results",
         },
@@ -461,15 +461,15 @@ def generate() -> dict[str, Any]:
             "unique_dimension_count": len({row["dimension_id"] for row in variation_points}),
             "domain_count": 20,
             "operation_count": 108,
-            "hook_count": 29,
-            "primary_operation_hook_edge_count": 130,
+            "hook_count": 30,
+            "primary_operation_hook_edge_count": 134,
             "reference_helper_operation_edge_count": 8,
             "portable_decision_owner_point_count": 99,
             "selected_route_count": 0,
             "accepted_result_rule_count": 0,
             "accepted_bounded_result_subset_rule_count": 3,
             "accepted_bounded_result_subset_tuple_count": 48,
-            "accepted_unsupported_tuple_count": 114,
+            "accepted_unsupported_tuple_count": 150,
             "accepted_domain_result_rule_count": 0,
             "pd12_complete": False,
             "s5_t2_a_complete": False,

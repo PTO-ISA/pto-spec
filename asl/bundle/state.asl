@@ -15,6 +15,9 @@ var _BundleScalarBindings : BundleScalarBindingSnapshot;
 var _BundleTileBindings : BundleTileBindingSnapshot;
 var _BundleControlAttributes : BundleControlAttributes;
 var _BundleDataAttributes : BundleDataAttributes;
+// NORM is mandatory. Other accepted layout bits require an advertised
+// profile/platform capability.
+var _TileDataLayoutCapabilities : bits(32);
 var _FrameDepth : integer {0..PTO_MODEL_MEMORY_EVENTS};
 var _LastFrameBegin : Reg5Selector;
 var _LastFrameEnd : Reg5Selector;
@@ -67,6 +70,8 @@ begin
         _BundleTileBindings[[index]].valid = FALSE;
         _BundleTileBindings[[index]].destination_valid = FALSE;
         _BundleTileBindings[[index]].destination = 0;
+        _BundleTileBindings[[index]].destination_hand = Zeros{2};
+        _BundleTileBindings[[index]].destination_allocated_by_bundle = FALSE;
         _BundleTileBindings[[index]].destination_size = 0;
         _BundleTileBindings[[index]].source0_valid = FALSE;
         _BundleTileBindings[[index]].source1_valid = FALSE;
@@ -84,10 +89,13 @@ begin
     _BundleControlAttributes.direct_register = FALSE;
     _BundleDataAttributes.data_type = Zeros{5};
     _BundleDataAttributes.data_layout = Zeros{5};
-    _BundleDataAttributes.pad_value = Zeros{5};
+    _BundleDataAttributes.pad_value = Zeros{2};
     _BundleDataAttributes.conversion_mode = Zeros{3};
     _BundleDataAttributes.rounding_mode = Zeros{3};
     _BundleDataAttributes.saturating = FALSE;
+    _BundleDataAttributes.canonicalize = FALSE;
+    _TileDataLayoutCapabilities = Zeros{32};
+    _TileDataLayoutCapabilities[0] = '1';
     for ring = 0 to PTO_ACR_COUNT - 1 do
         _TrapContexts[[ring]].valid = FALSE;
         _TrapContexts[[ring]].source_acr = 0;
@@ -115,6 +123,7 @@ begin
         _TrapContexts[[ring]].t_queue = _TQueue;
         _TrapContexts[[ring]].u_queue = _UQueue;
         _TrapContexts[[ring]].predicates = _PredicateRegisters;
+        _TrapContexts[[ring]].accumulator = _Accumulator;
     end;
     _FrameDepth = 0;
     _LastFrameBegin = 0;
@@ -138,6 +147,112 @@ end;
 readonly func BundleBodyIsActive() => boolean
 begin
     return _BundleBodyActive;
+end;
+
+readonly func BundleTileOperationSelected() => boolean
+begin
+    return _BundleOperation.valid &&
+           (_BundleOperation.operation_class == BundleOperation_TileElement ||
+            _BundleOperation.operation_class == BundleOperation_TileMemory ||
+            _BundleOperation.operation_class == BundleOperation_TileMatrix);
+end;
+
+readonly func CurrentBundleTileOperationDataTypeCode() => bits(5)
+begin
+    assert BundleTileOperationSelected() &&
+           _BundleOperation.data_type_valid;
+    return _BundleOperation.data_type;
+end;
+
+readonly func CurrentBundleMemoryOrder() => MemoryOrder
+begin
+    if _BundleControlAttributes.acquire &&
+       _BundleControlAttributes.release then
+        return MemoryOrder_AcquireRelease;
+    elsif _BundleControlAttributes.acquire then
+        return MemoryOrder_Acquire;
+    elsif _BundleControlAttributes.release then
+        return MemoryOrder_Release;
+    else
+        return MemoryOrder_Relaxed;
+    end;
+end;
+
+readonly func CurrentBundleAtomic() => boolean
+begin
+    return _BundleControlAttributes.atomic;
+end;
+
+readonly func CurrentBundlePadValue() => TilePadValue
+begin
+    case _BundleDataAttributes.pad_value[1:0] of
+        when '00' => return TilePad_Zero;
+        when '01' => return TilePad_Max;
+        when '10' => return TilePad_Min;
+        when '11' => return TilePad_Null;
+    end;
+end;
+
+pure func TileDataLayoutCodeAccepted(data_layout: bits(5)) => boolean
+begin
+    let code = UInt(data_layout);
+    return code == 0 || code == 1 || code == 3 || code == 4 ||
+           code == 6 || code == 8 || code == 9 || code == 17 ||
+           code == 18 || code == 20 || code == 27 || code == 28 ||
+           code == 30;
+end;
+
+readonly func TileDataLayoutCodeSupported(data_layout: bits(5)) => boolean
+begin
+    if !TileDataLayoutCodeAccepted(data_layout) then return FALSE; end;
+    return _TileDataLayoutCapabilities[UInt(data_layout)] == '1';
+end;
+
+readonly func CurrentBundleTileLayout() => TileLayout
+begin
+    if _BundleDataAttributes.data_layout == Zeros{5} then
+        return TileLayout_RowMajor;
+    else
+        // PTO's generic model cannot interpret advertised target layouts.
+        // The capability makes their descriptors legal, not generically
+        // indexable.
+        return TileLayout_ImplementationDefined;
+    end;
+end;
+
+func AdvertiseTileDataLayout(data_layout: bits(5))
+begin
+    assert TileDataLayoutCodeAccepted(data_layout);
+    _TileDataLayoutCapabilities[UInt(data_layout)] = '1';
+end;
+
+readonly func CurrentBundleDataTypeCode() => bits(5)
+begin
+    return _BundleDataAttributes.data_type;
+end;
+
+readonly func CurrentBundleCanonicalize() => boolean
+begin
+    return _BundleDataAttributes.canonicalize;
+end;
+
+func SetBundleDataAttributeState0571(
+    data_type: bits(5), data_layout: bits(5), pad_value: bits(2),
+    conversion_mode: bits(3), rounding_mode: bits(3), saturating: boolean,
+    canonicalize: boolean)
+begin
+    if !TileDataTypeEncodingValid(ZeroExtend{PTO_XLEN}(data_type)) ||
+       !TileDataLayoutCodeSupported(data_layout) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return;
+    end;
+    _BundleDataAttributes.data_type = data_type;
+    _BundleDataAttributes.data_layout = data_layout;
+    _BundleDataAttributes.pad_value = pad_value;
+    _BundleDataAttributes.conversion_mode = conversion_mode;
+    _BundleDataAttributes.rounding_mode = rounding_mode;
+    _BundleDataAttributes.saturating = saturating;
+    _BundleDataAttributes.canonicalize = canonicalize;
 end;
 
 func InstallBundleOperationDescriptor(descriptor: BundleOperationDescriptor)
@@ -170,6 +285,7 @@ begin
     for index = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         _BundleTileBindings[[index]].valid = FALSE;
         _BundleTileBindings[[index]].destination_valid = FALSE;
+        _BundleTileBindings[[index]].destination_allocated_by_bundle = FALSE;
         _BundleTileBindings[[index]].source0_valid = FALSE;
         _BundleTileBindings[[index]].source1_valid = FALSE;
         _BundleTileBindings[[index]].last = FALSE;
@@ -182,10 +298,11 @@ begin
     _BundleControlAttributes.direct_register = FALSE;
     _BundleDataAttributes.data_type = Zeros{5};
     _BundleDataAttributes.data_layout = Zeros{5};
-    _BundleDataAttributes.pad_value = Zeros{5};
+    _BundleDataAttributes.pad_value = Zeros{2};
     _BundleDataAttributes.conversion_mode = Zeros{3};
     _BundleDataAttributes.rounding_mode = Zeros{3};
     _BundleDataAttributes.saturating = FALSE;
+    _BundleDataAttributes.canonicalize = FALSE;
 end;
 
 func SetBundleDimension(index: BundleDimensionIndex, value: Word)
@@ -244,9 +361,17 @@ func SetBundleTileBinding(index: BundleTileBindingIndex,
                          source1_reuse: boolean,
                          last: boolean)
 begin
+    if destination_valid &&
+       (destination > 3 || !TileSizeCodeIsLegal(destination_size)) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return;
+    end;
     _BundleTileBindings[[index]].valid = TRUE;
     _BundleTileBindings[[index]].destination_valid = destination_valid;
     _BundleTileBindings[[index]].destination = destination;
+    _BundleTileBindings[[index]].destination_hand =
+        Zeros{2} + (destination MOD 4);
+    _BundleTileBindings[[index]].destination_allocated_by_bundle = FALSE;
     _BundleTileBindings[[index]].destination_size = destination_size;
     _BundleTileBindings[[index]].source0_valid = source0_valid;
     _BundleTileBindings[[index]].source1_valid = source1_valid;
@@ -255,6 +380,75 @@ begin
     _BundleTileBindings[[index]].source0_reuse = source0_reuse;
     _BundleTileBindings[[index]].source1_reuse = source1_reuse;
     _BundleTileBindings[[index]].last = last;
+end;
+
+func AddBundleTileBinding(destination_valid: boolean,
+                          destination: TileIndex,
+                          destination_size: integer {0..15},
+                          source0_valid: boolean,
+                          source1_valid: boolean,
+                          source0: TileIndex,
+                          source1: TileIndex,
+                          source0_reuse: boolean,
+                          source1_reuse: boolean,
+                          last: boolean)
+begin
+    var added = FALSE;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if !added && !_BundleTileBindings[[binding]].valid then
+            SetBundleTileBinding(binding as BundleTileBindingIndex,
+                destination_valid, destination, destination_size,
+                source0_valid, source1_valid, source0, source1,
+                source0_reuse, source1_reuse, last);
+            added = TRUE;
+        end;
+    end;
+    if !added then SetFault(Fault_TileLegality, ReadTPC()); end;
+end;
+
+readonly func BundleTileDestinationSizeLegal(
+    binding: BundleTileBindingIndex) => boolean
+begin
+    if !_BundleTileBindings[[binding]].destination_valid then return TRUE; end;
+    return TileSizeCodeIsLegal(
+        _BundleTileBindings[[binding]].destination_size);
+end;
+
+readonly func BundleTileDestinationSizeBytes(
+    binding: BundleTileBindingIndex)
+    => integer {0,128,256,512,1024,2048,4096,8192}
+begin
+    if !_BundleTileBindings[[binding]].destination_valid then return 0; end;
+    assert BundleTileDestinationSizeLegal(binding);
+    return TileSizeCodeBytes(
+        _BundleTileBindings[[binding]].destination_size as integer {3..9});
+end;
+
+func CommitBundleTileSourceLifetime(binding: BundleTileBindingIndex)
+begin
+    if _BundleTileBindings[[binding]].source0_valid &&
+       !_BundleTileBindings[[binding]].source0_reuse then
+        ReleaseTile(_BundleTileBindings[[binding]].source0);
+    end;
+    if _BundleTileBindings[[binding]].source1_valid &&
+       !_BundleTileBindings[[binding]].source1_reuse &&
+       (!_BundleTileBindings[[binding]].source0_valid ||
+        _BundleTileBindings[[binding]].source1 !=
+            _BundleTileBindings[[binding]].source0) then
+        ReleaseTile(_BundleTileBindings[[binding]].source1);
+    end;
+end;
+
+func FinalizeBundleTileAttempt(status: TileExecutionStatus)
+begin
+    if status == TileExecution_Executed then
+        for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+            if _BundleTileBindings[[binding]].valid then
+                CommitBundleTileSourceLifetime(
+                    binding as BundleTileBindingIndex);
+            end;
+        end;
+    end;
 end;
 
 func SetBundleControlAttributeState(trap_enabled: boolean, atomic: boolean,
@@ -270,7 +464,7 @@ begin
 end;
 
 func SetBundleDataAttributeState(data_type: bits(5), data_layout: bits(5),
-                                pad_value: bits(5), conversion_mode: bits(3),
+                                pad_value: bits(2), conversion_mode: bits(3),
                                 rounding_mode: bits(3), saturating: boolean)
 begin
     _BundleDataAttributes.data_type = data_type;
@@ -279,6 +473,7 @@ begin
     _BundleDataAttributes.conversion_mode = conversion_mode;
     _BundleDataAttributes.rounding_mode = rounding_mode;
     _BundleDataAttributes.saturating = saturating;
+    _BundleDataAttributes.canonicalize = FALSE;
 end;
 
 func BeginBundle(kind: BundleKind, transfer: BundleTransfer, target: Word,

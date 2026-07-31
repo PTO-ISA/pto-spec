@@ -1,0 +1,606 @@
+{
+  "canonical_inputs": [
+    {
+      "path": ".aslref-version",
+      "sha256": "943437e8563813c276417b022296f0c51b34fadbb8da49ca70dbac7f6589db63"
+    },
+    {
+      "path": "asl/architecture.asl",
+      "sha256": "b67de1f2227f2305f0b7f56eceba59165efe1bfeb9737186d44dfbb902ca0ea2"
+    },
+    {
+      "path": "asl/bundle/dispatch.asl",
+      "sha256": "b74bf48403e9ff66d71d2aaa538fb92f5118dc879cd1072c6e05f266b6209fb2"
+    },
+    {
+      "path": "asl/bundle/state.asl",
+      "sha256": "d8b924265ea5823809009b3dc4d300b74d13d8bfd160d0365b99e0dafe09b6af"
+    },
+    {
+      "path": "asl/concurrency.asl",
+      "sha256": "3f5836d799c371593524f794140160369c65fb72ddd629a4e140f26ee5853bed"
+    },
+    {
+      "path": "asl/dispatch.asl",
+      "sha256": "a1516b8b47509b17c6550d6ac5f6c7b1472a443613a04158f127fce2a531000d"
+    },
+    {
+      "path": "asl/profiles/pto-v0.asl",
+      "sha256": "c8ec4b448d7cf5d4be7af6784f8b49d7cfd5da8947a7d614dfbf4b84b7bc3084"
+    },
+    {
+      "path": "asl/scalar/addressing.asl",
+      "sha256": "cf0be6df6f06e6da1e617af52b735408f8019c97fa0025a227fffeb50c370e50"
+    },
+    {
+      "path": "asl/scalar/atomic.asl",
+      "sha256": "d7a09e82860d1911fb0bf05864232af77db11222551faeeb840eb06b01dceaf0"
+    },
+    {
+      "path": "asl/scalar/control.asl",
+      "sha256": "5daed1ee0339a36ee8aea9a65be54516e31e8d9886ba1987adc53f4e21ef1ae9"
+    },
+    {
+      "path": "asl/scalar/dispatch.asl",
+      "sha256": "ff7990fd930802c1b9e21461c0000a66d64810397154faae07984c83cedaffa2"
+    },
+    {
+      "path": "asl/scalar/floating.asl",
+      "sha256": "04e3dd501da8e706fb77fe68afab487323a4160a67ce071404b3220bcbbdbc75"
+    },
+    {
+      "path": "asl/scalar/integer.asl",
+      "sha256": "13be78a3dd8d82c3bf72f2480de506120d408d71457a0ee2d6713bf7bc550570"
+    },
+    {
+      "path": "asl/scalar/memory.asl",
+      "sha256": "1ca7ee8a05cb122a0001f9a75dee034414778961187bdd8c7745e533006ed8ab"
+    },
+    {
+      "path": "asl/scalar/operands.asl",
+      "sha256": "e24e26f63e0d2d3c9487c34ce3cad9b65823936354fae3aad9d0443979c7327a"
+    },
+    {
+      "path": "asl/scalar/system-registers.asl",
+      "sha256": "bcbe71ae0d697a487789a625eec3684ef4de9d13758ee0d75833523659331f22"
+    },
+    {
+      "path": "asl/scalar/system.asl",
+      "sha256": "3a083e643d283f91ef6e18522603c15a70ba34c84946270c7681cd7d04f85fbb"
+    },
+    {
+      "path": "asl/state.asl",
+      "sha256": "e8c32d3d6d86cb2e8dc39c0ba643af506940994779aa70b75bdb9592f7cc3bca"
+    },
+    {
+      "path": "asl/tile/complex.asl",
+      "sha256": "dcd81b56bae377cc418f6c5721abb1a20d56b28f80aa55fa9fc9245c6106b1fb"
+    },
+    {
+      "path": "asl/tile/conversion.asl",
+      "sha256": "7dc8084113115bf50f01b580a8e90f7e4bfb735691b45d00e723cb7c33139cd4"
+    },
+    {
+      "path": "asl/tile/cube.asl",
+      "sha256": "27a8a9659e97d383e62049b3d0be340a19756c94143cc1919db45049919fff46"
+    },
+    {
+      "path": "asl/tile/elementwise.asl",
+      "sha256": "0bee4334c9dfb58738f7c9bdb9ee78b86bfd6a77d22431e246ea1d2306f0ec9e"
+    },
+    {
+      "path": "asl/tile/expansion.asl",
+      "sha256": "c0c1d08033a8b1db01165320d5e23c29b565956fbc6b9d0c02cf2362f8eb8e6c"
+    },
+    {
+      "path": "asl/tile/generation.asl",
+      "sha256": "16b6801d78f936aea4432aca8af56722a3746a1b854c5eeb3a08aa400592e51d"
+    },
+    {
+      "path": "asl/tile/legality.asl",
+      "sha256": "1092631e2e746524309fb875b60183c5bbe59b8ff987572bafb1bb5813ba0657"
+    },
+    {
+      "path": "asl/tile/memory.asl",
+      "sha256": "04a523c7d759c55761ab4cb48767ea199c0e2f21fd8e69a5fc6b86fb5cc3c027"
+    },
+    {
+      "path": "asl/tile/rearrangement.asl",
+      "sha256": "9a3a14f65ca2135dec01975537161d195af745214b3cfe2d36c1b341cbcf1e5b"
+    },
+    {
+      "path": "asl/tile/reduction.asl",
+      "sha256": "f70a0b5a39b85602fd7af8046c45a40576a595560814ca52187a91f09ea0b4b1"
+    },
+    {
+      "path": "asl/tile/state.asl",
+      "sha256": "8fe56df1f993a81c451d0420aec31e993b84ecb296e84b809eef2c794159f245"
+    },
+    {
+      "path": "asl/types.asl",
+      "sha256": "2f2801230cac12c7835ee705b506f83191dfba1e4ad1565f470ff401adb6e83b"
+    },
+    {
+      "path": "docs/architecture-decisions/0001-pto-architecture-scope.md",
+      "sha256": "19ea4e5bcb4cb10f31b9e5698670455dd0bf02ff5cac962808bcaffc2aa27b85"
+    },
+    {
+      "path": "docs/architecture-decisions/0003-pto-owned-system-register-names.md",
+      "sha256": "3cf6f664f696fd967bd89f391f83d3e12055c1fa050f28d6ec2ea381fdc0e0ee"
+    },
+    {
+      "path": "docs/architecture-decisions/0005-pto-v0-concrete-reference-profile.md",
+      "sha256": "3355afdfeb955f1e7f061e2d2224500774ed9fe572d6df2056d02de28209bd70"
+    },
+    {
+      "path": "docs/architecture-decisions/0006-pto-total-store-order.md",
+      "sha256": "e20cf0096f723924bd86925d182f9e2c664beb2975fbfe5415fd6c82fa0ddcc7"
+    },
+    {
+      "path": "docs/architecture-decisions/0008-architectural-state-contract.md",
+      "sha256": "d1892e429aec89914dd0b0e3d8ee796b478385771908684ee4ff13666658db76"
+    },
+    {
+      "path": "docs/architecture-decisions/0009-scalar-tpc-and-execution-status.md",
+      "sha256": "a48b0d7377fd8350328b3e9bc9c32fc2bd03925c7fdb26bf8780799cd59f86fa"
+    },
+    {
+      "path": "docs/architecture-decisions/0010-acr-routing-and-context-reset.md",
+      "sha256": "9de04538d9b760126d78cdd4f1dae866d6bea5cc0e6a93ca75a0fb744bed83a8"
+    },
+    {
+      "path": "docs/architecture-decisions/0011-visible-ebarg-snapshot.md",
+      "sha256": "75d9a725fe6933c9ecad01a3798fcf93396078023788dd3e0c9f0f122e30dc39"
+    },
+    {
+      "path": "docs/architecture-decisions/0012-acrc-service-request.md",
+      "sha256": "848159e5d547c96f6bf54ad1a19d4f9e2f4f016afd69a7138928da469ea01bb7"
+    },
+    {
+      "path": "docs/architecture-decisions/0013-tile-capacity-and-packed-storage.md",
+      "sha256": "2942e8cb1a3f8b0c65ef1f17a77724c06a5a9ec82dff3c24f4ea6480af9b66ce"
+    },
+    {
+      "path": "docs/architecture-decisions/0014-element-level-tile-definedness.md",
+      "sha256": "c084a48cafa91c5b75131cb1a4b0a8e8cb2d1d538ac5c1217874f2f258281e91"
+    },
+    {
+      "path": "docs/architecture-decisions/0015-explicit-tile-handoff-slots.md",
+      "sha256": "54a801cef8927a2bc2f498815bc35819b4bfac5a475412d9687dacc286a42c48"
+    },
+    {
+      "path": "docs/architecture-decisions/0016-interrupt-pending-and-timer-state.md",
+      "sha256": "121ed46a955dd55e5bf562137ff3551e9815836e224a618b16f431c646daddc5"
+    },
+    {
+      "path": "docs/architecture-decisions/0017-system-register-behavior-classes.md",
+      "sha256": "d3adc2979db58cfa626936984755955452669b09c4a201926b2973b3e0c546b8"
+    },
+    {
+      "path": "docs/architecture-decisions/0018-pto-v0-trap-disposition.md",
+      "sha256": "b94916ad090842fc0fabae8e5516a7549ae72d684ef2259b1b19c745fb7f315b"
+    },
+    {
+      "path": "docs/architecture-decisions/0019-predicate-register-contract.md",
+      "sha256": "cf62ec32d96f717bd39fb766d4b57662f8b336ced7f32e0b3fec94bd56e00a5f"
+    },
+    {
+      "path": "docs/architecture-decisions/0020-production-memory-events-and-atomic-corners.md",
+      "sha256": "e59fc071cff61b7f54ed77ff1685d29fd40f678a9f8ef4194fbea260f3dd3e4b"
+    },
+    {
+      "path": "docs/architecture-decisions/0021-scalar-pc-relative-and-return-address.md",
+      "sha256": "6d540d5f29d63234115dc8dd6deddb1a5a14edbd0bffb5af92e8e50ce382b9f6"
+    },
+    {
+      "path": "docs/architecture-decisions/0022-bundle-operation-descriptor-and-commit.md",
+      "sha256": "43e84df2875d505189ea35c1b8ab79032e2477e9d73bb45a41d45d022c5988bd"
+    },
+    {
+      "path": "docs/architecture-decisions/0023-uniform-instruction-attempt-status.md",
+      "sha256": "c85f755be20df7b9a7e73fd909275b543ef3fe7c22b83aaf16daa81f54adfb2c"
+    },
+    {
+      "path": "docs/architecture-decisions/0024-pc-relative-and-unscaled-agu-addressing.md",
+      "sha256": "3fbf85c0880778fee43eab16f1d8ed042cf765f5f8b37f7f2c9977c2d76fcfb7"
+    },
+    {
+      "path": "docs/architecture-decisions/0025-scalar-bitfield-and-reverse-bounds.md",
+      "sha256": "2b0b11a8d0cd04379bf06a3c29436a4ee225692530be535a6a1edb8bce5f6056"
+    },
+    {
+      "path": "docs/architecture-decisions/0026-scalar-alu-totality-and-alias-order.md",
+      "sha256": "4ff2e9b361766652f1c457cba2645db7787f925518ee14ab21174e1bdb4578b9"
+    },
+    {
+      "path": "docs/architecture-decisions/0027-scalar-bru-totality-and-target-legality.md",
+      "sha256": "239ae2f90001f655cc28d5535ab84bcb5493c7d06785e2988f68a136950cca29"
+    },
+    {
+      "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
+      "sha256": "0cd5c9eef6525edf16603f9d1c4df1233f59b6e8ffc9750b84bd99995fd55962"
+    },
+    {
+      "path": "docs/architecture-decisions/0029-scalar-agu-totality-and-restart.md",
+      "sha256": "a178848e13ec32030c801c144163d31316858e881d3af58880b659826e8640b4"
+    },
+    {
+      "path": "docs/architecture-decisions/0030-scalar-amo-totality-and-reservation.md",
+      "sha256": "dfdcfbe9c724896cafd0aeaa416fe1cb22c12102e3e7b4e5a67c3a4b2942fae7"
+    },
+    {
+      "path": "docs/architecture-decisions/0031-scalar-sys-totality-and-profile-boundaries.md",
+      "sha256": "803470e7ba2f1f563160520ac781c56efc6cd9e1a74a86db8e9e9de3ed7b9ed3"
+    },
+    {
+      "path": "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+      "sha256": "2af8db98fd316dced2ec1cd7e4eafccbcef73a3fbbb38956c194f15cc45446d2"
+    },
+    {
+      "path": "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
+      "sha256": "133d78e770cedb49f0b7cac66b52e0fc6efb6a687f99bd7cb630ca9fb7ec6714"
+    },
+    {
+      "path": "docs/architecture-decisions/0034-cube-raw-carrier-totality.md",
+      "sha256": "bdc6dd46e5d16cdd5ffc14ced4ab973fde5bd28f540df56f01cf444225d5c269"
+    },
+    {
+      "path": "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
+      "sha256": "4fdbbbc9eb79cf23c0d63f4d933041897aeb423516a8fa1a0ece1a53e4419db8"
+    },
+    {
+      "path": "docs/architecture-decisions/0036-executable-model-comparison-dispositions.md",
+      "sha256": "2273f664d85b4c3d8f1e680040c12eb7ea7b749f9be392f3accc0ff8cecdb67a"
+    },
+    {
+      "path": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+      "sha256": "e4b8ec913ebe63322fca7985e2421b7e8cb894c06ed73c652a6179d63121c63b"
+    },
+    {
+      "path": "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
+      "sha256": "adf0e2b0462c70c882e1eeb6052e4c6a72b1965e82059783ade0b799b560218e"
+    },
+    {
+      "path": "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
+      "sha256": "9eba031999786c1dc5e34dd54090f6e77a30409f15c9d2396acbc3400ae50bb3"
+    },
+    {
+      "path": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+      "sha256": "be234bc101e738b6a26db40b219f4ff1b186f1622deec1d7b037276b2f3f1591"
+    },
+    {
+      "path": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
+      "sha256": "5eb62cb56c0af0cc7c4485c018683f0799b1d7fa7bcd262d46002b190cf33262"
+    },
+    {
+      "path": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
+      "sha256": "837960a74610132776f4e707a50ef2b95e6ff576b47843bed239b07306bed79c"
+    },
+    {
+      "path": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
+      "sha256": "7730954ebe136cd213d99e8b66749135b43fa3f2c223e320fcf4b28bf23c7cd4"
+    },
+    {
+      "path": "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
+      "sha256": "fe98df65bb6c86efc9206b0e50ff65f23494f79c6bf2a0389adb7288bc2cf42d"
+    },
+    {
+      "path": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+      "sha256": "94bfe27aba5f549c2579a169c720182a1366780b2deefd783047c21c4aaf236f"
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "f3a2e4b6f891cfb49695086f38b952b6d3a5004c40d29ec4dd04e61c924ea331"
+    },
+    {
+      "path": "docs/coverage.md",
+      "sha256": "50b99a7f3ab522f2bd9786926fe32387710dcb03591e21ad31a78acc918cc2fe"
+    },
+    {
+      "path": "docs/maturity-bringup-plan.md",
+      "sha256": "7d0a22a934e8b2c10c3295f389b4a4434344d0caa2f4257d9a9ee745eef96f4d"
+    },
+    {
+      "path": "docs/maturity-stage-targets.md",
+      "sha256": "61c14a02437bf50a8cd0a219db9dc0af8ac76511f5104578642c9b37be0d6059"
+    },
+    {
+      "path": "docs/memory-model.md",
+      "sha256": "6bdcbe43be2a58ad3a4c3b7287c6b909d227cd8d850fe297595d602473de4951"
+    },
+    {
+      "path": "docs/modeling-conventions.md",
+      "sha256": "d0eedfbedf34481efa09fb3294657dfa8b6a58295ddfd2e947ce71f4fbc5cae8"
+    },
+    {
+      "path": "docs/normative-sources.md",
+      "sha256": "2e03e58844f3eed124d6eb745e3c56143532ad00e57c08e63e1a74bb258b09e4"
+    },
+    {
+      "path": "docs/numeric-profile-decision-register.md",
+      "sha256": "827f60fc011554a5b173871176b93272a02c3da3a7daa0e4e515f60e01c45f40"
+    },
+    {
+      "path": "docs/profile-contracts.md",
+      "sha256": "759a96e6975b6702a4900c803bee29f1b9ad4cc43b152920bce3e508d1d3e35e"
+    },
+    {
+      "path": "docs/review-checklist.md",
+      "sha256": "0768e306a54a5512018450567bddead28d5cf140956589340b249bd4accdf08a"
+    },
+    {
+      "path": "spec/catalog/command-forms.json",
+      "sha256": "e5a98441098fdd88c0f5837bb3e1367d7b272ebc2ba506275e9e2be1b4c1978a"
+    },
+    {
+      "path": "spec/catalog/numeric-profile-applicability.json",
+      "sha256": "567127cf30879734e81a7664ff2db9e25b3c2a8539444c65fbcff25fcb284902"
+    },
+    {
+      "path": "spec/catalog/numeric-profile-identities.json",
+      "sha256": "f2bf1bcfa9e6ce1006132ac6d9aec4a8c698990a20eeb7736d361d62ed6477ed"
+    },
+    {
+      "path": "spec/catalog/scalar-forms.json",
+      "sha256": "0fb686db56423c37d669f92058003d4668b0c183a9bd0428d25c4ae70b391670"
+    },
+    {
+      "path": "spec/catalog/system-registers.json",
+      "sha256": "f81a7638a4117937775585e43e922ac4ad972bccc192d5af05aba03bc8179e94"
+    },
+    {
+      "path": "spec/catalog/tile-operations.json",
+      "sha256": "e77c762122dd776ea8b1b2113e6d095b2db0fe24b5b98d0c26012db9fb98e64e"
+    },
+    {
+      "path": "spec/evidence/bundle-command-totality.json",
+      "sha256": "49abac7a2a2958d1127e0f311f4b867dd1e7878d27ffec9309017bce5c7d5c99"
+    },
+    {
+      "path": "spec/evidence/cube-totality.json",
+      "sha256": "4f17f7da1225d2f2c2ad4eac3ff6eb05ee0b4a3529cf4f44389d96a8f1f37abc"
+    },
+    {
+      "path": "spec/evidence/executable-model-comparison.json",
+      "sha256": "58ca12e8e3cba790a25a95ee5230dca3ec9e21bbe2031530ac4b4eb18909f515"
+    },
+    {
+      "path": "spec/evidence/maturity-closure.json",
+      "sha256": "b43cfa6c5dbc0fa1d017863e36af7474b6a876944467a8aadcf5337aa4662f0d"
+    },
+    {
+      "path": "spec/evidence/numeric-conformance-readiness.json",
+      "sha256": "ba40adfad5527e7899be57f05198d7595df31ead7d272822a0ef7413cd010fe5"
+    },
+    {
+      "path": "spec/evidence/numeric-contracts.json",
+      "sha256": "6984a2c6bcafa208a1458001fc1105a7820b0a8005d54ca77bf07846c00d7b49"
+    },
+    {
+      "path": "spec/evidence/numeric-format-namespace-contract.json",
+      "sha256": "931472f8f33ef893e473db825b9523dc82c41408c81f7fd9e608a2751e9dbef2"
+    },
+    {
+      "path": "spec/evidence/numeric-profile-applicability-closure.json",
+      "sha256": "7939cf794640efca743816f75a0e71faa2eb840bf398c63e427a729093ac951b"
+    },
+    {
+      "path": "spec/evidence/numeric-profile-decision-inputs.json",
+      "sha256": "9bcb979388b28cbc9e1ff9bdfbf5e479a268a616e5a2bf514ab206fb27107d54"
+    },
+    {
+      "path": "spec/evidence/numeric-profile-decision-proposals.json",
+      "sha256": "c19d41ba8264c2cd38e1b48a6082c081a9d0c6db4f36677579d3a15dc0c36c69"
+    },
+    {
+      "path": "spec/evidence/numeric-rounding-selector-contract.json",
+      "sha256": "94ac3b70f25e720528c170472e6b9e81bee3fbd3a745f4174bca6145f7e0ba31"
+    },
+    {
+      "path": "spec/evidence/numeric-variation-point-ownership.json",
+      "sha256": "295b36f19172f44ce608313194c02f1470144a5dea35b053f8277960269f2679"
+    },
+    {
+      "path": "spec/evidence/public-integer-conversion-contract.json",
+      "sha256": "2be575e8984f1fdead54d570e4261cccde0cd9b8fde8c96d573577843190fa84"
+    },
+    {
+      "path": "spec/evidence/public-numeric-type-baseline.json",
+      "sha256": "3d89bdb88ced41225cd4016f41e2a0bfc88eb38e72555a27d6791fb2a8548edb"
+    },
+    {
+      "path": "spec/evidence/public-source-reconciliation.json",
+      "sha256": "f7f5a8ffbaff7f4d932481e74ce9eaa1aac7fb377c8463de997e41d3e17fa7f3"
+    },
+    {
+      "path": "spec/evidence/release-gate-readiness.json",
+      "sha256": "4b76a16a6b93d9b7d39ed8e6f6ca3c80305aa4df52f752468e17a65ede854e05"
+    },
+    {
+      "path": "spec/evidence/release-traceability-readiness.json",
+      "sha256": "dd79a486487f39a20779d859956486646bbfca27785ee934e7ab15be5a513b11"
+    },
+    {
+      "path": "spec/evidence/scalar-agu-totality.json",
+      "sha256": "c21c95ae5348c02f0c85de47cb461224112c7da3bdf3945f4580c1c8889ecac0"
+    },
+    {
+      "path": "spec/evidence/scalar-alu-totality.json",
+      "sha256": "3aee165469c871692ae3e6898eec11125bbfca368b448efb90f84de43c432619"
+    },
+    {
+      "path": "spec/evidence/scalar-amo-totality.json",
+      "sha256": "d962e3a99651c7036a136acdd6d826b39496e89b4abb21b20cf6bf7806d33e18"
+    },
+    {
+      "path": "spec/evidence/scalar-bru-totality.json",
+      "sha256": "83e4df505c21749ac5fb3ee37ce72f73f808926297fde207b33201b1ac337929"
+    },
+    {
+      "path": "spec/evidence/scalar-effect-closure.json",
+      "sha256": "1428026445f191a38eb1bf1e6f15bd2c3385191db4cb3a4f35e2245b41edb6d8"
+    },
+    {
+      "path": "spec/evidence/scalar-fsu-totality.json",
+      "sha256": "dadf2f4e38653439296354218a26ad4d057d417372b22708d7d559564a4688ac"
+    },
+    {
+      "path": "spec/evidence/scalar-numeric-flag-contract.json",
+      "sha256": "0eebde6ca8ef2f5bbbaebcf9276226b8b1cc1b673394ec43440ebd0ac09012ce"
+    },
+    {
+      "path": "spec/evidence/scalar-sys-totality.json",
+      "sha256": "1ac5be70d5d12b81ef9e64c6bc817e2b9bd90858937075fab8194913e76250e9"
+    },
+    {
+      "path": "spec/evidence/tepl-totality.json",
+      "sha256": "a8e956cc88f6f21a8cb02bb5ffd94b553929feec42fda1fea73380b65ae0de43"
+    },
+    {
+      "path": "spec/evidence/tma-totality.json",
+      "sha256": "4230bd9a729682cdcc725265a4362af857929802f33a0cfc1d2db1221d4b3f24"
+    },
+    {
+      "path": "spec/hardware-conformance-profile.json",
+      "sha256": "becfbefcc7a31408e5e5293802493f833f68a2fccebb3f9e8008d8b9f4e7658c"
+    },
+    {
+      "path": "spec/profile-hooks.json",
+      "sha256": "fcf921cc49579c5150a77e9b3f81dee782de893e84a88da83952ac023cb08584"
+    },
+    {
+      "path": "spec/requirements.json",
+      "sha256": "0735933dd44abee66584fc17012457f7e33bff115dfea71a17beea58c244e177"
+    },
+    {
+      "path": "specification.toml",
+      "sha256": "e3dddba11db0d77a422863f656c1c7c0259c9d8042477bb677d0e78c723cfd29"
+    }
+  ],
+  "catalog_counts": {
+    "command_form_families": {
+      "BBD": 25,
+      "CMD": 74
+    },
+    "command_forms": 99,
+    "contract_status_counts": {
+      "reviewed-complete": 120
+    },
+    "pending_base_operations": 0,
+    "scalar_forms": 474,
+    "tile_operations": {
+      "CUBE": 13,
+      "TEPL": 98,
+      "TMA": 9
+    },
+    "tile_operations_total": 120
+  },
+  "content_sha256": "748c1c6ac1bd5482d219cd08b8f0a871c7eda2b8f8afb1e81d498ec742e8abe8",
+  "elf_identity": {
+    "alignment_bytes": 4,
+    "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
+    "descriptor_fields": [
+      "release",
+      "encoding_abi",
+      "encoding_projection_sha256"
+    ],
+    "descriptor_nul_terminated": false,
+    "link_policy": "all input identities must be present and exactly equal",
+    "load_policy": "the image identity must exactly match the implementation identity",
+    "name_size_bytes": 4,
+    "note_name": "PTO",
+    "note_type": "PTO_NT_ISA_IDENTITY",
+    "note_type_value": 1,
+    "section": ".note.pto.isa"
+  },
+  "encoding_abi": "pto-isa-0.57.1-mode-function-v1",
+  "encoding_projection_sha256": "9705a984e2e48e0d4e856d3fbcfa07041c8578dd326d81f1c90279e826354c32",
+  "hardware_conformance_profile": {
+    "evidence": "spec/evidence/pto-isa-0571-hardware-numeric-vectors.json",
+    "path": "spec/hardware-conformance-profile.json",
+    "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
+    "repository_implementation_conformance": "unproven",
+    "sha256": "becfbefcc7a31408e5e5293802493f833f68a2fccebb3f9e8008d8b9f4e7658c"
+  },
+  "hash_contract": {
+    "algorithm": "SHA-256",
+    "content_projection": "object mapping each canonical input path to its file SHA-256",
+    "encoding_projection": "encoding ABI ID plus scalar/command forms, tile selector/function assignments, and system-register locations",
+    "json_encoding": "UTF-8 JSON with lexicographically sorted keys and separators ',' ':'"
+  },
+  "owned_artifacts": [
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/bundle-command.md",
+      "sha256": "50a0e03a3fc5ee816208f7d0bbe31c02a81e27c195ed9efaa7404f29fafef772"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/index.md",
+      "sha256": "5410fa3650e749fea98a33ce9a8b010b0b4e278575d71f50fdd90120234ac7a3"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/scalar-agu.md",
+      "sha256": "8404d610bb653356e4bdfdcbfe03041fa707c3876797f18d21dab96ee41e9910"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/scalar-alu.md",
+      "sha256": "0e4c04082a953743e1f74cb8e6c8556de1bb0d79ba243bbe68d73418d6758fd6"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/scalar-amo.md",
+      "sha256": "74932feb29c5df7994b1b7c918278fe40b9d1288fd5333198804dbe0a685a060"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/scalar-bru.md",
+      "sha256": "440318ee1e93315579fddb211ecf103e9d9a98d1bb4282a40e110b78e53f1fdc"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/scalar-fsu.md",
+      "sha256": "0ea3ef3f8df6e908d3a260ce097564ff596bf83dc8ceaf561defd9c2c3d35267"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/scalar-sys.md",
+      "sha256": "e07ed2adb5f0f503fa5615d48aa59150a9baca904fa52f541fb44742da1dc0b8"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/scalar.md",
+      "sha256": "30ba0321cb2557fbd283a024b0343a7a64a257a3aaab6829c4d9289656fc5447"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/system-registers.md",
+      "sha256": "c79ac2c5eca25b12aad2e6bea4b8aaa207d8ea5d77eedacf9f656cd009b6a6e5"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/instructions/tile.md",
+      "sha256": "879f01919b4aa1e744a8c887fc50348b36edd381f08b89496d1c279473da72d9"
+    },
+    {
+      "kind": "generated-evidence",
+      "path": "spec/evidence/pto-isa-0571-abi-vectors.json",
+      "sha256": "934824c2f3c59b1f7c93c5c4c36feeed6002958b2180326ee156f0ab9eaaceed"
+    },
+    {
+      "kind": "generated-evidence",
+      "path": "spec/evidence/pto-isa-0571-encoding-totality.json",
+      "sha256": "052d67c09dfe3f2c8f8765ae2094d4b359a5fc62c29cf24f79ff4282ec52e9e5"
+    },
+    {
+      "kind": "generated-evidence",
+      "path": "spec/evidence/pto-isa-0571-hardware-numeric-vectors.json",
+      "sha256": "b9f908deb9cfec412388e95f4532563cf4e462032b43d15996f0f7b4b93b4ec9"
+    }
+  ],
+  "release": "0.57.1",
+  "schema_version": 1,
+  "specification_status": "draft"
+}

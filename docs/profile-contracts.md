@@ -10,9 +10,9 @@ The machine-readable authority is `spec/profile-hooks.json`.
 The interface declaration, active implementation, and direct profile tests
 travel together. Removing, renaming, or adding a hook must update all three in
 one reviewable change. The registry records implementation status separately
-from target-conformance status: all 37 hooks have deterministic PTO-v0
+from target-conformance status: all 38 hooks have deterministic PTO-v0
 implementations, and eight non-numeric hooks close their reference contracts.
-The checked `S5-T1` inventory assigns all 29 numeric hooks to their affected
+The checked `S5-T1` inventory assigns all 30 numeric hooks to their affected
 scalar and tile operations. Those hooks retain `S5-T2` target-conformance
 obligations. The generated
 `spec/evidence/numeric-conformance-readiness.json` ledger divides those
@@ -55,7 +55,7 @@ profile-owned forms still require exact flag-production rules and vectors.
 `ResetProfileState` clears the 24 absolute GPRs, the T/U queues, P0..P7, and
 bounded memory; invalidates every `TileInfo`; clears defined extended
 system-register storage; resets faults, reservations, concurrency candidates,
-and maintenance epochs; sets VERSION to 1 and TILE_CAPACITY to 512 KiB; sets
+and maintenance epochs; sets VERSION to 1 and TILE_CAPACITY to 256 KiB; sets
 time to zero; and enters ACR0. Tile payload backing that becomes unobservable
 through invalid descriptors is not scrubbed.
 
@@ -125,9 +125,25 @@ host floating library can change execution.
   uses unsigned all-ones division. Quantization and dequantization use the
   declared scale and zero-point word operations.
 
-This profile makes the current formal model total and reproducible. A future
-IEEE or hardware numeric profile must be a separately named implementation; it
-must not silently reinterpret `pto-v0` results.
+This profile makes the current formal model total and reproducible. It does not
+silently acquire the rules of another profile.
+
+### PTO ISA 0.57.1 hardware numeric contract
+
+`pto-hardware-numeric-0.57.1-ieee-v1` is the separately named hardware numeric
+contract accepted by ADR 0045. It defines, without changing `pto-v0`:
+
+- low-precision format identities and packed-lane order;
+- canonical NaN, signed-zero, invalid integer-result, and RHB tie behavior;
+- public conversion, reduction, sort, and comparison boundaries;
+- ordinary and MX matrix operand classes;
+- logical versus physical ACC types; and
+- E8M0 scale shape, K-block indexing, and pre-FMA scale order.
+
+The checked profile record and boundary vectors define what an implementation
+must demonstrate. They are not implementation results. Hardware, RTL, emulator,
+and executable-model conformance remain unproven until independent byte/effect
+parity, oracle results, and both review perspectives close `S5-T2`.
 
 ## Registered domains
 
@@ -143,6 +159,7 @@ must not silently reinterpret `pto-v0` results.
 | Tile comparison, reduction, expansion, and partial | signed raw ordering and modular accumulation |
 | Tile conversion | raw normalization, quantization, and dequantization |
 | Tile matrix arithmetic | modular word-width multiply, bias, accumulate, and scale |
+| Named hardware numeric contract | 0.57.1 format, result, physical ACC, and MX-scale obligations; no implementation claim |
 
 ## Validation rule
 
@@ -160,6 +177,10 @@ numeric lane. A lane cannot become promotion-ready merely because the active
 raw-carrier profile test passes; it must acquire independent profile, oracle,
 vector, differential-result, and review evidence in dependency order.
 
+The accepted 0.57.1 contract supplies the named-profile and boundary-definition
+inputs for those lanes. It does not by itself fill an implementation result,
+differential parity, or review-acceptance field.
+
 The generated `numeric-profile-decision-inputs.json` ledger is the first
 dependency. It records 12 open questions covering profile identity, formats,
 rounding, FTZ, special values, flags, conversion overflow, elementary-function
@@ -175,7 +196,7 @@ The generated `numeric-rounding-selector-contract.json` ledger records the
 accepted selector namespaces and owners without closing PD-03. It keeps all 18
 affected domain rounding and saturation-order rules explicitly null.
 The generated `numeric-format-namespace-contract.json` ledger records the
-accepted five code namespaces, 19 carrier widths, reserved-code behavior, and
+accepted five code namespaces, 25 carrier identities, reserved-code behavior, and
 four-bit packing without closing PD-02. It keeps eight format, exceptional
 value, operation/type/profile legality, target-availability, and vector
 residuals explicit at that checkpoint.
@@ -194,7 +215,7 @@ float/integer conversions, support matrices, overflow/saturation, rounding,
 flags, and independent vectors remain open, so PD-07 and `S5-T2-A` remain open.
 The generated `numeric-profile-applicability-closure.json` ledger records the
 accepted A2/A3 unsupported-in-profile disposition for the six MX CUBE
-selectors across all 19 `TileDataType` identities. It keeps result rules,
+selectors across all 25 `TileDataType` identities. It keeps result rules,
 remaining applicability tables, and `cube-matrix` conformance open.
 The executable selector is an accepted negative-rule set, not a complete A2/A3
 profile; an operation absent from that set is not thereby supported.

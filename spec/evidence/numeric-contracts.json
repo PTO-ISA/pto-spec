@@ -320,7 +320,8 @@
       "id": "tile-order",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
-        "TileProfileOrderLeft"
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
       ],
       "requirement": "PTO-REQ-TEPL-COMPLEX-001",
       "stage4_target": "S4-T8",
@@ -607,7 +608,7 @@
       ]
     },
     {
-      "name": "TileProfileMatrixScale",
+      "name": "TileProfileMatrixScaledAccumulate",
       "role": "portable-profile-boundary",
       "model": "asl/tile/cube.asl",
       "requirement": "PTO-REQ-CUBE-001",
@@ -623,6 +624,19 @@
     },
     {
       "name": "TileProfileOrderLeft",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/complex.asl",
+      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:TEPL:TMRGSORT",
+        "tile:TEPL:TPARTARGMAX",
+        "tile:TEPL:TPARTARGMIN",
+        "tile:TEPL:TSORT"
+      ]
+    },
+    {
+      "name": "TileProfileValueIsNaN",
       "role": "portable-profile-boundary",
       "model": "asl/tile/complex.asl",
       "requirement": "PTO-REQ-TEPL-COMPLEX-001",
@@ -1130,7 +1144,7 @@
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-CUBE-001",
@@ -1147,7 +1161,7 @@
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-CUBE-001",
@@ -1165,7 +1179,7 @@
       "primary_hooks": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-CUBE-001",
@@ -1231,7 +1245,7 @@
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-CUBE-001",
@@ -1248,7 +1262,7 @@
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-CUBE-001",
@@ -1266,7 +1280,7 @@
       "primary_hooks": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-CUBE-001",
@@ -1278,7 +1292,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TABS",
-      "catalog_identity": "0x02D",
+      "catalog_identity": "0x00F",
       "numeric_contract": "tile-unary",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1358,7 +1372,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TAXPY",
-      "catalog_identity": "0x031",
+      "catalog_identity": "0x02F",
       "numeric_contract": "tile-axpy",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1374,7 +1388,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TCMP",
-      "catalog_identity": "0x02B",
+      "catalog_identity": "0x00D",
       "numeric_contract": "tile-compare",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1390,7 +1404,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TCMPS",
-      "catalog_identity": "0x033",
+      "catalog_identity": "0x02D",
       "numeric_contract": "tile-compare",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1406,7 +1420,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TCOLARGMAX",
-      "catalog_identity": "0x039",
+      "catalog_identity": "0x05C",
       "numeric_contract": "tile-reduction",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1423,7 +1437,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TCOLARGMIN",
-      "catalog_identity": "0x03A",
+      "catalog_identity": "0x05D",
       "numeric_contract": "tile-reduction",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1440,7 +1454,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TCOLEXPAND",
-      "catalog_identity": "0x01E",
+      "catalog_identity": "0x054",
       "numeric_contract": "tile-expand",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1456,7 +1470,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TCOLEXPANDADD",
-      "catalog_identity": "0x042",
+      "catalog_identity": "0x055",
       "numeric_contract": "tile-expand",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1472,7 +1486,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TCOLEXPANDDIV",
-      "catalog_identity": "0x045",
+      "catalog_identity": "0x058",
       "numeric_contract": "tile-expand",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1488,7 +1502,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TCOLEXPANDEXPDIF",
-      "catalog_identity": "0x048",
+      "catalog_identity": "0x05B",
       "numeric_contract": "tile-expand",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1506,7 +1520,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TCOLEXPANDMAX",
-      "catalog_identity": "0x046",
+      "catalog_identity": "0x059",
       "numeric_contract": "tile-expand",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1522,7 +1536,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TCOLEXPANDMIN",
-      "catalog_identity": "0x047",
+      "catalog_identity": "0x05A",
       "numeric_contract": "tile-expand",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1538,7 +1552,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TCOLEXPANDMUL",
-      "catalog_identity": "0x044",
+      "catalog_identity": "0x057",
       "numeric_contract": "tile-expand",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1554,7 +1568,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TCOLEXPANDSUB",
-      "catalog_identity": "0x043",
+      "catalog_identity": "0x056",
       "numeric_contract": "tile-expand",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1570,7 +1584,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TCOLMAX",
-      "catalog_identity": "0x015",
+      "catalog_identity": "0x051",
       "numeric_contract": "tile-reduction",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1587,7 +1601,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TCOLMIN",
-      "catalog_identity": "0x016",
+      "catalog_identity": "0x052",
       "numeric_contract": "tile-reduction",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1604,7 +1618,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TCOLPROD",
-      "catalog_identity": "0x038",
+      "catalog_identity": "0x053",
       "numeric_contract": "tile-reduction",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1621,7 +1635,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TCOLSUM",
-      "catalog_identity": "0x017",
+      "catalog_identity": "0x050",
       "numeric_contract": "tile-reduction",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1638,7 +1652,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TCVT",
-      "catalog_identity": "0x00D",
+      "catalog_identity": "0x01B",
       "numeric_contract": "tile-convert",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1654,7 +1668,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TDEQUANT",
-      "catalog_identity": "0x084",
+      "catalog_identity": "0x06B",
       "numeric_contract": "tile-dequantize",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1702,7 +1716,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TEXP",
-      "catalog_identity": "0x00E",
+      "catalog_identity": "0x012",
       "numeric_contract": "tile-unary",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1720,7 +1734,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TLOG",
-      "catalog_identity": "0x00F",
+      "catalog_identity": "0x013",
       "numeric_contract": "tile-unary",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1738,7 +1752,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TMAX",
-      "catalog_identity": "0x004",
+      "catalog_identity": "0x00B",
       "numeric_contract": "tile-binary",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1754,7 +1768,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TMAXS",
-      "catalog_identity": "0x024",
+      "catalog_identity": "0x02B",
       "numeric_contract": "tile-binary",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1770,7 +1784,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TMIN",
-      "catalog_identity": "0x005",
+      "catalog_identity": "0x00C",
       "numeric_contract": "tile-binary",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1786,7 +1800,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TMINS",
-      "catalog_identity": "0x025",
+      "catalog_identity": "0x02C",
       "numeric_contract": "tile-binary",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1802,11 +1816,12 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TMRGSORT",
-      "catalog_identity": "0x0C1",
+      "catalog_identity": "0x06D",
       "numeric_contract": "tile-order",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
-        "TileProfileOrderLeft"
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-TEPL-COMPLEX-001",
@@ -1850,7 +1865,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TNEG",
-      "catalog_identity": "0x02F",
+      "catalog_identity": "0x011",
       "numeric_contract": "tile-unary",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1866,7 +1881,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TNOT",
-      "catalog_identity": "0x02E",
+      "catalog_identity": "0x010",
       "numeric_contract": "tile-unary",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1914,7 +1929,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TPARTADD",
-      "catalog_identity": "0x0C3",
+      "catalog_identity": "0x071",
       "numeric_contract": "tile-partial",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1930,11 +1945,12 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TPARTARGMAX",
-      "catalog_identity": "0x0C7",
+      "catalog_identity": "0x075",
       "numeric_contract": "tile-order",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
-        "TileProfileOrderLeft"
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-TEPL-COMPLEX-001",
@@ -1946,11 +1962,12 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TPARTARGMIN",
-      "catalog_identity": "0x0C8",
+      "catalog_identity": "0x076",
       "numeric_contract": "tile-order",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
-        "TileProfileOrderLeft"
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-TEPL-COMPLEX-001",
@@ -1962,7 +1979,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TPARTMAX",
-      "catalog_identity": "0x0C5",
+      "catalog_identity": "0x073",
       "numeric_contract": "tile-partial",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1978,7 +1995,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TPARTMIN",
-      "catalog_identity": "0x0C6",
+      "catalog_identity": "0x074",
       "numeric_contract": "tile-partial",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -1994,7 +2011,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TPARTMUL",
-      "catalog_identity": "0x0C4",
+      "catalog_identity": "0x072",
       "numeric_contract": "tile-partial",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2010,7 +2027,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TPRELU",
-      "catalog_identity": "0x00C",
+      "catalog_identity": "0x00E",
       "numeric_contract": "tile-prelu",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2026,7 +2043,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TQUANT",
-      "catalog_identity": "0x083",
+      "catalog_identity": "0x06A",
       "numeric_contract": "tile-quantize",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2042,7 +2059,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TRECIP",
-      "catalog_identity": "0x018",
+      "catalog_identity": "0x014",
       "numeric_contract": "tile-unary",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2060,7 +2077,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TRELU",
-      "catalog_identity": "0x00B",
+      "catalog_identity": "0x017",
       "numeric_contract": "tile-unary",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2076,7 +2093,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TREM",
-      "catalog_identity": "0x030",
+      "catalog_identity": "0x004",
       "numeric_contract": "tile-binary",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2092,7 +2109,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TREMS",
-      "catalog_identity": "0x032",
+      "catalog_identity": "0x024",
       "numeric_contract": "tile-binary",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2108,7 +2125,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TROWARGMAX",
-      "catalog_identity": "0x036",
+      "catalog_identity": "0x04C",
       "numeric_contract": "tile-reduction",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2125,7 +2142,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TROWARGMIN",
-      "catalog_identity": "0x037",
+      "catalog_identity": "0x04D",
       "numeric_contract": "tile-reduction",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2142,7 +2159,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TROWEXPAND",
-      "catalog_identity": "0x01F",
+      "catalog_identity": "0x044",
       "numeric_contract": "tile-expand",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2158,7 +2175,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TROWEXPANDADD",
-      "catalog_identity": "0x03B",
+      "catalog_identity": "0x045",
       "numeric_contract": "tile-expand",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2174,7 +2191,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TROWEXPANDDIV",
-      "catalog_identity": "0x03E",
+      "catalog_identity": "0x048",
       "numeric_contract": "tile-expand",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2190,7 +2207,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TROWEXPANDEXPDIF",
-      "catalog_identity": "0x041",
+      "catalog_identity": "0x04B",
       "numeric_contract": "tile-expand",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2208,7 +2225,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TROWEXPANDMAX",
-      "catalog_identity": "0x03F",
+      "catalog_identity": "0x049",
       "numeric_contract": "tile-expand",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2224,7 +2241,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TROWEXPANDMIN",
-      "catalog_identity": "0x040",
+      "catalog_identity": "0x04A",
       "numeric_contract": "tile-expand",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2240,7 +2257,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TROWEXPANDMUL",
-      "catalog_identity": "0x03D",
+      "catalog_identity": "0x047",
       "numeric_contract": "tile-expand",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2256,7 +2273,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TROWEXPANDSUB",
-      "catalog_identity": "0x03C",
+      "catalog_identity": "0x046",
       "numeric_contract": "tile-expand",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2272,7 +2289,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TROWMAX",
-      "catalog_identity": "0x012",
+      "catalog_identity": "0x041",
       "numeric_contract": "tile-reduction",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2289,7 +2306,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TROWMIN",
-      "catalog_identity": "0x013",
+      "catalog_identity": "0x042",
       "numeric_contract": "tile-reduction",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2306,7 +2323,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TROWPROD",
-      "catalog_identity": "0x035",
+      "catalog_identity": "0x043",
       "numeric_contract": "tile-reduction",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2323,7 +2340,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TROWSUM",
-      "catalog_identity": "0x014",
+      "catalog_identity": "0x040",
       "numeric_contract": "tile-reduction",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2340,7 +2357,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TRSQRT",
-      "catalog_identity": "0x011",
+      "catalog_identity": "0x016",
       "numeric_contract": "tile-unary",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2423,11 +2440,12 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TSORT",
-      "catalog_identity": "0x0C0",
+      "catalog_identity": "0x06C",
       "numeric_contract": "tile-order",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
-        "TileProfileOrderLeft"
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-TEPL-COMPLEX-001",
@@ -2439,7 +2457,7 @@
       "surface": "direct-tile-operation",
       "family": "TEPL",
       "name": "TSQRT",
-      "catalog_identity": "0x010",
+      "catalog_identity": "0x015",
       "numeric_contract": "tile-unary",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -2518,11 +2536,11 @@
     }
   ],
   "summary": {
-    "numeric_hook_count": 29,
+    "numeric_hook_count": 30,
     "decoded_operation_count": 108,
     "scalar_form_count": 19,
     "direct_tile_operation_count": 89,
-    "primary_profile_boundary_hook_count": 22,
+    "primary_profile_boundary_hook_count": 23,
     "reference_helper_hook_count": 5,
     "library_only_hook_count": 2,
     "target_conformance_status": "open:S5-T2"

@@ -34,6 +34,7 @@ type FaultCode of enumeration {
     Fault_HardwareWatchpoint,
     Fault_Assert,
     Fault_TileLegality,
+    Fault_TileAllocation,
     Fault_BundleControl,
     Fault_ServiceRequest
 };
@@ -100,6 +101,8 @@ type BundleTileBinding of record {
     valid: boolean,
     destination_valid: boolean,
     destination: TileIndex,
+    destination_hand: bits(2),
+    destination_allocated_by_bundle: boolean,
     destination_size: integer {0..15},
     source0_valid: boolean,
     source1_valid: boolean,
@@ -122,10 +125,11 @@ type BundleControlAttributes of record {
 type BundleDataAttributes of record {
     data_type: bits(5),
     data_layout: bits(5),
-    pad_value: bits(5),
+    pad_value: bits(2),
     conversion_mode: bits(3),
     rounding_mode: bits(3),
-    saturating: boolean
+    saturating: boolean,
+    canonicalize: boolean
 };
 
 // ACR0 is the root ring. The active profile defines permissions and the
@@ -138,34 +142,6 @@ type BundleScalarBindingSnapshot of array [[PTO_BUNDLE_SCALAR_BINDING_COUNT]]
     of BundleScalarBinding;
 type BundleTileBindingSnapshot of array [[PTO_BUNDLE_TILE_BINDING_COUNT]]
     of BundleTileBinding;
-
-type TrapContext of record {
-    valid: boolean,
-    source_acr: AccessControlRing,
-    tpc: Word,
-    bpc: Word,
-    core_state: Word,
-    bundle_argument: Word,
-    commit_argument: Word,
-    bundle_active: boolean,
-    bundle_body_active: boolean,
-    bundle_kind: BundleKind,
-    bundle_transfer: BundleTransfer,
-    bundle_condition: boolean,
-    bundle_target: Word,
-    bundle_fallthrough: Word,
-    bundle_return_target: Word,
-    bundle_body_address: Word,
-    bundle_operation: BundleOperationDescriptor,
-    bundle_dimensions: BundleDimensionSnapshot,
-    bundle_scalar_bindings: BundleScalarBindingSnapshot,
-    bundle_tile_bindings: BundleTileBindingSnapshot,
-    bundle_control_attributes: BundleControlAttributes,
-    bundle_data_attributes: BundleDataAttributes,
-    t_queue: TemporaryQueueSnapshot,
-    u_queue: TemporaryQueueSnapshot,
-    predicates: PredicateSnapshot
-};
 
 type DataAccessProbe of record {
     fault: FaultCode,
@@ -326,25 +302,54 @@ type TileHand of enumeration {
 };
 
 type TileDataType of enumeration {
-    TileDataType_F64,
-    TileDataType_S8,
-    TileDataType_U8,
-    TileDataType_S16,
-    TileDataType_U16,
-    TileDataType_S32,
-    TileDataType_U32,
-    TileDataType_S64,
-    TileDataType_U64,
-    TileDataType_F16,
+    TileDataType_FP64,
+    TileDataType_FP32,
+    TileDataType_TF32,
+    TileDataType_HF32,
+    TileDataType_FP16,
     TileDataType_BF16,
-    TileDataType_F32,
-    TileDataType_FP8,
-    TileDataType_FPL8,
-    TileDataType_FP4,
-    TileDataType_FPL4,
-    TileDataType_S4,
-    TileDataType_U4,
-    TileDataType_E8M0
+    TileDataType_HiF8,
+    TileDataType_E4M3,
+    TileDataType_E5M2,
+    TileDataType_E3M2,
+    TileDataType_E2M3,
+    TileDataType_E2M1X2,
+    TileDataType_E1M2X2,
+    TileDataType_E8M0,
+    TileDataType_HiF4X2,
+    TileDataType_S64,
+    TileDataType_S32,
+    TileDataType_S16,
+    TileDataType_S8,
+    TileDataType_S4X2,
+    TileDataType_U64,
+    TileDataType_U32,
+    TileDataType_U16,
+    TileDataType_U8,
+    TileDataType_U4X2
+};
+
+type TileDataLayout of enumeration {
+    TileDataLayout_NORM,
+    TileDataLayout_ND2DN,
+    TileDataLayout_ND2ZN,
+    TileDataLayout_ND2NZ,
+    TileDataLayout_DN2ND,
+    TileDataLayout_DN2ZN,
+    TileDataLayout_DN2NZ,
+    TileDataLayout_ZN2ND,
+    TileDataLayout_ZN2DN,
+    TileDataLayout_ZN2NZ,
+    TileDataLayout_NZ2ND,
+    TileDataLayout_NZ2DN,
+    TileDataLayout_NZ2ZN
+};
+
+type TilePadValue of enumeration {
+    TilePad_Zero,
+    TilePad_Max,
+    TilePad_Min,
+    TilePad_Null
 };
 
 type TileLayout of enumeration {
@@ -485,6 +490,7 @@ type TileInstructionOperands of record {
     source1: TileIndex,
     source2: TileIndex,
     source3: TileIndex,
+    source4: TileIndex,
     address: Word,
     scalar0: Word,
     scalar1: Word,
@@ -511,6 +517,7 @@ begin
         source1 = 0,
         source2 = 0,
         source3 = 0,
+        source4 = 0,
         address = Zeros{PTO_XLEN},
         scalar0 = Zeros{PTO_XLEN},
         scalar1 = Zeros{PTO_XLEN},
@@ -536,7 +543,7 @@ type TileInfo of record {
     contents_defined: boolean,
     defined_elements: bits(PTO_MODEL_TILE_ELEMENTS),
     defined_valid_elements: integer {0..4096},
-    capacity_bytes: integer {0..524288},
+    capacity_bytes: integer {0..262144},
     rows: integer {0..65535},
     columns: integer {0..65535},
     valid_rows: integer {0..65535},
@@ -545,4 +552,39 @@ type TileInfo of record {
     layout: TileLayout,
     location: TileLocation,
     payload: TilePayload
+};
+
+type AccumulatorState of record {
+    live: boolean,
+    logical_data_type: TileDataType,
+    info: TileInfo
+};
+
+type TrapContext of record {
+    valid: boolean,
+    source_acr: AccessControlRing,
+    tpc: Word,
+    bpc: Word,
+    core_state: Word,
+    bundle_argument: Word,
+    commit_argument: Word,
+    bundle_active: boolean,
+    bundle_body_active: boolean,
+    bundle_kind: BundleKind,
+    bundle_transfer: BundleTransfer,
+    bundle_condition: boolean,
+    bundle_target: Word,
+    bundle_fallthrough: Word,
+    bundle_return_target: Word,
+    bundle_body_address: Word,
+    bundle_operation: BundleOperationDescriptor,
+    bundle_dimensions: BundleDimensionSnapshot,
+    bundle_scalar_bindings: BundleScalarBindingSnapshot,
+    bundle_tile_bindings: BundleTileBindingSnapshot,
+    bundle_control_attributes: BundleControlAttributes,
+    bundle_data_attributes: BundleDataAttributes,
+    t_queue: TemporaryQueueSnapshot,
+    u_queue: TemporaryQueueSnapshot,
+    predicates: PredicateSnapshot,
+    accumulator: AccumulatorState
 };

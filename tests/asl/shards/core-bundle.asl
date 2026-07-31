@@ -21,6 +21,9 @@ begin
     TestA2A3CubeMxBundleRejectionMatrix();
     TestBundleTileCommitLifecycle();
     TestBundleTileCommitRollback();
+    TestBundleDataAttributes0571();
+    TestBundleTileAllocationAndLifetime();
+    TestBundleTileUndersizedAllocation();
     TestTileRegisterMapping();
     TestScalarTemporaryQueues();
     TestTileAllocationState();

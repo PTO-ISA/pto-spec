@@ -25,7 +25,7 @@ to `S5-T2`.
 ## Decision
 
 PTO-v0 TEPL accepts all 98 catalogued TEPL selectors as raw XLEN-carrier
-operations. All 19 architectural `TileDataType` values are legal carriers under
+operations. All 25 architectural `TileDataType` values are legal carriers under
 the reference profile. Floating, quantized, rounded, saturated, and exceptional
 numeric interpretations remain named profile hooks and are not promoted to
 target conformance by this ADR.

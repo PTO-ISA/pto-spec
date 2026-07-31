@@ -915,6 +915,61 @@
       ]
     },
     {
+      "id": "PTO-REQ-RELEASE-ISA-001",
+      "model": [
+        "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "specification.toml",
+        "spec/release-manifest.json",
+        "spec/catalog/command-forms.json",
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/pto-isa-0571-abi-vectors.json",
+        "spec/evidence/pto-isa-0571-encoding-totality.json",
+        "asl/bundle/state.asl",
+        "asl/bundle/dispatch.asl",
+        "asl/tile/state.asl",
+        "asl/tile/legality.asl",
+        "asl/tile/memory.asl",
+        "asl/tile/cube.asl",
+        "scripts/generate-release-manifest"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+      "status": "accepted-implementation-in-progress",
+      "tests": [
+        "scripts/check-catalogs",
+        "scripts/check-binary-closure",
+        "scripts/check-release-manifest",
+        "tests/asl/bundle-tests.asl",
+        "tests/asl/tile-tests.asl",
+        "tests/asl/main.asl"
+      ]
+    },
+    {
+      "id": "PTO-REQ-HARDWARE-NUMERIC-001",
+      "model": [
+        "spec/hardware-conformance-profile.json",
+        "spec/evidence/pto-isa-0571-hardware-numeric-vectors.json",
+        "asl/tile/cube.asl",
+        "asl/tile/legality.asl",
+        "asl/tile/state.asl",
+        "asl/types.asl",
+        "spec/profile-hooks.json",
+        "docs/profile-contracts.md",
+        "docs/coverage.md",
+        "docs/normative-sources.md",
+        "docs/numeric-profile-decision-register.md",
+        "spec/evidence/numeric-contracts.json",
+        "spec/evidence/numeric-conformance-readiness.json",
+        "spec/release-manifest.json"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/hardware-conformance-profile.json",
+      "status": "candidate-profile-contract-defined-conformance-open:S5-T2",
+      "tests": [
+        "scripts/check-release-manifest",
+        "tests/asl/profile-tests.asl",
+        "tests/asl/tile-tests.asl"
+      ]
+    },
+    {
       "id": "PTO-REQ-CLOSURE-001",
       "model": [
         "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
@@ -933,6 +988,7 @@
         "scripts/check-asl-test-shards",
         "scripts/check-binary-closure",
         "scripts/check-catalogs",
+        "scripts/check-release-manifest",
         "scripts/check-repository",
         "scripts/generate-executable-model-comparison",
         "scripts/generate-numeric-conformance-readiness",
@@ -966,7 +1022,8 @@
         "spec/evidence/numeric-contracts.json",
         "spec/evidence/executable-model-comparison.json",
         "spec/evidence/release-traceability-readiness.json",
-        "spec/evidence/release-gate-readiness.json"
+        "spec/evidence/release-gate-readiness.json",
+        "spec/release-manifest.json"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/normative-sources.md",
       "status": "m4-reference-closed-s5-conformance-in-progress-s6-release-open",
@@ -974,6 +1031,7 @@
         "scripts/check-asl-test-shards",
         "scripts/check-binary-closure",
         "scripts/check-catalogs",
+        "scripts/check-release-manifest",
         "scripts/check-repository"
       ]
     },

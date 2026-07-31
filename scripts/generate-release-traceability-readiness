@@ -43,14 +43,14 @@ SOURCE_PATHS = (
 )
 
 EXPECTED_COUNTS = {
-    "requirement_count": 44,
+    "requirement_count": 46,
     "scalar_form_count": 474,
-    "command_form_count": 107,
+    "command_form_count": 99,
     "tile_operation_count": 120,
     "system_register_count": 72,
     "trap_count": 13,
-    "profile_hook_count": 37,
-    "state_root_count": 70,
+    "profile_hook_count": 38,
+    "state_root_count": 72,
 }
 
 SCALAR_TRACE = {
@@ -308,6 +308,8 @@ STATE_GROUPS = {
         "_BundleDataAttributes",
         "_FrameDepth",
         "_Tiles",
+        "_Accumulator",
+        "_TileDataLayoutCapabilities",
     },
     "architectural-storage-abstraction": {"_Memory"},
     "architectural-ordering-abstraction": {"_MemoryEvents", "_MemoryEventCount"},
@@ -447,6 +449,16 @@ def state_requirements(name: str, model: str) -> list[str]:
         )
     if name == "_PredicateRegisters":
         requirements.add("PTO-REQ-PREDICATE-001")
+    if name == "_Accumulator":
+        requirements.update({"PTO-REQ-CUBE-001", "PTO-REQ-PROFILE-001"})
+    if name == "_TileDataLayoutCapabilities":
+        requirements.update(
+            {
+                "PTO-REQ-BUNDLE-OPERATION-001",
+                "PTO-REQ-RELEASE-ISA-001",
+                "PTO-REQ-TILE-LEGALITY-001",
+            }
+        )
     if name in {
         "_LastFault",
         "_FaultAddress",
@@ -500,6 +512,10 @@ def state_tests(name: str, model: str) -> list[str]:
         tests.add("tests/asl/concurrency-tests.asl")
     if name in {"_ExtendedSystemRegisters", "_SystemRegisters"}:
         tests.add("tests/asl/scalar-tests.asl")
+    if name == "_Accumulator":
+        tests.update({"tests/asl/cube-totality-tests.asl", "tests/asl/tile-tests.asl"})
+    if name == "_TileDataLayoutCapabilities":
+        tests.update({"tests/asl/bundle-tests.asl", "tests/asl/tile-tests.asl"})
     return sorted(tests)
 
 
@@ -849,7 +865,7 @@ def build_evidence() -> dict[str, Any]:
         for row in hook_rows
         if row["bounded_status"] == "target-conformance-open"
     ]
-    require(len(open_hooks) == 29, "the expected 29 S5-T2 hooks are not open")
+    require(len(open_hooks) == 30, "the expected 30 S5-T2 hooks are not open")
 
     return {
         "schema_version": 1,

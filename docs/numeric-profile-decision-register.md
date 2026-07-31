@@ -56,7 +56,7 @@ accepted architecture decisions remain authoritative.
   rest of the applicability matrix remain open.
 - ADR 0042 and `spec/evidence/numeric-variation-point-ownership.json` close
   PD-12 discovery and current-owner assignment: 99 stable variation points
-  cover all 20 domains, 108 operations, and 29 hooks. Every selected route,
+  cover all 20 domains, 108 operations, and 30 hooks. Every selected route,
   result rule, and result acceptance remains null.
 - The current maturity floor remains M4. This register improves decision
   readiness; it does not close `S5-T2-A` or numeric conformance.
@@ -90,7 +90,7 @@ acceptance-record fields.
 | ID | Proposed disposition | Review target |
 | --- | --- | --- |
 | `PD-01` | ADR 0041 fixes the A2/A3 unsupported-in-profile MX CUBE slice; portable results plus other named support restrictions and bounded target variations remain open | Complete the full applicability matrix for the accepted identities; keep CPU observational |
-| `PD-02` | ADR 0040 fixes five separate code namespaces, all 19 raw-carrier widths, reserved rejection, and packed four-bit order; numeric meanings remain profile-bound | Resolve bit-exact floating meanings, exceptional values, the complete operation/type/profile legality matrix, target availability, and positive/reserved vectors |
+| `PD-02` | ADR 0040 and the 0.57.1 contract fix five separate code namespaces, all 25 raw-carrier identities, reserved rejection, and packed four-bit order; numeric meanings remain profile-bound | Resolve bit-exact floating meanings, exceptional values, the complete operation/type/profile legality matrix, target availability, and positive/reserved vectors |
 | `PD-03` | Selector namespaces and owners fixed by ADR 0039; portable core is RNE/RTZ/RTP/RTM | Decide active codes 4–7, map named bundle/public/matrix/stochastic controls, and define all domain rounding and saturation-order rules |
 | `PD-04` | Named input/result subnormal rules selected by visible mode state or a fixed target profile | Define reset, lifetime, transitions, operation applicability, and unknown-mode rejection |
 | `PD-05` | Bit-exact special-value rules or an enumerated target result set | Choose canonicalization/payload, signaling, infinity, signed-zero, and flag interactions |

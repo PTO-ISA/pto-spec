@@ -135,9 +135,8 @@ pure func DecodeBundleOperationDescriptor(
 begin
     var selector = Zeros{10};
     var selector_valid = FALSE;
-    if CommandOperandPresent(form, CommandField_TileOpcode) then
-        selector = DecodeCommandOperandRaw(instruction, form,
-            CommandField_TileOpcode)[9:0];
+    if CommandFormSelectsTileOperation(form) then
+        selector = CommandTileCodeOfForm(instruction, form)[9:0];
         selector_valid = TRUE;
     elsif CommandOperandPresent(form, CommandField_Function) then
         selector[4:0] = DecodeCommandOperandRaw(instruction, form,
@@ -153,8 +152,11 @@ begin
         operation_class = CommandBundleOperationClassOfForm(form),
         selector_valid = selector_valid,
         selector = selector,
-        data_type_valid = CommandOperandPresent(form, CommandField_DataType),
-        data_type = if CommandOperandPresent(form, CommandField_DataType) then
+        data_type_valid = CommandFormSelectsTileOperation(form) ||
+            CommandOperandPresent(form, CommandField_DataType),
+        data_type = if CommandFormSelectsTileOperation(form) then
+            CommandTileDataTypeOfForm(instruction, form)
+            else if CommandOperandPresent(form, CommandField_DataType) then
             DecodeCommandOperandRaw(instruction, form, CommandField_DataType)[4:0]
             else Zeros{5},
         mode_valid = CommandOperandPresent(form, CommandField_Mode),
@@ -187,38 +189,39 @@ end;
 
 pure func BundleDataTypeSupported(data_type: bits(5)) => boolean
 begin
-    return data_type == '00000' || data_type == '00001' ||
-           data_type == '00100' || data_type == '00101' ||
-           data_type == '00111' || data_type == '01000' ||
-           data_type == '01101' || data_type == '01110' ||
-           data_type == '10000' || data_type == '10001' ||
-           data_type == '10010' || data_type == '10011' ||
-           data_type == '10100' || data_type == '11000' ||
-           data_type == '11001' || data_type == '11010' ||
-           data_type == '11011' || data_type == '11100';
+    let code = UInt(data_type);
+    return code <= 14 || (16 <= code && code <= 20) ||
+           (24 <= code && code <= 28);
 end;
 
 pure func BundleTileDataType(data_type: bits(5)) => TileDataType
 begin
     case data_type of
-        when '00000' => return TileDataType_F64;
-        when '00001' => return TileDataType_F32;
-        when '00100' => return TileDataType_F16;
+        when '00000' => return TileDataType_FP64;
+        when '00001' => return TileDataType_FP32;
+        when '00010' => return TileDataType_TF32;
+        when '00011' => return TileDataType_HF32;
+        when '00100' => return TileDataType_FP16;
         when '00101' => return TileDataType_BF16;
-        when '00111' => return TileDataType_FP8;
-        when '01000' => return TileDataType_FPL8;
+        when '00110' => return TileDataType_HiF8;
+        when '00111' => return TileDataType_E4M3;
+        when '01000' => return TileDataType_E5M2;
+        when '01001' => return TileDataType_E3M2;
+        when '01010' => return TileDataType_E2M3;
+        when '01011' => return TileDataType_E2M1X2;
+        when '01100' => return TileDataType_E1M2X2;
         when '01101' => return TileDataType_E8M0;
-        when '01110' => return TileDataType_FPL4;
+        when '01110' => return TileDataType_HiF4X2;
         when '10000' => return TileDataType_S64;
         when '10001' => return TileDataType_S32;
         when '10010' => return TileDataType_S16;
         when '10011' => return TileDataType_S8;
-        when '10100' => return TileDataType_S4;
+        when '10100' => return TileDataType_S4X2;
         when '11000' => return TileDataType_U64;
         when '11001' => return TileDataType_U32;
         when '11010' => return TileDataType_U16;
         when '11011' => return TileDataType_U8;
-        when '11100' => return TileDataType_U4;
+        when '11100' => return TileDataType_U4X2;
         otherwise => unreachable;
     end;
 end;
@@ -237,7 +240,12 @@ end;
 pure func BundleSelectorCode(descriptor: BundleOperationDescriptor) => bits(12)
 begin
     var code = Zeros{12};
-    code[9:0] = descriptor.selector;
+    if descriptor.mode_valid then
+        code[6:5] = descriptor.mode;
+        code[4:0] = descriptor.selector[4:0];
+    else
+        code[9:0] = descriptor.selector;
+    end;
     return code;
 end;
 
@@ -291,34 +299,313 @@ end;
 readonly func BundleOperationBindingsComplete(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
-    let binding = _BundleTileBindings[[0]];
-    if !binding.valid || !binding.last then
+    var destination_count: integer = 0;
+    var source_count: integer = 0;
+    var binding_count: integer = 0;
+    var last_seen = FALSE;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            binding_count = binding_count + 1;
+            if _BundleTileBindings[[binding]].destination_valid then
+                destination_count = destination_count + 1;
+            end;
+            if _BundleTileBindings[[binding]].source0_valid then
+                source_count = source_count + 1;
+            end;
+            if _BundleTileBindings[[binding]].source1_valid then
+                source_count = source_count + 1;
+            end;
+            if _BundleTileBindings[[binding]].last then last_seen = TRUE; end;
+        end;
+    end;
+    let expected_destinations =
+        (if TileOperandPresent(operation, TileOperand_destination0)
+         then 1 else 0) +
+        (if TileOperandPresent(operation, TileOperand_destination1)
+         then 1 else 0);
+    let expected_sources =
+        (if TileOperandPresent(operation, TileOperand_source0)
+         then 1 else 0) +
+        (if TileOperandPresent(operation, TileOperand_source1)
+         then 1 else 0) +
+        (if TileOperandPresent(operation, TileOperand_source2)
+         then 1 else 0) +
+        (if TileOperandPresent(operation, TileOperand_source3)
+         then 1 else 0) +
+        (if TileOperandPresent(operation, TileOperand_source4)
+         then 1 else 0);
+    if destination_count != expected_destinations ||
+       source_count != expected_sources then return FALSE; end;
+    if binding_count > 0 && !last_seen then return FALSE; end;
+    if (TileOperandPresent(operation, TileOperand_address) ||
+        TileOperandPresent(operation, TileOperand_scalar0) ||
+        TileOperandPresent(operation, TileOperand_scalar1)) &&
+       !_BundleScalarBindings[[0]].valid then return FALSE; end;
+    return TRUE;
+end;
+
+func BundleTileInstructionOperands() => TileInstructionOperands
+begin
+    var operands = DefaultTileInstructionOperands();
+    var destination_count: integer = 0;
+    var source_count: integer = 0;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            if _BundleTileBindings[[binding]].destination_valid then
+                if destination_count == 0 then
+                    operands.destination0 =
+                        _BundleTileBindings[[binding]].destination;
+                else
+                    operands.destination1 =
+                        _BundleTileBindings[[binding]].destination;
+                end;
+                destination_count = destination_count + 1;
+            end;
+            if _BundleTileBindings[[binding]].source0_valid then
+                case source_count of
+                    when 0 => operands.source0 =
+                        _BundleTileBindings[[binding]].source0;
+                    when 1 => operands.source1 =
+                        _BundleTileBindings[[binding]].source0;
+                    when 2 => operands.source2 =
+                        _BundleTileBindings[[binding]].source0;
+                    when 3 => operands.source3 =
+                        _BundleTileBindings[[binding]].source0;
+                    when 4 => operands.source4 =
+                        _BundleTileBindings[[binding]].source0;
+                    otherwise => unreachable;
+                end;
+                source_count = source_count + 1;
+            end;
+            if _BundleTileBindings[[binding]].source1_valid then
+                case source_count of
+                    when 0 => operands.source0 =
+                        _BundleTileBindings[[binding]].source1;
+                    when 1 => operands.source1 =
+                        _BundleTileBindings[[binding]].source1;
+                    when 2 => operands.source2 =
+                        _BundleTileBindings[[binding]].source1;
+                    when 3 => operands.source3 =
+                        _BundleTileBindings[[binding]].source1;
+                    when 4 => operands.source4 =
+                        _BundleTileBindings[[binding]].source1;
+                    otherwise => unreachable;
+                end;
+                source_count = source_count + 1;
+            end;
+        end;
+    end;
+    if _BundleScalarBindings[[0]].valid then
+        operands.address = ReadScalarRegisterOperand(
+            _BundleScalarBindings[[0]].source0);
+        operands.scalar0 = operands.address;
+        operands.scalar1 = ReadScalarRegisterOperand(
+            _BundleScalarBindings[[0]].source1);
+    end;
+    let dimension0 = UInt(_BundleDimensions[[0]]);
+    let dimension1 = UInt(_BundleDimensions[[1]]);
+    if dimension0 <= 65535 then
+        operands.natural0 = dimension0 as integer {0..65535};
+        if dimension0 != 0 then
+            operands.positive0 = dimension0 as integer {1..65535};
+        end;
+    end;
+    if dimension1 <= 65535 then
+        operands.natural1 = dimension1 as integer {0..65535};
+        if dimension1 != 0 then
+            operands.positive1 = dimension1 as integer {1..65535};
+        end;
+    end;
+    if dimension0 <= 262144 then
+        operands.byte_count = dimension0 as integer {0..262144};
+    end;
+    operands.selected_byte = UInt(_BundleDataAttributes.pad_value)
+        as integer {0..3};
+    case UInt(_BundleDataAttributes.conversion_mode) of
+        when 0 => operands.comparison = TileComparison_EQ;
+        when 1 => operands.comparison = TileComparison_NE;
+        when 2 => operands.comparison = TileComparison_LT;
+        when 3 => operands.comparison = TileComparison_GT;
+        when 4 => operands.comparison = TileComparison_LE;
+        when 5 => operands.comparison = TileComparison_GE;
+        otherwise => operands.comparison = TileComparison_EQ;
+    end;
+    operands.flag0 = _BundleDataAttributes.saturating;
+    return operands;
+end;
+
+readonly func BundleDestinationRows(shape_source_valid: boolean,
+                                    shape_source: TileIndex)
+                                    => integer {0..65535}
+begin
+    if UInt(_BundleDimensions[[0]]) >= 1 &&
+       UInt(_BundleDimensions[[0]]) <= 65535 then
+        return UInt(_BundleDimensions[[0]]) as integer {1..65535};
+    elsif shape_source_valid && TileDescriptorConfigured(shape_source) then
+        return _Tiles[[shape_source]].valid_rows;
+    elsif _Accumulator.live then
+        return _Accumulator.info.valid_rows;
+    else
+        return 1;
+    end;
+end;
+
+readonly func BundleDestinationColumns(shape_source_valid: boolean,
+                                       shape_source: TileIndex)
+                                       => integer {0..65535}
+begin
+    if UInt(_BundleDimensions[[1]]) >= 1 &&
+       UInt(_BundleDimensions[[1]]) <= 65535 then
+        return UInt(_BundleDimensions[[1]]) as integer {1..65535};
+    elsif shape_source_valid && TileDescriptorConfigured(shape_source) then
+        return _Tiles[[shape_source]].valid_columns;
+    elsif _Accumulator.live then
+        return _Accumulator.info.valid_columns;
+    else
+        return 1;
+    end;
+end;
+
+func ResolveBundleTileDestinations() => boolean
+begin
+    var reserved: array [[PTO_TILE_REGISTER_COUNT]] of boolean;
+    var resolved: array [[PTO_BUNDLE_TILE_BINDING_COUNT]] of TileIndex;
+    var required_capacity: integer = 0;
+    for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
+        reserved[[index]] = FALSE;
+    end;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        resolved[[binding]] = 0;
+        if _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].destination_valid &&
+           !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
+            required_capacity = required_capacity +
+                BundleTileDestinationSizeBytes(
+                    binding as BundleTileBindingIndex);
+            let hand =
+                UInt(_BundleTileBindings[[binding]].destination_hand);
+            var found = FALSE;
+            for offset = 0 to 15 do
+                let raw_index: integer = hand * 16 + offset;
+                if !found && !_Tiles[[raw_index]].allocated &&
+                   !reserved[[raw_index]] then
+                    resolved[[binding]] = raw_index as TileIndex;
+                    reserved[[raw_index]] = TRUE;
+                    found = TRUE;
+                end;
+            end;
+            if !found then
+                SetFault(Fault_TileAllocation, ReadTPC());
+                return FALSE;
+            end;
+        end;
+    end;
+    if TileCapacityInUse() + required_capacity > TileCapacityLimitBytes() then
+        SetFault(Fault_TileAllocation, ReadTPC());
         return FALSE;
     end;
-    if TileOperandPresent(operation, TileOperand_destination0) &&
-       !binding.destination_valid then return FALSE; end;
-    if TileOperandPresent(operation, TileOperand_source0) &&
-       !binding.source0_valid then return FALSE; end;
-    if TileOperandPresent(operation, TileOperand_source1) &&
-       !binding.source1_valid then return FALSE; end;
-    return !TileOperandPresent(operation, TileOperand_destination1) &&
-           !TileOperandPresent(operation, TileOperand_source2) &&
-           !TileOperandPresent(operation, TileOperand_source3) &&
-           !TileOperandPresent(operation, TileOperand_address) &&
-           !TileOperandPresent(operation, TileOperand_scalar0) &&
-           !TileOperandPresent(operation, TileOperand_scalar1) &&
-           !TileOperandPresent(operation, TileOperand_natural0) &&
-           !TileOperandPresent(operation, TileOperand_natural1) &&
-           !TileOperandPresent(operation, TileOperand_positive0) &&
-           !TileOperandPresent(operation, TileOperand_positive1) &&
-           !TileOperandPresent(operation, TileOperand_positive2) &&
-           !TileOperandPresent(operation, TileOperand_positive3) &&
-           !TileOperandPresent(operation, TileOperand_diagonal) &&
-           !TileOperandPresent(operation, TileOperand_byte_count) &&
-           !TileOperandPresent(operation, TileOperand_selected_byte) &&
-           !TileOperandPresent(operation, TileOperand_axis) &&
-           !TileOperandPresent(operation, TileOperand_comparison) &&
-           !TileOperandPresent(operation, TileOperand_flag0);
+
+    let selected_type = TileDataTypeFromEncoding(
+        ZeroExtend{PTO_XLEN}(CurrentBundleTileOperationDataTypeCode()));
+    var shape_source_valid = FALSE;
+    var shape_source: TileIndex = 0;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if !shape_source_valid && _BundleTileBindings[[binding]].valid then
+            if _BundleTileBindings[[binding]].source0_valid then
+                shape_source = _BundleTileBindings[[binding]].source0;
+                shape_source_valid = TRUE;
+            elsif _BundleTileBindings[[binding]].source1_valid then
+                shape_source = _BundleTileBindings[[binding]].source1;
+                shape_source_valid = TRUE;
+            end;
+        end;
+    end;
+
+    // Validate every derived descriptor before allocating any destination.
+    // This preserves precise all-or-nothing B.IOT allocation when a size code
+    // is too small for its logical shape.
+    var destination_ordinal: integer = 0;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].destination_valid &&
+           !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
+            let rows = BundleDestinationRows(
+                shape_source_valid, shape_source);
+            let columns = BundleDestinationColumns(
+                shape_source_valid, shape_source);
+            let destination_type = if destination_ordinal == 0 then
+                selected_type else TileDataType_U32;
+            if rows == 0 || columns == 0 ||
+               rows * columns > PTO_MODEL_TILE_ELEMENTS ||
+               !TileStorageFitsCapacity(rows, columns, destination_type,
+                   BundleTileDestinationSizeBytes(
+                       binding as BundleTileBindingIndex)) then
+                SetFault(Fault_TileAllocation, ReadTPC());
+                return FALSE;
+            end;
+            destination_ordinal = destination_ordinal + 1;
+        end;
+    end;
+
+    destination_ordinal = 0;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].destination_valid &&
+           !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
+            let rows = BundleDestinationRows(
+                shape_source_valid, shape_source);
+            let columns = BundleDestinationColumns(
+                shape_source_valid, shape_source);
+            let destination_type = if destination_ordinal == 0 then
+                selected_type else TileDataType_U32;
+            ConfigureTile(resolved[[binding]],
+                BundleTileDestinationSizeBytes(
+                    binding as BundleTileBindingIndex),
+                rows, columns, rows, columns, destination_type,
+                CurrentBundleTileLayout(), TileLocation_Any);
+            _BundleTileBindings[[binding]].destination = resolved[[binding]];
+            _BundleTileBindings[[binding]].destination_allocated_by_bundle =
+                TRUE;
+            destination_ordinal = destination_ordinal + 1;
+        end;
+    end;
+    return TRUE;
+end;
+
+func RollBackBundleTileDestinations()
+begin
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].destination_allocated_by_bundle then
+            ReleaseTile(_BundleTileBindings[[binding]].destination);
+            _BundleTileBindings[[binding]].destination =
+                UInt(_BundleTileBindings[[binding]].destination_hand)
+                    as TileIndex;
+            _BundleTileBindings[[binding]].destination_allocated_by_bundle =
+                FALSE;
+        end;
+    end;
+end;
+
+func SelectedBundleTileDataAttributesLegal(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
+begin
+    if !TileOperationDATRFieldsLegal(
+        operation, _BundleDataAttributes.conversion_mode,
+        _BundleDataAttributes.pad_value, _BundleDataAttributes.saturating,
+        _BundleDataAttributes.canonicalize, _BundleDataAttributes.data_type,
+        _BundleDataAttributes.rounding_mode,
+        _BundleDataAttributes.data_layout) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if _BundleDataAttributes.pad_value != Zeros{2} &&
+       TileOperationDATRPadUnion(operation) ==
+           TileDATRPadUnion_MustZero then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    return TRUE;
 end;
 
 readonly func BundleTileTypesMatch(
@@ -353,20 +640,20 @@ begin
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;
     end;
-    let binding = _BundleTileBindings[[0]];
-    var operands = DefaultTileInstructionOperands();
-    operands.destination0 = binding.destination;
-    operands.source0 = binding.source0;
-    operands.source1 = binding.source1;
-    let expected = BundleTileDataType(_BundleOperation.data_type);
-    if !BundleTileTypesMatch(operation, operands, expected) then
-        SetFault(Fault_BundleControl, ReadTPC());
+    if !SelectedBundleTileDataAttributesLegal(operation) then
         return FALSE;
     end;
+    if !ResolveBundleTileDestinations() then return FALSE; end;
+    let operands = BundleTileInstructionOperands();
     let (status, -) =
         ExecuteTileInstructionWithoutTimeWithAcceptedApplicabilityRules(
             rules, family, code, operands);
-    return status == TileExecution_Executed;
+    if _LastFault != Fault_None || status != TileExecution_Executed then
+        RollBackBundleTileDestinations();
+        return FALSE;
+    end;
+    FinalizeBundleTileAttempt(status);
+    return TRUE;
 end;
 
 func ExecuteBundleTileOperation() => boolean
@@ -482,14 +769,6 @@ begin
         return CommandExecution_Rejected;
     end;
     case handler of
-        when CommandHandler_SetBundleArgument =>
-            if CommandOperandPresent(form, CommandField_format) then
-                SetBundleArgumentKind(CommandBundleArgumentKindOfForm(form),
-                    CommandDecodedWord(instruction, form, CommandField_format));
-            else
-                SetBundleArgumentKind(CommandBundleArgumentKindOfForm(form),
-                    Zeros{PTO_XLEN});
-            end;
         when CommandHandler_SetBundleControlAttributes =>
             SetBundleControlAttributeState(
                 CommandDecodedBool(instruction, form, CommandField_trap),
@@ -499,18 +778,20 @@ begin
                 CommandDecodedBool(instruction, form, CommandField_far),
                 CommandDecodedBool(instruction, form, CommandField_DR));
         when CommandHandler_SetBundleDataAttributes =>
-            SetBundleDataAttributeState(
+            SetBundleDataAttributeState0571(
                 DecodeCommandOperandRaw(instruction, form,
                     CommandField_DataType)[4:0],
                 DecodeCommandOperandRaw(instruction, form,
-                    CommandField_DataLayout)[4:0],
+                    CommandField_Layout)[4:0],
                 DecodeCommandOperandRaw(instruction, form,
-                    CommandField_PadValue)[4:0],
+                    CommandField_PadValueOrByteId)[1:0],
                 DecodeCommandOperandRaw(instruction, form,
                     CommandField_CMode)[2:0],
                 DecodeCommandOperandRaw(instruction, form,
                     CommandField_RMode)[2:0],
-                CommandDecodedBool(instruction, form, CommandField_Sat));
+                CommandDecodedBool(instruction, form, CommandField_Sat),
+                CommandDecodedBool(
+                    instruction, form, CommandField_Canonicalize));
         when CommandHandler_SetBundleDimension =>
             if CommandOperandPresent(form, CommandField_RegSrc) then
                 SetBundleDimension(CommandDecodedBundleDimension(instruction, form),
@@ -532,7 +813,7 @@ begin
                 CommandDecodedReg5(instruction, form, CommandField_RegSrc1),
                 CommandDecodedReg5(instruction, form, CommandField_RegSrc2), 3);
         when CommandHandler_BindBundleTileIO =>
-            SetBundleTileBinding(0,
+            AddBundleTileBinding(
                 CommandOperandPresent(form, CommandField_DstTile),
                 if CommandOperandPresent(form, CommandField_DstTile) then
                     CommandDecodedTile(instruction, form, CommandField_DstTile)

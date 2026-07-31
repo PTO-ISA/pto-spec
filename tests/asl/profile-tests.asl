@@ -189,20 +189,26 @@ begin
         TileDataType_U64, Zeros{PTO_XLEN} + 4, Zeros{PTO_XLEN} + 5);
     let tile_order_left = TileProfileOrderLeft(Zeros{PTO_XLEN} + 4,
         Zeros{PTO_XLEN} + 5, FALSE, TileDataType_S64);
+    let raw_profile_nan = TileProfileValueIsNaN(
+        Zeros{PTO_XLEN} + 0x7ff8000000000000, TileDataType_FP64);
     let matrix_accumulate = TileProfileMatrixAccumulate(
         Zeros{PTO_XLEN} + 1, Zeros{PTO_XLEN} + 2, Zeros{PTO_XLEN} + 3,
         TileDataType_U64, TileDataType_U64, TileDataType_U64);
     let matrix_bias = TileProfileMatrixBias(Zeros{PTO_XLEN} + 7,
         Zeros{PTO_XLEN} + 2, TileDataType_U64, TileDataType_U64);
-    let matrix_scale = TileProfileMatrixScale(Zeros{PTO_XLEN} + 2,
+    let matrix_scaled_accumulate = TileProfileMatrixScaledAccumulate(
+        Zeros{PTO_XLEN} + 5, Zeros{PTO_XLEN} + 2,
         Zeros{PTO_XLEN} + 3, Zeros{PTO_XLEN} + 4,
-        TileDataType_U64, TileDataType_U64, TileDataType_U64);
+        Zeros{PTO_XLEN} + 6, TileDataType_FP32,
+        TileDataType_E4M3, TileDataType_E5M2,
+        TileDataType_E8M0, TileDataType_E8M0);
     assert tile_expand == Zeros{PTO_XLEN} + 9;
     assert tile_partial == Zeros{PTO_XLEN} + 20;
     assert tile_order_left;
+    assert !raw_profile_nan;
     assert matrix_accumulate == Zeros{PTO_XLEN} + 7;
     assert matrix_bias == Zeros{PTO_XLEN} + 9;
-    assert matrix_scale == Zeros{PTO_XLEN} + 24;
+    assert matrix_scaled_accumulate == Zeros{PTO_XLEN} + 149;
 
     WriteTPC(Zeros{PTO_XLEN} + 0x120);
     WriteBPC(Zeros{PTO_XLEN} + 0x100);
@@ -244,11 +250,11 @@ begin
     SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 3);
     SetBundleScalarBinding(31, 1, 2, 3, 4, 3);
-    SetBundleTileBinding(15, TRUE, 63, 1, TRUE, TRUE, 0, 63,
+    SetBundleTileBinding(15, TRUE, 3, 3, TRUE, TRUE, 0, 63,
         TRUE, TRUE, TRUE);
     SetBundleControlAttributeState(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE);
     SetBundleDataAttributeState(Zeros{5} + 1, Zeros{5} + 2,
-        Zeros{5} + 3, Zeros{3} + 1, Zeros{3} + 2, TRUE);
+        Zeros{2} + 3, Zeros{3} + 1, Zeros{3} + 2, TRUE);
     _ReservationValid = TRUE;
     _ReservationAddress = Zeros{PTO_XLEN} + 0x80;
     _ReservationSize = 8;
@@ -289,6 +295,7 @@ begin
     assert !_BundleTileBindings[[15]].valid;
     assert !_BundleControlAttributes.trap_enabled;
     assert !_BundleDataAttributes.saturating;
+    assert !_Accumulator.live;
     assert !_Tiles[[0]].allocated && !_Tiles[[63]].allocated;
     assert !_Tiles[[0]].contents_defined && !_Tiles[[63]].contents_defined;
     assert _Tiles[[0]].capacity_bytes == 0 &&

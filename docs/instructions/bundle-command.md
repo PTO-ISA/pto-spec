@@ -8,21 +8,23 @@ Bundle/command forms update the bundle descriptor, bundle arguments, bundle-visi
 
 The `B` prefix in `BSTART`, `BSTOP`, `C.BSTART`, `C.BSTOP`, and `B.*` means bundle. BPC is the bundle-body program counter. `BID` in `CROSS_BID` instead means virtual core-block identifier. These are stable ISA spellings.
 
+PTO ISA 0.57.1 freezes this 99-form command ABI. `BSTART.TEPL` carries the two-bit Mode and five-bit Function fields; named TMA and CUBE starts each have one command encoding. `B.IOT`, `B.DATR`, and `B.CATR` define tile lifetime, data attributes, and bundle-control attributes. The removed `B.ARG`, generic `BSTART.CUBE`, and generic `BSTART.FIXP` forms are not accepted. See [ADR 0045](../architecture-decisions/0045-pto-isa-release-tile-contract.md).
+
 ## Summary
 
 | Metric | Value |
 | --- | --- |
-| Accepted forms | 107 |
-| Operand fields | 58 |
-| Operand pieces | 197 |
-| Semantic handlers | 22 |
+| Accepted forms | 99 |
+| Operand fields | 57 |
+| Operand pieces | 190 |
+| Semantic handlers | 21 |
 
 ## Groups
 
 | Group | Forms |
 | --- | --- |
 | General | 3 |
-| Bundle Argument | 9 |
+| Bundle Argument | 3 |
 | Bundle Dimension | 2 |
 | Bundle Data Attribute | 1 |
 | Bundle Control Attribute | 1 |
@@ -31,7 +33,7 @@ The `B` prefix in `BSTART`, `BSTOP`, `C.BSTART`, `C.BSTOP`, and `B.*` means bund
 | Bundle Hint | 2 |
 | BSTART | 20 |
 | C.BSTART | 5 |
-| Bundle Split | 57 |
+| Bundle Split | 55 |
 
 ## Handler coverage
 
@@ -39,7 +41,7 @@ The `B` prefix in `BSTART`, `BSTOP`, `C.BSTART`, `C.BSTOP`, and `B.*` means bund
 | --- | --- |
 | BindBundleScalarIO | 1 |
 | BindBundleTileIO | 5 |
-| ExecuteBundleStart | 71 |
+| ExecuteBundleStart | 69 |
 | ExecuteBundleStop | 2 |
 | ExecuteCrossBlockTransfer | 1 |
 | ExecuteFrameEntry | 1 |
@@ -53,7 +55,6 @@ The `B` prefix in `BSTART`, `BSTOP`, `C.BSTART`, `C.BSTOP`, and `B.*` means bund
 | ExecuteQueuePush | 1 |
 | RecoverExecutionContext | 1 |
 | SaveExecutionContext | 1 |
-| SetBundleArgument | 6 |
 | SetBundleBodyAddress | 1 |
 | SetBundleControlAttributes | 1 |
 | SetBundleDataAttributes | 1 |
@@ -72,12 +73,6 @@ The `B` prefix in `BSTART`, `BSTOP`, `C.BSTART`, `C.BSTOP`, and `B.*` means bund
 
 | Mnemonic | Assembly | Length | Kind | Handler | Summary | Encoding | Fields | Constraints |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| B.ARG | B.ARG DN2NZ.normal, FP32, Null | 32 | L32 | SetBundleArgument | Updates the bundle argument or format state selected by the encoded argument kind. | 0:32b mask=0xffffffff match=0x1800a4a3 | none | none |
-| B.ARG | B.ARG DN2ZN.normal, FP16, Null | 32 | L32 | SetBundleArgument | Updates the bundle argument or format state selected by the encoded argument kind. | 0:32b mask=0xffffffff match=0x18022423 | none | none |
-| B.ARG | B.ARG ND2ZN.normal, FP16, Null | 32 | L32 | SetBundleArgument | Updates the bundle argument or format state selected by the encoded argument kind. | 0:32b mask=0xffffffff match=0x180221a3 | none | none |
-| B.ARG | B.ARG NORM.normal | 32 | L32 | SetBundleArgument | Updates the bundle argument or format state selected by the encoded argument kind. | 0:32b mask=0xffffffff match=0x000fa023 | none | none |
-| B.ARG | B.ARG NZ2DN.canon | 32 | L32 | SetBundleArgument | Updates the bundle argument or format state selected by the encoded argument kind. | 0:32b mask=0xffffffff match=0x020fae23 | none | none |
-| B.ARG | B.ARG format | 32 | L32 | SetBundleArgument | Updates the bundle argument or format state selected by the encoded argument kind. | 0:32b mask=0xfffff07f match=0x00003043 | format[5] encoding-defined (i7:5→v0) | none |
 | B.DIM | B.DIM RegSrc, uimm, -&gt;LB0 | 32 | L32 | SetBundleDimension | Writes one of the three bundle-local dimension registers. | 0:32b mask=0x0000707f match=0x00000043 | RegSrc[5] encoding-defined (i15:5→v0)&lt;br&gt;uimm17[17] unsigned (i20:12→v0,i7:5→v12) | none |
 | B.DIM | B.DIM RegSrc, uimm, -&gt;LB1 | 32 | L32 | SetBundleDimension | Writes one of the three bundle-local dimension registers. | 0:32b mask=0x0000707f match=0x00001043 | RegSrc[5] encoding-defined (i15:5→v0)&lt;br&gt;uimm17[17] unsigned (i20:12→v0,i7:5→v12) | none |
 | B.DIM | B.DIM RegSrc, uimm, -&gt;LB2 | 32 | L32 | SetBundleDimension | Writes one of the three bundle-local dimension registers. | 0:32b mask=0x0000707f match=0x00002043 | RegSrc[5] encoding-defined (i15:5→v0)&lt;br&gt;uimm17[17] unsigned (i20:12→v0,i7:5→v12) | none |
@@ -93,13 +88,13 @@ The `B` prefix in `BSTART`, `BSTOP`, `C.BSTART`, `C.BSTOP`, and `B.*` means bund
 
 | Mnemonic | Assembly | Length | Kind | Handler | Summary | Encoding | Fields | Constraints |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| B.DATR | B.DATR {layout.{canon, normal}, datatype, padvalue, cmode, rmode, sat} | 32 | L32 | SetBundleDataAttributes | Latches tile layout, data type, padding, conversion, rounding, and saturation attributes. | 0:32b mask=0x0000707f match=0x00001023 | CMode[3] encoding-defined (i25:3→v0)&lt;br&gt;DataLayout[5] encoding-defined (i7:5→v0)&lt;br&gt;DataType[5] encoding-defined (i20:5→v0)&lt;br&gt;PadValue[5] encoding-defined (i15:5→v0)&lt;br&gt;RMode[3] encoding-defined (i28:3→v0)&lt;br&gt;Sat[1] encoding-defined (i31:1→v0) | none |
+| B.DATR | B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize} | 32 | L32 | SetBundleDataAttributes | Latches tile layout, data type, padding, conversion, rounding, and saturation attributes. | 0:32b mask=0x000c707f match=0x00001023 | CMode[3] encoding-defined (i29:3→v0)&lt;br&gt;PadValueOrByteId[2] encoding-defined (i27:2→v0)&lt;br&gt;Sat[1] encoding-defined (i26:1→v0)&lt;br&gt;Canonicalize[1] encoding-defined (i25:1→v0)&lt;br&gt;DataType[5] encoding-defined (i20:5→v0)&lt;br&gt;RMode[3] encoding-defined (i15:3→v0)&lt;br&gt;Layout[5] encoding-defined (i7:5→v0) | CMode one-of {0, 1, 2, 3, 4, 5}&lt;br&gt;DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28}&lt;br&gt;Layout one-of {0, 1, 3, 4, 6, 8, 9, 17, 18, 20, 27, 28, 30} |
 
 ## Bundle Control Attribute
 
 | Mnemonic | Assembly | Length | Kind | Handler | Summary | Encoding | Fields | Constraints |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| B.CATR | B.CATR {trap, atomic, &lt;aq, rl, aqrl&gt;, far, dr} | 32 | L32 | SetBundleControlAttributes | Latches bundle control, trap, atomic, ordering, and address-class attributes. | 0:32b mask=0x03ffffff match=0x00000023 | DR[1] encoding-defined (i26:1→v0)&lt;br&gt;aq[1] encoding-defined (i29:1→v0)&lt;br&gt;atom[1] encoding-defined (i30:1→v0)&lt;br&gt;far[1] encoding-defined (i27:1→v0)&lt;br&gt;rl[1] encoding-defined (i28:1→v0)&lt;br&gt;trap[1] encoding-defined (i31:1→v0) | none |
+| B.CATR | B.CATR {trap, atomic, &lt;aq, rl, aqrl&gt;, far, dr} | 32 | L32 | SetBundleControlAttributes | Latches bundle control, trap, atomic, ordering, and address-class attributes. | 0:32b mask=0xfbf07fff match=0x00000023 | DR[1] encoding-defined (i26:1→v0)&lt;br&gt;trap[1] encoding-defined (i19:1→v0)&lt;br&gt;far[1] encoding-defined (i18:1→v0)&lt;br&gt;atom[1] encoding-defined (i17:1→v0)&lt;br&gt;aq[1] encoding-defined (i16:1→v0)&lt;br&gt;rl[1] encoding-defined (i15:1→v0) | none |
 
 ## Bundle Offset
 
@@ -112,11 +107,11 @@ The `B` prefix in `BSTART`, `BSTOP`, `C.BSTART`, `C.BSTOP`, and `B.*` means bund
 | Mnemonic | Assembly | Length | Kind | Handler | Summary | Encoding | Fields | Constraints |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | B.IOR | B.IOR [RegSrc0, RegSrc1, RegSrc2],[RegDst] | 32 | L32 | BindBundleScalarIO | Binds encoded scalar inputs and outputs to the current bundle interface. | 0:32b mask=0x0600707f match=0x00000013 | RegDst[5] encoding-defined (i7:5→v0)&lt;br&gt;RegSrc0[5] encoding-defined (i15:5→v0)&lt;br&gt;RegSrc1[5] encoding-defined (i20:5→v0)&lt;br&gt;RegSrc2[5] encoding-defined (i27:5→v0) | none |
-| B.IOT | B.IOT &lt;last&gt;, -&gt;DstTile&lt;Size&gt; | 32 | L32 | BindBundleTileIO | Binds encoded tile inputs and outputs, reuse, last-use, and allocation-size metadata. | 0:32b mask=0xc03fffff match=0x00006013 | DstTile[3] encoding-defined (i22:3→v0)&lt;br&gt;L[1] encoding-defined (i29:1→v0)&lt;br&gt;imm4[4] encoding-defined (i25:4→v0) | none |
-| B.IOT | B.IOT SrcTile0&lt;.reuse&gt;, &lt;last&gt; | 32 | L32 | BindBundleTileIO | Binds encoded tile inputs and outputs, reuse, last-use, and allocation-size metadata. | 0:32b mask=0x9fff707f match=0x01c05013 | L[1] encoding-defined (i29:1→v0)&lt;br&gt;S0R[1] encoding-defined (i30:1→v0)&lt;br&gt;SrcTile0[6] encoding-defined (i7:5→v0,i15:1→v5) | none |
-| B.IOT | B.IOT SrcTile0&lt;.reuse&gt;, &lt;last&gt;, -&gt;DstTile&lt;Size&gt; | 32 | L32 | BindBundleTileIO | Binds encoded tile inputs and outputs, reuse, last-use, and allocation-size metadata. | 0:32b mask=0x803f707f match=0x00005013 | DstTile[3] encoding-defined (i22:3→v0)&lt;br&gt;L[1] encoding-defined (i29:1→v0)&lt;br&gt;S0R[1] encoding-defined (i30:1→v0)&lt;br&gt;SrcTile0[6] encoding-defined (i7:5→v0,i15:1→v5)&lt;br&gt;imm4[4] encoding-defined (i25:4→v0) | DstTile not-equal 7 |
-| B.IOT | B.IOT SrcTile0&lt;.reuse&gt;, SrcTile1&lt;.reuse&gt;, &lt;last&gt; | 32 | L32 | BindBundleTileIO | Binds encoded tile inputs and outputs, reuse, last-use, and allocation-size metadata. | 0:32b mask=0x1fc0707f match=0x01c04013 | L[1] encoding-defined (i29:1→v0)&lt;br&gt;S0R[1] encoding-defined (i30:1→v0)&lt;br&gt;S1R[1] encoding-defined (i31:1→v0)&lt;br&gt;SrcTile0[6] encoding-defined (i7:5→v0,i15:1→v5)&lt;br&gt;SrcTile1[6] encoding-defined (i16:6→v0) | none |
-| B.IOT | B.IOT SrcTile0&lt;.reuse&gt;, SrcTile1&lt;.reuse&gt;, &lt;last&gt;, -&gt;DstTile&lt;Size&gt; | 32 | L32 | BindBundleTileIO | Binds encoded tile inputs and outputs, reuse, last-use, and allocation-size metadata. | 0:32b mask=0x0000707f match=0x00004013 | DstTile[3] encoding-defined (i22:3→v0)&lt;br&gt;L[1] encoding-defined (i29:1→v0)&lt;br&gt;S0R[1] encoding-defined (i30:1→v0)&lt;br&gt;S1R[1] encoding-defined (i31:1→v0)&lt;br&gt;SrcTile0[6] encoding-defined (i7:5→v0,i15:1→v5)&lt;br&gt;SrcTile1[6] encoding-defined (i16:6→v0)&lt;br&gt;imm4[4] encoding-defined (i25:4→v0) | DstTile not-equal 7 |
+| B.IOT | B.IOT &lt;last&gt;, -&gt;DstTile&lt;Size&gt; | 32 | L32 | BindBundleTileIO | Binds encoded tile inputs and outputs, reuse, last-use, and allocation-size metadata. | 0:32b mask=0xfff07c7f match=0x00006013 | L[1] encoding-defined (i19:1→v0)&lt;br&gt;imm4[4] encoding-defined (i15:4→v0)&lt;br&gt;DstTile[3] encoding-defined (i7:3→v0) | DstTile one-of {0, 1, 2, 3}&lt;br&gt;imm4 one-of {3, 4, 5, 6, 7, 8, 9} |
+| B.IOT | B.IOT SrcTile0&lt;.reuse&gt;, &lt;last&gt; | 32 | L32 | BindBundleTileIO | Binds encoded tile inputs and outputs, reuse, last-use, and allocation-size metadata. | 0:32b mask=0xfc07fbff match=0x00005013 | SrcTile0[6] encoding-defined (i20:6→v0)&lt;br&gt;L[1] encoding-defined (i19:1→v0)&lt;br&gt;S0R[1] encoding-defined (i10:1→v0) | none |
+| B.IOT | B.IOT SrcTile0&lt;.reuse&gt;, &lt;last&gt;, -&gt;DstTile&lt;Size&gt; | 32 | L32 | BindBundleTileIO | Binds encoded tile inputs and outputs, reuse, last-use, and allocation-size metadata. | 0:32b mask=0xfc00787f match=0x00005013 | SrcTile0[6] encoding-defined (i20:6→v0)&lt;br&gt;L[1] encoding-defined (i19:1→v0)&lt;br&gt;imm4[4] encoding-defined (i15:4→v0)&lt;br&gt;S0R[1] encoding-defined (i10:1→v0)&lt;br&gt;DstTile[3] encoding-defined (i7:3→v0) | DstTile one-of {0, 1, 2, 3}&lt;br&gt;imm4 one-of {3, 4, 5, 6, 7, 8, 9} |
+| B.IOT | B.IOT SrcTile0&lt;.reuse&gt;, SrcTile1&lt;.reuse&gt;, &lt;last&gt; | 32 | L32 | BindBundleTileIO | Binds encoded tile inputs and outputs, reuse, last-use, and allocation-size metadata. | 0:32b mask=0x0007f3ff match=0x00004013 | SrcTile1[6] encoding-defined (i26:6→v0)&lt;br&gt;SrcTile0[6] encoding-defined (i20:6→v0)&lt;br&gt;L[1] encoding-defined (i19:1→v0)&lt;br&gt;S1R[1] encoding-defined (i11:1→v0)&lt;br&gt;S0R[1] encoding-defined (i10:1→v0) | none |
+| B.IOT | B.IOT SrcTile0&lt;.reuse&gt;, SrcTile1&lt;.reuse&gt;, &lt;last&gt;, -&gt;DstTile&lt;Size&gt; | 32 | L32 | BindBundleTileIO | Binds encoded tile inputs and outputs, reuse, last-use, and allocation-size metadata. | 0:32b mask=0x0000707f match=0x00004013 | SrcTile1[6] encoding-defined (i26:6→v0)&lt;br&gt;SrcTile0[6] encoding-defined (i20:6→v0)&lt;br&gt;L[1] encoding-defined (i19:1→v0)&lt;br&gt;imm4[4] encoding-defined (i15:4→v0)&lt;br&gt;S1R[1] encoding-defined (i11:1→v0)&lt;br&gt;S0R[1] encoding-defined (i10:1→v0)&lt;br&gt;DstTile[3] encoding-defined (i7:3→v0) | DstTile one-of {0, 1, 2, 3}&lt;br&gt;imm4 one-of {3, 4, 5, 6, 7, 8, 9} |
 
 ## Bundle Hint
 
@@ -154,10 +149,10 @@ The `B` prefix in `BSTART`, `BSTOP`, `C.BSTART`, `C.BSTOP`, and `B.*` means bund
 
 | Mnemonic | Assembly | Length | Kind | Handler | Summary | Encoding | Fields | Constraints |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| C.BSTART.FP | C.BSTART.FP BrType | 16 | C16 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:16b mask=0xc7ff match=0x0080 | BrType[3] encoding-defined (i11:3→v0) | BrType not-equal 0&lt;br&gt;BrType not-equal 2&lt;br&gt;BrType not-equal 3&lt;br&gt;BrType not-equal 4 |
+| C.BSTART.FP | C.BSTART.FP BrType | 16 | C16 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:16b mask=0xc7ff match=0x0080 | BrType[3] encoding-defined (i11:3→v0) | BrType not-equal 0 |
 | C.BSTART.MPAR | C.BSTART.MPAR FALL | 16 | C16 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:16b mask=0xffff match=0x08c0 | none | none |
 | C.BSTART.MSEQ | C.BSTART.MSEQ FALL | 16 | C16 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:16b mask=0xffff match=0x48c0 | none | none |
-| C.BSTART.STD | C.BSTART.STD BrType | 16 | C16 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:16b mask=0xc7ff match=0x0000 | BrType[3] encoding-defined (i11:3→v0) | BrType not-equal 0&lt;br&gt;BrType not-equal 2&lt;br&gt;BrType not-equal 3&lt;br&gt;BrType not-equal 4 |
+| C.BSTART.STD | C.BSTART.STD BrType | 16 | C16 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:16b mask=0xc7ff match=0x0000 | BrType[3] encoding-defined (i11:3→v0) | BrType not-equal 0 |
 | C.BSTART.SYS | C.BSTART.SYS FALL | 16 | C16 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:16b mask=0xffff match=0x0840 | none | none |
 
 ## Bundle Split
@@ -165,10 +160,8 @@ The `B` prefix in `BSTART`, `BSTOP`, `C.BSTART`, `C.BSTOP`, and `B.*` means bund
 | Mnemonic | Assembly | Length | Kind | Handler | Summary | Encoding | Fields | Constraints |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | BSTART | BSTART COND, &lt;label&gt; | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x0000007f match=0x00000021 | simm25[25] signed (i7:25→v0) | none |
-| BSTART | BSTART DIRECT, &lt;label&gt; | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x0000007f match=0x00000011 | simm25[25] signed (i7:25→v0) | none |
-| BSTART.ACCCVT | BSTART.ACCCVT DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00831181 | DataType[5] encoding-defined (i27:5→v0) | none |
-| BSTART.CUBE | BSTART.CUBE Function, DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x060fffff match=0x00031181 | DataType[5] encoding-defined (i27:5→v0)&lt;br&gt;Function[5] encoding-defined (i20:5→v0) | Function not-equal 0&lt;br&gt;Function not-equal 1&lt;br&gt;Function not-equal 2&lt;br&gt;Function not-equal 4&lt;br&gt;Function not-equal 5&lt;br&gt;Function not-equal 6&lt;br&gt;Function not-equal 8&lt;br&gt;Function not-equal 16&lt;br&gt;Function not-equal 17&lt;br&gt;Function not-equal 18&lt;br&gt;Function not-equal 20&lt;br&gt;Function not-equal 21&lt;br&gt;Function not-equal 22 |
-| BSTART.FIXP | BSTART.FIXP TileOp, DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x060fffff match=0x00039181 | DataType[5] encoding-defined (i27:5→v0)&lt;br&gt;Function[5] encoding-defined (i20:5→v0) | none |
+| BSTART | BSTART {DIRECT, CALL}, &lt;label&gt; | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x0000007f match=0x00000011 | simm25[25] signed (i7:25→v0) | none |
+| BSTART.ACCCVT | BSTART.ACCCVT DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00831181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
 | BSTART.FP | BSTART.FP CALL, &lt;label&gt; | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x00007fff match=0x00004101 | simm17[17] signed (i15:17→v0) | none |
 | BSTART.FP | BSTART.FP COND, &lt;label&gt; | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x00007fff match=0x00003101 | simm17[17] signed (i15:17→v0) | none |
 | BSTART.FP | BSTART.FP DIRECT, &lt;label&gt; | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x00007fff match=0x00002101 | simm17[17] signed (i15:17→v0) | none |
@@ -176,12 +169,12 @@ The `B` prefix in `BSTART`, `BSTOP`, `C.BSTART`, `C.BSTOP`, and `B.*` means bund
 | BSTART.FP | BSTART.FP ICALL | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0xffffffff match=0x00006101 | none | none |
 | BSTART.FP | BSTART.FP IND | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0xffffffff match=0x00005101 | none | none |
 | BSTART.FP | BSTART.FP RET | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0xffffffff match=0x00007101 | none | none |
-| BSTART.MGATHER | BSTART.MGATHER DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00411181 | DataType[5] encoding-defined (i27:5→v0) | none |
-| BSTART.MGATHER.CAS | BSTART.MGATHER.CAS DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00811181 | DataType[5] encoding-defined (i27:5→v0) | none |
-| BSTART.MGATHER.MASK | BSTART.MGATHER.MASK DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00611181 | DataType[5] encoding-defined (i27:5→v0) | none |
+| BSTART.MGATHER | BSTART.MGATHER DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00411181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.MGATHER.CAS | BSTART.MGATHER.CAS DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00811181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.MGATHER.MASK | BSTART.MGATHER.MASK DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00611181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
 | BSTART.MPAR | BSTART.MPAR &lt;VS8, VS16&gt; | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0xf9ffffff match=0x00001181 | Mode[2] encoding-defined (i25:2→v0) | none |
-| BSTART.MSCATTER | BSTART.MSCATTER DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00511181 | DataType[5] encoding-defined (i27:5→v0) | none |
-| BSTART.MSCATTER.MASK | BSTART.MSCATTER.MASK DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00711181 | DataType[5] encoding-defined (i27:5→v0) | none |
+| BSTART.MSCATTER | BSTART.MSCATTER DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00511181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.MSCATTER.MASK | BSTART.MSCATTER.MASK DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00711181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
 | BSTART.MSEQ | BSTART.MSEQ &lt;VS8, VS16&gt; | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0xf9ffffff match=0x00009181 | Mode[2] encoding-defined (i25:2→v0) | none |
 | BSTART.STD | BSTART.STD CALL, &lt;label&gt; | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x00007fff match=0x00004001 | simm17[17] signed (i15:17→v0) | none |
 | BSTART.STD | BSTART.STD COND, &lt;label&gt; | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x00007fff match=0x00003001 | simm17[17] signed (i15:17→v0) | none |
@@ -191,23 +184,23 @@ The `B` prefix in `BSTART`, `BSTOP`, `C.BSTART`, `C.BSTOP`, and `B.*` means bund
 | BSTART.STD | BSTART.STD IND | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0xffffffff match=0x00005001 | none | none |
 | BSTART.STD | BSTART.STD RET | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0xffffffff match=0x00007001 | none | none |
 | BSTART.SYS | BSTART.SYS FALL&lt;, fixup_label&gt; | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x00007fff match=0x00001081 | simm17[17] signed (i15:17→v0) | none |
-| BSTART.TEPL | BSTART.TEPL TileOpcode, DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x06007fff match=0x02001181 | DataType[5] encoding-defined (i27:5→v0)&lt;br&gt;TileOpcode[10] encoding-defined (i15:10→v0) | none |
-| BSTART.TGEMV | BSTART.TGEMV DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x01031181 | DataType[5] encoding-defined (i27:5→v0) | none |
-| BSTART.TGEMV.ACC | BSTART.TGEMV.ACC DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x01231181 | DataType[5] encoding-defined (i27:5→v0) | none |
-| BSTART.TGEMV.BIAS | BSTART.TGEMV.BIAS DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x01131181 | DataType[5] encoding-defined (i27:5→v0) | none |
-| BSTART.TGEMVMX | BSTART.TGEMVMX DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x01431181 | DataType[5] encoding-defined (i27:5→v0) | none |
-| BSTART.TGEMVMX.ACC | BSTART.TGEMVMX.ACC DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x01631181 | DataType[5] encoding-defined (i27:5→v0) | none |
-| BSTART.TGEMVMX.BIAS | BSTART.TGEMVMX.BIAS DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x01531181 | DataType[5] encoding-defined (i27:5→v0) | none |
-| BSTART.TLOAD | BSTART.TLOAD DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00011181 | DataType[5] encoding-defined (i27:5→v0) | none |
-| BSTART.TMATMUL | BSTART.TMATMUL DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00031181 | DataType[5] encoding-defined (i27:5→v0) | none |
-| BSTART.TMATMUL.ACC | BSTART.TMATMUL.ACC DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00231181 | DataType[5] encoding-defined (i27:5→v0) | none |
-| BSTART.TMATMUL.BIAS | BSTART.TMATMUL.BIAS DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00131181 | DataType[5] encoding-defined (i27:5→v0) | none |
-| BSTART.TMATMULMX | BSTART.TMATMULMX DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00431181 | DataType[5] encoding-defined (i27:5→v0) | none |
-| BSTART.TMATMULMX.ACC | BSTART.TMATMULMX.ACC DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00631181 | DataType[5] encoding-defined (i27:5→v0) | none |
-| BSTART.TMATMULMX.BIAS | BSTART.TMATMULMX.BIAS DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00531181 | DataType[5] encoding-defined (i27:5→v0) | none |
-| BSTART.TMOV | BSTART.TMOV DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00211181 | DataType[5] encoding-defined (i27:5→v0) | none |
-| BSTART.TPREFETCH | BSTART.TPREFETCH DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00311181 | DataType[5] encoding-defined (i27:5→v0) | none |
-| BSTART.TSTORE | BSTART.TSTORE DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00111181 | DataType[5] encoding-defined (i27:5→v0) | none |
+| BSTART.TEPL | BSTART.TEPL Mode, Function, DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x000fffff match=0x00019181 | DataType[5] encoding-defined (i27:5→v0)&lt;br&gt;Mode[2] encoding-defined (i25:2→v0)&lt;br&gt;Function[5] encoding-defined (i20:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.TGEMV | BSTART.TGEMV DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x01031181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.TGEMV.ACC | BSTART.TGEMV.ACC DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x01231181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.TGEMV.BIAS | BSTART.TGEMV.BIAS DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x01131181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.TGEMVMX | BSTART.TGEMVMX DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x01431181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.TGEMVMX.ACC | BSTART.TGEMVMX.ACC DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x01631181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.TGEMVMX.BIAS | BSTART.TGEMVMX.BIAS DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x01531181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.TLOAD | BSTART.TLOAD DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00011181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.TMATMUL | BSTART.TMATMUL DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00031181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.TMATMUL.ACC | BSTART.TMATMUL.ACC DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00231181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.TMATMUL.BIAS | BSTART.TMATMUL.BIAS DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00131181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.TMATMULMX | BSTART.TMATMULMX DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00431181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.TMATMULMX.ACC | BSTART.TMATMULMX.ACC DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00631181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.TMATMULMX.BIAS | BSTART.TMATMULMX.BIAS DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00531181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.TMOV | BSTART.TMOV DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00211181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.TPREFETCH | BSTART.TPREFETCH DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00311181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.TSTORE | BSTART.TSTORE DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00111181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
 | BSTOP | BSTOP | 32 | L32 | ExecuteBundleStop | Commits the current bundle and transfers to its selected continuation. | 0:32b mask=0xffffffff match=0x00000001 | none | none |
 | C.BSTART | C.BSTART COND,  label | 16 | C16 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:16b mask=0x000f match=0x0004 | simm12[12] signed (i4:12→v0) | none |
 | C.BSTART | C.BSTART DIRECT, label | 16 | C16 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:16b mask=0x000f match=0x0002 | simm12[12] signed (i4:12→v0) | none |

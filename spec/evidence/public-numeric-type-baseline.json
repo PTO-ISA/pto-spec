@@ -3,14 +3,14 @@
   "target": "S5-T2-A5:PD-02-SC2",
   "decision_id": "PD-02",
   "checkpoint_id": "PD-02-SC2",
-  "status": "public-type-identity-and-target-availability-baseline-closed-result-and-legality-open",
+  "status": "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
   "acceptance_record": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
   "policy": {
     "authority": "Only the pinned public PTO contract defines public type identities and target availability.",
     "support_not_semantics": "Availability is a type-support fact, not an operation/type legality or numeric-result rule.",
     "profile_narrowing": "A named target profile may narrow support but may not redefine portable PTO semantics.",
     "cpu_observation": "The CPU simulator is implementation evidence and is neither a target-profile authority nor a numeric oracle.",
-    "unbound_catalog_names": "A PTO raw-carrier name without one accepted public binding remains unbound; spelling or backend type aliases do not create a format."
+    "non_public_catalog_names": "The nine remaining PTO TileDataType identities are defined by the 0.57.1 hardware contract but have no alias in the pinned public type inventory; that absence does not weaken their architectural identity."
   },
   "public_types": [
     {
@@ -24,7 +24,7 @@
       "signed": null,
       "a2a3_available": true,
       "a5_available": true,
-      "catalog_binding": "TileDataType_F16",
+      "catalog_binding": "TileDataType_FP16",
       "binding_status": "public-identity-bound-result-rules-open",
       "result_rule_id": null,
       "result_acceptance_record": null
@@ -54,7 +54,7 @@
       "signed": null,
       "a2a3_available": true,
       "a5_available": true,
-      "catalog_binding": "TileDataType_F32",
+      "catalog_binding": "TileDataType_FP32",
       "binding_status": "public-identity-bound-result-rules-open",
       "result_rule_id": null,
       "result_acceptance_record": null
@@ -70,8 +70,8 @@
       "signed": null,
       "a2a3_available": false,
       "a5_available": true,
-      "catalog_binding": null,
-      "binding_status": "public-identity-known-catalog-binding-open",
+      "catalog_binding": "TileDataType_E4M3",
+      "binding_status": "public-identity-bound-result-rules-open",
       "result_rule_id": null,
       "result_acceptance_record": null
     },
@@ -86,8 +86,8 @@
       "signed": null,
       "a2a3_available": false,
       "a5_available": true,
-      "catalog_binding": null,
-      "binding_status": "public-identity-known-catalog-binding-open",
+      "catalog_binding": "TileDataType_E5M2",
+      "binding_status": "public-identity-bound-result-rules-open",
       "result_rule_id": null,
       "result_acceptance_record": null
     },
@@ -102,8 +102,8 @@
       "signed": null,
       "a2a3_available": false,
       "a5_available": true,
-      "catalog_binding": null,
-      "binding_status": "public-identity-known-catalog-binding-open",
+      "catalog_binding": "TileDataType_HiF8",
+      "binding_status": "public-identity-bound-result-rules-open",
       "result_rule_id": null,
       "result_acceptance_record": null
     },
@@ -118,8 +118,8 @@
       "signed": null,
       "a2a3_available": false,
       "a5_available": true,
-      "catalog_binding": null,
-      "binding_status": "public-identity-known-catalog-binding-open",
+      "catalog_binding": "TileDataType_E1M2X2",
+      "binding_status": "public-identity-bound-result-rules-open",
       "result_rule_id": null,
       "result_acceptance_record": null
     },
@@ -134,8 +134,8 @@
       "signed": null,
       "a2a3_available": false,
       "a5_available": true,
-      "catalog_binding": null,
-      "binding_status": "public-identity-known-catalog-binding-open",
+      "catalog_binding": "TileDataType_E2M1X2",
+      "binding_status": "public-identity-bound-result-rules-open",
       "result_rule_id": null,
       "result_acceptance_record": null
     },
@@ -255,8 +255,8 @@
   "accepted_catalog_bindings": [
     {
       "public_type_id": "public-type/f16",
-      "catalog_name": "F16",
-      "asl_enumerator": "TileDataType_F16",
+      "catalog_name": "FP16",
+      "asl_enumerator": "TileDataType_FP16",
       "storage_bits": 16,
       "status": "accepted-identity-binding-result-rules-open"
     },
@@ -269,9 +269,44 @@
     },
     {
       "public_type_id": "public-type/f32",
-      "catalog_name": "F32",
-      "asl_enumerator": "TileDataType_F32",
+      "catalog_name": "FP32",
+      "asl_enumerator": "TileDataType_FP32",
       "storage_bits": 32,
+      "status": "accepted-identity-binding-result-rules-open"
+    },
+    {
+      "public_type_id": "public-type/f8e4m3",
+      "catalog_name": "E4M3",
+      "asl_enumerator": "TileDataType_E4M3",
+      "storage_bits": 8,
+      "status": "accepted-identity-binding-result-rules-open"
+    },
+    {
+      "public_type_id": "public-type/f8e5m2",
+      "catalog_name": "E5M2",
+      "asl_enumerator": "TileDataType_E5M2",
+      "storage_bits": 8,
+      "status": "accepted-identity-binding-result-rules-open"
+    },
+    {
+      "public_type_id": "public-type/hifloat8",
+      "catalog_name": "HiF8",
+      "asl_enumerator": "TileDataType_HiF8",
+      "storage_bits": 8,
+      "status": "accepted-identity-binding-result-rules-open"
+    },
+    {
+      "public_type_id": "public-type/float4_e1m2x2",
+      "catalog_name": "E1M2X2",
+      "asl_enumerator": "TileDataType_E1M2X2",
+      "storage_bits": 4,
+      "status": "accepted-identity-binding-result-rules-open"
+    },
+    {
+      "public_type_id": "public-type/float4_e2m1x2",
+      "catalog_name": "E2M1X2",
+      "asl_enumerator": "TileDataType_E2M1X2",
+      "storage_bits": 4,
       "status": "accepted-identity-binding-result-rules-open"
     },
     {
@@ -331,53 +366,51 @@
       "status": "accepted-identity-binding-result-rules-open"
     }
   ],
-  "unresolved_catalog_types": [
+  "non_public_catalog_types": [
     {
-      "catalog_name": "F64",
-      "asl_enumerator": "TileDataType_F64",
-      "status": "public-element-type-absent-at-pinned-revision",
-      "candidate_public_types": []
+      "catalog_name": "FP64",
+      "asl_enumerator": "TileDataType_FP64",
+      "status": "architectural-type-without-public-source-alias"
     },
     {
-      "catalog_name": "FP8",
-      "asl_enumerator": "TileDataType_FP8",
-      "status": "one-catalog-name-two-public-format-candidates",
-      "candidate_public_types": [
-        "f8e4m3",
-        "f8e5m2"
-      ]
+      "catalog_name": "TF32",
+      "asl_enumerator": "TileDataType_TF32",
+      "status": "hardware-contract-specialized-type"
     },
     {
-      "catalog_name": "FPL8",
-      "asl_enumerator": "TileDataType_FPL8",
-      "status": "specialized-public-binding-not-accepted",
-      "candidate_public_types": [
-        "hifloat8"
-      ]
+      "catalog_name": "HF32",
+      "asl_enumerator": "TileDataType_HF32",
+      "status": "hardware-contract-specialized-type"
     },
     {
-      "catalog_name": "FP4",
-      "asl_enumerator": "TileDataType_FP4",
-      "status": "two-specialized-public-bindings-not-accepted",
-      "candidate_public_types": [
-        "float4_e1m2x2",
-        "float4_e2m1x2"
-      ]
+      "catalog_name": "E3M2",
+      "asl_enumerator": "TileDataType_E3M2",
+      "status": "hardware-contract-specialized-type"
     },
     {
-      "catalog_name": "FPL4",
-      "asl_enumerator": "TileDataType_FPL4",
-      "status": "two-specialized-public-bindings-not-accepted",
-      "candidate_public_types": [
-        "float4_e1m2x2",
-        "float4_e2m1x2"
-      ]
+      "catalog_name": "E2M3",
+      "asl_enumerator": "TileDataType_E2M3",
+      "status": "hardware-contract-specialized-type"
     },
     {
       "catalog_name": "E8M0",
       "asl_enumerator": "TileDataType_E8M0",
-      "status": "public-element-type-absent-at-pinned-revision",
-      "candidate_public_types": []
+      "status": "hardware-contract-scale-type"
+    },
+    {
+      "catalog_name": "HiF4X2",
+      "asl_enumerator": "TileDataType_HiF4X2",
+      "status": "hardware-contract-specialized-type"
+    },
+    {
+      "catalog_name": "S4X2",
+      "asl_enumerator": "TileDataType_S4X2",
+      "status": "hardware-contract-packed-integer-type"
+    },
+    {
+      "catalog_name": "U4X2",
+      "asl_enumerator": "TileDataType_U4X2",
+      "status": "hardware-contract-packed-integer-type"
     }
   ],
   "target_profiles": [
@@ -475,45 +508,33 @@
   "open_residuals": [
     {
       "id": "PD-02-R1",
-      "rule": "bind FP8, FPL8, FP4, and FPL4 to unique bit-exact public formats"
-    },
-    {
-      "id": "PD-02-R2",
-      "rule": "decide the public numeric role of the F64 raw carrier"
-    },
-    {
-      "id": "PD-02-R3",
-      "rule": "decide the public numeric role of the E8M0 raw carrier"
-    },
-    {
-      "id": "PD-02-R4",
-      "rule": "resolve the published E5M2 versus E5M3FN spelling conflict"
-    },
-    {
-      "id": "PD-02-R5",
-      "rule": "publish bit-exact payload fields and exceptional-value classes for every floating type"
-    },
-    {
-      "id": "PD-02-R6",
       "rule": "complete every scalar and tile operation/type/profile legality tuple"
     },
     {
-      "id": "PD-02-R7",
-      "rule": "publish positive and negative target-availability vectors for every accepted tuple"
+      "id": "PD-02-R2",
+      "rule": "publish independent numeric result and exception vectors for every supported tuple"
+    },
+    {
+      "id": "PD-02-R3",
+      "rule": "record downstream byte-and-effect parity for the immutable hardware profile"
+    },
+    {
+      "id": "PD-02-R4",
+      "rule": "accept architecture and formal-model review against the exact 0.57.1 type contract"
     }
   ],
   "sources": [
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "94865e7c29c2a14a63627390d51cc6c3b698a91700d6ce71785b2928bb3bd39f"
+      "sha256": "9bcb979388b28cbc9e1ff9bdfbf5e479a268a616e5a2bf514ab206fb27107d54"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "ccf96bbc5f71cdc224a512313d7c461176ed6a6888947ba6a0d6364086bb3fa6"
+      "sha256": "931472f8f33ef893e473db825b9523dc82c41408c81f7fd9e608a2751e9dbef2"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "32999bbc2b803c7d6edaafc8d02056aab0d600830efddc67b8b3226c5dd4563c"
+      "sha256": "58ca12e8e3cba790a25a95ee5230dca3ec9e21bbe2031530ac4b4eb18909f515"
     },
     {
       "path": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
@@ -526,11 +547,11 @@
     "public_integer_type_count": 8,
     "a2a3_available_type_count": 11,
     "a5_available_type_count": 16,
-    "accepted_catalog_binding_count": 11,
-    "unresolved_catalog_type_count": 6,
+    "accepted_catalog_binding_count": 16,
+    "non_public_catalog_type_count": 9,
     "accepted_result_rule_count": 0,
     "accepted_domain_rule_count": 0,
-    "open_residual_count": 7,
+    "open_residual_count": 4,
     "pd02_complete": false,
     "s5_t2_a_complete": false,
     "s5_t2_complete": false

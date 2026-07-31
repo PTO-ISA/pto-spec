@@ -22,7 +22,7 @@ portable reference can infer from raw 64-bit payload carriers.
 
 ### PTO-v0 type and placement rule
 
-PTO-v0 accepts all 19 architectural `TileDataType` values for every CUBE
+PTO-v0 accepts all 25 architectural `TileDataType` values for every CUBE
 operand and permits mixed source, scale, bias, accumulator, and destination
 types. The reference profile passes raw XLEN carriers and all operand types to
 the named matrix profile hooks. This defines deterministic reference behavior
@@ -66,7 +66,7 @@ value they wrote earlier through an aliased operand.
 `spec/evidence/cube-totality.json` owns the exact 13-function inventory and
 the raw-carrier/profile boundary. `TestCubeDecodedSelectorMatrix` executes
 every accepted selector through decoded dispatch and checks its result.
-Additional matrices cover all 19 type identities, mixed type/layout/location
+Additional matrices cover all 25 type identities, mixed type/layout/location
 execution, implementation-defined layout rejection, all 19 reserved function
 codes, ten representative alias classes, and nine preflight failure roles with
 complete destination preservation. The alias matrix covers destination-left,

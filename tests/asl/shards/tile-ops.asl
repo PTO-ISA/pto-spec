@@ -4,6 +4,8 @@ begin
     TestTileElementwiseAndAliasing();
     TestTileMemory();
     TestTileMatmul();
+    TestMatrixNumericContractLegality();
+    TestMatrixPhysicalAccumulatorClasses();
     TestTileReduction();
     TestTileExpansion();
     TestTileGeneration();

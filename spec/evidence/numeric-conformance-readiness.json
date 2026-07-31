@@ -16,10 +16,10 @@
   },
   "public_type_baseline": {
     "path": "spec/evidence/public-numeric-type-baseline.json",
-    "status": "public-type-identity-and-target-availability-baseline-closed-result-and-legality-open",
+    "status": "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
     "acceptance_record": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
     "public_type_count": 16,
-    "accepted_catalog_binding_count": 11,
+    "accepted_catalog_binding_count": 16,
     "accepted_result_rule_count": 0,
     "accepted_domain_rule_count": 0
   },
@@ -475,12 +475,13 @@
         "TileProfileOrderLeft",
         "TileProfilePartialValue",
         "TileProfileReductionInitial",
-        "TileProfileReductionStep"
+        "TileProfileReductionStep",
+        "TileProfileValueIsNaN"
       ],
       "counts": {
         "contract_domains": 3,
         "operations": 20,
-        "hooks": 4
+        "hooks": 5
       },
       "open_numeric_dimensions": [
         "NaN and infinity",
@@ -544,7 +545,7 @@
       "hooks": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "counts": {
         "contract_domains": 1,
@@ -584,12 +585,12 @@
   ],
   "summary": {
     "contract_domain_count": 20,
-    "hook_count": 29,
+    "hook_count": 30,
     "lane_count": 6,
     "operation_count": 108,
     "accepted_configuration_identity_count": 4,
     "accepted_selection_framework_rule_count": 5,
-    "accepted_public_type_binding_count": 11,
+    "accepted_public_type_binding_count": 16,
     "public_type_identity_count": 16,
     "accepted_bounded_result_rule_count": 3,
     "accepted_bounded_result_tuple_count": 48,

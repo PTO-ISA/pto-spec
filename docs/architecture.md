@@ -3,7 +3,8 @@
 PTO is a 64-bit scalar, bundle/command, and tile instruction set. The ASL files
 and machine-readable catalogs in this repository are the normative definition of
 the architecture. They define accepted encodings, architectural state, legality,
-faults, completion, ordering, and the active `pto-v0` profile.
+faults, completion, ordering, and named conformance profiles. PTO ISA 0.57.1
+release identity and profile identity are separate machine-readable fields.
 
 PTO does not define vector instructions. Encodings and bundle forms that exist
 only to host vector execution are outside the accepted PTO ISA surface.
@@ -13,7 +14,7 @@ only to host vector execution are outside the accepted PTO ISA surface.
 | Surface | Count | Scope |
 | --- | ---: | --- |
 | Scalar forms | 474 | AGU, ALU, AMO, BRU, FSU, and SYS |
-| Bundle/command forms | 107 | bundle start, split, argument, dimension, control, data, IO, hint, stop, and context forms |
+| Bundle/command forms | 99 | bundle start, dimension, control, data, IO, hint, stop, and context forms |
 | Direct tile operations | 120 | 98 TEPL, 9 TMA, and 13 CUBE operations |
 | System registers | 72 | base, context, trap snapshot, translation, interrupt, and debug registers |
 
@@ -83,8 +84,11 @@ executes exactly one selected direct tile operation when present, and then
 commits the transfer. Failed descriptor, binding, type, or tile-legality checks
 preserve tile destinations and save the live bundle state in the trap context.
 The exact selector, DataType, BrType, direct B.IOT boundary, and unsupported
-families are defined by ADR 0022. Vector-only bundle and queue forms are rejected
-by the PTO catalog because PTO has no vector instruction execution surface.
+families are defined by ADR 0022. ADR 0045 additionally fixes the 0.57.1
+Mode/Function encoding, B.IOT allocation and lifetime fields, B.DATR data
+attributes, and B.CATR ordering attributes. Vector-only bundle and queue forms
+are rejected by the PTO catalog because PTO has no vector instruction execution
+surface.
 
 ## Tile state
 
@@ -92,9 +96,10 @@ by the PTO catalog because PTO has no vector instruction execution surface.
 - T/U/M/N hands occupy codes 0..15, 16..31, 32..47, and 48..63.
 - Each register has a `TileInfo` record containing allocation, capacity, shape,
   valid region, data type, layout, location intent, and definedness.
-- A normal active tile has at least 256 bytes and cannot exceed the read-only
-  `TILE_CAPACITY` system register. The sum of active capacities must also stay
-  within `TILE_CAPACITY`. PTO v0 resets it to 512 KiB.
+- Architectural CELL size is 128 bytes. B.IOT size codes 3 through 9 allocate
+  128 bytes, 256 bytes, 512 bytes, 1 KiB, 2 KiB, 4 KiB, or 8 KiB. An active
+  tile cannot exceed the read-only `TILE_CAPACITY` system register, and the sum
+  of active capacities must also stay within it.
 - Descriptor storage is `ceil(rows * columns * element_bits / 8)` bytes and
   must fit in the tile's capacity. FP4, FPL4, S4, and U4 occupy four bits per
   element for capacity accounting; an odd final element rounds up to one byte.
@@ -116,6 +121,10 @@ by the PTO catalog because PTO has no vector instruction execution surface.
 - Source operands are snapshotted before destination writes, defining
   read-before-write behavior for permitted aliases.
 
+B.IOT source-reuse bits are architectural lifetime controls. Zero releases the
+source only after a successful bundle commit; one preserves it. Rejection,
+fault, retry, and squash preserve sources and any pre-attempt destination state.
+
 Tile management uses explicit tile indices rather than hidden pipe state.
 `TPUSH destination, source` publishes a defined source into a free destination
 slot and preserves the producer. `TPOP destination, source` copies a defined
@@ -136,18 +145,29 @@ by itself define the address and packing protocol of sub-byte TMA transfers.
 - TMA contains 9 accepted tile memory operations, including load, store, move,
   prefetch, gather, scatter, masked gather/scatter, and gather-CAS forms.
 - CUBE contains 13 accepted matrix operations, including base, bias,
-  accumulate, MX, ACCCVT, and matrix/vector variants.
+  accumulate, MX, ACCCVT, and matrix/vector variants. ACC is implicit
+  architectural state and has no B.IOT source or destination code.
 
 The canonical selector and descriptor fields define encoding and operand facts.
-Direct PTO tile operations have explicit destinations, sources, dimensions,
-addresses, and attributes. Pipe state is not architectural.
+TEPL and TMA operations have explicit tile operands. CUBE function identity
+declares implicit ACC access: ordinary and BIAS forms initialize ACC, `.ACC`
+forms update it, and ACCCVT publishes a tile and releases ACC only after
+successful commit. ACC retains logical type separately from physical
+accumulation type and is included in trap context. Pipe state is not
+architectural.
+
+B.DATR compare, padding/byte-selection, saturation, canonicalization, DataType,
+rounding, and layout fields are legal only when the selected operation consumes
+them. An inapplicable nonzero field rejects before allocation or effects.
+B.CATR `atom`, `aq`, and `rl` fields control the selected tile-memory operation;
+dependency metadata never creates a PTO-TSO fence.
 
 Numeric format codes are namespace-local, not one shared enumeration. Scalar
 2-bit source types, scalar 5-bit floating destinations, scalar 5-bit integer
 destinations, 6-bit TMA/TALLOC types, and 5-bit bundle `DataType` fields are
 decoded independently; equal integers do not imply equal types. ADR 0040 and
 `spec/evidence/numeric-format-namespace-contract.json` define every mapped and
-reserved code, all 19 `TileDataType` raw-carrier widths, and low-nibble-first
+reserved code, all 25 `TileDataType` raw-carrier identities, and low-nibble-first
 packing for FP4, FPL4, S4, and U4. ADR 0043 and
 `spec/evidence/public-numeric-type-baseline.json` additionally bind the 16
 published type identities to 11 unambiguous PTO catalog types and close public
@@ -170,10 +190,17 @@ negative slice and must not be read as a complete executable A2/A3 profile.
 
 ADR 0042 and `spec/evidence/numeric-variation-point-ownership.json` make every
 open numeric variation point explicit. The 99 stable domain/dimension rows
-cover all 108 operations and 29 hooks. `pto-numeric-v1` owns each decision
+cover all 108 operations and 30 hooks. `pto-numeric-v1` owns each decision
 until an accepted PTO record selects a portable rule, named target profile,
 visible selector, or unsupported tuple. No backend or independent-model
 fallback supplies a missing rule.
+
+The named `pto-hardware-numeric-0.57.1-ieee-v1` contract fixes the 0.57.1
+low-precision formats, packed-lane order, canonical NaNs, signed zero, invalid
+integer results, RHB ties, matrix operand classes, physical ACC classes, and MX
+scale layout. This is a contract definition, not an implementation-conformance
+claim. Independent oracle, vector-result, downstream parity, and review
+evidence remain open under `S5-T2`.
 
 `ExecuteTileInstruction` is the decoded tile execution boundary. The normative
 tile catalog binds each accepted selector to a typed subset of
@@ -186,7 +213,8 @@ read-only legality predicate. Descriptor availability, logical shapes, data
 types, divisor values, index ranges, and matrix/broadcast dimensions are
 checked as applicable. Failure raises `Fault_TileLegality`, reports the current
 TPC, returns `TileExecution_Rejected`, and performs no destination or memory
-effect.
+effect. Bundle-launched failures additionally preserve ACC, source lifetime,
+and pre-attempt allocation state.
 
 ## Instruction-attempt status
 

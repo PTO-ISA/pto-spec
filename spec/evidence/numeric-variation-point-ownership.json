@@ -365,7 +365,7 @@
       "hook_ids": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "requirement_id": "PTO-REQ-CUBE-001",
       "decision_ownership": {
@@ -431,7 +431,7 @@
       "hook_ids": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "requirement_id": "PTO-REQ-CUBE-001",
       "decision_ownership": {
@@ -497,7 +497,7 @@
       "hook_ids": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "requirement_id": "PTO-REQ-CUBE-001",
       "decision_ownership": {
@@ -579,7 +579,7 @@
       "hook_ids": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "requirement_id": "PTO-REQ-CUBE-001",
       "decision_ownership": {
@@ -661,7 +661,7 @@
       "hook_ids": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "requirement_id": "PTO-REQ-CUBE-001",
       "decision_ownership": {
@@ -4448,7 +4448,8 @@
         "tile:TEPL:TSORT"
       ],
       "hook_ids": [
-        "TileProfileOrderLeft"
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
       ],
       "requirement_id": "PTO-REQ-TEPL-COMPLEX-001",
       "decision_ownership": {
@@ -4516,7 +4517,8 @@
         "tile:TEPL:TSORT"
       ],
       "hook_ids": [
-        "TileProfileOrderLeft"
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
       ],
       "requirement_id": "PTO-REQ-TEPL-COMPLEX-001",
       "decision_ownership": {
@@ -4572,7 +4574,8 @@
         "tile:TEPL:TSORT"
       ],
       "hook_ids": [
-        "TileProfileOrderLeft"
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
       ],
       "requirement_id": "PTO-REQ-TEPL-COMPLEX-001",
       "decision_ownership": {
@@ -4628,7 +4631,8 @@
         "tile:TEPL:TSORT"
       ],
       "hook_ids": [
-        "TileProfileOrderLeft"
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
       ],
       "requirement_id": "PTO-REQ-TEPL-COMPLEX-001",
       "decision_ownership": {
@@ -4684,7 +4688,8 @@
         "tile:TEPL:TSORT"
       ],
       "hook_ids": [
-        "TileProfileOrderLeft"
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
       ],
       "requirement_id": "PTO-REQ-TEPL-COMPLEX-001",
       "decision_ownership": {
@@ -6784,7 +6789,7 @@
       "domain": "cube-matrix",
       "hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "variation_point_ids": [
         "numeric-vp/cube-matrix/accumulation-width",
@@ -6806,7 +6811,7 @@
       "domain": "cube-matrix",
       "hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "variation_point_ids": [
         "numeric-vp/cube-matrix/accumulation-width",
@@ -6829,7 +6834,7 @@
       "hooks": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "variation_point_ids": [
         "numeric-vp/cube-matrix/accumulation-width",
@@ -6909,7 +6914,7 @@
       "domain": "cube-matrix",
       "hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "variation_point_ids": [
         "numeric-vp/cube-matrix/accumulation-width",
@@ -6931,7 +6936,7 @@
       "domain": "cube-matrix",
       "hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "variation_point_ids": [
         "numeric-vp/cube-matrix/accumulation-width",
@@ -6954,7 +6959,7 @@
       "hooks": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "variation_point_ids": [
         "numeric-vp/cube-matrix/accumulation-width",
@@ -7590,7 +7595,8 @@
       "operation_key": "tile:TEPL:TMRGSORT",
       "domain": "tile-order",
       "hooks": [
-        "TileProfileOrderLeft"
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
       ],
       "variation_point_ids": [
         "numeric-vp/tile-order/ascending-and-descending-tie-behavior",
@@ -7742,7 +7748,8 @@
       "operation_key": "tile:TEPL:TPARTARGMAX",
       "domain": "tile-order",
       "hooks": [
-        "TileProfileOrderLeft"
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
       ],
       "variation_point_ids": [
         "numeric-vp/tile-order/ascending-and-descending-tie-behavior",
@@ -7761,7 +7768,8 @@
       "operation_key": "tile:TEPL:TPARTARGMIN",
       "domain": "tile-order",
       "hooks": [
-        "TileProfileOrderLeft"
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
       ],
       "variation_point_ids": [
         "numeric-vp/tile-order/ascending-and-descending-tie-behavior",
@@ -8322,7 +8330,8 @@
       "operation_key": "tile:TEPL:TSORT",
       "domain": "tile-order",
       "hooks": [
-        "TileProfileOrderLeft"
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
       ],
       "variation_point_ids": [
         "numeric-vp/tile-order/ascending-and-descending-tie-behavior",
@@ -8926,7 +8935,7 @@
       "status": "ownership-inventoried-result-rule-required"
     },
     {
-      "hook": "TileProfileMatrixScale",
+      "hook": "TileProfileMatrixScaledAccumulate",
       "role": "portable-profile-boundary",
       "requirement": "PTO-REQ-CUBE-001",
       "domains": [
@@ -9151,6 +9160,32 @@
       "status": "ownership-inventoried-result-rule-required"
     },
     {
+      "hook": "TileProfileValueIsNaN",
+      "role": "portable-profile-boundary",
+      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+      "domains": [
+        "tile-order"
+      ],
+      "operation_keys": [
+        "tile:TEPL:TMRGSORT",
+        "tile:TEPL:TPARTARGMAX",
+        "tile:TEPL:TPARTARGMIN",
+        "tile:TEPL:TSORT"
+      ],
+      "variation_point_ids": [
+        "numeric-vp/tile-order/ascending-and-descending-tie-behavior",
+        "numeric-vp/tile-order/data-type-ordering",
+        "numeric-vp/tile-order/equal-value-stability",
+        "numeric-vp/tile-order/nan-placement",
+        "numeric-vp/tile-order/signed-zero"
+      ],
+      "decision_owner_kind": "portable-architecture",
+      "decision_owner_id": "pto-numeric-v1",
+      "selected_route": null,
+      "result_rule_id": null,
+      "status": "ownership-inventoried-result-rule-required"
+    },
+    {
       "hook": "TileReciprocal",
       "role": "pto-v0-reference-helper",
       "requirement": "PTO-REQ-TEPL-001",
@@ -9202,7 +9237,7 @@
   "support_rules": {
     "path": "spec/evidence/numeric-profile-applicability-closure.json",
     "rule_count": 6,
-    "tuple_count": 114,
+    "tuple_count": 150,
     "result_rule_count": 0,
     "status": "accepted-support-rejection-separate-from-numeric-results"
   },
@@ -9220,11 +9255,11 @@
   "sources": [
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "ce71137b8edc794f1bc0964ce2211cadeef22465b720b7d16b0402365f800a1b"
+      "sha256": "6984a2c6bcafa208a1458001fc1105a7820b0a8005d54ca77bf07846c00d7b49"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "94865e7c29c2a14a63627390d51cc6c3b698a91700d6ce71785b2928bb3bd39f"
+      "sha256": "9bcb979388b28cbc9e1ff9bdfbf5e479a268a616e5a2bf514ab206fb27107d54"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
@@ -9232,31 +9267,31 @@
     },
     {
       "path": "spec/profile-hooks.json",
-      "sha256": "1eb4293edbdb0c87fe28543a72c7265abc85ee1c04a8390a3f9555fc3d994f52"
+      "sha256": "fcf921cc49579c5150a77e9b3f81dee782de893e84a88da83952ac023cb08584"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "6f284ceccfe79347acf317c8d0263742bf508986120f64c6d93cae7a3c3dcfa3"
+      "sha256": "94ac3b70f25e720528c170472e6b9e81bee3fbd3a745f4174bca6145f7e0ba31"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "ccf96bbc5f71cdc224a512313d7c461176ed6a6888947ba6a0d6364086bb3fa6"
+      "sha256": "931472f8f33ef893e473db825b9523dc82c41408c81f7fd9e608a2751e9dbef2"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "9ee660158b15a403fa7e2d7c16aaa51f6b5475006f7440270de6521db306f8ed"
+      "sha256": "3d89bdb88ced41225cd4016f41e2a0bfc88eb38e72555a27d6791fb2a8548edb"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "82849d0610e0ab02321025cfc41bd7794bbeef7ea94a8d88791a07375bf63927"
+      "sha256": "2be575e8984f1fdead54d570e4261cccde0cd9b8fde8c96d573577843190fa84"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "2232608ed5f1c56ef9ccf9c52ae368df5d7223b7bc53cbe08274cf2760f3aa83"
+      "sha256": "7939cf794640efca743816f75a0e71faa2eb840bf398c63e427a729093ac951b"
     },
     {
       "path": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
-      "sha256": "78378a8adcfa5d40fc74ed95950ae7da81550649ec99ee1f22b1c3c9ab7ddead"
+      "sha256": "837960a74610132776f4e707a50ef2b95e6ff576b47843bed239b07306bed79c"
     }
   ],
   "summary": {
@@ -9264,15 +9299,15 @@
     "unique_dimension_count": 41,
     "domain_count": 20,
     "operation_count": 108,
-    "hook_count": 29,
-    "primary_operation_hook_edge_count": 130,
+    "hook_count": 30,
+    "primary_operation_hook_edge_count": 134,
     "reference_helper_operation_edge_count": 8,
     "portable_decision_owner_point_count": 99,
     "selected_route_count": 0,
     "accepted_result_rule_count": 0,
     "accepted_bounded_result_subset_rule_count": 3,
     "accepted_bounded_result_subset_tuple_count": 48,
-    "accepted_unsupported_tuple_count": 114,
+    "accepted_unsupported_tuple_count": 150,
     "accepted_domain_result_rule_count": 0,
     "pd12_complete": false,
     "s5_t2_a_complete": false,

@@ -3,7 +3,7 @@
 
 func ConfigurePackedTmaTile(index: TileIndex, columns: integer {1..16})
 begin
-    ConfigureTile(index, 256, 1, columns, 1, columns, TileDataType_U4,
+    ConfigureTile(index, 256, 1, columns, 1, columns, TileDataType_U4X2,
         TileLayout_RowMajor, TileLocation_Any);
 end;
 
@@ -82,15 +82,16 @@ end;
 
 func TestTmaAllFourBitTypes()
 begin
-    ConfigurePackedTmaTileType(33, 2, TileDataType_FP4);
-    ConfigurePackedTmaTileType(34, 2, TileDataType_FPL4);
-    ConfigurePackedTmaTileType(35, 2, TileDataType_S4);
-    ConfigurePackedTmaTileType(36, 2, TileDataType_U4);
-    ConfigureIndexTmaTile(37, 2);
-    WriteTileElement(37, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(37, 0, 1, Zeros{PTO_XLEN} + 1);
+    ConfigurePackedTmaTileType(33, 2, TileDataType_E2M1X2);
+    ConfigurePackedTmaTileType(34, 2, TileDataType_E1M2X2);
+    ConfigurePackedTmaTileType(35, 2, TileDataType_HiF4X2);
+    ConfigurePackedTmaTileType(36, 2, TileDataType_S4X2);
+    ConfigurePackedTmaTileType(37, 2, TileDataType_U4X2);
+    ConfigureIndexTmaTile(38, 2);
+    WriteTileElement(38, 0, 0, Zeros{PTO_XLEN});
+    WriteTileElement(38, 0, 1, Zeros{PTO_XLEN} + 1);
 
-    for tile_offset = 0 to 3 do
+    for tile_offset = 0 to 4 do
         let tile = (33 + tile_offset) as TileIndex;
         let address = Zeros{PTO_XLEN} + 0x340 + tile_offset;
         Store(address, 1, Zeros{PTO_XLEN} + 0xaf);
@@ -106,7 +107,7 @@ begin
             (tile_offset + 5) * 16 + tile_offset + 1;
 
         Store(address, 1, Zeros{PTO_XLEN} + 0xa8 + tile_offset);
-        MGATHER(tile, address, 37);
+        MGATHER(tile, address, 38);
         assert ReadTileElement(tile, 0, 0) ==
             Zeros{PTO_XLEN} + 8 + tile_offset;
         assert ReadTileElement(tile, 0, 1) == Zeros{PTO_XLEN} + 0xa;
@@ -173,12 +174,12 @@ begin
     WriteTileElement(8, 0, 2, Zeros{PTO_XLEN} + 1);
     Store(Zeros{PTO_XLEN} + 0x1a0, 1, Zeros{PTO_XLEN} + 0x21);
     StartMemoryEventCapture(1);
-    MGATHER_MASK(6, Zeros{PTO_XLEN} + 0x1a0, 7, 8);
+    MGATHER_MASK(6, Zeros{PTO_XLEN} + 0x1a0, 7, 8, TilePad_Zero);
     assert _MemoryEventCount == 2;
     assert _MemoryEvents[[0]].kind == MemoryEvent_Load;
     assert _MemoryEvents[[1]].kind == MemoryEvent_Load;
     assert ReadTileElement(6, 0, 0) == Zeros{PTO_XLEN} + 1;
-    assert ReadTileElement(6, 0, 1) == Zeros{PTO_XLEN} + 8;
+    assert ReadTileElement(6, 0, 1) == Zeros{PTO_XLEN};
     assert ReadTileElement(6, 0, 2) == Zeros{PTO_XLEN} + 1;
     StopMemoryEventCapture();
 
@@ -391,7 +392,7 @@ begin
 
         ClearFault();
         StartMemoryEventCapture(1);
-        MGATHER_MASK(27, base_address, 28, 29);
+        MGATHER_MASK(27, base_address, 28, 29, TilePad_Zero);
         assert _LastFault == Fault_DataPage;
         assert _FaultAddress == Zeros{PTO_XLEN} + 4096;
         assert _MemoryEventCount == 0;

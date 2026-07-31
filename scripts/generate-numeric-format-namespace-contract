@@ -17,31 +17,38 @@ SCALAR_FSU_TOTALITY = ROOT / "spec/evidence/scalar-fsu-totality.json"
 TMA_TOTALITY = ROOT / "spec/evidence/tma-totality.json"
 COMMAND_CATALOG = ROOT / "spec/catalog/command-forms.json"
 EXECUTABLE_COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
+HARDWARE_PROFILE = ROOT / "spec/hardware-conformance-profile.json"
 OUTPUT = ROOT / "spec/evidence/numeric-format-namespace-contract.json"
 ACCEPTANCE_RECORD = (
     "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md"
 )
 
 TILE_DATA_TYPES = (
-    ("F64", 64, "floating-raw-carrier", 0, 0, "public-binding-open"),
-    ("S8", 8, "signed-integer", 19, 19, "width-and-signedness-closed"),
-    ("U8", 8, "unsigned-integer", 27, 27, "width-and-signedness-closed"),
-    ("S16", 16, "signed-integer", 18, 18, "width-and-signedness-closed"),
-    ("U16", 16, "unsigned-integer", 26, 26, "width-and-signedness-closed"),
-    ("S32", 32, "signed-integer", 17, 17, "width-and-signedness-closed"),
-    ("U32", 32, "unsigned-integer", 25, 25, "width-and-signedness-closed"),
-    ("S64", 64, "signed-integer", 16, 16, "width-and-signedness-closed"),
-    ("U64", 64, "unsigned-integer", 24, 24, "width-and-signedness-closed"),
-    ("F16", 16, "floating-raw-carrier", 2, 4, "format-rule-open"),
-    ("BF16", 16, "floating-raw-carrier", 6, 5, "format-rule-open"),
-    ("F32", 32, "floating-raw-carrier", 1, 1, "format-rule-open"),
-    ("FP8", 8, "floating-raw-carrier", 3, 7, "e4m3-versus-e5m2-binding-open"),
-    ("FPL8", 8, "floating-raw-carrier", 7, 8, "hifloat8-binding-open"),
-    ("FP4", 4, "floating-raw-carrier", 11, None, "e1m2-versus-e2m1-binding-open"),
-    ("FPL4", 4, "floating-raw-carrier", 12, 14, "e1m2-versus-e2m1-binding-open"),
-    ("S4", 4, "signed-integer", 20, 20, "width-and-signedness-closed"),
-    ("U4", 4, "unsigned-integer", 28, 28, "width-and-signedness-closed"),
-    ("E8M0", 8, "floating-raw-carrier", None, 13, "architectural-role-open"),
+    ("FP64", 64, "floating-raw-carrier", 0, "format-contract-defined-conformance-open"),
+    ("FP32", 32, "floating-raw-carrier", 1, "format-contract-defined-conformance-open"),
+    ("TF32", 32, "floating-raw-carrier", 2, "format-contract-defined-conformance-open"),
+    ("HF32", 32, "floating-raw-carrier", 3, "format-contract-defined-conformance-open"),
+    ("FP16", 16, "floating-raw-carrier", 4, "format-contract-defined-conformance-open"),
+    ("BF16", 16, "floating-raw-carrier", 5, "format-contract-defined-conformance-open"),
+    ("HiF8", 8, "floating-raw-carrier", 6, "format-contract-defined-conformance-open"),
+    ("E4M3", 8, "floating-raw-carrier", 7, "format-contract-defined-conformance-open"),
+    ("E5M2", 8, "floating-raw-carrier", 8, "format-contract-defined-conformance-open"),
+    ("E3M2", 8, "floating-raw-carrier", 9, "format-contract-defined-conformance-open"),
+    ("E2M3", 8, "floating-raw-carrier", 10, "format-contract-defined-conformance-open"),
+    ("E2M1X2", 4, "packed-floating-raw-carrier", 11, "format-contract-defined-conformance-open"),
+    ("E1M2X2", 4, "packed-floating-raw-carrier", 12, "format-contract-defined-conformance-open"),
+    ("E8M0", 8, "scale-raw-carrier", 13, "format-contract-defined-conformance-open"),
+    ("HiF4X2", 4, "packed-floating-raw-carrier", 14, "format-contract-defined-conformance-open"),
+    ("S64", 64, "signed-integer", 16, "width-and-signedness-closed"),
+    ("S32", 32, "signed-integer", 17, "width-and-signedness-closed"),
+    ("S16", 16, "signed-integer", 18, "width-and-signedness-closed"),
+    ("S8", 8, "signed-integer", 19, "width-and-signedness-closed"),
+    ("S4X2", 4, "signed-integer", 20, "width-and-signedness-closed"),
+    ("U64", 64, "unsigned-integer", 24, "width-and-signedness-closed"),
+    ("U32", 32, "unsigned-integer", 25, "width-and-signedness-closed"),
+    ("U16", 16, "unsigned-integer", 26, "width-and-signedness-closed"),
+    ("U8", 8, "unsigned-integer", 27, "width-and-signedness-closed"),
+    ("U4X2", 4, "unsigned-integer", 28, "width-and-signedness-closed"),
 )
 
 
@@ -80,6 +87,7 @@ def generate() -> dict[str, Any]:
     tma_totality = load(TMA_TOTALITY)
     command_catalog = load(COMMAND_CATALOG)
     executable_comparison = load(EXECUTABLE_COMPARISON)
+    hardware_profile = load(HARDWARE_PROFILE)
 
     pd02 = next(row for row in inputs["decision_questions"] if row["id"] == "PD-02")
     require(pd02["status"] == "decision-required", "PD-02 status drift")
@@ -107,25 +115,28 @@ def generate() -> dict[str, Any]:
             "asl_enumerator": f"TileDataType_{name}",
             "storage_bits": bits,
             "raw_class": raw_class,
-            "tma_talloc_code": tma_code,
-            "bundle_code": bundle_code,
+            "tma_talloc_code": code,
+            "bundle_code": code,
             "numeric_semantics_status": status,
         }
-        for name, bits, raw_class, tma_code, bundle_code, status in TILE_DATA_TYPES
+        for name, bits, raw_class, code, status in TILE_DATA_TYPES
     ]
 
     tma_mapping = {
-        tma_code: name
-        for name, _, _, tma_code, _, _ in TILE_DATA_TYPES
-        if tma_code is not None
+        code: name for name, _, _, code, _ in TILE_DATA_TYPES
     }
     bundle_mapping = {
-        bundle_code: name
-        for name, _, _, _, bundle_code, _ in TILE_DATA_TYPES
-        if bundle_code is not None
+        code: name for name, _, _, code, _ in TILE_DATA_TYPES
     }
-    require(len(tma_mapping) == 18, "TMA/TALLOC mapping count drift")
-    require(len(bundle_mapping) == 18, "bundle mapping count drift")
+    require(len(tma_mapping) == 25, "TMA/TALLOC mapping count drift")
+    require(len(bundle_mapping) == 25, "bundle mapping count drift")
+    hardware_types = {
+        (row["name"], row["code"]) for row in hardware_profile["data_types"]
+    }
+    require(
+        hardware_types == {(name, code) for name, _, _, code, _ in TILE_DATA_TYPES},
+        "hardware numeric profile type namespace drift",
+    )
 
     data_type_forms = [
         form
@@ -226,8 +237,8 @@ def generate() -> dict[str, Any]:
             "namespace_locality": "Scalar source, scalar floating destination, scalar integer destination, TMA/TALLOC, and bundle DataType codes are distinct namespaces. Equal integers do not imply equal types across namespaces.",
             "reserved_codes": "Every unmapped code rejects before architectural effects; helper fallback values are unreachable after legality succeeds and are not architectural aliases.",
             "raw_carrier_boundary": "Widths and signedness describe Stage 4 raw carriers only. Floating bit layouts and target numeric results remain S5-T2 rules.",
-            "four_bit_packing": "FP4, FPL4, S4, and U4 use low-index/low-nibble and odd-index/high-nibble packing with sibling preservation on stores.",
-            "pd02_boundary": "This checkpoint does not accept PD-02. Bit-exact formats, public-name bindings, target availability, and the complete operation/type legality matrix remain open.",
+            "four_bit_packing": "E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 use low-index/low-nibble and odd-index/high-nibble packing with sibling preservation on stores.",
+            "pd02_boundary": "The 0.57.1 type identities and format contract are fixed, while operation/type legality, target execution results, and implementation conformance remain open under S5-T2.",
         },
         "tile_data_types": tile_rows,
         "scalar_source_type": scalar_source_rows,
@@ -268,35 +279,35 @@ def generate() -> dict[str, Any]:
         "open_residuals": [
             {
                 "id": "PD-02-R1",
-                "rule": "bind FP8 to an exact public E4M3, E5M2, or other accepted format",
+                "rule": "close every operation/type/profile legality tuple against the 0.57.1 type namespace",
             },
             {
                 "id": "PD-02-R2",
-                "rule": "bind FPL8 to H8 or another bit-exact specialized eight-bit format",
+                "rule": "publish independently checked result vectors for every supported floating type",
             },
             {
                 "id": "PD-02-R3",
-                "rule": "resolve the published E5M2 versus E5M3FN naming conflict",
+                "rule": "prove exceptional-value and canonical-NaN behavior across all supported operations",
             },
             {
                 "id": "PD-02-R4",
-                "rule": "bind FP4 and FPL4 to exact E1M2/E2M1 encodings",
+                "rule": "prove packed-lane ordering and sibling preservation for every packed four-bit operation",
             },
             {
                 "id": "PD-02-R5",
-                "rule": "decide whether E8M0 is a standalone payload type, an MX scale carrier, or profile-only",
+                "rule": "prove E8M0 scale-carrier legality and MX scale application",
             },
             {
                 "id": "PD-02-R6",
-                "rule": "publish bit-exact floating layouts and exceptional-value classes",
+                "rule": "prove target availability and rejection before effects for unsupported tuples",
             },
             {
                 "id": "PD-02-R7",
-                "rule": "complete every scalar and tile operation/type/profile legality tuple",
+                "rule": "obtain accepted architecture and formal-model review of the numeric result contract",
             },
             {
                 "id": "PD-02-R8",
-                "rule": "publish target availability and positive/reserved format vectors for every accepted tuple",
+                "rule": "record downstream byte-and-effect parity for the immutable profile contract",
             },
         ],
         "tests": [
@@ -311,6 +322,7 @@ def generate() -> dict[str, Any]:
             source("spec/evidence/scalar-fsu-totality.json"),
             source("spec/evidence/tma-totality.json"),
             source("spec/evidence/executable-model-comparison.json"),
+            source("spec/hardware-conformance-profile.json"),
             source("spec/catalog/command-forms.json"),
             source("asl/types.asl"),
             source("asl/scalar/floating.asl"),

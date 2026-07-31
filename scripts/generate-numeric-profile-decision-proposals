@@ -41,7 +41,7 @@ PROPOSALS: dict[str, dict[str, Any]] = {
             "named-target-profile-rule",
             "unsupported-in-profile",
         ],
-        "proposed_rule": "ADR 0041 closes the A2A3 unsupported-in-profile rule for all six MX CUBE selectors and all 19 TileDataType identities. Legal PTO operations otherwise use pto-numeric-v1 results. A2A3 and A5 may reject only documented operation/type tuples; any accepted target-dependent result must be selected by a named profile and bounded rule. CPU observations are never normative.",
+        "proposed_rule": "ADR 0041 closes the A2A3 unsupported-in-profile rule for all six MX CUBE selectors and all 25 TileDataType identities. Legal PTO operations otherwise use pto-numeric-v1 results. A2A3 and A5 may reject only documented operation/type tuples; any accepted target-dependent result must be selected by a named profile and bounded rule. CPU observations are never normative.",
         "open_items": [
             "complete every remaining domain operation/type applicability table after the accepted A2A3 MX negative slice",
             "accept one portable or target disposition for every supported and rejected tuple",
@@ -53,7 +53,7 @@ PROPOSALS: dict[str, dict[str, Any]] = {
             "named-target-profile-rule",
             "unsupported-in-profile",
         ],
-        "proposed_rule": "ADR 0040 closes five distinct code namespaces, all 19 TileDataType raw widths, reserved codes, and packed four-bit order. ADR 0043 additionally closes 16 published type identities, 11 unambiguous catalog bindings, and the A2/A3-versus-A5 public type-availability baseline. Bit-exact floating formats and operation/type/profile legality remain open. Backend carrier types cannot create implicit PTO formats.",
+        "proposed_rule": "The 0.57.1 contract closes five distinct code namespaces and all 25 TileDataType identities, raw widths, reserved codes, and packed four-bit order. All 16 published public type identities have unambiguous catalog bindings and retain the A2/A3-versus-A5 availability baseline. Operation/type/profile legality and implementation conformance remain open. Backend carrier types cannot create implicit PTO formats.",
         "open_items": [
             "bind the specialized floating raw carriers and decide the public roles of F64 and E8M0",
             "publish bit-exact payload fields and exceptional-value classes for every floating type",
@@ -269,12 +269,12 @@ def generate() -> dict[str, Any]:
         == "namespace-and-carrier-inventory-closed-format-rules-open"
         and format_namespace_contract["summary"]
         == {
-            "tile_data_type_count": 19,
+            "tile_data_type_count": 25,
             "tile_storage_width_counts": {
-                "4": 4,
-                "8": 5,
+                "4": 5,
+                "8": 8,
                 "16": 4,
-                "32": 3,
+                "32": 5,
                 "64": 3,
             },
             "scalar_source_mapped_count": 2,
@@ -283,11 +283,11 @@ def generate() -> dict[str, Any]:
             "scalar_floating_destination_reserved_count": 17,
             "scalar_integer_destination_mapped_count": 15,
             "scalar_integer_destination_reserved_count": 17,
-            "tma_talloc_mapped_count": 18,
-            "tma_talloc_reserved_count": 46,
-            "bundle_mapped_count": 18,
-            "bundle_reserved_count": 14,
-            "four_bit_type_count": 4,
+            "tma_talloc_mapped_count": 25,
+            "tma_talloc_reserved_count": 39,
+            "bundle_mapped_count": 25,
+            "bundle_reserved_count": 7,
+            "four_bit_type_count": 5,
             "open_residual_count": 8,
             "pd02_complete": False,
         },
@@ -298,7 +298,7 @@ def generate() -> dict[str, Any]:
         and public_type_baseline["decision_id"] == "PD-02"
         and public_type_baseline["checkpoint_id"] == "PD-02-SC2"
         and public_type_baseline["status"]
-        == "public-type-identity-and-target-availability-baseline-closed-result-and-legality-open"
+        == "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open"
         and public_type_baseline["summary"]
         == {
             "public_type_count": 16,
@@ -306,11 +306,11 @@ def generate() -> dict[str, Any]:
             "public_integer_type_count": 8,
             "a2a3_available_type_count": 11,
             "a5_available_type_count": 16,
-            "accepted_catalog_binding_count": 11,
-            "unresolved_catalog_type_count": 6,
+            "accepted_catalog_binding_count": 16,
+            "non_public_catalog_type_count": 9,
             "accepted_result_rule_count": 0,
             "accepted_domain_rule_count": 0,
-            "open_residual_count": 7,
+            "open_residual_count": 4,
             "pd02_complete": False,
             "s5_t2_a_complete": False,
             "s5_t2_complete": False,
@@ -354,8 +354,11 @@ def generate() -> dict[str, Any]:
             "rule_count": 6,
             "operation_count": 6,
             "selector_count": 6,
-            "tile_data_type_count": 19,
-            "tuple_count": 114,
+            "tile_data_type_count": 25,
+            "tuple_count": 150,
+            "bundle_execution_tuple_count": 150,
+            "bundle_command_form_count": 6,
+            "accepted_command_form_count": 99,
             "result_rule_count": 0,
             "parent_pd01_complete": False,
             "cube_matrix_complete": False,
@@ -453,7 +456,7 @@ def generate() -> dict[str, Any]:
     )
     require(len(domain_proposals) == 20, "numeric domain count drift")
     require(operation_count == 108, "numeric operation count drift")
-    require(len(profile_hooks) == 29, "numeric hook count drift")
+    require(len(profile_hooks) == 30, "numeric hook count drift")
     require(
         readiness["summary"]["operation_count"] == operation_count,
         "readiness operation count drift",
@@ -647,7 +650,7 @@ def generate() -> dict[str, Any]:
                 "id": "S5-T2-E",
                 "target": "adjudicate every differential and obtain architecture/formal review",
                 "current": 0,
-                "required": 22,
+                "required": 23,
                 "status": "open",
             },
         ],

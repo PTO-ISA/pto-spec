@@ -1549,7 +1549,8 @@
         "tile:TEPL:TSORT"
       ],
       "hooks": [
-        "TileProfileOrderLeft"
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
       ],
       "open_numeric_dimensions": [
         "data-type ordering",
@@ -1603,7 +1604,7 @@
       "hooks": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
-        "TileProfileMatrixScale"
+        "TileProfileMatrixScaledAccumulate"
       ],
       "open_numeric_dimensions": [
         "input product precision",

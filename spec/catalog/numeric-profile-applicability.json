@@ -19,7 +19,7 @@
       "function": 4,
       "type_scope": {
         "kind": "all_tile_data_types",
-        "tile_data_type_count": 19
+        "tile_data_type_count": 25
       },
       "disposition": "unsupported-in-profile",
       "rejection": {
@@ -44,7 +44,7 @@
       "function": 5,
       "type_scope": {
         "kind": "all_tile_data_types",
-        "tile_data_type_count": 19
+        "tile_data_type_count": 25
       },
       "disposition": "unsupported-in-profile",
       "rejection": {
@@ -69,7 +69,7 @@
       "function": 6,
       "type_scope": {
         "kind": "all_tile_data_types",
-        "tile_data_type_count": 19
+        "tile_data_type_count": 25
       },
       "disposition": "unsupported-in-profile",
       "rejection": {
@@ -94,7 +94,7 @@
       "function": 20,
       "type_scope": {
         "kind": "all_tile_data_types",
-        "tile_data_type_count": 19
+        "tile_data_type_count": 25
       },
       "disposition": "unsupported-in-profile",
       "rejection": {
@@ -119,7 +119,7 @@
       "function": 21,
       "type_scope": {
         "kind": "all_tile_data_types",
-        "tile_data_type_count": 19
+        "tile_data_type_count": 25
       },
       "disposition": "unsupported-in-profile",
       "rejection": {
@@ -144,7 +144,7 @@
       "function": 22,
       "type_scope": {
         "kind": "all_tile_data_types",
-        "tile_data_type_count": 19
+        "tile_data_type_count": 25
       },
       "disposition": "unsupported-in-profile",
       "rejection": {
