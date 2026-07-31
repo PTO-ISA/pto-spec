@@ -10,7 +10,7 @@
       "domain": "architecture-reset",
       "model": "asl/state.asl",
       "name": "ResetProfileState",
-      "portable_default": "Clear the 24 absolute scalar registers, temporary queues, predicates, and bounded memory; invalidate every TileInfo; set VERSION to 1 and TILE_CAPACITY to 512 KiB; reset time to zero; and enter ACR0.",
+      "portable_default": "Clear the 24 absolute scalar registers, temporary queues, P1 through P7, the stored machine execution mask, and bounded memory; retain hardwired all-ones P0; invalidate every TileInfo; set VERSION to 1 and TILE_CAPACITY to 256 KiB; reset time to zero; and enter ACR0.",
       "profile_obligations": [
         "Reset all architecturally visible PTO v0 reference-profile state to the values stated in the implementation."
       ],

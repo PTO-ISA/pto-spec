@@ -6,7 +6,7 @@ direct tile. PTO does not include vector instruction execution.
 
 | Area | Accepted surface | Current ASL grade | Executable evidence | Remaining closure |
 | --- | ---: | --- | --- | --- |
-| Scalar and context state | 24 absolute GPRs, four-entry T/U queues, P0..P7, TPC, bundle descriptors, return, commit, trap, ACR, system, time, and memory-order state | Stage 2 state/fault, Stage 3 ordering, and Stage 4 instruction closure complete | nonzero-seed boundary reset; R0 and queues; P0 body-entry/consumer; P1..P7 reserved-state; extended bundle/predicate trap preservation; all-bank register access/reset; per-trap routing/recovery; ACR, time, and bounded event-capture tests | target numeric and release conformance are tracked in Stages 5–6 |
+| Scalar and context state | 24 absolute GPRs, four-entry T/U queues, eight 32-bit P registers, a separate 64-bit MPAR/MSEQ execution mask, TPC, bundle descriptors, return, commit, trap, ACR, system, time, and memory-order state | Stage 2 state/fault, Stage 3 ordering, and Stage 4 instruction closure complete | nonzero-seed boundary reset; R0 and queues; hardwired P0 and independent P1/P7 boundaries; machine/non-machine execution-mask selection; extended bundle/predicate/mask trap preservation; all-bank register access/reset; per-trap routing/recovery; ACR, time, and bounded event-capture tests | target numeric and release conformance are tracked in Stages 5–6; full comparison-ISA vector divergence remains outside PTO 0.57.1 |
 | Bundle state | TPC, BPC, active/body flags, bundle condition, exact start form/class/selector/DataType/Mode/BrType descriptor, arguments, dimensions, scalar IO, tile IO, B.IOT lifetime, B.DATR data attributes, and B.CATR control attributes | Stage 1 lifecycle and Stage 4 command-totality targets closed; 0.57.1 attribute contract defined | all-start descriptor witnesses; field sensitivity; sequential start/header/stop and next-start commit; direct tile launch; DATR applicability; CATR ordering; source lifetime; timing; reserved-value, missing-binding, type-mismatch, invalid-next-start, trap-preservation, rollback, and 99-form effect-or-rejection tests | target scheduling and named hardware numeric conformance remain Stage 5 work |
 | Scalar forms | 474 | decoded effect closure 474/474; Stage 1 closed; Stage 4 AGU, ALU, AMO, BRU, FSU, and SYS closed | stable form-ID effect ledger and generated before/after witnesses for every AGU, ALU, AMO, BRU, FSU, and SYS form; 1,464 decoded AGU boundary/fault/restart plus 4,296 alias cases; 337 decoded ALU boundary plus 35 alias cases; 2,474 decoded AMO modifier, value, alias, fault/restart, reservation, and DMA cases; 284 decoded BRU totality plus 32 alias/fault cases; 2,270 decoded FSU type, raw-boundary, rounding, Reg5/alias, and sticky-flag cases plus 35 direct flag cases; 4,401 decoded SYS transfer, Reg5, fence, request, recovery, privilege, and maintenance cases | target numeric conformance remains Stage 5 |
 | Bundle/command forms | 99 | Stage 4 command totality closed | generated exact-form priority witnesses, all-start descriptor assertions, exact 89-executed/10-rejected dispositions, full-width memory-command bounds, explicit metadata-only effects, transactional commit, and checked bundle-to-tile representability | target-specific behavior for profile-rejected frame, queue, context-memory, and cross-core-block commands requires a new profile contract |
@@ -140,10 +140,10 @@ acceptance records remain null, so PD-12, S5-T2, and M4 remain unchanged.
 
 Release traceability is independently fail-closed. The generated
 `spec/evidence/release-traceability-readiness.json` ledger assigns requirement,
-model, executable witness, and bounded status links to 934 exact units. It
+model, executable witness, and bounded status links to 935 exact units. It
 covers all 474 scalar forms, 99 command forms, 120 direct tile operations, 72
-system registers, 13 traps, 38 profile hooks, 46 requirements, and 72 top-level
-ASL state roots expanded to 236 leaf fields. State rows distinguish direct
+system registers, 13 traps, 38 profile hooks, 46 requirements, and 73 top-level
+ASL state roots expanded to 238 leaf fields. State rows distinguish direct
 architectural state, bounded storage and ordering abstractions,
 architectural-effect abstractions, and verification-only instrumentation. The
 inventory and link package is closed; 11 S5-T2-dependent requirements, 30

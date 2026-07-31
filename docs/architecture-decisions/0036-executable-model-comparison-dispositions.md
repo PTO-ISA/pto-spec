@@ -55,8 +55,10 @@ The comparison explicitly records these model limits:
 
 - Reg5 is not validated as a flat scalar-register model. PTO keeps the
   absolute-GPR plus T/U queue rules from ADR 0008 and scalar operand evidence.
-- P0..P7 predicate-register state is PTO-owned. The comparison does not prove
-  equivalent predicate execution.
+- The comparison model's 64-bit kernel execution mask corroborates the
+  separate PTO MPAR/MSEQ mask domain. PTO's eight 32-bit P registers remain
+  PTO-owned; the comparison neither defines their selector encoding nor
+  proves equivalent warp-predicate execution.
 - PTO-v0 bundle commit binds only `destination0`, `source0`, and `source1`.
   The bundle bridge can represent 63 TEPL, 1 TMA, and 5 CUBE direct operations;
   other direct operations either use direct tile dispatch or reject at bundle

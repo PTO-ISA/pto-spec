@@ -16,9 +16,10 @@ end;
 
 readonly func ReadBranchPredicate() => Word
 begin
-    // SETC.* supplies the coupled-bundle predicate. Inside a bundle body P0 is
-    // the architectural branch predicate for B.Z/B.NZ.
-    return if _BundleBodyActive then ReadPredicateRegister(0)
+    // SETC.* supplies the coupled-bundle predicate. Inside a bundle body the
+    // independent architectural EXEC mask `p` drives B.Z/B.NZ; P0..P7 are a
+    // distinct 32-bit per-warp predicate register file.
+    return if ExecutionMaskIsActive() then ReadExecutionMask()
            else _CommitArgument;
 end;
 

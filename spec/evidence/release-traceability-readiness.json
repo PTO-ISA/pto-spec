@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "0735933dd44abee66584fc17012457f7e33bff115dfea71a17beea58c244e177"
+      "sha256": "3e48b22b1bb0b19625773642f0dd1e7f7abe0d3611ecbd890c6f449b2900f49d"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -39,43 +39,43 @@
     },
     {
       "path": "spec/profile-hooks.json",
-      "sha256": "fcf921cc49579c5150a77e9b3f81dee782de893e84a88da83952ac023cb08584"
+      "sha256": "ac87ddc2eb45adab0a1306c840ad1059ce5d7f14a6c88ea6a81f7f52fbf41f7d"
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "b43cfa6c5dbc0fa1d017863e36af7474b6a876944467a8aadcf5337aa4662f0d"
+      "sha256": "e8af14043daf1a5a65d81da154d190f5dd3ec9db62278a13811e5c55e420353d"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "c19d41ba8264c2cd38e1b48a6082c081a9d0c6db4f36677579d3a15dc0c36c69"
+      "sha256": "d6df7ccec56a1261d9485a8fa41051f4838a360d9f4ddaae2a627cd8ec33711b"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "931472f8f33ef893e473db825b9523dc82c41408c81f7fd9e608a2751e9dbef2"
+      "sha256": "a8cec33f0b61e94892946788ee7e0959a946fe6247763aa733a3412b4f1da4df"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "7939cf794640efca743816f75a0e71faa2eb840bf398c63e427a729093ac951b"
+      "sha256": "fb111499122a169ae2c7c5d416b2092cdcc996537e78f6abc87053590a34434a"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "295b36f19172f44ce608313194c02f1470144a5dea35b053f8277960269f2679"
+      "sha256": "bdf00ad0bea4329f4e73f8a3d8511f88dbf9fb27e0c6316776dff682288456a5"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "3d89bdb88ced41225cd4016f41e2a0bfc88eb38e72555a27d6791fb2a8548edb"
+      "sha256": "2ec1f43b3160f508f7781c3393dde57296f4bec25341775b1fcb5ef02e2a5d39"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "2be575e8984f1fdead54d570e4261cccde0cd9b8fde8c96d573577843190fa84"
+      "sha256": "abe0dd3c773ca122084467b3d40f8b6caed3a1ad6296abdd0df75445e4daf7f6"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "94ac3b70f25e720528c170472e6b9e81bee3fbd3a745f4174bca6145f7e0ba31"
+      "sha256": "2efe9c879aa3473a6b546bab51f06a878d09839f00a09653cb4cdfb28a51f3ad"
     },
     {
       "path": "spec/evidence/scalar-effect-closure.json",
-      "sha256": "1428026445f191a38eb1bf1e6f15bd2c3385191db4cb3a4f35e2245b41edb6d8"
+      "sha256": "eb752edaef13e5abea2b59e6e1b0ac18706e2a75ac759aa719a42d9b5318bb20"
     },
     {
       "path": "spec/evidence/bundle-command-totality.json",
@@ -95,15 +95,15 @@
     },
     {
       "path": "asl/types.asl",
-      "sha256": "2f2801230cac12c7835ee705b506f83191dfba1e4ad1565f470ff401adb6e83b"
+      "sha256": "7a4eaeb1b3d6a093be1dd03c7062acbf5ace9c41959978749f9504dad6357151"
     },
     {
       "path": "asl/state.asl",
-      "sha256": "e8c32d3d6d86cb2e8dc39c0ba643af506940994779aa70b75bdb9592f7cc3bca"
+      "sha256": "340acbbd0353cfca9147a3b0fce80447eddb428967134737011a677353a087e7"
     },
     {
       "path": "asl/bundle/state.asl",
-      "sha256": "d8b924265ea5823809009b3dc4d300b74d13d8bfd160d0365b99e0dafe09b6af"
+      "sha256": "f53698e3083eb1850865fa8977fd92c495e3e4d40998ee808c69c69630d996be"
     },
     {
       "path": "asl/tile/state.asl",
@@ -111,7 +111,7 @@
     },
     {
       "path": "asl/architecture.asl",
-      "sha256": "b67de1f2227f2305f0b7f56eceba59165efe1bfeb9737186d44dfbb902ca0ea2"
+      "sha256": "cf410a71d0357d90af4374427b72a3722da0aa056443adb7cd5f8069d635d895"
     },
     {
       "path": "asl/bundle/dispatch.asl",
@@ -127,7 +127,7 @@
     },
     {
       "path": "asl/profiles/pto-v0.asl",
-      "sha256": "c8ec4b448d7cf5d4be7af6784f8b49d7cfd5da8947a7d614dfbf4b84b7bc3084"
+      "sha256": "a36729a1e8481074b7f031ef70b7e5fef6ae6d82b17f050dc9f7962f6c08ea1b"
     },
     {
       "path": "asl/scalar/addressing.asl",
@@ -139,7 +139,7 @@
     },
     {
       "path": "asl/scalar/control.asl",
-      "sha256": "5daed1ee0339a36ee8aea9a65be54516e31e8d9886ba1987adc53f4e21ef1ae9"
+      "sha256": "a47da2850f0483651c032d4305cc96fb049385d3f8b797259e5e68713c7c8b63"
     },
     {
       "path": "asl/scalar/dispatch.asl",
@@ -293,7 +293,7 @@
       {
         "id": "PTO-REQ-PREDICATE-001",
         "status": "implemented-by-pto-v0-profile",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0019-predicate-register-contract.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0046-separate-execution-mask-and-warp-predicates.md",
         "model": [
           "asl/types.asl",
           "asl/state.asl",
@@ -301,12 +301,14 @@
           "asl/scalar/control.asl",
           "asl/profiles/pto-v0.asl",
           "docs/architecture-decisions/0019-predicate-register-contract.md",
+          "docs/architecture-decisions/0046-separate-execution-mask-and-warp-predicates.md",
           "spec/profile-hooks.json"
         ],
         "tests": [
           "tests/asl/state-tests.asl",
           "tests/asl/bundle-tests.asl",
-          "tests/asl/scalar-tests.asl"
+          "tests/asl/scalar-tests.asl",
+          "tests/asl/profile-tests.asl"
         ],
         "bounded_status": "closed"
       },
@@ -21699,6 +21701,32 @@
         "bounded_status": "reference-model-closed"
       },
       {
+        "id": "state:_ExecutionMask",
+        "root": "_ExecutionMask",
+        "type": "Word",
+        "classification": "architectural-state",
+        "leaf_fields": [
+          {
+            "path": "_ExecutionMask",
+            "type": "Word"
+          }
+        ],
+        "requirements": [
+          "PTO-REQ-PREDICATE-001",
+          "PTO-REQ-STATE-001"
+        ],
+        "model": [
+          "asl/state.asl"
+        ],
+        "tests": [
+          "tests/asl/bundle-tests.asl",
+          "tests/asl/profile-tests.asl",
+          "tests/asl/scalar-tests.asl",
+          "tests/asl/state-tests.asl"
+        ],
+        "bounded_status": "reference-model-closed"
+      },
+      {
         "id": "state:_ExtendedSystemRegisters",
         "root": "_ExtendedSystemRegisters",
         "type": "array [[65536]] of Word",
@@ -22111,7 +22139,7 @@
         "leaf_fields": [
           {
             "path": "_PredicateRegisters[]",
-            "type": "Word"
+            "type": "PredicateWord"
           }
         ],
         "requirements": [
@@ -22122,6 +22150,9 @@
           "asl/state.asl"
         ],
         "tests": [
+          "tests/asl/bundle-tests.asl",
+          "tests/asl/profile-tests.asl",
+          "tests/asl/scalar-tests.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-model-closed"
@@ -22597,8 +22628,12 @@
             "type": "Word"
           },
           {
-            "path": "_TrapContexts[].predicates[]",
+            "path": "_TrapContexts[].execution_mask",
             "type": "Word"
+          },
+          {
+            "path": "_TrapContexts[].predicates[]",
+            "type": "PredicateWord"
           },
           {
             "path": "_TrapContexts[].accumulator.live",
@@ -22781,9 +22816,9 @@
     "system_register_count": 72,
     "trap_count": 13,
     "profile_hook_count": 38,
-    "state_root_count": 72,
-    "state_leaf_count": 236,
-    "traceability_item_count": 934,
+    "state_root_count": 73,
+    "state_leaf_count": 238,
+    "traceability_item_count": 935,
     "open_requirement_count": 11,
     "open_requirement_ids": [
       "PTO-REQ-PROFILE-001",

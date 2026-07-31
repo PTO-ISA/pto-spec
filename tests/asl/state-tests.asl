@@ -7,69 +7,105 @@ begin
 
     WritePC(Zeros{PTO_XLEN} + 16);
     assert ReadPC() == Zeros{PTO_XLEN} + 16;
-    WritePredicateRegister(0, Zeros{PTO_XLEN} + 0xf0);
-    WritePredicateRegister(7, Zeros{PTO_XLEN} + 0x7f);
-    assert ReadPredicateRegister(0) == Zeros{PTO_XLEN} + 0xf0;
-    assert ReadPredicateRegister(7) == Zeros{PTO_XLEN} + 0x7f;
+    WritePredicateRegister(0, Zeros{PTO_PREDICATE_WIDTH});
+    WritePredicateRegister(7, Zeros{PTO_PREDICATE_WIDTH} + 0x7f);
+    // P0 is the hardwired always-active warp predicate. A write cannot
+    // suppress it.
+    assert ReadPredicateRegister(0) == Ones{PTO_PREDICATE_WIDTH};
+    assert ReadPredicateRegister(7) ==
+        Zeros{PTO_PREDICATE_WIDTH} + 0x7f;
     ClearFault();
     assert _LastFault == Fault_None;
 end;
 
-// PTO-REQ-PREDICATE-001: P0 is the bundle-body EXEC predicate. P1..P7 are
-// resettable and trap-preserved visible state with no PTO v0 instruction
-// consumer.
+// PTO-REQ-PREDICATE-001: the eight 32-bit per-warp predicate registers are
+// distinct from the 64-bit kernel EXEC mask. P0 is hardwired all-ones;
+// P1..P7 are writable and trap-preserved.
 func TestPredicateStateContract()
 begin
     ResetProfileState();
-    for index = 0 to PTO_PREDICATE_REGISTER_COUNT - 1 do
-        assert ReadPredicateRegister(index as PredicateIndex) ==
-            Zeros{PTO_XLEN};
-    end;
-    assert PredicateRegisterHasInstructionConsumer(0);
+    assert ReadPredicateRegister(0) == Ones{PTO_PREDICATE_WIDTH};
     for index = 1 to PTO_PREDICATE_REGISTER_COUNT - 1 do
+        assert ReadPredicateRegister(index as PredicateIndex) ==
+            Zeros{PTO_PREDICATE_WIDTH};
+    end;
+    for index = 0 to PTO_PREDICATE_REGISTER_COUNT - 1 do
         assert !PredicateRegisterHasInstructionConsumer(index as PredicateIndex);
     end;
 
-    WritePredicateRegister(1, Zeros{PTO_XLEN} + 0x11);
-    WritePredicateRegister(7, Zeros{PTO_XLEN} + 0x77);
-    WritePredicateRegister(0, Zeros{PTO_XLEN} + 0x55);
+    WritePredicateRegister(0, Zeros{PTO_PREDICATE_WIDTH});
+    assert ReadPredicateRegister(0) == Ones{PTO_PREDICATE_WIDTH};
+    WritePredicateRegister(1, Zeros{PTO_PREDICATE_WIDTH} + 0x11);
+    WritePredicateRegister(7,
+        Zeros{PTO_PREDICATE_WIDTH} + 0x80000001);
+    assert !BundleKindUsesExecutionMask(BundleKind_Standard);
+    assert !BundleKindUsesExecutionMask(BundleKind_Floating);
+    assert !BundleKindUsesExecutionMask(BundleKind_System);
+    assert BundleKindUsesExecutionMask(BundleKind_MachineParallel);
+    assert BundleKindUsesExecutionMask(BundleKind_MachineSequential);
+    assert !BundleKindUsesExecutionMask(BundleKind_TileElement);
+    assert !BundleKindUsesExecutionMask(BundleKind_TileMemory);
+    assert !BundleKindUsesExecutionMask(BundleKind_TileMatrix);
+    assert !BundleKindUsesExecutionMask(BundleKind_FrameTemplate);
+
+    WriteExecutionMask(Zeros{PTO_XLEN} + 0x55);
+    _CommitArgument = Zeros{PTO_XLEN} + 0xcc;
     BeginBundle(BundleKind_Standard, BundleTransfer_Conditional,
         Zeros{PTO_XLEN} + 0x80, Zeros{PTO_XLEN} + 4,
         Zeros{PTO_XLEN} + 4, FALSE);
     assert BundleIsActive();
-    assert ReadPredicateRegister(0) == Zeros{PTO_XLEN} + 0x55;
+    assert ReadPredicateRegister(0) == Ones{PTO_PREDICATE_WIDTH};
+    assert ReadExecutionMask() == Zeros{PTO_XLEN} + 0x55;
+    EnterBundleBody();
+    assert !ExecutionMaskIsActive();
+    assert ReadBranchPredicate() == Zeros{PTO_XLEN} + 0xcc;
     StopBundleAt(Zeros{PTO_XLEN} + 4);
     assert !BundleIsActive();
-    BeginBundle(BundleKind_Standard, BundleTransfer_Direct,
+    BeginBundle(BundleKind_MachineParallel, BundleTransfer_Direct,
         Zeros{PTO_XLEN} + 0x100, Zeros{PTO_XLEN} + 4,
         Zeros{PTO_XLEN} + 4, TRUE);
     EnterBundleBody();
-    assert ReadPredicateRegister(0) == Ones{PTO_XLEN};
-    assert ReadPredicateRegister(1) == Zeros{PTO_XLEN} + 0x11;
-    assert ReadPredicateRegister(7) == Zeros{PTO_XLEN} + 0x77;
+    assert ExecutionMaskIsActive();
+    assert ReadExecutionMask() == Ones{PTO_XLEN};
+    assert ReadPredicateRegister(0) == Ones{PTO_PREDICATE_WIDTH};
+    assert ReadPredicateRegister(1) ==
+        Zeros{PTO_PREDICATE_WIDTH} + 0x11;
+    assert ReadPredicateRegister(7) ==
+        Zeros{PTO_PREDICATE_WIDTH} + 0x80000001;
 
-    // B.Z/B.NZ consume only P0 in a bundle body.
-    WritePredicateRegister(0, Zeros{PTO_XLEN});
-    WritePredicateRegister(1, Ones{PTO_XLEN});
+    StopBundle();
+    WriteExecutionMask(Zeros{PTO_XLEN} + 0x55);
+    BeginBundle(BundleKind_MachineSequential, BundleTransfer_Direct,
+        Zeros{PTO_XLEN} + 0x180, Zeros{PTO_XLEN} + 4,
+        Zeros{PTO_XLEN} + 4, TRUE);
+    EnterBundleBody();
+    assert ExecutionMaskIsActive();
+    assert ReadExecutionMask() == Ones{PTO_XLEN};
+
+    // B.Z/B.NZ consume the independent EXEC mask in a bundle body.
+    WriteExecutionMask(Zeros{PTO_XLEN});
+    WritePredicateRegister(1, Ones{PTO_PREDICATE_WIDTH});
     assert ReadBranchPredicate() == Zeros{PTO_XLEN};
 
-    WritePredicateRegister(0, Zeros{PTO_XLEN} + 0xaa);
+    WriteExecutionMask(Zeros{PTO_XLEN} + 0xaa);
     SetCurrentACR(15);
     WriteTPC(Zeros{PTO_XLEN} + 0x200);
     SetFault(Fault_Assert, Zeros{PTO_XLEN} + 0x200);
     assert CurrentACR() == 1;
-    WritePredicateRegister(0, Zeros{PTO_XLEN});
-    WritePredicateRegister(1, Zeros{PTO_XLEN});
-    WritePredicateRegister(7, Zeros{PTO_XLEN});
+    WriteExecutionMask(Zeros{PTO_XLEN});
+    WritePredicateRegister(1, Zeros{PTO_PREDICATE_WIDTH});
+    WritePredicateRegister(7, Zeros{PTO_PREDICATE_WIDTH});
     let recovered = RecoverTrapContext(CurrentACR());
     assert recovered;
-    assert ReadPredicateRegister(0) == Zeros{PTO_XLEN} + 0xaa;
-    assert ReadPredicateRegister(1) == Ones{PTO_XLEN};
-    assert ReadPredicateRegister(7) == Zeros{PTO_XLEN} + 0x77;
-    WritePredicateRegister(0, Zeros{PTO_XLEN} + 0xbb);
+    assert ReadExecutionMask() == Zeros{PTO_XLEN} + 0xaa;
+    assert ReadPredicateRegister(0) == Ones{PTO_PREDICATE_WIDTH};
+    assert ReadPredicateRegister(1) == Ones{PTO_PREDICATE_WIDTH};
+    assert ReadPredicateRegister(7) ==
+        Zeros{PTO_PREDICATE_WIDTH} + 0x80000001;
+    WriteExecutionMask(Zeros{PTO_XLEN} + 0xbb);
     ArchitectureEnterRequest('0001');
     assert _LastFault == Fault_ExecutionStateCheck;
-    assert ReadPredicateRegister(0) == Zeros{PTO_XLEN} + 0xbb;
+    assert ReadExecutionMask() == Zeros{PTO_XLEN} + 0xbb;
     ResetProfileState();
 end;
 

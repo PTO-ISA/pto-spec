@@ -1594,7 +1594,7 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "58ca12e8e3cba790a25a95ee5230dca3ec9e21bbe2031530ac4b4eb18909f515"
+      "sha256": "ce9072ef71d205b71a6abf01f9aa4168c39878cdd5cf0f4dc518fcef1ddb5335"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -1606,7 +1606,7 @@
     },
     {
       "path": "asl/types.asl",
-      "sha256": "2f2801230cac12c7835ee705b506f83191dfba1e4ad1565f470ff401adb6e83b"
+      "sha256": "7a4eaeb1b3d6a093be1dd03c7062acbf5ace9c41959978749f9504dad6357151"
     },
     {
       "path": "asl/scalar/floating.asl",

@@ -227,8 +227,9 @@ begin
     WriteGPR(23, Zeros{PTO_XLEN} + 0x66);
     PushTemporaryQueue(TRUE, Zeros{PTO_XLEN} + 0x11);
     PushTemporaryQueue(FALSE, Zeros{PTO_XLEN} + 0x22);
-    WritePredicateRegister(0, Zeros{PTO_XLEN} + 0x33);
-    WritePredicateRegister(7, Zeros{PTO_XLEN} + 0x77);
+    WriteExecutionMask(Zeros{PTO_XLEN} + 0x33);
+    WritePredicateRegister(0, Zeros{PTO_PREDICATE_WIDTH});
+    WritePredicateRegister(7, Zeros{PTO_PREDICATE_WIDTH} + 0x77);
     Store(Zeros{PTO_XLEN}, 8, Zeros{PTO_XLEN} + 0xaa);
     - = AddInitialWriteEvent(Zeros{PTO_XLEN} + 2048, 8,
         Zeros{PTO_XLEN});
@@ -261,7 +262,8 @@ begin
     _ACRTrapNumber[[15]] = Zeros{6} + 52;
     _ACRTrapArgument0[[15]] = Ones{PTO_XLEN};
     _TrapContexts[[15]].valid = TRUE;
-    _TrapContexts[[15]].predicates[[7]] = Ones{PTO_XLEN};
+    _TrapContexts[[15]].execution_mask = Zeros{PTO_XLEN};
+    _TrapContexts[[15]].predicates[[7]] = Ones{PTO_PREDICATE_WIDTH};
     _SystemRegisters.thread_ptr = Ones{PTO_XLEN};
     _SystemRegisters.global_ptr = Ones{PTO_XLEN};
     _SystemRegisters.core_feature_enable = Ones{PTO_XLEN};
@@ -272,8 +274,9 @@ begin
     assert ReadGPR(23) == Zeros{PTO_XLEN};
     assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN};
     assert ReadTemporaryQueue(FALSE, 0) == Zeros{PTO_XLEN};
-    assert ReadPredicateRegister(0) == Zeros{PTO_XLEN};
-    assert ReadPredicateRegister(7) == Zeros{PTO_XLEN};
+    assert ReadExecutionMask() == Zeros{PTO_XLEN};
+    assert ReadPredicateRegister(0) == Ones{PTO_PREDICATE_WIDTH};
+    assert ReadPredicateRegister(7) == Zeros{PTO_PREDICATE_WIDTH};
     assert _MemoryEventCount == 0;
     assert !_MemoryEventCaptureEnabled;
     assert _CurrentMemoryAgent == 0;
@@ -307,8 +310,11 @@ begin
         assert _ACRTrapNumber[[ring]] == Zeros{6};
         assert _ACRTrapArgument0[[ring]] == Zeros{PTO_XLEN};
         assert !_TrapContexts[[ring]].valid;
-        assert _TrapContexts[[ring]].predicates[[0]] == Zeros{PTO_XLEN};
-        assert _TrapContexts[[ring]].predicates[[7]] == Zeros{PTO_XLEN};
+        assert _TrapContexts[[ring]].execution_mask == Zeros{PTO_XLEN};
+        assert _TrapContexts[[ring]].predicates[[0]] ==
+            Zeros{PTO_PREDICATE_WIDTH};
+        assert _TrapContexts[[ring]].predicates[[7]] ==
+            Zeros{PTO_PREDICATE_WIDTH};
     end;
     assert _ExtendedSystemRegisters[[0x0f00]] == Zeros{PTO_XLEN};
     assert _ExtendedSystemRegisters[[0x1f01]] == Zeros{PTO_XLEN};

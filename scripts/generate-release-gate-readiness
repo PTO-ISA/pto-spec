@@ -410,7 +410,7 @@ def build_evidence() -> dict[str, Any]:
     traceability = load("spec/evidence/release-traceability-readiness.json")
     require(
         traceability["status"] == "inventory-and-links-closed-promotion-open"
-        and traceability["summary"]["traceability_item_count"] == 934
+        and traceability["summary"]["traceability_item_count"] == 935
         and traceability["summary"]["release_traceability_status"] == "open:S6-T1",
         "S6-T1 readiness contract drift",
     )

@@ -27,9 +27,10 @@ memory policy.
 - A synchronous fault or interrupt sourced in ACR2 through ACR15 targets ACR1.
 - Reset clears the complete catalog-defined context-family low-index range in
   all 16 ACR banks.
-- Reset also clears every live GPR, T/U queue, predicate, bundle descriptor,
-  tile descriptor and definedness bit, reservation, memory/event, fault, trap,
-  and saved-context field. Profile constants are then installed explicitly.
+- Reset also clears every live GPR, T/U queue, P1 through P7, the stored
+  machine execution mask, bundle descriptor, tile descriptor and definedness
+  bit, reservation, memory/event, fault, trap, and saved-context field. P0 is
+  hardwired all-ones. Profile constants are then installed explicitly.
 - Bundle-format and bundle-control faults report `BUNDLE_TRAP` (5).
 - `SCALL` (6) remains reserved for the separately specified `ACRC` service-
   request transition and is not used as a bundle-control surrogate.

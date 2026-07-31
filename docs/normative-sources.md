@@ -145,8 +145,9 @@ vectors alone would not satisfy that closure rule.
 `scalar-bru-totality.json` is the Stage 4 BRU totality, alias, predicate, target,
 and fault contract. It binds all six BRU effect classes and all 66 accepted form
 IDs to 284 raw decoded totality cases and 32 decoded alias/fault obligations.
-The evidence includes all Reg5 queue sources and destinations, bundle versus
-non-bundle predicate selection, the ignored `JR.SrcZero` alias field, signed
+The evidence includes all Reg5 queue sources and destinations, MPAR/MSEQ
+execution-mask versus commit-argument branch selection, the ignored
+`JR.SrcZero` alias field, signed
 halfword target limits and wrapping, odd-target trap context, and synchronized
 return state. These executable cases and ADR 0027 close `S4-T4`.
 

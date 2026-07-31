@@ -50,13 +50,13 @@ address, or state-transition rule.
 - Reg5 destinations 1..23 write GPRs; 0 and 24..29 discard the value; selector
   30 pushes U and selector 31 pushes T. A push shifts older entries toward
   `#4` and discards the previous `#4`.
-- P0..P7 are 64-bit predicate registers. Scalar B.Z and B.NZ read the bundle
-  condition outside a bundle body and P0 as the EXEC predicate inside a bundle
-  body.
-- Bundle-body entry initializes P0 to all ones. P1..P7 are trap-preserved,
-  resettable visible state with no PTO v0 instruction producer or consumer;
-  their selector space remains reserved pending an explicit architecture
-  extension.
+- P0..P7 are 32-bit per-warp predicate registers. P0 is hardwired all-ones;
+  P1..P7 reset to zero and are independently trap-preserved. PTO ISA 0.57.1
+  has no instruction producer, consumer, or selector for this register file.
+- A separate 64-bit execution mask belongs only to active MPAR and MSEQ
+  bodies. Machine-body entry initializes it to all ones, and B.Z/B.NZ consume
+  it while that body is active. Everywhere else B.Z/B.NZ consume the bundle
+  commit argument. See ADR 0046.
 - Access-control state is ACR0..ACR15. PTO v0 resets to ACR0; the exact reset
   and access policy are defined by `docs/profile-contracts.md`.
 - PTO v0 treats ACR0 as the root manager, ACR1 as the system manager, and
@@ -309,8 +309,8 @@ comparison, commit, conditional branch, jump, PC-relative value, and
 return-address effect classes. Its 284 decoded totality cases cross condition
 limits, source modifiers, immediate limits, taken/not-taken targets, fallthrough,
 halfword scaling, and modulo-64-bit wrapping. Thirty-two additional decoded
-obligations prove the complete Reg5 queue/alias topology, bundle versus
-non-bundle predicate selection, P0 precedence and bundle preservation, the
+obligations prove the complete Reg5 queue/alias topology, MPAR/MSEQ
+execution-mask versus commit-argument selection and bundle preservation, the
 ignored `JR.SrcZero` alias field, synchronized R10/bundle return state, and
 precise odd-target faults both outside and inside a bundle. ADR 0027 defines the
 portable target policy and records why a start-marker check is not part of PTO
@@ -460,8 +460,9 @@ machine/security requests route to ACR0. The trap reports the request in
 `CAUSE`, the source TPC in `TRAPARG0`, and source TPC + 4 in `EBARG_TPC` so
 ordinary recovery advances past the 32-bit ACRC.
 
-Trap save and recovery preserve all eight predicate registers in addition to
-TPC, BPC, core state, and the T/U queues. Bundle preservation includes kind,
+Trap save and recovery preserve all eight 32-bit predicate registers and the
+separate 64-bit machine-body execution mask in addition to TPC, BPC, core
+state, and the T/U queues. Bundle preservation includes kind,
 transfer, condition, targets, fallthrough, the operation-bearing start
 descriptor, dimensions, scalar/tile bindings, and control/data attributes.
 Manager edits to EBARG-covered fields remain authoritative; saved context

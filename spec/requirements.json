@@ -23,14 +23,16 @@
         "asl/scalar/control.asl",
         "asl/profiles/pto-v0.asl",
         "docs/architecture-decisions/0019-predicate-register-contract.md",
+        "docs/architecture-decisions/0046-separate-execution-mask-and-warp-predicates.md",
         "spec/profile-hooks.json"
       ],
-      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0019-predicate-register-contract.md",
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0046-separate-execution-mask-and-warp-predicates.md",
       "status": "implemented-by-pto-v0-profile",
       "tests": [
         "tests/asl/state-tests.asl",
         "tests/asl/bundle-tests.asl",
-        "tests/asl/scalar-tests.asl"
+        "tests/asl/scalar-tests.asl",
+        "tests/asl/profile-tests.asl"
       ]
     },
     {

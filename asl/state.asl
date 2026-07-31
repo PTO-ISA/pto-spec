@@ -11,6 +11,9 @@ var _BundleActive : boolean;
 var _BundleBodyActive : boolean;
 var _ReturnAddress : Word;
 var _CommitArgument : Word;
+// The comparison architecture's bundle-body EXEC mask `p` is independent of
+// the per-warp P0..P7 register file.
+var _ExecutionMask : Word;
 var _PredicateRegisters : PredicateSnapshot;
 var _LastFault : FaultCode;
 var _FaultAddress : Word;
@@ -276,22 +279,35 @@ begin
     end;
 end;
 
-readonly func ReadPredicateRegister(index: PredicateIndex) => Word
+readonly func ReadExecutionMask() => Word
 begin
-    return _PredicateRegisters[[index]];
+    return _ExecutionMask;
 end;
 
-func WritePredicateRegister(index: PredicateIndex, value: Word)
+func WriteExecutionMask(value: Word)
 begin
-    _PredicateRegisters[[index]] = value;
+    _ExecutionMask = value;
+end;
+
+readonly func ReadPredicateRegister(index: PredicateIndex) => PredicateWord
+begin
+    return if index == 0 then Ones{PTO_PREDICATE_WIDTH}
+           else _PredicateRegisters[[index]];
+end;
+
+func WritePredicateRegister(index: PredicateIndex, value: PredicateWord)
+begin
+    if index != 0 then
+        _PredicateRegisters[[index]] = value;
+    end;
 end;
 
 pure func PredicateRegisterHasInstructionConsumer(index: PredicateIndex)
         => boolean
 begin
-    // PTO has no vector execution surface. P0 is the bundle-body EXEC
-    // predicate consumed by B.Z/B.NZ; P1..P7 are reserved visible state.
-    return index == 0;
+    // PTO 0.57.1 has no warp-vector execution surface. Machine-body B.Z and
+    // B.NZ consume the distinct execution mask, not P0..P7.
+    return FALSE;
 end;
 
 impdef func SaveTrapContext(target: AccessControlRing,
@@ -322,6 +338,7 @@ begin
     _TrapContexts[[target]].bundle_data_attributes = _BundleDataAttributes;
     _TrapContexts[[target]].t_queue = _TQueue;
     _TrapContexts[[target]].u_queue = _UQueue;
+    _TrapContexts[[target]].execution_mask = _ExecutionMask;
     _TrapContexts[[target]].predicates = _PredicateRegisters;
     _TrapContexts[[target]].accumulator = _Accumulator;
 end;
@@ -353,6 +370,7 @@ begin
     _BundleDataAttributes = _TrapContexts[[target]].bundle_data_attributes;
     _TQueue = _TrapContexts[[target]].t_queue;
     _UQueue = _TrapContexts[[target]].u_queue;
+    _ExecutionMask = _TrapContexts[[target]].execution_mask;
     _PredicateRegisters = _TrapContexts[[target]].predicates;
     _Accumulator = _TrapContexts[[target]].accumulator;
     _CurrentACR = _TrapContexts[[target]].source_acr;

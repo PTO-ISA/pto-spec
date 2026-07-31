@@ -122,6 +122,7 @@ begin
         _TrapContexts[[ring]].bundle_data_attributes = _BundleDataAttributes;
         _TrapContexts[[ring]].t_queue = _TQueue;
         _TrapContexts[[ring]].u_queue = _UQueue;
+        _TrapContexts[[ring]].execution_mask = _ExecutionMask;
         _TrapContexts[[ring]].predicates = _PredicateRegisters;
         _TrapContexts[[ring]].accumulator = _Accumulator;
     end;
@@ -147,6 +148,17 @@ end;
 readonly func BundleBodyIsActive() => boolean
 begin
     return _BundleBodyActive;
+end;
+
+pure func BundleKindUsesExecutionMask(kind: BundleKind) => boolean
+begin
+    return kind == BundleKind_MachineParallel ||
+           kind == BundleKind_MachineSequential;
+end;
+
+readonly func ExecutionMaskIsActive() => boolean
+begin
+    return _BundleBodyActive && BundleKindUsesExecutionMask(_BundleKind);
 end;
 
 readonly func BundleTileOperationSelected() => boolean
@@ -510,9 +522,12 @@ begin
         SetFault(Fault_BundleControl, ReadTPC());
     else
         _BundleBodyActive = TRUE;
-        // PTO begins a bundle body with every EXEC bit active. P0 may later be
-        // replaced only by a profile that defines an architectural producer.
-        WritePredicateRegister(0, Ones{PTO_XLEN});
+        // Only machine-parallel and machine-sequential bodies enter the
+        // kernel EXEC domain. Other bundle kinds retain the stored mask and
+        // continue to branch on CARG.
+        if BundleKindUsesExecutionMask(_BundleKind) then
+            WriteExecutionMask(Ones{PTO_XLEN});
+        end;
         WriteTPC(ReadBPC());
     end;
 end;

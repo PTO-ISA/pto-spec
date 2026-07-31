@@ -1924,8 +1924,8 @@ def main() -> int:
         "b-nz-outside-zero",
         "b-nz-outside-one",
         "b-nz-outside-all-ones",
-        "b-z-p0-precedence",
-        "b-nz-p0-precedence",
+        "b-z-exec-mask-precedence",
+        "b-nz-exec-mask-precedence",
         "successful-branch-preserves-bundle-state",
         "jr-srczero-zero-max-alias",
         "jr-odd-fault-outside",
@@ -2029,7 +2029,7 @@ def main() -> int:
         and independent_bru_comparison["non_comparable_contracts"]
         == [
             "pto-reg5-t-u-queue-namespace",
-            "pto-commit-versus-p0-source-selection",
+            "pto-commit-versus-execution-mask-source-selection",
             "pto-bundle-return-address-mirror",
         ]
         and "PTO-owned" in independent_bru_comparison["pto_disposition"]
@@ -7420,7 +7420,7 @@ def main() -> int:
         "system_registers": 72,
         "traps": 13,
         "profile_hooks": 38,
-        "state_roots": 72,
+        "state_roots": 73,
     }
     require(
         set(release_traceability["inventories"]) == set(release_inventory_counts)
@@ -7439,8 +7439,8 @@ def main() -> int:
         len(release_item_ids)
         == len(set(release_item_ids))
         == release_traceability["summary"]["traceability_item_count"]
-        == 934
-        and release_traceability["summary"]["state_leaf_count"] == 236
+        == 935
+        and release_traceability["summary"]["state_leaf_count"] == 238
         and release_traceability["summary"]["open_requirement_count"] == 11
         and release_traceability["summary"]["open_profile_hook_count"] == 30
         and release_traceability["summary"]["closed_prerequisite_targets"] == 28

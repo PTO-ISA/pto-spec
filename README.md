@@ -80,9 +80,9 @@ passes its generation, validation, documentation, Sail parser, and Sail
 C-backend gates. This classification closes `S5-T3` without changing the open
 `S5-T2` and Stage 6 claims.
 Release traceability is now generated rather than inferred from prose. The
-`spec/evidence/release-traceability-readiness.json` ledger covers 934 exact
+`spec/evidence/release-traceability-readiness.json` ledger covers 935 exact
 units: all 46 requirements, accepted forms and operations, system registers,
-traps, 38 profile hooks, and 72 ASL state roots expanded to 236 leaf fields. Its
+traps, 38 profile hooks, and 73 ASL state roots expanded to 238 leaf fields. Its
 inventory and links are closed, while S6-T1 promotion remains explicitly open
 on S5-T2 and an immutable-commit claim-hygiene review.
 The generated `spec/evidence/release-gate-readiness.json` ledger separately
@@ -100,7 +100,8 @@ approval evidence.
 - 120 direct tile operations: 98 TEPL, 9 TMA, and 13 CUBE.
 - PTO ISA 0.57.1 Mode/Function tile encoding with no untagged legacy decoder.
 - A 32-code scalar namespace: 24 absolute GPRs plus four-entry T and U
-  temporary queues, eight predicate registers, and 64 flat T/U/M/N tiles.
+  temporary queues, eight 32-bit per-warp predicate registers, one independent
+  64-bit MPAR/MSEQ execution mask, and 64 flat T/U/M/N tiles.
 - 72 architecturally visible system registers, including THREAD_PTR,
   GLOBAL_PTR, BLOCKID, THREAD_ID, CORE_STATE, CORE_ID, and TILE_CAPACITY.
 - Visible TPC/BPC bundle state and `TileInfo` state for every tile register.

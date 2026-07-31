@@ -52,8 +52,9 @@ profile-owned forms still require exact flag-production rules and vectors.
 
 ### Reset, access-control rings, and time
 
-`ResetProfileState` clears the 24 absolute GPRs, the T/U queues, P0..P7, and
-bounded memory; invalidates every `TileInfo`; clears defined extended
+`ResetProfileState` clears the 24 absolute GPRs, the T/U queues, P1..P7, the
+stored machine-body execution mask, and bounded memory. P0 remains hardwired
+to 32 one bits. Reset invalidates every `TileInfo`; clears defined extended
 system-register storage; resets faults, reservations, concurrency candidates,
 and maintenance epochs; sets VERSION to 1 and TILE_CAPACITY to 256 KiB; sets
 time to zero; and enters ACR0. Tile payload backing that becomes unobservable

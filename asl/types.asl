@@ -5,6 +5,7 @@ type Word of bits(PTO_XLEN);
 type DoubleWord of bits(PTO_XLEN * 2);
 type HalfWord of bits(32);
 type Byte of bits(8);
+type PredicateWord of bits(PTO_PREDICATE_WIDTH);
 type GPRIndex of integer {0..PTO_ABSOLUTE_GPR_COUNT-1};
 type Reg5Selector of integer {0..31};
 type TileIndex of integer {0..PTO_TILE_REGISTER_COUNT-1};
@@ -136,7 +137,8 @@ type BundleDataAttributes of record {
 // implemented Access Control Ring subtree.
 type AccessControlRing of integer {0..15};
 type TemporaryQueueSnapshot of array [[PTO_TEMPORARY_QUEUE_DEPTH]] of Word;
-type PredicateSnapshot of array [[PTO_PREDICATE_REGISTER_COUNT]] of Word;
+type PredicateSnapshot of array [[PTO_PREDICATE_REGISTER_COUNT]]
+    of PredicateWord;
 type BundleDimensionSnapshot of array [[PTO_BUNDLE_DIMENSION_COUNT]] of Word;
 type BundleScalarBindingSnapshot of array [[PTO_BUNDLE_SCALAR_BINDING_COUNT]]
     of BundleScalarBinding;
@@ -585,6 +587,7 @@ type TrapContext of record {
     bundle_data_attributes: BundleDataAttributes,
     t_queue: TemporaryQueueSnapshot,
     u_queue: TemporaryQueueSnapshot,
+    execution_mask: Word,
     predicates: PredicateSnapshot,
     accumulator: AccumulatorState
 };

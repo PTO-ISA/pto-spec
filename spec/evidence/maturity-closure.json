@@ -122,14 +122,14 @@
       "title": "Close all trap entry, routing, recovery, and no-trigger envelopes"
     },
     {
-      "evidence": ["docs/architecture-decisions/0019-predicate-register-contract.md", "tests/asl/state-tests.asl", "tests/asl/bundle-tests.asl", "tests/asl/scalar-tests.asl"],
+      "evidence": ["docs/architecture-decisions/0046-separate-execution-mask-and-warp-predicates.md", "tests/asl/state-tests.asl", "tests/asl/bundle-tests.asl", "tests/asl/scalar-tests.asl", "tests/asl/profile-tests.asl"],
       "gaps": [],
       "id": "S2-T4",
       "owner": "PTO scalar architecture maintainers",
       "requirements": ["PTO-REQ-PREDICATE-001"],
       "stage": 2,
       "status": "closed",
-      "title": "Define P0 through P7 architectural behavior"
+      "title": "Separate kernel execution-mask and warp-predicate state"
     },
     {
       "evidence": ["docs/architecture-decisions/0013-tile-capacity-and-packed-storage.md", "tests/asl/state-tests.asl", "tests/asl/tile-tests.asl"],
