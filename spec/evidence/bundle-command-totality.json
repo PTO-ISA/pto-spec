@@ -1711,8 +1711,8 @@
     "counts": {
       "TEPL": {
         "total": 98,
-        "representable": 63,
-        "commit_rejected": 35
+        "representable": 62,
+        "commit_rejected": 36
       },
       "TMA": {
         "total": 9,
@@ -1721,8 +1721,8 @@
       },
       "CUBE": {
         "total": 13,
-        "representable": 5,
-        "commit_rejected": 8
+        "representable": 4,
+        "commit_rejected": 9
       }
     },
     "operation_matrix": [
@@ -2714,11 +2714,14 @@
         "selector": "0x008",
         "operation": "ACCCVT",
         "operand_fields": [
-          "destination0"
+          "destination0",
+          "numeric_control"
         ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
+        "representable": false,
+        "unsupported_operand_fields": [
+          "numeric_control"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
       },
       {
         "family": "CUBE",
@@ -3003,11 +3006,14 @@
         "operation": "TCVT",
         "operand_fields": [
           "destination0",
-          "source0"
+          "source0",
+          "numeric_control"
         ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
+        "representable": false,
+        "unsupported_operand_fields": [
+          "numeric_control"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
       },
       {
         "family": "TEPL",
@@ -3017,10 +3023,12 @@
           "destination0",
           "source0",
           "scalar0",
-          "scalar1"
+          "scalar1",
+          "numeric_control"
         ],
         "representable": false,
         "unsupported_operand_fields": [
+          "numeric_control",
           "scalar0",
           "scalar1"
         ],
@@ -3034,10 +3042,12 @@
           "destination0",
           "source0",
           "scalar0",
-          "scalar1"
+          "scalar1",
+          "numeric_control"
         ],
         "representable": false,
         "unsupported_operand_fields": [
+          "numeric_control",
           "scalar0",
           "scalar1"
         ],

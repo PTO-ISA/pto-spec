@@ -2,7 +2,12 @@
 
 ## Status
 
-Accepted structural checkpoint; per-domain rounding results remain open.
+Accepted structural checkpoint; semantic-selection and domain-rule portions
+superseded by ADR 0047.
+
+The mappings recorded below describe the pre-ADR-0047 inventory state. They are
+not current semantics: scalar values 4–7 now resolve to RNE, and `FCVTA` now
+selects RNA (nearest with ties away), as specified by ADR 0047.
 
 ## Context
 
@@ -60,12 +65,16 @@ Selector discovery, namespace separation, fixed-override ownership, bundle
 state binding, and affected-domain ownership are closed. Positive and negative
 halfway tests cover the five mathematical rounding functions in PTO-v0.
 
-`PD-03` remains open. Closure still requires an accepted disposition for
+At the time of this decision, `PD-03` remained open. Closure required an accepted disposition for
 active FRM codes 4 through 7, exact mappings for public and target selector
 classes, an accepted rule for all 18 domains, rounding-before-saturation
 vectors, and any stochastic state or bounded-result contract. This decision
 does not increment the `S5-T2-A2` accepted-decision count or promote maturity
 beyond M4.
+
+ADR 0047 subsequently accepts those rounding-selection and rounding-point
+rules. The historical inventory and namespace-separation rationale in this
+decision remain valid.
 
 ## Evidence
 

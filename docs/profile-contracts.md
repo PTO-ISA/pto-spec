@@ -194,8 +194,9 @@ question acceptance and domain result rule null.
 The generated `scalar-numeric-flag-contract.json` ledger records the accepted
 flag lifecycle and 30/30 producer-owner matrix without closing PD-06.
 The generated `numeric-rounding-selector-contract.json` ledger records the
-accepted selector namespaces and owners without closing PD-03. It keeps all 18
-affected domain rounding and saturation-order rules explicitly null.
+accepted selector namespaces and owners from ADR 0039 and the complete PD-03
+semantics accepted by ADR 0047. All 18 affected domain rounding and
+saturation-order rules are populated; other numeric dimensions remain open.
 The generated `numeric-format-namespace-contract.json` ledger records the
 accepted five code namespaces, 25 carrier identities, reserved-code behavior, and
 four-bit packing without closing PD-02. It keeps eight format, exceptional

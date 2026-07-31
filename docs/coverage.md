@@ -102,12 +102,13 @@ acceptance field remains null. The generated
 state/lifecycle and assign all 30 FSU forms to one producer owner; exact flag
 conditions remain open for 19 profile-owned forms. PD-06, S5-T2-A, and numeric
 conformance therefore remain open.
-The generated `numeric-rounding-selector-contract.json` ledger and ADR 0039
-close PD-03 selector discovery and namespace ownership across eight active
-scalar codes, five fixed overrides, eight bundle codes, four external selector
-classes, 18 domains, 102 operations, and 25 hooks. All domain rounding and
-saturation-order rules remain open, so this checkpoint does not increment the
-accepted-decision count or change the M4 floor.
+The generated `numeric-rounding-selector-contract.json` ledger and ADRs 0039
+and 0047 close PD-03 across eight scalar raw values, five fixed overrides,
+eight bundle codes, seven public conversion values, four external selector
+classes, 18 domains, 102 operations, and 25 hooks. The ledger accepts all 18
+domain rounding points and saturation-order rules and increments the accepted
+decision count to one. Other numeric dimensions remain open, so the repository
+floor remains M4.
 The generated `numeric-format-namespace-contract.json` ledger and ADR 0040
 close the structural namespace portion of PD-02. Five code spaces remain
 distinct; all 25 raw-carrier identities, every mapped/reserved code, and all four

@@ -1943,8 +1943,8 @@ begin
     assert FloatingFused(FloatingFused_MADD, 1.0, 2.0, 3.0) == 7.0;
     let square_root = FloatingUnary(FloatingUnary_SQRT, 9.0);
     assert square_root == 3.0;
-    let rounded_down = FloatingToInteger(3.75, FloatingRound_Down);
-    let rounded_zero = FloatingToInteger(-3.75, FloatingRound_TowardsZero);
+    let rounded_down = FloatingToInteger(3.75, NumericRound_RTM);
+    let rounded_zero = FloatingToInteger(-3.75, NumericRound_RTZ);
     assert rounded_down == 3;
     assert rounded_zero == -3;
     let converted_encoding = ConvertFloatingEncoding(Zeros{PTO_XLEN} + 0x1234,

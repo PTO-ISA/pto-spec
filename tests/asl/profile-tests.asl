@@ -22,16 +22,24 @@ begin
     assert rounded_even_negative_low == -2;
     assert rounded_even_negative_high == -4;
 
-    let rne_positive = FloatingToInteger(2.5, FloatingRound_Nearest);
-    let rne_negative = FloatingToInteger(-2.5, FloatingRound_Nearest);
-    let down_positive = FloatingToInteger(2.5, FloatingRound_Down);
-    let down_negative = FloatingToInteger(-2.5, FloatingRound_Down);
-    let up_positive = FloatingToInteger(2.5, FloatingRound_Up);
-    let up_negative = FloatingToInteger(-2.5, FloatingRound_Up);
-    let zero_positive = FloatingToInteger(2.5, FloatingRound_TowardsZero);
-    let zero_negative = FloatingToInteger(-2.5, FloatingRound_TowardsZero);
-    let away_positive = FloatingToInteger(2.5, FloatingRound_Away);
-    let away_negative = FloatingToInteger(-2.5, FloatingRound_Away);
+    let rne_positive = FloatingToInteger(2.5, NumericRound_RNE);
+    let rne_negative = FloatingToInteger(-2.5, NumericRound_RNE);
+    let down_positive = FloatingToInteger(2.5, NumericRound_RTM);
+    let down_negative = FloatingToInteger(-2.5, NumericRound_RTM);
+    let up_positive = FloatingToInteger(2.5, NumericRound_RTP);
+    let up_negative = FloatingToInteger(-2.5, NumericRound_RTP);
+    let zero_positive = FloatingToInteger(2.5, NumericRound_RTZ);
+    let zero_negative = FloatingToInteger(-2.5, NumericRound_RTZ);
+    let away_nonhalf_positive = FloatingToInteger(2.1, NumericRound_RNA);
+    let away_nonhalf_negative = FloatingToInteger(-2.1, NumericRound_RNA);
+    let away_positive = FloatingToInteger(2.5, NumericRound_RNA);
+    let away_negative = FloatingToInteger(-2.5, NumericRound_RNA);
+    let odd_exact_even = FloatingToInteger(2.0, NumericRound_RTO);
+    let odd_exact_odd = FloatingToInteger(3.0, NumericRound_RTO);
+    let odd_positive = FloatingToInteger(2.25, NumericRound_RTO);
+    let odd_negative = FloatingToInteger(-2.25, NumericRound_RTO);
+    let half_up_positive = FloatingToInteger(2.5, NumericRound_RHB);
+    let half_up_negative = FloatingToInteger(-2.5, NumericRound_RHB);
     assert rne_positive == 2;
     assert rne_negative == -2;
     assert down_positive == 2;
@@ -40,33 +48,89 @@ begin
     assert up_negative == -2;
     assert zero_positive == 2;
     assert zero_negative == -2;
+    assert away_nonhalf_positive == 2;
+    assert away_nonhalf_negative == -2;
     assert away_positive == 3;
     assert away_negative == -3;
+    assert odd_exact_even == 2;
+    assert odd_exact_odd == 3;
+    assert odd_positive == 3;
+    assert odd_negative == -3;
+    assert half_up_positive == 3;
+    assert half_up_negative == -2;
+
+    assert ResolveScalarFPActiveRoundingMode('000') == NumericRound_RNE;
+    assert ResolveScalarFPActiveRoundingMode('001') == NumericRound_RTM;
+    assert ResolveScalarFPActiveRoundingMode('010') == NumericRound_RTP;
+    assert ResolveScalarFPActiveRoundingMode('011') == NumericRound_RTZ;
+    // Active FRM has only four modes. Reserved raw values use the specified
+    // RNE fallback and never inherit the bundle namespace.
+    assert ResolveScalarFPActiveRoundingMode('100') == NumericRound_RNE;
+    assert ResolveScalarFPActiveRoundingMode('111') == NumericRound_RNE;
+
+    let bundle_none = DecodeBundleRoundingSelection('000');
+    let bundle_rne = DecodeBundleRoundingSelection('001');
+    let bundle_rtz = DecodeBundleRoundingSelection('010');
+    let bundle_rdn = DecodeBundleRoundingSelection('011');
+    let bundle_rup = DecodeBundleRoundingSelection('100');
+    let bundle_rna = DecodeBundleRoundingSelection('101');
+    let bundle_rto = DecodeBundleRoundingSelection('110');
+    let bundle_rhb = DecodeBundleRoundingSelection('111');
+    assert bundle_none.use_operation_default;
+    assert bundle_rne.rounding_mode == NumericRound_RNE;
+    assert bundle_rtz.rounding_mode == NumericRound_RTZ;
+    assert bundle_rdn.rounding_mode == NumericRound_RTM;
+    assert bundle_rup.rounding_mode == NumericRound_RTP;
+    assert bundle_rna.rounding_mode == NumericRound_RNA;
+    assert bundle_rto.rounding_mode == NumericRound_RTO;
+    assert bundle_rhb.rounding_mode == NumericRound_RHB;
+
+    let (public_none_valid, public_none) =
+        DecodePublicConversionRoundingSelection('000');
+    let (public_round_valid, public_round) =
+        DecodePublicConversionRoundingSelection('010');
+    let (public_floor_valid, public_floor) =
+        DecodePublicConversionRoundingSelection('011');
+    let (public_trunc_valid, public_trunc) =
+        DecodePublicConversionRoundingSelection('101');
+    let (public_odd_valid, public_odd) =
+        DecodePublicConversionRoundingSelection('110');
+    let (public_reserved_valid, -) =
+        DecodePublicConversionRoundingSelection('111');
+    assert public_none_valid && public_none.use_operation_default;
+    assert public_round_valid &&
+           public_round.rounding_mode == NumericRound_RNA;
+    assert public_floor_valid &&
+           public_floor.rounding_mode == NumericRound_RTM;
+    assert public_trunc_valid &&
+           public_trunc.rounding_mode == NumericRound_RTZ;
+    assert public_odd_valid && public_odd.rounding_mode == NumericRound_RTO;
+    assert !public_reserved_valid;
 
     let (fp_binary, fp_binary_flags) = ScalarFPBinaryProfile(
-        FloatingBinary_ADD, Zeros{3}, Zeros{5},
+        FloatingBinary_ADD, NumericRound_RNE, Zeros{5},
         Zeros{PTO_XLEN} + 2, Zeros{PTO_XLEN} + 3);
     assert fp_binary == Zeros{PTO_XLEN} + 5;
     assert fp_binary_flags == Zeros{5};
     let (fp_unary, fp_unary_flags) = ScalarFPUnaryProfile(
-        FloatingUnary_EXP, Zeros{3}, Zeros{5}, Zeros{PTO_XLEN} + 4);
+        FloatingUnary_EXP, NumericRound_RNE, Zeros{5}, Zeros{PTO_XLEN} + 4);
     assert fp_unary == Zeros{PTO_XLEN} + 5;
     assert fp_unary_flags == Zeros{5};
     let (fp_fused, fp_fused_flags) = ScalarFPFusedProfile(
-        FloatingFused_MADD, Zeros{3}, Zeros{5}, Zeros{PTO_XLEN} + 1,
+        FloatingFused_MADD, NumericRound_RNE, Zeros{5}, Zeros{PTO_XLEN} + 1,
         Zeros{PTO_XLEN} + 2, Zeros{PTO_XLEN} + 3);
     assert fp_fused == Zeros{PTO_XLEN} + 7;
     assert fp_fused_flags == Zeros{5};
     let (fp_integer, fp_integer_flags) = ScalarFPToIntegerProfile(
-        Zeros{3}, Zeros{5}, Zeros{5}, Zeros{PTO_XLEN} + 9);
+        NumericRound_RNE, Zeros{5}, Zeros{5}, Zeros{PTO_XLEN} + 9);
     assert fp_integer == Zeros{PTO_XLEN} + 9;
     assert fp_integer_flags == Zeros{5};
     let (fp_convert, fp_convert_flags) = ScalarFPConvertProfile(
-        Zeros{3}, Zeros{5} + 1, Zeros{5}, Zeros{PTO_XLEN} + 10);
+        NumericRound_RNE, Zeros{5} + 1, Zeros{5}, Zeros{PTO_XLEN} + 10);
     assert fp_convert == Zeros{PTO_XLEN} + 10;
     assert fp_convert_flags == Zeros{5};
     let (integer_fp, integer_fp_flags) = ScalarIntegerToFPProfile(
-        Zeros{3}, Zeros{5}, Zeros{5} + 1, Zeros{PTO_XLEN} + 11);
+        NumericRound_RNE, Zeros{5}, Zeros{5} + 1, Zeros{PTO_XLEN} + 11);
     assert integer_fp == Zeros{PTO_XLEN} + 11;
     assert integer_fp_flags == Zeros{5};
 
@@ -84,15 +148,15 @@ begin
     assert tile_exp_difference == Zeros{PTO_XLEN} + 5;
 
     let converted_tile = TileProfileConvert(Zeros{PTO_XLEN} + 0x123,
-        TileDataType_U64, TileDataType_U8);
+        TileDataType_U64, TileDataType_U8, DefaultNumericExecutionControl());
     assert converted_tile == Zeros{PTO_XLEN} + 0x23;
     let quantized_tile = TileProfileQuantize(Zeros{PTO_XLEN} + 20,
         Zeros{PTO_XLEN} + 4, Zeros{PTO_XLEN} + 1,
-        TileDataType_U64, TileDataType_U8);
+        TileDataType_U64, TileDataType_U8, DefaultNumericExecutionControl());
     assert quantized_tile == Zeros{PTO_XLEN} + 6;
     let dequantized_tile = TileProfileDequantize(Zeros{PTO_XLEN} + 7,
         Zeros{PTO_XLEN} + 3, Zeros{PTO_XLEN} + 1,
-        TileDataType_U8, TileDataType_U64);
+        TileDataType_U8, TileDataType_U64, DefaultNumericExecutionControl());
     assert dequantized_tile == Zeros{PTO_XLEN} + 18;
 
     assert AtomicAddress(Zeros{PTO_XLEN} + 128, FALSE) ==

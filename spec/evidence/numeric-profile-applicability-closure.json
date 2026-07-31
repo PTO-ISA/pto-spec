@@ -5417,7 +5417,7 @@
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "e77c762122dd776ea8b1b2113e6d095b2db0fe24b5b98d0c26012db9fb98e64e"
+      "sha256": "52c84c4b40b8c8f5fa52ba6a7cabc8ebb394b65907e34c0923f98a6885096550"
     },
     {
       "path": "spec/catalog/command-forms.json",
@@ -5425,11 +5425,11 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "a8cec33f0b61e94892946788ee7e0959a946fe6247763aa733a3412b4f1da4df"
+      "sha256": "e4b23dd42f29aebf2d1fbe70e40222dfd34595b1f8e811d15fe02369cd248391"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "9bcb979388b28cbc9e1ff9bdfbf5e479a268a616e5a2bf514ab206fb27107d54"
+      "sha256": "428fc467ee70e38506c42359b64cb1e0b110fdf29fcde29471686e307f9badcf"
     },
     {
       "path": "spec/evidence/public-source-reconciliation.json",
@@ -5437,23 +5437,23 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "ce9072ef71d205b71a6abf01f9aa4168c39878cdd5cf0f4dc518fcef1ddb5335"
+      "sha256": "c1a370fbdb17caa54aeeaa733f22bd55e6777322e3dd8a7e1ed6fa62ab35249a"
     },
     {
       "path": "scripts/generate-asl-decoders",
-      "sha256": "2ed5458a8b54d9c8d8ed4d0847bbbe03fabac8eedfed9f60e28d65e16d72b388"
+      "sha256": "f4b8e76225a8277d9a464d0c555a3bcc68356e75b284b746d1baec56957d4c7f"
     },
     {
       "path": "asl/types.asl",
-      "sha256": "7a4eaeb1b3d6a093be1dd03c7062acbf5ace9c41959978749f9504dad6357151"
+      "sha256": "aa9575e96cb87e7ddc0e90d359039a730383558de594c0b3312604a703bdc65b"
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "b74bf48403e9ff66d71d2aaa538fb92f5118dc879cd1072c6e05f266b6209fb2"
+      "sha256": "fd3c014af09354d56835239a9063a7fef3d363f18e00efe4b6c3b87b1e3bb1d9"
     },
     {
       "path": "tests/asl/bundle-tests.asl",
-      "sha256": "83c4d2cd5ac6ff3b471fb5d0681c213bcff83f5376ecaf35e905f954cbf74cf6"
+      "sha256": "0ec3b59d2460775934af18b06258e35d109064fbf4fc3529f9d0fee34543fddd"
     },
     {
       "path": "tests/asl/cube-totality-tests.asl",

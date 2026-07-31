@@ -203,7 +203,7 @@ open, and the repository remains at M4, until every sub-stage below closes.
 
 | Sub-stage | Current state | Clear target | Required exit evidence |
 | --- | --- | --- | --- |
-| `S5-T2-A` — profile decision | Checkpoints A1, A4, A5, and A6 are closed; complete result decisions remain open | Apply the four accepted identities and fail-closed selection rules. Preserve the 99-point ownership ledger. Use the A5 public baseline of 16 identities, 11 accepted catalog bindings, 11 A2/A3 types, and 16 A5 types without treating availability as legality or result semantics. Preserve A6's three conditional result rules over all 48 unequal-width public integer `TCVT` pairs without turning them into support claims. Resolve the seven PD-02 and six PD-07 residuals, all 12 complete decisions, all 20 domain rules, 19 profile-owned flag conditions, and every broad selected variation route/result bound. | Accepted records populate all 12 decisions and 20 domain rules; every non-portable point has one visible route and bounded result contract; all format, legality, conversion, flag, rounding, and target-support residuals have reproducible evidence. |
+| `S5-T2-A` — profile decision | Checkpoints A1, A4, A5, and A6 are closed; PD-03 is accepted | Apply the four accepted identities and fail-closed selection rules. Preserve the 99-point ownership ledger. Use the A5 public baseline of 16 identities, 16 accepted catalog bindings, 11 A2/A3 types, and 16 A5 types without treating availability as legality or complete result semantics. Preserve A6's three conditional result rules over all 48 unequal-width public integer `TCVT` pairs without turning them into support claims. Preserve ADR 0047's 18 selected rounding routes. Resolve the remaining PD-02/PD-04–PD-12 residuals, 11 complete decisions, all 20 complete domain rules, 19 profile-owned flag conditions, and 81 selected variation routes/result bounds. | Accepted records populate all 12 decisions and 20 domain rules; every non-portable point has one visible route and bounded result contract; all format, legality, conversion, flag, rounding, and target-support residuals have reproducible evidence. |
 | `S5-T2-B` — oracle qualification | Waiting on A | Select an independent, versioned oracle for each lane. The implementation under test and the `pto-v0` reference are not independent oracles. | Reproducible oracle identity, version/digest, invocation, supported domain list, known limitations, and a reviewer-approved rule for any target behavior that requires hardware capture rather than a software arithmetic library. |
 | `S5-T2-C` — vector corpus | Waiting on A–B | Generate deterministic inputs for every operation and every open numeric dimension. | Normal, minimum/maximum, boundary, signed-zero, subnormal, infinity, NaN, tie, overflow, underflow, divide-by-zero, rounding, saturation, reduction-order, and accumulation cases as applicable; each vector links to one operation key, profile, oracle, and expected disposition. |
 | `S5-T2-D` — differential execution | Waiting on B–C | Run the six numeric lanes independently and preserve raw oracle and PTO results. | All 20 contract domains, 30 hooks, and 108 operations are assigned exactly once; every vector produces a reproducible match, mismatch, unsupported, or implementation-defined record; no lane is missing or duplicated. |
@@ -227,12 +227,13 @@ ADR 0038 and `spec/evidence/scalar-numeric-flag-contract.json` additionally
 close flag state/lifecycle and the 30/30 FSU producer-owner matrix. Eleven
 architecture-owned conditions are exact; 19 profile-owned conditions keep
 PD-06 open and do not increment the S5-T2-A2 decision count.
-ADR 0039 and `spec/evidence/numeric-rounding-selector-contract.json` close the
-PD-03 selector-discovery and ownership inventory across eight active scalar
-codes, five fixed conversion overrides, eight bundle `RMode` codes, four
-external selector classes, 18 domains, 102 operations, and 25 hooks. Every
-per-domain rounding and saturation-order rule remains null, so PD-03 likewise
-does not increment the S5-T2-A2 decision count.
+ADRs 0039 and 0047 and
+`spec/evidence/numeric-rounding-selector-contract.json` close PD-03 across
+eight scalar raw values, five fixed conversion overrides, eight bundle
+`RMode` codes, seven public conversion values, four external selector classes,
+18 domains, 102 operations, and 25 hooks. All 18 per-domain rounding and
+saturation-order rules are accepted, so the S5-T2-A2 decision count is 1/12
+and 18/99 variation routes are selected.
 ADR 0040 and `spec/evidence/numeric-format-namespace-contract.json` close the
 PD-02 structural checkpoint: five independent code spaces, all 19
 `TileDataType` raw-carrier widths, complete mapped/reserved tables, and
@@ -358,8 +359,9 @@ configuration from being confused with a passing release candidate.
   state/lifecycle and producer-owner matrix. It closes 30 ownership rows and 11
   architecture-owned conditions while retaining 19 profile-owned conditions.
 - `spec/evidence/numeric-rounding-selector-contract.json` is the generated
-  PD-03 selector-ownership inventory. It closes discovery and namespace
-  separation while retaining all 18 affected domain result rules.
+  accepted PD-03 contract. It closes discovery, namespace separation, tie
+  behavior, translations, defaults, all 18 rounding points, and saturation
+  order while leaving unrelated numeric dimensions open.
 - `spec/evidence/numeric-format-namespace-contract.json` is the generated
   PD-02 namespace/carrier inventory. It closes structural ownership while
   handing its eight residuals to later PD-02 checkpoints.

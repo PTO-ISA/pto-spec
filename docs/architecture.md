@@ -159,6 +159,11 @@ architectural.
 B.DATR compare, padding/byte-selection, saturation, canonicalization, DataType,
 rounding, and layout fields are legal only when the selected operation consumes
 them. An inapplicable nonzero field rejects before allocation or effects.
+`RMode` values 0–7 are NONE, RNE, RTZ, RDN, RUP, RNA, RTO, and RHB. Only
+`ACCCVT`, `TCVT`, `TQUANT`, and `TDEQUANT` consume the resulting
+`TileNumericSelection`; NONE is RNE except for floating-to-integer `TCVT`, where
+it is RTZ. Rounding precedes saturation. Public conversion-mode ordinals use an
+explicit translation and must not be copied into `RMode` directly.
 B.CATR `atom`, `aq`, and `rl` fields control the selected tile-memory operation;
 dependency metadata never creates a PTO-TSO fence.
 
@@ -398,10 +403,11 @@ rules and the Stage 4 boundary/alias evidence contract.
 
 Scalar floating-point values occupy the shared Reg5 carrier. Source type `00`
 selects a 64-bit carrier and `01` selects a zero-extended 32-bit carrier; the
-other source encodings are illegal. CORE_STATE[39:37] supplies the rounding
-mode: 0 is nearest, 1 is toward negative infinity, 2 is toward positive
-infinity, 3 is toward zero, and 4 is away from zero. Reserved encodings 5–7
-select nearest in PTO v0. CORE_STATE bits 32 through 36 accumulate sticky NV,
+other source encodings are illegal. `CORE_STATE[39:37]` supplies active scalar
+rounding: 0 is RNE, 1 is RTM, 2 is RTP, and 3 is RTZ. Encodings 4–7 are reserved
+and deterministically resolve to RNE; they never inherit bundle `RMode`
+meanings. Fixed conversion mnemonics override the active field, with `FCVTA`
+selecting RNA (nearest, ties away). CORE_STATE bits 32 through 36 accumulate sticky NV,
 DZ, OF, UF, and NX flags. PTO v0 supplies deterministic raw-carrier numeric
 behavior; alternate numeric profiles require a distinct profile identity and
 evidence.

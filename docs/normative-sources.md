@@ -206,10 +206,11 @@ or independent-oracle claim.
 
 `numeric-rounding-selector-contract.json` is generated from the scalar and
 bundle catalogs, accepted profile identities, and numeric decision inputs.
-ADR 0039 makes selector discovery, namespace separation, and ownership
-normative. It does not choose active scalar codes 4–7, map target controls, or
-define per-domain rounding and saturation-order results; those remain PD-03
-profile decisions.
+ADR 0039 makes selector discovery and namespace separation normative. ADR 0047
+completes PD-03 by accepting the scalar reserved-code fallback, fixed-mnemonic,
+bundle, and public translations; exact tie behavior; operation defaults; all
+18 domain rounding points; and rounding-before-saturation order. PD-02 and
+PD-04 through PD-12 continue to own every other numeric result dimension.
 
 `numeric-format-namespace-contract.json` is generated from the accepted ASL
 carrier types, scalar and command catalogs, TMA closure ledger, pinned public

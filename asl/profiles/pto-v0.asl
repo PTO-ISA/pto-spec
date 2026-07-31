@@ -162,12 +162,11 @@ begin
 end;
 
 implementation func ScalarFPBinaryProfile(operation: FloatingBinaryOperation,
-                                           rounding_mode: bits(3),
+                                           rounding_mode: NumericRoundingMode,
                                            source_type: bits(5),
                                            left: Word, right: Word)
                                            => (Word, bits(5))
 begin
-    assert UInt(rounding_mode) <= 4;
     assert ScalarFPTypeCodeSupported(source_type);
     case operation of
         when FloatingBinary_ADD => return (left + right, Zeros{5});
@@ -192,11 +191,10 @@ begin
 end;
 
 implementation func ScalarFPUnaryProfile(operation: FloatingUnaryOperation,
-                                          rounding_mode: bits(3),
+                                          rounding_mode: NumericRoundingMode,
                                           source_type: bits(5), value: Word)
                                           => (Word, bits(5))
 begin
-    assert UInt(rounding_mode) <= 4;
     assert ScalarFPTypeCodeSupported(source_type);
     case operation of
         when FloatingUnary_ABS =>
@@ -215,12 +213,11 @@ begin
 end;
 
 implementation func ScalarFPFusedProfile(operation: FloatingFusedOperation,
-                                          rounding_mode: bits(3),
+                                          rounding_mode: NumericRoundingMode,
                                           source_type: bits(5), addend: Word,
                                           left: Word, right: Word)
                                           => (Word, bits(5))
 begin
-    assert UInt(rounding_mode) <= 4;
     assert ScalarFPTypeCodeSupported(source_type);
     let product = MultiplyWord(left, right);
     case operation of
@@ -234,30 +231,27 @@ begin
 end;
 
 implementation func ScalarFPToIntegerProfile(
-    rounding_mode: bits(3), destination_type: bits(5),
+    rounding_mode: NumericRoundingMode, destination_type: bits(5),
     source_type: bits(5), value: Word) => (Word, bits(5))
 begin
-    assert UInt(rounding_mode) <= 4;
     assert ScalarIntegerTypeCodeSupported(destination_type);
     assert ScalarFPTypeCodeSupported(source_type);
     return (value, Zeros{5});
 end;
 
 implementation func ScalarFPConvertProfile(
-    rounding_mode: bits(3), destination_type: bits(5),
+    rounding_mode: NumericRoundingMode, destination_type: bits(5),
     source_type: bits(5), value: Word) => (Word, bits(5))
 begin
-    assert UInt(rounding_mode) <= 4;
     assert ScalarFPTypeCodeSupported(destination_type);
     assert ScalarFPTypeCodeSupported(source_type);
     return (value, Zeros{5});
 end;
 
 implementation func ScalarIntegerToFPProfile(
-    rounding_mode: bits(3), source_type: bits(5),
+    rounding_mode: NumericRoundingMode, source_type: bits(5),
     destination_type: bits(5), value: Word) => (Word, bits(5))
 begin
-    assert UInt(rounding_mode) <= 4;
     assert ScalarIntegerTypeCodeSupported(source_type);
     assert ScalarFPTypeCodeSupported(destination_type);
     return (value, Zeros{5});
@@ -291,7 +285,8 @@ end;
 
 implementation func TileProfileConvert(value: Word,
                                         source_type: TileDataType,
-                                        destination_type: TileDataType) => Word
+                                        destination_type: TileDataType,
+                                        control: NumericExecutionControl) => Word
 begin
     if !TileDataTypeIsFloating(destination_type) then
         return NormalizeTileInteger(value, destination_type);
@@ -302,7 +297,8 @@ end;
 implementation func TileProfileQuantize(value: Word, scale: Word,
                                          zero_point: Word,
                                          source_type: TileDataType,
-                                         destination_type: TileDataType) => Word
+                                         destination_type: TileDataType,
+                                         control: NumericExecutionControl) => Word
 begin
     assert !IsZero(scale);
     return NormalizeTileInteger(DivideWordUnsigned(value, scale) + zero_point,
@@ -312,7 +308,8 @@ end;
 implementation func TileProfileDequantize(value: Word, scale: Word,
                                            zero_point: Word,
                                            source_type: TileDataType,
-                                           destination_type: TileDataType) => Word
+                                           destination_type: TileDataType,
+                                           control: NumericExecutionControl) => Word
 begin
     return MultiplyWord(value - zero_point, scale);
 end;

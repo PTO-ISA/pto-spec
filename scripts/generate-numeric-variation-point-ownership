@@ -221,7 +221,11 @@ def generate() -> dict[str, Any]:
     require(inventory["summary"]["decoded_operation_count"] == 108, "operation count drift")
     require(len(inventory["contract_domains"]) == 20, "domain count drift")
     require(identities["summary"]["accepted_identity_count"] == 4, "identity drift")
-    require(rounding["summary"]["accepted_domain_rounding_rule_count"] == 0, "rounding result rule unexpectedly accepted")
+    require(
+        rounding["summary"]["accepted_domain_rounding_rule_count"] == 18
+        and rounding["summary"]["pd03_complete"] is True,
+        "accepted rounding result-rule set drift",
+    )
     require(formats["summary"]["pd02_complete"] is False, "format decision unexpectedly complete")
     require(
         public_types["target"] == "S5-T2-A5:PD-02-SC2"
@@ -303,6 +307,7 @@ def generate() -> dict[str, Any]:
             decision_ids = domain_inputs[domain_id]["decision_question_ids"]
             primary_decision_id = primary_decision(dimension, decision_ids)
             points_by_domain[domain_id].append(point_id)
+            rounding_rule_accepted = primary_decision_id == "PD-03"
             variation_points.append(
                 {
                     "id": point_id,
@@ -321,11 +326,23 @@ def generate() -> dict[str, Any]:
                     "decision_owner_id": "pto-numeric-v1",
                     "admissible_routes": admissible_routes(dimension),
                     "selector_dependencies": selector_dependencies(dimension),
-                    "selected_route": None,
-                    "result_rule_id": None,
-                    "result_acceptance_record": None,
+                    "selected_route": (
+                        {"kind": "portable-rule", "profile_id": "pto-numeric-v1"}
+                        if rounding_rule_accepted
+                        else None
+                    ),
+                    "result_rule_id": (
+                        f"pd03-rounding/{domain_id}" if rounding_rule_accepted else None
+                    ),
+                    "result_acceptance_record": (
+                        rounding["acceptance_record"] if rounding_rule_accepted else None
+                    ),
                     "missing_rule_disposition": "reject-before-effects",
-                    "status": "ownership-inventoried-result-rule-required",
+                    "status": (
+                        "portable-rounding-rule-accepted"
+                        if rounding_rule_accepted
+                        else "ownership-inventoried-result-rule-required"
+                    ),
                 }
             )
 
@@ -338,6 +355,11 @@ def generate() -> dict[str, Any]:
             for row in applicability["rules"]
             if row["operation_key"] == key
         ]
+        accepted_result_rule_count = sum(
+            point["domain_id"] == operation["numeric_contract"]
+            and point["selected_route"] is not None
+            for point in variation_points
+        )
         operation_rows.append(
             {
                 "operation_key": key,
@@ -349,8 +371,12 @@ def generate() -> dict[str, Any]:
                 "decision_owner_kind": "portable-architecture",
                 "decision_owner_id": "pto-numeric-v1",
                 "accepted_unsupported_profiles": unsupported,
-                "accepted_result_rule_count": 0,
-                "status": "owner-closed-result-rules-open",
+                "accepted_result_rule_count": accepted_result_rule_count,
+                "status": (
+                    "rounding-rule-accepted-other-result-rules-open"
+                    if accepted_result_rule_count
+                    else "owner-closed-result-rules-open"
+                ),
             }
         )
 
@@ -361,6 +387,11 @@ def generate() -> dict[str, Any]:
         hook_points = sorted(
             point_id for domain in hook_domains for point_id in points_by_domain[domain]
         )
+        accepted_hook_points = [
+            point
+            for point in variation_points
+            if point["id"] in hook_points and point["selected_route"] is not None
+        ]
         hook_rows.append(
             {
                 "hook": name,
@@ -371,9 +402,19 @@ def generate() -> dict[str, Any]:
                 "variation_point_ids": hook_points,
                 "decision_owner_kind": "portable-architecture",
                 "decision_owner_id": "pto-numeric-v1",
-                "selected_route": None,
-                "result_rule_id": None,
-                "status": "ownership-inventoried-result-rule-required",
+                "selected_route": (
+                    {"kind": "portable-rule", "profile_id": "pto-numeric-v1"}
+                    if accepted_hook_points
+                    else None
+                ),
+                "result_rule_id": (
+                    f"pd03-rounding-hook/{name}" if accepted_hook_points else None
+                ),
+                "status": (
+                    "rounding-rule-accepted-other-result-rules-open"
+                    if accepted_hook_points
+                    else "ownership-inventoried-result-rule-required"
+                ),
             }
         )
 
@@ -465,8 +506,12 @@ def generate() -> dict[str, Any]:
             "primary_operation_hook_edge_count": 134,
             "reference_helper_operation_edge_count": 8,
             "portable_decision_owner_point_count": 99,
-            "selected_route_count": 0,
-            "accepted_result_rule_count": 0,
+            "selected_route_count": sum(
+                row["selected_route"] is not None for row in variation_points
+            ),
+            "accepted_result_rule_count": sum(
+                row["result_rule_id"] is not None for row in variation_points
+            ),
             "accepted_bounded_result_subset_rule_count": 3,
             "accepted_bounded_result_subset_tuple_count": 48,
             "accepted_unsupported_tuple_count": 150,

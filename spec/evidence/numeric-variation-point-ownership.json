@@ -161,11 +161,14 @@
         "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding/cube-convert",
+      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
+      "status": "portable-rounding-rule-accepted"
     },
     {
       "id": "numeric-vp/cube-convert/nan-payload",
@@ -550,11 +553,14 @@
         "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding/cube-matrix",
+      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
+      "status": "portable-rounding-rule-accepted"
     },
     {
       "id": "numeric-vp/cube-matrix/saturation",
@@ -770,11 +776,14 @@
         "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding/scalar-binary",
+      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
+      "status": "portable-rounding-rule-accepted"
     },
     {
       "id": "numeric-vp/scalar-binary/nan-and-infinity",
@@ -1128,11 +1137,14 @@
         "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding/scalar-fp-convert",
+      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
+      "status": "portable-rounding-rule-accepted"
     },
     {
       "id": "numeric-vp/scalar-fp-convert/nan-payload",
@@ -1360,11 +1372,14 @@
         "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding/scalar-fp-to-integer",
+      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
+      "status": "portable-rounding-rule-accepted"
     },
     {
       "id": "numeric-vp/scalar-fp-to-integer/out-of-range-result",
@@ -1676,11 +1691,14 @@
         "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding/scalar-fused",
+      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
+      "status": "portable-rounding-rule-accepted"
     },
     {
       "id": "numeric-vp/scalar-fused/nan-and-infinity",
@@ -2102,11 +2120,14 @@
         "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding/scalar-integer-to-fp",
+      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
+      "status": "portable-rounding-rule-accepted"
     },
     {
       "id": "numeric-vp/scalar-integer-to-fp/overflow",
@@ -2281,11 +2302,14 @@
         "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding/scalar-unary",
+      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
+      "status": "portable-rounding-rule-accepted"
     },
     {
       "id": "numeric-vp/scalar-unary/domain-errors",
@@ -2623,11 +2647,14 @@
         "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding/tile-axpy",
+      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
+      "status": "portable-rounding-rule-accepted"
     },
     {
       "id": "numeric-vp/tile-axpy/overflow",
@@ -2978,11 +3005,14 @@
         "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding/tile-binary",
+      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
+      "status": "portable-rounding-rule-accepted"
     },
     {
       "id": "numeric-vp/tile-binary/saturation",
@@ -3584,11 +3614,14 @@
         "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding/tile-convert",
+      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
+      "status": "portable-rounding-rule-accepted"
     },
     {
       "id": "numeric-vp/tile-convert/nan-payload",
@@ -3934,11 +3967,14 @@
         "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding/tile-dequantize",
+      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
+      "status": "portable-rounding-rule-accepted"
     },
     {
       "id": "numeric-vp/tile-dequantize/overflow-and-underflow",
@@ -4206,11 +4242,14 @@
         "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding/tile-expand",
+      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
+      "status": "portable-rounding-rule-accepted"
     },
     {
       "id": "numeric-vp/tile-expand/divide-by-zero",
@@ -4866,11 +4905,14 @@
         "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding/tile-partial",
+      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
+      "status": "portable-rounding-rule-accepted"
     },
     {
       "id": "numeric-vp/tile-partial/overflow",
@@ -5209,11 +5251,14 @@
         "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding/tile-prelu",
+      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
+      "status": "portable-rounding-rule-accepted"
     },
     {
       "id": "numeric-vp/tile-prelu/overflow",
@@ -5506,11 +5551,14 @@
         "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding/tile-quantize",
+      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
+      "status": "portable-rounding-rule-accepted"
     },
     {
       "id": "numeric-vp/tile-quantize/clamping",
@@ -5839,11 +5887,14 @@
         "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding/tile-reduction",
+      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
+      "status": "portable-rounding-rule-accepted"
     },
     {
       "id": "numeric-vp/tile-reduction/nan-and-infinity",
@@ -6127,11 +6178,14 @@
         "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding/tile-unary",
+      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
+      "status": "portable-rounding-rule-accepted"
     },
     {
       "id": "numeric-vp/tile-unary/domain-errors",
@@ -6362,8 +6416,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "scalar:fcvt_32_1102f5aeeda9",
@@ -6381,8 +6435,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "scalar:fcvta_32_010837b9acbd",
@@ -6400,8 +6454,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "scalar:fcvtm_32_8801f1562870",
@@ -6419,8 +6473,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "scalar:fcvtn_32_8714ba358d80",
@@ -6438,8 +6492,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "scalar:fcvtp_32_84354a7aa6b1",
@@ -6457,8 +6511,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "scalar:fcvtz_32_bee01d31217c",
@@ -6476,8 +6530,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "scalar:fdiv_32_04a5bb6ab56f",
@@ -6495,8 +6549,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "scalar:fexp_32_592ef5288c7d",
@@ -6514,8 +6568,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "scalar:fmadd_32_c616a17bcb12",
@@ -6533,8 +6587,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "scalar:fmsub_32_b83012b83148",
@@ -6552,8 +6606,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "scalar:fmul_32_7d521d9d65e7",
@@ -6571,8 +6625,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "scalar:fnmadd_32_7f45e606d299",
@@ -6590,8 +6644,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "scalar:fnmsub_32_6542d56665b3",
@@ -6609,8 +6663,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "scalar:frecip_32_3d51f4f727ea",
@@ -6628,8 +6682,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "scalar:fsqrt_32_84b3495cc6c7",
@@ -6647,8 +6701,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "scalar:fsub_32_a4479d0d4276",
@@ -6666,8 +6720,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "scalar:scvtf_32_01861bbd5ef2",
@@ -6685,8 +6739,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "scalar:ucvtf_32_987f4e019c32",
@@ -6704,8 +6758,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:CUBE:ACCCVT",
@@ -6723,8 +6777,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:CUBE:TGEMV",
@@ -6742,8 +6796,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:CUBE:TGEMV_ACC",
@@ -6761,8 +6815,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:CUBE:TGEMV_BIAS",
@@ -6781,8 +6835,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:CUBE:TGEMV_MX",
@@ -6803,8 +6857,8 @@
       "accepted_unsupported_profiles": [
         "pto-a2a3-numeric-v1"
       ],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
@@ -6825,8 +6879,8 @@
       "accepted_unsupported_profiles": [
         "pto-a2a3-numeric-v1"
       ],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
@@ -6848,8 +6902,8 @@
       "accepted_unsupported_profiles": [
         "pto-a2a3-numeric-v1"
       ],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:CUBE:TMATMUL",
@@ -6867,8 +6921,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:CUBE:TMATMUL_ACC",
@@ -6886,8 +6940,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:CUBE:TMATMUL_BIAS",
@@ -6906,8 +6960,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:CUBE:TMATMUL_MX",
@@ -6928,8 +6982,8 @@
       "accepted_unsupported_profiles": [
         "pto-a2a3-numeric-v1"
       ],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
@@ -6950,8 +7004,8 @@
       "accepted_unsupported_profiles": [
         "pto-a2a3-numeric-v1"
       ],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
@@ -6973,8 +7027,8 @@
       "accepted_unsupported_profiles": [
         "pto-a2a3-numeric-v1"
       ],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TABS",
@@ -6992,8 +7046,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TADD",
@@ -7011,8 +7065,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TADDS",
@@ -7030,8 +7084,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TAND",
@@ -7049,8 +7103,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TANDS",
@@ -7068,8 +7122,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TAXPY",
@@ -7087,8 +7141,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TCMP",
@@ -7143,8 +7197,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TCOLARGMIN",
@@ -7163,8 +7217,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TCOLEXPAND",
@@ -7182,8 +7236,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TCOLEXPANDADD",
@@ -7201,8 +7255,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TCOLEXPANDDIV",
@@ -7220,8 +7274,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TCOLEXPANDEXPDIF",
@@ -7240,8 +7294,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TCOLEXPANDMAX",
@@ -7259,8 +7313,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TCOLEXPANDMIN",
@@ -7278,8 +7332,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TCOLEXPANDMUL",
@@ -7297,8 +7351,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TCOLEXPANDSUB",
@@ -7316,8 +7370,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TCOLMAX",
@@ -7336,8 +7390,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TCOLMIN",
@@ -7356,8 +7410,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TCOLPROD",
@@ -7376,8 +7430,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TCOLSUM",
@@ -7396,8 +7450,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TCVT",
@@ -7415,8 +7469,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TDEQUANT",
@@ -7434,8 +7488,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TDIV",
@@ -7453,8 +7507,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TDIVS",
@@ -7472,8 +7526,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TEXP",
@@ -7492,8 +7546,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TLOG",
@@ -7512,8 +7566,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TMAX",
@@ -7531,8 +7585,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TMAXS",
@@ -7550,8 +7604,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TMIN",
@@ -7569,8 +7623,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TMINS",
@@ -7588,8 +7642,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TMRGSORT",
@@ -7627,8 +7681,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TMULS",
@@ -7646,8 +7700,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TNEG",
@@ -7665,8 +7719,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TNOT",
@@ -7684,8 +7738,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TOR",
@@ -7703,8 +7757,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TORS",
@@ -7722,8 +7776,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TPARTADD",
@@ -7741,8 +7795,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TPARTARGMAX",
@@ -7800,8 +7854,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TPARTMIN",
@@ -7819,8 +7873,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TPARTMUL",
@@ -7838,8 +7892,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TPRELU",
@@ -7857,8 +7911,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TQUANT",
@@ -7876,8 +7930,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TRECIP",
@@ -7896,8 +7950,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TRELU",
@@ -7915,8 +7969,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TREM",
@@ -7934,8 +7988,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TREMS",
@@ -7953,8 +8007,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TROWARGMAX",
@@ -7973,8 +8027,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TROWARGMIN",
@@ -7993,8 +8047,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TROWEXPAND",
@@ -8012,8 +8066,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TROWEXPANDADD",
@@ -8031,8 +8085,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TROWEXPANDDIV",
@@ -8050,8 +8104,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TROWEXPANDEXPDIF",
@@ -8070,8 +8124,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TROWEXPANDMAX",
@@ -8089,8 +8143,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TROWEXPANDMIN",
@@ -8108,8 +8162,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TROWEXPANDMUL",
@@ -8127,8 +8181,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TROWEXPANDSUB",
@@ -8146,8 +8200,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TROWMAX",
@@ -8166,8 +8220,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TROWMIN",
@@ -8186,8 +8240,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TROWPROD",
@@ -8206,8 +8260,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TROWSUM",
@@ -8226,8 +8280,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TRSQRT",
@@ -8247,8 +8301,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TSHL",
@@ -8266,8 +8320,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TSHLS",
@@ -8285,8 +8339,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TSHR",
@@ -8304,8 +8358,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TSHRS",
@@ -8323,8 +8377,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TSORT",
@@ -8363,8 +8417,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TSUB",
@@ -8382,8 +8436,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TSUBS",
@@ -8401,8 +8455,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TXOR",
@@ -8420,8 +8474,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "operation_key": "tile:TEPL:TXORS",
@@ -8439,8 +8493,8 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 0,
-      "status": "owner-closed-result-rules-open"
+      "accepted_result_rule_count": 1,
+      "status": "rounding-rule-accepted-other-result-rules-open"
     }
   ],
   "hooks": [
@@ -8492,9 +8546,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/ScalarFPBinaryProfile",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "ScalarFPConvertProfile",
@@ -8515,9 +8572,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/ScalarFPConvertProfile",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "ScalarFPFusedProfile",
@@ -8541,9 +8601,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/ScalarFPFusedProfile",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "ScalarFPToIntegerProfile",
@@ -8568,9 +8631,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/ScalarFPToIntegerProfile",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "ScalarFPUnaryProfile",
@@ -8593,9 +8659,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/ScalarFPUnaryProfile",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "ScalarIntegerToFPProfile",
@@ -8617,9 +8686,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/ScalarIntegerToFPProfile",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "TileExpDifference",
@@ -8641,9 +8713,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileExpDifference",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "TileExponential",
@@ -8664,9 +8739,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileExponential",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "TileLogarithm",
@@ -8687,9 +8765,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileLogarithm",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "TileProfileAxpy",
@@ -8710,9 +8791,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileProfileAxpy",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "TileProfileBinary",
@@ -8756,9 +8840,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileProfileBinary",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "TileProfileCompare",
@@ -8809,9 +8896,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileProfileConvert",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "TileProfileDequantize",
@@ -8832,9 +8922,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileProfileDequantize",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "TileProfileExpand",
@@ -8870,9 +8963,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileProfileExpand",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "TileProfileMatrixAccumulate",
@@ -8904,9 +9000,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileProfileMatrixAccumulate",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "TileProfileMatrixBias",
@@ -8930,9 +9029,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileProfileMatrixBias",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "TileProfileMatrixScaledAccumulate",
@@ -8958,9 +9060,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileProfileMatrixScaledAccumulate",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "TileProfileOrderLeft",
@@ -9007,9 +9112,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileProfilePReLU",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "TileProfilePartialValue",
@@ -9033,9 +9141,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileProfilePartialValue",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "TileProfileQuantize",
@@ -9056,9 +9167,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileProfileQuantize",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "TileProfileReductionInitial",
@@ -9090,9 +9204,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileProfileReductionInitial",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "TileProfileReductionStep",
@@ -9124,9 +9241,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileProfileReductionStep",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "TileProfileUnary",
@@ -9155,9 +9275,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileProfileUnary",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "TileProfileValueIsNaN",
@@ -9205,9 +9328,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileReciprocal",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
       "hook": "TileSquareRoot",
@@ -9229,9 +9355,12 @@
       ],
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
-      "selected_route": null,
-      "result_rule_id": null,
-      "status": "ownership-inventoried-result-rule-required"
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileSquareRoot",
+      "status": "rounding-rule-accepted-other-result-rules-open"
     }
   ],
   "support_rules": {
@@ -9259,7 +9388,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "9bcb979388b28cbc9e1ff9bdfbf5e479a268a616e5a2bf514ab206fb27107d54"
+      "sha256": "428fc467ee70e38506c42359b64cb1e0b110fdf29fcde29471686e307f9badcf"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
@@ -9267,27 +9396,27 @@
     },
     {
       "path": "spec/profile-hooks.json",
-      "sha256": "ac87ddc2eb45adab0a1306c840ad1059ce5d7f14a6c88ea6a81f7f52fbf41f7d"
+      "sha256": "f686463805e725891d49c00d598d0ecdb209964ab5a34244469a0fa45367817f"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "2efe9c879aa3473a6b546bab51f06a878d09839f00a09653cb4cdfb28a51f3ad"
+      "sha256": "b59d03487347e5d0a923a5da261cfd62cc3fd4ef470e9169a5cf4c16915eac56"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "a8cec33f0b61e94892946788ee7e0959a946fe6247763aa733a3412b4f1da4df"
+      "sha256": "e4b23dd42f29aebf2d1fbe70e40222dfd34595b1f8e811d15fe02369cd248391"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "2ec1f43b3160f508f7781c3393dde57296f4bec25341775b1fcb5ef02e2a5d39"
+      "sha256": "472b49d7f40c284ff21ebb8c71df979403a0dd077422c4835b14155e7c53164b"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "abe0dd3c773ca122084467b3d40f8b6caed3a1ad6296abdd0df75445e4daf7f6"
+      "sha256": "8f163c367ce2d9257c8a3c89d7ea365ae0631399204624e7cd0a1a6a17415269"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "fb111499122a169ae2c7c5d416b2092cdcc996537e78f6abc87053590a34434a"
+      "sha256": "2a9f422f7921cb4f8700bbeb4585df2248c136717fa6d331045b4ed53bf4a975"
     },
     {
       "path": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
@@ -9303,8 +9432,8 @@
     "primary_operation_hook_edge_count": 134,
     "reference_helper_operation_edge_count": 8,
     "portable_decision_owner_point_count": 99,
-    "selected_route_count": 0,
-    "accepted_result_rule_count": 0,
+    "selected_route_count": 18,
+    "accepted_result_rule_count": 18,
     "accepted_bounded_result_subset_rule_count": 3,
     "accepted_bounded_result_subset_tuple_count": 48,
     "accepted_unsupported_tuple_count": 150,

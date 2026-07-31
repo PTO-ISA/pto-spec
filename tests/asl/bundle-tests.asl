@@ -498,6 +498,12 @@ begin
     assert CurrentBundleDataTypeCode() == Zeros{5} + 24;
     assert CurrentBundlePadValue() == TilePad_Null;
     assert CurrentBundleCanonicalize();
+    let conversion_operation = DecodeTileOperation(TileDecode_TEPL, '000000011011')
+        as integer {0..PTO_TILE_OPERATION_COUNT-1};
+    let conversion_operands = BundleTileInstructionOperands(conversion_operation);
+    assert !conversion_operands.numeric_control.use_operation_default;
+    assert conversion_operands.numeric_control.rounding_mode == NumericRound_RTZ;
+    assert conversion_operands.numeric_control.saturating;
 
     // Accepted implementation-defined layouts are rejected by generic
     // indexing until the implementation advertises support.

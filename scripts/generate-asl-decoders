@@ -4316,6 +4316,8 @@ def scalar_fsu_alias_cases(row: dict) -> list[tuple[str, dict[str, int]]]:
 
 def tile_argument_expression(argument: dict) -> str:
     if set(argument) == {"operand"}:
+        if argument["operand"] == "numeric_control":
+            return "numeric_control"
         return f"operands.{argument['operand']}"
     if set(argument) == {"constant"}:
         return argument["constant"]
@@ -9337,23 +9339,33 @@ def main() -> None:
             direct_flag_case_index += 1
     if direct_flag_case_index != 35:
         raise ValueError("scalar FSU direct flag-helper count drift during emission")
+    scalar_active_rounding = {
+        0: "NumericRound_RNE",
+        1: "NumericRound_RTM",
+        2: "NumericRound_RTP",
+        3: "NumericRound_RTZ",
+        4: "NumericRound_RNE",
+        5: "NumericRound_RNE",
+        6: "NumericRound_RNE",
+        7: "NumericRound_RNE",
+    }
     for encoded in range(8):
-        normalized = encoded if encoded <= 4 else 0
         print("    _SystemRegisters.core_state = Zeros{PTO_XLEN};")
         print(f"    _SystemRegisters.core_state[39:37] = {bit_literal(encoded, 3)};")
         print(
-            f"    assert ScalarFPActiveRoundingMode() == {bit_literal(normalized, 3)};"
+            "    assert ScalarFPActiveRoundingMode() == "
+            f"{scalar_active_rounding[encoded]};"
         )
     for operation, rounding_mode in (
-        ("FCVTA", 4),
-        ("FCVTM", 1),
-        ("FCVTN", 0),
-        ("FCVTP", 2),
-        ("FCVTZ", 3),
+        ("FCVTA", "NumericRound_RNA"),
+        ("FCVTM", "NumericRound_RTM"),
+        ("FCVTN", "NumericRound_RNE"),
+        ("FCVTP", "NumericRound_RTP"),
+        ("FCVTZ", "NumericRound_RTZ"),
     ):
         print(
             "    assert ScalarFPFixedConversionRoundingMode("
-            f"ScalarOperation_{operation}) == {bit_literal(rounding_mode, 3)};"
+            f"ScalarOperation_{operation}) == {rounding_mode};"
         )
     print("    ResetProfileState();")
     print("end;")
@@ -11411,6 +11423,8 @@ def main() -> None:
     print("        SetFault(Fault_IllegalInstruction, ReadPC());")
     print("        return (TileExecution_Rejected, Zeros{PTO_XLEN});")
     print("    end;")
+    print("    let numeric_control = ResolveTileNumericExecutionControl(")
+    print("        accepted_operation, operands);")
     print("    case TileOperationOfIndex(accepted_operation) of")
     for row, operation_name in zip(tile, tile_operations, strict=True):
         arguments = ", ".join(

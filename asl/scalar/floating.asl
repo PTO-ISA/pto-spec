@@ -63,15 +63,78 @@ begin
     end;
 end;
 
-func FloatingToInteger(value: real, mode: FloatingRoundingMode) => integer
+func FloatingToInteger(value: real, mode: NumericRoundingMode) => integer
 begin
     case mode of
-        when FloatingRound_Nearest => return FloatingRoundNearest(value);
-        when FloatingRound_Up => return RoundUp(value);
-        when FloatingRound_Down => return RoundDown(value);
-        when FloatingRound_TowardsZero => return RoundTowardsZero(value);
-        when FloatingRound_Away =>
-            if value >= 0.0 then return RoundUp(value); else return RoundDown(value); end;
+        when NumericRound_RNE => return FloatingRoundNearest(value);
+        when NumericRound_RTP => return RoundUp(value);
+        when NumericRound_RTM => return RoundDown(value);
+        when NumericRound_RTZ => return RoundTowardsZero(value);
+        when NumericRound_RNA =>
+            let lower = RoundDown(value);
+            let fraction = value - Real(lower);
+            if fraction < 0.5 then return lower;
+            elsif fraction > 0.5 then return lower + 1;
+            elsif value < 0.0 then return lower;
+            else return lower + 1;
+            end;
+        when NumericRound_RTO =>
+            let lower = RoundDown(value);
+            let fraction = value - Real(lower);
+            if fraction == 0.0 then return lower;
+            elsif lower MOD 2 != 0 then return lower;
+            else return lower + 1;
+            end;
+        when NumericRound_RHB =>
+            let lower = RoundDown(value);
+            let fraction = value - Real(lower);
+            if fraction < 0.5 then return lower;
+            else return lower + 1;
+            end;
+    end;
+end;
+
+pure func ResolveScalarFPActiveRoundingMode(encoded: bits(3))
+                                                => NumericRoundingMode
+begin
+    if encoded == '001' then return NumericRound_RTM;
+    elsif encoded == '010' then return NumericRound_RTP;
+    elsif encoded == '011' then return NumericRound_RTZ;
+    else return NumericRound_RNE;
+    end;
+end;
+
+pure func DecodeBundleRoundingSelection(encoded: bits(3))
+                                                => TileNumericSelection
+begin
+    var result = TileNumericSelection {
+        use_operation_default = encoded == '000',
+        rounding_mode = NumericRound_RNE,
+        saturating = FALSE
+    };
+    if encoded == '010' then result.rounding_mode = NumericRound_RTZ;
+    elsif encoded == '011' then result.rounding_mode = NumericRound_RTM;
+    elsif encoded == '100' then result.rounding_mode = NumericRound_RTP;
+    elsif encoded == '101' then result.rounding_mode = NumericRound_RNA;
+    elsif encoded == '110' then result.rounding_mode = NumericRound_RTO;
+    elsif encoded == '111' then result.rounding_mode = NumericRound_RHB;
+    end;
+    return result;
+end;
+
+// Public conversion controls are not B.DATR encodings. Translate the seven
+// assigned public ordinals explicitly; ordinal 7 is unassigned in PTO 0.57.1.
+pure func DecodePublicConversionRoundingSelection(encoded: bits(3))
+                                                => (boolean, TileNumericSelection)
+begin
+    if encoded == '000' then return (TRUE, DecodeBundleRoundingSelection('000'));
+    elsif encoded == '001' then return (TRUE, DecodeBundleRoundingSelection('001'));
+    elsif encoded == '010' then return (TRUE, DecodeBundleRoundingSelection('101'));
+    elsif encoded == '011' then return (TRUE, DecodeBundleRoundingSelection('011'));
+    elsif encoded == '100' then return (TRUE, DecodeBundleRoundingSelection('100'));
+    elsif encoded == '101' then return (TRUE, DecodeBundleRoundingSelection('010'));
+    elsif encoded == '110' then return (TRUE, DecodeBundleRoundingSelection('110'));
+    else return (FALSE, DecodeBundleRoundingSelection('000'));
     end;
 end;
 
@@ -90,7 +153,8 @@ func ConvertFloatingEncoding(value: Word, source_type: bits(5),
                              rounding_mode: bits(3)) => Word
 begin
     let (converted, -) = ScalarFPConvertProfile(
-        rounding_mode, destination_type, source_type, value);
+        ResolveScalarFPActiveRoundingMode(rounding_mode),
+        destination_type, source_type, value);
     return converted;
 end;
 
@@ -133,21 +197,19 @@ begin
     return UInt(data_type) <= 14;
 end;
 
-readonly func ScalarFPActiveRoundingMode() => bits(3)
+readonly func ScalarFPActiveRoundingMode() => NumericRoundingMode
 begin
-    let encoded = _SystemRegisters.core_state[39:37];
-    if UInt(encoded) <= 4 then return encoded;
-    else return Zeros{3};
-    end;
+    return ResolveScalarFPActiveRoundingMode(_SystemRegisters.core_state[39:37]);
 end;
 
-pure func ScalarFPFixedConversionRoundingMode(operation: ScalarOperation) => bits(3)
+pure func ScalarFPFixedConversionRoundingMode(operation: ScalarOperation)
+                                                => NumericRoundingMode
 begin
-    if operation == ScalarOperation_FCVTA then return '100';
-    elsif operation == ScalarOperation_FCVTM then return '001';
-    elsif operation == ScalarOperation_FCVTN then return '000';
-    elsif operation == ScalarOperation_FCVTP then return '010';
-    elsif operation == ScalarOperation_FCVTZ then return '011';
+    if operation == ScalarOperation_FCVTA then return NumericRound_RNA;
+    elsif operation == ScalarOperation_FCVTM then return NumericRound_RTM;
+    elsif operation == ScalarOperation_FCVTN then return NumericRound_RNE;
+    elsif operation == ScalarOperation_FCVTP then return NumericRound_RTP;
+    elsif operation == ScalarOperation_FCVTZ then return NumericRound_RTZ;
     else unreachable;
     end;
 end;
@@ -378,63 +440,57 @@ begin
 end;
 
 impdef func ScalarFPBinaryProfile(operation: FloatingBinaryOperation,
-                                  rounding_mode: bits(3), source_type: bits(5),
+                                  rounding_mode: NumericRoundingMode, source_type: bits(5),
                                   left: Word, right: Word) => (Word, bits(5))
 begin
     // Executable identity default. A named numeric profile supplies the
     // correctly rounded arithmetic result and IEEE exception flags.
-    assert UInt(rounding_mode) <= 4;
     assert ScalarFPTypeCodeSupported(source_type);
     return (left, Zeros{5});
 end;
 
 impdef func ScalarFPUnaryProfile(operation: FloatingUnaryOperation,
-                                 rounding_mode: bits(3), source_type: bits(5),
+                                 rounding_mode: NumericRoundingMode, source_type: bits(5),
                                  value: Word) => (Word, bits(5))
 begin
-    assert UInt(rounding_mode) <= 4;
     assert ScalarFPTypeCodeSupported(source_type);
     return (value, Zeros{5});
 end;
 
 impdef func ScalarFPFusedProfile(operation: FloatingFusedOperation,
-                                 rounding_mode: bits(3), source_type: bits(5),
+                                 rounding_mode: NumericRoundingMode, source_type: bits(5),
                                  addend: Word, left: Word, right: Word)
                                  => (Word, bits(5))
 begin
-    assert UInt(rounding_mode) <= 4;
     assert ScalarFPTypeCodeSupported(source_type);
     return (addend, Zeros{5});
 end;
 
-impdef func ScalarFPToIntegerProfile(rounding_mode: bits(3),
+impdef func ScalarFPToIntegerProfile(rounding_mode: NumericRoundingMode,
                                      destination_type: bits(5),
                                      source_type: bits(5), value: Word)
                                      => (Word, bits(5))
 begin
-    assert UInt(rounding_mode) <= 4;
     assert ScalarIntegerTypeCodeSupported(destination_type);
     assert ScalarFPTypeCodeSupported(source_type);
     return (value, Zeros{5});
 end;
 
-impdef func ScalarFPConvertProfile(rounding_mode: bits(3),
+impdef func ScalarFPConvertProfile(rounding_mode: NumericRoundingMode,
                                    destination_type: bits(5),
                                    source_type: bits(5), value: Word)
                                    => (Word, bits(5))
 begin
-    assert UInt(rounding_mode) <= 4;
     assert ScalarFPTypeCodeSupported(destination_type);
     assert ScalarFPTypeCodeSupported(source_type);
     return (value, Zeros{5});
 end;
 
-impdef func ScalarIntegerToFPProfile(rounding_mode: bits(3),
+impdef func ScalarIntegerToFPProfile(rounding_mode: NumericRoundingMode,
                                      source_type: bits(5),
                                      destination_type: bits(5), value: Word)
                                      => (Word, bits(5))
 begin
-    assert UInt(rounding_mode) <= 4;
     assert ScalarIntegerTypeCodeSupported(source_type);
     assert ScalarFPTypeCodeSupported(destination_type);
     return (value, Zeros{5});

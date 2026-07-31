@@ -17,27 +17,141 @@ DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
 IDENTITY_CATALOG = ROOT / "spec/catalog/numeric-profile-identities.json"
 OUTPUT = ROOT / "spec/evidence/numeric-rounding-selector-contract.json"
 ACCEPTANCE_RECORD = (
-    "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md"
+    "docs/architecture-decisions/0047-numeric-rounding-semantics.md"
 )
 
 ACTIVE_ROUNDING = (
-    (0, "RNE", "nearest-ties-even", "portable-core"),
-    (1, "RTM", "toward-negative-infinity", "portable-core"),
-    (2, "RTP", "toward-positive-infinity", "portable-core"),
-    (3, "RTZ", "toward-zero", "portable-core"),
-    (4, "RTA", "away-from-zero", "active-versus-fixed-scope-decision-required"),
-    (5, None, None, "reserved-fallback-versus-rejection-decision-required"),
-    (6, None, None, "reserved-fallback-versus-rejection-decision-required"),
-    (7, None, None, "reserved-fallback-versus-rejection-decision-required"),
+    (0, "assigned", "RNE", "nearest-ties-even"),
+    (1, "assigned", "RTM", "toward-negative-infinity"),
+    (2, "assigned", "RTP", "toward-positive-infinity"),
+    (3, "assigned", "RTZ", "toward-zero"),
+    (4, "reserved", "RNE", "reserved-code-fallback-to-nearest-ties-even"),
+    (5, "reserved", "RNE", "reserved-code-fallback-to-nearest-ties-even"),
+    (6, "reserved", "RNE", "reserved-code-fallback-to-nearest-ties-even"),
+    (7, "reserved", "RNE", "reserved-code-fallback-to-nearest-ties-even"),
 )
 
 FIXED_CONVERSIONS = (
-    ("FCVTA", 4, "RTA", "away-from-zero"),
-    ("FCVTM", 1, "RTM", "toward-negative-infinity"),
-    ("FCVTN", 0, "RNE", "nearest-ties-even"),
-    ("FCVTP", 2, "RTP", "toward-positive-infinity"),
-    ("FCVTZ", 3, "RTZ", "toward-zero"),
+    ("FCVTA", "RNA", "nearest-ties-away-from-zero"),
+    ("FCVTM", "RTM", "toward-negative-infinity"),
+    ("FCVTN", "RNE", "nearest-ties-even"),
+    ("FCVTP", "RTP", "toward-positive-infinity"),
+    ("FCVTZ", "RTZ", "toward-zero"),
 )
+
+BUNDLE_RMODE = (
+    (0, "NONE", None, "operation-defined-default"),
+    (1, "RNE", "RNE", "nearest-ties-even"),
+    (2, "RTZ", "RTZ", "toward-zero"),
+    (3, "RDN", "RTM", "toward-negative-infinity"),
+    (4, "RUP", "RTP", "toward-positive-infinity"),
+    (5, "RNA", "RNA", "nearest-ties-away-from-zero"),
+    (6, "RTO", "RTO", "round-to-odd-when-inexact"),
+    (7, "RHB", "RHB", "nearest-tie-selects-numerically-greater-candidate"),
+)
+
+PUBLIC_CONVERSION_ROUND_MODES = (
+    (0, "CAST_NONE", 0, "NONE"),
+    (1, "CAST_RINT", 1, "RNE"),
+    (2, "CAST_ROUND", 5, "RNA"),
+    (3, "CAST_FLOOR", 3, "RDN"),
+    (4, "CAST_CEIL", 4, "RUP"),
+    (5, "CAST_TRUNC", 2, "RTZ"),
+    (6, "CAST_ODD", 6, "RTO"),
+)
+
+DOMAIN_RULES = {
+    "scalar-binary": (
+        "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
+        "Apply the resolved active scalar mode once when the exact operation result is encoded in the destination format.",
+        "not-applicable",
+    ),
+    "scalar-unary": (
+        "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
+        "Apply the resolved active scalar mode once when the operation-defined mathematical result is encoded in the destination format; PD-08 still owns approximation bounds.",
+        "not-applicable",
+    ),
+    "scalar-fused": (
+        "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
+        "Evaluate the exact fused multiply-add expression and round once, only at the destination-format boundary.",
+        "not-applicable",
+    ),
+    "scalar-fp-to-integer": (
+        "fixed FCVTA/FCVTM/FCVTN/FCVTP/FCVTZ mnemonic override",
+        "Apply the mnemonic-selected mode once to the finite source before destination range handling; FCVTA is nearest with ties away, not directed away from zero.",
+        "round-before-PD-07-range-or-indefinite-result-selection",
+    ),
+    "scalar-fp-convert": (
+        "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
+        "Apply the resolved active scalar mode once when encoding the destination floating format.",
+        "not-applicable",
+    ),
+    "scalar-integer-to-fp": (
+        "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
+        "Apply the resolved active scalar mode once when encoding the destination floating format; exactly representable integers are unchanged.",
+        "not-applicable",
+    ),
+    "tile-binary": (
+        "operation-fixed pto-v0 rule",
+        "Floating arithmetic rounds each operation result once using RNE; integer, bitwise, shift, comparison, minimum, and maximum results do not round.",
+        "not-applicable",
+    ),
+    "tile-unary": (
+        "operation-fixed pto-v0 rule",
+        "Floating results round once using RNE at the destination boundary; exact sign, bitwise, and selection operations do not round; PD-08 retains approximation bounds.",
+        "not-applicable",
+    ),
+    "tile-axpy": (
+        "operation-fixed pto-v0 rule",
+        "Round the operation-defined floating destination result once using RNE; integer results are exact modulo their independently specified overflow rule.",
+        "not-applicable",
+    ),
+    "tile-prelu": (
+        "operation-fixed pto-v0 rule",
+        "When the negative branch multiplies floating values, round its destination result once using RNE; the identity branch does not round.",
+        "not-applicable",
+    ),
+    "tile-reduction": (
+        "operation-fixed pto-v0 rule",
+        "Evaluate in increasing logical row-major order and round each floating sum or product step to the declared accumulator type using RNE; min, max, and arg selection do not round.",
+        "not-applicable",
+    ),
+    "tile-expand": (
+        "operation-fixed pto-v0 rule",
+        "Floating arithmetic and exponential-difference results round once using RNE at each destination element; broadcast, min, and max selection do not round.",
+        "not-applicable",
+    ),
+    "tile-partial": (
+        "operation-fixed pto-v0 rule",
+        "Each floating partial add or multiply step rounds to its declared accumulator type using RNE; min and max selection do not round.",
+        "not-applicable",
+    ),
+    "tile-convert": (
+        "TileNumericSelection from direct operands or B.DATR.RMode",
+        "Resolve NONE to RTZ for floating-to-integer TCVT and to RNE otherwise; explicit codes 1 through 7 use their bundle mapping, then round once to the destination format.",
+        "round-before-saturation-clamp-or-PD-07-nonsaturating-result-selection",
+    ),
+    "cube-convert": (
+        "TileNumericSelection from direct operands or B.DATR.RMode",
+        "Resolve NONE to RNE; explicit codes 1 through 7 use their bundle mapping, then round each logical ACC lane once to the destination format.",
+        "round-before-saturation-clamp-or-PD-07-nonsaturating-result-selection",
+    ),
+    "tile-quantize": (
+        "TileNumericSelection from direct operands or B.DATR.RMode",
+        "Resolve NONE to RNE; explicit codes 1 through 7 use their bundle mapping, then round once after the affine quantization expression and before destination packing.",
+        "round-before-saturation-clamp-or-PD-07-nonsaturating-result-selection",
+    ),
+    "tile-dequantize": (
+        "TileNumericSelection from direct operands or B.DATR.RMode",
+        "Resolve NONE to RNE; explicit codes 1 through 7 use their bundle mapping, then round once after the dequantization expression at the destination-format boundary.",
+        "round-before-saturation-clamp-or-PD-07-nonsaturating-result-selection",
+    ),
+    "cube-matrix": (
+        "operation-fixed pto-v0 rule",
+        "Use RNE for each fused multiply-add into the declared accumulator in increasing logical K order and for the post-dot bias addition; conversion out of ACC follows cube-convert.",
+        "not-applicable-to-matrix-accumulation",
+    ),
+}
 
 
 def load(path: Path) -> dict[str, Any]:
@@ -64,15 +178,16 @@ def generate() -> dict[str, Any]:
     identities = load(IDENTITY_CATALOG)
 
     pd03 = next(row for row in inputs["decision_questions"] if row["id"] == "PD-03")
-    require(pd03["status"] == "decision-required", "PD-03 status drift")
+    require(pd03["status"] == "accepted", "PD-03 status drift")
     require(
-        pd03["selected_disposition"] is None and pd03["decision_record"] is None,
-        "PD-03 must remain unaccepted while result rules are open",
+        pd03["selected_disposition"] == "portable-normative-rule"
+        and pd03["decision_record"] == ACCEPTANCE_RECORD,
+        "PD-03 acceptance disposition drift",
     )
 
     scalar_forms = {row["mnemonic"]: row for row in scalar["forms"]}
     fixed_rows = []
-    for mnemonic, code, name, rule in FIXED_CONVERSIONS:
+    for mnemonic, name, rule in FIXED_CONVERSIONS:
         form = scalar_forms[mnemonic]
         require(form["semantic_family"] == "FSU", f"{mnemonic} family drift")
         fixed_rows.append(
@@ -80,28 +195,31 @@ def generate() -> dict[str, Any]:
                 "form_id": form["form_id"],
                 "mnemonic": mnemonic,
                 "selector_namespace": "scalar-fixed-conversion-override",
-                "code": code,
                 "portable_name": name,
                 "mathematical_rule": rule,
                 "selection_status": "closed",
-                "numeric_result_status": "operation-type-rule-required",
+                "numeric_result_status": "rounding-rule-closed-other-result-dimensions-open",
             }
         )
 
     command_form = next(row for row in command["forms"] if row["mnemonic"] == "B.DATR")
     rmode = next(field for field in command_form["fields"] if field["name"] == "RMode")
     require(rmode["width"] == 3, "B.DATR RMode width drift")
+    require(1 << rmode["width"] == len(BUNDLE_RMODE), "B.DATR RMode map drift")
     command_rows = [
         {
             "form_id": command_form["form_id"],
             "mnemonic": command_form["mnemonic"],
             "selector_namespace": "bundle-data-attribute-rmode",
             "code": code,
+            "encoded_name": encoded_name,
+            "portable_name": portable_name,
+            "mathematical_rule": rule,
             "binding": "BundleDataAttributes.rounding_mode",
-            "selection_status": "encoding-and-state-binding-closed",
-            "numeric_result_status": "named-profile-rule-required",
+            "selection_status": "encoding-state-and-semantic-mapping-closed",
+            "numeric_result_status": "rounding-rule-closed-other-result-dimensions-open",
         }
-        for code in range(1 << rmode["width"])
+        for code, encoded_name, portable_name, rule in BUNDLE_RMODE
     ]
 
     active_rows = [
@@ -110,16 +228,13 @@ def generate() -> dict[str, Any]:
             "system_register": "CORE_STATE",
             "bit_range": "39:37",
             "code": code,
+            "encoding_status": encoding_status,
             "portable_name": name,
             "mathematical_rule": rule,
-            "selection_status": status,
-            "pto_v0_behavior": (
-                "passes-code-to-active-profile-hook"
-                if code <= 4
-                else "normalizes-to-RNE"
-            ),
+            "selection_status": "closed",
+            "pto_v0_behavior": "resolves-to-" + name,
         }
-        for code, name, rule, status in ACTIVE_ROUNDING
+        for code, encoding_status, name, rule in ACTIVE_ROUNDING
     ]
 
     domain_rows_by_name = {}
@@ -137,10 +252,10 @@ def generate() -> dict[str, Any]:
                 for identity in identities["identities"]
                 if identity["kind"] != "observation-only"
             ],
-            "selector_owner": None,
-            "rounding_rule": None,
-            "saturation_order_rule": None,
-            "status": "profile-rule-required",
+            "selector_owner": DOMAIN_RULES[row["domain"]][0],
+            "rounding_rule": DOMAIN_RULES[row["domain"]][1],
+            "saturation_order_rule": DOMAIN_RULES[row["domain"]][2],
+            "status": "rounding-rule-accepted-other-numeric-dimensions-open",
         }
 
     domain_rows = [domain_rows_by_name[name] for name in pd03["domains"]]
@@ -155,18 +270,28 @@ def generate() -> dict[str, Any]:
         "schema_version": 1,
         "target": "S5-T2-A2:PD-03",
         "decision_id": "PD-03",
-        "status": "selector-ownership-inventory-closed-result-rules-open",
+        "status": "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open",
         "acceptance_record": ACCEPTANCE_RECORD,
         "policy": {
             "namespace_separation": "Scalar FRM, scalar fixed conversion overrides, bundle RMode, public API modes, matrix controls, and stochastic controls are distinct selector namespaces unless an accepted rule maps them.",
             "no_backend_inheritance": "Backend CAST, ROUND, PART, and stochastic-control values are evidence only and cannot create portable PTO encodings.",
-            "unknown_selection": "Unknown or unmapped selectors and missing delegated rounding rules reject before architectural effects under ADR 0037.",
-            "saturation_order": "Rounding selection and saturation selection are independent inputs; each accepted conversion or quantization rule must define their order.",
-            "pd03_boundary": "This artifact closes selector discovery and ownership only. PD-03 remains open until all affected domains have exact rounding and saturation-order rules plus vectors.",
+            "unknown_selection": "All scalar and bundle three-bit patterns have deterministic resolution. Unknown public selector ordinals or missing delegated rules reject before architectural effects under ADR 0037.",
+            "saturation_order": "Rounding selection and saturation selection are independent inputs. Every applicable conversion or quantization domain rounds before saturation or the PD-07 nonsaturating result rule.",
+            "pd03_boundary": "PD-03 is accepted for selector mapping, tie behavior, rounding points, and saturation order. PD-04 through PD-12 continue to own subnormals, special values, flags, range results, accuracy, quantization equations, matrix precision, and other result dimensions.",
         },
         "scalar_active_rounding": active_rows,
         "scalar_fixed_conversion_overrides": fixed_rows,
         "bundle_rmode": command_rows,
+        "public_conversion_round_modes": [
+            {
+                "public_ordinal": ordinal,
+                "public_name": name,
+                "bundle_rmode_code": bundle_code,
+                "bundle_rmode_name": bundle_name,
+                "status": "accepted-explicit-translation",
+            }
+            for ordinal, name, bundle_code, bundle_name in PUBLIC_CONVERSION_ROUND_MODES
+        ],
         "external_selector_classes": [
             {
                 "class": "public-conversion-round-mode",
@@ -176,17 +301,17 @@ def generate() -> dict[str, Any]:
                     "a2a3-conversion",
                     "a5-conversion",
                 ],
-                "status": "mapping-decision-required",
+                "status": "accepted-explicit-translation",
             },
             {
                 "class": "matrix-tf32-hf32-rounding-control",
                 "source_ids": ["public-target-profiles", "a2a3-matrix", "a5-matrix"],
-                "status": "named-target-profile-rule-required",
+                "status": "operation-fixed-RNE-mapping-accepted",
             },
             {
                 "class": "quantization-stochastic-control",
                 "source_ids": ["a2a3-quantization", "a5-quantization"],
-                "status": "state-or-bounded-result-decision-required",
+                "status": "not-an-architectural-selector-in-pto-v0",
             },
             {
                 "class": "backend-only-cast-round-part-controls",
@@ -196,16 +321,17 @@ def generate() -> dict[str, Any]:
         ],
         "domains": domain_rows,
         "independent_comparison": {
-            "status": "scalar-selection-structure-corroborated-not-numeric-oracle",
+            "status": "scalar-selection-and-reserved-fallback-corroborated-not-numeric-oracle",
             "provenance_sha256": "9e601ae1a3f1a7025b048aa6108b04b445a3ccbc68fc77ea4b76d7befa2e46b8",
             "matched_contracts": [
                 "scalar-FRM-field-location",
                 "RNE-RTM-RTP-RTZ-code-order",
                 "fixed-conversion-rounding-overrides",
+                "reserved-scalar-FRM-fallback-to-RNE",
             ],
             "limits": [
                 "independent-numeric-helpers-are-not-a-PTO-oracle",
-                "bundle-RMode-has-no-independent-semantic-mapping",
+                "bundle-RMode-mapping-is-a-PTO-decision-not-an-independent-contract",
                 "target-conversion-matrix-and-stochastic-controls-are-not-closed",
             ],
         },
@@ -225,12 +351,17 @@ def generate() -> dict[str, Any]:
             source("asl/scalar/dispatch.asl"),
             source("asl/bundle/state.asl"),
             source("asl/bundle/dispatch.asl"),
+            source("asl/tile/conversion.asl"),
+            source("asl/tile/cube.asl"),
+            source("spec/catalog/tile-operations.json"),
+            source("spec/hardware-conformance-profile.json"),
             source(
                 "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md"
             ),
             source(
                 "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
             ),
+            source(ACCEPTANCE_RECORD),
         ],
         "summary": {
             "scalar_active_selector_count": len(active_rows),
@@ -242,8 +373,8 @@ def generate() -> dict[str, Any]:
                 row["operation_count"] for row in domain_rows
             ),
             "affected_hook_count": len(hooks),
-            "accepted_domain_rounding_rule_count": 0,
-            "pd03_complete": False,
+            "accepted_domain_rounding_rule_count": len(domain_rows),
+            "pd03_complete": True,
         },
     }
 

@@ -92,7 +92,7 @@
       "name": "ScalarFPBinaryProfile",
       "portable_default": "Apply deterministic modular carrier ADD, SUB, MUL, or DIV; zero DIV returns all ones and DZ. Scalar dispatch owns MIN/MAX NaN and signed-zero behavior.",
       "profile_obligations": [
-        "Define correctly rounded ADD, SUB, MUL, and DIV raw results for every accepted scalar format.",
+        "Consume the resolved active scalar rounding mode and round ADD, SUB, MUL, and DIV once at the destination-format boundary for every accepted scalar format.",
         "Define NaN propagation, infinities, subnormals, signed zero, and NV/DZ/OF/UF/NX flags."
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
@@ -109,7 +109,7 @@
       "name": "ScalarFPUnaryProfile",
       "portable_default": "Apply deterministic carrier ABS, identity SQRT, increment EXP, or unsigned reciprocal; zero reciprocal returns all ones and DZ.",
       "profile_obligations": [
-        "Define correctly rounded SQRT, reciprocal, and exponential raw results.",
+        "Consume the resolved active scalar rounding mode and round SQRT, reciprocal, and exponential once at the destination-format boundary; define the exact or bounded mathematical result.",
         "Define exceptional inputs, approximation guarantees, and NV/DZ/OF/UF/NX flags."
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
@@ -126,7 +126,7 @@
       "name": "ScalarFPFusedProfile",
       "portable_default": "Apply one modular word-width multiply followed by the selected signed addend transform.",
       "profile_obligations": [
-        "Define single-rounding fused multiply-add variants for every accepted scalar format.",
+        "Evaluate the exact fused multiply-add expression and apply the resolved active scalar rounding mode once at the destination-format boundary for every accepted scalar format.",
         "Define NaN propagation and NV/OF/UF/NX flags."
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
@@ -143,7 +143,7 @@
       "name": "ScalarFPToIntegerProfile",
       "portable_default": "Return the source payload before normative destination-width normalization and no new flags.",
       "profile_obligations": [
-        "Define rounding, saturation or indefinite results, exceptional inputs, and NV/NX flags for every accepted integer destination type."
+        "Use the fixed mnemonic rounding mode once before range handling; define saturation or indefinite results, exceptional inputs, and NV/NX flags for every accepted integer destination type."
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -159,7 +159,7 @@
       "name": "ScalarFPConvertProfile",
       "portable_default": "Return the source payload before normative floating destination-width normalization and no new flags.",
       "profile_obligations": [
-        "Define floating format conversion, rounding, NaN payload handling, overflow, underflow, and flags for every accepted destination type."
+        "Apply the resolved active scalar rounding mode once at the destination-format boundary; define NaN payload handling, overflow, underflow, and flags for every accepted destination type."
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -175,7 +175,7 @@
       "name": "ScalarIntegerToFPProfile",
       "portable_default": "Return the normalized integer source payload before normative floating destination-width normalization and no new flags.",
       "profile_obligations": [
-        "Define integer-to-floating conversion, rounding, overflow, underflow, and NX flags for every accepted destination type."
+        "Apply the resolved active scalar rounding mode once at the destination-format boundary; define overflow, underflow, and NX flags for every accepted destination type."
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -191,7 +191,7 @@
       "name": "TileSquareRoot",
       "portable_default": "Return the raw input payload.",
       "profile_obligations": [
-        "Define per-data-type square-root encoding, accuracy, exceptional inputs, and rounding."
+        "Use operation-fixed RNE once at the destination boundary; define per-data-type square-root encoding, accuracy, and exceptional inputs."
       ],
       "requirement": "PTO-REQ-TEPL-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -207,7 +207,7 @@
       "name": "TileLogarithm",
       "portable_default": "Return the raw input payload.",
       "profile_obligations": [
-        "Define per-data-type logarithm encoding, base, accuracy, exceptional inputs, and rounding."
+        "Use operation-fixed RNE once at the destination boundary; define per-data-type logarithm encoding, base, accuracy, and exceptional inputs."
       ],
       "requirement": "PTO-REQ-TEPL-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -223,7 +223,7 @@
       "name": "TileReciprocal",
       "portable_default": "Apply unsigned bitvector reciprocal and reject zero.",
       "profile_obligations": [
-        "Define per-data-type reciprocal encoding, accuracy, division-by-zero behavior, and rounding."
+        "Use operation-fixed RNE once at the destination boundary; define per-data-type reciprocal encoding, accuracy, and division-by-zero behavior."
       ],
       "requirement": "PTO-REQ-TEPL-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -239,7 +239,7 @@
       "name": "TileExponential",
       "portable_default": "Increment the raw input payload by one modulo XLEN.",
       "profile_obligations": [
-        "Define per-data-type exponential encoding, base, accuracy, overflow, underflow, and rounding."
+        "Use operation-fixed RNE once at the destination boundary; define per-data-type exponential encoding, base, accuracy, overflow, and underflow."
       ],
       "requirement": "PTO-REQ-TEPL-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -255,7 +255,7 @@
       "name": "TileExpDifference",
       "portable_default": "Subtract the raw right payload from the raw left payload.",
       "profile_obligations": [
-        "Define the exponential-difference formula, intermediate precision, exceptional inputs, and rounding for every accepted floating type."
+        "Use operation-fixed RNE once at the destination boundary; define the exponential-difference formula, intermediate precision, and exceptional inputs for every accepted floating type."
       ],
       "requirement": "PTO-REQ-TEPL-EXPAND-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -271,7 +271,7 @@
       "name": "TileProfileConvert",
       "portable_default": "Preserve the raw payload for conversions involving a floating type.",
       "profile_obligations": [
-        "Define every accepted floating/integer type pair, destination packing, rounding, saturation, and exceptional values."
+        "Consume NumericExecutionControl, apply the TCVT or ACCCVT operation default or explicit mode once at the destination boundary, then saturate; define accepted type pairs, packing, nonsaturating range results, and exceptional values."
       ],
       "requirement": "PTO-REQ-TEPL-CONVERT-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -287,7 +287,7 @@
       "name": "TileProfileQuantize",
       "portable_default": "Apply unsigned bitvector division by scale, add zero point, and normalize to the destination integer width.",
       "profile_obligations": [
-        "Define scale and zero-point encodings, rounding, clamping, saturation, per-type legality, and zero-scale behavior."
+        "Consume NumericExecutionControl, round once after the affine quantization expression, then saturate; define scale and zero-point encodings, clamping values, per-type legality, and zero-scale behavior."
       ],
       "requirement": "PTO-REQ-TEPL-CONVERT-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -303,7 +303,7 @@
       "name": "TileProfileDequantize",
       "portable_default": "Subtract the zero point and multiply by scale as raw bitvectors.",
       "profile_obligations": [
-        "Define scale and zero-point encodings, intermediate precision, destination rounding, and per-type legality."
+        "Consume NumericExecutionControl, round once after the dequantization expression at the destination boundary, then saturate; define scale and zero-point encodings, intermediate precision, and per-type legality."
       ],
       "requirement": "PTO-REQ-TEPL-CONVERT-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -407,7 +407,7 @@
       "name": "TileProfileBinary",
       "portable_default": "Apply the operation with deterministic raw bitvector arithmetic.",
       "profile_obligations": [
-        "Define per-type arithmetic, rounding, exceptional values, overflow, and underflow."
+        "Use operation-fixed RNE once at each floating destination boundary and no rounding for exact integer or bitwise results; define exceptional values, overflow, and underflow."
       ],
       "requirement": "PTO-REQ-TEPL-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -423,7 +423,7 @@
       "name": "TileProfileUnary",
       "portable_default": "Apply the operation with deterministic raw bitvector behavior.",
       "profile_obligations": [
-        "Define per-type arithmetic, rounding, exceptional values, overflow, and underflow."
+        "Use operation-fixed RNE once at each floating destination boundary and no rounding for exact sign, bitwise, or selection results; define exceptional values, overflow, and underflow."
       ],
       "requirement": "PTO-REQ-TEPL-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -439,7 +439,7 @@
       "name": "TileProfileAxpy",
       "portable_default": "Multiply and add raw bitvectors at architectural word width.",
       "profile_obligations": [
-        "Define per-type multiplication, addition, intermediate precision, rounding, and exceptional values."
+        "Use operation-fixed RNE once at the operation-defined floating destination boundary; define multiplication/addition intermediate precision and exceptional values."
       ],
       "requirement": "PTO-REQ-TEPL-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -455,7 +455,7 @@
       "name": "TileProfilePReLU",
       "portable_default": "Apply negative-slope multiplication to signed-negative raw payloads and preserve non-negative payloads.",
       "profile_obligations": [
-        "Define per-type signedness, negative-zero behavior, multiplication precision, rounding, saturation, and exceptional values."
+        "Use operation-fixed RNE once for a floating negative-branch result and no rounding for the identity branch; define signedness, negative-zero behavior, multiplication precision, saturation, and exceptional values."
       ],
       "requirement": "PTO-REQ-TEPL-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -488,7 +488,7 @@
       "name": "TileProfileReductionInitial",
       "portable_default": "Initialize reduction accumulators from the first raw payload.",
       "profile_obligations": [
-        "Define per-type identities, first-element handling, exceptional values, and empty-input legality."
+        "Initialize in increasing logical row-major order without rounding the selected first element; define per-type identities, exceptional values, and empty-input legality."
       ],
       "requirement": "PTO-REQ-TEPL-REDUCE-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -504,7 +504,7 @@
       "name": "TileProfileReductionStep",
       "portable_default": "Apply raw bitvector sum, product, minimum, maximum, or argument selection.",
       "profile_obligations": [
-        "Define per-type accumulation precision, rounding, ordering, exceptional values, and tie selection."
+        "Use increasing logical row-major order and operation-fixed RNE after each floating sum or product step; define accumulation precision, exceptional values, and tie selection."
       ],
       "requirement": "PTO-REQ-TEPL-REDUCE-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -520,7 +520,7 @@
       "name": "TileProfileExpand",
       "portable_default": "Apply the selected expansion operation with raw bitvector arithmetic.",
       "profile_obligations": [
-        "Define per-type broadcast arithmetic, rounding, exceptional values, overflow, and underflow."
+        "Use operation-fixed RNE once at each floating arithmetic destination and no rounding for broadcast or selection results; define exceptional values, overflow, and underflow."
       ],
       "requirement": "PTO-REQ-TEPL-EXPAND-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -536,7 +536,7 @@
       "name": "TileProfilePartialValue",
       "portable_default": "Apply partial arithmetic with deterministic raw bitvector operations.",
       "profile_obligations": [
-        "Define per-type partial arithmetic, rounding, exceptional values, and missing-source behavior."
+        "Use operation-fixed RNE after each floating partial add or multiply step and no rounding for min/max selection; define exceptional values and missing-source behavior."
       ],
       "requirement": "PTO-REQ-TEPL-COMPLEX-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -584,7 +584,7 @@
       "name": "TileProfileMatrixAccumulate",
       "portable_default": "Multiply raw payloads and accumulate at architectural word width.",
       "profile_obligations": [
-        "Define accepted type triples, product and accumulator widths, rounding, saturation, and exceptional values."
+        "Use operation-fixed RNE for each fused multiply-add in increasing logical K order; define accepted type triples, product and accumulator widths, saturation, and exceptional values."
       ],
       "requirement": "PTO-REQ-CUBE-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -600,7 +600,7 @@
       "name": "TileProfileMatrixBias",
       "portable_default": "Add bias and destination raw payloads at architectural word width.",
       "profile_obligations": [
-        "Define accepted type pairs, bias conversion, rounding, saturation, and exceptional values."
+        "Add bias after the complete dot product and use operation-fixed RNE at the accumulator boundary; define accepted type pairs, bias conversion, saturation, and exceptional values."
       ],
       "requirement": "PTO-REQ-CUBE-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -616,7 +616,7 @@
       "name": "TileProfileMatrixScaledAccumulate",
       "portable_default": "Scale the left and right raw operands at word width, multiply the scaled operands, and add the term to the unscaled prior accumulator.",
       "profile_obligations": [
-        "Define the exact MX operand pairs, E8M0 decoding, K-block indexing, pre-FMA scale application, accumulator precision, rounding, saturation, and exceptional values."
+        "Apply scale before each fused multiply-add, visit K in increasing logical order, and use operation-fixed RNE at each accumulator step; define exact MX pairs, E8M0 decoding, accumulator precision, saturation, and exceptional values."
       ],
       "requirement": "PTO-REQ-CUBE-001",
       "implementation_status": "implemented-by-pto-v0",

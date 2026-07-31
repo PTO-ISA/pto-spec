@@ -3749,11 +3749,18 @@
         {
           "field": "destination0",
           "role": "destination"
+        },
+        {
+          "field": "numeric_control",
+          "role": "rounding-and-saturation"
         }
       ],
       "arguments": [
         {
           "operand": "destination0"
+        },
+        {
+          "operand": "numeric_control"
         }
       ],
       "acc_effect": "read-release-on-commit",
@@ -3764,6 +3771,7 @@
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
+        "operand:numeric_control:rounding-and-saturation",
         "implicit:ACC:read-release-on-commit"
       ],
       "datr_contract": {
@@ -4695,6 +4703,10 @@
         {
           "field": "source0",
           "role": "source"
+        },
+        {
+          "field": "numeric_control",
+          "role": "rounding-and-saturation"
         }
       ],
       "arguments": [
@@ -4703,6 +4715,9 @@
         },
         {
           "operand": "source0"
+        },
+        {
+          "operand": "numeric_control"
         }
       ],
       "mode": 0,
@@ -4714,7 +4729,8 @@
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
-        "operand:source0:source"
+        "operand:source0:source",
+        "operand:numeric_control:rounding-and-saturation"
       ],
       "datr_contract": {
         "allowed_nonzero_fields": [
@@ -4750,6 +4766,10 @@
         {
           "field": "scalar1",
           "role": "zero-point"
+        },
+        {
+          "field": "numeric_control",
+          "role": "rounding-and-saturation"
         }
       ],
       "arguments": [
@@ -4764,6 +4784,9 @@
         },
         {
           "operand": "scalar1"
+        },
+        {
+          "operand": "numeric_control"
         }
       ],
       "mode": 3,
@@ -4777,7 +4800,8 @@
         "operand:destination0:destination",
         "operand:source0:source",
         "operand:scalar0:scale",
-        "operand:scalar1:zero-point"
+        "operand:scalar1:zero-point",
+        "operand:numeric_control:rounding-and-saturation"
       ],
       "datr_contract": {
         "allowed_nonzero_fields": [
@@ -4813,6 +4837,10 @@
         {
           "field": "scalar1",
           "role": "zero-point"
+        },
+        {
+          "field": "numeric_control",
+          "role": "rounding-and-saturation"
         }
       ],
       "arguments": [
@@ -4827,6 +4855,9 @@
         },
         {
           "operand": "scalar1"
+        },
+        {
+          "operand": "numeric_control"
         }
       ],
       "mode": 3,
@@ -4840,7 +4871,8 @@
         "operand:destination0:destination",
         "operand:source0:source",
         "operand:scalar0:scale",
-        "operand:scalar1:zero-point"
+        "operand:scalar1:zero-point",
+        "operand:numeric_control:rounding-and-saturation"
       ],
       "datr_contract": {
         "allowed_nonzero_fields": [

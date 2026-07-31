@@ -462,14 +462,44 @@
       },
       {
         "destination": "S32",
+        "expected": "2",
+        "input": "2.1",
+        "mode": "RNA"
+      },
+      {
+        "destination": "S32",
+        "expected": "-2",
+        "input": "-2.1",
+        "mode": "RNA"
+      },
+      {
+        "destination": "S32",
+        "expected": "3",
+        "input": "2.5",
+        "mode": "RNA"
+      },
+      {
+        "destination": "S32",
         "expected": "-3",
         "input": "-2.5",
         "mode": "RNA"
       },
       {
         "destination": "S32",
+        "expected": "2",
+        "input": "2.0",
+        "mode": "RTO"
+      },
+      {
+        "destination": "S32",
         "expected": "3",
         "input": "2.25",
+        "mode": "RTO"
+      },
+      {
+        "destination": "S32",
+        "expected": "-3",
+        "input": "-2.25",
         "mode": "RTO"
       },
       {
@@ -483,6 +513,121 @@
         "expected": "-2",
         "input": "-2.5",
         "mode": "RHB"
+      }
+    ],
+    "rounding_before_saturation": [
+      {
+        "destination": "S8",
+        "expected": "127",
+        "input": "127.5",
+        "mode": "RNA",
+        "rounded_intermediate": "128",
+        "sat": true
+      },
+      {
+        "destination": "S8",
+        "expected": "-128",
+        "input": "-128.5",
+        "mode": "RNA",
+        "rounded_intermediate": "-129",
+        "sat": true
+      }
+    ],
+    "rounding_selection": [
+      {
+        "encoding_status": "assigned",
+        "expected_mode": "RNE",
+        "namespace": "scalar-core-state-frm",
+        "raw": 0
+      },
+      {
+        "encoding_status": "assigned",
+        "expected_mode": "RTM",
+        "namespace": "scalar-core-state-frm",
+        "raw": 1
+      },
+      {
+        "encoding_status": "assigned",
+        "expected_mode": "RTP",
+        "namespace": "scalar-core-state-frm",
+        "raw": 2
+      },
+      {
+        "encoding_status": "assigned",
+        "expected_mode": "RTZ",
+        "namespace": "scalar-core-state-frm",
+        "raw": 3
+      },
+      {
+        "encoding_status": "reserved-fallback",
+        "expected_mode": "RNE",
+        "namespace": "scalar-core-state-frm",
+        "raw": 4
+      },
+      {
+        "encoding_status": "reserved-fallback",
+        "expected_mode": "RNE",
+        "namespace": "scalar-core-state-frm",
+        "raw": 7
+      },
+      {
+        "expected_mode": "RTZ",
+        "namespace": "bundle-rmode",
+        "operation": "TCVT-float-to-integer",
+        "raw": 0
+      },
+      {
+        "expected_mode": "RNE",
+        "namespace": "bundle-rmode",
+        "operation": "ACCCVT",
+        "raw": 0
+      },
+      {
+        "bundle_rmode": 0,
+        "namespace": "public-conversion",
+        "public_name": "CAST_NONE",
+        "raw": 0
+      },
+      {
+        "bundle_rmode": 1,
+        "namespace": "public-conversion",
+        "public_name": "CAST_RINT",
+        "raw": 1
+      },
+      {
+        "bundle_rmode": 5,
+        "namespace": "public-conversion",
+        "public_name": "CAST_ROUND",
+        "raw": 2
+      },
+      {
+        "bundle_rmode": 3,
+        "namespace": "public-conversion",
+        "public_name": "CAST_FLOOR",
+        "raw": 3
+      },
+      {
+        "bundle_rmode": 4,
+        "namespace": "public-conversion",
+        "public_name": "CAST_CEIL",
+        "raw": 4
+      },
+      {
+        "bundle_rmode": 2,
+        "namespace": "public-conversion",
+        "public_name": "CAST_TRUNC",
+        "raw": 5
+      },
+      {
+        "bundle_rmode": 6,
+        "namespace": "public-conversion",
+        "public_name": "CAST_ODD",
+        "raw": 6
+      },
+      {
+        "expected": "reject-before-effects",
+        "namespace": "public-conversion",
+        "raw": 7
       }
     ],
     "saturation": [

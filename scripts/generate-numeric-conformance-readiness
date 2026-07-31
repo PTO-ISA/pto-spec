@@ -224,7 +224,9 @@ def build_evidence() -> dict[str, Any]:
         == "variation-point-discovery-and-ownership-closed-result-bounds-open"
         and variation_ownership.get("summary", {}).get("variation_point_count")
         == 99
-        and variation_ownership.get("summary", {}).get("selected_route_count") == 0,
+        and variation_ownership.get("summary", {}).get("selected_route_count") == 18
+        and variation_ownership.get("summary", {}).get("accepted_result_rule_count")
+        == 18,
         "numeric variation-point ownership checkpoint drift",
     )
     require(
@@ -356,8 +358,8 @@ def build_evidence() -> dict[str, Any]:
             "status": variation_ownership["status"],
             "acceptance_record": variation_ownership["acceptance_record"],
             "variation_point_count": 99,
-            "selected_route_count": 0,
-            "accepted_result_rule_count": 0,
+            "selected_route_count": 18,
+            "accepted_result_rule_count": 18,
         },
         "public_type_baseline": {
             "path": "spec/evidence/public-numeric-type-baseline.json",
@@ -382,7 +384,7 @@ def build_evidence() -> dict[str, Any]:
             "accepted_identity_count": 4,
             "accepted_selection_rule_count": 5,
             "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
-            "result_decision_count": 0,
+            "result_decision_count": 1,
             "accepted_domain_rule_count": 0,
         },
         "policy": {
