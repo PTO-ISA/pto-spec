@@ -107,7 +107,7 @@
   },
   "profile_applicability_contract": {
     "path": "spec/evidence/numeric-profile-applicability-closure.json",
-    "sha256": "42e2b276c7a81608a1db20b9b0e6964fe00c3af9ae96048c52a86434bbd239d5",
+    "sha256": "7939cf794640efca743816f75a0e71faa2eb840bf398c63e427a729093ac951b",
     "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
     "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
     "rule_count": 6,
@@ -125,7 +125,7 @@
   },
   "variation_point_contract": {
     "path": "spec/evidence/numeric-variation-point-ownership.json",
-    "sha256": "4a8c5f6db5a8cb88cbe96c192cc43f9e4d2ae5ab9be7f42d845f338c2fd40888",
+    "sha256": "295b36f19172f44ce608313194c02f1470144a5dea35b053f8277960269f2679",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
     "acceptance_record": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
     "variation_point_count": 99,

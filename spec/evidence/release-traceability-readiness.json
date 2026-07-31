@@ -47,7 +47,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "9d93a25d3707a952847223505e2eeb57fef5f564f1af200d5e03b4b96631e75c"
+      "sha256": "c19d41ba8264c2cd38e1b48a6082c081a9d0c6db4f36677579d3a15dc0c36c69"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -55,11 +55,11 @@
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "42e2b276c7a81608a1db20b9b0e6964fe00c3af9ae96048c52a86434bbd239d5"
+      "sha256": "7939cf794640efca743816f75a0e71faa2eb840bf398c63e427a729093ac951b"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "4a8c5f6db5a8cb88cbe96c192cc43f9e4d2ae5ab9be7f42d845f338c2fd40888"
+      "sha256": "295b36f19172f44ce608313194c02f1470144a5dea35b053f8277960269f2679"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",

@@ -383,7 +383,11 @@ begin
     assert stop == CommandExecution_Executed;
     assert !BundleIsActive();
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x10c;
-    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 16;
+    // DstTile selects hand 2, not physical tile 2. The first free tile in
+    // hand 2 is tile 32; the pre-existing physical tile 2 is preserved.
+    assert _Tiles[[32]].allocated;
+    assert ReadTileElement(32, 0, 0) == Zeros{PTO_XLEN} + 16;
+    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 99;
     assert _SystemRegisters.cycle == Zeros{PTO_XLEN} + 3;
 
     // A following BSTART is also a commit boundary and installs only the next
@@ -406,7 +410,9 @@ begin
     assert first_start == CommandExecution_Executed;
     assert first_binding == CommandExecution_Executed;
     assert next_status == CommandExecution_Executed;
-    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 5;
+    assert _Tiles[[32]].allocated;
+    assert ReadTileElement(32, 0, 0) == Zeros{PTO_XLEN} + 5;
+    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 99;
     assert _BundleOperation.operation_class == BundleOperation_Control;
     assert !_BundleOperation.selector_valid;
     assert BundleIsActive();

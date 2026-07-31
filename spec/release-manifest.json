@@ -382,7 +382,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "42e2b276c7a81608a1db20b9b0e6964fe00c3af9ae96048c52a86434bbd239d5"
+      "sha256": "7939cf794640efca743816f75a0e71faa2eb840bf398c63e427a729093ac951b"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
@@ -390,7 +390,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "9d93a25d3707a952847223505e2eeb57fef5f564f1af200d5e03b4b96631e75c"
+      "sha256": "c19d41ba8264c2cd38e1b48a6082c081a9d0c6db4f36677579d3a15dc0c36c69"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
@@ -398,7 +398,7 @@
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "4a8c5f6db5a8cb88cbe96c192cc43f9e4d2ae5ab9be7f42d845f338c2fd40888"
+      "sha256": "295b36f19172f44ce608313194c02f1470144a5dea35b053f8277960269f2679"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
@@ -414,11 +414,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "7ec41892d385580781cc9f855e9f70ad15243b79dc71fb3044fc180a45e1f6ba"
+      "sha256": "4b76a16a6b93d9b7d39ed8e6f6ca3c80305aa4df52f752468e17a65ede854e05"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "08c8c139d4973391a253d97ebb96743004c0dc856706b655f53865b2c00e72d7"
+      "sha256": "dd79a486487f39a20779d859956486646bbfca27785ee934e7ab15be5a513b11"
     },
     {
       "path": "spec/evidence/scalar-agu-totality.json",
@@ -495,7 +495,7 @@
     },
     "tile_operations_total": 120
   },
-  "content_sha256": "461233e9b9395a2052cd647187226a2b30cd984eee9ddd66b660d7c4f04ecde9",
+  "content_sha256": "42bc9c8b3c1a1d9e43fc8ada0748fdc20d163d2b612296fcc4042e8de9b57fbd",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",

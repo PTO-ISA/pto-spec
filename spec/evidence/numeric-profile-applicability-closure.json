@@ -5453,7 +5453,7 @@
     },
     {
       "path": "tests/asl/bundle-tests.asl",
-      "sha256": "6b05fcd35f0ff487e3a2000d5c4297408c087fb3de13f3955145fab598df4d53"
+      "sha256": "83c4d2cd5ac6ff3b471fb5d0681c213bcff83f5376ecaf35e905f954cbf74cf6"
     },
     {
       "path": "tests/asl/cube-totality-tests.asl",
