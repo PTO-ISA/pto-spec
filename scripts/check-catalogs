@@ -2611,6 +2611,7 @@ def main() -> int:
         "spec/hardware-conformance-profile.json",
         "spec/catalog/command-forms.json",
         "asl/types.asl",
+        "asl/numeric/formats.asl",
         "asl/scalar/floating.asl",
         "asl/tile/state.asl",
         "asl/tile/memory.asl",
@@ -2618,6 +2619,7 @@ def main() -> int:
         "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
         "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
         "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+        "docs/architecture-decisions/0048-numeric-format-value-classification.md",
     ]
     require(
         set(numeric_format_namespaces)
@@ -2625,6 +2627,8 @@ def main() -> int:
             "acceptance_record",
             "bundle_data_type",
             "checkpoint_id",
+            "classification_acceptance_record",
+            "classification_checkpoint_id",
             "decision_id",
             "four_bit_packing",
             "independent_comparison",
@@ -2642,15 +2646,20 @@ def main() -> int:
             "tests",
             "tile_data_types",
             "tma_talloc_data_type",
+            "value_classification",
         }
         and numeric_format_namespaces["schema_version"] == 1
         and numeric_format_namespaces["target"] == "S5-T2-A2:PD-02"
         and numeric_format_namespaces["decision_id"] == "PD-02"
         and numeric_format_namespaces["checkpoint_id"] == "PD-02-SC1"
         and numeric_format_namespaces["status"]
-        == "namespace-and-carrier-inventory-closed-format-rules-open"
+        == "namespace-carrier-and-value-classification-closed-operation-rules-open"
         and numeric_format_namespaces["acceptance_record"]
         == "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md"
+        and numeric_format_namespaces["classification_checkpoint_id"]
+        == "PD-02-SC2:PD-05-SC1"
+        and numeric_format_namespaces["classification_acceptance_record"]
+        == "docs/architecture-decisions/0048-numeric-format-value-classification.md"
         and (ROOT / numeric_format_namespaces["acceptance_record"]).is_file(),
         "numeric format namespace identity or schema drift",
     )
@@ -2714,6 +2723,95 @@ def main() -> int:
             for row in tile_type_rows
         ),
         "numeric tile type inventory, width, or namespace binding drift",
+    )
+    nan_capable_types = {
+        "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "HiF8", "E4M3",
+        "E5M2", "E8M0",
+    }
+    signaling_nan_types = {
+        "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "E5M2",
+    }
+    infinity_capable_types = {
+        "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "HiF8", "E5M2",
+    }
+    subnormal_capable_types = {
+        "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "HiF8", "E4M3",
+        "E5M2", "E3M2", "E2M3",
+    }
+    signed_zero_types = {
+        "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "E4M3", "E5M2",
+        "E3M2", "E2M3", "E2M1X2", "E1M2X2", "HiF4X2",
+    }
+    internal_encoding_constraints = {
+        "TF32": "bits[12:0] are zero",
+        "HF32": "bits[11:0] are zero",
+        "E3M2": "bits[7:6] are zero",
+        "E2M3": "bits[7:6] are zero",
+    }
+    hardware_types_by_name = {
+        row["name"]: row for row in hardware_conformance_profile["data_types"]
+    }
+    value_classification = numeric_format_namespaces["value_classification"]
+    require(
+        set(value_classification)
+        == {
+            "canonical_nan",
+            "class_type",
+            "classifier",
+            "encoding_validity",
+            "formats",
+            "invalid_encoding_result",
+            "status",
+        }
+        and value_classification["classifier"] == "TileNumericValueClass"
+        and value_classification["encoding_validity"] == "TileNumericEncodingValid"
+        and value_classification["canonical_nan"] == "TileNumericCanonicalNaN"
+        and value_classification["class_type"] == "NumericValueClass"
+        and value_classification["invalid_encoding_result"]
+        == "NumericValue_InvalidEncoding"
+        and value_classification["status"] == "closed",
+        "numeric value-classification schema or ASL binding drift",
+    )
+    classification_rows = value_classification["formats"]
+    require(
+        [row["name"] for row in classification_rows]
+        == [row["name"] for row in hardware_conformance_profile["data_types"]]
+        and len(classification_rows) == 25
+        and all(
+            set(row)
+            == {
+                "asl_enumerator",
+                "canonical_nan",
+                "infinity_capable",
+                "internal_encoding_constraint",
+                "logical_element_bits",
+                "name",
+                "nan_capable",
+                "profile_class",
+                "signaling_nan_capable",
+                "signed_zero",
+                "subnormal_capable",
+            }
+            and row["asl_enumerator"] == f"TileDataType_{row['name']}"
+            and row["logical_element_bits"]
+            == hardware_types_by_name[row["name"]]["storage_bits"]
+            // hardware_types_by_name[row["name"]]["lanes_per_storage"]
+            and row["profile_class"] == hardware_types_by_name[row["name"]]["class"]
+            and row["nan_capable"] == (row["name"] in nan_capable_types)
+            and row["signaling_nan_capable"]
+            == (row["name"] in signaling_nan_types)
+            and row["infinity_capable"]
+            == (row["name"] in infinity_capable_types)
+            and row["subnormal_capable"]
+            == (row["name"] in subnormal_capable_types)
+            and row["signed_zero"] == (row["name"] in signed_zero_types)
+            and row["canonical_nan"]
+            == hardware_types_by_name[row["name"]].get("canonical_qnan")
+            and row["internal_encoding_constraint"]
+            == internal_encoding_constraints.get(row["name"])
+            for row in classification_rows
+        ),
+        "numeric value-classification format contract drift",
     )
     format_codes = scalar_fsu_totality["format_code_contract"]
     expected_source_codes = {row["code"]: row for row in format_codes["source_codes"]}
@@ -2860,6 +2958,13 @@ def main() -> int:
             "bundle_mapped_count": 25,
             "bundle_reserved_count": 7,
             "four_bit_type_count": 5,
+            "value_classified_type_count": 25,
+            "nan_capable_type_count": 10,
+            "signaling_nan_capable_type_count": 7,
+            "infinity_capable_type_count": 8,
+            "subnormal_capable_type_count": 11,
+            "signed_zero_type_count": 13,
+            "internally_constrained_type_count": 4,
             "open_residual_count": 8,
             "pd02_complete": False,
         },
@@ -2872,6 +2977,7 @@ def main() -> int:
             "tests/asl/scalar-tests.asl",
             "tests/asl/bundle-tests.asl",
             "tests/asl/tma-totality-tests.asl",
+            "tests/asl/profile-tests.asl",
         )
     )
     for witness in (
@@ -2883,6 +2989,10 @@ def main() -> int:
         "BundleTileDataType(Zeros{5} + 13) == TileDataType_E8M0",
         "BundleTileDataType(Zeros{5} + 11) == TileDataType_E2M1X2",
         "ReadTileElement(tile, 0, 1) == Zeros{PTO_XLEN} + 0xa",
+        "TileNumericValueClass(TileDataType_FP64",
+        "NumericValue_SignalingNaN",
+        "!TileNumericEncodingValid(TileDataType_TF32",
+        "TileNumericCanonicalNaN(TileDataType_E8M0)",
     ):
         require(
             witness in format_test_bodies,
@@ -7553,7 +7663,7 @@ def main() -> int:
         and release_summary["required_external_control_count"] == 10
         and release_summary["shard_count"] == 34
         and release_summary["canonical_call_count"] == 105
-        and release_summary["reachable_test_subprogram_count"] == 96
+        and release_summary["reachable_test_subprogram_count"] == 97
         and release_summary["open_prerequisite_targets"] == ["S5-T2", "S6-T1"]
         and release_summary["closed_gate_contract_count"] == 10
         and release_summary["candidate_gate_result_count"] == 0
@@ -9053,8 +9163,10 @@ def main() -> int:
                     ROOT / "spec/evidence/numeric-format-namespace-contract.json"
                 ).read_bytes()
             ).hexdigest(),
-            "status": "namespace-and-carrier-inventory-closed-format-rules-open",
+            "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
             "acceptance_record": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+            "classification_checkpoint_id": "PD-02-SC2:PD-05-SC1",
+            "classification_acceptance_record": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
             "tile_data_type_count": 25,
             "tile_storage_width_counts": {
                 "4": 5,
@@ -9074,6 +9186,13 @@ def main() -> int:
             "bundle_mapped_count": 25,
             "bundle_reserved_count": 7,
             "four_bit_type_count": 5,
+            "value_classified_type_count": 25,
+            "nan_capable_type_count": 10,
+            "signaling_nan_capable_type_count": 7,
+            "infinity_capable_type_count": 8,
+            "subnormal_capable_type_count": 11,
+            "signed_zero_type_count": 13,
+            "internally_constrained_type_count": 4,
             "open_residual_count": 8,
             "pd02_complete": False,
         },

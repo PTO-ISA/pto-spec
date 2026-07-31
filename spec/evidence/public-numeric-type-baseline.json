@@ -530,7 +530,7 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "e4b23dd42f29aebf2d1fbe70e40222dfd34595b1f8e811d15fe02369cd248391"
+      "sha256": "1b9d2eabf11081df6631bdf939d405d09d5d86917ea049163a3ed3aa4e10bc3f"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",

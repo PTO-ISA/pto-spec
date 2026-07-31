@@ -73,6 +73,10 @@ matrix, target availability, and positive/reserved vectors for every accepted
 tuple. This checkpoint does not increment the `S5-T2-A2` accepted-decision
 count or promote maturity beyond M4.
 
+ADR 0048 subsequently closes the bit-level value-classification checkpoint for
+these carriers. It does not alter this ADR's namespace separation or accept a
+complete PD-02 result decision.
+
 ## Evidence
 
 - `spec/evidence/numeric-format-namespace-contract.json`
@@ -80,6 +84,8 @@ count or promote maturity beyond M4.
 - `spec/evidence/scalar-fsu-totality.json`
 - `spec/evidence/tma-totality.json`
 - `asl/types.asl`
+- `asl/numeric/formats.asl`
+- `docs/architecture-decisions/0048-numeric-format-value-classification.md`
 - `asl/scalar/floating.asl`
 - `asl/tile/state.asl`
 - `asl/tile/memory.asl`

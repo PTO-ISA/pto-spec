@@ -96,8 +96,8 @@ evidence sources. The generated
 identities, proposed dispositions for all 12 questions, and an exact mapping
 for all 20 domains. ADR 0037 and
 `spec/catalog/numeric-profile-identities.json` now close the four identity and
-five selection-framework records. Every question and domain result-rule
-acceptance field remains null. The generated
+five selection-framework records. PD-03 is accepted; 11 complete decisions and
+all 20 complete domain result rules remain open. The generated
 `scalar-numeric-flag-contract.json` ledger and ADR 0038 close the scalar flag
 state/lifecycle and assign all 30 FSU forms to one producer owner; exact flag
 conditions remain open for 19 profile-owned forms. PD-06, S5-T2-A, and numeric
@@ -109,12 +109,14 @@ classes, 18 domains, 102 operations, and 25 hooks. The ledger accepts all 18
 domain rounding points and saturation-order rules and increments the accepted
 decision count to one. Other numeric dimensions remain open, so the repository
 floor remains M4.
-The generated `numeric-format-namespace-contract.json` ledger and ADR 0040
+The generated `numeric-format-namespace-contract.json` ledger and ADRs 0040
+and 0048
 close the structural namespace portion of PD-02. Five code spaces remain
-distinct; all 25 raw-carrier identities, every mapped/reserved code, and all four
-packed 4-bit low/high nibble cases are executable invariants. Eight residuals
-retain the bit-exact floating-format, exceptional-value, operation/type/profile
-legality, target-availability, and conformance-vector work at that checkpoint.
+distinct; all 25 raw-carrier identities, every mapped/reserved code, all four
+packed 4-bit low/high nibble cases, all 25 value classifications, four internal
+encoding constraints, and ten canonical NaNs are executable invariants.
+Operation-specific exceptional results, FTZ, flags, legality,
+target-availability, and conformance-vector work remain open.
 ADR 0043 and the generated `public-numeric-type-baseline.json` ledger close
 all 16 published public type identities, 11 exact catalog bindings, and public
 availability for 11 A2/A3 and 16 A5 types. Seven bit-exact format, catalog-role,
@@ -153,7 +155,7 @@ numeric hooks, and the later immutable-commit review keep S6-T1 open.
 The generated `spec/evidence/release-gate-readiness.json` ledger closes the
 S6-T2 contract inventory independently of candidate execution. It defines ten
 clone-verifiable release gates, proves the pinned least-privilege hosted
-workflow and exact 34-shard/105-call/96-subprogram topology, and enumerates ten
+workflow and exact 34-shard/105-call/97-subprogram topology, and enumerates ten
 external repository controls plus the PTO architecture and formal-model review
 perspectives. All candidate commit, runtime result, hosted-run, control-snapshot,
 and approval fields remain null. S5-T2 and S6-T1 therefore block candidate

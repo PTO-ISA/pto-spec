@@ -215,10 +215,13 @@ PD-04 through PD-12 continue to own every other numeric result dimension.
 `numeric-format-namespace-contract.json` is generated from the accepted ASL
 carrier types, scalar and command catalogs, TMA closure ledger, pinned public
 evidence, and independent model comparison. ADR 0040 makes the five namespace
-boundaries, all 25 raw-carrier identities, mapped/reserved code tables, and packed
-4-bit order normative. It does not define the unresolved floating formats,
-exceptional values, complete legality matrix, or target availability; those
-remain explicit PD-02 work until the next accepted checkpoint.
+boundaries, all 25 raw-carrier identities, mapped/reserved code tables, and
+packed 4-bit order normative. ADR 0048 adds the executable value-class
+checkpoint: all 25 formats have a typed class, four internal encoding
+constraints are checked, and all ten NaN-capable formats have canonical NaN
+encodings. Operation-specific exceptional-value results, FTZ, flags, the
+complete legality matrix, target availability, and independent vectors remain
+explicit PD-02/PD-05 work.
 
 `public-numeric-type-baseline.json` is generated from the pinned public type,
 target-profile, and portability sources plus the closed namespace inventory.

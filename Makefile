@@ -5,6 +5,7 @@ ASLREF ?= ./scripts/aslref
 ASL_SOURCES_BEFORE_DECODER := \
 	asl/architecture.asl \
 	asl/types.asl \
+	asl/numeric/formats.asl \
 	asl/state.asl \
 	asl/bundle/state.asl \
 	asl/tile/state.asl \

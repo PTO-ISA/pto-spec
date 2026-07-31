@@ -5425,7 +5425,7 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "e4b23dd42f29aebf2d1fbe70e40222dfd34595b1f8e811d15fe02369cd248391"
+      "sha256": "1b9d2eabf11081df6631bdf939d405d09d5d86917ea049163a3ed3aa4e10bc3f"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
@@ -5445,7 +5445,7 @@
     },
     {
       "path": "asl/types.asl",
-      "sha256": "aa9575e96cb87e7ddc0e90d359039a730383558de594c0b3312604a703bdc65b"
+      "sha256": "f88b8aaecd3c0578dfe23424fcc75a3ee1b5617e993e4f4aa50f49825d02155a"
     },
     {
       "path": "asl/bundle/dispatch.asl",

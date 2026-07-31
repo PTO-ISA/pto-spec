@@ -3,14 +3,17 @@
   "target": "S5-T2-A2:PD-02",
   "decision_id": "PD-02",
   "checkpoint_id": "PD-02-SC1",
-  "status": "namespace-and-carrier-inventory-closed-format-rules-open",
+  "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
   "acceptance_record": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+  "classification_acceptance_record": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
+  "classification_checkpoint_id": "PD-02-SC2:PD-05-SC1",
   "policy": {
     "namespace_locality": "Scalar source, scalar floating destination, scalar integer destination, TMA/TALLOC, and bundle DataType codes are distinct namespaces. Equal integers do not imply equal types across namespaces.",
     "reserved_codes": "Every unmapped code rejects before architectural effects; helper fallback values are unreachable after legality succeeds and are not architectural aliases.",
     "raw_carrier_boundary": "Widths and signedness describe Stage 4 raw carriers only. Floating bit layouts and target numeric results remain S5-T2 rules.",
     "four_bit_packing": "E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 use low-index/low-nibble and odd-index/high-nibble packing with sibling preservation on stores.",
-    "pd02_boundary": "The 0.57.1 type identities and format contract are fixed, while operation/type legality, target execution results, and implementation conformance remain open under S5-T2."
+    "pd02_boundary": "The 0.57.1 type identities and format contract are fixed, while operation/type legality, target execution results, and implementation conformance remain open under S5-T2.",
+    "value_class_boundary": "TileNumericValueClass defines only bit-exact encoding classes and canonical NaN values. It does not select arithmetic results, exception flags, operation/type support, or target conformance."
   },
   "tile_data_types": [
     {
@@ -239,6 +242,341 @@
       "numeric_semantics_status": "width-and-signedness-closed"
     }
   ],
+  "value_classification": {
+    "classifier": "TileNumericValueClass",
+    "encoding_validity": "TileNumericEncodingValid",
+    "canonical_nan": "TileNumericCanonicalNaN",
+    "class_type": "NumericValueClass",
+    "invalid_encoding_result": "NumericValue_InvalidEncoding",
+    "formats": [
+      {
+        "name": "FP64",
+        "asl_enumerator": "TileDataType_FP64",
+        "logical_element_bits": 64,
+        "profile_class": "floating",
+        "nan_capable": true,
+        "signaling_nan_capable": true,
+        "infinity_capable": true,
+        "subnormal_capable": true,
+        "signed_zero": true,
+        "canonical_nan": "0x7FF8000000000000",
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "FP32",
+        "asl_enumerator": "TileDataType_FP32",
+        "logical_element_bits": 32,
+        "profile_class": "floating",
+        "nan_capable": true,
+        "signaling_nan_capable": true,
+        "infinity_capable": true,
+        "subnormal_capable": true,
+        "signed_zero": true,
+        "canonical_nan": "0x7FC00000",
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "TF32",
+        "asl_enumerator": "TileDataType_TF32",
+        "logical_element_bits": 32,
+        "profile_class": "floating",
+        "nan_capable": true,
+        "signaling_nan_capable": true,
+        "infinity_capable": true,
+        "subnormal_capable": true,
+        "signed_zero": true,
+        "canonical_nan": "0x7FC00000",
+        "internal_encoding_constraint": "bits[12:0] are zero"
+      },
+      {
+        "name": "HF32",
+        "asl_enumerator": "TileDataType_HF32",
+        "logical_element_bits": 32,
+        "profile_class": "floating",
+        "nan_capable": true,
+        "signaling_nan_capable": true,
+        "infinity_capable": true,
+        "subnormal_capable": true,
+        "signed_zero": true,
+        "canonical_nan": "0x7FC00000",
+        "internal_encoding_constraint": "bits[11:0] are zero"
+      },
+      {
+        "name": "FP16",
+        "asl_enumerator": "TileDataType_FP16",
+        "logical_element_bits": 16,
+        "profile_class": "floating",
+        "nan_capable": true,
+        "signaling_nan_capable": true,
+        "infinity_capable": true,
+        "subnormal_capable": true,
+        "signed_zero": true,
+        "canonical_nan": "0x7E00",
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "BF16",
+        "asl_enumerator": "TileDataType_BF16",
+        "logical_element_bits": 16,
+        "profile_class": "floating",
+        "nan_capable": true,
+        "signaling_nan_capable": true,
+        "infinity_capable": true,
+        "subnormal_capable": true,
+        "signed_zero": true,
+        "canonical_nan": "0x7FC0",
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "HiF8",
+        "asl_enumerator": "TileDataType_HiF8",
+        "logical_element_bits": 8,
+        "profile_class": "floating",
+        "nan_capable": true,
+        "signaling_nan_capable": false,
+        "infinity_capable": true,
+        "subnormal_capable": true,
+        "signed_zero": false,
+        "canonical_nan": "0x80",
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "E4M3",
+        "asl_enumerator": "TileDataType_E4M3",
+        "logical_element_bits": 8,
+        "profile_class": "floating",
+        "nan_capable": true,
+        "signaling_nan_capable": false,
+        "infinity_capable": false,
+        "subnormal_capable": true,
+        "signed_zero": true,
+        "canonical_nan": "0x7F",
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "E5M2",
+        "asl_enumerator": "TileDataType_E5M2",
+        "logical_element_bits": 8,
+        "profile_class": "floating",
+        "nan_capable": true,
+        "signaling_nan_capable": true,
+        "infinity_capable": true,
+        "subnormal_capable": true,
+        "signed_zero": true,
+        "canonical_nan": "0x7E",
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "E3M2",
+        "asl_enumerator": "TileDataType_E3M2",
+        "logical_element_bits": 8,
+        "profile_class": "floating",
+        "nan_capable": false,
+        "signaling_nan_capable": false,
+        "infinity_capable": false,
+        "subnormal_capable": true,
+        "signed_zero": true,
+        "canonical_nan": null,
+        "internal_encoding_constraint": "bits[7:6] are zero"
+      },
+      {
+        "name": "E2M3",
+        "asl_enumerator": "TileDataType_E2M3",
+        "logical_element_bits": 8,
+        "profile_class": "floating",
+        "nan_capable": false,
+        "signaling_nan_capable": false,
+        "infinity_capable": false,
+        "subnormal_capable": true,
+        "signed_zero": true,
+        "canonical_nan": null,
+        "internal_encoding_constraint": "bits[7:6] are zero"
+      },
+      {
+        "name": "E2M1X2",
+        "asl_enumerator": "TileDataType_E2M1X2",
+        "logical_element_bits": 4,
+        "profile_class": "packed-floating",
+        "nan_capable": false,
+        "signaling_nan_capable": false,
+        "infinity_capable": false,
+        "subnormal_capable": false,
+        "signed_zero": true,
+        "canonical_nan": null,
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "E1M2X2",
+        "asl_enumerator": "TileDataType_E1M2X2",
+        "logical_element_bits": 4,
+        "profile_class": "packed-floating",
+        "nan_capable": false,
+        "signaling_nan_capable": false,
+        "infinity_capable": false,
+        "subnormal_capable": false,
+        "signed_zero": true,
+        "canonical_nan": null,
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "E8M0",
+        "asl_enumerator": "TileDataType_E8M0",
+        "logical_element_bits": 8,
+        "profile_class": "scale",
+        "nan_capable": true,
+        "signaling_nan_capable": false,
+        "infinity_capable": false,
+        "subnormal_capable": false,
+        "signed_zero": false,
+        "canonical_nan": "0xFF",
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "HiF4X2",
+        "asl_enumerator": "TileDataType_HiF4X2",
+        "logical_element_bits": 4,
+        "profile_class": "packed-floating",
+        "nan_capable": false,
+        "signaling_nan_capable": false,
+        "infinity_capable": false,
+        "subnormal_capable": false,
+        "signed_zero": true,
+        "canonical_nan": null,
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "S64",
+        "asl_enumerator": "TileDataType_S64",
+        "logical_element_bits": 64,
+        "profile_class": "signed-integer",
+        "nan_capable": false,
+        "signaling_nan_capable": false,
+        "infinity_capable": false,
+        "subnormal_capable": false,
+        "signed_zero": false,
+        "canonical_nan": null,
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "S32",
+        "asl_enumerator": "TileDataType_S32",
+        "logical_element_bits": 32,
+        "profile_class": "signed-integer",
+        "nan_capable": false,
+        "signaling_nan_capable": false,
+        "infinity_capable": false,
+        "subnormal_capable": false,
+        "signed_zero": false,
+        "canonical_nan": null,
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "S16",
+        "asl_enumerator": "TileDataType_S16",
+        "logical_element_bits": 16,
+        "profile_class": "signed-integer",
+        "nan_capable": false,
+        "signaling_nan_capable": false,
+        "infinity_capable": false,
+        "subnormal_capable": false,
+        "signed_zero": false,
+        "canonical_nan": null,
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "S8",
+        "asl_enumerator": "TileDataType_S8",
+        "logical_element_bits": 8,
+        "profile_class": "signed-integer",
+        "nan_capable": false,
+        "signaling_nan_capable": false,
+        "infinity_capable": false,
+        "subnormal_capable": false,
+        "signed_zero": false,
+        "canonical_nan": null,
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "S4X2",
+        "asl_enumerator": "TileDataType_S4X2",
+        "logical_element_bits": 4,
+        "profile_class": "packed-signed-integer",
+        "nan_capable": false,
+        "signaling_nan_capable": false,
+        "infinity_capable": false,
+        "subnormal_capable": false,
+        "signed_zero": false,
+        "canonical_nan": null,
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "U64",
+        "asl_enumerator": "TileDataType_U64",
+        "logical_element_bits": 64,
+        "profile_class": "unsigned-integer",
+        "nan_capable": false,
+        "signaling_nan_capable": false,
+        "infinity_capable": false,
+        "subnormal_capable": false,
+        "signed_zero": false,
+        "canonical_nan": null,
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "U32",
+        "asl_enumerator": "TileDataType_U32",
+        "logical_element_bits": 32,
+        "profile_class": "unsigned-integer",
+        "nan_capable": false,
+        "signaling_nan_capable": false,
+        "infinity_capable": false,
+        "subnormal_capable": false,
+        "signed_zero": false,
+        "canonical_nan": null,
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "U16",
+        "asl_enumerator": "TileDataType_U16",
+        "logical_element_bits": 16,
+        "profile_class": "unsigned-integer",
+        "nan_capable": false,
+        "signaling_nan_capable": false,
+        "infinity_capable": false,
+        "subnormal_capable": false,
+        "signed_zero": false,
+        "canonical_nan": null,
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "U8",
+        "asl_enumerator": "TileDataType_U8",
+        "logical_element_bits": 8,
+        "profile_class": "unsigned-integer",
+        "nan_capable": false,
+        "signaling_nan_capable": false,
+        "infinity_capable": false,
+        "subnormal_capable": false,
+        "signed_zero": false,
+        "canonical_nan": null,
+        "internal_encoding_constraint": null
+      },
+      {
+        "name": "U4X2",
+        "asl_enumerator": "TileDataType_U4X2",
+        "logical_element_bits": 4,
+        "profile_class": "packed-unsigned-integer",
+        "nan_capable": false,
+        "signaling_nan_capable": false,
+        "infinity_capable": false,
+        "subnormal_capable": false,
+        "signed_zero": false,
+        "canonical_nan": null,
+        "internal_encoding_constraint": null
+      }
+    ],
+    "status": "closed"
+  },
   "scalar_source_type": [
     {
       "namespace": "scalar-fsu-source-type",
@@ -1530,11 +1868,14 @@
       "scalar-source-type-code-legality",
       "scalar-destination-type-code-legality",
       "scalar-floating-and-integer-carrier-widths",
-      "bundle-DataType-field-width"
+      "bundle-DataType-field-width",
+      "FP32-and-FP64-NaN-zero-signed-zero-classification",
+      "FP32-and-FP64-canonical-quiet-NaN-values"
     ],
     "limits": [
       "independent-tile-decode-does-not-bind-DataType-to-PTO-numeric-formats",
       "independent-numeric-helpers-are-not-a-PTO-oracle",
+      "independent-comparison-does-not-cover-PTO-low-precision-value-classes",
       "target-operation-type-support-remains-unvalidated"
     ]
   },
@@ -1549,7 +1890,7 @@
     },
     {
       "id": "PD-02-R3",
-      "rule": "prove exceptional-value and canonical-NaN behavior across all supported operations"
+      "rule": "apply the accepted value classes and canonical NaNs to every supported operation and prove each exceptional result rule"
     },
     {
       "id": "PD-02-R4",
@@ -1573,6 +1914,7 @@
     }
   ],
   "tests": [
+    "tests/asl/profile-tests.asl:ValidateNumericFormatClassification",
     "tests/asl/state-tests.asl:TestTileRegisterMapping",
     "tests/asl/scalar-tests.asl:TestScalarFloating",
     "tests/asl/bundle-tests.asl:TestBundleOperationDescriptorFields",
@@ -1606,11 +1948,15 @@
     },
     {
       "path": "asl/types.asl",
-      "sha256": "aa9575e96cb87e7ddc0e90d359039a730383558de594c0b3312604a703bdc65b"
+      "sha256": "f88b8aaecd3c0578dfe23424fcc75a3ee1b5617e993e4f4aa50f49825d02155a"
+    },
+    {
+      "path": "asl/numeric/formats.asl",
+      "sha256": "6177f3031c68c4af38b4e57276cd87cc13493eba37cda4914e2de0fe2e8ae6ad"
     },
     {
       "path": "asl/scalar/floating.asl",
-      "sha256": "a75df94f79ca4f1d7cff5b4afe050c1dbd8806daaacf96820885a005da1ec9c8"
+      "sha256": "343bf5c522269034372b2fe916fb011556043fdff142862a0f6ea8738118184b"
     },
     {
       "path": "asl/tile/state.asl",
@@ -1635,6 +1981,10 @@
     {
       "path": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
       "sha256": "e4b8ec913ebe63322fca7985e2421b7e8cb894c06ed73c652a6179d63121c63b"
+    },
+    {
+      "path": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
+      "sha256": "20b2d242c6ca44dff15b65e4f539b596168220efc9ba452dbc07a4a84afeaa8e"
     }
   ],
   "summary": {
@@ -1657,6 +2007,13 @@
     "bundle_mapped_count": 25,
     "bundle_reserved_count": 7,
     "four_bit_type_count": 5,
+    "value_classified_type_count": 25,
+    "nan_capable_type_count": 10,
+    "signaling_nan_capable_type_count": 7,
+    "infinity_capable_type_count": 8,
+    "subnormal_capable_type_count": 11,
+    "signed_zero_type_count": 13,
+    "internally_constrained_type_count": 4,
     "open_residual_count": 8,
     "pd02_complete": false
   }

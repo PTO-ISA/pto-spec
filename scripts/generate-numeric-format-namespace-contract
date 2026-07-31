@@ -22,6 +22,34 @@ OUTPUT = ROOT / "spec/evidence/numeric-format-namespace-contract.json"
 ACCEPTANCE_RECORD = (
     "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md"
 )
+CLASSIFICATION_ACCEPTANCE_RECORD = (
+    "docs/architecture-decisions/0048-numeric-format-value-classification.md"
+)
+
+NAN_CAPABLE_TYPES = {
+    "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "HiF8", "E4M3",
+    "E5M2", "E8M0",
+}
+INFINITY_CAPABLE_TYPES = {
+    "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "HiF8", "E5M2",
+}
+SUBNORMAL_CAPABLE_TYPES = {
+    "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "HiF8", "E4M3",
+    "E5M2", "E3M2", "E2M3",
+}
+SIGNED_ZERO_TYPES = {
+    "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "E4M3", "E5M2",
+    "E3M2", "E2M3", "E2M1X2", "E1M2X2", "HiF4X2",
+}
+SIGNALING_NAN_TYPES = {
+    "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "E5M2",
+}
+INTERNAL_ENCODING_CONSTRAINTS = {
+    "TF32": "bits[12:0] are zero",
+    "HF32": "bits[11:0] are zero",
+    "E3M2": "bits[7:6] are zero",
+    "E2M3": "bits[7:6] are zero",
+}
 
 TILE_DATA_TYPES = (
     ("FP64", 64, "floating-raw-carrier", 0, "format-contract-defined-conformance-open"),
@@ -137,6 +165,32 @@ def generate() -> dict[str, Any]:
         hardware_types == {(name, code) for name, _, _, code, _ in TILE_DATA_TYPES},
         "hardware numeric profile type namespace drift",
     )
+    hardware_types_by_name = {
+        row["name"]: row for row in hardware_profile["data_types"]
+    }
+    value_classification_rows = []
+    for name, bits, raw_class, code, _ in TILE_DATA_TYPES:
+        profile_row = hardware_types_by_name[name]
+        canonical_nan = profile_row.get("canonical_qnan")
+        require(
+            (canonical_nan is not None) == (name in NAN_CAPABLE_TYPES),
+            f"canonical NaN capability drift for {name}",
+        )
+        value_classification_rows.append(
+            {
+                "name": name,
+                "asl_enumerator": f"TileDataType_{name}",
+                "logical_element_bits": bits,
+                "profile_class": profile_row["class"],
+                "nan_capable": name in NAN_CAPABLE_TYPES,
+                "signaling_nan_capable": name in SIGNALING_NAN_TYPES,
+                "infinity_capable": name in INFINITY_CAPABLE_TYPES,
+                "subnormal_capable": name in SUBNORMAL_CAPABLE_TYPES,
+                "signed_zero": name in SIGNED_ZERO_TYPES,
+                "canonical_nan": canonical_nan,
+                "internal_encoding_constraint": INTERNAL_ENCODING_CONSTRAINTS.get(name),
+            }
+        )
 
     data_type_forms = [
         form
@@ -231,16 +285,28 @@ def generate() -> dict[str, Any]:
         "target": "S5-T2-A2:PD-02",
         "decision_id": "PD-02",
         "checkpoint_id": "PD-02-SC1",
-        "status": "namespace-and-carrier-inventory-closed-format-rules-open",
+        "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
         "acceptance_record": ACCEPTANCE_RECORD,
+        "classification_acceptance_record": CLASSIFICATION_ACCEPTANCE_RECORD,
+        "classification_checkpoint_id": "PD-02-SC2:PD-05-SC1",
         "policy": {
             "namespace_locality": "Scalar source, scalar floating destination, scalar integer destination, TMA/TALLOC, and bundle DataType codes are distinct namespaces. Equal integers do not imply equal types across namespaces.",
             "reserved_codes": "Every unmapped code rejects before architectural effects; helper fallback values are unreachable after legality succeeds and are not architectural aliases.",
             "raw_carrier_boundary": "Widths and signedness describe Stage 4 raw carriers only. Floating bit layouts and target numeric results remain S5-T2 rules.",
             "four_bit_packing": "E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 use low-index/low-nibble and odd-index/high-nibble packing with sibling preservation on stores.",
             "pd02_boundary": "The 0.57.1 type identities and format contract are fixed, while operation/type legality, target execution results, and implementation conformance remain open under S5-T2.",
+            "value_class_boundary": "TileNumericValueClass defines only bit-exact encoding classes and canonical NaN values. It does not select arithmetic results, exception flags, operation/type support, or target conformance.",
         },
         "tile_data_types": tile_rows,
+        "value_classification": {
+            "classifier": "TileNumericValueClass",
+            "encoding_validity": "TileNumericEncodingValid",
+            "canonical_nan": "TileNumericCanonicalNaN",
+            "class_type": "NumericValueClass",
+            "invalid_encoding_result": "NumericValue_InvalidEncoding",
+            "formats": value_classification_rows,
+            "status": "closed",
+        },
         "scalar_source_type": scalar_source_rows,
         "scalar_floating_destination_type": scalar_fp_destination_rows,
         "scalar_integer_destination_type": scalar_integer_destination_rows,
@@ -269,10 +335,13 @@ def generate() -> dict[str, Any]:
                 "scalar-destination-type-code-legality",
                 "scalar-floating-and-integer-carrier-widths",
                 "bundle-DataType-field-width",
+                "FP32-and-FP64-NaN-zero-signed-zero-classification",
+                "FP32-and-FP64-canonical-quiet-NaN-values",
             ],
             "limits": [
                 "independent-tile-decode-does-not-bind-DataType-to-PTO-numeric-formats",
                 "independent-numeric-helpers-are-not-a-PTO-oracle",
+                "independent-comparison-does-not-cover-PTO-low-precision-value-classes",
                 "target-operation-type-support-remains-unvalidated",
             ],
         },
@@ -287,7 +356,7 @@ def generate() -> dict[str, Any]:
             },
             {
                 "id": "PD-02-R3",
-                "rule": "prove exceptional-value and canonical-NaN behavior across all supported operations",
+                "rule": "apply the accepted value classes and canonical NaNs to every supported operation and prove each exceptional result rule",
             },
             {
                 "id": "PD-02-R4",
@@ -311,6 +380,7 @@ def generate() -> dict[str, Any]:
             },
         ],
         "tests": [
+            "tests/asl/profile-tests.asl:ValidateNumericFormatClassification",
             "tests/asl/state-tests.asl:TestTileRegisterMapping",
             "tests/asl/scalar-tests.asl:TestScalarFloating",
             "tests/asl/bundle-tests.asl:TestBundleOperationDescriptorFields",
@@ -325,6 +395,7 @@ def generate() -> dict[str, Any]:
             source("spec/hardware-conformance-profile.json"),
             source("spec/catalog/command-forms.json"),
             source("asl/types.asl"),
+            source("asl/numeric/formats.asl"),
             source("asl/scalar/floating.asl"),
             source("asl/tile/state.asl"),
             source("asl/tile/memory.asl"),
@@ -335,6 +406,9 @@ def generate() -> dict[str, Any]:
             source("docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"),
             source(
                 "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+            ),
+            source(
+                "docs/architecture-decisions/0048-numeric-format-value-classification.md"
             ),
         ],
         "summary": {
@@ -353,6 +427,13 @@ def generate() -> dict[str, Any]:
             "bundle_mapped_count": len(bundle_mapping),
             "bundle_reserved_count": 32 - len(bundle_mapping),
             "four_bit_type_count": len(four_bit_types),
+            "value_classified_type_count": len(value_classification_rows),
+            "nan_capable_type_count": len(NAN_CAPABLE_TYPES),
+            "signaling_nan_capable_type_count": len(SIGNALING_NAN_TYPES),
+            "infinity_capable_type_count": len(INFINITY_CAPABLE_TYPES),
+            "subnormal_capable_type_count": len(SUBNORMAL_CAPABLE_TYPES),
+            "signed_zero_type_count": len(SIGNED_ZERO_TYPES),
+            "internally_constrained_type_count": len(INTERNAL_ENCODING_CONSTRAINTS),
             "open_residual_count": 8,
             "pd02_complete": False,
         },

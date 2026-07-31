@@ -298,6 +298,22 @@ type NumericExecutionControl of record {
     saturating: boolean
 };
 
+// Bit-exact value classes are format properties. They do not select an
+// operation result, exception flag, target profile, or arithmetic algorithm.
+type NumericValueClass of enumeration {
+    NumericValue_InvalidEncoding,
+    NumericValue_PositiveZero,
+    NumericValue_NegativeZero,
+    NumericValue_PositiveSubnormal,
+    NumericValue_NegativeSubnormal,
+    NumericValue_PositiveNormal,
+    NumericValue_NegativeNormal,
+    NumericValue_PositiveInfinity,
+    NumericValue_NegativeInfinity,
+    NumericValue_QuietNaN,
+    NumericValue_SignalingNaN
+};
+
 type TileNumericSelection of record {
     use_operation_default: boolean,
     rounding_mode: NumericRoundingMode,

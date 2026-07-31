@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "893d6add94579774f03f84a68be7f596c6287394e59fcefcfa32d83864d18153"
+      "sha256": "36385098316f0ca3b57a51c2cbe1f3e0c84eb891e157ad78156d2c245809de92"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -43,35 +43,35 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "a74b80e381fe25cd6fd29d4980f74d1cb22324e4a687837290198e1ba4da2eec"
+      "sha256": "1e19669aa90617f63cb25160ce45d5439f74ed6a24a6cae0d104fdc1834040d7"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "49bcfada06b6051b0f3a6216c387aabd0eb747720458b7a3530cc3b95ecbbea8"
+      "sha256": "5aa6adfbbb0c1797fd04948d03bb8afd5a985120dca88e2c4134082ce48d73d1"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "e4b23dd42f29aebf2d1fbe70e40222dfd34595b1f8e811d15fe02369cd248391"
+      "sha256": "1b9d2eabf11081df6631bdf939d405d09d5d86917ea049163a3ed3aa4e10bc3f"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "2a9f422f7921cb4f8700bbeb4585df2248c136717fa6d331045b4ed53bf4a975"
+      "sha256": "7fe6367d810786017c7cfe299c81271bc47ddefe2877188840c6bab4ef8f63ac"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "83e4599282f4bbe568e05cd0559903fd64b788115982abe4e3ae1a926346e099"
+      "sha256": "4d5fbd4345f3661d5a4d9f9b0661af3c884d9e327246f58f83e2768b99170ecc"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "472b49d7f40c284ff21ebb8c71df979403a0dd077422c4835b14155e7c53164b"
+      "sha256": "c7851d1453d7074ecd20410bad88d7d6de733b83b0df8a950bdc7895b3a9f0e3"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "8f163c367ce2d9257c8a3c89d7ea365ae0631399204624e7cd0a1a6a17415269"
+      "sha256": "d7de17c76ec812a4b5cc4f0d74d5d08ba1638af68d65ed59fabfc97c5506ac69"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "b59d03487347e5d0a923a5da261cfd62cc3fd4ef470e9169a5cf4c16915eac56"
+      "sha256": "713f0b8e4a7ef3d57cfe19f06cc6628f10dae1862398c9234119d5dc1aa6dd66"
     },
     {
       "path": "spec/evidence/scalar-effect-closure.json",
@@ -95,7 +95,7 @@
     },
     {
       "path": "asl/types.asl",
-      "sha256": "aa9575e96cb87e7ddc0e90d359039a730383558de594c0b3312604a703bdc65b"
+      "sha256": "f88b8aaecd3c0578dfe23424fcc75a3ee1b5617e993e4f4aa50f49825d02155a"
     },
     {
       "path": "asl/state.asl",
@@ -126,6 +126,10 @@
       "sha256": "a1516b8b47509b17c6550d6ac5f6c7b1472a443613a04158f127fce2a531000d"
     },
     {
+      "path": "asl/numeric/formats.asl",
+      "sha256": "6177f3031c68c4af38b4e57276cd87cc13493eba37cda4914e2de0fe2e8ae6ad"
+    },
+    {
       "path": "asl/profiles/pto-v0.asl",
       "sha256": "beb795edb5aa112c4333d41a68d0a05cd2db4c577f8e516e3d2750e3241ba3d1"
     },
@@ -147,7 +151,7 @@
     },
     {
       "path": "asl/scalar/floating.asl",
-      "sha256": "a75df94f79ca4f1d7cff5b4afe050c1dbd8806daaacf96820885a005da1ec9c8"
+      "sha256": "343bf5c522269034372b2fe916fb011556043fdff142862a0f6ea8738118184b"
     },
     {
       "path": "asl/scalar/integer.asl",
@@ -322,6 +326,7 @@
           "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
           "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
           "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+          "docs/architecture-decisions/0048-numeric-format-value-classification.md",
           "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
           "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
           "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
@@ -330,6 +335,7 @@
           "asl/scalar/system-registers.asl",
           "asl/state.asl",
           "asl/types.asl",
+          "asl/numeric/formats.asl",
           "docs/architecture-decisions/0005-pto-v0-concrete-reference-profile.md",
           "docs/architecture-decisions/0011-visible-ebarg-snapshot.md",
           "docs/architecture-decisions/0034-cube-raw-carrier-totality.md",
@@ -652,6 +658,8 @@
           "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
           "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
           "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+          "docs/architecture-decisions/0048-numeric-format-value-classification.md",
+          "asl/numeric/formats.asl",
           "asl/scalar/floating.asl",
           "asl/scalar/dispatch.asl",
           "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
@@ -1277,6 +1285,8 @@
           "asl/tile/legality.asl",
           "asl/tile/state.asl",
           "asl/types.asl",
+          "asl/numeric/formats.asl",
+          "docs/architecture-decisions/0048-numeric-format-value-classification.md",
           "spec/profile-hooks.json",
           "docs/profile-contracts.md",
           "docs/coverage.md",
@@ -1303,6 +1313,8 @@
           "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
           "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
           "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+          "docs/architecture-decisions/0048-numeric-format-value-classification.md",
+          "asl/numeric/formats.asl",
           "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
           "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
           "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
