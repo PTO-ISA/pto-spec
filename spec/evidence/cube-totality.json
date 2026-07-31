@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "target": "S4-T10",
+  "status": "closed",
+  "accepted_selector_count": 13,
+  "reserved_selector_count": 19,
+  "reserved_functions": [3, 7, 9, 10, 11, 12, 13, 14, 15, 19, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+  "covered_functions": {
+    "0": "TMATMUL",
+    "1": "TMATMUL_BIAS",
+    "2": "TMATMUL_ACC",
+    "4": "TMATMUL_MX",
+    "5": "TMATMUL_MX_BIAS",
+    "6": "TMATMUL_MX_ACC",
+    "8": "ACCCVT",
+    "16": "TGEMV",
+    "17": "TGEMV_BIAS",
+    "18": "TGEMV_ACC",
+    "20": "TGEMV_MX",
+    "21": "TGEMV_MX_BIAS",
+    "22": "TGEMV_MX_ACC"
+  },
+  "architecture_contract": {
+    "data_types": "All 25 PTO ISA 0.57.1 TileDataType identities use deterministic PTO-v0 raw-carrier hooks; target numeric interpretation remains S5-T2.",
+    "layouts": "Row-major and column-major operands may be mixed; implementation-defined layout rejects before effects.",
+    "locations": "Vector, Matrix, Memory, and Any locations have identical PTO-v0 logical semantics.",
+    "source_definedness": "Every matrix, bias, and scale source must have a defined valid region; accumulate forms additionally require a live, defined implicit ACC.",
+    "preflight": "All descriptor, type, layout, shape, source-definedness, ACC-liveness, and publication checks precede the first ACC or destination effect.",
+    "aliases": "The source-source and ACCCVT destination-source alias classes observe snapshotted pre-instruction source and ACC values."
+  },
+  "type_identity_count": 25,
+  "decoded_selector_test": "tests/asl/cube-totality-tests.asl:TestCubeDecodedSelectorMatrix",
+  "reserved_selector_test": "scripts/generate-asl-decoders:ValidateCanonicalRejectedTileSelectors",
+  "type_layout_test": "tests/asl/cube-totality-tests.asl:TestCubeRawCarrierTypeAndPlacementMatrix",
+  "alias_case_count": 2,
+  "alias_test": "tests/asl/cube-totality-tests.asl:TestCubeAliasMatrix",
+  "preflight_case_count": 3,
+  "preflight_test": "tests/asl/cube-totality-tests.asl:TestCubeCompositePreflight",
+  "numeric_conformance_target": "S5-T2",
+  "evidence_files": [
+    "asl/tile/cube.asl",
+    "asl/tile/legality.asl",
+    "tests/asl/cube-totality-tests.asl",
+    "docs/architecture-decisions/0034-cube-raw-carrier-totality.md"
+  ],
+  "requirement_ids": [
+    "PTO-REQ-CUBE-001",
+    "PTO-REQ-TILE-LEGALITY-001",
+    "PTO-REQ-PROFILE-001"
+  ]
+}

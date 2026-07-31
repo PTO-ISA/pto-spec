@@ -38,8 +38,7 @@ begin
     return FALSE;
 end;
 
-func TileSortLeftBefore(left: Word, right: Word,
-                        descending: boolean,
+func TileSortLeftBefore(left: Word, right: Word, descending: boolean,
                         data_type: TileDataType) => boolean
 begin
     let left_nan = TileProfileValueIsNaN(left, data_type);
@@ -172,7 +171,8 @@ begin
                     if swap then
                         values[[element as ModelTileElementIndex]] = right;
                         values[[(element + 1) as ModelTileElementIndex]] = left;
-                        let left_index = indices[[element as ModelTileElementIndex]];
+                        let left_index =
+                            indices[[element as ModelTileElementIndex]];
                         indices[[element as ModelTileElementIndex]] =
                             indices[[(element + 1) as ModelTileElementIndex]];
                         indices[[(element + 1) as ModelTileElementIndex]] =
@@ -185,11 +185,12 @@ begin
     for element = 0 to extent - 1 looplimit 4096 do
         _Tiles[[destination]].payload[[element as ModelTileElementIndex]] =
             values[[element as ModelTileElementIndex]];
-        _Tiles[[destination_indices]].payload[[element as ModelTileElementIndex]] =
+        _Tiles[[destination_indices]].payload[[
+            element as ModelTileElementIndex]] =
             indices[[element as ModelTileElementIndex]];
     end;
-    _Tiles[[destination]].contents_defined = TRUE;
-    _Tiles[[destination_indices]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(destination);
+    MarkTileValidRegionDefined(destination_indices);
 end;
 
 func TMRGSORT(destination: TileIndex, source_left: TileIndex, source_right: TileIndex,
@@ -225,7 +226,7 @@ begin
             right_index = right_index + 1;
         end;
     end;
-    _Tiles[[destination]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(destination);
 end;
 
 pure func ExtractWordByte(value: Word, byte_index: integer {0..3}) => Byte

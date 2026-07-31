@@ -1,0 +1,2548 @@
+{
+  "schema_version": 1,
+  "maturity_target": "S5-T1",
+  "status": "closed-inventory-and-ownership",
+  "active_reference_profile": "pto-v0",
+  "policy": {
+    "authority": "PTO-owned ASL and accepted architecture decisions remain normative; comparison models and future numeric oracles are evidence only.",
+    "reference_boundary": "The pto-v0 raw-carrier algorithms are deterministic executable references, not IEEE-754 or target-hardware conformance claims.",
+    "target_boundary": "Every listed operation requires a named numeric profile and independent evidence before target numeric behavior can be claimed.",
+    "next_target": "S5-T2"
+  },
+  "contract_domains": [
+    {
+      "id": "scalar-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPBinaryProfile"
+      ],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "open_numeric_dimensions": [
+        "rounding",
+        "NaN and infinity",
+        "signed zero",
+        "subnormal handling",
+        "NV/DZ/OF/UF/NX flags"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    },
+    {
+      "id": "scalar-unary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPUnaryProfile"
+      ],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "open_numeric_dimensions": [
+        "rounding",
+        "domain errors",
+        "NaN and infinity",
+        "signed zero",
+        "NV/DZ/OF/UF/NX flags"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    },
+    {
+      "id": "scalar-fused",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPFusedProfile"
+      ],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "open_numeric_dimensions": [
+        "single-rounding behavior",
+        "NaN and infinity",
+        "signed zero",
+        "overflow and underflow",
+        "NV/DZ/OF/UF/NX flags"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    },
+    {
+      "id": "scalar-fp-to-integer",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPToIntegerProfile"
+      ],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "open_numeric_dimensions": [
+        "rounding-mode result",
+        "out-of-range result",
+        "NaN and infinity",
+        "saturation or indefinite value",
+        "NV/NX flags"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    },
+    {
+      "id": "scalar-fp-convert",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPConvertProfile"
+      ],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "open_numeric_dimensions": [
+        "source and destination format mapping",
+        "rounding",
+        "NaN payload",
+        "overflow and underflow",
+        "NV/OF/UF/NX flags"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    },
+    {
+      "id": "scalar-integer-to-fp",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarIntegerToFPProfile"
+      ],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "open_numeric_dimensions": [
+        "signedness",
+        "destination format",
+        "rounding",
+        "overflow",
+        "NX flag"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    },
+    {
+      "id": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "open_numeric_dimensions": [
+        "data-type interpretation",
+        "rounding",
+        "saturation",
+        "divide-by-zero",
+        "NaN and infinity"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    },
+    {
+      "id": "tile-unary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileUnary"
+      ],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "open_numeric_dimensions": [
+        "data-type interpretation",
+        "rounding",
+        "domain errors",
+        "NaN and infinity",
+        "saturation"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    },
+    {
+      "id": "tile-axpy",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileAxpy"
+      ],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "open_numeric_dimensions": [
+        "multiply-add precision",
+        "rounding",
+        "overflow",
+        "saturation",
+        "NaN and infinity"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    },
+    {
+      "id": "tile-prelu",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfilePReLU"
+      ],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "open_numeric_dimensions": [
+        "comparison domain",
+        "multiply precision",
+        "rounding",
+        "overflow",
+        "saturation"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    },
+    {
+      "id": "tile-compare",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileCompare"
+      ],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "open_numeric_dimensions": [
+        "ordered and unordered comparison",
+        "NaN behavior",
+        "signed zero",
+        "result encoding"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    },
+    {
+      "id": "tile-reduction",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileReductionInitial",
+        "TileProfileReductionStep"
+      ],
+      "requirement": "PTO-REQ-TEPL-REDUCE-001",
+      "stage4_target": "S4-T8",
+      "open_numeric_dimensions": [
+        "accumulation width",
+        "reduction order",
+        "rounding",
+        "NaN and infinity",
+        "arg tie-breaking"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    },
+    {
+      "id": "tile-expand",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileExpand"
+      ],
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "stage4_target": "S4-T8",
+      "open_numeric_dimensions": [
+        "data-type interpretation",
+        "rounding",
+        "divide-by-zero",
+        "NaN and infinity",
+        "saturation"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    },
+    {
+      "id": "tile-convert",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileConvert"
+      ],
+      "requirement": "PTO-REQ-TEPL-CONVERT-001",
+      "stage4_target": "S4-T8",
+      "open_numeric_dimensions": [
+        "source and destination format mapping",
+        "rounding",
+        "NaN payload",
+        "overflow and underflow",
+        "saturation"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    },
+    {
+      "id": "cube-convert",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileConvert"
+      ],
+      "requirement": "PTO-REQ-CUBE-001",
+      "stage4_target": "S4-T10",
+      "open_numeric_dimensions": [
+        "source and destination format mapping",
+        "rounding",
+        "NaN payload",
+        "overflow and underflow",
+        "saturation"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    },
+    {
+      "id": "tile-quantize",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileQuantize"
+      ],
+      "requirement": "PTO-REQ-TEPL-CONVERT-001",
+      "stage4_target": "S4-T8",
+      "open_numeric_dimensions": [
+        "scale interpretation",
+        "zero-point interpretation",
+        "rounding",
+        "clamping",
+        "exception behavior"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    },
+    {
+      "id": "tile-dequantize",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileDequantize"
+      ],
+      "requirement": "PTO-REQ-TEPL-CONVERT-001",
+      "stage4_target": "S4-T8",
+      "open_numeric_dimensions": [
+        "scale interpretation",
+        "zero-point interpretation",
+        "rounding",
+        "overflow and underflow",
+        "exception behavior"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    },
+    {
+      "id": "tile-partial",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfilePartialValue"
+      ],
+      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+      "stage4_target": "S4-T8",
+      "open_numeric_dimensions": [
+        "data-type interpretation",
+        "rounding",
+        "overflow",
+        "NaN and infinity",
+        "tie behavior"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    },
+    {
+      "id": "tile-order",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
+      ],
+      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+      "stage4_target": "S4-T8",
+      "open_numeric_dimensions": [
+        "data-type ordering",
+        "NaN placement",
+        "signed zero",
+        "equal-value stability",
+        "ascending and descending tie behavior"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    },
+    {
+      "id": "cube-matrix",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileMatrixAccumulate"
+      ],
+      "requirement": "PTO-REQ-CUBE-001",
+      "stage4_target": "S4-T10",
+      "open_numeric_dimensions": [
+        "input product precision",
+        "accumulation width",
+        "rounding",
+        "saturation",
+        "NaN and infinity"
+      ],
+      "target_conformance_status": "open:S5-T2"
+    }
+  ],
+  "hooks": [
+    {
+      "name": "FloatingExponential",
+      "role": "numeric-library-helper-no-decoded-operation",
+      "model": "asl/scalar/floating.asl",
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": []
+    },
+    {
+      "name": "FloatingRoundNearest",
+      "role": "numeric-library-helper-no-decoded-operation",
+      "model": "asl/scalar/floating.asl",
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": []
+    },
+    {
+      "name": "ScalarFPBinaryProfile",
+      "role": "portable-profile-boundary",
+      "model": "asl/scalar/floating.asl",
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "scalar:fadd_32_b78b658e6740",
+        "scalar:fdiv_32_04a5bb6ab56f",
+        "scalar:fmul_32_7d521d9d65e7",
+        "scalar:fsub_32_a4479d0d4276"
+      ]
+    },
+    {
+      "name": "ScalarFPConvertProfile",
+      "role": "portable-profile-boundary",
+      "model": "asl/scalar/floating.asl",
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "scalar:fcvt_32_1102f5aeeda9"
+      ]
+    },
+    {
+      "name": "ScalarFPFusedProfile",
+      "role": "portable-profile-boundary",
+      "model": "asl/scalar/floating.asl",
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "scalar:fmadd_32_c616a17bcb12",
+        "scalar:fmsub_32_b83012b83148",
+        "scalar:fnmadd_32_7f45e606d299",
+        "scalar:fnmsub_32_6542d56665b3"
+      ]
+    },
+    {
+      "name": "ScalarFPToIntegerProfile",
+      "role": "portable-profile-boundary",
+      "model": "asl/scalar/floating.asl",
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "scalar:fcvta_32_010837b9acbd",
+        "scalar:fcvtm_32_8801f1562870",
+        "scalar:fcvtn_32_8714ba358d80",
+        "scalar:fcvtp_32_84354a7aa6b1",
+        "scalar:fcvtz_32_bee01d31217c"
+      ]
+    },
+    {
+      "name": "ScalarFPUnaryProfile",
+      "role": "portable-profile-boundary",
+      "model": "asl/scalar/floating.asl",
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "scalar:fexp_32_592ef5288c7d",
+        "scalar:frecip_32_3d51f4f727ea",
+        "scalar:fsqrt_32_84b3495cc6c7"
+      ]
+    },
+    {
+      "name": "ScalarIntegerToFPProfile",
+      "role": "portable-profile-boundary",
+      "model": "asl/scalar/floating.asl",
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "scalar:scvtf_32_01861bbd5ef2",
+        "scalar:ucvtf_32_987f4e019c32"
+      ]
+    },
+    {
+      "name": "TileExpDifference",
+      "role": "pto-v0-reference-helper",
+      "model": "asl/tile/expansion.asl",
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:TEPL:TCOLEXPANDEXPDIF",
+        "tile:TEPL:TROWEXPANDEXPDIF"
+      ]
+    },
+    {
+      "name": "TileExponential",
+      "role": "pto-v0-reference-helper",
+      "model": "asl/tile/elementwise.asl",
+      "requirement": "PTO-REQ-TEPL-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:TEPL:TEXP"
+      ]
+    },
+    {
+      "name": "TileLogarithm",
+      "role": "pto-v0-reference-helper",
+      "model": "asl/tile/elementwise.asl",
+      "requirement": "PTO-REQ-TEPL-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:TEPL:TLOG"
+      ]
+    },
+    {
+      "name": "TileProfileAxpy",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/elementwise.asl",
+      "requirement": "PTO-REQ-TEPL-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:TEPL:TAXPY"
+      ]
+    },
+    {
+      "name": "TileProfileBinary",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/elementwise.asl",
+      "requirement": "PTO-REQ-TEPL-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:TEPL:TADD",
+        "tile:TEPL:TADDS",
+        "tile:TEPL:TAND",
+        "tile:TEPL:TANDS",
+        "tile:TEPL:TDIV",
+        "tile:TEPL:TDIVS",
+        "tile:TEPL:TMAX",
+        "tile:TEPL:TMAXS",
+        "tile:TEPL:TMIN",
+        "tile:TEPL:TMINS",
+        "tile:TEPL:TMUL",
+        "tile:TEPL:TMULS",
+        "tile:TEPL:TOR",
+        "tile:TEPL:TORS",
+        "tile:TEPL:TREM",
+        "tile:TEPL:TREMS",
+        "tile:TEPL:TSHL",
+        "tile:TEPL:TSHLS",
+        "tile:TEPL:TSHR",
+        "tile:TEPL:TSHRS",
+        "tile:TEPL:TSUB",
+        "tile:TEPL:TSUBS",
+        "tile:TEPL:TXOR",
+        "tile:TEPL:TXORS"
+      ]
+    },
+    {
+      "name": "TileProfileCompare",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/elementwise.asl",
+      "requirement": "PTO-REQ-TEPL-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:TEPL:TCMP",
+        "tile:TEPL:TCMPS"
+      ]
+    },
+    {
+      "name": "TileProfileConvert",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/conversion.asl",
+      "requirement": "PTO-REQ-TEPL-CONVERT-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:CUBE:ACCCVT",
+        "tile:TEPL:TCVT"
+      ]
+    },
+    {
+      "name": "TileProfileDequantize",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/conversion.asl",
+      "requirement": "PTO-REQ-TEPL-CONVERT-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:TEPL:TDEQUANT"
+      ]
+    },
+    {
+      "name": "TileProfileExpand",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/expansion.asl",
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:TEPL:TCOLEXPAND",
+        "tile:TEPL:TCOLEXPANDADD",
+        "tile:TEPL:TCOLEXPANDDIV",
+        "tile:TEPL:TCOLEXPANDEXPDIF",
+        "tile:TEPL:TCOLEXPANDMAX",
+        "tile:TEPL:TCOLEXPANDMIN",
+        "tile:TEPL:TCOLEXPANDMUL",
+        "tile:TEPL:TCOLEXPANDSUB",
+        "tile:TEPL:TROWEXPAND",
+        "tile:TEPL:TROWEXPANDADD",
+        "tile:TEPL:TROWEXPANDDIV",
+        "tile:TEPL:TROWEXPANDEXPDIF",
+        "tile:TEPL:TROWEXPANDMAX",
+        "tile:TEPL:TROWEXPANDMIN",
+        "tile:TEPL:TROWEXPANDMUL",
+        "tile:TEPL:TROWEXPANDSUB"
+      ]
+    },
+    {
+      "name": "TileProfileMatrixAccumulate",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/cube.asl",
+      "requirement": "PTO-REQ-CUBE-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:CUBE:TGEMV",
+        "tile:CUBE:TGEMV_ACC",
+        "tile:CUBE:TGEMV_BIAS",
+        "tile:CUBE:TGEMV_MX",
+        "tile:CUBE:TGEMV_MX_ACC",
+        "tile:CUBE:TGEMV_MX_BIAS",
+        "tile:CUBE:TMATMUL",
+        "tile:CUBE:TMATMUL_ACC",
+        "tile:CUBE:TMATMUL_BIAS",
+        "tile:CUBE:TMATMUL_MX",
+        "tile:CUBE:TMATMUL_MX_ACC",
+        "tile:CUBE:TMATMUL_MX_BIAS"
+      ]
+    },
+    {
+      "name": "TileProfileMatrixBias",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/cube.asl",
+      "requirement": "PTO-REQ-CUBE-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:CUBE:TGEMV_BIAS",
+        "tile:CUBE:TGEMV_MX_BIAS",
+        "tile:CUBE:TMATMUL_BIAS",
+        "tile:CUBE:TMATMUL_MX_BIAS"
+      ]
+    },
+    {
+      "name": "TileProfileMatrixScaledAccumulate",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/cube.asl",
+      "requirement": "PTO-REQ-CUBE-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:CUBE:TGEMV_MX",
+        "tile:CUBE:TGEMV_MX_ACC",
+        "tile:CUBE:TGEMV_MX_BIAS",
+        "tile:CUBE:TMATMUL_MX",
+        "tile:CUBE:TMATMUL_MX_ACC",
+        "tile:CUBE:TMATMUL_MX_BIAS"
+      ]
+    },
+    {
+      "name": "TileProfileOrderLeft",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/complex.asl",
+      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:TEPL:TMRGSORT",
+        "tile:TEPL:TPARTARGMAX",
+        "tile:TEPL:TPARTARGMIN",
+        "tile:TEPL:TSORT"
+      ]
+    },
+    {
+      "name": "TileProfileValueIsNaN",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/complex.asl",
+      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:TEPL:TMRGSORT",
+        "tile:TEPL:TPARTARGMAX",
+        "tile:TEPL:TPARTARGMIN",
+        "tile:TEPL:TSORT"
+      ]
+    },
+    {
+      "name": "TileProfilePartialValue",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/complex.asl",
+      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:TEPL:TPARTADD",
+        "tile:TEPL:TPARTMAX",
+        "tile:TEPL:TPARTMIN",
+        "tile:TEPL:TPARTMUL"
+      ]
+    },
+    {
+      "name": "TileProfilePReLU",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/elementwise.asl",
+      "requirement": "PTO-REQ-TEPL-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:TEPL:TPRELU"
+      ]
+    },
+    {
+      "name": "TileProfileQuantize",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/conversion.asl",
+      "requirement": "PTO-REQ-TEPL-CONVERT-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:TEPL:TQUANT"
+      ]
+    },
+    {
+      "name": "TileProfileReductionInitial",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/reduction.asl",
+      "requirement": "PTO-REQ-TEPL-REDUCE-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:TEPL:TCOLARGMAX",
+        "tile:TEPL:TCOLARGMIN",
+        "tile:TEPL:TCOLMAX",
+        "tile:TEPL:TCOLMIN",
+        "tile:TEPL:TCOLPROD",
+        "tile:TEPL:TCOLSUM",
+        "tile:TEPL:TROWARGMAX",
+        "tile:TEPL:TROWARGMIN",
+        "tile:TEPL:TROWMAX",
+        "tile:TEPL:TROWMIN",
+        "tile:TEPL:TROWPROD",
+        "tile:TEPL:TROWSUM"
+      ]
+    },
+    {
+      "name": "TileProfileReductionStep",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/reduction.asl",
+      "requirement": "PTO-REQ-TEPL-REDUCE-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:TEPL:TCOLARGMAX",
+        "tile:TEPL:TCOLARGMIN",
+        "tile:TEPL:TCOLMAX",
+        "tile:TEPL:TCOLMIN",
+        "tile:TEPL:TCOLPROD",
+        "tile:TEPL:TCOLSUM",
+        "tile:TEPL:TROWARGMAX",
+        "tile:TEPL:TROWARGMIN",
+        "tile:TEPL:TROWMAX",
+        "tile:TEPL:TROWMIN",
+        "tile:TEPL:TROWPROD",
+        "tile:TEPL:TROWSUM"
+      ]
+    },
+    {
+      "name": "TileProfileUnary",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/elementwise.asl",
+      "requirement": "PTO-REQ-TEPL-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:TEPL:TABS",
+        "tile:TEPL:TEXP",
+        "tile:TEPL:TLOG",
+        "tile:TEPL:TNEG",
+        "tile:TEPL:TNOT",
+        "tile:TEPL:TRECIP",
+        "tile:TEPL:TRELU",
+        "tile:TEPL:TRSQRT",
+        "tile:TEPL:TSQRT"
+      ]
+    },
+    {
+      "name": "TileReciprocal",
+      "role": "pto-v0-reference-helper",
+      "model": "asl/tile/elementwise.asl",
+      "requirement": "PTO-REQ-TEPL-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:TEPL:TRECIP",
+        "tile:TEPL:TRSQRT"
+      ]
+    },
+    {
+      "name": "TileSquareRoot",
+      "role": "pto-v0-reference-helper",
+      "model": "asl/tile/elementwise.asl",
+      "requirement": "PTO-REQ-TEPL-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:TEPL:TRSQRT",
+        "tile:TEPL:TSQRT"
+      ]
+    }
+  ],
+  "operations": [
+    {
+      "key": "scalar:fadd_32_b78b658e6740",
+      "surface": "scalar-form",
+      "family": "FSU",
+      "name": "FADD",
+      "catalog_identity": "fadd_32_b78b658e6740",
+      "numeric_contract": "scalar-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPBinaryProfile"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "scalar:fcvt_32_1102f5aeeda9",
+      "surface": "scalar-form",
+      "family": "FSU",
+      "name": "FCVT",
+      "catalog_identity": "fcvt_32_1102f5aeeda9",
+      "numeric_contract": "scalar-fp-convert",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPConvertProfile"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "scalar:fcvta_32_010837b9acbd",
+      "surface": "scalar-form",
+      "family": "FSU",
+      "name": "FCVTA",
+      "catalog_identity": "fcvta_32_010837b9acbd",
+      "numeric_contract": "scalar-fp-to-integer",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPToIntegerProfile"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "scalar:fcvtm_32_8801f1562870",
+      "surface": "scalar-form",
+      "family": "FSU",
+      "name": "FCVTM",
+      "catalog_identity": "fcvtm_32_8801f1562870",
+      "numeric_contract": "scalar-fp-to-integer",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPToIntegerProfile"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "scalar:fcvtn_32_8714ba358d80",
+      "surface": "scalar-form",
+      "family": "FSU",
+      "name": "FCVTN",
+      "catalog_identity": "fcvtn_32_8714ba358d80",
+      "numeric_contract": "scalar-fp-to-integer",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPToIntegerProfile"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "scalar:fcvtp_32_84354a7aa6b1",
+      "surface": "scalar-form",
+      "family": "FSU",
+      "name": "FCVTP",
+      "catalog_identity": "fcvtp_32_84354a7aa6b1",
+      "numeric_contract": "scalar-fp-to-integer",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPToIntegerProfile"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "scalar:fcvtz_32_bee01d31217c",
+      "surface": "scalar-form",
+      "family": "FSU",
+      "name": "FCVTZ",
+      "catalog_identity": "fcvtz_32_bee01d31217c",
+      "numeric_contract": "scalar-fp-to-integer",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPToIntegerProfile"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "scalar:fdiv_32_04a5bb6ab56f",
+      "surface": "scalar-form",
+      "family": "FSU",
+      "name": "FDIV",
+      "catalog_identity": "fdiv_32_04a5bb6ab56f",
+      "numeric_contract": "scalar-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPBinaryProfile"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "scalar:fexp_32_592ef5288c7d",
+      "surface": "scalar-form",
+      "family": "FSU",
+      "name": "FEXP",
+      "catalog_identity": "fexp_32_592ef5288c7d",
+      "numeric_contract": "scalar-unary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPUnaryProfile"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "scalar:fmadd_32_c616a17bcb12",
+      "surface": "scalar-form",
+      "family": "FSU",
+      "name": "FMADD",
+      "catalog_identity": "fmadd_32_c616a17bcb12",
+      "numeric_contract": "scalar-fused",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPFusedProfile"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "scalar:fmsub_32_b83012b83148",
+      "surface": "scalar-form",
+      "family": "FSU",
+      "name": "FMSUB",
+      "catalog_identity": "fmsub_32_b83012b83148",
+      "numeric_contract": "scalar-fused",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPFusedProfile"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "scalar:fmul_32_7d521d9d65e7",
+      "surface": "scalar-form",
+      "family": "FSU",
+      "name": "FMUL",
+      "catalog_identity": "fmul_32_7d521d9d65e7",
+      "numeric_contract": "scalar-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPBinaryProfile"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "scalar:fnmadd_32_7f45e606d299",
+      "surface": "scalar-form",
+      "family": "FSU",
+      "name": "FNMADD",
+      "catalog_identity": "fnmadd_32_7f45e606d299",
+      "numeric_contract": "scalar-fused",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPFusedProfile"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "scalar:fnmsub_32_6542d56665b3",
+      "surface": "scalar-form",
+      "family": "FSU",
+      "name": "FNMSUB",
+      "catalog_identity": "fnmsub_32_6542d56665b3",
+      "numeric_contract": "scalar-fused",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPFusedProfile"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "scalar:frecip_32_3d51f4f727ea",
+      "surface": "scalar-form",
+      "family": "FSU",
+      "name": "FRECIP",
+      "catalog_identity": "frecip_32_3d51f4f727ea",
+      "numeric_contract": "scalar-unary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPUnaryProfile"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "scalar:fsqrt_32_84b3495cc6c7",
+      "surface": "scalar-form",
+      "family": "FSU",
+      "name": "FSQRT",
+      "catalog_identity": "fsqrt_32_84b3495cc6c7",
+      "numeric_contract": "scalar-unary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPUnaryProfile"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "scalar:fsub_32_a4479d0d4276",
+      "surface": "scalar-form",
+      "family": "FSU",
+      "name": "FSUB",
+      "catalog_identity": "fsub_32_a4479d0d4276",
+      "numeric_contract": "scalar-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarFPBinaryProfile"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "scalar:scvtf_32_01861bbd5ef2",
+      "surface": "scalar-form",
+      "family": "FSU",
+      "name": "SCVTF",
+      "catalog_identity": "scvtf_32_01861bbd5ef2",
+      "numeric_contract": "scalar-integer-to-fp",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarIntegerToFPProfile"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "scalar:ucvtf_32_987f4e019c32",
+      "surface": "scalar-form",
+      "family": "FSU",
+      "name": "UCVTF",
+      "catalog_identity": "ucvtf_32_987f4e019c32",
+      "numeric_contract": "scalar-integer-to-fp",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "ScalarIntegerToFPProfile"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-SCALAR-FP-001",
+      "stage4_target": "S4-T5",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:CUBE:ACCCVT",
+      "surface": "direct-tile-operation",
+      "family": "CUBE",
+      "name": "ACCCVT",
+      "catalog_identity": "ACCCVT",
+      "numeric_contract": "cube-convert",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileConvert"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-CUBE-001",
+      "stage4_target": "S4-T10",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:CUBE:TGEMV",
+      "surface": "direct-tile-operation",
+      "family": "CUBE",
+      "name": "TGEMV",
+      "catalog_identity": "TGEMV",
+      "numeric_contract": "cube-matrix",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileMatrixAccumulate"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-CUBE-001",
+      "stage4_target": "S4-T10",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:CUBE:TGEMV_ACC",
+      "surface": "direct-tile-operation",
+      "family": "CUBE",
+      "name": "TGEMV_ACC",
+      "catalog_identity": "TGEMV_ACC",
+      "numeric_contract": "cube-matrix",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileMatrixAccumulate"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-CUBE-001",
+      "stage4_target": "S4-T10",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:CUBE:TGEMV_BIAS",
+      "surface": "direct-tile-operation",
+      "family": "CUBE",
+      "name": "TGEMV_BIAS",
+      "catalog_identity": "TGEMV_BIAS",
+      "numeric_contract": "cube-matrix",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixBias"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-CUBE-001",
+      "stage4_target": "S4-T10",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:CUBE:TGEMV_MX",
+      "surface": "direct-tile-operation",
+      "family": "CUBE",
+      "name": "TGEMV_MX",
+      "catalog_identity": "TGEMV_MX",
+      "numeric_contract": "cube-matrix",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixScaledAccumulate"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-CUBE-001",
+      "stage4_target": "S4-T10",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:CUBE:TGEMV_MX_ACC",
+      "surface": "direct-tile-operation",
+      "family": "CUBE",
+      "name": "TGEMV_MX_ACC",
+      "catalog_identity": "TGEMV_MX_ACC",
+      "numeric_contract": "cube-matrix",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixScaledAccumulate"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-CUBE-001",
+      "stage4_target": "S4-T10",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:CUBE:TGEMV_MX_BIAS",
+      "surface": "direct-tile-operation",
+      "family": "CUBE",
+      "name": "TGEMV_MX_BIAS",
+      "catalog_identity": "TGEMV_MX_BIAS",
+      "numeric_contract": "cube-matrix",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixBias",
+        "TileProfileMatrixScaledAccumulate"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-CUBE-001",
+      "stage4_target": "S4-T10",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:CUBE:TMATMUL",
+      "surface": "direct-tile-operation",
+      "family": "CUBE",
+      "name": "TMATMUL",
+      "catalog_identity": "TMATMUL",
+      "numeric_contract": "cube-matrix",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileMatrixAccumulate"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-CUBE-001",
+      "stage4_target": "S4-T10",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:CUBE:TMATMUL_ACC",
+      "surface": "direct-tile-operation",
+      "family": "CUBE",
+      "name": "TMATMUL_ACC",
+      "catalog_identity": "TMATMUL_ACC",
+      "numeric_contract": "cube-matrix",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileMatrixAccumulate"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-CUBE-001",
+      "stage4_target": "S4-T10",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:CUBE:TMATMUL_BIAS",
+      "surface": "direct-tile-operation",
+      "family": "CUBE",
+      "name": "TMATMUL_BIAS",
+      "catalog_identity": "TMATMUL_BIAS",
+      "numeric_contract": "cube-matrix",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixBias"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-CUBE-001",
+      "stage4_target": "S4-T10",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:CUBE:TMATMUL_MX",
+      "surface": "direct-tile-operation",
+      "family": "CUBE",
+      "name": "TMATMUL_MX",
+      "catalog_identity": "TMATMUL_MX",
+      "numeric_contract": "cube-matrix",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixScaledAccumulate"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-CUBE-001",
+      "stage4_target": "S4-T10",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:CUBE:TMATMUL_MX_ACC",
+      "surface": "direct-tile-operation",
+      "family": "CUBE",
+      "name": "TMATMUL_MX_ACC",
+      "catalog_identity": "TMATMUL_MX_ACC",
+      "numeric_contract": "cube-matrix",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixScaledAccumulate"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-CUBE-001",
+      "stage4_target": "S4-T10",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "surface": "direct-tile-operation",
+      "family": "CUBE",
+      "name": "TMATMUL_MX_BIAS",
+      "catalog_identity": "TMATMUL_MX_BIAS",
+      "numeric_contract": "cube-matrix",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixBias",
+        "TileProfileMatrixScaledAccumulate"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-CUBE-001",
+      "stage4_target": "S4-T10",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TABS",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TABS",
+      "catalog_identity": "0x00F",
+      "numeric_contract": "tile-unary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileUnary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TADD",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TADD",
+      "catalog_identity": "0x000",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TADDS",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TADDS",
+      "catalog_identity": "0x020",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TAND",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TAND",
+      "catalog_identity": "0x006",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TANDS",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TANDS",
+      "catalog_identity": "0x026",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TAXPY",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TAXPY",
+      "catalog_identity": "0x02F",
+      "numeric_contract": "tile-axpy",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileAxpy"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TCMP",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TCMP",
+      "catalog_identity": "0x00D",
+      "numeric_contract": "tile-compare",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileCompare"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TCMPS",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TCMPS",
+      "catalog_identity": "0x02D",
+      "numeric_contract": "tile-compare",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileCompare"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TCOLARGMAX",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TCOLARGMAX",
+      "catalog_identity": "0x05C",
+      "numeric_contract": "tile-reduction",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileReductionInitial",
+        "TileProfileReductionStep"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-REDUCE-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TCOLARGMIN",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TCOLARGMIN",
+      "catalog_identity": "0x05D",
+      "numeric_contract": "tile-reduction",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileReductionInitial",
+        "TileProfileReductionStep"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-REDUCE-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TCOLEXPAND",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TCOLEXPAND",
+      "catalog_identity": "0x054",
+      "numeric_contract": "tile-expand",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileExpand"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TCOLEXPANDADD",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TCOLEXPANDADD",
+      "catalog_identity": "0x055",
+      "numeric_contract": "tile-expand",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileExpand"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TCOLEXPANDDIV",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TCOLEXPANDDIV",
+      "catalog_identity": "0x058",
+      "numeric_contract": "tile-expand",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileExpand"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TCOLEXPANDEXPDIF",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TCOLEXPANDEXPDIF",
+      "catalog_identity": "0x05B",
+      "numeric_contract": "tile-expand",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileExpand"
+      ],
+      "reference_helpers": [
+        "TileExpDifference"
+      ],
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TCOLEXPANDMAX",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TCOLEXPANDMAX",
+      "catalog_identity": "0x059",
+      "numeric_contract": "tile-expand",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileExpand"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TCOLEXPANDMIN",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TCOLEXPANDMIN",
+      "catalog_identity": "0x05A",
+      "numeric_contract": "tile-expand",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileExpand"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TCOLEXPANDMUL",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TCOLEXPANDMUL",
+      "catalog_identity": "0x057",
+      "numeric_contract": "tile-expand",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileExpand"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TCOLEXPANDSUB",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TCOLEXPANDSUB",
+      "catalog_identity": "0x056",
+      "numeric_contract": "tile-expand",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileExpand"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TCOLMAX",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TCOLMAX",
+      "catalog_identity": "0x051",
+      "numeric_contract": "tile-reduction",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileReductionInitial",
+        "TileProfileReductionStep"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-REDUCE-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TCOLMIN",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TCOLMIN",
+      "catalog_identity": "0x052",
+      "numeric_contract": "tile-reduction",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileReductionInitial",
+        "TileProfileReductionStep"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-REDUCE-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TCOLPROD",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TCOLPROD",
+      "catalog_identity": "0x053",
+      "numeric_contract": "tile-reduction",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileReductionInitial",
+        "TileProfileReductionStep"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-REDUCE-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TCOLSUM",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TCOLSUM",
+      "catalog_identity": "0x050",
+      "numeric_contract": "tile-reduction",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileReductionInitial",
+        "TileProfileReductionStep"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-REDUCE-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TCVT",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TCVT",
+      "catalog_identity": "0x01B",
+      "numeric_contract": "tile-convert",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileConvert"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-CONVERT-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TDEQUANT",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TDEQUANT",
+      "catalog_identity": "0x06B",
+      "numeric_contract": "tile-dequantize",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileDequantize"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-CONVERT-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TDIV",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TDIV",
+      "catalog_identity": "0x003",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TDIVS",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TDIVS",
+      "catalog_identity": "0x023",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TEXP",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TEXP",
+      "catalog_identity": "0x012",
+      "numeric_contract": "tile-unary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileUnary"
+      ],
+      "reference_helpers": [
+        "TileExponential"
+      ],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TLOG",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TLOG",
+      "catalog_identity": "0x013",
+      "numeric_contract": "tile-unary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileUnary"
+      ],
+      "reference_helpers": [
+        "TileLogarithm"
+      ],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TMAX",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TMAX",
+      "catalog_identity": "0x00B",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TMAXS",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TMAXS",
+      "catalog_identity": "0x02B",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TMIN",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TMIN",
+      "catalog_identity": "0x00C",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TMINS",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TMINS",
+      "catalog_identity": "0x02C",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TMRGSORT",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TMRGSORT",
+      "catalog_identity": "0x06D",
+      "numeric_contract": "tile-order",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TMUL",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TMUL",
+      "catalog_identity": "0x002",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TMULS",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TMULS",
+      "catalog_identity": "0x022",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TNEG",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TNEG",
+      "catalog_identity": "0x011",
+      "numeric_contract": "tile-unary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileUnary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TNOT",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TNOT",
+      "catalog_identity": "0x010",
+      "numeric_contract": "tile-unary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileUnary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TOR",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TOR",
+      "catalog_identity": "0x007",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TORS",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TORS",
+      "catalog_identity": "0x027",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TPARTADD",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TPARTADD",
+      "catalog_identity": "0x071",
+      "numeric_contract": "tile-partial",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfilePartialValue"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TPARTARGMAX",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TPARTARGMAX",
+      "catalog_identity": "0x075",
+      "numeric_contract": "tile-order",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TPARTARGMIN",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TPARTARGMIN",
+      "catalog_identity": "0x076",
+      "numeric_contract": "tile-order",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TPARTMAX",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TPARTMAX",
+      "catalog_identity": "0x073",
+      "numeric_contract": "tile-partial",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfilePartialValue"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TPARTMIN",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TPARTMIN",
+      "catalog_identity": "0x074",
+      "numeric_contract": "tile-partial",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfilePartialValue"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TPARTMUL",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TPARTMUL",
+      "catalog_identity": "0x072",
+      "numeric_contract": "tile-partial",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfilePartialValue"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TPRELU",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TPRELU",
+      "catalog_identity": "0x00E",
+      "numeric_contract": "tile-prelu",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfilePReLU"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TQUANT",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TQUANT",
+      "catalog_identity": "0x06A",
+      "numeric_contract": "tile-quantize",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileQuantize"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-CONVERT-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TRECIP",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TRECIP",
+      "catalog_identity": "0x014",
+      "numeric_contract": "tile-unary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileUnary"
+      ],
+      "reference_helpers": [
+        "TileReciprocal"
+      ],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TRELU",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TRELU",
+      "catalog_identity": "0x017",
+      "numeric_contract": "tile-unary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileUnary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TREM",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TREM",
+      "catalog_identity": "0x004",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TREMS",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TREMS",
+      "catalog_identity": "0x024",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TROWARGMAX",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TROWARGMAX",
+      "catalog_identity": "0x04C",
+      "numeric_contract": "tile-reduction",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileReductionInitial",
+        "TileProfileReductionStep"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-REDUCE-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TROWARGMIN",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TROWARGMIN",
+      "catalog_identity": "0x04D",
+      "numeric_contract": "tile-reduction",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileReductionInitial",
+        "TileProfileReductionStep"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-REDUCE-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TROWEXPAND",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TROWEXPAND",
+      "catalog_identity": "0x044",
+      "numeric_contract": "tile-expand",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileExpand"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TROWEXPANDADD",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TROWEXPANDADD",
+      "catalog_identity": "0x045",
+      "numeric_contract": "tile-expand",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileExpand"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TROWEXPANDDIV",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TROWEXPANDDIV",
+      "catalog_identity": "0x048",
+      "numeric_contract": "tile-expand",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileExpand"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TROWEXPANDEXPDIF",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TROWEXPANDEXPDIF",
+      "catalog_identity": "0x04B",
+      "numeric_contract": "tile-expand",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileExpand"
+      ],
+      "reference_helpers": [
+        "TileExpDifference"
+      ],
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TROWEXPANDMAX",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TROWEXPANDMAX",
+      "catalog_identity": "0x049",
+      "numeric_contract": "tile-expand",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileExpand"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TROWEXPANDMIN",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TROWEXPANDMIN",
+      "catalog_identity": "0x04A",
+      "numeric_contract": "tile-expand",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileExpand"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TROWEXPANDMUL",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TROWEXPANDMUL",
+      "catalog_identity": "0x047",
+      "numeric_contract": "tile-expand",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileExpand"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TROWEXPANDSUB",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TROWEXPANDSUB",
+      "catalog_identity": "0x046",
+      "numeric_contract": "tile-expand",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileExpand"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-EXPAND-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TROWMAX",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TROWMAX",
+      "catalog_identity": "0x041",
+      "numeric_contract": "tile-reduction",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileReductionInitial",
+        "TileProfileReductionStep"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-REDUCE-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TROWMIN",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TROWMIN",
+      "catalog_identity": "0x042",
+      "numeric_contract": "tile-reduction",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileReductionInitial",
+        "TileProfileReductionStep"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-REDUCE-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TROWPROD",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TROWPROD",
+      "catalog_identity": "0x043",
+      "numeric_contract": "tile-reduction",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileReductionInitial",
+        "TileProfileReductionStep"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-REDUCE-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TROWSUM",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TROWSUM",
+      "catalog_identity": "0x040",
+      "numeric_contract": "tile-reduction",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileReductionInitial",
+        "TileProfileReductionStep"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-REDUCE-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TRSQRT",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TRSQRT",
+      "catalog_identity": "0x016",
+      "numeric_contract": "tile-unary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileUnary"
+      ],
+      "reference_helpers": [
+        "TileSquareRoot",
+        "TileReciprocal"
+      ],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TSHL",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TSHL",
+      "catalog_identity": "0x009",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TSHLS",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TSHLS",
+      "catalog_identity": "0x029",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TSHR",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TSHR",
+      "catalog_identity": "0x00A",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TSHRS",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TSHRS",
+      "catalog_identity": "0x02A",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TSORT",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TSORT",
+      "catalog_identity": "0x06C",
+      "numeric_contract": "tile-order",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TSQRT",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TSQRT",
+      "catalog_identity": "0x015",
+      "numeric_contract": "tile-unary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileUnary"
+      ],
+      "reference_helpers": [
+        "TileSquareRoot"
+      ],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TSUB",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TSUB",
+      "catalog_identity": "0x001",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TSUBS",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TSUBS",
+      "catalog_identity": "0x021",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TXOR",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TXOR",
+      "catalog_identity": "0x008",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    },
+    {
+      "key": "tile:TEPL:TXORS",
+      "surface": "direct-tile-operation",
+      "family": "TEPL",
+      "name": "TXORS",
+      "catalog_identity": "0x028",
+      "numeric_contract": "tile-binary",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "primary_hooks": [
+        "TileProfileBinary"
+      ],
+      "reference_helpers": [],
+      "requirement": "PTO-REQ-TEPL-001",
+      "stage4_target": "S4-T8",
+      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
+    }
+  ],
+  "summary": {
+    "numeric_hook_count": 30,
+    "decoded_operation_count": 108,
+    "scalar_form_count": 19,
+    "direct_tile_operation_count": 89,
+    "primary_profile_boundary_hook_count": 23,
+    "reference_helper_hook_count": 5,
+    "library_only_hook_count": 2,
+    "target_conformance_status": "open:S5-T2"
+  }
+}

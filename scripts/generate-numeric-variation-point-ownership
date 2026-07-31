@@ -1,0 +1,501 @@
+#!/usr/bin/env python3
+"""Generate the fail-closed PD-12 numeric variation-point ownership ledger."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from collections import Counter, defaultdict
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+NUMERIC_CONTRACTS = ROOT / "spec/evidence/numeric-contracts.json"
+DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
+IDENTITY_CATALOG = ROOT / "spec/catalog/numeric-profile-identities.json"
+PROFILE_HOOKS = ROOT / "spec/profile-hooks.json"
+ROUNDING_CONTRACT = ROOT / "spec/evidence/numeric-rounding-selector-contract.json"
+FORMAT_CONTRACT = ROOT / "spec/evidence/numeric-format-namespace-contract.json"
+PUBLIC_TYPE_BASELINE = ROOT / "spec/evidence/public-numeric-type-baseline.json"
+INTEGER_CONVERSION_CONTRACT = (
+    ROOT / "spec/evidence/public-integer-conversion-contract.json"
+)
+APPLICABILITY_CONTRACT = (
+    ROOT / "spec/evidence/numeric-profile-applicability-closure.json"
+)
+ACCEPTANCE_RECORD = (
+    "docs/architecture-decisions/0042-numeric-variation-point-ownership.md"
+)
+OUTPUT = ROOT / "spec/evidence/numeric-variation-point-ownership.json"
+
+SOURCE_PATHS = (
+    "spec/evidence/numeric-contracts.json",
+    "spec/evidence/numeric-profile-decision-inputs.json",
+    "spec/catalog/numeric-profile-identities.json",
+    "spec/profile-hooks.json",
+    "spec/evidence/numeric-rounding-selector-contract.json",
+    "spec/evidence/numeric-format-namespace-contract.json",
+    "spec/evidence/public-numeric-type-baseline.json",
+    "spec/evidence/public-integer-conversion-contract.json",
+    "spec/evidence/numeric-profile-applicability-closure.json",
+    ACCEPTANCE_RECORD,
+)
+
+DIMENSION_IDS = {
+    "rounding": "rounding",
+    "NaN and infinity": "nan-and-infinity",
+    "signed zero": "signed-zero",
+    "subnormal handling": "subnormal-handling",
+    "NV/DZ/OF/UF/NX flags": "nv-dz-of-uf-nx-flags",
+    "domain errors": "domain-errors",
+    "single-rounding behavior": "single-rounding-behavior",
+    "overflow and underflow": "overflow-and-underflow",
+    "rounding-mode result": "rounding-mode-result",
+    "out-of-range result": "out-of-range-result",
+    "saturation or indefinite value": "saturation-or-indefinite-value",
+    "NV/NX flags": "nv-nx-flags",
+    "source and destination format mapping": "source-and-destination-format-mapping",
+    "NaN payload": "nan-payload",
+    "NV/OF/UF/NX flags": "nv-of-uf-nx-flags",
+    "signedness": "signedness",
+    "destination format": "destination-format",
+    "overflow": "overflow",
+    "NX flag": "nx-flag",
+    "data-type interpretation": "data-type-interpretation",
+    "saturation": "saturation",
+    "divide-by-zero": "divide-by-zero",
+    "multiply-add precision": "multiply-add-precision",
+    "comparison domain": "comparison-domain",
+    "multiply precision": "multiply-precision",
+    "ordered and unordered comparison": "ordered-and-unordered-comparison",
+    "NaN behavior": "nan-behavior",
+    "result encoding": "result-encoding",
+    "accumulation width": "accumulation-width",
+    "reduction order": "reduction-order",
+    "arg tie-breaking": "arg-tie-breaking",
+    "scale interpretation": "scale-interpretation",
+    "zero-point interpretation": "zero-point-interpretation",
+    "clamping": "clamping",
+    "exception behavior": "exception-behavior",
+    "tie behavior": "tie-behavior",
+    "data-type ordering": "data-type-ordering",
+    "NaN placement": "nan-placement",
+    "equal-value stability": "equal-value-stability",
+    "ascending and descending tie behavior": "ascending-and-descending-tie-behavior",
+    "input product precision": "input-product-precision",
+}
+
+PRIMARY_DECISION_CANDIDATES = {
+    "rounding": ("PD-03",),
+    "NaN and infinity": ("PD-05",),
+    "signed zero": ("PD-05",),
+    "subnormal handling": ("PD-04",),
+    "NV/DZ/OF/UF/NX flags": ("PD-06",),
+    "domain errors": ("PD-08", "PD-12"),
+    "single-rounding behavior": ("PD-03",),
+    "overflow and underflow": ("PD-07", "PD-11", "PD-12"),
+    "rounding-mode result": ("PD-03",),
+    "out-of-range result": ("PD-07",),
+    "saturation or indefinite value": ("PD-07",),
+    "NV/NX flags": ("PD-06",),
+    "source and destination format mapping": ("PD-02",),
+    "NaN payload": ("PD-05",),
+    "NV/OF/UF/NX flags": ("PD-06",),
+    "signedness": ("PD-02",),
+    "destination format": ("PD-02",),
+    "overflow": ("PD-07", "PD-09", "PD-12"),
+    "NX flag": ("PD-06",),
+    "data-type interpretation": ("PD-02",),
+    "saturation": ("PD-07", "PD-11", "PD-12"),
+    "divide-by-zero": ("PD-08", "PD-05", "PD-12"),
+    "multiply-add precision": ("PD-12",),
+    "comparison domain": ("PD-09", "PD-12"),
+    "multiply precision": ("PD-12",),
+    "ordered and unordered comparison": ("PD-09",),
+    "NaN behavior": ("PD-05",),
+    "result encoding": ("PD-02",),
+    "accumulation width": ("PD-11", "PD-09"),
+    "reduction order": ("PD-09",),
+    "arg tie-breaking": ("PD-09",),
+    "scale interpretation": ("PD-10",),
+    "zero-point interpretation": ("PD-10",),
+    "clamping": ("PD-10", "PD-07"),
+    "exception behavior": ("PD-10", "PD-05"),
+    "tie behavior": ("PD-09",),
+    "data-type ordering": ("PD-09",),
+    "NaN placement": ("PD-05",),
+    "equal-value stability": ("PD-09",),
+    "ascending and descending tie behavior": ("PD-09",),
+    "input product precision": ("PD-11",),
+}
+
+
+def load(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise SystemExit(f"numeric variation ownership generation failed: {message}")
+
+
+def source(path: str) -> dict[str, str]:
+    absolute = ROOT / path
+    return {"path": path, "sha256": hashlib.sha256(absolute.read_bytes()).hexdigest()}
+
+
+def selector_dependencies(dimension: str) -> list[str]:
+    dependencies = ["spec/catalog/numeric-profile-identities.json"]
+    lowered = dimension.lower()
+    if "round" in lowered or dimension in {
+        "single-rounding behavior",
+        "saturation",
+        "clamping",
+        "saturation or indefinite value",
+    }:
+        dependencies.append("spec/evidence/numeric-rounding-selector-contract.json")
+    if any(
+        term in lowered
+        for term in ("data-type", "format", "signedness", "result encoding")
+    ):
+        dependencies.append("spec/evidence/numeric-format-namespace-contract.json")
+        dependencies.append("spec/evidence/public-numeric-type-baseline.json")
+    return dependencies
+
+
+def primary_decision(dimension: str, domain_decisions: list[str]) -> str:
+    candidates = PRIMARY_DECISION_CANDIDATES[dimension]
+    selected = next((candidate for candidate in candidates if candidate in domain_decisions), None)
+    require(selected is not None, f"no primary decision for {dimension}")
+    return selected
+
+
+def admissible_routes(dimension: str) -> list[dict[str, str]]:
+    routes = [
+        {"kind": "portable-rule", "profile_id": "pto-numeric-v1"},
+        {"kind": "named-profile-rule", "profile_id": "pto-a2a3-numeric-v1"},
+        {"kind": "named-profile-rule", "profile_id": "pto-a5-numeric-v1"},
+        {"kind": "unsupported-in-profile", "profile_id": "pto-a2a3-numeric-v1"},
+        {"kind": "unsupported-in-profile", "profile_id": "pto-a5-numeric-v1"},
+    ]
+    dependencies = selector_dependencies(dimension)
+    if "spec/evidence/numeric-rounding-selector-contract.json" in dependencies:
+        routes.extend(
+            {
+                "kind": "visible-selector-rule",
+                "selector_source_class": source_class,
+                "selector_ref": "spec/evidence/numeric-rounding-selector-contract.json",
+            }
+            for source_class in (
+                "architectural-state",
+                "decoded-operand",
+                "bundle-state",
+            )
+        )
+    if "spec/evidence/numeric-format-namespace-contract.json" in dependencies:
+        routes.extend(
+            {
+                "kind": "visible-selector-rule",
+                "selector_source_class": source_class,
+                "selector_ref": "spec/evidence/numeric-format-namespace-contract.json",
+            }
+            for source_class in ("decoded-operand", "bundle-state")
+        )
+    return routes
+
+
+def generate() -> dict[str, Any]:
+    inventory = load(NUMERIC_CONTRACTS)
+    decisions = load(DECISION_INPUTS)
+    identities = load(IDENTITY_CATALOG)
+    profile_hooks = load(PROFILE_HOOKS)
+    rounding = load(ROUNDING_CONTRACT)
+    formats = load(FORMAT_CONTRACT)
+    public_types = load(PUBLIC_TYPE_BASELINE)
+    integer_conversion = load(INTEGER_CONVERSION_CONTRACT)
+    applicability = load(APPLICABILITY_CONTRACT)
+
+    require(inventory["summary"]["numeric_hook_count"] == 30, "hook count drift")
+    require(inventory["summary"]["decoded_operation_count"] == 108, "operation count drift")
+    require(len(inventory["contract_domains"]) == 20, "domain count drift")
+    require(identities["summary"]["accepted_identity_count"] == 4, "identity drift")
+    require(rounding["summary"]["accepted_domain_rounding_rule_count"] == 0, "rounding result rule unexpectedly accepted")
+    require(formats["summary"]["pd02_complete"] is False, "format decision unexpectedly complete")
+    require(
+        public_types["target"] == "S5-T2-A5:PD-02-SC2"
+        and public_types["status"]
+        == "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
+        "public type baseline identity drift",
+    )
+    require(
+        public_types["summary"]["public_type_count"] == 16
+        and public_types["summary"]["accepted_catalog_binding_count"] == 16
+        and public_types["summary"]["accepted_result_rule_count"] == 0,
+        "public type baseline summary drift",
+    )
+    require(
+        integer_conversion["target"] == "S5-T2-A6:PD-07-SC1"
+        and integer_conversion["status"]
+        == "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open"
+        and integer_conversion["summary"]["accepted_unequal_width_tuple_count"]
+        == 48
+        and integer_conversion["summary"]["accepted_result_rule_count"] == 3
+        and integer_conversion["summary"]["accepted_domain_rule_count"] == 0,
+        "public integer conversion subset drift",
+    )
+    require(applicability["summary"]["tuple_count"] == 150, "applicability tuple drift")
+    require(applicability["summary"]["result_rule_count"] == 0, "applicability result rule unexpectedly accepted")
+
+    pd12 = next(row for row in decisions["decision_questions"] if row["id"] == "PD-12")
+    require(
+        pd12["status"] == "decision-required"
+        and pd12["selected_disposition"] is None
+        and pd12["decision_record"] is None,
+        "PD-12 must remain open",
+    )
+
+    domains = {row["id"]: row for row in inventory["contract_domains"]}
+    domain_inputs = {row["domain"]: row for row in decisions["domain_matrix"]}
+    operations = {row["key"]: row for row in inventory["operations"]}
+    hooks = {row["name"]: row for row in inventory["hooks"]}
+    registered_hooks = {
+        row["name"]: row
+        for row in profile_hooks["hooks"]
+        if row["maturity_target"] == "S5-T2"
+    }
+    require(set(domains) == set(domain_inputs), "decision-domain coverage drift")
+    require(set(hooks) == set(registered_hooks), "profile-hook coverage drift")
+    dimension_labels = {
+        dimension
+        for domain in domains.values()
+        for dimension in domain["open_numeric_dimensions"]
+    }
+    require(dimension_labels == set(DIMENSION_IDS), "dimension identity drift")
+    require(set(PRIMARY_DECISION_CANDIDATES) == set(DIMENSION_IDS), "primary-decision map drift")
+
+    operations_by_domain: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    domains_by_hook: dict[str, set[str]] = defaultdict(set)
+    for operation in operations.values():
+        operations_by_domain[operation["numeric_contract"]].append(operation)
+        for hook in operation["primary_hooks"] + operation["reference_helpers"]:
+            domains_by_hook[hook].add(operation["numeric_contract"])
+
+    variation_points: list[dict[str, Any]] = []
+    points_by_domain: dict[str, list[str]] = defaultdict(list)
+    for domain_id in sorted(domains):
+        domain = domains[domain_id]
+        domain_operations = sorted(
+            operations_by_domain[domain_id], key=lambda row: row["key"]
+        )
+        operation_keys = [row["key"] for row in domain_operations]
+        domain_hooks = sorted(
+            {
+                hook
+                for row in domain_operations
+                for hook in row["primary_hooks"] + row["reference_helpers"]
+            }
+        )
+        for dimension in domain["open_numeric_dimensions"]:
+            dimension_id = DIMENSION_IDS[dimension]
+            point_id = f"numeric-vp/{domain_id}/{dimension_id}"
+            decision_ids = domain_inputs[domain_id]["decision_question_ids"]
+            primary_decision_id = primary_decision(dimension, decision_ids)
+            points_by_domain[domain_id].append(point_id)
+            variation_points.append(
+                {
+                    "id": point_id,
+                    "domain_id": domain_id,
+                    "lane": domain_inputs[domain_id]["lane"],
+                    "dimension_id": dimension_id,
+                    "label": dimension,
+                    "operation_keys": operation_keys,
+                    "hook_ids": domain_hooks,
+                    "requirement_id": domain["requirement"],
+                    "decision_ownership": {
+                        "primary_decision_id": primary_decision_id,
+                        "cross_cutting_decision_ids": ["PD-01", "PD-12"],
+                    },
+                    "decision_owner_kind": "portable-architecture",
+                    "decision_owner_id": "pto-numeric-v1",
+                    "admissible_routes": admissible_routes(dimension),
+                    "selector_dependencies": selector_dependencies(dimension),
+                    "selected_route": None,
+                    "result_rule_id": None,
+                    "result_acceptance_record": None,
+                    "missing_rule_disposition": "reject-before-effects",
+                    "status": "ownership-inventoried-result-rule-required",
+                }
+            )
+
+    operation_rows = []
+    for key in sorted(operations):
+        operation = operations[key]
+        all_hooks = operation["primary_hooks"] + operation["reference_helpers"]
+        unsupported = [
+            row["profile_id"]
+            for row in applicability["rules"]
+            if row["operation_key"] == key
+        ]
+        operation_rows.append(
+            {
+                "operation_key": key,
+                "domain": operation["numeric_contract"],
+                "hooks": all_hooks,
+                "variation_point_ids": sorted(
+                    points_by_domain[operation["numeric_contract"]]
+                ),
+                "decision_owner_kind": "portable-architecture",
+                "decision_owner_id": "pto-numeric-v1",
+                "accepted_unsupported_profiles": unsupported,
+                "accepted_result_rule_count": 0,
+                "status": "owner-closed-result-rules-open",
+            }
+        )
+
+    hook_rows = []
+    for name in sorted(hooks):
+        hook = hooks[name]
+        hook_domains = sorted(domains_by_hook[name])
+        hook_points = sorted(
+            point_id for domain in hook_domains for point_id in points_by_domain[domain]
+        )
+        hook_rows.append(
+            {
+                "hook": name,
+                "role": hook["role"],
+                "requirement": hook["requirement"],
+                "domains": hook_domains,
+                "operation_keys": hook["operation_keys"],
+                "variation_point_ids": hook_points,
+                "decision_owner_kind": "portable-architecture",
+                "decision_owner_id": "pto-numeric-v1",
+                "selected_route": None,
+                "result_rule_id": None,
+                "status": "ownership-inventoried-result-rule-required",
+            }
+        )
+
+    require(len(variation_points) == 99, "variation-point count drift")
+    require(len({row["id"] for row in variation_points}) == 99, "duplicate variation point")
+    require(len(operation_rows) == 108, "operation ownership coverage drift")
+    require(len(hook_rows) == 30, "hook ownership coverage drift")
+    require(
+        Counter(row["domain"] for row in operation_rows)
+        == Counter(row["numeric_contract"] for row in operations.values()),
+        "operation domain mapping drift",
+    )
+    require(
+        sum(len(row["primary_hooks"]) for row in operations.values()) == 134
+        and sum(len(row["reference_helpers"]) for row in operations.values()) == 8,
+        "operation-to-hook edge count drift",
+    )
+    require(
+        Counter(row["role"] for row in hook_rows)
+        == Counter(
+            {
+                "portable-profile-boundary": 23,
+                "pto-v0-reference-helper": 5,
+                "numeric-library-helper-no-decoded-operation": 2,
+            }
+        ),
+        "hook role partition drift",
+    )
+
+    return {
+        "schema_version": 1,
+        "artifact_id": "numeric-variation-point-ownership",
+        "target": "S5-T2-A4:PD-12",
+        "decision_id": "PD-12",
+        "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
+        "acceptance_record": ACCEPTANCE_RECORD,
+        "policy": {
+            "applies_to": "Named target-conformance profiles; pto-v0 remains a deterministic raw-carrier reference and is not a target result fallback.",
+            "authority": "Every open numeric dimension remains owned by pto-numeric-v1 until an accepted PTO decision delegates the exact variation point.",
+            "delegation": "Delegation requires a named target profile or visible selector plus exact applicability and a finite or mathematically testable allowed-result contract.",
+            "unsupported": "Unsupported operation/type/profile tuples reject before effects and do not define numeric results.",
+            "missing_rule": "Unknown profiles, selectors, formats, tuples, and absent delegated rules reject before effects.",
+            "evidence_boundary": "Backend and independent executable-model behavior are structural evidence only and never acquire numeric ownership implicitly.",
+            "reference_fallback_forbidden": True,
+            "cpu_observation_is_owner": False,
+        },
+        "ownership_routes": [
+            "portable-rule",
+            "named-profile-rule",
+            "visible-selector-rule",
+            "unsupported-in-profile",
+        ],
+        "selection_surfaces": {
+            "portable_owner": "pto-numeric-v1",
+            "named_target_profiles": ["pto-a2a3-numeric-v1", "pto-a5-numeric-v1"],
+            "observation_only_identity": "pto-cpu-observation-v1",
+            "rounding_selector_contract": "spec/evidence/numeric-rounding-selector-contract.json",
+            "format_namespace_contract": "spec/evidence/numeric-format-namespace-contract.json",
+            "accepted_unsupported_contract": "spec/evidence/numeric-profile-applicability-closure.json",
+        },
+        "variation_points": variation_points,
+        "operations": operation_rows,
+        "hooks": hook_rows,
+        "support_rules": {
+            "path": "spec/evidence/numeric-profile-applicability-closure.json",
+            "rule_count": 6,
+            "tuple_count": 150,
+            "result_rule_count": 0,
+            "status": "accepted-support-rejection-separate-from-numeric-results",
+        },
+        "bounded_result_subsets": [
+            {
+                "path": "spec/evidence/public-integer-conversion-contract.json",
+                "operation_key": "tile:TEPL:TCVT",
+                "domain": "tile-convert",
+                "result_rule_count": 3,
+                "tuple_count": 48,
+                "profile_support_rule_count": 0,
+                "status": "accepted-portable-results-only-after-profile-support",
+            }
+        ],
+        "sources": [source(path) for path in SOURCE_PATHS],
+        "summary": {
+            "variation_point_count": 99,
+            "unique_dimension_count": len({row["dimension_id"] for row in variation_points}),
+            "domain_count": 20,
+            "operation_count": 108,
+            "hook_count": 30,
+            "primary_operation_hook_edge_count": 134,
+            "reference_helper_operation_edge_count": 8,
+            "portable_decision_owner_point_count": 99,
+            "selected_route_count": 0,
+            "accepted_result_rule_count": 0,
+            "accepted_bounded_result_subset_rule_count": 3,
+            "accepted_bounded_result_subset_tuple_count": 48,
+            "accepted_unsupported_tuple_count": 150,
+            "accepted_domain_result_rule_count": 0,
+            "pd12_complete": False,
+            "s5_t2_a_complete": False,
+            "s5_t2_complete": False,
+        },
+    }
+
+
+def serialized() -> str:
+    return json.dumps(generate(), indent=2, ensure_ascii=False) + "\n"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    action = parser.add_mutually_exclusive_group(required=True)
+    action.add_argument("--check", action="store_true")
+    action.add_argument("--write", action="store_true")
+    args = parser.parse_args()
+    expected = serialized()
+    if args.write:
+        OUTPUT.write_text(expected, encoding="utf-8")
+        return 0
+    if not OUTPUT.exists() or OUTPUT.read_text(encoding="utf-8") != expected:
+        raise SystemExit(f"stale generated evidence: {OUTPUT.relative_to(ROOT)}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

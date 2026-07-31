@@ -9,11 +9,13 @@ This page is generated from the canonical PTO catalogs under `spec/catalog/`.
 | Surface | Count | Reference |
 | --- | --- | --- |
 | Scalar encoded forms | 474 | [scalar summary](scalar.md) |
-| Block/command encoded forms | 99 | [block/command](block-command.md) |
+| Bundle/command encoded forms | 99 | [bundle/command](bundle-command.md) |
 | Direct tile operations | 120 | [tile operations](tile.md) |
-| System registers | 54 | [system registers](system-registers.md) |
+| System registers | 72 | [system registers](system-registers.md) |
 
-The PTO encoded instruction catalog contains 573 forms: 474 scalar forms and 99 block/command forms. Direct tile operations are selector-catalog operations with explicit decoded operands and effects. The separate vector execution instruction class is outside the PTO ISA scope.
+The PTO encoded instruction catalog contains 573 forms: 474 scalar forms and 99 bundle/command forms. Direct tile operations are selector-catalog operations with explicit decoded operands and effects. The separate vector execution instruction class is outside the PTO ISA scope.
+
+Bundle is the grouped-execution term used throughout this specification. The stable `BSTART`, `BSTOP`, `B.*`, and BPC spellings use `B` for bundle. Separately, `BLOCKNUM`, `BLOCKID`, and `CROSS_BID` identify virtual core blocks. Their encodings and operand layouts are unchanged.
 
 ## Scalar families
 
@@ -26,7 +28,7 @@ The PTO encoded instruction catalog contains 573 forms: 474 scalar forms and 99 
 | FSU | 30 | [FSU](scalar-fsu.md) |
 | SYS | 35 | [SYS](scalar-sys.md) |
 
-## Block/command families
+## Bundle/command families
 
 | Family | Forms |
 | --- | --- |

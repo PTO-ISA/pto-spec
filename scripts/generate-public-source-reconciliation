@@ -1,0 +1,429 @@
+#!/usr/bin/env python3
+"""Generate the PTO public-source reconciliation ledger deterministically."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parent.parent
+OUTPUT = ROOT / "spec/evidence/public-source-reconciliation.json"
+PUBLIC_REPOSITORY = "https://github.com/hw-native-sys/pto-isa"
+PUBLIC_COMMIT = "712cbe9f23df5d5362be5e8327599f4285317473"
+
+# Audited directly from PUBLIC_COMMIT's PTO_INST declarations. This set is
+# intentionally independent of the local tile catalog so a new catalog name
+# fails closed until the public-source audit is repeated.
+PUBLIC_TILE_SYMBOLS = {
+    "MGATHER",
+    "MSCATTER",
+    "TABS",
+    "TADD",
+    "TADDS",
+    "TALLOC",
+    "TAND",
+    "TANDS",
+    "TAXPY",
+    "TCI",
+    "TCMP",
+    "TCMPS",
+    "TCOLARGMAX",
+    "TCOLARGMIN",
+    "TCOLEXPAND",
+    "TCOLEXPANDADD",
+    "TCOLEXPANDDIV",
+    "TCOLEXPANDEXPDIF",
+    "TCOLEXPANDMAX",
+    "TCOLEXPANDMIN",
+    "TCOLEXPANDMUL",
+    "TCOLEXPANDSUB",
+    "TCOLMAX",
+    "TCOLMIN",
+    "TCOLPROD",
+    "TCOLSUM",
+    "TCONCAT",
+    "TCVT",
+    "TDEINTERLEAVE",
+    "TDEQUANT",
+    "TDIV",
+    "TDIVS",
+    "TEXP",
+    "TEXPANDS",
+    "TEXTRACT",
+    "TFILLPAD",
+    "TFREE",
+    "TGATHER",
+    "TGATHERB",
+    "TGEMV",
+    "TGEMV_ACC",
+    "TGEMV_BIAS",
+    "TGEMV_MX",
+    "THISTOGRAM",
+    "TIMG2COL",
+    "TINSERT",
+    "TINTERLEAVE",
+    "TLOAD",
+    "TLOG",
+    "TMATMUL",
+    "TMATMUL_ACC",
+    "TMATMUL_BIAS",
+    "TMATMUL_MX",
+    "TMAX",
+    "TMAXS",
+    "TMIN",
+    "TMINS",
+    "TMOV",
+    "TMRGSORT",
+    "TMUL",
+    "TMULS",
+    "TNEG",
+    "TNOT",
+    "TOR",
+    "TORS",
+    "TPARTADD",
+    "TPARTARGMAX",
+    "TPARTARGMIN",
+    "TPARTMAX",
+    "TPARTMIN",
+    "TPARTMUL",
+    "TPOP",
+    "TPREFETCH",
+    "TPUSH",
+    "TQUANT",
+    "TRECIP",
+    "TRELU",
+    "TREM",
+    "TREMS",
+    "TRESHAPE",
+    "TROWARGMAX",
+    "TROWARGMIN",
+    "TROWEXPAND",
+    "TROWEXPANDADD",
+    "TROWEXPANDDIV",
+    "TROWEXPANDEXPDIF",
+    "TROWEXPANDMAX",
+    "TROWEXPANDMIN",
+    "TROWEXPANDMUL",
+    "TROWEXPANDSUB",
+    "TROWMAX",
+    "TROWMIN",
+    "TROWPROD",
+    "TROWSUM",
+    "TRSQRT",
+    "TSCATTER",
+    "TSEL",
+    "TSELS",
+    "TSHL",
+    "TSHLS",
+    "TSHR",
+    "TSHRS",
+    "TSORT32",
+    "TSQRT",
+    "TSTORE",
+    "TSUB",
+    "TSUBS",
+    "TTRANS",
+    "TTRI",
+    "TXOR",
+    "TXORS",
+}
+
+PUBLIC_SOURCES = [
+    {
+        "id": "public-intrinsic-api",
+        "path": "include/pto/common/pto_instr.hpp",
+        "role": "typed-cpp-intrinsic-api",
+        "sha256": "6fbd4bfb068606ee7cd00cb0b98d38e8550a026779d3d723d9a08934400e0e98",
+    },
+    {
+        "id": "public-source-precedence",
+        "path": "docs/isa/reference/source-of-truth.md",
+        "role": "public-repository-source-precedence",
+        "sha256": "50ffe6f25a9f54f8c3ad63016dba9ccb1025182338fda456107993c7948d849e",
+    },
+    {
+        "id": "public-isa-scope",
+        "path": "docs/isa/introduction/current-isa-scope.md",
+        "role": "public-named-instruction-inventory",
+        "sha256": "df65fc48325f478fbf6e1b7fe1a04f418673ae11e25b6612f506bf64c4da87fe",
+    },
+    {
+        "id": "public-assembly-model",
+        "path": "docs/isa/syntax-and-operands/assembly-model.md",
+        "role": "public-source-syntax-and-lowering-layers",
+        "sha256": "381c2dfe4b6b0031178a87b0a37de09836c90b73d7f952859fa22d350e8777ba",
+    },
+    {
+        "id": "public-shared-scalar-arith",
+        "path": "docs/isa/scalar/shared-arith.md",
+        "role": "public-shared-scalar-source-layer",
+        "sha256": "f8ed82355f975e1ba7d54f8027b404f2d3be9a1b340b9a3824f967d401d799cf",
+    },
+    {
+        "id": "public-scalar-control",
+        "path": "docs/isa/instruction-families/scalar-and-control-families.md",
+        "role": "public-scalar-control-source-layer",
+        "sha256": "24a2919faaf0fcb6a1915ce5847f3cce3e471b7de4bc71ac9c4ae3f40fe28864",
+    },
+]
+
+# These are differences between a direct binary operation and a typed source
+# intrinsic. They are not unresolved semantic conflicts. The PTO-owned ASL and
+# catalogs remain authoritative at the binary architecture layer.
+TILE_LAYER_RESOLUTIONS = {
+    "TAXPY": (
+        "public-api-aligned",
+        "The public intrinsic exposes destination, source, and scalar roles matching the direct operation.",
+    ),
+    "TPREFETCH": (
+        "explicit-layer-difference",
+        "The typed intrinsic carries a destination-shaped lowering context; the direct architecture operation is a destination-free address hint and writes no tile state.",
+    ),
+    "TDEQUANT": (
+        "explicit-layer-difference",
+        "The public typed API carries scale and offset tiles; the direct binary operation carries scalar scale and zero-point operands.",
+    ),
+    "TCONCAT": (
+        "explicit-layer-difference",
+        "The public typed API derives layout and offers index-tile overloads; the direct binary operation carries an explicit axis operand.",
+    ),
+    "TDEINTERLEAVE": (
+        "public-api-aligned",
+        "A public intrinsic overload exposes two destinations and one source, matching the direct operation's core roles.",
+    ),
+    "TINTERLEAVE": (
+        "explicit-layer-difference",
+        "The public typed API exposes two destination tiles; the direct binary operation has one architectural destination and two sources.",
+    ),
+    "TSORT": (
+        "explicit-layer-difference",
+        "The public source spelling is TSORT32 and carries index or temporary tiles; the direct binary operation is TSORT with an explicit descending flag.",
+    ),
+    "THISTOGRAM": (
+        "public-api-aligned",
+        "The public intrinsic exposes destination, source, index, and selected-byte roles corresponding to the direct operation.",
+    ),
+    "TPARTARGMAX": (
+        "public-api-aligned",
+        "The public intrinsic exposes value and index destinations plus left and right value/index sources.",
+    ),
+    "TPARTARGMIN": (
+        "public-api-aligned",
+        "The public intrinsic exposes value and index destinations plus left and right value/index sources.",
+    ),
+    "TPUSH": (
+        "explicit-layer-difference",
+        "The typed source helper is a producer-side API; the direct architecture operation publishes a defined source into an explicit free TileInfo slot, preserves the producer, and has no hidden pipe state.",
+    ),
+    "TPOP": (
+        "explicit-layer-difference",
+        "The typed source helper is a consumer-side API; the direct architecture operation copies an explicit source slot into a matching configured consumer and then releases that source slot, with no hidden pipe state.",
+    ),
+    "TALLOC": (
+        "explicit-layer-difference",
+        "The typed source helper requests storage; the direct architecture operation allocates TileInfo capacity bounded by TILE_CAPACITY and makes contents undefined.",
+    ),
+    "TFREE": (
+        "explicit-layer-difference",
+        "The typed source helper releases storage; the direct architecture operation clears the corresponding TileInfo allocation state.",
+    ),
+}
+
+EXCLUDED_PUBLIC_TILE_OPERATIONS = {}
+
+
+def load(relative: str):
+    return json.loads((ROOT / relative).read_text(encoding="utf-8"))
+
+
+def public_url(path: str) -> str:
+    return f"{PUBLIC_REPOSITORY}/blob/{PUBLIC_COMMIT}/{path}"
+
+
+def source_rows() -> list[dict]:
+    rows = []
+    for source in PUBLIC_SOURCES:
+        row = dict(source)
+        row["url"] = public_url(source["path"])
+        rows.append(row)
+    return rows
+
+
+def scalar_rows(forms: list[dict]) -> list[dict]:
+    rows = []
+    for form in forms:
+        family = form["semantic_family"]
+        source_layer = (
+            "shared-scalar-source-layer"
+            if family in {"ALU", "FSU"}
+            else "scalar-control-or-lowering-layer"
+        )
+        rows.append(
+            {
+                "form_id": form["form_id"],
+                "mnemonic": form["mnemonic"],
+                "semantic_family": family,
+                "closure_status": "closed",
+                "public_layer": source_layer,
+            }
+        )
+    return rows
+
+
+def tile_rows(operations: list[dict]) -> list[dict]:
+    rows = []
+    for operation in operations:
+        name = operation["name"]
+        public_symbol = "TSORT32" if name == "TSORT" else name
+        if name in TILE_LAYER_RESOLUTIONS:
+            closure_basis, resolution = TILE_LAYER_RESOLUTIONS[name]
+        elif public_symbol not in PUBLIC_TILE_SYMBOLS:
+            closure_basis = "catalog-defined-direct-binary"
+            resolution = (
+                "The canonical PTO catalog defines this direct binary operation; "
+                "no typed public intrinsic symbol is required for the binary architecture."
+            )
+        else:
+            closure_basis = "public-source-supported"
+            resolution = (
+                "The canonical PTO operation is present in the audited public "
+                "intrinsic inventory with the same operation spelling."
+            )
+        rows.append(
+            {
+                "name": name,
+                "family": operation["family"],
+                "selector": operation.get("selector"),
+                "closure_status": "closed",
+                "closure_basis": closure_basis,
+                "public_symbol": public_symbol,
+                "public_symbol_relation": (
+                    "documented-spelling-mapping"
+                    if name == "TSORT"
+                    else "exact-name"
+                    if public_symbol in PUBLIC_TILE_SYMBOLS
+                    else "catalog-defined"
+                ),
+                "resolution": resolution,
+            }
+        )
+    return rows
+
+
+def excluded_public_tile_rows() -> list[dict]:
+    return [
+        {
+            "name": name,
+            "public_symbol": name,
+            "disposition": "source-api-only-not-a-direct-operation",
+            "resolution": resolution,
+        }
+        for name, resolution in sorted(EXCLUDED_PUBLIC_TILE_OPERATIONS.items())
+    ]
+
+
+def generate() -> dict:
+    scalar = load("spec/catalog/scalar-forms.json")
+    tile = load("spec/catalog/tile-operations.json")
+    scalars = scalar_rows(scalar["forms"])
+    tiles = tile_rows(tile["operations"])
+    excluded_tiles = excluded_public_tile_rows()
+    return {
+        "schema_version": 1,
+        "public_repository": PUBLIC_REPOSITORY,
+        "public_commit": PUBLIC_COMMIT,
+        "public_sources": source_rows(),
+        "public_tile_symbol_inventory": {
+            "count": len(PUBLIC_TILE_SYMBOLS),
+            "source_id": "public-intrinsic-api",
+            "source_sha256": "6fbd4bfb068606ee7cd00cb0b98d38e8550a026779d3d723d9a08934400e0e98",
+            "symbols": sorted(PUBLIC_TILE_SYMBOLS),
+        },
+        "policy": {
+            "authority": "PTO ASL, catalogs, and accepted architecture decisions define the direct binary architecture.",
+            "public_api_use": "The pinned public PTO repository is source-API and lowering evidence; matching names do not import unmodeled operands or behavior.",
+        },
+        "public_layer_sources": {
+            "shared-scalar-source-layer": [
+                "public-shared-scalar-arith",
+                "public-scalar-control",
+            ],
+            "scalar-control-or-lowering-layer": [
+                "public-scalar-control",
+                "public-source-precedence",
+            ],
+            "typed-tile-intrinsic-layer": [
+                "public-intrinsic-api",
+                "public-isa-scope",
+                "public-assembly-model",
+            ],
+        },
+        "summary": {
+            "scalar_forms": {"count": len(scalars), "closed": len(scalars), "open": 0},
+            "tile_operations": {
+                "count": len(tiles),
+                "closed": len(tiles),
+                "open": 0,
+                "public_exact_name": sum(
+                    row["public_symbol_relation"] == "exact-name" for row in tiles
+                ),
+                "public_spelling_mapping": sum(
+                    row["public_symbol_relation"] == "documented-spelling-mapping"
+                    for row in tiles
+                ),
+            },
+            "excluded_public_tile_operations": {
+                "count": len(excluded_tiles),
+                "closed": len(excluded_tiles),
+            },
+            "closure_basis": {
+                "public_source_supported": sum(
+                    row["closure_basis"] == "public-source-supported" for row in tiles
+                ),
+                "catalog_defined_direct_binary": sum(
+                    row["closure_basis"] == "catalog-defined-direct-binary"
+                    for row in tiles
+                ),
+                "public_api_aligned": sum(
+                    row["closure_basis"] == "public-api-aligned" for row in tiles
+                ),
+                "explicit_layer_difference": sum(
+                    row["closure_basis"] == "explicit-layer-difference" for row in tiles
+                ),
+                "open": 0,
+            },
+        },
+        "scalar_forms": scalars,
+        "tile_operations": tiles,
+        "excluded_public_tile_operations": excluded_tiles,
+    }
+
+
+def serialized() -> str:
+    return json.dumps(generate(), indent=2, ensure_ascii=True) + "\n"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    action = parser.add_mutually_exclusive_group(required=True)
+    action.add_argument("--check", action="store_true")
+    action.add_argument("--write", action="store_true")
+    args = parser.parse_args()
+    expected = serialized()
+    if args.write:
+        OUTPUT.write_text(expected, encoding="utf-8")
+        return 0
+    if not OUTPUT.exists() or OUTPUT.read_text(encoding="utf-8") != expected:
+        print(
+            "public source reconciliation is stale; run scripts/generate-public-source-reconciliation --write",
+            file=sys.stderr,
+        )
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

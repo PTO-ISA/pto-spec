@@ -72,7 +72,7 @@ begin
                     left_payload[[element]], right_payload[[element]]);
         end;
     end;
-    _Tiles[[destination]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(destination);
 end;
 
 func TileUnaryValue(op: TileUnaryOperation, value: Word) => Word
@@ -121,7 +121,7 @@ begin
                     source_payload[[element]], scalar, source_tile.data_type);
         end;
     end;
-    _Tiles[[destination]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(destination);
 end;
 
 func ExecuteTileFillScalar(destination: TileIndex, scalar: Word)
@@ -134,7 +134,7 @@ begin
                 column as integer {0..65535}, scalar);
         end;
     end;
-    _Tiles[[destination]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(destination);
 end;
 
 func ExecuteTileUnary(op: TileUnaryOperation, destination: TileIndex, source: TileIndex)
@@ -153,7 +153,7 @@ begin
                     source_payload[[element]]);
         end;
     end;
-    _Tiles[[destination]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(destination);
 end;
 
 impdef func TileProfilePReLU(value: Word, negative_slope: Word,
@@ -182,7 +182,7 @@ begin
                     source_tile.data_type);
         end;
     end;
-    _Tiles[[destination]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(destination);
 end;
 
 func ExecuteTileScalar(op: TileBinaryOperation, destination: TileIndex,
@@ -202,7 +202,7 @@ begin
                     source_payload[[element]], scalar);
         end;
     end;
-    _Tiles[[destination]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(destination);
 end;
 
 pure func TileCompareValue(comparison: TileComparison, left: Word, right: Word) => Word
@@ -246,7 +246,7 @@ begin
                     left_payload[[element]], right_payload[[element]]);
         end;
     end;
-    _Tiles[[destination]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(destination);
 end;
 
 func ExecuteTileCompareScalar(destination: TileIndex, source: TileIndex,
@@ -265,7 +265,7 @@ begin
                     payload[[element]], scalar);
         end;
     end;
-    _Tiles[[destination]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(destination);
 end;
 
 func ExecuteTileSelect(destination: TileIndex, mask: TileIndex,
@@ -291,7 +291,7 @@ begin
             end;
         end;
     end;
-    _Tiles[[destination]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(destination);
 end;
 
 func ExecuteTileSelectScalar(destination: TileIndex, mask: TileIndex,
@@ -314,5 +314,5 @@ begin
                 true_payload[[element]] else scalar_false;
         end;
     end;
-    _Tiles[[destination]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(destination);
 end;

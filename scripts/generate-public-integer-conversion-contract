@@ -1,0 +1,264 @@
+#!/usr/bin/env python3
+"""Generate the fail-closed public integer TCVT result-subset contract."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
+TYPE_BASELINE = ROOT / "spec/evidence/public-numeric-type-baseline.json"
+NUMERIC_CONTRACTS = ROOT / "spec/evidence/numeric-contracts.json"
+EXECUTABLE_COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
+ASL_MODEL = ROOT / "asl/tile/conversion.asl"
+ASL_TESTS = ROOT / "tests/asl/tile-tests.asl"
+OUTPUT = ROOT / "spec/evidence/public-integer-conversion-contract.json"
+ACCEPTANCE_RECORD = (
+    "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md"
+)
+
+
+def load(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise SystemExit(f"public integer conversion generation failed: {message}")
+
+
+def source(path: str) -> dict[str, str]:
+    absolute = ROOT / path
+    return {"path": path, "sha256": hashlib.sha256(absolute.read_bytes()).hexdigest()}
+
+
+def generate() -> dict[str, Any]:
+    inputs = load(DECISION_INPUTS)
+    types = load(TYPE_BASELINE)
+    inventory = load(NUMERIC_CONTRACTS)
+    comparison = load(EXECUTABLE_COMPARISON)
+
+    pd07 = next(row for row in inputs["decision_questions"] if row["id"] == "PD-07")
+    require(
+        pd07["status"] == "decision-required"
+        and pd07["selected_disposition"] is None
+        and pd07["decision_record"] is None,
+        "PD-07 must remain open",
+    )
+    require(
+        types["summary"]["public_integer_type_count"] == 8
+        and types["summary"]["accepted_catalog_binding_count"] == 16
+        and types["summary"]["accepted_result_rule_count"] == 0,
+        "public type baseline drift",
+    )
+    operation = next(
+        row for row in inventory["operations"] if row["key"] == "tile:TEPL:TCVT"
+    )
+    require(
+        operation["numeric_contract"] == "tile-convert"
+        and operation["primary_hooks"] == ["TileProfileConvert"],
+        "TCVT numeric ownership drift",
+    )
+    require(
+        comparison["status"] == "comparison-matrix-closed-clean-gates-passed:S5-T3",
+        "independent comparison status drift",
+    )
+
+    public_source = next(row for row in inputs["sources"] if row["id"] == "public-type-system")
+    require(public_source["layer"] == "public-contract", "type system is not public authority")
+
+    integer_types = [row for row in types["public_types"] if row["class"] == "integer"]
+    require(len(integer_types) == 8, "public integer type inventory drift")
+    tuples = []
+    for source_type in integer_types:
+        for destination_type in integer_types:
+            if source_type["storage_bits"] == destination_type["storage_bits"]:
+                continue
+            widening = source_type["storage_bits"] < destination_type["storage_bits"]
+            tuples.append(
+                {
+                    "id": (
+                        "public-integer-conversion/"
+                        f"{source_type['public_name']}-to-{destination_type['public_name']}"
+                    ),
+                    "operation_key": "tile:TEPL:TCVT",
+                    "domain": "tile-convert",
+                    "source_public_type_id": source_type["id"],
+                    "source_catalog_type": source_type["catalog_binding"],
+                    "source_bits": source_type["storage_bits"],
+                    "source_signed": source_type["signed"],
+                    "destination_public_type_id": destination_type["id"],
+                    "destination_catalog_type": destination_type["catalog_binding"],
+                    "destination_bits": destination_type["storage_bits"],
+                    "destination_signed": destination_type["signed"],
+                    "width_relation": "widening" if widening else "narrowing",
+                    "result_rule_id": (
+                        "PTO-NUM-INT-SIGN-EXTEND"
+                        if widening and source_type["signed"]
+                        else "PTO-NUM-INT-ZERO-EXTEND"
+                        if widening
+                        else "PTO-NUM-INT-TRUNCATE-HIGH"
+                    ),
+                    "profile_support_status": "operation-type-profile-legality-open",
+                    "result_status": "accepted-if-profile-supported",
+                    "result_acceptance_record": ACCEPTANCE_RECORD,
+                }
+            )
+
+    widening = [row for row in tuples if row["width_relation"] == "widening"]
+    narrowing = [row for row in tuples if row["width_relation"] == "narrowing"]
+    require(len(tuples) == 48, "unequal-width tuple count drift")
+    require(len(widening) == len(narrowing) == 24, "width relation partition drift")
+
+    model_body = ASL_MODEL.read_text(encoding="utf-8")
+    test_body = ASL_TESTS.read_text(encoding="utf-8")
+    require(
+        "NormalizeTileInteger(value, source_type), destination_type" in model_body,
+        "source-first ASL normalization missing",
+    )
+    for witness in (
+        "TileDataType_S8, TileDataType_S16",
+        "TileDataType_U8, TileDataType_U16",
+        "TileDataType_S16, TileDataType_U8",
+        "TileDataType_U16, TileDataType_S8",
+        "TileDataType_S64, TileDataType_U8",
+    ):
+        require(witness in test_body, f"integer conversion witness missing: {witness}")
+
+    return {
+        "schema_version": 1,
+        "target": "S5-T2-A6:PD-07-SC1",
+        "decision_id": "PD-07",
+        "checkpoint_id": "PD-07-SC1",
+        "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
+        "acceptance_record": ACCEPTANCE_RECORD,
+        "policy": {
+            "authority": "The pinned public PTO type system defines widening and narrowing results.",
+            "support_separation": "A result rule applies only after the selected target profile accepts the operation/type tuple.",
+            "same_width_excluded": "Equal-width signedness changes are not inferred from widening or narrowing prose.",
+            "floating_excluded": "Floating, float/integer, quantization, rounding, saturation, exceptional-value, and flag rules remain open.",
+            "independent_model_role": "The pinned independent executable model corroborates structure only and is not PTO authority.",
+        },
+        "operation": {
+            "key": "tile:TEPL:TCVT",
+            "mnemonic": "TCVT",
+            "public_name": "pto.tcvt",
+            "domain": "tile-convert",
+            "semantic_handler": "TCVT",
+            "portable_result_function": "TileConvertValue",
+            "floating_profile_hook": "TileProfileConvert",
+        },
+        "result_rules": [
+            {
+                "id": "PTO-NUM-INT-SIGN-EXTEND",
+                "applicability": "source and destination are public integer types and destination is wider than a signed source",
+                "result": "sign-extend the source-width bit pattern to the destination width",
+                "status": "accepted-portable-result-rule",
+            },
+            {
+                "id": "PTO-NUM-INT-ZERO-EXTEND",
+                "applicability": "source and destination are public integer types and destination is wider than an unsigned source",
+                "result": "zero-extend the source-width bit pattern to the destination width",
+                "status": "accepted-portable-result-rule",
+            },
+            {
+                "id": "PTO-NUM-INT-TRUNCATE-HIGH",
+                "applicability": "source and destination are public integer types and destination is narrower",
+                "result": "retain the low destination-width bits and discard all higher source bits",
+                "status": "accepted-portable-result-rule",
+            },
+        ],
+        "conversion_tuples": tuples,
+        "source_line_contracts": [
+            {
+                "source_id": "public-type-system",
+                "sha256": public_source["sha256"],
+                "line_ranges": ["100-107", "117-124"],
+                "claim": "integer widening/narrowing results and pto.tcvt operation identity",
+            }
+        ],
+        "independent_comparison": {
+            "status": "algorithmic-corroboration-only-not-pto-authority",
+            "provenance_sha256": comparison["snapshot"]["revision_sha256"],
+            "model_surface": "independent vector integer-conversion executable subset",
+            "corroborated": [
+                "source-width interpretation precedes destination conversion",
+                "signed widening sign-extends",
+                "unsigned widening zero-extends",
+                "narrowing truncates high bits",
+            ],
+            "limits": [
+                "the compared vector instructions are outside the accepted PTO ISA surface",
+                "the comparison type codes, predicate behavior, and packed register representation are not imported",
+                "the comparison does not define PTO target-profile support for TCVT",
+            ],
+        },
+        "open_residuals": [
+            {"id": "PD-07-R1", "rule": "decide same-width integer signedness conversions"},
+            {"id": "PD-07-R2", "rule": "complete floating and float/integer conversion results"},
+            {"id": "PD-07-R3", "rule": "complete every operation/type/profile support tuple"},
+            {"id": "PD-07-R4", "rule": "define overflow, saturation, indefinite, NaN, and infinity results"},
+            {"id": "PD-07-R5", "rule": "define rounding and numeric-flag results"},
+            {"id": "PD-07-R6", "rule": "publish independent target-conformance vectors"},
+        ],
+        "tests": [
+            {
+                "path": "tests/asl/tile-tests.asl",
+                "function": "TestTileConversion",
+                "coverage": "signed widening, unsigned widening, narrowing, cross-signedness, 64-bit source, and direct TCVT execution",
+            }
+        ],
+        "sources": [
+            source("spec/evidence/numeric-profile-decision-inputs.json"),
+            source("spec/evidence/public-numeric-type-baseline.json"),
+            source("spec/evidence/numeric-contracts.json"),
+            source("spec/evidence/executable-model-comparison.json"),
+            source("asl/tile/conversion.asl"),
+            source("tests/asl/tile-tests.asl"),
+            source(ACCEPTANCE_RECORD),
+        ],
+        "summary": {
+            "public_integer_type_count": 8,
+            "candidate_ordered_pair_count": 64,
+            "same_width_pair_count": 16,
+            "accepted_unequal_width_tuple_count": 48,
+            "accepted_widening_tuple_count": 24,
+            "accepted_narrowing_tuple_count": 24,
+            "accepted_result_rule_count": 3,
+            "accepted_domain_rule_count": 0,
+            "accepted_profile_support_rule_count": 0,
+            "open_residual_count": 6,
+            "pd07_complete": False,
+            "tile_convert_domain_complete": False,
+            "s5_t2_a_complete": False,
+            "s5_t2_complete": False,
+        },
+    }
+
+
+def serialized() -> str:
+    return json.dumps(generate(), indent=2, ensure_ascii=False) + "\n"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    action = parser.add_mutually_exclusive_group(required=True)
+    action.add_argument("--check", action="store_true")
+    action.add_argument("--write", action="store_true")
+    args = parser.parse_args()
+    expected = serialized()
+    if args.write:
+        OUTPUT.write_text(expected, encoding="utf-8")
+        return 0
+    if not OUTPUT.is_file() or OUTPUT.read_text(encoding="utf-8") != expected:
+        raise SystemExit(f"stale generated evidence: {OUTPUT.relative_to(ROOT)}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

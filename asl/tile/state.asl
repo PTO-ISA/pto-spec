@@ -47,10 +47,9 @@ end;
 
 readonly func TileCapacityIsLegal(capacity_bytes: integer {0..262144}) => boolean
 begin
-    return capacity_bytes == 0 ||
-           (capacity_bytes >= PTO_TILE_CELL_BYTES &&
-            capacity_bytes MOD PTO_TILE_CELL_BYTES == 0 &&
-            capacity_bytes <= TileCapacityLimitBytes());
+    return capacity_bytes >= PTO_TILE_CELL_BYTES &&
+           capacity_bytes MOD PTO_TILE_CELL_BYTES == 0 &&
+           capacity_bytes <= TileCapacityLimitBytes();
 end;
 
 pure func TileSizeCodeIsLegal(size_code: integer {0..15}) => boolean
@@ -59,7 +58,7 @@ begin
 end;
 
 pure func TileSizeCodeBytes(size_code: integer {3..9})
-                            => integer {128,256,512,1024,2048,4096,8192}
+    => integer {128,256,512,1024,2048,4096,8192}
 begin
     case size_code of
         when 3 => return 128;
@@ -72,21 +71,72 @@ begin
     end;
 end;
 
+pure func TileElementBits(data_type: TileDataType) => integer {4,8,16,32,64}
+begin
+    case data_type of
+        when TileDataType_E2M1X2, TileDataType_E1M2X2,
+             TileDataType_HiF4X2, TileDataType_S4X2,
+             TileDataType_U4X2 => return 4;
+        when TileDataType_S8, TileDataType_U8, TileDataType_HiF8,
+             TileDataType_E4M3, TileDataType_E5M2, TileDataType_E3M2,
+             TileDataType_E2M3, TileDataType_E8M0 => return 8;
+        when TileDataType_S16, TileDataType_U16, TileDataType_FP16,
+             TileDataType_BF16 => return 16;
+        when TileDataType_S32, TileDataType_U32,
+             TileDataType_FP32, TileDataType_TF32,
+             TileDataType_HF32 => return 32;
+        when TileDataType_S64, TileDataType_U64,
+             TileDataType_FP64 => return 64;
+    end;
+end;
+
+pure func TileDataTypeIsFourBit(data_type: TileDataType) => boolean
+begin
+    return data_type == TileDataType_E2M1X2 ||
+           data_type == TileDataType_E1M2X2 ||
+           data_type == TileDataType_HiF4X2 ||
+           data_type == TileDataType_S4X2 ||
+           data_type == TileDataType_U4X2;
+end;
+
+pure func TileStorageBytes(rows: integer {0..65535},
+                           columns: integer {0..65535},
+                           data_type: TileDataType) => integer
+begin
+    // Capacity accounting is bit-packed. In particular, two four-bit
+    // elements occupy one byte and an odd final element rounds up.
+    return ((rows * columns * TileElementBits(data_type)) + 7) DIVRM 8;
+end;
+
+pure func TileStorageFitsCapacity(rows: integer {0..65535},
+                                  columns: integer {0..65535},
+                                  data_type: TileDataType,
+                                  capacity_bytes: integer {0..262144})
+    => boolean
+begin
+    return TileStorageBytes(rows, columns, data_type) <= capacity_bytes;
+end;
+
 func ConfigureTile(index: TileIndex, capacity_bytes: integer {0..262144},
                    rows: integer {0..65535}, columns: integer {0..65535},
                    valid_rows: integer {0..65535}, valid_columns: integer {0..65535},
                    data_type: TileDataType, layout: TileLayout, location: TileLocation)
 begin
     assert TileCapacityIsLegal(capacity_bytes);
+    assert rows > 0;
+    assert columns > 0;
     assert valid_rows <= rows;
     assert valid_columns <= columns;
+    assert TileStorageFitsCapacity(rows, columns, data_type, capacity_bytes);
     assert rows * columns <= PTO_MODEL_TILE_ELEMENTS;
     assert TileCapacityInUseExcept(index) + capacity_bytes <=
         TileCapacityLimitBytes();
-    _Tiles[[index]].allocated = capacity_bytes != 0;
+    _Tiles[[index]].allocated = TRUE;
     // Allocation defines TileInfo but not the payload. A producer must write
     // the tile before any generic payload read is legal.
     _Tiles[[index]].contents_defined = FALSE;
+    _Tiles[[index]].defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
+    _Tiles[[index]].defined_valid_elements = 0;
     _Tiles[[index]].capacity_bytes = capacity_bytes;
     _Tiles[[index]].rows = rows;
     _Tiles[[index]].columns = columns;
@@ -101,11 +151,16 @@ func ReleaseTile(index: TileIndex)
 begin
     _Tiles[[index]].allocated = FALSE;
     _Tiles[[index]].contents_defined = FALSE;
+    _Tiles[[index]].defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
+    _Tiles[[index]].defined_valid_elements = 0;
     _Tiles[[index]].capacity_bytes = 0;
     _Tiles[[index]].rows = 0;
     _Tiles[[index]].columns = 0;
     _Tiles[[index]].valid_rows = 0;
     _Tiles[[index]].valid_columns = 0;
+    _Tiles[[index]].data_type = TileDataType_U8;
+    _Tiles[[index]].layout = TileLayout_RowMajor;
+    _Tiles[[index]].location = TileLocation_Any;
 end;
 
 readonly func TileGenericIndexingPermitted(tile: TileInfo) => boolean
@@ -166,8 +221,6 @@ begin
            data_type == TileDataType_HiF4X2;
 end;
 
-// CUBE command headers name the logical matrix/result type. ACC stores the
-// wider physical class selected by that logical type.
 pure func TileMatrixAccumulatorDataType(data_type: TileDataType) => TileDataType
 begin
     if data_type == TileDataType_FP64 then return TileDataType_FP64; end;
@@ -178,9 +231,6 @@ begin
     return TileDataType_FP32;
 end;
 
-// Portable safe materialization for B.DATR padding. Integer extrema are exact.
-// The raw-carrier reference profile uses all-ones/one-sign-bit sentinels for
-// floating Max/Min; a hardware IEEE profile refines those carrier encodings.
 pure func TilePadValueForDataType(pad_value: TilePadValue,
                                   data_type: TileDataType) => Word
 begin
@@ -254,9 +304,17 @@ end;
 readonly func ReadTileElement(index: TileIndex, row: integer {0..65535},
                      column: integer {0..65535}) => Word
 begin
-    assert _Tiles[[index]].contents_defined;
     let element = TileLinearIndex(_Tiles[[index]], row, column);
+    assert _Tiles[[index]].defined_elements[element] == '1';
     return _Tiles[[index]].payload[[element]];
+end;
+
+readonly func TileElementDefined(index: TileIndex,
+                                 row: integer {0..65535},
+                                 column: integer {0..65535}) => boolean
+begin
+    let element = TileLinearIndex(_Tiles[[index]], row, column);
+    return _Tiles[[index]].defined_elements[element] == '1';
 end;
 
 func WriteTileElement(index: TileIndex, row: integer {0..65535},
@@ -264,6 +322,35 @@ func WriteTileElement(index: TileIndex, row: integer {0..65535},
 begin
     let element = TileLinearIndex(_Tiles[[index]], row, column);
     _Tiles[[index]].payload[[element]] = value;
+    if _Tiles[[index]].defined_elements[element] == '0' then
+        _Tiles[[index]].defined_elements[element] = '1';
+        if row < _Tiles[[index]].valid_rows &&
+           column < _Tiles[[index]].valid_columns then
+            assert _Tiles[[index]].defined_valid_elements <
+                PTO_MODEL_TILE_ELEMENTS;
+            _Tiles[[index]].defined_valid_elements =
+                (_Tiles[[index]].defined_valid_elements + 1)
+                    as integer {0..4096};
+        end;
+    end;
+    _Tiles[[index]].contents_defined =
+        _Tiles[[index]].defined_valid_elements ==
+            _Tiles[[index]].valid_rows * _Tiles[[index]].valid_columns;
+end;
+
+func MarkTileValidRegionDefined(index: TileIndex)
+begin
+    let tile = _Tiles[[index]];
+    for row = 0 to tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
+            let element = TileLinearIndex(tile,
+                row as integer {0..65535}, column as integer {0..65535});
+            _Tiles[[index]].defined_elements[element] = '1';
+        end;
+    end;
+    _Tiles[[index]].defined_valid_elements =
+        (tile.valid_rows * tile.valid_columns)
+            as integer {0..4096};
     _Tiles[[index]].contents_defined = TRUE;
 end;
 

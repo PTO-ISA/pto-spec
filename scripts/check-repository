@@ -24,9 +24,21 @@ required_files=(
     .codex/skills/pto-asl/SKILL.md
     asl/architecture.asl
     docs/architecture.md
+    docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md
+    docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md
+    docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md
+    docs/architecture-decisions/0040-numeric-format-namespace-ownership.md
+    docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md
+    docs/architecture-decisions/0042-numeric-variation-point-ownership.md
+    docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md
+    docs/architecture-decisions/0044-public-integer-conversion-result-subset.md
+    docs/architecture-decisions/0045-pto-isa-release-tile-contract.md
     docs/coverage.md
     docs/memory-model.md
     docs/modeling-conventions.md
+    docs/maturity-bringup-plan.md
+    docs/maturity-stage-targets.md
+    docs/numeric-profile-decision-register.md
     docs/normative-sources.md
     docs/profile-contracts.md
     docs/review-checklist.md
@@ -34,6 +46,8 @@ required_files=(
     spec/requirements.json
     spec/catalog/scalar-forms.json
     spec/catalog/command-forms.json
+    spec/catalog/numeric-profile-identities.json
+    spec/catalog/numeric-profile-applicability.json
     spec/catalog/system-registers.json
     spec/catalog/tile-operations.json
     spec/hardware-conformance-profile.json
@@ -41,10 +55,50 @@ required_files=(
     spec/evidence/pto-isa-0571-abi-vectors.json
     spec/evidence/pto-isa-0571-encoding-totality.json
     spec/evidence/pto-isa-0571-hardware-numeric-vectors.json
-    scripts/check-release-manifest
-    scripts/generate-release-manifest
+    spec/evidence/public-source-reconciliation.json
+    spec/evidence/maturity-closure.json
+    spec/evidence/release-gate-readiness.json
+    spec/evidence/release-traceability-readiness.json
+    spec/evidence/numeric-conformance-readiness.json
+    spec/evidence/numeric-contracts.json
+    spec/evidence/numeric-profile-decision-inputs.json
+    spec/evidence/numeric-profile-decision-proposals.json
+    spec/evidence/public-numeric-type-baseline.json
+    spec/evidence/public-integer-conversion-contract.json
+    spec/evidence/numeric-format-namespace-contract.json
+    spec/evidence/numeric-profile-applicability-closure.json
+    spec/evidence/numeric-variation-point-ownership.json
+    spec/evidence/numeric-rounding-selector-contract.json
+    spec/evidence/bundle-command-totality.json
+    spec/evidence/cube-totality.json
+    spec/evidence/executable-model-comparison.json
+    spec/evidence/scalar-agu-totality.json
+    spec/evidence/scalar-alu-totality.json
+    spec/evidence/scalar-bru-totality.json
+    spec/evidence/scalar-fsu-totality.json
+    spec/evidence/scalar-numeric-flag-contract.json
+    spec/evidence/scalar-effect-closure.json
+    spec/evidence/tepl-totality.json
+    spec/evidence/tma-totality.json
+    scripts/generate-bundle-command-totality
+    scripts/generate-executable-model-comparison
     scripts/generate-instruction-reference
+    scripts/generate-numeric-conformance-readiness
+    scripts/generate-numeric-profile-decision-inputs
+    scripts/generate-numeric-profile-decision-proposals
+    scripts/generate-public-numeric-type-baseline
+    scripts/generate-public-integer-conversion-contract
+    scripts/generate-numeric-format-namespace-contract
+    scripts/generate-numeric-profile-applicability-closure
+    scripts/generate-numeric-variation-point-ownership
+    scripts/generate-numeric-rounding-selector-contract
+    scripts/generate-public-source-reconciliation
+    scripts/generate-release-gate-readiness
+    scripts/generate-release-manifest
+    scripts/generate-release-traceability-readiness
+    scripts/generate-scalar-numeric-flag-contract
     tests/README.md
+    scripts/check-release-manifest
 )
 
 for path in "${required_files[@]}"; do
@@ -135,6 +189,19 @@ for script in scripts/*; do
 done
 
 python3 scripts/check-catalogs
+./scripts/generate-bundle-command-totality --check
+./scripts/generate-numeric-conformance-readiness --check
+./scripts/generate-numeric-profile-decision-inputs --check
+./scripts/generate-scalar-numeric-flag-contract --check
+./scripts/generate-numeric-rounding-selector-contract --check
+./scripts/generate-numeric-format-namespace-contract --check
+./scripts/generate-public-numeric-type-baseline --check
+./scripts/generate-public-integer-conversion-contract --check
+./scripts/generate-numeric-profile-applicability-closure --check
+./scripts/generate-numeric-variation-point-ownership --check
+./scripts/generate-numeric-profile-decision-proposals --check
+./scripts/generate-release-traceability-readiness --check
+./scripts/generate-release-gate-readiness --check
 python3 scripts/generate-instruction-reference --check
 ./scripts/check-release-manifest
 python3 scripts/check-publication-hygiene

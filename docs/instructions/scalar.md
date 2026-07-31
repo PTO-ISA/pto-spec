@@ -11,7 +11,7 @@ This page is generated from the canonical PTO catalogs under `spec/catalog/`.
 | Accepted forms | 474 |
 | Operand fields | 45 |
 | Operand pieces | 1867 |
-| Semantic handlers | 68 |
+| Semantic handlers | 69 |
 | Lengths | 16b=27, 32b=260, 48b=187 |
 
 ## Families
@@ -30,7 +30,6 @@ This page is generated from the canonical PTO catalogs under `spec/catalog/`.
 | Handler | Forms |
 | --- | --- |
 | AddToPC | 2 |
-| ApplyScalarRightModifier | 1 |
 | ArchitectureAssert | 1 |
 | ArchitectureCloseRequest | 1 |
 | ArchitectureEnterRequest | 1 |
@@ -72,20 +71,22 @@ This page is generated from the canonical PTO catalogs under `spec/catalog/`.
 | JumpRegister | 1 |
 | JumpRelative | 1 |
 | LoadReserved | 4 |
-| MaterializeLUI | 2 |
+| MaterializeLUI | 1 |
 | MaterializeLongSigned | 2 |
 | MaterializeLongUnsigned | 1 |
 | ModifyBitfield | 2 |
+| MoveScalarValue | 2 |
 | MultiplyWord | 2 |
 | ReverseBitfieldBytes | 1 |
-| ScalarBinary | 33 |
+| ScalarBinary | 32 |
 | ScalarBinaryW | 21 |
 | ScalarConditionalSelect | 1 |
 | ScalarDivideSigned | 1 |
 | ScalarDivideSignedW | 1 |
 | ScalarDivideUnsigned | 1 |
 | ScalarDivideUnsignedW | 1 |
-| ScalarMultiplyAdd | 2 |
+| ScalarMultiplyAdd | 1 |
+| ScalarMultiplyAddW | 1 |
 | ScalarMultiplyImmediateAdd | 2 |
 | ScalarMultiplyW | 2 |
 | ScalarPrefetch | 6 |
@@ -94,6 +95,6 @@ This page is generated from the canonical PTO catalogs under `spec/catalog/`.
 | ScalarRemainderUnsigned | 1 |
 | ScalarRemainderUnsignedW | 1 |
 | SetCommitTarget | 2 |
-| SetReturnAddress | 2 |
+| SetReturnAddress | 3 |
 | SoftwareBreakpoint | 2 |
 | StoreConditional | 4 |

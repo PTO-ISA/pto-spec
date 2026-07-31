@@ -21,6 +21,7 @@ distinguishes clone-verifiable checks, GitHub settings, and human review.
 | Catalogs, decoder reachability, profile hooks, feature evidence, and public-source dispositions agree | `scripts/check-catalogs` |
 | Prohibited source identities, stale URLs, and broken local documentation links stay unpublished | `scripts/check-publication-hygiene` |
 | Generated artifacts stay untracked and scripts are syntactically valid | `scripts/check-repository` |
+| The S6-T2 gate inventory, workflow pins, parallel topology, external controls, and empty-before-candidate evidence slots remain exact | `scripts/generate-release-gate-readiness` and `scripts/check-catalogs` |
 | Review routing for normative, toolchain, and governance paths | `.github/CODEOWNERS` |
 | Admin-only updates, required `validate`, signed commits, linear history, resolved conversations, no force push or deletion | GitHub branch protection on `main` |
 | Change-class isolation, requirement traceability, architecture decisions, and two-perspective normative review | Human review against `docs/review-checklist.md` |
@@ -76,3 +77,22 @@ evidence.
 `scripts/check-repository` enforces the mechanical part of that transition:
 every supported status requires `normative = true` and a non-empty `ASL_TESTS`.
 The remaining conditions are review obligations.
+
+### Architecturally-complete candidate evidence
+
+`spec/evidence/release-gate-readiness.json` separates clone-verifiable policy
+from release-candidate evidence. Its gate contract and parallel topology may
+close while the repository remains a draft, but the candidate fields must stay
+empty until all Stage 0–5 targets and S6-T1 close.
+
+At candidate freeze, one signed commit must receive:
+
+- clean-tree results for every listed local gate, including the complete
+  parallel runtime suite;
+- a passing hosted `validate` result for the same commit;
+- a timestamped GitHub API snapshot proving all listed branch and repository
+  controls; and
+- accepted PTO architecture and formal-model dispositions naming that commit.
+
+No earlier branch run, unpinned approval, or administrator merge capability can
+substitute for those candidate-specific records.

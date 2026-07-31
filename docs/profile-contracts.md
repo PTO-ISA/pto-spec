@@ -5,103 +5,50 @@ auditable layer rather than hidden backend behavior. The normative repository
 selects one complete executable implementation, `pto-v0`, in
 `asl/profiles/pto-v0.asl`. Every registered interface has exactly one matching
 `implementation func` and a direct witness in `tests/asl/profile-tests.asl`.
-The machine-readable authority for that executable reference-test layer is
-`spec/profile-hooks.json`. The separate hardware numeric contract is
-`spec/hardware-conformance-profile.json`.
+The machine-readable authority is `spec/profile-hooks.json`.
 
-The interface declaration, active implementation, and conformance tests travel
-together. Removing, renaming, or adding a hook must update all three in one
-reviewable change. An alternative implementation is conforming only if it names
-the replaced hooks, satisfies every recorded obligation, preserves non-profile
-architecture behavior, and supplies raw input/output and state-effect tests.
+The interface declaration, active implementation, and direct profile tests
+travel together. Removing, renaming, or adding a hook must update all three in
+one reviewable change. The registry records implementation status separately
+from target-conformance status: all 37 hooks have deterministic PTO-v0
+implementations, and eight non-numeric hooks close their reference contracts.
+The checked `S5-T1` inventory assigns all 30 numeric hooks to their affected
+scalar and tile operations. Those hooks retain `S5-T2` target-conformance
+obligations. The generated
+`spec/evidence/numeric-conformance-readiness.json` ledger divides those
+obligations into six exact parallel lanes and keeps every unavailable profile,
+oracle, vector, result, and review identity null. An alternative
+implementation is conforming only if it names the replaced hooks, satisfies
+every recorded obligation, preserves non-profile architecture behavior, and
+supplies raw input/output and state-effect tests.
 
-## Profile identities
+## Numeric identity and selection framework
 
-PTO ISA 0.57.1 defines a hardware-conformance numeric contract using IEEE-754
-behavior, canonical quiet NaN, and IEEE signed zero. Rounding, saturation, and
-canonicalization are selected by B.DATR and per-operation legality. The
-checked-in `pto-v0` implementation is a separately identified deterministic
-reference-test profile. Its raw-carrier results are executable formal evidence
-but are not hardware-conformance results.
+ADR 0037 and `spec/catalog/numeric-profile-identities.json` accept four stable
+identities without claiming that their numeric rules are complete:
 
-The hardware profile identity is
-`pto-hardware-numeric-0.57.1-ieee-v1`. A hardware, emulator, compiler/runtime
-pair, or performance model may claim that identity only when it matches the
-release content hash, passes every generated numeric boundary vector, and
-provides independent operation-level legality, exception, byte, and effect
-evidence. This repository currently publishes the contract and vectors; it
-does not claim that the raw-carrier ASL implementation passes them.
+| Identity | Contract |
+| --- | --- |
+| `pto-numeric-v1` | Portable numeric legality, result, bounded-variation, and pre-effect rejection contract. |
+| `pto-cpu-observation-v1` | Observation-only CPU implementation evidence; never architecture or an independent oracle. |
+| `pto-a2a3-numeric-v1` | A2A3 support restrictions and explicitly delegated bounded result rules. |
+| `pto-a5-numeric-v1` | A5 support restrictions and explicitly delegated bounded result rules. |
 
-## Hardware numeric contract
+The identity framework is fail-closed. A target may narrow support but cannot
+silently change the portable result of an accepted tuple. A delegated variation
+must name a target profile or visible mode and provide a finite or
+mathematically testable allowed-result contract. Unknown profiles, modes,
+formats, tuples, and missing delegated rules reject before architectural
+effects. The identity spellings and selection rules are closed; the 12 numeric
+decisions and all 20 domain rules remain open.
 
-The machine-readable profile freezes all 25 accepted DataType codes and the six
-reserved codes. It records storage width, logical packed-lane count, format
-identity, integer extrema, and every available canonical NaN. E4M3, E5M2,
-E3M2, E2M3, E2M1, and E8M0 use their exact OCP encodings. HiF8 uses the exact
-variable-width Dot/Exponent/Mantissa prefix encoding, including its single zero,
-NaN, infinities, and denormal exponent extension. `E1M2X2` and `HiF4X2` remain
-distinct DataType identities even though both use the public 16-value E1M2 lane
-table. Formats without a NaN or infinity encoding are not assigned one by PTO.
+ADR 0038 fixes the shared scalar exception-state envelope independently of
+target arithmetic. `CORE_STATE[36:32]` stores sticky NV/DZ/OF/UF/NX; reset,
+software replacement, simultaneous OR, rejected-operation preservation, and
+trap recovery are portable. The 30-form ownership matrix is complete, but 19
+profile-owned forms still require exact flag-production rules and vectors.
 
-For every X2 DataType, Tile dimensions count logical lanes. Logical even lane
-`2*i` occupies byte `i` bits 3:0 and logical odd lane `2*i+1` occupies bits 7:4.
-An unused high nibble in an odd logical extent is reserved and zero on
-publication. Subnormal values are supported by each format that defines them;
-flush-to-zero behavior is non-conforming for those formats.
-
-B.DATR has the following hardware-profile meaning:
-
-- `CMode=0..5` selects EQ, NE, LT, GT, LE, or GE; 6 and 7 are reserved.
-- `RMode=0` uses the operation default, which is RNE for numeric conversion.
-  Codes 1 through 7 select RNE, RTZ, RDN, RUP, RNA, RTO, and RHB exactly as
-  defined by the machine-readable profile.
-- With `Sat=0`, integer arithmetic wraps, floating overflow produces infinity,
-  and invalid float-to-integer conversion produces the exact destination
-  indefinite value: the signed minimum or unsigned maximum, independently per
-  packed lane. With `Sat=1`, integer and conversion results clamp, NaN-to-integer
-  produces zero, and floating overflow clamps to maximum finite.
-- `Canonicalize=1` canonicalizes NaN inputs before the operation.
-  `Canonicalize=0` preserves source classification and payload while reading,
-  but any NaN result is still canonical. Neither setting erases signed zero.
-
-Floating comparisons are unordered on NaN: EQ and ordered relations are false,
-NE is true, and a signaling NaN reports invalid. Positive and negative zero
-compare equal. Minimum and maximum return the numeric input when exactly one
-input is NaN, canonical qNaN when both are NaN, `-0` for minimum, and `+0` for
-maximum.
-
-Reductions process increasing logical row-major indices without reassociation
-and round to the declared accumulator type after each step. ARGMIN/ARGMAX ties
-select the lowest original index. Empty reductions are illegal before effects.
-Sum/product propagate canonical qNaN; min/max ignore NaN when any numeric input
-exists and return canonical qNaN for an all-NaN input.
-
-TSORT processes exactly 32 elements, returns each value with its U32 original
-index, remains stable for equal values and signed zeros, and places stable NaNs
-after all numeric values for either direction.
-
-Matrix dot products advance in increasing logical K order. Ordinary matrix
-forms accept every assigned numeric DataType except E8M0; left, right, command
-header, and bias use the same logical type. FP64 uses physical FP64 ACC; other
-floating types use FP32 ACC; signed and unsigned integers use S64 and U64 ACC.
-
-MX forms use an FP32 command header, FP32 ACC, FP32 bias, and E8M0 scales. Their
-accepted operand pairs are the four ordered E4M3/E5M2 combinations and the four
-ordered E2M1X2/HiF4X2 combinations. K is partitioned into blocks of 32 logical
-elements: ScaleA has shape `M x ceil(K/32)` and ScaleB has shape
-`ceil(K/32) x N`. Each input is scaled by its K-block scale before the fused
-multiply-add. A `.ACC` form computes old ACC plus this newly scaled dot product;
-it never scales the old ACC. Bias is added after the complete dot product.
-ACCCVT rounds once to the destination type and releases ACC only after complete
-Tile publication.
-
-`spec/evidence/pto-isa-0571-hardware-numeric-vectors.json` is generated from
-this profile. It covers canonical NaNs, signed zero, every rounding mode,
-saturation, unordered comparisons, reduction ties/NaNs, stable 32-element sort,
-low-format encodings, packed lane order, integer indefinite results, and matrix
-initialization/bias/accumulate/MX K-block boundaries.
-
-## PTO v0 reference-test behavior
+## PTO v0 concrete behavior
 
 ### Reset, access-control rings, and time
 
@@ -118,13 +65,45 @@ translation, interrupt, and debug register families whose low index is at
 least `0xF00` require ACR0. A denied system
 register access raises `Fault_IllegalInstruction` before the access.
 
+The banked `EBARG` range is the PTO v0 first-layer trap snapshot. Trap entry
+records visible PC, target, return, queue, and bundle-control state there;
+`ACRE` consumes those visible words and clears the snapshot-valid bit. ACR0 may
+edit a managed ring's snapshot before recovery. Bundle argument and commit
+state without allocated `EBARG` words use bounded profile-defined `EBSTATE`
+backing and are not aliases for hidden system registers.
+
 The bounded reference memory is 4096 bytes. ACR0 and ACR1 can access the full
 range; ACR2 through ACR15 can access bytes 0 through 3071. Translation is identity.
-Permission and bounds failure use the existing data-page fault envelope.
+Permission and bounds failure use the existing data-page fault envelope. The
+translation and permission hooks are readonly: a profile may refine the address
+or access decision, but probing an access cannot itself mutate architectural
+state.
+
+Scalar prefetch does not enter this translation or permission path. All five-bit
+`model` values are legal PTO v0 hint metadata with no architecture-visible
+effect. Prefetch forms a modulo-64-bit address but emits no event, touches no
+memory or reservation state, and cannot fault. Address-returning forms publish
+that formed address through the ordinary Reg5 destination rules. A target may
+use the hint metadata microarchitecturally without creating a new architectural
+effect; any observable reinterpretation requires a separately named profile.
 
 TIME and CYCLE return the same 64-bit modulo counter. Reset sets it to zero and
 each scalar or tile decoded execution attempt increments it once, including an
 attempt that is later rejected or faults.
+
+PTO v0 resets `ECONFIG[1:0]` to `11` in all 16 ACR banks. Its interrupt pending
+bitmap, lowest-ID priority, acknowledgement, timer comparison, and enable
+behavior are defined by ADR 0016. Translation and debug control registers not
+otherwise consumed by PTO v0 remain visible storage-only profile state; that
+classification does not claim active MMU or debug-trigger behavior.
+
+PTO-v0 cache maintenance is a synchronous local epoch completion with an
+opaque 64-bit scope token. TLB maintenance is ACR0-only and applies the
+canonical-VA48 or low-16-bit ASID checks fixed by ADR 0031. The profile does not
+claim physical cache or TLB structures. `BSE`, `BWE`, `BWI`, and `BWT` publish
+nonblocking scheduling requests; physical suspension and wakeup do not add
+architecture-visible PTO-v0 state. A profile that activates MMU, debug, cache
+topology, or visible scheduler state must use a distinct identity and evidence.
 
 ### Numeric carrier profile
 
@@ -136,7 +115,8 @@ host floating library can change execution.
 
 - The real-number exponential helper is an 18-term Taylor reference algorithm.
 - Scalar raw ADD/SUB/MUL/DIV and fused variants use modular XLEN carrier
-  arithmetic; zero DIV/reciprocal returns all ones and records DZ.
+  arithmetic; either signed zero DIV/reciprocal returns all ones and records
+  DZ, as fixed by ADR 0028.
 - Scalar conversion hooks preserve the source carrier before the normative
   destination-width normalization already defined in scalar ASL.
 - Tile arithmetic, reduction, expansion, partial, conversion, matrix, and
@@ -145,8 +125,25 @@ host floating library can change execution.
   uses unsigned all-ones division. Quantization and dequantization use the
   declared scale and zero-point word operations.
 
-This profile makes the formal reference model total and reproducible. It must
-not silently reinterpret `pto-v0` results as the 0.57.1 hardware profile.
+This profile makes the current formal model total and reproducible. It does not
+silently acquire the rules of another profile.
+
+### PTO ISA 0.57.1 hardware numeric contract
+
+`pto-hardware-numeric-0.57.1-ieee-v1` is the separately named hardware numeric
+contract accepted by ADR 0045. It defines, without changing `pto-v0`:
+
+- low-precision format identities and packed-lane order;
+- canonical NaN, signed-zero, invalid integer-result, and RHB tie behavior;
+- public conversion, reduction, sort, and comparison boundaries;
+- ordinary and MX matrix operand classes;
+- logical versus physical ACC types; and
+- E8M0 scale shape, K-block indexing, and pre-FMA scale order.
+
+The checked profile record and boundary vectors define what an implementation
+must demonstrate. They are not implementation results. Hardware, RTL, emulator,
+and executable-model conformance remain unproven until independent byte/effect
+parity, oracle results, and both review perspectives close `S5-T2`.
 
 ## Registered domains
 
@@ -162,14 +159,68 @@ not silently reinterpret `pto-v0` results as the 0.57.1 hardware profile.
 | Tile comparison, reduction, expansion, and partial | signed raw ordering and modular accumulation |
 | Tile conversion | raw normalization, quantization, and dequantization |
 | Tile matrix arithmetic | modular word-width multiply, bias, accumulate, and scale |
+| Named hardware numeric contract | 0.57.1 format, result, physical ACC, and MX-scale obligations; no implementation claim |
 
 ## Validation rule
 
 The repository checker extracts every `impdef func` under `asl/`, every
 `implementation func` from the active profile, and every direct call in the
-profile conformance test. The three name sets must equal the current registry
-exactly. CI also requires the active reference-test identity in
-`specification.toml`, validates the distinct hardware profile and generated
-numeric vectors through the release manifest, and executes the complete ASL
-suite with the pinned ASLRef. Passing the ASL suite proves `pto-v0`; it does not
-prove hardware numeric conformance.
+profile conformance test. The three name sets must equal the 37-entry registry
+exactly. It also freezes the eight closed non-numeric versus 29 raw-carrier
+implemented, target-conformance-open classifications. CI requires the active
+profile identity in `specification.toml` and executes the complete ASL suite
+with the pinned ASLRef.
+
+The same gate regenerates the S5-T2 readiness ledger from the numeric-contract
+inventory. Every domain, hook, and operation key must occur in exactly one
+numeric lane. A lane cannot become promotion-ready merely because the active
+raw-carrier profile test passes; it must acquire independent profile, oracle,
+vector, differential-result, and review evidence in dependency order.
+
+The accepted 0.57.1 contract supplies the named-profile and boundary-definition
+inputs for those lanes. It does not by itself fill an implementation result,
+differential parity, or review-acceptance field.
+
+The generated `numeric-profile-decision-inputs.json` ledger is the first
+dependency. It records 12 open questions covering profile identity, formats,
+rounding, FTZ, special values, flags, conversion overflow, elementary-function
+accuracy, reduction/order, quantization, matrix arithmetic, and bounded
+implementation-defined behavior. Its CPU, A2A3, and A5 observations are
+implementation evidence only. They cannot silently become PTO semantics.
+The generated `numeric-profile-decision-proposals.json` ledger imports the
+accepted identity catalog and records `S5-T2-A1` closed while keeping every
+question acceptance and domain result rule null.
+The generated `scalar-numeric-flag-contract.json` ledger records the accepted
+flag lifecycle and 30/30 producer-owner matrix without closing PD-06.
+The generated `numeric-rounding-selector-contract.json` ledger records the
+accepted selector namespaces and owners without closing PD-03. It keeps all 18
+affected domain rounding and saturation-order rules explicitly null.
+The generated `numeric-format-namespace-contract.json` ledger records the
+accepted five code namespaces, 25 carrier identities, reserved-code behavior, and
+four-bit packing without closing PD-02. It keeps eight format, exceptional
+value, operation/type/profile legality, target-availability, and vector
+residuals explicit at that checkpoint.
+The generated `public-numeric-type-baseline.json` ledger and ADR 0043 close
+`S5-T2-A5`: all 16 published types are identified, 11 unambiguous catalog
+bindings are accepted, A2/A3 availability is fixed at 11 types, and A5
+availability is fixed at 16. Six catalog names and seven bit-exact format,
+legality, and vector residuals remain open; availability never implies an
+operation result rule.
+The generated `public-integer-conversion-contract.json` ledger and ADR 0044
+close `S5-T2-A6`: all 48 unequal-width ordered pairs among the eight public
+integer types have a portable sign-extension, zero-extension, or high-bit
+truncation result. A target profile must still accept the operation/type tuple
+before that result applies. Same-width signedness changes, floating and
+float/integer conversions, support matrices, overflow/saturation, rounding,
+flags, and independent vectors remain open, so PD-07 and `S5-T2-A` remain open.
+The generated `numeric-profile-applicability-closure.json` ledger records the
+accepted A2/A3 unsupported-in-profile disposition for the six MX CUBE
+selectors across all 25 `TileDataType` identities. It keeps result rules,
+remaining applicability tables, and `cube-matrix` conformance open.
+The executable selector is an accepted negative-rule set, not a complete A2/A3
+profile; an operation absent from that set is not thereby supported.
+The generated `numeric-variation-point-ownership.json` ledger records the
+accepted `S5-T2-A4` discovery and ownership checkpoint. It enumerates 99
+domain/dimension points, proves reachability across all 108 operations and 29
+hooks, and keeps every selected route and result rule null. A missing target
+rule never falls back to `pto-v0` or a backend observation.

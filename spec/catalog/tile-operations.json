@@ -48,7 +48,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileBinary",
       "effect_contract": "ExecuteTileBinary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -100,7 +100,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileBinary",
       "effect_contract": "ExecuteTileBinary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -152,7 +152,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileBinary",
       "effect_contract": "ExecuteTileBinary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -204,7 +204,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileBinary",
       "effect_contract": "ExecuteTileBinary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -256,7 +256,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileBinary",
       "effect_contract": "ExecuteTileBinary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -308,7 +308,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileBinary",
       "effect_contract": "ExecuteTileBinary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -360,7 +360,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileBinary",
       "effect_contract": "ExecuteTileBinary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -412,7 +412,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileBinary",
       "effect_contract": "ExecuteTileBinary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -464,7 +464,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileBinary",
       "effect_contract": "ExecuteTileBinary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -516,7 +516,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileBinary",
       "effect_contract": "ExecuteTileBinary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -572,7 +572,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileCompare",
       "effect_contract": "ExecuteTileCompare",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -631,7 +631,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileSelect",
       "effect_contract": "ExecuteTileSelect",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:mask",
@@ -677,7 +677,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileUnary",
       "effect_contract": "ExecuteTileUnary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -721,7 +721,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileUnary",
       "effect_contract": "ExecuteTileUnary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -765,7 +765,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileUnary",
       "effect_contract": "ExecuteTileUnary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -809,7 +809,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileUnary",
       "effect_contract": "ExecuteTileUnary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -857,7 +857,7 @@
       "legality_handler": "TileOperandsLegal_TPRELU",
       "effect_contract": "TPRELU",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -909,7 +909,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileBinary",
       "effect_contract": "ExecuteTileBinary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -961,7 +961,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileBinary",
       "effect_contract": "ExecuteTileBinary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -1006,7 +1006,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileUnary",
       "effect_contract": "ExecuteTileUnary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -1050,7 +1050,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileUnary",
       "effect_contract": "ExecuteTileUnary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -1094,7 +1094,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileUnary",
       "effect_contract": "ExecuteTileUnary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -1138,7 +1138,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileUnary",
       "effect_contract": "ExecuteTileUnary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -1182,7 +1182,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileUnary",
       "effect_contract": "ExecuteTileUnary",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -1233,7 +1233,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
       "effect_contract": "ExecuteTileScalar",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -1282,7 +1282,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileAxpy",
       "effect_contract": "ExecuteTileAxpy",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -1334,7 +1334,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
       "effect_contract": "ExecuteTileScalar",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -1386,7 +1386,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
       "effect_contract": "ExecuteTileScalar",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -1438,7 +1438,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
       "effect_contract": "ExecuteTileScalar",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -1490,7 +1490,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
       "effect_contract": "ExecuteTileScalar",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -1542,7 +1542,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
       "effect_contract": "ExecuteTileScalar",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -1594,7 +1594,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
       "effect_contract": "ExecuteTileScalar",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -1646,7 +1646,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
       "effect_contract": "ExecuteTileScalar",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -1698,7 +1698,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
       "effect_contract": "ExecuteTileScalar",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -1750,7 +1750,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
       "effect_contract": "ExecuteTileScalar",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -1806,7 +1806,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileCompareScalar",
       "effect_contract": "ExecuteTileCompareScalar",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -1865,7 +1865,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileSelectScalar",
       "effect_contract": "ExecuteTileSelectScalar",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:mask",
@@ -1918,7 +1918,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
       "effect_contract": "ExecuteTileScalar",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -1970,7 +1970,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
       "effect_contract": "ExecuteTileScalar",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -2018,7 +2018,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
       "effect_contract": "ExecuteTileReduction",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -2065,7 +2065,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
       "effect_contract": "ExecuteTileReduction",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -2112,7 +2112,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
       "effect_contract": "ExecuteTileReduction",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -2159,7 +2159,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
       "effect_contract": "ExecuteTileReduction",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -2206,7 +2206,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
       "effect_contract": "ExecuteTileReduction",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -2253,7 +2253,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
       "effect_contract": "ExecuteTileReduction",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -2300,7 +2300,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
       "effect_contract": "ExecuteTileReduction",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -2347,7 +2347,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
       "effect_contract": "ExecuteTileReduction",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -2394,7 +2394,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
       "effect_contract": "ExecuteTileReduction",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -2441,7 +2441,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
       "effect_contract": "ExecuteTileReduction",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -2488,7 +2488,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
       "effect_contract": "ExecuteTileReduction",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -2535,7 +2535,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
       "effect_contract": "ExecuteTileReduction",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -2589,7 +2589,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileExpand",
       "effect_contract": "ExecuteTileExpand",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -2644,7 +2644,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileExpand",
       "effect_contract": "ExecuteTileExpand",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -2699,7 +2699,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileExpand",
       "effect_contract": "ExecuteTileExpand",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -2754,7 +2754,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileExpand",
       "effect_contract": "ExecuteTileExpand",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -2809,7 +2809,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileExpand",
       "effect_contract": "ExecuteTileExpand",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -2864,7 +2864,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileExpand",
       "effect_contract": "ExecuteTileExpand",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -2919,7 +2919,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileExpand",
       "effect_contract": "ExecuteTileExpand",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -2974,7 +2974,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileExpand",
       "effect_contract": "ExecuteTileExpand",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -3029,7 +3029,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileExpand",
       "effect_contract": "ExecuteTileExpand",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -3084,7 +3084,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileExpand",
       "effect_contract": "ExecuteTileExpand",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -3139,7 +3139,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileExpand",
       "effect_contract": "ExecuteTileExpand",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -3194,7 +3194,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileExpand",
       "effect_contract": "ExecuteTileExpand",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -3249,7 +3249,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileExpand",
       "effect_contract": "ExecuteTileExpand",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -3304,7 +3304,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileExpand",
       "effect_contract": "ExecuteTileExpand",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -3359,7 +3359,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileExpand",
       "effect_contract": "ExecuteTileExpand",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -3414,7 +3414,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileExpand",
       "effect_contract": "ExecuteTileExpand",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -3458,7 +3458,7 @@
       "legality_handler": "TileOperandsLegal_TMATMUL",
       "effect_contract": "TMATMUL",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:source0:left",
         "operand:source1:right",
@@ -3506,7 +3506,7 @@
       "legality_handler": "TileOperandsLegal_TMATMUL_BIAS",
       "effect_contract": "TMATMUL_BIAS",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:source0:left",
         "operand:source1:right",
@@ -3548,7 +3548,7 @@
       "legality_handler": "TileOperandsLegal_TMATMUL_ACC",
       "effect_contract": "TMATMUL_ACC",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:source0:left",
         "operand:source1:right",
@@ -3603,7 +3603,7 @@
       "legality_handler": "TileOperandsLegal_TMATMUL_MX",
       "effect_contract": "TMATMUL_MX",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:source0:left",
         "operand:source1:right",
@@ -3667,7 +3667,7 @@
       "legality_handler": "TileOperandsLegal_TMATMUL_MX_BIAS",
       "effect_contract": "TMATMUL_MX_BIAS",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:source0:left",
         "operand:source1:right",
@@ -3725,7 +3725,7 @@
       "legality_handler": "TileOperandsLegal_TMATMUL_MX_ACC",
       "effect_contract": "TMATMUL_MX_ACC",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:source0:left",
         "operand:source1:right",
@@ -3761,7 +3761,7 @@
       "legality_handler": "TileOperandsLegal_ACCCVT",
       "effect_contract": "ACCCVT",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "implicit:ACC:read-release-on-commit"
@@ -3807,7 +3807,7 @@
       "legality_handler": "TileOperandsLegal_TGEMV",
       "effect_contract": "TGEMV",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:source0:matrix",
         "operand:source1:vector",
@@ -3855,7 +3855,7 @@
       "legality_handler": "TileOperandsLegal_TGEMV_BIAS",
       "effect_contract": "TGEMV_BIAS",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:source0:matrix",
         "operand:source1:vector",
@@ -3897,7 +3897,7 @@
       "legality_handler": "TileOperandsLegal_TGEMV_ACC",
       "effect_contract": "TGEMV_ACC",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:source0:matrix",
         "operand:source1:vector",
@@ -3952,7 +3952,7 @@
       "legality_handler": "TileOperandsLegal_TGEMV_MX",
       "effect_contract": "TGEMV_MX",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:source0:matrix",
         "operand:source1:vector",
@@ -4016,7 +4016,7 @@
       "legality_handler": "TileOperandsLegal_TGEMV_MX_BIAS",
       "effect_contract": "TGEMV_MX_BIAS",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:source0:matrix",
         "operand:source1:vector",
@@ -4074,7 +4074,7 @@
       "legality_handler": "TileOperandsLegal_TGEMV_MX_ACC",
       "effect_contract": "TGEMV_MX_ACC",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:source0:matrix",
         "operand:source1:vector",
@@ -4116,7 +4116,7 @@
       "legality_handler": "TileOperandsLegal_TLOAD",
       "effect_contract": "TLOAD",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:address:base-address"
@@ -4157,7 +4157,7 @@
       "legality_handler": "TileOperandsLegal_TSTORE",
       "effect_contract": "TSTORE",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:address:base-address",
         "operand:source0:source"
@@ -4198,7 +4198,7 @@
       "legality_handler": "TileOperandsLegal_TPREFETCH",
       "effect_contract": "TPREFETCH",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:address:base-address",
         "operand:byte_count:byte-count"
@@ -4244,7 +4244,7 @@
       "legality_handler": "TileOperandsLegal_MGATHER",
       "effect_contract": "MGATHER",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:address:base-address",
@@ -4293,7 +4293,7 @@
       "legality_handler": "TileOperandsLegal_MSCATTER",
       "effect_contract": "MSCATTER",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:address:base-address",
         "operand:source0:source",
@@ -4345,14 +4345,14 @@
           "operand": "source1"
         },
         {
-          "runtime": "CurrentBlockPadValue"
+          "runtime": "CurrentBundlePadValue"
         }
       ],
       "contract_status": "reviewed-complete",
       "legality_handler": "TileOperandsLegal_MGATHER_MASK",
       "effect_contract": "MGATHER_MASK",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:address:base-address",
@@ -4410,7 +4410,7 @@
       "legality_handler": "TileOperandsLegal_MSCATTER_MASK",
       "effect_contract": "MSCATTER_MASK",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:address:base-address",
         "operand:source0:source",
@@ -4474,7 +4474,7 @@
       "legality_handler": "TileOperandsLegal_MGATHER_CAS",
       "effect_contract": "MGATHER_CAS",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:address:base-address",
@@ -4520,7 +4520,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTileFillScalar",
       "effect_contract": "ExecuteTileFillScalar",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:scalar0:scalar"
@@ -4568,7 +4568,7 @@
       "legality_handler": "TileOperandsLegal_TCI",
       "effect_contract": "TCI",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:scalar0:start",
@@ -4617,7 +4617,7 @@
       "legality_handler": "TileOperandsLegal_TTRI",
       "effect_contract": "TTRI",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:flag0:upper",
@@ -4666,7 +4666,7 @@
       "legality_handler": "TileOperandsLegal_TFILLPAD",
       "effect_contract": "TFILLPAD",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -4711,7 +4711,7 @@
       "legality_handler": "TileOperandsLegal_TCVT",
       "effect_contract": "TCVT",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -4772,7 +4772,7 @@
       "legality_handler": "TileOperandsLegal_TQUANT",
       "effect_contract": "TQUANT",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -4835,7 +4835,7 @@
       "legality_handler": "TileOperandsLegal_TDEQUANT",
       "effect_contract": "TDEQUANT",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -4898,7 +4898,7 @@
       "legality_handler": "TileOperandsLegal_TEXTRACT",
       "effect_contract": "TEXTRACT",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -4957,7 +4957,7 @@
       "legality_handler": "TileOperandsLegal_TINSERT",
       "effect_contract": "TINSERT",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -5009,7 +5009,7 @@
       "legality_handler": "TileOperandsLegal_TGATHER",
       "effect_contract": "TGATHER",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -5060,7 +5060,7 @@
       "legality_handler": "TileOperandsLegal_TSCATTER",
       "effect_contract": "TSCATTER",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -5118,7 +5118,7 @@
       "legality_handler": "TileOperandsLegal_TCONCAT",
       "effect_contract": "TCONCAT",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -5163,7 +5163,7 @@
       "legality_handler": "TileOperandsLegal_TTRANS",
       "effect_contract": "TTRANS",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -5255,7 +5255,7 @@
       "legality_handler": "TileOperandsLegal_TIMG2COL",
       "effect_contract": "TIMG2COL",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -5303,7 +5303,7 @@
       "legality_handler": "TileOperandsLegal_TMOV",
       "effect_contract": "TMOV",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -5353,7 +5353,7 @@
       "legality_handler": "TileOperandsLegal_TGATHERB",
       "effect_contract": "TGATHERB",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -5404,7 +5404,7 @@
       "legality_handler": "TileOperandsLegal_TDEINTERLEAVE",
       "effect_contract": "TDEINTERLEAVE",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination-even",
         "operand:destination1:destination-odd",
@@ -5455,7 +5455,7 @@
       "legality_handler": "TileOperandsLegal_TINTERLEAVE",
       "effect_contract": "TINTERLEAVE",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -5499,7 +5499,7 @@
       "legality_handler": "TileOperandsLegal_TRESHAPE",
       "effect_contract": "TRESHAPE",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -5556,7 +5556,7 @@
       "legality_handler": "TileOperandsLegal_TSORT",
       "effect_contract": "TSORT",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:destination1:original-indices-u32",
@@ -5613,7 +5613,7 @@
       "legality_handler": "TileOperandsLegal_TMRGSORT",
       "effect_contract": "TMRGSORT",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -5670,7 +5670,7 @@
       "legality_handler": "TileOperandsLegal_THISTOGRAM",
       "effect_contract": "THISTOGRAM",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source",
@@ -5716,7 +5716,7 @@
       "legality_handler": "TileOperandsLegal_TPUSH",
       "effect_contract": "TPUSH",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -5757,7 +5757,7 @@
       "legality_handler": "TileOperandsLegal_TPOP",
       "effect_contract": "TPOP",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source"
@@ -5840,7 +5840,7 @@
       "legality_handler": "TileOperandsLegal_TALLOC",
       "effect_contract": "TALLOC",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:byte_count:capacity-bytes",
@@ -5880,7 +5880,7 @@
       "legality_handler": "TileOperandsLegal_TFREE",
       "effect_contract": "TFREE",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination"
       ],
@@ -5930,7 +5930,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTilePartial",
       "effect_contract": "ExecuteTilePartial",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -5982,7 +5982,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTilePartial",
       "effect_contract": "ExecuteTilePartial",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -6034,7 +6034,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTilePartial",
       "effect_contract": "ExecuteTilePartial",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -6086,7 +6086,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTilePartial",
       "effect_contract": "ExecuteTilePartial",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:source-left",
@@ -6159,7 +6159,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTilePartialArg",
       "effect_contract": "ExecuteTilePartialArg",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:destination1:destination-indices",
@@ -6235,7 +6235,7 @@
       "legality_handler": "TileOperandsLegal_ExecuteTilePartialArg",
       "effect_contract": "ExecuteTilePartialArg",
       "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "FinalizeBlockTileAttempt",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:destination1:destination-indices",

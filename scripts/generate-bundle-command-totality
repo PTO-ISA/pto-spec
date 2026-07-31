@@ -1,0 +1,206 @@
+#!/usr/bin/env python3
+"""Generate the fail-closed S4-T7 bundle-command totality evidence."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from collections import Counter
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+COMMAND_CATALOG = ROOT / "spec/catalog/command-forms.json"
+TILE_CATALOG = ROOT / "spec/catalog/tile-operations.json"
+DEFAULT_OUTPUT = ROOT / "spec/evidence/bundle-command-totality.json"
+
+UNSUPPORTED_HANDLERS = {
+    "SaveExecutionContext",
+    "RecoverExecutionContext",
+    "ExecuteFrameEntry",
+    "ExecuteFrameExit",
+    "ExecuteFrameReturnAddress",
+    "ExecuteFrameReturnStack",
+    "ExecuteQueueMove",
+    "ExecuteQueuePop",
+    "ExecuteQueuePush",
+    "ExecuteCrossBlockTransfer",
+}
+
+REJECTED_START_MNEMONICS = {"BSTART.CUBE", "BSTART.FIXP"}
+
+EFFECT_BY_HANDLER = {
+    "BindBundleScalarIO": "bundle-scalar-binding",
+    "BindBundleTileIO": "bundle-tile-binding",
+    "ExecuteBundleStart": "bundle-start-descriptor",
+    "ExecuteBundleStop": "bundle-commit-and-stop",
+    "ExecuteMemoryCopy": "bounded-memory-copy",
+    "ExecuteMemorySet": "bounded-memory-fill",
+    "SetBundleArgument": "bundle-argument-kind-and-value",
+    "SetBundleBodyAddress": "bundle-body-address",
+    "SetBundleControlAttributes": "bundle-control-attributes",
+    "SetBundleDataAttributes": "bundle-data-attributes",
+    "SetBundleDimension": "bundle-dimension",
+    "SetBundleHint": "diagnostic-hint-payload",
+}
+
+BRIDGE_FIELDS = {"destination0", "source0", "source1"}
+
+
+def load_json(path: Path) -> dict:
+    with path.open(encoding="utf-8") as stream:
+        return json.load(stream)
+
+
+def command_rejected(row: dict) -> bool:
+    return row["semantic_handler"] in UNSUPPORTED_HANDLERS or (
+        row["semantic_handler"] == "ExecuteBundleStart"
+        and row["mnemonic"] in REJECTED_START_MNEMONICS
+    )
+
+
+def build_evidence() -> dict:
+    command_rows = load_json(COMMAND_CATALOG)["forms"]
+    tile_rows = load_json(TILE_CATALOG)["operations"]
+
+    form_matrix = []
+    for index, row in enumerate(command_rows):
+        fields = [field["name"] for field in row["fields"]]
+        rejected = command_rejected(row)
+        if row["semantic_handler"] in UNSUPPORTED_HANDLERS:
+            effect = "pto-v0-unsupported-handler"
+        elif row["mnemonic"] in REJECTED_START_MNEMONICS:
+            effect = "pto-v0-unsupported-start-family"
+        else:
+            effect = EFFECT_BY_HANDLER[row["semantic_handler"]]
+        form_matrix.append(
+            {
+                "form_index": index,
+                "form_id": row["form_id"],
+                "mnemonic": row["mnemonic"],
+                "semantic_handler": row["semantic_handler"],
+                "decoded_fields": fields,
+                "consumed_fields": [] if rejected else fields,
+                "disposition": "pto-v0-rejected" if rejected else "executed",
+                "effect_class": effect,
+                "rejection_precedes_effects": rejected,
+                "sequential_tpc_advance": (
+                    not rejected
+                    and row["semantic_handler"]
+                    not in {"ExecuteBundleStart", "ExecuteBundleStop"}
+                ),
+            }
+        )
+
+    bridge_matrix = []
+    for row in tile_rows:
+        operand_fields = [operand["field"] for operand in row["operands"]]
+        unsupported_fields = sorted(set(operand_fields) - BRIDGE_FIELDS)
+        representable = not unsupported_fields
+        bridge_matrix.append(
+            {
+                "family": row["family"],
+                "selector": (
+                    row["selector"] if "selector" in row else f"0x{row['function']:03x}"
+                ),
+                "operation": row["name"],
+                "operand_fields": operand_fields,
+                "representable": representable,
+                "unsupported_operand_fields": unsupported_fields,
+                "commit_disposition": (
+                    "execute-after-complete-binding"
+                    if representable
+                    else "reject-bundle-control-before-tile-effect"
+                ),
+            }
+        )
+
+    handler_counts = Counter(row["semantic_handler"] for row in command_rows)
+    disposition_counts = Counter(row["disposition"] for row in form_matrix)
+    bridge_counts = {
+        family: {
+            "total": sum(row["family"] == family for row in bridge_matrix),
+            "representable": sum(
+                row["family"] == family and row["representable"]
+                for row in bridge_matrix
+            ),
+            "commit_rejected": sum(
+                row["family"] == family and not row["representable"]
+                for row in bridge_matrix
+            ),
+        }
+        for family in ("TEPL", "TMA", "CUBE")
+    }
+
+    return {
+        "schema_version": 1,
+        "target": "S4-T7",
+        "status": "closed",
+        "accepted_form_count": len(command_rows),
+        "disposition_counts": dict(sorted(disposition_counts.items())),
+        "handler_counts": dict(sorted(handler_counts.items())),
+        "architecture_contract": {
+            "unsupported_handlers": sorted(UNSUPPORTED_HANDLERS),
+            "unsupported_start_mnemonics": sorted(REJECTED_START_MNEMONICS),
+            "unsupported_rule": "Reject with ILLEGAL_INST before handler operand reads, state effects, memory effects, or TPC advance.",
+            "retirement_rule": "Every successful non-start/non-stop command advances TPC by its encoded instruction length; start and stop own their control transfer.",
+            "argument_rule": "All six B.ARG forms retain distinct three-bit argument-kind state; the dynamic form also records its decoded value.",
+            "hint_rule": "B.HINT records the complete encoded payload and advances the hint epoch but has no PTO-v0 scheduling effect.",
+            "metadata_rule": "B.DIM, B.TEXT, B.IOR, B.IOT, B.CATR, and B.DATR consume every decoded field into trap-preserved bundle state. PTO-v0 tile commit consumes only B.IOT slot 0 destination/source bindings and the descriptor data type; all other stored metadata has no payload effect in this profile.",
+            "memory_rule": "MCOPY and MSET accept lengths 0 through 63 bytes and reject larger XLEN values without truncation or partial effects.",
+            "bridge_rule": "The PTO-v0 bundle bridge binds destination0, source0, and source1 only; operations needing any other operand reject at commit before tile effects.",
+        },
+        "form_matrix": form_matrix,
+        "bundle_tile_bridge": {
+            "bound_operand_fields": sorted(BRIDGE_FIELDS),
+            "counts": bridge_counts,
+            "operation_matrix": bridge_matrix,
+        },
+        "executable_evidence": {
+            "canonical_form_test": "scripts/generate-asl-decoders:ValidateCanonicalCommandExecution",
+            "boundary_test": "tests/asl/bundle-tests.asl:TestBundleCommandTotalityBoundaries",
+            "bridge_tests": [
+                "tests/asl/bundle-tests.asl:TestBundleTileCommitLifecycle",
+                "tests/asl/bundle-tests.asl:TestBundleTileCommitRollback",
+            ],
+            "canonical_form_case_count": len(command_rows),
+        },
+        "independent_comparison": {
+            "source": "content-addressed independent executable ISA snapshot",
+            "aggregate_sha256": "1f8862ef90ee72d0e917398b2d96b2799f541f2e7198c103d9fc47af998a54ec",
+            "matched_form_ids": 99,
+            "exact_encoding_matches": 92,
+            "accepted_abi_encoding_divergences": 7,
+            "executable_subset": 85,
+            "decode_only": 14,
+            "authority": "non-normative structural comparison only",
+            "limitation": "The independent snapshot predates seven accepted PTO 0.57.1 command encoding changes and stages bundle payload execution, so it neither matches those masks nor validates PTO tile payload effects; ADR 0045, the PTO catalogs, and PTO-owned ASL evidence remain authoritative.",
+        },
+        "requirement_ids": [
+            "PTO-REQ-BUNDLE-DISPATCH-001",
+            "PTO-REQ-BUNDLE-OPERATION-001",
+            "PTO-REQ-BUNDLE-STATE-001",
+        ],
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--check", action="store_true")
+    args = parser.parse_args()
+    expected = json.dumps(build_evidence(), indent=2) + "\n"
+    if args.check:
+        if (
+            not args.output.exists()
+            or args.output.read_text(encoding="utf-8") != expected
+        ):
+            raise SystemExit(f"stale generated evidence: {args.output}")
+        return 0
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(expected, encoding="utf-8")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

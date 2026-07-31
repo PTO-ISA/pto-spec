@@ -51,4 +51,20 @@ installing it globally:
 opam exec -- dune exec --root=/path/to/herdtools7 asllib/aslref.exe -- --version
 ```
 
-CI fetches exactly the commit in `.aslref-version`, installs build dependencies, and uses this source-execution path.
+CI fetches exactly the commit in `.aslref-version` and installs the build dependencies. For a one-shot invocation, the
+source-execution path above is sufficient. For repository tests, especially parallel shards, build once and invoke the
+pinned executable directly:
+
+```bash
+opam exec -- dune build --root=/path/to/herdtools7 asllib/aslref.exe
+/path/to/herdtools7/_build/default/asllib/aslref.exe --version
+```
+
+Do not wrap every long-running ASLRef shard in `dune exec`. Dune retains the source workspace lock until the child exits,
+so multiple shards that appear parallel will serialize on the shared build tree. The repository `scripts/aslref` wrapper
+implements the build-once/direct-execution rule and remains the canonical entry point for local and CI validation.
+
+ASLRef parses and types every declaration assembled into a shard, including test functions that its `main()` never
+calls. A parallel shard should therefore include the complete normative specification but only the test-library sources
+needed by that shard. Preserve a canonical full-suite assembly as the coverage reference, and fail closed unless the
+shard mains partition its direct calls exactly once and retain reachability of every declared test entry point.

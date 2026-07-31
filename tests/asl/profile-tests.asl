@@ -15,8 +15,33 @@ begin
     assert exponential_zero == 1.0;
     let rounded_even_low = FloatingRoundNearest(2.5);
     let rounded_even_high = FloatingRoundNearest(3.5);
+    let rounded_even_negative_low = FloatingRoundNearest(-2.5);
+    let rounded_even_negative_high = FloatingRoundNearest(-3.5);
     assert rounded_even_low == 2;
     assert rounded_even_high == 4;
+    assert rounded_even_negative_low == -2;
+    assert rounded_even_negative_high == -4;
+
+    let rne_positive = FloatingToInteger(2.5, FloatingRound_Nearest);
+    let rne_negative = FloatingToInteger(-2.5, FloatingRound_Nearest);
+    let down_positive = FloatingToInteger(2.5, FloatingRound_Down);
+    let down_negative = FloatingToInteger(-2.5, FloatingRound_Down);
+    let up_positive = FloatingToInteger(2.5, FloatingRound_Up);
+    let up_negative = FloatingToInteger(-2.5, FloatingRound_Up);
+    let zero_positive = FloatingToInteger(2.5, FloatingRound_TowardsZero);
+    let zero_negative = FloatingToInteger(-2.5, FloatingRound_TowardsZero);
+    let away_positive = FloatingToInteger(2.5, FloatingRound_Away);
+    let away_negative = FloatingToInteger(-2.5, FloatingRound_Away);
+    assert rne_positive == 2;
+    assert rne_negative == -2;
+    assert down_positive == 2;
+    assert down_negative == -3;
+    assert up_positive == 3;
+    assert up_negative == -2;
+    assert zero_positive == 2;
+    assert zero_negative == -2;
+    assert away_positive == 3;
+    assert away_negative == -3;
 
     let (fp_binary, fp_binary_flags) = ScalarFPBinaryProfile(
         FloatingBinary_ADD, Zeros{3}, Zeros{5},
@@ -100,16 +125,40 @@ begin
 
     WriteTPC(Zeros{PTO_XLEN} + 0x500);
     WriteBPC(Zeros{PTO_XLEN} + 0x600);
-    _BlockArgument = Zeros{PTO_XLEN} + 0x77;
+    _BundleArgument = Zeros{PTO_XLEN} + 0x77;
+    PushTemporaryQueue(TRUE, Zeros{PTO_XLEN} + 0x11);
     SaveTrapContext(1, CurrentACR());
+    let saved_control = ReadSystemRegisterAddress(Zeros{24} + 0x1f40);
+    let saved_bpc = ReadSystemRegisterAddress(Zeros{24} + 0x1f41);
+    let saved_tpc = ReadSystemRegisterAddress(Zeros{24} + 0x1f43);
+    assert saved_control[4] == '1';
+    assert saved_bpc == Zeros{PTO_XLEN} + 0x600;
+    assert saved_tpc == Zeros{PTO_XLEN} + 0x500;
+    WriteSystemRegisterAddress(Zeros{24} + 0x1f41,
+        Zeros{PTO_XLEN} + 0x610);
+    WriteSystemRegisterAddress(Zeros{24} + 0x1f43,
+        Zeros{PTO_XLEN} + 0x510);
+    WriteSystemRegisterAddress(Zeros{24} + 0x1f45,
+        Zeros{PTO_XLEN} + 0x22);
     WriteTPC(Zeros{PTO_XLEN} + 0x700);
     WriteBPC(Zeros{PTO_XLEN} + 0x800);
-    _BlockArgument = Zeros{PTO_XLEN};
+    _BundleArgument = Zeros{PTO_XLEN};
     let recovered_context = RecoverTrapContext(1);
     assert recovered_context;
-    assert ReadTPC() == Zeros{PTO_XLEN} + 0x500;
-    assert ReadBPC() == Zeros{PTO_XLEN} + 0x600;
-    assert _BlockArgument == Zeros{PTO_XLEN} + 0x77;
+    assert ReadTPC() == Zeros{PTO_XLEN} + 0x510;
+    assert ReadBPC() == Zeros{PTO_XLEN} + 0x610;
+    assert _BundleArgument == Zeros{PTO_XLEN} + 0x77;
+    assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN} + 0x22;
+    assert PTOv0ReadContextRegister(1, 0x0f40)[4] == '0';
+
+    let before_failed_recovery = _ArchitectureRequestEpoch;
+    ClearFault();
+    ArchitectureEnterRequest('0001');
+    assert _LastFault == Fault_ExecutionStateCheck;
+    assert _ACRTrapNumber[[CurrentACR()]] == Zeros{6};
+    assert _ACRTrapArgumentValid[[CurrentACR()]];
+    assert _ACRTrapArgument0[[CurrentACR()]] == Zeros{PTO_XLEN} + 0x510;
+    assert _ArchitectureRequestEpoch == before_failed_recovery;
 
     let tile_binary = TileProfileBinary(TileBinary_ADD, TileDataType_U64,
         Zeros{PTO_XLEN} + 2, Zeros{PTO_XLEN} + 3);
@@ -175,14 +224,59 @@ begin
     assert CurrentACR() == 2;
 
     WriteGPR(1, Zeros{PTO_XLEN} + 0x55);
+    WriteGPR(23, Zeros{PTO_XLEN} + 0x66);
+    PushTemporaryQueue(TRUE, Zeros{PTO_XLEN} + 0x11);
+    PushTemporaryQueue(FALSE, Zeros{PTO_XLEN} + 0x22);
+    WritePredicateRegister(0, Zeros{PTO_XLEN} + 0x33);
+    WritePredicateRegister(7, Zeros{PTO_XLEN} + 0x77);
     Store(Zeros{PTO_XLEN}, 8, Zeros{PTO_XLEN} + 0xaa);
     - = AddInitialWriteEvent(Zeros{PTO_XLEN} + 2048, 8,
         Zeros{PTO_XLEN});
+    _MemoryEventCaptureEnabled = TRUE;
+    _CurrentMemoryAgent = 3;
+    _ExtendedSystemRegisters[[0x0f00]] = Ones{PTO_XLEN};
+    _ExtendedSystemRegisters[[0x1f01]] = Ones{PTO_XLEN};
+    _ExtendedSystemRegisters[[0xffb7]] = Ones{PTO_XLEN};
+    ConfigureTile(0, 256, 1, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(63, 256, 1, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(63, 0, 0, Zeros{PTO_XLEN} + 2);
+    BeginBundle(BundleKind_Standard, BundleTransfer_Direct,
+        Zeros{PTO_XLEN} + 0x200, Zeros{PTO_XLEN} + 4,
+        Zeros{PTO_XLEN} + 4, TRUE);
+    EnterBundleBody();
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 3);
+    SetBundleScalarBinding(31, 1, 2, 3, 4, 3);
+    SetBundleTileBinding(15, TRUE, 3, 3, TRUE, TRUE, 0, 63,
+        TRUE, TRUE, TRUE);
+    SetBundleControlAttributeState(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE);
+    SetBundleDataAttributeState(Zeros{5} + 1, Zeros{5} + 2,
+        Zeros{2} + 3, Zeros{3} + 1, Zeros{3} + 2, TRUE);
+    _ReservationValid = TRUE;
+    _ReservationAddress = Zeros{PTO_XLEN} + 0x80;
+    _ReservationSize = 8;
+    _ACRTrapNumber[[15]] = Zeros{6} + 52;
+    _ACRTrapArgument0[[15]] = Ones{PTO_XLEN};
+    _TrapContexts[[15]].valid = TRUE;
+    _TrapContexts[[15]].predicates[[7]] = Ones{PTO_XLEN};
+    _SystemRegisters.thread_ptr = Ones{PTO_XLEN};
+    _SystemRegisters.global_ptr = Ones{PTO_XLEN};
+    _SystemRegisters.core_feature_enable = Ones{PTO_XLEN};
     SetCurrentACR(2);
     ResetProfileState();
     assert CurrentACR() == 0;
     assert ReadGPR(1) == Zeros{PTO_XLEN};
+    assert ReadGPR(23) == Zeros{PTO_XLEN};
+    assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN};
+    assert ReadTemporaryQueue(FALSE, 0) == Zeros{PTO_XLEN};
+    assert ReadPredicateRegister(0) == Zeros{PTO_XLEN};
+    assert ReadPredicateRegister(7) == Zeros{PTO_XLEN};
     assert _MemoryEventCount == 0;
+    assert !_MemoryEventCaptureEnabled;
+    assert _CurrentMemoryAgent == 0;
     let reset_memory = LoadUnsigned(Zeros{PTO_XLEN}, 8);
     assert reset_memory == Zeros{PTO_XLEN};
     let final_reset_time = ReadMonotonicTime();
@@ -191,4 +285,32 @@ begin
     assert _SystemRegisters.tile_capacity ==
         Zeros{PTO_XLEN} + PTO_MODEL_MAX_TILE_CAPACITY_BYTES;
     assert _SystemRegisters.thread_id == Zeros{PTO_XLEN};
+    assert _SystemRegisters.thread_ptr == Zeros{PTO_XLEN};
+    assert _SystemRegisters.global_ptr == Zeros{PTO_XLEN};
+    assert _SystemRegisters.core_feature_enable == Zeros{PTO_XLEN};
+    assert !_BundleActive && !_BundleBodyActive;
+    assert _BundleDimensions[[0]] == Zeros{PTO_XLEN};
+    assert _BundleDimensions[[2]] == Zeros{PTO_XLEN};
+    assert !_BundleScalarBindings[[31]].valid;
+    assert !_BundleTileBindings[[15]].valid;
+    assert !_BundleControlAttributes.trap_enabled;
+    assert !_BundleDataAttributes.saturating;
+    assert !_Accumulator.live;
+    assert !_Tiles[[0]].allocated && !_Tiles[[63]].allocated;
+    assert !_Tiles[[0]].contents_defined && !_Tiles[[63]].contents_defined;
+    assert _Tiles[[0]].capacity_bytes == 0 &&
+        _Tiles[[63]].capacity_bytes == 0;
+    assert !_ReservationValid;
+    assert _ReservationAddress == Zeros{PTO_XLEN};
+    assert _ReservationSize == 1;
+    for ring = 0 to PTO_ACR_COUNT - 1 do
+        assert _ACRTrapNumber[[ring]] == Zeros{6};
+        assert _ACRTrapArgument0[[ring]] == Zeros{PTO_XLEN};
+        assert !_TrapContexts[[ring]].valid;
+        assert _TrapContexts[[ring]].predicates[[0]] == Zeros{PTO_XLEN};
+        assert _TrapContexts[[ring]].predicates[[7]] == Zeros{PTO_XLEN};
+    end;
+    assert _ExtendedSystemRegisters[[0x0f00]] == Zeros{PTO_XLEN};
+    assert _ExtendedSystemRegisters[[0x1f01]] == Zeros{PTO_XLEN};
+    assert _ExtendedSystemRegisters[[0xffb7]] == Zeros{PTO_XLEN};
 end;

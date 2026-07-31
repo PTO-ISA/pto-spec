@@ -174,17 +174,282 @@ begin
     assert !MemoryExecutionAllowedTSO();
 end;
 
-func TestTileCASOrderCase(block_atomic: boolean, acquire: boolean,
-                          release: boolean, expected_order: MemoryOrder)
+func TestProductionScalarEventExtraction()
 begin
-    Store(Zeros{PTO_XLEN} + 256, 8, Zeros{PTO_XLEN} + 10);
+    let address = Zeros{PTO_XLEN} + 0x300;
+    StopMemoryEventCapture();
+    Store(address, 8, Zeros{PTO_XLEN} + 10);
+    StartMemoryEventCapture(2);
+    let initial = AddInitialWriteEvent(address, 8, Zeros{PTO_XLEN} + 10);
+    let loaded = LoadUnsigned(address, 8);
+    assert loaded == Zeros{PTO_XLEN} + 10;
+    StoreWithOrder(address, 8, Zeros{PTO_XLEN} + 11,
+        MemoryOrder_Release);
+    FenceData('0010', '0001');
+    let old = AtomicReadModifyWrite(address, 8, Atomic_ADD,
+        Zeros{PTO_XLEN} + 1, MemoryOrder_AcquireRelease);
+    assert old == Zeros{PTO_XLEN} + 11;
+    assert _MemoryEventCount == 5;
+    assert _MemoryEvents[[1]].kind == MemoryEvent_Load;
+    assert _MemoryEvents[[1]].agent == 2;
+    assert _MemoryEvents[[1]].address == address;
+    assert _MemoryEvents[[1]].size_bytes == 8;
+    assert _MemoryEvents[[1]].order == MemoryOrder_Relaxed;
+    assert _MemoryEvents[[1]].read_from == initial;
+    assert _MemoryEvents[[2]].kind == MemoryEvent_Store;
+    assert _MemoryEvents[[2]].order == MemoryOrder_Release;
+    assert _MemoryEvents[[2]].coherence_rank == 1;
+    assert _MemoryEvents[[3]].kind == MemoryEvent_Fence;
+    assert _MemoryEvents[[3]].fence_predecessor == '0010';
+    assert _MemoryEvents[[3]].fence_successor == '0001';
+    assert _MemoryEvents[[4]].kind == MemoryEvent_Atomic;
+    assert _MemoryEvents[[4]].order == MemoryOrder_AcquireRelease;
+    assert _MemoryEvents[[4]].read_value == Zeros{PTO_XLEN} + 11;
+    assert _MemoryEvents[[4]].write_value == Zeros{PTO_XLEN} + 12;
+    assert _MemoryEvents[[4]].write_performed;
+    assert _MemoryEvents[[4]].coherence_rank == 2;
+    assert MemoryCandidateExecutionValid();
+    assert MemoryExecutionAllowedTSO();
+    StopMemoryEventCapture();
+end;
+
+func TestProductionReservationEventsAndCorners()
+begin
+    let line = Zeros{PTO_XLEN} + 0x380;
+    StopMemoryEventCapture();
+    Store(line, 8, Zeros{PTO_XLEN} + 0x1122334455667788);
+    StartMemoryEventCapture(1);
+    let reserved = LoadReserved(line, 8, MemoryOrder_Acquire);
+    assert reserved == Zeros{PTO_XLEN} + 0x1122334455667788;
+    let cross_width = StoreConditional(line + 4, 4,
+        Zeros{PTO_XLEN} + 0xaabbccdd, MemoryOrder_Release);
+    assert cross_width == Zeros{PTO_XLEN};
+    assert _MemoryEventCount == 2;
+    assert _MemoryEvents[[0]].kind == MemoryEvent_Load;
+    assert _MemoryEvents[[0]].order == MemoryOrder_Acquire;
+    assert _MemoryEvents[[1]].kind == MemoryEvent_Store;
+    assert _MemoryEvents[[1]].address == line + 4;
+    assert _MemoryEvents[[1]].size_bytes == 4;
+    assert _MemoryEvents[[1]].order == MemoryOrder_Release;
+
+    ClearFault();
+    let failed_without_probe = StoreConditional(Ones{PTO_XLEN}, 8,
+        Zeros{PTO_XLEN}, MemoryOrder_Relaxed);
+    assert failed_without_probe == Zeros{PTO_XLEN} + 1;
+    assert _LastFault == Fault_None;
+    assert _MemoryEventCount == 2;
+    assert !_ReservationValid;
+    StopMemoryEventCapture();
+
+    - = LoadReserved(line, 8, MemoryOrder_Relaxed);
+    assert _ReservationValid;
+    Store(line + 63, 1, Zeros{PTO_XLEN} + 1);
+    assert !_ReservationValid;
+    - = LoadReserved(line, 8, MemoryOrder_Relaxed);
+    Store(line + 64, 1, Zeros{PTO_XLEN} + 1);
+    assert _ReservationValid;
+    let next_line = StoreConditional(line + 64, 1,
+        Zeros{PTO_XLEN} + 2, MemoryOrder_Relaxed);
+    assert next_line == Zeros{PTO_XLEN} + 1;
+    assert !_ReservationValid;
+
+    - = LoadReserved(line, 8, MemoryOrder_Relaxed);
+    assert _ReservationValid;
+    ClearFault();
+    let faulting_sc = StoreConditional(line + 1, 8,
+        Zeros{PTO_XLEN}, MemoryOrder_Relaxed);
+    assert faulting_sc == Zeros{PTO_XLEN};
+    assert _LastFault == Fault_DataAlignment;
+    assert !_ReservationValid;
+end;
+
+func TestProductionPairAndDMAEventExtraction()
+begin
+    let source = Zeros{PTO_XLEN} + 0x100;
+    let destination = Zeros{PTO_XLEN} + 0x180;
+    StopMemoryEventCapture();
+    Store(source, 4, Zeros{PTO_XLEN} + 0x11);
+    Store(source + 4, 4, Zeros{PTO_XLEN} + 0x22);
+    WriteGPR(2, source);
+    StartMemoryEventCapture(0);
+    ExecuteScalarLoadPair(3, 4, 2, Zeros{PTO_XLEN}, 4, FALSE);
+    assert _MemoryEventCount == 2;
+    assert _MemoryEvents[[0]].kind == MemoryEvent_Load;
+    assert _MemoryEvents[[0]].address == source;
+    assert _MemoryEvents[[1]].address == source + 4;
+    StopMemoryEventCapture();
+
+    for byte_index = 0 to 63 do
+        Store(source + NaturalToWord(byte_index as integer {0..262144}),
+            1, Zeros{PTO_XLEN} + byte_index);
+    end;
+    StartMemoryEventCapture(3);
+    ExecuteScalarDMACopy64(source, destination);
+    assert _MemoryEventCount == PTO_MODEL_MEMORY_EVENTS;
+    for event_index = 0 to 7 do
+        assert _MemoryEvents[[event_index]].kind == MemoryEvent_Load;
+        assert _MemoryEvents[[event_index]].agent == 3;
+        assert _MemoryEvents[[event_index]].size_bytes == 8;
+    end;
+    for event_index = 8 to 15 do
+        assert _MemoryEvents[[event_index]].kind == MemoryEvent_Store;
+        assert _MemoryEvents[[event_index]].agent == 3;
+        assert _MemoryEvents[[event_index]].size_bytes == 8;
+    end;
+    StopMemoryEventCapture();
+end;
+
+func ConfigureOneElementMemoryTile(index: TileIndex)
+begin
+    ConfigureTile(index, 256, 1, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+end;
+
+func TestProductionTileEventExtraction()
+begin
+    ResetProfileState();
+    let source_address = Zeros{PTO_XLEN} + 0x500;
+    let destination_address = Zeros{PTO_XLEN} + 0x508;
+    StopMemoryEventCapture();
+    Store(source_address, 8, Zeros{PTO_XLEN} + 7);
+    ConfigureOneElementMemoryTile(40);
+    ConfigureOneElementMemoryTile(41);
+    ConfigureOneElementMemoryTile(42);
+    ConfigureOneElementMemoryTile(43);
+    ConfigureOneElementMemoryTile(44);
+    ConfigureOneElementMemoryTile(45);
+    WriteTileElement(41, 0, 0, Zeros{PTO_XLEN} + 7);
+    WriteTileElement(42, 0, 0, Zeros{PTO_XLEN});
+    WriteTileElement(43, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(44, 0, 0, Zeros{PTO_XLEN} + 7);
+    WriteTileElement(45, 0, 0, Zeros{PTO_XLEN} + 9);
+
+    StartMemoryEventCapture(3);
+    TLOAD(40, source_address);
+    assert _MemoryEventCount == 1;
+    assert _MemoryEvents[[0]].kind == MemoryEvent_Load;
+    assert _MemoryEvents[[0]].agent == 3;
+    assert _MemoryEvents[[0]].address == source_address;
+    StopMemoryEventCapture();
+
+    StartMemoryEventCapture(3);
+    TSTORE(destination_address, 41);
+    assert _MemoryEventCount == 1;
+    assert _MemoryEvents[[0]].kind == MemoryEvent_Store;
+    assert _MemoryEvents[[0]].address == destination_address;
+    StopMemoryEventCapture();
+
+    StartMemoryEventCapture(2);
+    MGATHER(40, source_address, 42);
+    assert _MemoryEventCount == 1;
+    assert _MemoryEvents[[0]].kind == MemoryEvent_Load;
+    StopMemoryEventCapture();
+
+    StartMemoryEventCapture(2);
+    MSCATTER(destination_address, 41, 42);
+    assert _MemoryEventCount == 1;
+    assert _MemoryEvents[[0]].kind == MemoryEvent_Store;
+    StopMemoryEventCapture();
+
+    StartMemoryEventCapture(1);
+    MGATHER_MASK(40, source_address, 42, 43, TilePad_Zero);
+    assert _MemoryEventCount == 1;
+    assert _MemoryEvents[[0]].kind == MemoryEvent_Load;
+    StopMemoryEventCapture();
+
+    StartMemoryEventCapture(1);
+    MSCATTER_MASK(destination_address, 41, 42, 43);
+    assert _MemoryEventCount == 1;
+    assert _MemoryEvents[[0]].kind == MemoryEvent_Store;
+    StopMemoryEventCapture();
+
+    Store(source_address, 8, Zeros{PTO_XLEN} + 7);
+    StartMemoryEventCapture(0);
+    MGATHER_CAS(40, source_address, 42, 44, 45);
+    assert _MemoryEventCount == 1;
+    assert _MemoryEvents[[0]].kind == MemoryEvent_Atomic;
+    assert _MemoryEvents[[0]].write_performed;
+    assert _MemoryEvents[[0]].read_value == Zeros{PTO_XLEN} + 7;
+    assert _MemoryEvents[[0]].write_value == Zeros{PTO_XLEN} + 9;
+    StopMemoryEventCapture();
+
+    WriteTileElement(44, 0, 0, Zeros{PTO_XLEN} + 8);
+    StartMemoryEventCapture(0);
+    MGATHER_CAS(40, source_address, 42, 44, 45);
+    assert _MemoryEventCount == 1;
+    assert _MemoryEvents[[0]].kind == MemoryEvent_Atomic;
+    assert !_MemoryEvents[[0]].write_performed;
+    StopMemoryEventCapture();
+
+    // Scalar and tile accesses occupy one event domain and one same-agent
+    // program order; the tile load reads from the preceding scalar store.
+    Store(source_address, 8, Zeros{PTO_XLEN} + 7);
+    StartMemoryEventCapture(2);
+    - = AddInitialWriteEvent(source_address, 8, Zeros{PTO_XLEN} + 7);
+    Store(source_address, 8, Zeros{PTO_XLEN} + 8);
+    TLOAD(40, source_address);
+    assert _MemoryEventCount == 3;
+    assert _MemoryEvents[[1]].kind == MemoryEvent_Store;
+    assert _MemoryEvents[[2]].kind == MemoryEvent_Load;
+    assert _MemoryEvents[[1]].agent == _MemoryEvents[[2]].agent;
+    assert _MemoryEvents[[2]].read_from == 1;
+    assert MemoryCandidateExecutionValid();
+    assert MemoryExecutionAllowedTSO();
+    StopMemoryEventCapture();
+
+    ClearFault();
+    StartMemoryEventCapture(0);
+    TPREFETCH(Ones{PTO_XLEN}, 2);
+    assert _LastFault == Fault_DataPage;
+    assert _MemoryEventCount == 0;
+    StopMemoryEventCapture();
+
+    ClearFault();
+    StartMemoryEventCapture(0);
+    TPREFETCH(source_address, 2);
+    assert _LastFault == Fault_None;
+    assert _MemoryEventCount == 2;
+    assert _MemoryEvents[[0]].kind == MemoryEvent_Load;
+    assert _MemoryEvents[[1]].kind == MemoryEvent_Load;
+    StopMemoryEventCapture();
+end;
+
+func TestTSOMixedSizeAndConditionalAtomicPolicy()
+begin
     ResetMemoryExecution();
+    - = AddInitialWriteEvent(Zeros{PTO_XLEN}, 8, Zeros{PTO_XLEN});
+    - = AddInitialWriteEvent(Zeros{PTO_XLEN} + 8, 4, Zeros{PTO_XLEN});
+    assert MemoryCandidateExecutionValid();
+    assert MemoryExecutionAllowedTSO();
+
+    ResetMemoryExecution();
+    - = AddInitialWriteEvent(Zeros{PTO_XLEN}, 8, Zeros{PTO_XLEN});
+    - = AddInitialWriteEvent(Zeros{PTO_XLEN} + 4, 4, Zeros{PTO_XLEN});
+    assert !MemoryCandidateExecutionValid();
+
+    ResetMemoryExecution();
+    let initial = AddInitialWriteEvent(Zeros{PTO_XLEN}, 8,
+        Zeros{PTO_XLEN} + 1);
+    let failed_cas = AddAtomicOutcomeEvent(0, Zeros{PTO_XLEN}, 8,
+        Zeros{PTO_XLEN} + 1, Zeros{PTO_XLEN} + 2,
+        MemoryOrder_Acquire, 0, FALSE);
+    SetMemoryReadFrom(failed_cas, initial);
+    assert MemoryCandidateExecutionValid();
+    assert MemoryExecutionAllowedTSO();
+end;
+
+func RunTileCASOrderCase(bundle_atomic: boolean, acquire: boolean,
+                         release: boolean, expected_order: MemoryOrder)
+begin
+    StopMemoryEventCapture();
+    Store(Zeros{PTO_XLEN} + 256, 8, Zeros{PTO_XLEN} + 10);
+    StartMemoryEventCapture(0);
     let initial = AddInitialWriteEvent(Zeros{PTO_XLEN} + 256, 8,
         Zeros{PTO_XLEN} + 10);
-    SetBlockControlAttributeState(FALSE, block_atomic, acquire, release,
+    SetBundleControlAttributeState(FALSE, bundle_atomic, acquire, release,
         FALSE, FALSE);
-    assert CurrentBlockAtomic() == block_atomic;
-    assert CurrentBlockMemoryOrder() == expected_order;
+    assert CurrentBundleAtomic() == bundle_atomic;
+    assert CurrentBundleMemoryOrder() == expected_order;
     ClearFault();
     MGATHER_CAS(0, Zeros{PTO_XLEN} + 256, 1, 2, 3);
     assert _LastFault == Fault_None;
@@ -195,6 +460,7 @@ begin
     assert _MemoryEvents[[1]].write_value == Zeros{PTO_XLEN} + 11;
     assert _MemoryEvents[[1]].read_from == initial;
     assert MemoryCandidateExecutionValid();
+    StopMemoryEventCapture();
 end;
 
 func TestTileMemoryEventOrdering()
@@ -213,32 +479,35 @@ begin
     WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 11);
 
     // MGATHER.CAS is represented as an indivisible atomic event even without
-    // the block-atomic hint. aq/rl select the exact event order.
-    TestTileCASOrderCase(FALSE, FALSE, FALSE, MemoryOrder_Relaxed);
-    TestTileCASOrderCase(TRUE, TRUE, FALSE, MemoryOrder_Acquire);
-    TestTileCASOrderCase(TRUE, FALSE, TRUE, MemoryOrder_Release);
-    TestTileCASOrderCase(TRUE, TRUE, TRUE, MemoryOrder_AcquireRelease);
+    // the bundle-atomic hint. aq/rl select the exact event order.
+    RunTileCASOrderCase(FALSE, FALSE, FALSE, MemoryOrder_Relaxed);
+    RunTileCASOrderCase(TRUE, TRUE, FALSE, MemoryOrder_Acquire);
+    RunTileCASOrderCase(TRUE, FALSE, TRUE, MemoryOrder_Release);
+    RunTileCASOrderCase(TRUE, TRUE, TRUE, MemoryOrder_AcquireRelease);
 
     ConfigureTile(4, 128, 1, 1, 1, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
+    StopMemoryEventCapture();
     Store(Zeros{PTO_XLEN} + 320, 8, Zeros{PTO_XLEN} + 0x55);
-    ResetMemoryExecution();
+    StartMemoryEventCapture(0);
     - = AddInitialWriteEvent(Zeros{PTO_XLEN} + 320, 8,
         Zeros{PTO_XLEN} + 0x55);
-    SetBlockControlAttributeState(FALSE, FALSE, TRUE, FALSE, FALSE, FALSE);
+    SetBundleControlAttributeState(FALSE, FALSE, TRUE, FALSE, FALSE, FALSE);
     TLOAD(4, Zeros{PTO_XLEN} + 320);
     assert _MemoryEventCount == 2;
     assert _MemoryEvents[[1]].kind == MemoryEvent_Load;
     assert _MemoryEvents[[1]].order == MemoryOrder_Acquire;
+    StopMemoryEventCapture();
 
-    ResetMemoryExecution();
+    StartMemoryEventCapture(0);
     - = AddInitialWriteEvent(Zeros{PTO_XLEN} + 328, 8,
         Zeros{PTO_XLEN});
-    SetBlockControlAttributeState(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE);
+    SetBundleControlAttributeState(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE);
     TSTORE(Zeros{PTO_XLEN} + 328, 4);
     assert _MemoryEventCount == 2;
     assert _MemoryEvents[[1]].kind == MemoryEvent_Store;
     assert _MemoryEvents[[1]].order == MemoryOrder_Release;
+    StopMemoryEventCapture();
 
     ConfigureTile(5, 128, 1, 2, 1, 2, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
@@ -249,14 +518,11 @@ begin
     WriteTileElement(6, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(6, 0, 1, Zeros{PTO_XLEN});
     Store(Zeros{PTO_XLEN} + 384, 8, Zeros{PTO_XLEN});
-    ResetMemoryExecution();
+    StartMemoryEventCapture(0);
     - = AddInitialWriteEvent(Zeros{PTO_XLEN} + 384, 8,
         Zeros{PTO_XLEN});
-    SetBlockControlAttributeState(FALSE, TRUE, TRUE, TRUE, FALSE, FALSE);
+    SetBundleControlAttributeState(FALSE, TRUE, TRUE, TRUE, FALSE, FALSE);
     MSCATTER(Zeros{PTO_XLEN} + 384, 5, 6);
-    let atomic_scatter_winner = LoadUnsigned(
-        Zeros{PTO_XLEN} + 384, 8);
-    assert atomic_scatter_winner == Zeros{PTO_XLEN} + 22;
     assert _MemoryEventCount == 3;
     assert _MemoryEvents[[1]].kind == MemoryEvent_Store;
     assert _MemoryEvents[[2]].kind == MemoryEvent_Store;
@@ -265,27 +531,30 @@ begin
     assert _MemoryEvents[[1]].coherence_rank == 1;
     assert _MemoryEvents[[2]].coherence_rank == 2;
     assert MemoryCandidateExecutionValid();
+    StopMemoryEventCapture();
 
-    ResetMemoryExecution();
     ClearFault();
+    StartMemoryEventCapture(0);
     TLOAD(4, Zeros{PTO_XLEN} + 4096);
     assert _LastFault == Fault_DataPage;
     assert _MemoryEventCount == 0;
+    StopMemoryEventCapture();
 end;
 
 func TestDependencyMetadataIsNotFence()
 begin
+    StopMemoryEventCapture();
     ResetMemoryExecution();
     let initial_x = AddInitialWriteEvent(Zeros{PTO_XLEN}, 8,
         Zeros{PTO_XLEN});
     let initial_y = AddInitialWriteEvent(Zeros{PTO_XLEN} + 8, 8,
         Zeros{PTO_XLEN});
+    // Dependency annotations are scheduling metadata, not architectural
+    // events. The candidate therefore contains only the memory operations.
     - = AddStoreEvent(0, Zeros{PTO_XLEN}, 8, Zeros{PTO_XLEN} + 1,
         MemoryOrder_Relaxed, 1);
-    NoteDependencyMetadata();
     - = AddStoreEvent(1, Zeros{PTO_XLEN} + 8, 8,
         Zeros{PTO_XLEN} + 1, MemoryOrder_Relaxed, 1);
-    NoteDependencyMetadata();
     let read_y = AddLoadEvent(0, Zeros{PTO_XLEN} + 8, 8,
         Zeros{PTO_XLEN}, MemoryOrder_Relaxed);
     let read_x = AddLoadEvent(1, Zeros{PTO_XLEN}, 8,
@@ -300,97 +569,20 @@ begin
     assert MemoryExecutionAllowedTSO();
 end;
 
-func TestTileEventBoundIsPrecise()
-begin
-    ResetProfileState();
-    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(2, 128, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(3, 128, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xaa);
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 10);
-    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 11);
-
-    Store(Zeros{PTO_XLEN} + 400, 8, Zeros{PTO_XLEN} + 0x77);
-    _MemoryEventCount = PTO_MODEL_MEMORY_EVENTS;
-    ClearFault();
-    TLOAD(0, Zeros{PTO_XLEN} + 400);
-    assert _LastFault == Fault_TileLegality;
-    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 0xaa;
-
-    ClearFault();
-    TSTORE(Zeros{PTO_XLEN} + 400, 0);
-    assert _LastFault == Fault_TileLegality;
-    ClearFault();
-    let preserved_store = LoadUnsigned(Zeros{PTO_XLEN} + 400, 8);
-    assert preserved_store == Zeros{PTO_XLEN} + 0x77;
-
-    ConfigureTile(4, 128, 1, 2, 1, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(5, 128, 1, 2, 1, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 21);
-    WriteTileElement(4, 0, 1, Zeros{PTO_XLEN} + 22);
-    WriteTileElement(5, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(5, 0, 1, Zeros{PTO_XLEN});
-    Store(Zeros{PTO_XLEN} + 416, 8, Zeros{PTO_XLEN} + 0x44);
-    _MemoryEventCount = PTO_MODEL_MEMORY_EVENTS;
-    ClearFault();
-    MSCATTER(Zeros{PTO_XLEN} + 416, 4, 5);
-    assert _LastFault == Fault_TileLegality;
-    ClearFault();
-    let preserved_scatter = LoadUnsigned(Zeros{PTO_XLEN} + 416, 8);
-    assert preserved_scatter == Zeros{PTO_XLEN} + 0x44;
-
-    Store(Zeros{PTO_XLEN} + 432, 8, Zeros{PTO_XLEN} + 10);
-    _MemoryEventCount = PTO_MODEL_MEMORY_EVENTS;
-    ClearFault();
-    MGATHER_CAS(0, Zeros{PTO_XLEN} + 432, 1, 2, 3);
-    assert _LastFault == Fault_TileLegality;
-    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 0xaa;
-    ClearFault();
-    let preserved_cas = LoadUnsigned(Zeros{PTO_XLEN} + 432, 8);
-    assert preserved_cas == Zeros{PTO_XLEN} + 10;
-
-    ConfigureTile(10, 128, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(10, 0, 0, Zeros{PTO_XLEN} + 0x99);
-    WriteGPR(2, Zeros{PTO_XLEN} + 448);
-    Store(Zeros{PTO_XLEN} + 448, 8, Zeros{PTO_XLEN} + 0x55);
-    ResetBlockControlState();
-    SetBlockScalarBinding(0, 0, 2, 0, 0, 1);
-    SetBlockTileBinding(0, FALSE, 0, 0, TRUE, FALSE, 10, 0,
-        FALSE, FALSE, TRUE);
-    SetBlockTileOperationSelection('01', '000000000001',
-        Zeros{5} + 24);
-    _MemoryEventCount = PTO_MODEL_MEMORY_EVENTS;
-    ClearFault();
-    let status = ExecuteSelectedBlockTileOperation();
-    FinalizeBlockTileAttempt(status);
-    assert status == TileExecution_Faulted;
-    assert _LastFault == Fault_TileLegality;
-    assert _Tiles[[10]].allocated;
-    assert ReadTileElement(10, 0, 0) == Zeros{PTO_XLEN} + 0x99;
-    ClearFault();
-    let preserved_lifetime_store = LoadUnsigned(
-        Zeros{PTO_XLEN} + 448, 8);
-    assert preserved_lifetime_store == Zeros{PTO_XLEN} + 0x55;
-    ResetMemoryExecution();
-end;
-
 func TestTSOConcurrency()
 begin
+    StopMemoryEventCapture();
     TestTSOStoreBufferingAllowed();
     TestTSOStoreBufferingFenceForbidden();
     TestTSOMessagePassing();
     TestTSOSameLocationAndAtomicity();
     TestTSOIRIWForbidden();
+    TestProductionScalarEventExtraction();
+    TestProductionReservationEventsAndCorners();
+    TestProductionPairAndDMAEventExtraction();
+    TestProductionTileEventExtraction();
+    TestTSOMixedSizeAndConditionalAtomicPolicy();
     TestTileMemoryEventOrdering();
     TestDependencyMetadataIsNotFence();
-    TestTileEventBoundIsPrecise();
+    StopMemoryEventCapture();
 end;

@@ -6,6 +6,8 @@ This page is generated from the canonical PTO catalogs under `spec/catalog/`.
 
 Direct tile operations are selected by the tile operation catalog and execute against explicit tile, scalar, memory, and descriptor operands. The selector catalog is normative for operation identity, operand roles, semantic handler, and argument order.
 
+In PTO ISA 0.57.1, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TMA and CUBE operations bind directly to their corresponding `BSTART.*` command forms. CUBE uses implicit ACC state; `ACCCVT` publishes and releases ACC. Tile allocation selects the first free Tile in the requested hand, and accepted `B.IOT` reuse bits control commit-qualified source release. `B.DATR` fields apply only to the operation sets recorded in the catalog. See [ADR 0045](../architecture-decisions/0045-pto-isa-release-tile-contract.md).
+
 ## Families
 
 | Family | Operations | Role |
@@ -127,7 +129,7 @@ Direct tile operations are selected by the tile operation catalog and execute ag
 | TPREFETCH | function=3 | TPREFETCH | address:base-address&lt;br&gt;byte_count:byte-count | address&lt;br&gt;byte_count |
 | MGATHER | function=4 | MGATHER | destination0:destination&lt;br&gt;address:base-address&lt;br&gt;source0:indices | destination0&lt;br&gt;address&lt;br&gt;source0 |
 | MSCATTER | function=5 | MSCATTER | address:base-address&lt;br&gt;source0:source&lt;br&gt;source1:indices | address&lt;br&gt;source0&lt;br&gt;source1 |
-| MGATHER_MASK | function=6 | MGATHER_MASK | destination0:destination&lt;br&gt;address:base-address&lt;br&gt;source0:indices&lt;br&gt;source1:mask | destination0&lt;br&gt;address&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;{"runtime": "CurrentBlockPadValue"} |
+| MGATHER_MASK | function=6 | MGATHER_MASK | destination0:destination&lt;br&gt;address:base-address&lt;br&gt;source0:indices&lt;br&gt;source1:mask | destination0&lt;br&gt;address&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;{"runtime": "CurrentBundlePadValue"} |
 | MSCATTER_MASK | function=7 | MSCATTER_MASK | address:base-address&lt;br&gt;source0:source&lt;br&gt;source1:indices&lt;br&gt;source2:mask | address&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2 |
 | MGATHER_CAS | function=8 | MGATHER_CAS | destination0:destination&lt;br&gt;address:base-address&lt;br&gt;source0:indices&lt;br&gt;source1:expected&lt;br&gt;source2:replacement | destination0&lt;br&gt;address&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2 |
 

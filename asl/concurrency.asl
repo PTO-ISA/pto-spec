@@ -10,7 +10,8 @@ end;
 pure func MemoryEventIsWrite(event: MemoryEvent) => boolean
 begin
     return event.kind == MemoryEvent_InitialWrite ||
-           event.kind == MemoryEvent_Store || event.kind == MemoryEvent_Atomic;
+           event.kind == MemoryEvent_Store ||
+           (event.kind == MemoryEvent_Atomic && event.write_performed);
 end;
 
 pure func MemoryEventIsAccess(event: MemoryEvent) => boolean
@@ -42,6 +43,27 @@ begin
     _MemoryEventCount = 0;
 end;
 
+// Production event extraction is an explicit verification mode because the
+// bounded event array is model-checking infrastructure, not an architectural
+// execution limit. Manual candidate construction remains available while
+// capture is disabled.
+func StartMemoryEventCapture(agent: MemoryAgentId)
+begin
+    ResetMemoryExecution();
+    _CurrentMemoryAgent = agent;
+    _MemoryEventCaptureEnabled = TRUE;
+end;
+
+func SelectMemoryEventAgent(agent: MemoryAgentId)
+begin
+    _CurrentMemoryAgent = agent;
+end;
+
+func StopMemoryEventCapture()
+begin
+    _MemoryEventCaptureEnabled = FALSE;
+end;
+
 func AddMemoryEvent(event: MemoryEvent) => MemoryEventIndex
 begin
     assert _MemoryEventCount < PTO_MODEL_MEMORY_EVENTS;
@@ -61,7 +83,8 @@ begin
         address = address,
         size_bytes = size_bytes,
         read_value = Zeros{PTO_XLEN},
-        write_value = value,
+        write_value = NormalizeMemoryAccessValue(value, size_bytes),
+        write_performed = TRUE,
         order = MemoryOrder_Relaxed,
         read_from = 0,
         coherence_rank = 0,
@@ -79,8 +102,9 @@ begin
         agent = agent,
         address = address,
         size_bytes = size_bytes,
-        read_value = value,
+        read_value = NormalizeMemoryAccessValue(value, size_bytes),
         write_value = Zeros{PTO_XLEN},
+        write_performed = FALSE,
         order = order,
         read_from = 0,
         coherence_rank = 0,
@@ -100,7 +124,8 @@ begin
         address = address,
         size_bytes = size_bytes,
         read_value = Zeros{PTO_XLEN},
-        write_value = value,
+        write_value = NormalizeMemoryAccessValue(value, size_bytes),
+        write_performed = TRUE,
         order = order,
         read_from = 0,
         coherence_rank = rank,
@@ -114,13 +139,24 @@ func AddAtomicEvent(agent: MemoryAgentId, address: Word,
                     write_value: Word, order: MemoryOrder,
                     rank: MemoryCoherenceRank) => MemoryEventIndex
 begin
+    return AddAtomicOutcomeEvent(agent, address, size_bytes, read_value,
+        write_value, order, rank, TRUE);
+end;
+
+func AddAtomicOutcomeEvent(agent: MemoryAgentId, address: Word,
+                           size_bytes: integer {1,2,4,8}, read_value: Word,
+                           write_value: Word, order: MemoryOrder,
+                           rank: MemoryCoherenceRank,
+                           write_performed: boolean) => MemoryEventIndex
+begin
     return AddMemoryEvent(MemoryEvent {
         kind = MemoryEvent_Atomic,
         agent = agent,
         address = address,
         size_bytes = size_bytes,
-        read_value = read_value,
-        write_value = write_value,
+        read_value = NormalizeMemoryAccessValue(read_value, size_bytes),
+        write_value = NormalizeMemoryAccessValue(write_value, size_bytes),
+        write_performed = write_performed,
         order = order,
         read_from = 0,
         coherence_rank = rank,
@@ -139,6 +175,7 @@ begin
         size_bytes = 1,
         read_value = Zeros{PTO_XLEN},
         write_value = Zeros{PTO_XLEN},
+        write_performed = FALSE,
         order = MemoryOrder_AcquireRelease,
         read_from = 0,
         coherence_rank = 0,
@@ -147,91 +184,84 @@ begin
     });
 end;
 
-readonly func MemoryEventCapacityAvailable(
-    additional_events: integer {0..PTO_MODEL_TILE_ELEMENTS}) => boolean
-begin
-    return _MemoryEventCount + additional_events <= PTO_MODEL_MEMORY_EVENTS;
-end;
-
 readonly func NextMemoryCoherenceRank(address: Word,
                                       size_bytes: integer {1,2,4,8})
                                       => MemoryCoherenceRank
 begin
-    var rank: integer = 0;
-    for event_number = 0 to _MemoryEventCount - 1 do
-        let event = _MemoryEvents[[event_number]];
-        if MemoryEventIsWrite(event) && event.address == address &&
-           event.size_bytes == size_bytes && event.coherence_rank > rank then
-            rank = event.coherence_rank;
+    var next_rank: integer {1..PTO_MODEL_MEMORY_EVENTS} = 1;
+    if _MemoryEventCount > 0 then
+        for event_number = 0 to _MemoryEventCount - 1 do
+            let event = _MemoryEvents[[event_number as MemoryEventIndex]];
+            if MemoryEventIsWrite(event) && event.address == address &&
+               event.size_bytes == size_bytes &&
+               event.coherence_rank >= next_rank then
+                next_rank = (event.coherence_rank + 1) as
+                    integer {1..PTO_MODEL_MEMORY_EVENTS};
+            end;
         end;
     end;
-    assert rank + 1 < PTO_MODEL_MEMORY_EVENTS;
-    return (rank + 1) as MemoryCoherenceRank;
+    assert next_rank < PTO_MODEL_MEMORY_EVENTS;
+    return next_rank as MemoryCoherenceRank;
 end;
 
-func RecordCompletedLoadEvent(address: Word,
-                              size_bytes: integer {1,2,4,8},
-                              value: Word, order: MemoryOrder)
+func ResolveCapturedReadFrom(read: MemoryEventIndex)
 begin
-    assert _MemoryEventCount < PTO_MODEL_MEMORY_EVENTS;
-    let load = AddLoadEvent(0, address, size_bytes, value, order);
-    var source_found = FALSE;
+    let read_event = _MemoryEvents[[read]];
+    var found = FALSE;
     var source: MemoryEventIndex = 0;
-    var source_rank: integer = -1;
-    for event_number = 0 to load - 1 do
-        let candidate = event_number as MemoryEventIndex;
-        let event = _MemoryEvents[[candidate]];
-        if MemoryEventIsWrite(event) && event.address == address &&
-           event.size_bytes == size_bytes && event.write_value == value &&
-           event.coherence_rank > source_rank then
-            source = candidate;
-            source_rank = event.coherence_rank;
-            source_found = TRUE;
+    if read > 0 then
+        for candidate_number = 0 to read - 1 do
+            let candidate_index = candidate_number as MemoryEventIndex;
+            let candidate = _MemoryEvents[[candidate_index]];
+            if MemoryEventIsWrite(candidate) &&
+               MemoryEventsShareLocation(read_event, candidate) &&
+               candidate.write_value == read_event.read_value then
+                found = TRUE;
+                source = candidate_index;
+            end;
         end;
     end;
-    if source_found then SetMemoryReadFrom(load, source); end;
+    if found then SetMemoryReadFrom(read, source); end;
 end;
 
-func RecordCompletedStoreEvent(address: Word,
-                               size_bytes: integer {1,2,4,8},
-                               value: Word, order: MemoryOrder)
+func RecordLoadEvent(address: Word, size_bytes: integer {1,2,4,8},
+                     value: Word, order: MemoryOrder)
 begin
-    assert _MemoryEventCount < PTO_MODEL_MEMORY_EVENTS;
-    - = AddStoreEvent(0, address, size_bytes, value, order,
-        NextMemoryCoherenceRank(address, size_bytes));
-end;
-
-func RecordCompletedAtomicEvent(address: Word,
-                                size_bytes: integer {1,2,4,8},
-                                read_value: Word, write_value: Word,
-                                order: MemoryOrder)
-begin
-    assert _MemoryEventCount < PTO_MODEL_MEMORY_EVENTS;
-    let atomic = AddAtomicEvent(0, address, size_bytes, read_value,
-        write_value, order, NextMemoryCoherenceRank(address, size_bytes));
-    var source_found = FALSE;
-    var source: MemoryEventIndex = 0;
-    var source_rank: integer = -1;
-    for event_number = 0 to atomic - 1 do
-        let candidate = event_number as MemoryEventIndex;
-        let event = _MemoryEvents[[candidate]];
-        if MemoryEventIsWrite(event) && event.address == address &&
-           event.size_bytes == size_bytes &&
-           event.write_value == read_value &&
-           event.coherence_rank > source_rank then
-            source = candidate;
-            source_rank = event.coherence_rank;
-            source_found = TRUE;
-        end;
+    if _MemoryEventCaptureEnabled then
+        let event = AddLoadEvent(_CurrentMemoryAgent, address, size_bytes,
+            value, order);
+        ResolveCapturedReadFrom(event);
     end;
-    if source_found then SetMemoryReadFrom(atomic, source); end;
 end;
 
-// Dependency metadata is a scheduling relation only. Applying it creates no
-// candidate event and, in particular, never synthesizes a FENCE.D event.
-func NoteDependencyMetadata()
+func RecordStoreEvent(address: Word, size_bytes: integer {1,2,4,8},
+                      value: Word, order: MemoryOrder)
 begin
-    return;
+    if _MemoryEventCaptureEnabled then
+        - = AddStoreEvent(_CurrentMemoryAgent, address, size_bytes, value,
+            order, NextMemoryCoherenceRank(address, size_bytes));
+    end;
+end;
+
+func RecordAtomicEvent(address: Word, size_bytes: integer {1,2,4,8},
+                       read_value: Word, write_value: Word,
+                       order: MemoryOrder, write_performed: boolean)
+begin
+    if _MemoryEventCaptureEnabled then
+        let rank = if write_performed then
+            NextMemoryCoherenceRank(address, size_bytes) else 0;
+        let event = AddAtomicOutcomeEvent(_CurrentMemoryAgent, address,
+            size_bytes, read_value, write_value, order,
+            rank as MemoryCoherenceRank, write_performed);
+        ResolveCapturedReadFrom(event);
+    end;
+end;
+
+func RecordDataFenceEvent(predecessor: bits(4), successor: bits(4))
+begin
+    if _MemoryEventCaptureEnabled then
+        - = AddDataFenceEvent(_CurrentMemoryAgent, predecessor, successor);
+    end;
 end;
 
 func SetMemoryReadFrom(read: MemoryEventIndex, source: MemoryEventIndex)
@@ -396,6 +426,7 @@ begin
                 return FALSE;
             end;
             if event.kind == MemoryEvent_Atomic &&
+               event.write_performed &&
                source.coherence_rank + 1 != event.coherence_rank then
                 return FALSE;
             end;

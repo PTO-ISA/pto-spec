@@ -148,7 +148,7 @@ DELETED_TEPL_NAMES = (
 )
 
 GENERATED_DOCS = (
-    "docs/instructions/block-command.md",
+    "docs/instructions/bundle-command.md",
     "docs/instructions/index.md",
     "docs/instructions/scalar-agu.md",
     "docs/instructions/scalar-alu.md",
@@ -172,16 +172,22 @@ CANONICAL_STATIC_INPUTS = (
     "spec/hardware-conformance-profile.json",
     "spec/requirements.json",
     "spec/catalog/command-forms.json",
+    "spec/catalog/numeric-profile-applicability.json",
+    "spec/catalog/numeric-profile-identities.json",
     "spec/catalog/scalar-forms.json",
     "spec/catalog/system-registers.json",
     "spec/catalog/tile-operations.json",
     "docs/architecture.md",
     "docs/coverage.md",
     "docs/memory-model.md",
+    "docs/maturity-bringup-plan.md",
+    "docs/maturity-stage-targets.md",
     "docs/modeling-conventions.md",
     "docs/normative-sources.md",
+    "docs/numeric-profile-decision-register.md",
     "docs/profile-contracts.md",
-    "docs/architecture-decisions/0009-pto-isa-release-tile-contract.md",
+    "docs/review-checklist.md",
+    "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
 )
 FORM_PROJECTION_KEYS = (
     "form_id",
@@ -477,7 +483,7 @@ def build_totality_evidence(encoding_hash: str) -> dict:
         "pending_base_operations": [],
         "contract_status_counts": {"reviewed-complete": sum(FAMILY_COUNTS.values())},
         "dispatch_outcome_contract": {
-            "recognized_operation_legality_or_handler_failure": "TileExecution_Faulted",
+            "recognized_operation_legality_or_handler_failure": "TileExecution_Rejected",
             "unknown_or_reserved_selector": "TileExecution_Rejected",
         },
         "tepl": {
@@ -893,7 +899,14 @@ def canonical_input_paths() -> list[str]:
         str(path.relative_to(ROOT))
         for path in (ROOT / "docs/architecture-decisions").glob("*.md")
     )
-    paths = sorted(set(CANONICAL_STATIC_INPUTS).union(asl, decisions))
+    closure_evidence = sorted(
+        str(path.relative_to(ROOT))
+        for path in (ROOT / "spec/evidence").glob("*.json")
+        if str(path.relative_to(ROOT)) not in EVIDENCE_FILES
+    )
+    paths = sorted(
+        set(CANONICAL_STATIC_INPUTS).union(asl, decisions, closure_evidence)
+    )
     missing = [path for path in paths if not (ROOT / path).is_file()]
     if missing:
         raise SystemExit(f"canonical release inputs are missing: {missing}")

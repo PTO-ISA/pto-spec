@@ -103,6 +103,16 @@ git diff --check
 make repo-check
 ```
 
+For parallel executable tests, build the repository-pinned ASLRef executable once and have each shard invoke that
+executable directly. Do not keep `dune exec` alive around each ASLRef process: Dune retains the workspace lock for the
+process lifetime and silently serializes otherwise independent shards. The repository `scripts/aslref` wrapper owns this
+build-once/direct-execution behavior.
+
+Keep runtime shards focused: assemble only the test-library sources that define a shard's calls, schedule the known
+heavy totality matrices first, and use a bounded job count. The shard checker must inspect only each actual `main()`
+body, prove every canonical call appears exactly once, reject orphan or empty shard files, and prove every declared
+`Test*` or `Validate*` subprogram remains reachable. A call-looking line in dead helper code is not execution evidence.
+
 Before committing, confirm:
 
 - ASLRef strict type-checking succeeds.
@@ -116,6 +126,10 @@ Before committing, confirm:
 - Every declared implementation profile has an exact machine-readable portable default, override obligations,
   requirement owner, ASL call site, and executable feature evidence.
 - Independent-evidence gaps and conflicts remain visible rather than being converted into unsupported agreement.
+- Independent comparison gates are executed against the recorded clean, pinned snapshot; evidence archives a stable
+  publication-safe command identity, exit code, result, output hashes, and a sanitized diagnostic excerpt. Keep any
+  restricted source/version recipe behind constructed local generator inputs. Never hardcode a gate result. Missing
+  commands, timeouts, or nonzero exits fail closed and keep the associated maturity target open.
 - Generated files are not committed.
 - No backend mechanism leaked into the portable model.
 - Governance, security, and contribution policies remain consistent.

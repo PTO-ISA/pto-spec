@@ -2097,7 +2097,7 @@
       "mnemonic": "C.MOVI",
       "semantic_family": "ALU",
       "semantic_group": "ALU",
-      "semantic_handler": "MaterializeLongSigned",
+      "semantic_handler": "MoveScalarValue",
       "status": "accepted"
     },
     {
@@ -2143,7 +2143,7 @@
       "mnemonic": "C.MOVR",
       "semantic_family": "ALU",
       "semantic_group": "ALU",
-      "semantic_handler": "ApplyScalarRightModifier",
+      "semantic_handler": "MoveScalarValue",
       "status": "accepted"
     },
     {
@@ -2395,7 +2395,7 @@
       "mnemonic": "C.SETRET",
       "semantic_family": "ALU",
       "semantic_group": "ALU",
-      "semantic_handler": "ScalarBinary",
+      "semantic_handler": "SetReturnAddress",
       "status": "accepted"
     },
     {
@@ -12898,7 +12898,7 @@
       "mnemonic": "HL.LUI",
       "semantic_family": "ALU",
       "semantic_group": "ALU",
-      "semantic_handler": "MaterializeLUI",
+      "semantic_handler": "MaterializeLongSigned",
       "status": "accepted"
     },
     {
@@ -24750,7 +24750,7 @@
       "mnemonic": "MADDW",
       "semantic_family": "ALU",
       "semantic_group": "ALU",
-      "semantic_handler": "ScalarMultiplyAdd",
+      "semantic_handler": "ScalarMultiplyAddW",
       "status": "accepted"
     },
     {
@@ -31616,5 +31616,5 @@
   "operand_field_count": 45,
   "operand_piece_count": 1867,
   "schema_version": 2,
-  "semantic_handler_count": 68
+  "semantic_handler_count": 69
 }

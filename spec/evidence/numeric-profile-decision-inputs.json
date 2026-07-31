@@ -1,0 +1,1654 @@
+{
+  "schema_version": 1,
+  "target": "S5-T2-A",
+  "status": "decision-inputs-and-identities-closed-profile-decisions-open",
+  "public_repository": "https://github.com/hw-native-sys/pto-isa",
+  "public_commit": "712cbe9f23df5d5362be5e8327599f4285317473",
+  "policy": {
+    "authority": "PTO ASL and accepted architecture decisions define numeric semantics; public implementation evidence exposes choices but cannot select them.",
+    "profile_boundary": "Support restrictions, portable result rules, named target result rules, and bounded implementation-defined behavior must be classified separately.",
+    "cpu_role": "CPU simulation is an implementation under test and host arithmetic is not a target oracle.",
+    "independent_comparison_role": "The closed executable-ISA comparison validates identities and bounded structural semantics but does not provide S5-T2 numeric differential results.",
+    "no_implicit_choice": "A missing profile rule remains open; the generator never chooses the most convenient backend behavior."
+  },
+  "profile_partition_inputs": [
+    {
+      "id": "portable-numeric",
+      "role": "portable result contract",
+      "status": "identity-accepted-rules-required"
+    },
+    {
+      "id": "cpu-observation",
+      "role": "implementation-under-test observation only",
+      "status": "identity-accepted-observation-schema-required-not-an-oracle"
+    },
+    {
+      "id": "a2a3-target",
+      "role": "named target profile candidate",
+      "status": "identity-accepted-rules-required"
+    },
+    {
+      "id": "a5-target",
+      "role": "named target profile candidate",
+      "status": "identity-accepted-rules-required"
+    }
+  ],
+  "sources": [
+    {
+      "id": "public-type-system",
+      "path": "docs/isa/state-and-types/type-system.md",
+      "role": "published numeric formats, exceptional values, conversion rules, and target variation points",
+      "layer": "public-contract",
+      "sha256": "3bbd2d11d24cf503962f269f6c0d313a331039f1193409422ede4e68d9993330",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/docs/isa/state-and-types/type-system.md"
+    },
+    {
+      "id": "public-target-profiles",
+      "path": "docs/isa/machine-model/execution-agents.md",
+      "role": "published CPU, A2A3, and A5 capability partition",
+      "layer": "public-contract",
+      "sha256": "d2f0e6de371a1bc7713f64e18861b565e012a5bb2290552ae00dbb2f9902571f",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/docs/isa/machine-model/execution-agents.md"
+    },
+    {
+      "id": "public-portability-rules",
+      "path": "docs/isa/reference/portability-and-target-profiles.md",
+      "role": "published portable-semantics and target-narrowing boundary",
+      "layer": "public-contract",
+      "sha256": "e607ab10d5b35d5f492ee187c582d3782115f195c87c0b88fc038272d52abd29",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/docs/isa/reference/portability-and-target-profiles.md"
+    },
+    {
+      "id": "cpu-conversion",
+      "path": "include/pto/cpu/TCvt.hpp",
+      "role": "CPU conversion, rounding, and saturation implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "5824b29148028fa9358854ce5a729571a0101dc8c07b9c1347f2fe9c76f247b4",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/cpu/TCvt.hpp"
+    },
+    {
+      "id": "a2a3-conversion",
+      "path": "include/pto/npu/a2a3/TCvt.hpp",
+      "role": "A2A3 conversion control and edge-case implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "442fbc7977038ef4684ec275a3d20c2f9ac79dc023771803e4f596e514d93eaf",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/npu/a2a3/TCvt.hpp"
+    },
+    {
+      "id": "a5-conversion",
+      "path": "include/pto/npu/a5/TCvt.hpp",
+      "role": "A5 conversion control, format, and edge-case implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "7b87f505c3ea50066628aa2fdfd23ffb3cdbb382d16d560c8827590f8eb2ca52",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/npu/a5/TCvt.hpp"
+    },
+    {
+      "id": "a5-division",
+      "path": "include/pto/npu/a5/custom/Div754.hpp",
+      "role": "A5 division precision, special-value, and subnormal implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "e073ea0d0bb77cc5649dd0e6d30a26fa86ca4828baa42d2efccb3c4caa89e542",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/npu/a5/custom/Div754.hpp"
+    },
+    {
+      "id": "cpu-square-root",
+      "path": "include/pto/cpu/TSqrt.hpp",
+      "role": "CPU square-root implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "aab7b3b0df41690e8f112e6f02f63c365b82cf7e580b933e90701024f79177df",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/cpu/TSqrt.hpp"
+    },
+    {
+      "id": "cpu-reciprocal-square-root",
+      "path": "include/pto/cpu/TRSqrt.hpp",
+      "role": "CPU reciprocal-square-root implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "3b2304aad6473a3632dc034e0af6a5b474e0bd8bf043f72098fb50023d2eaa43",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/cpu/TRSqrt.hpp"
+    },
+    {
+      "id": "a5-exponential",
+      "path": "include/pto/npu/a5/custom/TExp_Custom.hpp",
+      "role": "A5 exponential implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "b4132dfb7ab052d6333d476172a11eb68f51526ce5f8f6a87533a15e1aec6d5c",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/npu/a5/custom/TExp_Custom.hpp"
+    },
+    {
+      "id": "a5-logarithm",
+      "path": "include/pto/npu/a5/custom/TLog_Custom.hpp",
+      "role": "A5 logarithm implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "92ed4c98eb340c69e5bf0ef9639a332a8dfcb123bc7648cc2ae18bcb86f76ff7",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/npu/a5/custom/TLog_Custom.hpp"
+    },
+    {
+      "id": "a5-square-root",
+      "path": "include/pto/npu/a5/custom/TSqrtHp.hpp",
+      "role": "A5 high-precision square-root implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "a3a16d27f845956f332a9004a7ec508b9b1698562a615ffe96162e39f3639c9c",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/npu/a5/custom/TSqrtHp.hpp"
+    },
+    {
+      "id": "cpu-reduction",
+      "path": "include/pto/cpu/TReduce.hpp",
+      "role": "CPU reduction implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "d91643b4c22673dfce152c636cf8a103153fd0e08321cbc43f5d637261161508",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/cpu/TReduce.hpp"
+    },
+    {
+      "id": "a2a3-reduction",
+      "path": "include/pto/npu/a2a3/TRowReduceOps.hpp",
+      "role": "A2A3 reduction-tree implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "79314d0af3619961eb39b51668cbd0b375e5b5f85de24c879b6a86357ce13753",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/npu/a2a3/TRowReduceOps.hpp"
+    },
+    {
+      "id": "a5-reduction",
+      "path": "include/pto/npu/a5/TRowReduce.hpp",
+      "role": "A5 reduction width, order, and narrowing implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "fb02fdf0367280465c80ab39db3272206f3d97a35f54205636e8f9a71a70584d",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/npu/a5/TRowReduce.hpp"
+    },
+    {
+      "id": "cpu-matrix",
+      "path": "include/pto/cpu/TMatmul.hpp",
+      "role": "CPU matrix arithmetic and MX implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "bb2f361360740ad36961ab9431b42de1d33b341edf60e2f0862ff371aaf7dcd4",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/cpu/TMatmul.hpp"
+    },
+    {
+      "id": "a2a3-matrix",
+      "path": "include/pto/npu/a2a3/TMatmul.hpp",
+      "role": "A2A3 matrix instruction implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "6efc16caad1fa9b81fe3339bbe10cfb8a3fcb40d3759a807efdaf3b00464fb7f",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/npu/a2a3/TMatmul.hpp"
+    },
+    {
+      "id": "a5-matrix",
+      "path": "include/pto/npu/a5/TMatmul.hpp",
+      "role": "A5 matrix instruction and MX implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "13d04641738882a5e784372ba4ad94762ab54b7d2a229666fd74399ce567c944",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/npu/a5/TMatmul.hpp"
+    },
+    {
+      "id": "cpu-quantization",
+      "path": "include/pto/cpu/TQuant.hpp",
+      "role": "CPU quantization format, scale, rounding, and special-value implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "8dd82083bd5c7332b39002b964d110a3fd0fffecf344c3ea5433cfcecbe8f779",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/cpu/TQuant.hpp"
+    },
+    {
+      "id": "a2a3-quantization",
+      "path": "include/pto/npu/a2a3/TQuant.hpp",
+      "role": "A2A3 quantization implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "a6b2aab4217fa9895df331c290d85218e7726eb080e430bfbd0651e91cddc34b",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/npu/a2a3/TQuant.hpp"
+    },
+    {
+      "id": "a5-quantization",
+      "path": "include/pto/npu/a5/TQuant.hpp",
+      "role": "A5 quantization format, scale, and special-value implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "7e16b3cc9892b0af496d7e1d4fbddfb86f4c2cc9bd5c43235adbca5d7ce92ae3",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/npu/a5/TQuant.hpp"
+    },
+    {
+      "id": "cpu-dequantization",
+      "path": "include/pto/cpu/TDeQuant.hpp",
+      "role": "CPU dequantization implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "f5d4e7a4c8f28845f27ec16d0092a4c9801a999d365a67c431727d8bcdd21bc4",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/cpu/TDeQuant.hpp"
+    },
+    {
+      "id": "a2a3-dequantization",
+      "path": "include/pto/npu/a2a3/TDequant.hpp",
+      "role": "A2A3 dequantization implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "4fc8c886e202a9a6cbe359659c2cbd2b80b427397958908c4381762b63b60b57",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/npu/a2a3/TDequant.hpp"
+    },
+    {
+      "id": "a5-dequantization",
+      "path": "include/pto/npu/a5/TDeQuant.hpp",
+      "role": "A5 dequantization implementation evidence",
+      "layer": "implementation-evidence",
+      "sha256": "b4fa0abd2b5eebaecc08c29accf42a45e2909d13256961be4f121b159639e941",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/npu/a5/TDeQuant.hpp"
+    }
+  ],
+  "decision_questions": [
+    {
+      "id": "PD-01",
+      "title": "profile identity and support-versus-semantics boundary",
+      "classification": "profile-decision",
+      "source_ids": [
+        "public-target-profiles",
+        "public-portability-rules",
+        "public-type-system"
+      ],
+      "finding": "The public contract names CPU, A2A3, and A5 capability profiles and says profiles narrow support, while the numeric contract also exposes target-dependent result variation.",
+      "unresolved_rule": "Decide whether portable numeric results exist for each domain and which remaining differences are named target-profile rules rather than support restrictions.",
+      "permitted_dispositions": [
+        "portable-normative-rule",
+        "named-target-profile-rule",
+        "unsupported-in-profile"
+      ],
+      "acceptance_evidence": [
+        "accepted profile taxonomy and version identifiers",
+        "complete domain-to-profile applicability matrix"
+      ],
+      "domains": [
+        "cube-convert",
+        "cube-matrix",
+        "scalar-binary",
+        "scalar-fp-convert",
+        "scalar-fp-to-integer",
+        "scalar-fused",
+        "scalar-integer-to-fp",
+        "scalar-unary",
+        "tile-axpy",
+        "tile-binary",
+        "tile-compare",
+        "tile-convert",
+        "tile-dequantize",
+        "tile-expand",
+        "tile-order",
+        "tile-partial",
+        "tile-prelu",
+        "tile-quantize",
+        "tile-reduction",
+        "tile-unary"
+      ],
+      "status": "decision-required",
+      "selected_disposition": null,
+      "decision_record": null
+    },
+    {
+      "id": "PD-02",
+      "title": "numeric format encodings and target availability",
+      "classification": "profile-decision",
+      "source_ids": [
+        "public-type-system",
+        "cpu-conversion",
+        "a2a3-conversion",
+        "a5-conversion"
+      ],
+      "finding": "The public type names span IEEE, BF16, FP8, specialized eight-bit, four-bit, and integer carriers, but target availability and conversion paths differ.",
+      "unresolved_rule": "Freeze every format encoding, supported operation/type pair, widening or reinterpretation rule, and profile rejection before numeric vectors are generated.",
+      "permitted_dispositions": [
+        "portable-normative-rule",
+        "named-target-profile-rule",
+        "unsupported-in-profile"
+      ],
+      "acceptance_evidence": [
+        "bit-level format table",
+        "all operation/type legality matrix",
+        "positive and reserved-format vectors"
+      ],
+      "domains": [
+        "cube-convert",
+        "cube-matrix",
+        "scalar-binary",
+        "scalar-fp-convert",
+        "scalar-fp-to-integer",
+        "scalar-fused",
+        "scalar-integer-to-fp",
+        "scalar-unary",
+        "tile-axpy",
+        "tile-binary",
+        "tile-compare",
+        "tile-convert",
+        "tile-dequantize",
+        "tile-expand",
+        "tile-order",
+        "tile-partial",
+        "tile-prelu",
+        "tile-quantize",
+        "tile-reduction",
+        "tile-unary"
+      ],
+      "status": "decision-required",
+      "selected_disposition": null,
+      "decision_record": null
+    },
+    {
+      "id": "PD-03",
+      "title": "rounding taxonomy, selection, and tie behavior",
+      "classification": "profile-decision",
+      "source_ids": [
+        "public-type-system",
+        "cpu-conversion",
+        "a2a3-conversion",
+        "a5-conversion"
+      ],
+      "finding": "The public prose names four directional modes while backend conversion paths expose additional round, odd, part, and saturation combinations.",
+      "unresolved_rule": "Map every encoded or profile-selected rounding value to an exact result rule, including tie behavior, unsupported combinations, and operation-local overrides.",
+      "permitted_dispositions": [
+        "portable-normative-rule",
+        "named-target-profile-rule",
+        "unsupported-in-profile"
+      ],
+      "acceptance_evidence": [
+        "rounding encoding table",
+        "halfway vectors on both signs",
+        "rounding-and-saturation ordering vectors"
+      ],
+      "domains": [
+        "cube-convert",
+        "cube-matrix",
+        "scalar-binary",
+        "scalar-fp-convert",
+        "scalar-fp-to-integer",
+        "scalar-fused",
+        "scalar-integer-to-fp",
+        "scalar-unary",
+        "tile-axpy",
+        "tile-binary",
+        "tile-convert",
+        "tile-dequantize",
+        "tile-expand",
+        "tile-partial",
+        "tile-prelu",
+        "tile-quantize",
+        "tile-reduction",
+        "tile-unary"
+      ],
+      "status": "decision-required",
+      "selected_disposition": null,
+      "decision_record": null
+    },
+    {
+      "id": "PD-04",
+      "title": "subnormal handling, FTZ, and numeric mode state",
+      "classification": "architecture-decision",
+      "source_ids": [
+        "public-type-system",
+        "a5-division",
+        "public-target-profiles"
+      ],
+      "finding": "The public contract allows default FTZ and names target controls, while implementation evidence includes explicit subnormal handling in selected operations.",
+      "unresolved_rule": "Define input and result FTZ separately, the architectural visibility and lifetime of numeric mode state, and whether an operation may override default FTZ.",
+      "permitted_dispositions": [
+        "portable-normative-rule",
+        "named-target-profile-rule",
+        "implementation-defined-with-explicit-allowed-set"
+      ],
+      "acceptance_evidence": [
+        "mode-state reset and transition contract",
+        "minimum subnormal and normal-boundary vectors",
+        "per-operation FTZ applicability matrix"
+      ],
+      "domains": [
+        "cube-convert",
+        "cube-matrix",
+        "scalar-binary",
+        "scalar-fp-convert",
+        "scalar-fused",
+        "scalar-unary",
+        "tile-axpy",
+        "tile-binary",
+        "tile-convert",
+        "tile-dequantize",
+        "tile-expand",
+        "tile-partial",
+        "tile-prelu",
+        "tile-quantize",
+        "tile-reduction",
+        "tile-unary"
+      ],
+      "status": "decision-required",
+      "selected_disposition": null,
+      "decision_record": null
+    },
+    {
+      "id": "PD-05",
+      "title": "NaN, infinity, signed zero, and payload rules",
+      "classification": "profile-decision",
+      "source_ids": [
+        "public-type-system",
+        "a5-division",
+        "cpu-quantization",
+        "a5-quantization"
+      ],
+      "finding": "Published and implementation evidence distinguish quieting, propagation, sentinel, payload, infinity, and signed-zero cases without one complete cross-operation rule.",
+      "unresolved_rule": "Define canonical versus payload-preserving NaNs, signaling behavior, infinity production, signed-zero selection, and special-value conversion or quantization results.",
+      "permitted_dispositions": [
+        "portable-normative-rule",
+        "named-target-profile-rule",
+        "implementation-defined-with-explicit-allowed-set"
+      ],
+      "acceptance_evidence": [
+        "bit-exact special-value table",
+        "all sign and payload classes",
+        "binary, unary, conversion, compare, reduction, quantization, and matrix vectors"
+      ],
+      "domains": [
+        "cube-convert",
+        "cube-matrix",
+        "scalar-binary",
+        "scalar-fp-convert",
+        "scalar-fp-to-integer",
+        "scalar-fused",
+        "scalar-unary",
+        "tile-axpy",
+        "tile-binary",
+        "tile-compare",
+        "tile-convert",
+        "tile-dequantize",
+        "tile-expand",
+        "tile-order",
+        "tile-partial",
+        "tile-prelu",
+        "tile-quantize",
+        "tile-reduction",
+        "tile-unary"
+      ],
+      "status": "decision-required",
+      "selected_disposition": null,
+      "decision_record": null
+    },
+    {
+      "id": "PD-06",
+      "title": "scalar numeric exception flags",
+      "classification": "architecture-decision",
+      "source_ids": [
+        "public-type-system"
+      ],
+      "finding": "The formal scalar surface owns NV, DZ, OF, UF, and NX hooks, but the audited public numeric contract does not define a complete producer, stickiness, or priority rule.",
+      "unresolved_rule": "Define per-operation flag production, simultaneous flags, stickiness, reset, and trap interaction for every scalar numeric domain.",
+      "permitted_dispositions": [
+        "portable-normative-rule",
+        "named-target-profile-rule"
+      ],
+      "acceptance_evidence": [
+        "flag production matrix",
+        "multi-flag priority and stickiness vectors",
+        "reset and trap-preservation tests"
+      ],
+      "domains": [
+        "scalar-binary",
+        "scalar-fp-convert",
+        "scalar-fp-to-integer",
+        "scalar-fused",
+        "scalar-integer-to-fp",
+        "scalar-unary"
+      ],
+      "status": "decision-required",
+      "selected_disposition": null,
+      "decision_record": null
+    },
+    {
+      "id": "PD-07",
+      "title": "conversion overflow, saturation, wrap, and indefinite results",
+      "classification": "architecture-decision",
+      "source_ids": [
+        "public-type-system",
+        "cpu-conversion",
+        "a2a3-conversion",
+        "a5-conversion"
+      ],
+      "finding": "The public contract records undefined hardware overflow where CPU simulation may saturate, and backend paths also expose non-saturating wrap and target-specific control combinations.",
+      "unresolved_rule": "Choose a deterministic result or a bounded implementation-defined result set for every source, destination, rounding, saturation, NaN, infinity, and out-of-range combination.",
+      "permitted_dispositions": [
+        "portable-normative-rule",
+        "named-target-profile-rule",
+        "implementation-defined-with-explicit-allowed-set",
+        "unsupported-in-profile"
+      ],
+      "acceptance_evidence": [
+        "complete conversion cross-product",
+        "minimum, maximum, one-past, NaN, and infinity vectors",
+        "saturation-off wrap vectors"
+      ],
+      "domains": [
+        "cube-convert",
+        "scalar-fp-convert",
+        "scalar-fp-to-integer",
+        "scalar-integer-to-fp",
+        "tile-convert",
+        "tile-dequantize",
+        "tile-quantize"
+      ],
+      "status": "decision-required",
+      "selected_disposition": null,
+      "decision_record": null
+    },
+    {
+      "id": "PD-08",
+      "title": "elementary-function accuracy and domain behavior",
+      "classification": "profile-decision",
+      "source_ids": [
+        "cpu-square-root",
+        "cpu-reciprocal-square-root",
+        "a5-exponential",
+        "a5-logarithm",
+        "a5-square-root",
+        "a5-division"
+      ],
+      "finding": "CPU and target implementations use different library, intrinsic, or custom approximation paths, so matching operation names do not establish equal numeric results.",
+      "unresolved_rule": "Define exact rounding or an explicit accuracy bound, monotonicity requirement, domain errors, and special-value results for division, reciprocal, square root, reciprocal square root, logarithm, exponential, and exponential difference.",
+      "permitted_dispositions": [
+        "correctly-rounded-portable-rule",
+        "named-profile-error-bound",
+        "unsupported-in-profile"
+      ],
+      "acceptance_evidence": [
+        "versioned high-precision oracle",
+        "ULP or relative-error rule",
+        "domain boundary and monotonicity vectors"
+      ],
+      "domains": [
+        "scalar-binary",
+        "scalar-unary",
+        "tile-binary",
+        "tile-expand",
+        "tile-unary"
+      ],
+      "status": "decision-required",
+      "selected_disposition": null,
+      "decision_record": null
+    },
+    {
+      "id": "PD-09",
+      "title": "reduction width, order, ties, and stability",
+      "classification": "architecture-decision",
+      "source_ids": [
+        "cpu-reduction",
+        "a2a3-reduction",
+        "a5-reduction"
+      ],
+      "finding": "CPU and target reduction trees differ, optimized shapes may change grouping, and selected integer paths widen then narrow with wrap behavior.",
+      "unresolved_rule": "Freeze accumulation width and order, overflow behavior, NaN and signed-zero selection, arg tie-breaking, partial merge behavior, and stable ordering requirements.",
+      "permitted_dispositions": [
+        "portable-normative-rule",
+        "named-target-profile-rule",
+        "implementation-defined-with-explicit-allowed-set"
+      ],
+      "acceptance_evidence": [
+        "reduction-tree or allowed-result contract",
+        "permutation and tie vectors",
+        "widening, overflow, NaN, zero, and partial-merge vectors"
+      ],
+      "domains": [
+        "tile-compare",
+        "tile-order",
+        "tile-partial",
+        "tile-reduction"
+      ],
+      "status": "decision-required",
+      "selected_disposition": null,
+      "decision_record": null
+    },
+    {
+      "id": "PD-10",
+      "title": "quantization and dequantization scale contract",
+      "classification": "architecture-decision",
+      "source_ids": [
+        "cpu-quantization",
+        "a2a3-quantization",
+        "a5-quantization",
+        "cpu-dequantization",
+        "a2a3-dequantization",
+        "a5-dequantization"
+      ],
+      "finding": "Implementation evidence contains multiple format, shared-exponent, scale, zero-point, clamping, and special-value paths that are not one portable arithmetic rule.",
+      "unresolved_rule": "Define scale and zero-point encoding, grouping axis and size, exponent selection, rounding, clamping, exceptional sentinels, packing, and inverse dequantization for every accepted format.",
+      "permitted_dispositions": [
+        "portable-normative-rule",
+        "named-target-profile-rule",
+        "unsupported-in-profile"
+      ],
+      "acceptance_evidence": [
+        "format-specific quantization equations",
+        "group and tail-boundary vectors",
+        "NaN, infinity, zero, max, tie, clamp, pack, and round-trip vectors"
+      ],
+      "domains": [
+        "tile-dequantize",
+        "tile-quantize"
+      ],
+      "status": "decision-required",
+      "selected_disposition": null,
+      "decision_record": null
+    },
+    {
+      "id": "PD-11",
+      "title": "matrix product, accumulation, bias, and MX arithmetic",
+      "classification": "architecture-decision",
+      "source_ids": [
+        "cpu-matrix",
+        "a2a3-matrix",
+        "a5-matrix",
+        "public-target-profiles"
+      ],
+      "finding": "CPU evidence uses host arithmetic and fused accumulation for selected types, while target paths use matrix hardware and A5 adds MX scale formats.",
+      "unresolved_rule": "Define product precision, accumulator width, accumulation order, intermediate rounding, saturation, bias order, source accumulator order, MX scale interpretation, and special-value behavior per type tuple.",
+      "permitted_dispositions": [
+        "portable-normative-rule",
+        "named-target-profile-rule",
+        "unsupported-in-profile"
+      ],
+      "acceptance_evidence": [
+        "legal type-tuple and accumulator table",
+        "dot-product cancellation and halfway vectors",
+        "bias, accumulate, MX scale, overflow, saturation, and exceptional-value vectors"
+      ],
+      "domains": [
+        "cube-matrix"
+      ],
+      "status": "decision-required",
+      "selected_disposition": null,
+      "decision_record": null
+    },
+    {
+      "id": "PD-12",
+      "title": "bounded implementation-defined numeric behavior",
+      "classification": "profile-decision",
+      "source_ids": [
+        "public-target-profiles",
+        "public-portability-rules",
+        "public-type-system"
+      ],
+      "finding": "The public contract permits target variation but does not provide a complete allowed-result set or discovery mechanism for each numeric variation point.",
+      "unresolved_rule": "For every non-portable result, name the selecting profile or visible mode, bound the allowed results, and require generic validation to reject an unknown profile or unconfigured implementation-defined rule.",
+      "permitted_dispositions": [
+        "named-target-profile-rule",
+        "implementation-defined-with-explicit-allowed-set",
+        "unsupported-in-profile"
+      ],
+      "acceptance_evidence": [
+        "profile discovery and selection contract",
+        "allowed-result sets for every implementation-defined rule",
+        "unknown-profile and missing-rule rejection tests"
+      ],
+      "domains": [
+        "cube-convert",
+        "cube-matrix",
+        "scalar-binary",
+        "scalar-fp-convert",
+        "scalar-fp-to-integer",
+        "scalar-fused",
+        "scalar-integer-to-fp",
+        "scalar-unary",
+        "tile-axpy",
+        "tile-binary",
+        "tile-compare",
+        "tile-convert",
+        "tile-dequantize",
+        "tile-expand",
+        "tile-order",
+        "tile-partial",
+        "tile-prelu",
+        "tile-quantize",
+        "tile-reduction",
+        "tile-unary"
+      ],
+      "status": "decision-required",
+      "selected_disposition": null,
+      "decision_record": null
+    }
+  ],
+  "domain_matrix": [
+    {
+      "domain": "scalar-binary",
+      "lane": "N1",
+      "operation_count": 4,
+      "operation_keys": [
+        "scalar:fadd_32_b78b658e6740",
+        "scalar:fdiv_32_04a5bb6ab56f",
+        "scalar:fmul_32_7d521d9d65e7",
+        "scalar:fsub_32_a4479d0d4276"
+      ],
+      "hooks": [
+        "ScalarFPBinaryProfile"
+      ],
+      "open_numeric_dimensions": [
+        "rounding",
+        "NaN and infinity",
+        "signed zero",
+        "subnormal handling",
+        "NV/DZ/OF/UF/NX flags"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-03",
+        "PD-04",
+        "PD-05",
+        "PD-06",
+        "PD-08",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a5-conversion",
+        "a5-division",
+        "a5-exponential",
+        "a5-logarithm",
+        "a5-quantization",
+        "a5-square-root",
+        "cpu-conversion",
+        "cpu-quantization",
+        "cpu-reciprocal-square-root",
+        "cpu-square-root",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    },
+    {
+      "domain": "scalar-unary",
+      "lane": "N1",
+      "operation_count": 3,
+      "operation_keys": [
+        "scalar:fexp_32_592ef5288c7d",
+        "scalar:frecip_32_3d51f4f727ea",
+        "scalar:fsqrt_32_84b3495cc6c7"
+      ],
+      "hooks": [
+        "ScalarFPUnaryProfile"
+      ],
+      "open_numeric_dimensions": [
+        "rounding",
+        "domain errors",
+        "NaN and infinity",
+        "signed zero",
+        "NV/DZ/OF/UF/NX flags"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-03",
+        "PD-04",
+        "PD-05",
+        "PD-06",
+        "PD-08",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a5-conversion",
+        "a5-division",
+        "a5-exponential",
+        "a5-logarithm",
+        "a5-quantization",
+        "a5-square-root",
+        "cpu-conversion",
+        "cpu-quantization",
+        "cpu-reciprocal-square-root",
+        "cpu-square-root",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    },
+    {
+      "domain": "scalar-fused",
+      "lane": "N1",
+      "operation_count": 4,
+      "operation_keys": [
+        "scalar:fmadd_32_c616a17bcb12",
+        "scalar:fmsub_32_b83012b83148",
+        "scalar:fnmadd_32_7f45e606d299",
+        "scalar:fnmsub_32_6542d56665b3"
+      ],
+      "hooks": [
+        "ScalarFPFusedProfile"
+      ],
+      "open_numeric_dimensions": [
+        "single-rounding behavior",
+        "NaN and infinity",
+        "signed zero",
+        "overflow and underflow",
+        "NV/DZ/OF/UF/NX flags"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-03",
+        "PD-04",
+        "PD-05",
+        "PD-06",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a5-conversion",
+        "a5-division",
+        "a5-quantization",
+        "cpu-conversion",
+        "cpu-quantization",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    },
+    {
+      "domain": "scalar-fp-to-integer",
+      "lane": "N2",
+      "operation_count": 5,
+      "operation_keys": [
+        "scalar:fcvta_32_010837b9acbd",
+        "scalar:fcvtm_32_8801f1562870",
+        "scalar:fcvtn_32_8714ba358d80",
+        "scalar:fcvtp_32_84354a7aa6b1",
+        "scalar:fcvtz_32_bee01d31217c"
+      ],
+      "hooks": [
+        "ScalarFPToIntegerProfile"
+      ],
+      "open_numeric_dimensions": [
+        "rounding-mode result",
+        "out-of-range result",
+        "NaN and infinity",
+        "saturation or indefinite value",
+        "NV/NX flags"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-03",
+        "PD-05",
+        "PD-06",
+        "PD-07",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a5-conversion",
+        "a5-division",
+        "a5-quantization",
+        "cpu-conversion",
+        "cpu-quantization",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    },
+    {
+      "domain": "scalar-fp-convert",
+      "lane": "N2",
+      "operation_count": 1,
+      "operation_keys": [
+        "scalar:fcvt_32_1102f5aeeda9"
+      ],
+      "hooks": [
+        "ScalarFPConvertProfile"
+      ],
+      "open_numeric_dimensions": [
+        "source and destination format mapping",
+        "rounding",
+        "NaN payload",
+        "overflow and underflow",
+        "NV/OF/UF/NX flags"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-03",
+        "PD-04",
+        "PD-05",
+        "PD-06",
+        "PD-07",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a5-conversion",
+        "a5-division",
+        "a5-quantization",
+        "cpu-conversion",
+        "cpu-quantization",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    },
+    {
+      "domain": "scalar-integer-to-fp",
+      "lane": "N2",
+      "operation_count": 2,
+      "operation_keys": [
+        "scalar:scvtf_32_01861bbd5ef2",
+        "scalar:ucvtf_32_987f4e019c32"
+      ],
+      "hooks": [
+        "ScalarIntegerToFPProfile"
+      ],
+      "open_numeric_dimensions": [
+        "signedness",
+        "destination format",
+        "rounding",
+        "overflow",
+        "NX flag"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-03",
+        "PD-06",
+        "PD-07",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a5-conversion",
+        "cpu-conversion",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    },
+    {
+      "domain": "tile-binary",
+      "lane": "N3",
+      "operation_count": 24,
+      "operation_keys": [
+        "tile:TEPL:TADD",
+        "tile:TEPL:TADDS",
+        "tile:TEPL:TAND",
+        "tile:TEPL:TANDS",
+        "tile:TEPL:TDIV",
+        "tile:TEPL:TDIVS",
+        "tile:TEPL:TMAX",
+        "tile:TEPL:TMAXS",
+        "tile:TEPL:TMIN",
+        "tile:TEPL:TMINS",
+        "tile:TEPL:TMUL",
+        "tile:TEPL:TMULS",
+        "tile:TEPL:TOR",
+        "tile:TEPL:TORS",
+        "tile:TEPL:TREM",
+        "tile:TEPL:TREMS",
+        "tile:TEPL:TSHL",
+        "tile:TEPL:TSHLS",
+        "tile:TEPL:TSHR",
+        "tile:TEPL:TSHRS",
+        "tile:TEPL:TSUB",
+        "tile:TEPL:TSUBS",
+        "tile:TEPL:TXOR",
+        "tile:TEPL:TXORS"
+      ],
+      "hooks": [
+        "TileProfileBinary"
+      ],
+      "open_numeric_dimensions": [
+        "data-type interpretation",
+        "rounding",
+        "saturation",
+        "divide-by-zero",
+        "NaN and infinity"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-03",
+        "PD-04",
+        "PD-05",
+        "PD-08",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a5-conversion",
+        "a5-division",
+        "a5-exponential",
+        "a5-logarithm",
+        "a5-quantization",
+        "a5-square-root",
+        "cpu-conversion",
+        "cpu-quantization",
+        "cpu-reciprocal-square-root",
+        "cpu-square-root",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    },
+    {
+      "domain": "tile-unary",
+      "lane": "N3",
+      "operation_count": 9,
+      "operation_keys": [
+        "tile:TEPL:TABS",
+        "tile:TEPL:TEXP",
+        "tile:TEPL:TLOG",
+        "tile:TEPL:TNEG",
+        "tile:TEPL:TNOT",
+        "tile:TEPL:TRECIP",
+        "tile:TEPL:TRELU",
+        "tile:TEPL:TRSQRT",
+        "tile:TEPL:TSQRT"
+      ],
+      "hooks": [
+        "TileExponential",
+        "TileLogarithm",
+        "TileProfileUnary",
+        "TileReciprocal",
+        "TileSquareRoot"
+      ],
+      "open_numeric_dimensions": [
+        "data-type interpretation",
+        "rounding",
+        "domain errors",
+        "NaN and infinity",
+        "saturation"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-03",
+        "PD-04",
+        "PD-05",
+        "PD-08",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a5-conversion",
+        "a5-division",
+        "a5-exponential",
+        "a5-logarithm",
+        "a5-quantization",
+        "a5-square-root",
+        "cpu-conversion",
+        "cpu-quantization",
+        "cpu-reciprocal-square-root",
+        "cpu-square-root",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    },
+    {
+      "domain": "tile-axpy",
+      "lane": "N3",
+      "operation_count": 1,
+      "operation_keys": [
+        "tile:TEPL:TAXPY"
+      ],
+      "hooks": [
+        "TileProfileAxpy"
+      ],
+      "open_numeric_dimensions": [
+        "multiply-add precision",
+        "rounding",
+        "overflow",
+        "saturation",
+        "NaN and infinity"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-03",
+        "PD-04",
+        "PD-05",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a5-conversion",
+        "a5-division",
+        "a5-quantization",
+        "cpu-conversion",
+        "cpu-quantization",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    },
+    {
+      "domain": "tile-prelu",
+      "lane": "N3",
+      "operation_count": 1,
+      "operation_keys": [
+        "tile:TEPL:TPRELU"
+      ],
+      "hooks": [
+        "TileProfilePReLU"
+      ],
+      "open_numeric_dimensions": [
+        "comparison domain",
+        "multiply precision",
+        "rounding",
+        "overflow",
+        "saturation"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-03",
+        "PD-04",
+        "PD-05",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a5-conversion",
+        "a5-division",
+        "a5-quantization",
+        "cpu-conversion",
+        "cpu-quantization",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    },
+    {
+      "domain": "tile-compare",
+      "lane": "N3",
+      "operation_count": 2,
+      "operation_keys": [
+        "tile:TEPL:TCMP",
+        "tile:TEPL:TCMPS"
+      ],
+      "hooks": [
+        "TileProfileCompare"
+      ],
+      "open_numeric_dimensions": [
+        "ordered and unordered comparison",
+        "NaN behavior",
+        "signed zero",
+        "result encoding"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-05",
+        "PD-09",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a2a3-reduction",
+        "a5-conversion",
+        "a5-division",
+        "a5-quantization",
+        "a5-reduction",
+        "cpu-conversion",
+        "cpu-quantization",
+        "cpu-reduction",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    },
+    {
+      "domain": "tile-reduction",
+      "lane": "N5",
+      "operation_count": 12,
+      "operation_keys": [
+        "tile:TEPL:TCOLARGMAX",
+        "tile:TEPL:TCOLARGMIN",
+        "tile:TEPL:TCOLMAX",
+        "tile:TEPL:TCOLMIN",
+        "tile:TEPL:TCOLPROD",
+        "tile:TEPL:TCOLSUM",
+        "tile:TEPL:TROWARGMAX",
+        "tile:TEPL:TROWARGMIN",
+        "tile:TEPL:TROWMAX",
+        "tile:TEPL:TROWMIN",
+        "tile:TEPL:TROWPROD",
+        "tile:TEPL:TROWSUM"
+      ],
+      "hooks": [
+        "TileProfileReductionInitial",
+        "TileProfileReductionStep"
+      ],
+      "open_numeric_dimensions": [
+        "accumulation width",
+        "reduction order",
+        "rounding",
+        "NaN and infinity",
+        "arg tie-breaking"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-03",
+        "PD-04",
+        "PD-05",
+        "PD-09",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a2a3-reduction",
+        "a5-conversion",
+        "a5-division",
+        "a5-quantization",
+        "a5-reduction",
+        "cpu-conversion",
+        "cpu-quantization",
+        "cpu-reduction",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    },
+    {
+      "domain": "tile-expand",
+      "lane": "N3",
+      "operation_count": 16,
+      "operation_keys": [
+        "tile:TEPL:TCOLEXPAND",
+        "tile:TEPL:TCOLEXPANDADD",
+        "tile:TEPL:TCOLEXPANDDIV",
+        "tile:TEPL:TCOLEXPANDEXPDIF",
+        "tile:TEPL:TCOLEXPANDMAX",
+        "tile:TEPL:TCOLEXPANDMIN",
+        "tile:TEPL:TCOLEXPANDMUL",
+        "tile:TEPL:TCOLEXPANDSUB",
+        "tile:TEPL:TROWEXPAND",
+        "tile:TEPL:TROWEXPANDADD",
+        "tile:TEPL:TROWEXPANDDIV",
+        "tile:TEPL:TROWEXPANDEXPDIF",
+        "tile:TEPL:TROWEXPANDMAX",
+        "tile:TEPL:TROWEXPANDMIN",
+        "tile:TEPL:TROWEXPANDMUL",
+        "tile:TEPL:TROWEXPANDSUB"
+      ],
+      "hooks": [
+        "TileExpDifference",
+        "TileProfileExpand"
+      ],
+      "open_numeric_dimensions": [
+        "data-type interpretation",
+        "rounding",
+        "divide-by-zero",
+        "NaN and infinity",
+        "saturation"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-03",
+        "PD-04",
+        "PD-05",
+        "PD-08",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a5-conversion",
+        "a5-division",
+        "a5-exponential",
+        "a5-logarithm",
+        "a5-quantization",
+        "a5-square-root",
+        "cpu-conversion",
+        "cpu-quantization",
+        "cpu-reciprocal-square-root",
+        "cpu-square-root",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    },
+    {
+      "domain": "tile-convert",
+      "lane": "N4",
+      "operation_count": 1,
+      "operation_keys": [
+        "tile:TEPL:TCVT"
+      ],
+      "hooks": [
+        "TileProfileConvert"
+      ],
+      "open_numeric_dimensions": [
+        "source and destination format mapping",
+        "rounding",
+        "NaN payload",
+        "overflow and underflow",
+        "saturation"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-03",
+        "PD-04",
+        "PD-05",
+        "PD-07",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a5-conversion",
+        "a5-division",
+        "a5-quantization",
+        "cpu-conversion",
+        "cpu-quantization",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    },
+    {
+      "domain": "cube-convert",
+      "lane": "N4",
+      "operation_count": 1,
+      "operation_keys": [
+        "tile:CUBE:ACCCVT"
+      ],
+      "hooks": [
+        "TileProfileConvert"
+      ],
+      "open_numeric_dimensions": [
+        "source and destination format mapping",
+        "rounding",
+        "NaN payload",
+        "overflow and underflow",
+        "saturation"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-03",
+        "PD-04",
+        "PD-05",
+        "PD-07",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a5-conversion",
+        "a5-division",
+        "a5-quantization",
+        "cpu-conversion",
+        "cpu-quantization",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    },
+    {
+      "domain": "tile-quantize",
+      "lane": "N4",
+      "operation_count": 1,
+      "operation_keys": [
+        "tile:TEPL:TQUANT"
+      ],
+      "hooks": [
+        "TileProfileQuantize"
+      ],
+      "open_numeric_dimensions": [
+        "scale interpretation",
+        "zero-point interpretation",
+        "rounding",
+        "clamping",
+        "exception behavior"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-03",
+        "PD-04",
+        "PD-05",
+        "PD-07",
+        "PD-10",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a2a3-dequantization",
+        "a2a3-quantization",
+        "a5-conversion",
+        "a5-dequantization",
+        "a5-division",
+        "a5-quantization",
+        "cpu-conversion",
+        "cpu-dequantization",
+        "cpu-quantization",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    },
+    {
+      "domain": "tile-dequantize",
+      "lane": "N4",
+      "operation_count": 1,
+      "operation_keys": [
+        "tile:TEPL:TDEQUANT"
+      ],
+      "hooks": [
+        "TileProfileDequantize"
+      ],
+      "open_numeric_dimensions": [
+        "scale interpretation",
+        "zero-point interpretation",
+        "rounding",
+        "overflow and underflow",
+        "exception behavior"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-03",
+        "PD-04",
+        "PD-05",
+        "PD-07",
+        "PD-10",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a2a3-dequantization",
+        "a2a3-quantization",
+        "a5-conversion",
+        "a5-dequantization",
+        "a5-division",
+        "a5-quantization",
+        "cpu-conversion",
+        "cpu-dequantization",
+        "cpu-quantization",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    },
+    {
+      "domain": "tile-partial",
+      "lane": "N5",
+      "operation_count": 4,
+      "operation_keys": [
+        "tile:TEPL:TPARTADD",
+        "tile:TEPL:TPARTMAX",
+        "tile:TEPL:TPARTMIN",
+        "tile:TEPL:TPARTMUL"
+      ],
+      "hooks": [
+        "TileProfilePartialValue"
+      ],
+      "open_numeric_dimensions": [
+        "data-type interpretation",
+        "rounding",
+        "overflow",
+        "NaN and infinity",
+        "tie behavior"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-03",
+        "PD-04",
+        "PD-05",
+        "PD-09",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a2a3-reduction",
+        "a5-conversion",
+        "a5-division",
+        "a5-quantization",
+        "a5-reduction",
+        "cpu-conversion",
+        "cpu-quantization",
+        "cpu-reduction",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    },
+    {
+      "domain": "tile-order",
+      "lane": "N5",
+      "operation_count": 4,
+      "operation_keys": [
+        "tile:TEPL:TMRGSORT",
+        "tile:TEPL:TPARTARGMAX",
+        "tile:TEPL:TPARTARGMIN",
+        "tile:TEPL:TSORT"
+      ],
+      "hooks": [
+        "TileProfileOrderLeft",
+        "TileProfileValueIsNaN"
+      ],
+      "open_numeric_dimensions": [
+        "data-type ordering",
+        "NaN placement",
+        "signed zero",
+        "equal-value stability",
+        "ascending and descending tie behavior"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-05",
+        "PD-09",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a2a3-reduction",
+        "a5-conversion",
+        "a5-division",
+        "a5-quantization",
+        "a5-reduction",
+        "cpu-conversion",
+        "cpu-quantization",
+        "cpu-reduction",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    },
+    {
+      "domain": "cube-matrix",
+      "lane": "N6",
+      "operation_count": 12,
+      "operation_keys": [
+        "tile:CUBE:TGEMV",
+        "tile:CUBE:TGEMV_ACC",
+        "tile:CUBE:TGEMV_BIAS",
+        "tile:CUBE:TGEMV_MX",
+        "tile:CUBE:TGEMV_MX_ACC",
+        "tile:CUBE:TGEMV_MX_BIAS",
+        "tile:CUBE:TMATMUL",
+        "tile:CUBE:TMATMUL_ACC",
+        "tile:CUBE:TMATMUL_BIAS",
+        "tile:CUBE:TMATMUL_MX",
+        "tile:CUBE:TMATMUL_MX_ACC",
+        "tile:CUBE:TMATMUL_MX_BIAS"
+      ],
+      "hooks": [
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixBias",
+        "TileProfileMatrixScaledAccumulate"
+      ],
+      "open_numeric_dimensions": [
+        "input product precision",
+        "accumulation width",
+        "rounding",
+        "saturation",
+        "NaN and infinity"
+      ],
+      "decision_question_ids": [
+        "PD-01",
+        "PD-02",
+        "PD-03",
+        "PD-04",
+        "PD-05",
+        "PD-11",
+        "PD-12"
+      ],
+      "source_ids": [
+        "a2a3-conversion",
+        "a2a3-matrix",
+        "a5-conversion",
+        "a5-division",
+        "a5-matrix",
+        "a5-quantization",
+        "cpu-conversion",
+        "cpu-matrix",
+        "cpu-quantization",
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ],
+      "status": "profile-rule-required",
+      "selected_profile_rule": null
+    }
+  ],
+  "summary": {
+    "source_count": 24,
+    "public_contract_source_count": 3,
+    "implementation_evidence_source_count": 21,
+    "decision_question_count": 12,
+    "open_decision_question_count": 12,
+    "numeric_domain_count": 20,
+    "open_numeric_domain_count": 20,
+    "selected_profile_rule_count": 0,
+    "profile_identity_count": 4
+  }
+}

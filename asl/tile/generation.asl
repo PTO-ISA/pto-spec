@@ -13,7 +13,7 @@ begin
             _Tiles[[destination]].payload[[element]] = value;
         end;
     end;
-    _Tiles[[destination]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(destination);
 end;
 
 func TTRI(destination: TileIndex, upper: boolean,

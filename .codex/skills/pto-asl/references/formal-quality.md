@@ -33,6 +33,10 @@ Check:
   enum linkage alone is insufficient.
 - **Evidence hygiene**: external comparison evidence records provenance and disposition without importing incompatible
   material into the normative model.
+- **Reproducible external gates**: comparison evidence runs every claimed gate on a clean content-addressed snapshot and
+  archives a publication-safe command identity, exit code, result, output hashes, and a sanitized diagnostic excerpt.
+  Restricted source/version recipes stay behind constructed local generator inputs. Missing commands, timeouts, and
+  nonzero exits fail closed; generated evidence must never substitute hardcoded outcomes for executed checks.
 
 ## Test shape
 

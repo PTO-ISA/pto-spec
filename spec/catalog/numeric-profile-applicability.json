@@ -1,0 +1,171 @@
+{
+  "schema_version": 1,
+  "catalog_id": "numeric-profile-applicability",
+  "status": "a2a3-mx-support-rejection-closed-results-open",
+  "target": "S5-T2-A3:PD-01",
+  "profiles": [
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "role": "A2/A3 target numeric applicability",
+      "status": "partial-applicability-closed-results-open",
+      "accepted_scope": "The six MX CUBE operation selectors are unsupported by A2/A3 for every architectural TileDataType and reject before operation effects."
+    }
+  ],
+  "rules": [
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "family": "CUBE",
+      "function": 4,
+      "type_scope": {
+        "kind": "all_tile_data_types",
+        "tile_data_type_count": 25
+      },
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null,
+      "source_ids": [
+        "public-target-profiles",
+        "public-portability-rules",
+        "a2a3-matrix",
+        "a5-matrix",
+        "public-intrinsic-api",
+        "executable-model-comparison"
+      ],
+      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "family": "CUBE",
+      "function": 5,
+      "type_scope": {
+        "kind": "all_tile_data_types",
+        "tile_data_type_count": 25
+      },
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null,
+      "source_ids": [
+        "public-target-profiles",
+        "public-portability-rules",
+        "a2a3-matrix",
+        "a5-matrix",
+        "public-intrinsic-api",
+        "executable-model-comparison"
+      ],
+      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "family": "CUBE",
+      "function": 6,
+      "type_scope": {
+        "kind": "all_tile_data_types",
+        "tile_data_type_count": 25
+      },
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null,
+      "source_ids": [
+        "public-target-profiles",
+        "public-portability-rules",
+        "a2a3-matrix",
+        "a5-matrix",
+        "public-intrinsic-api",
+        "executable-model-comparison"
+      ],
+      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "family": "CUBE",
+      "function": 20,
+      "type_scope": {
+        "kind": "all_tile_data_types",
+        "tile_data_type_count": 25
+      },
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null,
+      "source_ids": [
+        "public-target-profiles",
+        "public-portability-rules",
+        "a2a3-matrix",
+        "a5-matrix",
+        "public-intrinsic-api",
+        "executable-model-comparison"
+      ],
+      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "family": "CUBE",
+      "function": 21,
+      "type_scope": {
+        "kind": "all_tile_data_types",
+        "tile_data_type_count": 25
+      },
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null,
+      "source_ids": [
+        "public-target-profiles",
+        "public-portability-rules",
+        "a2a3-matrix",
+        "a5-matrix",
+        "public-intrinsic-api",
+        "executable-model-comparison"
+      ],
+      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "family": "CUBE",
+      "function": 22,
+      "type_scope": {
+        "kind": "all_tile_data_types",
+        "tile_data_type_count": 25
+      },
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null,
+      "source_ids": [
+        "public-target-profiles",
+        "public-portability-rules",
+        "a2a3-matrix",
+        "a5-matrix",
+        "public-intrinsic-api",
+        "executable-model-comparison"
+      ],
+      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+    }
+  ],
+  "open_parent_decisions": [
+    "PD-01",
+    "cube-matrix",
+    "S5-T2"
+  ]
+}

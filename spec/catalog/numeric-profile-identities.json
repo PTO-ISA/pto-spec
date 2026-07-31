@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "status": "identity-framework-closed-rules-open",
+  "active_reference_profile": "pto-v0",
+  "policy": {
+    "authority": "PTO ASL, accepted architecture decisions, and this identity catalog define the numeric profile boundary; backend behavior is evidence only.",
+    "support_boundary": "A target profile may reject an operation/type tuple, but it may not silently change the portable result of an accepted tuple.",
+    "bounded_variation": "A portable rule may delegate a result dimension only to a named target profile or visible numeric mode with a finite or mathematically testable allowed-result contract.",
+    "unknown_selection": "Unknown identities, modes, formats, operation/type tuples, and missing delegated rules reject before architectural effects.",
+    "cpu_observation": "CPU observations are implementation-under-test diagnostics and are never an architectural profile or independent oracle."
+  },
+  "identities": [
+    {
+      "partition_id": "portable-numeric",
+      "id": "pto-numeric-v1",
+      "kind": "portable-numeric-contract",
+      "normative_identity": true,
+      "role": "Portable result, legality, and pre-effect rejection contract for accepted numeric operation/type tuples.",
+      "selection": "Applies to every PTO numeric operation; target profiles may only narrow support or implement an explicitly delegated bounded variation point.",
+      "relation_to_pto_v0": "Distinct from the deterministic pto-v0 raw-carrier implementation profile; it supplies the future target-conformance contract rather than changing pto-v0.",
+      "rule_status": "decision-required",
+      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+      "source_ids": [
+        "public-portability-rules",
+        "public-target-profiles"
+      ]
+    },
+    {
+      "partition_id": "cpu-observation",
+      "id": "pto-cpu-observation-v1",
+      "kind": "observation-only",
+      "normative_identity": false,
+      "role": "Versioned implementation-under-test observations and developer diagnostics.",
+      "selection": "Cannot be selected as an architectural numeric profile or independent conformance oracle.",
+      "relation_to_pto_v0": "May observe pto-v0 or a CPU backend but defines neither one.",
+      "rule_status": "observation-schema-required",
+      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+      "source_ids": [
+        "public-portability-rules",
+        "public-target-profiles"
+      ]
+    },
+    {
+      "partition_id": "a2a3-target",
+      "id": "pto-a2a3-numeric-v1",
+      "kind": "target-numeric-profile",
+      "normative_identity": true,
+      "role": "A2A3 support restrictions and explicitly delegated bounded numeric rules.",
+      "selection": "Requires a complete A2A3 operation/type legality matrix and one accepted result rule for every supported tuple.",
+      "relation_to_pto_v0": "Future alternative target profile distinct from pto-v0; pto-v0 raw-carrier results are not inherited as hardware arithmetic.",
+      "rule_status": "decision-required",
+      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+      "source_ids": [
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ]
+    },
+    {
+      "partition_id": "a5-target",
+      "id": "pto-a5-numeric-v1",
+      "kind": "target-numeric-profile",
+      "normative_identity": true,
+      "role": "A5 support restrictions and explicitly delegated bounded numeric rules.",
+      "selection": "Requires a complete A5 operation/type legality matrix and one accepted result rule for every supported tuple.",
+      "relation_to_pto_v0": "Future alternative target profile distinct from pto-v0; pto-v0 raw-carrier results are not inherited as hardware arithmetic.",
+      "rule_status": "decision-required",
+      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+      "source_ids": [
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ]
+    }
+  ],
+  "summary": {
+    "identity_count": 4,
+    "accepted_identity_count": 4,
+    "portable_contract_count": 1,
+    "observation_only_count": 1,
+    "target_profile_count": 2,
+    "complete_rule_count": 0
+  }
+}
