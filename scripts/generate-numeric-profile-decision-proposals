@@ -68,13 +68,8 @@ PROPOSALS: dict[str, dict[str, Any]] = {
             "named-target-profile-rule",
             "unsupported-in-profile",
         ],
-        "proposed_rule": "ADR 0039 closes discovery and namespace ownership for scalar FRM, fixed FCVT overrides, bundle RMode, public conversion modes, matrix controls, stochastic controls, and backend-only controls. The portable rounding core is RNE, RTZ, RTP, and RTM with exact ties-to-even behavior for RNE. Numeric result rules remain open for all 18 affected domains, 102 operations, and 25 hooks.",
-        "open_items": [
-            "accept the active scalar code-4 rule and the code-5-through-7 rejection-or-fallback disposition",
-            "map public, bundle, matrix, stochastic, and backend-only controls only where a named profile owns the mapping",
-            "assign exact per-domain rounding and saturation-order rules",
-            "publish signed halfway and rounding-before-saturation vectors",
-        ],
+        "proposed_rule": "ADR 0047 accepts the separate scalar, fixed-mnemonic, bundle, and public selector mappings; exact RNE, RTM, RTP, RTZ, RNA, RTO, and RHB tie rules; scalar reserved-code RNE fallback; operation defaults; one rounding point for every affected domain; and rounding before saturation. Other numeric result dimensions remain owned by PD-02 and PD-04 through PD-12.",
+        "open_items": [],
     },
     "PD-04": {
         "proposed_dispositions": [
@@ -247,7 +242,7 @@ def generate() -> dict[str, Any]:
         rounding_selector_contract["schema_version"] == 1
         and rounding_selector_contract["decision_id"] == "PD-03"
         and rounding_selector_contract["status"]
-        == "selector-ownership-inventory-closed-result-rules-open"
+        == "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open"
         and rounding_selector_contract["summary"]
         == {
             "scalar_active_selector_count": 8,
@@ -257,8 +252,8 @@ def generate() -> dict[str, Any]:
             "affected_domain_count": 18,
             "affected_operation_count": 102,
             "affected_hook_count": 25,
-            "accepted_domain_rounding_rule_count": 0,
-            "pd03_complete": False,
+            "accepted_domain_rounding_rule_count": 18,
+            "pd03_complete": True,
         },
         "numeric rounding selector contract drift",
     )
@@ -401,10 +396,20 @@ def generate() -> dict[str, Any]:
             ),
             f"{question['id']} proposes a forbidden disposition",
         )
+        accepted = question["status"] == "accepted"
         require(
-            question["selected_disposition"] is None
-            and question["decision_record"] is None,
-            f"{question['id']} was accepted outside this proposal layer",
+            (
+                accepted
+                and question["selected_disposition"] in proposal["proposed_dispositions"]
+                and isinstance(question["decision_record"], str)
+                and question["decision_record"]
+            )
+            or (
+                not accepted
+                and question["selected_disposition"] is None
+                and question["decision_record"] is None
+            ),
+            f"{question['id']} acceptance state drift",
         )
         decision_proposals.append(
             {
@@ -415,9 +420,9 @@ def generate() -> dict[str, Any]:
                 "affected_domains": question["domains"],
                 **proposal,
                 "acceptance_evidence": question["acceptance_evidence"],
-                "status": "review-required",
-                "accepted": False,
-                "acceptance_record": None,
+                "status": "accepted" if accepted else "review-required",
+                "accepted": accepted,
+                "acceptance_record": question["decision_record"],
             }
         )
 
@@ -465,7 +470,7 @@ def generate() -> dict[str, Any]:
     return {
         "schema_version": 9,
         "target": "S5-T2-A",
-        "status": "proposal-complete-decisions-open",
+        "status": "proposal-complete-one-decision-accepted",
         "input": {
             "path": "spec/evidence/numeric-profile-decision-inputs.json",
             "sha256": hashlib.sha256(INPUT.read_bytes()).hexdigest(),
@@ -539,7 +544,7 @@ def generate() -> dict[str, Any]:
             **variation_point_contract["summary"],
         },
         "policy": {
-            "proposal_not_authority": "The identity and bounded-variation framework is accepted; question and domain proposals remain review inputs and do not select numeric results.",
+            "proposal_not_authority": "Accepted decision rows are backed by their architecture records; every other question and every incomplete domain proposal remains review input and does not select numeric results.",
             "support_boundary": identity_catalog["policy"]["support_boundary"],
             "bounded_variation": identity_catalog["policy"]["bounded_variation"],
             "cpu_boundary": identity_catalog["policy"]["cpu_observation"],
@@ -593,7 +598,7 @@ def generate() -> dict[str, Any]:
             {
                 "id": "S5-T2-A2",
                 "target": "accept all numeric decision records",
-                "current": 0,
+                "current": sum(row["accepted"] for row in decision_proposals),
                 "required": 12,
                 "status": "open",
             },
@@ -659,7 +664,9 @@ def generate() -> dict[str, Any]:
             "accepted_profile_identity_count": len(profile_proposals),
             "accepted_framework_rule_count": 5,
             "decision_proposal_count": len(decision_proposals),
-            "accepted_decision_count": 0,
+            "accepted_decision_count": sum(
+                row["accepted"] for row in decision_proposals
+            ),
             "numeric_domain_count": len(domain_proposals),
             "accepted_domain_rule_count": 0,
             "numeric_operation_count": operation_count,

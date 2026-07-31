@@ -15,17 +15,19 @@ begin
 end;
 
 impdef func TileProfileConvert(value: Word, source_type: TileDataType,
-                               destination_type: TileDataType) => Word
+                               destination_type: TileDataType,
+                               control: NumericExecutionControl) => Word
 begin
     // Profiles replace this raw-encoding rule for floating conversions.
     return value;
 end;
 
 func TileConvertValue(value: Word, source_type: TileDataType,
-                      destination_type: TileDataType) => Word
+                      destination_type: TileDataType,
+                      control: NumericExecutionControl) => Word
 begin
     if TileDataTypeIsFloating(source_type) || TileDataTypeIsFloating(destination_type) then
-        return TileProfileConvert(value, source_type, destination_type);
+        return TileProfileConvert(value, source_type, destination_type, control);
     else
         // Integer conversion first interprets the source width/signedness,
         // then truncates or extends into the destination representation.
@@ -34,7 +36,8 @@ begin
     end;
 end;
 
-func TCVT(destination: TileIndex, source: TileIndex)
+func TCVT(destination: TileIndex, source: TileIndex,
+          control: NumericExecutionControl)
 begin
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
@@ -48,7 +51,8 @@ begin
             let destination_element = TileLinearIndex(destination_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             _Tiles[[destination]].payload[[destination_element]] = TileConvertValue(
-                source_payload[[source_element]], source_tile.data_type, destination_tile.data_type);
+                source_payload[[source_element]], source_tile.data_type,
+                destination_tile.data_type, control);
         end;
     end;
     MarkTileValidRegionDefined(destination);
@@ -56,7 +60,8 @@ end;
 
 impdef func TileProfileQuantize(value: Word, scale: Word, zero_point: Word,
                                 source_type: TileDataType,
-                                destination_type: TileDataType) => Word
+                                destination_type: TileDataType,
+                                control: NumericExecutionControl) => Word
 begin
     assert !IsZero(scale);
     return NormalizeTileInteger(DivideWordUnsigned(value, scale) + zero_point,
@@ -65,12 +70,14 @@ end;
 
 impdef func TileProfileDequantize(value: Word, scale: Word, zero_point: Word,
                                   source_type: TileDataType,
-                                  destination_type: TileDataType) => Word
+                                  destination_type: TileDataType,
+                                  control: NumericExecutionControl) => Word
 begin
     return MultiplyWord(value - zero_point, scale);
 end;
 
-func TQUANT(destination: TileIndex, source: TileIndex, scale: Word, zero_point: Word)
+func TQUANT(destination: TileIndex, source: TileIndex, scale: Word,
+            zero_point: Word, control: NumericExecutionControl)
 begin
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
@@ -83,13 +90,14 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             _Tiles[[destination]].payload[[element]] = TileProfileQuantize(
                 source_payload[[element]], scale, zero_point,
-                source_tile.data_type, destination_tile.data_type);
+                source_tile.data_type, destination_tile.data_type, control);
         end;
     end;
     MarkTileValidRegionDefined(destination);
 end;
 
-func TDEQUANT(destination: TileIndex, source: TileIndex, scale: Word, zero_point: Word)
+func TDEQUANT(destination: TileIndex, source: TileIndex, scale: Word,
+              zero_point: Word, control: NumericExecutionControl)
 begin
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
@@ -102,7 +110,7 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             _Tiles[[destination]].payload[[element]] = TileProfileDequantize(
                 source_payload[[element]], scale, zero_point,
-                source_tile.data_type, destination_tile.data_type);
+                source_tile.data_type, destination_tile.data_type, control);
         end;
     end;
     MarkTileValidRegionDefined(destination);

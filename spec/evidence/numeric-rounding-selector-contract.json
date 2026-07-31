@@ -2,14 +2,14 @@
   "schema_version": 1,
   "target": "S5-T2-A2:PD-03",
   "decision_id": "PD-03",
-  "status": "selector-ownership-inventory-closed-result-rules-open",
-  "acceptance_record": "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
+  "status": "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open",
+  "acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
   "policy": {
     "namespace_separation": "Scalar FRM, scalar fixed conversion overrides, bundle RMode, public API modes, matrix controls, and stochastic controls are distinct selector namespaces unless an accepted rule maps them.",
     "no_backend_inheritance": "Backend CAST, ROUND, PART, and stochastic-control values are evidence only and cannot create portable PTO encodings.",
-    "unknown_selection": "Unknown or unmapped selectors and missing delegated rounding rules reject before architectural effects under ADR 0037.",
-    "saturation_order": "Rounding selection and saturation selection are independent inputs; each accepted conversion or quantization rule must define their order.",
-    "pd03_boundary": "This artifact closes selector discovery and ownership only. PD-03 remains open until all affected domains have exact rounding and saturation-order rules plus vectors."
+    "unknown_selection": "All scalar and bundle three-bit patterns have deterministic resolution. Unknown public selector ordinals or missing delegated rules reject before architectural effects under ADR 0037.",
+    "saturation_order": "Rounding selection and saturation selection are independent inputs. Every applicable conversion or quantization domain rounds before saturation or the PD-07 nonsaturating result rule.",
+    "pd03_boundary": "PD-03 is accepted for selector mapping, tie behavior, rounding points, and saturation order. PD-04 through PD-12 continue to own subnormals, special values, flags, range results, accuracy, quantization equations, matrix precision, and other result dimensions."
   },
   "scalar_active_rounding": [
     {
@@ -17,80 +17,88 @@
       "system_register": "CORE_STATE",
       "bit_range": "39:37",
       "code": 0,
+      "encoding_status": "assigned",
       "portable_name": "RNE",
       "mathematical_rule": "nearest-ties-even",
-      "selection_status": "portable-core",
-      "pto_v0_behavior": "passes-code-to-active-profile-hook"
+      "selection_status": "closed",
+      "pto_v0_behavior": "resolves-to-RNE"
     },
     {
       "selector_namespace": "scalar-core-state-frm",
       "system_register": "CORE_STATE",
       "bit_range": "39:37",
       "code": 1,
+      "encoding_status": "assigned",
       "portable_name": "RTM",
       "mathematical_rule": "toward-negative-infinity",
-      "selection_status": "portable-core",
-      "pto_v0_behavior": "passes-code-to-active-profile-hook"
+      "selection_status": "closed",
+      "pto_v0_behavior": "resolves-to-RTM"
     },
     {
       "selector_namespace": "scalar-core-state-frm",
       "system_register": "CORE_STATE",
       "bit_range": "39:37",
       "code": 2,
+      "encoding_status": "assigned",
       "portable_name": "RTP",
       "mathematical_rule": "toward-positive-infinity",
-      "selection_status": "portable-core",
-      "pto_v0_behavior": "passes-code-to-active-profile-hook"
+      "selection_status": "closed",
+      "pto_v0_behavior": "resolves-to-RTP"
     },
     {
       "selector_namespace": "scalar-core-state-frm",
       "system_register": "CORE_STATE",
       "bit_range": "39:37",
       "code": 3,
+      "encoding_status": "assigned",
       "portable_name": "RTZ",
       "mathematical_rule": "toward-zero",
-      "selection_status": "portable-core",
-      "pto_v0_behavior": "passes-code-to-active-profile-hook"
+      "selection_status": "closed",
+      "pto_v0_behavior": "resolves-to-RTZ"
     },
     {
       "selector_namespace": "scalar-core-state-frm",
       "system_register": "CORE_STATE",
       "bit_range": "39:37",
       "code": 4,
-      "portable_name": "RTA",
-      "mathematical_rule": "away-from-zero",
-      "selection_status": "active-versus-fixed-scope-decision-required",
-      "pto_v0_behavior": "passes-code-to-active-profile-hook"
+      "encoding_status": "reserved",
+      "portable_name": "RNE",
+      "mathematical_rule": "reserved-code-fallback-to-nearest-ties-even",
+      "selection_status": "closed",
+      "pto_v0_behavior": "resolves-to-RNE"
     },
     {
       "selector_namespace": "scalar-core-state-frm",
       "system_register": "CORE_STATE",
       "bit_range": "39:37",
       "code": 5,
-      "portable_name": null,
-      "mathematical_rule": null,
-      "selection_status": "reserved-fallback-versus-rejection-decision-required",
-      "pto_v0_behavior": "normalizes-to-RNE"
+      "encoding_status": "reserved",
+      "portable_name": "RNE",
+      "mathematical_rule": "reserved-code-fallback-to-nearest-ties-even",
+      "selection_status": "closed",
+      "pto_v0_behavior": "resolves-to-RNE"
     },
     {
       "selector_namespace": "scalar-core-state-frm",
       "system_register": "CORE_STATE",
       "bit_range": "39:37",
       "code": 6,
-      "portable_name": null,
-      "mathematical_rule": null,
-      "selection_status": "reserved-fallback-versus-rejection-decision-required",
-      "pto_v0_behavior": "normalizes-to-RNE"
+      "encoding_status": "reserved",
+      "portable_name": "RNE",
+      "mathematical_rule": "reserved-code-fallback-to-nearest-ties-even",
+      "selection_status": "closed",
+      "pto_v0_behavior": "resolves-to-RNE"
     },
     {
       "selector_namespace": "scalar-core-state-frm",
       "system_register": "CORE_STATE",
       "bit_range": "39:37",
       "code": 7,
-      "portable_name": null,
-      "mathematical_rule": null,
-      "selection_status": "reserved-fallback-versus-rejection-decision-required",
-      "pto_v0_behavior": "normalizes-to-RNE"
+      "encoding_status": "reserved",
+      "portable_name": "RNE",
+      "mathematical_rule": "reserved-code-fallback-to-nearest-ties-even",
+      "selection_status": "closed",
+      "pto_v0_behavior": "resolves-to-RNE"
     }
   ],
   "scalar_fixed_conversion_overrides": [
@@ -98,51 +106,46 @@
       "form_id": "fcvta_32_010837b9acbd",
       "mnemonic": "FCVTA",
       "selector_namespace": "scalar-fixed-conversion-override",
-      "code": 4,
-      "portable_name": "RTA",
-      "mathematical_rule": "away-from-zero",
+      "portable_name": "RNA",
+      "mathematical_rule": "nearest-ties-away-from-zero",
       "selection_status": "closed",
-      "numeric_result_status": "operation-type-rule-required"
+      "numeric_result_status": "rounding-rule-closed-other-result-dimensions-open"
     },
     {
       "form_id": "fcvtm_32_8801f1562870",
       "mnemonic": "FCVTM",
       "selector_namespace": "scalar-fixed-conversion-override",
-      "code": 1,
       "portable_name": "RTM",
       "mathematical_rule": "toward-negative-infinity",
       "selection_status": "closed",
-      "numeric_result_status": "operation-type-rule-required"
+      "numeric_result_status": "rounding-rule-closed-other-result-dimensions-open"
     },
     {
       "form_id": "fcvtn_32_8714ba358d80",
       "mnemonic": "FCVTN",
       "selector_namespace": "scalar-fixed-conversion-override",
-      "code": 0,
       "portable_name": "RNE",
       "mathematical_rule": "nearest-ties-even",
       "selection_status": "closed",
-      "numeric_result_status": "operation-type-rule-required"
+      "numeric_result_status": "rounding-rule-closed-other-result-dimensions-open"
     },
     {
       "form_id": "fcvtp_32_84354a7aa6b1",
       "mnemonic": "FCVTP",
       "selector_namespace": "scalar-fixed-conversion-override",
-      "code": 2,
       "portable_name": "RTP",
       "mathematical_rule": "toward-positive-infinity",
       "selection_status": "closed",
-      "numeric_result_status": "operation-type-rule-required"
+      "numeric_result_status": "rounding-rule-closed-other-result-dimensions-open"
     },
     {
       "form_id": "fcvtz_32_bee01d31217c",
       "mnemonic": "FCVTZ",
       "selector_namespace": "scalar-fixed-conversion-override",
-      "code": 3,
       "portable_name": "RTZ",
       "mathematical_rule": "toward-zero",
       "selection_status": "closed",
-      "numeric_result_status": "operation-type-rule-required"
+      "numeric_result_status": "rounding-rule-closed-other-result-dimensions-open"
     }
   ],
   "bundle_rmode": [
@@ -151,72 +154,147 @@
       "mnemonic": "B.DATR",
       "selector_namespace": "bundle-data-attribute-rmode",
       "code": 0,
+      "encoded_name": "NONE",
+      "portable_name": null,
+      "mathematical_rule": "operation-defined-default",
       "binding": "BundleDataAttributes.rounding_mode",
-      "selection_status": "encoding-and-state-binding-closed",
-      "numeric_result_status": "named-profile-rule-required"
+      "selection_status": "encoding-state-and-semantic-mapping-closed",
+      "numeric_result_status": "rounding-rule-closed-other-result-dimensions-open"
     },
     {
       "form_id": "b_datr_32_c161a042ff38",
       "mnemonic": "B.DATR",
       "selector_namespace": "bundle-data-attribute-rmode",
       "code": 1,
+      "encoded_name": "RNE",
+      "portable_name": "RNE",
+      "mathematical_rule": "nearest-ties-even",
       "binding": "BundleDataAttributes.rounding_mode",
-      "selection_status": "encoding-and-state-binding-closed",
-      "numeric_result_status": "named-profile-rule-required"
+      "selection_status": "encoding-state-and-semantic-mapping-closed",
+      "numeric_result_status": "rounding-rule-closed-other-result-dimensions-open"
     },
     {
       "form_id": "b_datr_32_c161a042ff38",
       "mnemonic": "B.DATR",
       "selector_namespace": "bundle-data-attribute-rmode",
       "code": 2,
+      "encoded_name": "RTZ",
+      "portable_name": "RTZ",
+      "mathematical_rule": "toward-zero",
       "binding": "BundleDataAttributes.rounding_mode",
-      "selection_status": "encoding-and-state-binding-closed",
-      "numeric_result_status": "named-profile-rule-required"
+      "selection_status": "encoding-state-and-semantic-mapping-closed",
+      "numeric_result_status": "rounding-rule-closed-other-result-dimensions-open"
     },
     {
       "form_id": "b_datr_32_c161a042ff38",
       "mnemonic": "B.DATR",
       "selector_namespace": "bundle-data-attribute-rmode",
       "code": 3,
+      "encoded_name": "RDN",
+      "portable_name": "RTM",
+      "mathematical_rule": "toward-negative-infinity",
       "binding": "BundleDataAttributes.rounding_mode",
-      "selection_status": "encoding-and-state-binding-closed",
-      "numeric_result_status": "named-profile-rule-required"
+      "selection_status": "encoding-state-and-semantic-mapping-closed",
+      "numeric_result_status": "rounding-rule-closed-other-result-dimensions-open"
     },
     {
       "form_id": "b_datr_32_c161a042ff38",
       "mnemonic": "B.DATR",
       "selector_namespace": "bundle-data-attribute-rmode",
       "code": 4,
+      "encoded_name": "RUP",
+      "portable_name": "RTP",
+      "mathematical_rule": "toward-positive-infinity",
       "binding": "BundleDataAttributes.rounding_mode",
-      "selection_status": "encoding-and-state-binding-closed",
-      "numeric_result_status": "named-profile-rule-required"
+      "selection_status": "encoding-state-and-semantic-mapping-closed",
+      "numeric_result_status": "rounding-rule-closed-other-result-dimensions-open"
     },
     {
       "form_id": "b_datr_32_c161a042ff38",
       "mnemonic": "B.DATR",
       "selector_namespace": "bundle-data-attribute-rmode",
       "code": 5,
+      "encoded_name": "RNA",
+      "portable_name": "RNA",
+      "mathematical_rule": "nearest-ties-away-from-zero",
       "binding": "BundleDataAttributes.rounding_mode",
-      "selection_status": "encoding-and-state-binding-closed",
-      "numeric_result_status": "named-profile-rule-required"
+      "selection_status": "encoding-state-and-semantic-mapping-closed",
+      "numeric_result_status": "rounding-rule-closed-other-result-dimensions-open"
     },
     {
       "form_id": "b_datr_32_c161a042ff38",
       "mnemonic": "B.DATR",
       "selector_namespace": "bundle-data-attribute-rmode",
       "code": 6,
+      "encoded_name": "RTO",
+      "portable_name": "RTO",
+      "mathematical_rule": "round-to-odd-when-inexact",
       "binding": "BundleDataAttributes.rounding_mode",
-      "selection_status": "encoding-and-state-binding-closed",
-      "numeric_result_status": "named-profile-rule-required"
+      "selection_status": "encoding-state-and-semantic-mapping-closed",
+      "numeric_result_status": "rounding-rule-closed-other-result-dimensions-open"
     },
     {
       "form_id": "b_datr_32_c161a042ff38",
       "mnemonic": "B.DATR",
       "selector_namespace": "bundle-data-attribute-rmode",
       "code": 7,
+      "encoded_name": "RHB",
+      "portable_name": "RHB",
+      "mathematical_rule": "nearest-tie-selects-numerically-greater-candidate",
       "binding": "BundleDataAttributes.rounding_mode",
-      "selection_status": "encoding-and-state-binding-closed",
-      "numeric_result_status": "named-profile-rule-required"
+      "selection_status": "encoding-state-and-semantic-mapping-closed",
+      "numeric_result_status": "rounding-rule-closed-other-result-dimensions-open"
+    }
+  ],
+  "public_conversion_round_modes": [
+    {
+      "public_ordinal": 0,
+      "public_name": "CAST_NONE",
+      "bundle_rmode_code": 0,
+      "bundle_rmode_name": "NONE",
+      "status": "accepted-explicit-translation"
+    },
+    {
+      "public_ordinal": 1,
+      "public_name": "CAST_RINT",
+      "bundle_rmode_code": 1,
+      "bundle_rmode_name": "RNE",
+      "status": "accepted-explicit-translation"
+    },
+    {
+      "public_ordinal": 2,
+      "public_name": "CAST_ROUND",
+      "bundle_rmode_code": 5,
+      "bundle_rmode_name": "RNA",
+      "status": "accepted-explicit-translation"
+    },
+    {
+      "public_ordinal": 3,
+      "public_name": "CAST_FLOOR",
+      "bundle_rmode_code": 3,
+      "bundle_rmode_name": "RDN",
+      "status": "accepted-explicit-translation"
+    },
+    {
+      "public_ordinal": 4,
+      "public_name": "CAST_CEIL",
+      "bundle_rmode_code": 4,
+      "bundle_rmode_name": "RUP",
+      "status": "accepted-explicit-translation"
+    },
+    {
+      "public_ordinal": 5,
+      "public_name": "CAST_TRUNC",
+      "bundle_rmode_code": 2,
+      "bundle_rmode_name": "RTZ",
+      "status": "accepted-explicit-translation"
+    },
+    {
+      "public_ordinal": 6,
+      "public_name": "CAST_ODD",
+      "bundle_rmode_code": 6,
+      "bundle_rmode_name": "RTO",
+      "status": "accepted-explicit-translation"
     }
   ],
   "external_selector_classes": [
@@ -228,7 +306,7 @@
         "a2a3-conversion",
         "a5-conversion"
       ],
-      "status": "mapping-decision-required"
+      "status": "accepted-explicit-translation"
     },
     {
       "class": "matrix-tf32-hf32-rounding-control",
@@ -237,7 +315,7 @@
         "a2a3-matrix",
         "a5-matrix"
       ],
-      "status": "named-target-profile-rule-required"
+      "status": "operation-fixed-RNE-mapping-accepted"
     },
     {
       "class": "quantization-stochastic-control",
@@ -245,7 +323,7 @@
         "a2a3-quantization",
         "a5-quantization"
       ],
-      "status": "state-or-bounded-result-decision-required"
+      "status": "not-an-architectural-selector-in-pto-v0"
     },
     {
       "class": "backend-only-cast-round-part-controls",
@@ -273,10 +351,10 @@
         "pto-a2a3-numeric-v1",
         "pto-a5-numeric-v1"
       ],
-      "selector_owner": null,
-      "rounding_rule": null,
-      "saturation_order_rule": null,
-      "status": "profile-rule-required"
+      "selector_owner": "TileNumericSelection from direct operands or B.DATR.RMode",
+      "rounding_rule": "Resolve NONE to RNE; explicit codes 1 through 7 use their bundle mapping, then round each logical ACC lane once to the destination format.",
+      "saturation_order_rule": "round-before-saturation-clamp-or-PD-07-nonsaturating-result-selection",
+      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "cube-matrix",
@@ -306,10 +384,10 @@
         "pto-a2a3-numeric-v1",
         "pto-a5-numeric-v1"
       ],
-      "selector_owner": null,
-      "rounding_rule": null,
-      "saturation_order_rule": null,
-      "status": "profile-rule-required"
+      "selector_owner": "operation-fixed pto-v0 rule",
+      "rounding_rule": "Use RNE for each fused multiply-add into the declared accumulator in increasing logical K order and for the post-dot bias addition; conversion out of ACC follows cube-convert.",
+      "saturation_order_rule": "not-applicable-to-matrix-accumulation",
+      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "scalar-binary",
@@ -329,10 +407,10 @@
         "pto-a2a3-numeric-v1",
         "pto-a5-numeric-v1"
       ],
-      "selector_owner": null,
-      "rounding_rule": null,
-      "saturation_order_rule": null,
-      "status": "profile-rule-required"
+      "selector_owner": "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
+      "rounding_rule": "Apply the resolved active scalar mode once when the exact operation result is encoded in the destination format.",
+      "saturation_order_rule": "not-applicable",
+      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "scalar-fp-convert",
@@ -349,10 +427,10 @@
         "pto-a2a3-numeric-v1",
         "pto-a5-numeric-v1"
       ],
-      "selector_owner": null,
-      "rounding_rule": null,
-      "saturation_order_rule": null,
-      "status": "profile-rule-required"
+      "selector_owner": "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
+      "rounding_rule": "Apply the resolved active scalar mode once when encoding the destination floating format.",
+      "saturation_order_rule": "not-applicable",
+      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "scalar-fp-to-integer",
@@ -373,10 +451,10 @@
         "pto-a2a3-numeric-v1",
         "pto-a5-numeric-v1"
       ],
-      "selector_owner": null,
-      "rounding_rule": null,
-      "saturation_order_rule": null,
-      "status": "profile-rule-required"
+      "selector_owner": "fixed FCVTA/FCVTM/FCVTN/FCVTP/FCVTZ mnemonic override",
+      "rounding_rule": "Apply the mnemonic-selected mode once to the finite source before destination range handling; FCVTA is nearest with ties away, not directed away from zero.",
+      "saturation_order_rule": "round-before-PD-07-range-or-indefinite-result-selection",
+      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "scalar-fused",
@@ -396,10 +474,10 @@
         "pto-a2a3-numeric-v1",
         "pto-a5-numeric-v1"
       ],
-      "selector_owner": null,
-      "rounding_rule": null,
-      "saturation_order_rule": null,
-      "status": "profile-rule-required"
+      "selector_owner": "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
+      "rounding_rule": "Evaluate the exact fused multiply-add expression and round once, only at the destination-format boundary.",
+      "saturation_order_rule": "not-applicable",
+      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "scalar-integer-to-fp",
@@ -417,10 +495,10 @@
         "pto-a2a3-numeric-v1",
         "pto-a5-numeric-v1"
       ],
-      "selector_owner": null,
-      "rounding_rule": null,
-      "saturation_order_rule": null,
-      "status": "profile-rule-required"
+      "selector_owner": "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
+      "rounding_rule": "Apply the resolved active scalar mode once when encoding the destination floating format; exactly representable integers are unchanged.",
+      "saturation_order_rule": "not-applicable",
+      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "scalar-unary",
@@ -439,10 +517,10 @@
         "pto-a2a3-numeric-v1",
         "pto-a5-numeric-v1"
       ],
-      "selector_owner": null,
-      "rounding_rule": null,
-      "saturation_order_rule": null,
-      "status": "profile-rule-required"
+      "selector_owner": "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
+      "rounding_rule": "Apply the resolved active scalar mode once when the operation-defined mathematical result is encoded in the destination format; PD-08 still owns approximation bounds.",
+      "saturation_order_rule": "not-applicable",
+      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "tile-axpy",
@@ -459,10 +537,10 @@
         "pto-a2a3-numeric-v1",
         "pto-a5-numeric-v1"
       ],
-      "selector_owner": null,
-      "rounding_rule": null,
-      "saturation_order_rule": null,
-      "status": "profile-rule-required"
+      "selector_owner": "operation-fixed pto-v0 rule",
+      "rounding_rule": "Round the operation-defined floating destination result once using RNE; integer results are exact modulo their independently specified overflow rule.",
+      "saturation_order_rule": "not-applicable",
+      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "tile-binary",
@@ -502,10 +580,10 @@
         "pto-a2a3-numeric-v1",
         "pto-a5-numeric-v1"
       ],
-      "selector_owner": null,
-      "rounding_rule": null,
-      "saturation_order_rule": null,
-      "status": "profile-rule-required"
+      "selector_owner": "operation-fixed pto-v0 rule",
+      "rounding_rule": "Floating arithmetic rounds each operation result once using RNE; integer, bitwise, shift, comparison, minimum, and maximum results do not round.",
+      "saturation_order_rule": "not-applicable",
+      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "tile-convert",
@@ -522,10 +600,10 @@
         "pto-a2a3-numeric-v1",
         "pto-a5-numeric-v1"
       ],
-      "selector_owner": null,
-      "rounding_rule": null,
-      "saturation_order_rule": null,
-      "status": "profile-rule-required"
+      "selector_owner": "TileNumericSelection from direct operands or B.DATR.RMode",
+      "rounding_rule": "Resolve NONE to RTZ for floating-to-integer TCVT and to RNE otherwise; explicit codes 1 through 7 use their bundle mapping, then round once to the destination format.",
+      "saturation_order_rule": "round-before-saturation-clamp-or-PD-07-nonsaturating-result-selection",
+      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "tile-dequantize",
@@ -542,10 +620,10 @@
         "pto-a2a3-numeric-v1",
         "pto-a5-numeric-v1"
       ],
-      "selector_owner": null,
-      "rounding_rule": null,
-      "saturation_order_rule": null,
-      "status": "profile-rule-required"
+      "selector_owner": "TileNumericSelection from direct operands or B.DATR.RMode",
+      "rounding_rule": "Resolve NONE to RNE; explicit codes 1 through 7 use their bundle mapping, then round once after the dequantization expression at the destination-format boundary.",
+      "saturation_order_rule": "round-before-saturation-clamp-or-PD-07-nonsaturating-result-selection",
+      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "tile-expand",
@@ -578,10 +656,10 @@
         "pto-a2a3-numeric-v1",
         "pto-a5-numeric-v1"
       ],
-      "selector_owner": null,
-      "rounding_rule": null,
-      "saturation_order_rule": null,
-      "status": "profile-rule-required"
+      "selector_owner": "operation-fixed pto-v0 rule",
+      "rounding_rule": "Floating arithmetic and exponential-difference results round once using RNE at each destination element; broadcast, min, and max selection do not round.",
+      "saturation_order_rule": "not-applicable",
+      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "tile-partial",
@@ -601,10 +679,10 @@
         "pto-a2a3-numeric-v1",
         "pto-a5-numeric-v1"
       ],
-      "selector_owner": null,
-      "rounding_rule": null,
-      "saturation_order_rule": null,
-      "status": "profile-rule-required"
+      "selector_owner": "operation-fixed pto-v0 rule",
+      "rounding_rule": "Each floating partial add or multiply step rounds to its declared accumulator type using RNE; min and max selection do not round.",
+      "saturation_order_rule": "not-applicable",
+      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "tile-prelu",
@@ -621,10 +699,10 @@
         "pto-a2a3-numeric-v1",
         "pto-a5-numeric-v1"
       ],
-      "selector_owner": null,
-      "rounding_rule": null,
-      "saturation_order_rule": null,
-      "status": "profile-rule-required"
+      "selector_owner": "operation-fixed pto-v0 rule",
+      "rounding_rule": "When the negative branch multiplies floating values, round its destination result once using RNE; the identity branch does not round.",
+      "saturation_order_rule": "not-applicable",
+      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "tile-quantize",
@@ -641,10 +719,10 @@
         "pto-a2a3-numeric-v1",
         "pto-a5-numeric-v1"
       ],
-      "selector_owner": null,
-      "rounding_rule": null,
-      "saturation_order_rule": null,
-      "status": "profile-rule-required"
+      "selector_owner": "TileNumericSelection from direct operands or B.DATR.RMode",
+      "rounding_rule": "Resolve NONE to RNE; explicit codes 1 through 7 use their bundle mapping, then round once after the affine quantization expression and before destination packing.",
+      "saturation_order_rule": "round-before-saturation-clamp-or-PD-07-nonsaturating-result-selection",
+      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "tile-reduction",
@@ -673,10 +751,10 @@
         "pto-a2a3-numeric-v1",
         "pto-a5-numeric-v1"
       ],
-      "selector_owner": null,
-      "rounding_rule": null,
-      "saturation_order_rule": null,
-      "status": "profile-rule-required"
+      "selector_owner": "operation-fixed pto-v0 rule",
+      "rounding_rule": "Evaluate in increasing logical row-major order and round each floating sum or product step to the declared accumulator type using RNE; min, max, and arg selection do not round.",
+      "saturation_order_rule": "not-applicable",
+      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "tile-unary",
@@ -705,23 +783,24 @@
         "pto-a2a3-numeric-v1",
         "pto-a5-numeric-v1"
       ],
-      "selector_owner": null,
-      "rounding_rule": null,
-      "saturation_order_rule": null,
-      "status": "profile-rule-required"
+      "selector_owner": "operation-fixed pto-v0 rule",
+      "rounding_rule": "Floating results round once using RNE at the destination boundary; exact sign, bitwise, and selection operations do not round; PD-08 retains approximation bounds.",
+      "saturation_order_rule": "not-applicable",
+      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     }
   ],
   "independent_comparison": {
-    "status": "scalar-selection-structure-corroborated-not-numeric-oracle",
+    "status": "scalar-selection-and-reserved-fallback-corroborated-not-numeric-oracle",
     "provenance_sha256": "9e601ae1a3f1a7025b048aa6108b04b445a3ccbc68fc77ea4b76d7befa2e46b8",
     "matched_contracts": [
       "scalar-FRM-field-location",
       "RNE-RTM-RTP-RTZ-code-order",
-      "fixed-conversion-rounding-overrides"
+      "fixed-conversion-rounding-overrides",
+      "reserved-scalar-FRM-fallback-to-RNE"
     ],
     "limits": [
       "independent-numeric-helpers-are-not-a-PTO-oracle",
-      "bundle-RMode-has-no-independent-semantic-mapping",
+      "bundle-RMode-mapping-is-a-PTO-decision-not-an-independent-contract",
       "target-conversion-matrix-and-stochastic-controls-are-not-closed"
     ]
   },
@@ -746,7 +825,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "9bcb979388b28cbc9e1ff9bdfbf5e479a268a616e5a2bf514ab206fb27107d54"
+      "sha256": "428fc467ee70e38506c42359b64cb1e0b110fdf29fcde29471686e307f9badcf"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
@@ -754,7 +833,7 @@
     },
     {
       "path": "asl/scalar/floating.asl",
-      "sha256": "04e3dd501da8e706fb77fe68afab487323a4160a67ce071404b3220bcbbdbc75"
+      "sha256": "a75df94f79ca4f1d7cff5b4afe050c1dbd8806daaacf96820885a005da1ec9c8"
     },
     {
       "path": "asl/scalar/dispatch.asl",
@@ -766,7 +845,23 @@
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "b74bf48403e9ff66d71d2aaa538fb92f5118dc879cd1072c6e05f266b6209fb2"
+      "sha256": "fd3c014af09354d56835239a9063a7fef3d363f18e00efe4b6c3b87b1e3bb1d9"
+    },
+    {
+      "path": "asl/tile/conversion.asl",
+      "sha256": "943e415907740524a864bcca1ffda627fbaa22ad9612814530dfe896fdc359cd"
+    },
+    {
+      "path": "asl/tile/cube.asl",
+      "sha256": "47cc1428bbf5a7e5c7e8931d5413fffa6116e3debfd8b9c6174dee16d9dc8aef"
+    },
+    {
+      "path": "spec/catalog/tile-operations.json",
+      "sha256": "52c84c4b40b8c8f5fa52ba6a7cabc8ebb394b65907e34c0923f98a6885096550"
+    },
+    {
+      "path": "spec/hardware-conformance-profile.json",
+      "sha256": "becfbefcc7a31408e5e5293802493f833f68a2fccebb3f9e8008d8b9f4e7658c"
     },
     {
       "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
@@ -775,6 +870,10 @@
     {
       "path": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
       "sha256": "e4b8ec913ebe63322fca7985e2421b7e8cb894c06ed73c652a6179d63121c63b"
+    },
+    {
+      "path": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "sha256": "eff69e38127dfaf9777c98e0db45b43c212fc7d2491db6f50c81caad96d96086"
     }
   ],
   "summary": {
@@ -785,7 +884,7 @@
     "affected_domain_count": 18,
     "affected_operation_count": 102,
     "affected_hook_count": 25,
-    "accepted_domain_rounding_rule_count": 0,
-    "pd03_complete": false
+    "accepted_domain_rounding_rule_count": 18,
+    "pd03_complete": true
   }
 }

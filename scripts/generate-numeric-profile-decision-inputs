@@ -543,6 +543,14 @@ DOMAIN_QUESTIONS = {
     "cube-matrix": ["PD-01", "PD-02", "PD-03", "PD-04", "PD-05", "PD-11", "PD-12"],
 }
 
+ACCEPTED_DECISIONS = {
+    "PD-03": {
+        "status": "accepted",
+        "selected_disposition": "portable-normative-rule",
+        "decision_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+    },
+}
+
 
 def load(relative: str) -> dict[str, Any]:
     return json.loads((ROOT / relative).read_text(encoding="utf-8"))
@@ -606,15 +614,15 @@ def generate() -> dict[str, Any]:
         require(domains, f"{spec['id']} has no affected domain")
         question_domain_membership.update(domains)
         source_membership.update(spec["source_ids"])
-        questions.append(
+        disposition = ACCEPTED_DECISIONS.get(
+            spec["id"],
             {
-                **spec,
-                "domains": domains,
                 "status": "decision-required",
                 "selected_disposition": None,
                 "decision_record": None,
-            }
+            },
         )
+        questions.append({**spec, "domains": domains, **disposition})
     require(
         set(source_membership) == set(sources_by_id),
         "unreferenced public evidence source",
@@ -706,7 +714,9 @@ def generate() -> dict[str, Any]:
                 row["layer"] == "implementation-evidence" for row in SOURCES
             ),
             "decision_question_count": len(questions),
-            "open_decision_question_count": len(questions),
+            "open_decision_question_count": sum(
+                row["status"] == "decision-required" for row in questions
+            ),
             "numeric_domain_count": len(domain_matrix),
             "open_numeric_domain_count": len(domain_matrix),
             "selected_profile_rule_count": 0,

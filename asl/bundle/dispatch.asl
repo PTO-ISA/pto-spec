@@ -344,7 +344,9 @@ begin
     return TRUE;
 end;
 
-func BundleTileInstructionOperands() => TileInstructionOperands
+func BundleTileInstructionOperands(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1})
+    => TileInstructionOperands
 begin
     var operands = DefaultTileInstructionOperands();
     var destination_count: integer = 0;
@@ -430,8 +432,32 @@ begin
         when 5 => operands.comparison = TileComparison_GE;
         otherwise => operands.comparison = TileComparison_EQ;
     end;
-    operands.flag0 = _BundleDataAttributes.saturating;
+    // Generic boolean operands are operation controls, not aliases of the
+    // numeric saturation bit. Numeric consumers receive the separate typed
+    // control below; other bundle operations retain their operation default.
+    operands.numeric_control = DecodeBundleRoundingSelection(
+        _BundleDataAttributes.rounding_mode);
+    operands.numeric_control.saturating = _BundleDataAttributes.saturating;
     return operands;
+end;
+
+readonly func ResolveTileNumericExecutionControl(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1},
+    operands: TileInstructionOperands) => NumericExecutionControl
+begin
+    var result = NumericExecutionControl {
+        rounding_mode = operands.numeric_control.rounding_mode,
+        saturating = operands.numeric_control.saturating
+    };
+    if operands.numeric_control.use_operation_default then
+        result.rounding_mode = NumericRound_RNE;
+        if TileOperationOfIndex(operation) == TileOperation_TCVT &&
+           TileDataTypeIsFloating(_Tiles[[operands.source0]].data_type) &&
+           !TileDataTypeIsFloating(_Tiles[[operands.destination0]].data_type) then
+            result.rounding_mode = NumericRound_RTZ;
+        end;
+    end;
+    return result;
 end;
 
 readonly func BundleDestinationRows(shape_source_valid: boolean,
@@ -644,7 +670,7 @@ begin
         return FALSE;
     end;
     if !ResolveBundleTileDestinations() then return FALSE; end;
-    let operands = BundleTileInstructionOperands();
+    let operands = BundleTileInstructionOperands(operation);
     let (status, -) =
         ExecuteTileInstructionWithoutTimeWithAcceptedApplicabilityRules(
             rules, family, code, operands);

@@ -364,9 +364,9 @@
         "tile-reduction",
         "tile-unary"
       ],
-      "status": "decision-required",
-      "selected_disposition": null,
-      "decision_record": null
+      "status": "accepted",
+      "selected_disposition": "portable-normative-rule",
+      "decision_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md"
     },
     {
       "id": "PD-04",
@@ -1645,7 +1645,7 @@
     "public_contract_source_count": 3,
     "implementation_evidence_source_count": 21,
     "decision_question_count": 12,
-    "open_decision_question_count": 12,
+    "open_decision_question_count": 11,
     "numeric_domain_count": 20,
     "open_numeric_domain_count": 20,
     "selected_profile_rule_count": 0,

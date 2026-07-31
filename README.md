@@ -34,12 +34,13 @@ null. ADR 0038 and the generated
 `spec/evidence/scalar-numeric-flag-contract.json` ledger separately close the
 scalar flag lifecycle and 30/30 producer-owner matrix while leaving exact
 conditions open for 19 profile-owned forms, so PD-06 and S5-T2 remain open.
-ADR 0039 and the generated
+ADRs 0039 and 0047 and the generated
 `spec/evidence/numeric-rounding-selector-contract.json` ledger separately map
 all scalar, fixed-conversion, bundle, public, matrix, stochastic, and
-backend-only rounding selector namespaces. The inventory covers 18 domains,
-102 operations, and 25 hooks without accepting a numeric result rule, so PD-03
-and S5-T2 also remain open.
+backend-only rounding selector namespaces. PD-03 now accepts the complete
+selector translations, tie behavior, operation defaults, rounding points, and
+rounding-before-saturation order across 18 domains, 102 operations, and 25
+hooks. Other numeric decisions keep S5-T2 open.
 ADR 0040 and the generated
 `spec/evidence/numeric-format-namespace-contract.json` ledger close the
 structural part of PD-02: five independent code namespaces, all 25

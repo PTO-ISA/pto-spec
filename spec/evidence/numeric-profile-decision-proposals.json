@@ -1,10 +1,10 @@
 {
   "schema_version": 9,
   "target": "S5-T2-A",
-  "status": "proposal-complete-decisions-open",
+  "status": "proposal-complete-one-decision-accepted",
   "input": {
     "path": "spec/evidence/numeric-profile-decision-inputs.json",
-    "sha256": "9bcb979388b28cbc9e1ff9bdfbf5e479a268a616e5a2bf514ab206fb27107d54",
+    "sha256": "428fc467ee70e38506c42359b64cb1e0b110fdf29fcde29471686e307f9badcf",
     "public_repository": "https://github.com/hw-native-sys/pto-isa",
     "public_commit": "712cbe9f23df5d5362be5e8327599f4285317473"
   },
@@ -16,7 +16,7 @@
   },
   "scalar_flag_contract": {
     "path": "spec/evidence/scalar-numeric-flag-contract.json",
-    "sha256": "426075b59a5d91f2c0acb5df2ccf61616fd46108bca1b25a1b5371e9b79dec70",
+    "sha256": "076f37f5caaf9a776928c67f87f18224d12c37e1e8376993352d9221ce208385",
     "status": "state-owner-matrix-closed-profile-production-open",
     "acceptance_record": "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
     "producer_owner_closed_form_count": 30,
@@ -26,9 +26,9 @@
   },
   "rounding_selector_contract": {
     "path": "spec/evidence/numeric-rounding-selector-contract.json",
-    "sha256": "2efe9c879aa3473a6b546bab51f06a878d09839f00a09653cb4cdfb28a51f3ad",
-    "status": "selector-ownership-inventory-closed-result-rules-open",
-    "acceptance_record": "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
+    "sha256": "b59d03487347e5d0a923a5da261cfd62cc3fd4ef470e9169a5cf4c16915eac56",
+    "status": "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open",
+    "acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
     "scalar_active_selector_count": 8,
     "scalar_fixed_override_count": 5,
     "bundle_rmode_selector_count": 8,
@@ -36,12 +36,12 @@
     "affected_domain_count": 18,
     "affected_operation_count": 102,
     "affected_hook_count": 25,
-    "accepted_domain_rounding_rule_count": 0,
-    "pd03_complete": false
+    "accepted_domain_rounding_rule_count": 18,
+    "pd03_complete": true
   },
   "format_namespace_contract": {
     "path": "spec/evidence/numeric-format-namespace-contract.json",
-    "sha256": "a8cec33f0b61e94892946788ee7e0959a946fe6247763aa733a3412b4f1da4df",
+    "sha256": "e4b23dd42f29aebf2d1fbe70e40222dfd34595b1f8e811d15fe02369cd248391",
     "status": "namespace-and-carrier-inventory-closed-format-rules-open",
     "acceptance_record": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
     "tile_data_type_count": 25,
@@ -68,7 +68,7 @@
   },
   "public_type_baseline": {
     "path": "spec/evidence/public-numeric-type-baseline.json",
-    "sha256": "2ec1f43b3160f508f7781c3393dde57296f4bec25341775b1fcb5ef02e2a5d39",
+    "sha256": "472b49d7f40c284ff21ebb8c71df979403a0dd077422c4835b14155e7c53164b",
     "status": "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
     "acceptance_record": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
     "public_type_count": 16,
@@ -87,7 +87,7 @@
   },
   "public_integer_conversion": {
     "path": "spec/evidence/public-integer-conversion-contract.json",
-    "sha256": "abe0dd3c773ca122084467b3d40f8b6caed3a1ad6296abdd0df75445e4daf7f6",
+    "sha256": "8f163c367ce2d9257c8a3c89d7ea365ae0631399204624e7cd0a1a6a17415269",
     "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
     "acceptance_record": "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
     "public_integer_type_count": 8,
@@ -107,7 +107,7 @@
   },
   "profile_applicability_contract": {
     "path": "spec/evidence/numeric-profile-applicability-closure.json",
-    "sha256": "fb111499122a169ae2c7c5d416b2092cdcc996537e78f6abc87053590a34434a",
+    "sha256": "2a9f422f7921cb4f8700bbeb4585df2248c136717fa6d331045b4ed53bf4a975",
     "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
     "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
     "rule_count": 6,
@@ -125,7 +125,7 @@
   },
   "variation_point_contract": {
     "path": "spec/evidence/numeric-variation-point-ownership.json",
-    "sha256": "bdf00ad0bea4329f4e73f8a3d8511f88dbf9fb27e0c6316776dff682288456a5",
+    "sha256": "83e4599282f4bbe568e05cd0559903fd64b788115982abe4e3ae1a926346e099",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
     "acceptance_record": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
     "variation_point_count": 99,
@@ -136,8 +136,8 @@
     "primary_operation_hook_edge_count": 134,
     "reference_helper_operation_edge_count": 8,
     "portable_decision_owner_point_count": 99,
-    "selected_route_count": 0,
-    "accepted_result_rule_count": 0,
+    "selected_route_count": 18,
+    "accepted_result_rule_count": 18,
     "accepted_bounded_result_subset_rule_count": 3,
     "accepted_bounded_result_subset_tuple_count": 48,
     "accepted_unsupported_tuple_count": 150,
@@ -147,7 +147,7 @@
     "s5_t2_complete": false
   },
   "policy": {
-    "proposal_not_authority": "The identity and bounded-variation framework is accepted; question and domain proposals remain review inputs and do not select numeric results.",
+    "proposal_not_authority": "Accepted decision rows are backed by their architecture records; every other question and every incomplete domain proposal remains review input and does not select numeric results.",
     "support_boundary": "A target profile may reject an operation/type tuple, but it may not silently change the portable result of an accepted tuple.",
     "bounded_variation": "A portable rule may delegate a result dimension only to a named target profile or visible numeric mode with a finite or mathematically testable allowed-result contract.",
     "cpu_boundary": "CPU observations are implementation-under-test diagnostics and are never an architectural profile or independent oracle.",
@@ -425,21 +425,16 @@
         "named-target-profile-rule",
         "unsupported-in-profile"
       ],
-      "proposed_rule": "ADR 0039 closes discovery and namespace ownership for scalar FRM, fixed FCVT overrides, bundle RMode, public conversion modes, matrix controls, stochastic controls, and backend-only controls. The portable rounding core is RNE, RTZ, RTP, and RTM with exact ties-to-even behavior for RNE. Numeric result rules remain open for all 18 affected domains, 102 operations, and 25 hooks.",
-      "open_items": [
-        "accept the active scalar code-4 rule and the code-5-through-7 rejection-or-fallback disposition",
-        "map public, bundle, matrix, stochastic, and backend-only controls only where a named profile owns the mapping",
-        "assign exact per-domain rounding and saturation-order rules",
-        "publish signed halfway and rounding-before-saturation vectors"
-      ],
+      "proposed_rule": "ADR 0047 accepts the separate scalar, fixed-mnemonic, bundle, and public selector mappings; exact RNE, RTM, RTP, RTZ, RNA, RTO, and RHB tie rules; scalar reserved-code RNE fallback; operation defaults; one rounding point for every affected domain; and rounding before saturation. Other numeric result dimensions remain owned by PD-02 and PD-04 through PD-12.",
+      "open_items": [],
       "acceptance_evidence": [
         "rounding encoding table",
         "halfway vectors on both signs",
         "rounding-and-saturation ordering vectors"
       ],
-      "status": "review-required",
-      "accepted": false,
-      "acceptance_record": null
+      "status": "accepted",
+      "accepted": true,
+      "acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md"
     },
     {
       "id": "PD-04",
@@ -1636,7 +1631,7 @@
     {
       "id": "S5-T2-A2",
       "target": "accept all numeric decision records",
-      "current": 0,
+      "current": 1,
       "required": 12,
       "status": "open"
     },
@@ -1702,13 +1697,13 @@
     "accepted_profile_identity_count": 4,
     "accepted_framework_rule_count": 5,
     "decision_proposal_count": 12,
-    "accepted_decision_count": 0,
+    "accepted_decision_count": 1,
     "numeric_domain_count": 20,
     "accepted_domain_rule_count": 0,
     "numeric_operation_count": 108,
     "numeric_hook_count": 30,
     "numeric_variation_point_count": 99,
-    "selected_variation_route_count": 0,
+    "selected_variation_route_count": 18,
     "accepted_public_type_binding_count": 16,
     "public_type_identity_count": 16,
     "accepted_bounded_result_rule_count": 3,

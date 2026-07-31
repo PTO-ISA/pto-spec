@@ -306,23 +306,26 @@ begin
 end;
 
 readonly func TileOperandsLegal_TCVT(destination: TileIndex,
-                                     source: TileIndex) => boolean
+                                     source: TileIndex,
+                                     control: NumericExecutionControl) => boolean
 begin
     return TileLogicalShapeMatch(destination, source);
 end;
 
 readonly func TileOperandsLegal_TQUANT(destination: TileIndex,
                                        source: TileIndex, scale: Word,
-                                       zero_point: Word) => boolean
+                                       zero_point: Word,
+                                       control: NumericExecutionControl) => boolean
 begin
-    return TileOperandsLegal_TCVT(destination, source) && !IsZero(scale);
+    return TileLogicalShapeMatch(destination, source) && !IsZero(scale);
 end;
 
 readonly func TileOperandsLegal_TDEQUANT(destination: TileIndex,
                                          source: TileIndex, scale: Word,
-                                         zero_point: Word) => boolean
+                                         zero_point: Word,
+                                         control: NumericExecutionControl) => boolean
 begin
-    return TileOperandsLegal_TCVT(destination, source);
+    return TileLogicalShapeMatch(destination, source);
 end;
 
 readonly func TileOperandsLegal_TEXTRACT(
@@ -850,7 +853,9 @@ begin
            TileAccumulatorMatches(left, right);
 end;
 
-readonly func TileOperandsLegal_ACCCVT(destination: TileIndex) => boolean
+readonly func TileOperandsLegal_ACCCVT(destination: TileIndex,
+                                       control: NumericExecutionControl)
+                                       => boolean
 begin
     if !_Accumulator.live || !_Accumulator.info.contents_defined ||
        !TileDescriptorLegal(destination) ||

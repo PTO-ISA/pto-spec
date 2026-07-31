@@ -13866,7 +13866,7 @@
     },
     {
       "abi_change_acceptance": null,
-      "bundle_bridge_representable": true,
+      "bundle_bridge_representable": false,
       "classification": "non-comparable",
       "evidence": [
         "spec/catalog/tile-operations.json",
@@ -14342,7 +14342,7 @@
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.57.1-compact-tepl-selector-break"
       },
-      "bundle_bridge_representable": true,
+      "bundle_bridge_representable": false,
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",

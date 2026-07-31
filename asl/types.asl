@@ -280,13 +280,37 @@ type FloatingFusedOperation of enumeration {
     FloatingFused_NMSUB
 };
 
-type FloatingRoundingMode of enumeration {
-    FloatingRound_Nearest,
-    FloatingRound_Down,
-    FloatingRound_Up,
-    FloatingRound_TowardsZero,
-    FloatingRound_Away
+// Semantic rounding modes are independent of every encoded selector
+// namespace. Scalar FRM, fixed conversion overrides, bundle RMode, and public
+// API controls must resolve into this type explicitly.
+type NumericRoundingMode of enumeration {
+    NumericRound_RNE,
+    NumericRound_RTM,
+    NumericRound_RTP,
+    NumericRound_RTZ,
+    NumericRound_RNA,
+    NumericRound_RTO,
+    NumericRound_RHB
 };
+
+type NumericExecutionControl of record {
+    rounding_mode: NumericRoundingMode,
+    saturating: boolean
+};
+
+type TileNumericSelection of record {
+    use_operation_default: boolean,
+    rounding_mode: NumericRoundingMode,
+    saturating: boolean
+};
+
+pure func DefaultNumericExecutionControl() => NumericExecutionControl
+begin
+    return NumericExecutionControl {
+        rounding_mode = NumericRound_RNE,
+        saturating = FALSE
+    };
+end;
 
 // Selects only a bounded set of accepted negative applicability rules. This
 // is not a complete target-profile selector: absence of a rejection does not
@@ -507,7 +531,8 @@ type TileInstructionOperands of record {
     selected_byte: integer {0..3},
     axis: TileAxis,
     comparison: TileComparison,
-    flag0: boolean
+    flag0: boolean,
+    numeric_control: TileNumericSelection
 };
 
 pure func DefaultTileInstructionOperands() => TileInstructionOperands
@@ -534,7 +559,12 @@ begin
         selected_byte = 0,
         axis = TileAxis_Row,
         comparison = TileComparison_EQ,
-        flag0 = FALSE
+        flag0 = FALSE,
+        numeric_control = TileNumericSelection {
+            use_operation_default = TRUE,
+            rounding_mode = NumericRound_RNE,
+            saturating = FALSE
+        }
     };
 end;
 

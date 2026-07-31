@@ -529,6 +529,7 @@ TILE_OPERAND_FIELDS = {
     "axis",
     "comparison",
     "flag0",
+    "numeric_control",
 }
 
 TILE_BINDING_CONSTANT = re.compile(
@@ -2399,8 +2400,13 @@ def main() -> int:
         "asl/scalar/dispatch.asl",
         "asl/bundle/state.asl",
         "asl/bundle/dispatch.asl",
+        "asl/tile/conversion.asl",
+        "asl/tile/cube.asl",
+        "spec/catalog/tile-operations.json",
+        "spec/hardware-conformance-profile.json",
         "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
         "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+        "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
     ]
     require(
         set(numeric_rounding_selectors)
@@ -2412,6 +2418,7 @@ def main() -> int:
             "external_selector_classes",
             "independent_comparison",
             "policy",
+            "public_conversion_round_modes",
             "scalar_active_rounding",
             "scalar_fixed_conversion_overrides",
             "schema_version",
@@ -2425,9 +2432,9 @@ def main() -> int:
         and numeric_rounding_selectors["target"] == "S5-T2-A2:PD-03"
         and numeric_rounding_selectors["decision_id"] == "PD-03"
         and numeric_rounding_selectors["status"]
-        == "selector-ownership-inventory-closed-result-rules-open"
+        == "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open"
         and numeric_rounding_selectors["acceptance_record"]
-        == "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md"
+        == "docs/architecture-decisions/0047-numeric-rounding-semantics.md"
         and (ROOT / numeric_rounding_selectors["acceptance_record"]).is_file(),
         "numeric rounding selector identity or schema drift",
     )
@@ -2445,50 +2452,38 @@ def main() -> int:
     active_rounding = numeric_rounding_selectors["scalar_active_rounding"]
     require(
         [row["code"] for row in active_rounding] == list(range(8))
+        and [row["encoding_status"] for row in active_rounding]
+        == ["assigned", "assigned", "assigned", "assigned", "reserved", "reserved", "reserved", "reserved"]
         and [row["portable_name"] for row in active_rounding]
-        == ["RNE", "RTM", "RTP", "RTZ", "RTA", None, None, None]
+        == ["RNE", "RTM", "RTP", "RTZ", "RNE", "RNE", "RNE", "RNE"]
         and all(
             row["selector_namespace"] == "scalar-core-state-frm"
             and row["system_register"] == "CORE_STATE"
             and row["bit_range"] == "39:37"
-            and row["pto_v0_behavior"]
-            == (
-                "passes-code-to-active-profile-hook"
-                if row["code"] <= 4
-                else "normalizes-to-RNE"
-            )
+            and row["selection_status"] == "closed"
+            and row["pto_v0_behavior"] == "resolves-to-" + row["portable_name"]
             for row in active_rounding
-        )
-        and [row["selection_status"] for row in active_rounding]
-        == [
-            "portable-core",
-            "portable-core",
-            "portable-core",
-            "portable-core",
-            "active-versus-fixed-scope-decision-required",
-            "reserved-fallback-versus-rejection-decision-required",
-            "reserved-fallback-versus-rejection-decision-required",
-            "reserved-fallback-versus-rejection-decision-required",
-        ],
+        ),
         "scalar active rounding selector ownership drift",
     )
     scalar_forms_by_mnemonic = {row["mnemonic"]: row for row in forms}
     fixed_rounding = numeric_rounding_selectors["scalar_fixed_conversion_overrides"]
     expected_fixed_rounding = [
-        ("FCVTA", 4, "RTA"),
-        ("FCVTM", 1, "RTM"),
-        ("FCVTN", 0, "RNE"),
-        ("FCVTP", 2, "RTP"),
-        ("FCVTZ", 3, "RTZ"),
+        ("FCVTA", "RNA"),
+        ("FCVTM", "RTM"),
+        ("FCVTN", "RNE"),
+        ("FCVTP", "RTP"),
+        ("FCVTZ", "RTZ"),
     ]
     require(
-        [(row["mnemonic"], row["code"], row["portable_name"]) for row in fixed_rounding]
+        [(row["mnemonic"], row["portable_name"]) for row in fixed_rounding]
         == expected_fixed_rounding
         and all(
             row["form_id"] == scalar_forms_by_mnemonic[row["mnemonic"]]["form_id"]
             and row["selector_namespace"] == "scalar-fixed-conversion-override"
             and row["selection_status"] == "closed"
-            and row["numeric_result_status"] == "operation-type-rule-required"
+            and row["numeric_result_status"]
+            == "rounding-rule-closed-other-result-dimensions-open"
             for row in fixed_rounding
         ),
         "fixed conversion rounding selector ownership drift",
@@ -2497,16 +2492,40 @@ def main() -> int:
     require(
         [row["code"] for row in numeric_rounding_selectors["bundle_rmode"]]
         == list(range(8))
+        and [row["encoded_name"] for row in numeric_rounding_selectors["bundle_rmode"]]
+        == ["NONE", "RNE", "RTZ", "RDN", "RUP", "RNA", "RTO", "RHB"]
+        and [row["portable_name"] for row in numeric_rounding_selectors["bundle_rmode"]]
+        == [None, "RNE", "RTZ", "RTM", "RTP", "RNA", "RTO", "RHB"]
         and all(
             row["form_id"] == bundle_datr["form_id"]
             and row["mnemonic"] == "B.DATR"
             and row["selector_namespace"] == "bundle-data-attribute-rmode"
             and row["binding"] == "BundleDataAttributes.rounding_mode"
-            and row["selection_status"] == "encoding-and-state-binding-closed"
-            and row["numeric_result_status"] == "named-profile-rule-required"
+            and row["selection_status"]
+            == "encoding-state-and-semantic-mapping-closed"
+            and row["numeric_result_status"]
+            == "rounding-rule-closed-other-result-dimensions-open"
             for row in numeric_rounding_selectors["bundle_rmode"]
         ),
         "bundle rounding selector ownership drift",
+    )
+    public_rounding = numeric_rounding_selectors["public_conversion_round_modes"]
+    require(
+        [row["public_ordinal"] for row in public_rounding] == list(range(7))
+        and [row["public_name"] for row in public_rounding]
+        == [
+            "CAST_NONE",
+            "CAST_RINT",
+            "CAST_ROUND",
+            "CAST_FLOOR",
+            "CAST_CEIL",
+            "CAST_TRUNC",
+            "CAST_ODD",
+        ]
+        and [row["bundle_rmode_code"] for row in public_rounding]
+        == [0, 1, 5, 3, 4, 2, 6]
+        and all(row["status"] == "accepted-explicit-translation" for row in public_rounding),
+        "public conversion-to-bundle rounding translation drift",
     )
     pd03 = next(
         row
@@ -2526,10 +2545,14 @@ def main() -> int:
             and row["operation_keys"]
             == profile_domains_by_name[row["domain"]]["operation_keys"]
             and row["hooks"] == profile_domains_by_name[row["domain"]]["hooks"]
-            and row["selector_owner"] is None
-            and row["rounding_rule"] is None
-            and row["saturation_order_rule"] is None
-            and row["status"] == "profile-rule-required"
+            and isinstance(row["selector_owner"], str)
+            and row["selector_owner"]
+            and isinstance(row["rounding_rule"], str)
+            and row["rounding_rule"]
+            and isinstance(row["saturation_order_rule"], str)
+            and row["saturation_order_rule"]
+            and row["status"]
+            == "rounding-rule-accepted-other-numeric-dimensions-open"
             for row in pd03_domains
         )
         and numeric_rounding_selectors["summary"]
@@ -2541,18 +2564,18 @@ def main() -> int:
             "affected_domain_count": 18,
             "affected_operation_count": 102,
             "affected_hook_count": 25,
-            "accepted_domain_rounding_rule_count": 0,
-            "pd03_complete": False,
+            "accepted_domain_rounding_rule_count": 18,
+            "pd03_complete": True,
         },
         "numeric rounding domain ownership or open-result boundary drift",
     )
     rounding_comparison = numeric_rounding_selectors["independent_comparison"]
     require(
         rounding_comparison["status"]
-        == "scalar-selection-structure-corroborated-not-numeric-oracle"
+        == "scalar-selection-and-reserved-fallback-corroborated-not-numeric-oracle"
         and rounding_comparison["provenance_sha256"]
         == "9e601ae1a3f1a7025b048aa6108b04b445a3ccbc68fc77ea4b76d7befa2e46b8"
-        and len(rounding_comparison["matched_contracts"]) == 3
+        and len(rounding_comparison["matched_contracts"]) == 4
         and len(rounding_comparison["limits"]) == 3
         and len(numeric_rounding_selectors["external_selector_classes"]) == 4,
         "numeric rounding comparison or external namespace boundary drift",
@@ -2563,10 +2586,14 @@ def main() -> int:
     for witness in (
         "FloatingRoundNearest(-2.5)",
         "FloatingRoundNearest(-3.5)",
-        "let rne_positive = FloatingToInteger(2.5, FloatingRound_Nearest);",
-        "let rne_negative = FloatingToInteger(-2.5, FloatingRound_Nearest);",
-        "let away_positive = FloatingToInteger(2.5, FloatingRound_Away);",
-        "let away_negative = FloatingToInteger(-2.5, FloatingRound_Away);",
+        "let rne_positive = FloatingToInteger(2.5, NumericRound_RNE);",
+        "let rne_negative = FloatingToInteger(-2.5, NumericRound_RNE);",
+        "let away_nonhalf_positive = FloatingToInteger(2.1, NumericRound_RNA);",
+        "let away_nonhalf_negative = FloatingToInteger(-2.1, NumericRound_RNA);",
+        "let away_positive = FloatingToInteger(2.5, NumericRound_RNA);",
+        "let away_negative = FloatingToInteger(-2.5, NumericRound_RNA);",
+        "assert ResolveScalarFPActiveRoundingMode('100') == NumericRound_RNE;",
+        "DecodePublicConversionRoundingSelection('111')",
         "assert rne_positive == 2;",
         "assert rne_negative == -2;",
         "assert away_positive == 3;",
@@ -4887,10 +4914,24 @@ def main() -> int:
             operand["field"]
             for operand in cube_rows_by_name["ACCCVT"]["operands"]
         ]
-        == ["destination0"]
+        == ["destination0", "numeric_control"]
         and cube_rows_by_name["ACCCVT"]["arguments"]
-        == [{"operand": "destination0"}],
+        == [{"operand": "destination0"}, {"operand": "numeric_control"}],
         "ACCCVT must publish one Tile from implicit ACC",
+    )
+    numeric_control_operations = {
+        row["name"]
+        for row in operations
+        if any(operand["field"] == "numeric_control" for operand in row["operands"])
+    }
+    require(
+        numeric_control_operations == {"ACCCVT", "TCVT", "TQUANT", "TDEQUANT"}
+        and all(
+            row["arguments"][-1] == {"operand": "numeric_control"}
+            for row in operations
+            if row["name"] in numeric_control_operations
+        ),
+        "rounding and saturation control must bind exactly four numeric operations",
     )
     sort_row = next(row for row in operations if row["name"] == "TSORT")
     require(
@@ -6293,18 +6334,23 @@ def main() -> int:
     scalar_types_body = (ROOT / "asl" / "types.asl").read_text(encoding="utf-8")
     require(
         re.search(
-            r"type FloatingRoundingMode of enumeration \{\s*"
-            r"FloatingRound_Nearest,\s*FloatingRound_Down,\s*"
-            r"FloatingRound_Up,\s*FloatingRound_TowardsZero,\s*"
-            r"FloatingRound_Away\s*\};",
+            r"type NumericRoundingMode of enumeration \{\s*"
+            r"NumericRound_RNE,\s*NumericRound_RTM,\s*"
+            r"NumericRound_RTP,\s*NumericRound_RTZ,\s*"
+            r"NumericRound_RNA,\s*NumericRound_RTO,\s*"
+            r"NumericRound_RHB\s*\};",
             scalar_types_body,
         )
         is not None
-        and "ScalarOperation_FCVTM then return '001'" in scalar_floating_body
-        and "ScalarOperation_FCVTP then return '010'" in scalar_floating_body
+        and "ScalarOperation_FCVTA then return NumericRound_RNA"
+        in scalar_floating_body
+        and "ScalarOperation_FCVTM then return NumericRound_RTM"
+        in scalar_floating_body
+        and "ScalarOperation_FCVTP then return NumericRound_RTP"
+        in scalar_floating_body
         and "ScalarFPFixedConversionRoundingMode(operation)"
         in scalar_effect_dispatch_body,
-        "rounding codes 1/2 must remain aligned with FCVTM down and FCVTP up",
+        "semantic rounding modes and fixed conversion overrides drifted",
     )
     require(
         "when ScalarOperation_C_SETRET =>" in scalar_effect_dispatch_body
@@ -7331,6 +7377,8 @@ def main() -> int:
         in closure_requirement["model"]
         and "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md"
         in closure_requirement["model"]
+        and "docs/architecture-decisions/0047-numeric-rounding-semantics.md"
+        in closure_requirement["model"]
         and "spec/evidence/numeric-format-namespace-contract.json"
         in closure_requirement["model"]
         and "scripts/generate-numeric-format-namespace-contract"
@@ -8122,7 +8170,7 @@ def main() -> int:
             "accepted_domain_rule_count": 0,
             "accepted_identity_count": 4,
             "accepted_selection_rule_count": 5,
-            "result_decision_count": 0,
+            "result_decision_count": 1,
             "status": "closed:S5-T2-A1",
         },
         "numeric-conformance readiness identity or status drift",
@@ -8160,8 +8208,8 @@ def main() -> int:
             "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
             "acceptance_record": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
             "variation_point_count": 99,
-            "selected_route_count": 0,
-            "accepted_result_rule_count": 0,
+            "selected_route_count": 18,
+            "accepted_result_rule_count": 18,
         },
         "numeric-conformance readiness variation-point checkpoint drift",
     )
@@ -8435,9 +8483,21 @@ def main() -> int:
                 "unresolved_rule",
             }
             and row["classification"] in {"architecture-decision", "profile-decision"}
-            and row["status"] == "decision-required"
-            and row["selected_disposition"] is None
-            and row["decision_record"] is None
+            and (
+                (
+                    decision_id == "PD-03"
+                    and row["status"] == "accepted"
+                    and row["selected_disposition"] == "portable-normative-rule"
+                    and row["decision_record"]
+                    == "docs/architecture-decisions/0047-numeric-rounding-semantics.md"
+                )
+                or (
+                    decision_id != "PD-03"
+                    and row["status"] == "decision-required"
+                    and row["selected_disposition"] is None
+                    and row["decision_record"] is None
+                )
+            )
             and all(
                 isinstance(row[key], str) and row[key]
                 for key in ("finding", "title", "unresolved_rule")
@@ -8521,7 +8581,7 @@ def main() -> int:
             "decision_question_count": 12,
             "implementation_evidence_source_count": 21,
             "numeric_domain_count": 20,
-            "open_decision_question_count": 12,
+            "open_decision_question_count": 11,
             "open_numeric_domain_count": 20,
             "profile_identity_count": 4,
             "public_contract_source_count": 3,
@@ -8738,11 +8798,27 @@ def main() -> int:
             )
             and "pto-cpu-observation-v1"
             not in {route.get("profile_id") for route in row["admissible_routes"]}
-            and row["selected_route"] is None
-            and row["result_rule_id"] is None
-            and row["result_acceptance_record"] is None
+            and (
+                (
+                    row["decision_ownership"]["primary_decision_id"] == "PD-03"
+                    and row["selected_route"]
+                    == {"kind": "portable-rule", "profile_id": "pto-numeric-v1"}
+                    and row["result_rule_id"]
+                    == f"pd03-rounding/{row['domain_id']}"
+                    and row["result_acceptance_record"]
+                    == "docs/architecture-decisions/0047-numeric-rounding-semantics.md"
+                    and row["status"] == "portable-rounding-rule-accepted"
+                )
+                or (
+                    row["decision_ownership"]["primary_decision_id"] != "PD-03"
+                    and row["selected_route"] is None
+                    and row["result_rule_id"] is None
+                    and row["result_acceptance_record"] is None
+                    and row["status"]
+                    == "ownership-inventoried-result-rule-required"
+                )
+            )
             and row["missing_rule_disposition"] == "reject-before-effects"
-            and row["status"] == "ownership-inventoried-result-rule-required"
             for row in variation_points
         ),
         "numeric variation-point rows do not exactly cover domain dimensions and owner boundaries",
@@ -8779,8 +8855,14 @@ def main() -> int:
             and row["decision_owner_id"] == "pto-numeric-v1"
             and row["accepted_unsupported_profiles"]
             == unsupported_profiles_by_operation[key]
-            and row["accepted_result_rule_count"] == 0
-            and row["status"] == "owner-closed-result-rules-open"
+            and row["accepted_result_rule_count"]
+            == (1 if row["domain"] in set(pd03["domains"]) else 0)
+            and row["status"]
+            == (
+                "rounding-rule-accepted-other-result-rules-open"
+                if row["domain"] in set(pd03["domains"])
+                else "owner-closed-result-rules-open"
+            )
             for key, row in ownership_operations_by_key.items()
         ),
         "numeric variation-point operation reachability drift",
@@ -8823,9 +8905,35 @@ def main() -> int:
             )
             and row["decision_owner_kind"] == "portable-architecture"
             and row["decision_owner_id"] == "pto-numeric-v1"
-            and row["selected_route"] is None
-            and row["result_rule_id"] is None
-            and row["status"] == "ownership-inventoried-result-rule-required"
+            and (
+                (
+                    any(
+                        variation_points_by_id[point_id]["decision_ownership"][
+                            "primary_decision_id"
+                        ]
+                        == "PD-03"
+                        for point_id in row["variation_point_ids"]
+                    )
+                    and row["selected_route"]
+                    == {"kind": "portable-rule", "profile_id": "pto-numeric-v1"}
+                    and row["result_rule_id"] == f"pd03-rounding-hook/{name}"
+                    and row["status"]
+                    == "rounding-rule-accepted-other-result-rules-open"
+                )
+                or (
+                    not any(
+                        variation_points_by_id[point_id]["decision_ownership"][
+                            "primary_decision_id"
+                        ]
+                        == "PD-03"
+                        for point_id in row["variation_point_ids"]
+                    )
+                    and row["selected_route"] is None
+                    and row["result_rule_id"] is None
+                    and row["status"]
+                    == "ownership-inventoried-result-rule-required"
+                )
+            )
             for name, row in ownership_hooks_by_name.items()
         ),
         "numeric variation-point hook ownership drift",
@@ -8880,8 +8988,8 @@ def main() -> int:
             "primary_operation_hook_edge_count": 134,
             "reference_helper_operation_edge_count": 8,
             "portable_decision_owner_point_count": 99,
-            "selected_route_count": 0,
-            "accepted_result_rule_count": 0,
+            "selected_route_count": 18,
+            "accepted_result_rule_count": 18,
             "accepted_unsupported_tuple_count": 150,
             "accepted_domain_result_rule_count": 0,
             "accepted_bounded_result_subset_rule_count": 3,
@@ -8932,7 +9040,8 @@ def main() -> int:
         }
         and numeric_profile_proposals["schema_version"] == 9
         and numeric_profile_proposals["target"] == "S5-T2-A"
-        and numeric_profile_proposals["status"] == "proposal-complete-decisions-open",
+        and numeric_profile_proposals["status"]
+        == "proposal-complete-one-decision-accepted",
         "numeric profile proposal identity or schema drift",
     )
     require(
@@ -9063,8 +9172,8 @@ def main() -> int:
                     ROOT / "spec/evidence/numeric-rounding-selector-contract.json"
                 ).read_bytes()
             ).hexdigest(),
-            "status": "selector-ownership-inventory-closed-result-rules-open",
-            "acceptance_record": "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
+            "status": "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open",
+            "acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
             "scalar_active_selector_count": 8,
             "scalar_fixed_override_count": 5,
             "bundle_rmode_selector_count": 8,
@@ -9072,8 +9181,8 @@ def main() -> int:
             "affected_domain_count": 18,
             "affected_operation_count": 102,
             "affected_hook_count": 25,
-            "accepted_domain_rounding_rule_count": 0,
-            "pd03_complete": False,
+            "accepted_domain_rounding_rule_count": 18,
+            "pd03_complete": True,
         },
         "numeric profile proposal rounding checkpoint drift",
     )
@@ -9143,16 +9252,28 @@ def main() -> int:
     require(
         set(proposal_decisions_by_id) == set(decisions_by_id)
         and all(
-            row["status"] == "review-required"
-            and row["accepted"] is False
-            and row["acceptance_record"] is None
+            (
+                (
+                    row["id"] == "PD-03"
+                    and row["status"] == "accepted"
+                    and row["accepted"] is True
+                    and row["acceptance_record"]
+                    == "docs/architecture-decisions/0047-numeric-rounding-semantics.md"
+                )
+                or (
+                    row["id"] != "PD-03"
+                    and row["status"] == "review-required"
+                    and row["accepted"] is False
+                    and row["acceptance_record"] is None
+                )
+            )
             and row["proposed_dispositions"]
             and set(row["proposed_dispositions"])
             <= set(decisions_by_id[row["id"]]["permitted_dispositions"])
             and row["affected_domains"] == decisions_by_id[row["id"]]["domains"]
             for row in proposal_decisions_by_id.values()
         ),
-        "numeric decision proposal coverage or non-acceptance drift",
+        "numeric decision proposal coverage or acceptance drift",
     )
     proposal_domains_by_id = {
         row["domain"]: row for row in numeric_profile_proposals["domain_proposals"]
@@ -9229,7 +9350,9 @@ def main() -> int:
             "target": "close every unequal-width public integer TCVT result tuple",
         }
         and all(
-            row["current"] == 0 and row["required"] > 0 and row["status"] == "open"
+            row["current"] == (1 if row["id"] == "S5-T2-A2" else 0)
+            and row["required"] > 0
+            and row["status"] == "open"
             for index, row in enumerate(
                 numeric_profile_proposals["promotion_residuals"]
             )
@@ -9237,7 +9360,7 @@ def main() -> int:
         )
         and numeric_profile_proposals["summary"]
         == {
-            "accepted_decision_count": 0,
+            "accepted_decision_count": 1,
             "accepted_domain_rule_count": 0,
             "accepted_framework_rule_count": 5,
             "accepted_profile_identity_count": 4,
@@ -9249,7 +9372,7 @@ def main() -> int:
             "numeric_operation_count": 108,
             "numeric_variation_point_count": 99,
             "profile_proposal_count": 4,
-            "selected_variation_route_count": 0,
+            "selected_variation_route_count": 18,
             "accepted_public_type_binding_count": 16,
             "public_type_identity_count": 16,
             "accepted_bounded_result_rule_count": 3,
@@ -9273,6 +9396,8 @@ def main() -> int:
         and "spec/evidence/numeric-rounding-selector-contract.json" in s5_t2["evidence"]
         and "scripts/generate-numeric-rounding-selector-contract" in s5_t2["evidence"]
         and "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md"
+        in s5_t2["evidence"]
+        and "docs/architecture-decisions/0047-numeric-rounding-semantics.md"
         in s5_t2["evidence"]
         and "spec/evidence/numeric-format-namespace-contract.json" in s5_t2["evidence"]
         and "scripts/generate-numeric-format-namespace-contract" in s5_t2["evidence"]
@@ -9399,6 +9524,8 @@ def main() -> int:
             and "scripts/generate-numeric-rounding-selector-contract"
             in requirements_by_id[requirement_id]["model"]
             and "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md"
+            in requirements_by_id[requirement_id]["model"]
+            and "docs/architecture-decisions/0047-numeric-rounding-semantics.md"
             in requirements_by_id[requirement_id]["model"],
             f"numeric rounding selector checkpoint is not traceable from {requirement_id}",
         )
@@ -9442,6 +9569,8 @@ def main() -> int:
         "spec/evidence/numeric-rounding-selector-contract.json"
         in requirements_by_id["PTO-REQ-BUNDLE-STATE-001"]["model"]
         and "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md"
+        in requirements_by_id["PTO-REQ-BUNDLE-STATE-001"]["model"]
+        and "docs/architecture-decisions/0047-numeric-rounding-semantics.md"
         in requirements_by_id["PTO-REQ-BUNDLE-STATE-001"]["model"],
         "bundle RMode selector ownership is not requirement-traceable",
     )

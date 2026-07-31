@@ -266,7 +266,7 @@ begin
     CommitAccumulator(result, TileDataType_FP32);
 end;
 
-func ACCCVT(destination: TileIndex)
+func ACCCVT(destination: TileIndex, control: NumericExecutionControl)
 begin
     assert _Accumulator.live && _Accumulator.info.contents_defined;
     let destination_tile = _Tiles[[destination]];
@@ -284,7 +284,8 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             destination_payload[[destination_element]] = TileConvertValue(
                 accumulator_info.payload[[source_element]],
-                accumulator_info.data_type, destination_tile.data_type);
+                accumulator_info.data_type, destination_tile.data_type,
+                control);
         end;
     end;
     _Tiles[[destination]].payload = destination_payload;
