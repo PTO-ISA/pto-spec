@@ -294,15 +294,15 @@
     },
     {
       "path": "docs/coverage.md",
-      "sha256": "4c9774fbaad5dbbe99f6423ba1f13c60892e4591bbbaf4b54841e20f0440ae5c"
+      "sha256": "50b99a7f3ab522f2bd9786926fe32387710dcb03591e21ad31a78acc918cc2fe"
     },
     {
       "path": "docs/maturity-bringup-plan.md",
-      "sha256": "d5d2f265eb909c28a666bb6f3b9e1640d315c201d90b23eace7973a2fa26f50f"
+      "sha256": "7d0a22a934e8b2c10c3295f389b4a4434344d0caa2f4257d9a9ee745eef96f4d"
     },
     {
       "path": "docs/maturity-stage-targets.md",
-      "sha256": "e94a617a17ece8a2389f29d60e7927cd27a620a84ef615d2261607c2fcb12216"
+      "sha256": "61c14a02437bf50a8cd0a219db9dc0af8ac76511f5104578642c9b37be0d6059"
     },
     {
       "path": "docs/memory-model.md",
@@ -322,7 +322,7 @@
     },
     {
       "path": "docs/profile-contracts.md",
-      "sha256": "9f76a942012aec3bb57d6c425189d2cd8e0e59d67f7a42fed4eb599ac42d7fe1"
+      "sha256": "759a96e6975b6702a4900c803bee29f1b9ad4cc43b152920bce3e508d1d3e35e"
     },
     {
       "path": "docs/review-checklist.md",
@@ -495,7 +495,7 @@
     },
     "tile_operations_total": 120
   },
-  "content_sha256": "42bc9c8b3c1a1d9e43fc8ada0748fdc20d163d2b612296fcc4042e8de9b57fbd",
+  "content_sha256": "748c1c6ac1bd5482d219cd08b8f0a871c7eda2b8f8afb1e81d498ec742e8abe8",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",

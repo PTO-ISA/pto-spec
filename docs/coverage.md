@@ -140,19 +140,19 @@ acceptance records remain null, so PD-12, S5-T2, and M4 remain unchanged.
 
 Release traceability is independently fail-closed. The generated
 `spec/evidence/release-traceability-readiness.json` ledger assigns requirement,
-model, executable witness, and bounded status links to 937 exact units. It
+model, executable witness, and bounded status links to 934 exact units. It
 covers all 474 scalar forms, 99 command forms, 120 direct tile operations, 72
-system registers, 13 traps, 37 profile hooks, 44 requirements, and 70 top-level
-ASL state roots expanded to 199 leaf fields. State rows distinguish direct
+system registers, 13 traps, 38 profile hooks, 46 requirements, and 72 top-level
+ASL state roots expanded to 236 leaf fields. State rows distinguish direct
 architectural state, bounded storage and ordering abstractions,
 architectural-effect abstractions, and verification-only instrumentation. The
-inventory and link package is closed; nine S5-T2-dependent requirements, 29
+inventory and link package is closed; 11 S5-T2-dependent requirements, 30
 numeric hooks, and the later immutable-commit review keep S6-T1 open.
 
 The generated `spec/evidence/release-gate-readiness.json` ledger closes the
 S6-T2 contract inventory independently of candidate execution. It defines ten
 clone-verifiable release gates, proves the pinned least-privilege hosted
-workflow and exact 34-shard/100-call/89-subprogram topology, and enumerates ten
+workflow and exact 34-shard/105-call/96-subprogram topology, and enumerates ten
 external repository controls plus the PTO architecture and formal-model review
 perspectives. All candidate commit, runtime result, hosted-run, control-snapshot,
 and approval fields remain null. S5-T2 and S6-T1 therefore block candidate

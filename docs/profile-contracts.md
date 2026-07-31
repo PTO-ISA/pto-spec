@@ -10,7 +10,7 @@ The machine-readable authority is `spec/profile-hooks.json`.
 The interface declaration, active implementation, and direct profile tests
 travel together. Removing, renaming, or adding a hook must update all three in
 one reviewable change. The registry records implementation status separately
-from target-conformance status: all 37 hooks have deterministic PTO-v0
+from target-conformance status: all 38 hooks have deterministic PTO-v0
 implementations, and eight non-numeric hooks close their reference contracts.
 The checked `S5-T1` inventory assigns all 30 numeric hooks to their affected
 scalar and tile operations. Those hooks retain `S5-T2` target-conformance

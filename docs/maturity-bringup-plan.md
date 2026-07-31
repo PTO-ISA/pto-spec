@@ -106,7 +106,7 @@ The status vocabulary is deliberately strict:
 | Stage 3 | Closed | Production scalar, DMA, atomic, fence, tile, gather-CAS, and tile-prefetch paths emit the normative PTO-TSO stream; atomic, reservation, prefetch, and mixed-size corners have executable decisions. | No Stage 3 target remains open; byte-level mixed-size coherence is an explicit future extension, not an unclassified gap. |
 | Stage 4 | Closed | All scalar, bundle, TEPL, TMA, and CUBE targets have checked selector/form inventories, legality, state/effect, alias, boundary, and pre-effect rejection evidence under `pto-v0`. | No Stage 4 target remains open; target numerical conformance remains in Stage 5. |
 | Stage 5 | In progress | The checked numeric-contract matrix owns all 19 scalar and 89 direct-tile operations that cross 30 numeric hooks. ADRs 0037–0042 close identity/selection, scalar flag ownership, rounding-selector ownership, five numeric namespaces and 25 carrier identities, the A2/A3 MX negative slice, and ownership for all 99 variation points. ADR 0043 closes all 16 published type identities, 11 unambiguous catalog bindings, and target availability for 11 A2/A3 and 16 A5 types while retaining seven explicit PD-02 residuals. ADR 0044 closes three portable result rules across all 48 unequal-width public integer `TCVT` pairs, conditional on profile support, while retaining six explicit PD-07 residuals. All 12 complete numeric decisions, all 20 domain rules, and all 99 broad selected routes/result bounds remain under review. The exhaustive 693-row executable-model matrix records 557 exact matches, 96 explicit divergences (86 approved 0.57.1 ABI-break remaps traced to issue 18/ADR 0045 and 10 intentional rejected-command differences), 39 non-comparable rows, and one intentional extension. | No complete numeric decision or domain rule is accepted and no independent hardware/numeric oracle is closed. |
-| Stage 6 | Open | The generated S6-T1 ledger closes exact traceability inventory/link coverage across 937 units. The generated S6-T2 ledger closes the ten-gate contract, hosted workflow policy, and exact 34-shard/100-call/89-subprogram topology. | S5-T2 leaves nine requirements and 30 hooks open; no immutable candidate, complete local/hosted results, protected-branch snapshot, or architecture/formal approvals exist. |
+| Stage 6 | Open | The generated S6-T1 ledger closes exact traceability inventory/link coverage across 934 units. The generated S6-T2 ledger closes the ten-gate contract, hosted workflow policy, and exact 34-shard/105-call/96-subprogram topology. | S5-T2 leaves 11 requirements and 30 hooks open; no immutable candidate, complete local/hosted results, protected-branch snapshot, or architecture/formal approvals exist. |
 
 Update this table only from the exit evidence defined below. A stage may move to
 closed only when all of its exit criteria are satisfied.
@@ -171,7 +171,7 @@ closure; **open** means no closure claim is made.
 | `S5-T1` | 5 | Closed | Inventory every operation whose result depends on numeric behavior beyond the raw-carrier reference profile. | Checked `spec/evidence/numeric-contracts.json`: 19 scalar forms, 89 direct-tile operations, 30 hooks, an owner per row, and explicit `S5-T2` conformance obligations |
 | `S5-T2` | 5 | Open | Validate PTO numeric behavior against a named independent oracle without importing third-party semantics as PTO authority. | Generated readiness ledger partitions all 20 domains, 30 hooks, and 108 operations exactly once; checkpoints A1 and A4 close identity/selection and all 99 variation owners; ADRs 0038–0041 close flag ownership, rounding-selector ownership, five namespaces/25 carriers, and the six-selector/150-tuple A2/A3 MX unsupported slice; A5/ADR 0043 close 16 public identities, 11 catalog bindings, and 11-type A2/A3 / 16-type A5 availability; A6/ADR 0044 close 48 unequal-width public integer `TCVT` result tuples with three portable rules but no support rule or complete domain rule; the decision-input ledger exposes 12 unresolved questions from 24 pinned public sources; closure requires accepted profile decisions, populated profile/oracle/vector/result/review evidence, and a complete differential report |
 | `S5-T3` | 5 | Closed | Cross-check every shared scalar mnemonic and architectural pattern against a pinned independent executable ISA model, then resolve each difference as a PTO rule, profile difference, defect, or intentional non-equivalence. | The 693-row publication-safe disposition matrix is complete with 557 exact matches, 96 explicit divergences (86 approved 0.57.1 ABI-break remaps and 10 intentional rejected-command differences), 39 non-comparable rows, and one intentional extension; the clean content-addressed snapshot passes all eight repository gates and the pinned Sail parser/C-backend gate |
-| `S6-T1` | 6 | Open | Prove requirements-to-model-to-test traceability with no unsupported completeness claim. Exact inventory and link sub-stages are closed over 937 units; cumulative closure and review remain open. | Generated release-traceability readiness ledger; closed S5-T2-dependent requirement statuses; immutable-commit evidence-hygiene review |
+| `S6-T1` | 6 | Open | Prove requirements-to-model-to-test traceability with no unsupported completeness claim. Exact inventory and link sub-stages are closed over 934 units; cumulative closure and review remain open. | Generated release-traceability readiness ledger; closed S5-T2-dependent requirement statuses; immutable-commit evidence-hygiene review |
 | `S6-T2` | 6 | Open | Pass clean regeneration, ASLRef, repository, publication, protected-branch, and independent architecture/formal review gates. Gate-contract and topology sub-stages are closed; candidate execution and approval remain open. | Generated release-gate readiness ledger; clean `make ci`; `git diff --check`; hosted `validate`; GitHub control snapshot; recorded approvals at one signed commit |
 
 ### Delivery order and dependencies
@@ -578,10 +578,10 @@ hidden exceptions.
 ### S6-T1 traceability promotion stages
 
 `spec/evidence/release-traceability-readiness.json` is the fail-closed S6-T1
-promotion input. It covers 937 globally unique traceability units: 44
+promotion input. It covers 934 globally unique traceability units: 46
 requirements, 474 scalar forms, 99 bundle/command forms, 120 direct tile
-operations, 72 system registers, 13 traps, 37 profile hooks, and 70 top-level
-ASL state roots. Composite roots expand to 199 leaf fields so nested bundle,
+operations, 72 system registers, 13 traps, 38 profile hooks, and 72 top-level
+ASL state roots. Composite roots expand to 236 leaf fields so nested bundle,
 trap-context, memory-event, system-register, and `TileInfo` fields remain
 visible to review.
 
@@ -589,7 +589,7 @@ visible to review.
 | --- | --- | --- | --- |
 | `S6-T1-A` | Closed | Exact, duplicate-free release inventory | Every catalog identity, requirement, hook, and ASL state root appears exactly once. |
 | `S6-T1-B` | Closed | Existing requirement, model, test, and bounded-status links | Every path exists; state roots distinguish architectural state and abstractions from verification-only instrumentation. |
-| `S6-T1-C` | Blocked by S5-T2 | Cumulative Stage 0–5 closure | The nine S5-T2-dependent requirement rows and all 30 numeric hooks close with accepted conformance evidence. |
+| `S6-T1-C` | Blocked by S5-T2 | Cumulative Stage 0–5 closure | The 11 S5-T2-dependent requirement rows and all 30 numeric hooks close with accepted conformance evidence. |
 | `S6-T1-D` | Waiting on C | Immutable-commit claim-hygiene approval | Reviewer identity, reviewed commit, date, and disposition are populated. |
 | `S6-T1-E` | Waiting on C–D | S6-T1 promotion | All release surfaces agree and no completeness status exceeds its evidence. |
 
@@ -601,14 +601,14 @@ generated review fields remain null until a stable post-S5-T2 candidate exists.
 `spec/evidence/release-gate-readiness.json` separates the exact release
 contract from future results. It defines ten local/candidate gates, proves the
 hosted workflow uses full action pins and least-privilege contents access, and
-proves 34 shards partition 100 canonical calls reaching 89 test subprograms.
+proves 34 shards partition 105 canonical calls reaching 96 test subprograms.
 It also inventories ten GitHub repository/branch controls and the two required
 review perspectives.
 
 | Sub-stage | Current state | Target | Exit evidence |
 | --- | --- | --- | --- |
 | `S6-T2-A` | Closed | Exact release-gate contract | Ten commands/evidence boundaries, ten external controls, and two review perspectives are generated and checked. |
-| `S6-T2-B` | Closed | Hosted and parallel execution contract | Full action pins, least-privilege workflow, required `validate`, 360-minute bound, and exact 34/100/89 partition pass fail-closed checks. |
+| `S6-T2-B` | Closed | Hosted and parallel execution contract | Full action pins, least-privilege workflow, required `validate`, 360-minute bound, and exact 34/105/96 partition pass fail-closed checks. |
 | `S6-T2-C` | Blocked by S5-T2 and S6-T1 | Freeze one signed candidate | All cumulative prerequisites close and one immutable commit/tree identity is recorded. |
 | `S6-T2-D` | Waiting on C | Reproduce the candidate | Every local gate and hosted `validate` passes at the same candidate commit. |
 | `S6-T2-E` | Waiting on C–D | Verify controls and reviews | Candidate-specific GitHub control snapshot plus accepted PTO architecture and formal-model dispositions. |

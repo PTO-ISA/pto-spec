@@ -80,9 +80,9 @@ passes its generation, validation, documentation, Sail parser, and Sail
 C-backend gates. This classification closes `S5-T3` without changing the open
 `S5-T2` and Stage 6 claims.
 Release traceability is now generated rather than inferred from prose. The
-`spec/evidence/release-traceability-readiness.json` ledger covers 937 exact
-units: all requirements, accepted forms and operations, system registers,
-traps, profile hooks, and 70 ASL state roots expanded to 199 leaf fields. Its
+`spec/evidence/release-traceability-readiness.json` ledger covers 934 exact
+units: all 46 requirements, accepted forms and operations, system registers,
+traps, 38 profile hooks, and 72 ASL state roots expanded to 236 leaf fields. Its
 inventory and links are closed, while S6-T1 promotion remains explicitly open
 on S5-T2 and an immutable-commit claim-hygiene review.
 The generated `spec/evidence/release-gate-readiness.json` ledger separately
