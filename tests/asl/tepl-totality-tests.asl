@@ -185,6 +185,7 @@ begin
         ConfigureTeplFilledTile(1, 2, 2, TileDataType_U64, 10);
     elsif operation == TileOperation_TSORT then
         ConfigureTeplTile(0, 1, 4, TileDataType_U64);
+        ConfigureTeplTile(5, 1, 4, TileDataType_U32);
         ConfigureTeplFilledTile(1, 1, 4, TileDataType_U64, 10);
     elsif operation == TileOperation_TMRGSORT then
         ConfigureTeplTile(0, 1, 4, TileDataType_U64);
@@ -393,7 +394,7 @@ begin
     deinterleave.source0 = 1;
     ClearFault();
     let (deinterleave_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000010001010', deinterleave);
+        TileDecode_TEPL, '000001111000', deinterleave);
     assert deinterleave_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
 
@@ -412,7 +413,7 @@ begin
     partial_arg.source3 = 4;
     ClearFault();
     let (partial_arg_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011001000', partial_arg);
+        TileDecode_TEPL, '000001110101', partial_arg);
     assert partial_arg_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
 
@@ -426,7 +427,7 @@ begin
     insert.natural1 = 1;
     ClearFault();
     let (insert_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000010000110', insert);
+        TileDecode_TEPL, '000001100011', insert);
     assert insert_status == TileExecution_Executed;
     assert _LastFault == Fault_None;
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 41;
@@ -447,7 +448,7 @@ begin
     scatter.source1 = 2;
     ClearFault();
     let (scatter_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000000011011', scatter);
+        TileDecode_TEPL, '000001110000', scatter);
     assert scatter_status == TileExecution_Executed;
     assert _LastFault == Fault_None;
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 12;
@@ -455,6 +456,7 @@ begin
 
     ResetProfileState();
     ConfigureTeplTile(0, 1, 4, TileDataType_U64);
+    ConfigureTeplTile(2, 1, 4, TileDataType_U32);
     ConfigureTeplTile(1, 1, 4, TileDataType_U64);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 4);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 1);
@@ -462,11 +464,12 @@ begin
     WriteTileElement(1, 0, 3, Zeros{PTO_XLEN} + 2);
     var sort = DefaultTileInstructionOperands();
     sort.destination0 = 0;
+    sort.destination1 = 2;
     sort.source0 = 1;
     sort.flag0 = TRUE;
     ClearFault();
     let (sort_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011000000', sort);
+        TileDecode_TEPL, '000001101100', sort);
     assert sort_status == TileExecution_Executed;
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 4;
     assert ReadTileElement(0, 0, 3) == Zeros{PTO_XLEN} + 1;
@@ -486,7 +489,7 @@ begin
     histogram.selected_byte = 0;
     ClearFault();
     let (histogram_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011000010', histogram);
+        TileDecode_TEPL, '000001101000', histogram);
     assert histogram_status == TileExecution_Executed;
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN};
     assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN} + 2;
@@ -507,7 +510,7 @@ begin
     gather.source1 = 2;
     ClearFault();
     let (gather_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000000011010', gather);
+        TileDecode_TEPL, '000001101111', gather);
     assert gather_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 91;
@@ -516,7 +519,7 @@ begin
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 1);
     ClearFault();
     let (gatherb_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000010001001', gather);
+        TileDecode_TEPL, '000001100001', gather);
     assert gatherb_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 91;
@@ -534,7 +537,7 @@ begin
     scatter.source1 = 2;
     ClearFault();
     let (scatter_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000000011011', scatter);
+        TileDecode_TEPL, '000001110000', scatter);
     assert scatter_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 91;
@@ -558,7 +561,7 @@ begin
     merge.source1 = 2;
     ClearFault();
     let (ascending_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011000001', merge);
+        TileDecode_TEPL, '000001101101', merge);
     assert ascending_status == TileExecution_Executed;
     assert _LastFault == Fault_None;
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 1;
@@ -575,7 +578,7 @@ begin
     merge.flag0 = TRUE;
     ClearFault();
     let (descending_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000011000001', merge);
+        TileDecode_TEPL, '000001101101', merge);
     assert descending_status == TileExecution_Executed;
     assert _LastFault == Fault_None;
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 3;

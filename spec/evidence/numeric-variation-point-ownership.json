@@ -9287,7 +9287,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "af38dbef2eb460fc292b3aceec25cd38b80b52cfb6b74291701079b862d4bac2"
+      "sha256": "42e2b276c7a81608a1db20b9b0e6964fe00c3af9ae96048c52a86434bbd239d5"
     },
     {
       "path": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",

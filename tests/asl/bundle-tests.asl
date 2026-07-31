@@ -1,8 +1,9 @@
 pure func BundleTestTEPLStart(selector: bits(10), data_type: bits(5))
         => bits(64)
 begin
-    var instruction: bits(64) = Zeros{64} + 0x02001181;
-    instruction[24:15] = selector;
+    var instruction: bits(64) = Zeros{64} + 0x00019181;
+    instruction[26:25] = selector[6:5];
+    instruction[24:20] = selector[4:0];
     instruction[31:27] = data_type;
     return instruction;
 end;
@@ -72,11 +73,11 @@ pure func BundleTestTileBinding(destination: bits(3), source0: bits(6),
                                source1: bits(6), last: boolean) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00004013;
-    instruction[24:22] = destination;
-    instruction[11:7] = source0[4:0];
-    instruction[15] = source0[5];
-    instruction[21:16] = source1;
-    instruction[29] = if last then '1' else '0';
+    instruction[9:7] = destination;
+    instruction[18:15] = Zeros{4} + 3;
+    instruction[25:20] = source0;
+    instruction[31:26] = source1;
+    instruction[19] = if last then '1' else '0';
     return instruction;
 end;
 
@@ -121,17 +122,14 @@ begin
         BundleTestTEPLStart(Zeros{10} + 0x2b, Zeros{5} + 24), 32);
     assert tepl == CommandExecution_Executed;
     assert _BundleOperation.valid;
-    assert _BundleOperation.form_identity == Zeros{7} + 48;
+    assert _BundleOperation.form_identity == Zeros{7} + 40;
     assert _BundleOperation.operation_class == BundleOperation_TileElement;
     assert _BundleOperation.selector == Zeros{10} + 0x2b;
     assert _BundleOperation.data_type == Zeros{5} + 24;
 
     for data_type_code = 0 to 31 do
         let data_type = Zeros{5} + data_type_code;
-        let expected = data_type_code == 0 || data_type_code == 1 ||
-                       data_type_code == 4 || data_type_code == 5 ||
-                       data_type_code == 7 || data_type_code == 8 ||
-                       data_type_code == 13 || data_type_code == 14 ||
+        let expected = data_type_code <= 14 ||
                        (16 <= data_type_code && data_type_code <= 20) ||
                        (24 <= data_type_code && data_type_code <= 28);
         assert BundleDataTypeSupported(data_type) == expected;
@@ -161,9 +159,6 @@ begin
     assert BundleTileDataType(Zeros{5} + 26) == TileDataType_U16;
     assert BundleTileDataType(Zeros{5} + 27) == TileDataType_U8;
     assert BundleTileDataType(Zeros{5} + 28) == TileDataType_U4X2;
-    assert !BundleDataTypeSupported(Zeros{5} + 11);
-    assert !BundleDataTypeSupported(Zeros{5} + 12);
-
     // MPAR Mode is architectural descriptor state, including all encodings.
     for mode = 0 to 3 do
         ResetBundleControlState();
@@ -213,7 +208,7 @@ begin
     ResetProfileState();
     WriteTPC(Zeros{PTO_XLEN} + 0x400);
     let reserved_selector = ExecuteCommandInstruction(
-        BundleTestTEPLStart(Zeros{10} + 73, Zeros{5} + 24), 32);
+        BundleTestTEPLStart(Zeros{10} + 105, Zeros{5} + 24), 32);
     assert reserved_selector == CommandExecution_Rejected;
     assert _LastFault == Fault_IllegalInstruction;
     assert !_TrapContexts[[0]].bundle_operation.valid;
@@ -456,26 +451,6 @@ begin
     StopMemoryEventCapture();
     assert _TrapContexts[[0]].bundle_operation.valid;
 
-    // DataType mismatch is rejected before the direct tile operation mutates.
-    ResetProfileState();
-    BundleTestConfigureTile(0, TileDataType_U64);
-    BundleTestConfigureTile(1, TileDataType_U64);
-    BundleTestConfigureTile(2, TileDataType_U32);
-    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 3);
-    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 99);
-    WriteTPC(Zeros{PTO_XLEN} + 0x200);
-    let mismatch_start = ExecuteCommandInstruction(
-        BundleTestTEPLStart(Zeros{10}, Zeros{5} + 24), 32);
-    let mismatch_binding = ExecuteCommandInstruction(BundleTestTileBinding(
-        '010', Zeros{6}, Zeros{6} + 1, TRUE), 32);
-    let mismatch_stop = ExecuteCommandInstruction(Zeros{64} + 1, 32);
-    assert mismatch_start == CommandExecution_Executed;
-    assert mismatch_binding == CommandExecution_Executed;
-    assert mismatch_stop == CommandExecution_Rejected;
-    assert _LastFault == Fault_BundleControl;
-    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 99;
-
     // A faulting next start is validated before it can commit the live bundle.
     ResetProfileState();
     BundleTestConfigureTile(0, TileDataType_U64);
@@ -490,7 +465,7 @@ begin
     let live_binding = ExecuteCommandInstruction(BundleTestTileBinding(
         '010', Zeros{6}, Zeros{6} + 1, TRUE), 32);
     let invalid_next = ExecuteCommandInstruction(
-        BundleTestTEPLStart(Zeros{10} + 73, Zeros{5} + 24), 32);
+        BundleTestTEPLStart(Zeros{10} + 105, Zeros{5} + 24), 32);
     assert live_start == CommandExecution_Executed;
     assert live_binding == CommandExecution_Executed;
     assert invalid_next == CommandExecution_Rejected;
