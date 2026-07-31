@@ -26,7 +26,7 @@
     },
     {
       "path": "asl/numeric/formats.asl",
-      "sha256": "6177f3031c68c4af38b4e57276cd87cc13493eba37cda4914e2de0fe2e8ae6ad"
+      "sha256": "204681954bd1482a5ec3002ad14088f13356a389f7006552f1b4058e4d36103c"
     },
     {
       "path": "asl/profiles/pto-v0.asl",
@@ -122,7 +122,7 @@
     },
     {
       "path": "asl/types.asl",
-      "sha256": "f88b8aaecd3c0578dfe23424fcc75a3ee1b5617e993e4f4aa50f49825d02155a"
+      "sha256": "efbc90dbcdd0d049edd5450850ff02d922783df9ca5de364f5a5debc1d8dca12"
     },
     {
       "path": "docs/architecture-decisions/0001-pto-architecture-scope.md",
@@ -298,27 +298,31 @@
     },
     {
       "path": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
-      "sha256": "eff69e38127dfaf9777c98e0db45b43c212fc7d2491db6f50c81caad96d96086"
+      "sha256": "6595060f3b01749643d01677014308fc89aa02b23670fdef79d82e582f9232f2"
     },
     {
       "path": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
-      "sha256": "20b2d242c6ca44dff15b65e4f539b596168220efc9ba452dbc07a4a84afeaa8e"
+      "sha256": "360e4e66eb0370fca07782d4e09b116e814ffaa28bc6fec5b496b009e6b8821a"
+    },
+    {
+      "path": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
+      "sha256": "c9b1fe3be231597304c4b213818b01f7931d5d24b423a0d40ca22a43fe5f3cb0"
     },
     {
       "path": "docs/architecture.md",
-      "sha256": "c5e0fc0322f70d2ae11b5a1392816f92359b6d7363a28ee9484aa175f3e8d527"
+      "sha256": "0524aaaf82a4088bb67514a4950b9ac0365670edbd40bc6583bdea13b173bd0c"
     },
     {
       "path": "docs/coverage.md",
-      "sha256": "2bd31b95336318ac5daa9a38f3ca6c9d300d544d739f91e16755a805f90936a5"
+      "sha256": "40f47d895eeb31586941de3b657a48cf75f1fedefc7efa4e69b465ea0dfbc0be"
     },
     {
       "path": "docs/maturity-bringup-plan.md",
-      "sha256": "3007f9c2278afeb26d0c698943dd5255f1deaabd13e3d02256f0f5ae1d55d5a2"
+      "sha256": "ac32e43c22dc5cfa6e5706e1d0b36a65c8d80d0b9cf797fa6859d1fbd5496bda"
     },
     {
       "path": "docs/maturity-stage-targets.md",
-      "sha256": "6e95f0963fbd985b411cb589dadc671e6a8af61b9ae915c8af846b9404e6a0b9"
+      "sha256": "8d7c8c1aaa19b8e5ee30e9df31dd6a95976a056abd44dec5793b2c449ea21d63"
     },
     {
       "path": "docs/memory-model.md",
@@ -330,15 +334,15 @@
     },
     {
       "path": "docs/normative-sources.md",
-      "sha256": "f4fce08d37a5e2e04e35dbcdabd08561b7b4620942a3f7c814687ca3baf59a3f"
+      "sha256": "1f4c01b00f36e443b78d0df8c7c2ed5e59aaaade4b0f2de6ff1914d7f16834ff"
     },
     {
       "path": "docs/numeric-profile-decision-register.md",
-      "sha256": "9359df8b80a305b1bb9f242b04896f812231e43fdb6c93e5a2b2ea754f3e70e5"
+      "sha256": "5b4596b76f8186748f511af6efa046460b8b6b71b8faeb5bbc544f87eb5ec14e"
     },
     {
       "path": "docs/profile-contracts.md",
-      "sha256": "6f3f5b75ac4c80263429e999fe8c5091e2d559038b2164ee60bc1c71d86fb760"
+      "sha256": "aec825cf614dda04136de5ec06838722a3a35ac2cc62ee7ca719035e1dfd8d4a"
     },
     {
       "path": "docs/review-checklist.md",
@@ -382,11 +386,11 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "1e19669aa90617f63cb25160ce45d5439f74ed6a24a6cae0d104fdc1834040d7"
+      "sha256": "0ff2e40e67294bd96c339c84cbfca40750523ceb8ed8c3bccc262f01449ae649"
     },
     {
       "path": "spec/evidence/numeric-conformance-readiness.json",
-      "sha256": "55a637a39eda44a771cea304762df51a6689e62aeacdbb0324a66c95337e29a9"
+      "sha256": "b5bb63b0e59e0f9779ed926d6a71ed7605d62c9605d55f497e40d4ed004aa40f"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
@@ -394,35 +398,39 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "1b9d2eabf11081df6631bdf939d405d09d5d86917ea049163a3ed3aa4e10bc3f"
+      "sha256": "329cbcd7b2252816fb8322fc27c0a0043c225b5f7747718d760f9cfa092706cc"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "7fe6367d810786017c7cfe299c81271bc47ddefe2877188840c6bab4ef8f63ac"
+      "sha256": "2494c9e9ea1179c5c588a43dbb66e09c40e0d6bd0a9fad6086a128dc481026f9"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "428fc467ee70e38506c42359b64cb1e0b110fdf29fcde29471686e307f9badcf"
+      "sha256": "ea0cd7fd41bfda7c898d95cbde8a0e21ad6101e9f292ff2451d821269543ff96"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "5aa6adfbbb0c1797fd04948d03bb8afd5a985120dca88e2c4134082ce48d73d1"
+      "sha256": "ea011ff34307f9a0579bb21f875d3c3e012b19190425a26b4b0223049969d585"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "713f0b8e4a7ef3d57cfe19f06cc6628f10dae1862398c9234119d5dc1aa6dd66"
+      "sha256": "cfa192f240929c91ce367618f201f57da9dd3603629fd7d7280eb20e6ffe6df5"
+    },
+    {
+      "path": "spec/evidence/numeric-subnormal-contract.json",
+      "sha256": "86ccff3235ba77626bf2f0368e8c6c98ea197709860a5a56a2c5f646e2f4c8b6"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "4d5fbd4345f3661d5a4d9f9b0661af3c884d9e327246f58f83e2768b99170ecc"
+      "sha256": "e7ffa7d48a4ce3c7dcc643b8625ff7da52418336cbf871029496357ef276de19"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "d7de17c76ec812a4b5cc4f0d74d5d08ba1638af68d65ed59fabfc97c5506ac69"
+      "sha256": "333abe0ec1a1259696f13bcc9a8acf9bb292c4b0d26a07e47c089cfd3ca015b6"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "c7851d1453d7074ecd20410bad88d7d6de733b83b0df8a950bdc7895b3a9f0e3"
+      "sha256": "cc5a54aad3975607f5e98ab4c584495f8a5f888fb277c62f5ff2a1c7abb14c93"
     },
     {
       "path": "spec/evidence/public-source-reconciliation.json",
@@ -430,11 +438,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "ddc0e9dc478c1a30655182645d978f1ce90e10956f7b70ac343e89056061c8e9"
+      "sha256": "63ebd464690c04376f145cd6f16d13ba39e8a0532185e3de395d8037a7a10aea"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "5183367806c249457058f85e600664d232e361c6f1cc15f5a382b90138d007ec"
+      "sha256": "48425e2c0699b137fe9820390b76be22dd33bdafda3aa74be12318282cb06372"
     },
     {
       "path": "spec/evidence/scalar-agu-totality.json",
@@ -478,7 +486,7 @@
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "becfbefcc7a31408e5e5293802493f833f68a2fccebb3f9e8008d8b9f4e7658c"
+      "sha256": "b8357bb2202086fd8802722c8a6d12a48fa751556c9b322bd26f16ac2a3ec1fb"
     },
     {
       "path": "spec/profile-hooks.json",
@@ -486,7 +494,7 @@
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "36385098316f0ca3b57a51c2cbe1f3e0c84eb891e157ad78156d2c245809de92"
+      "sha256": "ae5f85d28db4d1bd7fc26bfd003306f573c286f5fffd322fc38f1830d83adff6"
     },
     {
       "path": "specification.toml",
@@ -511,7 +519,7 @@
     },
     "tile_operations_total": 120
   },
-  "content_sha256": "73b0fafd0d2faad4b4afc1c5c687a7bb91cc415277acd463ea5613841fab204a",
+  "content_sha256": "a9cd81d51400af0a094cade1c4fe222fec5a8d04be673142d0a1d0abefecfa1d",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -536,7 +544,7 @@
     "path": "spec/hardware-conformance-profile.json",
     "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
     "repository_implementation_conformance": "unproven",
-    "sha256": "becfbefcc7a31408e5e5293802493f833f68a2fccebb3f9e8008d8b9f4e7658c"
+    "sha256": "b8357bb2202086fd8802722c8a6d12a48fa751556c9b322bd26f16ac2a3ec1fb"
   },
   "hash_contract": {
     "algorithm": "SHA-256",
@@ -613,7 +621,7 @@
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0571-hardware-numeric-vectors.json",
-      "sha256": "a84857dfe146dc61916706b01f0f29b8dfdd31b53b2b58fa7c82a4877021d568"
+      "sha256": "367bbf68d0f07010f4cbe81c667dded0ab023e1f572e2b70e150ef3ae0928824"
     }
   ],
   "release": "0.57.1",

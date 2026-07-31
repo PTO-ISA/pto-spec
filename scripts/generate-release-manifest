@@ -586,6 +586,7 @@ def validate_numeric_profile() -> dict:
         "reserved_data_type_codes",
         "schema_version",
         "sort",
+        "subnormal_policy",
     }
     if set(profile) != expected_keys:
         raise SystemExit("hardware numeric profile top-level schema drift")
@@ -603,6 +604,19 @@ def validate_numeric_profile() -> dict:
         raise SystemExit("pto-v0 must remain a non-hardware reference-test profile")
     if profile["implementation_conformance"].get("repository_claim") != "contract-and-vector-definition-only":
         raise SystemExit("repository must not claim hardware numeric implementation conformance")
+    if profile["subnormal_policy"] != {
+        "architectural_mode_state": "none",
+        "configuration_validation": "Any request for FTZ, DAZ, or an operation-local subnormal override is non-conforming and must reject before effects.",
+        "denormals_are_zero": False,
+        "flush_to_zero": False,
+        "input_subnormals": "preserve exact source value",
+        "operation_override": False,
+        "profile_selection": "fixed by pto-hardware-numeric-0.57.1-ieee-v1",
+        "result_subnormals": "gradual underflow to the destination format",
+        "scope": "Every otherwise-supported operation/type tuple whose source or destination format defines subnormal encodings.",
+        "tininess_detection": "after-rounding",
+    }:
+        raise SystemExit("hardware numeric subnormal policy drift")
 
     data_types = profile["data_types"]
     actual_names = {row.get("code"): row.get("name") for row in data_types}
@@ -859,6 +873,57 @@ def build_numeric_vectors(profile: dict) -> dict:
             "rounding_before_saturation": [
                 {"mode": "RNA", "input": "127.5", "destination": "S8", "rounded_intermediate": "128", "sat": True, "expected": "127"},
                 {"mode": "RNA", "input": "-128.5", "destination": "S8", "rounded_intermediate": "-129", "sat": True, "expected": "-128"},
+            ],
+            "subnormal_policy": [
+                {
+                    "id": "default-configuration",
+                    "ftz": False,
+                    "daz": False,
+                    "operation_override": False,
+                    "expected": "accept",
+                },
+                {
+                    "id": "ftz-request",
+                    "ftz": True,
+                    "daz": False,
+                    "operation_override": False,
+                    "expected": "reject-before-effects",
+                },
+                {
+                    "id": "daz-request",
+                    "ftz": False,
+                    "daz": True,
+                    "operation_override": False,
+                    "expected": "reject-before-effects",
+                },
+                {
+                    "id": "operation-override-request",
+                    "ftz": False,
+                    "daz": False,
+                    "operation_override": True,
+                    "expected": "reject-before-effects",
+                },
+                {
+                    "id": "fp32-minimum-subnormal",
+                    "data_type": "FP32",
+                    "raw": "0x00000001",
+                    "expected_class": "positive-subnormal",
+                    "input_rule": "preserve-exact-source-value",
+                },
+                {
+                    "id": "fp32-maximum-subnormal",
+                    "data_type": "FP32",
+                    "raw": "0x007FFFFF",
+                    "expected_class": "positive-subnormal",
+                    "result_rule": "gradual-underflow",
+                },
+                {
+                    "id": "fp32-minimum-normal",
+                    "data_type": "FP32",
+                    "raw": "0x00800000",
+                    "expected_class": "positive-normal",
+                    "tininess_detection": "after-rounding",
+                },
             ],
             "invalid_float_to_integer": [
                 {"input": "qNaN", "destination": "S64", "sat": False, "expected_raw": "0x8000000000000000"},

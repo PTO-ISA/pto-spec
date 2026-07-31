@@ -90,13 +90,13 @@ validation does not turn PTO v0 into an IEEE or hardware profile. The generated
 six-lane partition and its absent profile/oracle/vector/result/review evidence
 fail closed before expensive runtime validation begins. The generated
 `numeric-profile-decision-inputs.json` ledger further covers all 20 domains
-with 12 explicit open profile questions and 24 content-addressed public
+with 12 explicit profile questions, ten still open, and 24 content-addressed public
 evidence sources. The generated
 `numeric-profile-decision-proposals.json` ledger adds four versioned profile
 identities, proposed dispositions for all 12 questions, and an exact mapping
 for all 20 domains. ADR 0037 and
 `spec/catalog/numeric-profile-identities.json` now close the four identity and
-five selection-framework records. PD-03 is accepted; 11 complete decisions and
+five selection-framework records. PD-03 and PD-04 are accepted; ten complete decisions and
 all 20 complete domain result rules remain open. The generated
 `scalar-numeric-flag-contract.json` ledger and ADR 0038 close the scalar flag
 state/lifecycle and assign all 30 FSU forms to one producer owner; exact flag
@@ -107,15 +107,22 @@ and 0047 close PD-03 across eight scalar raw values, five fixed overrides,
 eight bundle codes, seven public conversion values, four external selector
 classes, 18 domains, 102 operations, and 25 hooks. The ledger accepts all 18
 domain rounding points and saturation-order rules and increments the accepted
-decision count to one. Other numeric dimensions remain open, so the repository
-floor remains M4.
+decision count to one.
+The generated `numeric-subnormal-contract.json` ledger and ADR 0049 accept the
+second complete decision, PD-04, for the named hardware profile. Eleven
+subnormal-capable types have exact positive/negative boundaries, preserved
+inputs, gradual-underflow results, after-rounding tininess, and fail-closed
+configuration selection. Sixteen domains and 95 operations expand to 1,045
+conditional operation/type obligations; support, arithmetic conformance, and
+all complete domain rules remain open. Other numeric dimensions keep the
+repository floor at M4.
 The generated `numeric-format-namespace-contract.json` ledger and ADRs 0040
 and 0048
 close the structural namespace portion of PD-02. Five code spaces remain
 distinct; all 25 raw-carrier identities, every mapped/reserved code, all four
 packed 4-bit low/high nibble cases, all 25 value classifications, four internal
 encoding constraints, and ten canonical NaNs are executable invariants.
-Operation-specific exceptional results, FTZ, flags, legality,
+Operation-specific exceptional results, flags, legality,
 target-availability, and conformance-vector work remain open.
 ADR 0043 and the generated `public-numeric-type-baseline.json` ledger close
 all 16 published public type identities, 11 exact catalog bindings, and public
@@ -128,7 +135,7 @@ portable result rules cover signed widening, unsigned widening, and narrowing;
 executable boundary witnesses confirm source-width interpretation. Profile
 support, same-width conversions, floating conversions, overflow/saturation,
 rounding, flags, and target vectors remain open. The accepted bounded subset
-does not increment the 0/12 complete-decision or 0/20 domain-rule counts, so
+does not increment the two-of-12 complete-decision or 0/20 domain-rule counts, so
 PD-07, S5-T2, and the M4 floor remain unchanged.
 The generated `numeric-profile-applicability-closure.json` ledger and ADR 0041
 close one negative PD-01 slice: A2/A3 does not support the six MX CUBE

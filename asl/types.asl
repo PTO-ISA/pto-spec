@@ -314,6 +314,23 @@ type NumericValueClass of enumeration {
     NumericValue_SignalingNaN
 };
 
+// Input and result subnormal rules are intentionally separate. They describe
+// the named hardware numeric profile and are not pto-v0 arithmetic behavior.
+type NumericInputSubnormalRule of enumeration {
+    NumericInputSubnormal_NotApplicable,
+    NumericInputSubnormal_Preserve
+};
+
+type NumericResultSubnormalRule of enumeration {
+    NumericResultSubnormal_NotApplicable,
+    NumericResultSubnormal_GradualUnderflow
+};
+
+type NumericTininessDetectionRule of enumeration {
+    NumericTininessDetection_NotApplicable,
+    NumericTininessDetection_AfterRounding
+};
+
 type TileNumericSelection of record {
     use_operation_default: boolean,
     rounding_mode: NumericRoundingMode,

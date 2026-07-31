@@ -3,7 +3,8 @@
 ## Status
 
 Accepted. This decision completes PD-03 and supersedes the result-open parts of
-ADR 0039. It does not close PD-04 through PD-12.
+ADR 0039. ADR 0049 separately closes PD-04 for the named hardware profile;
+PD-02 and PD-05 through PD-12 remain outside this decision.
 
 ## Context
 
@@ -156,11 +157,12 @@ rounding points, and rounding-before-saturation order. The ASL carries semantic
 rounding values rather than ambiguous raw codes across profile hooks.
 
 This decision does not claim complete numeric results. Format encodings and
-legality, subnormal handling, special values, flags, overflow and indefinite
-results, approximation error, reduction tie behavior, quantization equations,
-matrix precision beyond the stated rounding points, and bounded target
-variation remain owned by PD-02 and PD-04 through PD-12. Stage 5 therefore
-remains in progress.
+legality, special values, flags, overflow and indefinite results,
+approximation error, reduction tie behavior, quantization equations, matrix
+precision beyond the stated rounding points, and bounded target variation
+remain owned by PD-02 and PD-05 through PD-12. ADR 0049 separately owns PD-04
+subnormal handling for the named hardware profile. Stage 5 therefore remains
+in progress.
 
 ## Evidence
 

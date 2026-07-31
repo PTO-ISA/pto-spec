@@ -5425,11 +5425,11 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "1b9d2eabf11081df6631bdf939d405d09d5d86917ea049163a3ed3aa4e10bc3f"
+      "sha256": "329cbcd7b2252816fb8322fc27c0a0043c225b5f7747718d760f9cfa092706cc"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "428fc467ee70e38506c42359b64cb1e0b110fdf29fcde29471686e307f9badcf"
+      "sha256": "ea0cd7fd41bfda7c898d95cbde8a0e21ad6101e9f292ff2451d821269543ff96"
     },
     {
       "path": "spec/evidence/public-source-reconciliation.json",
@@ -5445,7 +5445,7 @@
     },
     {
       "path": "asl/types.asl",
-      "sha256": "f88b8aaecd3c0578dfe23424fcc75a3ee1b5617e993e4f4aa50f49825d02155a"
+      "sha256": "efbc90dbcdd0d049edd5450850ff02d922783df9ca5de364f5a5debc1d8dca12"
     },
     {
       "path": "asl/bundle/dispatch.asl",

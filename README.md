@@ -29,7 +29,7 @@ profile, oracle, vector, result, and review identity explicit.
 The generated `spec/evidence/numeric-profile-decision-proposals.json` ledger
 imports four versioned identities and five selection rules accepted by ADR
 0037, then proposes dispositions for all 12 numeric decisions and mappings for
-all 20 domains. PD-03 is accepted; the remaining 11 complete decisions and all
+all 20 domains. PD-03 and PD-04 are accepted; the remaining ten complete decisions and all
 20 complete domain rules remain open. ADR 0038 and the generated
 `spec/evidence/scalar-numeric-flag-contract.json` ledger separately close the
 scalar flag lifecycle and 30/30 producer-owner matrix while leaving exact
@@ -41,6 +41,12 @@ backend-only rounding selector namespaces. PD-03 now accepts the complete
 selector translations, tie behavior, operation defaults, rounding points, and
 rounding-before-saturation order across 18 domains, 102 operations, and 25
 hooks. Other numeric decisions keep S5-T2 open.
+ADR 0049 and the generated `numeric-subnormal-contract.json` accept PD-04 for
+the named hardware profile: all eleven subnormal-capable formats preserve
+input subnormals, use gradual underflow, detect tininess after rounding, and
+expose no FTZ/DAZ state or operation override. The contract covers 16 domains,
+95 operations, and 1,045 conditional operation/type obligations without
+changing `pto-v0` or claiming operation/type support.
 ADRs 0040 and 0048 and the generated
 `spec/evidence/numeric-format-namespace-contract.json` ledger close the
 structural part of PD-02: five independent code namespaces, all 25
@@ -48,7 +54,7 @@ structural part of PD-02: five independent code namespaces, all 25
 low-nibble-first packing rule for all four 4-bit types. The shared ASL
 classifier additionally assigns all 25 formats a typed value class, rejects
 four internally constrained encodings, and supplies canonical NaNs for the ten
-NaN-capable formats. Operation-specific propagation, quieting, FTZ, flags,
+NaN-capable formats. Operation-specific propagation, quieting, flags,
 legality, target availability, and vectors remain open. ADR 0043 and
 `spec/evidence/public-numeric-type-baseline.json` then bind all 16 published
 type identities, accept 11 unambiguous catalog bindings, and close the A2/A3

@@ -197,12 +197,17 @@ The generated `numeric-rounding-selector-contract.json` ledger records the
 accepted selector namespaces and owners from ADR 0039 and the complete PD-03
 semantics accepted by ADR 0047. All 18 affected domain rounding and
 saturation-order rules are populated; other numeric dimensions remain open.
+The generated `numeric-subnormal-contract.json` ledger records ADR 0049's
+named-hardware-profile PD-04 rule. All eleven subnormal-capable types preserve
+input subnormals, use gradual underflow, and detect tininess after rounding;
+FTZ, DAZ, and operation-local override configurations reject before effects.
+The policy has no architectural mode state and does not alter `pto-v0`.
 The generated `numeric-format-namespace-contract.json` ledger records the
 accepted five code namespaces, 25 carrier identities, reserved-code behavior,
 and four-bit packing. ADR 0048 additionally accepts the shared value-class
 checkpoint for all 25 formats, including four internal encoding constraints
 and canonical NaNs for ten formats. It does not close PD-02 or PD-05:
-operation-specific exceptional results, FTZ, flags, legality,
+operation-specific exceptional results, flags, legality,
 target-availability, and vectors remain open.
 The generated `public-numeric-type-baseline.json` ledger and ADR 0043 close
 `S5-T2-A5`: all 16 published types are identified, 11 unambiguous catalog

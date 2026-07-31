@@ -1,0 +1,2670 @@
+{
+  "schema_version": 1,
+  "target": "S5-T2-A2:PD-04",
+  "decision_id": "PD-04",
+  "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
+  "acceptance_record": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
+  "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
+  "policy": {
+    "input_subnormals": "preserve-exact-source-value",
+    "result_subnormals": "gradual-underflow-to-destination-format",
+    "tininess_detection": "after-rounding",
+    "flush_to_zero": false,
+    "denormals_are_zero": false,
+    "architectural_mode_state": "none",
+    "operation_override": false,
+    "unknown_configuration": "reject-before-effects",
+    "support_boundary": "The rule applies only to otherwise-supported operation/type tuples and does not create support.",
+    "pto_v0_boundary": "The active pto-v0 profile remains a deterministic raw-carrier reference and does not inherit this target rule."
+  },
+  "asl_contract": {
+    "input_rule_type": "NumericInputSubnormalRule",
+    "result_rule_type": "NumericResultSubnormalRule",
+    "tininess_rule_type": "NumericTininessDetectionRule",
+    "type_predicate": "HardwareNumericTypeHasSubnormals",
+    "input_rule_function": "HardwareNumericInputSubnormalRule",
+    "result_rule_function": "HardwareNumericResultSubnormalRule",
+    "tininess_rule_function": "HardwareNumericTininessDetectionRule",
+    "configuration_function": "HardwareNumericSubnormalConfigurationValid",
+    "boundary_function": "HardwareNumericSubnormalBoundaries"
+  },
+  "format_boundaries": [
+    {
+      "name": "FP64",
+      "asl_enumerator": "TileDataType_FP64",
+      "logical_element_bits": 64,
+      "minimum_positive_subnormal": "0x0000000000000001",
+      "maximum_positive_subnormal": "0x000FFFFFFFFFFFFF",
+      "minimum_positive_normal": "0x0010000000000000",
+      "sign_mask": "0x8000000000000000",
+      "input_rule": "preserve-exact-source-value",
+      "result_rule": "gradual-underflow",
+      "tininess_detection": "after-rounding",
+      "status": "accepted-for-named-hardware-profile"
+    },
+    {
+      "name": "FP32",
+      "asl_enumerator": "TileDataType_FP32",
+      "logical_element_bits": 32,
+      "minimum_positive_subnormal": "0x00000001",
+      "maximum_positive_subnormal": "0x007FFFFF",
+      "minimum_positive_normal": "0x00800000",
+      "sign_mask": "0x80000000",
+      "input_rule": "preserve-exact-source-value",
+      "result_rule": "gradual-underflow",
+      "tininess_detection": "after-rounding",
+      "status": "accepted-for-named-hardware-profile"
+    },
+    {
+      "name": "TF32",
+      "asl_enumerator": "TileDataType_TF32",
+      "logical_element_bits": 32,
+      "minimum_positive_subnormal": "0x00002000",
+      "maximum_positive_subnormal": "0x007FE000",
+      "minimum_positive_normal": "0x00800000",
+      "sign_mask": "0x80000000",
+      "input_rule": "preserve-exact-source-value",
+      "result_rule": "gradual-underflow",
+      "tininess_detection": "after-rounding",
+      "status": "accepted-for-named-hardware-profile"
+    },
+    {
+      "name": "HF32",
+      "asl_enumerator": "TileDataType_HF32",
+      "logical_element_bits": 32,
+      "minimum_positive_subnormal": "0x00001000",
+      "maximum_positive_subnormal": "0x007FF000",
+      "minimum_positive_normal": "0x00800000",
+      "sign_mask": "0x80000000",
+      "input_rule": "preserve-exact-source-value",
+      "result_rule": "gradual-underflow",
+      "tininess_detection": "after-rounding",
+      "status": "accepted-for-named-hardware-profile"
+    },
+    {
+      "name": "FP16",
+      "asl_enumerator": "TileDataType_FP16",
+      "logical_element_bits": 16,
+      "minimum_positive_subnormal": "0x0001",
+      "maximum_positive_subnormal": "0x03FF",
+      "minimum_positive_normal": "0x0400",
+      "sign_mask": "0x8000",
+      "input_rule": "preserve-exact-source-value",
+      "result_rule": "gradual-underflow",
+      "tininess_detection": "after-rounding",
+      "status": "accepted-for-named-hardware-profile"
+    },
+    {
+      "name": "BF16",
+      "asl_enumerator": "TileDataType_BF16",
+      "logical_element_bits": 16,
+      "minimum_positive_subnormal": "0x0001",
+      "maximum_positive_subnormal": "0x007F",
+      "minimum_positive_normal": "0x0080",
+      "sign_mask": "0x8000",
+      "input_rule": "preserve-exact-source-value",
+      "result_rule": "gradual-underflow",
+      "tininess_detection": "after-rounding",
+      "status": "accepted-for-named-hardware-profile"
+    },
+    {
+      "name": "HiF8",
+      "asl_enumerator": "TileDataType_HiF8",
+      "logical_element_bits": 8,
+      "minimum_positive_subnormal": "0x01",
+      "maximum_positive_subnormal": "0x07",
+      "minimum_positive_normal": "0x08",
+      "sign_mask": "0x80",
+      "input_rule": "preserve-exact-source-value",
+      "result_rule": "gradual-underflow",
+      "tininess_detection": "after-rounding",
+      "status": "accepted-for-named-hardware-profile"
+    },
+    {
+      "name": "E4M3",
+      "asl_enumerator": "TileDataType_E4M3",
+      "logical_element_bits": 8,
+      "minimum_positive_subnormal": "0x01",
+      "maximum_positive_subnormal": "0x07",
+      "minimum_positive_normal": "0x08",
+      "sign_mask": "0x80",
+      "input_rule": "preserve-exact-source-value",
+      "result_rule": "gradual-underflow",
+      "tininess_detection": "after-rounding",
+      "status": "accepted-for-named-hardware-profile"
+    },
+    {
+      "name": "E5M2",
+      "asl_enumerator": "TileDataType_E5M2",
+      "logical_element_bits": 8,
+      "minimum_positive_subnormal": "0x01",
+      "maximum_positive_subnormal": "0x03",
+      "minimum_positive_normal": "0x04",
+      "sign_mask": "0x80",
+      "input_rule": "preserve-exact-source-value",
+      "result_rule": "gradual-underflow",
+      "tininess_detection": "after-rounding",
+      "status": "accepted-for-named-hardware-profile"
+    },
+    {
+      "name": "E3M2",
+      "asl_enumerator": "TileDataType_E3M2",
+      "logical_element_bits": 8,
+      "minimum_positive_subnormal": "0x01",
+      "maximum_positive_subnormal": "0x03",
+      "minimum_positive_normal": "0x04",
+      "sign_mask": "0x20",
+      "input_rule": "preserve-exact-source-value",
+      "result_rule": "gradual-underflow",
+      "tininess_detection": "after-rounding",
+      "status": "accepted-for-named-hardware-profile"
+    },
+    {
+      "name": "E2M3",
+      "asl_enumerator": "TileDataType_E2M3",
+      "logical_element_bits": 8,
+      "minimum_positive_subnormal": "0x01",
+      "maximum_positive_subnormal": "0x07",
+      "minimum_positive_normal": "0x08",
+      "sign_mask": "0x20",
+      "input_rule": "preserve-exact-source-value",
+      "result_rule": "gradual-underflow",
+      "tininess_detection": "after-rounding",
+      "status": "accepted-for-named-hardware-profile"
+    }
+  ],
+  "domain_applicability": [
+    {
+      "domain": "cube-convert",
+      "lane": "N4",
+      "operation_count": 1,
+      "operation_keys": [
+        "tile:CUBE:ACCCVT"
+      ],
+      "hooks": [
+        "TileProfileConvert"
+      ],
+      "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
+      "source_rule": "preserve-when-source-format-defines-subnormals",
+      "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
+      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+    },
+    {
+      "domain": "cube-matrix",
+      "lane": "N6",
+      "operation_count": 12,
+      "operation_keys": [
+        "tile:CUBE:TGEMV",
+        "tile:CUBE:TGEMV_ACC",
+        "tile:CUBE:TGEMV_BIAS",
+        "tile:CUBE:TGEMV_MX",
+        "tile:CUBE:TGEMV_MX_ACC",
+        "tile:CUBE:TGEMV_MX_BIAS",
+        "tile:CUBE:TMATMUL",
+        "tile:CUBE:TMATMUL_ACC",
+        "tile:CUBE:TMATMUL_BIAS",
+        "tile:CUBE:TMATMUL_MX",
+        "tile:CUBE:TMATMUL_MX_ACC",
+        "tile:CUBE:TMATMUL_MX_BIAS"
+      ],
+      "hooks": [
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixBias",
+        "TileProfileMatrixScaledAccumulate"
+      ],
+      "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
+      "source_rule": "preserve-when-source-format-defines-subnormals",
+      "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
+      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+    },
+    {
+      "domain": "scalar-binary",
+      "lane": "N1",
+      "operation_count": 4,
+      "operation_keys": [
+        "scalar:fadd_32_b78b658e6740",
+        "scalar:fdiv_32_04a5bb6ab56f",
+        "scalar:fmul_32_7d521d9d65e7",
+        "scalar:fsub_32_a4479d0d4276"
+      ],
+      "hooks": [
+        "ScalarFPBinaryProfile"
+      ],
+      "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
+      "source_rule": "preserve-when-source-format-defines-subnormals",
+      "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
+      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+    },
+    {
+      "domain": "scalar-fp-convert",
+      "lane": "N2",
+      "operation_count": 1,
+      "operation_keys": [
+        "scalar:fcvt_32_1102f5aeeda9"
+      ],
+      "hooks": [
+        "ScalarFPConvertProfile"
+      ],
+      "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
+      "source_rule": "preserve-when-source-format-defines-subnormals",
+      "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
+      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+    },
+    {
+      "domain": "scalar-fused",
+      "lane": "N1",
+      "operation_count": 4,
+      "operation_keys": [
+        "scalar:fmadd_32_c616a17bcb12",
+        "scalar:fmsub_32_b83012b83148",
+        "scalar:fnmadd_32_7f45e606d299",
+        "scalar:fnmsub_32_6542d56665b3"
+      ],
+      "hooks": [
+        "ScalarFPFusedProfile"
+      ],
+      "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
+      "source_rule": "preserve-when-source-format-defines-subnormals",
+      "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
+      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+    },
+    {
+      "domain": "scalar-unary",
+      "lane": "N1",
+      "operation_count": 3,
+      "operation_keys": [
+        "scalar:fexp_32_592ef5288c7d",
+        "scalar:frecip_32_3d51f4f727ea",
+        "scalar:fsqrt_32_84b3495cc6c7"
+      ],
+      "hooks": [
+        "ScalarFPUnaryProfile"
+      ],
+      "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
+      "source_rule": "preserve-when-source-format-defines-subnormals",
+      "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
+      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+    },
+    {
+      "domain": "tile-axpy",
+      "lane": "N3",
+      "operation_count": 1,
+      "operation_keys": [
+        "tile:TEPL:TAXPY"
+      ],
+      "hooks": [
+        "TileProfileAxpy"
+      ],
+      "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
+      "source_rule": "preserve-when-source-format-defines-subnormals",
+      "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
+      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+    },
+    {
+      "domain": "tile-binary",
+      "lane": "N3",
+      "operation_count": 24,
+      "operation_keys": [
+        "tile:TEPL:TADD",
+        "tile:TEPL:TADDS",
+        "tile:TEPL:TAND",
+        "tile:TEPL:TANDS",
+        "tile:TEPL:TDIV",
+        "tile:TEPL:TDIVS",
+        "tile:TEPL:TMAX",
+        "tile:TEPL:TMAXS",
+        "tile:TEPL:TMIN",
+        "tile:TEPL:TMINS",
+        "tile:TEPL:TMUL",
+        "tile:TEPL:TMULS",
+        "tile:TEPL:TOR",
+        "tile:TEPL:TORS",
+        "tile:TEPL:TREM",
+        "tile:TEPL:TREMS",
+        "tile:TEPL:TSHL",
+        "tile:TEPL:TSHLS",
+        "tile:TEPL:TSHR",
+        "tile:TEPL:TSHRS",
+        "tile:TEPL:TSUB",
+        "tile:TEPL:TSUBS",
+        "tile:TEPL:TXOR",
+        "tile:TEPL:TXORS"
+      ],
+      "hooks": [
+        "TileProfileBinary"
+      ],
+      "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
+      "source_rule": "preserve-when-source-format-defines-subnormals",
+      "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
+      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+    },
+    {
+      "domain": "tile-convert",
+      "lane": "N4",
+      "operation_count": 1,
+      "operation_keys": [
+        "tile:TEPL:TCVT"
+      ],
+      "hooks": [
+        "TileProfileConvert"
+      ],
+      "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
+      "source_rule": "preserve-when-source-format-defines-subnormals",
+      "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
+      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+    },
+    {
+      "domain": "tile-dequantize",
+      "lane": "N4",
+      "operation_count": 1,
+      "operation_keys": [
+        "tile:TEPL:TDEQUANT"
+      ],
+      "hooks": [
+        "TileProfileDequantize"
+      ],
+      "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
+      "source_rule": "preserve-when-source-format-defines-subnormals",
+      "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
+      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+    },
+    {
+      "domain": "tile-expand",
+      "lane": "N3",
+      "operation_count": 16,
+      "operation_keys": [
+        "tile:TEPL:TCOLEXPAND",
+        "tile:TEPL:TCOLEXPANDADD",
+        "tile:TEPL:TCOLEXPANDDIV",
+        "tile:TEPL:TCOLEXPANDEXPDIF",
+        "tile:TEPL:TCOLEXPANDMAX",
+        "tile:TEPL:TCOLEXPANDMIN",
+        "tile:TEPL:TCOLEXPANDMUL",
+        "tile:TEPL:TCOLEXPANDSUB",
+        "tile:TEPL:TROWEXPAND",
+        "tile:TEPL:TROWEXPANDADD",
+        "tile:TEPL:TROWEXPANDDIV",
+        "tile:TEPL:TROWEXPANDEXPDIF",
+        "tile:TEPL:TROWEXPANDMAX",
+        "tile:TEPL:TROWEXPANDMIN",
+        "tile:TEPL:TROWEXPANDMUL",
+        "tile:TEPL:TROWEXPANDSUB"
+      ],
+      "hooks": [
+        "TileExpDifference",
+        "TileProfileExpand"
+      ],
+      "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
+      "source_rule": "preserve-when-source-format-defines-subnormals",
+      "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
+      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+    },
+    {
+      "domain": "tile-partial",
+      "lane": "N5",
+      "operation_count": 4,
+      "operation_keys": [
+        "tile:TEPL:TPARTADD",
+        "tile:TEPL:TPARTMAX",
+        "tile:TEPL:TPARTMIN",
+        "tile:TEPL:TPARTMUL"
+      ],
+      "hooks": [
+        "TileProfilePartialValue"
+      ],
+      "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
+      "source_rule": "preserve-when-source-format-defines-subnormals",
+      "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
+      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+    },
+    {
+      "domain": "tile-prelu",
+      "lane": "N3",
+      "operation_count": 1,
+      "operation_keys": [
+        "tile:TEPL:TPRELU"
+      ],
+      "hooks": [
+        "TileProfilePReLU"
+      ],
+      "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
+      "source_rule": "preserve-when-source-format-defines-subnormals",
+      "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
+      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+    },
+    {
+      "domain": "tile-quantize",
+      "lane": "N4",
+      "operation_count": 1,
+      "operation_keys": [
+        "tile:TEPL:TQUANT"
+      ],
+      "hooks": [
+        "TileProfileQuantize"
+      ],
+      "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
+      "source_rule": "preserve-when-source-format-defines-subnormals",
+      "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
+      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+    },
+    {
+      "domain": "tile-reduction",
+      "lane": "N5",
+      "operation_count": 12,
+      "operation_keys": [
+        "tile:TEPL:TCOLARGMAX",
+        "tile:TEPL:TCOLARGMIN",
+        "tile:TEPL:TCOLMAX",
+        "tile:TEPL:TCOLMIN",
+        "tile:TEPL:TCOLPROD",
+        "tile:TEPL:TCOLSUM",
+        "tile:TEPL:TROWARGMAX",
+        "tile:TEPL:TROWARGMIN",
+        "tile:TEPL:TROWMAX",
+        "tile:TEPL:TROWMIN",
+        "tile:TEPL:TROWPROD",
+        "tile:TEPL:TROWSUM"
+      ],
+      "hooks": [
+        "TileProfileReductionInitial",
+        "TileProfileReductionStep"
+      ],
+      "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
+      "source_rule": "preserve-when-source-format-defines-subnormals",
+      "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
+      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+    },
+    {
+      "domain": "tile-unary",
+      "lane": "N3",
+      "operation_count": 9,
+      "operation_keys": [
+        "tile:TEPL:TABS",
+        "tile:TEPL:TEXP",
+        "tile:TEPL:TLOG",
+        "tile:TEPL:TNEG",
+        "tile:TEPL:TNOT",
+        "tile:TEPL:TRECIP",
+        "tile:TEPL:TRELU",
+        "tile:TEPL:TRSQRT",
+        "tile:TEPL:TSQRT"
+      ],
+      "hooks": [
+        "TileExponential",
+        "TileLogarithm",
+        "TileProfileUnary",
+        "TileReciprocal",
+        "TileSquareRoot"
+      ],
+      "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
+      "source_rule": "preserve-when-source-format-defines-subnormals",
+      "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
+      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+    }
+  ],
+  "operation_type_applicability": [
+    {
+      "operation_key": "tile:CUBE:ACCCVT",
+      "domain": "cube-convert",
+      "lane": "N4",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:CUBE:TGEMV",
+      "domain": "cube-matrix",
+      "lane": "N6",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:CUBE:TGEMV_ACC",
+      "domain": "cube-matrix",
+      "lane": "N6",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:CUBE:TGEMV_BIAS",
+      "domain": "cube-matrix",
+      "lane": "N6",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "domain": "cube-matrix",
+      "lane": "N6",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "domain": "cube-matrix",
+      "lane": "N6",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "domain": "cube-matrix",
+      "lane": "N6",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:CUBE:TMATMUL",
+      "domain": "cube-matrix",
+      "lane": "N6",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:CUBE:TMATMUL_ACC",
+      "domain": "cube-matrix",
+      "lane": "N6",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:CUBE:TMATMUL_BIAS",
+      "domain": "cube-matrix",
+      "lane": "N6",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "domain": "cube-matrix",
+      "lane": "N6",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "domain": "cube-matrix",
+      "lane": "N6",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "domain": "cube-matrix",
+      "lane": "N6",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "scalar:fadd_32_b78b658e6740",
+      "domain": "scalar-binary",
+      "lane": "N1",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "scalar:fdiv_32_04a5bb6ab56f",
+      "domain": "scalar-binary",
+      "lane": "N1",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "scalar:fmul_32_7d521d9d65e7",
+      "domain": "scalar-binary",
+      "lane": "N1",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "scalar:fsub_32_a4479d0d4276",
+      "domain": "scalar-binary",
+      "lane": "N1",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "scalar:fcvt_32_1102f5aeeda9",
+      "domain": "scalar-fp-convert",
+      "lane": "N2",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "scalar:fmadd_32_c616a17bcb12",
+      "domain": "scalar-fused",
+      "lane": "N1",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "scalar:fmsub_32_b83012b83148",
+      "domain": "scalar-fused",
+      "lane": "N1",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "scalar:fnmadd_32_7f45e606d299",
+      "domain": "scalar-fused",
+      "lane": "N1",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "scalar:fnmsub_32_6542d56665b3",
+      "domain": "scalar-fused",
+      "lane": "N1",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "scalar:fexp_32_592ef5288c7d",
+      "domain": "scalar-unary",
+      "lane": "N1",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "scalar:frecip_32_3d51f4f727ea",
+      "domain": "scalar-unary",
+      "lane": "N1",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "scalar:fsqrt_32_84b3495cc6c7",
+      "domain": "scalar-unary",
+      "lane": "N1",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TAXPY",
+      "domain": "tile-axpy",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TADD",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TADDS",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TAND",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TANDS",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TDIV",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TDIVS",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TMAX",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TMAXS",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TMIN",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TMINS",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TMUL",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TMULS",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TOR",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TORS",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TREM",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TREMS",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TSHL",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TSHLS",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TSHR",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TSHRS",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TSUB",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TSUBS",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TXOR",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TXORS",
+      "domain": "tile-binary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TCVT",
+      "domain": "tile-convert",
+      "lane": "N4",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TDEQUANT",
+      "domain": "tile-dequantize",
+      "lane": "N4",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TCOLEXPAND",
+      "domain": "tile-expand",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TCOLEXPANDADD",
+      "domain": "tile-expand",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TCOLEXPANDDIV",
+      "domain": "tile-expand",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TCOLEXPANDEXPDIF",
+      "domain": "tile-expand",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TCOLEXPANDMAX",
+      "domain": "tile-expand",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TCOLEXPANDMIN",
+      "domain": "tile-expand",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TCOLEXPANDMUL",
+      "domain": "tile-expand",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TCOLEXPANDSUB",
+      "domain": "tile-expand",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TROWEXPAND",
+      "domain": "tile-expand",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TROWEXPANDADD",
+      "domain": "tile-expand",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TROWEXPANDDIV",
+      "domain": "tile-expand",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TROWEXPANDEXPDIF",
+      "domain": "tile-expand",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TROWEXPANDMAX",
+      "domain": "tile-expand",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TROWEXPANDMIN",
+      "domain": "tile-expand",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TROWEXPANDMUL",
+      "domain": "tile-expand",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TROWEXPANDSUB",
+      "domain": "tile-expand",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TPARTADD",
+      "domain": "tile-partial",
+      "lane": "N5",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TPARTMAX",
+      "domain": "tile-partial",
+      "lane": "N5",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TPARTMIN",
+      "domain": "tile-partial",
+      "lane": "N5",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TPARTMUL",
+      "domain": "tile-partial",
+      "lane": "N5",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TPRELU",
+      "domain": "tile-prelu",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TQUANT",
+      "domain": "tile-quantize",
+      "lane": "N4",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TCOLARGMAX",
+      "domain": "tile-reduction",
+      "lane": "N5",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TCOLARGMIN",
+      "domain": "tile-reduction",
+      "lane": "N5",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TCOLMAX",
+      "domain": "tile-reduction",
+      "lane": "N5",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TCOLMIN",
+      "domain": "tile-reduction",
+      "lane": "N5",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TCOLPROD",
+      "domain": "tile-reduction",
+      "lane": "N5",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TCOLSUM",
+      "domain": "tile-reduction",
+      "lane": "N5",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TROWARGMAX",
+      "domain": "tile-reduction",
+      "lane": "N5",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TROWARGMIN",
+      "domain": "tile-reduction",
+      "lane": "N5",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TROWMAX",
+      "domain": "tile-reduction",
+      "lane": "N5",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TROWMIN",
+      "domain": "tile-reduction",
+      "lane": "N5",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TROWPROD",
+      "domain": "tile-reduction",
+      "lane": "N5",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TROWSUM",
+      "domain": "tile-reduction",
+      "lane": "N5",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TABS",
+      "domain": "tile-unary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TEXP",
+      "domain": "tile-unary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TLOG",
+      "domain": "tile-unary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TNEG",
+      "domain": "tile-unary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TNOT",
+      "domain": "tile-unary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TRECIP",
+      "domain": "tile-unary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TRELU",
+      "domain": "tile-unary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TRSQRT",
+      "domain": "tile-unary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    },
+    {
+      "operation_key": "tile:TEPL:TSQRT",
+      "domain": "tile-unary",
+      "lane": "N3",
+      "subnormal_type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3"
+      ],
+      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+      "tininess_detection": "after-rounding-for-an-applicable-destination",
+      "support_status": "conditional-not-created-by-pd04"
+    }
+  ],
+  "independent_comparison": {
+    "status": "raw-fp32-fp64-classification-corroborated-not-subnormal-arithmetic-oracle",
+    "provenance_sha256": "c565028c4a6a5b86349863524142fb832079798de325fc617cf664dffa859390",
+    "matched_contracts": [
+      "FP32-and-FP64-NaN-zero-signed-zero-classification",
+      "raw-FP32-and-FP64-subnormal-class-boundary"
+    ],
+    "limits": [
+      "no-executable-arithmetic-subnormal-result-policy",
+      "no-FTZ-or-DAZ-architecture-contract",
+      "no-PTO-low-precision-format-coverage",
+      "not-a-PTO-numeric-oracle"
+    ]
+  },
+  "tests": [
+    "tests/asl/profile-tests.asl:ValidateNumericFormatClassification",
+    "tests/asl/profile-tests.asl:AssertHardwareNumericSubnormalBoundary",
+    "tests/asl/profile-tests.asl:AssertHardwareNumericSubnormalNotApplicable"
+  ],
+  "sources": [
+    {
+      "path": "spec/hardware-conformance-profile.json",
+      "sha256": "b8357bb2202086fd8802722c8a6d12a48fa751556c9b322bd26f16ac2a3ec1fb"
+    },
+    {
+      "path": "spec/evidence/numeric-profile-decision-inputs.json",
+      "sha256": "ea0cd7fd41bfda7c898d95cbde8a0e21ad6101e9f292ff2451d821269543ff96"
+    },
+    {
+      "path": "spec/evidence/numeric-contracts.json",
+      "sha256": "6984a2c6bcafa208a1458001fc1105a7820b0a8005d54ca77bf07846c00d7b49"
+    },
+    {
+      "path": "spec/evidence/numeric-format-namespace-contract.json",
+      "sha256": "329cbcd7b2252816fb8322fc27c0a0043c225b5f7747718d760f9cfa092706cc"
+    },
+    {
+      "path": "spec/evidence/executable-model-comparison.json",
+      "sha256": "c1a370fbdb17caa54aeeaa733f22bd55e6777322e3dd8a7e1ed6fa62ab35249a"
+    },
+    {
+      "path": "asl/types.asl",
+      "sha256": "efbc90dbcdd0d049edd5450850ff02d922783df9ca5de364f5a5debc1d8dca12"
+    },
+    {
+      "path": "asl/numeric/formats.asl",
+      "sha256": "204681954bd1482a5ec3002ad14088f13356a389f7006552f1b4058e4d36103c"
+    },
+    {
+      "path": "tests/asl/profile-tests.asl",
+      "sha256": "a976851066b0d767b266b4903d9b7786d5ac524acc82fdc491e290bb733eab3d"
+    },
+    {
+      "path": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
+      "sha256": "c9b1fe3be231597304c4b213818b01f7931d5d24b423a0d40ca22a43fe5f3cb0"
+    }
+  ],
+  "summary": {
+    "subnormal_capable_type_count": 11,
+    "boundary_vector_count": 55,
+    "configuration_vector_count": 8,
+    "non_applicable_type_count": 14,
+    "affected_domain_count": 16,
+    "affected_operation_count": 95,
+    "operation_applicability_row_count": 95,
+    "conditional_operation_type_tuple_count": 1045,
+    "affected_hook_count": 23,
+    "accepted_decision_count": 1,
+    "accepted_complete_domain_rule_count": 0,
+    "pd04_complete": true,
+    "s5_t2_a_complete": false,
+    "s5_t2_complete": false
+  }
+}

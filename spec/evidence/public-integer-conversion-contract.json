@@ -970,11 +970,11 @@
   "sources": [
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "428fc467ee70e38506c42359b64cb1e0b110fdf29fcde29471686e307f9badcf"
+      "sha256": "ea0cd7fd41bfda7c898d95cbde8a0e21ad6101e9f292ff2451d821269543ff96"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "c7851d1453d7074ecd20410bad88d7d6de733b83b0df8a950bdc7895b3a9f0e3"
+      "sha256": "cc5a54aad3975607f5e98ab4c584495f8a5f888fb277c62f5ff2a1c7abb14c93"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",

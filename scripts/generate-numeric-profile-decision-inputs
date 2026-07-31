@@ -549,6 +549,11 @@ ACCEPTED_DECISIONS = {
         "selected_disposition": "portable-normative-rule",
         "decision_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
     },
+    "PD-04": {
+        "status": "accepted",
+        "selected_disposition": "named-target-profile-rule",
+        "decision_record": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
+    },
 }
 
 

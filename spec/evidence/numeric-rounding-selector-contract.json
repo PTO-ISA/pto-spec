@@ -9,7 +9,7 @@
     "no_backend_inheritance": "Backend CAST, ROUND, PART, and stochastic-control values are evidence only and cannot create portable PTO encodings.",
     "unknown_selection": "All scalar and bundle three-bit patterns have deterministic resolution. Unknown public selector ordinals or missing delegated rules reject before architectural effects under ADR 0037.",
     "saturation_order": "Rounding selection and saturation selection are independent inputs. Every applicable conversion or quantization domain rounds before saturation or the PD-07 nonsaturating result rule.",
-    "pd03_boundary": "PD-03 is accepted for selector mapping, tie behavior, rounding points, and saturation order. PD-04 through PD-12 continue to own subnormals, special values, flags, range results, accuracy, quantization equations, matrix precision, and other result dimensions."
+    "pd03_boundary": "PD-03 is accepted for selector mapping, tie behavior, rounding points, and saturation order. ADR 0049 separately owns PD-04 subnormal behavior for the named hardware profile; PD-02 and PD-05 through PD-12 own the remaining format, special-value, flag, range, accuracy, quantization, matrix, and bounded-variation dimensions."
   },
   "scalar_active_rounding": [
     {
@@ -825,7 +825,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "428fc467ee70e38506c42359b64cb1e0b110fdf29fcde29471686e307f9badcf"
+      "sha256": "ea0cd7fd41bfda7c898d95cbde8a0e21ad6101e9f292ff2451d821269543ff96"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
@@ -861,7 +861,7 @@
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "becfbefcc7a31408e5e5293802493f833f68a2fccebb3f9e8008d8b9f4e7658c"
+      "sha256": "b8357bb2202086fd8802722c8a6d12a48fa751556c9b322bd26f16ac2a3ec1fb"
     },
     {
       "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
@@ -873,7 +873,7 @@
     },
     {
       "path": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
-      "sha256": "eff69e38127dfaf9777c98e0db45b43c212fc7d2491db6f50c81caad96d96086"
+      "sha256": "6595060f3b01749643d01677014308fc89aa02b23670fdef79d82e582f9232f2"
     }
   ],
   "summary": {

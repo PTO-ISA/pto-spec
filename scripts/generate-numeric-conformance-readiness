@@ -22,6 +22,7 @@ PUBLIC_NUMERIC_TYPE_BASELINE = (
 PUBLIC_INTEGER_CONVERSION = (
     ROOT / "spec/evidence/public-integer-conversion-contract.json"
 )
+NUMERIC_SUBNORMAL_CONTRACT = ROOT / "spec/evidence/numeric-subnormal-contract.json"
 DEFAULT_OUTPUT = ROOT / "spec/evidence/numeric-conformance-readiness.json"
 
 
@@ -205,6 +206,7 @@ def build_evidence() -> dict[str, Any]:
     variation_ownership = load_json(NUMERIC_VARIATION_OWNERSHIP)
     public_type_baseline = load_json(PUBLIC_NUMERIC_TYPE_BASELINE)
     integer_conversion = load_json(PUBLIC_INTEGER_CONVERSION)
+    subnormal_contract = load_json(NUMERIC_SUBNORMAL_CONTRACT)
     require(
         inventory.get("status") == "closed-inventory-and-ownership",
         "S5-T1 numeric inventory is not closed",
@@ -259,6 +261,18 @@ def build_evidence() -> dict[str, Any]:
         )
         == 0,
         "public integer conversion subset drift",
+    )
+    require(
+        subnormal_contract.get("status")
+        == "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open"
+        and subnormal_contract.get("summary", {}).get("pd04_complete") is True
+        and subnormal_contract.get("summary", {}).get("affected_domain_count") == 16
+        and subnormal_contract.get("summary", {}).get("affected_operation_count") == 95
+        and subnormal_contract.get("summary", {}).get(
+            "conditional_operation_type_tuple_count"
+        )
+        == 1045,
+        "numeric subnormal contract drift",
     )
 
     domains = {row["id"]: row for row in inventory["contract_domains"]}
@@ -379,12 +393,18 @@ def build_evidence() -> dict[str, Any]:
             "accepted_profile_support_rule_count": 0,
             "accepted_domain_rule_count": 0,
         },
+        "numeric_subnormal_contract": {
+            "path": "spec/evidence/numeric-subnormal-contract.json",
+            "status": subnormal_contract["status"],
+            "acceptance_record": subnormal_contract["acceptance_record"],
+            **subnormal_contract["summary"],
+        },
         "identity_framework": {
             "status": "closed:S5-T2-A1",
             "accepted_identity_count": 4,
             "accepted_selection_rule_count": 5,
             "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
-            "result_decision_count": 1,
+            "result_decision_count": 2,
             "accepted_domain_rule_count": 0,
         },
         "policy": {
