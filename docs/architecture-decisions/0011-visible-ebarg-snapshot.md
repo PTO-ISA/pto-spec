@@ -43,10 +43,11 @@ an execution-state-check fault rather than a silent no-op. An unsupported ACRE
 request-type encoding remains an illegal-instruction fault.
 
 The internal saved context also preserves bundle dimensions, scalar and tile
-bindings, control/data attributes, fallthrough state, and all eight predicates.
-These fields have no complete EBARG encoding in PTO v0, so successful recovery
-restores their saved values. EBARG-covered fields remain authoritative and may
-be deliberately edited by manager software before recovery.
+bindings, control/data attributes, fallthrough state, the 64-bit machine
+execution mask, and all eight 32-bit warp predicates. These fields have no
+complete EBARG encoding in PTO v0, so successful recovery restores their saved
+values. EBARG-covered fields remain authoritative and may be deliberately
+edited by manager software before recovery.
 
 The bounded `_TrapContexts` record is PTO v0 profile-defined extended `EBSTATE`,
 not an alternative visible register file. It retains bundle argument and commit

@@ -974,7 +974,7 @@
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "3d89bdb88ced41225cd4016f41e2a0bfc88eb38e72555a27d6791fb2a8548edb"
+      "sha256": "2ec1f43b3160f508f7781c3393dde57296f4bec25341775b1fcb5ef02e2a5d39"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
@@ -982,7 +982,7 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "58ca12e8e3cba790a25a95ee5230dca3ec9e21bbe2031530ac4b4eb18909f515"
+      "sha256": "ce9072ef71d205b71a6abf01f9aa4168c39878cdd5cf0f4dc518fcef1ddb5335"
     },
     {
       "path": "asl/tile/conversion.asl",

@@ -1210,8 +1210,8 @@ SCALAR_BRU_ALIAS_FAULT_CASE_IDS = (
     "b-nz-outside-zero",
     "b-nz-outside-one",
     "b-nz-outside-all-ones",
-    "b-z-p0-precedence",
-    "b-nz-p0-precedence",
+    "b-z-exec-mask-precedence",
+    "b-nz-exec-mask-precedence",
     "successful-branch-preserves-bundle-state",
     "jr-srczero-zero-max-alias",
     "jr-odd-fault-outside",
@@ -1872,33 +1872,33 @@ def emit_scalar_bru_alias_and_faults(
     for mnemonic, predicate, outside in (("B.Z", 0, 1), ("B.NZ", 1, 0)):
         row = by_mnemonic[mnemonic]
         witness = scalar_bru_alias_witness(row, family_constraints, {"simm22": 1})
-        index = begin(f"{mnemonic.lower().replace('.', '-')}-p0-precedence")
+        index = begin(f"{mnemonic.lower().replace('.', '-')}-exec-mask-precedence")
         print(f"    _CommitArgument = {bit_literal(outside, 64)};")
         print(
-            "    BeginBundle(BundleKind_Standard, BundleTransfer_Direct, "
+            "    BeginBundle(BundleKind_MachineParallel, BundleTransfer_Direct, "
             "Zeros{PTO_XLEN} + 0x100, Zeros{PTO_XLEN} + 0x104, "
             "Zeros{PTO_XLEN} + 0x108, TRUE);"
         )
         print("    EnterBundleBody();")
-        print(f"    WritePredicateRegister(0, {bit_literal(predicate, 64)});")
+        print(f"    WriteExecutionMask({bit_literal(predicate, 64)});")
         execute(index, witness, row)
         print("    assert ReadTPC() == Zeros{PTO_XLEN} + 0x102;")
         print("    assert BundleIsActive();")
         print("    assert _BundleBodyActive;")
-        print(f"    assert ReadPredicateRegister(0) == {bit_literal(predicate, 64)};")
+        print(f"    assert ReadExecutionMask() == {bit_literal(predicate, 64)};")
         print(f"    assert _CommitArgument == {bit_literal(outside, 64)};")
 
     bz = by_mnemonic["B.Z"]
     bz_witness = scalar_bru_alias_witness(bz, family_constraints, {"simm22": 1})
     index = begin("successful-branch-preserves-bundle-state")
-    print(f"    _CommitArgument = {bit_literal(control_sentinel, 64)};")
+    print("    _CommitArgument = Zeros{PTO_XLEN};")
     print(
         "    BeginBundle(BundleKind_Standard, BundleTransfer_Direct, "
         "Zeros{PTO_XLEN} + 0x100, Zeros{PTO_XLEN} + 0x104, "
         "Zeros{PTO_XLEN} + 0x108, TRUE);"
     )
     print("    EnterBundleBody();")
-    print("    WritePredicateRegister(0, Zeros{PTO_XLEN});")
+    print("    WriteExecutionMask(Zeros{PTO_XLEN} + 0x55);")
     execute(index, bz_witness, bz)
     print("    assert ReadTPC() == Zeros{PTO_XLEN} + 0x102;")
     print("    assert ReadBPC() == Zeros{PTO_XLEN} + 0x100;")
@@ -1907,7 +1907,8 @@ def emit_scalar_bru_alias_and_faults(
     print("    assert _BundleTarget == Zeros{PTO_XLEN} + 0x100;")
     print("    assert _BundleFallthrough == Zeros{PTO_XLEN} + 0x104;")
     print("    assert _BundleReturnTarget == Zeros{PTO_XLEN} + 0x108;")
-    print(f"    assert _CommitArgument == {bit_literal(control_sentinel, 64)};")
+    print("    assert ReadExecutionMask() == Zeros{PTO_XLEN} + 0x55;")
+    print("    assert _CommitArgument == Zeros{PTO_XLEN};")
 
     jr = by_mnemonic["JR"]
     jr_zero = scalar_bru_alias_witness(
@@ -1979,7 +1980,7 @@ def emit_scalar_bru_alias_and_faults(
         "Zeros{PTO_XLEN} + 0x108, TRUE);"
     )
     print("    EnterBundleBody();")
-    print("    WritePredicateRegister(0, Zeros{PTO_XLEN} + 0x55);")
+    print("    WriteExecutionMask(Zeros{PTO_XLEN} + 0x55);")
     execute(index, jr_odd, jr, rejected=True)
     print("    assert _FaultAddress == Zeros{PTO_XLEN} + 0x201;")
     print("    assert _TrapContexts[[0]].valid;")
@@ -1997,7 +1998,7 @@ def emit_scalar_bru_alias_and_faults(
     print(
         f"    assert _TrapContexts[[0]].commit_argument == {bit_literal(control_sentinel, 64)};"
     )
-    print("    assert _TrapContexts[[0]].predicates[[0]] == Zeros{PTO_XLEN} + 0x55;")
+    print("    assert _TrapContexts[[0]].execution_mask == Zeros{PTO_XLEN} + 0x55;")
     print("    assert _TrapContexts[[0]].t_queue[[0]] == Zeros{PTO_XLEN} + 0x11;")
     print("    assert _TrapContexts[[0]].u_queue[[0]] == Zeros{PTO_XLEN} + 0x22;")
     print("    assert ReadGPR(1) == Zeros{PTO_XLEN} + 0x201;")
@@ -8182,14 +8183,14 @@ def main() -> None:
                 print("    _SystemRegisters.cycle = Zeros{PTO_XLEN};")
                 print(f"    _CommitArgument = {bit_literal(outside_predicate, 64)};")
                 print(
-                    "    BeginBundle(BundleKind_Standard, "
+                    "    BeginBundle(BundleKind_MachineParallel, "
                     "BundleTransfer_Direct, Zeros{PTO_XLEN} + 0x100, "
                     "Zeros{PTO_XLEN} + 0x104, "
                     "Zeros{PTO_XLEN} + 0x104, TRUE);"
                 )
                 print("    EnterBundleBody();")
                 print(
-                    f"    WritePredicateRegister(0, {bit_literal(body_predicate, 64)});"
+                    f"    WriteExecutionMask({bit_literal(body_predicate, 64)});"
                 )
                 print(
                     f"    let scalar_bru_bundle_predicate_status_"
@@ -8209,7 +8210,7 @@ def main() -> None:
                 print("    assert BundleIsActive();")
                 print("    assert _BundleBodyActive;")
                 print(
-                    f"    assert ReadPredicateRegister(0) == "
+                    f"    assert ReadExecutionMask() == "
                     f"{bit_literal(body_predicate, 64)};"
                 )
                 print(

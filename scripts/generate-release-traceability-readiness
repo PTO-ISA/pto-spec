@@ -50,7 +50,7 @@ EXPECTED_COUNTS = {
     "system_register_count": 72,
     "trap_count": 13,
     "profile_hook_count": 38,
-    "state_root_count": 72,
+    "state_root_count": 73,
 }
 
 SCALAR_TRACE = {
@@ -274,6 +274,7 @@ STATE_GROUPS = {
         "_BundleBodyActive",
         "_ReturnAddress",
         "_CommitArgument",
+        "_ExecutionMask",
         "_PredicateRegisters",
         "_LastFault",
         "_FaultAddress",
@@ -447,7 +448,7 @@ def state_requirements(name: str, model: str) -> list[str]:
                 "PTO-REQ-TILE-MANAGEMENT-001",
             }
         )
-    if name == "_PredicateRegisters":
+    if name in {"_ExecutionMask", "_PredicateRegisters"}:
         requirements.add("PTO-REQ-PREDICATE-001")
     if name == "_Accumulator":
         requirements.update({"PTO-REQ-CUBE-001", "PTO-REQ-PROFILE-001"})
@@ -514,6 +515,14 @@ def state_tests(name: str, model: str) -> list[str]:
         tests.add("tests/asl/scalar-tests.asl")
     if name == "_Accumulator":
         tests.update({"tests/asl/cube-totality-tests.asl", "tests/asl/tile-tests.asl"})
+    if name in {"_ExecutionMask", "_PredicateRegisters"}:
+        tests.update(
+            {
+                "tests/asl/bundle-tests.asl",
+                "tests/asl/profile-tests.asl",
+                "tests/asl/scalar-tests.asl",
+            }
+        )
     if name == "_TileDataLayoutCapabilities":
         tests.update({"tests/asl/bundle-tests.asl", "tests/asl/tile-tests.asl"})
     return sorted(tests)

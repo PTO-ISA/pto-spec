@@ -11,7 +11,7 @@ begin
         _UQueue[[index]] = Zeros{PTO_XLEN};
     end;
     for index = 0 to PTO_PREDICATE_REGISTER_COUNT - 1 do
-        _PredicateRegisters[[index]] = Zeros{PTO_XLEN};
+        _PredicateRegisters[[index]] = Zeros{PTO_PREDICATE_WIDTH};
     end;
     for index = 0 to PTO_MODEL_MEMORY_BYTES - 1 do
         _Memory[[index]] = Zeros{8};
@@ -61,6 +61,7 @@ begin
     _BPC = Zeros{PTO_XLEN};
     _BundleActive = FALSE;
     _BundleBodyActive = FALSE;
+    _ExecutionMask = Zeros{PTO_XLEN};
     ResetBundleControlState();
     _ReturnAddress = Zeros{PTO_XLEN};
     _CommitArgument = Zeros{PTO_XLEN};
@@ -100,6 +101,7 @@ begin
         _TrapContexts[[ring]].bundle_body_active = FALSE;
         _TrapContexts[[ring]].t_queue = _TQueue;
         _TrapContexts[[ring]].u_queue = _UQueue;
+        _TrapContexts[[ring]].execution_mask = Zeros{PTO_XLEN};
         _TrapContexts[[ring]].predicates = _PredicateRegisters;
         _TrapContexts[[ring]].accumulator = _Accumulator;
     end;
@@ -452,6 +454,7 @@ begin
     _TrapContexts[[target]].bundle_data_attributes = _BundleDataAttributes;
     _TrapContexts[[target]].t_queue = _TQueue;
     _TrapContexts[[target]].u_queue = _UQueue;
+    _TrapContexts[[target]].execution_mask = _ExecutionMask;
     _TrapContexts[[target]].predicates = _PredicateRegisters;
     _TrapContexts[[target]].accumulator = _Accumulator;
 
@@ -521,6 +524,7 @@ begin
         _TQueue[[index]] = PTOv0ReadContextRegister(target, 0x0f45 + index);
         _UQueue[[index]] = PTOv0ReadContextRegister(target, 0x0f49 + index);
     end;
+    _ExecutionMask = _TrapContexts[[target]].execution_mask;
     _PredicateRegisters = _TrapContexts[[target]].predicates;
     _Accumulator = _TrapContexts[[target]].accumulator;
     _CurrentACR = UInt(ecstate[3:0]) as AccessControlRing;

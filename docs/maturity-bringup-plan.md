@@ -102,11 +102,11 @@ The status vocabulary is deliberately strict:
 | --- | --- | --- | --- |
 | Stage 0 | Closed | Catalog counts, deterministic generation, ASLRef gates, maturity vocabulary, and the fail-closed ownership/classification ledger are explicit and checker-enforced. | No Stage 0 target remains open; the ledger retains all Stage 4–6 gaps and promotion evidence. |
 | Stage 1 | Closed | `S1-T1` and `S1-T2` close exact bundle-start descriptors, transactional commit, direct tile launch, timing, and rollback. `S1-T3` closes stable form-ID decoded before/after evidence for all 474 scalar forms across AGU, ALU, AMO, BRU, FSU, and SYS. `S1-T4` closes the shared scalar/command/tile execution-attempt status, one-tick, stale-fault isolation, trap-preservation, and legality no-effect contract. `S1-T5` closes selector-to-handler and operand binding for all 120 direct-tile operations. | No Stage 1 target remains open; deeper family totality remains in Stages 4–5. |
-| Stage 2 | Closed | The 72-register behavior and all-bank reset contract (`S2-T1`), complete nonzero-seed architectural reset (`S2-T2`), all 13 trap dispositions and extended recovery envelopes (`S2-T3`), P0 producer/consumer and P1..P7 reserved-state contract (`S2-T4`), precise tile capacity/storage (`S2-T5`), element-level definedness, and explicit tile handoff (`S2-T6`) execute. | No Stage 2 target remains open; later instruction-family and ordering refinements remain in Stages 3–5. |
+| Stage 2 | Closed | The 72-register behavior and all-bank reset contract (`S2-T1`), complete nonzero-seed architectural reset (`S2-T2`), all 13 trap dispositions and extended recovery envelopes (`S2-T3`), separate 64-bit MPAR/MSEQ execution-mask and eight-register 32-bit warp-predicate contract (`S2-T4`), precise tile capacity/storage (`S2-T5`), element-level definedness, and explicit tile handoff (`S2-T6`) execute. | No Stage 2 target remains open. Full comparison-ISA vector divergence, including a `V.CMP.* ->p` producer and dimension/tail group initialization, is outside the accepted PTO 0.57.1 instruction surface and is not claimed by this closure. |
 | Stage 3 | Closed | Production scalar, DMA, atomic, fence, tile, gather-CAS, and tile-prefetch paths emit the normative PTO-TSO stream; atomic, reservation, prefetch, and mixed-size corners have executable decisions. | No Stage 3 target remains open; byte-level mixed-size coherence is an explicit future extension, not an unclassified gap. |
 | Stage 4 | Closed | All scalar, bundle, TEPL, TMA, and CUBE targets have checked selector/form inventories, legality, state/effect, alias, boundary, and pre-effect rejection evidence under `pto-v0`. | No Stage 4 target remains open; target numerical conformance remains in Stage 5. |
 | Stage 5 | In progress | The checked numeric-contract matrix owns all 19 scalar and 89 direct-tile operations that cross 30 numeric hooks. ADRs 0037–0042 close identity/selection, scalar flag ownership, rounding-selector ownership, five numeric namespaces and 25 carrier identities, the A2/A3 MX negative slice, and ownership for all 99 variation points. ADR 0043 closes all 16 published type identities, 11 unambiguous catalog bindings, and target availability for 11 A2/A3 and 16 A5 types while retaining seven explicit PD-02 residuals. ADR 0044 closes three portable result rules across all 48 unequal-width public integer `TCVT` pairs, conditional on profile support, while retaining six explicit PD-07 residuals. All 12 complete numeric decisions, all 20 domain rules, and all 99 broad selected routes/result bounds remain under review. The exhaustive 693-row executable-model matrix records 557 exact matches, 96 explicit divergences (86 approved 0.57.1 ABI-break remaps traced to issue 18/ADR 0045 and 10 intentional rejected-command differences), 39 non-comparable rows, and one intentional extension. | No complete numeric decision or domain rule is accepted and no independent hardware/numeric oracle is closed. |
-| Stage 6 | Open | The generated S6-T1 ledger closes exact traceability inventory/link coverage across 934 units. The generated S6-T2 ledger closes the ten-gate contract, hosted workflow policy, and exact 34-shard/105-call/96-subprogram topology. | S5-T2 leaves 11 requirements and 30 hooks open; no immutable candidate, complete local/hosted results, protected-branch snapshot, or architecture/formal approvals exist. |
+| Stage 6 | Open | The generated S6-T1 ledger closes exact traceability inventory/link coverage across 935 units. The generated S6-T2 ledger closes the ten-gate contract, hosted workflow policy, and exact 34-shard/105-call/96-subprogram topology. | S5-T2 leaves 11 requirements and 30 hooks open; no immutable candidate, complete local/hosted results, protected-branch snapshot, or architecture/formal approvals exist. |
 
 Update this table only from the exit evidence defined below. A stage may move to
 closed only when all of its exit criteria are satisfied.
@@ -153,7 +153,7 @@ closure; **open** means no closure claim is made.
 | `S2-T1` | 2 | Closed | Resolve the visible system-register inventory: model the 70 source-reconciled baseline registers, including 18 `EBARG` registers, plus PTO `THREAD_ID` and `TILE_CAPACITY`, or document each deliberate exclusion in an accepted ADR. | ADR 0017, machine-readable behavior classes, generated reference, all-bank access/reset witnesses, and source-reconciliation record |
 | `S2-T2` | 2 | Closed | Define reset for all 16 ACR banks and every visible core, thread, predicate, bundle, tile, reservation, memory-event, fault, trap, and saved-context field. | ADR 0010 plus nonzero-seed reset tests for lowest/highest register, bank, predicate, binding, tile, and context boundaries |
 | `S2-T3` | 2 | Closed | Define all 13 trap producer envelopes or explicit PTO v0 no-trigger dispositions, causes, target-ACR routing, saved context, recovery, and restart behavior. | ADR 0018, machine-readable trap dispositions, per-trap routing/cause tests, and fault-injection recovery tests |
-| `S2-T4` | 2 | Closed | Define architectural use or reserved behavior for predicates `P0`–`P7`; no visible predicate remains accidental state. | ADR 0019 plus body-entry producer, P0-only consumer, P1..P7 reserved-state, trap preservation, and reset tests |
+| `S2-T4` | 2 | Closed | Define architectural use or reserved behavior for the eight 32-bit warp predicates and the separate 64-bit MPAR/MSEQ execution mask; no visible predicate-domain state remains accidental. | ADR 0046 plus P0 hardwiring, P1/P7 width boundaries, all-nine bundle-kind domain selection, branch-source selection, trap preservation, reset, and no-encoding-consumer tests |
 | `S2-T5` | 2 | Closed | Enforce nonzero per-tile and aggregate capacity against `TILE_CAPACITY`, including shape/storage bounds and sub-byte formats. | ADR 0013 plus zero/minimum/maximum/exact-fit/overflow/reconfiguration/allocation-sequence tests |
 | `S2-T6` | 2 | Closed | Define element contents, valid-region definedness, generic layout rejection, explicit handoff management, source lifetime, ordering, and alias rules. | ADRs 0014–0015 plus undefined/partial-write/reduction/layout/alias and decoded push/pop/full/empty/capacity/multi-slot tests |
 | `S3-T1` | 3 | Closed | Emit normative PTO-TSO events from every production scalar and tile load, store, atomic, and fence path. | ADR 0020 plus event-kind/address/size/agent/order/program-order assertions for scalar singles/pairs, LR/SC, RMW/CAS, DMA, fences, and every TMA access class |
@@ -171,7 +171,7 @@ closure; **open** means no closure claim is made.
 | `S5-T1` | 5 | Closed | Inventory every operation whose result depends on numeric behavior beyond the raw-carrier reference profile. | Checked `spec/evidence/numeric-contracts.json`: 19 scalar forms, 89 direct-tile operations, 30 hooks, an owner per row, and explicit `S5-T2` conformance obligations |
 | `S5-T2` | 5 | Open | Validate PTO numeric behavior against a named independent oracle without importing third-party semantics as PTO authority. | Generated readiness ledger partitions all 20 domains, 30 hooks, and 108 operations exactly once; checkpoints A1 and A4 close identity/selection and all 99 variation owners; ADRs 0038–0041 close flag ownership, rounding-selector ownership, five namespaces/25 carriers, and the six-selector/150-tuple A2/A3 MX unsupported slice; A5/ADR 0043 close 16 public identities, 11 catalog bindings, and 11-type A2/A3 / 16-type A5 availability; A6/ADR 0044 close 48 unequal-width public integer `TCVT` result tuples with three portable rules but no support rule or complete domain rule; the decision-input ledger exposes 12 unresolved questions from 24 pinned public sources; closure requires accepted profile decisions, populated profile/oracle/vector/result/review evidence, and a complete differential report |
 | `S5-T3` | 5 | Closed | Cross-check every shared scalar mnemonic and architectural pattern against a pinned independent executable ISA model, then resolve each difference as a PTO rule, profile difference, defect, or intentional non-equivalence. | The 693-row publication-safe disposition matrix is complete with 557 exact matches, 96 explicit divergences (86 approved 0.57.1 ABI-break remaps and 10 intentional rejected-command differences), 39 non-comparable rows, and one intentional extension; the clean content-addressed snapshot passes all eight repository gates and the pinned Sail parser/C-backend gate |
-| `S6-T1` | 6 | Open | Prove requirements-to-model-to-test traceability with no unsupported completeness claim. Exact inventory and link sub-stages are closed over 934 units; cumulative closure and review remain open. | Generated release-traceability readiness ledger; closed S5-T2-dependent requirement statuses; immutable-commit evidence-hygiene review |
+| `S6-T1` | 6 | Open | Prove requirements-to-model-to-test traceability with no unsupported completeness claim. Exact inventory and link sub-stages are closed over 935 units; cumulative closure and review remain open. | Generated release-traceability readiness ledger; closed S5-T2-dependent requirement statuses; immutable-commit evidence-hygiene review |
 | `S6-T2` | 6 | Open | Pass clean regeneration, ASLRef, repository, publication, protected-branch, and independent architecture/formal review gates. Gate-contract and topology sub-stages are closed; candidate execution and approval remain open. | Generated release-gate readiness ledger; clean `make ci`; `git diff --check`; hosted `validate`; GitHub control snapshot; recorded approvals at one signed commit |
 
 ### Delivery order and dependencies
@@ -205,8 +205,10 @@ cross-family normative decisions.
 Resolved decisions: ADR 0017 closes the former `MD-01` translation-register
 classification by making it explicit storage-only behavior in `pto-v0`. ADR
 0018 closes former `MD-02` through `MD-04` with complete entry envelopes and
-explicit no-trigger dispositions for unsupported PTO v0 sources. ADR 0019
-closes former `MD-06` with an active P0 contract and reserved P1..P7 behavior.
+explicit no-trigger dispositions for unsupported PTO v0 sources. ADR 0046
+corrects former `MD-06` by separating the 64-bit MPAR/MSEQ execution mask from
+eight 32-bit warp predicates, hardwiring P0, and defining P1..P7 as
+trap-preserved state without a PTO 0.57.1 instruction consumer.
 ADR 0020 closes former `MD-07` with production event extraction and owned
 atomic, reservation, prefetch, gather-CAS, and mixed-size dispositions.
 ADR 0022 closes former `MD-05` with an exact bundle descriptor, decoded-field
@@ -305,8 +307,9 @@ merely from mnemonic or handler presence.
 
 BRU witnesses execute every comparison, commit condition, and conditional
 branch in both directions, including signed/unsigned and logical forms. They
-also cover the compressed T-queue result, decoded `B.Z`/`B.NZ` precedence of P0
-over an opposing commit argument inside bundle bodies, relative and register
+also cover the compressed T-queue result, decoded `B.Z`/`B.NZ` precedence of
+the execution mask over an opposing commit argument inside MPAR/MSEQ bodies,
+commit-argument selection in every other bundle domain, relative and register
 targets, sequential TPC behavior, matching R10/bundle return state, and precise
 odd-target register-jump fault recovery.
 
@@ -578,10 +581,10 @@ hidden exceptions.
 ### S6-T1 traceability promotion stages
 
 `spec/evidence/release-traceability-readiness.json` is the fail-closed S6-T1
-promotion input. It covers 934 globally unique traceability units: 46
+promotion input. It covers 935 globally unique traceability units: 46
 requirements, 474 scalar forms, 99 bundle/command forms, 120 direct tile
-operations, 72 system registers, 13 traps, 38 profile hooks, and 72 top-level
-ASL state roots. Composite roots expand to 236 leaf fields so nested bundle,
+operations, 72 system registers, 13 traps, 38 profile hooks, and 73 top-level
+ASL state roots. Composite roots expand to 238 leaf fields so nested bundle,
 trap-context, memory-event, system-register, and `TileInfo` fields remain
 visible to review.
 

@@ -32,8 +32,9 @@ normal discard, absolute-GPR, push-U, and push-T rules. `C.CMP.EQI` and
 Relative branches and jumps add the sign-extended decoded offset, shifted left
 by one, to the pre-increment TPC. A conditional branch that is not taken writes
 pre-increment TPC plus four. Arithmetic wraps modulo `2^64`. `B.Z` and `B.NZ`
-read the commit argument outside a bundle body and P0 inside a bundle body; all
-other predicates and bundle state are preserved.
+read the 64-bit execution mask in an active MPAR or MSEQ body and read the
+commit argument everywhere else. The separate 32-bit P0 through P7 warp
+predicate registers and all other bundle state are preserved.
 
 `JR` adds its sign-extended, halfword-scaled offset to the snapshotted source.
 Its encoded `SrcZero` field is absent from the assembly grammar and is an

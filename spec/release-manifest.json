@@ -6,7 +6,7 @@
     },
     {
       "path": "asl/architecture.asl",
-      "sha256": "b67de1f2227f2305f0b7f56eceba59165efe1bfeb9737186d44dfbb902ca0ea2"
+      "sha256": "cf410a71d0357d90af4374427b72a3722da0aa056443adb7cd5f8069d635d895"
     },
     {
       "path": "asl/bundle/dispatch.asl",
@@ -14,7 +14,7 @@
     },
     {
       "path": "asl/bundle/state.asl",
-      "sha256": "d8b924265ea5823809009b3dc4d300b74d13d8bfd160d0365b99e0dafe09b6af"
+      "sha256": "f53698e3083eb1850865fa8977fd92c495e3e4d40998ee808c69c69630d996be"
     },
     {
       "path": "asl/concurrency.asl",
@@ -26,7 +26,7 @@
     },
     {
       "path": "asl/profiles/pto-v0.asl",
-      "sha256": "c8ec4b448d7cf5d4be7af6784f8b49d7cfd5da8947a7d614dfbf4b84b7bc3084"
+      "sha256": "a36729a1e8481074b7f031ef70b7e5fef6ae6d82b17f050dc9f7962f6c08ea1b"
     },
     {
       "path": "asl/scalar/addressing.asl",
@@ -38,7 +38,7 @@
     },
     {
       "path": "asl/scalar/control.asl",
-      "sha256": "5daed1ee0339a36ee8aea9a65be54516e31e8d9886ba1987adc53f4e21ef1ae9"
+      "sha256": "a47da2850f0483651c032d4305cc96fb049385d3f8b797259e5e68713c7c8b63"
     },
     {
       "path": "asl/scalar/dispatch.asl",
@@ -70,7 +70,7 @@
     },
     {
       "path": "asl/state.asl",
-      "sha256": "e8c32d3d6d86cb2e8dc39c0ba643af506940994779aa70b75bdb9592f7cc3bca"
+      "sha256": "340acbbd0353cfca9147a3b0fce80447eddb428967134737011a677353a087e7"
     },
     {
       "path": "asl/tile/complex.asl",
@@ -118,7 +118,7 @@
     },
     {
       "path": "asl/types.asl",
-      "sha256": "2f2801230cac12c7835ee705b506f83191dfba1e4ad1565f470ff401adb6e83b"
+      "sha256": "7a4eaeb1b3d6a093be1dd03c7062acbf5ace9c41959978749f9504dad6357151"
     },
     {
       "path": "docs/architecture-decisions/0001-pto-architecture-scope.md",
@@ -138,7 +138,7 @@
     },
     {
       "path": "docs/architecture-decisions/0008-architectural-state-contract.md",
-      "sha256": "d1892e429aec89914dd0b0e3d8ee796b478385771908684ee4ff13666658db76"
+      "sha256": "1efa583eafb67d75b8ece2b239d1ebc6e2d0d3ec1212aff0550127f62725f8ff"
     },
     {
       "path": "docs/architecture-decisions/0009-scalar-tpc-and-execution-status.md",
@@ -146,11 +146,11 @@
     },
     {
       "path": "docs/architecture-decisions/0010-acr-routing-and-context-reset.md",
-      "sha256": "9de04538d9b760126d78cdd4f1dae866d6bea5cc0e6a93ca75a0fb744bed83a8"
+      "sha256": "d20adcc83932072b3bf6035531f6edb699a3ee43fdb6c941fe673666970e36e5"
     },
     {
       "path": "docs/architecture-decisions/0011-visible-ebarg-snapshot.md",
-      "sha256": "75d9a725fe6933c9ecad01a3798fcf93396078023788dd3e0c9f0f122e30dc39"
+      "sha256": "4ba89eb9b4dc72057b4b5353889df157e86724a4172d1c3213d1b9e4755c0ef0"
     },
     {
       "path": "docs/architecture-decisions/0012-acrc-service-request.md",
@@ -182,7 +182,7 @@
     },
     {
       "path": "docs/architecture-decisions/0019-predicate-register-contract.md",
-      "sha256": "cf62ec32d96f717bd39fb766d4b57662f8b336ced7f32e0b3fec94bd56e00a5f"
+      "sha256": "2053dc202b7c19141a0844c1a0293a2d430d2684cff43f0a76c9b54f69fc5061"
     },
     {
       "path": "docs/architecture-decisions/0020-production-memory-events-and-atomic-corners.md",
@@ -214,7 +214,7 @@
     },
     {
       "path": "docs/architecture-decisions/0027-scalar-bru-totality-and-target-legality.md",
-      "sha256": "239ae2f90001f655cc28d5535ab84bcb5493c7d06785e2988f68a136950cca29"
+      "sha256": "db27d9eb8bed982d949c5902636c9b3c4e954093ec5e4eadbb79f1f8e9b26772"
     },
     {
       "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
@@ -250,7 +250,7 @@
     },
     {
       "path": "docs/architecture-decisions/0036-executable-model-comparison-dispositions.md",
-      "sha256": "2273f664d85b4c3d8f1e680040c12eb7ea7b749f9be392f3accc0ff8cecdb67a"
+      "sha256": "c5683ee89631cd206089c0953c1bfa9c0a9d87a13dac1cd41b642c05bfa64ff6"
     },
     {
       "path": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
@@ -289,20 +289,24 @@
       "sha256": "94bfe27aba5f549c2579a169c720182a1366780b2deefd783047c21c4aaf236f"
     },
     {
+      "path": "docs/architecture-decisions/0046-separate-execution-mask-and-warp-predicates.md",
+      "sha256": "4403e4d1cae95eaffeaa9f62be49c3bb3294b9d18fa7aa94e02854bca1d5e774"
+    },
+    {
       "path": "docs/architecture.md",
-      "sha256": "f3a2e4b6f891cfb49695086f38b952b6d3a5004c40d29ec4dd04e61c924ea331"
+      "sha256": "64587974c59e18bfc18c081cc2210c6bcabc4d94e0cf9e6aeb8b590602d72c47"
     },
     {
       "path": "docs/coverage.md",
-      "sha256": "50b99a7f3ab522f2bd9786926fe32387710dcb03591e21ad31a78acc918cc2fe"
+      "sha256": "ea824e12640842a3d246b1462c66365214ab588e664923ba545bfbdb2036f20d"
     },
     {
       "path": "docs/maturity-bringup-plan.md",
-      "sha256": "7d0a22a934e8b2c10c3295f389b4a4434344d0caa2f4257d9a9ee745eef96f4d"
+      "sha256": "6241d067d92beb760333229f30c235ff9572c1ec1ef7cdcb8e30287e1b699233"
     },
     {
       "path": "docs/maturity-stage-targets.md",
-      "sha256": "61c14a02437bf50a8cd0a219db9dc0af8ac76511f5104578642c9b37be0d6059"
+      "sha256": "1c1ed8d2207485e249dff39201465c09a2ba1bdc4957cec047c54fc0a77dec07"
     },
     {
       "path": "docs/memory-model.md",
@@ -314,7 +318,7 @@
     },
     {
       "path": "docs/normative-sources.md",
-      "sha256": "2e03e58844f3eed124d6eb745e3c56143532ad00e57c08e63e1a74bb258b09e4"
+      "sha256": "f1c0733720ecc52ca159e7ae6c1e2f10c3679e29542ad382c76677d29b696f30"
     },
     {
       "path": "docs/numeric-profile-decision-register.md",
@@ -322,7 +326,7 @@
     },
     {
       "path": "docs/profile-contracts.md",
-      "sha256": "759a96e6975b6702a4900c803bee29f1b9ad4cc43b152920bce3e508d1d3e35e"
+      "sha256": "1a7d1b062ed68ab02a38c5fac6557fb075a25adc09f881ad4f138f273f0ec5ce"
     },
     {
       "path": "docs/review-checklist.md",
@@ -362,11 +366,11 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "58ca12e8e3cba790a25a95ee5230dca3ec9e21bbe2031530ac4b4eb18909f515"
+      "sha256": "ce9072ef71d205b71a6abf01f9aa4168c39878cdd5cf0f4dc518fcef1ddb5335"
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "b43cfa6c5dbc0fa1d017863e36af7474b6a876944467a8aadcf5337aa4662f0d"
+      "sha256": "e8af14043daf1a5a65d81da154d190f5dd3ec9db62278a13811e5c55e420353d"
     },
     {
       "path": "spec/evidence/numeric-conformance-readiness.json",
@@ -378,11 +382,11 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "931472f8f33ef893e473db825b9523dc82c41408c81f7fd9e608a2751e9dbef2"
+      "sha256": "a8cec33f0b61e94892946788ee7e0959a946fe6247763aa733a3412b4f1da4df"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "7939cf794640efca743816f75a0e71faa2eb840bf398c63e427a729093ac951b"
+      "sha256": "fb111499122a169ae2c7c5d416b2092cdcc996537e78f6abc87053590a34434a"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
@@ -390,23 +394,23 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "c19d41ba8264c2cd38e1b48a6082c081a9d0c6db4f36677579d3a15dc0c36c69"
+      "sha256": "d6df7ccec56a1261d9485a8fa41051f4838a360d9f4ddaae2a627cd8ec33711b"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "94ac3b70f25e720528c170472e6b9e81bee3fbd3a745f4174bca6145f7e0ba31"
+      "sha256": "2efe9c879aa3473a6b546bab51f06a878d09839f00a09653cb4cdfb28a51f3ad"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "295b36f19172f44ce608313194c02f1470144a5dea35b053f8277960269f2679"
+      "sha256": "bdf00ad0bea4329f4e73f8a3d8511f88dbf9fb27e0c6316776dff682288456a5"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "2be575e8984f1fdead54d570e4261cccde0cd9b8fde8c96d573577843190fa84"
+      "sha256": "abe0dd3c773ca122084467b3d40f8b6caed3a1ad6296abdd0df75445e4daf7f6"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "3d89bdb88ced41225cd4016f41e2a0bfc88eb38e72555a27d6791fb2a8548edb"
+      "sha256": "2ec1f43b3160f508f7781c3393dde57296f4bec25341775b1fcb5ef02e2a5d39"
     },
     {
       "path": "spec/evidence/public-source-reconciliation.json",
@@ -414,11 +418,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "4b76a16a6b93d9b7d39ed8e6f6ca3c80305aa4df52f752468e17a65ede854e05"
+      "sha256": "a65e3e7a0166f50881c0164a55a50ea42325b6fcdc8ac622d7cc0662279ae627"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "dd79a486487f39a20779d859956486646bbfca27785ee934e7ab15be5a513b11"
+      "sha256": "329e7deb6c3a7c38ad1287bf0e43b0dbad8f292580f7dd788baf76d8ba6651ad"
     },
     {
       "path": "spec/evidence/scalar-agu-totality.json",
@@ -434,11 +438,11 @@
     },
     {
       "path": "spec/evidence/scalar-bru-totality.json",
-      "sha256": "83e4df505c21749ac5fb3ee37ce72f73f808926297fde207b33201b1ac337929"
+      "sha256": "2ed5140c31aa34eccbcaae6c2b2af10a96e4054dea0a1552606e340dc80916cd"
     },
     {
       "path": "spec/evidence/scalar-effect-closure.json",
-      "sha256": "1428026445f191a38eb1bf1e6f15bd2c3385191db4cb3a4f35e2245b41edb6d8"
+      "sha256": "eb752edaef13e5abea2b59e6e1b0ac18706e2a75ac759aa719a42d9b5318bb20"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
@@ -446,7 +450,7 @@
     },
     {
       "path": "spec/evidence/scalar-numeric-flag-contract.json",
-      "sha256": "0eebde6ca8ef2f5bbbaebcf9276226b8b1cc1b673394ec43440ebd0ac09012ce"
+      "sha256": "426075b59a5d91f2c0acb5df2ccf61616fd46108bca1b25a1b5371e9b79dec70"
     },
     {
       "path": "spec/evidence/scalar-sys-totality.json",
@@ -466,11 +470,11 @@
     },
     {
       "path": "spec/profile-hooks.json",
-      "sha256": "fcf921cc49579c5150a77e9b3f81dee782de893e84a88da83952ac023cb08584"
+      "sha256": "ac87ddc2eb45adab0a1306c840ad1059ce5d7f14a6c88ea6a81f7f52fbf41f7d"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "0735933dd44abee66584fc17012457f7e33bff115dfea71a17beea58c244e177"
+      "sha256": "3e48b22b1bb0b19625773642f0dd1e7f7abe0d3611ecbd890c6f449b2900f49d"
     },
     {
       "path": "specification.toml",
@@ -495,7 +499,7 @@
     },
     "tile_operations_total": 120
   },
-  "content_sha256": "748c1c6ac1bd5482d219cd08b8f0a871c7eda2b8f8afb1e81d498ec742e8abe8",
+  "content_sha256": "f01c4a181b8aaea377d510ed3e524ed0bd97dac3658f2782e3a25e2b46d0d7ef",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",

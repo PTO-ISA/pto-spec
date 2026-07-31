@@ -367,8 +367,8 @@
       "status": "decoded-effect-tested",
       "visible_assertions": [
         "every branch executes both taken and fallthrough paths from the pre-increment TPC",
-        "decoded B.Z and B.NZ consume P0 inside a bundle body and the commit argument outside it",
-        "both in-bundle outcomes prove that P0 takes precedence over an opposing commit argument",
+        "decoded B.Z and B.NZ consume the execution mask inside MPAR/MSEQ bodies and the commit argument everywhere else",
+        "both machine-body outcomes prove that the execution mask takes precedence over an opposing commit argument",
         "sources, unrelated state, fault result, and time satisfy the shared attempt contract"
       ]
     },

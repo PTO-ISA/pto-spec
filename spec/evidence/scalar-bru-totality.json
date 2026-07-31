@@ -21,9 +21,9 @@
     },
     {
       "dimensions": [
-        "commit-argument-outside-bundle",
-        "P0-inside-bundle",
-        "P0-precedence",
+        "commit-argument-outside-machine-body",
+        "execution-mask-inside-machine-body",
+        "execution-mask-precedence",
         "successful-branch-bundle-preservation"
       ],
       "effect_classes": [
@@ -175,8 +175,8 @@
     "b-nz-outside-zero",
     "b-nz-outside-one",
     "b-nz-outside-all-ones",
-    "b-z-p0-precedence",
-    "b-nz-p0-precedence",
+    "b-z-exec-mask-precedence",
+    "b-nz-exec-mask-precedence",
     "successful-branch-preserves-bundle-state",
     "jr-srczero-zero-max-alias",
     "jr-odd-fault-outside",
@@ -222,11 +222,11 @@
     ],
     "non_comparable_contracts": [
       "pto-reg5-t-u-queue-namespace",
-      "pto-commit-versus-p0-source-selection",
+      "pto-commit-versus-execution-mask-source-selection",
       "pto-bundle-return-address-mirror"
     ],
     "provenance_sha256": "5bdca2befb72eb7e5a060bd50036dca26d11d7352c8b3c793bdc8134d1e33931",
-    "pto_disposition": "The independent executable comparison corroborates shared arithmetic and condition rules. PTO-owned semantics remain authoritative: the portable model has no instruction-memory marker state, defines its own Reg5 queue and bundle-predicate rules, rejects odd JR targets, and mirrors SETRET into bundle return state.",
+    "pto_disposition": "The independent executable comparison corroborates shared arithmetic and condition rules. PTO-owned semantics remain authoritative: the portable model has no instruction-memory marker state, defines its own Reg5 queue and commit-argument versus machine-body execution-mask branch-source rules, rejects odd JR targets, and mirrors SETRET into bundle return state.",
     "status": "reviewed"
   },
   "requirement_ids": [

@@ -622,7 +622,7 @@ def build(snapshot_root: Path) -> dict[str, Any]:
             },
             {
                 "id": "predicate-p0-p7-difference",
-                "disposition": "PTO defines P0..P7, bundle EXEC initialization, and trap-preserved predicate state. The comparison does not establish an equivalent predicate-register execution contract.",
+                "disposition": "The independent model corroborates one 64-bit MPAR/MSEQ execution mask. PTO separately defines eight 32-bit warp predicates with hardwired P0; the comparison does not establish their selector or execution contract.",
             },
             {
                 "id": "bundle-bridge-operand-boundary",
