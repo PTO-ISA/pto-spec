@@ -1,6 +1,6 @@
 {
   "hardware_profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
-  "hardware_profile_sha256": "b8357bb2202086fd8802722c8a6d12a48fa751556c9b322bd26f16ac2a3ec1fb",
+  "hardware_profile_sha256": "1608fa0c03d139842b85c63c581d8280c37e55ef03a6e2f3cbf75dd8cb8edaab",
   "implementation_conformance_status": "unproven-in-repository",
   "reference_profile": {
     "hardware_conformance_claim": false,

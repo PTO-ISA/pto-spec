@@ -3,7 +3,7 @@
     "canonical_nan_output": "When the destination format has a NaN encoding, every produced NaN is replaced by that format's canonical NaN encoding.",
     "exception_model": "IEEE-754 invalid, divide-by-zero, overflow, underflow, and inexact conditions are reported through the operation-defined architectural status; host traps are not observable.",
     "fused_operations": "A fused operation rounds once after the exact multiply-add expression.",
-    "signed_zero": "IEEE signed zero is preserved by formats that encode both signs of zero; HiF8 has one zero encoding. Exact cancellation follows the selected rounding mode and min/max use -0 for minimum and +0 for maximum when the destination format has signed zero.",
+    "signed_zero": "IEEE signed zero is preserved by formats that encode both signs of zero; HiF8 has one zero encoding. Exact cancellation follows the selected rounding mode. Equal-sign zero inputs preserve that sign; a mixed-sign zero tie uses -0 for minimum and +0 for maximum.",
     "standard": "IEEE 754-2019 operation semantics with the explicitly enumerated low-precision format refinements",
     "subnormals": "supported by each format that defines subnormal encodings; flush-to-zero and denormals-are-zero are non-conforming for those formats",
     "tininess_detection": "after-rounding"

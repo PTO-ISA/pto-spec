@@ -203,7 +203,7 @@ open, and the repository remains at M4, until every sub-stage below closes.
 
 | Sub-stage | Current state | Clear target | Required exit evidence |
 | --- | --- | --- | --- |
-| `S5-T2-A` — profile decision | Checkpoints A1, A4, A5, and A6 are closed; PD-03 and PD-04 are accepted | Apply the four accepted identities and fail-closed selection rules. Preserve the 99-point ownership ledger. Use the A5 public baseline of 16 identities, 16 accepted catalog bindings, 11 A2/A3 types, and 16 A5 types without treating availability as legality or complete result semantics. Preserve A6's three conditional result rules over all 48 unequal-width public integer `TCVT` pairs without turning them into support claims. Preserve ADR 0047's 18 selected rounding routes and ADR 0049's eleven-format, 95-operation named-profile subnormal contract without changing `pto-v0` or creating support. Resolve the remaining PD-02/PD-05–PD-12 residuals, ten complete decisions, all 20 complete domain rules, 19 profile-owned flag conditions, and 81 selected variation routes/result bounds. | Accepted records populate all 12 decisions and 20 domain rules; every non-portable point has one visible route and bounded result contract; all format, legality, conversion, flag, rounding, and target-support residuals have reproducible evidence. |
+| `S5-T2-A` — profile decision | Checkpoints A1, A4, A5, and A6 are closed; PD-03 and PD-04 are accepted; PD-05-SC2 has a bounded special-value checkpoint | Apply the four accepted identities and fail-closed selection rules. Preserve the 99-point ownership ledger. Use the A5 public baseline of 16 identities, 16 accepted catalog bindings, 11 A2/A3 types, and 16 A5 types without treating availability as legality or complete result semantics. Preserve A6's three conditional result rules over all 48 unequal-width public integer `TCVT` pairs without turning them into support claims. Preserve ADR 0047's 18 selected rounding routes, ADR 0049's eleven-format, 95-operation named-profile subnormal contract, and ADR 0050's three special-value rules over eight operations and 154 conditional operation/type rows without changing `pto-v0` or creating support. Resolve the remaining PD-02/PD-05–PD-12 residuals, ten complete decisions, all 20 complete domain rules, 19 profile-owned flag conditions, and 81 selected variation routes/result bounds. | Accepted records populate all 12 decisions and 20 domain rules; every non-portable point has one visible route and bounded result contract; all format, legality, conversion, flag, rounding, and target-support residuals have reproducible evidence. |
 | `S5-T2-B` — oracle qualification | Waiting on A | Select an independent, versioned oracle for each lane. The implementation under test and the `pto-v0` reference are not independent oracles. | Reproducible oracle identity, version/digest, invocation, supported domain list, known limitations, and a reviewer-approved rule for any target behavior that requires hardware capture rather than a software arithmetic library. |
 | `S5-T2-C` — vector corpus | Waiting on A–B | Generate deterministic inputs for every operation and every open numeric dimension. | Normal, minimum/maximum, boundary, signed-zero, subnormal, infinity, NaN, tie, overflow, underflow, divide-by-zero, rounding, saturation, reduction-order, and accumulation cases as applicable; each vector links to one operation key, profile, oracle, and expected disposition. |
 | `S5-T2-D` — differential execution | Waiting on B–C | Run the six numeric lanes independently and preserve raw oracle and PTO results. | All 20 contract domains, 30 hooks, and 108 operations are assigned exactly once; every vector produces a reproducible match, mismatch, unsupported, or implementation-defined record; no lane is missing or duplicated. |
@@ -253,6 +253,16 @@ classifies all 25 formats, rejects four internally constrained encodings, and
 provides canonical NaNs for ten formats. This is not an operation result rule:
 propagation, flags, legality, target behavior, and independent vectors remain
 open; those PD-02/PD-05 residuals do not change the 2/12 decision count.
+ADR 0050 adds the bounded PD-05-SC2 special-value checkpoint for the named
+hardware profile. Three accepted rules fix produced canonical NaNs, tile
+comparison NaN/signed-zero results, and scalar/tile MIN/MAX NaN/signed-zero
+results across eight operations and 154 conditional operation/type rows. The
+rules are conditional on separately accepted profile support, do not change
+`pto-v0`, and do not close PD-05, a complete numeric domain, or another
+generic variation route. Infinity arithmetic, broader NaN creation,
+conversions, reductions, quantization, matrix results, and full flag/status
+behavior remain open; the decision count stays 2/12, open decisions stay ten,
+complete domains stay 0/20, and selected generic variation routes stay 18/99.
 ADR 0041 and `spec/evidence/numeric-profile-applicability-closure.json` close
 a bounded PD-01 checkpoint within `S5-T2-A3`: A2/A3 rejects
 `TMATMUL_MX`, `TMATMUL_MX_BIAS`, `TMATMUL_MX_ACC`, `TGEMV_MX`,
@@ -279,7 +289,8 @@ only after the selected profile accepts the tuple. Six residuals keep
 same-width conversions, floating conversions, support legality,
 overflow/saturation and exceptional results, rounding/flags, and independent
 vectors open. PD-07, `tile-convert`, `S5-T2-A`, and M5 therefore remain open;
-the complete-decision and complete-domain-rule counts remain 0/12 and 0/20.
+this bounded subset does not change the current 2/12 accepted-decision count
+or the 0/20 complete-domain-rule count.
 
 #### Parallel numeric lanes
 

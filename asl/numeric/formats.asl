@@ -384,3 +384,108 @@ begin
         otherwise => return (FALSE, Zeros{PTO_XLEN});
     end;
 end;
+
+// Named hardware-profile special-result helpers. These functions classify
+// only cases whose result is fixed without evaluating ordinary arithmetic.
+// Invalid internal encodings and non-special operands remain unhandled so a
+// complete operation/type profile must reject or evaluate them explicitly.
+pure func HardwareNumericCanonicalNaNResult(data_type: TileDataType)
+    => (boolean, Word)
+begin
+    return TileNumericCanonicalNaN(data_type);
+end;
+
+pure func HardwareNumericSignedZeroEncodings(data_type: TileDataType)
+    => (boolean, Word, Word)
+begin
+    case data_type of
+        when TileDataType_FP64 => return (TRUE, Zeros{PTO_XLEN},
+            Zeros{PTO_XLEN} + 0x8000000000000000);
+        when TileDataType_FP32, TileDataType_TF32, TileDataType_HF32 =>
+            return (TRUE, Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0x80000000);
+        when TileDataType_FP16, TileDataType_BF16 =>
+            return (TRUE, Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0x8000);
+        when TileDataType_E4M3, TileDataType_E5M2 =>
+            return (TRUE, Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0x80);
+        when TileDataType_E3M2, TileDataType_E2M3 =>
+            return (TRUE, Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0x20);
+        when TileDataType_E2M1X2, TileDataType_E1M2X2,
+             TileDataType_HiF4X2 =>
+            return (TRUE, Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0x8);
+        otherwise => return (FALSE, Zeros{PTO_XLEN}, Zeros{PTO_XLEN});
+    end;
+end;
+
+// Returns handled, result carrier, and invalid-condition status. NaN
+// comparisons are unordered except NE, and signed zeros compare equal.
+pure func HardwareNumericComparisonSpecial(
+    comparison: TileComparison, data_type: TileDataType,
+    left: Word, right: Word) => (boolean, Word, boolean)
+begin
+    let left_class = TileNumericValueClass(data_type, left);
+    let right_class = TileNumericValueClass(data_type, right);
+    if left_class == NumericValue_InvalidEncoding ||
+       right_class == NumericValue_InvalidEncoding then
+        return (FALSE, Zeros{PTO_XLEN}, FALSE);
+    end;
+    let left_nan = NumericValueClassIsNaN(left_class);
+    let right_nan = NumericValueClassIsNaN(right_class);
+    let invalid = left_class == NumericValue_SignalingNaN ||
+                  right_class == NumericValue_SignalingNaN;
+    if left_nan || right_nan then
+        if comparison == TileComparison_NE then
+            return (TRUE, Zeros{PTO_XLEN} + 1, invalid);
+        else return (TRUE, Zeros{PTO_XLEN}, invalid);
+        end;
+    end;
+    if NumericValueClassIsZero(left_class) &&
+       NumericValueClassIsZero(right_class) then
+        if comparison == TileComparison_EQ || comparison == TileComparison_LE ||
+           comparison == TileComparison_GE then
+            return (TRUE, Zeros{PTO_XLEN} + 1, FALSE);
+        else return (TRUE, Zeros{PTO_XLEN}, FALSE);
+        end;
+    end;
+    return (FALSE, Zeros{PTO_XLEN}, FALSE);
+end;
+
+// Returns handled, result carrier, and invalid-condition status for MIN/MAX
+// NaN and zero ties. One NaN selects the numeric operand, two NaNs produce the
+// destination canonical NaN, MIN chooses -0, and MAX chooses +0.
+pure func HardwareNumericMinMaxSpecial(
+    maximum: boolean, data_type: TileDataType,
+    left: Word, right: Word) => (boolean, Word, boolean)
+begin
+    let left_class = TileNumericValueClass(data_type, left);
+    let right_class = TileNumericValueClass(data_type, right);
+    if left_class == NumericValue_InvalidEncoding ||
+       right_class == NumericValue_InvalidEncoding then
+        return (FALSE, Zeros{PTO_XLEN}, FALSE);
+    end;
+    let left_nan = NumericValueClassIsNaN(left_class);
+    let right_nan = NumericValueClassIsNaN(right_class);
+    let invalid = left_class == NumericValue_SignalingNaN ||
+                  right_class == NumericValue_SignalingNaN;
+    if left_nan && right_nan then
+        let (available, canonical) =
+            HardwareNumericCanonicalNaNResult(data_type);
+        assert available;
+        return (TRUE, canonical, invalid);
+    elsif left_nan then return (TRUE, right, invalid);
+    elsif right_nan then return (TRUE, left, invalid);
+    end;
+    if NumericValueClassIsZero(left_class) &&
+       NumericValueClassIsZero(right_class) then
+        if maximum && left_class == NumericValue_NegativeZero &&
+           right_class == NumericValue_NegativeZero then
+            return (TRUE, left, FALSE);
+        elsif maximum then return (TRUE, Zeros{PTO_XLEN}, FALSE);
+        elsif left_class == NumericValue_NegativeZero then
+            return (TRUE, left, FALSE);
+        elsif right_class == NumericValue_NegativeZero then
+            return (TRUE, right, FALSE);
+        else return (TRUE, Zeros{PTO_XLEN}, FALSE);
+        end;
+    end;
+    return (FALSE, Zeros{PTO_XLEN}, FALSE);
+end;

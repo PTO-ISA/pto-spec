@@ -2616,11 +2616,11 @@
   "sources": [
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "b8357bb2202086fd8802722c8a6d12a48fa751556c9b322bd26f16ac2a3ec1fb"
+      "sha256": "1608fa0c03d139842b85c63c581d8280c37e55ef03a6e2f3cbf75dd8cb8edaab"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ea0cd7fd41bfda7c898d95cbde8a0e21ad6101e9f292ff2451d821269543ff96"
+      "sha256": "4939fd3b5c32bd81c815e0c4b5756d329a8fd207b375d921e6c074d949e000eb"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
@@ -2628,7 +2628,7 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "329cbcd7b2252816fb8322fc27c0a0043c225b5f7747718d760f9cfa092706cc"
+      "sha256": "913765605c4ac6f9d4023155d0c9b484df45e0024e333853681b6b006479aa61"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
@@ -2640,15 +2640,15 @@
     },
     {
       "path": "asl/numeric/formats.asl",
-      "sha256": "204681954bd1482a5ec3002ad14088f13356a389f7006552f1b4058e4d36103c"
+      "sha256": "359470d81e446cabaefdb0ebc52529cf76809f6ce64806af596f39ac59e3339b"
     },
     {
       "path": "tests/asl/profile-tests.asl",
-      "sha256": "a976851066b0d767b266b4903d9b7786d5ac524acc82fdc491e290bb733eab3d"
+      "sha256": "dae9a72ca6ea569082bed29df1f35942a67ffc5e1ba53affedcb3019a138216e"
     },
     {
       "path": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
-      "sha256": "c9b1fe3be231597304c4b213818b01f7931d5d24b423a0d40ca22a43fe5f3cb0"
+      "sha256": "9065787b60ef2a323515c1deb82331bfde059d8be4455c3c3ffa0d0f50f4311a"
     }
   ],
   "summary": {

@@ -297,15 +297,15 @@ QUESTION_SPECS: tuple[dict[str, Any], ...] = (
             "cpu-quantization",
             "a5-quantization",
         ],
-        "finding": "Published and implementation evidence distinguish quieting, propagation, sentinel, payload, infinity, and signed-zero cases without one complete cross-operation rule.",
-        "unresolved_rule": "Define canonical versus payload-preserving NaNs, signaling behavior, infinity production, signed-zero selection, and special-value conversion or quantization results.",
+        "finding": "ADR 0050 closes canonical produced NaNs plus comparison and min/max NaN and signed-zero selection for a bounded named-hardware operation set. Published and implementation evidence still distinguish propagation, sentinel, payload, infinity, conversion, reduction, quantization, matrix, and flag/status cases without one complete cross-operation rule.",
+        "unresolved_rule": "Complete NaN creation beyond comparison and min/max, signaling flag/status behavior, infinity production, and special-value conversion, reduction, quantization, and matrix results.",
         "permitted_dispositions": [
             "portable-normative-rule",
             "named-target-profile-rule",
             "implementation-defined-with-explicit-allowed-set",
         ],
         "acceptance_evidence": [
-            "bit-exact special-value table",
+            "bit-exact special-value table extending the accepted ADR 0050 checkpoint",
             "all sign and payload classes",
             "binary, unary, conversion, compare, reduction, quantization, and matrix vectors",
         ],

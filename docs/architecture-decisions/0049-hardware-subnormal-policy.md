@@ -89,7 +89,10 @@ therefore represent 1,045 operation/type obligations instead of relying on
 mnemonic families or backend behavior. Operation-specific special values,
 exception flags, range results, approximation error, reduction ties,
 quantization equations, and matrix precision remain owned by PD-05 through
-PD-12.
+PD-12. ADR 0050 separately owns the bounded PD-05-SC2 checkpoint for produced
+canonical NaNs, comparison NaN/signed-zero results, and MIN/MAX NaN/signed-zero
+results; it does not relax this subnormal policy or create operation/type
+support.
 
 ## Rejected alternatives
 
@@ -131,7 +134,9 @@ publication-safe independent-comparison boundary.
 
 These assertions are Stage 5 profile-decision evidence. Arithmetic input/output
 and underflow-transition vectors remain required by `S5-T2-C`; accepting PD-04
-does not claim that any implementation has passed them.
+does not claim that any implementation has passed them. ADR 0050's
+special-value checkpoint likewise remains profile-decision evidence rather
+than an implementation-conformance result.
 
 ## Evidence
 

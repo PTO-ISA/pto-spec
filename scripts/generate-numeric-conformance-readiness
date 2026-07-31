@@ -23,6 +23,9 @@ PUBLIC_INTEGER_CONVERSION = (
     ROOT / "spec/evidence/public-integer-conversion-contract.json"
 )
 NUMERIC_SUBNORMAL_CONTRACT = ROOT / "spec/evidence/numeric-subnormal-contract.json"
+NUMERIC_SPECIAL_VALUE_CONTRACT = (
+    ROOT / "spec/evidence/numeric-special-value-contract.json"
+)
 DEFAULT_OUTPUT = ROOT / "spec/evidence/numeric-conformance-readiness.json"
 
 
@@ -207,6 +210,7 @@ def build_evidence() -> dict[str, Any]:
     public_type_baseline = load_json(PUBLIC_NUMERIC_TYPE_BASELINE)
     integer_conversion = load_json(PUBLIC_INTEGER_CONVERSION)
     subnormal_contract = load_json(NUMERIC_SUBNORMAL_CONTRACT)
+    special_value_contract = load_json(NUMERIC_SPECIAL_VALUE_CONTRACT)
     require(
         inventory.get("status") == "closed-inventory-and-ownership",
         "S5-T1 numeric inventory is not closed",
@@ -398,6 +402,12 @@ def build_evidence() -> dict[str, Any]:
             "status": subnormal_contract["status"],
             "acceptance_record": subnormal_contract["acceptance_record"],
             **subnormal_contract["summary"],
+        },
+        "numeric_special_value_contract": {
+            "path": "spec/evidence/numeric-special-value-contract.json",
+            "status": special_value_contract["status"],
+            "acceptance_record": special_value_contract["acceptance_record"],
+            **special_value_contract["summary"],
         },
         "identity_framework": {
             "status": "closed:S5-T2-A1",

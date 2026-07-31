@@ -47,6 +47,14 @@ input subnormals, use gradual underflow, detect tininess after rounding, and
 expose no FTZ/DAZ state or operation override. The contract covers 16 domains,
 95 operations, and 1,045 conditional operation/type obligations without
 changing `pto-v0` or claiming operation/type support.
+ADR 0050 and the generated `numeric-special-value-contract.json` add the
+bounded PD-05-SC2 hardware special-value checkpoint. The checkpoint fixes
+three accepted special-value rules for produced canonical NaNs, NaN/signed-zero
+comparison results, and MIN/MAX NaN/signed-zero selection across eight
+operations and 154 conditional operation/type tuples. It is conditional on
+separate profile support, does not change `pto-v0`, and does not close PD-05:
+infinity arithmetic, broader NaN creation, conversions, reductions,
+quantization, matrix results, and complete flag/status behavior remain open.
 ADRs 0040 and 0048 and the generated
 `spec/evidence/numeric-format-namespace-contract.json` ledger close the
 structural part of PD-02: five independent code namespaces, all 25
@@ -80,6 +88,10 @@ open domain/dimension variation points and map them to all 108 numeric
 operations and 30 hooks. Every point remains owned by `pto-numeric-v1`; no
 delegation, allowed-result contract, or domain result rule is accepted, so
 PD-12 and S5-T2 remain open.
+The numeric maturity counters remain unchanged by bounded checkpoints that do
+not accept a complete decision or domain: two of 12 complete decisions are
+accepted, ten remain open, no complete numeric domain is closed, and the
+generic variation-route count remains 18/99.
 The executable-model comparison has an exhaustive 693-row disposition matrix:
 557 exact matches, 96 explicit divergences, 39 non-comparable rows, and one
 intentional extension. Of the divergences, 79 TEPL and 7 command rows are the

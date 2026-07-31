@@ -32,6 +32,7 @@ SOURCE_PATHS = (
     "spec/evidence/public-integer-conversion-contract.json",
     "spec/evidence/numeric-rounding-selector-contract.json",
     "spec/evidence/numeric-subnormal-contract.json",
+    "spec/evidence/numeric-special-value-contract.json",
     "spec/evidence/scalar-effect-closure.json",
     "spec/evidence/bundle-command-totality.json",
     "spec/evidence/tepl-totality.json",

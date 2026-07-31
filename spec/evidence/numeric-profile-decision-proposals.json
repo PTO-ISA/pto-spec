@@ -1,10 +1,10 @@
 {
-  "schema_version": 10,
+  "schema_version": 11,
   "target": "S5-T2-A",
   "status": "proposal-complete-two-decisions-accepted",
   "input": {
     "path": "spec/evidence/numeric-profile-decision-inputs.json",
-    "sha256": "ea0cd7fd41bfda7c898d95cbde8a0e21ad6101e9f292ff2451d821269543ff96",
+    "sha256": "4939fd3b5c32bd81c815e0c4b5756d329a8fd207b375d921e6c074d949e000eb",
     "public_repository": "https://github.com/hw-native-sys/pto-isa",
     "public_commit": "712cbe9f23df5d5362be5e8327599f4285317473"
   },
@@ -26,7 +26,7 @@
   },
   "rounding_selector_contract": {
     "path": "spec/evidence/numeric-rounding-selector-contract.json",
-    "sha256": "cfa192f240929c91ce367618f201f57da9dd3603629fd7d7280eb20e6ffe6df5",
+    "sha256": "e18d4a7fb61c61f0f0fdcaaf9114191d90b361774f93769b116d7b339349dbe9",
     "status": "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open",
     "acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
     "scalar_active_selector_count": 8,
@@ -41,7 +41,7 @@
   },
   "subnormal_contract": {
     "path": "spec/evidence/numeric-subnormal-contract.json",
-    "sha256": "86ccff3235ba77626bf2f0368e8c6c98ea197709860a5a56a2c5f646e2f4c8b6",
+    "sha256": "773a2a83e3c38f75fcb6c7504458a2bd19434fb06e5029cb94539553551b2891",
     "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
     "acceptance_record": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
     "subnormal_capable_type_count": 11,
@@ -59,9 +59,28 @@
     "s5_t2_a_complete": false,
     "s5_t2_complete": false
   },
+  "special_value_contract": {
+    "path": "spec/evidence/numeric-special-value-contract.json",
+    "sha256": "96a4e8b2268e2a7c65d8972931b350ebef9eb14466e07b0e9fdaba00ba144d86",
+    "status": "named-hardware-special-value-checkpoint-accepted-pd05-open",
+    "acceptance_record": "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
+    "format_count": 25,
+    "nan_capable_type_count": 10,
+    "signaling_nan_capable_type_count": 7,
+    "signed_zero_type_count": 13,
+    "comparison_operation_count": 2,
+    "minmax_operation_count": 6,
+    "operation_scope_count": 8,
+    "conditional_operation_type_tuple_count": 154,
+    "accepted_special_result_rule_count": 3,
+    "accepted_complete_domain_rule_count": 0,
+    "accepted_complete_decision_count": 0,
+    "pd05_complete": false,
+    "s5_t2_complete": false
+  },
   "format_namespace_contract": {
     "path": "spec/evidence/numeric-format-namespace-contract.json",
-    "sha256": "329cbcd7b2252816fb8322fc27c0a0043c225b5f7747718d760f9cfa092706cc",
+    "sha256": "913765605c4ac6f9d4023155d0c9b484df45e0024e333853681b6b006479aa61",
     "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
     "acceptance_record": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
     "classification_checkpoint_id": "PD-02-SC2:PD-05-SC1",
@@ -97,7 +116,7 @@
   },
   "public_type_baseline": {
     "path": "spec/evidence/public-numeric-type-baseline.json",
-    "sha256": "cc5a54aad3975607f5e98ab4c584495f8a5f888fb277c62f5ff2a1c7abb14c93",
+    "sha256": "d8e6a76113b20c0423f1414f3bd612b7458f7d972c517e4ececa97ce4f2e0ac1",
     "status": "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
     "acceptance_record": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
     "public_type_count": 16,
@@ -116,7 +135,7 @@
   },
   "public_integer_conversion": {
     "path": "spec/evidence/public-integer-conversion-contract.json",
-    "sha256": "333abe0ec1a1259696f13bcc9a8acf9bb292c4b0d26a07e47c089cfd3ca015b6",
+    "sha256": "15317456e8d45aab015e8827ac2edd90d21450edbc0f3ad210b531a9b0424c41",
     "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
     "acceptance_record": "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
     "public_integer_type_count": 8,
@@ -136,7 +155,7 @@
   },
   "profile_applicability_contract": {
     "path": "spec/evidence/numeric-profile-applicability-closure.json",
-    "sha256": "2494c9e9ea1179c5c588a43dbb66e09c40e0d6bd0a9fad6086a128dc481026f9",
+    "sha256": "935de85b760dcbb660c44dd440e2f773e644417a4a582532c971f94232aedaba",
     "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
     "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
     "rule_count": 6,
@@ -154,7 +173,7 @@
   },
   "variation_point_contract": {
     "path": "spec/evidence/numeric-variation-point-ownership.json",
-    "sha256": "e7ffa7d48a4ce3c7dcc643b8625ff7da52418336cbf871029496357ef276de19",
+    "sha256": "06cec6ee4bbf5fed6a6e4410462cd38ff4aa9eaddf9b59e42ef30c4c3996c0fd",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
     "acceptance_record": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
     "variation_point_count": 99,
@@ -543,14 +562,14 @@
         "named-target-profile-rule",
         "implementation-defined-with-explicit-allowed-set"
       ],
-      "proposed_rule": "Define results by special-value class for every numeric family. Canonicalization or payload preservation, signaling quieting, infinity production, and signed-zero selection must be bit-exact or an enumerated target-profile result set; unconstrained host propagation is not conforming evidence.",
+      "proposed_rule": "ADR 0050 accepts a bounded named-hardware checkpoint for canonical produced NaNs, NaN and signed-zero comparison results, and min/max NaN and signed-zero selection across 8 operations and 154 conditional operation/type tuples. PD-05 remains open for infinity arithmetic, broader NaN creation, conversions, reductions, quantization, matrix operations, and the complete flag/status contract.",
       "open_items": [
-        "choose canonical versus payload-preserving NaNs per family",
-        "define signaling and flag interaction",
-        "publish bit-exact infinity and signed-zero tables"
+        "extend bit-exact NaN creation rules beyond comparison and min/max",
+        "define infinity arithmetic and special results for conversions, reductions, quantization, and matrix operations",
+        "complete signaling-NaN flag and status interactions for every affected family"
       ],
       "acceptance_evidence": [
-        "bit-exact special-value table",
+        "bit-exact special-value table extending the accepted ADR 0050 checkpoint",
         "all sign and payload classes",
         "binary, unary, conversion, compare, reduction, quantization, and matrix vectors"
       ],
@@ -1733,6 +1752,7 @@
     "public_type_identity_count": 16,
     "accepted_bounded_result_rule_count": 3,
     "accepted_bounded_result_tuple_count": 48,
+    "accepted_special_result_rule_count": 3,
     "can_close_s5_t2_a": false,
     "can_close_s5_t2": false
   }

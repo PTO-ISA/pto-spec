@@ -26,7 +26,7 @@
     },
     {
       "path": "asl/numeric/formats.asl",
-      "sha256": "204681954bd1482a5ec3002ad14088f13356a389f7006552f1b4058e4d36103c"
+      "sha256": "359470d81e446cabaefdb0ebc52529cf76809f6ce64806af596f39ac59e3339b"
     },
     {
       "path": "asl/profiles/pto-v0.asl",
@@ -302,27 +302,31 @@
     },
     {
       "path": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
-      "sha256": "360e4e66eb0370fca07782d4e09b116e814ffaa28bc6fec5b496b009e6b8821a"
+      "sha256": "cca6076b80003179731fe8f843ae230b835b5f0e581024f8e5b4509cd0f33f7e"
     },
     {
       "path": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
-      "sha256": "c9b1fe3be231597304c4b213818b01f7931d5d24b423a0d40ca22a43fe5f3cb0"
+      "sha256": "9065787b60ef2a323515c1deb82331bfde059d8be4455c3c3ffa0d0f50f4311a"
+    },
+    {
+      "path": "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
+      "sha256": "7c9f27fbccea8bec91238781adf7060a57cf774db59c67766a75e867551fe561"
     },
     {
       "path": "docs/architecture.md",
-      "sha256": "0524aaaf82a4088bb67514a4950b9ac0365670edbd40bc6583bdea13b173bd0c"
+      "sha256": "8cbc3ad20767ed1a5d6a66d9048ffd5149c01f08054e90333c52436f1740a23e"
     },
     {
       "path": "docs/coverage.md",
-      "sha256": "40f47d895eeb31586941de3b657a48cf75f1fedefc7efa4e69b465ea0dfbc0be"
+      "sha256": "83510a2a97c22b0cc15bea03f2e82230f1c84f296eabb7db8c8d815681777ef6"
     },
     {
       "path": "docs/maturity-bringup-plan.md",
-      "sha256": "ac32e43c22dc5cfa6e5706e1d0b36a65c8d80d0b9cf797fa6859d1fbd5496bda"
+      "sha256": "0c4c0178fa44fd2d26b811812c32dcdf0970dc3c258c3bbd0eb04c5954cde222"
     },
     {
       "path": "docs/maturity-stage-targets.md",
-      "sha256": "8d7c8c1aaa19b8e5ee30e9df31dd6a95976a056abd44dec5793b2c449ea21d63"
+      "sha256": "6f0058bfedd7260c1a955961c374b64f56c292e0ee3d6c4236f888d332029070"
     },
     {
       "path": "docs/memory-model.md",
@@ -334,15 +338,15 @@
     },
     {
       "path": "docs/normative-sources.md",
-      "sha256": "1f4c01b00f36e443b78d0df8c7c2ed5e59aaaade4b0f2de6ff1914d7f16834ff"
+      "sha256": "097fc4c006aca948a9c5121ddde139432008c043de12ff17423df61b507bbf7b"
     },
     {
       "path": "docs/numeric-profile-decision-register.md",
-      "sha256": "5b4596b76f8186748f511af6efa046460b8b6b71b8faeb5bbc544f87eb5ec14e"
+      "sha256": "9543beed7216c350729372ef95d72d3ecafc973391cb88d76ef22f1e1c419e82"
     },
     {
       "path": "docs/profile-contracts.md",
-      "sha256": "aec825cf614dda04136de5ec06838722a3a35ac2cc62ee7ca719035e1dfd8d4a"
+      "sha256": "8856e8175f46beabaa7d99e159f2211d0a4527d64fe744a74f08d4b634011a21"
     },
     {
       "path": "docs/review-checklist.md",
@@ -386,11 +390,11 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "0ff2e40e67294bd96c339c84cbfca40750523ceb8ed8c3bccc262f01449ae649"
+      "sha256": "4afdd3cced1e8b560a741e4aab989d45b586f14e91051658295b3c8c357b9c14"
     },
     {
       "path": "spec/evidence/numeric-conformance-readiness.json",
-      "sha256": "b5bb63b0e59e0f9779ed926d6a71ed7605d62c9605d55f497e40d4ed004aa40f"
+      "sha256": "dc691ee01f37e82f50699de288418684bed09c80745c67f161e271c7f65cf638"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
@@ -398,39 +402,43 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "329cbcd7b2252816fb8322fc27c0a0043c225b5f7747718d760f9cfa092706cc"
+      "sha256": "913765605c4ac6f9d4023155d0c9b484df45e0024e333853681b6b006479aa61"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "2494c9e9ea1179c5c588a43dbb66e09c40e0d6bd0a9fad6086a128dc481026f9"
+      "sha256": "935de85b760dcbb660c44dd440e2f773e644417a4a582532c971f94232aedaba"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ea0cd7fd41bfda7c898d95cbde8a0e21ad6101e9f292ff2451d821269543ff96"
+      "sha256": "4939fd3b5c32bd81c815e0c4b5756d329a8fd207b375d921e6c074d949e000eb"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "ea011ff34307f9a0579bb21f875d3c3e012b19190425a26b4b0223049969d585"
+      "sha256": "5adc4378f2b610396b2b7e2354ce9f8ed8469853f86c497cb746c6556b111dc7"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "cfa192f240929c91ce367618f201f57da9dd3603629fd7d7280eb20e6ffe6df5"
+      "sha256": "e18d4a7fb61c61f0f0fdcaaf9114191d90b361774f93769b116d7b339349dbe9"
+    },
+    {
+      "path": "spec/evidence/numeric-special-value-contract.json",
+      "sha256": "96a4e8b2268e2a7c65d8972931b350ebef9eb14466e07b0e9fdaba00ba144d86"
     },
     {
       "path": "spec/evidence/numeric-subnormal-contract.json",
-      "sha256": "86ccff3235ba77626bf2f0368e8c6c98ea197709860a5a56a2c5f646e2f4c8b6"
+      "sha256": "773a2a83e3c38f75fcb6c7504458a2bd19434fb06e5029cb94539553551b2891"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "e7ffa7d48a4ce3c7dcc643b8625ff7da52418336cbf871029496357ef276de19"
+      "sha256": "06cec6ee4bbf5fed6a6e4410462cd38ff4aa9eaddf9b59e42ef30c4c3996c0fd"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "333abe0ec1a1259696f13bcc9a8acf9bb292c4b0d26a07e47c089cfd3ca015b6"
+      "sha256": "15317456e8d45aab015e8827ac2edd90d21450edbc0f3ad210b531a9b0424c41"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "cc5a54aad3975607f5e98ab4c584495f8a5f888fb277c62f5ff2a1c7abb14c93"
+      "sha256": "d8e6a76113b20c0423f1414f3bd612b7458f7d972c517e4ececa97ce4f2e0ac1"
     },
     {
       "path": "spec/evidence/public-source-reconciliation.json",
@@ -438,11 +446,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "63ebd464690c04376f145cd6f16d13ba39e8a0532185e3de395d8037a7a10aea"
+      "sha256": "06680a958054766e68fb8815e0bfa3871469e01f3a1c49abad42214806466f2c"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "48425e2c0699b137fe9820390b76be22dd33bdafda3aa74be12318282cb06372"
+      "sha256": "b7093a183cab00221ae12115234b07fa23b8a773811a130cbd639fcc9258a971"
     },
     {
       "path": "spec/evidence/scalar-agu-totality.json",
@@ -486,7 +494,7 @@
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "b8357bb2202086fd8802722c8a6d12a48fa751556c9b322bd26f16ac2a3ec1fb"
+      "sha256": "1608fa0c03d139842b85c63c581d8280c37e55ef03a6e2f3cbf75dd8cb8edaab"
     },
     {
       "path": "spec/profile-hooks.json",
@@ -494,7 +502,7 @@
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "ae5f85d28db4d1bd7fc26bfd003306f573c286f5fffd322fc38f1830d83adff6"
+      "sha256": "2472d76e774539656a4c23fd04c40a09c973534d84bcfb5b655b1f436ea094ec"
     },
     {
       "path": "specification.toml",
@@ -519,7 +527,7 @@
     },
     "tile_operations_total": 120
   },
-  "content_sha256": "a9cd81d51400af0a094cade1c4fe222fec5a8d04be673142d0a1d0abefecfa1d",
+  "content_sha256": "3c1026807fdff29725e5b7a762920f4bda2761f2ad73e04ee80631cc354daee8",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -544,7 +552,7 @@
     "path": "spec/hardware-conformance-profile.json",
     "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
     "repository_implementation_conformance": "unproven",
-    "sha256": "b8357bb2202086fd8802722c8a6d12a48fa751556c9b322bd26f16ac2a3ec1fb"
+    "sha256": "1608fa0c03d139842b85c63c581d8280c37e55ef03a6e2f3cbf75dd8cb8edaab"
   },
   "hash_contract": {
     "algorithm": "SHA-256",
@@ -621,7 +629,7 @@
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0571-hardware-numeric-vectors.json",
-      "sha256": "367bbf68d0f07010f4cbe81c667dded0ab023e1f572e2b70e150ef3ae0928824"
+      "sha256": "07daa2085c86544ad7dec243ab9ab1e754d1819e1e5d5074aa31b409cb41e17c"
     }
   ],
   "release": "0.57.1",
