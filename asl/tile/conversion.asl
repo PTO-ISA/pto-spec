@@ -27,7 +27,10 @@ begin
     if TileDataTypeIsFloating(source_type) || TileDataTypeIsFloating(destination_type) then
         return TileProfileConvert(value, source_type, destination_type);
     else
-        return NormalizeTileInteger(value, destination_type);
+        // Integer conversion first interprets the source width/signedness,
+        // then truncates or extends into the destination representation.
+        return NormalizeTileInteger(
+            NormalizeTileInteger(value, source_type), destination_type);
     end;
 end;
 
@@ -48,7 +51,7 @@ begin
                 source_payload[[source_element]], source_tile.data_type, destination_tile.data_type);
         end;
     end;
-    _Tiles[[destination]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(destination);
 end;
 
 impdef func TileProfileQuantize(value: Word, scale: Word, zero_point: Word,
@@ -83,7 +86,7 @@ begin
                 source_tile.data_type, destination_tile.data_type);
         end;
     end;
-    _Tiles[[destination]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(destination);
 end;
 
 func TDEQUANT(destination: TileIndex, source: TileIndex, scale: Word, zero_point: Word)
@@ -102,5 +105,5 @@ begin
                 source_tile.data_type, destination_tile.data_type);
         end;
     end;
-    _Tiles[[destination]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(destination);
 end;

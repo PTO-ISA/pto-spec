@@ -1,0 +1,222 @@
+#!/usr/bin/env python3
+"""Generate the fail-closed scalar numeric flag ownership contract."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SCALAR_CATALOG = ROOT / "spec/catalog/scalar-forms.json"
+NUMERIC_CONTRACTS = ROOT / "spec/evidence/numeric-contracts.json"
+OUTPUT = ROOT / "spec/evidence/scalar-numeric-flag-contract.json"
+ACCEPTANCE_RECORD = (
+    "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md"
+)
+
+QUIET_COMPARISONS = {"FEQ", "FGE", "FLT", "FNE"}
+SIGNALING_COMPARISONS = {"FEQS", "FGES", "FLTS", "FNES"}
+MINMAX = {"FMIN", "FMAX"}
+FLAG_NAMES = ["NV", "DZ", "OF", "UF", "NX"]
+
+
+def load(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise SystemExit(message)
+
+
+def source(path: str) -> dict[str, str]:
+    absolute = ROOT / path
+    return {
+        "path": path,
+        "sha256": hashlib.sha256(absolute.read_bytes()).hexdigest(),
+    }
+
+
+def architecture_row(form: dict[str, Any]) -> dict[str, Any]:
+    mnemonic = form["mnemonic"]
+    if mnemonic == "FABS":
+        condition = "never produces a numeric exception flag"
+        possible_flags: list[str] = []
+        producer_interface = "ExecuteDecodedFPUnary:FABS"
+    elif mnemonic in MINMAX:
+        condition = "produces NV exactly when either source is a signaling NaN"
+        possible_flags = ["NV"]
+        producer_interface = "ExecuteDecodedFPBinary:FMIN/FMAX"
+    elif mnemonic in QUIET_COMPARISONS:
+        condition = "produces NV exactly when either source is a signaling NaN"
+        possible_flags = ["NV"]
+        producer_interface = "ExecuteDecodedFPCompare:quiet"
+    elif mnemonic in SIGNALING_COMPARISONS:
+        condition = "produces NV exactly when either source is any NaN"
+        possible_flags = ["NV"]
+        producer_interface = "ExecuteDecodedFPCompare:signaling"
+    else:
+        raise SystemExit(f"unclassified architecture-owned FSU form: {mnemonic}")
+    return {
+        "form_id": form["form_id"],
+        "mnemonic": mnemonic,
+        "semantic_handler": form["semantic_handler"],
+        "producer_owner": "portable-architecture",
+        "producer_interface": producer_interface,
+        "numeric_contract": None,
+        "possible_flags": possible_flags,
+        "condition": condition,
+        "exact_condition_status": "closed",
+    }
+
+
+def profile_row(form: dict[str, Any], operation: dict[str, Any]) -> dict[str, Any]:
+    require(
+        len(operation["primary_hooks"]) == 1,
+        f"scalar numeric form must have exactly one primary hook: {form['form_id']}",
+    )
+    return {
+        "form_id": form["form_id"],
+        "mnemonic": form["mnemonic"],
+        "semantic_handler": form["semantic_handler"],
+        "producer_owner": "named-numeric-profile",
+        "producer_interface": operation["primary_hooks"][0],
+        "numeric_contract": operation["numeric_contract"],
+        "possible_flags": FLAG_NAMES,
+        "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+        "exact_condition_status": "profile-rule-required",
+    }
+
+
+def generate() -> dict[str, Any]:
+    scalar = load(SCALAR_CATALOG)
+    numeric = load(NUMERIC_CONTRACTS)
+    fsu_forms = [form for form in scalar["forms"] if form["semantic_family"] == "FSU"]
+    profile_operations = {
+        operation["catalog_identity"]: operation
+        for operation in numeric["operations"]
+        if operation["surface"] == "scalar-form"
+    }
+    require(len(fsu_forms) == 30, "expected exactly 30 scalar FSU forms")
+    require(
+        len(profile_operations) == 19,
+        "expected exactly 19 profile-owned scalar numeric forms",
+    )
+
+    rows = []
+    for form in fsu_forms:
+        operation = profile_operations.get(form["form_id"])
+        rows.append(
+            profile_row(form, operation)
+            if operation is not None
+            else architecture_row(form)
+        )
+
+    profile_domains = sorted(
+        {row["numeric_contract"] for row in rows if row["numeric_contract"]}
+    )
+    profile_hooks = sorted(
+        {
+            row["producer_interface"]
+            for row in rows
+            if row["producer_owner"] == "named-numeric-profile"
+        }
+    )
+    closed_count = sum(row["exact_condition_status"] == "closed" for row in rows)
+
+    return {
+        "schema_version": 1,
+        "target": "S5-T2-A2:PD-06",
+        "decision_id": "PD-06",
+        "status": "state-owner-matrix-closed-profile-production-open",
+        "acceptance_record": ACCEPTANCE_RECORD,
+        "architecture_contract": {
+            "storage": {
+                "system_register": "CORE_STATE",
+                "address": "0x0020",
+                "bit_range": "36:32",
+                "low_to_high": FLAG_NAMES,
+            },
+            "reset": "ResetProfileState sets all five flags to zero.",
+            "numeric_update": "A completed scalar numeric form ORs its produced five-bit vector into the old flags; it never clears a previously set flag.",
+            "software_write": "A permitted full CORE_STATE system-register write replaces the flag field and may therefore clear flags.",
+            "simultaneous": "The five bits are independent and have no priority; every produced bit is accumulated in the same update.",
+            "rejected_operation": "An illegal or rejected scalar form leaves every flag unchanged and performs no profile-producer call.",
+            "numeric_exception_trap": "Numeric exception outcomes do not themselves raise a synchronous PTO trap; encoding and legality faults remain separate pre-effect failures.",
+            "trap_context": "Trap entry snapshots the complete CORE_STATE; successful recovery restores the manager-visible ECSTATE value, including all five flags.",
+            "profile_boundary": "Architecture-owned forms have exact conditions below. Each supported profile-owned operation/type rule must return an exact flag vector; a missing rule rejects before effects under ADR 0037.",
+        },
+        "forms": rows,
+        "independent_comparison": {
+            "status": "structure-corroborated-producer-oracle-unavailable",
+            "provenance_sha256": "c34df32b3b14517e8cd1dec9720308c8bf1e30f5d64629288634e182a34ec0a1",
+            "matched_contracts": [
+                "five-status-bits-in-common-core-state",
+                "NV-DZ-OF-UF-NX-bit-order",
+                "sticky-or-accumulation",
+                "zero-reset-and-system-register-replacement",
+                "illegal-type-rejection-before-flag-update",
+            ],
+            "divergences": [
+                "comparison-model-does-not-produce-signaling-compare-NV",
+                "comparison-model-does-not-produce-minmax-signaling-NaN-NV",
+            ],
+            "limits": [
+                "numeric-result-and-flag-helpers-are-unbound-external-declarations",
+                "no-independent-simultaneous-flag-or-tininess-evidence",
+                "no-independent-PTO-trap-context-evidence",
+            ],
+        },
+        "tests": [
+            "tests/asl/scalar-tests.asl:TestScalarFPFlagLifecycle",
+            "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUTotality",
+            "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUFlagAndRoundingHelpers",
+        ],
+        "sources": [
+            source("spec/catalog/scalar-forms.json"),
+            source("spec/catalog/system-registers.json"),
+            source("spec/evidence/numeric-contracts.json"),
+            source("asl/scalar/floating.asl"),
+            source("asl/scalar/dispatch.asl"),
+            source("asl/profiles/pto-v0.asl"),
+            source(
+                "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md"
+            ),
+        ],
+        "summary": {
+            "form_count": len(rows),
+            "producer_owner_closed_form_count": len(rows),
+            "architecture_condition_closed_form_count": closed_count,
+            "profile_condition_open_form_count": len(rows) - closed_count,
+            "profile_domain_count": len(profile_domains),
+            "profile_hook_count": len(profile_hooks),
+            "pd06_complete": False,
+        },
+    }
+
+
+def serialized() -> str:
+    return json.dumps(generate(), indent=2, ensure_ascii=False) + "\n"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    action = parser.add_mutually_exclusive_group(required=True)
+    action.add_argument("--check", action="store_true")
+    action.add_argument("--write", action="store_true")
+    args = parser.parse_args()
+    expected = serialized()
+    if args.write:
+        OUTPUT.write_text(expected, encoding="utf-8")
+        return 0
+    if not OUTPUT.is_file() or OUTPUT.read_text(encoding="utf-8") != expected:
+        raise SystemExit(f"stale generated evidence: {OUTPUT.relative_to(ROOT)}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

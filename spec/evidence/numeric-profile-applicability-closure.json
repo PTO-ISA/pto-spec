@@ -1,0 +1,1745 @@
+{
+  "schema_version": 1,
+  "artifact_id": "numeric-profile-applicability-closure",
+  "target": "S5-T2-A3:PD-01",
+  "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
+  "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
+  "policy": {
+    "support_boundary": "Applicability rules decide whether a profile supports an operation/type tuple. They do not define numeric result semantics.",
+    "rejection_boundary": "The six A2/A3 MX CUBE rules reject with IllegalInstruction before operand legality, handler dispatch, or operation effects.",
+    "parent_boundary": "This checkpoint closes only a negative A2/A3 support slice. PD-01, cube-matrix result rules, and S5-T2 remain open."
+  },
+  "profiles": [
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "role": "A2/A3 target numeric applicability",
+      "status": "partial-applicability-closed-results-open",
+      "accepted_scope": "The six MX CUBE operation selectors are unsupported by A2/A3 for every architectural TileDataType and reject before operation effects."
+    }
+  ],
+  "rules": [
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "family": "CUBE",
+      "function": 4,
+      "type_scope": {
+        "kind": "all_tile_data_types",
+        "tile_data_type_count": 19
+      },
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null,
+      "source_ids": [
+        "public-target-profiles",
+        "public-portability-rules",
+        "a2a3-matrix",
+        "a5-matrix",
+        "public-intrinsic-api",
+        "executable-model-comparison"
+      ],
+      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "family": "CUBE",
+      "function": 5,
+      "type_scope": {
+        "kind": "all_tile_data_types",
+        "tile_data_type_count": 19
+      },
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null,
+      "source_ids": [
+        "public-target-profiles",
+        "public-portability-rules",
+        "a2a3-matrix",
+        "a5-matrix",
+        "public-intrinsic-api",
+        "executable-model-comparison"
+      ],
+      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "family": "CUBE",
+      "function": 6,
+      "type_scope": {
+        "kind": "all_tile_data_types",
+        "tile_data_type_count": 19
+      },
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null,
+      "source_ids": [
+        "public-target-profiles",
+        "public-portability-rules",
+        "a2a3-matrix",
+        "a5-matrix",
+        "public-intrinsic-api",
+        "executable-model-comparison"
+      ],
+      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "family": "CUBE",
+      "function": 20,
+      "type_scope": {
+        "kind": "all_tile_data_types",
+        "tile_data_type_count": 19
+      },
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null,
+      "source_ids": [
+        "public-target-profiles",
+        "public-portability-rules",
+        "a2a3-matrix",
+        "a5-matrix",
+        "public-intrinsic-api",
+        "executable-model-comparison"
+      ],
+      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "family": "CUBE",
+      "function": 21,
+      "type_scope": {
+        "kind": "all_tile_data_types",
+        "tile_data_type_count": 19
+      },
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null,
+      "source_ids": [
+        "public-target-profiles",
+        "public-portability-rules",
+        "a2a3-matrix",
+        "a5-matrix",
+        "public-intrinsic-api",
+        "executable-model-comparison"
+      ],
+      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "family": "CUBE",
+      "function": 22,
+      "type_scope": {
+        "kind": "all_tile_data_types",
+        "tile_data_type_count": 19
+      },
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null,
+      "source_ids": [
+        "public-target-profiles",
+        "public-portability-rules",
+        "a2a3-matrix",
+        "a5-matrix",
+        "public-intrinsic-api",
+        "executable-model-comparison"
+      ],
+      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+    }
+  ],
+  "expanded_tuples": [
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "function": 4,
+      "tile_data_type": "TileDataType_F64",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "function": 4,
+      "tile_data_type": "TileDataType_S8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "function": 4,
+      "tile_data_type": "TileDataType_U8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "function": 4,
+      "tile_data_type": "TileDataType_S16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "function": 4,
+      "tile_data_type": "TileDataType_U16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "function": 4,
+      "tile_data_type": "TileDataType_S32",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "function": 4,
+      "tile_data_type": "TileDataType_U32",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "function": 4,
+      "tile_data_type": "TileDataType_S64",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "function": 4,
+      "tile_data_type": "TileDataType_U64",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "function": 4,
+      "tile_data_type": "TileDataType_F16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "function": 4,
+      "tile_data_type": "TileDataType_BF16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "function": 4,
+      "tile_data_type": "TileDataType_F32",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "function": 4,
+      "tile_data_type": "TileDataType_FP8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "function": 4,
+      "tile_data_type": "TileDataType_FPL8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "function": 4,
+      "tile_data_type": "TileDataType_FP4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "function": 4,
+      "tile_data_type": "TileDataType_FPL4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "function": 4,
+      "tile_data_type": "TileDataType_S4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "function": 4,
+      "tile_data_type": "TileDataType_U4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX",
+      "function": 4,
+      "tile_data_type": "TileDataType_E8M0",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "function": 5,
+      "tile_data_type": "TileDataType_F64",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "function": 5,
+      "tile_data_type": "TileDataType_S8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "function": 5,
+      "tile_data_type": "TileDataType_U8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "function": 5,
+      "tile_data_type": "TileDataType_S16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "function": 5,
+      "tile_data_type": "TileDataType_U16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "function": 5,
+      "tile_data_type": "TileDataType_S32",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "function": 5,
+      "tile_data_type": "TileDataType_U32",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "function": 5,
+      "tile_data_type": "TileDataType_S64",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "function": 5,
+      "tile_data_type": "TileDataType_U64",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "function": 5,
+      "tile_data_type": "TileDataType_F16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "function": 5,
+      "tile_data_type": "TileDataType_BF16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "function": 5,
+      "tile_data_type": "TileDataType_F32",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "function": 5,
+      "tile_data_type": "TileDataType_FP8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "function": 5,
+      "tile_data_type": "TileDataType_FPL8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "function": 5,
+      "tile_data_type": "TileDataType_FP4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "function": 5,
+      "tile_data_type": "TileDataType_FPL4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "function": 5,
+      "tile_data_type": "TileDataType_S4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "function": 5,
+      "tile_data_type": "TileDataType_U4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+      "function": 5,
+      "tile_data_type": "TileDataType_E8M0",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "function": 6,
+      "tile_data_type": "TileDataType_F64",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "function": 6,
+      "tile_data_type": "TileDataType_S8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "function": 6,
+      "tile_data_type": "TileDataType_U8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "function": 6,
+      "tile_data_type": "TileDataType_S16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "function": 6,
+      "tile_data_type": "TileDataType_U16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "function": 6,
+      "tile_data_type": "TileDataType_S32",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "function": 6,
+      "tile_data_type": "TileDataType_U32",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "function": 6,
+      "tile_data_type": "TileDataType_S64",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "function": 6,
+      "tile_data_type": "TileDataType_U64",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "function": 6,
+      "tile_data_type": "TileDataType_F16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "function": 6,
+      "tile_data_type": "TileDataType_BF16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "function": 6,
+      "tile_data_type": "TileDataType_F32",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "function": 6,
+      "tile_data_type": "TileDataType_FP8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "function": 6,
+      "tile_data_type": "TileDataType_FPL8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "function": 6,
+      "tile_data_type": "TileDataType_FP4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "function": 6,
+      "tile_data_type": "TileDataType_FPL4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "function": 6,
+      "tile_data_type": "TileDataType_S4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "function": 6,
+      "tile_data_type": "TileDataType_U4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+      "function": 6,
+      "tile_data_type": "TileDataType_E8M0",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "function": 20,
+      "tile_data_type": "TileDataType_F64",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "function": 20,
+      "tile_data_type": "TileDataType_S8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "function": 20,
+      "tile_data_type": "TileDataType_U8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "function": 20,
+      "tile_data_type": "TileDataType_S16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "function": 20,
+      "tile_data_type": "TileDataType_U16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "function": 20,
+      "tile_data_type": "TileDataType_S32",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "function": 20,
+      "tile_data_type": "TileDataType_U32",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "function": 20,
+      "tile_data_type": "TileDataType_S64",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "function": 20,
+      "tile_data_type": "TileDataType_U64",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "function": 20,
+      "tile_data_type": "TileDataType_F16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "function": 20,
+      "tile_data_type": "TileDataType_BF16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "function": 20,
+      "tile_data_type": "TileDataType_F32",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "function": 20,
+      "tile_data_type": "TileDataType_FP8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "function": 20,
+      "tile_data_type": "TileDataType_FPL8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "function": 20,
+      "tile_data_type": "TileDataType_FP4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "function": 20,
+      "tile_data_type": "TileDataType_FPL4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "function": 20,
+      "tile_data_type": "TileDataType_S4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "function": 20,
+      "tile_data_type": "TileDataType_U4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX",
+      "function": 20,
+      "tile_data_type": "TileDataType_E8M0",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "function": 21,
+      "tile_data_type": "TileDataType_F64",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "function": 21,
+      "tile_data_type": "TileDataType_S8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "function": 21,
+      "tile_data_type": "TileDataType_U8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "function": 21,
+      "tile_data_type": "TileDataType_S16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "function": 21,
+      "tile_data_type": "TileDataType_U16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "function": 21,
+      "tile_data_type": "TileDataType_S32",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "function": 21,
+      "tile_data_type": "TileDataType_U32",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "function": 21,
+      "tile_data_type": "TileDataType_S64",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "function": 21,
+      "tile_data_type": "TileDataType_U64",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "function": 21,
+      "tile_data_type": "TileDataType_F16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "function": 21,
+      "tile_data_type": "TileDataType_BF16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "function": 21,
+      "tile_data_type": "TileDataType_F32",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "function": 21,
+      "tile_data_type": "TileDataType_FP8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "function": 21,
+      "tile_data_type": "TileDataType_FPL8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "function": 21,
+      "tile_data_type": "TileDataType_FP4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "function": 21,
+      "tile_data_type": "TileDataType_FPL4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "function": 21,
+      "tile_data_type": "TileDataType_S4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "function": 21,
+      "tile_data_type": "TileDataType_U4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+      "function": 21,
+      "tile_data_type": "TileDataType_E8M0",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "function": 22,
+      "tile_data_type": "TileDataType_F64",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "function": 22,
+      "tile_data_type": "TileDataType_S8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "function": 22,
+      "tile_data_type": "TileDataType_U8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "function": 22,
+      "tile_data_type": "TileDataType_S16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "function": 22,
+      "tile_data_type": "TileDataType_U16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "function": 22,
+      "tile_data_type": "TileDataType_S32",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "function": 22,
+      "tile_data_type": "TileDataType_U32",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "function": 22,
+      "tile_data_type": "TileDataType_S64",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "function": 22,
+      "tile_data_type": "TileDataType_U64",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "function": 22,
+      "tile_data_type": "TileDataType_F16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "function": 22,
+      "tile_data_type": "TileDataType_BF16",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "function": 22,
+      "tile_data_type": "TileDataType_F32",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "function": 22,
+      "tile_data_type": "TileDataType_FP8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "function": 22,
+      "tile_data_type": "TileDataType_FPL8",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "function": 22,
+      "tile_data_type": "TileDataType_FP4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "function": 22,
+      "tile_data_type": "TileDataType_FPL4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "function": 22,
+      "tile_data_type": "TileDataType_S4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "function": 22,
+      "tile_data_type": "TileDataType_U4",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    },
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+      "function": 22,
+      "tile_data_type": "TileDataType_E8M0",
+      "disposition": "unsupported-in-profile",
+      "rejection": {
+        "fault": "IllegalInstruction",
+        "phase": "before-operation-effects"
+      },
+      "result_rule_id": null
+    }
+  ],
+  "source_evidence": {
+    "public_repository": "https://github.com/hw-native-sys/pto-isa",
+    "public_commit": "712cbe9f23df5d5362be5e8327599f4285317473",
+    "profile_identity": {
+      "partition_id": "a2a3-target",
+      "id": "pto-a2a3-numeric-v1",
+      "kind": "target-numeric-profile",
+      "normative_identity": true,
+      "role": "A2A3 support restrictions and explicitly delegated bounded numeric rules.",
+      "selection": "Requires a complete A2A3 operation/type legality matrix and one accepted result rule for every supported tuple.",
+      "relation_to_pto_v0": "Future alternative target profile distinct from pto-v0; pto-v0 raw-carrier results are not inherited as hardware arithmetic.",
+      "rule_status": "decision-required",
+      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+      "source_ids": [
+        "public-portability-rules",
+        "public-target-profiles",
+        "public-type-system"
+      ]
+    },
+    "decision_input_sources": {
+      "public-target-profiles": {
+        "id": "public-target-profiles",
+        "path": "docs/isa/machine-model/execution-agents.md",
+        "role": "published CPU, A2A3, and A5 capability partition",
+        "layer": "public-contract",
+        "sha256": "d2f0e6de371a1bc7713f64e18861b565e012a5bb2290552ae00dbb2f9902571f",
+        "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/docs/isa/machine-model/execution-agents.md"
+      },
+      "public-portability-rules": {
+        "id": "public-portability-rules",
+        "path": "docs/isa/reference/portability-and-target-profiles.md",
+        "role": "published portable-semantics and target-narrowing boundary",
+        "layer": "public-contract",
+        "sha256": "e607ab10d5b35d5f492ee187c582d3782115f195c87c0b88fc038272d52abd29",
+        "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/docs/isa/reference/portability-and-target-profiles.md"
+      },
+      "a2a3-matrix": {
+        "id": "a2a3-matrix",
+        "path": "include/pto/npu/a2a3/TMatmul.hpp",
+        "role": "A2A3 matrix instruction implementation evidence",
+        "layer": "implementation-evidence",
+        "sha256": "6efc16caad1fa9b81fe3339bbe10cfb8a3fcb40d3759a807efdaf3b00464fb7f",
+        "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/npu/a2a3/TMatmul.hpp"
+      },
+      "a5-matrix": {
+        "id": "a5-matrix",
+        "path": "include/pto/npu/a5/TMatmul.hpp",
+        "role": "A5 matrix instruction and MX implementation evidence",
+        "layer": "implementation-evidence",
+        "sha256": "13d04641738882a5e784372ba4ad94762ab54b7d2a229666fd74399ce567c944",
+        "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/npu/a5/TMatmul.hpp"
+      }
+    },
+    "public_intrinsic_api": {
+      "id": "public-intrinsic-api",
+      "path": "include/pto/common/pto_instr.hpp",
+      "role": "typed-cpp-intrinsic-api",
+      "sha256": "6fbd4bfb068606ee7cd00cb0b98d38e8550a026779d3d723d9a08934400e0e98",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/common/pto_instr.hpp"
+    },
+    "independent_executable_model": {
+      "role": "structural corroboration only; no tile payload or numeric result oracle",
+      "snapshot_revision_sha256": "c565028c4a6a5b86349863524142fb832079798de325fc617cf664dffa859390",
+      "rows": [
+        {
+          "surface": "direct-tile",
+          "stable_id": "cube:0x004:TMATMUL_MX",
+          "operation_key": "tile:CUBE:TMATMUL_MX",
+          "selector": "0x004",
+          "independent_status": "header-manifest"
+        },
+        {
+          "surface": "direct-tile",
+          "stable_id": "cube:0x005:TMATMUL_MX_BIAS",
+          "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
+          "selector": "0x005",
+          "independent_status": "header-manifest"
+        },
+        {
+          "surface": "direct-tile",
+          "stable_id": "cube:0x006:TMATMUL_MX_ACC",
+          "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
+          "selector": "0x006",
+          "independent_status": "header-manifest"
+        },
+        {
+          "surface": "direct-tile",
+          "stable_id": "cube:0x014:TGEMV_MX",
+          "operation_key": "tile:CUBE:TGEMV_MX",
+          "selector": "0x014",
+          "independent_status": "header-manifest"
+        },
+        {
+          "surface": "direct-tile",
+          "stable_id": "cube:0x015:TGEMV_MX_BIAS",
+          "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
+          "selector": "0x015",
+          "independent_status": "header-manifest"
+        },
+        {
+          "surface": "direct-tile",
+          "stable_id": "cube:0x016:TGEMV_MX_ACC",
+          "operation_key": "tile:CUBE:TGEMV_MX_ACC",
+          "selector": "0x016",
+          "independent_status": "header-manifest"
+        }
+      ]
+    }
+  },
+  "executable_evidence": {
+    "guard_generator": "scripts/generate-asl-decoders",
+    "guard_symbol": "TileOperationRejectedByAcceptedApplicabilityRules",
+    "rule_set_type": {
+      "path": "asl/types.asl",
+      "symbol": "NumericApplicabilityRuleSet"
+    },
+    "bundle_guard": {
+      "path": "asl/bundle/dispatch.asl",
+      "symbol": "BundleOperationDescriptorRejectedByAcceptedApplicabilityRules"
+    },
+    "direct_test": {
+      "path": "tests/asl/cube-totality-tests.asl",
+      "symbol": "TestA2A3CubeMxDirectRejectionMatrix"
+    },
+    "bundle_test": {
+      "path": "tests/asl/bundle-tests.asl",
+      "symbol": "TestA2A3CubeMxBundleRejectionMatrix"
+    }
+  },
+  "tests": [
+    "tests/asl/bundle-tests.asl",
+    "tests/asl/cube-totality-tests.asl"
+  ],
+  "source_hashes": [
+    {
+      "path": "spec/catalog/numeric-profile-applicability.json",
+      "sha256": "7553e7fa87b6aeb731f87ee8b91b0bb13c938c7323229f2f99645acdf1c9d7fe"
+    },
+    {
+      "path": "spec/catalog/numeric-profile-identities.json",
+      "sha256": "f2bf1bcfa9e6ce1006132ac6d9aec4a8c698990a20eeb7736d361d62ed6477ed"
+    },
+    {
+      "path": "spec/catalog/tile-operations.json",
+      "sha256": "0e0a2cb4e9c2e5e21eaa19ec262690c4b2e0515d2676950bbbe7b04710037882"
+    },
+    {
+      "path": "spec/evidence/numeric-format-namespace-contract.json",
+      "sha256": "ccf96bbc5f71cdc224a512313d7c461176ed6a6888947ba6a0d6364086bb3fa6"
+    },
+    {
+      "path": "spec/evidence/numeric-profile-decision-inputs.json",
+      "sha256": "94865e7c29c2a14a63627390d51cc6c3b698a91700d6ce71785b2928bb3bd39f"
+    },
+    {
+      "path": "spec/evidence/public-source-reconciliation.json",
+      "sha256": "9f1c5541babe63684adf92617a8d25611f5d0b7e1962d4d6f4e76494ce07a966"
+    },
+    {
+      "path": "spec/evidence/executable-model-comparison.json",
+      "sha256": "32999bbc2b803c7d6edaafc8d02056aab0d600830efddc67b8b3226c5dd4563c"
+    },
+    {
+      "path": "scripts/generate-asl-decoders",
+      "sha256": "66fe5a1d13e7537d1d022a0014002bd79b8eb8cd53524d8169a030e761c547da"
+    },
+    {
+      "path": "asl/types.asl",
+      "sha256": "d6cb4340d9be626dde6db716b0d4808c68827fdf81391520ced7ebf8f59dc2bf"
+    },
+    {
+      "path": "asl/bundle/dispatch.asl",
+      "sha256": "3618784ae4b57e482d0e4f01b707b8e5b2bb70d446a837d5f1a96da31ddce9c1"
+    },
+    {
+      "path": "tests/asl/bundle-tests.asl",
+      "sha256": "d301e9cd35305a6705b38a541d412e01607b6fbaf54f541a0799519247ced094"
+    },
+    {
+      "path": "tests/asl/cube-totality-tests.asl",
+      "sha256": "bdf686e89e790221f7292408058881b66e8a2d5426ad40fb288c02c619e3b1a9"
+    },
+    {
+      "path": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
+      "sha256": "4fa6c28e08858cab52b5c5482d670518c16700eb78489b246727ede8fe9cd1c4"
+    }
+  ],
+  "open_parent_decisions": [
+    "PD-01",
+    "cube-matrix",
+    "S5-T2"
+  ],
+  "summary": {
+    "rule_count": 6,
+    "operation_count": 6,
+    "selector_count": 6,
+    "tile_data_type_count": 19,
+    "tuple_count": 114,
+    "result_rule_count": 0,
+    "parent_pd01_complete": false,
+    "cube_matrix_complete": false,
+    "s5_t2_complete": false
+  }
+}

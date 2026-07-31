@@ -1,0 +1,559 @@
+{
+  "schema_version": 1,
+  "target": "S5-T2-A2:PD-06",
+  "decision_id": "PD-06",
+  "status": "state-owner-matrix-closed-profile-production-open",
+  "acceptance_record": "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
+  "architecture_contract": {
+    "storage": {
+      "system_register": "CORE_STATE",
+      "address": "0x0020",
+      "bit_range": "36:32",
+      "low_to_high": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ]
+    },
+    "reset": "ResetProfileState sets all five flags to zero.",
+    "numeric_update": "A completed scalar numeric form ORs its produced five-bit vector into the old flags; it never clears a previously set flag.",
+    "software_write": "A permitted full CORE_STATE system-register write replaces the flag field and may therefore clear flags.",
+    "simultaneous": "The five bits are independent and have no priority; every produced bit is accumulated in the same update.",
+    "rejected_operation": "An illegal or rejected scalar form leaves every flag unchanged and performs no profile-producer call.",
+    "numeric_exception_trap": "Numeric exception outcomes do not themselves raise a synchronous PTO trap; encoding and legality faults remain separate pre-effect failures.",
+    "trap_context": "Trap entry snapshots the complete CORE_STATE; successful recovery restores the manager-visible ECSTATE value, including all five flags.",
+    "profile_boundary": "Architecture-owned forms have exact conditions below. Each supported profile-owned operation/type rule must return an exact flag vector; a missing rule rejects before effects under ADR 0037."
+  },
+  "forms": [
+    {
+      "form_id": "fabs_32_9515e008bf17",
+      "mnemonic": "FABS",
+      "semantic_handler": "FloatingUnary",
+      "producer_owner": "portable-architecture",
+      "producer_interface": "ExecuteDecodedFPUnary:FABS",
+      "numeric_contract": null,
+      "possible_flags": [],
+      "condition": "never produces a numeric exception flag",
+      "exact_condition_status": "closed"
+    },
+    {
+      "form_id": "fadd_32_b78b658e6740",
+      "mnemonic": "FADD",
+      "semantic_handler": "FloatingBinary",
+      "producer_owner": "named-numeric-profile",
+      "producer_interface": "ScalarFPBinaryProfile",
+      "numeric_contract": "scalar-binary",
+      "possible_flags": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ],
+      "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+      "exact_condition_status": "profile-rule-required"
+    },
+    {
+      "form_id": "fcvt_32_1102f5aeeda9",
+      "mnemonic": "FCVT",
+      "semantic_handler": "ConvertFloatingEncoding",
+      "producer_owner": "named-numeric-profile",
+      "producer_interface": "ScalarFPConvertProfile",
+      "numeric_contract": "scalar-fp-convert",
+      "possible_flags": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ],
+      "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+      "exact_condition_status": "profile-rule-required"
+    },
+    {
+      "form_id": "fcvta_32_010837b9acbd",
+      "mnemonic": "FCVTA",
+      "semantic_handler": "ConvertFloatingEncoding",
+      "producer_owner": "named-numeric-profile",
+      "producer_interface": "ScalarFPToIntegerProfile",
+      "numeric_contract": "scalar-fp-to-integer",
+      "possible_flags": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ],
+      "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+      "exact_condition_status": "profile-rule-required"
+    },
+    {
+      "form_id": "fcvtm_32_8801f1562870",
+      "mnemonic": "FCVTM",
+      "semantic_handler": "ConvertFloatingEncoding",
+      "producer_owner": "named-numeric-profile",
+      "producer_interface": "ScalarFPToIntegerProfile",
+      "numeric_contract": "scalar-fp-to-integer",
+      "possible_flags": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ],
+      "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+      "exact_condition_status": "profile-rule-required"
+    },
+    {
+      "form_id": "fcvtn_32_8714ba358d80",
+      "mnemonic": "FCVTN",
+      "semantic_handler": "ConvertFloatingEncoding",
+      "producer_owner": "named-numeric-profile",
+      "producer_interface": "ScalarFPToIntegerProfile",
+      "numeric_contract": "scalar-fp-to-integer",
+      "possible_flags": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ],
+      "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+      "exact_condition_status": "profile-rule-required"
+    },
+    {
+      "form_id": "fcvtp_32_84354a7aa6b1",
+      "mnemonic": "FCVTP",
+      "semantic_handler": "ConvertFloatingEncoding",
+      "producer_owner": "named-numeric-profile",
+      "producer_interface": "ScalarFPToIntegerProfile",
+      "numeric_contract": "scalar-fp-to-integer",
+      "possible_flags": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ],
+      "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+      "exact_condition_status": "profile-rule-required"
+    },
+    {
+      "form_id": "fcvtz_32_bee01d31217c",
+      "mnemonic": "FCVTZ",
+      "semantic_handler": "ConvertFloatingEncoding",
+      "producer_owner": "named-numeric-profile",
+      "producer_interface": "ScalarFPToIntegerProfile",
+      "numeric_contract": "scalar-fp-to-integer",
+      "possible_flags": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ],
+      "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+      "exact_condition_status": "profile-rule-required"
+    },
+    {
+      "form_id": "fdiv_32_04a5bb6ab56f",
+      "mnemonic": "FDIV",
+      "semantic_handler": "FloatingBinary",
+      "producer_owner": "named-numeric-profile",
+      "producer_interface": "ScalarFPBinaryProfile",
+      "numeric_contract": "scalar-binary",
+      "possible_flags": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ],
+      "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+      "exact_condition_status": "profile-rule-required"
+    },
+    {
+      "form_id": "feq_32_9435d6959c3c",
+      "mnemonic": "FEQ",
+      "semantic_handler": "FloatingCompare",
+      "producer_owner": "portable-architecture",
+      "producer_interface": "ExecuteDecodedFPCompare:quiet",
+      "numeric_contract": null,
+      "possible_flags": [
+        "NV"
+      ],
+      "condition": "produces NV exactly when either source is a signaling NaN",
+      "exact_condition_status": "closed"
+    },
+    {
+      "form_id": "feqs_32_1d3011890fa8",
+      "mnemonic": "FEQS",
+      "semantic_handler": "FloatingCompare",
+      "producer_owner": "portable-architecture",
+      "producer_interface": "ExecuteDecodedFPCompare:signaling",
+      "numeric_contract": null,
+      "possible_flags": [
+        "NV"
+      ],
+      "condition": "produces NV exactly when either source is any NaN",
+      "exact_condition_status": "closed"
+    },
+    {
+      "form_id": "fexp_32_592ef5288c7d",
+      "mnemonic": "FEXP",
+      "semantic_handler": "FloatingUnary",
+      "producer_owner": "named-numeric-profile",
+      "producer_interface": "ScalarFPUnaryProfile",
+      "numeric_contract": "scalar-unary",
+      "possible_flags": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ],
+      "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+      "exact_condition_status": "profile-rule-required"
+    },
+    {
+      "form_id": "fge_32_b3244b2ffa89",
+      "mnemonic": "FGE",
+      "semantic_handler": "FloatingCompare",
+      "producer_owner": "portable-architecture",
+      "producer_interface": "ExecuteDecodedFPCompare:quiet",
+      "numeric_contract": null,
+      "possible_flags": [
+        "NV"
+      ],
+      "condition": "produces NV exactly when either source is a signaling NaN",
+      "exact_condition_status": "closed"
+    },
+    {
+      "form_id": "fges_32_e0301fcee743",
+      "mnemonic": "FGES",
+      "semantic_handler": "FloatingCompare",
+      "producer_owner": "portable-architecture",
+      "producer_interface": "ExecuteDecodedFPCompare:signaling",
+      "numeric_contract": null,
+      "possible_flags": [
+        "NV"
+      ],
+      "condition": "produces NV exactly when either source is any NaN",
+      "exact_condition_status": "closed"
+    },
+    {
+      "form_id": "flt_32_1c09549d8d3f",
+      "mnemonic": "FLT",
+      "semantic_handler": "FloatingCompare",
+      "producer_owner": "portable-architecture",
+      "producer_interface": "ExecuteDecodedFPCompare:quiet",
+      "numeric_contract": null,
+      "possible_flags": [
+        "NV"
+      ],
+      "condition": "produces NV exactly when either source is a signaling NaN",
+      "exact_condition_status": "closed"
+    },
+    {
+      "form_id": "flts_32_c744c874e6a2",
+      "mnemonic": "FLTS",
+      "semantic_handler": "FloatingCompare",
+      "producer_owner": "portable-architecture",
+      "producer_interface": "ExecuteDecodedFPCompare:signaling",
+      "numeric_contract": null,
+      "possible_flags": [
+        "NV"
+      ],
+      "condition": "produces NV exactly when either source is any NaN",
+      "exact_condition_status": "closed"
+    },
+    {
+      "form_id": "fmadd_32_c616a17bcb12",
+      "mnemonic": "FMADD",
+      "semantic_handler": "FloatingFused",
+      "producer_owner": "named-numeric-profile",
+      "producer_interface": "ScalarFPFusedProfile",
+      "numeric_contract": "scalar-fused",
+      "possible_flags": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ],
+      "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+      "exact_condition_status": "profile-rule-required"
+    },
+    {
+      "form_id": "fmax_32_eaf3880d7739",
+      "mnemonic": "FMAX",
+      "semantic_handler": "FloatingBinary",
+      "producer_owner": "portable-architecture",
+      "producer_interface": "ExecuteDecodedFPBinary:FMIN/FMAX",
+      "numeric_contract": null,
+      "possible_flags": [
+        "NV"
+      ],
+      "condition": "produces NV exactly when either source is a signaling NaN",
+      "exact_condition_status": "closed"
+    },
+    {
+      "form_id": "fmin_32_b5c106e5cd7e",
+      "mnemonic": "FMIN",
+      "semantic_handler": "FloatingBinary",
+      "producer_owner": "portable-architecture",
+      "producer_interface": "ExecuteDecodedFPBinary:FMIN/FMAX",
+      "numeric_contract": null,
+      "possible_flags": [
+        "NV"
+      ],
+      "condition": "produces NV exactly when either source is a signaling NaN",
+      "exact_condition_status": "closed"
+    },
+    {
+      "form_id": "fmsub_32_b83012b83148",
+      "mnemonic": "FMSUB",
+      "semantic_handler": "FloatingFused",
+      "producer_owner": "named-numeric-profile",
+      "producer_interface": "ScalarFPFusedProfile",
+      "numeric_contract": "scalar-fused",
+      "possible_flags": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ],
+      "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+      "exact_condition_status": "profile-rule-required"
+    },
+    {
+      "form_id": "fmul_32_7d521d9d65e7",
+      "mnemonic": "FMUL",
+      "semantic_handler": "FloatingBinary",
+      "producer_owner": "named-numeric-profile",
+      "producer_interface": "ScalarFPBinaryProfile",
+      "numeric_contract": "scalar-binary",
+      "possible_flags": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ],
+      "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+      "exact_condition_status": "profile-rule-required"
+    },
+    {
+      "form_id": "fne_32_822c18caca3b",
+      "mnemonic": "FNE",
+      "semantic_handler": "FloatingCompare",
+      "producer_owner": "portable-architecture",
+      "producer_interface": "ExecuteDecodedFPCompare:quiet",
+      "numeric_contract": null,
+      "possible_flags": [
+        "NV"
+      ],
+      "condition": "produces NV exactly when either source is a signaling NaN",
+      "exact_condition_status": "closed"
+    },
+    {
+      "form_id": "fnes_32_9b4b5a493783",
+      "mnemonic": "FNES",
+      "semantic_handler": "FloatingCompare",
+      "producer_owner": "portable-architecture",
+      "producer_interface": "ExecuteDecodedFPCompare:signaling",
+      "numeric_contract": null,
+      "possible_flags": [
+        "NV"
+      ],
+      "condition": "produces NV exactly when either source is any NaN",
+      "exact_condition_status": "closed"
+    },
+    {
+      "form_id": "fnmadd_32_7f45e606d299",
+      "mnemonic": "FNMADD",
+      "semantic_handler": "FloatingFused",
+      "producer_owner": "named-numeric-profile",
+      "producer_interface": "ScalarFPFusedProfile",
+      "numeric_contract": "scalar-fused",
+      "possible_flags": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ],
+      "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+      "exact_condition_status": "profile-rule-required"
+    },
+    {
+      "form_id": "fnmsub_32_6542d56665b3",
+      "mnemonic": "FNMSUB",
+      "semantic_handler": "FloatingFused",
+      "producer_owner": "named-numeric-profile",
+      "producer_interface": "ScalarFPFusedProfile",
+      "numeric_contract": "scalar-fused",
+      "possible_flags": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ],
+      "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+      "exact_condition_status": "profile-rule-required"
+    },
+    {
+      "form_id": "frecip_32_3d51f4f727ea",
+      "mnemonic": "FRECIP",
+      "semantic_handler": "FloatingUnary",
+      "producer_owner": "named-numeric-profile",
+      "producer_interface": "ScalarFPUnaryProfile",
+      "numeric_contract": "scalar-unary",
+      "possible_flags": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ],
+      "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+      "exact_condition_status": "profile-rule-required"
+    },
+    {
+      "form_id": "fsqrt_32_84b3495cc6c7",
+      "mnemonic": "FSQRT",
+      "semantic_handler": "FloatingUnary",
+      "producer_owner": "named-numeric-profile",
+      "producer_interface": "ScalarFPUnaryProfile",
+      "numeric_contract": "scalar-unary",
+      "possible_flags": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ],
+      "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+      "exact_condition_status": "profile-rule-required"
+    },
+    {
+      "form_id": "fsub_32_a4479d0d4276",
+      "mnemonic": "FSUB",
+      "semantic_handler": "FloatingBinary",
+      "producer_owner": "named-numeric-profile",
+      "producer_interface": "ScalarFPBinaryProfile",
+      "numeric_contract": "scalar-binary",
+      "possible_flags": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ],
+      "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+      "exact_condition_status": "profile-rule-required"
+    },
+    {
+      "form_id": "scvtf_32_01861bbd5ef2",
+      "mnemonic": "SCVTF",
+      "semantic_handler": "ConvertFloatingEncoding",
+      "producer_owner": "named-numeric-profile",
+      "producer_interface": "ScalarIntegerToFPProfile",
+      "numeric_contract": "scalar-integer-to-fp",
+      "possible_flags": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ],
+      "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+      "exact_condition_status": "profile-rule-required"
+    },
+    {
+      "form_id": "ucvtf_32_987f4e019c32",
+      "mnemonic": "UCVTF",
+      "semantic_handler": "ConvertFloatingEncoding",
+      "producer_owner": "named-numeric-profile",
+      "producer_interface": "ScalarIntegerToFPProfile",
+      "numeric_contract": "scalar-integer-to-fp",
+      "possible_flags": [
+        "NV",
+        "DZ",
+        "OF",
+        "UF",
+        "NX"
+      ],
+      "condition": "the accepted operation/type result rule must define the exact five-bit flag set",
+      "exact_condition_status": "profile-rule-required"
+    }
+  ],
+  "independent_comparison": {
+    "status": "structure-corroborated-producer-oracle-unavailable",
+    "provenance_sha256": "c34df32b3b14517e8cd1dec9720308c8bf1e30f5d64629288634e182a34ec0a1",
+    "matched_contracts": [
+      "five-status-bits-in-common-core-state",
+      "NV-DZ-OF-UF-NX-bit-order",
+      "sticky-or-accumulation",
+      "zero-reset-and-system-register-replacement",
+      "illegal-type-rejection-before-flag-update"
+    ],
+    "divergences": [
+      "comparison-model-does-not-produce-signaling-compare-NV",
+      "comparison-model-does-not-produce-minmax-signaling-NaN-NV"
+    ],
+    "limits": [
+      "numeric-result-and-flag-helpers-are-unbound-external-declarations",
+      "no-independent-simultaneous-flag-or-tininess-evidence",
+      "no-independent-PTO-trap-context-evidence"
+    ]
+  },
+  "tests": [
+    "tests/asl/scalar-tests.asl:TestScalarFPFlagLifecycle",
+    "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUTotality",
+    "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUFlagAndRoundingHelpers"
+  ],
+  "sources": [
+    {
+      "path": "spec/catalog/scalar-forms.json",
+      "sha256": "0fb686db56423c37d669f92058003d4668b0c183a9bd0428d25c4ae70b391670"
+    },
+    {
+      "path": "spec/catalog/system-registers.json",
+      "sha256": "f81a7638a4117937775585e43e922ac4ad972bccc192d5af05aba03bc8179e94"
+    },
+    {
+      "path": "spec/evidence/numeric-contracts.json",
+      "sha256": "ce71137b8edc794f1bc0964ce2211cadeef22465b720b7d16b0402365f800a1b"
+    },
+    {
+      "path": "asl/scalar/floating.asl",
+      "sha256": "04e3dd501da8e706fb77fe68afab487323a4160a67ce071404b3220bcbbdbc75"
+    },
+    {
+      "path": "asl/scalar/dispatch.asl",
+      "sha256": "ff7990fd930802c1b9e21461c0000a66d64810397154faae07984c83cedaffa2"
+    },
+    {
+      "path": "asl/profiles/pto-v0.asl",
+      "sha256": "86cfe2cab8e077e4d4ae50b694c6b831242b99cff40c08666222359aefa2bde2"
+    },
+    {
+      "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
+      "sha256": "0cd5c9eef6525edf16603f9d1c4df1233f59b6e8ffc9750b84bd99995fd55962"
+    }
+  ],
+  "summary": {
+    "form_count": 30,
+    "producer_owner_closed_form_count": 30,
+    "architecture_condition_closed_form_count": 11,
+    "profile_condition_open_form_count": 19,
+    "profile_domain_count": 6,
+    "profile_hook_count": 6,
+    "pd06_complete": false
+  }
+}

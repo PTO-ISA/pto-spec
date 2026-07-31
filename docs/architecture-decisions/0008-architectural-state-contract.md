@@ -6,7 +6,7 @@
 
 ## Context
 
-The architecture requires a scalar-block and tile-state contract with explicit
+The architecture requires a scalar-bundle and tile-state contract with explicit
 register, predicate, access-control, trap, system-register, and tile descriptor
 state. Older bridge and pipe-management wording did not match that contract.
 
@@ -25,8 +25,8 @@ state. Older bridge and pipe-management wording did not match that contract.
   address selects which bank ACR0 software observes.
 - The base system-register names include `THREAD_PTR`, `GLOBAL_PTR`,
   `BLOCKID`, `THREAD_ID`, `CORE_STATE`, `CORE_ID`, and `TILE_CAPACITY`.
-- Block execution state includes TPC, BPC, block active/body flags, block
-  condition, block arguments, dimensions, IO bindings, control attributes, and
+- Bundle execution state includes TPC, BPC, bundle active/body flags, bundle
+  condition, bundle arguments, dimensions, IO bindings, control attributes, and
   data attributes.
 - Each tile register has a `TileInfo` descriptor. Allocation or reconfiguration
   makes its contents undefined until an architectural write defines them.
@@ -37,7 +37,7 @@ state. Older bridge and pipe-management wording did not match that contract.
   register. PTO v0 sets that register to 512 KiB; the ASL verification model
   supports values up to that bound.
 - Pipe state is not architectural. PTO models allocation, definedness, and
-  handoff through scalar queues, block bindings, and `TileInfo`.
+  handoff through scalar queues, bundle bindings, and `TileInfo`.
 
 ## Consequences
 

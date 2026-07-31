@@ -1,0 +1,188 @@
+{
+  "accepted_form_count": 53,
+  "alias_case_breakdown": {
+    "absolute-source-destination-overlap": 76,
+    "destination-special-selectors": 324,
+    "lr-ignored-srczero": 128,
+    "temporary-queue-sources": 880
+  },
+  "architecture_contract": {
+    "dma": [
+      "source-probe-before-destination-probe",
+      "source-snapshot-before-destination-write",
+      "eight-load-events-before-eight-store-events",
+      "fault-no-partial-effect",
+      "overlapping-destination-invalidates-reservation"
+    ],
+    "fault_precedence": [
+      "alignment",
+      "translation",
+      "permission-or-bounded-memory"
+    ],
+    "reg5_order": "All address, value, expected, and desired sources are snapshotted before memory or destination effects.",
+    "reservation": [
+      "lr-installs-exact-address-and-width",
+      "sc-matches-64-byte-original-address-line",
+      "sc-miss-clears-without-probe",
+      "matched-sc-clears-before-access-probe",
+      "failed-cas-preserves-reservation",
+      "completed-overlapping-store-invalidates-reservation",
+      "nonoverlapping-store-preserves-reservation",
+      "data-and-instruction-fences-invalidate-reservation"
+    ],
+    "restart": "LR, RMW, CAS, and DMA restart by full reissue after repair. A faulting matched SC has already cleared its reservation, so recovery and reissue without a new LR returns reservation-miss status one without a store or event.",
+    "width_return": {
+      "byte": "zero-extend",
+      "doubleword": "unchanged",
+      "halfword": "zero-extend",
+      "word": "sign-extend"
+    }
+  },
+  "component_case_counts": {
+    "alias_topology": 1408,
+    "dma_overlap_boundary_fault_restart": 15,
+    "fault_restart_no_probe": 313,
+    "modifier_order_far": 337,
+    "reservation_interactions": 81,
+    "retained_stage1": 66,
+    "value_and_conditionals": 320
+  },
+  "decoded_alias_case_count": 1408,
+  "decoded_dma_case_count": 15,
+  "decoded_fault_restart_case_count": 313,
+  "decoded_modifier_case_count": 337,
+  "decoded_reservation_case_count": 81,
+  "decoded_totality_test": "scripts/generate-asl-decoders:ValidateCanonicalScalarAMOTotality,ValidateCanonicalScalarAMOAliases",
+  "decoded_value_case_count": 320,
+  "dma_case_breakdown": {
+    "fault-precedence": 3,
+    "highest-legal-window": 2,
+    "overlap-and-snapshot": 8,
+    "repair-and-reissue": 2
+  },
+  "effect_class_ids": [
+    "scalar-amo-load-reserved",
+    "scalar-amo-store-conditional",
+    "scalar-amo-swap",
+    "scalar-amo-cas",
+    "scalar-amo-load-rmw",
+    "scalar-amo-store-rmw",
+    "scalar-dma-copy"
+  ],
+  "fault_restart_case_breakdown": {
+    "alignment-fault": 47,
+    "bounded-page-fault": 52,
+    "permission-fault": 52,
+    "restart-after-alignment-fault": 47,
+    "restart-after-bounded-page-fault": 52,
+    "restart-after-permission-fault": 52,
+    "sc-miss-alignment-address-no-probe": 3,
+    "sc-miss-bounded-page-address-no-probe": 4,
+    "sc-miss-permission-denied-address-no-probe": 4
+  },
+  "independent_comparison": {
+    "comparison_scope": {
+      "decode_only": 1,
+      "executable_subset": 52,
+      "shared_form_count": 53
+    },
+    "divergences": [
+      "comparison-dma-decodes-but-traps-illegal",
+      "comparison-reservation-is-not-invalidated-by-ordinary-stores-rmw-cas-fences-dma-or-other-agents"
+    ],
+    "matched_contracts": [
+      "lr-sc-swap-cas-and-rmw-operation-shapes",
+      "byte-halfword-zero-extension-word-sign-extension-doubleword-identity",
+      "rmw-wrap-logical-and-signed-unsigned-minmax-values",
+      "64-byte-reservation-line-matching-and-cross-width-sc",
+      "failed-cas-read-only-result",
+      "lr-srczero-ignored-for-all-encodings",
+      "short-cas-aq-rl-and-hl-cas-aq-rl-far-fields",
+      "pto-v0-far-value-semantic-identity"
+    ],
+    "non_comparable_contracts": [
+      "pto-aq-rl-events-and-inter-agent-atomicity",
+      "pto-access-fault-precedence-transactional-preflight-and-restart",
+      "pto-sc-clear-before-fault",
+      "pto-cas-mismatch-write-permission-preflight",
+      "pto-exact-reservation-address-and-size-inspection",
+      "pto-reg5-t-u-queue-topology",
+      "pto-dma-overlap-fault-restart-and-event-semantics"
+    ],
+    "provenance_sha256": "5a5e65fcf130c57a3286c0bc928390297135762fb732b4757fd2375ad40a6312",
+    "pto_disposition": "The independent executable ISA/model comparison corroborates shared decoded value and reservation-line behavior. PTO ASL and ADR 0030 remain authoritative for ordering, faults, restart, reservation invalidation, Reg5 topology, and executable DMA semantics.",
+    "status": "reviewed"
+  },
+  "inventory": {
+    "alignment_fault_capable_forms": 47,
+    "destination_field_occurrences": 36,
+    "far_field_forms": 48,
+    "fault_capable_forms": 52,
+    "form_class_counts": {
+      "cas": 8,
+      "dma": 1,
+      "load-reserved": 4,
+      "load-return-rmw": 16,
+      "store-conditional": 4,
+      "store-only-rmw": 16,
+      "swap": 4
+    },
+    "ordering_field_forms": {
+      "aq": 36,
+      "rl": 52
+    },
+    "source_field_occurrences": 110,
+    "width_counts_excluding_dma": {
+      "byte": 5,
+      "doubleword": 21,
+      "halfword": 5,
+      "word": 21
+    }
+  },
+  "modifier_case_breakdown": {
+    "aq-rl-far-cross-product": 256,
+    "dma-no-modifier-control": 1,
+    "short-cas-aq-rl-cross-product": 16,
+    "store-only-rl-far-cross-product": 64
+  },
+  "new_stage4_case_count": 2474,
+  "profile_evidence_limits": [
+    "PTO v0 identity translation cannot execute a translated-address mismatch between the read and write probes of one RMW or CAS attempt.",
+    "PTO v0 uses the same ACR permission rule for reads and writes, so a write-only denial after a permitted read is a statically reviewed profile obligation.",
+    "Translation and permission hooks are readonly, so alternate profiles may refine results but cannot mutate architectural state during a probe."
+  ],
+  "requirement_ids": [
+    "PTO-REQ-SCALAR-AMO-001",
+    "PTO-REQ-SCALAR-OPERAND-001",
+    "PTO-REQ-MEMORY-001",
+    "PTO-REQ-MEMORY-COMPLETION-001",
+    "PTO-REQ-MEMORY-TSO-001",
+    "PTO-REQ-SCALAR-EXECUTION-001"
+  ],
+  "reservation_case_breakdown": {
+    "fence-invalidation": 5,
+    "lr-install-and-replacement": 16,
+    "nonoverlap-store-preservation": 8,
+    "ordinary-store-overlap-invalidation": 12,
+    "sc-cross-width-same-line": 16,
+    "sc-granule-mismatch-no-probe": 16,
+    "sc-same-line-interior-and-highest-offset": 8
+  },
+  "schema_version": 1,
+  "stage1_retained_case_counts": {
+    "cas-mismatch": 8,
+    "dma-destination-fault": 1,
+    "nominal-success": 53,
+    "sc-reservation-miss": 4
+  },
+  "status": "closed",
+  "target": "S4-T3",
+  "total_executable_case_count": 2540,
+  "value_case_breakdown": {
+    "cas-success-and-mismatch": 80,
+    "lr-return-normalization": 16,
+    "rmw-arithmetic-logical-and-minmax": 176,
+    "sc-truncation-success-and-miss": 32,
+    "swap-old-and-new-boundaries": 16
+  }
+}

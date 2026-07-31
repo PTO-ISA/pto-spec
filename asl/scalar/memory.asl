@@ -11,17 +11,24 @@ begin
            right_start < left_start + left_size;
 end;
 
-impdef func TranslateDataAddress(address: Word,
-                                 size_bytes: integer {1..262144},
-                                 write: boolean) => Word
+readonly func ReservationGranuleAddress() => Word
+begin
+    return _ReservationAddress - NaturalToWord(
+        (UInt(_ReservationAddress) MOD PTO_RESERVATION_GRANULE_BYTES) as
+            integer {0..262144});
+end;
+
+readonly impdef func TranslateDataAddress(address: Word,
+                                          size_bytes: integer {1..262144},
+                                          write: boolean) => Word
 begin
     // The portable model uses identity translation.
     return address;
 end;
 
-impdef func DataAccessPermitted(address: Word,
-                                size_bytes: integer {1..262144},
-                                write: boolean) => boolean
+readonly impdef func DataAccessPermitted(address: Word,
+                                         size_bytes: integer {1..262144},
+                                         write: boolean) => boolean
 begin
     // The portable model exposes one bounded, readable, writable address space.
     return UInt(address) + size_bytes <= PTO_MODEL_MEMORY_BYTES;
@@ -112,6 +119,17 @@ begin
     end;
 end;
 
+pure func NormalizeMemoryAccessValue(value: Word,
+                                     size_bytes: integer {1,2,4,8}) => Word
+begin
+    case size_bytes of
+        when 1 => return ZeroExtend{PTO_XLEN}(value[7:0]);
+        when 2 => return ZeroExtend{PTO_XLEN}(value[15:0]);
+        when 4 => return ZeroExtend{PTO_XLEN}(value[31:0]);
+        when 8 => return value;
+    end;
+end;
+
 func StoreTranslatedBytes64(original_address: Word, translated_address: Word,
                             value: array [[64]] of Byte)
 begin
@@ -122,7 +140,8 @@ begin
     end;
     if _ReservationValid &&
        RangesOverlap(original_address, 64,
-                     _ReservationAddress, PTO_RESERVATION_GRANULE_BYTES) then
+                     ReservationGranuleAddress(),
+                     PTO_RESERVATION_GRANULE_BYTES) then
         _ReservationValid = FALSE;
     end;
 end;
@@ -141,7 +160,8 @@ begin
     end;
     if _ReservationValid &&
        RangesOverlap(original_address, byte_count,
-                     _ReservationAddress, PTO_RESERVATION_GRANULE_BYTES) then
+                     ReservationGranuleAddress(),
+                     PTO_RESERVATION_GRANULE_BYTES) then
         _ReservationValid = FALSE;
     end;
 end;
@@ -160,7 +180,8 @@ begin
     end;
     if _ReservationValid &&
        RangesOverlap(original_address, byte_count,
-                     _ReservationAddress, PTO_RESERVATION_GRANULE_BYTES) then
+                     ReservationGranuleAddress(),
+                     PTO_RESERVATION_GRANULE_BYTES) then
         _ReservationValid = FALSE;
     end;
 end;
@@ -175,16 +196,25 @@ begin
     end;
     if _ReservationValid &&
        RangesOverlap(original_address, size_bytes,
-                     _ReservationAddress, PTO_RESERVATION_GRANULE_BYTES) then
+                     ReservationGranuleAddress(),
+                     PTO_RESERVATION_GRANULE_BYTES) then
         _ReservationValid = FALSE;
     end;
 end;
 
-func LoadUnsigned(address: Word, size_bytes: integer {1,2,4,8}) => Word
+func LoadWithOrder(address: Word, size_bytes: integer {1,2,4,8},
+                   order: MemoryOrder) => Word
 begin
     let probe = ProbeDataAccess(address, size_bytes, size_bytes, FALSE);
     if RaiseDataAccessFault(probe, address) then return Zeros{PTO_XLEN}; end;
-    return LoadTranslatedUnsigned(probe.translated_address, size_bytes);
+    let value = LoadTranslatedUnsigned(probe.translated_address, size_bytes);
+    RecordLoadEvent(probe.translated_address, size_bytes, value, order);
+    return value;
+end;
+
+func LoadUnsigned(address: Word, size_bytes: integer {1,2,4,8}) => Word
+begin
+    return LoadWithOrder(address, size_bytes, MemoryOrder_Relaxed);
 end;
 
 func LoadSigned(address: Word, size_bytes: integer {1,2,4,8}) => Word
@@ -193,9 +223,16 @@ begin
     return NormalizeLoadedValue(value, size_bytes, TRUE);
 end;
 
-func Store(address: Word, size_bytes: integer {1,2,4,8}, value: Word)
+func StoreWithOrder(address: Word, size_bytes: integer {1,2,4,8}, value: Word,
+                    order: MemoryOrder)
 begin
     let probe = ProbeDataAccess(address, size_bytes, size_bytes, TRUE);
     if RaiseDataAccessFault(probe, address) then return; end;
     StoreTranslated(address, probe.translated_address, size_bytes, value);
+    RecordStoreEvent(probe.translated_address, size_bytes, value, order);
+end;
+
+func Store(address: Word, size_bytes: integer {1,2,4,8}, value: Word)
+begin
+    StoreWithOrder(address, size_bytes, value, MemoryOrder_Relaxed);
 end;

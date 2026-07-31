@@ -1,0 +1,961 @@
+#!/usr/bin/env python3
+"""Generate the fail-closed S6-T1 release-traceability readiness ledger."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import re
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_OUTPUT = ROOT / "spec/evidence/release-traceability-readiness.json"
+
+SOURCE_PATHS = (
+    "spec/requirements.json",
+    "spec/catalog/scalar-forms.json",
+    "spec/catalog/command-forms.json",
+    "spec/catalog/tile-operations.json",
+    "spec/catalog/system-registers.json",
+    "spec/catalog/numeric-profile-identities.json",
+    "spec/catalog/numeric-profile-applicability.json",
+    "spec/profile-hooks.json",
+    "spec/evidence/maturity-closure.json",
+    "spec/evidence/numeric-profile-decision-proposals.json",
+    "spec/evidence/numeric-format-namespace-contract.json",
+    "spec/evidence/numeric-profile-applicability-closure.json",
+    "spec/evidence/numeric-variation-point-ownership.json",
+    "spec/evidence/public-numeric-type-baseline.json",
+    "spec/evidence/public-integer-conversion-contract.json",
+    "spec/evidence/numeric-rounding-selector-contract.json",
+    "spec/evidence/scalar-effect-closure.json",
+    "spec/evidence/bundle-command-totality.json",
+    "spec/evidence/tepl-totality.json",
+    "spec/evidence/tma-totality.json",
+    "spec/evidence/cube-totality.json",
+    "asl/types.asl",
+    "asl/state.asl",
+    "asl/bundle/state.asl",
+    "asl/tile/state.asl",
+)
+
+EXPECTED_COUNTS = {
+    "requirement_count": 44,
+    "scalar_form_count": 474,
+    "command_form_count": 107,
+    "tile_operation_count": 120,
+    "system_register_count": 72,
+    "trap_count": 13,
+    "profile_hook_count": 37,
+    "state_root_count": 70,
+}
+
+SCALAR_TRACE = {
+    "AGU": {
+        "requirements": [
+            "PTO-REQ-SCALAR-ADDRESS-001",
+            "PTO-REQ-SCALAR-EXECUTION-001",
+            "PTO-REQ-SCALAR-OPERAND-001",
+            "PTO-REQ-SCALAR-CONSTRAINT-001",
+            "PTO-REQ-SCALAR-EFFECT-CLOSURE-001",
+        ],
+        "model": [
+            "asl/scalar/addressing.asl",
+            "asl/scalar/memory.asl",
+            "asl/scalar/dispatch.asl",
+            "spec/evidence/scalar-agu-totality.json",
+        ],
+    },
+    "ALU": {
+        "requirements": [
+            "PTO-REQ-SCALAR-ALU-001",
+            "PTO-REQ-SCALAR-OPERAND-001",
+            "PTO-REQ-SCALAR-CONSTRAINT-001",
+            "PTO-REQ-SCALAR-EFFECT-CLOSURE-001",
+        ],
+        "model": [
+            "asl/scalar/integer.asl",
+            "asl/scalar/dispatch.asl",
+            "spec/evidence/scalar-alu-totality.json",
+        ],
+    },
+    "AMO": {
+        "requirements": [
+            "PTO-REQ-SCALAR-AMO-001",
+            "PTO-REQ-SCALAR-OPERAND-001",
+            "PTO-REQ-MEMORY-001",
+            "PTO-REQ-MEMORY-TSO-001",
+            "PTO-REQ-SCALAR-EFFECT-CLOSURE-001",
+        ],
+        "model": [
+            "asl/scalar/atomic.asl",
+            "asl/scalar/dispatch.asl",
+            "spec/evidence/scalar-amo-totality.json",
+        ],
+    },
+    "BRU": {
+        "requirements": [
+            "PTO-REQ-SCALAR-CONTROL-001",
+            "PTO-REQ-SCALAR-OPERAND-001",
+            "PTO-REQ-SCALAR-CONSTRAINT-001",
+            "PTO-REQ-SCALAR-EFFECT-CLOSURE-001",
+        ],
+        "model": [
+            "asl/scalar/control.asl",
+            "asl/scalar/dispatch.asl",
+            "spec/evidence/scalar-bru-totality.json",
+        ],
+    },
+    "FSU": {
+        "requirements": [
+            "PTO-REQ-SCALAR-FP-001",
+            "PTO-REQ-SCALAR-OPERAND-001",
+            "PTO-REQ-SCALAR-CONSTRAINT-001",
+            "PTO-REQ-PROFILE-001",
+            "PTO-REQ-SCALAR-EFFECT-CLOSURE-001",
+        ],
+        "model": [
+            "asl/scalar/floating.asl",
+            "asl/scalar/dispatch.asl",
+            "spec/evidence/scalar-fsu-totality.json",
+            "spec/evidence/scalar-numeric-flag-contract.json",
+            "spec/evidence/numeric-rounding-selector-contract.json",
+            "spec/evidence/numeric-format-namespace-contract.json",
+            "spec/evidence/numeric-variation-point-ownership.json",
+            "spec/evidence/public-numeric-type-baseline.json",
+        ],
+    },
+    "SYS": {
+        "requirements": [
+            "PTO-REQ-SCALAR-SYS-001",
+            "PTO-REQ-ACRC-001",
+            "PTO-REQ-SCALAR-SSR-001",
+            "PTO-REQ-SCALAR-EFFECT-CLOSURE-001",
+        ],
+        "model": [
+            "asl/scalar/system.asl",
+            "asl/scalar/system-registers.asl",
+            "asl/scalar/dispatch.asl",
+            "spec/evidence/scalar-sys-totality.json",
+        ],
+    },
+}
+
+TILE_TRACE = {
+    "TEPL": {
+        "requirements": [
+            "PTO-REQ-TILE-DISPATCH-001",
+            "PTO-REQ-TILE-LEGALITY-001",
+        ],
+        "model": [
+            "asl/tile/legality.asl",
+            "spec/evidence/tepl-totality.json",
+        ],
+        "tests": ["tests/asl/tepl-totality-tests.asl", "tests/asl/tile-tests.asl"],
+    },
+    "TMA": {
+        "requirements": [
+            "PTO-REQ-TMA-001",
+            "PTO-REQ-MEMORY-001",
+            "PTO-REQ-MEMORY-COMPLETION-001",
+            "PTO-REQ-MEMORY-TSO-001",
+            "PTO-REQ-TILE-DISPATCH-001",
+        ],
+        "model": [
+            "asl/tile/memory.asl",
+            "asl/tile/legality.asl",
+            "spec/evidence/tma-totality.json",
+        ],
+        "tests": [
+            "tests/asl/tma-totality-tests.asl",
+            "tests/asl/tile-tests.asl",
+            "tests/asl/concurrency-tests.asl",
+        ],
+    },
+    "CUBE": {
+        "requirements": [
+            "PTO-REQ-CUBE-001",
+            "PTO-REQ-TILE-DISPATCH-001",
+            "PTO-REQ-TILE-LEGALITY-001",
+            "PTO-REQ-PROFILE-001",
+        ],
+        "model": [
+            "asl/tile/cube.asl",
+            "asl/tile/legality.asl",
+            "spec/evidence/cube-totality.json",
+        ],
+        "tests": ["tests/asl/cube-totality-tests.asl", "tests/asl/tile-tests.asl"],
+    },
+}
+
+TEPL_HANDLER_TRACE = {
+    "elementwise": {
+        "handlers": {
+            "ExecuteTileBinary",
+            "ExecuteTileCompare",
+            "ExecuteTileSelect",
+            "ExecuteTileUnary",
+            "TPRELU",
+            "ExecuteTileScalar",
+            "ExecuteTileAxpy",
+            "ExecuteTileCompareScalar",
+            "ExecuteTileSelectScalar",
+            "ExecuteTileFillScalar",
+        },
+        "requirement": "PTO-REQ-TEPL-001",
+        "model": "asl/tile/elementwise.asl",
+    },
+    "reduction": {
+        "handlers": {"ExecuteTileReduction"},
+        "requirement": "PTO-REQ-TEPL-REDUCE-001",
+        "model": "asl/tile/reduction.asl",
+    },
+    "expansion": {
+        "handlers": {"ExecuteTileExpand"},
+        "requirement": "PTO-REQ-TEPL-EXPAND-001",
+        "model": "asl/tile/expansion.asl",
+    },
+    "generation": {
+        "handlers": {"TCI", "TTRI", "TFILLPAD"},
+        "requirement": "PTO-REQ-TEPL-GENERATE-001",
+        "model": "asl/tile/generation.asl",
+    },
+    "conversion": {
+        "handlers": {"TCVT", "TQUANT", "TDEQUANT"},
+        "requirement": "PTO-REQ-TEPL-CONVERT-001",
+        "model": "asl/tile/conversion.asl",
+    },
+    "rearrangement": {
+        "handlers": {
+            "TEXTRACT",
+            "TINSERT",
+            "TGATHER",
+            "TSCATTER",
+            "TCONCAT",
+            "TTRANS",
+            "TIMG2COL",
+            "TGATHERB",
+            "TDEINTERLEAVE",
+            "TINTERLEAVE",
+            "TRESHAPE",
+        },
+        "requirement": "PTO-REQ-TEPL-REARRANGE-001",
+        "model": "asl/tile/rearrangement.asl",
+    },
+    "complex": {
+        "handlers": {
+            "TSORT",
+            "TMRGSORT",
+            "THISTOGRAM",
+            "ExecuteTilePartial",
+            "ExecuteTilePartialArg",
+        },
+        "requirement": "PTO-REQ-TEPL-COMPLEX-001",
+        "model": "asl/tile/complex.asl",
+    },
+    "management": {
+        "handlers": {"TPUSH", "TPOP", "TALLOC", "TFREE"},
+        "requirement": "PTO-REQ-TILE-MANAGEMENT-001",
+        "model": "asl/tile/state.asl",
+    },
+}
+
+STATE_GROUPS = {
+    "architectural-state": {
+        "_GPR",
+        "_TQueue",
+        "_UQueue",
+        "_PC",
+        "_BPC",
+        "_BundleActive",
+        "_BundleBodyActive",
+        "_ReturnAddress",
+        "_CommitArgument",
+        "_PredicateRegisters",
+        "_LastFault",
+        "_FaultAddress",
+        "_ReservationValid",
+        "_ReservationAddress",
+        "_ReservationSize",
+        "_LastFencePredecessor",
+        "_LastFenceSuccessor",
+        "_ExtendedSystemRegisters",
+        "_ACRTrapAsynchronous",
+        "_ACRTrapArgumentValid",
+        "_ACRTrapCause",
+        "_ACRTrapNumber",
+        "_ACRTrapArgument0",
+        "_TrapContexts",
+        "_CurrentACR",
+        "_SystemRegisters",
+        "_BundleKind",
+        "_BundleTransfer",
+        "_BundleCondition",
+        "_BundleTarget",
+        "_BundleFallthrough",
+        "_BundleReturnTarget",
+        "_BundleBodyAddress",
+        "_BundleArgument",
+        "_BundleArgumentKind",
+        "_BundleOperation",
+        "_BundleDimensions",
+        "_BundleScalarBindings",
+        "_BundleTileBindings",
+        "_BundleControlAttributes",
+        "_BundleDataAttributes",
+        "_FrameDepth",
+        "_Tiles",
+    },
+    "architectural-storage-abstraction": {"_Memory"},
+    "architectural-ordering-abstraction": {"_MemoryEvents", "_MemoryEventCount"},
+    "architectural-effect-abstraction": {
+        "_DataCacheEpoch",
+        "_InstructionCacheEpoch",
+        "_BundleCacheEpoch",
+        "_TLBEpoch",
+        "_LastMaintenanceOperation",
+        "_LastMaintenanceOperand",
+        "_BundleHintEpoch",
+        "_ArchitectureRequestEpoch",
+        "_LastControlRequest",
+        "_ControlRequestOperand",
+        "_BreakpointTag",
+        "_LastFrameBegin",
+        "_LastFrameEnd",
+        "_LastFrameSize",
+        "_LastQueueLeft",
+        "_LastQueueRight",
+        "_LastQueueFlags",
+        "_LastMemoryCommandAddress",
+        "_LastMemoryCommandSize",
+        "_LastCrossBlockACR",
+        "_LastCrossBlockID",
+        "_LastBundleHintPayload",
+    },
+    "verification-only": {"_MemoryEventCaptureEnabled", "_CurrentMemoryAgent"},
+}
+
+
+def load(path: str) -> dict[str, Any]:
+    return json.loads((ROOT / path).read_text(encoding="utf-8"))
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise SystemExit(f"release-traceability generation failed: {message}")
+
+
+def sha256(path: str) -> str:
+    return hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
+
+
+def require_paths(paths: list[str], label: str) -> None:
+    missing = [path for path in paths if not (ROOT / path).is_file()]
+    require(not missing, f"{label} names missing paths {missing}")
+
+
+def parse_state_roots() -> list[dict[str, str]]:
+    roots: list[dict[str, str]] = []
+    pattern = re.compile(r"^var\s+(_[A-Za-z0-9_]+)\s*:\s*(.+);$", re.MULTILINE)
+    for source_path in sorted(ROOT.glob("asl/**/*.asl")):
+        path = str(source_path.relative_to(ROOT))
+        for match in pattern.finditer(source_path.read_text(encoding="utf-8")):
+            roots.append(
+                {"name": match.group(1), "type": match.group(2), "model": path}
+            )
+    return roots
+
+
+def parse_type_graph() -> tuple[dict[str, list[tuple[str, str]]], dict[str, str]]:
+    source = "\n".join(
+        path.read_text(encoding="utf-8") for path in sorted(ROOT.glob("asl/**/*.asl"))
+    )
+    records: dict[str, list[tuple[str, str]]] = {}
+    record_pattern = re.compile(
+        r"type\s+([A-Za-z0-9_]+)\s+of\s+record\s*\{(.*?)\n\};", re.DOTALL
+    )
+    field_pattern = re.compile(r"^\s*([a-zA-Z0-9_]+)\s*:\s*(.+?),?\s*$")
+    for match in record_pattern.finditer(source):
+        fields = []
+        for line in match.group(2).splitlines():
+            field = field_pattern.match(line)
+            if field:
+                fields.append((field.group(1), field.group(2).rstrip(",")))
+        records[match.group(1)] = fields
+
+    aliases: dict[str, str] = {}
+    alias_pattern = re.compile(
+        r"type\s+([A-Za-z0-9_]+)\s+of\s+array\s+\[\[.*?\]\]\s+of\s+([A-Za-z0-9_]+)\s*;",
+        re.DOTALL,
+    )
+    for match in alias_pattern.finditer(source):
+        aliases[match.group(1)] = match.group(2)
+    return records, aliases
+
+
+def underlying_type(type_text: str, aliases: dict[str, str]) -> tuple[str, bool]:
+    array_match = re.search(r"\bof\s+([A-Za-z0-9_]+)\s*$", type_text)
+    type_name = array_match.group(1) if array_match else type_text.strip()
+    is_array = array_match is not None or type_name in aliases
+    seen: set[str] = set()
+    while type_name in aliases:
+        require(type_name not in seen, f"cyclic type alias {type_name}")
+        seen.add(type_name)
+        type_name = aliases[type_name]
+        is_array = True
+    return type_name, is_array
+
+
+def state_leaf_fields(
+    root_name: str,
+    type_text: str,
+    records: dict[str, list[tuple[str, str]]],
+    aliases: dict[str, str],
+) -> list[dict[str, str]]:
+    leaves: list[dict[str, str]] = []
+
+    def visit(path: str, current_type: str) -> None:
+        type_name, is_array = underlying_type(current_type, aliases)
+        display_path = f"{path}[]" if is_array else path
+        if type_name not in records:
+            leaves.append({"path": display_path, "type": type_name})
+            return
+        for field_name, field_type in records[type_name]:
+            visit(f"{display_path}.{field_name}", field_type)
+
+    visit(root_name, type_text)
+    return leaves
+
+
+def state_requirements(name: str, model: str) -> list[str]:
+    requirements = {"PTO-REQ-STATE-001"}
+    if model == "asl/bundle/state.asl":
+        requirements.update(
+            {"PTO-REQ-BUNDLE-STATE-001", "PTO-REQ-BUNDLE-OPERATION-001"}
+        )
+    if model == "asl/tile/state.asl":
+        requirements.update(
+            {
+                "PTO-REQ-TILE-001",
+                "PTO-REQ-TILE-CAPACITY-001",
+                "PTO-REQ-TILE-DEFINEDNESS-001",
+                "PTO-REQ-TILE-MANAGEMENT-001",
+            }
+        )
+    if name == "_PredicateRegisters":
+        requirements.add("PTO-REQ-PREDICATE-001")
+    if name in {
+        "_LastFault",
+        "_FaultAddress",
+        "_ACRTrapAsynchronous",
+        "_ACRTrapArgumentValid",
+        "_ACRTrapCause",
+        "_ACRTrapNumber",
+        "_ACRTrapArgument0",
+        "_TrapContexts",
+        "_CurrentACR",
+    }:
+        requirements.update({"PTO-REQ-FAULT-001", "PTO-REQ-INTERRUPT-001"})
+    if name in {
+        "_Memory",
+        "_ReservationValid",
+        "_ReservationAddress",
+        "_ReservationSize",
+        "_LastFencePredecessor",
+        "_LastFenceSuccessor",
+        "_MemoryEvents",
+        "_MemoryEventCount",
+        "_MemoryEventCaptureEnabled",
+        "_CurrentMemoryAgent",
+    }:
+        requirements.update({"PTO-REQ-MEMORY-001", "PTO-REQ-MEMORY-TSO-001"})
+    if name in {
+        "_DataCacheEpoch",
+        "_InstructionCacheEpoch",
+        "_BundleCacheEpoch",
+        "_TLBEpoch",
+        "_LastMaintenanceOperation",
+        "_LastMaintenanceOperand",
+        "_ArchitectureRequestEpoch",
+        "_LastControlRequest",
+        "_ControlRequestOperand",
+        "_BreakpointTag",
+        "_ExtendedSystemRegisters",
+        "_SystemRegisters",
+    }:
+        requirements.update({"PTO-REQ-SCALAR-SYS-001", "PTO-REQ-SCALAR-SSR-001"})
+    return sorted(requirements)
+
+
+def state_tests(name: str, model: str) -> list[str]:
+    tests = {"tests/asl/state-tests.asl"}
+    if model == "asl/bundle/state.asl":
+        tests.add("tests/asl/bundle-tests.asl")
+    if model == "asl/tile/state.asl":
+        tests.add("tests/asl/tile-tests.asl")
+    if name.startswith("_Memory") or name.startswith("_Reservation"):
+        tests.add("tests/asl/concurrency-tests.asl")
+    if name in {"_ExtendedSystemRegisters", "_SystemRegisters"}:
+        tests.add("tests/asl/scalar-tests.asl")
+    return sorted(tests)
+
+
+def build_state_inventory(requirement_ids: set[str]) -> list[dict[str, Any]]:
+    roots = parse_state_roots()
+    require(len(roots) == EXPECTED_COUNTS["state_root_count"], "state root count drift")
+    names = [row["name"] for row in roots]
+    require(len(names) == len(set(names)), "duplicate state root")
+    classified = {
+        name for names_in_group in STATE_GROUPS.values() for name in names_in_group
+    }
+    require(
+        len(classified) == sum(map(len, STATE_GROUPS.values())), "state class overlap"
+    )
+    require(
+        set(names) == classified, "state roots changed without an explicit disposition"
+    )
+    classifications = {
+        name: classification
+        for classification, names_in_group in STATE_GROUPS.items()
+        for name in names_in_group
+    }
+    records, aliases = parse_type_graph()
+    inventory = []
+    for root in sorted(roots, key=lambda row: (row["model"], row["name"])):
+        requirements = state_requirements(root["name"], root["model"])
+        tests = state_tests(root["name"], root["model"])
+        require(
+            set(requirements) <= requirement_ids,
+            f"unknown state requirement for {root['name']}",
+        )
+        require_paths([root["model"], *tests], f"state root {root['name']}")
+        inventory.append(
+            {
+                "id": f"state:{root['name']}",
+                "root": root["name"],
+                "type": root["type"],
+                "classification": classifications[root["name"]],
+                "leaf_fields": state_leaf_fields(
+                    root["name"], root["type"], records, aliases
+                ),
+                "requirements": requirements,
+                "model": [root["model"]],
+                "tests": tests,
+                "bounded_status": "reference-model-closed",
+            }
+        )
+    return inventory
+
+
+def requirement_is_open(status: str) -> bool:
+    return "open" in status or "in-progress" in status
+
+
+def tile_operation_trace(row: dict[str, Any]) -> dict[str, list[str]]:
+    trace = TILE_TRACE.get(row["family"])
+    require(trace is not None, f"unmapped tile family {row['family']}")
+    requirements = list(trace["requirements"])
+    model = list(trace["model"])
+    if row["family"] == "TEPL":
+        matching_groups = [
+            group
+            for group in TEPL_HANDLER_TRACE.values()
+            if row["semantic_handler"] in group["handlers"]
+        ]
+        require(
+            len(matching_groups) == 1,
+            f"TEPL operation {row['name']} has no unique semantic sub-contract",
+        )
+        requirements.append(matching_groups[0]["requirement"])
+        model.append(matching_groups[0]["model"])
+        if row["name"] == "TCVT":
+            model.append("spec/evidence/public-integer-conversion-contract.json")
+        if row["name"] == "TALLOC":
+            requirements.append("PTO-REQ-TILE-CAPACITY-001")
+        if row["name"] in {"TPUSH", "TPOP", "TALLOC", "TFREE"}:
+            requirements.append("PTO-REQ-TILE-DEFINEDNESS-001")
+    return {"requirements": sorted(set(requirements)), "model": model}
+
+
+def build_evidence() -> dict[str, Any]:
+    asl_paths = sorted(
+        str(path.relative_to(ROOT)) for path in ROOT.glob("asl/**/*.asl")
+    )
+    source_paths = tuple(dict.fromkeys((*SOURCE_PATHS, *asl_paths)))
+    sources = {path: sha256(path) for path in source_paths}
+    requirements_document = load("spec/requirements.json")
+    requirements = requirements_document["requirements"]
+    requirement_ids = {row["id"] for row in requirements}
+    require(len(requirement_ids) == len(requirements), "duplicate requirement ID")
+    require(
+        len(requirements) == EXPECTED_COUNTS["requirement_count"],
+        "requirement count drift",
+    )
+
+    requirement_rows = []
+    for row in requirements:
+        require(row["model"] and row["tests"], f"{row['id']} lacks model or tests")
+        require_paths(row["model"], f"requirement {row['id']} model")
+        require_paths(row["tests"], f"requirement {row['id']} tests")
+        requirement_rows.append(
+            {
+                "id": row["id"],
+                "status": row["status"],
+                "source": row["source"],
+                "model": row["model"],
+                "tests": row["tests"],
+                "bounded_status": "open"
+                if requirement_is_open(row["status"])
+                else "closed",
+            }
+        )
+
+    scalar_forms = load("spec/catalog/scalar-forms.json")["forms"]
+    scalar_evidence = load("spec/evidence/scalar-effect-closure.json")
+    closed_scalar_ids = {
+        form_id
+        for effect_class in scalar_evidence["classes"]
+        for form_id in effect_class["form_ids"]
+    }
+    require(
+        len(scalar_forms) == EXPECTED_COUNTS["scalar_form_count"], "scalar count drift"
+    )
+    require(
+        {row["form_id"] for row in scalar_forms} == closed_scalar_ids,
+        "scalar effect evidence does not cover the catalog exactly",
+    )
+    scalar_rows = []
+    for row in scalar_forms:
+        trace = SCALAR_TRACE.get(row["semantic_family"])
+        require(trace is not None, f"unmapped scalar family {row['semantic_family']}")
+        require(
+            set(trace["requirements"]) <= requirement_ids,
+            f"unknown scalar requirement {row['form_id']}",
+        )
+        tests = ["tests/asl/scalar-tests.asl", "tests/asl/main.asl"]
+        require_paths([*trace["model"], *tests], f"scalar form {row['form_id']}")
+        scalar_rows.append(
+            {
+                "id": row["form_id"],
+                "mnemonic": row["mnemonic"],
+                "family": row["semantic_family"],
+                "handler": row["semantic_handler"],
+                "requirements": trace["requirements"],
+                "model": ["spec/catalog/scalar-forms.json", *trace["model"]],
+                "tests": tests,
+                "bounded_status": "reference-totality-closed",
+            }
+        )
+
+    command_forms = load("spec/catalog/command-forms.json")["forms"]
+    command_totality = load("spec/evidence/bundle-command-totality.json")
+    require(
+        len(command_forms) == EXPECTED_COUNTS["command_form_count"],
+        "command count drift",
+    )
+    require(
+        {row["form_id"] for row in command_forms}
+        == {row["form_id"] for row in command_totality["form_matrix"]},
+        "bundle totality evidence does not cover the command catalog exactly",
+    )
+    command_requirements = [
+        "PTO-REQ-BUNDLE-STATE-001",
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+    ]
+    command_model = [
+        "spec/catalog/command-forms.json",
+        "asl/bundle/dispatch.asl",
+        "asl/bundle/state.asl",
+        "spec/evidence/bundle-command-totality.json",
+    ]
+    command_tests = ["tests/asl/bundle-tests.asl", "tests/asl/main.asl"]
+    require_paths([*command_model, *command_tests], "command trace")
+    command_rows = [
+        {
+            "id": row["form_id"],
+            "mnemonic": row["mnemonic"],
+            "group": row["semantic_group"],
+            "handler": row["semantic_handler"],
+            "requirements": command_requirements,
+            "model": command_model,
+            "tests": command_tests,
+            "bounded_status": "reference-totality-closed",
+        }
+        for row in command_forms
+    ]
+
+    tile_operations = load("spec/catalog/tile-operations.json")["operations"]
+    require(
+        len(tile_operations) == EXPECTED_COUNTS["tile_operation_count"],
+        "tile count drift",
+    )
+    tile_rows = []
+    for row in tile_operations:
+        trace = tile_operation_trace(row)
+        family_tests = TILE_TRACE[row["family"]]["tests"]
+        require(
+            set(trace["requirements"]) <= requirement_ids,
+            f"unknown tile requirement {row['name']}",
+        )
+        require_paths([*trace["model"], *family_tests], f"tile operation {row['name']}")
+        encoded_identity = row.get("selector", row.get("function"))
+        require(
+            encoded_identity is not None,
+            f"tile operation {row['name']} lacks selector or function",
+        )
+        tile_rows.append(
+            {
+                "id": f"{row['family']}:{encoded_identity}:{row['name']}",
+                "name": row["name"],
+                "family": row["family"],
+                "selector_or_function": encoded_identity,
+                "handler": row["semantic_handler"],
+                "requirements": trace["requirements"],
+                "model": ["spec/catalog/tile-operations.json", *trace["model"]],
+                "tests": family_tests,
+                "bounded_status": "reference-totality-closed",
+            }
+        )
+
+    system_catalog = load("spec/catalog/system-registers.json")
+    registers = system_catalog["registers"]
+    traps = system_catalog["trap_numbers"]
+    require(
+        len(registers) == EXPECTED_COUNTS["system_register_count"],
+        "system-register count drift",
+    )
+    require(len(traps) == EXPECTED_COUNTS["trap_count"], "trap count drift")
+    system_rows = [
+        {
+            "id": f"system-register:{row.get('address', row.get('low_index'))}:{row['name']}",
+            "name": row["name"],
+            "address_or_low_index": row.get("address", row.get("low_index")),
+            "access": row["access"],
+            "scope": row["scope"],
+            "requirements": ["PTO-REQ-SCALAR-SSR-001", "PTO-REQ-STATE-001"],
+            "model": [
+                "spec/catalog/system-registers.json",
+                "asl/scalar/system-registers.asl",
+                "asl/state.asl",
+            ],
+            "tests": ["tests/asl/scalar-tests.asl", "tests/asl/state-tests.asl"],
+            "bounded_status": "reference-behavior-closed",
+        }
+        for row in registers
+    ]
+    trap_rows = [
+        {
+            "id": f"trap:{row['number']}:{row['name']}",
+            "name": row["name"],
+            "number": row["number"],
+            "disposition": row["pto_v0_status"],
+            "requirements": ["PTO-REQ-FAULT-001", "PTO-REQ-INTERRUPT-001"],
+            "model": [
+                "spec/catalog/system-registers.json",
+                "asl/state.asl",
+                "asl/profiles/pto-v0.asl",
+            ],
+            "tests": ["tests/asl/state-tests.asl", "tests/asl/scalar-tests.asl"],
+            "bounded_status": "reference-disposition-closed",
+        }
+        for row in traps
+    ]
+    require_paths(
+        sorted(
+            {
+                path
+                for row in [*system_rows, *trap_rows]
+                for path in [*row["model"], *row["tests"]]
+            }
+        ),
+        "system-register and trap trace",
+    )
+
+    hooks = load("spec/profile-hooks.json")["hooks"]
+    require(
+        len(hooks) == EXPECTED_COUNTS["profile_hook_count"], "profile hook count drift"
+    )
+    hook_rows = []
+    for row in hooks:
+        require(
+            row["requirement"] in requirement_ids,
+            f"unknown hook requirement {row['name']}",
+        )
+        require_paths([row["model"], *row["tests"]], f"profile hook {row['name']}")
+        hook_rows.append(
+            {
+                "id": f"profile-hook:{row['name']}",
+                "name": row["name"],
+                "domain": row["domain"],
+                "requirements": [row["requirement"]],
+                "model": [row["model"], "spec/profile-hooks.json"],
+                "tests": row["tests"],
+                "conformance_status": row["conformance_status"],
+                "maturity_target": row["maturity_target"],
+                "bounded_status": (
+                    "target-conformance-open"
+                    if row["maturity_target"] == "S5-T2"
+                    else "reference-profile-closed"
+                ),
+            }
+        )
+
+    state_rows = build_state_inventory(requirement_ids)
+    maturity = load("spec/evidence/maturity-closure.json")
+    target_statuses = {row["id"]: row["status"] for row in maturity["targets"]}
+    require(
+        target_statuses.get("S5-T2") == "open",
+        "S5-T2 no longer open; revise release readiness",
+    )
+    require(
+        target_statuses.get("S6-T1") == "open", "S6-T1 status changed without promotion"
+    )
+    require(
+        all(
+            target_statuses.get(f"S{stage}-T{target}") == "closed"
+            for stage, maximum in ((0, 3), (1, 5), (2, 6), (3, 2), (4, 10))
+            for target in range(1, maximum + 1)
+        ),
+        "a Stage 0 through Stage 4 prerequisite regressed",
+    )
+    require(
+        target_statuses.get("S5-T1") == "closed"
+        and target_statuses.get("S5-T3") == "closed",
+        "Stage 5 closed prerequisite drift",
+    )
+
+    inventories = {
+        "requirements": requirement_rows,
+        "scalar_forms": scalar_rows,
+        "command_forms": command_rows,
+        "tile_operations": tile_rows,
+        "system_registers": system_rows,
+        "traps": trap_rows,
+        "profile_hooks": hook_rows,
+        "state_roots": state_rows,
+    }
+    ids = [row["id"] for rows in inventories.values() for row in rows]
+    require(len(ids) == len(set(ids)), "traceability item IDs are not globally unique")
+    state_leaf_count = sum(len(row["leaf_fields"]) for row in state_rows)
+    open_requirements = [
+        row["id"] for row in requirement_rows if row["bounded_status"] == "open"
+    ]
+    open_hooks = [
+        row["name"]
+        for row in hook_rows
+        if row["bounded_status"] == "target-conformance-open"
+    ]
+    require(len(open_hooks) == 29, "the expected 29 S5-T2 hooks are not open")
+
+    return {
+        "schema_version": 1,
+        "target": "S6-T1",
+        "status": "inventory-and-links-closed-promotion-open",
+        "policy": {
+            "authority": "PTO requirements, catalogs, accepted ADRs, and ASL define the release claim; comparison models and implementations are evidence, not authority.",
+            "traceability_unit": "Every accepted form, direct operation, system register, trap, profile hook, requirement, and top-level ASL state root receives an exact row. Composite state leaves are expanded recursively.",
+            "state_boundary": "Architectural state, architectural abstractions, ordering instrumentation, and verification-only state are distinguished explicitly; test instrumentation is never presented as an ISA register.",
+            "closure_rule": "S6-T1 closes only after every Stage 0 through Stage 5 target is closed or excluded by an accepted PTO decision, every requirement is closed, and an independent traceability review approves one immutable commit.",
+        },
+        "sources": [
+            {"path": path, "sha256": digest} for path, digest in sources.items()
+        ],
+        "sub_stages": [
+            {
+                "id": "S6-T1-A",
+                "status": "closed",
+                "target": "enumerate every release-traceability unit exactly once",
+                "blocked_by": [],
+            },
+            {
+                "id": "S6-T1-B",
+                "status": "closed",
+                "target": "attach requirement, model, executable evidence, and bounded status to every unit",
+                "blocked_by": [],
+            },
+            {
+                "id": "S6-T1-C",
+                "status": "blocked-by-prerequisite",
+                "target": "close every cumulative Stage 0 through Stage 5 requirement",
+                "blocked_by": ["S5-T2"],
+            },
+            {
+                "id": "S6-T1-D",
+                "status": "waiting-on-prerequisite",
+                "target": "approve claim hygiene and traceability at one immutable commit",
+                "blocked_by": ["S6-T1-C"],
+            },
+            {
+                "id": "S6-T1-E",
+                "status": "waiting-on-prerequisite",
+                "target": "promote the release-traceability target without unsupported completeness claims",
+                "blocked_by": ["S6-T1-C", "S6-T1-D"],
+            },
+        ],
+        "blocking_gaps": [
+            {
+                "id": "S6-T1-G1",
+                "classification": "release-governance",
+                "statement": "S5-T2 target numeric conformance is open, so cumulative release traceability cannot close.",
+                "acceptance_evidence": [
+                    "closed S5-T2 conformance package and closed dependent requirement statuses"
+                ],
+            },
+            {
+                "id": "S6-T1-G2",
+                "classification": "release-governance",
+                "statement": "Independent claim-hygiene review is intentionally unassigned until cumulative requirement closure.",
+                "acceptance_evidence": [
+                    "reviewer identity, immutable commit, review date, and accepted disposition"
+                ],
+            },
+        ],
+        "review": {
+            "reviewer_identity": None,
+            "review_commit": None,
+            "review_date": None,
+            "review_disposition": None,
+        },
+        "inventories": inventories,
+        "summary": {
+            **EXPECTED_COUNTS,
+            "state_leaf_count": state_leaf_count,
+            "traceability_item_count": len(ids),
+            "open_requirement_count": len(open_requirements),
+            "open_requirement_ids": open_requirements,
+            "open_profile_hook_count": len(open_hooks),
+            "open_profile_hooks": open_hooks,
+            "closed_prerequisite_targets": 28,
+            "open_prerequisite_targets": ["S5-T2"],
+            "inventory_and_link_status": "closed",
+            "release_traceability_status": "open:S6-T1",
+        },
+    }
+
+
+def render(document: dict[str, Any]) -> str:
+    return json.dumps(document, indent=2, ensure_ascii=False) + "\n"
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--check", action="store_true")
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    args = parser.parse_args()
+    generated = render(build_evidence())
+    if args.check:
+        require(args.output.is_file(), f"missing generated artifact {args.output}")
+        require(
+            args.output.read_text(encoding="utf-8") == generated,
+            f"stale generated artifact {args.output}",
+        )
+        return
+    args.output.write_text(generated, encoding="utf-8")
+
+
+if __name__ == "__main__":
+    main()
