@@ -135,21 +135,32 @@ end;
 
 readonly func ScalarFPActiveRoundingMode() => bits(3)
 begin
-    let encoded = _SystemRegisters.cstate[39:37];
+    let encoded = _SystemRegisters.core_state[39:37];
     if UInt(encoded) <= 4 then return encoded;
     else return Zeros{3};
     end;
 end;
 
+pure func ScalarFPFixedConversionRoundingMode(operation: ScalarOperation) => bits(3)
+begin
+    if operation == ScalarOperation_FCVTA then return '100';
+    elsif operation == ScalarOperation_FCVTM then return '001';
+    elsif operation == ScalarOperation_FCVTN then return '000';
+    elsif operation == ScalarOperation_FCVTP then return '010';
+    elsif operation == ScalarOperation_FCVTZ then return '011';
+    else unreachable;
+    end;
+end;
+
 readonly func ScalarFPFlags() => bits(5)
 begin
-    // flags[0..4] map to CSTATE[32..36] as NV, DZ, OF, UF, and NX.
-    return _SystemRegisters.cstate[36:32];
+    // flags[0..4] map to CORE_STATE[32..36] as NV, DZ, OF, UF, and NX.
+    return _SystemRegisters.core_state[36:32];
 end;
 
 func ScalarFPRecordFlags(flags: bits(5))
 begin
-    _SystemRegisters.cstate[36:32] = ScalarFPFlags() OR flags;
+    _SystemRegisters.core_state[36:32] = ScalarFPFlags() OR flags;
 end;
 
 pure func NormalizeScalarFPSource(value: Word, data_type: bits(5)) => Word
@@ -239,6 +250,13 @@ end;
 pure func ScalarFP32IsZero(value: bits(32)) => boolean
 begin
     return (value AND (Zeros{32} + 0x7fffffff)) == Zeros{32};
+end;
+
+pure func ScalarFPCarrierIsZero(value: Word, data_type: bits(5)) => boolean
+begin
+    if data_type == '00001' then return ScalarFP32IsZero(value[31:0]);
+    else return ScalarFP64IsZero(value);
+    end;
 end;
 
 pure func ScalarFP32OrderKey(value: bits(32)) => bits(32)

@@ -1,0 +1,3567 @@
+{
+  "schema_version": 1,
+  "target": "S4-T7",
+  "status": "closed",
+  "accepted_form_count": 107,
+  "disposition_counts": {
+    "executed": 95,
+    "pto-v0-rejected": 12
+  },
+  "handler_counts": {
+    "BindBundleScalarIO": 1,
+    "BindBundleTileIO": 5,
+    "ExecuteBundleStart": 71,
+    "ExecuteBundleStop": 2,
+    "ExecuteCrossBlockTransfer": 1,
+    "ExecuteFrameEntry": 1,
+    "ExecuteFrameExit": 1,
+    "ExecuteFrameReturnAddress": 1,
+    "ExecuteFrameReturnStack": 1,
+    "ExecuteMemoryCopy": 1,
+    "ExecuteMemorySet": 1,
+    "ExecuteQueueMove": 1,
+    "ExecuteQueuePop": 1,
+    "ExecuteQueuePush": 1,
+    "RecoverExecutionContext": 1,
+    "SaveExecutionContext": 1,
+    "SetBundleArgument": 6,
+    "SetBundleBodyAddress": 1,
+    "SetBundleControlAttributes": 1,
+    "SetBundleDataAttributes": 1,
+    "SetBundleDimension": 5,
+    "SetBundleHint": 2
+  },
+  "architecture_contract": {
+    "unsupported_handlers": [
+      "ExecuteCrossBlockTransfer",
+      "ExecuteFrameEntry",
+      "ExecuteFrameExit",
+      "ExecuteFrameReturnAddress",
+      "ExecuteFrameReturnStack",
+      "ExecuteQueueMove",
+      "ExecuteQueuePop",
+      "ExecuteQueuePush",
+      "RecoverExecutionContext",
+      "SaveExecutionContext"
+    ],
+    "unsupported_start_mnemonics": [
+      "BSTART.CUBE",
+      "BSTART.FIXP"
+    ],
+    "unsupported_rule": "Reject with ILLEGAL_INST before handler operand reads, state effects, memory effects, or TPC advance.",
+    "retirement_rule": "Every successful non-start/non-stop command advances TPC by its encoded instruction length; start and stop own their control transfer.",
+    "argument_rule": "All six B.ARG forms retain distinct three-bit argument-kind state; the dynamic form also records its decoded value.",
+    "hint_rule": "B.HINT records the complete encoded payload and advances the hint epoch but has no PTO-v0 scheduling effect.",
+    "metadata_rule": "B.DIM, B.TEXT, B.IOR, B.IOT, B.CATR, and B.DATR consume every decoded field into trap-preserved bundle state. PTO-v0 tile commit consumes only B.IOT slot 0 destination/source bindings and the descriptor data type; all other stored metadata has no payload effect in this profile.",
+    "memory_rule": "MCOPY and MSET accept lengths 0 through 63 bytes and reject larger XLEN values without truncation or partial effects.",
+    "bridge_rule": "The PTO-v0 bundle bridge binds destination0, source0, and source1 only; operations needing any other operand reject at commit before tile effects."
+  },
+  "form_matrix": [
+    {
+      "form_index": 0,
+      "form_id": "b_arg_32_374ec956affe",
+      "mnemonic": "B.ARG",
+      "semantic_handler": "SetBundleArgument",
+      "decoded_fields": [],
+      "consumed_fields": [],
+      "disposition": "executed",
+      "effect_class": "bundle-argument-kind-and-value",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 1,
+      "form_id": "b_arg_32_47e8ac50ac96",
+      "mnemonic": "B.ARG",
+      "semantic_handler": "SetBundleArgument",
+      "decoded_fields": [
+        "format"
+      ],
+      "consumed_fields": [
+        "format"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-argument-kind-and-value",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 2,
+      "form_id": "b_arg_32_5c8bfa662370",
+      "mnemonic": "B.ARG",
+      "semantic_handler": "SetBundleArgument",
+      "decoded_fields": [],
+      "consumed_fields": [],
+      "disposition": "executed",
+      "effect_class": "bundle-argument-kind-and-value",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 3,
+      "form_id": "b_arg_32_95152c29a268",
+      "mnemonic": "B.ARG",
+      "semantic_handler": "SetBundleArgument",
+      "decoded_fields": [],
+      "consumed_fields": [],
+      "disposition": "executed",
+      "effect_class": "bundle-argument-kind-and-value",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 4,
+      "form_id": "b_arg_32_c6d5c49a4ad7",
+      "mnemonic": "B.ARG",
+      "semantic_handler": "SetBundleArgument",
+      "decoded_fields": [],
+      "consumed_fields": [],
+      "disposition": "executed",
+      "effect_class": "bundle-argument-kind-and-value",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 5,
+      "form_id": "b_arg_32_f19d18f2126b",
+      "mnemonic": "B.ARG",
+      "semantic_handler": "SetBundleArgument",
+      "decoded_fields": [],
+      "consumed_fields": [],
+      "disposition": "executed",
+      "effect_class": "bundle-argument-kind-and-value",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 6,
+      "form_id": "b_catr_32_e90bd52fa480",
+      "mnemonic": "B.CATR",
+      "semantic_handler": "SetBundleControlAttributes",
+      "decoded_fields": [
+        "DR",
+        "aq",
+        "atom",
+        "far",
+        "rl",
+        "trap"
+      ],
+      "consumed_fields": [
+        "DR",
+        "aq",
+        "atom",
+        "far",
+        "rl",
+        "trap"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-control-attributes",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 7,
+      "form_id": "b_datr_32_c161a042ff38",
+      "mnemonic": "B.DATR",
+      "semantic_handler": "SetBundleDataAttributes",
+      "decoded_fields": [
+        "CMode",
+        "DataLayout",
+        "DataType",
+        "PadValue",
+        "RMode",
+        "Sat"
+      ],
+      "consumed_fields": [
+        "CMode",
+        "DataLayout",
+        "DataType",
+        "PadValue",
+        "RMode",
+        "Sat"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-data-attributes",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 8,
+      "form_id": "b_dim_32_1caa1aa2944a",
+      "mnemonic": "B.DIM",
+      "semantic_handler": "SetBundleDimension",
+      "decoded_fields": [
+        "RegSrc",
+        "uimm17"
+      ],
+      "consumed_fields": [
+        "RegSrc",
+        "uimm17"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-dimension",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 9,
+      "form_id": "b_dim_32_27602ab68929",
+      "mnemonic": "B.DIM",
+      "semantic_handler": "SetBundleDimension",
+      "decoded_fields": [
+        "RegSrc",
+        "uimm17"
+      ],
+      "consumed_fields": [
+        "RegSrc",
+        "uimm17"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-dimension",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 10,
+      "form_id": "b_dim_32_4191099a5f4d",
+      "mnemonic": "B.DIM",
+      "semantic_handler": "SetBundleDimension",
+      "decoded_fields": [
+        "RegSrc",
+        "uimm17"
+      ],
+      "consumed_fields": [
+        "RegSrc",
+        "uimm17"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-dimension",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 11,
+      "form_id": "b_hint_32_69d942ff1583",
+      "mnemonic": "B.HINT",
+      "semantic_handler": "SetBundleHint",
+      "decoded_fields": [
+        "L/UL",
+        "V",
+        "prefetch_size",
+        "temp"
+      ],
+      "consumed_fields": [
+        "L/UL",
+        "V",
+        "prefetch_size",
+        "temp"
+      ],
+      "disposition": "executed",
+      "effect_class": "diagnostic-hint-payload",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 12,
+      "form_id": "b_hint_32_f7d01d734925",
+      "mnemonic": "B.HINT",
+      "semantic_handler": "SetBundleHint",
+      "decoded_fields": [
+        "B/E"
+      ],
+      "consumed_fields": [
+        "B/E"
+      ],
+      "disposition": "executed",
+      "effect_class": "diagnostic-hint-payload",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 13,
+      "form_id": "b_ior_32_c3ea71404eb3",
+      "mnemonic": "B.IOR",
+      "semantic_handler": "BindBundleScalarIO",
+      "decoded_fields": [
+        "RegDst",
+        "RegSrc0",
+        "RegSrc1",
+        "RegSrc2"
+      ],
+      "consumed_fields": [
+        "RegDst",
+        "RegSrc0",
+        "RegSrc1",
+        "RegSrc2"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-scalar-binding",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 14,
+      "form_id": "b_iot_32_10db6db84f5d",
+      "mnemonic": "B.IOT",
+      "semantic_handler": "BindBundleTileIO",
+      "decoded_fields": [
+        "DstTile",
+        "L",
+        "S0R",
+        "SrcTile0",
+        "imm4"
+      ],
+      "consumed_fields": [
+        "DstTile",
+        "L",
+        "S0R",
+        "SrcTile0",
+        "imm4"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-tile-binding",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 15,
+      "form_id": "b_iot_32_2c07e7177fad",
+      "mnemonic": "B.IOT",
+      "semantic_handler": "BindBundleTileIO",
+      "decoded_fields": [
+        "L",
+        "S0R",
+        "S1R",
+        "SrcTile0",
+        "SrcTile1"
+      ],
+      "consumed_fields": [
+        "L",
+        "S0R",
+        "S1R",
+        "SrcTile0",
+        "SrcTile1"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-tile-binding",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 16,
+      "form_id": "b_iot_32_8b8bce6bffe8",
+      "mnemonic": "B.IOT",
+      "semantic_handler": "BindBundleTileIO",
+      "decoded_fields": [
+        "DstTile",
+        "L",
+        "S0R",
+        "S1R",
+        "SrcTile0",
+        "SrcTile1",
+        "imm4"
+      ],
+      "consumed_fields": [
+        "DstTile",
+        "L",
+        "S0R",
+        "S1R",
+        "SrcTile0",
+        "SrcTile1",
+        "imm4"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-tile-binding",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 17,
+      "form_id": "b_iot_32_c11eb189dd83",
+      "mnemonic": "B.IOT",
+      "semantic_handler": "BindBundleTileIO",
+      "decoded_fields": [
+        "L",
+        "S0R",
+        "SrcTile0"
+      ],
+      "consumed_fields": [
+        "L",
+        "S0R",
+        "SrcTile0"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-tile-binding",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 18,
+      "form_id": "b_iot_32_efa0fe3fe49a",
+      "mnemonic": "B.IOT",
+      "semantic_handler": "BindBundleTileIO",
+      "decoded_fields": [
+        "DstTile",
+        "L",
+        "imm4"
+      ],
+      "consumed_fields": [
+        "DstTile",
+        "L",
+        "imm4"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-tile-binding",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 19,
+      "form_id": "b_text_32_1ce09f50e5dd",
+      "mnemonic": "B.TEXT",
+      "semantic_handler": "SetBundleBodyAddress",
+      "decoded_fields": [
+        "simm25"
+      ],
+      "consumed_fields": [
+        "simm25"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-body-address",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 20,
+      "form_id": "bstart_32_7eb93b649748",
+      "mnemonic": "BSTART",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm25"
+      ],
+      "consumed_fields": [
+        "simm25"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 21,
+      "form_id": "bstart_32_e11e678a32ac",
+      "mnemonic": "BSTART",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm25"
+      ],
+      "consumed_fields": [
+        "simm25"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 22,
+      "form_id": "bstart_call_32_9404418d1ae5",
+      "mnemonic": "BSTART CALL",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm12",
+        "uimm5"
+      ],
+      "consumed_fields": [
+        "simm12",
+        "uimm5"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 23,
+      "form_id": "bstart_acccvt_32_56c3ce3838c5",
+      "mnemonic": "BSTART.ACCCVT",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 24,
+      "form_id": "bstart_cube_32_bd3f337acb9d",
+      "mnemonic": "BSTART.CUBE",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType",
+        "Function"
+      ],
+      "consumed_fields": [],
+      "disposition": "pto-v0-rejected",
+      "effect_class": "pto-v0-unsupported-start-family",
+      "rejection_precedes_effects": true,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 25,
+      "form_id": "bstart_fixp_32_3b0ae11126a6",
+      "mnemonic": "BSTART.FIXP",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType",
+        "Function"
+      ],
+      "consumed_fields": [],
+      "disposition": "pto-v0-rejected",
+      "effect_class": "pto-v0-unsupported-start-family",
+      "rejection_precedes_effects": true,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 26,
+      "form_id": "bstart_fp_32_0c671a644214",
+      "mnemonic": "BSTART.FP",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [],
+      "consumed_fields": [],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 27,
+      "form_id": "bstart_fp_32_24db3966d6ba",
+      "mnemonic": "BSTART.FP",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [],
+      "consumed_fields": [],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 28,
+      "form_id": "bstart_fp_32_58ad7954fb49",
+      "mnemonic": "BSTART.FP",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm17"
+      ],
+      "consumed_fields": [
+        "simm17"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 29,
+      "form_id": "bstart_fp_32_7978795a29a1",
+      "mnemonic": "BSTART.FP",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [],
+      "consumed_fields": [],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 30,
+      "form_id": "bstart_fp_32_d00a708a81f0",
+      "mnemonic": "BSTART.FP",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm17"
+      ],
+      "consumed_fields": [
+        "simm17"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 31,
+      "form_id": "bstart_fp_32_dd7bc8dd694c",
+      "mnemonic": "BSTART.FP",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm17"
+      ],
+      "consumed_fields": [
+        "simm17"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 32,
+      "form_id": "bstart_fp_32_face4f238d84",
+      "mnemonic": "BSTART.FP",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm17"
+      ],
+      "consumed_fields": [
+        "simm17"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 33,
+      "form_id": "bstart_mgather_32_c9defbf18276",
+      "mnemonic": "BSTART.MGATHER",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 34,
+      "form_id": "bstart_mgather_cas_32_fd8c8a3b720a",
+      "mnemonic": "BSTART.MGATHER.CAS",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 35,
+      "form_id": "bstart_mgather_mask_32_5573241cd944",
+      "mnemonic": "BSTART.MGATHER.MASK",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 36,
+      "form_id": "bstart_mpar_32_2d163417c615",
+      "mnemonic": "BSTART.MPAR",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "Mode"
+      ],
+      "consumed_fields": [
+        "Mode"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 37,
+      "form_id": "bstart_mscatter_32_0f0ba08bd798",
+      "mnemonic": "BSTART.MSCATTER",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 38,
+      "form_id": "bstart_mscatter_mask_32_2a33eed646f7",
+      "mnemonic": "BSTART.MSCATTER.MASK",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 39,
+      "form_id": "bstart_mseq_32_39343a456ec5",
+      "mnemonic": "BSTART.MSEQ",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "Mode"
+      ],
+      "consumed_fields": [
+        "Mode"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 40,
+      "form_id": "bstart_std_32_1ef99c4cedcb",
+      "mnemonic": "BSTART.STD",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm17"
+      ],
+      "consumed_fields": [
+        "simm17"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 41,
+      "form_id": "bstart_std_32_3f6980d013f7",
+      "mnemonic": "BSTART.STD",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [],
+      "consumed_fields": [],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 42,
+      "form_id": "bstart_std_32_441ad677fffe",
+      "mnemonic": "BSTART.STD",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm17"
+      ],
+      "consumed_fields": [
+        "simm17"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 43,
+      "form_id": "bstart_std_32_816dfa76cc4a",
+      "mnemonic": "BSTART.STD",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [],
+      "consumed_fields": [],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 44,
+      "form_id": "bstart_std_32_986b7ee2cf6a",
+      "mnemonic": "BSTART.STD",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [],
+      "consumed_fields": [],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 45,
+      "form_id": "bstart_std_32_b05390d367cf",
+      "mnemonic": "BSTART.STD",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm17"
+      ],
+      "consumed_fields": [
+        "simm17"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 46,
+      "form_id": "bstart_std_32_c1de85e06878",
+      "mnemonic": "BSTART.STD",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm17"
+      ],
+      "consumed_fields": [
+        "simm17"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 47,
+      "form_id": "bstart_sys_32_762d9d84a6d8",
+      "mnemonic": "BSTART.SYS",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm17"
+      ],
+      "consumed_fields": [
+        "simm17"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 48,
+      "form_id": "bstart_tepl_32_d022db6dacb3",
+      "mnemonic": "BSTART.TEPL",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType",
+        "TileOpcode"
+      ],
+      "consumed_fields": [
+        "DataType",
+        "TileOpcode"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 49,
+      "form_id": "bstart_tgemv_32_ae19f5b678f5",
+      "mnemonic": "BSTART.TGEMV",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 50,
+      "form_id": "bstart_tgemv_acc_32_9a471b21913e",
+      "mnemonic": "BSTART.TGEMV.ACC",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 51,
+      "form_id": "bstart_tgemv_bias_32_186ee96c0a8b",
+      "mnemonic": "BSTART.TGEMV.BIAS",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 52,
+      "form_id": "bstart_tgemvmx_32_ae5e005f6589",
+      "mnemonic": "BSTART.TGEMVMX",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 53,
+      "form_id": "bstart_tgemvmx_acc_32_368647b04bb0",
+      "mnemonic": "BSTART.TGEMVMX.ACC",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 54,
+      "form_id": "bstart_tgemvmx_bias_32_d23011f15171",
+      "mnemonic": "BSTART.TGEMVMX.BIAS",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 55,
+      "form_id": "bstart_tload_32_d0c18bb0ab15",
+      "mnemonic": "BSTART.TLOAD",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 56,
+      "form_id": "bstart_tmatmul_32_f9da70e4e0ad",
+      "mnemonic": "BSTART.TMATMUL",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 57,
+      "form_id": "bstart_tmatmul_acc_32_0c8c62e5f00a",
+      "mnemonic": "BSTART.TMATMUL.ACC",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 58,
+      "form_id": "bstart_tmatmul_bias_32_4d5a498d12f3",
+      "mnemonic": "BSTART.TMATMUL.BIAS",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 59,
+      "form_id": "bstart_tmatmulmx_32_e26cb3874648",
+      "mnemonic": "BSTART.TMATMULMX",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 60,
+      "form_id": "bstart_tmatmulmx_acc_32_70fa59b0ab4c",
+      "mnemonic": "BSTART.TMATMULMX.ACC",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 61,
+      "form_id": "bstart_tmatmulmx_bias_32_098c7efa51b0",
+      "mnemonic": "BSTART.TMATMULMX.BIAS",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 62,
+      "form_id": "bstart_tmov_32_211446509efb",
+      "mnemonic": "BSTART.TMOV",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 63,
+      "form_id": "bstart_tprefetch_32_d5f83e5aadf6",
+      "mnemonic": "BSTART.TPREFETCH",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 64,
+      "form_id": "bstart_tstore_32_4048b6e8b0f4",
+      "mnemonic": "BSTART.TSTORE",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 65,
+      "form_id": "bstop_32_d25b09fdd59c",
+      "mnemonic": "BSTOP",
+      "semantic_handler": "ExecuteBundleStop",
+      "decoded_fields": [],
+      "consumed_fields": [],
+      "disposition": "executed",
+      "effect_class": "bundle-commit-and-stop",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 66,
+      "form_id": "c_b_dim_16_14f1b8fba5e6",
+      "mnemonic": "C.B.DIM",
+      "semantic_handler": "SetBundleDimension",
+      "decoded_fields": [
+        "LoopNest",
+        "RegSrc"
+      ],
+      "consumed_fields": [
+        "LoopNest",
+        "RegSrc"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-dimension",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 67,
+      "form_id": "c_b_dimi_16_3f1b113c76ce",
+      "mnemonic": "C.B.DIMI",
+      "semantic_handler": "SetBundleDimension",
+      "decoded_fields": [
+        "LoopNest",
+        "imm8"
+      ],
+      "consumed_fields": [
+        "LoopNest",
+        "imm8"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-dimension",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 68,
+      "form_id": "c_bstart_16_c4e238a9227a",
+      "mnemonic": "C.BSTART",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm12"
+      ],
+      "consumed_fields": [
+        "simm12"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 69,
+      "form_id": "c_bstart_16_f833d2a4753c",
+      "mnemonic": "C.BSTART",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm12"
+      ],
+      "consumed_fields": [
+        "simm12"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 70,
+      "form_id": "c_bstart_fp_16_9dcef7e3a85b",
+      "mnemonic": "C.BSTART.FP",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "BrType"
+      ],
+      "consumed_fields": [
+        "BrType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 71,
+      "form_id": "c_bstart_mpar_16_66c3ef2226ec",
+      "mnemonic": "C.BSTART.MPAR",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [],
+      "consumed_fields": [],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 72,
+      "form_id": "c_bstart_mseq_16_b5597e0e41c2",
+      "mnemonic": "C.BSTART.MSEQ",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [],
+      "consumed_fields": [],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 73,
+      "form_id": "c_bstart_std_16_8b40f078c14a",
+      "mnemonic": "C.BSTART.STD",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "BrType"
+      ],
+      "consumed_fields": [
+        "BrType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 74,
+      "form_id": "c_bstart_sys_16_ec213ce96eb7",
+      "mnemonic": "C.BSTART.SYS",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [],
+      "consumed_fields": [],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 75,
+      "form_id": "c_bstop_16_ca4743d8a95e",
+      "mnemonic": "C.BSTOP",
+      "semantic_handler": "ExecuteBundleStop",
+      "decoded_fields": [],
+      "consumed_fields": [],
+      "disposition": "executed",
+      "effect_class": "bundle-commit-and-stop",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 76,
+      "form_id": "ercov_32_dc0be14a2d8b",
+      "mnemonic": "ERCOV",
+      "semantic_handler": "RecoverExecutionContext",
+      "decoded_fields": [
+        "RegSrc0",
+        "RegSrc1",
+        "RegSrc2"
+      ],
+      "consumed_fields": [],
+      "disposition": "pto-v0-rejected",
+      "effect_class": "pto-v0-unsupported-handler",
+      "rejection_precedes_effects": true,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 77,
+      "form_id": "esave_32_4c4f79fe3171",
+      "mnemonic": "ESAVE",
+      "semantic_handler": "SaveExecutionContext",
+      "decoded_fields": [
+        "RegSrc0",
+        "RegSrc1",
+        "RegSrc2"
+      ],
+      "consumed_fields": [],
+      "disposition": "pto-v0-rejected",
+      "effect_class": "pto-v0-unsupported-handler",
+      "rejection_precedes_effects": true,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 78,
+      "form_id": "fentry_32_a47584ec13b6",
+      "mnemonic": "FENTRY",
+      "semantic_handler": "ExecuteFrameEntry",
+      "decoded_fields": [
+        "SrcBegin",
+        "SrcEnd",
+        "uimm"
+      ],
+      "consumed_fields": [],
+      "disposition": "pto-v0-rejected",
+      "effect_class": "pto-v0-unsupported-handler",
+      "rejection_precedes_effects": true,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 79,
+      "form_id": "fexit_32_37b663f2a34d",
+      "mnemonic": "FEXIT",
+      "semantic_handler": "ExecuteFrameExit",
+      "decoded_fields": [
+        "DstBegin",
+        "DstEnd",
+        "uimm"
+      ],
+      "consumed_fields": [],
+      "disposition": "pto-v0-rejected",
+      "effect_class": "pto-v0-unsupported-handler",
+      "rejection_precedes_effects": true,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 80,
+      "form_id": "fret_ra_32_659c886221c1",
+      "mnemonic": "FRET.RA",
+      "semantic_handler": "ExecuteFrameReturnAddress",
+      "decoded_fields": [
+        "DstBegin",
+        "DstEnd",
+        "uimm"
+      ],
+      "consumed_fields": [],
+      "disposition": "pto-v0-rejected",
+      "effect_class": "pto-v0-unsupported-handler",
+      "rejection_precedes_effects": true,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 81,
+      "form_id": "fret_stk_32_4fe246bd8241",
+      "mnemonic": "FRET.STK",
+      "semantic_handler": "ExecuteFrameReturnStack",
+      "decoded_fields": [
+        "DstBegin",
+        "DstEnd",
+        "uimm"
+      ],
+      "consumed_fields": [],
+      "disposition": "pto-v0-rejected",
+      "effect_class": "pto-v0-unsupported-handler",
+      "rejection_precedes_effects": true,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 82,
+      "form_id": "hl_bstart_call_48_3c784c583c90",
+      "mnemonic": "HL.BSTART CALL",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm25",
+        "uimm5"
+      ],
+      "consumed_fields": [
+        "simm25",
+        "uimm5"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 83,
+      "form_id": "hl_bstart_fp_48_038e2e96cf64",
+      "mnemonic": "HL.BSTART.FP",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm"
+      ],
+      "consumed_fields": [
+        "simm"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 84,
+      "form_id": "hl_bstart_fp_48_43530d2ebfae",
+      "mnemonic": "HL.BSTART.FP",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm"
+      ],
+      "consumed_fields": [
+        "simm"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 85,
+      "form_id": "hl_bstart_fp_48_81b457553844",
+      "mnemonic": "HL.BSTART.FP",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm"
+      ],
+      "consumed_fields": [
+        "simm"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 86,
+      "form_id": "hl_bstart_fp_48_eb938e9200eb",
+      "mnemonic": "HL.BSTART.FP",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm"
+      ],
+      "consumed_fields": [
+        "simm"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 87,
+      "form_id": "hl_bstart_std_48_51f78942222e",
+      "mnemonic": "HL.BSTART.STD",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm"
+      ],
+      "consumed_fields": [
+        "simm"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 88,
+      "form_id": "hl_bstart_std_48_9ba705710872",
+      "mnemonic": "HL.BSTART.STD",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm"
+      ],
+      "consumed_fields": [
+        "simm"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 89,
+      "form_id": "hl_bstart_std_48_b13f22c7c4a3",
+      "mnemonic": "HL.BSTART.STD",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm"
+      ],
+      "consumed_fields": [
+        "simm"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 90,
+      "form_id": "hl_bstart_std_48_d814d26508a4",
+      "mnemonic": "HL.BSTART.STD",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm"
+      ],
+      "consumed_fields": [
+        "simm"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 91,
+      "form_id": "hl_bstart_sys_48_5bf0381f7bf8",
+      "mnemonic": "HL.BSTART.SYS",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm"
+      ],
+      "consumed_fields": [
+        "simm"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 92,
+      "form_id": "hl_qmt_48_eb9e41958045",
+      "mnemonic": "HL.QMT",
+      "semantic_handler": "ExecuteQueueMove",
+      "decoded_fields": [
+        "RegDst",
+        "SrcL",
+        "SrcR",
+        "e",
+        "i",
+        "r",
+        "s"
+      ],
+      "consumed_fields": [],
+      "disposition": "pto-v0-rejected",
+      "effect_class": "pto-v0-unsupported-handler",
+      "rejection_precedes_effects": true,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 93,
+      "form_id": "hl_qpop_48_a2c57f5bc27b",
+      "mnemonic": "HL.QPOP",
+      "semantic_handler": "ExecuteQueuePop",
+      "decoded_fields": [
+        "RegDst0",
+        "RegDst1",
+        "SrcL",
+        "SrcR",
+        "e",
+        "r"
+      ],
+      "consumed_fields": [],
+      "disposition": "pto-v0-rejected",
+      "effect_class": "pto-v0-unsupported-handler",
+      "rejection_precedes_effects": true,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 94,
+      "form_id": "hl_qpush_48_3eab8e05d61a",
+      "mnemonic": "HL.QPUSH",
+      "semantic_handler": "ExecuteQueuePush",
+      "decoded_fields": [
+        "RegDst",
+        "SrcL",
+        "SrcR",
+        "e",
+        "h",
+        "r"
+      ],
+      "consumed_fields": [],
+      "disposition": "pto-v0-rejected",
+      "effect_class": "pto-v0-unsupported-handler",
+      "rejection_precedes_effects": true,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 95,
+      "form_id": "l_bstart_fp_64_098e57019d7b",
+      "mnemonic": "L.BSTART.FP",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm"
+      ],
+      "consumed_fields": [
+        "simm"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 96,
+      "form_id": "l_bstart_fp_64_0cac9941f7d4",
+      "mnemonic": "L.BSTART.FP",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm"
+      ],
+      "consumed_fields": [
+        "simm"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 97,
+      "form_id": "l_bstart_fp_64_2067ad6667ed",
+      "mnemonic": "L.BSTART.FP",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm"
+      ],
+      "consumed_fields": [
+        "simm"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 98,
+      "form_id": "l_bstart_fp_64_8115c042ef26",
+      "mnemonic": "L.BSTART.FP",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm"
+      ],
+      "consumed_fields": [
+        "simm"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 99,
+      "form_id": "l_bstart_std_64_37e84068ce61",
+      "mnemonic": "L.BSTART.STD",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm"
+      ],
+      "consumed_fields": [
+        "simm"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 100,
+      "form_id": "l_bstart_std_64_463a1567da91",
+      "mnemonic": "L.BSTART.STD",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm"
+      ],
+      "consumed_fields": [
+        "simm"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 101,
+      "form_id": "l_bstart_std_64_72d502fcd30d",
+      "mnemonic": "L.BSTART.STD",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm"
+      ],
+      "consumed_fields": [
+        "simm"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 102,
+      "form_id": "l_bstart_std_64_899592f9c5bc",
+      "mnemonic": "L.BSTART.STD",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm"
+      ],
+      "consumed_fields": [
+        "simm"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 103,
+      "form_id": "l_bstart_sys_64_919e576c79e4",
+      "mnemonic": "L.BSTART.SYS",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "simm"
+      ],
+      "consumed_fields": [
+        "simm"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 104,
+      "form_id": "mcopy_32_4fc4a803e995",
+      "mnemonic": "MCOPY",
+      "semantic_handler": "ExecuteMemoryCopy",
+      "decoded_fields": [
+        "RegSrc0",
+        "RegSrc1",
+        "RegSrc2"
+      ],
+      "consumed_fields": [
+        "RegSrc0",
+        "RegSrc1",
+        "RegSrc2"
+      ],
+      "disposition": "executed",
+      "effect_class": "bounded-memory-copy",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 105,
+      "form_id": "mset_32_0b932f291932",
+      "mnemonic": "MSET",
+      "semantic_handler": "ExecuteMemorySet",
+      "decoded_fields": [
+        "RegSrc0",
+        "RegSrc1",
+        "RegSrc2"
+      ],
+      "consumed_fields": [
+        "RegSrc0",
+        "RegSrc1",
+        "RegSrc2"
+      ],
+      "disposition": "executed",
+      "effect_class": "bounded-memory-fill",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 106,
+      "form_id": "xb_32_40ad190a0a7f",
+      "mnemonic": "XB",
+      "semantic_handler": "ExecuteCrossBlockTransfer",
+      "decoded_fields": [
+        "ACR-ID",
+        "CROSS-BID"
+      ],
+      "consumed_fields": [],
+      "disposition": "pto-v0-rejected",
+      "effect_class": "pto-v0-unsupported-handler",
+      "rejection_precedes_effects": true,
+      "sequential_tpc_advance": false
+    }
+  ],
+  "bundle_tile_bridge": {
+    "bound_operand_fields": [
+      "destination0",
+      "source0",
+      "source1"
+    ],
+    "counts": {
+      "TEPL": {
+        "total": 98,
+        "representable": 63,
+        "commit_rejected": 35
+      },
+      "TMA": {
+        "total": 9,
+        "representable": 1,
+        "commit_rejected": 8
+      },
+      "CUBE": {
+        "total": 13,
+        "representable": 5,
+        "commit_rejected": 8
+      }
+    },
+    "operation_matrix": [
+      {
+        "family": "TEPL",
+        "selector": "0x000",
+        "operation": "TADD",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x001",
+        "operation": "TSUB",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x002",
+        "operation": "TMUL",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x004",
+        "operation": "TMAX",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x005",
+        "operation": "TMIN",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x006",
+        "operation": "TAND",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x007",
+        "operation": "TOR",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x008",
+        "operation": "TXOR",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x009",
+        "operation": "TSHL",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x00A",
+        "operation": "TSHR",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x02B",
+        "operation": "TCMP",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "comparison"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "comparison"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x02C",
+        "operation": "TSEL",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "source2"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "source2"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x02D",
+        "operation": "TABS",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x02E",
+        "operation": "TNOT",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x02F",
+        "operation": "TNEG",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x00B",
+        "operation": "TRELU",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x00C",
+        "operation": "TPRELU",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x003",
+        "operation": "TDIV",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x030",
+        "operation": "TREM",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x010",
+        "operation": "TSQRT",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x00F",
+        "operation": "TLOG",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x018",
+        "operation": "TRECIP",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x00E",
+        "operation": "TEXP",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x011",
+        "operation": "TRSQRT",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x020",
+        "operation": "TADDS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x031",
+        "operation": "TAXPY",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x021",
+        "operation": "TSUBS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x022",
+        "operation": "TMULS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x023",
+        "operation": "TDIVS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x025",
+        "operation": "TMINS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x024",
+        "operation": "TMAXS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x032",
+        "operation": "TREMS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x026",
+        "operation": "TANDS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x027",
+        "operation": "TORS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x028",
+        "operation": "TXORS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x033",
+        "operation": "TCMPS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0",
+          "comparison"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "comparison",
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x034",
+        "operation": "TSELS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x029",
+        "operation": "TSHLS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x02A",
+        "operation": "TSHRS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x014",
+        "operation": "TROWSUM",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x035",
+        "operation": "TROWPROD",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x012",
+        "operation": "TROWMAX",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x013",
+        "operation": "TROWMIN",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x036",
+        "operation": "TROWARGMAX",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x037",
+        "operation": "TROWARGMIN",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x017",
+        "operation": "TCOLSUM",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x038",
+        "operation": "TCOLPROD",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x015",
+        "operation": "TCOLMAX",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x016",
+        "operation": "TCOLMIN",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x039",
+        "operation": "TCOLARGMAX",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x03A",
+        "operation": "TCOLARGMIN",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x01F",
+        "operation": "TROWEXPAND",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x03B",
+        "operation": "TROWEXPANDADD",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x03C",
+        "operation": "TROWEXPANDSUB",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x03D",
+        "operation": "TROWEXPANDMUL",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x03E",
+        "operation": "TROWEXPANDDIV",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x03F",
+        "operation": "TROWEXPANDMAX",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x040",
+        "operation": "TROWEXPANDMIN",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x041",
+        "operation": "TROWEXPANDEXPDIF",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x01E",
+        "operation": "TCOLEXPAND",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x042",
+        "operation": "TCOLEXPANDADD",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x043",
+        "operation": "TCOLEXPANDSUB",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x044",
+        "operation": "TCOLEXPANDMUL",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x045",
+        "operation": "TCOLEXPANDDIV",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x046",
+        "operation": "TCOLEXPANDMAX",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x047",
+        "operation": "TCOLEXPANDMIN",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x048",
+        "operation": "TCOLEXPANDEXPDIF",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x000",
+        "operation": "TMATMUL",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x001",
+        "operation": "TMATMUL_BIAS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "source2"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "source2"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x002",
+        "operation": "TMATMUL_ACC",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x004",
+        "operation": "TMATMUL_MX",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "source2",
+          "source3"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "source2",
+          "source3"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x005",
+        "operation": "TMATMUL_MX_BIAS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "source2",
+          "source3",
+          "destination1"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "destination1",
+          "source2",
+          "source3"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x006",
+        "operation": "TMATMUL_MX_ACC",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "source2",
+          "source3"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "source2",
+          "source3"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x008",
+        "operation": "ACCCVT",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x010",
+        "operation": "TGEMV",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x011",
+        "operation": "TGEMV_BIAS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "source2"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "source2"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x012",
+        "operation": "TGEMV_ACC",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x014",
+        "operation": "TGEMV_MX",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "source2",
+          "source3"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "source2",
+          "source3"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x015",
+        "operation": "TGEMV_MX_BIAS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "source2",
+          "source3",
+          "destination1"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "destination1",
+          "source2",
+          "source3"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x016",
+        "operation": "TGEMV_MX_ACC",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "source2",
+          "source3"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "source2",
+          "source3"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TMA",
+        "selector": "0x000",
+        "operation": "TLOAD",
+        "operand_fields": [
+          "destination0",
+          "address"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "address"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TMA",
+        "selector": "0x001",
+        "operation": "TSTORE",
+        "operand_fields": [
+          "address",
+          "source0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "address"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TMA",
+        "selector": "0x003",
+        "operation": "TPREFETCH",
+        "operand_fields": [
+          "address",
+          "byte_count"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "address",
+          "byte_count"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TMA",
+        "selector": "0x004",
+        "operation": "MGATHER",
+        "operand_fields": [
+          "destination0",
+          "address",
+          "source0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "address"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TMA",
+        "selector": "0x005",
+        "operation": "MSCATTER",
+        "operand_fields": [
+          "address",
+          "source0",
+          "source1"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "address"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TMA",
+        "selector": "0x006",
+        "operation": "MGATHER_MASK",
+        "operand_fields": [
+          "destination0",
+          "address",
+          "source0",
+          "source1"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "address"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TMA",
+        "selector": "0x007",
+        "operation": "MSCATTER_MASK",
+        "operand_fields": [
+          "address",
+          "source0",
+          "source1",
+          "source2"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "address",
+          "source2"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TMA",
+        "selector": "0x008",
+        "operation": "MGATHER_CAS",
+        "operand_fields": [
+          "destination0",
+          "address",
+          "source0",
+          "source1",
+          "source2"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "address",
+          "source2"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x019",
+        "operation": "TEXPANDS",
+        "operand_fields": [
+          "destination0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x080",
+        "operation": "TCI",
+        "operand_fields": [
+          "destination0",
+          "scalar0",
+          "flag0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "flag0",
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x081",
+        "operation": "TTRI",
+        "operand_fields": [
+          "destination0",
+          "flag0",
+          "diagonal"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "diagonal",
+          "flag0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x082",
+        "operation": "TFILLPAD",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x00D",
+        "operation": "TCVT",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x083",
+        "operation": "TQUANT",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0",
+          "scalar1"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0",
+          "scalar1"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x084",
+        "operation": "TDEQUANT",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0",
+          "scalar1"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0",
+          "scalar1"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x085",
+        "operation": "TEXTRACT",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "natural0",
+          "natural1"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "natural0",
+          "natural1"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x086",
+        "operation": "TINSERT",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "natural0",
+          "natural1"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "natural0",
+          "natural1"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x01A",
+        "operation": "TGATHER",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x01B",
+        "operation": "TSCATTER",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x087",
+        "operation": "TCONCAT",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "axis"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "axis"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x01D",
+        "operation": "TTRANS",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x088",
+        "operation": "TIMG2COL",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "positive0",
+          "positive1",
+          "positive2",
+          "positive3",
+          "natural0",
+          "natural1",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "natural0",
+          "natural1",
+          "positive0",
+          "positive1",
+          "positive2",
+          "positive3",
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TMA",
+        "selector": "0x002",
+        "operation": "TMOV",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x089",
+        "operation": "TGATHERB",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x08A",
+        "operation": "TDEINTERLEAVE",
+        "operand_fields": [
+          "destination0",
+          "destination1",
+          "source0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "destination1"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x08B",
+        "operation": "TINTERLEAVE",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x01C",
+        "operation": "TRESHAPE",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x0C0",
+        "operation": "TSORT",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "flag0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "flag0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x0C1",
+        "operation": "TMRGSORT",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "flag0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "flag0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x0C2",
+        "operation": "THISTOGRAM",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "selected_byte"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "selected_byte"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x0E0",
+        "operation": "TPUSH",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x0E1",
+        "operation": "TPOP",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x0E2",
+        "operation": "TALLOC",
+        "operand_fields": [
+          "destination0",
+          "byte_count",
+          "positive0",
+          "positive1",
+          "natural0",
+          "natural1",
+          "scalar0",
+          "flag0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "byte_count",
+          "flag0",
+          "natural0",
+          "natural1",
+          "positive0",
+          "positive1",
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x0E3",
+        "operation": "TFREE",
+        "operand_fields": [
+          "destination0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x0C3",
+        "operation": "TPARTADD",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x0C4",
+        "operation": "TPARTMUL",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x0C5",
+        "operation": "TPARTMAX",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x0C6",
+        "operation": "TPARTMIN",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x0C7",
+        "operation": "TPARTARGMAX",
+        "operand_fields": [
+          "destination0",
+          "destination1",
+          "source0",
+          "source1",
+          "source2",
+          "source3"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "destination1",
+          "source2",
+          "source3"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x0C8",
+        "operation": "TPARTARGMIN",
+        "operand_fields": [
+          "destination0",
+          "destination1",
+          "source0",
+          "source1",
+          "source2",
+          "source3"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "destination1",
+          "source2",
+          "source3"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      }
+    ]
+  },
+  "executable_evidence": {
+    "canonical_form_test": "scripts/generate-asl-decoders:ValidateCanonicalCommandExecution",
+    "boundary_test": "tests/asl/bundle-tests.asl:TestBundleCommandTotalityBoundaries",
+    "bridge_tests": [
+      "tests/asl/bundle-tests.asl:TestBundleTileCommitLifecycle",
+      "tests/asl/bundle-tests.asl:TestBundleTileCommitRollback"
+    ],
+    "canonical_form_case_count": 107
+  },
+  "independent_comparison": {
+    "source": "content-addressed independent executable ISA snapshot",
+    "aggregate_sha256": "1f8862ef90ee72d0e917398b2d96b2799f541f2e7198c103d9fc47af998a54ec",
+    "matched_form_ids": 107,
+    "executable_subset": 91,
+    "decode_only": 16,
+    "authority": "non-normative structural comparison only",
+    "limitation": "The independent model stages bundle payload execution, so it does not validate PTO tile payload effects; those remain closed by PTO-owned ASL evidence."
+  },
+  "requirement_ids": [
+    "PTO-REQ-BUNDLE-DISPATCH-001",
+    "PTO-REQ-BUNDLE-OPERATION-001",
+    "PTO-REQ-BUNDLE-STATE-001"
+  ]
+}

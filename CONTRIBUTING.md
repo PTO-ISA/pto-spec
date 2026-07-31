@@ -1,6 +1,6 @@
 # Contributing
 
-`pto-spec` is a normative draft. Normative PTO semantics require an approved
+`pto-spec` is the normative PTO architecture repository. Normative PTO semantics require an approved
 architecture change proposal before code is added.
 
 ## Before opening a pull request
@@ -31,8 +31,6 @@ catalogs during every build.
 
 Public source reconciliation changes must update the audited commit, content
 hashes, per-row disposition, ADR or rationale, and generated ledger together.
-Never change the raw private cross-check merely to make a public closure count
-pass.
 
 Commit messages should explain intent and record important constraints, rejected alternatives, verification, and known
 gaps. Use native Git trailers when those details are useful.
@@ -41,5 +39,5 @@ gaps. Use native Git trailers when those details are useful.
 
 Contributions are accepted under the BSD 3-Clause License in `LICENSE`. Do not
 copy third-party specification prose, source, or diagrams unless their license
-is compatible and attribution is recorded in `NOTICE`. Private cross-check
+is compatible and attribution is recorded in `NOTICE`. Non-public comparison
 material must never be copied, named, or linked from this repository.

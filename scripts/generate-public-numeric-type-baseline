@@ -1,0 +1,310 @@
+#!/usr/bin/env python3
+"""Generate the fail-closed PD-02 public type and availability baseline."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
+FORMAT_NAMESPACE = ROOT / "spec/evidence/numeric-format-namespace-contract.json"
+EXECUTABLE_COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
+OUTPUT = ROOT / "spec/evidence/public-numeric-type-baseline.json"
+ACCEPTANCE_RECORD = (
+    "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md"
+)
+
+PUBLIC_TYPES = (
+    ("f16", ["half"], "floating", 16, None, True, True, "F16"),
+    ("bf16", ["bfloat16_t"], "floating", 16, None, True, True, "BF16"),
+    ("f32", [], "floating", 32, None, True, True, "F32"),
+    ("f8e4m3", ["float8_e4m3_t"], "floating", 8, None, False, True, None),
+    ("f8e5m2", ["float8_e5m2_t"], "floating", 8, None, False, True, None),
+    ("hifloat8", ["hifloat8_t"], "floating", 8, None, False, True, None),
+    (
+        "float4_e1m2x2",
+        ["float4_e1m2x2_t"],
+        "floating",
+        4,
+        None,
+        False,
+        True,
+        None,
+    ),
+    (
+        "float4_e2m1x2",
+        ["float4_e2m1x2_t"],
+        "floating",
+        4,
+        None,
+        False,
+        True,
+        None,
+    ),
+    ("i8", [], "integer", 8, True, True, True, "S8"),
+    ("u8", [], "integer", 8, False, True, True, "U8"),
+    ("i16", [], "integer", 16, True, True, True, "S16"),
+    ("u16", [], "integer", 16, False, True, True, "U16"),
+    ("i32", [], "integer", 32, True, True, True, "S32"),
+    ("u32", [], "integer", 32, False, True, True, "U32"),
+    ("i64", [], "integer", 64, True, True, True, "S64"),
+    ("u64", [], "integer", 64, False, True, True, "U64"),
+)
+
+
+def load(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise SystemExit(f"public numeric type baseline generation failed: {message}")
+
+
+def source(path: str) -> dict[str, str]:
+    absolute = ROOT / path
+    return {"path": path, "sha256": hashlib.sha256(absolute.read_bytes()).hexdigest()}
+
+
+def generate() -> dict[str, Any]:
+    inputs = load(DECISION_INPUTS)
+    namespace = load(FORMAT_NAMESPACE)
+    comparison = load(EXECUTABLE_COMPARISON)
+
+    pd02 = next(row for row in inputs["decision_questions"] if row["id"] == "PD-02")
+    require(
+        pd02["status"] == "decision-required"
+        and pd02["selected_disposition"] is None
+        and pd02["decision_record"] is None,
+        "PD-02 must remain open",
+    )
+    require(
+        namespace["decision_id"] == "PD-02"
+        and namespace["checkpoint_id"] == "PD-02-SC1"
+        and namespace["summary"]["pd02_complete"] is False,
+        "PD-02 namespace checkpoint drift",
+    )
+    require(
+        comparison["status"]
+        == "comparison-matrix-closed-clean-gates-passed:S5-T3",
+        "independent comparison status drift",
+    )
+
+    source_by_id = {row["id"]: row for row in inputs["sources"]}
+    for source_id in (
+        "public-type-system",
+        "public-target-profiles",
+        "public-portability-rules",
+    ):
+        require(source_id in source_by_id, f"missing public source {source_id}")
+        require(
+            source_by_id[source_id]["layer"] == "public-contract",
+            f"non-public authority for {source_id}",
+        )
+
+    namespace_by_name = {row["name"]: row for row in namespace["tile_data_types"]}
+    require(len(namespace_by_name) == 19, "tile type namespace drift")
+
+    public_types = []
+    accepted_bindings = []
+    for (
+        type_id,
+        aliases,
+        type_class,
+        width,
+        signed,
+        a2a3,
+        a5,
+        catalog_name,
+    ) in PUBLIC_TYPES:
+        row = {
+            "id": f"public-type/{type_id}",
+            "public_name": type_id,
+            "aliases": aliases,
+            "class": type_class,
+            "storage_bits": width,
+            "signed": signed,
+            "a2a3_available": a2a3,
+            "a5_available": a5,
+            "catalog_binding": (
+                f"TileDataType_{catalog_name}" if catalog_name is not None else None
+            ),
+            "binding_status": (
+                "public-identity-bound-result-rules-open"
+                if catalog_name is not None
+                else "public-identity-known-catalog-binding-open"
+            ),
+            "result_rule_id": None,
+            "result_acceptance_record": None,
+        }
+        public_types.append(row)
+        if catalog_name is not None:
+            catalog = namespace_by_name[catalog_name]
+            require(catalog["storage_bits"] == width, f"width drift for {type_id}")
+            if type_class == "integer":
+                expected_class = "signed-integer" if signed else "unsigned-integer"
+                require(
+                    catalog["raw_class"] == expected_class,
+                    f"signedness drift for {type_id}",
+                )
+            accepted_bindings.append(
+                {
+                    "public_type_id": row["id"],
+                    "catalog_name": catalog_name,
+                    "asl_enumerator": catalog["asl_enumerator"],
+                    "storage_bits": width,
+                    "status": "accepted-identity-binding-result-rules-open",
+                }
+            )
+
+    unresolved_catalog_types = [
+        {
+            "catalog_name": name,
+            "asl_enumerator": namespace_by_name[name]["asl_enumerator"],
+            "status": status,
+            "candidate_public_types": candidates,
+        }
+        for name, status, candidates in (
+            ("F64", "public-element-type-absent-at-pinned-revision", []),
+            ("FP8", "one-catalog-name-two-public-format-candidates", ["f8e4m3", "f8e5m2"]),
+            ("FPL8", "specialized-public-binding-not-accepted", ["hifloat8"]),
+            ("FP4", "two-specialized-public-bindings-not-accepted", ["float4_e1m2x2", "float4_e2m1x2"]),
+            ("FPL4", "two-specialized-public-bindings-not-accepted", ["float4_e1m2x2", "float4_e2m1x2"]),
+            ("E8M0", "public-element-type-absent-at-pinned-revision", []),
+        )
+    ]
+
+    a2a3_count = sum(row[5] for row in PUBLIC_TYPES)
+    a5_count = sum(row[6] for row in PUBLIC_TYPES)
+    require(a2a3_count == 11 and a5_count == 16, "target availability drift")
+    require(len(accepted_bindings) == 11, "accepted binding count drift")
+
+    return {
+        "schema_version": 1,
+        "target": "S5-T2-A5:PD-02-SC2",
+        "decision_id": "PD-02",
+        "checkpoint_id": "PD-02-SC2",
+        "status": "public-type-identity-and-target-availability-baseline-closed-result-and-legality-open",
+        "acceptance_record": ACCEPTANCE_RECORD,
+        "policy": {
+            "authority": "Only the pinned public PTO contract defines public type identities and target availability.",
+            "support_not_semantics": "Availability is a type-support fact, not an operation/type legality or numeric-result rule.",
+            "profile_narrowing": "A named target profile may narrow support but may not redefine portable PTO semantics.",
+            "cpu_observation": "The CPU simulator is implementation evidence and is neither a target-profile authority nor a numeric oracle.",
+            "unbound_catalog_names": "A PTO raw-carrier name without one accepted public binding remains unbound; spelling or backend type aliases do not create a format.",
+        },
+        "public_types": public_types,
+        "accepted_catalog_bindings": accepted_bindings,
+        "unresolved_catalog_types": unresolved_catalog_types,
+        "target_profiles": [
+            {
+                "profile_id": "pto-a2a3-numeric-v1",
+                "public_target": "A2/A3",
+                "available_public_type_ids": sorted(
+                    row["id"] for row in public_types if row["a2a3_available"]
+                ),
+                "unavailable_public_type_ids": sorted(
+                    row["id"] for row in public_types if not row["a2a3_available"]
+                ),
+                "status": "type-availability-baseline-closed-operation-legality-open",
+            },
+            {
+                "profile_id": "pto-a5-numeric-v1",
+                "public_target": "A5",
+                "available_public_type_ids": sorted(row["id"] for row in public_types),
+                "unavailable_public_type_ids": [],
+                "status": "type-availability-baseline-closed-operation-legality-open",
+            },
+        ],
+        "source_line_contracts": [
+            {
+                "source_id": "public-type-system",
+                "sha256": source_by_id["public-type-system"]["sha256"],
+                "line_ranges": ["11-20", "24-33"],
+                "claim": "public names, aliases, widths, signedness, and A2/A3/A5 availability",
+            },
+            {
+                "source_id": "public-target-profiles",
+                "sha256": source_by_id["public-target-profiles"]["sha256"],
+                "line_ranges": ["131-170", "175-202"],
+                "claim": "profile identity, narrowing boundary, specialized A5 support, and the E5M2/E5M3FN conflict",
+            },
+            {
+                "source_id": "public-portability-rules",
+                "sha256": source_by_id["public-portability-rules"]["sha256"],
+                "line_ranges": ["13-24"],
+                "claim": "target profiles narrow support rather than redefine PTO",
+            },
+        ],
+        "independent_comparison": {
+            "status": "structural-only-no-public-binding-or-result-oracle",
+            "provenance_sha256": comparison["snapshot"]["revision_sha256"],
+            "corroborated": [
+                "scalar-floating-carrier-widths-and-type-field-legality",
+                "numeric-code-namespaces-must-remain-distinct",
+            ],
+            "limits": [
+                "tile-numeric-selectors-do-not-execute-payload-arithmetic",
+                "independent-type-code-values-conflict-with-PTO-catalog-namespaces",
+                "no-PTO-public-type-binding-or-numeric-result-is-imported",
+            ],
+        },
+        "open_residuals": [
+            {"id": "PD-02-R1", "rule": "bind FP8, FPL8, FP4, and FPL4 to unique bit-exact public formats"},
+            {"id": "PD-02-R2", "rule": "decide the public numeric role of the F64 raw carrier"},
+            {"id": "PD-02-R3", "rule": "decide the public numeric role of the E8M0 raw carrier"},
+            {"id": "PD-02-R4", "rule": "resolve the published E5M2 versus E5M3FN spelling conflict"},
+            {"id": "PD-02-R5", "rule": "publish bit-exact payload fields and exceptional-value classes for every floating type"},
+            {"id": "PD-02-R6", "rule": "complete every scalar and tile operation/type/profile legality tuple"},
+            {"id": "PD-02-R7", "rule": "publish positive and negative target-availability vectors for every accepted tuple"},
+        ],
+        "sources": [
+            source("spec/evidence/numeric-profile-decision-inputs.json"),
+            source("spec/evidence/numeric-format-namespace-contract.json"),
+            source("spec/evidence/executable-model-comparison.json"),
+            source(ACCEPTANCE_RECORD),
+        ],
+        "summary": {
+            "public_type_count": len(public_types),
+            "public_floating_type_count": sum(row["class"] == "floating" for row in public_types),
+            "public_integer_type_count": sum(row["class"] == "integer" for row in public_types),
+            "a2a3_available_type_count": a2a3_count,
+            "a5_available_type_count": a5_count,
+            "accepted_catalog_binding_count": len(accepted_bindings),
+            "unresolved_catalog_type_count": len(unresolved_catalog_types),
+            "accepted_result_rule_count": 0,
+            "accepted_domain_rule_count": 0,
+            "open_residual_count": 7,
+            "pd02_complete": False,
+            "s5_t2_a_complete": False,
+            "s5_t2_complete": False,
+        },
+    }
+
+
+def serialized() -> str:
+    return json.dumps(generate(), indent=2, ensure_ascii=False) + "\n"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    action = parser.add_mutually_exclusive_group(required=True)
+    action.add_argument("--check", action="store_true")
+    action.add_argument("--write", action="store_true")
+    args = parser.parse_args()
+    expected = serialized()
+    if args.write:
+        OUTPUT.write_text(expected, encoding="utf-8")
+        return 0
+    if not OUTPUT.is_file() or OUTPUT.read_text(encoding="utf-8") != expected:
+        raise SystemExit(f"stale generated evidence: {OUTPUT.relative_to(ROOT)}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

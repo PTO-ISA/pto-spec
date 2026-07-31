@@ -12,20 +12,21 @@ id = "pto-v0"
 implementation = "asl/profiles/pto-v0.asl"
 conformance_tests = "tests/asl/profile-tests.asl"
 numeric_model = "deterministic-raw-carrier-reference"
-memory_model = "identity-translation-with-user-protected-region"
+memory_model = "identity-translation-with-acr2-protected-region"
 reset_model = "explicit-reference-reset"
-privilege_model = "user-supervisor-machine"
+access_control_model = "acr0-to-acr15"
 time_model = "one-tick-per-decoded-attempt"
 
 [architecture]
 profile = "pto-v0"
 xlen = 64
-scalar_forms = 473
-system_register_definitions = 52
+scalar_forms = 474
+command_forms = 107
+system_register_definitions = 72
 trap_numbers = 13
 tile_model = "one-level"
 tile_registers = 64
-pto_operations = 111
+pto_operations = 120
 hierarchical_calls = false
 
 [memory_order]
@@ -37,15 +38,21 @@ agent_bound = 4
 mixed_size = "fail-closed"
 
 [maturity]
-scalar_state = "implemented"
-scalar_semantics = "complete-under-pto-v0-reference-profile"
-system_state = "implemented-with-explicit-privilege-time-and-reset"
-tile_state = "implemented"
-tile_semantics = "decoded-with-explicit-legality-and-pto-v0-reference-profile"
-binary_decode = "executable-complete"
-instruction_dispatch = "all-473-scalar-forms-and-111-tile-operations-executable"
-memory_order = "bounded-executable-pto-tso-candidate-model"
-source_reconciliation = "all-473-scalar-forms-and-111-tile-operations-closed-at-pinned-public-source"
+current_level = "M4-reference-semantics-closed"
+scalar_state = "implemented-reference-envelope-stage-M2-closed"
+scalar_semantics = "reference-totality-stage-M4-closed"
+system_state = "catalog-and-ebarg-visible-stage-M2-closed"
+tile_state = "implemented-descriptors-stage-M2-closed"
+tile_semantics = "reference-totality-stage-M4-closed"
+binary_decode = "mechanically-closed"
+instruction_dispatch = "bundle-status-and-all-scalar-effects-closed-stage-M1-closed"
+memory_order = "production-connected-candidate-graph-stage-M3-closed"
+numeric_contracts = "inventory-owned-stage-S5-T1-closed-target-conformance-stage-S5-T2-open"
+numeric_profile_decisions = "identity-framework-flag-lifecycle-rounding-selector-format-namespace-public-type-baseline-public-integer-conversion-a2a3-mx-negative-applicability-and-variation-ownership-closed-stage-S5-T2-A-results-open"
+source_reconciliation = "exhaustive-comparison-matrix-and-clean-gates-stage-S5-T3-closed"
+release_traceability = "inventory-and-links-closed-stage-S6-T1-promotion-open"
+release_gate_readiness = "gate-contract-and-parallel-topology-closed-stage-S6-T2-promotion-open"
+architectural_completion = "open"
 
 [toolchain]
 aslref_repository = "https://github.com/herd/herdtools7.git"

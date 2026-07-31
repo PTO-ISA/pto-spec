@@ -1,0 +1,538 @@
+{
+  "schema_version": 1,
+  "target": "S5-T2-A5:PD-02-SC2",
+  "decision_id": "PD-02",
+  "checkpoint_id": "PD-02-SC2",
+  "status": "public-type-identity-and-target-availability-baseline-closed-result-and-legality-open",
+  "acceptance_record": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
+  "policy": {
+    "authority": "Only the pinned public PTO contract defines public type identities and target availability.",
+    "support_not_semantics": "Availability is a type-support fact, not an operation/type legality or numeric-result rule.",
+    "profile_narrowing": "A named target profile may narrow support but may not redefine portable PTO semantics.",
+    "cpu_observation": "The CPU simulator is implementation evidence and is neither a target-profile authority nor a numeric oracle.",
+    "unbound_catalog_names": "A PTO raw-carrier name without one accepted public binding remains unbound; spelling or backend type aliases do not create a format."
+  },
+  "public_types": [
+    {
+      "id": "public-type/f16",
+      "public_name": "f16",
+      "aliases": [
+        "half"
+      ],
+      "class": "floating",
+      "storage_bits": 16,
+      "signed": null,
+      "a2a3_available": true,
+      "a5_available": true,
+      "catalog_binding": "TileDataType_F16",
+      "binding_status": "public-identity-bound-result-rules-open",
+      "result_rule_id": null,
+      "result_acceptance_record": null
+    },
+    {
+      "id": "public-type/bf16",
+      "public_name": "bf16",
+      "aliases": [
+        "bfloat16_t"
+      ],
+      "class": "floating",
+      "storage_bits": 16,
+      "signed": null,
+      "a2a3_available": true,
+      "a5_available": true,
+      "catalog_binding": "TileDataType_BF16",
+      "binding_status": "public-identity-bound-result-rules-open",
+      "result_rule_id": null,
+      "result_acceptance_record": null
+    },
+    {
+      "id": "public-type/f32",
+      "public_name": "f32",
+      "aliases": [],
+      "class": "floating",
+      "storage_bits": 32,
+      "signed": null,
+      "a2a3_available": true,
+      "a5_available": true,
+      "catalog_binding": "TileDataType_F32",
+      "binding_status": "public-identity-bound-result-rules-open",
+      "result_rule_id": null,
+      "result_acceptance_record": null
+    },
+    {
+      "id": "public-type/f8e4m3",
+      "public_name": "f8e4m3",
+      "aliases": [
+        "float8_e4m3_t"
+      ],
+      "class": "floating",
+      "storage_bits": 8,
+      "signed": null,
+      "a2a3_available": false,
+      "a5_available": true,
+      "catalog_binding": null,
+      "binding_status": "public-identity-known-catalog-binding-open",
+      "result_rule_id": null,
+      "result_acceptance_record": null
+    },
+    {
+      "id": "public-type/f8e5m2",
+      "public_name": "f8e5m2",
+      "aliases": [
+        "float8_e5m2_t"
+      ],
+      "class": "floating",
+      "storage_bits": 8,
+      "signed": null,
+      "a2a3_available": false,
+      "a5_available": true,
+      "catalog_binding": null,
+      "binding_status": "public-identity-known-catalog-binding-open",
+      "result_rule_id": null,
+      "result_acceptance_record": null
+    },
+    {
+      "id": "public-type/hifloat8",
+      "public_name": "hifloat8",
+      "aliases": [
+        "hifloat8_t"
+      ],
+      "class": "floating",
+      "storage_bits": 8,
+      "signed": null,
+      "a2a3_available": false,
+      "a5_available": true,
+      "catalog_binding": null,
+      "binding_status": "public-identity-known-catalog-binding-open",
+      "result_rule_id": null,
+      "result_acceptance_record": null
+    },
+    {
+      "id": "public-type/float4_e1m2x2",
+      "public_name": "float4_e1m2x2",
+      "aliases": [
+        "float4_e1m2x2_t"
+      ],
+      "class": "floating",
+      "storage_bits": 4,
+      "signed": null,
+      "a2a3_available": false,
+      "a5_available": true,
+      "catalog_binding": null,
+      "binding_status": "public-identity-known-catalog-binding-open",
+      "result_rule_id": null,
+      "result_acceptance_record": null
+    },
+    {
+      "id": "public-type/float4_e2m1x2",
+      "public_name": "float4_e2m1x2",
+      "aliases": [
+        "float4_e2m1x2_t"
+      ],
+      "class": "floating",
+      "storage_bits": 4,
+      "signed": null,
+      "a2a3_available": false,
+      "a5_available": true,
+      "catalog_binding": null,
+      "binding_status": "public-identity-known-catalog-binding-open",
+      "result_rule_id": null,
+      "result_acceptance_record": null
+    },
+    {
+      "id": "public-type/i8",
+      "public_name": "i8",
+      "aliases": [],
+      "class": "integer",
+      "storage_bits": 8,
+      "signed": true,
+      "a2a3_available": true,
+      "a5_available": true,
+      "catalog_binding": "TileDataType_S8",
+      "binding_status": "public-identity-bound-result-rules-open",
+      "result_rule_id": null,
+      "result_acceptance_record": null
+    },
+    {
+      "id": "public-type/u8",
+      "public_name": "u8",
+      "aliases": [],
+      "class": "integer",
+      "storage_bits": 8,
+      "signed": false,
+      "a2a3_available": true,
+      "a5_available": true,
+      "catalog_binding": "TileDataType_U8",
+      "binding_status": "public-identity-bound-result-rules-open",
+      "result_rule_id": null,
+      "result_acceptance_record": null
+    },
+    {
+      "id": "public-type/i16",
+      "public_name": "i16",
+      "aliases": [],
+      "class": "integer",
+      "storage_bits": 16,
+      "signed": true,
+      "a2a3_available": true,
+      "a5_available": true,
+      "catalog_binding": "TileDataType_S16",
+      "binding_status": "public-identity-bound-result-rules-open",
+      "result_rule_id": null,
+      "result_acceptance_record": null
+    },
+    {
+      "id": "public-type/u16",
+      "public_name": "u16",
+      "aliases": [],
+      "class": "integer",
+      "storage_bits": 16,
+      "signed": false,
+      "a2a3_available": true,
+      "a5_available": true,
+      "catalog_binding": "TileDataType_U16",
+      "binding_status": "public-identity-bound-result-rules-open",
+      "result_rule_id": null,
+      "result_acceptance_record": null
+    },
+    {
+      "id": "public-type/i32",
+      "public_name": "i32",
+      "aliases": [],
+      "class": "integer",
+      "storage_bits": 32,
+      "signed": true,
+      "a2a3_available": true,
+      "a5_available": true,
+      "catalog_binding": "TileDataType_S32",
+      "binding_status": "public-identity-bound-result-rules-open",
+      "result_rule_id": null,
+      "result_acceptance_record": null
+    },
+    {
+      "id": "public-type/u32",
+      "public_name": "u32",
+      "aliases": [],
+      "class": "integer",
+      "storage_bits": 32,
+      "signed": false,
+      "a2a3_available": true,
+      "a5_available": true,
+      "catalog_binding": "TileDataType_U32",
+      "binding_status": "public-identity-bound-result-rules-open",
+      "result_rule_id": null,
+      "result_acceptance_record": null
+    },
+    {
+      "id": "public-type/i64",
+      "public_name": "i64",
+      "aliases": [],
+      "class": "integer",
+      "storage_bits": 64,
+      "signed": true,
+      "a2a3_available": true,
+      "a5_available": true,
+      "catalog_binding": "TileDataType_S64",
+      "binding_status": "public-identity-bound-result-rules-open",
+      "result_rule_id": null,
+      "result_acceptance_record": null
+    },
+    {
+      "id": "public-type/u64",
+      "public_name": "u64",
+      "aliases": [],
+      "class": "integer",
+      "storage_bits": 64,
+      "signed": false,
+      "a2a3_available": true,
+      "a5_available": true,
+      "catalog_binding": "TileDataType_U64",
+      "binding_status": "public-identity-bound-result-rules-open",
+      "result_rule_id": null,
+      "result_acceptance_record": null
+    }
+  ],
+  "accepted_catalog_bindings": [
+    {
+      "public_type_id": "public-type/f16",
+      "catalog_name": "F16",
+      "asl_enumerator": "TileDataType_F16",
+      "storage_bits": 16,
+      "status": "accepted-identity-binding-result-rules-open"
+    },
+    {
+      "public_type_id": "public-type/bf16",
+      "catalog_name": "BF16",
+      "asl_enumerator": "TileDataType_BF16",
+      "storage_bits": 16,
+      "status": "accepted-identity-binding-result-rules-open"
+    },
+    {
+      "public_type_id": "public-type/f32",
+      "catalog_name": "F32",
+      "asl_enumerator": "TileDataType_F32",
+      "storage_bits": 32,
+      "status": "accepted-identity-binding-result-rules-open"
+    },
+    {
+      "public_type_id": "public-type/i8",
+      "catalog_name": "S8",
+      "asl_enumerator": "TileDataType_S8",
+      "storage_bits": 8,
+      "status": "accepted-identity-binding-result-rules-open"
+    },
+    {
+      "public_type_id": "public-type/u8",
+      "catalog_name": "U8",
+      "asl_enumerator": "TileDataType_U8",
+      "storage_bits": 8,
+      "status": "accepted-identity-binding-result-rules-open"
+    },
+    {
+      "public_type_id": "public-type/i16",
+      "catalog_name": "S16",
+      "asl_enumerator": "TileDataType_S16",
+      "storage_bits": 16,
+      "status": "accepted-identity-binding-result-rules-open"
+    },
+    {
+      "public_type_id": "public-type/u16",
+      "catalog_name": "U16",
+      "asl_enumerator": "TileDataType_U16",
+      "storage_bits": 16,
+      "status": "accepted-identity-binding-result-rules-open"
+    },
+    {
+      "public_type_id": "public-type/i32",
+      "catalog_name": "S32",
+      "asl_enumerator": "TileDataType_S32",
+      "storage_bits": 32,
+      "status": "accepted-identity-binding-result-rules-open"
+    },
+    {
+      "public_type_id": "public-type/u32",
+      "catalog_name": "U32",
+      "asl_enumerator": "TileDataType_U32",
+      "storage_bits": 32,
+      "status": "accepted-identity-binding-result-rules-open"
+    },
+    {
+      "public_type_id": "public-type/i64",
+      "catalog_name": "S64",
+      "asl_enumerator": "TileDataType_S64",
+      "storage_bits": 64,
+      "status": "accepted-identity-binding-result-rules-open"
+    },
+    {
+      "public_type_id": "public-type/u64",
+      "catalog_name": "U64",
+      "asl_enumerator": "TileDataType_U64",
+      "storage_bits": 64,
+      "status": "accepted-identity-binding-result-rules-open"
+    }
+  ],
+  "unresolved_catalog_types": [
+    {
+      "catalog_name": "F64",
+      "asl_enumerator": "TileDataType_F64",
+      "status": "public-element-type-absent-at-pinned-revision",
+      "candidate_public_types": []
+    },
+    {
+      "catalog_name": "FP8",
+      "asl_enumerator": "TileDataType_FP8",
+      "status": "one-catalog-name-two-public-format-candidates",
+      "candidate_public_types": [
+        "f8e4m3",
+        "f8e5m2"
+      ]
+    },
+    {
+      "catalog_name": "FPL8",
+      "asl_enumerator": "TileDataType_FPL8",
+      "status": "specialized-public-binding-not-accepted",
+      "candidate_public_types": [
+        "hifloat8"
+      ]
+    },
+    {
+      "catalog_name": "FP4",
+      "asl_enumerator": "TileDataType_FP4",
+      "status": "two-specialized-public-bindings-not-accepted",
+      "candidate_public_types": [
+        "float4_e1m2x2",
+        "float4_e2m1x2"
+      ]
+    },
+    {
+      "catalog_name": "FPL4",
+      "asl_enumerator": "TileDataType_FPL4",
+      "status": "two-specialized-public-bindings-not-accepted",
+      "candidate_public_types": [
+        "float4_e1m2x2",
+        "float4_e2m1x2"
+      ]
+    },
+    {
+      "catalog_name": "E8M0",
+      "asl_enumerator": "TileDataType_E8M0",
+      "status": "public-element-type-absent-at-pinned-revision",
+      "candidate_public_types": []
+    }
+  ],
+  "target_profiles": [
+    {
+      "profile_id": "pto-a2a3-numeric-v1",
+      "public_target": "A2/A3",
+      "available_public_type_ids": [
+        "public-type/bf16",
+        "public-type/f16",
+        "public-type/f32",
+        "public-type/i16",
+        "public-type/i32",
+        "public-type/i64",
+        "public-type/i8",
+        "public-type/u16",
+        "public-type/u32",
+        "public-type/u64",
+        "public-type/u8"
+      ],
+      "unavailable_public_type_ids": [
+        "public-type/f8e4m3",
+        "public-type/f8e5m2",
+        "public-type/float4_e1m2x2",
+        "public-type/float4_e2m1x2",
+        "public-type/hifloat8"
+      ],
+      "status": "type-availability-baseline-closed-operation-legality-open"
+    },
+    {
+      "profile_id": "pto-a5-numeric-v1",
+      "public_target": "A5",
+      "available_public_type_ids": [
+        "public-type/bf16",
+        "public-type/f16",
+        "public-type/f32",
+        "public-type/f8e4m3",
+        "public-type/f8e5m2",
+        "public-type/float4_e1m2x2",
+        "public-type/float4_e2m1x2",
+        "public-type/hifloat8",
+        "public-type/i16",
+        "public-type/i32",
+        "public-type/i64",
+        "public-type/i8",
+        "public-type/u16",
+        "public-type/u32",
+        "public-type/u64",
+        "public-type/u8"
+      ],
+      "unavailable_public_type_ids": [],
+      "status": "type-availability-baseline-closed-operation-legality-open"
+    }
+  ],
+  "source_line_contracts": [
+    {
+      "source_id": "public-type-system",
+      "sha256": "3bbd2d11d24cf503962f269f6c0d313a331039f1193409422ede4e68d9993330",
+      "line_ranges": [
+        "11-20",
+        "24-33"
+      ],
+      "claim": "public names, aliases, widths, signedness, and A2/A3/A5 availability"
+    },
+    {
+      "source_id": "public-target-profiles",
+      "sha256": "d2f0e6de371a1bc7713f64e18861b565e012a5bb2290552ae00dbb2f9902571f",
+      "line_ranges": [
+        "131-170",
+        "175-202"
+      ],
+      "claim": "profile identity, narrowing boundary, specialized A5 support, and the E5M2/E5M3FN conflict"
+    },
+    {
+      "source_id": "public-portability-rules",
+      "sha256": "e607ab10d5b35d5f492ee187c582d3782115f195c87c0b88fc038272d52abd29",
+      "line_ranges": [
+        "13-24"
+      ],
+      "claim": "target profiles narrow support rather than redefine PTO"
+    }
+  ],
+  "independent_comparison": {
+    "status": "structural-only-no-public-binding-or-result-oracle",
+    "provenance_sha256": "c565028c4a6a5b86349863524142fb832079798de325fc617cf664dffa859390",
+    "corroborated": [
+      "scalar-floating-carrier-widths-and-type-field-legality",
+      "numeric-code-namespaces-must-remain-distinct"
+    ],
+    "limits": [
+      "tile-numeric-selectors-do-not-execute-payload-arithmetic",
+      "independent-type-code-values-conflict-with-PTO-catalog-namespaces",
+      "no-PTO-public-type-binding-or-numeric-result-is-imported"
+    ]
+  },
+  "open_residuals": [
+    {
+      "id": "PD-02-R1",
+      "rule": "bind FP8, FPL8, FP4, and FPL4 to unique bit-exact public formats"
+    },
+    {
+      "id": "PD-02-R2",
+      "rule": "decide the public numeric role of the F64 raw carrier"
+    },
+    {
+      "id": "PD-02-R3",
+      "rule": "decide the public numeric role of the E8M0 raw carrier"
+    },
+    {
+      "id": "PD-02-R4",
+      "rule": "resolve the published E5M2 versus E5M3FN spelling conflict"
+    },
+    {
+      "id": "PD-02-R5",
+      "rule": "publish bit-exact payload fields and exceptional-value classes for every floating type"
+    },
+    {
+      "id": "PD-02-R6",
+      "rule": "complete every scalar and tile operation/type/profile legality tuple"
+    },
+    {
+      "id": "PD-02-R7",
+      "rule": "publish positive and negative target-availability vectors for every accepted tuple"
+    }
+  ],
+  "sources": [
+    {
+      "path": "spec/evidence/numeric-profile-decision-inputs.json",
+      "sha256": "94865e7c29c2a14a63627390d51cc6c3b698a91700d6ce71785b2928bb3bd39f"
+    },
+    {
+      "path": "spec/evidence/numeric-format-namespace-contract.json",
+      "sha256": "ccf96bbc5f71cdc224a512313d7c461176ed6a6888947ba6a0d6364086bb3fa6"
+    },
+    {
+      "path": "spec/evidence/executable-model-comparison.json",
+      "sha256": "32999bbc2b803c7d6edaafc8d02056aab0d600830efddc67b8b3226c5dd4563c"
+    },
+    {
+      "path": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
+      "sha256": "7730954ebe136cd213d99e8b66749135b43fa3f2c223e320fcf4b28bf23c7cd4"
+    }
+  ],
+  "summary": {
+    "public_type_count": 16,
+    "public_floating_type_count": 8,
+    "public_integer_type_count": 8,
+    "a2a3_available_type_count": 11,
+    "a5_available_type_count": 16,
+    "accepted_catalog_binding_count": 11,
+    "unresolved_catalog_type_count": 6,
+    "accepted_result_rule_count": 0,
+    "accepted_domain_rule_count": 0,
+    "open_residual_count": 7,
+    "pd02_complete": false,
+    "s5_t2_a_complete": false,
+    "s5_t2_complete": false
+  }
+}

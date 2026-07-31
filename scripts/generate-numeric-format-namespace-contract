@@ -1,0 +1,370 @@
+#!/usr/bin/env python3
+"""Generate the fail-closed PD-02 numeric format namespace checkpoint."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from collections import Counter
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
+SCALAR_FSU_TOTALITY = ROOT / "spec/evidence/scalar-fsu-totality.json"
+TMA_TOTALITY = ROOT / "spec/evidence/tma-totality.json"
+COMMAND_CATALOG = ROOT / "spec/catalog/command-forms.json"
+EXECUTABLE_COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
+OUTPUT = ROOT / "spec/evidence/numeric-format-namespace-contract.json"
+ACCEPTANCE_RECORD = (
+    "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md"
+)
+
+TILE_DATA_TYPES = (
+    ("F64", 64, "floating-raw-carrier", 0, 0, "public-binding-open"),
+    ("S8", 8, "signed-integer", 19, 19, "width-and-signedness-closed"),
+    ("U8", 8, "unsigned-integer", 27, 27, "width-and-signedness-closed"),
+    ("S16", 16, "signed-integer", 18, 18, "width-and-signedness-closed"),
+    ("U16", 16, "unsigned-integer", 26, 26, "width-and-signedness-closed"),
+    ("S32", 32, "signed-integer", 17, 17, "width-and-signedness-closed"),
+    ("U32", 32, "unsigned-integer", 25, 25, "width-and-signedness-closed"),
+    ("S64", 64, "signed-integer", 16, 16, "width-and-signedness-closed"),
+    ("U64", 64, "unsigned-integer", 24, 24, "width-and-signedness-closed"),
+    ("F16", 16, "floating-raw-carrier", 2, 4, "format-rule-open"),
+    ("BF16", 16, "floating-raw-carrier", 6, 5, "format-rule-open"),
+    ("F32", 32, "floating-raw-carrier", 1, 1, "format-rule-open"),
+    ("FP8", 8, "floating-raw-carrier", 3, 7, "e4m3-versus-e5m2-binding-open"),
+    ("FPL8", 8, "floating-raw-carrier", 7, 8, "hifloat8-binding-open"),
+    ("FP4", 4, "floating-raw-carrier", 11, None, "e1m2-versus-e2m1-binding-open"),
+    ("FPL4", 4, "floating-raw-carrier", 12, 14, "e1m2-versus-e2m1-binding-open"),
+    ("S4", 4, "signed-integer", 20, 20, "width-and-signedness-closed"),
+    ("U4", 4, "unsigned-integer", 28, 28, "width-and-signedness-closed"),
+    ("E8M0", 8, "floating-raw-carrier", None, 13, "architectural-role-open"),
+)
+
+
+def load(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise SystemExit(f"numeric format namespace generation failed: {message}")
+
+
+def source(path: str) -> dict[str, str]:
+    absolute = ROOT / path
+    return {"path": path, "sha256": hashlib.sha256(absolute.read_bytes()).hexdigest()}
+
+
+def code_rows(
+    namespace: str, width: int, mapping: dict[int, str]
+) -> list[dict[str, Any]]:
+    return [
+        {
+            "namespace": namespace,
+            "code": code,
+            "bits": format(code, f"0{width}b"),
+            "status": "mapped" if code in mapping else "reserved-before-effects",
+            "tile_data_type": mapping.get(code),
+        }
+        for code in range(1 << width)
+    ]
+
+
+def generate() -> dict[str, Any]:
+    inputs = load(DECISION_INPUTS)
+    scalar_totality = load(SCALAR_FSU_TOTALITY)
+    tma_totality = load(TMA_TOTALITY)
+    command_catalog = load(COMMAND_CATALOG)
+    executable_comparison = load(EXECUTABLE_COMPARISON)
+
+    pd02 = next(row for row in inputs["decision_questions"] if row["id"] == "PD-02")
+    require(pd02["status"] == "decision-required", "PD-02 status drift")
+    require(
+        pd02["selected_disposition"] is None and pd02["decision_record"] is None,
+        "PD-02 must remain unaccepted while format and legality rules are open",
+    )
+    require(
+        scalar_totality["status"] == "closed" and scalar_totality["target"] == "S4-T5",
+        "scalar FSU totality drift",
+    )
+    require(
+        tma_totality["status"] == "closed" and tma_totality["target"] == "S4-T9",
+        "TMA totality drift",
+    )
+    require(
+        executable_comparison["status"]
+        == "comparison-matrix-closed-clean-gates-passed:S5-T3",
+        "independent comparison status drift",
+    )
+
+    tile_rows = [
+        {
+            "name": name,
+            "asl_enumerator": f"TileDataType_{name}",
+            "storage_bits": bits,
+            "raw_class": raw_class,
+            "tma_talloc_code": tma_code,
+            "bundle_code": bundle_code,
+            "numeric_semantics_status": status,
+        }
+        for name, bits, raw_class, tma_code, bundle_code, status in TILE_DATA_TYPES
+    ]
+
+    tma_mapping = {
+        tma_code: name
+        for name, _, _, tma_code, _, _ in TILE_DATA_TYPES
+        if tma_code is not None
+    }
+    bundle_mapping = {
+        bundle_code: name
+        for name, _, _, _, bundle_code, _ in TILE_DATA_TYPES
+        if bundle_code is not None
+    }
+    require(len(tma_mapping) == 18, "TMA/TALLOC mapping count drift")
+    require(len(bundle_mapping) == 18, "bundle mapping count drift")
+
+    data_type_forms = [
+        form
+        for form in command_catalog["forms"]
+        if any(field["name"] == "DataType" for field in form["fields"])
+    ]
+    require(data_type_forms, "command DataType form inventory is empty")
+    require(
+        all(
+            next(field for field in form["fields"] if field["name"] == "DataType")[
+                "width"
+            ]
+            == 5
+            for form in data_type_forms
+        ),
+        "command DataType field width drift",
+    )
+
+    format_codes = scalar_totality["format_code_contract"]
+    source_codes = {row["code"]: row for row in format_codes["source_codes"]}
+    scalar_source_rows = []
+    for code in range(4):
+        source_row = source_codes.get(code)
+        scalar_source_rows.append(
+            {
+                "namespace": "scalar-fsu-source-type",
+                "code": code,
+                "bits": format(code, "02b"),
+                "status": "mapped" if source_row else "reserved-before-effects",
+                "carrier_width": source_row["carrier_width"] if source_row else None,
+                "meaning": source_row["meaning"] if source_row else None,
+            }
+        )
+
+    floating_by_code = {
+        row["code"]: row for row in format_codes["floating_destination_codes"]
+    }
+    integer_by_code = {
+        row["code"]: row for row in format_codes["integer_destination_codes"]
+    }
+    scalar_fp_destination_rows = [
+        {
+            "namespace": "scalar-fsu-floating-destination-type",
+            "code": code,
+            "bits": format(code, "05b"),
+            "status": "mapped"
+            if code in floating_by_code
+            else "reserved-before-effects",
+            "carrier_width": (
+                floating_by_code[code]["carrier_width"]
+                if code in floating_by_code
+                else None
+            ),
+            "stage4_name": (
+                floating_by_code[code]["stage4_name"]
+                if code in floating_by_code
+                else None
+            ),
+        }
+        for code in range(32)
+    ]
+    scalar_integer_destination_rows = [
+        {
+            "namespace": "scalar-fsu-integer-destination-type",
+            "code": code,
+            "bits": format(code, "05b"),
+            "status": "mapped"
+            if code in integer_by_code
+            else "reserved-before-effects",
+            "carrier_width": (
+                integer_by_code[code]["carrier_width"]
+                if code in integer_by_code
+                else None
+            ),
+            "signed": integer_by_code[code]["signed"]
+            if code in integer_by_code
+            else None,
+            "stage4_name": (
+                integer_by_code[code]["stage4_name"]
+                if code in integer_by_code
+                else None
+            ),
+        }
+        for code in range(32)
+    ]
+
+    width_counts = Counter(row["storage_bits"] for row in tile_rows)
+    four_bit_types = [row["name"] for row in tile_rows if row["storage_bits"] == 4]
+
+    return {
+        "schema_version": 1,
+        "target": "S5-T2-A2:PD-02",
+        "decision_id": "PD-02",
+        "checkpoint_id": "PD-02-SC1",
+        "status": "namespace-and-carrier-inventory-closed-format-rules-open",
+        "acceptance_record": ACCEPTANCE_RECORD,
+        "policy": {
+            "namespace_locality": "Scalar source, scalar floating destination, scalar integer destination, TMA/TALLOC, and bundle DataType codes are distinct namespaces. Equal integers do not imply equal types across namespaces.",
+            "reserved_codes": "Every unmapped code rejects before architectural effects; helper fallback values are unreachable after legality succeeds and are not architectural aliases.",
+            "raw_carrier_boundary": "Widths and signedness describe Stage 4 raw carriers only. Floating bit layouts and target numeric results remain S5-T2 rules.",
+            "four_bit_packing": "FP4, FPL4, S4, and U4 use low-index/low-nibble and odd-index/high-nibble packing with sibling preservation on stores.",
+            "pd02_boundary": "This checkpoint does not accept PD-02. Bit-exact formats, public-name bindings, target availability, and the complete operation/type legality matrix remain open.",
+        },
+        "tile_data_types": tile_rows,
+        "scalar_source_type": scalar_source_rows,
+        "scalar_floating_destination_type": scalar_fp_destination_rows,
+        "scalar_integer_destination_type": scalar_integer_destination_rows,
+        "tma_talloc_data_type": code_rows("tma-talloc-data-type", 6, tma_mapping),
+        "bundle_data_type": code_rows("bundle-data-type", 5, bundle_mapping),
+        "four_bit_packing": {
+            "types": four_bit_types,
+            "even_element": "low-nibble[3:0]",
+            "odd_element": "high-nibble[7:4]",
+            "indexed_selector": "index_value[0]",
+            "load_extension": "zero-extend-selected-nibble",
+            "store_rule": "replace-selected-nibble-preserve-sibling-nibble",
+            "status": "closed",
+        },
+        "public_evidence": {
+            "source_ids": pd02["source_ids"],
+            "pinned_repository": inputs["public_repository"],
+            "pinned_commit": inputs["public_commit"],
+            "status": "names-and-target-availability-observed-format-bindings-open",
+        },
+        "independent_comparison": {
+            "status": "scalar-carrier-structure-corroborated-tile-format-oracle-unavailable",
+            "provenance_sha256": executable_comparison["snapshot"]["revision_sha256"],
+            "matched_contracts": [
+                "scalar-source-type-code-legality",
+                "scalar-destination-type-code-legality",
+                "scalar-floating-and-integer-carrier-widths",
+                "bundle-DataType-field-width",
+            ],
+            "limits": [
+                "independent-tile-decode-does-not-bind-DataType-to-PTO-numeric-formats",
+                "independent-numeric-helpers-are-not-a-PTO-oracle",
+                "target-operation-type-support-remains-unvalidated",
+            ],
+        },
+        "open_residuals": [
+            {
+                "id": "PD-02-R1",
+                "rule": "bind FP8 to an exact public E4M3, E5M2, or other accepted format",
+            },
+            {
+                "id": "PD-02-R2",
+                "rule": "bind FPL8 to H8 or another bit-exact specialized eight-bit format",
+            },
+            {
+                "id": "PD-02-R3",
+                "rule": "resolve the published E5M2 versus E5M3FN naming conflict",
+            },
+            {
+                "id": "PD-02-R4",
+                "rule": "bind FP4 and FPL4 to exact E1M2/E2M1 encodings",
+            },
+            {
+                "id": "PD-02-R5",
+                "rule": "decide whether E8M0 is a standalone payload type, an MX scale carrier, or profile-only",
+            },
+            {
+                "id": "PD-02-R6",
+                "rule": "publish bit-exact floating layouts and exceptional-value classes",
+            },
+            {
+                "id": "PD-02-R7",
+                "rule": "complete every scalar and tile operation/type/profile legality tuple",
+            },
+            {
+                "id": "PD-02-R8",
+                "rule": "publish target availability and positive/reserved format vectors for every accepted tuple",
+            },
+        ],
+        "tests": [
+            "tests/asl/state-tests.asl:TestTileRegisterMapping",
+            "tests/asl/scalar-tests.asl:TestScalarFloating",
+            "tests/asl/bundle-tests.asl:TestBundleOperationDescriptorFields",
+            "tests/asl/tma-totality-tests.asl:TestTmaAllFourBitTypes",
+            "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUTotality",
+        ],
+        "sources": [
+            source("spec/evidence/numeric-profile-decision-inputs.json"),
+            source("spec/evidence/scalar-fsu-totality.json"),
+            source("spec/evidence/tma-totality.json"),
+            source("spec/evidence/executable-model-comparison.json"),
+            source("spec/catalog/command-forms.json"),
+            source("asl/types.asl"),
+            source("asl/scalar/floating.asl"),
+            source("asl/tile/state.asl"),
+            source("asl/tile/memory.asl"),
+            source("asl/bundle/dispatch.asl"),
+            source(
+                "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md"
+            ),
+            source("docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"),
+            source(
+                "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+            ),
+        ],
+        "summary": {
+            "tile_data_type_count": len(tile_rows),
+            "tile_storage_width_counts": {
+                str(key): width_counts[key] for key in sorted(width_counts)
+            },
+            "scalar_source_mapped_count": len(source_codes),
+            "scalar_source_reserved_count": 4 - len(source_codes),
+            "scalar_floating_destination_mapped_count": len(floating_by_code),
+            "scalar_floating_destination_reserved_count": 32 - len(floating_by_code),
+            "scalar_integer_destination_mapped_count": len(integer_by_code),
+            "scalar_integer_destination_reserved_count": 32 - len(integer_by_code),
+            "tma_talloc_mapped_count": len(tma_mapping),
+            "tma_talloc_reserved_count": 64 - len(tma_mapping),
+            "bundle_mapped_count": len(bundle_mapping),
+            "bundle_reserved_count": 32 - len(bundle_mapping),
+            "four_bit_type_count": len(four_bit_types),
+            "open_residual_count": 8,
+            "pd02_complete": False,
+        },
+    }
+
+
+def serialized() -> str:
+    return json.dumps(generate(), indent=2, ensure_ascii=False) + "\n"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    action = parser.add_mutually_exclusive_group(required=True)
+    action.add_argument("--check", action="store_true")
+    action.add_argument("--write", action="store_true")
+    args = parser.parse_args()
+    expected = serialized()
+    if args.write:
+        OUTPUT.write_text(expected, encoding="utf-8")
+        return 0
+    if not OUTPUT.is_file() or OUTPUT.read_text(encoding="utf-8") != expected:
+        raise SystemExit(f"stale generated evidence: {OUTPUT.relative_to(ROOT)}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

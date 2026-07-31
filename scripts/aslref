@@ -31,4 +31,12 @@ if [[ $current != "$pin" ]]; then
     git -C "$aslref_root" checkout --quiet --detach "$pin"
 fi
 
-exec opam exec -- dune exec --root="$aslref_root" asllib/aslref.exe -- "$@"
+aslref_binary="$aslref_root/_build/default/asllib/aslref.exe"
+if [[ ! -x $aslref_binary ]]; then
+    opam exec -- dune build --root="$aslref_root" asllib/aslref.exe
+fi
+
+# Execute the pinned binary directly once built. `dune exec` holds one workspace
+# lock for the lifetime of ASLRef, which serializes otherwise independent test
+# shards and defeats `make test-parallel`.
+exec "$aslref_binary" "$@"

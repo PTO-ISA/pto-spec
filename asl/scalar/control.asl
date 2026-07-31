@@ -14,6 +14,14 @@ begin
     end;
 end;
 
+readonly func ReadBranchPredicate() => Word
+begin
+    // SETC.* supplies the coupled-bundle predicate. Inside a bundle body P0 is
+    // the architectural branch predicate for B.Z/B.NZ.
+    return if _BundleBodyActive then ReadPredicateRegister(0)
+           else _CommitArgument;
+end;
+
 func BranchRelative(condition: ScalarCondition, left: Word, right: Word,
                     halfword_offset: Word)
 begin
@@ -66,7 +74,11 @@ end;
 
 func SetReturnAddress(halfword_offset: Word)
 begin
-    _ReturnAddress = ReadPC() + LSL(halfword_offset, 1);
+    let target = ReadTPC() + LSL(halfword_offset, 1);
+    // SETRET's assembly destination is Ra (R10). The bundle-local return
+    // address mirrors the same target for BSTART.RET and frame recovery.
+    WriteGPR(10, target);
+    _ReturnAddress = target;
 end;
 
 func JumpRelative(halfword_offset: Word)
@@ -76,5 +88,5 @@ end;
 
 func AddToPC(destination: Reg5Selector, halfword_offset: Word)
 begin
-    WriteScalarDestination(destination, ReadPC() + LSL(halfword_offset, 1));
+    WriteScalarDestination(destination, ReadTPC() + LSL(halfword_offset, 1));
 end;

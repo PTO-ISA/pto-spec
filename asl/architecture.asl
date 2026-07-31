@@ -5,12 +5,22 @@
 
 constant PTO_ARCHITECTURE_VERSION = 0;
 constant PTO_XLEN = 64;
-constant PTO_SCALAR_REGISTER_COUNT = 24;
+// The five-bit scalar namespace contains 24 absolute GPRs and two four-entry
+// bundle-local temporary queues (T and U).
+constant PTO_SCALAR_REGISTER_COUNT = 32;
+constant PTO_ABSOLUTE_GPR_COUNT = 24;
+constant PTO_TEMPORARY_QUEUE_DEPTH = 4;
+constant PTO_PREDICATE_REGISTER_COUNT = 8;
+constant PTO_ACR_COUNT = 16;
 constant PTO_TILE_REGISTER_COUNT = 64;
-constant PTO_PIPE_COUNT = 4;
-constant PTO_MODEL_PIPE_DEPTH = 4;
 constant PTO_MODEL_MEMORY_AGENTS = 4;
 constant PTO_MODEL_MEMORY_EVENTS = 16;
+constant PTO_MODEL_MAX_TILE_CAPACITY_BYTES = 524288;
+constant PTO_RESERVATION_GRANULE_BYTES = 64;
+constant PTO_BUNDLE_DIMENSION_COUNT = 3;
+constant PTO_BUNDLE_SCALAR_BINDING_COUNT = 32;
+constant PTO_BUNDLE_TILE_BINDING_COUNT = 16;
+constant PTO_TILE_BASE_COUNT = 6;
 
 // ASL arrays require static bounds. This is an executable-model bound, not an
 // architectural maximum tile size. Legality uses descriptor byte capacity.

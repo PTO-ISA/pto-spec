@@ -1,22 +1,10 @@
 {
   "isa": "PTO Instruction Set Architecture",
-  "operation_count": 111,
+  "operation_count": 120,
   "rejected_review_only_codes": {
-    "CUBE": [
-      5,
-      6,
-      8,
-      21,
-      22
-    ],
-    "TEPL": [
-      "0x00C"
-    ],
-    "TMA": [
-      6,
-      7,
-      8
-    ]
+    "CUBE": [],
+    "TEPL": [],
+    "TMA": []
   },
   "operations": [
     {
@@ -556,6 +544,38 @@
         },
         {
           "operand": "source0"
+        }
+      ]
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TPRELU",
+      "selector": "0x00C",
+      "semantic_handler": "TPRELU",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "negative-slope"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
         }
       ]
     },
@@ -2434,6 +2454,130 @@
     {
       "disposition": "accepted-direct-operation",
       "family": "CUBE",
+      "function": 5,
+      "name": "TMATMUL_MX_BIAS",
+      "semantic_handler": "TMATMUL_MX_BIAS",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "left"
+        },
+        {
+          "field": "source1",
+          "role": "right"
+        },
+        {
+          "field": "source2",
+          "role": "row-scale"
+        },
+        {
+          "field": "source3",
+          "role": "column-scale"
+        },
+        {
+          "field": "destination1",
+          "role": "bias"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        },
+        {
+          "operand": "source3"
+        },
+        {
+          "operand": "destination1"
+        }
+      ]
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "function": 6,
+      "name": "TMATMUL_MX_ACC",
+      "semantic_handler": "TMATMUL_MX_ACC",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "left"
+        },
+        {
+          "field": "source1",
+          "role": "right"
+        },
+        {
+          "field": "source2",
+          "role": "row-scale"
+        },
+        {
+          "field": "source3",
+          "role": "column-scale"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        },
+        {
+          "operand": "source3"
+        }
+      ]
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "function": 8,
+      "name": "ACCCVT",
+      "semantic_handler": "ACCCVT",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
       "function": 16,
       "name": "TGEMV",
       "semantic_handler": "TGEMV",
@@ -2540,6 +2684,105 @@
       "function": 20,
       "name": "TGEMV_MX",
       "semantic_handler": "TGEMV_MX",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "matrix"
+        },
+        {
+          "field": "source1",
+          "role": "vector"
+        },
+        {
+          "field": "source2",
+          "role": "row-scale"
+        },
+        {
+          "field": "source3",
+          "role": "column-scale"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        },
+        {
+          "operand": "source3"
+        }
+      ]
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "function": 21,
+      "name": "TGEMV_MX_BIAS",
+      "semantic_handler": "TGEMV_MX_BIAS",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "matrix"
+        },
+        {
+          "field": "source1",
+          "role": "vector"
+        },
+        {
+          "field": "source2",
+          "role": "row-scale"
+        },
+        {
+          "field": "source3",
+          "role": "column-scale"
+        },
+        {
+          "field": "destination1",
+          "role": "bias"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        },
+        {
+          "operand": "source3"
+        },
+        {
+          "operand": "destination1"
+        }
+      ]
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "function": 22,
+      "name": "TGEMV_MX_ACC",
+      "semantic_handler": "TGEMV_MX_ACC",
       "operands": [
         {
           "field": "destination0",
@@ -2716,6 +2959,130 @@
         },
         {
           "operand": "source1"
+        }
+      ]
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TMA",
+      "function": 6,
+      "name": "MGATHER_MASK",
+      "semantic_handler": "MGATHER_MASK",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "mask"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ]
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TMA",
+      "function": 7,
+      "name": "MSCATTER_MASK",
+      "semantic_handler": "MSCATTER_MASK",
+      "operands": [
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "indices"
+        },
+        {
+          "field": "source2",
+          "role": "mask"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        }
+      ]
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TMA",
+      "function": 8,
+      "name": "MGATHER_CAS",
+      "semantic_handler": "MGATHER_CAS",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "expected"
+        },
+        {
+          "field": "source2",
+          "role": "replacement"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
         }
       ]
     },
@@ -3482,6 +3849,141 @@
     {
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
+      "name": "TPUSH",
+      "selector": "0x0E0",
+      "semantic_handler": "TPUSH",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TPOP",
+      "selector": "0x0E1",
+      "semantic_handler": "TPOP",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ]
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TALLOC",
+      "selector": "0x0E2",
+      "semantic_handler": "TALLOC",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "byte_count",
+          "role": "capacity-bytes"
+        },
+        {
+          "field": "positive0",
+          "role": "rows"
+        },
+        {
+          "field": "positive1",
+          "role": "columns"
+        },
+        {
+          "field": "natural0",
+          "role": "valid-rows"
+        },
+        {
+          "field": "natural1",
+          "role": "valid-columns"
+        },
+        {
+          "field": "scalar0",
+          "role": "data-type-code"
+        },
+        {
+          "field": "flag0",
+          "role": "implementation-defined-layout"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "byte_count"
+        },
+        {
+          "operand": "positive0"
+        },
+        {
+          "operand": "positive1"
+        },
+        {
+          "operand": "natural0"
+        },
+        {
+          "operand": "natural1"
+        },
+        {
+          "operand": "scalar0"
+        },
+        {
+          "operand": "flag0"
+        }
+      ]
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "name": "TFREE",
+      "selector": "0x0E3",
+      "semantic_handler": "TFREE",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        }
+      ]
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
       "name": "TPARTADD",
       "selector": "0x0C3",
       "semantic_handler": "ExecuteTilePartial",
@@ -3730,93 +4232,6 @@
           "operand": "source3"
         }
       ]
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "name": "TPUSH",
-      "selector": "0x0E0",
-      "semantic_handler": "TPUSH",
-      "operands": [
-        {
-          "field": "pipe",
-          "role": "pipe"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "pipe"
-        },
-        {
-          "operand": "source0"
-        }
-      ]
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "name": "TPOP",
-      "selector": "0x0E1",
-      "semantic_handler": "TPOP",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "pipe",
-          "role": "pipe"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "pipe"
-        }
-      ]
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "name": "TALLOC",
-      "selector": "0x0E2",
-      "semantic_handler": "TALLOC",
-      "operands": [
-        {
-          "field": "pipe",
-          "role": "pipe"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "pipe"
-        }
-      ],
-      "result": "value"
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "name": "TFREE",
-      "selector": "0x0E3",
-      "semantic_handler": "TFREE",
-      "operands": [
-        {
-          "field": "pipe",
-          "role": "pipe"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "pipe"
-        }
-      ]
     }
   ],
   "rejected_review_only_names": [
@@ -3824,10 +4239,8 @@
     "TFILL/TEXPANDS",
     "TFMOD",
     "TFMODS",
-    "TLRELU\uff1f",
     "TPOW",
     "TPOWS",
-    "TPRELU\uff1f",
     "TRANDOM"
   ],
   "reserved": {

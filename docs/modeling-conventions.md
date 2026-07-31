@@ -22,7 +22,7 @@ before choosing behavior.
 
 ## Normative precision
 
-- Give every modeled requirement a stable ID and public source link.
+- Give every modeled requirement a stable ID and PTO-owned source link.
 - Separate legality predicates from result/state semantics when it improves reviewability.
 - Define source/destination aliasing, read-before-write behavior, exceptional values, and partial valid regions.
 - State memory, event, and asynchronous ordering explicitly.

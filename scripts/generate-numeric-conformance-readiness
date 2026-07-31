@@ -1,0 +1,489 @@
+#!/usr/bin/env python3
+"""Generate the fail-closed S5-T2 numeric-conformance readiness ledger."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from collections import Counter
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+NUMERIC_CONTRACTS = ROOT / "spec/evidence/numeric-contracts.json"
+NUMERIC_PROFILE_IDENTITIES = ROOT / "spec/catalog/numeric-profile-identities.json"
+NUMERIC_VARIATION_OWNERSHIP = (
+    ROOT / "spec/evidence/numeric-variation-point-ownership.json"
+)
+PUBLIC_NUMERIC_TYPE_BASELINE = (
+    ROOT / "spec/evidence/public-numeric-type-baseline.json"
+)
+PUBLIC_INTEGER_CONVERSION = (
+    ROOT / "spec/evidence/public-integer-conversion-contract.json"
+)
+DEFAULT_OUTPUT = ROOT / "spec/evidence/numeric-conformance-readiness.json"
+
+
+LANE_SPECS: tuple[dict[str, Any], ...] = (
+    {
+        "id": "N1",
+        "title": "scalar arithmetic",
+        "contract_domains": ["scalar-binary", "scalar-unary", "scalar-fused"],
+        "unbound_hooks": ["FloatingExponential"],
+        "required_vector_classes": [
+            "normal",
+            "boundary",
+            "signed-zero",
+            "subnormal",
+            "infinity",
+            "NaN",
+            "rounding-tie",
+            "overflow",
+            "underflow",
+            "divide-by-zero",
+            "domain-error",
+            "exception-flags",
+        ],
+        "oracle_requirement": "Use a versioned independent arithmetic oracle where the selected profile matches it; otherwise use reviewed, immutable target capture for the divergent rule.",
+    },
+    {
+        "id": "N2",
+        "title": "scalar conversion",
+        "contract_domains": [
+            "scalar-fp-to-integer",
+            "scalar-fp-convert",
+            "scalar-integer-to-fp",
+        ],
+        "unbound_hooks": ["FloatingRoundNearest"],
+        "required_vector_classes": [
+            "normal",
+            "minimum",
+            "maximum",
+            "signed-zero",
+            "subnormal",
+            "infinity",
+            "NaN",
+            "rounding-tie",
+            "inexact",
+            "out-of-range",
+            "overflow",
+            "underflow",
+            "saturation-or-indefinite",
+            "exception-flags",
+        ],
+        "oracle_requirement": "Use a versioned independent format-conversion oracle plus reviewed target capture for saturation, indefinite, payload, or flag rules that the selected profile makes target-specific.",
+    },
+    {
+        "id": "N3",
+        "title": "tile elementwise",
+        "contract_domains": [
+            "tile-binary",
+            "tile-unary",
+            "tile-axpy",
+            "tile-prelu",
+            "tile-compare",
+            "tile-expand",
+        ],
+        "unbound_hooks": [],
+        "required_vector_classes": [
+            "normal",
+            "boundary",
+            "signed-zero",
+            "subnormal",
+            "infinity",
+            "NaN",
+            "rounding-tie",
+            "overflow",
+            "underflow",
+            "divide-by-zero",
+            "domain-error",
+            "saturation",
+            "ordered-unordered-compare",
+        ],
+        "oracle_requirement": "Use independent elementwise and elementary-function oracles with explicit accuracy bounds, augmented by immutable target capture for carrier or saturation rules outside those oracle contracts.",
+    },
+    {
+        "id": "N4",
+        "title": "tile conversion",
+        "contract_domains": [
+            "tile-convert",
+            "cube-convert",
+            "tile-quantize",
+            "tile-dequantize",
+        ],
+        "unbound_hooks": [],
+        "required_vector_classes": [
+            "normal",
+            "minimum",
+            "maximum",
+            "signed-zero",
+            "subnormal",
+            "infinity",
+            "NaN",
+            "rounding-tie",
+            "overflow",
+            "underflow",
+            "scale-boundary",
+            "zero-point-boundary",
+            "clamping",
+        ],
+        "oracle_requirement": "Use a versioned conversion and quantization oracle whose format, scale, zero-point, payload, rounding, and clamping rules exactly match the selected profile, or qualify target capture for each exception.",
+    },
+    {
+        "id": "N5",
+        "title": "reductions and ordering",
+        "contract_domains": ["tile-reduction", "tile-partial", "tile-order"],
+        "unbound_hooks": [],
+        "required_vector_classes": [
+            "normal",
+            "single-element",
+            "minimum-shape",
+            "maximum-verified-shape",
+            "signed-zero",
+            "infinity",
+            "NaN",
+            "equal-value-tie",
+            "rounding-tie",
+            "overflow",
+            "accumulation-order",
+            "ascending-descending",
+            "stability",
+        ],
+        "oracle_requirement": "Use an independent ordered reference that exposes accumulation order, width, ties, stability, and exceptional-value placement exactly as selected by the profile.",
+    },
+    {
+        "id": "N6",
+        "title": "matrix arithmetic",
+        "contract_domains": ["cube-matrix"],
+        "unbound_hooks": [],
+        "required_vector_classes": [
+            "normal",
+            "minimum-shape",
+            "maximum-verified-shape",
+            "signed-zero",
+            "subnormal",
+            "infinity",
+            "NaN",
+            "rounding-tie",
+            "overflow",
+            "underflow",
+            "saturation",
+            "accumulation-order",
+            "bias",
+            "scale",
+        ],
+        "oracle_requirement": "Use an independent matrix oracle parameterized by product precision, accumulation width and order, bias, scaling, rounding, saturation, and exceptional-value rules from the selected profile.",
+    },
+)
+
+EXPECTED_COUNTS = {
+    "contract_domain_count": 20,
+    "hook_count": 29,
+    "lane_count": 6,
+    "operation_count": 108,
+}
+
+
+def load_json(path: Path) -> dict[str, Any]:
+    with path.open(encoding="utf-8") as stream:
+        return json.load(stream)
+
+
+def fail(message: str) -> None:
+    raise SystemExit(f"numeric-conformance readiness generation failed: {message}")
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        fail(message)
+
+
+def build_evidence() -> dict[str, Any]:
+    inventory = load_json(NUMERIC_CONTRACTS)
+    identity_catalog = load_json(NUMERIC_PROFILE_IDENTITIES)
+    variation_ownership = load_json(NUMERIC_VARIATION_OWNERSHIP)
+    public_type_baseline = load_json(PUBLIC_NUMERIC_TYPE_BASELINE)
+    integer_conversion = load_json(PUBLIC_INTEGER_CONVERSION)
+    require(
+        inventory.get("status") == "closed-inventory-and-ownership",
+        "S5-T1 numeric inventory is not closed",
+    )
+    require(
+        inventory.get("summary", {}).get("target_conformance_status") == "open:S5-T2",
+        "numeric inventory no longer reports S5-T2 open",
+    )
+    require(
+        identity_catalog.get("status") == "identity-framework-closed-rules-open"
+        and identity_catalog.get("summary", {}).get("accepted_identity_count") == 4
+        and identity_catalog.get("summary", {}).get("complete_rule_count") == 0,
+        "numeric identity framework is not closed with result rules open",
+    )
+    require(
+        variation_ownership.get("status")
+        == "variation-point-discovery-and-ownership-closed-result-bounds-open"
+        and variation_ownership.get("summary", {}).get("variation_point_count")
+        == 99
+        and variation_ownership.get("summary", {}).get("selected_route_count") == 0,
+        "numeric variation-point ownership checkpoint drift",
+    )
+    require(
+        public_type_baseline.get("status")
+        == "public-type-identity-and-target-availability-baseline-closed-result-and-legality-open"
+        and public_type_baseline.get("summary", {}).get("public_type_count") == 16
+        and public_type_baseline.get("summary", {}).get(
+            "accepted_catalog_binding_count"
+        )
+        == 11
+        and public_type_baseline.get("summary", {}).get(
+            "accepted_result_rule_count"
+        )
+        == 0,
+        "public numeric type baseline drift",
+    )
+    require(
+        integer_conversion.get("status")
+        == "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open"
+        and integer_conversion.get("summary", {}).get(
+            "accepted_unequal_width_tuple_count"
+        )
+        == 48
+        and integer_conversion.get("summary", {}).get(
+            "accepted_result_rule_count"
+        )
+        == 3
+        and integer_conversion.get("summary", {}).get(
+            "accepted_domain_rule_count"
+        )
+        == 0,
+        "public integer conversion subset drift",
+    )
+
+    domains = {row["id"]: row for row in inventory["contract_domains"]}
+    hooks = {row["name"]: row for row in inventory["hooks"]}
+    operations = {row["key"]: row for row in inventory["operations"]}
+    require(len(domains) == len(inventory["contract_domains"]), "duplicate domain")
+    require(len(hooks) == len(inventory["hooks"]), "duplicate hook")
+    require(len(operations) == len(inventory["operations"]), "duplicate operation")
+
+    lanes = []
+    domain_membership: Counter[str] = Counter()
+    hook_membership: Counter[str] = Counter()
+    operation_membership: Counter[str] = Counter()
+    for spec in LANE_SPECS:
+        lane_domains = spec["contract_domains"]
+        unknown_domains = sorted(set(lane_domains) - set(domains))
+        require(
+            not unknown_domains, f"{spec['id']} has unknown domains {unknown_domains}"
+        )
+        lane_operations = sorted(
+            row["key"]
+            for row in operations.values()
+            if row["numeric_contract"] in lane_domains
+        )
+        lane_hooks = set(spec["unbound_hooks"])
+        for operation_key in lane_operations:
+            operation = operations[operation_key]
+            lane_hooks.update(operation["primary_hooks"])
+            lane_hooks.update(operation["reference_helpers"])
+        unknown_hooks = sorted(lane_hooks - set(hooks))
+        require(not unknown_hooks, f"{spec['id']} has unknown hooks {unknown_hooks}")
+        open_dimensions = sorted(
+            {
+                dimension
+                for domain_id in lane_domains
+                for dimension in domains[domain_id]["open_numeric_dimensions"]
+            }
+        )
+        domain_membership.update(lane_domains)
+        hook_membership.update(lane_hooks)
+        operation_membership.update(lane_operations)
+        lanes.append(
+            {
+                "id": spec["id"],
+                "title": spec["title"],
+                "parallel_shard": f"numeric-{spec['title'].replace(' ', '-')}",
+                "status": "profile-and-oracle-required",
+                "contract_domains": lane_domains,
+                "operation_keys": lane_operations,
+                "hooks": sorted(lane_hooks),
+                "counts": {
+                    "contract_domains": len(lane_domains),
+                    "operations": len(lane_operations),
+                    "hooks": len(lane_hooks),
+                },
+                "open_numeric_dimensions": open_dimensions,
+                "required_vector_classes": spec["required_vector_classes"],
+                "oracle_requirement": spec["oracle_requirement"],
+                "profile_identity": None,
+                "oracle_identity": None,
+                "vector_manifest": None,
+                "differential_result": None,
+                "review_disposition": None,
+            }
+        )
+
+    require(
+        domain_membership == Counter({name: 1 for name in domains}),
+        "contract domains are not partitioned exactly once",
+    )
+    require(
+        hook_membership == Counter({name: 1 for name in hooks}),
+        "numeric hooks are not partitioned exactly once",
+    )
+    require(
+        operation_membership == Counter({key: 1 for key in operations}),
+        "numeric operations are not partitioned exactly once",
+    )
+    actual_counts = {
+        "contract_domain_count": len(domains),
+        "hook_count": len(hooks),
+        "lane_count": len(lanes),
+        "operation_count": len(operations),
+    }
+    require(actual_counts == EXPECTED_COUNTS, "numeric inventory count drift")
+
+    return {
+        "schema_version": 1,
+        "target": "S5-T2",
+        "status": "readiness-defined-conformance-open",
+        "source_inventory": "spec/evidence/numeric-contracts.json",
+        "profile_identity_catalog": "spec/catalog/numeric-profile-identities.json",
+        "profile_decision_inputs": "spec/evidence/numeric-profile-decision-inputs.json",
+        "profile_decision_proposals": "spec/evidence/numeric-profile-decision-proposals.json",
+        "variation_point_ownership": {
+            "path": "spec/evidence/numeric-variation-point-ownership.json",
+            "status": variation_ownership["status"],
+            "acceptance_record": variation_ownership["acceptance_record"],
+            "variation_point_count": 99,
+            "selected_route_count": 0,
+            "accepted_result_rule_count": 0,
+        },
+        "public_type_baseline": {
+            "path": "spec/evidence/public-numeric-type-baseline.json",
+            "status": public_type_baseline["status"],
+            "acceptance_record": public_type_baseline["acceptance_record"],
+            "public_type_count": 16,
+            "accepted_catalog_binding_count": 11,
+            "accepted_result_rule_count": 0,
+            "accepted_domain_rule_count": 0,
+        },
+        "public_integer_conversion": {
+            "path": "spec/evidence/public-integer-conversion-contract.json",
+            "status": integer_conversion["status"],
+            "acceptance_record": integer_conversion["acceptance_record"],
+            "accepted_result_rule_count": 3,
+            "accepted_unequal_width_tuple_count": 48,
+            "accepted_profile_support_rule_count": 0,
+            "accepted_domain_rule_count": 0,
+        },
+        "identity_framework": {
+            "status": "closed:S5-T2-A1",
+            "accepted_identity_count": 4,
+            "accepted_selection_rule_count": 5,
+            "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+            "result_decision_count": 0,
+            "accepted_domain_rule_count": 0,
+        },
+        "policy": {
+            "authority": "PTO-owned target profiles and accepted architecture decisions define PTO numeric semantics.",
+            "active_reference_profile_role": "The active raw-carrier reference proves executable totality but is not a hardware or independent numeric oracle.",
+            "implementation_under_test_role": "CPU and target backends are implementations under test and cannot validate themselves.",
+            "independent_executable_model_role": "The independent executable ISA comparison does not execute tile payload numerics and is not an S5-T2 oracle.",
+            "closure_rule": "S5-T2 closes only after every sub-stage, lane artifact, mismatch disposition, clean reproduction, and independent review is complete.",
+        },
+        "sub_stages": [
+            {
+                "id": "S5-T2-A",
+                "status": "in-progress",
+                "target": "accept all numeric result decisions and domain rules under the closed identity framework",
+                "blocked_by": [],
+                "closed_checkpoints": [
+                    "S5-T2-A1",
+                    "S5-T2-A4",
+                    "S5-T2-A5",
+                    "S5-T2-A6",
+                ],
+            },
+            {
+                "id": "S5-T2-B",
+                "status": "waiting-on-prerequisite",
+                "target": "qualify an independent versioned oracle for every lane",
+                "blocked_by": ["S5-T2-A"],
+                "closed_checkpoints": [],
+            },
+            {
+                "id": "S5-T2-C",
+                "status": "waiting-on-prerequisite",
+                "target": "publish deterministic linked vectors for every applicable numeric dimension",
+                "blocked_by": ["S5-T2-A", "S5-T2-B"],
+                "closed_checkpoints": [],
+            },
+            {
+                "id": "S5-T2-D",
+                "status": "waiting-on-prerequisite",
+                "target": "execute every lane and archive raw PTO and oracle results",
+                "blocked_by": ["S5-T2-B", "S5-T2-C"],
+                "closed_checkpoints": [],
+            },
+            {
+                "id": "S5-T2-E",
+                "status": "waiting-on-prerequisite",
+                "target": "classify and resolve every differential disposition",
+                "blocked_by": ["S5-T2-D"],
+                "closed_checkpoints": [],
+            },
+            {
+                "id": "S5-T2-F",
+                "status": "waiting-on-prerequisite",
+                "target": "reproduce, review, and promote the complete conformance package",
+                "blocked_by": ["S5-T2-A", "S5-T2-B", "S5-T2-C", "S5-T2-D", "S5-T2-E"],
+                "closed_checkpoints": [],
+            },
+        ],
+        "blocking_gap_ids": [
+            "S5-T2-G1",
+            "S5-T2-G2",
+            "S5-T2-G3",
+            "S5-T2-G4",
+            "S5-T2-G5",
+        ],
+        "lanes": lanes,
+        "summary": {
+            **actual_counts,
+            "accepted_configuration_identity_count": 4,
+            "accepted_selection_framework_rule_count": 5,
+            "accepted_public_type_binding_count": 11,
+            "public_type_identity_count": 16,
+            "accepted_bounded_result_rule_count": 3,
+            "accepted_bounded_result_tuple_count": 48,
+            "profile_identity_count": 0,
+            "qualified_oracle_count": 0,
+            "vector_manifest_count": 0,
+            "differential_result_count": 0,
+            "reviewed_lane_count": 0,
+            "promotion_ready": False,
+        },
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--check", action="store_true")
+    args = parser.parse_args()
+    expected = json.dumps(build_evidence(), indent=2, ensure_ascii=False) + "\n"
+    if args.check:
+        if (
+            not args.output.exists()
+            or args.output.read_text(encoding="utf-8") != expected
+        ):
+            raise SystemExit(f"stale generated evidence: {args.output}")
+        return 0
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(expected, encoding="utf-8")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

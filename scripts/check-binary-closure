@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+"""Fail closed if the normative PTO encoded-form envelope drifts."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parent.parent
+EXPECTED_FORM_COUNT = 581
+EXPECTED_FINGERPRINT = (
+    "a2023d295ca8c1355fd4a6ff4d5b0d15d7a33a8af08fb1fb263e760514054ca2"
+)
+PROJECTION_KEYS = (
+    "form_id",
+    "mnemonic",
+    "asm",
+    "length_bits",
+    "encoding_kind",
+    "encoding",
+    "fields",
+    "constraints",
+)
+
+
+def load_forms(relative: str) -> list[dict]:
+    catalog = json.loads((ROOT / relative).read_text(encoding="utf-8"))
+    return catalog["forms"]
+
+
+def main() -> int:
+    forms = load_forms("spec/catalog/scalar-forms.json")
+    forms += load_forms("spec/catalog/command-forms.json")
+    if len(forms) != EXPECTED_FORM_COUNT:
+        raise SystemExit(
+            f"encoded-form count drift: expected {EXPECTED_FORM_COUNT}, got {len(forms)}"
+        )
+    ids = [row["form_id"] for row in forms]
+    if len(ids) != len(set(ids)):
+        raise SystemExit("encoded-form IDs are not globally unique")
+    projection = [
+        {key: row[key] for key in PROJECTION_KEYS}
+        for row in sorted(forms, key=lambda row: row["form_id"])
+    ]
+    payload = json.dumps(projection, sort_keys=True, separators=(",", ":")).encode(
+        "utf-8"
+    )
+    fingerprint = hashlib.sha256(payload).hexdigest()
+    if fingerprint != EXPECTED_FINGERPRINT:
+        raise SystemExit(
+            "encoded-form fingerprint drift: update the normative review before "
+            f"changing {EXPECTED_FINGERPRINT} to {fingerprint}"
+        )
+    print(
+        f"binary closure passed: {EXPECTED_FORM_COUNT} encoded forms, "
+        f"fingerprint {fingerprint}"
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

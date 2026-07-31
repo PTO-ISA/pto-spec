@@ -1,49 +1,9 @@
 {
-  "family_constraint_application_count": 85,
-  "family_constraint_count": 2,
-  "family_constraints": [
-    {
-      "applies_to": {
-        "required_fields": [
-          "RegDst0",
-          "RegDst1"
-        ],
-        "semantic_families": [
-          "AGU"
-        ],
-        "semantic_handlers": [
-          "ExecuteScalarLoad",
-          "ExecuteScalarLoadPair"
-        ]
-      },
-      "architectural_rule": "AGU forms with two encoded result selectors require the selectors to be distinct.",
-      "id": "agu-distinct-result-selectors",
-      "left_field": "RegDst0",
-      "operator": "fields-not-equal",
-      "right_field": "RegDst1"
-    },
-    {
-      "applies_to": {
-        "required_fields": [
-          "RegDst",
-          "SrcD"
-        ],
-        "semantic_families": [
-          "AGU"
-        ],
-        "semantic_handlers": [
-          "ExecuteScalarStore"
-        ]
-      },
-      "architectural_rule": "An AGU store address-update result selector must be distinct from its stored-data selector.",
-      "id": "agu-store-update-data-distinct",
-      "left_field": "RegDst",
-      "operator": "fields-not-equal",
-      "right_field": "SrcD"
-    }
-  ],
+  "family_constraint_application_count": 0,
+  "family_constraint_count": 0,
+  "family_constraints": [],
   "form_constraint_count": 3,
-  "form_count": 473,
+  "form_count": 474,
   "forms": [
     {
       "asm": "acrc rst_type",
@@ -2137,7 +2097,7 @@
       "mnemonic": "C.MOVI",
       "semantic_family": "ALU",
       "semantic_group": "ALU",
-      "semantic_handler": "MaterializeLongSigned",
+      "semantic_handler": "MoveScalarValue",
       "status": "accepted"
     },
     {
@@ -2183,7 +2143,7 @@
       "mnemonic": "C.MOVR",
       "semantic_family": "ALU",
       "semantic_group": "ALU",
-      "semantic_handler": "ApplyScalarRightModifier",
+      "semantic_handler": "MoveScalarValue",
       "status": "accepted"
     },
     {
@@ -2435,7 +2395,7 @@
       "mnemonic": "C.SETRET",
       "semantic_family": "ALU",
       "semantic_group": "ALU",
-      "semantic_handler": "ScalarBinary",
+      "semantic_handler": "SetReturnAddress",
       "status": "accepted"
     },
     {
@@ -4715,6 +4675,52 @@
       "semantic_family": "SYS",
       "semantic_group": "SYS",
       "semantic_handler": "ExecuteMaintenance",
+      "status": "accepted"
+    },
+    {
+      "asm": "dma [SrcL], SrcR",
+      "constraints": [],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0xfe007fff",
+          "match": "0x0000700b",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "SrcL",
+          "pieces": [
+            {
+              "instruction_lsb": 15,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        },
+        {
+          "name": "SrcR",
+          "pieces": [
+            {
+              "instruction_lsb": 20,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "dma_32_a168aeca5fa5",
+      "length_bits": 32,
+      "mnemonic": "DMA",
+      "semantic_family": "AMO",
+      "semantic_group": "AMO",
+      "semantic_handler": "ExecuteScalarDMACopy64",
       "status": "accepted"
     },
     {
@@ -12892,7 +12898,7 @@
       "mnemonic": "HL.LUI",
       "semantic_family": "ALU",
       "semantic_group": "ALU",
-      "semantic_handler": "MaterializeLUI",
+      "semantic_handler": "MaterializeLongSigned",
       "status": "accepted"
     },
     {
@@ -24744,7 +24750,7 @@
       "mnemonic": "MADDW",
       "semantic_family": "ALU",
       "semantic_group": "ALU",
-      "semantic_handler": "ScalarMultiplyAdd",
+      "semantic_handler": "ScalarMultiplyAddW",
       "status": "accepted"
     },
     {
@@ -31608,7 +31614,7 @@
   ],
   "isa": "PTO Instruction Set Architecture",
   "operand_field_count": 45,
-  "operand_piece_count": 1865,
+  "operand_piece_count": 1867,
   "schema_version": 2,
-  "semantic_handler_count": 67
+  "semantic_handler_count": 69
 }

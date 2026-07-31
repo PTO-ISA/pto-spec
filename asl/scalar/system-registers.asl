@@ -1,13 +1,13 @@
 // PTO-REQ-SCALAR-SSR-001, PTO-REQ-PROFILE-001: canonical 24-bit
-// system-register addressing with explicit privilege checks.
+// system-register addressing with explicit Access Control Ring checks.
 
 readonly impdef func SystemRegisterAccessPermitted(
     address: SystemRegisterAddress, write: boolean,
-    privilege: PrivilegeLevel) => boolean
+    ring: AccessControlRing) => boolean
 begin
-    // The active profile permits base registers at every privilege and keeps
-    // context-family registers machine-only.
-    return UInt(address[11:0]) < 0x0f00 || privilege == Privilege_Machine;
+    // The active profile permits base registers at every ring and keeps
+    // context-family registers root-ring-only.
+    return UInt(address[11:0]) < 0x0f00 || ring == 0;
 end;
 
 pure func IsBaseSystemRegisterAddress(address: SystemRegisterAddress) => boolean
@@ -21,6 +21,8 @@ begin
            address == Zeros{24} + 0x0023 ||
            address == Zeros{24} + 0x0024 ||
            address == Zeros{24} + 0x0025 ||
+           address == Zeros{24} + 0x0026 ||
+           address == Zeros{24} + 0x0027 ||
            address == Zeros{24} + 0x0050 ||
            address == Zeros{24} + 0x0051 ||
            address == Zeros{24} + 0x0c00;
@@ -29,15 +31,17 @@ end;
 pure func BaseSystemRegisterOfAddress(address: SystemRegisterAddress) => SystemRegister
 begin
     case UInt(address) of
-        when 0x0000 => return SystemRegister_TP;
-        when 0x0001 => return SystemRegister_GP;
+        when 0x0000 => return SystemRegister_THREAD_PTR;
+        when 0x0001 => return SystemRegister_GLOBAL_PTR;
         when 0x0010 => return SystemRegister_TIME;
-        when 0x0020 => return SystemRegister_CSTATE;
+        when 0x0020 => return SystemRegister_CORE_STATE;
         when 0x0021 => return SystemRegister_CORE_ID;
         when 0x0022 => return SystemRegister_VENDOR;
         when 0x0023 => return SystemRegister_VERSION;
         when 0x0024 => return SystemRegister_CORE_FEATURE;
         when 0x0025 => return SystemRegister_CORE_FEATURE_ENABLE;
+        when 0x0026 => return SystemRegister_THREAD_ID;
+        when 0x0027 => return SystemRegister_TILE_CAPACITY;
         when 0x0050 => return SystemRegister_BLOCKNUM;
         when 0x0051 => return SystemRegister_BLOCKID;
         when 0x0c00 => return SystemRegister_CYCLE;
@@ -54,7 +58,7 @@ end;
 
 func ReadSystemRegisterAddress(address: SystemRegisterAddress) => Word
 begin
-    if !SystemRegisterAccessPermitted(address, FALSE, CurrentPrivilege()) then
+    if !SystemRegisterAccessPermitted(address, FALSE, CurrentACR()) then
         SetFault(Fault_IllegalInstruction, ReadPC());
         return Zeros{PTO_XLEN};
     end;
@@ -69,15 +73,18 @@ begin
     end;
 
     let low_index = UInt(address[11:0]);
-    if low_index == 0x0f02 then return PackTrapStatus(); end;
-    if low_index == 0x0f03 then return _TrapArgument0; end;
+    let ring = UInt(address[15:12]) as AccessControlRing;
+    if low_index == 0x0f02 then return PackTrapStatus(ring); end;
+    if low_index == 0x0f03 then return _ACRTrapArgument0[[ring]]; end;
+    if low_index == 0x0f08 then return ReadInterruptPending(ring); end;
+    if low_index == 0x0f09 then return ReadTopPendingInterrupt(ring); end;
     if low_index == 0x0f20 then return ReadMonotonicTime(); end;
     return _ExtendedSystemRegisters[[SystemRegisterFileIndexOf(address)]];
 end;
 
 func WriteSystemRegisterAddress(address: SystemRegisterAddress, value: Word)
 begin
-    if !SystemRegisterAccessPermitted(address, TRUE, CurrentPrivilege()) then
+    if !SystemRegisterAccessPermitted(address, TRUE, CurrentACR()) then
         SetFault(Fault_IllegalInstruction, ReadPC());
         return;
     end;
@@ -93,21 +100,32 @@ begin
     end;
 
     let low_index = UInt(address[11:0]);
+    let ring = UInt(address[15:12]) as AccessControlRing;
     if low_index == 0x0f02 then
-        UnpackTrapStatus(value);
+        UnpackTrapStatus(ring, value);
     elsif low_index == 0x0f03 then
-        _TrapArgument0 = value;
+        _ACRTrapArgument0[[ring]] = value;
     else
-        _ExtendedSystemRegisters[[SystemRegisterFileIndexOf(address)]] = value;
         if low_index == 0x0f0a then
-            _TrapAsynchronous = FALSE;
-            _TrapArgumentValid = FALSE;
+            EndOfInterrupt(ring, value);
+        else
+            _ExtendedSystemRegisters[[SystemRegisterFileIndexOf(address)]] = value;
+            if low_index == 0x0f21 then RefreshTimerPending(ring); end;
         end;
     end;
 end;
 
 func SwapSystemRegisterAddress(address: SystemRegisterAddress, value: Word) => Word
 begin
+    // A swap is a read/write transaction.  Preflight both permissions and the
+    // access class before reading so a rejected swap cannot trigger read-side
+    // effects such as timer-pending refresh on a read-only register.
+    if !SystemRegisterAccessPermitted(address, FALSE, CurrentACR()) ||
+       !SystemRegisterAccessPermitted(address, TRUE, CurrentACR()) ||
+       SystemRegisterAccessOf(address) != SystemRegisterAccess_ReadWrite then
+        SetFault(Fault_IllegalInstruction, ReadPC());
+        return Zeros{PTO_XLEN};
+    end;
     let old_value = ReadSystemRegisterAddress(address);
     if _LastFault == Fault_None then WriteSystemRegisterAddress(address, value); end;
     return old_value;

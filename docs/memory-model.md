@@ -5,11 +5,10 @@ executable definition is `asl/concurrency.asl`. It checks a bounded candidate
 execution rather than pretending that counters attached to a sequential test
 run prove concurrency behavior.
 
-The ASL checker follows the relation structure reviewed in the pinned
-`herdtools7` `x86tso.cat`: per-location order is checked separately from the
+The ASL checker defines per-location order separately from the
 global-happens-before relation. PTO owns the event classes, acquire/release
-rules, fence masks, and atomic contract below. No x86 or Arm instruction
-behavior is imported by reference.
+rules, fence masks, and atomic contract below. No external instruction behavior
+is imported by reference.
 
 ## Candidate execution
 
@@ -22,14 +21,16 @@ execution order.
 | Initial write | no | yes | coherence rank 0 |
 | Load | yes | no | value and reads-from source |
 | Store | no | yes | value and positive coherence rank |
-| Atomic | yes | yes | read/write values, reads-from source, order, coherence rank |
+| Atomic | yes | conditional | read/write values, write-performed flag, reads-from source, order, coherence rank |
 | `FENCE.D` | no | no | predecessor and successor masks |
 
 Every accessed location has exactly one initial write. Writes to one location
 have unique contiguous coherence ranks. A read takes its value from exactly one
 write at the same location. An atomic event reads from the immediately preceding
 write in coherence order and contributes the next write as one indivisible
-event.
+event when its comparison or operation performs a write. A comparison-failed
+CAS remains an atomic read and ordering point but contributes no coherence
+write.
 
 The current executable bound is 16 events across four agents. It is a model
 checking bound, not an architecture limit. A location is an exact address and
@@ -42,7 +43,19 @@ candidate. Each architecturally indivisible atomic contributes one atomic
 event. A completed `FENCE.D` contributes one fence event. A faulting instruction
 contributes no access events because the instruction-wide completion contract
 preflights all accesses before effects. Multi-access tile instructions
-contribute their completed accesses in instruction program order.
+contribute their completed accesses in logical row-major program order.
+
+Production extraction is an explicit bounded verification mode. It selects one
+of four model agents and records translated locations through the same event
+constructors used by litmus candidates. Ordinary architectural execution keeps
+capture disabled, so the 16-event checker bound is never an ISA limit. Concrete
+captures assign observed coherence ranks and latest matching reads-from edges;
+manual candidates retain explicit relation control.
+
+DMA contributes eight 8-byte loads followed by eight 8-byte stores. Gather-CAS
+contributes one conditional atomic per active lane. Scalar prefetch is
+non-faulting and event-free; tile `TPREFETCH` is a faulting, restartable
+footprint read and contributes byte-load events when captured.
 
 ## Relations
 
@@ -96,5 +109,6 @@ seeing the publication store while missing an earlier data store.
   and
 - rejection of a non-contiguous atomic read-modify-write candidate.
 
-ADR-0006 records why PTO uses this axiomatic candidate boundary and how the
-upstream comparison source is constrained.
+ADR-0006 records why PTO uses this axiomatic candidate boundary. ADR-0020
+records production extraction, reservation, conditional-atomic, prefetch, and
+mixed-size decisions.

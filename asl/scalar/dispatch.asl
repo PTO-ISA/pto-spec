@@ -1,15 +1,21 @@
 // PTO-REQ-SCALAR-DISPATCH-001, PTO-REQ-SCALAR-CONSTRAINT-001: decoded scalar
 // execution with catalog-generated form and family legality.
 //
-// The public entry point deliberately reports recognized families that do not
-// yet have form-to-effect bindings. A recognized but unsupported form does not
-// mutate architectural state and is distinct from an illegal encoding.
+// Every accepted scalar family has a form-to-effect binding. Unknown or
+// operand-illegal encodings are rejected; there is no silent unsupported path.
 
 type ScalarExecutionStatus of enumeration {
     ScalarExecution_Executed,
-    ScalarExecution_Unsupported,
     ScalarExecution_Rejected
 };
+
+pure func ScalarHandlerWritesTPC(handler: ScalarSemanticHandler) => boolean
+begin
+    return handler == ScalarHandler_BranchRelative ||
+           handler == ScalarHandler_JumpRelative ||
+           handler == ScalarHandler_JumpRegister ||
+           handler == ScalarHandler_ArchitectureEnterRequest;
+end;
 
 pure func ScalarDecodedSelector(instruction: bits(48),
                                 form: integer {0..PTO_SCALAR_FORM_COUNT-1},
@@ -567,11 +573,13 @@ begin
         when ScalarOperation_C_MOVI =>
             WriteScalarDestination(
                 ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
-                ScalarDecodedWord(instruction, form, ScalarField_simm5));
+                MoveScalarValue(
+                    ScalarDecodedWord(instruction, form, ScalarField_simm5)));
         when ScalarOperation_C_MOVR =>
             WriteScalarDestination(
                 ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));
+                MoveScalarValue(
+                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL)));
 
         when ScalarOperation_C_SEXT_B, ScalarOperation_C_ZEXT_B =>
             WriteCompressedTResult(ExtendScalarValue(
@@ -818,7 +826,7 @@ begin
                 ScalarDecodedWord(instruction, form, ScalarField_simm12));
         when ScalarOperation_B_Z, ScalarOperation_B_NZ =>
             BranchRelative(ScalarConditionForOperation(operation),
-                ReadPredicateMask(), Zeros{PTO_XLEN},
+                ReadBranchPredicate(), Zeros{PTO_XLEN},
                 ScalarDecodedWord(instruction, form, ScalarField_simm22));
         when ScalarOperation_J =>
             JumpRelative(ScalarDecodedWord(instruction, form, ScalarField_simm22));
@@ -1072,6 +1080,10 @@ func ExecuteDecodedAMOForm(instruction: bits(48),
 begin
     let operation = ScalarOperationOfForm(form);
     case operation of
+        when ScalarOperation_DMA =>
+            ExecuteScalarDMACopy64(
+                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR));
         when ScalarOperation_LR_B =>
             ExecuteDecodedLoadReserved(instruction, form, 1);
         when ScalarOperation_LR_H =>
@@ -1162,7 +1174,9 @@ readonly func ScalarDecodedAGUBase(
     action: ScalarAGUAction, address_kind: ScalarAGUAddressKind) => Word
 begin
     if address_kind == ScalarAGU_PCRelative then
-        return ReadPC() AND (Ones{PTO_XLEN} - 3);
+        var aligned_tpc = ReadTPC();
+        aligned_tpc[1:0] = Zeros{2};
+        return aligned_tpc;
     elsif address_kind == ScalarAGU_Compressed then
         return ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL);
     elsif (action == ScalarAGU_Store || action == ScalarAGU_StorePair) &&
@@ -1250,6 +1264,10 @@ begin
     if RaiseDataAccessFault(second_probe, second_address) then return; end;
     let first = LoadTranslatedUnsigned(first_probe.translated_address, size_bytes);
     let second = LoadTranslatedUnsigned(second_probe.translated_address, size_bytes);
+    RecordLoadEvent(first_probe.translated_address, size_bytes, first,
+        MemoryOrder_Relaxed);
+    RecordLoadEvent(second_probe.translated_address, size_bytes, second,
+        MemoryOrder_Relaxed);
     WriteScalarDestination(
         ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
         NormalizeScalarLoadResult(first, size_bytes,
@@ -1277,7 +1295,8 @@ func ExecuteDecodedAGUStore(
     address: Word, updated_base: Word, update_mode: AddressUpdateMode,
     size_bytes: integer {1,2,4,8})
 begin
-    Store(address, size_bytes, ReadDecodedAGUStoreSource(instruction, form));
+    let source = ReadDecodedAGUStoreSource(instruction, form);
+    Store(address, size_bytes, source);
     if _LastFault == Fault_None && update_mode != AddressUpdate_None then
         WriteScalarDestination(
             ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
@@ -1296,10 +1315,15 @@ begin
     let second_probe = ProbeDataAccess(
         second_address, size_bytes, size_bytes, TRUE);
     if RaiseDataAccessFault(second_probe, second_address) then return; end;
-    StoreTranslated(address, first_probe.translated_address, size_bytes,
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcD));
-    StoreTranslated(second_address, second_probe.translated_address, size_bytes,
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcD1));
+    let first = ReadDecodedScalarRegister(instruction, form, ScalarField_SrcD);
+    let second = ReadDecodedScalarRegister(instruction, form, ScalarField_SrcD1);
+    StoreTranslated(address, first_probe.translated_address, size_bytes, first);
+    RecordStoreEvent(first_probe.translated_address, size_bytes, first,
+        MemoryOrder_Relaxed);
+    StoreTranslated(second_address, second_probe.translated_address,
+        size_bytes, second);
+    RecordStoreEvent(second_probe.translated_address, size_bytes, second,
+        MemoryOrder_Relaxed);
 end;
 
 func ExecuteDecodedAGUForm(instruction: bits(48),
@@ -1334,7 +1358,7 @@ begin
             if ScalarAGUPrefetchReturnsAddress(form) then
                 WriteScalarDestination(
                     ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
-                    updated_base);
+                    ScalarPrefetchAddress(base, offset));
             end;
     end;
 end;
@@ -1512,11 +1536,7 @@ begin
             SetFault(Fault_IllegalInstruction, ReadPC());
             return;
         end;
-        let rounding_mode = if operation == ScalarOperation_FCVTA then '100'
-            else if operation == ScalarOperation_FCVTM then '001'
-            else if operation == ScalarOperation_FCVTN then '000'
-            else if operation == ScalarOperation_FCVTP then '010'
-            else '011';
+        let rounding_mode = ScalarFPFixedConversionRoundingMode(operation);
         (result, flags) = ScalarFPToIntegerProfile(
             rounding_mode, destination_type, source_type,
             NormalizeScalarFPSource(value, source_type));
@@ -1589,7 +1609,7 @@ func ExecuteScalarInstruction(instruction: bits(48),
                               length_bits: integer {16,32,48})
                               => ScalarExecutionStatus
 begin
-    AdvanceArchitecturalTime();
+    BeginArchitecturalInstructionAttempt();
     let decoded = DecodeScalarForm(instruction, length_bits);
     if decoded == PTO_SCALAR_FORM_COUNT then
         SetFault(Fault_IllegalInstruction, ReadPC());
@@ -1601,7 +1621,7 @@ begin
         return ScalarExecution_Rejected;
     end;
     if !ScalarRegisterOperandsLegal(instruction, form) then
-        SetFault(Fault_TileLegality, ReadPC());
+        SetFault(Fault_IllegalInstruction, ReadPC());
         return ScalarExecution_Rejected;
     end;
     case ScalarFamilyOfForm(form) of
@@ -1611,7 +1631,13 @@ begin
         when ScalarSemantic_BRU => ExecuteDecodedBRUForm(instruction, form);
         when ScalarSemantic_FSU => ExecuteDecodedFSUForm(instruction, form);
         when ScalarSemantic_SYS => ExecuteDecodedSYSForm(instruction, form);
-        otherwise => return ScalarExecution_Unsupported;
+        otherwise => unreachable;
+    end;
+    if _LastFault != Fault_None then
+        return ScalarExecution_Rejected;
+    end;
+    if !ScalarHandlerWritesTPC(ScalarHandlerOfForm(form)) then
+        WriteTPC(ReadTPC() + NaturalToWord(length_bits DIV 8));
     end;
     return ScalarExecution_Executed;
 end;

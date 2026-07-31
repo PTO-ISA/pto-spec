@@ -1,21 +1,39 @@
 // PTO-REQ-PROFILE-001: concrete PTO v0 reference profile for every registered
-// numeric, memory, time, reset, and privilege boundary.
+// numeric, memory, time, reset, and access-control-ring boundary.
 
 implementation func ResetProfileState()
 begin
-    for index = 0 to PTO_SCALAR_REGISTER_COUNT - 1 do
+    for index = 0 to PTO_ABSOLUTE_GPR_COUNT - 1 do
         _GPR[[index]] = Zeros{PTO_XLEN};
+    end;
+    for index = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do
+        _TQueue[[index]] = Zeros{PTO_XLEN};
+        _UQueue[[index]] = Zeros{PTO_XLEN};
+    end;
+    for index = 0 to PTO_PREDICATE_REGISTER_COUNT - 1 do
+        _PredicateRegisters[[index]] = Zeros{PTO_XLEN};
     end;
     for index = 0 to PTO_MODEL_MEMORY_BYTES - 1 do
         _Memory[[index]] = Zeros{8};
     end;
-    // Only 0x0f00..0x0fb7 is architecturally defined by the current extended
-    // system-register catalog; the larger array is verification backing.
-    for index = 0x0f00 to 0x0fb7 do
-        _ExtendedSystemRegisters[[index]] = Zeros{PTO_XLEN};
+    // Context-family registers occupy low indices 0xf00..0xfb7 in every ACR
+    // bank. The larger array is verification backing for the complete 16-bit
+    // banked address domain.
+    for ring = 0 to PTO_ACR_COUNT - 1 do
+        for low_index = 0x0f00 to 0x0fb7 do
+            let index = ((ring * 4096) + low_index)
+                as SystemRegisterFileIndex;
+            _ExtendedSystemRegisters[[index]] = Zeros{PTO_XLEN};
+        end;
+        // PTO v0 enables external and timer interrupt collection at reset.
+        _ExtendedSystemRegisters[[((ring * 4096) + 0x0f07)
+            as SystemRegisterFileIndex]] = Zeros{PTO_XLEN} + 3;
     end;
     for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
         _Tiles[[index]].allocated = FALSE;
+        _Tiles[[index]].contents_defined = FALSE;
+        _Tiles[[index]].defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
+        _Tiles[[index]].defined_valid_elements = 0;
         _Tiles[[index]].capacity_bytes = 0;
         _Tiles[[index]].rows = 0;
         _Tiles[[index]].columns = 0;
@@ -25,65 +43,76 @@ begin
         _Tiles[[index]].layout = TileLayout_RowMajor;
         _Tiles[[index]].location = TileLocation_Any;
     end;
-    for index = 0 to PTO_PIPE_COUNT - 1 do
-        _Pipes[[index]].configured = FALSE;
-        _Pipes[[index]].base_address = Zeros{PTO_XLEN};
-        _Pipes[[index]].slot_size_bytes = 1;
-        _Pipes[[index]].slot_count = 1;
-        _Pipes[[index]].head = 0;
-        _Pipes[[index]].tail = 0;
-        _Pipes[[index]].count = 0;
-        _Pipes[[index]].producer_claimed = FALSE;
-        _Pipes[[index]].consumer_claimed = FALSE;
-        _Pipes[[index]].producer_slot = 0;
-        _Pipes[[index]].consumer_slot = 0;
-    end;
     _PC = Zeros{PTO_XLEN};
+    _BPC = Zeros{PTO_XLEN};
+    _BundleActive = FALSE;
+    _BundleBodyActive = FALSE;
+    ResetBundleControlState();
     _ReturnAddress = Zeros{PTO_XLEN};
     _CommitArgument = Zeros{PTO_XLEN};
-    _PredicateMask = Zeros{PTO_XLEN};
     _ReservationValid = FALSE;
     _ReservationAddress = Zeros{PTO_XLEN};
     _ReservationSize = 1;
     ResetMemoryExecution();
+    _MemoryEventCaptureEnabled = FALSE;
+    _CurrentMemoryAgent = 0;
     _LastFencePredecessor = Zeros{4};
     _LastFenceSuccessor = Zeros{4};
     _DataCacheEpoch = 0;
     _InstructionCacheEpoch = 0;
-    _BlockCacheEpoch = 0;
+    _BundleCacheEpoch = 0;
     _TLBEpoch = 0;
-    _BlockHintEpoch = 0;
+    _LastMaintenanceOperation = Maintenance_DC_IALL;
+    _LastMaintenanceOperand = Zeros{PTO_XLEN};
+    _BundleHintEpoch = 0;
     _ArchitectureRequestEpoch = 0;
     _LastControlRequest = ExecutionControl_SendEvent;
     _ControlRequestOperand = Zeros{PTO_XLEN};
     _BreakpointTag = Zeros{5};
-    _TrapAsynchronous = FALSE;
-    _TrapArgumentValid = FALSE;
-    _TrapCause = Zeros{24};
-    _TrapNumber = Zeros{6};
-    _TrapArgument0 = Zeros{PTO_XLEN};
-    _SystemRegisters.tp = Zeros{PTO_XLEN};
-    _SystemRegisters.gp = Zeros{PTO_XLEN};
-    _SystemRegisters.cstate = Zeros{PTO_XLEN};
+    for ring = 0 to PTO_ACR_COUNT - 1 do
+        _ACRTrapAsynchronous[[ring]] = FALSE;
+        _ACRTrapArgumentValid[[ring]] = FALSE;
+        _ACRTrapCause[[ring]] = Zeros{24};
+        _ACRTrapNumber[[ring]] = Zeros{6};
+        _ACRTrapArgument0[[ring]] = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].valid = FALSE;
+        _TrapContexts[[ring]].source_acr = 0;
+        _TrapContexts[[ring]].tpc = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].bpc = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].core_state = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].bundle_argument = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].commit_argument = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].bundle_active = FALSE;
+        _TrapContexts[[ring]].bundle_body_active = FALSE;
+        _TrapContexts[[ring]].t_queue = _TQueue;
+        _TrapContexts[[ring]].u_queue = _UQueue;
+        _TrapContexts[[ring]].predicates = _PredicateRegisters;
+    end;
+    _SystemRegisters.thread_ptr = Zeros{PTO_XLEN};
+    _SystemRegisters.global_ptr = Zeros{PTO_XLEN};
+    _SystemRegisters.core_state = Zeros{PTO_XLEN};
     _SystemRegisters.core_id = Zeros{PTO_XLEN};
+    _SystemRegisters.thread_id = Zeros{PTO_XLEN};
     _SystemRegisters.vendor = Zeros{PTO_XLEN};
     _SystemRegisters.version = Zeros{PTO_XLEN} + 1;
     _SystemRegisters.core_feature = Zeros{PTO_XLEN};
     _SystemRegisters.core_feature_enable = Zeros{PTO_XLEN};
+    _SystemRegisters.tile_capacity = Zeros{PTO_XLEN} +
+        PTO_MODEL_MAX_TILE_CAPACITY_BYTES;
     _SystemRegisters.blocknum = Zeros{PTO_XLEN};
     _SystemRegisters.blockid = Zeros{PTO_XLEN};
     _SystemRegisters.cycle = Zeros{PTO_XLEN};
-    _CurrentPrivilege = Privilege_Machine;
+    _CurrentACR = 0;
     ClearFault();
 end;
 
 readonly implementation func SystemRegisterAccessPermitted(
     address: SystemRegisterAddress, write: boolean,
-    privilege: PrivilegeLevel) => boolean
+    ring: AccessControlRing) => boolean
 begin
     // Base registers are available at every level. Context, translation, and
-    // debug register families are machine-only in the PTO v0 profile.
-    return UInt(address[11:0]) < 0x0f00 || privilege == Privilege_Machine;
+    // debug register families are ACR0-only in the PTO v0 profile.
+    return UInt(address[11:0]) < 0x0f00 || ring == 0;
 end;
 
 implementation func ReadMonotonicTime() => Word
@@ -128,9 +157,12 @@ begin
         when FloatingBinary_SUB => return (left - right, Zeros{5});
         when FloatingBinary_MUL => return (MultiplyWord(left, right), Zeros{5});
         when FloatingBinary_DIV =>
-            if IsZero(right) then return (Ones{PTO_XLEN}, Zeros{5} + 2);
+            if ScalarFPCarrierIsZero(right, source_type) then
+                return (Ones{PTO_XLEN}, Zeros{5} + 2);
             else return (DivideWordUnsigned(left, right), Zeros{5});
             end;
+        // Scalar dispatch owns MIN/MAX NaN and signed-zero behavior. These
+        // totality arms are not reached by decoded FMIN/FMAX.
         when FloatingBinary_MIN =>
             if SInt(left) <= SInt(right) then return (left, Zeros{5});
             else return (right, Zeros{5});
@@ -158,7 +190,8 @@ begin
         when FloatingUnary_SQRT => return (value, Zeros{5});
         when FloatingUnary_EXP => return (value + 1, Zeros{5});
         when FloatingUnary_RECIP =>
-            if IsZero(value) then return (Ones{PTO_XLEN}, Zeros{5} + 2);
+            if ScalarFPCarrierIsZero(value, source_type) then
+                return (Ones{PTO_XLEN}, Zeros{5} + 2);
             else return (DivideWordUnsigned(Ones{PTO_XLEN}, value), Zeros{5});
             end;
     end;
@@ -273,22 +306,211 @@ begin
     return address;
 end;
 
-implementation func TranslateDataAddress(address: Word,
-                                         size_bytes: integer {1..262144},
-                                         write: boolean) => Word
+readonly implementation func TranslateDataAddress(address: Word,
+                                                  size_bytes: integer {1..262144},
+                                                  write: boolean) => Word
 begin
     return address;
 end;
 
-implementation func DataAccessPermitted(address: Word,
-                                        size_bytes: integer {1..262144},
-                                        write: boolean) => boolean
+readonly implementation func DataAccessPermitted(address: Word,
+                                                 size_bytes: integer {1..262144},
+                                                 write: boolean) => boolean
 begin
     let end_address = UInt(address) + size_bytes;
     if end_address > PTO_MODEL_MEMORY_BYTES then return FALSE; end;
-    if CurrentPrivilege() == Privilege_User then return end_address <= 3072;
+    // PTO v0 assigns ACR0 and ACR1 full bounded-memory access. ACR2 through
+    // ACR15 use the bounded 3072-byte application region.
+    if CurrentACR() >= 2 then return end_address <= 3072;
     else return TRUE;
     end;
+end;
+
+pure func PTOv0ContextRegisterIndex(ring: AccessControlRing,
+                                    low_index: integer {0..4095})
+                                    => SystemRegisterFileIndex
+begin
+    return ((ring * 4096) + low_index) as SystemRegisterFileIndex;
+end;
+
+readonly func PTOv0ReadContextRegister(ring: AccessControlRing,
+                                       low_index: integer {0..4095}) => Word
+begin
+    return _ExtendedSystemRegisters[[
+        PTOv0ContextRegisterIndex(ring, low_index)]];
+end;
+
+func PTOv0WriteContextRegister(ring: AccessControlRing,
+                               low_index: integer {0..4095}, value: Word)
+begin
+    _ExtendedSystemRegisters[[PTOv0ContextRegisterIndex(ring, low_index)]] =
+        value;
+end;
+
+pure func PTOv0BundleKindCode(kind: BundleKind) => bits(4)
+begin
+    case kind of
+        when BundleKind_Standard => return '0000';
+        when BundleKind_Floating => return '0001';
+        when BundleKind_System => return '0010';
+        when BundleKind_MachineParallel => return '0011';
+        when BundleKind_MachineSequential => return '0100';
+        when BundleKind_TileElement => return '0101';
+        when BundleKind_TileMemory => return '0110';
+        when BundleKind_TileMatrix => return '0111';
+        when BundleKind_FrameTemplate => return '1000';
+    end;
+end;
+
+pure func PTOv0BundleKindOf(code: bits(4)) => BundleKind
+begin
+    if code == '0001' then return BundleKind_Floating;
+    elsif code == '0010' then return BundleKind_System;
+    elsif code == '0011' then return BundleKind_MachineParallel;
+    elsif code == '0100' then return BundleKind_MachineSequential;
+    elsif code == '0101' then return BundleKind_TileElement;
+    elsif code == '0110' then return BundleKind_TileMemory;
+    elsif code == '0111' then return BundleKind_TileMatrix;
+    elsif code == '1000' then return BundleKind_FrameTemplate;
+    else return BundleKind_Standard;
+    end;
+end;
+
+pure func PTOv0BundleTransferCode(transfer: BundleTransfer) => bits(3)
+begin
+    case transfer of
+        when BundleTransfer_Fallthrough => return '000';
+        when BundleTransfer_Direct => return '001';
+        when BundleTransfer_Conditional => return '010';
+        when BundleTransfer_Call => return '011';
+        when BundleTransfer_Return => return '100';
+        when BundleTransfer_Indirect => return '101';
+        when BundleTransfer_IndirectCall => return '110';
+    end;
+end;
+
+pure func PTOv0BundleTransferOf(code: bits(3)) => BundleTransfer
+begin
+    if code == '001' then return BundleTransfer_Direct;
+    elsif code == '010' then return BundleTransfer_Conditional;
+    elsif code == '011' then return BundleTransfer_Call;
+    elsif code == '100' then return BundleTransfer_Return;
+    elsif code == '101' then return BundleTransfer_Indirect;
+    elsif code == '110' then return BundleTransfer_IndirectCall;
+    else return BundleTransfer_Fallthrough;
+    end;
+end;
+
+pure func PTOv0EBARGControlLegal(control: Word) => boolean
+begin
+    return control[63:15] == Zeros{49} &&
+           UInt(control[10:7]) <= 8 &&
+           UInt(control[13:11]) <= 6 &&
+           (control[6] == '0' || control[5] == '1');
+end;
+
+implementation func SaveTrapContext(target: AccessControlRing,
+                                    source: AccessControlRing)
+begin
+    _TrapContexts[[target]].valid = TRUE;
+    _TrapContexts[[target]].source_acr = source;
+    _TrapContexts[[target]].tpc = ReadTPC();
+    _TrapContexts[[target]].bpc = ReadBPC();
+    _TrapContexts[[target]].core_state = _SystemRegisters.core_state;
+    _TrapContexts[[target]].bundle_argument = _BundleArgument;
+    _TrapContexts[[target]].commit_argument = _CommitArgument;
+    _TrapContexts[[target]].bundle_active = _BundleActive;
+    _TrapContexts[[target]].bundle_body_active = _BundleBodyActive;
+    _TrapContexts[[target]].bundle_kind = _BundleKind;
+    _TrapContexts[[target]].bundle_transfer = _BundleTransfer;
+    _TrapContexts[[target]].bundle_condition = _BundleCondition;
+    _TrapContexts[[target]].bundle_target = _BundleTarget;
+    _TrapContexts[[target]].bundle_fallthrough = _BundleFallthrough;
+    _TrapContexts[[target]].bundle_return_target = _BundleReturnTarget;
+    _TrapContexts[[target]].bundle_body_address = _BundleBodyAddress;
+    _TrapContexts[[target]].bundle_operation = _BundleOperation;
+    _TrapContexts[[target]].bundle_dimensions = _BundleDimensions;
+    _TrapContexts[[target]].bundle_scalar_bindings = _BundleScalarBindings;
+    _TrapContexts[[target]].bundle_tile_bindings = _BundleTileBindings;
+    _TrapContexts[[target]].bundle_control_attributes =
+        _BundleControlAttributes;
+    _TrapContexts[[target]].bundle_data_attributes = _BundleDataAttributes;
+    _TrapContexts[[target]].t_queue = _TQueue;
+    _TrapContexts[[target]].u_queue = _UQueue;
+    _TrapContexts[[target]].predicates = _PredicateRegisters;
+
+    var ecstate = _SystemRegisters.core_state;
+    ecstate[3:0] = Zeros{4} + source;
+    ecstate[4] = if _BundleBodyActive then '1' else '0';
+    PTOv0WriteContextRegister(target, 0x0f00, ecstate);
+
+    var control: Word = Zeros{PTO_XLEN};
+    control[3:0] = Zeros{4} + source;
+    control[4] = '1';
+    control[5] = if _BundleActive then '1' else '0';
+    control[6] = if _BundleBodyActive then '1' else '0';
+    control[10:7] = PTOv0BundleKindCode(_BundleKind);
+    control[13:11] = PTOv0BundleTransferCode(_BundleTransfer);
+    control[14] = if _BundleCondition then '1' else '0';
+    PTOv0WriteContextRegister(target, 0x0f40, control);
+    PTOv0WriteContextRegister(target, 0x0f41, ReadBPC());
+    PTOv0WriteContextRegister(target, 0x0f42, _BundleTarget);
+    PTOv0WriteContextRegister(target, 0x0f43, ReadTPC());
+    PTOv0WriteContextRegister(target, 0x0f44, _ReturnAddress);
+    for index = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do
+        PTOv0WriteContextRegister(target, 0x0f45 + index,
+            _TQueue[[index]]);
+        PTOv0WriteContextRegister(target, 0x0f49 + index,
+            _UQueue[[index]]);
+    end;
+    PTOv0WriteContextRegister(target, 0x0f4d, Zeros{PTO_XLEN});
+    PTOv0WriteContextRegister(target, 0x0f4e, Zeros{PTO_XLEN});
+end;
+
+implementation func RecoverTrapContext(target: AccessControlRing) => boolean
+begin
+    var control = PTOv0ReadContextRegister(target, 0x0f40);
+    let ecstate = PTOv0ReadContextRegister(target, 0x0f00);
+    let recovered_bpc = PTOv0ReadContextRegister(target, 0x0f41);
+    let recovered_tpc = PTOv0ReadContextRegister(target, 0x0f43);
+    if !_TrapContexts[[target]].valid || control[4] == '0' ||
+       !PTOv0EBARGControlLegal(control) ||
+       control[3:0] != ecstate[3:0] ||
+       recovered_bpc[0] == '1' || recovered_tpc[0] == '1' then
+        return FALSE;
+    end;
+    WriteTPC(recovered_tpc);
+    WriteBPC(recovered_bpc);
+    _SystemRegisters.core_state = ecstate;
+    _BundleArgument = _TrapContexts[[target]].bundle_argument;
+    _CommitArgument = _TrapContexts[[target]].commit_argument;
+    _BundleActive = control[5] == '1';
+    _BundleBodyActive = control[6] == '1';
+    _BundleKind = PTOv0BundleKindOf(control[10:7]);
+    _BundleTransfer = PTOv0BundleTransferOf(control[13:11]);
+    _BundleCondition = control[14] == '1';
+    _BundleTarget = PTOv0ReadContextRegister(target, 0x0f42);
+    _BundleReturnTarget = PTOv0ReadContextRegister(target, 0x0f44);
+    _BundleBodyAddress = recovered_bpc;
+    _ReturnAddress = PTOv0ReadContextRegister(target, 0x0f44);
+    _BundleFallthrough = _TrapContexts[[target]].bundle_fallthrough;
+    _BundleOperation = _TrapContexts[[target]].bundle_operation;
+    _BundleDimensions = _TrapContexts[[target]].bundle_dimensions;
+    _BundleScalarBindings = _TrapContexts[[target]].bundle_scalar_bindings;
+    _BundleTileBindings = _TrapContexts[[target]].bundle_tile_bindings;
+    _BundleControlAttributes =
+        _TrapContexts[[target]].bundle_control_attributes;
+    _BundleDataAttributes = _TrapContexts[[target]].bundle_data_attributes;
+    for index = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do
+        _TQueue[[index]] = PTOv0ReadContextRegister(target, 0x0f45 + index);
+        _UQueue[[index]] = PTOv0ReadContextRegister(target, 0x0f49 + index);
+    end;
+    _PredicateRegisters = _TrapContexts[[target]].predicates;
+    _CurrentACR = UInt(ecstate[3:0]) as AccessControlRing;
+    control[4] = '0';
+    PTOv0WriteContextRegister(target, 0x0f40, control);
+    _TrapContexts[[target]].valid = FALSE;
+    return TRUE;
 end;
 
 implementation func TileProfileBinary(op: TileBinaryOperation,
@@ -310,6 +532,16 @@ implementation func TileProfileAxpy(destination_value: Word,
                                      data_type: TileDataType) => Word
 begin
     return destination_value + MultiplyWord(scalar, source_value);
+end;
+
+implementation func TileProfilePReLU(value: Word, negative_slope: Word,
+                                     data_type: TileDataType) => Word
+begin
+    if SInt(value) < 0 then
+        return MultiplyWord(value, negative_slope);
+    else
+        return value;
+    end;
 end;
 
 implementation func TileProfileCompare(comparison: TileComparison,

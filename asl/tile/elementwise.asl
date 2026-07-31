@@ -72,6 +72,7 @@ begin
                     left_payload[[element]], right_payload[[element]]);
         end;
     end;
+    MarkTileValidRegionDefined(destination);
 end;
 
 func TileUnaryValue(op: TileUnaryOperation, value: Word) => Word
@@ -120,6 +121,7 @@ begin
                     source_payload[[element]], scalar, source_tile.data_type);
         end;
     end;
+    MarkTileValidRegionDefined(destination);
 end;
 
 func ExecuteTileFillScalar(destination: TileIndex, scalar: Word)
@@ -132,6 +134,7 @@ begin
                 column as integer {0..65535}, scalar);
         end;
     end;
+    MarkTileValidRegionDefined(destination);
 end;
 
 func ExecuteTileUnary(op: TileUnaryOperation, destination: TileIndex, source: TileIndex)
@@ -150,6 +153,36 @@ begin
                     source_payload[[element]]);
         end;
     end;
+    MarkTileValidRegionDefined(destination);
+end;
+
+impdef func TileProfilePReLU(value: Word, negative_slope: Word,
+                             data_type: TileDataType) => Word
+begin
+    if SInt(value) < 0 then
+        return MultiplyWord(value, negative_slope);
+    else
+        return value;
+    end;
+end;
+
+func TPRELU(destination: TileIndex, source: TileIndex, negative_slope: Word)
+begin
+    let source_tile = _Tiles[[source]];
+    assert source_tile.allocated;
+    assert TileShapesMatch(_Tiles[[destination]], source_tile);
+    assert _Tiles[[destination]].data_type == source_tile.data_type;
+    let source_payload = source_tile.payload;
+    for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
+            let element = TileLinearIndex(source_tile,
+                row as integer {0..65535}, column as integer {0..65535});
+            _Tiles[[destination]].payload[[element]] =
+                TileProfilePReLU(source_payload[[element]], negative_slope,
+                    source_tile.data_type);
+        end;
+    end;
+    MarkTileValidRegionDefined(destination);
 end;
 
 func ExecuteTileScalar(op: TileBinaryOperation, destination: TileIndex,
@@ -169,6 +202,7 @@ begin
                     source_payload[[element]], scalar);
         end;
     end;
+    MarkTileValidRegionDefined(destination);
 end;
 
 pure func TileCompareValue(comparison: TileComparison, left: Word, right: Word) => Word
@@ -212,6 +246,7 @@ begin
                     left_payload[[element]], right_payload[[element]]);
         end;
     end;
+    MarkTileValidRegionDefined(destination);
 end;
 
 func ExecuteTileCompareScalar(destination: TileIndex, source: TileIndex,
@@ -230,6 +265,7 @@ begin
                     payload[[element]], scalar);
         end;
     end;
+    MarkTileValidRegionDefined(destination);
 end;
 
 func ExecuteTileSelect(destination: TileIndex, mask: TileIndex,
@@ -255,6 +291,7 @@ begin
             end;
         end;
     end;
+    MarkTileValidRegionDefined(destination);
 end;
 
 func ExecuteTileSelectScalar(destination: TileIndex, mask: TileIndex,
@@ -277,4 +314,5 @@ begin
                 true_payload[[element]] else scalar_false;
         end;
     end;
+    MarkTileValidRegionDefined(destination);
 end;

@@ -1,0 +1,127 @@
+{
+  "accepted_form_count": 30,
+  "component_case_counts": {
+    "alias_topology": 920,
+    "raw_boundaries": 500,
+    "rounding_binding": 152,
+    "sticky_flags": 210,
+    "type_and_legality": 488
+  },
+  "decoded_fault_case_count": 204,
+  "decoded_totality_case_count": 2270,
+  "decoded_totality_test": "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUTotality,ValidateCanonicalScalarFSUAliases",
+  "direct_flag_case_count": 35,
+  "direct_helper_test": "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUFlagAndRoundingHelpers",
+  "effect_class_ids": [
+    "scalar-fp-absolute",
+    "scalar-fp-unary-profile",
+    "scalar-fp-binary-profile",
+    "scalar-fp-minmax",
+    "scalar-fp-compare-quiet",
+    "scalar-fp-compare-signaling",
+    "scalar-fp-fused-profile",
+    "scalar-fp-format-convert",
+    "scalar-fp-to-integer",
+    "scalar-integer-to-fp"
+  ],
+  "format_code_contract": {
+    "floating_destination_codes": [
+      {"carrier_width": 64, "code": 0, "stage4_name": "fp-carrier-64"},
+      {"carrier_width": 32, "code": 1, "stage4_name": "fp-carrier-32"},
+      {"carrier_width": 19, "code": 2, "stage4_name": "fp-carrier-19"},
+      {"carrier_width": 32, "code": 3, "stage4_name": "fp-carrier-32-alt"},
+      {"carrier_width": 16, "code": 4, "stage4_name": "fp-carrier-16-a"},
+      {"carrier_width": 16, "code": 5, "stage4_name": "fp-carrier-16-b"},
+      {"carrier_width": 8, "code": 6, "stage4_name": "fp-carrier-8-a"},
+      {"carrier_width": 8, "code": 7, "stage4_name": "fp-carrier-8-b"},
+      {"carrier_width": 8, "code": 8, "stage4_name": "fp-carrier-8-c"},
+      {"carrier_width": 6, "code": 9, "stage4_name": "fp-carrier-6-a"},
+      {"carrier_width": 6, "code": 10, "stage4_name": "fp-carrier-6-b"},
+      {"carrier_width": 4, "code": 11, "stage4_name": "fp-carrier-4-a"},
+      {"carrier_width": 4, "code": 12, "stage4_name": "fp-carrier-4-b"},
+      {"carrier_width": 8, "code": 13, "stage4_name": "fp-carrier-8-d"},
+      {"carrier_width": 9, "code": 14, "stage4_name": "fp-carrier-9"}
+    ],
+    "integer_destination_codes": [
+      {"carrier_width": 64, "code": 0, "signed": false, "stage4_name": "u64"},
+      {"carrier_width": 32, "code": 1, "signed": false, "stage4_name": "u32"},
+      {"carrier_width": 16, "code": 2, "signed": false, "stage4_name": "u16"},
+      {"carrier_width": 8, "code": 3, "signed": false, "stage4_name": "u8"},
+      {"carrier_width": 4, "code": 4, "signed": false, "stage4_name": "u4"},
+      {"carrier_width": 2, "code": 5, "signed": false, "stage4_name": "u2"},
+      {"carrier_width": 1, "code": 6, "signed": false, "stage4_name": "u1"},
+      {"carrier_width": 1, "code": 7, "signed": false, "stage4_name": "boolean-u1"},
+      {"carrier_width": 64, "code": 8, "signed": true, "stage4_name": "s64"},
+      {"carrier_width": 32, "code": 9, "signed": true, "stage4_name": "s32"},
+      {"carrier_width": 16, "code": 10, "signed": true, "stage4_name": "s16"},
+      {"carrier_width": 8, "code": 11, "signed": true, "stage4_name": "s8"},
+      {"carrier_width": 4, "code": 12, "signed": true, "stage4_name": "s4"},
+      {"carrier_width": 2, "code": 13, "signed": true, "stage4_name": "s2"},
+      {"carrier_width": 1, "code": 14, "signed": true, "stage4_name": "s1"}
+    ],
+    "reserved_destination_codes": {"first": 15, "last": 31},
+    "source_codes": [
+      {"carrier_width": 64, "code": 0, "meaning": "FP64, signed-64, or unsigned-64 according to the mnemonic"},
+      {"carrier_width": 32, "code": 1, "meaning": "FP32, signed-32, or unsigned-32 according to the mnemonic"}
+    ],
+    "source_reserved_codes": [2, 3],
+    "stage5_boundary": "Floating codes name raw carrier widths only at Stage 4. Their target numeric encodings, arithmetic, rounding accuracy, saturation, and complete exception production are S5-T2 obligations."
+  },
+  "independent_comparison": {
+    "divergences": [
+      "comparison-model-fne-fnes-nan-result",
+      "comparison-model-missing-invalid-source-rejection-on-architecture-owned-forms",
+      "comparison-model-missing-minmax-and-compare-nv-flags"
+    ],
+    "matched_contracts": [
+      "fp32-fp64-source-carrier-selection",
+      "destination-type-legality-and-carrier-widths",
+      "rounding-code-selection",
+      "fabs-payload-preservation",
+      "minmax-nan-and-signed-zero-results",
+      "ordinary-gpr-read-before-write"
+    ],
+    "non_comparable_contracts": [
+      "pto-v0-raw-carrier-arithmetic-and-dz-surrogates",
+      "pto-reg5-t-u-queue-topology",
+      "pto-attempt-fault-and-trap-envelope"
+    ],
+    "provenance_sha256": "9e601ae1a3f1a7025b048aa6108b04b445a3ccbc68fc77ea4b76d7befa2e46b8",
+    "pto_disposition": "The independent executable ISA/model comparison corroborates shared carrier, width, rounding-selection, ABS, min/max, and ordinary alias rules. PTO-owned ordered comparisons, sticky flags, invalid-type rejection, raw-carrier profile behavior, Reg5 queues, and attempt/fault semantics remain authoritative.",
+    "status": "reviewed"
+  },
+  "raw_profile_boundary": {
+    "architecture_owned": [
+      "source-and-destination-type-legality",
+      "carrier-normalization",
+      "ordered-comparison-results",
+      "minmax-nan-and-signed-zero-selection",
+      "sticky-NV-DZ-OF-UF-NX-state",
+      "rounding-code-selection",
+      "Reg5-source-snapshot-and-destination-topology",
+      "fault-and-time-envelope"
+    ],
+    "pto_v0_owned": [
+      "modular-binary-and-fused-carrier-results",
+      "deterministic-unary-carrier-results",
+      "positive-or-negative-zero-divisor-all-ones-result-and-sticky-DZ",
+      "raw-conversion-truncation-or-sign-extension"
+    ],
+    "stage5_open": [
+      "target-format-encoding-names-and-values",
+      "correctly-rounded-arithmetic-and-fused-results",
+      "approximation-accuracy",
+      "conversion-saturation-and-exceptional-values",
+      "OF-UF-NX-production"
+    ]
+  },
+  "requirement_ids": [
+    "PTO-REQ-SCALAR-FP-001",
+    "PTO-REQ-SCALAR-OPERAND-001",
+    "PTO-REQ-SCALAR-EXECUTION-001",
+    "PTO-REQ-PROFILE-001"
+  ],
+  "schema_version": 1,
+  "status": "closed",
+  "target": "S4-T5"
+}
