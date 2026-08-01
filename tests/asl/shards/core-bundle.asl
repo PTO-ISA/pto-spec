@@ -11,6 +11,7 @@ begin
     TestTrapRoutingPolicy();
     TestCompleteTrapEnvelope();
     TestVisibleTrapContextRegisters();
+    TestTrapContextAllLeafRecoveryEvidence();
     TestBundleStateLifecycle();
     TestBundleFaults();
     TestTrapContextRouteAndRecover();

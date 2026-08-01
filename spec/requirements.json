@@ -107,6 +107,7 @@
         "docs/architecture-decisions/0010-acr-routing-and-context-reset.md",
         "docs/architecture-decisions/0018-pto-v0-trap-disposition.md",
         "spec/catalog/system-registers.json",
+        "spec/evidence/trap-context-recovery-evidence.json",
         "spec/profile-hooks.json"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
@@ -321,7 +322,8 @@
         "asl/scalar/dispatch.asl",
         "docs/architecture-decisions/0012-acrc-service-request.md",
         "docs/architecture-decisions/0031-scalar-sys-totality-and-profile-boundaries.md",
-        "spec/evidence/scalar-sys-totality.json"
+        "spec/evidence/scalar-sys-totality.json",
+        "spec/evidence/trap-context-recovery-evidence.json"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0012-acrc-service-request.md",
       "status": "reference-totality-closed:S4-T6",

@@ -1,0 +1,419 @@
+{
+  "schema_version": 1,
+  "target": "TrapContext per-leaf recovery evidence",
+  "status": "per-leaf-save-preserve-recover-invalidate-closed",
+  "issue": "https://github.com/PTO-ISA/pto-spec/issues/27",
+  "adr": "docs/architecture-decisions/0011-visible-ebarg-snapshot.md",
+  "requirement_ids": [
+    "PTO-REQ-FAULT-001",
+    "PTO-REQ-SCALAR-SSR-001"
+  ],
+  "evidence_function": "TestTrapContextAllLeafRecoveryEvidence",
+  "serialization_boundary": {
+    "portable_first_layer_visible": "Only ECSTATE plus EBARG0, BPC_CUR, BPC_TGT, TPC, LRA, TQ0..TQ3, and UQ0..UQ3 are first-layer portable saved-context words in PTO v0.",
+    "internal_ebstate_only": "All remaining TrapContext leaves are retained by the bounded PTO v0 EBSTATE record and are not portable serialized state.",
+    "extension_rule": "Adding portable encodings for EBSTATE-only leaves requires a separate accepted architecture decision."
+  },
+  "classification_counts": {
+    "validity-control": 1,
+    "portable-first-layer-visible": 14,
+    "internal-ebstate-only": 64
+  },
+  "leaf_fields": [
+    {
+      "path": "_TrapContexts[].valid",
+      "classification": "validity-control",
+      "assertion": "assert _TrapContexts[[1]].valid;"
+    },
+    {
+      "path": "_TrapContexts[].source_acr",
+      "classification": "portable-first-layer-visible",
+      "assertion": "assert _TrapContexts[[1]].source_acr == 15;"
+    },
+    {
+      "path": "_TrapContexts[].tpc",
+      "classification": "portable-first-layer-visible",
+      "assertion": "assert _TrapContexts[[1]].tpc == Zeros{PTO_XLEN} + 0x1200;"
+    },
+    {
+      "path": "_TrapContexts[].bpc",
+      "classification": "portable-first-layer-visible",
+      "assertion": "assert _TrapContexts[[1]].bpc == Zeros{PTO_XLEN} + 0x2200;"
+    },
+    {
+      "path": "_TrapContexts[].core_state",
+      "classification": "portable-first-layer-visible",
+      "assertion": "assert _TrapContexts[[1]].core_state[3:0] == Zeros{4} + 15;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_argument",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_argument =="
+    },
+    {
+      "path": "_TrapContexts[].commit_argument",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].commit_argument =="
+    },
+    {
+      "path": "_TrapContexts[].bundle_active",
+      "classification": "portable-first-layer-visible",
+      "assertion": "assert _TrapContexts[[1]].bundle_active;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_body_active",
+      "classification": "portable-first-layer-visible",
+      "assertion": "assert _TrapContexts[[1]].bundle_body_active;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_kind",
+      "classification": "portable-first-layer-visible",
+      "assertion": "assert _TrapContexts[[1]].bundle_kind == BundleKind_TileMatrix;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_transfer",
+      "classification": "portable-first-layer-visible",
+      "assertion": "assert _TrapContexts[[1]].bundle_transfer =="
+    },
+    {
+      "path": "_TrapContexts[].bundle_condition",
+      "classification": "portable-first-layer-visible",
+      "assertion": "assert !_TrapContexts[[1]].bundle_condition;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_target",
+      "classification": "portable-first-layer-visible",
+      "assertion": "assert _TrapContexts[[1]].bundle_target =="
+    },
+    {
+      "path": "_TrapContexts[].bundle_fallthrough",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_fallthrough =="
+    },
+    {
+      "path": "_TrapContexts[].bundle_return_target",
+      "classification": "portable-first-layer-visible",
+      "assertion": "assert _TrapContexts[[1]].bundle_return_target =="
+    },
+    {
+      "path": "_TrapContexts[].bundle_body_address",
+      "classification": "portable-first-layer-visible",
+      "assertion": "assert _TrapContexts[[1]].bundle_body_address =="
+    },
+    {
+      "path": "_TrapContexts[].bundle_operation.valid",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_operation.valid;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_operation.form_identity",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_operation.form_identity =="
+    },
+    {
+      "path": "_TrapContexts[].bundle_operation.operation_class",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_operation.operation_class =="
+    },
+    {
+      "path": "_TrapContexts[].bundle_operation.selector_valid",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_operation.selector_valid;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_operation.selector",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_operation.selector == Zeros{10} + 0x155;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_operation.data_type_valid",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_operation.data_type_valid;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_operation.data_type",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_operation.data_type == Zeros{5} + 0x11;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_operation.mode_valid",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_operation.mode_valid;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_operation.mode",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_operation.mode == Zeros{2} + 0x2;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_operation.branch_type_valid",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_operation.branch_type_valid;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_operation.branch_type",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_operation.branch_type == Zeros{3} + 0x5;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_dimensions[]",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_dimensions[[2]] =="
+    },
+    {
+      "path": "_TrapContexts[].bundle_scalar_bindings[].valid",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_scalar_bindings[[0]].valid;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_scalar_bindings[].destination",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_scalar_bindings[[0]].destination == 31;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_scalar_bindings[].source0",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_scalar_bindings[[0]].source0 == 24;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_scalar_bindings[].source1",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_scalar_bindings[[0]].source1 == 25;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_scalar_bindings[].source2",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_scalar_bindings[[0]].source2 == 26;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_scalar_bindings[].source_count",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_scalar_bindings[[0]].source_count == 3;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_tile_bindings[].valid",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_tile_bindings[[0]].valid;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_tile_bindings[].destination_valid",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_tile_bindings[[0]].destination_valid;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_tile_bindings[].destination",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_tile_bindings[[0]].destination == 2;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_tile_bindings[].destination_hand",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_tile_bindings[[0]].destination_hand =="
+    },
+    {
+      "path": "_TrapContexts[].bundle_tile_bindings[].destination_allocated_by_bundle",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert !_TrapContexts[[1]].bundle_tile_bindings[[0]].destination_allocated_by_bundle;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_tile_bindings[].destination_size",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_tile_bindings[[0]].destination_size == 8;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_tile_bindings[].source0_valid",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_tile_bindings[[0]].source0_valid;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_tile_bindings[].source1_valid",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_tile_bindings[[0]].source1_valid;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_tile_bindings[].source0",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_tile_bindings[[0]].source0 == 40;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_tile_bindings[].source1",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_tile_bindings[[0]].source1 == 41;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_tile_bindings[].source0_reuse",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_tile_bindings[[0]].source0_reuse;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_tile_bindings[].source1_reuse",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert !_TrapContexts[[1]].bundle_tile_bindings[[0]].source1_reuse;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_tile_bindings[].last",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert !_TrapContexts[[1]].bundle_tile_bindings[[0]].last;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_control_attributes.trap_enabled",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_control_attributes.trap_enabled;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_control_attributes.atomic",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_control_attributes.atomic;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_control_attributes.acquire",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_control_attributes.acquire;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_control_attributes.release",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert !_TrapContexts[[1]].bundle_control_attributes.release;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_control_attributes.far",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_control_attributes.far;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_control_attributes.direct_register",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert !_TrapContexts[[1]].bundle_control_attributes.direct_register;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_data_attributes.data_type",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_data_attributes.data_type =="
+    },
+    {
+      "path": "_TrapContexts[].bundle_data_attributes.data_layout",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_data_attributes.data_layout == Zeros{5};"
+    },
+    {
+      "path": "_TrapContexts[].bundle_data_attributes.pad_value",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_data_attributes.pad_value =="
+    },
+    {
+      "path": "_TrapContexts[].bundle_data_attributes.conversion_mode",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_data_attributes.conversion_mode =="
+    },
+    {
+      "path": "_TrapContexts[].bundle_data_attributes.rounding_mode",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_data_attributes.rounding_mode =="
+    },
+    {
+      "path": "_TrapContexts[].bundle_data_attributes.saturating",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_data_attributes.saturating;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_data_attributes.canonicalize",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].bundle_data_attributes.canonicalize;"
+    },
+    {
+      "path": "_TrapContexts[].t_queue[]",
+      "classification": "portable-first-layer-visible",
+      "assertion": "assert _TrapContexts[[1]].t_queue[[3]] == Zeros{PTO_XLEN} + 0x903;"
+    },
+    {
+      "path": "_TrapContexts[].u_queue[]",
+      "classification": "portable-first-layer-visible",
+      "assertion": "assert _TrapContexts[[1]].u_queue[[3]] == Zeros{PTO_XLEN} + 0xa03;"
+    },
+    {
+      "path": "_TrapContexts[].execution_mask",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].execution_mask == Zeros{PTO_XLEN} + 0x5a5a;"
+    },
+    {
+      "path": "_TrapContexts[].predicates[]",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].predicates[[7]] =="
+    },
+    {
+      "path": "_TrapContexts[].accumulator.live",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].accumulator.live;"
+    },
+    {
+      "path": "_TrapContexts[].accumulator.logical_data_type",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].accumulator.logical_data_type =="
+    },
+    {
+      "path": "_TrapContexts[].accumulator.info.allocated",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].accumulator.info.allocated;"
+    },
+    {
+      "path": "_TrapContexts[].accumulator.info.contents_defined",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].accumulator.info.contents_defined;"
+    },
+    {
+      "path": "_TrapContexts[].accumulator.info.defined_elements",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].accumulator.info.defined_elements[0] =="
+    },
+    {
+      "path": "_TrapContexts[].accumulator.info.defined_valid_elements",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].accumulator.info.defined_valid_elements == 1;"
+    },
+    {
+      "path": "_TrapContexts[].accumulator.info.capacity_bytes",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].accumulator.info.capacity_bytes == 2048;"
+    },
+    {
+      "path": "_TrapContexts[].accumulator.info.rows",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].accumulator.info.rows == 16;"
+    },
+    {
+      "path": "_TrapContexts[].accumulator.info.columns",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].accumulator.info.columns == 16;"
+    },
+    {
+      "path": "_TrapContexts[].accumulator.info.valid_rows",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].accumulator.info.valid_rows == 1;"
+    },
+    {
+      "path": "_TrapContexts[].accumulator.info.valid_columns",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].accumulator.info.valid_columns == 1;"
+    },
+    {
+      "path": "_TrapContexts[].accumulator.info.data_type",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].accumulator.info.data_type == TileDataType_S64;"
+    },
+    {
+      "path": "_TrapContexts[].accumulator.info.layout",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].accumulator.info.layout =="
+    },
+    {
+      "path": "_TrapContexts[].accumulator.info.location",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].accumulator.info.location =="
+    },
+    {
+      "path": "_TrapContexts[].accumulator.info.payload",
+      "classification": "internal-ebstate-only",
+      "assertion": "assert _TrapContexts[[1]].accumulator.info.payload[[0]] =="
+    }
+  ]
+}

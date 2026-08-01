@@ -812,6 +812,7 @@ def main() -> int:
         "spec/evidence/numeric-profile-decision-proposals.json"
     )
     release_traceability = load("spec/evidence/release-traceability-readiness.json")
+    trap_context_recovery = load("spec/evidence/trap-context-recovery-evidence.json")
     release_gate = load("spec/evidence/release-gate-readiness.json")
     requirements = load("spec/requirements.json")["requirements"]
     profile_catalog = load("spec/profile-hooks.json")
@@ -9893,6 +9894,127 @@ def main() -> int:
         and "_MemoryEventCount == 0" in profile_test_body,
         "active profile reset is not executed and tested",
     )
+    trap_context_inventory = next(
+        (
+            row
+            for row in release_traceability["inventories"]["state_roots"]
+            if row["id"] == "state:_TrapContexts"
+        ),
+        None,
+    )
+    require(
+        trap_context_inventory is not None,
+        "release traceability omits TrapContext state root",
+    )
+    trap_context_leaf_paths = [
+        leaf["path"] for leaf in trap_context_inventory["leaf_fields"]
+    ]
+    recovery_leaf_rows = trap_context_recovery.get("leaf_fields", [])
+    recovery_leaf_paths = [row.get("path") for row in recovery_leaf_rows]
+    require(
+        set(trap_context_recovery)
+        == {
+            "adr",
+            "classification_counts",
+            "evidence_function",
+            "issue",
+            "leaf_fields",
+            "requirement_ids",
+            "schema_version",
+            "serialization_boundary",
+            "status",
+            "target",
+        }
+        and trap_context_recovery["schema_version"] == 1
+        and trap_context_recovery["target"]
+        == "TrapContext per-leaf recovery evidence"
+        and trap_context_recovery["status"]
+        == "per-leaf-save-preserve-recover-invalidate-closed",
+        "TrapContext recovery evidence identity or schema drift",
+    )
+    require(
+        recovery_leaf_paths == trap_context_leaf_paths,
+        "TrapContext recovery evidence must enumerate every release-traceability leaf in order",
+    )
+    actual_trap_context_classifications = Counter(
+        row["classification"] for row in recovery_leaf_rows
+    )
+    require(
+        trap_context_recovery["classification_counts"]
+        == dict(actual_trap_context_classifications)
+        and set(trap_context_recovery["classification_counts"])
+        == {
+            "internal-ebstate-only",
+            "portable-first-layer-visible",
+            "validity-control",
+        },
+        "TrapContext recovery evidence classification count drift",
+    )
+    require(
+        trap_context_recovery["serialization_boundary"]
+        == {
+            "portable_first_layer_visible": (
+                "Only ECSTATE plus EBARG0, BPC_CUR, BPC_TGT, TPC, LRA, "
+                "TQ0..TQ3, and UQ0..UQ3 are first-layer portable saved-context "
+                "words in PTO v0."
+            ),
+            "internal_ebstate_only": (
+                "All remaining TrapContext leaves are retained by the bounded PTO "
+                "v0 EBSTATE record and are not portable serialized state."
+            ),
+            "extension_rule": (
+                "Adding portable encodings for EBSTATE-only leaves requires a "
+                "separate accepted architecture decision."
+            ),
+        },
+        "TrapContext serialization boundary drift",
+    )
+    require(
+        set(trap_context_recovery["requirement_ids"])
+        == {"PTO-REQ-FAULT-001", "PTO-REQ-SCALAR-SSR-001"}
+        and trap_context_recovery["adr"]
+        == "docs/architecture-decisions/0011-visible-ebarg-snapshot.md"
+        and trap_context_recovery["issue"]
+        == "https://github.com/PTO-ISA/pto-spec/issues/27",
+        "TrapContext recovery evidence traceability drift",
+    )
+    for row in recovery_leaf_rows:
+        require(
+            set(row) == {"assertion", "classification", "path"}
+            and row["classification"]
+            in {
+                "portable-first-layer-visible",
+                "internal-ebstate-only",
+                "validity-control",
+            }
+            and isinstance(row["assertion"], str)
+            and row["assertion"],
+            f"TrapContext recovery evidence row drift: {row.get('path')}",
+        )
+    trap_context_function = trap_context_recovery["evidence_function"]
+    require(
+        f"func {trap_context_function}()" in state_test_source,
+        "TrapContext per-leaf recovery evidence function is missing",
+    )
+    trap_context_test_body = state_test_source.split(
+        f"func {trap_context_function}()", 1
+    )[1].split("func Test", 1)[0]
+    require(
+        f"{trap_context_function}();" in main_test_body
+        and "SetFault(Fault_DataPage" in trap_context_test_body
+        and "assert CurrentACR() == 1;" in trap_context_test_body
+        and "assert _TrapContexts[[1]].valid;" in trap_context_test_body
+        and "assert !_TrapContexts[[1]].valid;" in trap_context_test_body
+        and "recovered_all_leaf_context" in trap_context_test_body
+        and "EBSTATE-only" in trap_context_test_body
+        and "EBARG" in trap_context_test_body,
+        "TrapContext per-leaf recovery evidence is not directly executable",
+    )
+    for row in recovery_leaf_rows:
+        require(
+            row["assertion"] in trap_context_test_body,
+            f"TrapContext leaf lacks direct executable assertion: {row['path']}",
+        )
     require(
         "func AdvanceArchitecturalTime()" in system_body
         and "func BeginArchitecturalInstructionAttempt()" in system_body
