@@ -2,7 +2,12 @@
 
 ## Status
 
-Accepted.
+Accepted, with the minimum-allocation clause superseded by
+[ADR 0045](0045-pto-isa-release-tile-contract.md).
+
+ADR 0045 fixes the PTO ISA 0.57.1 architectural CELL at 128 bytes and makes
+`B.IOT` size code 3 the minimum active allocation. The capacity-accounting,
+packed-storage, precision, and rollback decisions below remain current.
 
 ## Context
 
@@ -19,7 +24,7 @@ cannot be mistaken for an active allocation.
 
 ## Decision
 
-- An active tile allocation has a capacity from 256 bytes through the current
+- An active tile allocation has a capacity from 128 bytes through the current
   `TILE_CAPACITY` value, inclusive. Zero is never an active capacity.
 - `TFREE` invokes a separate release transition. Release clears allocation,
   definedness, capacity, shape, valid region, data type, layout, and location
@@ -43,8 +48,9 @@ transfers; that instruction-level rule remains a separate TMA closure item.
 
 ## Consequences
 
-Zero, below-minimum, shape overflow, and aggregate overflow are tile-legality
-faults with the previous destination preserved. Minimum, maximum, exact-fit,
-reconfiguration, and release boundaries have executable witnesses. The ASL
-payload carrier width remains verification infrastructure and no longer
-determines architectural capacity for four-bit formats.
+Zero, below-128-byte-minimum, shape overflow, and aggregate overflow are
+tile-legality faults with the previous destination preserved. The 128-byte
+minimum, maximum, exact-fit, reconfiguration, and release boundaries have
+executable witnesses. The ASL payload carrier width remains verification
+infrastructure and no longer determines architectural capacity for four-bit
+formats.
