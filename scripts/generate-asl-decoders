@@ -10944,6 +10944,7 @@ def main() -> None:
     print("    ResetProfileState();")
     print("    SetCurrentACR(0);")
     print("    ClearFault();")
+    reset_witnessed_behaviors: set[str] = set()
     for row_index, row in enumerate(system_registers):
         behavior = system_register_behaviors[row["name"]]
         expected = system_register_reset_expression(behavior)
@@ -10952,6 +10953,9 @@ def main() -> None:
             for address in addresses:
                 if row["scope"] == "base":
                     raise ValueError("write-only base register lacks reset backing")
+                if behavior["id"] not in reset_witnessed_behaviors:
+                    print(f"    // SYSREG-WITNESS class/{behavior['id']}/reset")
+                    reset_witnessed_behaviors.add(behavior["id"])
                 print(
                     f"    assert _ExtendedSystemRegisters[[{address}]] == {expected};"
                 )
@@ -10961,19 +10965,31 @@ def main() -> None:
                 f"    let reset_value_{row_index}_{address_index} = "
                 f"ReadSystemRegisterAddress({bit_literal(address, 24)});"
             )
+            if behavior["id"] not in reset_witnessed_behaviors:
+                print(f"    // SYSREG-WITNESS class/{behavior['id']}/reset")
+                reset_witnessed_behaviors.add(behavior["id"])
             print(f"    assert reset_value_{row_index}_{address_index} == {expected};")
             print("    assert _LastFault == Fault_None;")
     print("    ResetProfileState();")
     print("    SetCurrentACR(0);")
     print("    ClearFault();")
+    access_witnessed_behaviors: set[str] = set()
     for row_index, row in enumerate(system_registers):
         behavior = system_register_behaviors[row["name"]]
         addresses = system_register_addresses(row)
         canonical_address = addresses[0]
+        first_behavior_access = behavior["id"] not in access_witnessed_behaviors
         if behavior["read"] == "reject-write-only":
             print(
                 f"    - = ReadSystemRegisterAddress({bit_literal(canonical_address, 24)});"
             )
+            if first_behavior_access:
+                print(f"    // SYSREG-WITNESS class/{behavior['id']}/access")
+                for effect in behavior["side_effects"]:
+                    print(
+                        f"    // SYSREG-WITNESS effect/{behavior['id']}/"
+                        f"{re.sub(r'[^a-z0-9]+', '-', effect.lower()).strip('-')}"
+                    )
             print("    assert _LastFault == Fault_IllegalInstruction;")
             print("    ClearFault();")
         elif row["access"] == "RO":
@@ -10991,6 +11007,13 @@ def main() -> None:
                 f"    let readonly_after_{row_index} = "
                 f"ReadSystemRegisterAddress({bit_literal(canonical_address, 24)});"
             )
+            if first_behavior_access:
+                print(f"    // SYSREG-WITNESS class/{behavior['id']}/access")
+                for effect in behavior["side_effects"]:
+                    print(
+                        f"    // SYSREG-WITNESS effect/{behavior['id']}/"
+                        f"{re.sub(r'[^a-z0-9]+', '-', effect.lower()).strip('-')}"
+                    )
             print(
                 f"    assert readonly_after_{row_index} == readonly_before_{row_index};"
             )
@@ -11011,10 +11034,19 @@ def main() -> None:
                 f"    let written_value_{row_index} = "
                 f"ReadSystemRegisterAddress({bit_literal(canonical_address, 24)});"
             )
+            if first_behavior_access:
+                print(f"    // SYSREG-WITNESS class/{behavior['id']}/access")
+                for effect in behavior["side_effects"]:
+                    print(
+                        f"    // SYSREG-WITNESS effect/{behavior['id']}/"
+                        f"{re.sub(r'[^a-z0-9]+', '-', effect.lower()).strip('-')}"
+                    )
             print(
                 f"    assert written_value_{row_index} == Zeros{{PTO_XLEN}} + {write_value};"
             )
             print("    assert _LastFault == Fault_None;")
+        if first_behavior_access:
+            access_witnessed_behaviors.add(behavior["id"])
     print("    ResetProfileState();")
     print("end;")
     print()

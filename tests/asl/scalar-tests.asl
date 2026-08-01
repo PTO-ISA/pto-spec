@@ -779,6 +779,8 @@ begin
     var software_state = _SystemRegisters.core_state;
     software_state[36:32] = '00101';
     WriteSystemRegister(SystemRegister_CORE_STATE, software_state);
+    // SYSREG-EFFECT-WITNESS core-state-control/write-selects-current-acr
+    assert CurrentACR() == 15;
     assert ScalarFPFlags() == '00101';
 
     WriteTPC(Zeros{PTO_XLEN} + 0x200);
@@ -1890,6 +1892,7 @@ begin
     ArchitectureCloseRequest('0001');
     assert _LastFault == Fault_ServiceRequest;
     assert CurrentACR() == 1;
+    // SYSREG-EFFECT-WITNESS exception-vector-base/selects-trap-entry-tpc
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x900;
     assert _ACRTrapNumber[[1]] == Zeros{6} + 6;
     assert _ACRTrapCause[[1]][3:0] == '0001';

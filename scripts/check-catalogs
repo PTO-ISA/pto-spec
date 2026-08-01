@@ -1122,6 +1122,9 @@ def main() -> int:
     scalar_bru_totality = load("spec/evidence/scalar-bru-totality.json")
     scalar_fsu_totality = load("spec/evidence/scalar-fsu-totality.json")
     scalar_numeric_flags = load("spec/evidence/scalar-numeric-flag-contract.json")
+    system_register_witnesses = load(
+        "spec/evidence/system-register-witness-closure.json"
+    )
     numeric_rounding_selectors = load(
         "spec/evidence/numeric-rounding-selector-contract.json"
     )
@@ -5870,6 +5873,180 @@ def main() -> int:
         envelope_only_traps == {33, 49, 51},
         "PTO v0 envelope-only trap disposition drift",
     )
+    witness_check = subprocess.run(
+        [str(ROOT / "scripts/generate-system-register-witness-closure"), "--check"],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    require(
+        witness_check.returncode == 0,
+        "system-register witness closure evidence is stale or a consumer-exclusion guard failed",
+    )
+    require(
+        set(system_register_witnesses)
+        == {
+            "behavior_classes",
+            "consumer_exclusion",
+            "schema_version",
+            "sources",
+            "status",
+            "summary",
+            "target",
+            "trap_witnesses",
+            "witness_binding_negative_canaries",
+        }
+        and system_register_witnesses["schema_version"] == 1
+        and system_register_witnesses["target"] == "S2-T1:S2-T3:issue-34"
+        and system_register_witnesses["status"]
+        == "reference-witness-and-consumer-exclusion-closed"
+        and system_register_witnesses["summary"]
+        == {
+            "register_definition_count": 72,
+            "bank_expanded_address_count": 837,
+            "behavior_class_count": 25,
+            "side_effect_contract_count": 23,
+            "storage_only_register_count": 33,
+            "trap_count": 13,
+            "production_active_trap_count": 10,
+            "envelope_only_trap_count": 3,
+        },
+        "system-register witness closure identity or summary drift",
+    )
+    behavior_witness_rows = system_register_witnesses["behavior_classes"]
+    require(
+        [row["behavior_class"] for row in behavior_witness_rows]
+        == [row["id"] for row in behavior_rows]
+        and all(
+            row["profile_status"]
+            == behaviors_by_id[row["behavior_class"]]["profile_status"]
+            and row["registers"] == behaviors_by_id[row["behavior_class"]]["registers"]
+            and [effect["side_effect"] for effect in row["side_effect_witnesses"]]
+            == behaviors_by_id[row["behavior_class"]]["side_effects"]
+            for row in behavior_witness_rows
+        ),
+        "system-register behavior-class witness binding drift",
+    )
+    witness_ids = []
+    for row in behavior_witness_rows:
+        require(
+            row["reset_witness"]["execution_reachability"] == "canonical-and-sharded"
+            and row["access_witness"]["execution_reachability"]
+            == "canonical-and-sharded"
+            and all(
+                effect["execution_reachability"] == "canonical-and-sharded"
+                for effect in row["side_effect_witnesses"]
+            ),
+            "system-register witness execution reachability drift",
+        )
+        witness_ids.extend(
+            [
+                row["reset_witness"]["witness_id"],
+                row["access_witness"]["witness_id"],
+                *[effect["witness_id"] for effect in row["side_effect_witnesses"]],
+            ]
+        )
+    trap_witness_rows = system_register_witnesses["trap_witnesses"]
+    witness_ids.extend(row["witness_id"] for row in trap_witness_rows)
+    require(
+        len(witness_ids) == len(set(witness_ids)) == 86
+        and len(witness_ids) - len(trap_witness_rows) == 73
+        and [row["name"] for row in trap_witness_rows]
+        == [row["name"] for row in trap_rows]
+        and [row["pto_v0_status"] for row in trap_witness_rows]
+        == [row["pto_v0_status"] for row in trap_rows],
+        "system-register or trap witness identity drift",
+    )
+    require(
+        all(
+            row["execution_reachability"] == "canonical-and-sharded"
+            and row["case_statement"]
+            and all(
+                assertion["execution_reachability"] == "canonical-and-sharded"
+                for assertion in row["helper_assertions"]
+            )
+            for row in trap_witness_rows
+        ),
+        "trap witness function binding or reachability drift",
+    )
+    witness_sources = {
+        row["path"]: row["sha256"] for row in system_register_witnesses["sources"]
+    }
+    for source_path in (
+        "tests/asl/scalar-tests.asl",
+        "tests/asl/state-tests.asl",
+        "tests/asl/tile-tests.asl",
+    ):
+        require(
+            witness_sources.get(source_path)
+            == hashlib.sha256((ROOT / source_path).read_bytes()).hexdigest(),
+            f"system-register witness source hash drift: {source_path}",
+        )
+    scall_witness = next(row for row in trap_witness_rows if row["name"] == "SCALL")
+    require(
+        scall_witness["closure"] == "exact-service-request-leaf-semantics"
+        and scall_witness["catalog_contract"]
+        == {
+            "cause": "request-type",
+            "argument": "source-tpc",
+            "restart": "saved-context-resume-next-instruction",
+        }
+        and scall_witness["helper_assertions"]
+        and all(
+            row["function"] == "CheckServiceRequestTrapMapping"
+            for row in scall_witness["helper_assertions"]
+        )
+        and {row["assertion_marker"] for row in scall_witness["helper_assertions"]}
+        == {
+            "TRAP-WITNESS scall/assert-number",
+            "TRAP-WITNESS scall/assert-argument",
+            "TRAP-WITNESS scall/assert-cause",
+            "TRAP-WITNESS scall/assert-synchronous",
+            "TRAP-WITNESS scall/assert-argument-valid",
+            "TRAP-WITNESS scall/assert-saved-source",
+            "TRAP-WITNESS scall/assert-saved-restart",
+            "TRAP-WITNESS scall/assert-visible-restart",
+            "TRAP-WITNESS scall/assert-vector-entry",
+            "TRAP-WITNESS scall/assert-restart",
+        },
+        "SCALL exact trap witness drift",
+    )
+    exclusion = system_register_witnesses["consumer_exclusion"]
+    require(
+        exclusion["storage_only_registers"]["status"]
+        == "closed-canonical-address-and-semantic-boundary"
+        and exclusion["storage_only_registers"]["register_count"] == 33
+        and exclusion["storage_only_registers"]["canonical_address_count"] == 423
+        and len(exclusion["storage_only_registers"]["canonical_addresses"]) == 423
+        and exclusion["storage_only_registers"]["semantic_access_inventory"]
+        and exclusion["envelope_only_traps"]["status"]
+        == "closed-no-production-trigger-reachability"
+        and exclusion["envelope_only_traps"]["trap_count"] == 3
+        and exclusion["envelope_only_traps"]["activation_inventory"]
+        and len(exclusion["negative_canaries"]) == 6
+        and {row["canary_id"] for row in exclusion["negative_canaries"]}
+        == {
+            "storage-full-bank-address",
+            "storage-symbolic-backing-index",
+            "storage-transitive-wrapper-consumer",
+            "trap-direct-number-assignment",
+            "trap-number-helper",
+            "trap-indirect-setfault",
+        }
+        and all(
+            row["status"] == "rejected-as-required"
+            for row in exclusion["negative_canaries"]
+        ),
+        "system-register or trap consumer-exclusion closure drift",
+    )
+    binding_canaries = system_register_witnesses["witness_binding_negative_canaries"]
+    require(
+        [row["canary_id"] for row in binding_canaries]
+        == ["witness-marker-relocation", "witness-commented-shard-call"]
+        and all(row["status"] == "rejected-as-required" for row in binding_canaries),
+        "system-register witness binding canary drift",
+    )
     for row in trap_rows:
         for producer in row["producers"]:
             fault_match = re.fullmatch(
@@ -7951,6 +8128,99 @@ def main() -> int:
             for name, count in release_inventory_counts.items()
         ),
         "release-traceability inventory count drift",
+    )
+    release_system_rows = release_traceability["inventories"]["system_registers"]
+    release_system_by_name = {row["name"]: row for row in release_system_rows}
+    witness_by_behavior = {row["behavior_class"]: row for row in behavior_witness_rows}
+    behavior_by_register = {
+        name: behavior for behavior in behavior_rows for name in behavior["registers"]
+    }
+
+    def expected_strongest_witness(behavior_id: str) -> dict[str, object]:
+        witness = witness_by_behavior[behavior_id]
+        rows = (
+            witness["side_effect_witnesses"]
+            if witness["side_effect_witnesses"]
+            else [witness["access_witness"]]
+        )
+        return {
+            "kind": (
+                "side-effect-contract-set"
+                if witness["side_effect_witnesses"]
+                else "access-contract"
+            ),
+            "witnesses": [
+                {
+                    "id": item["witness_id"],
+                    "function": item["function"],
+                    "assertion_marker": item["assertion_marker"],
+                    "source": item["source"],
+                    "source_sha256": witness_sources[item["source"]],
+                    **({"closure": item["closure"]} if "closure" in item else {}),
+                }
+                for item in rows
+            ],
+        }
+
+    require(
+        len(release_system_by_name) == 72
+        and all(
+            release_system_by_name[name]["behavior_class"] == behavior["id"]
+            and release_system_by_name[name]["profile_status"]
+            == behavior["profile_status"]
+            and release_system_by_name[name]["side_effects"] == behavior["side_effects"]
+            and release_system_by_name[name]["strongest_executable_witness"]
+            == expected_strongest_witness(behavior["id"])
+            and all(
+                source["sha256"] == witness_sources[source["path"]]
+                for source in release_system_by_name[name]["exact_witness_sources"]
+            )
+            and ("tests/asl/tile-tests.asl" in release_system_by_name[name]["tests"])
+            == (behavior["id"] == "tile-capacity-profile-limit")
+            and (
+                release_system_by_name[name]["consumer_exclusion_guard"]
+                == "sysreg-consumer-exclusion-pto-v0-storage-only"
+            )
+            == (behavior["profile_status"] == "pto-v0-storage-only")
+            for name, behavior in behavior_by_register.items()
+        ),
+        "release traceability omits exact system-register behavior or witness metadata",
+    )
+    release_trap_rows = release_traceability["inventories"]["traps"]
+    release_trap_by_name = {row["name"]: row for row in release_trap_rows}
+    trap_witness_by_name = {row["name"]: row for row in trap_witness_rows}
+    require(
+        len(release_trap_by_name) == 13
+        and all(
+            release_trap_by_name[row["name"]]["disposition"] == row["pto_v0_status"]
+            and release_trap_by_name[row["name"]]["producers"] == row["producers"]
+            and release_trap_by_name[row["name"]]["cause"] == row["cause"]
+            and release_trap_by_name[row["name"]]["argument"] == row["argument"]
+            and release_trap_by_name[row["name"]]["restart"] == row["restart"]
+            and release_trap_by_name[row["name"]]["exact_envelope_witness"]["id"]
+            == trap_witness_by_name[row["name"]]["witness_id"]
+            and release_trap_by_name[row["name"]]["exact_envelope_witness"]["closure"]
+            == trap_witness_by_name[row["name"]]["closure"]
+            and release_trap_by_name[row["name"]]["exact_envelope_witness"][
+                "catalog_contract"
+            ]
+            == {
+                "cause": row["cause"],
+                "argument": row["argument"],
+                "restart": row["restart"],
+            }
+            and release_trap_by_name[row["name"]]["exact_envelope_witness"][
+                "source_sha256"
+            ]
+            == witness_sources[trap_witness_by_name[row["name"]]["source"]]
+            and (
+                release_trap_by_name[row["name"]]["consumer_exclusion_guard"]
+                == "trap-consumer-exclusion-pto-v0-envelope-only"
+            )
+            == (row["pto_v0_status"] == "envelope-only-no-trigger")
+            for row in trap_rows
+        ),
+        "release traceability omits exact trap envelope or disposition metadata",
     )
     release_item_ids = [
         row["id"]

@@ -47,6 +47,16 @@ an empty trap bank.
 - Generated/catalog checks reject a missing producer declaration, missing
   cause/argument/restart contract, or a change to the three envelope-only
   identities without an explicit normative update.
+- Stable per-trap witness IDs bind every catalog row to its exact executable
+  envelope case and number, argument, cause, and restart assertions. `SCALL`
+  has a dedicated `RaiseServiceRequest` witness for source-TPC argument,
+  request-type cause, and next-instruction recovery rather than sharing the
+  ordinary synchronous `SetFault` helper. A fail-closed guard permits
+  `INST_PAGE_FAULT`, `HW_BREAKPOINT`, and `HW_WATCHPOINT` only in the
+  `FaultCode` declaration and `SetFault` mapping, and content-addresses every
+  normative trap producer/mutator plus every function mentioning canonical
+  numbers 33, 49, or 51. Direct-number, helper, and indirect-`SetFault`
+  negative canaries must all reject.
 
 ## Consequences
 
