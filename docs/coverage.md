@@ -17,7 +17,7 @@ direct tile. PTO does not include vector instruction execution.
 | TMA | 9 operations | Stage 4 reference totality closed; Stage 3 ordering closed | all-nine decoded effects, packed four-bit accesses, duplicate-lane ordering, masks, CAS, production events, restart, and first/middle/last preflight faults | target numeric conformance remains a Stage 5 obligation where profile hooks apply |
 | CUBE | 13 operations with implicit ACC | Stage 4 raw-carrier reference totality closed; 0.57.1 logical/physical ACC contract defined; Stage 5 conformance open | all-13 decoded results, all-25 type identities, mixed layouts/locations, aliases, ACC initialization/update/conversion/release, trap preservation, and composite preflight | named hardware accumulation, rounding, saturation, exceptional-value, and numeric conformance |
 | Encodings and execution status | 474 scalar forms + 99 bundle/command forms + 120 direct tile operations | PTO ISA 0.57.1 Mode/Function ABI and M4 instruction reference semantics closed; S5-T3 independent comparison closed | generated decoders, operand/handler bindings, reserved-code rejection, no-legacy-decode witnesses, one-tick success/rejection matrix, stale-fault isolation, preserved trap record, scalar/command/tile legality witnesses, and a 693-row comparison matrix with 557 exact matches, 96 classified divergences (86 approved 0.57.1 ABI-break remaps and 10 intentional rejected-command differences), 39 non-comparable rows, and one intentional extension, with all clean-snapshot documentation and Sail gates | Stage 5 numeric conformance and Stage 6 immutable-candidate evidence remain open |
-| Named hardware numeric profile | `pto-hardware-numeric-0.57.1-ieee-v1` | contract and boundary-vector schema defined; implementation conformance open | checked profile identity, low-precision formats, packed lanes, NaN/zero/invalid-result/RHB rules, matrix operand and physical ACC classes, and MX scale shape/order | independent oracle results, downstream byte/effect parity, and accepted target review under `S5-T2` |
+| Named hardware numeric profile | `pto-hardware-numeric-0.57.1-ieee-v1` | contract and boundary-vector schema defined; implementation conformance open | checked profile identity, low-precision formats, packed lanes, subnormal policy, produced canonical NaNs, NaN/signed-zero comparison results, MIN/MAX special results, invalid-result/RHB rules, matrix operand and physical ACC classes, and MX scale shape/order | infinity arithmetic, broader NaN creation, conversions, reductions, quantization, matrix results, complete flag/status behavior, independent oracle results, downstream byte/effect parity, and accepted target review under `S5-T2` |
 | PTO-TSO concurrency | 16-event/four-agent verification bound | production-connected candidate graph; Stage 3 closed | standalone litmus construction, axiomatic checks, scalar/tile/DMA/fence extraction, atomic ordering, reservation boundaries, conditional writes, and mixed-size fail-closed tests | byte-level mixed-size coherence is an explicit future extension |
 
 The current M4 claim means the mechanical, execution-path, state/fault,
@@ -116,6 +116,14 @@ configuration selection. Sixteen domains and 95 operations expand to 1,045
 conditional operation/type obligations; support, arithmetic conformance, and
 all complete domain rules remain open. Other numeric dimensions keep the
 repository floor at M4.
+The generated `numeric-special-value-contract.json` ledger and ADR 0050 add a
+bounded PD-05-SC2 checkpoint for the named hardware profile. Three accepted
+special-value rules cover produced canonical NaNs, comparison NaN/signed-zero
+results, and MIN/MAX NaN/signed-zero results across eight operations and 154
+conditional operation/type tuples. These rows are conditional on separate
+support and do not change `pto-v0`. They do not increment the two-of-12
+complete-decision count, close any of the 20 numeric domains, or change the
+18/99 selected generic variation routes.
 The generated `numeric-format-namespace-contract.json` ledger and ADRs 0040
 and 0048
 close the structural namespace portion of PD-02. Five code spaces remain
@@ -135,8 +143,9 @@ portable result rules cover signed widening, unsigned widening, and narrowing;
 executable boundary witnesses confirm source-width interpretation. Profile
 support, same-width conversions, floating conversions, overflow/saturation,
 rounding, flags, and target vectors remain open. The accepted bounded subset
-does not increment the two-of-12 complete-decision or 0/20 domain-rule counts, so
-PD-07, S5-T2, and the M4 floor remain unchanged.
+does not change the current 2/12 accepted-decision count or the 0/20
+complete-domain-rule count, so PD-07, S5-T2, and the M4 floor remain
+unchanged.
 The generated `numeric-profile-applicability-closure.json` ledger and ADR 0041
 close one negative PD-01 slice: A2/A3 does not support the six MX CUBE
 selectors for any of the 25 `TileDataType` identities, and every one of the

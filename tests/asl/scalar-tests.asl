@@ -652,6 +652,23 @@ begin
     assert minimum_status == ScalarExecution_Executed;
     assert ReadGPR(7) == Zeros{PTO_XLEN} + 0x80000000;
 
+    WriteGPR(3, Zeros{PTO_XLEN} + 0x80000000);
+    let maximum_negative_zero_status = ExecuteScalarInstruction(maximum, 32);
+    assert maximum_negative_zero_status == ScalarExecution_Executed;
+    assert ReadGPR(6) == Zeros{PTO_XLEN} + 0x80000000;
+
+    WriteGPR(2, Zeros{PTO_XLEN});
+    WriteGPR(3, Zeros{PTO_XLEN});
+    let minimum_positive_zero_status = ExecuteScalarInstruction(minimum, 32);
+    assert minimum_positive_zero_status == ScalarExecution_Executed;
+    assert ReadGPR(7) == Zeros{PTO_XLEN};
+
+    let negative_zero64 = Zeros{PTO_XLEN} + 0x8000000000000000;
+    assert ScalarFPMinMax(FloatingBinary_MAX, negative_zero64,
+        negative_zero64, '00') == negative_zero64;
+    assert ScalarFPMinMax(FloatingBinary_MIN, Zeros{PTO_XLEN},
+        Zeros{PTO_XLEN}, '00') == Zeros{PTO_XLEN};
+
     var equal_zero: bits(48) = Zeros{48} + 0x0000005b;
     equal_zero[11:7] = Zeros{5} + 8;
     equal_zero[19:15] = Zeros{5} + 2;

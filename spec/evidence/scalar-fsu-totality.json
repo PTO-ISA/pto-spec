@@ -71,14 +71,15 @@
     "divergences": [
       "comparison-model-fne-fnes-nan-result",
       "comparison-model-missing-invalid-source-rejection-on-architecture-owned-forms",
-      "comparison-model-missing-minmax-and-compare-nv-flags"
+      "comparison-model-missing-minmax-and-compare-nv-flags",
+      "comparison-model-fmax-equal-negative-zero-returns-positive-zero-pto-preserves-negative-zero"
     ],
     "matched_contracts": [
       "fp32-fp64-source-carrier-selection",
       "destination-type-legality-and-carrier-widths",
       "rounding-code-selection",
       "fabs-payload-preservation",
-      "minmax-nan-and-signed-zero-results",
+      "minmax-nan-results-and-shared-signed-zero-cases",
       "ordinary-gpr-read-before-write"
     ],
     "non_comparable_contracts": [
@@ -87,7 +88,7 @@
       "pto-attempt-fault-and-trap-envelope"
     ],
     "provenance_sha256": "9e601ae1a3f1a7025b048aa6108b04b445a3ccbc68fc77ea4b76d7befa2e46b8",
-    "pto_disposition": "The independent executable ISA/model comparison corroborates shared carrier, width, rounding-selection, ABS, min/max, and ordinary alias rules. PTO-owned ordered comparisons, sticky flags, invalid-type rejection, raw-carrier profile behavior, Reg5 queues, and attempt/fault semantics remain authoritative.",
+    "pto_disposition": "The independent executable ISA/model comparison corroborates shared carrier, width, rounding-selection, ABS, min/max NaN results, shared signed-zero cases, and ordinary alias rules. PTO preserves -0 for FMAX(-0, -0), while the comparison model returns +0 for every two-zero FMAX pair; this PTO-owned result, ordered comparisons, sticky flags, invalid-type rejection, raw-carrier profile behavior, Reg5 queues, and attempt/fault semantics remain authoritative.",
     "status": "reviewed"
   },
   "raw_profile_boundary": {

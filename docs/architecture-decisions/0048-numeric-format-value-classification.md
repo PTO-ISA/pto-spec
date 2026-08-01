@@ -159,12 +159,14 @@ profile, the generated format ledger, and the direct assertions together.
 ## Remaining boundaries
 
 PD-02 still requires the complete operation/type/profile legality matrix,
-target support, and independent result vectors. PD-05 still requires exact
-special-value results for every arithmetic, comparison, conversion,
-quantization, reduction, ordering, and matrix family. ADR 0049 now owns
-subnormal execution and tininess rules for the named hardware profile. PD-06
-owns scalar exception flags. No variation route or complete numeric domain is
-closed by classification alone.
+target support, and independent result vectors. ADR 0050 now owns the bounded
+PD-05-SC2 hardware special-value checkpoint for produced canonical NaNs,
+comparison NaN/signed-zero results, and MIN/MAX NaN/signed-zero results. PD-05
+still requires infinity arithmetic, broader NaN creation, conversions,
+reductions, quantization, matrix results, and complete flag/status behavior.
+ADR 0049 owns subnormal execution and tininess rules for the named hardware
+profile. PD-06 owns scalar exception flags. No variation route or complete
+numeric domain is closed by classification alone.
 
 ## Affected sources
 

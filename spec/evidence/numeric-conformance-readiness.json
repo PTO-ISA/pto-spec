@@ -51,6 +51,24 @@
     "s5_t2_a_complete": false,
     "s5_t2_complete": false
   },
+  "numeric_special_value_contract": {
+    "path": "spec/evidence/numeric-special-value-contract.json",
+    "status": "named-hardware-special-value-checkpoint-accepted-pd05-open",
+    "acceptance_record": "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
+    "format_count": 25,
+    "nan_capable_type_count": 10,
+    "signaling_nan_capable_type_count": 7,
+    "signed_zero_type_count": 13,
+    "comparison_operation_count": 2,
+    "minmax_operation_count": 6,
+    "operation_scope_count": 8,
+    "conditional_operation_type_tuple_count": 154,
+    "accepted_special_result_rule_count": 3,
+    "accepted_complete_domain_rule_count": 0,
+    "accepted_complete_decision_count": 0,
+    "pd05_complete": false,
+    "s5_t2_complete": false
+  },
   "identity_framework": {
     "status": "closed:S5-T2-A1",
     "accepted_identity_count": 4,

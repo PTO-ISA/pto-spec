@@ -825,15 +825,15 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ea0cd7fd41bfda7c898d95cbde8a0e21ad6101e9f292ff2451d821269543ff96"
+      "sha256": "4939fd3b5c32bd81c815e0c4b5756d329a8fd207b375d921e6c074d949e000eb"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
-      "sha256": "dadf2f4e38653439296354218a26ad4d057d417372b22708d7d559564a4688ac"
+      "sha256": "d8d188dc06cb4195fcf3d62724591416c17cbd938c0c225d2093890d61eeb7dc"
     },
     {
       "path": "asl/scalar/floating.asl",
-      "sha256": "343bf5c522269034372b2fe916fb011556043fdff142862a0f6ea8738118184b"
+      "sha256": "cc2b1fd8a53e840295363ae45335ca426385565d6f797b4829d760e3e65ba71f"
     },
     {
       "path": "asl/scalar/dispatch.asl",
@@ -861,11 +861,11 @@
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "b8357bb2202086fd8802722c8a6d12a48fa751556c9b322bd26f16ac2a3ec1fb"
+      "sha256": "1608fa0c03d139842b85c63c581d8280c37e55ef03a6e2f3cbf75dd8cb8edaab"
     },
     {
       "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
-      "sha256": "0cd5c9eef6525edf16603f9d1c4df1233f59b6e8ffc9750b84bd99995fd55962"
+      "sha256": "07c51707a4f02fa6a451f92ab267b31fe4f0398d3def26f12b461f79d734d6a7"
     },
     {
       "path": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",

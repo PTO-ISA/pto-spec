@@ -195,6 +195,17 @@ for results, and detects tininess after rounding. The profile exposes no FTZ
 or DAZ state and no operation-local override; a configuration requesting one
 rejects before effects. The rule is conditional on an otherwise-supported
 operation/type tuple and does not change `pto-v0`.
+ADR 0050 and `spec/evidence/numeric-special-value-contract.json` add the
+PD-05-SC2 hardware special-value result checkpoint for that same named
+profile. Produced NaNs use the destination canonical NaN, tile comparisons
+return NE only for NaN inputs while treating signed zeros as equal, and scalar
+or tile MIN/MAX selects the numeric operand for one-NaN cases, canonical NaN
+for two-NaN cases, and operation-defined zero signs for signed-zero ties. The
+three rules cover eight operation identities and 154 conditional
+operation/type tuples, but only after profile support is separately accepted.
+They do not change `pto-v0` and do not define infinity arithmetic, broader NaN
+creation, conversions, reductions, quantization, matrix results, or complete
+flag/status behavior.
 ADR 0044 and `spec/evidence/public-integer-conversion-contract.json` define the
 portable result for every unequal-width public integer `TCVT` pair: interpret
 the source at its declared width and signedness, then sign-extend, zero-extend,

@@ -202,6 +202,14 @@ named-hardware-profile PD-04 rule. All eleven subnormal-capable types preserve
 input subnormals, use gradual underflow, and detect tininess after rounding;
 FTZ, DAZ, and operation-local override configurations reject before effects.
 The policy has no architectural mode state and does not alter `pto-v0`.
+The generated `numeric-special-value-contract.json` ledger records ADR 0050's
+bounded PD-05-SC2 rule set for the same named hardware profile. Produced NaNs
+are canonical, tile comparison NaN and signed-zero results are fixed, and
+scalar/tile MIN/MAX NaN and signed-zero results are fixed. The three rules
+cover eight operation identities and 154 conditional operation/type rows, but
+they apply only after a support rule accepts the tuple. They do not alter
+`pto-v0`, close PD-05, close a complete numeric domain, or select additional
+generic variation routes.
 The generated `numeric-format-namespace-contract.json` ledger records the
 accepted five code namespaces, 25 carrier identities, reserved-code behavior,
 and four-bit packing. ADR 0048 additionally accepts the shared value-class

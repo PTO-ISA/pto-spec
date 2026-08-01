@@ -1,0 +1,639 @@
+{
+  "schema_version": 1,
+  "target": "S5-T2-A2:PD-05-SC2",
+  "decision_id": "PD-05",
+  "checkpoint_id": "PD-05-SC2",
+  "status": "named-hardware-special-value-checkpoint-accepted-pd05-open",
+  "acceptance_record": "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
+  "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
+  "policy": {
+    "produced_nan": "canonical-destination-format-nan",
+    "comparison_nan": "NE-true-all-other-relations-false",
+    "comparison_signaling_nan": "same-boolean-result-and-invalid-condition",
+    "comparison_signed_zero": "equal-neither-less-nor-greater",
+    "minmax_one_nan": "select-numeric-operand",
+    "minmax_two_nan": "canonical-destination-format-nan",
+    "minmax_signaling_nan": "same-result-and-invalid-condition",
+    "minmax_signed_zero": "preserve-equal-sign-mixed-tie-minimum-negative-maximum-positive",
+    "result_encoding": {
+      "false": 0,
+      "true": 1
+    },
+    "support_boundary": "The checkpoint does not create operation/type support and does not select the named hardware profile generically.",
+    "pto_v0_boundary": "The active pto-v0 raw-carrier hooks are unchanged."
+  },
+  "asl_contract": {
+    "classifier": "TileNumericValueClass",
+    "canonical_nan": "HardwareNumericCanonicalNaNResult",
+    "signed_zero_encodings": "HardwareNumericSignedZeroEncodings",
+    "comparison_special_result": "HardwareNumericComparisonSpecial",
+    "minmax_special_result": "HardwareNumericMinMaxSpecial"
+  },
+  "formats": [
+    {
+      "name": "FP64",
+      "asl_enumerator": "TileDataType_FP64",
+      "logical_element_bits": 64,
+      "nan_capable": true,
+      "signaling_nan_capable": true,
+      "canonical_nan": "0x7FF8000000000000",
+      "signed_zero": true,
+      "positive_zero": "0x0",
+      "negative_zero": "0x8000000000000000"
+    },
+    {
+      "name": "FP32",
+      "asl_enumerator": "TileDataType_FP32",
+      "logical_element_bits": 32,
+      "nan_capable": true,
+      "signaling_nan_capable": true,
+      "canonical_nan": "0x7FC00000",
+      "signed_zero": true,
+      "positive_zero": "0x0",
+      "negative_zero": "0x80000000"
+    },
+    {
+      "name": "TF32",
+      "asl_enumerator": "TileDataType_TF32",
+      "logical_element_bits": 32,
+      "nan_capable": true,
+      "signaling_nan_capable": true,
+      "canonical_nan": "0x7FC00000",
+      "signed_zero": true,
+      "positive_zero": "0x0",
+      "negative_zero": "0x80000000"
+    },
+    {
+      "name": "HF32",
+      "asl_enumerator": "TileDataType_HF32",
+      "logical_element_bits": 32,
+      "nan_capable": true,
+      "signaling_nan_capable": true,
+      "canonical_nan": "0x7FC00000",
+      "signed_zero": true,
+      "positive_zero": "0x0",
+      "negative_zero": "0x80000000"
+    },
+    {
+      "name": "FP16",
+      "asl_enumerator": "TileDataType_FP16",
+      "logical_element_bits": 16,
+      "nan_capable": true,
+      "signaling_nan_capable": true,
+      "canonical_nan": "0x7E00",
+      "signed_zero": true,
+      "positive_zero": "0x0",
+      "negative_zero": "0x8000"
+    },
+    {
+      "name": "BF16",
+      "asl_enumerator": "TileDataType_BF16",
+      "logical_element_bits": 16,
+      "nan_capable": true,
+      "signaling_nan_capable": true,
+      "canonical_nan": "0x7FC0",
+      "signed_zero": true,
+      "positive_zero": "0x0",
+      "negative_zero": "0x8000"
+    },
+    {
+      "name": "HiF8",
+      "asl_enumerator": "TileDataType_HiF8",
+      "logical_element_bits": 8,
+      "nan_capable": true,
+      "signaling_nan_capable": false,
+      "canonical_nan": "0x80",
+      "signed_zero": false,
+      "positive_zero": null,
+      "negative_zero": null
+    },
+    {
+      "name": "E4M3",
+      "asl_enumerator": "TileDataType_E4M3",
+      "logical_element_bits": 8,
+      "nan_capable": true,
+      "signaling_nan_capable": false,
+      "canonical_nan": "0x7F",
+      "signed_zero": true,
+      "positive_zero": "0x0",
+      "negative_zero": "0x80"
+    },
+    {
+      "name": "E5M2",
+      "asl_enumerator": "TileDataType_E5M2",
+      "logical_element_bits": 8,
+      "nan_capable": true,
+      "signaling_nan_capable": true,
+      "canonical_nan": "0x7E",
+      "signed_zero": true,
+      "positive_zero": "0x0",
+      "negative_zero": "0x80"
+    },
+    {
+      "name": "E3M2",
+      "asl_enumerator": "TileDataType_E3M2",
+      "logical_element_bits": 8,
+      "nan_capable": false,
+      "signaling_nan_capable": false,
+      "canonical_nan": null,
+      "signed_zero": true,
+      "positive_zero": "0x0",
+      "negative_zero": "0x20"
+    },
+    {
+      "name": "E2M3",
+      "asl_enumerator": "TileDataType_E2M3",
+      "logical_element_bits": 8,
+      "nan_capable": false,
+      "signaling_nan_capable": false,
+      "canonical_nan": null,
+      "signed_zero": true,
+      "positive_zero": "0x0",
+      "negative_zero": "0x20"
+    },
+    {
+      "name": "E2M1X2",
+      "asl_enumerator": "TileDataType_E2M1X2",
+      "logical_element_bits": 4,
+      "nan_capable": false,
+      "signaling_nan_capable": false,
+      "canonical_nan": null,
+      "signed_zero": true,
+      "positive_zero": "0x0",
+      "negative_zero": "0x8"
+    },
+    {
+      "name": "E1M2X2",
+      "asl_enumerator": "TileDataType_E1M2X2",
+      "logical_element_bits": 4,
+      "nan_capable": false,
+      "signaling_nan_capable": false,
+      "canonical_nan": null,
+      "signed_zero": true,
+      "positive_zero": "0x0",
+      "negative_zero": "0x8"
+    },
+    {
+      "name": "E8M0",
+      "asl_enumerator": "TileDataType_E8M0",
+      "logical_element_bits": 8,
+      "nan_capable": true,
+      "signaling_nan_capable": false,
+      "canonical_nan": "0xFF",
+      "signed_zero": false,
+      "positive_zero": null,
+      "negative_zero": null
+    },
+    {
+      "name": "HiF4X2",
+      "asl_enumerator": "TileDataType_HiF4X2",
+      "logical_element_bits": 4,
+      "nan_capable": false,
+      "signaling_nan_capable": false,
+      "canonical_nan": null,
+      "signed_zero": true,
+      "positive_zero": "0x0",
+      "negative_zero": "0x8"
+    },
+    {
+      "name": "S64",
+      "asl_enumerator": "TileDataType_S64",
+      "logical_element_bits": 64,
+      "nan_capable": false,
+      "signaling_nan_capable": false,
+      "canonical_nan": null,
+      "signed_zero": false,
+      "positive_zero": null,
+      "negative_zero": null
+    },
+    {
+      "name": "S32",
+      "asl_enumerator": "TileDataType_S32",
+      "logical_element_bits": 32,
+      "nan_capable": false,
+      "signaling_nan_capable": false,
+      "canonical_nan": null,
+      "signed_zero": false,
+      "positive_zero": null,
+      "negative_zero": null
+    },
+    {
+      "name": "S16",
+      "asl_enumerator": "TileDataType_S16",
+      "logical_element_bits": 16,
+      "nan_capable": false,
+      "signaling_nan_capable": false,
+      "canonical_nan": null,
+      "signed_zero": false,
+      "positive_zero": null,
+      "negative_zero": null
+    },
+    {
+      "name": "S8",
+      "asl_enumerator": "TileDataType_S8",
+      "logical_element_bits": 8,
+      "nan_capable": false,
+      "signaling_nan_capable": false,
+      "canonical_nan": null,
+      "signed_zero": false,
+      "positive_zero": null,
+      "negative_zero": null
+    },
+    {
+      "name": "S4X2",
+      "asl_enumerator": "TileDataType_S4X2",
+      "logical_element_bits": 4,
+      "nan_capable": false,
+      "signaling_nan_capable": false,
+      "canonical_nan": null,
+      "signed_zero": false,
+      "positive_zero": null,
+      "negative_zero": null
+    },
+    {
+      "name": "U64",
+      "asl_enumerator": "TileDataType_U64",
+      "logical_element_bits": 64,
+      "nan_capable": false,
+      "signaling_nan_capable": false,
+      "canonical_nan": null,
+      "signed_zero": false,
+      "positive_zero": null,
+      "negative_zero": null
+    },
+    {
+      "name": "U32",
+      "asl_enumerator": "TileDataType_U32",
+      "logical_element_bits": 32,
+      "nan_capable": false,
+      "signaling_nan_capable": false,
+      "canonical_nan": null,
+      "signed_zero": false,
+      "positive_zero": null,
+      "negative_zero": null
+    },
+    {
+      "name": "U16",
+      "asl_enumerator": "TileDataType_U16",
+      "logical_element_bits": 16,
+      "nan_capable": false,
+      "signaling_nan_capable": false,
+      "canonical_nan": null,
+      "signed_zero": false,
+      "positive_zero": null,
+      "negative_zero": null
+    },
+    {
+      "name": "U8",
+      "asl_enumerator": "TileDataType_U8",
+      "logical_element_bits": 8,
+      "nan_capable": false,
+      "signaling_nan_capable": false,
+      "canonical_nan": null,
+      "signed_zero": false,
+      "positive_zero": null,
+      "negative_zero": null
+    },
+    {
+      "name": "U4X2",
+      "asl_enumerator": "TileDataType_U4X2",
+      "logical_element_bits": 4,
+      "nan_capable": false,
+      "signaling_nan_capable": false,
+      "canonical_nan": null,
+      "signed_zero": false,
+      "positive_zero": null,
+      "negative_zero": null
+    }
+  ],
+  "operation_scope": [
+    {
+      "operation_key": "scalar:fmax_32_eaf3880d7739",
+      "mnemonic": "FMAX",
+      "surface": "scalar-form",
+      "rule": "portable-minmax-special-result-already-executable",
+      "type_names": [
+        "FP64",
+        "FP32"
+      ],
+      "support_boundary": "accepted scalar source selectors only"
+    },
+    {
+      "operation_key": "scalar:fmin_32_b5c106e5cd7e",
+      "mnemonic": "FMIN",
+      "surface": "scalar-form",
+      "rule": "portable-minmax-special-result-already-executable",
+      "type_names": [
+        "FP64",
+        "FP32"
+      ],
+      "support_boundary": "accepted scalar source selectors only"
+    },
+    {
+      "operation_key": "tile:TEPL:TCMP",
+      "mnemonic": "TCMP",
+      "surface": "direct-tile-operation",
+      "rule": "comparison-special-result",
+      "type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3",
+        "E2M1X2",
+        "E1M2X2",
+        "E8M0",
+        "HiF4X2",
+        "S64",
+        "S32",
+        "S16",
+        "S8",
+        "S4X2",
+        "U64",
+        "U32",
+        "U16",
+        "U8",
+        "U4X2"
+      ],
+      "support_boundary": "conditional on an otherwise-supported operation/type tuple"
+    },
+    {
+      "operation_key": "tile:TEPL:TCMPS",
+      "mnemonic": "TCMPS",
+      "surface": "direct-tile-operation",
+      "rule": "comparison-special-result",
+      "type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3",
+        "E2M1X2",
+        "E1M2X2",
+        "E8M0",
+        "HiF4X2",
+        "S64",
+        "S32",
+        "S16",
+        "S8",
+        "S4X2",
+        "U64",
+        "U32",
+        "U16",
+        "U8",
+        "U4X2"
+      ],
+      "support_boundary": "conditional on an otherwise-supported operation/type tuple"
+    },
+    {
+      "operation_key": "tile:TEPL:TMAX",
+      "mnemonic": "TMAX",
+      "surface": "direct-tile-operation",
+      "rule": "minmax-special-result",
+      "type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3",
+        "E2M1X2",
+        "E1M2X2",
+        "E8M0",
+        "HiF4X2",
+        "S64",
+        "S32",
+        "S16",
+        "S8",
+        "S4X2",
+        "U64",
+        "U32",
+        "U16",
+        "U8",
+        "U4X2"
+      ],
+      "support_boundary": "conditional on an otherwise-supported operation/type tuple"
+    },
+    {
+      "operation_key": "tile:TEPL:TMAXS",
+      "mnemonic": "TMAXS",
+      "surface": "direct-tile-operation",
+      "rule": "minmax-special-result",
+      "type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3",
+        "E2M1X2",
+        "E1M2X2",
+        "E8M0",
+        "HiF4X2",
+        "S64",
+        "S32",
+        "S16",
+        "S8",
+        "S4X2",
+        "U64",
+        "U32",
+        "U16",
+        "U8",
+        "U4X2"
+      ],
+      "support_boundary": "conditional on an otherwise-supported operation/type tuple"
+    },
+    {
+      "operation_key": "tile:TEPL:TMIN",
+      "mnemonic": "TMIN",
+      "surface": "direct-tile-operation",
+      "rule": "minmax-special-result",
+      "type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3",
+        "E2M1X2",
+        "E1M2X2",
+        "E8M0",
+        "HiF4X2",
+        "S64",
+        "S32",
+        "S16",
+        "S8",
+        "S4X2",
+        "U64",
+        "U32",
+        "U16",
+        "U8",
+        "U4X2"
+      ],
+      "support_boundary": "conditional on an otherwise-supported operation/type tuple"
+    },
+    {
+      "operation_key": "tile:TEPL:TMINS",
+      "mnemonic": "TMINS",
+      "surface": "direct-tile-operation",
+      "rule": "minmax-special-result",
+      "type_names": [
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3",
+        "E2M1X2",
+        "E1M2X2",
+        "E8M0",
+        "HiF4X2",
+        "S64",
+        "S32",
+        "S16",
+        "S8",
+        "S4X2",
+        "U64",
+        "U32",
+        "U16",
+        "U8",
+        "U4X2"
+      ],
+      "support_boundary": "conditional on an otherwise-supported operation/type tuple"
+    }
+  ],
+  "independent_comparison": {
+    "status": "fp32-fp64-shared-special-selection-corroborated-with-fmax-zero-divergence-not-numeric-oracle",
+    "provenance_sha256": "c565028c4a6a5b86349863524142fb832079798de325fc617cf664dffa859390",
+    "matched_contracts": [
+      "ordered-NaN-comparison-foundation",
+      "positive-negative-zero-equality",
+      "signaling-versus-quiet-NaN-classification",
+      "one-NaN-and-two-NaN-minmax-selection",
+      "fmin-zero-selection-and-fmax-zero-selection-except-equal-negative-zero"
+    ],
+    "divergences": [
+      "comparison-model-fmax-equal-negative-zero-returns-positive-zero-pto-preserves-negative-zero"
+    ],
+    "limits": [
+      "no-PTO-low-precision-operation-binding",
+      "no-complete-infinity-arithmetic-contract",
+      "no-complete-target-flag-or-status-contract",
+      "not-a-PTO-numeric-oracle"
+    ]
+  },
+  "tests": {
+    "sources": [
+      "tests/asl/profile-tests.asl",
+      "tests/asl/scalar-tests.asl"
+    ],
+    "entrypoints": [
+      "ValidateNumericFormatClassification",
+      "TestScalarFPDispatchEffects"
+    ],
+    "assertion_helpers": [
+      "AssertHardwareNumericNaNSpecialRules",
+      "AssertHardwareNumericSignedZeroSpecialRules",
+      "AssertHardwareNumericSignedZeroNotApplicable"
+    ],
+    "required_witnesses": [
+      "all-ten-canonical-NaN-formats",
+      "all-seven-signaling-NaN-formats",
+      "all-six-comparison-relations",
+      "left-right-and-two-NaN-minmax",
+      "all-thirteen-signed-zero-formats-mixed-orders-and-equal-sign-ties",
+      "all-twelve-no-signed-zero-formats",
+      "invalid-internal-encoding-rejects-before-special-result",
+      "scalar-fp32-fp64-equal-sign-zero-minmax"
+    ]
+  },
+  "sources": [
+    {
+      "path": "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
+      "sha256": "8743491d4ca91d06e7514082d0b878f18087ec9f70e010765153dd52cbd719b9"
+    },
+    {
+      "path": "spec/hardware-conformance-profile.json",
+      "sha256": "1608fa0c03d139842b85c63c581d8280c37e55ef03a6e2f3cbf75dd8cb8edaab"
+    },
+    {
+      "path": "spec/evidence/numeric-format-namespace-contract.json",
+      "sha256": "85385ed809b7b09241da60b59f6fadc23c372b2743dc4d2c2f96206a1795c07c"
+    },
+    {
+      "path": "spec/evidence/numeric-contracts.json",
+      "sha256": "6984a2c6bcafa208a1458001fc1105a7820b0a8005d54ca77bf07846c00d7b49"
+    },
+    {
+      "path": "spec/catalog/scalar-forms.json",
+      "sha256": "0fb686db56423c37d669f92058003d4668b0c183a9bd0428d25c4ae70b391670"
+    },
+    {
+      "path": "spec/evidence/executable-model-comparison.json",
+      "sha256": "c1a370fbdb17caa54aeeaa733f22bd55e6777322e3dd8a7e1ed6fa62ab35249a"
+    },
+    {
+      "path": "asl/numeric/formats.asl",
+      "sha256": "359470d81e446cabaefdb0ebc52529cf76809f6ce64806af596f39ac59e3339b"
+    },
+    {
+      "path": "asl/scalar/floating.asl",
+      "sha256": "cc2b1fd8a53e840295363ae45335ca426385565d6f797b4829d760e3e65ba71f"
+    },
+    {
+      "path": "asl/scalar/dispatch.asl",
+      "sha256": "ff7990fd930802c1b9e21461c0000a66d64810397154faae07984c83cedaffa2"
+    },
+    {
+      "path": "tests/asl/profile-tests.asl",
+      "sha256": "dae9a72ca6ea569082bed29df1f35942a67ffc5e1ba53affedcb3019a138216e"
+    }
+  ],
+  "summary": {
+    "format_count": 25,
+    "nan_capable_type_count": 10,
+    "signaling_nan_capable_type_count": 7,
+    "signed_zero_type_count": 13,
+    "comparison_operation_count": 2,
+    "minmax_operation_count": 6,
+    "operation_scope_count": 8,
+    "conditional_operation_type_tuple_count": 154,
+    "accepted_special_result_rule_count": 3,
+    "accepted_complete_domain_rule_count": 0,
+    "accepted_complete_decision_count": 0,
+    "pd05_complete": false,
+    "s5_t2_complete": false
+  }
+}

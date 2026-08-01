@@ -19,6 +19,7 @@ ROUNDING_SELECTOR_CONTRACT = (
     ROOT / "spec/evidence/numeric-rounding-selector-contract.json"
 )
 SUBNORMAL_CONTRACT = ROOT / "spec/evidence/numeric-subnormal-contract.json"
+SPECIAL_VALUE_CONTRACT = ROOT / "spec/evidence/numeric-special-value-contract.json"
 FORMAT_NAMESPACE_CONTRACT = (
     ROOT / "spec/evidence/numeric-format-namespace-contract.json"
 )
@@ -86,11 +87,11 @@ PROPOSALS: dict[str, dict[str, Any]] = {
             "named-target-profile-rule",
             "implementation-defined-with-explicit-allowed-set",
         ],
-        "proposed_rule": "Define results by special-value class for every numeric family. Canonicalization or payload preservation, signaling quieting, infinity production, and signed-zero selection must be bit-exact or an enumerated target-profile result set; unconstrained host propagation is not conforming evidence.",
+        "proposed_rule": "ADR 0050 accepts a bounded named-hardware checkpoint for canonical produced NaNs, NaN and signed-zero comparison results, and min/max NaN and signed-zero selection across 8 operations and 154 conditional operation/type tuples. PD-05 remains open for infinity arithmetic, broader NaN creation, conversions, reductions, quantization, matrix operations, and the complete flag/status contract.",
         "open_items": [
-            "choose canonical versus payload-preserving NaNs per family",
-            "define signaling and flag interaction",
-            "publish bit-exact infinity and signed-zero tables",
+            "extend bit-exact NaN creation rules beyond comparison and min/max",
+            "define infinity arithmetic and special results for conversions, reductions, quantization, and matrix operations",
+            "complete signaling-NaN flag and status interactions for every affected family",
         ],
     },
     "PD-06": {
@@ -202,6 +203,7 @@ def generate() -> dict[str, Any]:
     scalar_flag_contract = load(SCALAR_FLAG_CONTRACT)
     rounding_selector_contract = load(ROUNDING_SELECTOR_CONTRACT)
     subnormal_contract = load(SUBNORMAL_CONTRACT)
+    special_value_contract = load(SPECIAL_VALUE_CONTRACT)
     format_namespace_contract = load(FORMAT_NAMESPACE_CONTRACT)
     public_type_baseline = load(PUBLIC_TYPE_BASELINE)
     public_integer_conversion = load(PUBLIC_INTEGER_CONVERSION)
@@ -233,6 +235,32 @@ def generate() -> dict[str, Any]:
             "s5_t2_complete": False,
         },
         "numeric subnormal contract drift",
+    )
+    require(
+        special_value_contract["schema_version"] == 1
+        and special_value_contract["decision_id"] == "PD-05"
+        and special_value_contract["checkpoint_id"] == "PD-05-SC2"
+        and special_value_contract["status"]
+        == "named-hardware-special-value-checkpoint-accepted-pd05-open"
+        and special_value_contract["acceptance_record"]
+        == "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md"
+        and special_value_contract["summary"]
+        == {
+            "format_count": 25,
+            "nan_capable_type_count": 10,
+            "signaling_nan_capable_type_count": 7,
+            "signed_zero_type_count": 13,
+            "comparison_operation_count": 2,
+            "minmax_operation_count": 6,
+            "operation_scope_count": 8,
+            "conditional_operation_type_tuple_count": 154,
+            "accepted_special_result_rule_count": 3,
+            "accepted_complete_domain_rule_count": 0,
+            "accepted_complete_decision_count": 0,
+            "pd05_complete": False,
+            "s5_t2_complete": False,
+        },
+        "numeric special-value contract drift",
     )
     require(inputs["target"] == "S5-T2-A", "decision-input target drift")
     require(
@@ -505,7 +533,7 @@ def generate() -> dict[str, Any]:
     )
 
     return {
-        "schema_version": 10,
+        "schema_version": 11,
         "target": "S5-T2-A",
         "status": "proposal-complete-two-decisions-accepted",
         "input": {
@@ -545,6 +573,13 @@ def generate() -> dict[str, Any]:
             "status": subnormal_contract["status"],
             "acceptance_record": subnormal_contract["acceptance_record"],
             **subnormal_contract["summary"],
+        },
+        "special_value_contract": {
+            "path": "spec/evidence/numeric-special-value-contract.json",
+            "sha256": hashlib.sha256(SPECIAL_VALUE_CONTRACT.read_bytes()).hexdigest(),
+            "status": special_value_contract["status"],
+            "acceptance_record": special_value_contract["acceptance_record"],
+            **special_value_contract["summary"],
         },
         "format_namespace_contract": {
             "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -739,6 +774,9 @@ def generate() -> dict[str, Any]:
             "accepted_bounded_result_tuple_count": public_integer_conversion[
                 "summary"
             ]["accepted_unequal_width_tuple_count"],
+            "accepted_special_result_rule_count": special_value_contract[
+                "summary"
+            ]["accepted_special_result_rule_count"],
             "can_close_s5_t2_a": False,
             "can_close_s5_t2": False,
         },

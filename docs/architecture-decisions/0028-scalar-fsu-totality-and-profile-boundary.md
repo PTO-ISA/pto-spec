@@ -28,8 +28,9 @@ including simultaneous invalid source and destination fields.
 one NaN returns the numeric operand, two NaNs return the width-specific
 canonical quiet NaN, and any signaling NaN records sticky NV. For two zero
 operands, `FMIN` returns negative zero if either operand is negative zero;
-`FMAX` returns positive zero. Otherwise they use the width-specific total-order
-key defined by the scalar ASL.
+`FMAX` preserves negative zero only when both operands are negative zero and
+returns positive zero for the other zero pairs. Otherwise they use the
+width-specific total-order key defined by the scalar ASL.
 
 All eight comparisons are ordered. Any quiet or signaling NaN therefore
 produces false, including `FNE` and `FNES`. Quiet comparison forms record NV
@@ -79,9 +80,11 @@ negative zero missed the documented PTO-v0 zero-divisor path.
 
 An independent executable ISA/model comparison corroborates the shared
 FP32/FP64 source map, legal destination-width map, rounding selections, ABS,
-min/max values, signed-zero behavior, and ordinary GPR read-before-write. It
-does not model PTO Reg5 queues or PTO's attempt/fault envelope, and it omits or
-diverges on several legality and flag rules. PTO remains authoritative.
+min/max NaN results, the shared signed-zero cases, and ordinary GPR
+read-before-write. It diverges for `FMAX(-0, -0)`: PTO preserves negative zero,
+while the comparison model returns positive zero for every two-zero `FMAX`
+pair. It does not model PTO Reg5 queues or PTO's attempt/fault envelope, and it
+omits or diverges on several legality and flag rules. PTO remains authoritative.
 
 ## Verification
 

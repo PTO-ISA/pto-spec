@@ -779,6 +779,9 @@ def main() -> int:
     numeric_subnormal_contract = load(
         "spec/evidence/numeric-subnormal-contract.json"
     )
+    numeric_special_value_contract = load(
+        "spec/evidence/numeric-special-value-contract.json"
+    )
     numeric_format_namespaces = load(
         "spec/evidence/numeric-format-namespace-contract.json"
     )
@@ -2182,6 +2185,7 @@ def main() -> int:
             "comparison-model-fne-fnes-nan-result",
             "comparison-model-missing-invalid-source-rejection-on-architecture-owned-forms",
             "comparison-model-missing-minmax-and-compare-nv-flags",
+            "comparison-model-fmax-equal-negative-zero-returns-positive-zero-pto-preserves-negative-zero",
         ]
         and independent_fsu_comparison["non_comparable_contracts"]
         == [
@@ -2189,6 +2193,7 @@ def main() -> int:
             "pto-reg5-t-u-queue-topology",
             "pto-attempt-fault-and-trap-envelope",
         ]
+        and "FMAX(-0, -0)" in independent_fsu_comparison["pto_disposition"]
         and "PTO-owned" in independent_fsu_comparison["pto_disposition"]
         and "authoritative" in independent_fsu_comparison["pto_disposition"],
         "scalar FSU independent-comparison disposition drift",
@@ -8259,6 +8264,7 @@ def main() -> int:
             "public_integer_conversion",
             "public_type_baseline",
             "numeric_subnormal_contract",
+            "numeric_special_value_contract",
             "identity_framework",
             "schema_version",
             "source_inventory",
@@ -8302,6 +8308,18 @@ def main() -> int:
             **numeric_subnormal_contract["summary"],
         },
         "numeric-conformance readiness subnormal checkpoint drift",
+    )
+    require(
+        numeric_readiness["numeric_special_value_contract"]
+        == {
+            "path": "spec/evidence/numeric-special-value-contract.json",
+            "status": numeric_special_value_contract["status"],
+            "acceptance_record": numeric_special_value_contract[
+                "acceptance_record"
+            ],
+            **numeric_special_value_contract["summary"],
+        },
+        "numeric-conformance readiness special-value checkpoint drift",
     )
     require(
         numeric_readiness["public_type_baseline"]
@@ -9169,12 +9187,13 @@ def main() -> int:
             "rounding_selector_contract",
             "scalar_flag_contract",
             "subnormal_contract",
+            "special_value_contract",
             "schema_version",
             "status",
             "summary",
             "target",
         }
-        and numeric_profile_proposals["schema_version"] == 10
+        and numeric_profile_proposals["schema_version"] == 11
         and numeric_profile_proposals["target"] == "S5-T2-A"
         and numeric_profile_proposals["status"]
         == "proposal-complete-two-decisions-accepted",
@@ -9343,6 +9362,23 @@ def main() -> int:
             **numeric_subnormal_contract["summary"],
         },
         "numeric profile proposal subnormal checkpoint drift",
+    )
+    require(
+        numeric_profile_proposals["special_value_contract"]
+        == {
+            "path": "spec/evidence/numeric-special-value-contract.json",
+            "sha256": hashlib.sha256(
+                (
+                    ROOT / "spec/evidence/numeric-special-value-contract.json"
+                ).read_bytes()
+            ).hexdigest(),
+            "status": numeric_special_value_contract["status"],
+            "acceptance_record": numeric_special_value_contract[
+                "acceptance_record"
+            ],
+            **numeric_special_value_contract["summary"],
+        },
+        "numeric profile proposal special-value checkpoint drift",
     )
     proposed_profiles = numeric_profile_proposals["profile_proposals"]
     require(
@@ -9538,6 +9574,7 @@ def main() -> int:
             "public_type_identity_count": 16,
             "accepted_bounded_result_rule_count": 3,
             "accepted_bounded_result_tuple_count": 48,
+            "accepted_special_result_rule_count": 3,
         },
         "numeric profile proposal summary or residual drift",
     )
@@ -9563,6 +9600,11 @@ def main() -> int:
         and "spec/evidence/numeric-format-namespace-contract.json" in s5_t2["evidence"]
         and "scripts/generate-numeric-format-namespace-contract" in s5_t2["evidence"]
         and "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md"
+        in s5_t2["evidence"]
+        and "spec/evidence/numeric-special-value-contract.json"
+        in s5_t2["evidence"]
+        and "scripts/generate-numeric-special-value-contract" in s5_t2["evidence"]
+        and "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md"
         in s5_t2["evidence"]
         and "spec/catalog/numeric-profile-applicability.json" in s5_t2["evidence"]
         and "spec/evidence/numeric-profile-applicability-closure.json"
@@ -9689,6 +9731,22 @@ def main() -> int:
             and "docs/architecture-decisions/0047-numeric-rounding-semantics.md"
             in requirements_by_id[requirement_id]["model"],
             f"numeric rounding selector checkpoint is not traceable from {requirement_id}",
+        )
+    for requirement_id in (
+        "PTO-REQ-PROFILE-001",
+        "PTO-REQ-SCALAR-FP-001",
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-HARDWARE-NUMERIC-001",
+        "PTO-REQ-CLOSURE-001",
+    ):
+        require(
+            "spec/evidence/numeric-special-value-contract.json"
+            in requirements_by_id[requirement_id]["model"]
+            and "scripts/generate-numeric-special-value-contract"
+            in requirements_by_id[requirement_id]["model"]
+            and "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md"
+            in requirements_by_id[requirement_id]["model"],
+            f"numeric special-value checkpoint is not traceable from {requirement_id}",
         )
     for requirement_id in (
         "PTO-REQ-PROFILE-001",
