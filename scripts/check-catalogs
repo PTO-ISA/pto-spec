@@ -5948,14 +5948,66 @@ def main() -> int:
         == [row["pto_v0_status"] for row in trap_rows],
         "system-register or trap witness identity drift",
     )
+    witness_sources = {
+        row["path"]: row["sha256"]
+        for row in system_register_witnesses["sources"]
+    }
+    for source_path in (
+        "tests/asl/scalar-tests.asl",
+        "tests/asl/state-tests.asl",
+        "tests/asl/tile-tests.asl",
+    ):
+        require(
+            witness_sources.get(source_path)
+            == hashlib.sha256((ROOT / source_path).read_bytes()).hexdigest(),
+            f"system-register witness source hash drift: {source_path}",
+        )
+    scall_witness = next(row for row in trap_witness_rows if row["name"] == "SCALL")
+    require(
+        scall_witness["closure"] == "exact-service-request-leaf-semantics"
+        and scall_witness["catalog_contract"]
+        == {
+            "cause": "request-type",
+            "argument": "source-tpc",
+            "restart": "saved-context-resume-next-instruction",
+        }
+        and scall_witness["helper_assertions"]
+        and all(
+            row["function"] == "CheckServiceRequestTrapMapping"
+            for row in scall_witness["helper_assertions"]
+        )
+        and {row["assertion_marker"] for row in scall_witness["helper_assertions"]}
+        == {
+            "TRAP-WITNESS scall/assert-number",
+            "TRAP-WITNESS scall/assert-argument",
+            "TRAP-WITNESS scall/assert-cause",
+            "TRAP-WITNESS scall/assert-synchronous",
+            "TRAP-WITNESS scall/assert-argument-valid",
+            "TRAP-WITNESS scall/assert-saved-source",
+            "TRAP-WITNESS scall/assert-saved-restart",
+            "TRAP-WITNESS scall/assert-visible-restart",
+            "TRAP-WITNESS scall/assert-vector-entry",
+            "TRAP-WITNESS scall/assert-restart",
+        },
+        "SCALL exact trap witness drift",
+    )
     exclusion = system_register_witnesses["consumer_exclusion"]
     require(
         exclusion["storage_only_registers"]["status"]
-        == "closed-no-unreviewed-consumers"
+        == "closed-canonical-address-and-semantic-boundary"
         and exclusion["storage_only_registers"]["register_count"] == 33
+        and exclusion["storage_only_registers"]["canonical_address_count"] == 423
+        and len(exclusion["storage_only_registers"]["canonical_addresses"]) == 423
+        and exclusion["storage_only_registers"]["semantic_access_inventory"]
         and exclusion["envelope_only_traps"]["status"]
-        == "closed-no-production-trigger"
-        and exclusion["envelope_only_traps"]["trap_count"] == 3,
+        == "closed-no-production-trigger-reachability"
+        and exclusion["envelope_only_traps"]["trap_count"] == 3
+        and exclusion["envelope_only_traps"]["activation_inventory"]
+        and len(exclusion["negative_canaries"]) == 5
+        and all(
+            row["status"] == "rejected-as-required"
+            for row in exclusion["negative_canaries"]
+        ),
         "system-register or trap consumer-exclusion closure drift",
     )
     for row in trap_rows:
@@ -8050,6 +8102,32 @@ def main() -> int:
         for behavior in behavior_rows
         for name in behavior["registers"]
     }
+    def expected_strongest_witness(behavior_id: str) -> dict[str, object]:
+        witness = witness_by_behavior[behavior_id]
+        rows = (
+            witness["side_effect_witnesses"]
+            if witness["side_effect_witnesses"]
+            else [witness["access_witness"]]
+        )
+        return {
+            "kind": (
+                "side-effect-contract-set"
+                if witness["side_effect_witnesses"]
+                else "access-contract"
+            ),
+            "witnesses": [
+                {
+                    "id": item["witness_id"],
+                    "function": item["function"],
+                    "assertion_marker": item["assertion_marker"],
+                    "source": item["source"],
+                    "source_sha256": witness_sources[item["source"]],
+                    **({"closure": item["closure"]} if "closure" in item else {}),
+                }
+                for item in rows
+            ],
+        }
+
     require(
         len(release_system_by_name) == 72
         and all(
@@ -8059,11 +8137,16 @@ def main() -> int:
             and release_system_by_name[name]["side_effects"]
             == behavior["side_effects"]
             and release_system_by_name[name]["strongest_executable_witness"]
-            == {
-                "id": witness_by_behavior[behavior["id"]]["access_witness"]["witness_id"],
-                "function": "ValidateSystemRegisterResetAndAccess",
-                "assertion_marker": witness_by_behavior[behavior["id"]]["access_witness"]["assertion_marker"],
-            }
+            == expected_strongest_witness(behavior["id"])
+            and all(
+                source["sha256"] == witness_sources[source["path"]]
+                for source in release_system_by_name[name]["exact_witness_sources"]
+            )
+            and (
+                "tests/asl/tile-tests.asl"
+                in release_system_by_name[name]["tests"]
+            )
+            == (behavior["id"] == "tile-capacity-profile-limit")
             and (
                 release_system_by_name[name]["consumer_exclusion_guard"]
                 == "sysreg-consumer-exclusion-pto-v0-storage-only"
@@ -8087,6 +8170,16 @@ def main() -> int:
             and release_trap_by_name[row["name"]]["restart"] == row["restart"]
             and release_trap_by_name[row["name"]]["exact_envelope_witness"]["id"]
             == trap_witness_by_name[row["name"]]["witness_id"]
+            and release_trap_by_name[row["name"]]["exact_envelope_witness"]["closure"]
+            == trap_witness_by_name[row["name"]]["closure"]
+            and release_trap_by_name[row["name"]]["exact_envelope_witness"]["catalog_contract"]
+            == {
+                "cause": row["cause"],
+                "argument": row["argument"],
+                "restart": row["restart"],
+            }
+            and release_trap_by_name[row["name"]]["exact_envelope_witness"]["source_sha256"]
+            == witness_sources[trap_witness_by_name[row["name"]]["source"]]
             and (
                 release_trap_by_name[row["name"]]["consumer_exclusion_guard"]
                 == "trap-consumer-exclusion-pto-v0-envelope-only"

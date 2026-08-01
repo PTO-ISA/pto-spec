@@ -169,6 +169,45 @@ begin
     assert !_TrapContexts[[1]].valid;
 end;
 
+func CheckServiceRequestTrapMapping()
+begin
+    ResetProfileState();
+    WriteSystemRegisterAddress(Zeros{24} + 0x1f01,
+        Zeros{PTO_XLEN} + 0x900);
+    SetCurrentACR(2);
+    WriteTPC(Zeros{PTO_XLEN} + 0x400);
+    let entered = RaiseServiceRequest('0001');
+    assert entered;
+    assert _LastFault == Fault_ServiceRequest;
+    assert _FaultAddress == Zeros{PTO_XLEN} + 0x400;
+    assert CurrentACR() == 1;
+    // TRAP-WITNESS scall/assert-number
+    assert _ACRTrapNumber[[1]] == Zeros{6} + 6;
+    // TRAP-WITNESS scall/assert-argument
+    assert _ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 0x400;
+    // TRAP-WITNESS scall/assert-cause
+    assert _ACRTrapCause[[1]] == Zeros{24} + 1;
+    // TRAP-WITNESS scall/assert-synchronous
+    assert !_ACRTrapAsynchronous[[1]];
+    // TRAP-WITNESS scall/assert-argument-valid
+    assert _ACRTrapArgumentValid[[1]];
+    // TRAP-WITNESS scall/assert-saved-source
+    assert _TrapContexts[[1]].source_acr == 2;
+    // TRAP-WITNESS scall/assert-saved-restart
+    assert _TrapContexts[[1]].tpc == Zeros{PTO_XLEN} + 0x404;
+    // TRAP-WITNESS scall/assert-visible-restart
+    assert PTOv0ReadContextRegister(1, 0x0f43) ==
+        Zeros{PTO_XLEN} + 0x404;
+    // TRAP-WITNESS scall/assert-vector-entry
+    assert ReadTPC() == Zeros{PTO_XLEN} + 0x900;
+    let recovered = RecoverTrapContext(CurrentACR());
+    assert recovered;
+    assert CurrentACR() == 2;
+    // TRAP-WITNESS scall/assert-restart
+    assert ReadTPC() == Zeros{PTO_XLEN} + 0x404;
+    assert !_TrapContexts[[1]].valid;
+end;
+
 // PTO-REQ-FAULT-001: every cataloged trap identity has an executable entry
 // envelope. PTO v0 may leave its trigger inactive, but number, routing,
 // argument, saved context, and restart snapshot remain fully defined.
@@ -183,7 +222,7 @@ begin
     CheckSynchronousTrapMapping(Fault_TileLegality, Zeros{6} + 5);
     CheckSynchronousTrapMapping(Fault_TileAllocation, Zeros{6} + 5);
     // TRAP-WITNESS case/SCALL
-    CheckSynchronousTrapMapping(Fault_ServiceRequest, Zeros{6} + 6);
+    CheckServiceRequestTrapMapping();
     // TRAP-WITNESS case/INST_PC_FAULT
     CheckSynchronousTrapMapping(Fault_InstructionPC, Zeros{6} + 32);
     // TRAP-WITNESS case/INST_PAGE_FAULT

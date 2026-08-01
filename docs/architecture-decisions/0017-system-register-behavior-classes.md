@@ -26,8 +26,9 @@ translation or instruction/data matching.
   or malformed classifications.
 - `spec/evidence/system-register-witness-closure.json` assigns stable reset,
   access, and side-effect witness IDs to all 25 behavior classes. Each ID binds
-  to one exact assertion marker in the reachable generated
-  `ValidateSystemRegisterResetAndAccess` test.
+  to one exact assertion marker in either the reachable generated
+  `ValidateSystemRegisterResetAndAccess` test or the checked-in scalar, state,
+  and tile semantic tests. Every cited source is content-addressed.
 - Generated executable witnesses check reset for every visible base address,
   every bank of each ACR-family register, and every fixed-context register.
   They also prove read-only rejection and preservation, write-only rejection,
@@ -48,11 +49,13 @@ translation or instruction/data matching.
   definition. A future active translation or debug profile needs a distinct
   profile identity, defined field layouts and effects, and executable
   conformance evidence.
-- The generated consumer-exclusion guard rejects any storage-only register
-  address that appears as a new normative ASL consumer. Its only reviewed
-  exceptions are the profile reset range and the trap-save clearing of
-  `EBARG_LB` and `EBARG_LC`; generic system-register backing reads and writes
-  do not consume a stored value.
+- The generated consumer-exclusion guard expands all 423 fixed and banked
+  canonical addresses for the 33 storage-only definitions and content-addresses
+  every normative function that can reach the extended backing store or a
+  generic/context address API. A new literal address, computed index, symbolic
+  helper call, or direct backing-store access fails closed. Negative canaries
+  prove full-bank and symbolic additions are rejected; generic architectural
+  reads and writes still do not consume the stored value.
 
 The catalog is normative PTO material. Comparison implementations remain
 evidence only and cannot silently activate a storage-only class.

@@ -39,6 +39,12 @@ SOURCE_PATHS = (
     "spec/evidence/tepl-totality.json",
     "spec/evidence/tma-totality.json",
     "spec/evidence/cube-totality.json",
+    "scripts/generate-asl-decoders",
+    "scripts/generate-system-register-witness-closure",
+    "tests/asl/main.asl",
+    "tests/asl/scalar-tests.asl",
+    "tests/asl/state-tests.asl",
+    "tests/asl/tile-tests.asl",
     "asl/types.asl",
     "asl/state.asl",
     "asl/bundle/state.asl",
@@ -766,6 +772,9 @@ def build_evidence() -> dict[str, Any]:
     witness_by_behavior = {
         row["behavior_class"]: row for row in system_witnesses["behavior_classes"]
     }
+    system_witness_source_hashes = {
+        row["path"]: row["sha256"] for row in system_witnesses["sources"]
+    }
     trap_witness_by_name = {
         row["name"]: row for row in system_witnesses["trap_witnesses"]
     }
@@ -779,6 +788,37 @@ def build_evidence() -> dict[str, Any]:
     for row in registers:
         behavior = behavior_by_register[row["name"]]
         witness = witness_by_behavior[behavior["id"]]
+        strongest_rows = (
+            witness["side_effect_witnesses"]
+            if witness["side_effect_witnesses"]
+            else [witness["access_witness"]]
+        )
+        strongest_kind = (
+            "side-effect-contract-set"
+            if witness["side_effect_witnesses"]
+            else "access-contract"
+        )
+        strongest_witnesses = [
+            {
+                "id": item["witness_id"],
+                "function": item["function"],
+                "assertion_marker": item["assertion_marker"],
+                "source": item["source"],
+                "source_sha256": system_witness_source_hashes[item["source"]],
+                **({"closure": item["closure"]} if "closure" in item else {}),
+            }
+            for item in strongest_rows
+        ]
+        exact_witness_sources = sorted(
+            {
+                item["source"]
+                for item in [
+                    witness["reset_witness"],
+                    witness["access_witness"],
+                    *witness["side_effect_witnesses"],
+                ]
+            }
+        )
         witness_ids = [
             witness["reset_witness"]["witness_id"],
             witness["access_witness"]["witness_id"],
@@ -802,10 +842,16 @@ def build_evidence() -> dict[str, Any]:
                 "side_effects": behavior["side_effects"],
                 "witness_ids": witness_ids,
                 "strongest_executable_witness": {
-                    "id": witness["access_witness"]["witness_id"],
-                    "function": "ValidateSystemRegisterResetAndAccess",
-                    "assertion_marker": witness["access_witness"]["assertion_marker"],
+                    "kind": strongest_kind,
+                    "witnesses": strongest_witnesses,
                 },
+                "exact_witness_sources": [
+                    {
+                        "path": path,
+                        "sha256": system_witness_source_hashes[path],
+                    }
+                    for path in exact_witness_sources
+                ],
                 "consumer_exclusion_guard": (
                     system_witnesses["consumer_exclusion"]["storage_only_registers"]["guard_id"]
                     if behavior["profile_status"] == "pto-v0-storage-only"
@@ -821,8 +867,11 @@ def build_evidence() -> dict[str, Any]:
                 "tests": [
                     "scripts/generate-asl-decoders",
                     "tests/asl/main.asl",
-                    "tests/asl/scalar-tests.asl",
-                    "tests/asl/state-tests.asl",
+                    *[
+                        path
+                        for path in exact_witness_sources
+                        if path.startswith("tests/asl/")
+                    ],
                 ],
                 "bounded_status": "reference-behavior-closed",
             }
@@ -844,6 +893,10 @@ def build_evidence() -> dict[str, Any]:
                     "id": witness["witness_id"],
                     "function": witness["function"],
                     "case_marker": witness["case_marker"],
+                    "closure": witness["closure"],
+                    "catalog_contract": witness["catalog_contract"],
+                    "source": witness["source"],
+                    "source_sha256": system_witness_source_hashes[witness["source"]],
                     "assertion_markers": [
                         assertion["assertion_marker"]
                         for assertion in witness["helper_assertions"]
