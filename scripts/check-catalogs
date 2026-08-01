@@ -7675,8 +7675,8 @@ def main() -> int:
         and release_summary["required_approval_count"] == 2
         and release_summary["required_external_control_count"] == 10
         and release_summary["shard_count"] == 34
-        and release_summary["canonical_call_count"] == 105
-        and release_summary["reachable_test_subprogram_count"] == 97
+        and release_summary["canonical_call_count"] == 106
+        and release_summary["reachable_test_subprogram_count"] == 98
         and release_summary["open_prerequisite_targets"] == ["S5-T2", "S6-T1"]
         and release_summary["closed_gate_contract_count"] == 10
         and release_summary["candidate_gate_result_count"] == 0
