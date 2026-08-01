@@ -195,8 +195,8 @@ until architecture review accepts it.
 
 `numeric-profile-decision-proposals.json` imports the accepted identity catalog,
 records the five accepted selection-framework rules, and proposes dispositions
-for all 12 questions and 20 domains. Accepted identities do not imply accepted
-numeric results; question and domain acceptance fields remain null.
+for all 12 questions and 20 domains. PD-03 and PD-04 carry accepted decision
+records; the other ten questions and all complete domain rules remain open.
 
 `scalar-numeric-flag-contract.json` is generated from the scalar catalog and
 numeric ownership ledger. ADR 0038 makes its flag storage, lifecycle, trap
@@ -210,7 +210,16 @@ ADR 0039 makes selector discovery and namespace separation normative. ADR 0047
 completes PD-03 by accepting the scalar reserved-code fallback, fixed-mnemonic,
 bundle, and public translations; exact tie behavior; operation defaults; all
 18 domain rounding points; and rounding-before-saturation order. PD-02 and
-PD-04 through PD-12 continue to own every other numeric result dimension.
+PD-05 through PD-12 continue to own every other numeric result dimension.
+
+`numeric-subnormal-contract.json` is generated from the accepted PD-04 record,
+hardware profile, numeric-domain inventory, format classifier, and independent
+comparison ledger. ADR 0049 fixes input preservation, gradual underflow,
+after-rounding tininess, and the absence of FTZ/DAZ state or operation override
+for `pto-hardware-numeric-0.57.1-ieee-v1`. Its 95 operation rows expand to
+1,045 conditional operation/type obligations across eleven subnormal-capable
+formats. The conditions do not create operation/type support, do not change
+`pto-v0`, and are not Stage 5 arithmetic-conformance vectors.
 
 `numeric-format-namespace-contract.json` is generated from the accepted ASL
 carrier types, scalar and command catalogs, TMA closure ledger, pinned public
@@ -219,7 +228,7 @@ boundaries, all 25 raw-carrier identities, mapped/reserved code tables, and
 packed 4-bit order normative. ADR 0048 adds the executable value-class
 checkpoint: all 25 formats have a typed class, four internal encoding
 constraints are checked, and all ten NaN-capable formats have canonical NaN
-encodings. Operation-specific exceptional-value results, FTZ, flags, the
+encodings. Operation-specific exceptional-value results, flags, the
 complete legality matrix, target availability, and independent vectors remain
 explicit PD-02/PD-05 work.
 

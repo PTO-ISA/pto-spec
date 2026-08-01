@@ -187,7 +187,14 @@ signaling NaN; `TileNumericCanonicalNaN` returns the profile-defined canonical
 encoding for each of the ten NaN-capable formats. TF32, HF32, E3M2, and E2M3
 are checked for their internal zero-bit constraints before classification.
 These pure helpers do not change the active `pto-v0` raw-carrier semantics and
-do not decide operation-specific propagation, FTZ, flags, or result rules.
+do not decide operation-specific propagation, flags, or other result rules.
+ADR 0049 and `spec/evidence/numeric-subnormal-contract.json` separately fix
+PD-04 for `pto-hardware-numeric-0.57.1-ieee-v1`: each of the eleven formats
+that defines subnormals preserves exact input values, uses gradual underflow
+for results, and detects tininess after rounding. The profile exposes no FTZ
+or DAZ state and no operation-local override; a configuration requesting one
+rejects before effects. The rule is conditional on an otherwise-supported
+operation/type tuple and does not change `pto-v0`.
 ADR 0044 and `spec/evidence/public-integer-conversion-contract.json` define the
 portable result for every unequal-width public integer `TCVT` pair: interpret
 the source at its declared width and signedness, then sign-extend, zero-extend,

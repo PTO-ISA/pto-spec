@@ -51,7 +51,7 @@
     },
     {
       "path": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
-      "sha256": "eff69e38127dfaf9777c98e0db45b43c212fc7d2491db6f50c81caad96d96086"
+      "sha256": "6595060f3b01749643d01677014308fc89aa02b23670fdef79d82e582f9232f2"
     },
     {
       "path": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
@@ -59,7 +59,11 @@
     },
     {
       "path": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
-      "sha256": "20b2d242c6ca44dff15b65e4f539b596168220efc9ba452dbc07a4a84afeaa8e"
+      "sha256": "360e4e66eb0370fca07782d4e09b116e814ffaa28bc6fec5b496b009e6b8821a"
+    },
+    {
+      "path": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
+      "sha256": "c9b1fe3be231597304c4b213818b01f7931d5d24b423a0d40ca22a43fe5f3cb0"
     },
     {
       "path": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
@@ -87,7 +91,7 @@
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "9b0c2c0f240501e1d2fd569f334897e0cfc59035eda11a1b38d43730666b1c8c"
+      "sha256": "ea7de03b8cc433f0594c01190f7db2bbad2cb84d8f84fcc1db9dea496c84c4ce"
     },
     {
       "path": "scripts/check-publication-hygiene",
@@ -95,7 +99,7 @@
     },
     {
       "path": "scripts/check-repository",
-      "sha256": "38cf89eab7c60ea08f45ca6beaf4010beaac11f52fcc73aa6b0dd3a1140f7882"
+      "sha256": "17b357b2710da5be6ecc100c4b0a3c25fd98384eb2404609ab42973e42110407"
     },
     {
       "path": "scripts/check-toolchain",
@@ -108,6 +112,10 @@
     {
       "path": "scripts/generate-numeric-profile-applicability-closure",
       "sha256": "33c1aaa690e80ac1d05e1ea520ec58151f4127d94eb5ef1748f083a1e8b2295a"
+    },
+    {
+      "path": "scripts/generate-numeric-subnormal-contract",
+      "sha256": "1f4549902f368c13b083a7ecf167dfac9da0b0ce12648498ef4ee52c66c44465"
     },
     {
       "path": "scripts/generate-numeric-variation-point-ownership",
@@ -123,35 +131,39 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "1e19669aa90617f63cb25160ce45d5439f74ed6a24a6cae0d104fdc1834040d7"
+      "sha256": "0ff2e40e67294bd96c339c84cbfca40750523ceb8ed8c3bccc262f01449ae649"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "5aa6adfbbb0c1797fd04948d03bb8afd5a985120dca88e2c4134082ce48d73d1"
+      "sha256": "ea011ff34307f9a0579bb21f875d3c3e012b19190425a26b4b0223049969d585"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "1b9d2eabf11081df6631bdf939d405d09d5d86917ea049163a3ed3aa4e10bc3f"
+      "sha256": "329cbcd7b2252816fb8322fc27c0a0043c225b5f7747718d760f9cfa092706cc"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "7fe6367d810786017c7cfe299c81271bc47ddefe2877188840c6bab4ef8f63ac"
+      "sha256": "2494c9e9ea1179c5c588a43dbb66e09c40e0d6bd0a9fad6086a128dc481026f9"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "4d5fbd4345f3661d5a4d9f9b0661af3c884d9e327246f58f83e2768b99170ecc"
+      "sha256": "e7ffa7d48a4ce3c7dcc643b8625ff7da52418336cbf871029496357ef276de19"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "c7851d1453d7074ecd20410bad88d7d6de733b83b0df8a950bdc7895b3a9f0e3"
+      "sha256": "cc5a54aad3975607f5e98ab4c584495f8a5f888fb277c62f5ff2a1c7abb14c93"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "d7de17c76ec812a4b5cc4f0d74d5d08ba1638af68d65ed59fabfc97c5506ac69"
+      "sha256": "333abe0ec1a1259696f13bcc9a8acf9bb292c4b0d26a07e47c089cfd3ca015b6"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "713f0b8e4a7ef3d57cfe19f06cc6628f10dae1862398c9234119d5dc1aa6dd66"
+      "sha256": "cfa192f240929c91ce367618f201f57da9dd3603629fd7d7280eb20e6ffe6df5"
+    },
+    {
+      "path": "spec/evidence/numeric-subnormal-contract.json",
+      "sha256": "86ccff3235ba77626bf2f0368e8c6c98ea197709860a5a56a2c5f646e2f4c8b6"
     },
     {
       "path": "spec/evidence/scalar-numeric-flag-contract.json",
@@ -159,11 +171,11 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "5183367806c249457058f85e600664d232e361c6f1cc15f5a382b90138d007ec"
+      "sha256": "48425e2c0699b137fe9820390b76be22dd33bdafda3aa74be12318282cb06372"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "36385098316f0ca3b57a51c2cbe1f3e0c84eb891e157ad78156d2c245809de92"
+      "sha256": "ae5f85d28db4d1bd7fc26bfd003306f573c286f5fffd322fc38f1830d83adff6"
     },
     {
       "path": "spec/catalog/numeric-profile-applicability.json",

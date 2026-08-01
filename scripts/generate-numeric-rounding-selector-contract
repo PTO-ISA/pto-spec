@@ -277,7 +277,7 @@ def generate() -> dict[str, Any]:
             "no_backend_inheritance": "Backend CAST, ROUND, PART, and stochastic-control values are evidence only and cannot create portable PTO encodings.",
             "unknown_selection": "All scalar and bundle three-bit patterns have deterministic resolution. Unknown public selector ordinals or missing delegated rules reject before architectural effects under ADR 0037.",
             "saturation_order": "Rounding selection and saturation selection are independent inputs. Every applicable conversion or quantization domain rounds before saturation or the PD-07 nonsaturating result rule.",
-            "pd03_boundary": "PD-03 is accepted for selector mapping, tie behavior, rounding points, and saturation order. PD-04 through PD-12 continue to own subnormals, special values, flags, range results, accuracy, quantization equations, matrix precision, and other result dimensions.",
+            "pd03_boundary": "PD-03 is accepted for selector mapping, tie behavior, rounding points, and saturation order. ADR 0049 separately owns PD-04 subnormal behavior for the named hardware profile; PD-02 and PD-05 through PD-12 own the remaining format, special-value, flag, range, accuracy, quantization, matrix, and bounded-variation dimensions.",
         },
         "scalar_active_rounding": active_rows,
         "scalar_fixed_conversion_overrides": fixed_rows,

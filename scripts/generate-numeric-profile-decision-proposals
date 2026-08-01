@@ -18,6 +18,7 @@ SCALAR_FLAG_CONTRACT = ROOT / "spec/evidence/scalar-numeric-flag-contract.json"
 ROUNDING_SELECTOR_CONTRACT = (
     ROOT / "spec/evidence/numeric-rounding-selector-contract.json"
 )
+SUBNORMAL_CONTRACT = ROOT / "spec/evidence/numeric-subnormal-contract.json"
 FORMAT_NAMESPACE_CONTRACT = (
     ROOT / "spec/evidence/numeric-format-namespace-contract.json"
 )
@@ -68,7 +69,7 @@ PROPOSALS: dict[str, dict[str, Any]] = {
             "named-target-profile-rule",
             "unsupported-in-profile",
         ],
-        "proposed_rule": "ADR 0047 accepts the separate scalar, fixed-mnemonic, bundle, and public selector mappings; exact RNE, RTM, RTP, RTZ, RNA, RTO, and RHB tie rules; scalar reserved-code RNE fallback; operation defaults; one rounding point for every affected domain; and rounding before saturation. Other numeric result dimensions remain owned by PD-02 and PD-04 through PD-12.",
+        "proposed_rule": "ADR 0047 accepts the separate scalar, fixed-mnemonic, bundle, and public selector mappings; exact RNE, RTM, RTP, RTZ, RNA, RTO, and RHB tie rules; scalar reserved-code RNE fallback; operation defaults; one rounding point for every affected domain; and rounding before saturation. Other numeric result dimensions remain owned by PD-02 and PD-05 through PD-12; PD-04 is separately accepted by ADR 0049.",
         "open_items": [],
     },
     "PD-04": {
@@ -76,12 +77,8 @@ PROPOSALS: dict[str, dict[str, Any]] = {
             "named-target-profile-rule",
             "implementation-defined-with-explicit-allowed-set",
         ],
-        "proposed_rule": "Input denormal handling and result underflow handling are separate per-operation-class rules. Any configurable FTZ behavior must be selected by visible architectural mode state with reset, lifetime, and transition semantics; otherwise the target profile fixes one behavior. Unknown mode combinations reject.",
-        "open_items": [
-            "identify or add the visible HF32/TF32 numeric mode state",
-            "define A2A3 and A5 input/result FTZ matrices, including A5 division paths that explicitly normalize subnormals",
-            "bound CPU observation modes without treating them as architecture",
-        ],
+        "proposed_rule": "ADR 0049 fixes the pto-hardware-numeric-0.57.1-ieee-v1 rule: preserve every defined input subnormal, use gradual underflow for every defined result subnormal, detect tininess after rounding, expose no FTZ/DAZ architectural state or operation override, and reject a nonconforming configuration before effects. The rule is conditional on independent operation/type support and does not change pto-v0.",
+        "open_items": [],
     },
     "PD-05": {
         "proposed_dispositions": [
@@ -204,11 +201,39 @@ def generate() -> dict[str, Any]:
     identity_catalog = load(IDENTITY_CATALOG)
     scalar_flag_contract = load(SCALAR_FLAG_CONTRACT)
     rounding_selector_contract = load(ROUNDING_SELECTOR_CONTRACT)
+    subnormal_contract = load(SUBNORMAL_CONTRACT)
     format_namespace_contract = load(FORMAT_NAMESPACE_CONTRACT)
     public_type_baseline = load(PUBLIC_TYPE_BASELINE)
     public_integer_conversion = load(PUBLIC_INTEGER_CONVERSION)
     profile_applicability_contract = load(PROFILE_APPLICABILITY_CONTRACT)
     variation_point_contract = load(VARIATION_POINT_CONTRACT)
+
+    require(
+        subnormal_contract["schema_version"] == 1
+        and subnormal_contract["decision_id"] == "PD-04"
+        and subnormal_contract["status"]
+        == "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open"
+        and subnormal_contract["acceptance_record"]
+        == "docs/architecture-decisions/0049-hardware-subnormal-policy.md"
+        and subnormal_contract["summary"]
+        == {
+            "subnormal_capable_type_count": 11,
+            "boundary_vector_count": 55,
+            "configuration_vector_count": 8,
+            "non_applicable_type_count": 14,
+            "affected_domain_count": 16,
+            "affected_operation_count": 95,
+            "operation_applicability_row_count": 95,
+            "conditional_operation_type_tuple_count": 1045,
+            "affected_hook_count": 23,
+            "accepted_decision_count": 1,
+            "accepted_complete_domain_rule_count": 0,
+            "pd04_complete": True,
+            "s5_t2_a_complete": False,
+            "s5_t2_complete": False,
+        },
+        "numeric subnormal contract drift",
+    )
     require(inputs["target"] == "S5-T2-A", "decision-input target drift")
     require(
         inputs["status"]
@@ -480,9 +505,9 @@ def generate() -> dict[str, Any]:
     )
 
     return {
-        "schema_version": 9,
+        "schema_version": 10,
         "target": "S5-T2-A",
-        "status": "proposal-complete-one-decision-accepted",
+        "status": "proposal-complete-two-decisions-accepted",
         "input": {
             "path": "spec/evidence/numeric-profile-decision-inputs.json",
             "sha256": hashlib.sha256(INPUT.read_bytes()).hexdigest(),
@@ -513,6 +538,13 @@ def generate() -> dict[str, Any]:
             "status": rounding_selector_contract["status"],
             "acceptance_record": rounding_selector_contract["acceptance_record"],
             **rounding_selector_contract["summary"],
+        },
+        "subnormal_contract": {
+            "path": "spec/evidence/numeric-subnormal-contract.json",
+            "sha256": hashlib.sha256(SUBNORMAL_CONTRACT.read_bytes()).hexdigest(),
+            "status": subnormal_contract["status"],
+            "acceptance_record": subnormal_contract["acceptance_record"],
+            **subnormal_contract["summary"],
         },
         "format_namespace_contract": {
             "path": "spec/evidence/numeric-format-namespace-contract.json",

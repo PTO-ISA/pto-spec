@@ -161,9 +161,10 @@ profile, the generated format ledger, and the direct assertions together.
 PD-02 still requires the complete operation/type/profile legality matrix,
 target support, and independent result vectors. PD-05 still requires exact
 special-value results for every arithmetic, comparison, conversion,
-quantization, reduction, ordering, and matrix family. PD-04 owns subnormal
-execution and tininess rules. PD-06 owns scalar exception flags. No variation
-route or complete numeric domain is closed by classification alone.
+quantization, reduction, ordering, and matrix family. ADR 0049 now owns
+subnormal execution and tininess rules for the named hardware profile. PD-06
+owns scalar exception flags. No variation route or complete numeric domain is
+closed by classification alone.
 
 ## Affected sources
 

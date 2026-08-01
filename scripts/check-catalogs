@@ -776,6 +776,9 @@ def main() -> int:
     numeric_rounding_selectors = load(
         "spec/evidence/numeric-rounding-selector-contract.json"
     )
+    numeric_subnormal_contract = load(
+        "spec/evidence/numeric-subnormal-contract.json"
+    )
     numeric_format_namespaces = load(
         "spec/evidence/numeric-format-namespace-contract.json"
     )
@@ -7428,6 +7431,10 @@ def main() -> int:
         and "public-integer-conversion-contract.json" in maturity_index_body
         and "public-integer-conversion-contract.json" in readme_body
         and "public-integer-conversion-contract.json" in coverage_body
+        and "numeric-subnormal-contract.json" in numeric_profile_decision_body
+        and "numeric-subnormal-contract.json" in maturity_index_body
+        and "numeric-subnormal-contract.json" in readme_body
+        and "numeric-subnormal-contract.json" in coverage_body
         and "release-traceability-readiness.json" in maturity_index_body
         and "release-traceability-readiness.json" in readme_body
         and "release-traceability-readiness.json" in coverage_body
@@ -7435,7 +7442,7 @@ def main() -> int:
         and "release-gate-readiness.json" in readme_body
         and "release-gate-readiness.json" in coverage_body
         and "| `PD-12` |" in numeric_profile_decision_body
-        and "no question or domain result rule is accepted. Their\n  acceptance-record fields remain null."
+        and "PD-03 and PD-04 have accepted decision records; no complete\n  domain result rule is accepted."
         in numeric_profile_decision_body
         and "| **Total** | **28** | **31** |" in maturity_plan_body
         and "| **Total** | **28** | **31** |" in maturity_index_body
@@ -8251,6 +8258,7 @@ def main() -> int:
             "profile_identity_catalog",
             "public_integer_conversion",
             "public_type_baseline",
+            "numeric_subnormal_contract",
             "identity_framework",
             "schema_version",
             "source_inventory",
@@ -8280,10 +8288,20 @@ def main() -> int:
             "accepted_domain_rule_count": 0,
             "accepted_identity_count": 4,
             "accepted_selection_rule_count": 5,
-            "result_decision_count": 1,
+            "result_decision_count": 2,
             "status": "closed:S5-T2-A1",
         },
         "numeric-conformance readiness identity or status drift",
+    )
+    require(
+        numeric_readiness["numeric_subnormal_contract"]
+        == {
+            "path": "spec/evidence/numeric-subnormal-contract.json",
+            "status": numeric_subnormal_contract["status"],
+            "acceptance_record": numeric_subnormal_contract["acceptance_record"],
+            **numeric_subnormal_contract["summary"],
+        },
+        "numeric-conformance readiness subnormal checkpoint drift",
     )
     require(
         numeric_readiness["public_type_baseline"]
@@ -8595,14 +8613,21 @@ def main() -> int:
             and row["classification"] in {"architecture-decision", "profile-decision"}
             and (
                 (
-                    decision_id == "PD-03"
+                    decision_id in {"PD-03", "PD-04"}
                     and row["status"] == "accepted"
-                    and row["selected_disposition"] == "portable-normative-rule"
+                    and row["selected_disposition"]
+                    == {
+                        "PD-03": "portable-normative-rule",
+                        "PD-04": "named-target-profile-rule",
+                    }[decision_id]
                     and row["decision_record"]
-                    == "docs/architecture-decisions/0047-numeric-rounding-semantics.md"
+                    == {
+                        "PD-03": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+                        "PD-04": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
+                    }[decision_id]
                 )
                 or (
-                    decision_id != "PD-03"
+                    decision_id not in {"PD-03", "PD-04"}
                     and row["status"] == "decision-required"
                     and row["selected_disposition"] is None
                     and row["decision_record"] is None
@@ -8691,7 +8716,7 @@ def main() -> int:
             "decision_question_count": 12,
             "implementation_evidence_source_count": 21,
             "numeric_domain_count": 20,
-            "open_decision_question_count": 11,
+            "open_decision_question_count": 10,
             "open_numeric_domain_count": 20,
             "profile_identity_count": 4,
             "public_contract_source_count": 3,
@@ -9143,15 +9168,16 @@ def main() -> int:
             "promotion_residuals",
             "rounding_selector_contract",
             "scalar_flag_contract",
+            "subnormal_contract",
             "schema_version",
             "status",
             "summary",
             "target",
         }
-        and numeric_profile_proposals["schema_version"] == 9
+        and numeric_profile_proposals["schema_version"] == 10
         and numeric_profile_proposals["target"] == "S5-T2-A"
         and numeric_profile_proposals["status"]
-        == "proposal-complete-one-decision-accepted",
+        == "proposal-complete-two-decisions-accepted",
         "numeric profile proposal identity or schema drift",
     )
     require(
@@ -9305,6 +9331,19 @@ def main() -> int:
         },
         "numeric profile proposal rounding checkpoint drift",
     )
+    require(
+        numeric_profile_proposals["subnormal_contract"]
+        == {
+            "path": "spec/evidence/numeric-subnormal-contract.json",
+            "sha256": hashlib.sha256(
+                (ROOT / "spec/evidence/numeric-subnormal-contract.json").read_bytes()
+            ).hexdigest(),
+            "status": numeric_subnormal_contract["status"],
+            "acceptance_record": numeric_subnormal_contract["acceptance_record"],
+            **numeric_subnormal_contract["summary"],
+        },
+        "numeric profile proposal subnormal checkpoint drift",
+    )
     proposed_profiles = numeric_profile_proposals["profile_proposals"]
     require(
         [row["partition_id"] for row in proposed_profiles]
@@ -9373,14 +9412,17 @@ def main() -> int:
         and all(
             (
                 (
-                    row["id"] == "PD-03"
+                    row["id"] in {"PD-03", "PD-04"}
                     and row["status"] == "accepted"
                     and row["accepted"] is True
                     and row["acceptance_record"]
-                    == "docs/architecture-decisions/0047-numeric-rounding-semantics.md"
+                    == {
+                        "PD-03": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+                        "PD-04": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
+                    }[row["id"]]
                 )
                 or (
-                    row["id"] != "PD-03"
+                    row["id"] not in {"PD-03", "PD-04"}
                     and row["status"] == "review-required"
                     and row["accepted"] is False
                     and row["acceptance_record"] is None
@@ -9469,7 +9511,7 @@ def main() -> int:
             "target": "close every unequal-width public integer TCVT result tuple",
         }
         and all(
-            row["current"] == (1 if row["id"] == "S5-T2-A2" else 0)
+            row["current"] == (2 if row["id"] == "S5-T2-A2" else 0)
             and row["required"] > 0
             and row["status"] == "open"
             for index, row in enumerate(
@@ -9479,7 +9521,7 @@ def main() -> int:
         )
         and numeric_profile_proposals["summary"]
         == {
-            "accepted_decision_count": 1,
+            "accepted_decision_count": 2,
             "accepted_domain_rule_count": 0,
             "accepted_framework_rule_count": 5,
             "accepted_profile_identity_count": 4,

@@ -203,7 +203,7 @@ open, and the repository remains at M4, until every sub-stage below closes.
 
 | Sub-stage | Current state | Clear target | Required exit evidence |
 | --- | --- | --- | --- |
-| `S5-T2-A` — profile decision | Checkpoints A1, A4, A5, and A6 are closed; PD-03 is accepted | Apply the four accepted identities and fail-closed selection rules. Preserve the 99-point ownership ledger. Use the A5 public baseline of 16 identities, 16 accepted catalog bindings, 11 A2/A3 types, and 16 A5 types without treating availability as legality or complete result semantics. Preserve A6's three conditional result rules over all 48 unequal-width public integer `TCVT` pairs without turning them into support claims. Preserve ADR 0047's 18 selected rounding routes. Resolve the remaining PD-02/PD-04–PD-12 residuals, 11 complete decisions, all 20 complete domain rules, 19 profile-owned flag conditions, and 81 selected variation routes/result bounds. | Accepted records populate all 12 decisions and 20 domain rules; every non-portable point has one visible route and bounded result contract; all format, legality, conversion, flag, rounding, and target-support residuals have reproducible evidence. |
+| `S5-T2-A` — profile decision | Checkpoints A1, A4, A5, and A6 are closed; PD-03 and PD-04 are accepted | Apply the four accepted identities and fail-closed selection rules. Preserve the 99-point ownership ledger. Use the A5 public baseline of 16 identities, 16 accepted catalog bindings, 11 A2/A3 types, and 16 A5 types without treating availability as legality or complete result semantics. Preserve A6's three conditional result rules over all 48 unequal-width public integer `TCVT` pairs without turning them into support claims. Preserve ADR 0047's 18 selected rounding routes and ADR 0049's eleven-format, 95-operation named-profile subnormal contract without changing `pto-v0` or creating support. Resolve the remaining PD-02/PD-05–PD-12 residuals, ten complete decisions, all 20 complete domain rules, 19 profile-owned flag conditions, and 81 selected variation routes/result bounds. | Accepted records populate all 12 decisions and 20 domain rules; every non-portable point has one visible route and bounded result contract; all format, legality, conversion, flag, rounding, and target-support residuals have reproducible evidence. |
 | `S5-T2-B` — oracle qualification | Waiting on A | Select an independent, versioned oracle for each lane. The implementation under test and the `pto-v0` reference are not independent oracles. | Reproducible oracle identity, version/digest, invocation, supported domain list, known limitations, and a reviewer-approved rule for any target behavior that requires hardware capture rather than a software arithmetic library. |
 | `S5-T2-C` — vector corpus | Waiting on A–B | Generate deterministic inputs for every operation and every open numeric dimension. | Normal, minimum/maximum, boundary, signed-zero, subnormal, infinity, NaN, tie, overflow, underflow, divide-by-zero, rounding, saturation, reduction-order, and accumulation cases as applicable; each vector links to one operation key, profile, oracle, and expected disposition. |
 | `S5-T2-D` — differential execution | Waiting on B–C | Run the six numeric lanes independently and preserve raw oracle and PTO results. | All 20 contract domains, 30 hooks, and 108 operations are assigned exactly once; every vector produces a reproducible match, mismatch, unsupported, or implementation-defined record; no lane is missing or duplicated. |
@@ -216,13 +216,13 @@ scope control vector expectations; results cannot be adjudicated before the
 corresponding oracle and vector identities are frozen.
 
 The [numeric profile decision register](numeric-profile-decision-register.md)
-records the 12 open S5-T2-A questions and the pinned public-contract and
+records the 12 S5-T2-A questions and the pinned public-contract and
 implementation evidence that exposed them. Its generated domain matrix covers
 all 20 numeric domains without selecting a result rule. The generated
 `spec/evidence/numeric-profile-decision-proposals.json` package proposes every
 disposition and mapping while importing the four identities accepted in
 `spec/catalog/numeric-profile-identities.json`. `S5-T2-A1` is closed; all 12
-question records are populated, PD-03 is accepted, and the remaining 11
+question records are populated, PD-03 and PD-04 are accepted, and the remaining ten
 complete decisions plus all 20 complete domain rules remain open.
 ADR 0038 and `spec/evidence/scalar-numeric-flag-contract.json` additionally
 close flag state/lifecycle and the 30/30 FSU producer-owner matrix. Eleven
@@ -233,8 +233,14 @@ ADRs 0039 and 0047 and
 eight scalar raw values, five fixed conversion overrides, eight bundle
 `RMode` codes, seven public conversion values, four external selector classes,
 18 domains, 102 operations, and 25 hooks. All 18 per-domain rounding and
-saturation-order rules are accepted, so the S5-T2-A2 decision count is 1/12
-and 18/99 variation routes are selected.
+saturation-order rules are accepted and 18/99 variation routes are selected.
+ADR 0049 and `spec/evidence/numeric-subnormal-contract.json` close PD-04 for
+the named hardware profile across eleven subnormal-capable formats, 16
+domains, 95 operations, 23 hooks, and 1,045 conditional operation/type rows.
+Input values are preserved, results use gradual underflow, tininess is detected
+after rounding, and all FTZ/DAZ/override configurations reject before effects.
+The decision count is therefore 2/12. The generic selected-route count remains
+18/99 until PD-12 admits the hardware profile as a visible selection identity.
 ADR 0040 and `spec/evidence/numeric-format-namespace-contract.json` close the
 PD-02 structural checkpoint: five independent code spaces, all 25
 `TileDataType` raw-carrier widths, complete mapped/reserved tables, and
@@ -245,8 +251,8 @@ S5-T2-A2 decision count.
 ADR 0048 closes the shared PD-02/PD-05 value-class checkpoint. The ASL model
 classifies all 25 formats, rejects four internally constrained encodings, and
 provides canonical NaNs for ten formats. This is not an operation result rule:
-propagation, FTZ, flags, legality, target behavior, and independent vectors
-remain open, so the accepted-decision count stays 1/12.
+propagation, flags, legality, target behavior, and independent vectors remain
+open; those PD-02/PD-05 residuals do not change the 2/12 decision count.
 ADR 0041 and `spec/evidence/numeric-profile-applicability-closure.json` close
 a bounded PD-01 checkpoint within `S5-T2-A3`: A2/A3 rejects
 `TMATMUL_MX`, `TMATMUL_MX_BIAS`, `TMATMUL_MX_ACC`, `TGEMV_MX`,
@@ -255,9 +261,9 @@ identities before effects. It records 150 unsupported tuples and zero result
 rules, so the rest of PD-01 and `cube-matrix` remain open.
 ADR 0042 and `spec/evidence/numeric-variation-point-ownership.json` close
 `S5-T2-A4`, the PD-12 discovery and current-owner checkpoint. Its 99 stable
-domain/dimension rows cover all 20 domains, 108 operations, and 30 hooks. All
-selected routes, result rules, and result acceptance records remain null, so
-PD-12 and S5-T2 remain open.
+domain/dimension rows cover all 20 domains, 108 operations, and 30 hooks.
+Eighteen rounding routes are selected; the remaining 81 routes and all generic
+hardware-profile discovery remain open, so PD-12 and S5-T2 remain open.
 ADR 0043 and `spec/evidence/public-numeric-type-baseline.json` close
 `S5-T2-A5`, the PD-02 public identity and target-availability checkpoint. The
 baseline enumerates all 16 published types, accepts 11 unambiguous catalog

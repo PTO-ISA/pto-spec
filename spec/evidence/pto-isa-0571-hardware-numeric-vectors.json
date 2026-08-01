@@ -1,6 +1,6 @@
 {
   "hardware_profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
-  "hardware_profile_sha256": "becfbefcc7a31408e5e5293802493f833f68a2fccebb3f9e8008d8b9f4e7658c",
+  "hardware_profile_sha256": "b8357bb2202086fd8802722c8a6d12a48fa751556c9b322bd26f16ac2a3ec1fb",
   "implementation_conformance_status": "unproven-in-repository",
   "reference_profile": {
     "hardware_conformance_claim": false,
@@ -806,6 +806,57 @@
           "15",
           "-15"
         ]
+      }
+    ],
+    "subnormal_policy": [
+      {
+        "daz": false,
+        "expected": "accept",
+        "ftz": false,
+        "id": "default-configuration",
+        "operation_override": false
+      },
+      {
+        "daz": false,
+        "expected": "reject-before-effects",
+        "ftz": true,
+        "id": "ftz-request",
+        "operation_override": false
+      },
+      {
+        "daz": true,
+        "expected": "reject-before-effects",
+        "ftz": false,
+        "id": "daz-request",
+        "operation_override": false
+      },
+      {
+        "daz": false,
+        "expected": "reject-before-effects",
+        "ftz": false,
+        "id": "operation-override-request",
+        "operation_override": true
+      },
+      {
+        "data_type": "FP32",
+        "expected_class": "positive-subnormal",
+        "id": "fp32-minimum-subnormal",
+        "input_rule": "preserve-exact-source-value",
+        "raw": "0x00000001"
+      },
+      {
+        "data_type": "FP32",
+        "expected_class": "positive-subnormal",
+        "id": "fp32-maximum-subnormal",
+        "raw": "0x007FFFFF",
+        "result_rule": "gradual-underflow"
+      },
+      {
+        "data_type": "FP32",
+        "expected_class": "positive-normal",
+        "id": "fp32-minimum-normal",
+        "raw": "0x00800000",
+        "tininess_detection": "after-rounding"
       }
     ]
   }

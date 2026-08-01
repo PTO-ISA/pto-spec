@@ -1,0 +1,321 @@
+#!/usr/bin/env python3
+"""Generate the named hardware-profile PD-04 subnormal contract."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
+NUMERIC_CONTRACTS = ROOT / "spec/evidence/numeric-contracts.json"
+FORMAT_CONTRACT = ROOT / "spec/evidence/numeric-format-namespace-contract.json"
+COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
+HARDWARE_PROFILE = ROOT / "spec/hardware-conformance-profile.json"
+OUTPUT = ROOT / "spec/evidence/numeric-subnormal-contract.json"
+ACCEPTANCE_RECORD = "docs/architecture-decisions/0049-hardware-subnormal-policy.md"
+PROFILE_ID = "pto-hardware-numeric-0.57.1-ieee-v1"
+
+
+# name, ASL enumerator, logical width, minimum positive subnormal,
+# maximum positive subnormal, minimum positive normal, sign mask.
+BOUNDARIES = (
+    (
+        "FP64",
+        "TileDataType_FP64",
+        64,
+        0x1,
+        0x000FFFFFFFFFFFFF,
+        0x0010000000000000,
+        0x8000000000000000,
+    ),
+    ("FP32", "TileDataType_FP32", 32, 0x1, 0x007FFFFF, 0x00800000, 0x80000000),
+    ("TF32", "TileDataType_TF32", 32, 0x00002000, 0x007FE000, 0x00800000, 0x80000000),
+    ("HF32", "TileDataType_HF32", 32, 0x00001000, 0x007FF000, 0x00800000, 0x80000000),
+    ("FP16", "TileDataType_FP16", 16, 0x1, 0x03FF, 0x0400, 0x8000),
+    ("BF16", "TileDataType_BF16", 16, 0x1, 0x007F, 0x0080, 0x8000),
+    ("HiF8", "TileDataType_HiF8", 8, 0x1, 0x07, 0x08, 0x80),
+    ("E4M3", "TileDataType_E4M3", 8, 0x1, 0x07, 0x08, 0x80),
+    ("E5M2", "TileDataType_E5M2", 8, 0x1, 0x03, 0x04, 0x80),
+    ("E3M2", "TileDataType_E3M2", 8, 0x1, 0x03, 0x04, 0x20),
+    ("E2M3", "TileDataType_E2M3", 8, 0x1, 0x07, 0x08, 0x20),
+)
+
+
+def load(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise SystemExit(f"numeric subnormal contract generation failed: {message}")
+
+
+def source(path: str) -> dict[str, str]:
+    absolute = ROOT / path
+    return {
+        "path": path,
+        "sha256": hashlib.sha256(absolute.read_bytes()).hexdigest(),
+    }
+
+
+def raw(value: int, width: int) -> str:
+    return f"0x{value:0{width // 4}X}"
+
+
+def generate() -> dict[str, Any]:
+    inputs = load(DECISION_INPUTS)
+    contracts = load(NUMERIC_CONTRACTS)
+    formats = load(FORMAT_CONTRACT)
+    comparison = load(COMPARISON)
+    profile = load(HARDWARE_PROFILE)
+
+    pd04 = next(row for row in inputs["decision_questions"] if row["id"] == "PD-04")
+    require(pd04["status"] == "accepted", "PD-04 status drift")
+    require(
+        pd04["selected_disposition"] == "named-target-profile-rule"
+        and pd04["decision_record"] == ACCEPTANCE_RECORD,
+        "PD-04 disposition drift",
+    )
+    require(profile["profile_id"] == PROFILE_ID, "hardware profile identity drift")
+    require(
+        profile["subnormal_policy"]
+        == {
+            "architectural_mode_state": "none",
+            "configuration_validation": "Any request for FTZ, DAZ, or an operation-local subnormal override is non-conforming and must reject before effects.",
+            "denormals_are_zero": False,
+            "flush_to_zero": False,
+            "input_subnormals": "preserve exact source value",
+            "operation_override": False,
+            "profile_selection": "fixed by pto-hardware-numeric-0.57.1-ieee-v1",
+            "result_subnormals": "gradual underflow to the destination format",
+            "scope": "Every otherwise-supported operation/type tuple whose source or destination format defines subnormal encodings.",
+            "tininess_detection": "after-rounding",
+        },
+        "hardware profile subnormal policy drift",
+    )
+    require(
+        profile["arithmetic"]["subnormals"].startswith("supported by each format")
+        and profile["arithmetic"]["tininess_detection"] == "after-rounding",
+        "hardware arithmetic subnormal summary drift",
+    )
+
+    classified = {
+        row["name"]: row
+        for row in formats["value_classification"]["formats"]
+        if row["subnormal_capable"]
+    }
+    require(set(classified) == {row[0] for row in BOUNDARIES}, "format set drift")
+    require(
+        formats["summary"]["subnormal_capable_type_count"] == 11, "format count drift"
+    )
+
+    format_rows = []
+    for (
+        name,
+        enumerator,
+        width,
+        minimum,
+        maximum,
+        minimum_normal,
+        sign_mask,
+    ) in BOUNDARIES:
+        row = classified[name]
+        require(row["asl_enumerator"] == enumerator, f"{name} ASL identity drift")
+        require(row["logical_element_bits"] == width, f"{name} width drift")
+        format_rows.append(
+            {
+                "name": name,
+                "asl_enumerator": enumerator,
+                "logical_element_bits": width,
+                "minimum_positive_subnormal": raw(minimum, width),
+                "maximum_positive_subnormal": raw(maximum, width),
+                "minimum_positive_normal": raw(minimum_normal, width),
+                "sign_mask": raw(sign_mask, width),
+                "input_rule": "preserve-exact-source-value",
+                "result_rule": "gradual-underflow",
+                "tininess_detection": "after-rounding",
+                "status": "accepted-for-named-hardware-profile",
+            }
+        )
+
+    operations_by_domain: dict[str, list[dict[str, Any]]] = {}
+    for operation in contracts["operations"]:
+        operations_by_domain.setdefault(operation["numeric_contract"], []).append(
+            operation
+        )
+    domain_rows_by_name = {}
+    for row in inputs["domain_matrix"]:
+        if "PD-04" not in row["decision_question_ids"]:
+            continue
+        operations = operations_by_domain[row["domain"]]
+        require(
+            sorted(operation["key"] for operation in operations)
+            == row["operation_keys"],
+            f"{row['domain']} operation membership drift",
+        )
+        hooks = sorted(
+            {
+                hook
+                for operation in operations
+                for hook in operation["primary_hooks"] + operation["reference_helpers"]
+            }
+        )
+        require(hooks == row["hooks"], f"{row['domain']} hook membership drift")
+        domain_rows_by_name[row["domain"]] = {
+            "domain": row["domain"],
+            "lane": row["lane"],
+            "operation_count": row["operation_count"],
+            "operation_keys": row["operation_keys"],
+            "hooks": row["hooks"],
+            "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
+            "source_rule": "preserve-when-source-format-defines-subnormals",
+            "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
+            "status": "pd04-rule-accepted-other-numeric-dimensions-open",
+        }
+    require(
+        set(domain_rows_by_name) == set(pd04["domains"]),
+        "PD-04 domain membership drift",
+    )
+    domain_rows = [domain_rows_by_name[name] for name in pd04["domains"]]
+    require(len(domain_rows) == 16, "PD-04 domain count drift")
+    operation_rows = [
+        {
+            "operation_key": operation_key,
+            "domain": row["domain"],
+            "lane": row["lane"],
+            "subnormal_type_names": [boundary[0] for boundary in BOUNDARIES],
+            "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
+            "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
+            "tininess_detection": "after-rounding-for-an-applicable-destination",
+            "support_status": "conditional-not-created-by-pd04",
+        }
+        for row in domain_rows
+        for operation_key in row["operation_keys"]
+    ]
+    require(len(operation_rows) == 95, "PD-04 operation applicability count drift")
+
+    independent = formats["independent_comparison"]
+    require(
+        comparison["closure_judgment"]["can_close_s5_t3"] is True,
+        "comparison closure drift",
+    )
+    require(
+        comparison["snapshot"]["worktree_clean"] is True, "comparison snapshot is dirty"
+    )
+    require(
+        comparison["snapshot"]["revision_sha256"] == independent["provenance_sha256"],
+        "comparison provenance drift",
+    )
+
+    hooks = sorted({hook for row in domain_rows for hook in row["hooks"]})
+    return {
+        "schema_version": 1,
+        "target": "S5-T2-A2:PD-04",
+        "decision_id": "PD-04",
+        "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
+        "acceptance_record": ACCEPTANCE_RECORD,
+        "profile_id": PROFILE_ID,
+        "policy": {
+            "input_subnormals": "preserve-exact-source-value",
+            "result_subnormals": "gradual-underflow-to-destination-format",
+            "tininess_detection": "after-rounding",
+            "flush_to_zero": False,
+            "denormals_are_zero": False,
+            "architectural_mode_state": "none",
+            "operation_override": False,
+            "unknown_configuration": "reject-before-effects",
+            "support_boundary": "The rule applies only to otherwise-supported operation/type tuples and does not create support.",
+            "pto_v0_boundary": "The active pto-v0 profile remains a deterministic raw-carrier reference and does not inherit this target rule.",
+        },
+        "asl_contract": {
+            "input_rule_type": "NumericInputSubnormalRule",
+            "result_rule_type": "NumericResultSubnormalRule",
+            "tininess_rule_type": "NumericTininessDetectionRule",
+            "type_predicate": "HardwareNumericTypeHasSubnormals",
+            "input_rule_function": "HardwareNumericInputSubnormalRule",
+            "result_rule_function": "HardwareNumericResultSubnormalRule",
+            "tininess_rule_function": "HardwareNumericTininessDetectionRule",
+            "configuration_function": "HardwareNumericSubnormalConfigurationValid",
+            "boundary_function": "HardwareNumericSubnormalBoundaries",
+        },
+        "format_boundaries": format_rows,
+        "domain_applicability": domain_rows,
+        "operation_type_applicability": operation_rows,
+        "independent_comparison": {
+            "status": "raw-fp32-fp64-classification-corroborated-not-subnormal-arithmetic-oracle",
+            "provenance_sha256": independent["provenance_sha256"],
+            "matched_contracts": [
+                "FP32-and-FP64-NaN-zero-signed-zero-classification",
+                "raw-FP32-and-FP64-subnormal-class-boundary",
+            ],
+            "limits": [
+                "no-executable-arithmetic-subnormal-result-policy",
+                "no-FTZ-or-DAZ-architecture-contract",
+                "no-PTO-low-precision-format-coverage",
+                "not-a-PTO-numeric-oracle",
+            ],
+        },
+        "tests": [
+            "tests/asl/profile-tests.asl:ValidateNumericFormatClassification",
+            "tests/asl/profile-tests.asl:AssertHardwareNumericSubnormalBoundary",
+            "tests/asl/profile-tests.asl:AssertHardwareNumericSubnormalNotApplicable",
+        ],
+        "sources": [
+            source("spec/hardware-conformance-profile.json"),
+            source("spec/evidence/numeric-profile-decision-inputs.json"),
+            source("spec/evidence/numeric-contracts.json"),
+            source("spec/evidence/numeric-format-namespace-contract.json"),
+            source("spec/evidence/executable-model-comparison.json"),
+            source("asl/types.asl"),
+            source("asl/numeric/formats.asl"),
+            source("tests/asl/profile-tests.asl"),
+            source(ACCEPTANCE_RECORD),
+        ],
+        "summary": {
+            "subnormal_capable_type_count": len(format_rows),
+            "boundary_vector_count": len(format_rows) * 5,
+            "configuration_vector_count": 8,
+            "non_applicable_type_count": 14,
+            "affected_domain_count": len(domain_rows),
+            "affected_operation_count": sum(
+                row["operation_count"] for row in domain_rows
+            ),
+            "operation_applicability_row_count": len(operation_rows),
+            "conditional_operation_type_tuple_count": len(operation_rows)
+            * len(format_rows),
+            "affected_hook_count": len(hooks),
+            "accepted_decision_count": 1,
+            "accepted_complete_domain_rule_count": 0,
+            "pd04_complete": True,
+            "s5_t2_a_complete": False,
+            "s5_t2_complete": False,
+        },
+    }
+
+
+def serialized() -> str:
+    return json.dumps(generate(), indent=2, ensure_ascii=False) + "\n"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    action = parser.add_mutually_exclusive_group(required=True)
+    action.add_argument("--check", action="store_true")
+    action.add_argument("--write", action="store_true")
+    args = parser.parse_args()
+    expected = serialized()
+    if args.write:
+        OUTPUT.write_text(expected, encoding="utf-8")
+        return 0
+    if not OUTPUT.is_file() or OUTPUT.read_text(encoding="utf-8") != expected:
+        raise SystemExit(f"stale generated evidence: {OUTPUT.relative_to(ROOT)}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

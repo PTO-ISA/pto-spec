@@ -25,6 +25,107 @@ begin
            value_class == NumericValue_NegativeSubnormal;
 end;
 
+pure func HardwareNumericTypeHasSubnormals(data_type: TileDataType) => boolean
+begin
+    case data_type of
+        when TileDataType_FP64, TileDataType_FP32, TileDataType_TF32,
+             TileDataType_HF32, TileDataType_FP16, TileDataType_BF16,
+             TileDataType_HiF8, TileDataType_E4M3, TileDataType_E5M2,
+             TileDataType_E3M2, TileDataType_E2M3 => return TRUE;
+        otherwise => return FALSE;
+    end;
+end;
+
+pure func HardwareNumericInputSubnormalRule(data_type: TileDataType)
+    => NumericInputSubnormalRule
+begin
+    if HardwareNumericTypeHasSubnormals(data_type) then
+        return NumericInputSubnormal_Preserve;
+    else return NumericInputSubnormal_NotApplicable;
+    end;
+end;
+
+pure func HardwareNumericResultSubnormalRule(data_type: TileDataType)
+    => NumericResultSubnormalRule
+begin
+    if HardwareNumericTypeHasSubnormals(data_type) then
+        return NumericResultSubnormal_GradualUnderflow;
+    else return NumericResultSubnormal_NotApplicable;
+    end;
+end;
+
+pure func HardwareNumericTininessDetectionRule(data_type: TileDataType)
+    => NumericTininessDetectionRule
+begin
+    if HardwareNumericTypeHasSubnormals(data_type) then
+        return NumericTininessDetection_AfterRounding;
+    else return NumericTininessDetection_NotApplicable;
+    end;
+end;
+
+// These booleans describe a candidate conformance configuration. They are not
+// architectural mode bits. The 0.57.1 hardware profile exposes no FTZ/DAZ
+// state and permits no operation-local override.
+pure func HardwareNumericSubnormalConfigurationValid(flush_to_zero: boolean,
+                                                       denormals_are_zero: boolean,
+                                                       operation_override: boolean)
+    => boolean
+begin
+    return !flush_to_zero && !denormals_are_zero && !operation_override;
+end;
+
+// Returns availability, minimum positive subnormal, maximum positive
+// subnormal, and minimum positive normal. Values are exact raw encodings.
+pure func HardwareNumericSubnormalBoundaries(data_type: TileDataType)
+    => (boolean, Word, Word, Word)
+begin
+    case data_type of
+        when TileDataType_FP64 =>
+            return (TRUE, Zeros{PTO_XLEN} + 0x1,
+                    Zeros{PTO_XLEN} + 0x000fffffffffffff,
+                    Zeros{PTO_XLEN} + 0x0010000000000000);
+        when TileDataType_FP32 =>
+            return (TRUE, Zeros{PTO_XLEN} + 0x1,
+                    Zeros{PTO_XLEN} + 0x007fffff,
+                    Zeros{PTO_XLEN} + 0x00800000);
+        when TileDataType_TF32 =>
+            return (TRUE, Zeros{PTO_XLEN} + 0x00002000,
+                    Zeros{PTO_XLEN} + 0x007fe000,
+                    Zeros{PTO_XLEN} + 0x00800000);
+        when TileDataType_HF32 =>
+            return (TRUE, Zeros{PTO_XLEN} + 0x00001000,
+                    Zeros{PTO_XLEN} + 0x007ff000,
+                    Zeros{PTO_XLEN} + 0x00800000);
+        when TileDataType_FP16 =>
+            return (TRUE, Zeros{PTO_XLEN} + 0x1,
+                    Zeros{PTO_XLEN} + 0x03ff,
+                    Zeros{PTO_XLEN} + 0x0400);
+        when TileDataType_BF16 =>
+            return (TRUE, Zeros{PTO_XLEN} + 0x1,
+                    Zeros{PTO_XLEN} + 0x007f,
+                    Zeros{PTO_XLEN} + 0x0080);
+        when TileDataType_HiF8 =>
+            return (TRUE, Zeros{PTO_XLEN} + 0x01,
+                    Zeros{PTO_XLEN} + 0x07,
+                    Zeros{PTO_XLEN} + 0x08);
+        when TileDataType_E4M3 =>
+            return (TRUE, Zeros{PTO_XLEN} + 0x01,
+                    Zeros{PTO_XLEN} + 0x07,
+                    Zeros{PTO_XLEN} + 0x08);
+        when TileDataType_E5M2, TileDataType_E3M2 =>
+            return (TRUE, Zeros{PTO_XLEN} + 0x01,
+                    Zeros{PTO_XLEN} + 0x03,
+                    Zeros{PTO_XLEN} + 0x04);
+        when TileDataType_E2M3 =>
+            return (TRUE, Zeros{PTO_XLEN} + 0x01,
+                    Zeros{PTO_XLEN} + 0x07,
+                    Zeros{PTO_XLEN} + 0x08);
+        otherwise =>
+            return (FALSE, Zeros{PTO_XLEN}, Zeros{PTO_XLEN},
+                    Zeros{PTO_XLEN});
+    end;
+end;
+
 pure func NumericValueClassFromFiniteSign(sign: bits(1), zero: boolean,
                                            subnormal: boolean)
     => NumericValueClass

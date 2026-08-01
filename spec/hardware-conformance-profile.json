@@ -8,6 +8,18 @@
     "subnormals": "supported by each format that defines subnormal encodings; flush-to-zero and denormals-are-zero are non-conforming for those formats",
     "tininess_detection": "after-rounding"
   },
+  "subnormal_policy": {
+    "architectural_mode_state": "none",
+    "configuration_validation": "Any request for FTZ, DAZ, or an operation-local subnormal override is non-conforming and must reject before effects.",
+    "denormals_are_zero": false,
+    "flush_to_zero": false,
+    "input_subnormals": "preserve exact source value",
+    "operation_override": false,
+    "profile_selection": "fixed by pto-hardware-numeric-0.57.1-ieee-v1",
+    "result_subnormals": "gradual underflow to the destination format",
+    "scope": "Every otherwise-supported operation/type tuple whose source or destination format defines subnormal encodings.",
+    "tininess_detection": "after-rounding"
+  },
   "b_datr": {
     "canonicalize": {
       "0": "Do not pre-canonicalize source NaN payloads; every produced NaN in a NaN-capable destination is still canonical.",

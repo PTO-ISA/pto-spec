@@ -32,12 +32,31 @@
     "accepted_profile_support_rule_count": 0,
     "accepted_domain_rule_count": 0
   },
+  "numeric_subnormal_contract": {
+    "path": "spec/evidence/numeric-subnormal-contract.json",
+    "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
+    "acceptance_record": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
+    "subnormal_capable_type_count": 11,
+    "boundary_vector_count": 55,
+    "configuration_vector_count": 8,
+    "non_applicable_type_count": 14,
+    "affected_domain_count": 16,
+    "affected_operation_count": 95,
+    "operation_applicability_row_count": 95,
+    "conditional_operation_type_tuple_count": 1045,
+    "affected_hook_count": 23,
+    "accepted_decision_count": 1,
+    "accepted_complete_domain_rule_count": 0,
+    "pd04_complete": true,
+    "s5_t2_a_complete": false,
+    "s5_t2_complete": false
+  },
   "identity_framework": {
     "status": "closed:S5-T2-A1",
     "accepted_identity_count": 4,
     "accepted_selection_rule_count": 5,
     "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
-    "result_decision_count": 1,
+    "result_decision_count": 2,
     "accepted_domain_rule_count": 0
   },
   "policy": {

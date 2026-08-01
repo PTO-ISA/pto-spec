@@ -1924,7 +1924,7 @@
   "sources": [
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "428fc467ee70e38506c42359b64cb1e0b110fdf29fcde29471686e307f9badcf"
+      "sha256": "ea0cd7fd41bfda7c898d95cbde8a0e21ad6101e9f292ff2451d821269543ff96"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
@@ -1940,7 +1940,7 @@
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "becfbefcc7a31408e5e5293802493f833f68a2fccebb3f9e8008d8b9f4e7658c"
+      "sha256": "b8357bb2202086fd8802722c8a6d12a48fa751556c9b322bd26f16ac2a3ec1fb"
     },
     {
       "path": "spec/catalog/command-forms.json",
@@ -1948,11 +1948,11 @@
     },
     {
       "path": "asl/types.asl",
-      "sha256": "f88b8aaecd3c0578dfe23424fcc75a3ee1b5617e993e4f4aa50f49825d02155a"
+      "sha256": "efbc90dbcdd0d049edd5450850ff02d922783df9ca5de364f5a5debc1d8dca12"
     },
     {
       "path": "asl/numeric/formats.asl",
-      "sha256": "6177f3031c68c4af38b4e57276cd87cc13493eba37cda4914e2de0fe2e8ae6ad"
+      "sha256": "204681954bd1482a5ec3002ad14088f13356a389f7006552f1b4058e4d36103c"
     },
     {
       "path": "asl/scalar/floating.asl",
@@ -1984,7 +1984,7 @@
     },
     {
       "path": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
-      "sha256": "20b2d242c6ca44dff15b65e4f539b596168220efc9ba452dbc07a4a84afeaa8e"
+      "sha256": "360e4e66eb0370fca07782d4e09b116e814ffaa28bc6fec5b496b009e6b8821a"
     }
   ],
   "summary": {
