@@ -5425,7 +5425,7 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "14b13f6f6bb9c23acd01d80d25a3733d8640137de102c1f75596546769c175d6"
+      "sha256": "85385ed809b7b09241da60b59f6fadc23c372b2743dc4d2c2f96206a1795c07c"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",

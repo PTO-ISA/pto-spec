@@ -223,10 +223,14 @@ formats. The conditions do not create operation/type support, do not change
 
 `numeric-special-value-contract.json` is generated from ADR 0050, the hardware
 profile, the format classifier, scalar FP MIN/MAX and comparison contracts, and
-an independently reviewed executable ISA model. It records three accepted
-PD-05-SC2 special-value rules: produced NaNs are canonical, tile comparison
-NaN and signed-zero results are fixed, and scalar/tile MIN/MAX NaN and
-signed-zero results are fixed. The eight operation identities expand to 154
+an independently reviewed executable ISA model. That model corroborates only
+the shared FP32/FP64 subset: the comparison model returns `+0` for
+`FMAX(-0, -0)`, whereas PTO preserves `-0`; the equal-negative-zero result is
+therefore an intentional PTO-owned divergence rather than independent
+corroboration. The contract records three accepted PD-05-SC2 special-value
+rules: produced NaNs are canonical, tile comparison NaN and signed-zero results
+are fixed, and scalar/tile MIN/MAX NaN and signed-zero results are fixed. The
+eight operation identities expand to 154
 conditional operation/type rows. These rows require separate profile support,
 do not alter `pto-v0`, and do not close PD-05, any complete numeric domain, or
 the generic PD-12 variation-route ledger.

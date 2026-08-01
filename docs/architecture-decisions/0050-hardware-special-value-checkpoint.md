@@ -22,10 +22,13 @@ payload to escape, or choosing a zero sign from operand order. The existing
 scalar FP32/FP64 MIN/MAX and compare paths already implement compatible
 portable rules, but the named tile-numeric profile remained unwired.
 
-An independently reviewed executable ISA model corroborates the FP32/FP64
-classification, ordered comparison, signed-zero equality, and MIN/MAX
-selection foundations. It does not bind PTO low-precision formats or provide a
-complete target flag, infinity-arithmetic, or numeric-oracle contract.
+An independently reviewed executable ISA model corroborates the shared
+FP32/FP64 classification, ordered-comparison, signed-zero-equality, NaN
+MIN/MAX, and most zero-selection foundations. It intentionally differs for
+`FMAX(-0, -0)`: PTO preserves `-0`, while the comparison model returns `+0`
+for every two-zero `FMAX` input pair. The comparison therefore does not bind
+that PTO-owned result, any PTO low-precision format, or a complete target flag,
+infinity-arithmetic, or numeric-oracle contract.
 
 ## Decision
 

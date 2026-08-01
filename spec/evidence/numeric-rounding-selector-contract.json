@@ -829,7 +829,7 @@
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
-      "sha256": "dadf2f4e38653439296354218a26ad4d057d417372b22708d7d559564a4688ac"
+      "sha256": "d8d188dc06cb4195fcf3d62724591416c17cbd938c0c225d2093890d61eeb7dc"
     },
     {
       "path": "asl/scalar/floating.asl",
@@ -865,7 +865,7 @@
     },
     {
       "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
-      "sha256": "0cd5c9eef6525edf16603f9d1c4df1233f59b6e8ffc9750b84bd99995fd55962"
+      "sha256": "07c51707a4f02fa6a451f92ab267b31fe4f0398d3def26f12b461f79d734d6a7"
     },
     {
       "path": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",

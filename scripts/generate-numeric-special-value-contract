@@ -214,14 +214,17 @@ def generate() -> dict[str, Any]:
         "formats": special_formats,
         "operation_scope": operation_scope,
         "independent_comparison": {
-            "status": "fp32-fp64-special-selection-corroborated-not-numeric-oracle",
+            "status": "fp32-fp64-shared-special-selection-corroborated-with-fmax-zero-divergence-not-numeric-oracle",
             "provenance_sha256": provenance,
             "matched_contracts": [
                 "ordered-NaN-comparison-foundation",
                 "positive-negative-zero-equality",
                 "signaling-versus-quiet-NaN-classification",
                 "one-NaN-and-two-NaN-minmax-selection",
-                "equal-sign-zero-preservation-and-mixed-tie-minimum-negative-maximum-positive",
+                "fmin-zero-selection-and-fmax-zero-selection-except-equal-negative-zero",
+            ],
+            "divergences": [
+                "comparison-model-fmax-equal-negative-zero-returns-positive-zero-pto-preserves-negative-zero",
             ],
             "limits": [
                 "no-PTO-low-precision-operation-binding",

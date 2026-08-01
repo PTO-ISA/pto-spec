@@ -535,14 +535,17 @@
     }
   ],
   "independent_comparison": {
-    "status": "fp32-fp64-special-selection-corroborated-not-numeric-oracle",
+    "status": "fp32-fp64-shared-special-selection-corroborated-with-fmax-zero-divergence-not-numeric-oracle",
     "provenance_sha256": "c565028c4a6a5b86349863524142fb832079798de325fc617cf664dffa859390",
     "matched_contracts": [
       "ordered-NaN-comparison-foundation",
       "positive-negative-zero-equality",
       "signaling-versus-quiet-NaN-classification",
       "one-NaN-and-two-NaN-minmax-selection",
-      "equal-sign-zero-preservation-and-mixed-tie-minimum-negative-maximum-positive"
+      "fmin-zero-selection-and-fmax-zero-selection-except-equal-negative-zero"
+    ],
+    "divergences": [
+      "comparison-model-fmax-equal-negative-zero-returns-positive-zero-pto-preserves-negative-zero"
     ],
     "limits": [
       "no-PTO-low-precision-operation-binding",
@@ -579,7 +582,7 @@
   "sources": [
     {
       "path": "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
-      "sha256": "574e32ef5d4d7de785a801c5af6b00fe0c2b0cb832aec3cc2920ea4e17cd4dd5"
+      "sha256": "8743491d4ca91d06e7514082d0b878f18087ec9f70e010765153dd52cbd719b9"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -587,7 +590,7 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "14b13f6f6bb9c23acd01d80d25a3733d8640137de102c1f75596546769c175d6"
+      "sha256": "85385ed809b7b09241da60b59f6fadc23c372b2743dc4d2c2f96206a1795c07c"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",

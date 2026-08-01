@@ -2185,6 +2185,7 @@ def main() -> int:
             "comparison-model-fne-fnes-nan-result",
             "comparison-model-missing-invalid-source-rejection-on-architecture-owned-forms",
             "comparison-model-missing-minmax-and-compare-nv-flags",
+            "comparison-model-fmax-equal-negative-zero-returns-positive-zero-pto-preserves-negative-zero",
         ]
         and independent_fsu_comparison["non_comparable_contracts"]
         == [
@@ -2192,6 +2193,7 @@ def main() -> int:
             "pto-reg5-t-u-queue-topology",
             "pto-attempt-fault-and-trap-envelope",
         ]
+        and "FMAX(-0, -0)" in independent_fsu_comparison["pto_disposition"]
         and "PTO-owned" in independent_fsu_comparison["pto_disposition"]
         and "authoritative" in independent_fsu_comparison["pto_disposition"],
         "scalar FSU independent-comparison disposition drift",

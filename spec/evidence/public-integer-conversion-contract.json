@@ -974,7 +974,7 @@
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "75e120ac14e791ed5c9686f88dd1128e1d0b61c36890b218199f8b76730b8c2d"
+      "sha256": "30f658a893144ba433eb4dea036b60ea6e9426056a3809f90967d16a236a3779"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
