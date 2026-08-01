@@ -16,8 +16,12 @@ ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / "spec/catalog/system-registers.json"
 OUTPUT = ROOT / "spec/evidence/system-register-witness-closure.json"
 
-EXPECTED_STORAGE_SEMANTIC_INVENTORY_SHA256 = "e33843ce92d2367fafaf7ad43004410f7e7be6b375b369c8c909a4e5cf486f9b"
-EXPECTED_TRAP_ACTIVATION_INVENTORY_SHA256 = "a68e45429f4c8d0675eadf4e95ab79a2900ed4caafb8eb3c265b7c8f7f64e595"
+EXPECTED_STORAGE_SEMANTIC_INVENTORY_SHA256 = (
+    "8df976bb0c6031430e39f2e6968f2a92fa810b3cdb5b3ae36ac7099b151fe4e4"
+)
+EXPECTED_TRAP_ACTIVATION_INVENTORY_SHA256 = (
+    "c73ffb653ee840028525815de399b8c754fad313ec59a9650ccdcf1c8f278645"
+)
 
 STORAGE_BOUNDARY_SYMBOLS = {
     "_ExtendedSystemRegisters",
@@ -42,25 +46,82 @@ TRAP_ACTIVATION_SYMBOLS = {
 }
 
 SIDE_EFFECT_BINDINGS = {
-    ("core-state-control", "write-selects-current-acr"): ("tests/asl/scalar-tests.asl", "TestScalarFPFlagLifecycle"),
-    ("architectural-time", "advances-on-every-execution-attempt"): ("tests/asl/state-tests.asl", "TestInterruptRegisterState"),
-    ("tile-capacity-profile-limit", "limits-per-tile-and-aggregate-allocation"): ("tests/asl/tile-tests.asl", "TestTileCapacityLegality"),
-    ("execution-context-state", "save-and-recovery-profile-state"): ("tests/asl/state-tests.asl", "CheckSynchronousTrapMapping"),
-    ("exception-vector-base", "selects-trap-entry-tpc"): ("tests/asl/scalar-tests.asl", "TestServiceRequestControl"),
-    ("trap-status", "reads-and-writes-trap-bank-fields"): ("tests/asl/state-tests.asl", "CheckSynchronousTrapMapping"),
-    ("trap-argument", "reads-and-writes-trap-bank-argument"): ("tests/asl/state-tests.asl", "CheckSynchronousTrapMapping"),
-    ("interrupt-configuration", "controls-external-and-timer-trap-entry"): ("tests/asl/state-tests.asl", "TestInterruptRegisterState"),
-    ("interrupt-pending", "reflects-external-and-timer-pending-sources"): ("tests/asl/state-tests.asl", "TestInterruptRegisterState"),
-    ("top-pending-interrupt", "priority-derived-from-pending-bitmap"): ("tests/asl/state-tests.asl", "TestInterruptRegisterState"),
-    ("end-of-interrupt", "clears-selected-pending-id"): ("tests/asl/state-tests.asl", "TestInterruptRegisterState"),
-    ("end-of-interrupt", "clears-asynchronous-trap-status"): ("tests/asl/state-tests.asl", "TestInterruptRegisterState"),
-    ("timer-time", "aliases-architectural-time"): ("tests/asl/state-tests.asl", "TestInterruptRegisterState"),
-    ("timer-compare", "refreshes-timer-pending-state"): ("tests/asl/state-tests.asl", "TestInterruptRegisterState"),
-    ("saved-execution-context", "save-and-recovery-profile-state"): ("tests/asl/state-tests.asl", "CheckSynchronousTrapMapping"),
-    ("saved-loop-context-storage", "trap-save-clears-value"): ("tests/asl/state-tests.asl", "TestVisibleTrapContextRegisters"),
-    ("saved-loop-context-storage", "pto-v0-recovery-does-not-consume-value"): ("tests/asl/state-tests.asl", "TestVisibleTrapContextRegisters"),
-    ("extended-context-storage", "trap-save-preserves-value"): ("tests/asl/state-tests.asl", "TestVisibleTrapContextRegisters"),
-    ("extended-context-storage", "pto-v0-recovery-does-not-consume-value"): ("tests/asl/state-tests.asl", "TestVisibleTrapContextRegisters"),
+    ("core-state-control", "write-selects-current-acr"): (
+        "tests/asl/scalar-tests.asl",
+        "TestScalarFPFlagLifecycle",
+    ),
+    ("architectural-time", "advances-on-every-execution-attempt"): (
+        "tests/asl/state-tests.asl",
+        "TestInterruptRegisterState",
+    ),
+    ("tile-capacity-profile-limit", "limits-per-tile-and-aggregate-allocation"): (
+        "tests/asl/tile-tests.asl",
+        "TestTileCapacityLegality",
+    ),
+    ("execution-context-state", "save-and-recovery-profile-state"): (
+        "tests/asl/state-tests.asl",
+        "CheckSynchronousTrapMapping",
+    ),
+    ("exception-vector-base", "selects-trap-entry-tpc"): (
+        "tests/asl/scalar-tests.asl",
+        "TestServiceRequestControl",
+    ),
+    ("trap-status", "reads-and-writes-trap-bank-fields"): (
+        "tests/asl/state-tests.asl",
+        "CheckSynchronousTrapMapping",
+    ),
+    ("trap-argument", "reads-and-writes-trap-bank-argument"): (
+        "tests/asl/state-tests.asl",
+        "CheckSynchronousTrapMapping",
+    ),
+    ("interrupt-configuration", "controls-external-and-timer-trap-entry"): (
+        "tests/asl/state-tests.asl",
+        "TestInterruptRegisterState",
+    ),
+    ("interrupt-pending", "reflects-external-and-timer-pending-sources"): (
+        "tests/asl/state-tests.asl",
+        "TestInterruptRegisterState",
+    ),
+    ("top-pending-interrupt", "priority-derived-from-pending-bitmap"): (
+        "tests/asl/state-tests.asl",
+        "TestInterruptRegisterState",
+    ),
+    ("end-of-interrupt", "clears-selected-pending-id"): (
+        "tests/asl/state-tests.asl",
+        "TestInterruptRegisterState",
+    ),
+    ("end-of-interrupt", "clears-asynchronous-trap-status"): (
+        "tests/asl/state-tests.asl",
+        "TestInterruptRegisterState",
+    ),
+    ("timer-time", "aliases-architectural-time"): (
+        "tests/asl/state-tests.asl",
+        "TestInterruptRegisterState",
+    ),
+    ("timer-compare", "refreshes-timer-pending-state"): (
+        "tests/asl/state-tests.asl",
+        "TestInterruptRegisterState",
+    ),
+    ("saved-execution-context", "save-and-recovery-profile-state"): (
+        "tests/asl/state-tests.asl",
+        "CheckSynchronousTrapMapping",
+    ),
+    ("saved-loop-context-storage", "trap-save-clears-value"): (
+        "tests/asl/state-tests.asl",
+        "TestVisibleTrapContextRegisters",
+    ),
+    ("saved-loop-context-storage", "pto-v0-recovery-does-not-consume-value"): (
+        "tests/asl/state-tests.asl",
+        "TestVisibleTrapContextRegisters",
+    ),
+    ("extended-context-storage", "trap-save-preserves-value"): (
+        "tests/asl/state-tests.asl",
+        "TestVisibleTrapContextRegisters",
+    ),
+    ("extended-context-storage", "pto-v0-recovery-does-not-consume-value"): (
+        "tests/asl/state-tests.asl",
+        "TestVisibleTrapContextRegisters",
+    ),
 }
 
 
@@ -92,7 +153,7 @@ def normalized_body(value: str) -> str:
 def asl_units(path: str, body: str) -> list[dict[str, str]]:
     headers = list(
         re.finditer(
-            r"(?m)^(?:(?:readonly|pure|impdef|implementation)\s+)*func\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(",
+            r"(?m)^(?:(?:readonly|pure|impdef|implementation)\s+)*(?:func|procedure)\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(",
             body,
         )
     )
@@ -100,11 +161,42 @@ def asl_units(path: str, body: str) -> list[dict[str, str]]:
     if not headers and body.strip():
         return [{"path": path, "function": "<global>", "body": body}]
     if headers and body[: headers[0].start()].strip():
-        units.append({"path": path, "function": "<global>", "body": body[: headers[0].start()]})
+        units.append(
+            {"path": path, "function": "<global>", "body": body[: headers[0].start()]}
+        )
     for index, header in enumerate(headers):
         end = headers[index + 1].start() if index + 1 < len(headers) else len(body)
-        units.append({"path": path, "function": header.group(1), "body": body[header.start() : end]})
+        units.append(
+            {
+                "path": path,
+                "function": header.group(1),
+                "body": body[header.start() : end],
+            }
+        )
     return units
+
+
+def without_line_comments(body: str) -> str:
+    return re.sub(r"(?m)//.*$", "", body)
+
+
+def called_functions(body: str) -> set[str]:
+    return set(
+        re.findall(
+            r"\b([A-Za-z_][A-Za-z0-9_]*)\s*\(",
+            without_line_comments(body),
+        )
+    )
+
+
+def exact_function_body(path: str, body: str, function: str) -> str:
+    matches = [
+        unit["body"] for unit in asl_units(path, body) if unit["function"] == function
+    ]
+    require(
+        len(matches) == 1, f"expected exactly one function body: {path}::{function}"
+    )
+    return matches[0]
 
 
 def normative_asl_sources() -> dict[str, str]:
@@ -117,25 +209,56 @@ def normative_asl_sources() -> dict[str, str]:
 def unit_inventory(
     sources: dict[str, str], symbols: set[str], numbers: set[int] | None = None
 ) -> list[dict[str, str]]:
-    rows: list[dict[str, str]] = []
-    number_pattern = re.compile(r"(?<![A-Za-z0-9_])(?:0x[0-9a-fA-F]+|[0-9]+)(?![A-Za-z0-9_])")
-    for path, body in sorted(sources.items()):
-        for unit in asl_units(path, body):
-            normalized = normalized_body(unit["body"])
-            has_symbol = any(re.search(rf"\b{re.escape(symbol)}\b", normalized) for symbol in symbols)
-            literal_values = {
+    units = [
+        unit for path, body in sorted(sources.items()) for unit in asl_units(path, body)
+    ]
+    number_pattern = re.compile(
+        r"(?<![A-Za-z0-9_])(?:0x[0-9a-fA-F]+|[0-9]+)(?![A-Za-z0-9_])"
+    )
+    normalized = [normalized_body(unit["body"]) for unit in units]
+    tainted = {
+        index
+        for index, value in enumerate(normalized)
+        if any(re.search(rf"\b{re.escape(symbol)}\b", value) for symbol in symbols)
+        or (
+            numbers is not None
+            and not {
                 int(token, 16) if token.lower().startswith("0x") else int(token, 10)
-                for token in number_pattern.findall(normalized)
-            }
-            if has_symbol or (numbers is not None and not literal_values.isdisjoint(numbers)):
-                rows.append(
-                    {
-                        "path": path,
-                        "function": unit["function"],
-                        "sha256": sha256_text(normalized),
-                    }
-                )
-    return rows
+                for token in number_pattern.findall(value)
+            }.isdisjoint(numbers)
+        )
+    }
+    callers: dict[str, set[int]] = {}
+    for index, unit in enumerate(units):
+        for target in called_functions(unit["body"]):
+            callers.setdefault(target, set()).add(index)
+    pending = [
+        units[index]["function"]
+        for index in tainted
+        if units[index]["function"] != "<global>"
+    ]
+    seen_names = set(pending)
+    while pending:
+        target = pending.pop()
+        for index in callers.get(target, set()):
+            if index in tainted:
+                continue
+            tainted.add(index)
+            caller = units[index]["function"]
+            if caller != "<global>" and caller not in seen_names:
+                seen_names.add(caller)
+                pending.append(caller)
+    return [
+        {
+            "path": units[index]["path"],
+            "function": units[index]["function"],
+            "sha256": sha256_text(normalized[index]),
+        }
+        for index in sorted(
+            tainted,
+            key=lambda current: (units[current]["path"], units[current]["function"]),
+        )
+    ]
 
 
 def inventory_sha256(rows: list[dict[str, str]]) -> str:
@@ -146,7 +269,10 @@ def require_inventory(
     name: str, rows: list[dict[str, str]], expected_sha256: str
 ) -> str:
     actual = inventory_sha256(rows)
-    require(actual == expected_sha256, f"{name} inventory drift: expected {expected_sha256}, got {actual}")
+    require(
+        actual == expected_sha256,
+        f"{name} inventory drift: expected {expected_sha256}, got {actual}",
+    )
     return actual
 
 
@@ -176,10 +302,8 @@ def generated_decoder() -> str:
     return result.stdout
 
 
-def assertion_after_marker(body: str, marker: str) -> str:
-    matches = list(
-        re.finditer(rf"(?m)^\s*//\s*{re.escape(marker)}\s*$", body)
-    )
+def statement_after_marker(body: str, marker: str) -> str:
+    matches = list(re.finditer(rf"(?m)^\s*//\s*{re.escape(marker)}\s*$", body))
     require(len(matches) == 1, f"witness marker must occur exactly once: {marker}")
     lines = body[matches[0].end() :].splitlines()
     assertion: list[str] = []
@@ -187,12 +311,157 @@ def assertion_after_marker(body: str, marker: str) -> str:
         stripped = line.strip()
         if not stripped or stripped.startswith("//"):
             continue
-        if not assertion:
-            require(stripped.startswith("assert "), f"witness marker does not bind an assertion: {marker}")
         assertion.append(stripped)
         if stripped.endswith(";"):
             return " ".join(assertion)
-    raise SystemExit(f"unterminated assertion after witness marker: {marker}")
+    raise SystemExit(f"unterminated statement after witness marker: {marker}")
+
+
+def assertion_after_marker(body: str, marker: str) -> str:
+    statement = statement_after_marker(body, marker)
+    require(
+        statement.startswith("assert "),
+        f"witness marker does not bind an assertion: {marker}",
+    )
+    return statement
+
+
+def test_reachability(
+    decoder: str, overrides: dict[str, str] | None = None
+) -> tuple[set[str], set[str]]:
+    overrides = overrides or {}
+    test_paths = subprocess.check_output(
+        ["make", "--no-print-directory", "print-asl-tests"],
+        cwd=ROOT,
+        text=True,
+    ).splitlines()
+    library_sources = {
+        path: overrides.get(path, (ROOT / path).read_text(encoding="utf-8"))
+        for path in test_paths
+        if path != "tests/asl/main.asl"
+    }
+    library_sources["generated:build/decoders.asl"] = overrides.get(
+        "generated:build/decoders.asl", decoder
+    )
+    definitions: dict[str, str] = {}
+    for path, body in library_sources.items():
+        for unit in asl_units(path, body):
+            if unit["function"] == "<global>":
+                continue
+            require(
+                unit["function"] not in definitions,
+                f"duplicate test function definition: {unit['function']}",
+            )
+            definitions[unit["function"]] = unit["body"]
+    graph = {
+        function: called_functions(body) & definitions.keys()
+        for function, body in definitions.items()
+    }
+
+    def main_calls(path: str) -> set[str]:
+        body = overrides.get(path, (ROOT / path).read_text(encoding="utf-8"))
+        return called_functions(exact_function_body(path, body, "main")) - {"main"}
+
+    def closure(roots: set[str]) -> set[str]:
+        reachable = set(roots)
+        pending = list(roots)
+        while pending:
+            current = pending.pop()
+            for target in graph.get(current, set()):
+                if target not in reachable:
+                    reachable.add(target)
+                    pending.append(target)
+        return reachable
+
+    canonical = closure(main_calls("tests/asl/main.asl"))
+    shard_paths = subprocess.check_output(
+        ["make", "--no-print-directory", "print-asl-test-shards"],
+        cwd=ROOT,
+        text=True,
+    ).splitlines()
+    sharded = closure(set().union(*(main_calls(path) for path in shard_paths)))
+    return canonical, sharded
+
+
+def bound_assertion(
+    path: str,
+    body: str,
+    function: str,
+    marker: str,
+    reachability: tuple[set[str], set[str]],
+) -> str:
+    canonical, sharded = reachability
+    require(
+        function in canonical,
+        f"witness function is not reachable from canonical main: {function}",
+    )
+    require(
+        function in sharded,
+        f"witness function is not reachable from sharded mains: {function}",
+    )
+    return assertion_after_marker(exact_function_body(path, body, function), marker)
+
+
+def witness_binding_negative_canaries(
+    decoder: str, state_tests: str
+) -> list[dict[str, str]]:
+    reachability = test_reachability(decoder)
+    marker = "TRAP-WITNESS envelope/assert-number"
+    relocated = state_tests.replace(f"    // {marker}\n", "", 1)
+    relocated += f"\nfunc CanaryRelocatedWitness()\nbegin\n    // {marker}\n    assert TRUE;\nend;\n"
+    try:
+        bound_assertion(
+            "tests/asl/state-tests.asl",
+            relocated,
+            "CheckSynchronousTrapMapping",
+            marker,
+            reachability,
+        )
+    except SystemExit as error:
+        require(
+            "witness marker must occur exactly once" in str(error),
+            f"relocation canary failed for the wrong reason: {error}",
+        )
+    else:
+        raise SystemExit("negative canary was accepted: witness-marker-relocation")
+
+    shard_path = "tests/asl/shards/core-bundle.asl"
+    shard_body = (ROOT / shard_path).read_text(encoding="utf-8")
+    mutated_shard = shard_body.replace(
+        "    TestCompleteTrapEnvelope();",
+        "    // TestCompleteTrapEnvelope();",
+        1,
+    )
+    require(mutated_shard != shard_body, "commented-call canary target drift")
+    try:
+        canonical, sharded = test_reachability(decoder, {shard_path: mutated_shard})
+        require(
+            "TestCompleteTrapEnvelope" in canonical,
+            "commented-call canary lost canonical reachability",
+        )
+        require(
+            "TestCompleteTrapEnvelope" in sharded,
+            "witness function is not reachable from sharded mains: TestCompleteTrapEnvelope",
+        )
+    except SystemExit as error:
+        require(
+            "not reachable from sharded mains" in str(error),
+            f"commented-call canary failed for the wrong reason: {error}",
+        )
+    else:
+        raise SystemExit("negative canary was accepted: witness-commented-shard-call")
+    return [
+        {
+            "canary_id": "witness-marker-relocation",
+            "status": "rejected-as-required",
+            "expected_guard": "function-local marker binding",
+        },
+        {
+            "canary_id": "witness-commented-shard-call",
+            "status": "rejected-as-required",
+            "expected_guard": "canonical-and-sharded function reachability",
+        },
+    ]
 
 
 def storage_only_rows(catalog: dict[str, Any]) -> list[dict[str, Any]]:
@@ -242,13 +511,18 @@ def trap_consumer_exclusion(
         for row in catalog["trap_numbers"]
         if row["pto_v0_status"] == "envelope-only-no-trigger"
     ]
-    require([row["number"] for row in traps] == [33, 49, 51], "envelope-only trap set drift")
+    require(
+        [row["number"] for row in traps] == [33, 49, 51], "envelope-only trap set drift"
+    )
     rows = []
     fault_symbols: set[str] = set()
     for trap in traps:
         producer = trap["producers"][0]
         match = re.fullmatch(r"SetFault\((Fault_[A-Za-z]+)\)", producer)
-        require(match is not None, f"envelope-only trap lacks SetFault envelope: {trap['name']}")
+        require(
+            match is not None,
+            f"envelope-only trap lacks SetFault envelope: {trap['name']}",
+        )
         fault = match.group(1)
         fault_symbols.add(fault)
         occurrences = []
@@ -261,14 +535,21 @@ def trap_consumer_exclusion(
                     relative == "asl/types.asl" and normalized.rstrip(",") == fault
                 ) or (
                     relative == "asl/state.asl"
-                    and normalized.startswith(f"when {fault} => _ACRTrapNumber[[ring]] =")
+                    and normalized.startswith(
+                        f"when {fault} => _ACRTrapNumber[[ring]] ="
+                    )
                 )
                 require(
                     allowed,
                     f"envelope-only trap gained a PTO-v0 trigger: {relative}:{line_number}: {normalized}",
                 )
-                occurrences.append({"path": relative, "line": line_number, "text": normalized})
-        require(len(occurrences) == 2, f"envelope-only declaration/mapping drift: {trap['name']}")
+                occurrences.append(
+                    {"path": relative, "line": line_number, "text": normalized}
+                )
+        require(
+            len(occurrences) == 2,
+            f"envelope-only declaration/mapping drift: {trap['name']}",
+        )
         rows.append(
             {
                 "name": trap["name"],
@@ -315,6 +596,13 @@ def consumer_exclusion_negative_canaries(
             storage_consumer_exclusion,
             "asl/state.asl",
             "func CanaryStorageSymbolic(index: SystemRegisterFileIndex) => Word begin return _ExtendedSystemRegisters[[index]]; end;",
+            "storage semantic access inventory drift",
+        ),
+        (
+            "storage-transitive-wrapper-consumer",
+            storage_consumer_exclusion,
+            "asl/state.asl",
+            "func CanaryStorageWrapperConsumer(address: SystemRegisterAddress) begin ExecuteCompressedSystemRegisterGet(address); end;",
             "storage semantic access inventory drift",
         ),
         (
@@ -368,6 +656,7 @@ def generate() -> dict[str, Any]:
     decoder = generated_decoder()
     main = (ROOT / "tests/asl/main.asl").read_text(encoding="utf-8")
     state_tests = (ROOT / "tests/asl/state-tests.asl").read_text(encoding="utf-8")
+    reachability = test_reachability(decoder)
     require(
         "ValidateSystemRegisterResetAndAccess();" in main,
         "system-register generated witness is not reachable from canonical main",
@@ -406,10 +695,17 @@ def generate() -> dict[str, Any]:
                     "side_effect": effect,
                     "witness_id": f"sysreg-effect:{behavior_id}:{slug(effect)}",
                     "assertion_marker": marker,
-                    "assertion": assertion_after_marker(assertion_body, marker),
+                    "assertion": bound_assertion(
+                        source_path,
+                        assertion_body,
+                        function,
+                        marker,
+                        reachability,
+                    ),
                     "function": function,
                     "source": source_path,
                     "closure": closure,
+                    "execution_reachability": "canonical-and-sharded",
                 }
             )
         side_effect_count += len(effects)
@@ -421,16 +717,30 @@ def generate() -> dict[str, Any]:
                 "reset_witness": {
                     "witness_id": f"sysreg-class:{behavior_id}:reset",
                     "assertion_marker": reset_marker,
-                    "assertion": assertion_after_marker(decoder, reset_marker),
+                    "assertion": bound_assertion(
+                        "generated:build/decoders.asl",
+                        decoder,
+                        "ValidateSystemRegisterResetAndAccess",
+                        reset_marker,
+                        reachability,
+                    ),
                     "function": "ValidateSystemRegisterResetAndAccess",
                     "source": "generated:build/decoders.asl",
+                    "execution_reachability": "canonical-and-sharded",
                 },
                 "access_witness": {
                     "witness_id": f"sysreg-class:{behavior_id}:access",
                     "assertion_marker": access_marker,
-                    "assertion": assertion_after_marker(decoder, access_marker),
+                    "assertion": bound_assertion(
+                        "generated:build/decoders.asl",
+                        decoder,
+                        "ValidateSystemRegisterResetAndAccess",
+                        access_marker,
+                        reachability,
+                    ),
                     "function": "ValidateSystemRegisterResetAndAccess",
                     "source": "generated:build/decoders.asl",
+                    "execution_reachability": "canonical-and-sharded",
                 },
                 "side_effect_witnesses": effects,
             }
@@ -443,8 +753,20 @@ def generate() -> dict[str, Any]:
     ]
     trap_witnesses = []
     for trap in catalog["trap_numbers"]:
-        case_marker = f"// TRAP-WITNESS case/{trap['name']}"
-        require(state_tests.count(case_marker) == 1, f"trap case marker drift: {trap['name']}")
+        case_marker = f"TRAP-WITNESS case/{trap['name']}"
+        case_statement = statement_after_marker(
+            exact_function_body(
+                "tests/asl/state-tests.asl",
+                state_tests,
+                "TestCompleteTrapEnvelope",
+            ),
+            case_marker,
+        )
+        require(
+            "TestCompleteTrapEnvelope" in reachability[0]
+            and "TestCompleteTrapEnvelope" in reachability[1],
+            "trap case function is not reachable from canonical and sharded mains",
+        )
         if trap["name"] == "INTERRUPT":
             helper_function = "TestCompleteTrapEnvelope"
             helper_markers = [
@@ -475,9 +797,16 @@ def generate() -> dict[str, Any]:
         helper_assertions = [
             {
                 "assertion_marker": marker,
-                "assertion": assertion_after_marker(state_tests, marker),
+                "assertion": bound_assertion(
+                    "tests/asl/state-tests.asl",
+                    state_tests,
+                    helper_function,
+                    marker,
+                    reachability,
+                ),
                 "function": helper_function,
                 "source": "tests/asl/state-tests.asl",
+                "execution_reachability": "canonical-and-sharded",
             }
             for marker in helper_markers
         ]
@@ -487,10 +816,12 @@ def generate() -> dict[str, Any]:
                 "number": trap["number"],
                 "pto_v0_status": trap["pto_v0_status"],
                 "witness_id": f"trap-envelope:{trap['number']}:{trap['name']}",
-                "case_marker": case_marker.removeprefix("// "),
+                "case_marker": case_marker,
+                "case_statement": case_statement,
                 "function": "TestCompleteTrapEnvelope",
                 "source": "tests/asl/state-tests.asl",
                 "closure": closure,
+                "execution_reachability": "canonical-and-sharded",
                 "catalog_contract": {
                     "cause": trap["cause"],
                     "argument": trap["argument"],
@@ -502,13 +833,17 @@ def generate() -> dict[str, Any]:
 
     concrete_address_count = 0
     for row in catalog["registers"]:
-        concrete_address_count += 16 if row["scope"] == "context-family" and "fixed_context" not in row else 1
-    require(concrete_address_count == 837, "bank-expanded system-register address count drift")
+        concrete_address_count += (
+            16 if row["scope"] == "context-family" and "fixed_context" not in row else 1
+        )
+    require(
+        concrete_address_count == 837,
+        "bank-expanded system-register address count drift",
+    )
     storage_guard = storage_consumer_exclusion(catalog, normative_sources)
     trap_guard = trap_consumer_exclusion(catalog, normative_sources)
-    negative_canaries = consumer_exclusion_negative_canaries(
-        catalog, normative_sources
-    )
+    negative_canaries = consumer_exclusion_negative_canaries(catalog, normative_sources)
+    binding_canaries = witness_binding_negative_canaries(decoder, state_tests)
     return {
         "schema_version": 1,
         "target": "S2-T1:S2-T3:issue-34",
@@ -520,7 +855,9 @@ def generate() -> dict[str, Any]:
             "envelope_only_traps": trap_guard,
             "negative_canaries": negative_canaries,
         },
+        "witness_binding_negative_canaries": binding_canaries,
         "sources": [
+            source("Makefile"),
             source("spec/catalog/system-registers.json"),
             source("scripts/generate-asl-decoders"),
             {
@@ -528,6 +865,7 @@ def generate() -> dict[str, Any]:
                 "sha256": sha256_text(decoder),
             },
             source("tests/asl/main.asl"),
+            source("tests/asl/shards/core-bundle.asl"),
             source("tests/asl/scalar-tests.asl"),
             source("tests/asl/state-tests.asl"),
             source("tests/asl/tile-tests.asl"),
@@ -543,8 +881,13 @@ def generate() -> dict[str, Any]:
             "side_effect_contract_count": side_effect_count,
             "storage_only_register_count": len(storage_only_rows(catalog)),
             "trap_count": len(trap_witnesses),
-            "production_active_trap_count": sum(row["pto_v0_status"] == "production-active" for row in trap_witnesses),
-            "envelope_only_trap_count": sum(row["pto_v0_status"] == "envelope-only-no-trigger" for row in trap_witnesses),
+            "production_active_trap_count": sum(
+                row["pto_v0_status"] == "production-active" for row in trap_witnesses
+            ),
+            "envelope_only_trap_count": sum(
+                row["pto_v0_status"] == "envelope-only-no-trigger"
+                for row in trap_witnesses
+            ),
         },
     }
 
@@ -563,10 +906,10 @@ def main() -> int:
     expected = serialized()
     if args.check_canaries:
         document = json.loads(expected)
-        for row in document["consumer_exclusion"]["negative_canaries"]:
-            print(
-                f"{row['canary_id']}: {row['status']} ({row['expected_guard']})"
-            )
+        canaries = document["consumer_exclusion"]["negative_canaries"]
+        canaries += document["witness_binding_negative_canaries"]
+        for row in canaries:
+            print(f"{row['canary_id']}: {row['status']} ({row['expected_guard']})")
         return 0
     if args.write:
         OUTPUT.write_text(expected, encoding="utf-8")

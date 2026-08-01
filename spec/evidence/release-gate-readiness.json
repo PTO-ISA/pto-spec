@@ -95,7 +95,7 @@
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "97e3dbc807b1c437f9ae5cdfb92ede83ea7c45d5acc496fadd78bee9fe74a163"
+      "sha256": "17c9667b2632534b71f8b2ab2a796d1c9c395130a4fa947d2ce16fdc33f44266"
     },
     {
       "path": "scripts/check-publication-hygiene",
@@ -103,7 +103,7 @@
     },
     {
       "path": "scripts/check-repository",
-      "sha256": "88afc9ac2fc7fa3b7af4fc27e9d6322d8a5ca2dc3930b6def9786d1344f9de45"
+      "sha256": "63755d7b4dd98b3eb2d287ee057d94335fd3b9da4fcd2b9aed37c2285adf92fe"
     },
     {
       "path": "scripts/check-toolchain",
@@ -143,7 +143,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "9e5e1f9884034ea1b6c11604bd817bc482d6f561d3a6e10d3c6c9ef53996312c"
+      "sha256": "34c5b9d20a77c9788c8719569dc3a8ae8c7dbfbc9f74712beb3c0cab2455f74f"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -151,11 +151,11 @@
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "3898a9f3fcb3eb21e3f9d5159b1e2337565a067316128984f14953b1522b4939"
+      "sha256": "3abe1b9b2caafbc709fb170fda48ba9068e99895b880523f8fd85461ec639ad3"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "f1752a5cd060b3dd78826f1a350c0a686472a09d61f97af3c1e41ed742fd708a"
+      "sha256": "33fa8ea3a49fd11909959dcd5cf9b5a2aaeb6dc5a7c84e52036df3ffcf01518e"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
@@ -163,7 +163,7 @@
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "7c13bbec929c6d151f1b57bc8f128c95feb46f0ef82d060ad2978e4695fc8336"
+      "sha256": "74c5b70c75acff6100934e343fa56fe1b42cbab4dfa76416105df25ba174053a"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
@@ -183,11 +183,11 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "181c39ab1e0a046d4b8df5b1c7decfd711684ff3a86519700275f5d2bb95452b"
+      "sha256": "94b4a2236f993d5cca5b3707287635c7f48f2faf7fbce8b7d4df7b4322322adb"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "b26f3125ca21c5a5673d9e885fb37aa9c82cc4b320355b1912847046825f7d95"
+      "sha256": "91b7fd88f0e1afe3a2220854350245e67ca5a41cc6f94f498f9f2b1c1eb5cc11"
     },
     {
       "path": "spec/catalog/numeric-profile-applicability.json",

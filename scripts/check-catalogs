@@ -5895,6 +5895,7 @@ def main() -> int:
             "summary",
             "target",
             "trap_witnesses",
+            "witness_binding_negative_canaries",
         }
         and system_register_witnesses["schema_version"] == 1
         and system_register_witnesses["target"] == "S2-T1:S2-T3:issue-34"
@@ -5918,7 +5919,8 @@ def main() -> int:
         [row["behavior_class"] for row in behavior_witness_rows]
         == [row["id"] for row in behavior_rows]
         and all(
-            row["profile_status"] == behaviors_by_id[row["behavior_class"]]["profile_status"]
+            row["profile_status"]
+            == behaviors_by_id[row["behavior_class"]]["profile_status"]
             and row["registers"] == behaviors_by_id[row["behavior_class"]]["registers"]
             and [effect["side_effect"] for effect in row["side_effect_witnesses"]]
             == behaviors_by_id[row["behavior_class"]]["side_effects"]
@@ -5928,29 +5930,48 @@ def main() -> int:
     )
     witness_ids = []
     for row in behavior_witness_rows:
+        require(
+            row["reset_witness"]["execution_reachability"] == "canonical-and-sharded"
+            and row["access_witness"]["execution_reachability"]
+            == "canonical-and-sharded"
+            and all(
+                effect["execution_reachability"] == "canonical-and-sharded"
+                for effect in row["side_effect_witnesses"]
+            ),
+            "system-register witness execution reachability drift",
+        )
         witness_ids.extend(
             [
                 row["reset_witness"]["witness_id"],
                 row["access_witness"]["witness_id"],
-                *[
-                    effect["witness_id"]
-                    for effect in row["side_effect_witnesses"]
-                ],
+                *[effect["witness_id"] for effect in row["side_effect_witnesses"]],
             ]
         )
     trap_witness_rows = system_register_witnesses["trap_witnesses"]
     witness_ids.extend(row["witness_id"] for row in trap_witness_rows)
     require(
         len(witness_ids) == len(set(witness_ids)) == 86
+        and len(witness_ids) - len(trap_witness_rows) == 73
         and [row["name"] for row in trap_witness_rows]
         == [row["name"] for row in trap_rows]
         and [row["pto_v0_status"] for row in trap_witness_rows]
         == [row["pto_v0_status"] for row in trap_rows],
         "system-register or trap witness identity drift",
     )
+    require(
+        all(
+            row["execution_reachability"] == "canonical-and-sharded"
+            and row["case_statement"]
+            and all(
+                assertion["execution_reachability"] == "canonical-and-sharded"
+                for assertion in row["helper_assertions"]
+            )
+            for row in trap_witness_rows
+        ),
+        "trap witness function binding or reachability drift",
+    )
     witness_sources = {
-        row["path"]: row["sha256"]
-        for row in system_register_witnesses["sources"]
+        row["path"]: row["sha256"] for row in system_register_witnesses["sources"]
     }
     for source_path in (
         "tests/asl/scalar-tests.asl",
@@ -6003,12 +6024,28 @@ def main() -> int:
         == "closed-no-production-trigger-reachability"
         and exclusion["envelope_only_traps"]["trap_count"] == 3
         and exclusion["envelope_only_traps"]["activation_inventory"]
-        and len(exclusion["negative_canaries"]) == 5
+        and len(exclusion["negative_canaries"]) == 6
+        and {row["canary_id"] for row in exclusion["negative_canaries"]}
+        == {
+            "storage-full-bank-address",
+            "storage-symbolic-backing-index",
+            "storage-transitive-wrapper-consumer",
+            "trap-direct-number-assignment",
+            "trap-number-helper",
+            "trap-indirect-setfault",
+        }
         and all(
             row["status"] == "rejected-as-required"
             for row in exclusion["negative_canaries"]
         ),
         "system-register or trap consumer-exclusion closure drift",
+    )
+    binding_canaries = system_register_witnesses["witness_binding_negative_canaries"]
+    require(
+        [row["canary_id"] for row in binding_canaries]
+        == ["witness-marker-relocation", "witness-commented-shard-call"]
+        and all(row["status"] == "rejected-as-required" for row in binding_canaries),
+        "system-register witness binding canary drift",
     )
     for row in trap_rows:
         for producer in row["producers"]:
@@ -8094,14 +8131,11 @@ def main() -> int:
     )
     release_system_rows = release_traceability["inventories"]["system_registers"]
     release_system_by_name = {row["name"]: row for row in release_system_rows}
-    witness_by_behavior = {
-        row["behavior_class"]: row for row in behavior_witness_rows
-    }
+    witness_by_behavior = {row["behavior_class"]: row for row in behavior_witness_rows}
     behavior_by_register = {
-        name: behavior
-        for behavior in behavior_rows
-        for name in behavior["registers"]
+        name: behavior for behavior in behavior_rows for name in behavior["registers"]
     }
+
     def expected_strongest_witness(behavior_id: str) -> dict[str, object]:
         witness = witness_by_behavior[behavior_id]
         rows = (
@@ -8134,18 +8168,14 @@ def main() -> int:
             release_system_by_name[name]["behavior_class"] == behavior["id"]
             and release_system_by_name[name]["profile_status"]
             == behavior["profile_status"]
-            and release_system_by_name[name]["side_effects"]
-            == behavior["side_effects"]
+            and release_system_by_name[name]["side_effects"] == behavior["side_effects"]
             and release_system_by_name[name]["strongest_executable_witness"]
             == expected_strongest_witness(behavior["id"])
             and all(
                 source["sha256"] == witness_sources[source["path"]]
                 for source in release_system_by_name[name]["exact_witness_sources"]
             )
-            and (
-                "tests/asl/tile-tests.asl"
-                in release_system_by_name[name]["tests"]
-            )
+            and ("tests/asl/tile-tests.asl" in release_system_by_name[name]["tests"])
             == (behavior["id"] == "tile-capacity-profile-limit")
             and (
                 release_system_by_name[name]["consumer_exclusion_guard"]
@@ -8162,8 +8192,7 @@ def main() -> int:
     require(
         len(release_trap_by_name) == 13
         and all(
-            release_trap_by_name[row["name"]]["disposition"]
-            == row["pto_v0_status"]
+            release_trap_by_name[row["name"]]["disposition"] == row["pto_v0_status"]
             and release_trap_by_name[row["name"]]["producers"] == row["producers"]
             and release_trap_by_name[row["name"]]["cause"] == row["cause"]
             and release_trap_by_name[row["name"]]["argument"] == row["argument"]
@@ -8172,13 +8201,17 @@ def main() -> int:
             == trap_witness_by_name[row["name"]]["witness_id"]
             and release_trap_by_name[row["name"]]["exact_envelope_witness"]["closure"]
             == trap_witness_by_name[row["name"]]["closure"]
-            and release_trap_by_name[row["name"]]["exact_envelope_witness"]["catalog_contract"]
+            and release_trap_by_name[row["name"]]["exact_envelope_witness"][
+                "catalog_contract"
+            ]
             == {
                 "cause": row["cause"],
                 "argument": row["argument"],
                 "restart": row["restart"],
             }
-            and release_trap_by_name[row["name"]]["exact_envelope_witness"]["source_sha256"]
+            and release_trap_by_name[row["name"]]["exact_envelope_witness"][
+                "source_sha256"
+            ]
             == witness_sources[trap_witness_by_name[row["name"]]["source"]]
             and (
                 release_trap_by_name[row["name"]]["consumer_exclusion_guard"]

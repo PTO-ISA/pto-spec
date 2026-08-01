@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "b26f3125ca21c5a5673d9e885fb37aa9c82cc4b320355b1912847046825f7d95"
+      "sha256": "91b7fd88f0e1afe3a2220854350245e67ca5a41cc6f94f498f9f2b1c1eb5cc11"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -47,7 +47,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "9e5e1f9884034ea1b6c11604bd817bc482d6f561d3a6e10d3c6c9ef53996312c"
+      "sha256": "34c5b9d20a77c9788c8719569dc3a8ae8c7dbfbc9f74712beb3c0cab2455f74f"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -55,11 +55,11 @@
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "3898a9f3fcb3eb21e3f9d5159b1e2337565a067316128984f14953b1522b4939"
+      "sha256": "3abe1b9b2caafbc709fb170fda48ba9068e99895b880523f8fd85461ec639ad3"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "f1752a5cd060b3dd78826f1a350c0a686472a09d61f97af3c1e41ed742fd708a"
+      "sha256": "33fa8ea3a49fd11909959dcd5cf9b5a2aaeb6dc5a7c84e52036df3ffcf01518e"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
@@ -67,7 +67,7 @@
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "7c13bbec929c6d151f1b57bc8f128c95feb46f0ef82d060ad2978e4695fc8336"
+      "sha256": "74c5b70c75acff6100934e343fa56fe1b42cbab4dfa76416105df25ba174053a"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
@@ -86,6 +86,10 @@
       "sha256": "eb752edaef13e5abea2b59e6e1b0ac18706e2a75ac759aa719a42d9b5318bb20"
     },
     {
+      "path": "spec/evidence/system-register-witness-closure.json",
+      "sha256": "8802e89a9e7298c572b9e6ee9097086c6684d6292c8537ceb9f91e1e803b0210"
+    },
+    {
       "path": "spec/evidence/bundle-command-totality.json",
       "sha256": "968bc6d62e29d109b9c95bcec47943ec1517bd563098b11d55046b6548aa795d"
     },
@@ -100,6 +104,30 @@
     {
       "path": "spec/evidence/cube-totality.json",
       "sha256": "4f17f7da1225d2f2c2ad4eac3ff6eb05ee0b4a3529cf4f44389d96a8f1f37abc"
+    },
+    {
+      "path": "scripts/generate-asl-decoders",
+      "sha256": "842a224f61a149d775ad404b75abc4e09c026386558dab55fdd369d0be603975"
+    },
+    {
+      "path": "scripts/generate-system-register-witness-closure",
+      "sha256": "bb830bdfd8adbf474d2dd2809dbf53ff0600f22faafd1458951b14c340d3c808"
+    },
+    {
+      "path": "tests/asl/main.asl",
+      "sha256": "9d0aa2fd7ab490fe8c786b5fd8820ff5fc4287b86ee333a659535ca830230582"
+    },
+    {
+      "path": "tests/asl/scalar-tests.asl",
+      "sha256": "9e136247b451eefb8acf0ee0f854eafee0e5f9e27cfc35e075c69aefaf7aafc6"
+    },
+    {
+      "path": "tests/asl/state-tests.asl",
+      "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+    },
+    {
+      "path": "tests/asl/tile-tests.asl",
+      "sha256": "52f72289ab1c4ca1fb809e105d70f0979e51916b58ca35d94b44fc7a97b5d1c5"
     },
     {
       "path": "asl/types.asl",
@@ -646,11 +674,13 @@
           "spec/catalog/system-registers.json",
           "spec/profile-hooks.json",
           "scripts/generate-asl-decoders",
+          "scripts/generate-system-register-witness-closure",
           "docs/architecture-decisions/0003-pto-owned-system-register-names.md",
           "docs/architecture-decisions/0011-visible-ebarg-snapshot.md",
           "docs/architecture-decisions/0017-system-register-behavior-classes.md",
           "docs/architecture-decisions/0031-scalar-sys-totality-and-profile-boundaries.md",
-          "spec/evidence/scalar-sys-totality.json"
+          "spec/evidence/scalar-sys-totality.json",
+          "spec/evidence/system-register-witness-closure.json"
         ],
         "tests": [
           "scripts/generate-asl-decoders",
@@ -17972,18 +18002,48 @@
         "address_or_low_index": "0x0000",
         "access": "RW",
         "scope": "base",
+        "behavior_class": "base-pointer-storage",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [],
+        "witness_ids": [
+          "sysreg-class:base-pointer-storage:reset",
+          "sysreg-class:base-pointer-storage:access"
+        ],
+        "strongest_executable_witness": {
+          "kind": "access-contract",
+          "witnesses": [
+            {
+              "id": "sysreg-class:base-pointer-storage:access",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS class/base-pointer-storage/access",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -17993,18 +18053,48 @@
         "address_or_low_index": "0x0001",
         "access": "RW",
         "scope": "base",
+        "behavior_class": "base-pointer-storage",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [],
+        "witness_ids": [
+          "sysreg-class:base-pointer-storage:reset",
+          "sysreg-class:base-pointer-storage:access"
+        ],
+        "strongest_executable_witness": {
+          "kind": "access-contract",
+          "witnesses": [
+            {
+              "id": "sysreg-class:base-pointer-storage:access",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS class/base-pointer-storage/access",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18014,17 +18104,56 @@
         "address_or_low_index": "0x0010",
         "access": "RO",
         "scope": "base",
+        "behavior_class": "architectural-time",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "architectural-time",
+        "write": "reject-read-only",
+        "side_effects": [
+          "advances-on-every-execution-attempt"
+        ],
+        "witness_ids": [
+          "sysreg-class:architectural-time:reset",
+          "sysreg-class:architectural-time:access",
+          "sysreg-effect:architectural-time:advances-on-every-execution-attempt"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:architectural-time:advances-on-every-execution-attempt",
+              "function": "TestInterruptRegisterState",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS architectural-time/advances-on-every-execution-attempt",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18035,18 +18164,57 @@
         "address_or_low_index": "0x0020",
         "access": "RW",
         "scope": "base",
+        "behavior_class": "core-state-control",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "write-selects-current-acr"
+        ],
+        "witness_ids": [
+          "sysreg-class:core-state-control:reset",
+          "sysreg-class:core-state-control:access",
+          "sysreg-effect:core-state-control:write-selects-current-acr"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:core-state-control:write-selects-current-acr",
+              "function": "TestScalarFPFlagLifecycle",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS core-state-control/write-selects-current-acr",
+              "source": "tests/asl/scalar-tests.asl",
+              "source_sha256": "9e136247b451eefb8acf0ee0f854eafee0e5f9e27cfc35e075c69aefaf7aafc6",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/scalar-tests.asl",
+            "sha256": "9e136247b451eefb8acf0ee0f854eafee0e5f9e27cfc35e075c69aefaf7aafc6"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
+          "tests/asl/scalar-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18056,18 +18224,48 @@
         "address_or_low_index": "0x0021",
         "access": "RO",
         "scope": "base",
+        "behavior_class": "zero-profile-identity",
+        "profile_status": "profile-constant",
+        "reset": "zero",
+        "read": "profile-value",
+        "write": "reject-read-only",
+        "side_effects": [],
+        "witness_ids": [
+          "sysreg-class:zero-profile-identity:reset",
+          "sysreg-class:zero-profile-identity:access"
+        ],
+        "strongest_executable_witness": {
+          "kind": "access-contract",
+          "witnesses": [
+            {
+              "id": "sysreg-class:zero-profile-identity:access",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18077,18 +18275,48 @@
         "address_or_low_index": "0x0022",
         "access": "RO",
         "scope": "base",
+        "behavior_class": "zero-profile-identity",
+        "profile_status": "profile-constant",
+        "reset": "zero",
+        "read": "profile-value",
+        "write": "reject-read-only",
+        "side_effects": [],
+        "witness_ids": [
+          "sysreg-class:zero-profile-identity:reset",
+          "sysreg-class:zero-profile-identity:access"
+        ],
+        "strongest_executable_witness": {
+          "kind": "access-contract",
+          "witnesses": [
+            {
+              "id": "sysreg-class:zero-profile-identity:access",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18098,18 +18326,48 @@
         "address_or_low_index": "0x0023",
         "access": "RO",
         "scope": "base",
+        "behavior_class": "version-profile-identity",
+        "profile_status": "profile-constant",
+        "reset": "one",
+        "read": "profile-value",
+        "write": "reject-read-only",
+        "side_effects": [],
+        "witness_ids": [
+          "sysreg-class:version-profile-identity:reset",
+          "sysreg-class:version-profile-identity:access"
+        ],
+        "strongest_executable_witness": {
+          "kind": "access-contract",
+          "witnesses": [
+            {
+              "id": "sysreg-class:version-profile-identity:access",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS class/version-profile-identity/access",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18119,18 +18377,48 @@
         "address_or_low_index": "0x0024",
         "access": "RO",
         "scope": "base",
+        "behavior_class": "zero-profile-identity",
+        "profile_status": "profile-constant",
+        "reset": "zero",
+        "read": "profile-value",
+        "write": "reject-read-only",
+        "side_effects": [],
+        "witness_ids": [
+          "sysreg-class:zero-profile-identity:reset",
+          "sysreg-class:zero-profile-identity:access"
+        ],
+        "strongest_executable_witness": {
+          "kind": "access-contract",
+          "witnesses": [
+            {
+              "id": "sysreg-class:zero-profile-identity:access",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18140,18 +18428,48 @@
         "address_or_low_index": "0x0025",
         "access": "RW",
         "scope": "base",
+        "behavior_class": "feature-enable-storage",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [],
+        "witness_ids": [
+          "sysreg-class:feature-enable-storage:reset",
+          "sysreg-class:feature-enable-storage:access"
+        ],
+        "strongest_executable_witness": {
+          "kind": "access-contract",
+          "witnesses": [
+            {
+              "id": "sysreg-class:feature-enable-storage:access",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS class/feature-enable-storage/access",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18161,18 +18479,48 @@
         "address_or_low_index": "0x0026",
         "access": "RO",
         "scope": "base",
+        "behavior_class": "zero-profile-identity",
+        "profile_status": "profile-constant",
+        "reset": "zero",
+        "read": "profile-value",
+        "write": "reject-read-only",
+        "side_effects": [],
+        "witness_ids": [
+          "sysreg-class:zero-profile-identity:reset",
+          "sysreg-class:zero-profile-identity:access"
+        ],
+        "strongest_executable_witness": {
+          "kind": "access-contract",
+          "witnesses": [
+            {
+              "id": "sysreg-class:zero-profile-identity:access",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18182,18 +18530,57 @@
         "address_or_low_index": "0x0027",
         "access": "RO",
         "scope": "base",
+        "behavior_class": "tile-capacity-profile-limit",
+        "profile_status": "profile-constant",
+        "reset": "pto-model-max-tile-capacity-bytes",
+        "read": "profile-value",
+        "write": "reject-read-only",
+        "side_effects": [
+          "limits-per-tile-and-aggregate-allocation"
+        ],
+        "witness_ids": [
+          "sysreg-class:tile-capacity-profile-limit:reset",
+          "sysreg-class:tile-capacity-profile-limit:access",
+          "sysreg-effect:tile-capacity-profile-limit:limits-per-tile-and-aggregate-allocation"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:tile-capacity-profile-limit:limits-per-tile-and-aggregate-allocation",
+              "function": "TestTileCapacityLegality",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS tile-capacity-profile-limit/limits-per-tile-and-aggregate-allocation",
+              "source": "tests/asl/tile-tests.asl",
+              "source_sha256": "52f72289ab1c4ca1fb809e105d70f0979e51916b58ca35d94b44fc7a97b5d1c5",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/tile-tests.asl",
+            "sha256": "52f72289ab1c4ca1fb809e105d70f0979e51916b58ca35d94b44fc7a97b5d1c5"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
+          "tests/asl/tile-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18203,18 +18590,48 @@
         "address_or_low_index": "0x0050",
         "access": "RO",
         "scope": "base",
+        "behavior_class": "zero-profile-identity",
+        "profile_status": "profile-constant",
+        "reset": "zero",
+        "read": "profile-value",
+        "write": "reject-read-only",
+        "side_effects": [],
+        "witness_ids": [
+          "sysreg-class:zero-profile-identity:reset",
+          "sysreg-class:zero-profile-identity:access"
+        ],
+        "strongest_executable_witness": {
+          "kind": "access-contract",
+          "witnesses": [
+            {
+              "id": "sysreg-class:zero-profile-identity:access",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18224,18 +18641,48 @@
         "address_or_low_index": "0x0051",
         "access": "RO",
         "scope": "base",
+        "behavior_class": "zero-profile-identity",
+        "profile_status": "profile-constant",
+        "reset": "zero",
+        "read": "profile-value",
+        "write": "reject-read-only",
+        "side_effects": [],
+        "witness_ids": [
+          "sysreg-class:zero-profile-identity:reset",
+          "sysreg-class:zero-profile-identity:access"
+        ],
+        "strongest_executable_witness": {
+          "kind": "access-contract",
+          "witnesses": [
+            {
+              "id": "sysreg-class:zero-profile-identity:access",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18245,17 +18692,56 @@
         "address_or_low_index": "0x0C00",
         "access": "RO",
         "scope": "base",
+        "behavior_class": "architectural-time",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "architectural-time",
+        "write": "reject-read-only",
+        "side_effects": [
+          "advances-on-every-execution-attempt"
+        ],
+        "witness_ids": [
+          "sysreg-class:architectural-time:reset",
+          "sysreg-class:architectural-time:access",
+          "sysreg-effect:architectural-time:advances-on-every-execution-attempt"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:architectural-time:advances-on-every-execution-attempt",
+              "function": "TestInterruptRegisterState",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS architectural-time/advances-on-every-execution-attempt",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18266,17 +18752,56 @@
         "address_or_low_index": "0xF00",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "execution-context-state",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "save-and-recovery-profile-state"
+        ],
+        "witness_ids": [
+          "sysreg-class:execution-context-state:reset",
+          "sysreg-class:execution-context-state:access",
+          "sysreg-effect:execution-context-state:save-and-recovery-profile-state"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:execution-context-state:save-and-recovery-profile-state",
+              "function": "CheckSynchronousTrapMapping",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS execution-context-state/save-and-recovery-profile-state",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18287,18 +18812,57 @@
         "address_or_low_index": "0xF01",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "exception-vector-base",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "selects-trap-entry-tpc"
+        ],
+        "witness_ids": [
+          "sysreg-class:exception-vector-base:reset",
+          "sysreg-class:exception-vector-base:access",
+          "sysreg-effect:exception-vector-base:selects-trap-entry-tpc"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:exception-vector-base:selects-trap-entry-tpc",
+              "function": "TestServiceRequestControl",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS exception-vector-base/selects-trap-entry-tpc",
+              "source": "tests/asl/scalar-tests.asl",
+              "source_sha256": "9e136247b451eefb8acf0ee0f854eafee0e5f9e27cfc35e075c69aefaf7aafc6",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/scalar-tests.asl",
+            "sha256": "9e136247b451eefb8acf0ee0f854eafee0e5f9e27cfc35e075c69aefaf7aafc6"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
+          "tests/asl/scalar-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18308,17 +18872,56 @@
         "address_or_low_index": "0xF02",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "trap-status",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "packed-trap-status",
+        "write": "unpack-trap-status",
+        "side_effects": [
+          "reads-and-writes-trap-bank-fields"
+        ],
+        "witness_ids": [
+          "sysreg-class:trap-status:reset",
+          "sysreg-class:trap-status:access",
+          "sysreg-effect:trap-status:reads-and-writes-trap-bank-fields"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:trap-status:reads-and-writes-trap-bank-fields",
+              "function": "CheckSynchronousTrapMapping",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS trap-status/reads-and-writes-trap-bank-fields",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18329,17 +18932,56 @@
         "address_or_low_index": "0xF03",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "trap-argument",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "trap-argument-zero",
+        "write": "store-trap-argument-zero",
+        "side_effects": [
+          "reads-and-writes-trap-bank-argument"
+        ],
+        "witness_ids": [
+          "sysreg-class:trap-argument:reset",
+          "sysreg-class:trap-argument:access",
+          "sysreg-effect:trap-argument:reads-and-writes-trap-bank-argument"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:trap-argument:reads-and-writes-trap-bank-argument",
+              "function": "CheckSynchronousTrapMapping",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS trap-argument/reads-and-writes-trap-bank-argument",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18350,18 +18992,48 @@
         "address_or_low_index": "0xF05",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "exception-temporary-storage",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [],
+        "witness_ids": [
+          "sysreg-class:exception-temporary-storage:reset",
+          "sysreg-class:exception-temporary-storage:access"
+        ],
+        "strongest_executable_witness": {
+          "kind": "access-contract",
+          "witnesses": [
+            {
+              "id": "sysreg-class:exception-temporary-storage:access",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS class/exception-temporary-storage/access",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18371,18 +19043,48 @@
         "address_or_low_index": "0xF06",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "exception-temporary-storage",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [],
+        "witness_ids": [
+          "sysreg-class:exception-temporary-storage:reset",
+          "sysreg-class:exception-temporary-storage:access"
+        ],
+        "strongest_executable_witness": {
+          "kind": "access-contract",
+          "witnesses": [
+            {
+              "id": "sysreg-class:exception-temporary-storage:access",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS class/exception-temporary-storage/access",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18392,17 +19094,56 @@
         "address_or_low_index": "0xF07",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "interrupt-configuration",
+        "profile_status": "architectural-active",
+        "reset": "external-and-timer-enabled",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "controls-external-and-timer-trap-entry"
+        ],
+        "witness_ids": [
+          "sysreg-class:interrupt-configuration:reset",
+          "sysreg-class:interrupt-configuration:access",
+          "sysreg-effect:interrupt-configuration:controls-external-and-timer-trap-entry"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:interrupt-configuration:controls-external-and-timer-trap-entry",
+              "function": "TestInterruptRegisterState",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS interrupt-configuration/controls-external-and-timer-trap-entry",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18413,17 +19154,56 @@
         "address_or_low_index": "0xF08",
         "access": "RO",
         "scope": "context-family",
+        "behavior_class": "interrupt-pending",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "refresh-timer-then-pending-bitmap",
+        "write": "reject-read-only",
+        "side_effects": [
+          "reflects-external-and-timer-pending-sources"
+        ],
+        "witness_ids": [
+          "sysreg-class:interrupt-pending:reset",
+          "sysreg-class:interrupt-pending:access",
+          "sysreg-effect:interrupt-pending:reflects-external-and-timer-pending-sources"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:interrupt-pending:reflects-external-and-timer-pending-sources",
+              "function": "TestInterruptRegisterState",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS interrupt-pending/reflects-external-and-timer-pending-sources",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18434,17 +19214,56 @@
         "address_or_low_index": "0xF09",
         "access": "RO",
         "scope": "context-family",
+        "behavior_class": "top-pending-interrupt",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "refresh-timer-then-lowest-pending-id",
+        "write": "reject-read-only",
+        "side_effects": [
+          "priority-derived-from-pending-bitmap"
+        ],
+        "witness_ids": [
+          "sysreg-class:top-pending-interrupt:reset",
+          "sysreg-class:top-pending-interrupt:access",
+          "sysreg-effect:top-pending-interrupt:priority-derived-from-pending-bitmap"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:top-pending-interrupt:priority-derived-from-pending-bitmap",
+              "function": "TestInterruptRegisterState",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS top-pending-interrupt/priority-derived-from-pending-bitmap",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18455,17 +19274,66 @@
         "address_or_low_index": "0xF0A",
         "access": "WO",
         "scope": "context-family",
+        "behavior_class": "end-of-interrupt",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "reject-write-only",
+        "write": "acknowledge-interrupt-id",
+        "side_effects": [
+          "clears-selected-pending-id",
+          "clears-asynchronous-trap-status"
+        ],
+        "witness_ids": [
+          "sysreg-class:end-of-interrupt:reset",
+          "sysreg-class:end-of-interrupt:access",
+          "sysreg-effect:end-of-interrupt:clears-selected-pending-id",
+          "sysreg-effect:end-of-interrupt:clears-asynchronous-trap-status"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:end-of-interrupt:clears-selected-pending-id",
+              "function": "TestInterruptRegisterState",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS end-of-interrupt/clears-selected-pending-id",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            },
+            {
+              "id": "sysreg-effect:end-of-interrupt:clears-asynchronous-trap-status",
+              "function": "TestInterruptRegisterState",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS end-of-interrupt/clears-asynchronous-trap-status",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18476,18 +19344,52 @@
         "address_or_low_index": "0xF10",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "translation-configuration-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-identity-translation-does-not-consume-value"
+        ],
+        "witness_ids": [
+          "sysreg-class:translation-configuration-storage:reset",
+          "sysreg-class:translation-configuration-storage:access",
+          "sysreg-effect:translation-configuration-storage:pto-v0-identity-translation-does-not-consume-value"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:translation-configuration-storage:pto-v0-identity-translation-does-not-consume-value",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18497,18 +19399,52 @@
         "address_or_low_index": "0xF11",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "translation-configuration-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-identity-translation-does-not-consume-value"
+        ],
+        "witness_ids": [
+          "sysreg-class:translation-configuration-storage:reset",
+          "sysreg-class:translation-configuration-storage:access",
+          "sysreg-effect:translation-configuration-storage:pto-v0-identity-translation-does-not-consume-value"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:translation-configuration-storage:pto-v0-identity-translation-does-not-consume-value",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18518,18 +19454,52 @@
         "address_or_low_index": "0xF12",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "translation-configuration-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-identity-translation-does-not-consume-value"
+        ],
+        "witness_ids": [
+          "sysreg-class:translation-configuration-storage:reset",
+          "sysreg-class:translation-configuration-storage:access",
+          "sysreg-effect:translation-configuration-storage:pto-v0-identity-translation-does-not-consume-value"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:translation-configuration-storage:pto-v0-identity-translation-does-not-consume-value",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18539,18 +19509,52 @@
         "address_or_low_index": "0xF13",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "translation-configuration-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-identity-translation-does-not-consume-value"
+        ],
+        "witness_ids": [
+          "sysreg-class:translation-configuration-storage:reset",
+          "sysreg-class:translation-configuration-storage:access",
+          "sysreg-effect:translation-configuration-storage:pto-v0-identity-translation-does-not-consume-value"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:translation-configuration-storage:pto-v0-identity-translation-does-not-consume-value",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18560,18 +19564,52 @@
         "address_or_low_index": "0xF14",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "translation-configuration-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-identity-translation-does-not-consume-value"
+        ],
+        "witness_ids": [
+          "sysreg-class:translation-configuration-storage:reset",
+          "sysreg-class:translation-configuration-storage:access",
+          "sysreg-effect:translation-configuration-storage:pto-v0-identity-translation-does-not-consume-value"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:translation-configuration-storage:pto-v0-identity-translation-does-not-consume-value",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18581,18 +19619,52 @@
         "address_or_low_index": "0xF15",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "translation-configuration-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-identity-translation-does-not-consume-value"
+        ],
+        "witness_ids": [
+          "sysreg-class:translation-configuration-storage:reset",
+          "sysreg-class:translation-configuration-storage:access",
+          "sysreg-effect:translation-configuration-storage:pto-v0-identity-translation-does-not-consume-value"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:translation-configuration-storage:pto-v0-identity-translation-does-not-consume-value",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18602,18 +19674,52 @@
         "address_or_low_index": "0xF16",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "translation-configuration-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-identity-translation-does-not-consume-value"
+        ],
+        "witness_ids": [
+          "sysreg-class:translation-configuration-storage:reset",
+          "sysreg-class:translation-configuration-storage:access",
+          "sysreg-effect:translation-configuration-storage:pto-v0-identity-translation-does-not-consume-value"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:translation-configuration-storage:pto-v0-identity-translation-does-not-consume-value",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18623,17 +19729,56 @@
         "address_or_low_index": "0xF20",
         "access": "RO",
         "scope": "context-family",
+        "behavior_class": "timer-time",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "architectural-time",
+        "write": "reject-read-only",
+        "side_effects": [
+          "aliases-architectural-time"
+        ],
+        "witness_ids": [
+          "sysreg-class:timer-time:reset",
+          "sysreg-class:timer-time:access",
+          "sysreg-effect:timer-time:aliases-architectural-time"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:timer-time:aliases-architectural-time",
+              "function": "TestInterruptRegisterState",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS timer-time/aliases-architectural-time",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18644,17 +19789,56 @@
         "address_or_low_index": "0xF21",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "timer-compare",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "refreshes-timer-pending-state"
+        ],
+        "witness_ids": [
+          "sysreg-class:timer-compare:reset",
+          "sysreg-class:timer-compare:access",
+          "sysreg-effect:timer-compare:refreshes-timer-pending-state"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:timer-compare:refreshes-timer-pending-state",
+              "function": "TestInterruptRegisterState",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS timer-compare/refreshes-timer-pending-state",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18665,18 +19849,52 @@
         "address_or_low_index": "0xF30",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "acr-parameter-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-does-not-consume-value"
+        ],
+        "witness_ids": [
+          "sysreg-class:acr-parameter-storage:reset",
+          "sysreg-class:acr-parameter-storage:access",
+          "sysreg-effect:acr-parameter-storage:pto-v0-does-not-consume-value"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:acr-parameter-storage:pto-v0-does-not-consume-value",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/acr-parameter-storage/pto-v0-does-not-consume-value",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18686,18 +19904,52 @@
         "address_or_low_index": "0xF31",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "acr-parameter-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-does-not-consume-value"
+        ],
+        "witness_ids": [
+          "sysreg-class:acr-parameter-storage:reset",
+          "sysreg-class:acr-parameter-storage:access",
+          "sysreg-effect:acr-parameter-storage:pto-v0-does-not-consume-value"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:acr-parameter-storage:pto-v0-does-not-consume-value",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/acr-parameter-storage/pto-v0-does-not-consume-value",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -18707,17 +19959,56 @@
         "address_or_low_index": "0xF40",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "saved-execution-context",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "saved-context-value",
+        "write": "store-saved-context-value",
+        "side_effects": [
+          "save-and-recovery-profile-state"
+        ],
+        "witness_ids": [
+          "sysreg-class:saved-execution-context:reset",
+          "sysreg-class:saved-execution-context:access",
+          "sysreg-effect:saved-execution-context:save-and-recovery-profile-state"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:saved-execution-context:save-and-recovery-profile-state",
+              "function": "CheckSynchronousTrapMapping",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18728,17 +20019,56 @@
         "address_or_low_index": "0xF41",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "saved-execution-context",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "saved-context-value",
+        "write": "store-saved-context-value",
+        "side_effects": [
+          "save-and-recovery-profile-state"
+        ],
+        "witness_ids": [
+          "sysreg-class:saved-execution-context:reset",
+          "sysreg-class:saved-execution-context:access",
+          "sysreg-effect:saved-execution-context:save-and-recovery-profile-state"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:saved-execution-context:save-and-recovery-profile-state",
+              "function": "CheckSynchronousTrapMapping",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18749,17 +20079,56 @@
         "address_or_low_index": "0xF42",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "saved-execution-context",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "saved-context-value",
+        "write": "store-saved-context-value",
+        "side_effects": [
+          "save-and-recovery-profile-state"
+        ],
+        "witness_ids": [
+          "sysreg-class:saved-execution-context:reset",
+          "sysreg-class:saved-execution-context:access",
+          "sysreg-effect:saved-execution-context:save-and-recovery-profile-state"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:saved-execution-context:save-and-recovery-profile-state",
+              "function": "CheckSynchronousTrapMapping",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18770,17 +20139,56 @@
         "address_or_low_index": "0xF43",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "saved-execution-context",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "saved-context-value",
+        "write": "store-saved-context-value",
+        "side_effects": [
+          "save-and-recovery-profile-state"
+        ],
+        "witness_ids": [
+          "sysreg-class:saved-execution-context:reset",
+          "sysreg-class:saved-execution-context:access",
+          "sysreg-effect:saved-execution-context:save-and-recovery-profile-state"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:saved-execution-context:save-and-recovery-profile-state",
+              "function": "CheckSynchronousTrapMapping",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18791,17 +20199,56 @@
         "address_or_low_index": "0xF44",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "saved-execution-context",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "saved-context-value",
+        "write": "store-saved-context-value",
+        "side_effects": [
+          "save-and-recovery-profile-state"
+        ],
+        "witness_ids": [
+          "sysreg-class:saved-execution-context:reset",
+          "sysreg-class:saved-execution-context:access",
+          "sysreg-effect:saved-execution-context:save-and-recovery-profile-state"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:saved-execution-context:save-and-recovery-profile-state",
+              "function": "CheckSynchronousTrapMapping",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18812,17 +20259,56 @@
         "address_or_low_index": "0xF45",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "saved-execution-context",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "saved-context-value",
+        "write": "store-saved-context-value",
+        "side_effects": [
+          "save-and-recovery-profile-state"
+        ],
+        "witness_ids": [
+          "sysreg-class:saved-execution-context:reset",
+          "sysreg-class:saved-execution-context:access",
+          "sysreg-effect:saved-execution-context:save-and-recovery-profile-state"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:saved-execution-context:save-and-recovery-profile-state",
+              "function": "CheckSynchronousTrapMapping",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18833,17 +20319,56 @@
         "address_or_low_index": "0xF46",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "saved-execution-context",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "saved-context-value",
+        "write": "store-saved-context-value",
+        "side_effects": [
+          "save-and-recovery-profile-state"
+        ],
+        "witness_ids": [
+          "sysreg-class:saved-execution-context:reset",
+          "sysreg-class:saved-execution-context:access",
+          "sysreg-effect:saved-execution-context:save-and-recovery-profile-state"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:saved-execution-context:save-and-recovery-profile-state",
+              "function": "CheckSynchronousTrapMapping",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18854,17 +20379,56 @@
         "address_or_low_index": "0xF47",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "saved-execution-context",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "saved-context-value",
+        "write": "store-saved-context-value",
+        "side_effects": [
+          "save-and-recovery-profile-state"
+        ],
+        "witness_ids": [
+          "sysreg-class:saved-execution-context:reset",
+          "sysreg-class:saved-execution-context:access",
+          "sysreg-effect:saved-execution-context:save-and-recovery-profile-state"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:saved-execution-context:save-and-recovery-profile-state",
+              "function": "CheckSynchronousTrapMapping",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18875,17 +20439,56 @@
         "address_or_low_index": "0xF48",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "saved-execution-context",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "saved-context-value",
+        "write": "store-saved-context-value",
+        "side_effects": [
+          "save-and-recovery-profile-state"
+        ],
+        "witness_ids": [
+          "sysreg-class:saved-execution-context:reset",
+          "sysreg-class:saved-execution-context:access",
+          "sysreg-effect:saved-execution-context:save-and-recovery-profile-state"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:saved-execution-context:save-and-recovery-profile-state",
+              "function": "CheckSynchronousTrapMapping",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18896,17 +20499,56 @@
         "address_or_low_index": "0xF49",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "saved-execution-context",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "saved-context-value",
+        "write": "store-saved-context-value",
+        "side_effects": [
+          "save-and-recovery-profile-state"
+        ],
+        "witness_ids": [
+          "sysreg-class:saved-execution-context:reset",
+          "sysreg-class:saved-execution-context:access",
+          "sysreg-effect:saved-execution-context:save-and-recovery-profile-state"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:saved-execution-context:save-and-recovery-profile-state",
+              "function": "CheckSynchronousTrapMapping",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18917,17 +20559,56 @@
         "address_or_low_index": "0xF4A",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "saved-execution-context",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "saved-context-value",
+        "write": "store-saved-context-value",
+        "side_effects": [
+          "save-and-recovery-profile-state"
+        ],
+        "witness_ids": [
+          "sysreg-class:saved-execution-context:reset",
+          "sysreg-class:saved-execution-context:access",
+          "sysreg-effect:saved-execution-context:save-and-recovery-profile-state"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:saved-execution-context:save-and-recovery-profile-state",
+              "function": "CheckSynchronousTrapMapping",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18938,17 +20619,56 @@
         "address_or_low_index": "0xF4B",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "saved-execution-context",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "saved-context-value",
+        "write": "store-saved-context-value",
+        "side_effects": [
+          "save-and-recovery-profile-state"
+        ],
+        "witness_ids": [
+          "sysreg-class:saved-execution-context:reset",
+          "sysreg-class:saved-execution-context:access",
+          "sysreg-effect:saved-execution-context:save-and-recovery-profile-state"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:saved-execution-context:save-and-recovery-profile-state",
+              "function": "CheckSynchronousTrapMapping",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18959,17 +20679,56 @@
         "address_or_low_index": "0xF4C",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "saved-execution-context",
+        "profile_status": "architectural-active",
+        "reset": "zero",
+        "read": "saved-context-value",
+        "write": "store-saved-context-value",
+        "side_effects": [
+          "save-and-recovery-profile-state"
+        ],
+        "witness_ids": [
+          "sysreg-class:saved-execution-context:reset",
+          "sysreg-class:saved-execution-context:access",
+          "sysreg-effect:saved-execution-context:save-and-recovery-profile-state"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:saved-execution-context:save-and-recovery-profile-state",
+              "function": "CheckSynchronousTrapMapping",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -18980,17 +20739,66 @@
         "address_or_low_index": "0xF4D",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "saved-loop-context-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "trap-save-clears-value",
+          "pto-v0-recovery-does-not-consume-value"
+        ],
+        "witness_ids": [
+          "sysreg-class:saved-loop-context-storage:reset",
+          "sysreg-class:saved-loop-context-storage:access",
+          "sysreg-effect:saved-loop-context-storage:trap-save-clears-value",
+          "sysreg-effect:saved-loop-context-storage:pto-v0-recovery-does-not-consume-value"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:saved-loop-context-storage:trap-save-clears-value",
+              "function": "TestVisibleTrapContextRegisters",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS saved-loop-context-storage/trap-save-clears-value",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            },
+            {
+              "id": "sysreg-effect:saved-loop-context-storage:pto-v0-recovery-does-not-consume-value",
+              "function": "TestVisibleTrapContextRegisters",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS saved-loop-context-storage/pto-v0-recovery-does-not-consume-value",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -19001,17 +20809,66 @@
         "address_or_low_index": "0xF4E",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "saved-loop-context-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "trap-save-clears-value",
+          "pto-v0-recovery-does-not-consume-value"
+        ],
+        "witness_ids": [
+          "sysreg-class:saved-loop-context-storage:reset",
+          "sysreg-class:saved-loop-context-storage:access",
+          "sysreg-effect:saved-loop-context-storage:trap-save-clears-value",
+          "sysreg-effect:saved-loop-context-storage:pto-v0-recovery-does-not-consume-value"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:saved-loop-context-storage:trap-save-clears-value",
+              "function": "TestVisibleTrapContextRegisters",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS saved-loop-context-storage/trap-save-clears-value",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            },
+            {
+              "id": "sysreg-effect:saved-loop-context-storage:pto-v0-recovery-does-not-consume-value",
+              "function": "TestVisibleTrapContextRegisters",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS saved-loop-context-storage/pto-v0-recovery-does-not-consume-value",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -19022,17 +20879,66 @@
         "address_or_low_index": "0xF4F",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "extended-context-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "trap-save-preserves-value",
+          "pto-v0-recovery-does-not-consume-value"
+        ],
+        "witness_ids": [
+          "sysreg-class:extended-context-storage:reset",
+          "sysreg-class:extended-context-storage:access",
+          "sysreg-effect:extended-context-storage:trap-save-preserves-value",
+          "sysreg-effect:extended-context-storage:pto-v0-recovery-does-not-consume-value"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:extended-context-storage:trap-save-preserves-value",
+              "function": "TestVisibleTrapContextRegisters",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/trap-save-preserves-value",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            },
+            {
+              "id": "sysreg-effect:extended-context-storage:pto-v0-recovery-does-not-consume-value",
+              "function": "TestVisibleTrapContextRegisters",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/pto-v0-recovery-does-not-consume-value",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -19043,17 +20949,66 @@
         "address_or_low_index": "0xF50",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "extended-context-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "trap-save-preserves-value",
+          "pto-v0-recovery-does-not-consume-value"
+        ],
+        "witness_ids": [
+          "sysreg-class:extended-context-storage:reset",
+          "sysreg-class:extended-context-storage:access",
+          "sysreg-effect:extended-context-storage:trap-save-preserves-value",
+          "sysreg-effect:extended-context-storage:pto-v0-recovery-does-not-consume-value"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:extended-context-storage:trap-save-preserves-value",
+              "function": "TestVisibleTrapContextRegisters",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/trap-save-preserves-value",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            },
+            {
+              "id": "sysreg-effect:extended-context-storage:pto-v0-recovery-does-not-consume-value",
+              "function": "TestVisibleTrapContextRegisters",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/pto-v0-recovery-does-not-consume-value",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -19064,17 +21019,66 @@
         "address_or_low_index": "0xF51",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "extended-context-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "trap-save-preserves-value",
+          "pto-v0-recovery-does-not-consume-value"
+        ],
+        "witness_ids": [
+          "sysreg-class:extended-context-storage:reset",
+          "sysreg-class:extended-context-storage:access",
+          "sysreg-effect:extended-context-storage:trap-save-preserves-value",
+          "sysreg-effect:extended-context-storage:pto-v0-recovery-does-not-consume-value"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:extended-context-storage:trap-save-preserves-value",
+              "function": "TestVisibleTrapContextRegisters",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/trap-save-preserves-value",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            },
+            {
+              "id": "sysreg-effect:extended-context-storage:pto-v0-recovery-does-not-consume-value",
+              "function": "TestVisibleTrapContextRegisters",
+              "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/pto-v0-recovery-does-not-consume-value",
+              "source": "tests/asl/state-tests.asl",
+              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "closure": "direct-effect-assertion"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          },
+          {
+            "path": "tests/asl/state-tests.asl",
+            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl",
           "tests/asl/state-tests.asl"
         ],
         "bounded_status": "reference-behavior-closed"
@@ -19085,18 +21089,52 @@
         "address_or_low_index": "0xF80",
         "access": "RO",
         "scope": "context-family",
+        "behavior_class": "debug-identity-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "reject-read-only",
+        "side_effects": [
+          "pto-v0-debug-matching-disabled"
+        ],
+        "witness_ids": [
+          "sysreg-class:debug-identity-storage:reset",
+          "sysreg-class:debug-identity-storage:access",
+          "sysreg-effect:debug-identity-storage:pto-v0-debug-matching-disabled"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:debug-identity-storage:pto-v0-debug-matching-disabled",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/debug-identity-storage/pto-v0-debug-matching-disabled",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -19106,18 +21144,52 @@
         "address_or_low_index": "0xF90",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "debug-control-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-debug-matching-disabled"
+        ],
+        "witness_ids": [
+          "sysreg-class:debug-control-storage:reset",
+          "sysreg-class:debug-control-storage:access",
+          "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -19127,18 +21199,52 @@
         "address_or_low_index": "0xF92",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "debug-control-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-debug-matching-disabled"
+        ],
+        "witness_ids": [
+          "sysreg-class:debug-control-storage:reset",
+          "sysreg-class:debug-control-storage:access",
+          "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -19148,18 +21254,52 @@
         "address_or_low_index": "0xF94",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "debug-control-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-debug-matching-disabled"
+        ],
+        "witness_ids": [
+          "sysreg-class:debug-control-storage:reset",
+          "sysreg-class:debug-control-storage:access",
+          "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -19169,18 +21309,52 @@
         "address_or_low_index": "0xF96",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "debug-control-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-debug-matching-disabled"
+        ],
+        "witness_ids": [
+          "sysreg-class:debug-control-storage:reset",
+          "sysreg-class:debug-control-storage:access",
+          "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -19190,18 +21364,52 @@
         "address_or_low_index": "0xF91",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "debug-control-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-debug-matching-disabled"
+        ],
+        "witness_ids": [
+          "sysreg-class:debug-control-storage:reset",
+          "sysreg-class:debug-control-storage:access",
+          "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -19211,18 +21419,52 @@
         "address_or_low_index": "0xF93",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "debug-control-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-debug-matching-disabled"
+        ],
+        "witness_ids": [
+          "sysreg-class:debug-control-storage:reset",
+          "sysreg-class:debug-control-storage:access",
+          "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -19232,18 +21474,52 @@
         "address_or_low_index": "0xF95",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "debug-control-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-debug-matching-disabled"
+        ],
+        "witness_ids": [
+          "sysreg-class:debug-control-storage:reset",
+          "sysreg-class:debug-control-storage:access",
+          "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -19253,18 +21529,52 @@
         "address_or_low_index": "0xF97",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "debug-control-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-debug-matching-disabled"
+        ],
+        "witness_ids": [
+          "sysreg-class:debug-control-storage:reset",
+          "sysreg-class:debug-control-storage:access",
+          "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -19274,18 +21584,52 @@
         "address_or_low_index": "0xFA0",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "debug-control-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-debug-matching-disabled"
+        ],
+        "witness_ids": [
+          "sysreg-class:debug-control-storage:reset",
+          "sysreg-class:debug-control-storage:access",
+          "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -19295,18 +21639,52 @@
         "address_or_low_index": "0xFA1",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "debug-control-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-debug-matching-disabled"
+        ],
+        "witness_ids": [
+          "sysreg-class:debug-control-storage:reset",
+          "sysreg-class:debug-control-storage:access",
+          "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -19316,18 +21694,52 @@
         "address_or_low_index": "0xFB0",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "debug-control-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-debug-matching-disabled"
+        ],
+        "witness_ids": [
+          "sysreg-class:debug-control-storage:reset",
+          "sysreg-class:debug-control-storage:access",
+          "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -19337,18 +21749,52 @@
         "address_or_low_index": "0xFB2",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "debug-control-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-debug-matching-disabled"
+        ],
+        "witness_ids": [
+          "sysreg-class:debug-control-storage:reset",
+          "sysreg-class:debug-control-storage:access",
+          "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -19358,18 +21804,52 @@
         "address_or_low_index": "0xFB4",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "debug-control-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-debug-matching-disabled"
+        ],
+        "witness_ids": [
+          "sysreg-class:debug-control-storage:reset",
+          "sysreg-class:debug-control-storage:access",
+          "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -19379,18 +21859,52 @@
         "address_or_low_index": "0xFB6",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "debug-control-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-debug-matching-disabled"
+        ],
+        "witness_ids": [
+          "sysreg-class:debug-control-storage:reset",
+          "sysreg-class:debug-control-storage:access",
+          "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -19400,18 +21914,52 @@
         "address_or_low_index": "0xFB1",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "debug-control-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-debug-matching-disabled"
+        ],
+        "witness_ids": [
+          "sysreg-class:debug-control-storage:reset",
+          "sysreg-class:debug-control-storage:access",
+          "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -19421,18 +21969,52 @@
         "address_or_low_index": "0xFB3",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "debug-control-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-debug-matching-disabled"
+        ],
+        "witness_ids": [
+          "sysreg-class:debug-control-storage:reset",
+          "sysreg-class:debug-control-storage:access",
+          "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -19442,18 +22024,52 @@
         "address_or_low_index": "0xFB5",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "debug-control-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-debug-matching-disabled"
+        ],
+        "witness_ids": [
+          "sysreg-class:debug-control-storage:reset",
+          "sysreg-class:debug-control-storage:access",
+          "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       },
@@ -19463,18 +22079,52 @@
         "address_or_low_index": "0xFB7",
         "access": "RW",
         "scope": "context-family",
+        "behavior_class": "debug-control-storage",
+        "profile_status": "pto-v0-storage-only",
+        "reset": "zero",
+        "read": "stored-value",
+        "write": "store-value",
+        "side_effects": [
+          "pto-v0-debug-matching-disabled"
+        ],
+        "witness_ids": [
+          "sysreg-class:debug-control-storage:reset",
+          "sysreg-class:debug-control-storage:access",
+          "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled"
+        ],
+        "strongest_executable_witness": {
+          "kind": "side-effect-contract-set",
+          "witnesses": [
+            {
+              "id": "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled",
+              "function": "ValidateSystemRegisterResetAndAccess",
+              "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
+              "source": "generated:build/decoders.asl",
+              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "closure": "static-consumer-exclusion-plus-access-round-trip"
+            }
+          ]
+        },
+        "exact_witness_sources": [
+          {
+            "path": "generated:build/decoders.asl",
+            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+          }
+        ],
+        "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
         "requirements": [
           "PTO-REQ-SCALAR-SSR-001",
           "PTO-REQ-STATE-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/scalar/system-registers.asl",
           "asl/state.asl"
         ],
         "tests": [
-          "tests/asl/scalar-tests.asl",
-          "tests/asl/state-tests.asl"
+          "scripts/generate-asl-decoders",
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-behavior-closed"
       }
@@ -19485,18 +22135,45 @@
         "name": "EXEC_STATE_CHECK",
         "number": 0,
         "disposition": "production-active",
+        "producers": [
+          "ArchitectureEnterRequest",
+          "SetFault(Fault_ExecutionStateCheck)"
+        ],
+        "cause": "zero",
+        "argument": "source-tpc",
+        "restart": "saved-source-context",
+        "exact_envelope_witness": {
+          "id": "trap-envelope:0:EXEC_STATE_CHECK",
+          "function": "TestCompleteTrapEnvelope",
+          "case_marker": "TRAP-WITNESS case/EXEC_STATE_CHECK",
+          "closure": "exact-synchronous-envelope",
+          "catalog_contract": {
+            "cause": "zero",
+            "argument": "source-tpc",
+            "restart": "saved-source-context"
+          },
+          "source": "tests/asl/state-tests.asl",
+          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "assertion_markers": [
+            "TRAP-WITNESS envelope/assert-number",
+            "TRAP-WITNESS envelope/assert-argument",
+            "TRAP-WITNESS envelope/assert-restart"
+          ]
+        },
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-FAULT-001",
           "PTO-REQ-INTERRUPT-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/state.asl",
           "asl/profiles/pto-v0.asl"
         ],
         "tests": [
           "tests/asl/state-tests.asl",
-          "tests/asl/scalar-tests.asl"
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-disposition-closed"
       },
@@ -19505,18 +22182,44 @@
         "name": "ILLEGAL_INST",
         "number": 4,
         "disposition": "production-active",
+        "producers": [
+          "SetFault(Fault_IllegalInstruction)"
+        ],
+        "cause": "zero",
+        "argument": "fault-address",
+        "restart": "saved-source-context",
+        "exact_envelope_witness": {
+          "id": "trap-envelope:4:ILLEGAL_INST",
+          "function": "TestCompleteTrapEnvelope",
+          "case_marker": "TRAP-WITNESS case/ILLEGAL_INST",
+          "closure": "exact-synchronous-envelope",
+          "catalog_contract": {
+            "cause": "zero",
+            "argument": "fault-address",
+            "restart": "saved-source-context"
+          },
+          "source": "tests/asl/state-tests.asl",
+          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "assertion_markers": [
+            "TRAP-WITNESS envelope/assert-number",
+            "TRAP-WITNESS envelope/assert-argument",
+            "TRAP-WITNESS envelope/assert-restart"
+          ]
+        },
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-FAULT-001",
           "PTO-REQ-INTERRUPT-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/state.asl",
           "asl/profiles/pto-v0.asl"
         ],
         "tests": [
           "tests/asl/state-tests.asl",
-          "tests/asl/scalar-tests.asl"
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-disposition-closed"
       },
@@ -19525,18 +22228,46 @@
         "name": "BUNDLE_TRAP",
         "number": 5,
         "disposition": "production-active",
+        "producers": [
+          "SetFault(Fault_BundleControl)",
+          "SetFault(Fault_TileAllocation)",
+          "SetFault(Fault_TileLegality)"
+        ],
+        "cause": "zero",
+        "argument": "fault-address",
+        "restart": "saved-source-context",
+        "exact_envelope_witness": {
+          "id": "trap-envelope:5:BUNDLE_TRAP",
+          "function": "TestCompleteTrapEnvelope",
+          "case_marker": "TRAP-WITNESS case/BUNDLE_TRAP",
+          "closure": "exact-synchronous-envelope",
+          "catalog_contract": {
+            "cause": "zero",
+            "argument": "fault-address",
+            "restart": "saved-source-context"
+          },
+          "source": "tests/asl/state-tests.asl",
+          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "assertion_markers": [
+            "TRAP-WITNESS envelope/assert-number",
+            "TRAP-WITNESS envelope/assert-argument",
+            "TRAP-WITNESS envelope/assert-restart"
+          ]
+        },
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-FAULT-001",
           "PTO-REQ-INTERRUPT-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/state.asl",
           "asl/profiles/pto-v0.asl"
         ],
         "tests": [
           "tests/asl/state-tests.asl",
-          "tests/asl/scalar-tests.asl"
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-disposition-closed"
       },
@@ -19545,18 +22276,52 @@
         "name": "SCALL",
         "number": 6,
         "disposition": "production-active",
+        "producers": [
+          "RaiseServiceRequest",
+          "SetFault(Fault_ServiceRequest)"
+        ],
+        "cause": "request-type",
+        "argument": "source-tpc",
+        "restart": "saved-context-resume-next-instruction",
+        "exact_envelope_witness": {
+          "id": "trap-envelope:6:SCALL",
+          "function": "TestCompleteTrapEnvelope",
+          "case_marker": "TRAP-WITNESS case/SCALL",
+          "closure": "exact-service-request-leaf-semantics",
+          "catalog_contract": {
+            "cause": "request-type",
+            "argument": "source-tpc",
+            "restart": "saved-context-resume-next-instruction"
+          },
+          "source": "tests/asl/state-tests.asl",
+          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "assertion_markers": [
+            "TRAP-WITNESS scall/assert-number",
+            "TRAP-WITNESS scall/assert-argument",
+            "TRAP-WITNESS scall/assert-cause",
+            "TRAP-WITNESS scall/assert-synchronous",
+            "TRAP-WITNESS scall/assert-argument-valid",
+            "TRAP-WITNESS scall/assert-saved-source",
+            "TRAP-WITNESS scall/assert-saved-restart",
+            "TRAP-WITNESS scall/assert-visible-restart",
+            "TRAP-WITNESS scall/assert-vector-entry",
+            "TRAP-WITNESS scall/assert-restart"
+          ]
+        },
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-FAULT-001",
           "PTO-REQ-INTERRUPT-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/state.asl",
           "asl/profiles/pto-v0.asl"
         ],
         "tests": [
           "tests/asl/state-tests.asl",
-          "tests/asl/scalar-tests.asl"
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-disposition-closed"
       },
@@ -19565,18 +22330,44 @@
         "name": "INST_PC_FAULT",
         "number": 32,
         "disposition": "production-active",
+        "producers": [
+          "SetFault(Fault_InstructionPC)"
+        ],
+        "cause": "zero",
+        "argument": "invalid-target",
+        "restart": "saved-source-context",
+        "exact_envelope_witness": {
+          "id": "trap-envelope:32:INST_PC_FAULT",
+          "function": "TestCompleteTrapEnvelope",
+          "case_marker": "TRAP-WITNESS case/INST_PC_FAULT",
+          "closure": "exact-synchronous-envelope",
+          "catalog_contract": {
+            "cause": "zero",
+            "argument": "invalid-target",
+            "restart": "saved-source-context"
+          },
+          "source": "tests/asl/state-tests.asl",
+          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "assertion_markers": [
+            "TRAP-WITNESS envelope/assert-number",
+            "TRAP-WITNESS envelope/assert-argument",
+            "TRAP-WITNESS envelope/assert-restart"
+          ]
+        },
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-FAULT-001",
           "PTO-REQ-INTERRUPT-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/state.asl",
           "asl/profiles/pto-v0.asl"
         ],
         "tests": [
           "tests/asl/state-tests.asl",
-          "tests/asl/scalar-tests.asl"
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-disposition-closed"
       },
@@ -19585,18 +22376,44 @@
         "name": "INST_PAGE_FAULT",
         "number": 33,
         "disposition": "envelope-only-no-trigger",
+        "producers": [
+          "SetFault(Fault_InstructionPage)"
+        ],
+        "cause": "zero",
+        "argument": "fault-address",
+        "restart": "saved-source-context",
+        "exact_envelope_witness": {
+          "id": "trap-envelope:33:INST_PAGE_FAULT",
+          "function": "TestCompleteTrapEnvelope",
+          "case_marker": "TRAP-WITNESS case/INST_PAGE_FAULT",
+          "closure": "exact-synchronous-envelope",
+          "catalog_contract": {
+            "cause": "zero",
+            "argument": "fault-address",
+            "restart": "saved-source-context"
+          },
+          "source": "tests/asl/state-tests.asl",
+          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "assertion_markers": [
+            "TRAP-WITNESS envelope/assert-number",
+            "TRAP-WITNESS envelope/assert-argument",
+            "TRAP-WITNESS envelope/assert-restart"
+          ]
+        },
+        "consumer_exclusion_guard": "trap-consumer-exclusion-pto-v0-envelope-only",
         "requirements": [
           "PTO-REQ-FAULT-001",
           "PTO-REQ-INTERRUPT-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/state.asl",
           "asl/profiles/pto-v0.asl"
         ],
         "tests": [
           "tests/asl/state-tests.asl",
-          "tests/asl/scalar-tests.asl"
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-disposition-closed"
       },
@@ -19605,18 +22422,44 @@
         "name": "DATA_ALIGN_FAULT",
         "number": 34,
         "disposition": "production-active",
+        "producers": [
+          "SetFault(Fault_DataAlignment)"
+        ],
+        "cause": "zero",
+        "argument": "fault-address",
+        "restart": "saved-source-context",
+        "exact_envelope_witness": {
+          "id": "trap-envelope:34:DATA_ALIGN_FAULT",
+          "function": "TestCompleteTrapEnvelope",
+          "case_marker": "TRAP-WITNESS case/DATA_ALIGN_FAULT",
+          "closure": "exact-synchronous-envelope",
+          "catalog_contract": {
+            "cause": "zero",
+            "argument": "fault-address",
+            "restart": "saved-source-context"
+          },
+          "source": "tests/asl/state-tests.asl",
+          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "assertion_markers": [
+            "TRAP-WITNESS envelope/assert-number",
+            "TRAP-WITNESS envelope/assert-argument",
+            "TRAP-WITNESS envelope/assert-restart"
+          ]
+        },
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-FAULT-001",
           "PTO-REQ-INTERRUPT-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/state.asl",
           "asl/profiles/pto-v0.asl"
         ],
         "tests": [
           "tests/asl/state-tests.asl",
-          "tests/asl/scalar-tests.asl"
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-disposition-closed"
       },
@@ -19625,18 +22468,44 @@
         "name": "DATA_PAGE_FAULT",
         "number": 35,
         "disposition": "production-active",
+        "producers": [
+          "SetFault(Fault_DataPage)"
+        ],
+        "cause": "zero",
+        "argument": "fault-address",
+        "restart": "saved-source-context",
+        "exact_envelope_witness": {
+          "id": "trap-envelope:35:DATA_PAGE_FAULT",
+          "function": "TestCompleteTrapEnvelope",
+          "case_marker": "TRAP-WITNESS case/DATA_PAGE_FAULT",
+          "closure": "exact-synchronous-envelope",
+          "catalog_contract": {
+            "cause": "zero",
+            "argument": "fault-address",
+            "restart": "saved-source-context"
+          },
+          "source": "tests/asl/state-tests.asl",
+          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "assertion_markers": [
+            "TRAP-WITNESS envelope/assert-number",
+            "TRAP-WITNESS envelope/assert-argument",
+            "TRAP-WITNESS envelope/assert-restart"
+          ]
+        },
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-FAULT-001",
           "PTO-REQ-INTERRUPT-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/state.asl",
           "asl/profiles/pto-v0.asl"
         ],
         "tests": [
           "tests/asl/state-tests.asl",
-          "tests/asl/scalar-tests.asl"
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-disposition-closed"
       },
@@ -19645,18 +22514,44 @@
         "name": "INTERRUPT",
         "number": 44,
         "disposition": "production-active",
+        "producers": [
+          "RaiseInterrupt"
+        ],
+        "cause": "source-supplied",
+        "argument": "interrupt-id",
+        "restart": "saved-source-context",
+        "exact_envelope_witness": {
+          "id": "trap-envelope:44:INTERRUPT",
+          "function": "TestCompleteTrapEnvelope",
+          "case_marker": "TRAP-WITNESS case/INTERRUPT",
+          "closure": "exact-interrupt-envelope",
+          "catalog_contract": {
+            "cause": "source-supplied",
+            "argument": "interrupt-id",
+            "restart": "saved-source-context"
+          },
+          "source": "tests/asl/state-tests.asl",
+          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "assertion_markers": [
+            "TRAP-WITNESS interrupt/assert-number",
+            "TRAP-WITNESS interrupt/assert-argument",
+            "TRAP-WITNESS interrupt/assert-restart"
+          ]
+        },
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-FAULT-001",
           "PTO-REQ-INTERRUPT-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/state.asl",
           "asl/profiles/pto-v0.asl"
         ],
         "tests": [
           "tests/asl/state-tests.asl",
-          "tests/asl/scalar-tests.asl"
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-disposition-closed"
       },
@@ -19665,18 +22560,44 @@
         "name": "HW_BREAKPOINT",
         "number": 49,
         "disposition": "envelope-only-no-trigger",
+        "producers": [
+          "SetFault(Fault_HardwareBreakpoint)"
+        ],
+        "cause": "zero",
+        "argument": "instruction-address",
+        "restart": "saved-source-context",
+        "exact_envelope_witness": {
+          "id": "trap-envelope:49:HW_BREAKPOINT",
+          "function": "TestCompleteTrapEnvelope",
+          "case_marker": "TRAP-WITNESS case/HW_BREAKPOINT",
+          "closure": "exact-synchronous-envelope",
+          "catalog_contract": {
+            "cause": "zero",
+            "argument": "instruction-address",
+            "restart": "saved-source-context"
+          },
+          "source": "tests/asl/state-tests.asl",
+          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "assertion_markers": [
+            "TRAP-WITNESS envelope/assert-number",
+            "TRAP-WITNESS envelope/assert-argument",
+            "TRAP-WITNESS envelope/assert-restart"
+          ]
+        },
+        "consumer_exclusion_guard": "trap-consumer-exclusion-pto-v0-envelope-only",
         "requirements": [
           "PTO-REQ-FAULT-001",
           "PTO-REQ-INTERRUPT-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/state.asl",
           "asl/profiles/pto-v0.asl"
         ],
         "tests": [
           "tests/asl/state-tests.asl",
-          "tests/asl/scalar-tests.asl"
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-disposition-closed"
       },
@@ -19685,18 +22606,44 @@
         "name": "SW_BREAKPOINT",
         "number": 50,
         "disposition": "production-active",
+        "producers": [
+          "SetFault(Fault_SoftwareBreakpoint)"
+        ],
+        "cause": "zero",
+        "argument": "instruction-address",
+        "restart": "saved-source-context",
+        "exact_envelope_witness": {
+          "id": "trap-envelope:50:SW_BREAKPOINT",
+          "function": "TestCompleteTrapEnvelope",
+          "case_marker": "TRAP-WITNESS case/SW_BREAKPOINT",
+          "closure": "exact-synchronous-envelope",
+          "catalog_contract": {
+            "cause": "zero",
+            "argument": "instruction-address",
+            "restart": "saved-source-context"
+          },
+          "source": "tests/asl/state-tests.asl",
+          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "assertion_markers": [
+            "TRAP-WITNESS envelope/assert-number",
+            "TRAP-WITNESS envelope/assert-argument",
+            "TRAP-WITNESS envelope/assert-restart"
+          ]
+        },
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-FAULT-001",
           "PTO-REQ-INTERRUPT-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/state.asl",
           "asl/profiles/pto-v0.asl"
         ],
         "tests": [
           "tests/asl/state-tests.asl",
-          "tests/asl/scalar-tests.asl"
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-disposition-closed"
       },
@@ -19705,18 +22652,44 @@
         "name": "HW_WATCHPOINT",
         "number": 51,
         "disposition": "envelope-only-no-trigger",
+        "producers": [
+          "SetFault(Fault_HardwareWatchpoint)"
+        ],
+        "cause": "zero",
+        "argument": "data-address",
+        "restart": "saved-source-context",
+        "exact_envelope_witness": {
+          "id": "trap-envelope:51:HW_WATCHPOINT",
+          "function": "TestCompleteTrapEnvelope",
+          "case_marker": "TRAP-WITNESS case/HW_WATCHPOINT",
+          "closure": "exact-synchronous-envelope",
+          "catalog_contract": {
+            "cause": "zero",
+            "argument": "data-address",
+            "restart": "saved-source-context"
+          },
+          "source": "tests/asl/state-tests.asl",
+          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "assertion_markers": [
+            "TRAP-WITNESS envelope/assert-number",
+            "TRAP-WITNESS envelope/assert-argument",
+            "TRAP-WITNESS envelope/assert-restart"
+          ]
+        },
+        "consumer_exclusion_guard": "trap-consumer-exclusion-pto-v0-envelope-only",
         "requirements": [
           "PTO-REQ-FAULT-001",
           "PTO-REQ-INTERRUPT-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/state.asl",
           "asl/profiles/pto-v0.asl"
         ],
         "tests": [
           "tests/asl/state-tests.asl",
-          "tests/asl/scalar-tests.asl"
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-disposition-closed"
       },
@@ -19725,18 +22698,44 @@
         "name": "ASSERT_FAIL",
         "number": 52,
         "disposition": "production-active",
+        "producers": [
+          "SetFault(Fault_Assert)"
+        ],
+        "cause": "zero",
+        "argument": "instruction-address",
+        "restart": "saved-source-context",
+        "exact_envelope_witness": {
+          "id": "trap-envelope:52:ASSERT_FAIL",
+          "function": "TestCompleteTrapEnvelope",
+          "case_marker": "TRAP-WITNESS case/ASSERT_FAIL",
+          "closure": "exact-synchronous-envelope",
+          "catalog_contract": {
+            "cause": "zero",
+            "argument": "instruction-address",
+            "restart": "saved-source-context"
+          },
+          "source": "tests/asl/state-tests.asl",
+          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "assertion_markers": [
+            "TRAP-WITNESS envelope/assert-number",
+            "TRAP-WITNESS envelope/assert-argument",
+            "TRAP-WITNESS envelope/assert-restart"
+          ]
+        },
+        "consumer_exclusion_guard": null,
         "requirements": [
           "PTO-REQ-FAULT-001",
           "PTO-REQ-INTERRUPT-001"
         ],
         "model": [
           "spec/catalog/system-registers.json",
+          "spec/evidence/system-register-witness-closure.json",
           "asl/state.asl",
           "asl/profiles/pto-v0.asl"
         ],
         "tests": [
           "tests/asl/state-tests.asl",
-          "tests/asl/scalar-tests.asl"
+          "tests/asl/main.asl"
         ],
         "bounded_status": "reference-disposition-closed"
       }

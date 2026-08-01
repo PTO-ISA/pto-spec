@@ -221,6 +221,7 @@ begin
     CheckSynchronousTrapMapping(Fault_BundleControl, Zeros{6} + 5);
     CheckSynchronousTrapMapping(Fault_TileLegality, Zeros{6} + 5);
     CheckSynchronousTrapMapping(Fault_TileAllocation, Zeros{6} + 5);
+    CheckSynchronousTrapMapping(Fault_ServiceRequest, Zeros{6} + 6);
     // TRAP-WITNESS case/SCALL
     CheckServiceRequestTrapMapping();
     // TRAP-WITNESS case/INST_PC_FAULT
