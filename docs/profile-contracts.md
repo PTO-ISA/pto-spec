@@ -198,10 +198,12 @@ accepted selector namespaces and owners from ADR 0039 and the complete PD-03
 semantics accepted by ADR 0047. All 18 affected domain rounding and
 saturation-order rules are populated; other numeric dimensions remain open.
 The generated `numeric-format-namespace-contract.json` ledger records the
-accepted five code namespaces, 25 carrier identities, reserved-code behavior, and
-four-bit packing without closing PD-02. It keeps eight format, exceptional
-value, operation/type/profile legality, target-availability, and vector
-residuals explicit at that checkpoint.
+accepted five code namespaces, 25 carrier identities, reserved-code behavior,
+and four-bit packing. ADR 0048 additionally accepts the shared value-class
+checkpoint for all 25 formats, including four internal encoding constraints
+and canonical NaNs for ten formats. It does not close PD-02 or PD-05:
+operation-specific exceptional results, FTZ, flags, legality,
+target-availability, and vectors remain open.
 The generated `public-numeric-type-baseline.json` ledger and ADR 0043 close
 `S5-T2-A5`: all 16 published types are identified, 11 unambiguous catalog
 bindings are accepted, A2/A3 availability is fixed at 11 types, and A5

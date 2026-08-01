@@ -179,6 +179,15 @@ published type identities to 11 unambiguous PTO catalog types and close public
 A2/A3-versus-A5 type availability. The six ambiguous or absent catalog names,
 bit-exact floating meanings, and operation/type legality remain profile
 decisions under `S5-T2`.
+
+ADR 0048 and `asl/numeric/formats.asl` make the bit-level value-class boundary
+executable for all 25 `TileDataType` values. `NumericValueClass` distinguishes
+invalid encodings, signed zero, subnormal, normal, infinity, quiet NaN, and
+signaling NaN; `TileNumericCanonicalNaN` returns the profile-defined canonical
+encoding for each of the ten NaN-capable formats. TF32, HF32, E3M2, and E2M3
+are checked for their internal zero-bit constraints before classification.
+These pure helpers do not change the active `pto-v0` raw-carrier semantics and
+do not decide operation-specific propagation, FTZ, flags, or result rules.
 ADR 0044 and `spec/evidence/public-integer-conversion-contract.json` define the
 portable result for every unequal-width public integer `TCVT` pair: interpret
 the source at its declared width and signedness, then sign-extend, zero-extend,

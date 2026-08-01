@@ -222,7 +222,8 @@ all 20 numeric domains without selecting a result rule. The generated
 `spec/evidence/numeric-profile-decision-proposals.json` package proposes every
 disposition and mapping while importing the four identities accepted in
 `spec/catalog/numeric-profile-identities.json`. `S5-T2-A1` is closed; all 12
-question and 20 domain result-rule acceptance records remain null.
+question records are populated, PD-03 is accepted, and the remaining 11
+complete decisions plus all 20 complete domain rules remain open.
 ADR 0038 and `spec/evidence/scalar-numeric-flag-contract.json` additionally
 close flag state/lifecycle and the 30/30 FSU producer-owner matrix. Eleven
 architecture-owned conditions are exact; 19 profile-owned conditions keep
@@ -235,16 +236,21 @@ eight scalar raw values, five fixed conversion overrides, eight bundle
 saturation-order rules are accepted, so the S5-T2-A2 decision count is 1/12
 and 18/99 variation routes are selected.
 ADR 0040 and `spec/evidence/numeric-format-namespace-contract.json` close the
-PD-02 structural checkpoint: five independent code spaces, all 19
+PD-02 structural checkpoint: five independent code spaces, all 25
 `TileDataType` raw-carrier widths, complete mapped/reserved tables, and
 low-nibble-first packing for FP4, FPL4, S4, and U4. Eight residuals keep exact
 floating formats, exceptional values, operation/type/profile legality, target
 availability, and vectors open. PD-02 likewise does not increment the
 S5-T2-A2 decision count.
+ADR 0048 closes the shared PD-02/PD-05 value-class checkpoint. The ASL model
+classifies all 25 formats, rejects four internally constrained encodings, and
+provides canonical NaNs for ten formats. This is not an operation result rule:
+propagation, FTZ, flags, legality, target behavior, and independent vectors
+remain open, so the accepted-decision count stays 1/12.
 ADR 0041 and `spec/evidence/numeric-profile-applicability-closure.json` close
 a bounded PD-01 checkpoint within `S5-T2-A3`: A2/A3 rejects
 `TMATMUL_MX`, `TMATMUL_MX_BIAS`, `TMATMUL_MX_ACC`, `TGEMV_MX`,
-`TGEMV_MX_BIAS`, and `TGEMV_MX_ACC` for every one of the 19 `TileDataType`
+`TGEMV_MX_BIAS`, and `TGEMV_MX_ACC` for every one of the 25 `TileDataType`
 identities before effects. It records 150 unsupported tuples and zero result
 rules, so the rest of PD-01 and `cube-matrix` remain open.
 ADR 0042 and `spec/evidence/numeric-variation-point-ownership.json` close
@@ -335,7 +341,7 @@ configuration from being confused with a passing release candidate.
 | Sub-stage | Current state | Clear target | Required exit evidence |
 | --- | --- | --- | --- |
 | `S6-T2-A` — gate inventory | Closed | Freeze all candidate, hosted, external-control, and review obligations. | Ten gates, ten controls, and two review perspectives are unique, complete, and path-valid. |
-| `S6-T2-B` — execution topology | Closed | Prove the hosted workflow and parallel suite are bounded and exact. | Full action pins, contents-read permission, required `validate`, cancel-in-progress, 360-minute timeout, and 34 shards covering 100 calls/89 subprograms. |
+| `S6-T2-B` — execution topology | Closed | Prove the hosted workflow and parallel suite are bounded and exact. | Full action pins, contents-read permission, required `validate`, cancel-in-progress, 360-minute timeout, and 34 shards covering 105 calls/97 subprograms. |
 | `S6-T2-C` — candidate freeze | Blocked by S5-T2/S6-T1 | Name one signed immutable candidate. | Closed cumulative prerequisites, candidate commit/tree identity, clean-tree and signature evidence. |
 | `S6-T2-D` — candidate reproduction | Waiting on C | Execute every gate without moving the candidate. | Ten local results and passing hosted `validate` all name the candidate commit. |
 | `S6-T2-E` — controls and approvals | Waiting on C–D | Prove repository controls and both review perspectives. | Content-addressed GitHub API snapshot plus accepted architecture and formal-model dispositions. |

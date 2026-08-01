@@ -29,6 +29,7 @@ required_files=(
     docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md
     docs/architecture-decisions/0047-numeric-rounding-semantics.md
     docs/architecture-decisions/0040-numeric-format-namespace-ownership.md
+    docs/architecture-decisions/0048-numeric-format-value-classification.md
     docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md
     docs/architecture-decisions/0042-numeric-variation-point-ownership.md
     docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md

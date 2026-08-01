@@ -261,7 +261,12 @@ def generate() -> dict[str, Any]:
         format_namespace_contract["schema_version"] == 1
         and format_namespace_contract["decision_id"] == "PD-02"
         and format_namespace_contract["status"]
-        == "namespace-and-carrier-inventory-closed-format-rules-open"
+        == "namespace-carrier-and-value-classification-closed-operation-rules-open"
+        and format_namespace_contract["classification_checkpoint_id"]
+        == "PD-02-SC2:PD-05-SC1"
+        and format_namespace_contract["value_classification"]["status"] == "closed"
+        and len(format_namespace_contract["value_classification"]["formats"])
+        == 25
         and format_namespace_contract["summary"]
         == {
             "tile_data_type_count": 25,
@@ -283,6 +288,13 @@ def generate() -> dict[str, Any]:
             "bundle_mapped_count": 25,
             "bundle_reserved_count": 7,
             "four_bit_type_count": 5,
+            "value_classified_type_count": 25,
+            "nan_capable_type_count": 10,
+            "signaling_nan_capable_type_count": 7,
+            "infinity_capable_type_count": 8,
+            "subnormal_capable_type_count": 11,
+            "signed_zero_type_count": 13,
+            "internally_constrained_type_count": 4,
             "open_residual_count": 8,
             "pd02_complete": False,
         },
@@ -509,6 +521,12 @@ def generate() -> dict[str, Any]:
             ).hexdigest(),
             "status": format_namespace_contract["status"],
             "acceptance_record": format_namespace_contract["acceptance_record"],
+            "classification_checkpoint_id": format_namespace_contract[
+                "classification_checkpoint_id"
+            ],
+            "classification_acceptance_record": format_namespace_contract[
+                "classification_acceptance_record"
+            ],
             **format_namespace_contract["summary"],
         },
         "public_type_baseline": {

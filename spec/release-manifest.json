@@ -25,6 +25,10 @@
       "sha256": "a1516b8b47509b17c6550d6ac5f6c7b1472a443613a04158f127fce2a531000d"
     },
     {
+      "path": "asl/numeric/formats.asl",
+      "sha256": "6177f3031c68c4af38b4e57276cd87cc13493eba37cda4914e2de0fe2e8ae6ad"
+    },
+    {
       "path": "asl/profiles/pto-v0.asl",
       "sha256": "beb795edb5aa112c4333d41a68d0a05cd2db4c577f8e516e3d2750e3241ba3d1"
     },
@@ -46,7 +50,7 @@
     },
     {
       "path": "asl/scalar/floating.asl",
-      "sha256": "a75df94f79ca4f1d7cff5b4afe050c1dbd8806daaacf96820885a005da1ec9c8"
+      "sha256": "343bf5c522269034372b2fe916fb011556043fdff142862a0f6ea8738118184b"
     },
     {
       "path": "asl/scalar/integer.asl",
@@ -118,7 +122,7 @@
     },
     {
       "path": "asl/types.asl",
-      "sha256": "aa9575e96cb87e7ddc0e90d359039a730383558de594c0b3312604a703bdc65b"
+      "sha256": "f88b8aaecd3c0578dfe23424fcc75a3ee1b5617e993e4f4aa50f49825d02155a"
     },
     {
       "path": "docs/architecture-decisions/0001-pto-architecture-scope.md",
@@ -266,7 +270,7 @@
     },
     {
       "path": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
-      "sha256": "be234bc101e738b6a26db40b219f4ff1b186f1622deec1d7b037276b2f3f1591"
+      "sha256": "86b6c6fb16293133f1b8f221207df4219db0aaacc88ebd5e1aa286cc07d0e86a"
     },
     {
       "path": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
@@ -297,20 +301,24 @@
       "sha256": "eff69e38127dfaf9777c98e0db45b43c212fc7d2491db6f50c81caad96d96086"
     },
     {
+      "path": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
+      "sha256": "20b2d242c6ca44dff15b65e4f539b596168220efc9ba452dbc07a4a84afeaa8e"
+    },
+    {
       "path": "docs/architecture.md",
-      "sha256": "d42707e539f4490b195ea0b3051be2059361ce574cf27d13d57aef2a3c3c3fba"
+      "sha256": "c5e0fc0322f70d2ae11b5a1392816f92359b6d7363a28ee9484aa175f3e8d527"
     },
     {
       "path": "docs/coverage.md",
-      "sha256": "7ce80ce8f936c5a2eae3408b59cd53a82f284332bf8bc7ba3bbd429d2c25066e"
+      "sha256": "2bd31b95336318ac5daa9a38f3ca6c9d300d544d739f91e16755a805f90936a5"
     },
     {
       "path": "docs/maturity-bringup-plan.md",
-      "sha256": "e29f288da10bcdee13202224966b4b1054fc02c9d50a363ca8e6fc368d3d2e75"
+      "sha256": "3007f9c2278afeb26d0c698943dd5255f1deaabd13e3d02256f0f5ae1d55d5a2"
     },
     {
       "path": "docs/maturity-stage-targets.md",
-      "sha256": "c85dac3694479cbe1df245aa3937cef2d9e13ae5ca2214390355aa323cbcbe4a"
+      "sha256": "6e95f0963fbd985b411cb589dadc671e6a8af61b9ae915c8af846b9404e6a0b9"
     },
     {
       "path": "docs/memory-model.md",
@@ -322,15 +330,15 @@
     },
     {
       "path": "docs/normative-sources.md",
-      "sha256": "08943b1d739301b150f92638861ba0fc8b2765fd9d44e9f65ee4a04d9993cdb9"
+      "sha256": "f4fce08d37a5e2e04e35dbcdabd08561b7b4620942a3f7c814687ca3baf59a3f"
     },
     {
       "path": "docs/numeric-profile-decision-register.md",
-      "sha256": "afa9becf7ae744384427bd1975b532c368f074f9c0fdb74f9b9aca029ba3d6c0"
+      "sha256": "9359df8b80a305b1bb9f242b04896f812231e43fdb6c93e5a2b2ea754f3e70e5"
     },
     {
       "path": "docs/profile-contracts.md",
-      "sha256": "9c19ac3c6cc2ec8a1d787c44c2631325c1d8854f82bb6f4de28b9cc4c6768ee8"
+      "sha256": "6f3f5b75ac4c80263429e999fe8c5091e2d559038b2164ee60bc1c71d86fb760"
     },
     {
       "path": "docs/review-checklist.md",
@@ -374,7 +382,7 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "a74b80e381fe25cd6fd29d4980f74d1cb22324e4a687837290198e1ba4da2eec"
+      "sha256": "1e19669aa90617f63cb25160ce45d5439f74ed6a24a6cae0d104fdc1834040d7"
     },
     {
       "path": "spec/evidence/numeric-conformance-readiness.json",
@@ -386,11 +394,11 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "e4b23dd42f29aebf2d1fbe70e40222dfd34595b1f8e811d15fe02369cd248391"
+      "sha256": "1b9d2eabf11081df6631bdf939d405d09d5d86917ea049163a3ed3aa4e10bc3f"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "2a9f422f7921cb4f8700bbeb4585df2248c136717fa6d331045b4ed53bf4a975"
+      "sha256": "7fe6367d810786017c7cfe299c81271bc47ddefe2877188840c6bab4ef8f63ac"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
@@ -398,23 +406,23 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "49bcfada06b6051b0f3a6216c387aabd0eb747720458b7a3530cc3b95ecbbea8"
+      "sha256": "5aa6adfbbb0c1797fd04948d03bb8afd5a985120dca88e2c4134082ce48d73d1"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "b59d03487347e5d0a923a5da261cfd62cc3fd4ef470e9169a5cf4c16915eac56"
+      "sha256": "713f0b8e4a7ef3d57cfe19f06cc6628f10dae1862398c9234119d5dc1aa6dd66"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "83e4599282f4bbe568e05cd0559903fd64b788115982abe4e3ae1a926346e099"
+      "sha256": "4d5fbd4345f3661d5a4d9f9b0661af3c884d9e327246f58f83e2768b99170ecc"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "8f163c367ce2d9257c8a3c89d7ea365ae0631399204624e7cd0a1a6a17415269"
+      "sha256": "d7de17c76ec812a4b5cc4f0d74d5d08ba1638af68d65ed59fabfc97c5506ac69"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "472b49d7f40c284ff21ebb8c71df979403a0dd077422c4835b14155e7c53164b"
+      "sha256": "c7851d1453d7074ecd20410bad88d7d6de733b83b0df8a950bdc7895b3a9f0e3"
     },
     {
       "path": "spec/evidence/public-source-reconciliation.json",
@@ -422,11 +430,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "f9fb2fd80b10eb56a37811ddd0fc32d8522b121fe33a16223be8f73b45bb8757"
+      "sha256": "ddc0e9dc478c1a30655182645d978f1ce90e10956f7b70ac343e89056061c8e9"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "9d5826cd1a96bd9b543bbcb7bd8ed77f4c2e12f540b945aa99b1c49933ed6c43"
+      "sha256": "5183367806c249457058f85e600664d232e361c6f1cc15f5a382b90138d007ec"
     },
     {
       "path": "spec/evidence/scalar-agu-totality.json",
@@ -454,7 +462,7 @@
     },
     {
       "path": "spec/evidence/scalar-numeric-flag-contract.json",
-      "sha256": "076f37f5caaf9a776928c67f87f18224d12c37e1e8376993352d9221ce208385"
+      "sha256": "a25ecdbef206c1f1b6e87856764a919920ef41af25dbb7351ce6321c0a202b13"
     },
     {
       "path": "spec/evidence/scalar-sys-totality.json",
@@ -478,7 +486,7 @@
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "893d6add94579774f03f84a68be7f596c6287394e59fcefcfa32d83864d18153"
+      "sha256": "36385098316f0ca3b57a51c2cbe1f3e0c84eb891e157ad78156d2c245809de92"
     },
     {
       "path": "specification.toml",
@@ -503,7 +511,7 @@
     },
     "tile_operations_total": 120
   },
-  "content_sha256": "6f3b962627378eb7f41ff2cb49325f8f02e1020702edf5efdb209f7cdfc1c22b",
+  "content_sha256": "73b0fafd0d2faad4b4afc1c5c687a7bb91cc415277acd463ea5613841fab204a",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",

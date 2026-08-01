@@ -279,17 +279,20 @@ end;
 
 pure func ScalarFP64IsNaN(value: Word) => boolean
 begin
-    return value[62:52] == Ones{11} && value[51:0] != Zeros{52};
+    return NumericValueClassIsNaN(
+        TileNumericValueClass(TileDataType_FP64, value));
 end;
 
 pure func ScalarFP64IsSignalingNaN(value: Word) => boolean
 begin
-    return ScalarFP64IsNaN(value) && value[51] == '0';
+    return TileNumericValueClass(TileDataType_FP64, value) ==
+        NumericValue_SignalingNaN;
 end;
 
 pure func ScalarFP64IsZero(value: Word) => boolean
 begin
-    return (value AND (Zeros{PTO_XLEN} + 0x7fffffffffffffff)) == Zeros{PTO_XLEN};
+    return NumericValueClassIsZero(
+        TileNumericValueClass(TileDataType_FP64, value));
 end;
 
 pure func ScalarFP64OrderKey(value: Word) => Word
@@ -301,17 +304,20 @@ end;
 
 pure func ScalarFP32IsNaN(value: bits(32)) => boolean
 begin
-    return value[30:23] == Ones{8} && value[22:0] != Zeros{23};
+    return NumericValueClassIsNaN(TileNumericValueClass(
+        TileDataType_FP32, ZeroExtend{PTO_XLEN}(value)));
 end;
 
 pure func ScalarFP32IsSignalingNaN(value: bits(32)) => boolean
 begin
-    return ScalarFP32IsNaN(value) && value[22] == '0';
+    return TileNumericValueClass(TileDataType_FP32,
+        ZeroExtend{PTO_XLEN}(value)) == NumericValue_SignalingNaN;
 end;
 
 pure func ScalarFP32IsZero(value: bits(32)) => boolean
 begin
-    return (value AND (Zeros{32} + 0x7fffffff)) == Zeros{32};
+    return NumericValueClassIsZero(TileNumericValueClass(
+        TileDataType_FP32, ZeroExtend{PTO_XLEN}(value)));
 end;
 
 pure func ScalarFPCarrierIsZero(value: Word, data_type: bits(5)) => boolean
@@ -397,9 +403,11 @@ end;
 
 pure func ScalarFPQuietNaN(source_type: bits(2)) => Word
 begin
-    if source_type == '01' then return Zeros{PTO_XLEN} + 0x7fc00000;
-    else return Zeros{PTO_XLEN} + 0x7ff8000000000000;
-    end;
+    let data_type = if source_type == '01' then TileDataType_FP32
+                    else TileDataType_FP64;
+    let (available, value) = TileNumericCanonicalNaN(data_type);
+    assert available;
+    return value;
 end;
 
 pure func ScalarFPMinMax(operation: FloatingBinaryOperation,
