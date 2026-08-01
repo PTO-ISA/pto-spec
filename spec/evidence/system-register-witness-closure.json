@@ -1,0 +1,1388 @@
+{
+  "schema_version": 1,
+  "target": "S2-T1:S2-T3:issue-34",
+  "status": "reference-witness-and-consumer-exclusion-closed",
+  "behavior_classes": [
+    {
+      "behavior_class": "base-pointer-storage",
+      "profile_status": "architectural-active",
+      "registers": [
+        "THREAD_PTR",
+        "GLOBAL_PTR"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:base-pointer-storage:reset",
+        "assertion_marker": "SYSREG-WITNESS class/base-pointer-storage/reset",
+        "assertion": "assert reset_value_0_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:base-pointer-storage:access",
+        "assertion_marker": "SYSREG-WITNESS class/base-pointer-storage/access",
+        "assertion": "assert written_value_0 == Zeros{PTO_XLEN} + 256;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": []
+    },
+    {
+      "behavior_class": "core-state-control",
+      "profile_status": "architectural-active",
+      "registers": [
+        "CORE_STATE"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:core-state-control:reset",
+        "assertion_marker": "SYSREG-WITNESS class/core-state-control/reset",
+        "assertion": "assert reset_value_3_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:core-state-control:access",
+        "assertion_marker": "SYSREG-WITNESS class/core-state-control/access",
+        "assertion": "assert written_value_3 == Zeros{PTO_XLEN} + 256;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "write-selects-current-acr",
+          "witness_id": "sysreg-effect:core-state-control:write-selects-current-acr",
+          "assertion_marker": "SYSREG-EFFECT-WITNESS core-state-control/write-selects-current-acr",
+          "assertion": "assert CurrentACR() == 15;",
+          "function": "TestScalarFPFlagLifecycle",
+          "source": "tests/asl/scalar-tests.asl",
+          "closure": "direct-effect-assertion"
+        }
+      ]
+    },
+    {
+      "behavior_class": "feature-enable-storage",
+      "profile_status": "architectural-active",
+      "registers": [
+        "CORE_FEATURE_ENABLE"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:feature-enable-storage:reset",
+        "assertion_marker": "SYSREG-WITNESS class/feature-enable-storage/reset",
+        "assertion": "assert reset_value_8_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:feature-enable-storage:access",
+        "assertion_marker": "SYSREG-WITNESS class/feature-enable-storage/access",
+        "assertion": "assert written_value_8 == Zeros{PTO_XLEN} + 264;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": []
+    },
+    {
+      "behavior_class": "architectural-time",
+      "profile_status": "architectural-active",
+      "registers": [
+        "TIME",
+        "CYCLE"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:architectural-time:reset",
+        "assertion_marker": "SYSREG-WITNESS class/architectural-time/reset",
+        "assertion": "assert reset_value_2_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:architectural-time:access",
+        "assertion_marker": "SYSREG-WITNESS class/architectural-time/access",
+        "assertion": "assert readonly_after_2 == readonly_before_2;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "advances-on-every-execution-attempt",
+          "witness_id": "sysreg-effect:architectural-time:advances-on-every-execution-attempt",
+          "assertion_marker": "SYSREG-EFFECT-WITNESS architectural-time/advances-on-every-execution-attempt",
+          "assertion": "assert _SystemRegisters.cycle == Zeros{PTO_XLEN} + 10;",
+          "function": "TestInterruptRegisterState",
+          "source": "tests/asl/state-tests.asl",
+          "closure": "direct-effect-assertion"
+        }
+      ]
+    },
+    {
+      "behavior_class": "zero-profile-identity",
+      "profile_status": "profile-constant",
+      "registers": [
+        "CORE_ID",
+        "VENDOR",
+        "CORE_FEATURE",
+        "THREAD_ID",
+        "BLOCKNUM",
+        "BLOCKID"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:zero-profile-identity:reset",
+        "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/reset",
+        "assertion": "assert reset_value_4_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:zero-profile-identity:access",
+        "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
+        "assertion": "assert readonly_after_4 == readonly_before_4;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": []
+    },
+    {
+      "behavior_class": "version-profile-identity",
+      "profile_status": "profile-constant",
+      "registers": [
+        "VERSION"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:version-profile-identity:reset",
+        "assertion_marker": "SYSREG-WITNESS class/version-profile-identity/reset",
+        "assertion": "assert reset_value_6_0 == Zeros{PTO_XLEN} + 1;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:version-profile-identity:access",
+        "assertion_marker": "SYSREG-WITNESS class/version-profile-identity/access",
+        "assertion": "assert readonly_after_6 == readonly_before_6;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": []
+    },
+    {
+      "behavior_class": "tile-capacity-profile-limit",
+      "profile_status": "profile-constant",
+      "registers": [
+        "TILE_CAPACITY"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:tile-capacity-profile-limit:reset",
+        "assertion_marker": "SYSREG-WITNESS class/tile-capacity-profile-limit/reset",
+        "assertion": "assert reset_value_10_0 == Zeros{PTO_XLEN} + PTO_MODEL_MAX_TILE_CAPACITY_BYTES;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:tile-capacity-profile-limit:access",
+        "assertion_marker": "SYSREG-WITNESS class/tile-capacity-profile-limit/access",
+        "assertion": "assert readonly_after_10 == readonly_before_10;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "limits-per-tile-and-aggregate-allocation",
+          "witness_id": "sysreg-effect:tile-capacity-profile-limit:limits-per-tile-and-aggregate-allocation",
+          "assertion_marker": "SYSREG-EFFECT-WITNESS tile-capacity-profile-limit/limits-per-tile-and-aggregate-allocation",
+          "assertion": "assert aggregate_status == TileExecution_Rejected;",
+          "function": "TestTileCapacityLegality",
+          "source": "tests/asl/tile-tests.asl",
+          "closure": "direct-effect-assertion"
+        }
+      ]
+    },
+    {
+      "behavior_class": "execution-context-state",
+      "profile_status": "architectural-active",
+      "registers": [
+        "ECSTATE_ACRn"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:execution-context-state:reset",
+        "assertion_marker": "SYSREG-WITNESS class/execution-context-state/reset",
+        "assertion": "assert reset_value_14_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:execution-context-state:access",
+        "assertion_marker": "SYSREG-WITNESS class/execution-context-state/access",
+        "assertion": "assert written_value_14 == Zeros{PTO_XLEN} + 270;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "save-and-recovery-profile-state",
+          "witness_id": "sysreg-effect:execution-context-state:save-and-recovery-profile-state",
+          "assertion_marker": "SYSREG-EFFECT-WITNESS execution-context-state/save-and-recovery-profile-state",
+          "assertion": "assert CurrentACR() == 15;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl",
+          "closure": "direct-effect-assertion"
+        }
+      ]
+    },
+    {
+      "behavior_class": "exception-vector-base",
+      "profile_status": "architectural-active",
+      "registers": [
+        "EVBASE_ACRn"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:exception-vector-base:reset",
+        "assertion_marker": "SYSREG-WITNESS class/exception-vector-base/reset",
+        "assertion": "assert reset_value_15_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:exception-vector-base:access",
+        "assertion_marker": "SYSREG-WITNESS class/exception-vector-base/access",
+        "assertion": "assert written_value_15 == Zeros{PTO_XLEN} + 271;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "selects-trap-entry-tpc",
+          "witness_id": "sysreg-effect:exception-vector-base:selects-trap-entry-tpc",
+          "assertion_marker": "SYSREG-EFFECT-WITNESS exception-vector-base/selects-trap-entry-tpc",
+          "assertion": "assert ReadTPC() == Zeros{PTO_XLEN} + 0x900;",
+          "function": "TestServiceRequestControl",
+          "source": "tests/asl/scalar-tests.asl",
+          "closure": "direct-effect-assertion"
+        }
+      ]
+    },
+    {
+      "behavior_class": "trap-status",
+      "profile_status": "architectural-active",
+      "registers": [
+        "TRAPNO_ACRn"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:trap-status:reset",
+        "assertion_marker": "SYSREG-WITNESS class/trap-status/reset",
+        "assertion": "assert reset_value_16_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:trap-status:access",
+        "assertion_marker": "SYSREG-WITNESS class/trap-status/access",
+        "assertion": "assert written_value_16 == Zeros{PTO_XLEN} + 4;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "reads-and-writes-trap-bank-fields",
+          "witness_id": "sysreg-effect:trap-status:reads-and-writes-trap-bank-fields",
+          "assertion_marker": "SYSREG-EFFECT-WITNESS trap-status/reads-and-writes-trap-bank-fields",
+          "assertion": "assert _ACRTrapNumber[[1]] == expected;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl",
+          "closure": "direct-effect-assertion"
+        }
+      ]
+    },
+    {
+      "behavior_class": "trap-argument",
+      "profile_status": "architectural-active",
+      "registers": [
+        "TRAPARG0_ACRn"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:trap-argument:reset",
+        "assertion_marker": "SYSREG-WITNESS class/trap-argument/reset",
+        "assertion": "assert reset_value_17_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:trap-argument:access",
+        "assertion_marker": "SYSREG-WITNESS class/trap-argument/access",
+        "assertion": "assert written_value_17 == Zeros{PTO_XLEN} + 273;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "reads-and-writes-trap-bank-argument",
+          "witness_id": "sysreg-effect:trap-argument:reads-and-writes-trap-bank-argument",
+          "assertion_marker": "SYSREG-EFFECT-WITNESS trap-argument/reads-and-writes-trap-bank-argument",
+          "assertion": "assert _ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 0x2000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl",
+          "closure": "direct-effect-assertion"
+        }
+      ]
+    },
+    {
+      "behavior_class": "exception-temporary-storage",
+      "profile_status": "architectural-active",
+      "registers": [
+        "ETEMP_ACRn",
+        "ETEMP0_ACRn"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:exception-temporary-storage:reset",
+        "assertion_marker": "SYSREG-WITNESS class/exception-temporary-storage/reset",
+        "assertion": "assert reset_value_18_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:exception-temporary-storage:access",
+        "assertion_marker": "SYSREG-WITNESS class/exception-temporary-storage/access",
+        "assertion": "assert written_value_18 == Zeros{PTO_XLEN} + 274;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": []
+    },
+    {
+      "behavior_class": "interrupt-configuration",
+      "profile_status": "architectural-active",
+      "registers": [
+        "ECONFIG_ACRn"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:interrupt-configuration:reset",
+        "assertion_marker": "SYSREG-WITNESS class/interrupt-configuration/reset",
+        "assertion": "assert reset_value_20_0 == Zeros{PTO_XLEN} + 3;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:interrupt-configuration:access",
+        "assertion_marker": "SYSREG-WITNESS class/interrupt-configuration/access",
+        "assertion": "assert written_value_20 == Zeros{PTO_XLEN} + 276;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "controls-external-and-timer-trap-entry",
+          "witness_id": "sysreg-effect:interrupt-configuration:controls-external-and-timer-trap-entry",
+          "assertion_marker": "SYSREG-EFFECT-WITNESS interrupt-configuration/controls-external-and-timer-trap-entry",
+          "assertion": "assert _LastFault == Fault_None;",
+          "function": "TestInterruptRegisterState",
+          "source": "tests/asl/state-tests.asl",
+          "closure": "direct-effect-assertion"
+        }
+      ]
+    },
+    {
+      "behavior_class": "interrupt-pending",
+      "profile_status": "architectural-active",
+      "registers": [
+        "IPENDING_ACRn"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:interrupt-pending:reset",
+        "assertion_marker": "SYSREG-WITNESS class/interrupt-pending/reset",
+        "assertion": "assert reset_value_21_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:interrupt-pending:access",
+        "assertion_marker": "SYSREG-WITNESS class/interrupt-pending/access",
+        "assertion": "assert readonly_after_21 == readonly_before_21;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "reflects-external-and-timer-pending-sources",
+          "witness_id": "sysreg-effect:interrupt-pending:reflects-external-and-timer-pending-sources",
+          "assertion_marker": "SYSREG-EFFECT-WITNESS interrupt-pending/reflects-external-and-timer-pending-sources",
+          "assertion": "assert pending[7] == '1' && pending[2] == '1';",
+          "function": "TestInterruptRegisterState",
+          "source": "tests/asl/state-tests.asl",
+          "closure": "direct-effect-assertion"
+        }
+      ]
+    },
+    {
+      "behavior_class": "top-pending-interrupt",
+      "profile_status": "architectural-active",
+      "registers": [
+        "TOPEI_ACRn"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:top-pending-interrupt:reset",
+        "assertion_marker": "SYSREG-WITNESS class/top-pending-interrupt/reset",
+        "assertion": "assert reset_value_22_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:top-pending-interrupt:access",
+        "assertion_marker": "SYSREG-WITNESS class/top-pending-interrupt/access",
+        "assertion": "assert readonly_after_22 == readonly_before_22;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "priority-derived-from-pending-bitmap",
+          "witness_id": "sysreg-effect:top-pending-interrupt:priority-derived-from-pending-bitmap",
+          "assertion_marker": "SYSREG-EFFECT-WITNESS top-pending-interrupt/priority-derived-from-pending-bitmap",
+          "assertion": "assert top == Zeros{PTO_XLEN} + 2;",
+          "function": "TestInterruptRegisterState",
+          "source": "tests/asl/state-tests.asl",
+          "closure": "direct-effect-assertion"
+        }
+      ]
+    },
+    {
+      "behavior_class": "end-of-interrupt",
+      "profile_status": "architectural-active",
+      "registers": [
+        "EOIEI_ACRn"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:end-of-interrupt:reset",
+        "assertion_marker": "SYSREG-WITNESS class/end-of-interrupt/reset",
+        "assertion": "assert _ExtendedSystemRegisters[[3850]] == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:end-of-interrupt:access",
+        "assertion_marker": "SYSREG-WITNESS class/end-of-interrupt/access",
+        "assertion": "assert _LastFault == Fault_IllegalInstruction;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "clears-selected-pending-id",
+          "witness_id": "sysreg-effect:end-of-interrupt:clears-selected-pending-id",
+          "assertion_marker": "SYSREG-EFFECT-WITNESS end-of-interrupt/clears-selected-pending-id",
+          "assertion": "assert acknowledged_pending == Zeros{PTO_XLEN};",
+          "function": "TestInterruptRegisterState",
+          "source": "tests/asl/state-tests.asl",
+          "closure": "direct-effect-assertion"
+        },
+        {
+          "side_effect": "clears-asynchronous-trap-status",
+          "witness_id": "sysreg-effect:end-of-interrupt:clears-asynchronous-trap-status",
+          "assertion_marker": "SYSREG-EFFECT-WITNESS end-of-interrupt/clears-asynchronous-trap-status",
+          "assertion": "assert !_ACRTrapAsynchronous[[0]] && !_ACRTrapArgumentValid[[0]];",
+          "function": "TestInterruptRegisterState",
+          "source": "tests/asl/state-tests.asl",
+          "closure": "direct-effect-assertion"
+        }
+      ]
+    },
+    {
+      "behavior_class": "translation-configuration-storage",
+      "profile_status": "pto-v0-storage-only",
+      "registers": [
+        "TTBR0_ACR1",
+        "TTBR1_ACR1",
+        "TCR_ACR1",
+        "MAIR_ACR1",
+        "IOTTBR_ACR1",
+        "IOTCR_ACR1",
+        "IOMAIR_ACR1"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:translation-configuration-storage:reset",
+        "assertion_marker": "SYSREG-WITNESS class/translation-configuration-storage/reset",
+        "assertion": "assert reset_value_24_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:translation-configuration-storage:access",
+        "assertion_marker": "SYSREG-WITNESS class/translation-configuration-storage/access",
+        "assertion": "assert written_value_24 == Zeros{PTO_XLEN} + 280;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "pto-v0-identity-translation-does-not-consume-value",
+          "witness_id": "sysreg-effect:translation-configuration-storage:pto-v0-identity-translation-does-not-consume-value",
+          "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
+          "assertion": "assert written_value_24 == Zeros{PTO_XLEN} + 280;",
+          "function": "ValidateSystemRegisterResetAndAccess",
+          "source": "generated:build/decoders.asl",
+          "closure": "static-consumer-exclusion-plus-access-round-trip"
+        }
+      ]
+    },
+    {
+      "behavior_class": "timer-time",
+      "profile_status": "architectural-active",
+      "registers": [
+        "TIMER_TIME_ACRn"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:timer-time:reset",
+        "assertion_marker": "SYSREG-WITNESS class/timer-time/reset",
+        "assertion": "assert reset_value_31_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:timer-time:access",
+        "assertion_marker": "SYSREG-WITNESS class/timer-time/access",
+        "assertion": "assert readonly_after_31 == readonly_before_31;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "aliases-architectural-time",
+          "witness_id": "sysreg-effect:timer-time:aliases-architectural-time",
+          "assertion_marker": "SYSREG-EFFECT-WITNESS timer-time/aliases-architectural-time",
+          "assertion": "assert timer_alias == Zeros{PTO_XLEN} + 9;",
+          "function": "TestInterruptRegisterState",
+          "source": "tests/asl/state-tests.asl",
+          "closure": "direct-effect-assertion"
+        }
+      ]
+    },
+    {
+      "behavior_class": "timer-compare",
+      "profile_status": "architectural-active",
+      "registers": [
+        "TIMER_TIMECMP_ACRn"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:timer-compare:reset",
+        "assertion_marker": "SYSREG-WITNESS class/timer-compare/reset",
+        "assertion": "assert reset_value_32_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:timer-compare:access",
+        "assertion_marker": "SYSREG-WITNESS class/timer-compare/access",
+        "assertion": "assert written_value_32 == Zeros{PTO_XLEN} + 288;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "refreshes-timer-pending-state",
+          "witness_id": "sysreg-effect:timer-compare:refreshes-timer-pending-state",
+          "assertion_marker": "SYSREG-EFFECT-WITNESS timer-compare/refreshes-timer-pending-state",
+          "assertion": "assert timer_at_compare[3] == '1';",
+          "function": "TestInterruptRegisterState",
+          "source": "tests/asl/state-tests.asl",
+          "closure": "direct-effect-assertion"
+        }
+      ]
+    },
+    {
+      "behavior_class": "acr-parameter-storage",
+      "profile_status": "pto-v0-storage-only",
+      "registers": [
+        "XBINFO_ACRn",
+        "ACR_PARAM_ACRn"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:acr-parameter-storage:reset",
+        "assertion_marker": "SYSREG-WITNESS class/acr-parameter-storage/reset",
+        "assertion": "assert reset_value_33_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:acr-parameter-storage:access",
+        "assertion_marker": "SYSREG-WITNESS class/acr-parameter-storage/access",
+        "assertion": "assert written_value_33 == Zeros{PTO_XLEN} + 289;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "pto-v0-does-not-consume-value",
+          "witness_id": "sysreg-effect:acr-parameter-storage:pto-v0-does-not-consume-value",
+          "assertion_marker": "SYSREG-WITNESS effect/acr-parameter-storage/pto-v0-does-not-consume-value",
+          "assertion": "assert written_value_33 == Zeros{PTO_XLEN} + 289;",
+          "function": "ValidateSystemRegisterResetAndAccess",
+          "source": "generated:build/decoders.asl",
+          "closure": "static-consumer-exclusion-plus-access-round-trip"
+        }
+      ]
+    },
+    {
+      "behavior_class": "saved-execution-context",
+      "profile_status": "architectural-active",
+      "registers": [
+        "EBARG0_ACRn",
+        "EBARG_BPC_CUR_ACRn",
+        "EBARG_BPC_TGT_ACRn",
+        "EBARG_TPC_ACRn",
+        "EBARG_LRA_ACRn",
+        "EBARG_TQ0_ACRn",
+        "EBARG_TQ1_ACRn",
+        "EBARG_TQ2_ACRn",
+        "EBARG_TQ3_ACRn",
+        "EBARG_UQ0_ACRn",
+        "EBARG_UQ1_ACRn",
+        "EBARG_UQ2_ACRn",
+        "EBARG_UQ3_ACRn"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:saved-execution-context:reset",
+        "assertion_marker": "SYSREG-WITNESS class/saved-execution-context/reset",
+        "assertion": "assert reset_value_35_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:saved-execution-context:access",
+        "assertion_marker": "SYSREG-WITNESS class/saved-execution-context/access",
+        "assertion": "assert written_value_35 == Zeros{PTO_XLEN} + 291;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "save-and-recovery-profile-state",
+          "witness_id": "sysreg-effect:saved-execution-context:save-and-recovery-profile-state",
+          "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
+          "assertion": "assert CurrentACR() == 15;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl",
+          "closure": "direct-effect-assertion"
+        }
+      ]
+    },
+    {
+      "behavior_class": "saved-loop-context-storage",
+      "profile_status": "pto-v0-storage-only",
+      "registers": [
+        "EBARG_LB_ACRn",
+        "EBARG_LC_ACRn"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:saved-loop-context-storage:reset",
+        "assertion_marker": "SYSREG-WITNESS class/saved-loop-context-storage/reset",
+        "assertion": "assert reset_value_48_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:saved-loop-context-storage:access",
+        "assertion_marker": "SYSREG-WITNESS class/saved-loop-context-storage/access",
+        "assertion": "assert written_value_48 == Zeros{PTO_XLEN} + 304;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "trap-save-clears-value",
+          "witness_id": "sysreg-effect:saved-loop-context-storage:trap-save-clears-value",
+          "assertion_marker": "SYSREG-EFFECT-WITNESS saved-loop-context-storage/trap-save-clears-value",
+          "assertion": "assert saved_lb == Zeros{PTO_XLEN};",
+          "function": "TestVisibleTrapContextRegisters",
+          "source": "tests/asl/state-tests.asl",
+          "closure": "direct-effect-assertion"
+        },
+        {
+          "side_effect": "pto-v0-recovery-does-not-consume-value",
+          "witness_id": "sysreg-effect:saved-loop-context-storage:pto-v0-recovery-does-not-consume-value",
+          "assertion_marker": "SYSREG-EFFECT-WITNESS saved-loop-context-storage/pto-v0-recovery-does-not-consume-value",
+          "assertion": "assert recovered_lb == Zeros{PTO_XLEN} + 0x14d;",
+          "function": "TestVisibleTrapContextRegisters",
+          "source": "tests/asl/state-tests.asl",
+          "closure": "direct-effect-assertion"
+        }
+      ]
+    },
+    {
+      "behavior_class": "extended-context-storage",
+      "profile_status": "pto-v0-storage-only",
+      "registers": [
+        "EBARG_EXTCTX_PTR_ACRn",
+        "EBARG_EXTCTX_META_ACRn",
+        "EBARG_TPLFLAGS_ACRn"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:extended-context-storage:reset",
+        "assertion_marker": "SYSREG-WITNESS class/extended-context-storage/reset",
+        "assertion": "assert reset_value_50_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:extended-context-storage:access",
+        "assertion_marker": "SYSREG-WITNESS class/extended-context-storage/access",
+        "assertion": "assert written_value_50 == Zeros{PTO_XLEN} + 306;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "trap-save-preserves-value",
+          "witness_id": "sysreg-effect:extended-context-storage:trap-save-preserves-value",
+          "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/trap-save-preserves-value",
+          "assertion": "assert saved_extctx_ptr == Zeros{PTO_XLEN} + 0x4f;",
+          "function": "TestVisibleTrapContextRegisters",
+          "source": "tests/asl/state-tests.asl",
+          "closure": "direct-effect-assertion"
+        },
+        {
+          "side_effect": "pto-v0-recovery-does-not-consume-value",
+          "witness_id": "sysreg-effect:extended-context-storage:pto-v0-recovery-does-not-consume-value",
+          "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/pto-v0-recovery-does-not-consume-value",
+          "assertion": "assert recovered_extctx_ptr == Zeros{PTO_XLEN} + 0x14f;",
+          "function": "TestVisibleTrapContextRegisters",
+          "source": "tests/asl/state-tests.asl",
+          "closure": "direct-effect-assertion"
+        }
+      ]
+    },
+    {
+      "behavior_class": "debug-identity-storage",
+      "profile_status": "pto-v0-storage-only",
+      "registers": [
+        "DBGID_ACRn"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:debug-identity-storage:reset",
+        "assertion_marker": "SYSREG-WITNESS class/debug-identity-storage/reset",
+        "assertion": "assert reset_value_53_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:debug-identity-storage:access",
+        "assertion_marker": "SYSREG-WITNESS class/debug-identity-storage/access",
+        "assertion": "assert readonly_after_53 == readonly_before_53;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "pto-v0-debug-matching-disabled",
+          "witness_id": "sysreg-effect:debug-identity-storage:pto-v0-debug-matching-disabled",
+          "assertion_marker": "SYSREG-WITNESS effect/debug-identity-storage/pto-v0-debug-matching-disabled",
+          "assertion": "assert readonly_after_53 == readonly_before_53;",
+          "function": "ValidateSystemRegisterResetAndAccess",
+          "source": "generated:build/decoders.asl",
+          "closure": "static-consumer-exclusion-plus-access-round-trip"
+        }
+      ]
+    },
+    {
+      "behavior_class": "debug-control-storage",
+      "profile_status": "pto-v0-storage-only",
+      "registers": [
+        "DBCR0_ACRn",
+        "DBCR1_ACRn",
+        "DBCR2_ACRn",
+        "DBCR3_ACRn",
+        "DBVR0_ACRn",
+        "DBVR1_ACRn",
+        "DBVR2_ACRn",
+        "DBVR3_ACRn",
+        "DCCR0_ACRn",
+        "DCVR0_ACRn",
+        "DWCR0_ACRn",
+        "DWCR1_ACRn",
+        "DWCR2_ACRn",
+        "DWCR3_ACRn",
+        "DWVR0_ACRn",
+        "DWVR1_ACRn",
+        "DWVR2_ACRn",
+        "DWVR3_ACRn"
+      ],
+      "reset_witness": {
+        "witness_id": "sysreg-class:debug-control-storage:reset",
+        "assertion_marker": "SYSREG-WITNESS class/debug-control-storage/reset",
+        "assertion": "assert reset_value_54_0 == Zeros{PTO_XLEN};",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "access_witness": {
+        "witness_id": "sysreg-class:debug-control-storage:access",
+        "assertion_marker": "SYSREG-WITNESS class/debug-control-storage/access",
+        "assertion": "assert written_value_54 == Zeros{PTO_XLEN} + 310;",
+        "function": "ValidateSystemRegisterResetAndAccess",
+        "source": "generated:build/decoders.asl"
+      },
+      "side_effect_witnesses": [
+        {
+          "side_effect": "pto-v0-debug-matching-disabled",
+          "witness_id": "sysreg-effect:debug-control-storage:pto-v0-debug-matching-disabled",
+          "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
+          "assertion": "assert written_value_54 == Zeros{PTO_XLEN} + 310;",
+          "function": "ValidateSystemRegisterResetAndAccess",
+          "source": "generated:build/decoders.asl",
+          "closure": "static-consumer-exclusion-plus-access-round-trip"
+        }
+      ]
+    }
+  ],
+  "trap_witnesses": [
+    {
+      "name": "EXEC_STATE_CHECK",
+      "number": 0,
+      "pto_v0_status": "production-active",
+      "witness_id": "trap-envelope:0:EXEC_STATE_CHECK",
+      "case_marker": "TRAP-WITNESS case/EXEC_STATE_CHECK",
+      "function": "TestCompleteTrapEnvelope",
+      "source": "tests/asl/state-tests.asl",
+      "helper_assertions": [
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-number",
+          "assertion": "assert _ACRTrapNumber[[1]] == expected;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-argument",
+          "assertion": "assert _ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 0x2000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-restart",
+          "assertion": "assert ReadTPC() == Zeros{PTO_XLEN} + 0x1000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        }
+      ]
+    },
+    {
+      "name": "ILLEGAL_INST",
+      "number": 4,
+      "pto_v0_status": "production-active",
+      "witness_id": "trap-envelope:4:ILLEGAL_INST",
+      "case_marker": "TRAP-WITNESS case/ILLEGAL_INST",
+      "function": "TestCompleteTrapEnvelope",
+      "source": "tests/asl/state-tests.asl",
+      "helper_assertions": [
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-number",
+          "assertion": "assert _ACRTrapNumber[[1]] == expected;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-argument",
+          "assertion": "assert _ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 0x2000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-restart",
+          "assertion": "assert ReadTPC() == Zeros{PTO_XLEN} + 0x1000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        }
+      ]
+    },
+    {
+      "name": "BUNDLE_TRAP",
+      "number": 5,
+      "pto_v0_status": "production-active",
+      "witness_id": "trap-envelope:5:BUNDLE_TRAP",
+      "case_marker": "TRAP-WITNESS case/BUNDLE_TRAP",
+      "function": "TestCompleteTrapEnvelope",
+      "source": "tests/asl/state-tests.asl",
+      "helper_assertions": [
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-number",
+          "assertion": "assert _ACRTrapNumber[[1]] == expected;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-argument",
+          "assertion": "assert _ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 0x2000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-restart",
+          "assertion": "assert ReadTPC() == Zeros{PTO_XLEN} + 0x1000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        }
+      ]
+    },
+    {
+      "name": "SCALL",
+      "number": 6,
+      "pto_v0_status": "production-active",
+      "witness_id": "trap-envelope:6:SCALL",
+      "case_marker": "TRAP-WITNESS case/SCALL",
+      "function": "TestCompleteTrapEnvelope",
+      "source": "tests/asl/state-tests.asl",
+      "helper_assertions": [
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-number",
+          "assertion": "assert _ACRTrapNumber[[1]] == expected;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-argument",
+          "assertion": "assert _ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 0x2000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-restart",
+          "assertion": "assert ReadTPC() == Zeros{PTO_XLEN} + 0x1000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        }
+      ]
+    },
+    {
+      "name": "INST_PC_FAULT",
+      "number": 32,
+      "pto_v0_status": "production-active",
+      "witness_id": "trap-envelope:32:INST_PC_FAULT",
+      "case_marker": "TRAP-WITNESS case/INST_PC_FAULT",
+      "function": "TestCompleteTrapEnvelope",
+      "source": "tests/asl/state-tests.asl",
+      "helper_assertions": [
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-number",
+          "assertion": "assert _ACRTrapNumber[[1]] == expected;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-argument",
+          "assertion": "assert _ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 0x2000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-restart",
+          "assertion": "assert ReadTPC() == Zeros{PTO_XLEN} + 0x1000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        }
+      ]
+    },
+    {
+      "name": "INST_PAGE_FAULT",
+      "number": 33,
+      "pto_v0_status": "envelope-only-no-trigger",
+      "witness_id": "trap-envelope:33:INST_PAGE_FAULT",
+      "case_marker": "TRAP-WITNESS case/INST_PAGE_FAULT",
+      "function": "TestCompleteTrapEnvelope",
+      "source": "tests/asl/state-tests.asl",
+      "helper_assertions": [
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-number",
+          "assertion": "assert _ACRTrapNumber[[1]] == expected;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-argument",
+          "assertion": "assert _ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 0x2000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-restart",
+          "assertion": "assert ReadTPC() == Zeros{PTO_XLEN} + 0x1000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        }
+      ]
+    },
+    {
+      "name": "DATA_ALIGN_FAULT",
+      "number": 34,
+      "pto_v0_status": "production-active",
+      "witness_id": "trap-envelope:34:DATA_ALIGN_FAULT",
+      "case_marker": "TRAP-WITNESS case/DATA_ALIGN_FAULT",
+      "function": "TestCompleteTrapEnvelope",
+      "source": "tests/asl/state-tests.asl",
+      "helper_assertions": [
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-number",
+          "assertion": "assert _ACRTrapNumber[[1]] == expected;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-argument",
+          "assertion": "assert _ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 0x2000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-restart",
+          "assertion": "assert ReadTPC() == Zeros{PTO_XLEN} + 0x1000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        }
+      ]
+    },
+    {
+      "name": "DATA_PAGE_FAULT",
+      "number": 35,
+      "pto_v0_status": "production-active",
+      "witness_id": "trap-envelope:35:DATA_PAGE_FAULT",
+      "case_marker": "TRAP-WITNESS case/DATA_PAGE_FAULT",
+      "function": "TestCompleteTrapEnvelope",
+      "source": "tests/asl/state-tests.asl",
+      "helper_assertions": [
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-number",
+          "assertion": "assert _ACRTrapNumber[[1]] == expected;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-argument",
+          "assertion": "assert _ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 0x2000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-restart",
+          "assertion": "assert ReadTPC() == Zeros{PTO_XLEN} + 0x1000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        }
+      ]
+    },
+    {
+      "name": "INTERRUPT",
+      "number": 44,
+      "pto_v0_status": "production-active",
+      "witness_id": "trap-envelope:44:INTERRUPT",
+      "case_marker": "TRAP-WITNESS case/INTERRUPT",
+      "function": "TestCompleteTrapEnvelope",
+      "source": "tests/asl/state-tests.asl",
+      "helper_assertions": [
+        {
+          "assertion_marker": "TRAP-WITNESS interrupt/assert-number",
+          "assertion": "assert _ACRTrapNumber[[1]] == Zeros{6} + 44;",
+          "function": "TestCompleteTrapEnvelope",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS interrupt/assert-argument",
+          "assertion": "assert _ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 63;",
+          "function": "TestCompleteTrapEnvelope",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS interrupt/assert-restart",
+          "assertion": "assert ReadTPC() == Zeros{PTO_XLEN} + 0x3000;",
+          "function": "TestCompleteTrapEnvelope",
+          "source": "tests/asl/state-tests.asl"
+        }
+      ]
+    },
+    {
+      "name": "HW_BREAKPOINT",
+      "number": 49,
+      "pto_v0_status": "envelope-only-no-trigger",
+      "witness_id": "trap-envelope:49:HW_BREAKPOINT",
+      "case_marker": "TRAP-WITNESS case/HW_BREAKPOINT",
+      "function": "TestCompleteTrapEnvelope",
+      "source": "tests/asl/state-tests.asl",
+      "helper_assertions": [
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-number",
+          "assertion": "assert _ACRTrapNumber[[1]] == expected;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-argument",
+          "assertion": "assert _ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 0x2000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-restart",
+          "assertion": "assert ReadTPC() == Zeros{PTO_XLEN} + 0x1000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        }
+      ]
+    },
+    {
+      "name": "SW_BREAKPOINT",
+      "number": 50,
+      "pto_v0_status": "production-active",
+      "witness_id": "trap-envelope:50:SW_BREAKPOINT",
+      "case_marker": "TRAP-WITNESS case/SW_BREAKPOINT",
+      "function": "TestCompleteTrapEnvelope",
+      "source": "tests/asl/state-tests.asl",
+      "helper_assertions": [
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-number",
+          "assertion": "assert _ACRTrapNumber[[1]] == expected;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-argument",
+          "assertion": "assert _ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 0x2000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-restart",
+          "assertion": "assert ReadTPC() == Zeros{PTO_XLEN} + 0x1000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        }
+      ]
+    },
+    {
+      "name": "HW_WATCHPOINT",
+      "number": 51,
+      "pto_v0_status": "envelope-only-no-trigger",
+      "witness_id": "trap-envelope:51:HW_WATCHPOINT",
+      "case_marker": "TRAP-WITNESS case/HW_WATCHPOINT",
+      "function": "TestCompleteTrapEnvelope",
+      "source": "tests/asl/state-tests.asl",
+      "helper_assertions": [
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-number",
+          "assertion": "assert _ACRTrapNumber[[1]] == expected;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-argument",
+          "assertion": "assert _ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 0x2000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-restart",
+          "assertion": "assert ReadTPC() == Zeros{PTO_XLEN} + 0x1000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        }
+      ]
+    },
+    {
+      "name": "ASSERT_FAIL",
+      "number": 52,
+      "pto_v0_status": "production-active",
+      "witness_id": "trap-envelope:52:ASSERT_FAIL",
+      "case_marker": "TRAP-WITNESS case/ASSERT_FAIL",
+      "function": "TestCompleteTrapEnvelope",
+      "source": "tests/asl/state-tests.asl",
+      "helper_assertions": [
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-number",
+          "assertion": "assert _ACRTrapNumber[[1]] == expected;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-argument",
+          "assertion": "assert _ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 0x2000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        },
+        {
+          "assertion_marker": "TRAP-WITNESS envelope/assert-restart",
+          "assertion": "assert ReadTPC() == Zeros{PTO_XLEN} + 0x1000;",
+          "function": "CheckSynchronousTrapMapping",
+          "source": "tests/asl/state-tests.asl"
+        }
+      ]
+    }
+  ],
+  "consumer_exclusion": {
+    "storage_only_registers": {
+      "guard_id": "sysreg-consumer-exclusion-pto-v0-storage-only",
+      "status": "closed-no-unreviewed-consumers",
+      "register_count": 33,
+      "registers": [
+        "TTBR0_ACR1",
+        "TTBR1_ACR1",
+        "TCR_ACR1",
+        "MAIR_ACR1",
+        "IOTTBR_ACR1",
+        "IOTCR_ACR1",
+        "IOMAIR_ACR1",
+        "XBINFO_ACRn",
+        "ACR_PARAM_ACRn",
+        "EBARG_LB_ACRn",
+        "EBARG_LC_ACRn",
+        "EBARG_EXTCTX_PTR_ACRn",
+        "EBARG_EXTCTX_META_ACRn",
+        "EBARG_TPLFLAGS_ACRn",
+        "DBGID_ACRn",
+        "DBCR0_ACRn",
+        "DBCR1_ACRn",
+        "DBCR2_ACRn",
+        "DBCR3_ACRn",
+        "DBVR0_ACRn",
+        "DBVR1_ACRn",
+        "DBVR2_ACRn",
+        "DBVR3_ACRn",
+        "DCCR0_ACRn",
+        "DCVR0_ACRn",
+        "DWCR0_ACRn",
+        "DWCR1_ACRn",
+        "DWCR2_ACRn",
+        "DWCR3_ACRn",
+        "DWVR0_ACRn",
+        "DWVR1_ACRn",
+        "DWVR2_ACRn",
+        "DWVR3_ACRn"
+      ],
+      "allowed_normative_occurrences": [
+        {
+          "path": "asl/profiles/pto-v0.asl",
+          "line": 23,
+          "address": "0x0FB7",
+          "registers": [
+            "DWVR3_ACRn"
+          ],
+          "contract": "profile-reset-range-bound"
+        },
+        {
+          "path": "asl/profiles/pto-v0.asl",
+          "line": 482,
+          "address": "0x0F4D",
+          "registers": [
+            "EBARG_LB_ACRn"
+          ],
+          "contract": "trap-save-clears-value"
+        },
+        {
+          "path": "asl/profiles/pto-v0.asl",
+          "line": 483,
+          "address": "0x0F4E",
+          "registers": [
+            "EBARG_LC_ACRn"
+          ],
+          "contract": "trap-save-clears-value"
+        }
+      ],
+      "rule": "No storage-only register address may appear in normative ASL except the exact reviewed reset/save contracts above; generic read/write backing does not consume a stored value."
+    },
+    "envelope_only_traps": {
+      "guard_id": "trap-consumer-exclusion-pto-v0-envelope-only",
+      "status": "closed-no-production-trigger",
+      "trap_count": 3,
+      "traps": [
+        {
+          "name": "INST_PAGE_FAULT",
+          "number": 33,
+          "fault": "Fault_InstructionPage",
+          "status": "envelope-only-no-trigger",
+          "allowed_normative_occurrences": [
+            {
+              "path": "asl/state.asl",
+              "line": 399,
+              "text": "when Fault_InstructionPage => _ACRTrapNumber[[ring]] = Zeros{6} + 33;"
+            },
+            {
+              "path": "asl/types.asl",
+              "line": 30,
+              "text": "Fault_InstructionPage,"
+            }
+          ]
+        },
+        {
+          "name": "HW_BREAKPOINT",
+          "number": 49,
+          "fault": "Fault_HardwareBreakpoint",
+          "status": "envelope-only-no-trigger",
+          "allowed_normative_occurrences": [
+            {
+              "path": "asl/state.asl",
+              "line": 402,
+              "text": "when Fault_HardwareBreakpoint => _ACRTrapNumber[[ring]] = Zeros{6} + 49;"
+            },
+            {
+              "path": "asl/types.asl",
+              "line": 34,
+              "text": "Fault_HardwareBreakpoint,"
+            }
+          ]
+        },
+        {
+          "name": "HW_WATCHPOINT",
+          "number": 51,
+          "fault": "Fault_HardwareWatchpoint",
+          "status": "envelope-only-no-trigger",
+          "allowed_normative_occurrences": [
+            {
+              "path": "asl/state.asl",
+              "line": 404,
+              "text": "when Fault_HardwareWatchpoint => _ACRTrapNumber[[ring]] = Zeros{6} + 51;"
+            },
+            {
+              "path": "asl/types.asl",
+              "line": 35,
+              "text": "Fault_HardwareWatchpoint,"
+            }
+          ]
+        }
+      ],
+      "rule": "Envelope-only fault codes may appear only in the FaultCode declaration and SetFault trap-number mapping; any call or other normative use fails this generator."
+    }
+  },
+  "sources": [
+    {
+      "path": "spec/catalog/system-registers.json",
+      "sha256": "f81a7638a4117937775585e43e922ac4ad972bccc192d5af05aba03bc8179e94"
+    },
+    {
+      "path": "scripts/generate-asl-decoders",
+      "sha256": "842a224f61a149d775ad404b75abc4e09c026386558dab55fdd369d0be603975"
+    },
+    {
+      "path": "tests/asl/main.asl",
+      "sha256": "d74f2d4f235d32b2f22a4cbab49e58480522c4e4ec22f96e9d6b0a208a164688"
+    },
+    {
+      "path": "tests/asl/state-tests.asl",
+      "sha256": "88105e5084492f3a73b4877c005125630752c7c21ad6faf7f06948ef151df743"
+    },
+    {
+      "path": "asl/types.asl",
+      "sha256": "f88b8aaecd3c0578dfe23424fcc75a3ee1b5617e993e4f4aa50f49825d02155a"
+    },
+    {
+      "path": "asl/state.asl",
+      "sha256": "340acbbd0353cfca9147a3b0fce80447eddb428967134737011a677353a087e7"
+    },
+    {
+      "path": "asl/profiles/pto-v0.asl",
+      "sha256": "beb795edb5aa112c4333d41a68d0a05cd2db4c577f8e516e3d2750e3241ba3d1"
+    },
+    {
+      "path": "asl/scalar/system-registers.asl",
+      "sha256": "bcbe71ae0d697a487789a625eec3684ef4de9d13758ee0d75833523659331f22"
+    }
+  ],
+  "summary": {
+    "register_definition_count": 72,
+    "bank_expanded_address_count": 837,
+    "behavior_class_count": 25,
+    "side_effect_contract_count": 23,
+    "storage_only_register_count": 33,
+    "trap_count": 13,
+    "production_active_trap_count": 10,
+    "envelope_only_trap_count": 3
+  }
+}

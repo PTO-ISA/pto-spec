@@ -1122,6 +1122,9 @@ def main() -> int:
     scalar_bru_totality = load("spec/evidence/scalar-bru-totality.json")
     scalar_fsu_totality = load("spec/evidence/scalar-fsu-totality.json")
     scalar_numeric_flags = load("spec/evidence/scalar-numeric-flag-contract.json")
+    system_register_witnesses = load(
+        "spec/evidence/system-register-witness-closure.json"
+    )
     numeric_rounding_selectors = load(
         "spec/evidence/numeric-rounding-selector-contract.json"
     )
@@ -5870,6 +5873,91 @@ def main() -> int:
         envelope_only_traps == {33, 49, 51},
         "PTO v0 envelope-only trap disposition drift",
     )
+    witness_check = subprocess.run(
+        [str(ROOT / "scripts/generate-system-register-witness-closure"), "--check"],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    require(
+        witness_check.returncode == 0,
+        "system-register witness closure evidence is stale or a consumer-exclusion guard failed",
+    )
+    require(
+        set(system_register_witnesses)
+        == {
+            "behavior_classes",
+            "consumer_exclusion",
+            "schema_version",
+            "sources",
+            "status",
+            "summary",
+            "target",
+            "trap_witnesses",
+        }
+        and system_register_witnesses["schema_version"] == 1
+        and system_register_witnesses["target"] == "S2-T1:S2-T3:issue-34"
+        and system_register_witnesses["status"]
+        == "reference-witness-and-consumer-exclusion-closed"
+        and system_register_witnesses["summary"]
+        == {
+            "register_definition_count": 72,
+            "bank_expanded_address_count": 837,
+            "behavior_class_count": 25,
+            "side_effect_contract_count": 23,
+            "storage_only_register_count": 33,
+            "trap_count": 13,
+            "production_active_trap_count": 10,
+            "envelope_only_trap_count": 3,
+        },
+        "system-register witness closure identity or summary drift",
+    )
+    behavior_witness_rows = system_register_witnesses["behavior_classes"]
+    require(
+        [row["behavior_class"] for row in behavior_witness_rows]
+        == [row["id"] for row in behavior_rows]
+        and all(
+            row["profile_status"] == behaviors_by_id[row["behavior_class"]]["profile_status"]
+            and row["registers"] == behaviors_by_id[row["behavior_class"]]["registers"]
+            and [effect["side_effect"] for effect in row["side_effect_witnesses"]]
+            == behaviors_by_id[row["behavior_class"]]["side_effects"]
+            for row in behavior_witness_rows
+        ),
+        "system-register behavior-class witness binding drift",
+    )
+    witness_ids = []
+    for row in behavior_witness_rows:
+        witness_ids.extend(
+            [
+                row["reset_witness"]["witness_id"],
+                row["access_witness"]["witness_id"],
+                *[
+                    effect["witness_id"]
+                    for effect in row["side_effect_witnesses"]
+                ],
+            ]
+        )
+    trap_witness_rows = system_register_witnesses["trap_witnesses"]
+    witness_ids.extend(row["witness_id"] for row in trap_witness_rows)
+    require(
+        len(witness_ids) == len(set(witness_ids)) == 86
+        and [row["name"] for row in trap_witness_rows]
+        == [row["name"] for row in trap_rows]
+        and [row["pto_v0_status"] for row in trap_witness_rows]
+        == [row["pto_v0_status"] for row in trap_rows],
+        "system-register or trap witness identity drift",
+    )
+    exclusion = system_register_witnesses["consumer_exclusion"]
+    require(
+        exclusion["storage_only_registers"]["status"]
+        == "closed-no-unreviewed-consumers"
+        and exclusion["storage_only_registers"]["register_count"] == 33
+        and exclusion["envelope_only_traps"]["status"]
+        == "closed-no-production-trigger"
+        and exclusion["envelope_only_traps"]["trap_count"] == 3,
+        "system-register or trap consumer-exclusion closure drift",
+    )
     for row in trap_rows:
         for producer in row["producers"]:
             fault_match = re.fullmatch(
@@ -7951,6 +8039,62 @@ def main() -> int:
             for name, count in release_inventory_counts.items()
         ),
         "release-traceability inventory count drift",
+    )
+    release_system_rows = release_traceability["inventories"]["system_registers"]
+    release_system_by_name = {row["name"]: row for row in release_system_rows}
+    witness_by_behavior = {
+        row["behavior_class"]: row for row in behavior_witness_rows
+    }
+    behavior_by_register = {
+        name: behavior
+        for behavior in behavior_rows
+        for name in behavior["registers"]
+    }
+    require(
+        len(release_system_by_name) == 72
+        and all(
+            release_system_by_name[name]["behavior_class"] == behavior["id"]
+            and release_system_by_name[name]["profile_status"]
+            == behavior["profile_status"]
+            and release_system_by_name[name]["side_effects"]
+            == behavior["side_effects"]
+            and release_system_by_name[name]["strongest_executable_witness"]
+            == {
+                "id": witness_by_behavior[behavior["id"]]["access_witness"]["witness_id"],
+                "function": "ValidateSystemRegisterResetAndAccess",
+                "assertion_marker": witness_by_behavior[behavior["id"]]["access_witness"]["assertion_marker"],
+            }
+            and (
+                release_system_by_name[name]["consumer_exclusion_guard"]
+                == "sysreg-consumer-exclusion-pto-v0-storage-only"
+            )
+            == (behavior["profile_status"] == "pto-v0-storage-only")
+            for name, behavior in behavior_by_register.items()
+        ),
+        "release traceability omits exact system-register behavior or witness metadata",
+    )
+    release_trap_rows = release_traceability["inventories"]["traps"]
+    release_trap_by_name = {row["name"]: row for row in release_trap_rows}
+    trap_witness_by_name = {row["name"]: row for row in trap_witness_rows}
+    require(
+        len(release_trap_by_name) == 13
+        and all(
+            release_trap_by_name[row["name"]]["disposition"]
+            == row["pto_v0_status"]
+            and release_trap_by_name[row["name"]]["producers"] == row["producers"]
+            and release_trap_by_name[row["name"]]["cause"] == row["cause"]
+            and release_trap_by_name[row["name"]]["argument"] == row["argument"]
+            and release_trap_by_name[row["name"]]["restart"] == row["restart"]
+            and release_trap_by_name[row["name"]]["exact_envelope_witness"]["id"]
+            == trap_witness_by_name[row["name"]]["witness_id"]
+            and (
+                release_trap_by_name[row["name"]]["consumer_exclusion_guard"]
+                == "trap-consumer-exclusion-pto-v0-envelope-only"
+            )
+            == (row["pto_v0_status"] == "envelope-only-no-trigger")
+            for row in trap_rows
+        ),
+        "release traceability omits exact trap envelope or disposition metadata",
     )
     release_item_ids = [
         row["id"]

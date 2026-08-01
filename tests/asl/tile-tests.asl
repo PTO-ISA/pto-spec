@@ -932,6 +932,7 @@ begin
     ClearFault();
     let (aggregate_status, -) = ExecuteTileInstruction(
         TileDecode_TEPL, '000001111100', allocation);
+    // SYSREG-EFFECT-WITNESS tile-capacity-profile-limit/limits-per-tile-and-aggregate-allocation
     assert aggregate_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileAllocation;
     assert !_Tiles[[22]].allocated;

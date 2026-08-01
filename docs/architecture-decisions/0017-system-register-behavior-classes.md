@@ -24,6 +24,10 @@ translation or instruction/data matching.
   write, side effects, and profile status.
 - The catalog checker rejects missing, duplicate, unknown, access-inconsistent,
   or malformed classifications.
+- `spec/evidence/system-register-witness-closure.json` assigns stable reset,
+  access, and side-effect witness IDs to all 25 behavior classes. Each ID binds
+  to one exact assertion marker in the reachable generated
+  `ValidateSystemRegisterResetAndAccess` test.
 - Generated executable witnesses check reset for every visible base address,
   every bank of each ACR-family register, and every fixed-context register.
   They also prove read-only rejection and preservation, write-only rejection,
@@ -44,6 +48,11 @@ translation or instruction/data matching.
   definition. A future active translation or debug profile needs a distinct
   profile identity, defined field layouts and effects, and executable
   conformance evidence.
+- The generated consumer-exclusion guard rejects any storage-only register
+  address that appears as a new normative ASL consumer. Its only reviewed
+  exceptions are the profile reset range and the trap-save clearing of
+  `EBARG_LB` and `EBARG_LC`; generic system-register backing reads and writes
+  do not consume a stored value.
 
 The catalog is normative PTO material. Comparison implementations remain
 evidence only and cannot silently activate a storage-only class.

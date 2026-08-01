@@ -341,11 +341,13 @@
         "spec/catalog/system-registers.json",
         "spec/profile-hooks.json",
         "scripts/generate-asl-decoders",
+        "scripts/generate-system-register-witness-closure",
         "docs/architecture-decisions/0003-pto-owned-system-register-names.md",
         "docs/architecture-decisions/0011-visible-ebarg-snapshot.md",
         "docs/architecture-decisions/0017-system-register-behavior-classes.md",
         "docs/architecture-decisions/0031-scalar-sys-totality-and-profile-boundaries.md",
-        "spec/evidence/scalar-sys-totality.json"
+        "spec/evidence/scalar-sys-totality.json",
+        "spec/evidence/system-register-witness-closure.json"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/system-registers.json",
       "status": "reference-totality-closed:S4-T6",

@@ -47,6 +47,12 @@ an empty trap bank.
 - Generated/catalog checks reject a missing producer declaration, missing
   cause/argument/restart contract, or a change to the three envelope-only
   identities without an explicit normative update.
+- Stable per-trap witness IDs bind every catalog row to its exact executable
+  envelope case and number, argument, and restart assertions. A fail-closed
+  source guard permits `INST_PAGE_FAULT`, `HW_BREAKPOINT`, and
+  `HW_WATCHPOINT` only in the `FaultCode` declaration and the `SetFault`
+  trap-number mapping; any production call or other normative use fails the
+  evidence generator while their status remains envelope-only.
 
 ## Consequences
 

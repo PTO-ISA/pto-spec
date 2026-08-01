@@ -34,6 +34,7 @@ SOURCE_PATHS = (
     "spec/evidence/numeric-subnormal-contract.json",
     "spec/evidence/numeric-special-value-contract.json",
     "spec/evidence/scalar-effect-closure.json",
+    "spec/evidence/system-register-witness-closure.json",
     "spec/evidence/bundle-command-totality.json",
     "spec/evidence/tepl-totality.json",
     "spec/evidence/tma-totality.json",
@@ -749,6 +750,7 @@ def build_evidence() -> dict[str, Any]:
         )
 
     system_catalog = load("spec/catalog/system-registers.json")
+    system_witnesses = load("spec/evidence/system-register-witness-closure.json")
     registers = system_catalog["registers"]
     traps = system_catalog["trap_numbers"]
     require(
@@ -756,41 +758,113 @@ def build_evidence() -> dict[str, Any]:
         "system-register count drift",
     )
     require(len(traps) == EXPECTED_COUNTS["trap_count"], "trap count drift")
-    system_rows = [
-        {
-            "id": f"system-register:{row.get('address', row.get('low_index'))}:{row['name']}",
-            "name": row["name"],
-            "address_or_low_index": row.get("address", row.get("low_index")),
-            "access": row["access"],
-            "scope": row["scope"],
-            "requirements": ["PTO-REQ-SCALAR-SSR-001", "PTO-REQ-STATE-001"],
-            "model": [
-                "spec/catalog/system-registers.json",
-                "asl/scalar/system-registers.asl",
-                "asl/state.asl",
+    behavior_by_register = {
+        name: behavior
+        for behavior in system_catalog["behavior_classes"]
+        for name in behavior["registers"]
+    }
+    witness_by_behavior = {
+        row["behavior_class"]: row for row in system_witnesses["behavior_classes"]
+    }
+    trap_witness_by_name = {
+        row["name"]: row for row in system_witnesses["trap_witnesses"]
+    }
+    require(
+        set(behavior_by_register) == {row["name"] for row in registers}
+        and len(witness_by_behavior) == 25
+        and set(trap_witness_by_name) == {row["name"] for row in traps},
+        "system-register witness coverage drift",
+    )
+    system_rows = []
+    for row in registers:
+        behavior = behavior_by_register[row["name"]]
+        witness = witness_by_behavior[behavior["id"]]
+        witness_ids = [
+            witness["reset_witness"]["witness_id"],
+            witness["access_witness"]["witness_id"],
+            *[
+                effect["witness_id"]
+                for effect in witness["side_effect_witnesses"]
             ],
-            "tests": ["tests/asl/scalar-tests.asl", "tests/asl/state-tests.asl"],
-            "bounded_status": "reference-behavior-closed",
-        }
-        for row in registers
-    ]
-    trap_rows = [
-        {
-            "id": f"trap:{row['number']}:{row['name']}",
-            "name": row["name"],
-            "number": row["number"],
-            "disposition": row["pto_v0_status"],
-            "requirements": ["PTO-REQ-FAULT-001", "PTO-REQ-INTERRUPT-001"],
-            "model": [
-                "spec/catalog/system-registers.json",
-                "asl/state.asl",
-                "asl/profiles/pto-v0.asl",
-            ],
-            "tests": ["tests/asl/state-tests.asl", "tests/asl/scalar-tests.asl"],
-            "bounded_status": "reference-disposition-closed",
-        }
-        for row in traps
-    ]
+        ]
+        system_rows.append(
+            {
+                "id": f"system-register:{row.get('address', row.get('low_index'))}:{row['name']}",
+                "name": row["name"],
+                "address_or_low_index": row.get("address", row.get("low_index")),
+                "access": row["access"],
+                "scope": row["scope"],
+                "behavior_class": behavior["id"],
+                "profile_status": behavior["profile_status"],
+                "reset": behavior["reset"],
+                "read": behavior["read"],
+                "write": behavior["write"],
+                "side_effects": behavior["side_effects"],
+                "witness_ids": witness_ids,
+                "strongest_executable_witness": {
+                    "id": witness["access_witness"]["witness_id"],
+                    "function": "ValidateSystemRegisterResetAndAccess",
+                    "assertion_marker": witness["access_witness"]["assertion_marker"],
+                },
+                "consumer_exclusion_guard": (
+                    system_witnesses["consumer_exclusion"]["storage_only_registers"]["guard_id"]
+                    if behavior["profile_status"] == "pto-v0-storage-only"
+                    else None
+                ),
+                "requirements": ["PTO-REQ-SCALAR-SSR-001", "PTO-REQ-STATE-001"],
+                "model": [
+                    "spec/catalog/system-registers.json",
+                    "spec/evidence/system-register-witness-closure.json",
+                    "asl/scalar/system-registers.asl",
+                    "asl/state.asl",
+                ],
+                "tests": [
+                    "scripts/generate-asl-decoders",
+                    "tests/asl/main.asl",
+                    "tests/asl/scalar-tests.asl",
+                    "tests/asl/state-tests.asl",
+                ],
+                "bounded_status": "reference-behavior-closed",
+            }
+        )
+    trap_rows = []
+    for row in traps:
+        witness = trap_witness_by_name[row["name"]]
+        trap_rows.append(
+            {
+                "id": f"trap:{row['number']}:{row['name']}",
+                "name": row["name"],
+                "number": row["number"],
+                "disposition": row["pto_v0_status"],
+                "producers": row["producers"],
+                "cause": row["cause"],
+                "argument": row["argument"],
+                "restart": row["restart"],
+                "exact_envelope_witness": {
+                    "id": witness["witness_id"],
+                    "function": witness["function"],
+                    "case_marker": witness["case_marker"],
+                    "assertion_markers": [
+                        assertion["assertion_marker"]
+                        for assertion in witness["helper_assertions"]
+                    ],
+                },
+                "consumer_exclusion_guard": (
+                    system_witnesses["consumer_exclusion"]["envelope_only_traps"]["guard_id"]
+                    if row["pto_v0_status"] == "envelope-only-no-trigger"
+                    else None
+                ),
+                "requirements": ["PTO-REQ-FAULT-001", "PTO-REQ-INTERRUPT-001"],
+                "model": [
+                    "spec/catalog/system-registers.json",
+                    "spec/evidence/system-register-witness-closure.json",
+                    "asl/state.asl",
+                    "asl/profiles/pto-v0.asl",
+                ],
+                "tests": ["tests/asl/state-tests.asl", "tests/asl/main.asl"],
+                "bounded_status": "reference-disposition-closed",
+            }
+        )
     require_paths(
         sorted(
             {

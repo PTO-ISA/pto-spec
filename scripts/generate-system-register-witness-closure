@@ -1,0 +1,380 @@
+#!/usr/bin/env python3
+"""Generate fail-closed system-register and trap witness closure evidence."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import re
+import subprocess
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+CATALOG = ROOT / "spec/catalog/system-registers.json"
+OUTPUT = ROOT / "spec/evidence/system-register-witness-closure.json"
+
+SIDE_EFFECT_BINDINGS = {
+    ("core-state-control", "write-selects-current-acr"): ("tests/asl/scalar-tests.asl", "TestScalarFPFlagLifecycle"),
+    ("architectural-time", "advances-on-every-execution-attempt"): ("tests/asl/state-tests.asl", "TestInterruptRegisterState"),
+    ("tile-capacity-profile-limit", "limits-per-tile-and-aggregate-allocation"): ("tests/asl/tile-tests.asl", "TestTileCapacityLegality"),
+    ("execution-context-state", "save-and-recovery-profile-state"): ("tests/asl/state-tests.asl", "CheckSynchronousTrapMapping"),
+    ("exception-vector-base", "selects-trap-entry-tpc"): ("tests/asl/scalar-tests.asl", "TestServiceRequestControl"),
+    ("trap-status", "reads-and-writes-trap-bank-fields"): ("tests/asl/state-tests.asl", "CheckSynchronousTrapMapping"),
+    ("trap-argument", "reads-and-writes-trap-bank-argument"): ("tests/asl/state-tests.asl", "CheckSynchronousTrapMapping"),
+    ("interrupt-configuration", "controls-external-and-timer-trap-entry"): ("tests/asl/state-tests.asl", "TestInterruptRegisterState"),
+    ("interrupt-pending", "reflects-external-and-timer-pending-sources"): ("tests/asl/state-tests.asl", "TestInterruptRegisterState"),
+    ("top-pending-interrupt", "priority-derived-from-pending-bitmap"): ("tests/asl/state-tests.asl", "TestInterruptRegisterState"),
+    ("end-of-interrupt", "clears-selected-pending-id"): ("tests/asl/state-tests.asl", "TestInterruptRegisterState"),
+    ("end-of-interrupt", "clears-asynchronous-trap-status"): ("tests/asl/state-tests.asl", "TestInterruptRegisterState"),
+    ("timer-time", "aliases-architectural-time"): ("tests/asl/state-tests.asl", "TestInterruptRegisterState"),
+    ("timer-compare", "refreshes-timer-pending-state"): ("tests/asl/state-tests.asl", "TestInterruptRegisterState"),
+    ("saved-execution-context", "save-and-recovery-profile-state"): ("tests/asl/state-tests.asl", "CheckSynchronousTrapMapping"),
+    ("saved-loop-context-storage", "trap-save-clears-value"): ("tests/asl/state-tests.asl", "TestVisibleTrapContextRegisters"),
+    ("saved-loop-context-storage", "pto-v0-recovery-does-not-consume-value"): ("tests/asl/state-tests.asl", "TestVisibleTrapContextRegisters"),
+    ("extended-context-storage", "trap-save-preserves-value"): ("tests/asl/state-tests.asl", "TestVisibleTrapContextRegisters"),
+    ("extended-context-storage", "pto-v0-recovery-does-not-consume-value"): ("tests/asl/state-tests.asl", "TestVisibleTrapContextRegisters"),
+}
+
+
+def load(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise SystemExit(message)
+
+
+def source(path: str) -> dict[str, str]:
+    absolute = ROOT / path
+    return {
+        "path": path,
+        "sha256": hashlib.sha256(absolute.read_bytes()).hexdigest(),
+    }
+
+
+def slug(value: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
+
+
+def generated_decoder() -> str:
+    result = subprocess.run(
+        [str(ROOT / "scripts/generate-asl-decoders")],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    require(result.returncode == 0, result.stderr or "ASL decoder generation failed")
+    return result.stdout
+
+
+def assertion_after_marker(body: str, marker: str) -> str:
+    token = f"// {marker}"
+    require(body.count(token) == 1, f"witness marker must occur exactly once: {marker}")
+    tail = body.split(token, 1)[1]
+    lines = tail.splitlines()[1:]
+    assertion: list[str] = []
+    for line in lines:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("//"):
+            continue
+        if not assertion:
+            require(stripped.startswith("assert "), f"witness marker does not bind an assertion: {marker}")
+        assertion.append(stripped)
+        if stripped.endswith(";"):
+            return " ".join(assertion)
+    raise SystemExit(f"unterminated assertion after witness marker: {marker}")
+
+
+def storage_only_rows(catalog: dict[str, Any]) -> list[dict[str, Any]]:
+    names = {
+        name
+        for behavior in catalog["behavior_classes"]
+        if behavior["profile_status"] == "pto-v0-storage-only"
+        for name in behavior["registers"]
+    }
+    return [row for row in catalog["registers"] if row["name"] in names]
+
+
+def storage_consumer_exclusion(catalog: dict[str, Any]) -> dict[str, Any]:
+    rows = storage_only_rows(catalog)
+    require(len(rows) == 33, "expected exactly 33 PTO-v0 storage-only registers")
+    address_to_names: dict[int, list[str]] = {}
+    for row in rows:
+        address = int(row.get("address", row.get("low_index")), 0)
+        address_to_names.setdefault(address, []).append(row["name"])
+
+    allowed = {
+        ("asl/profiles/pto-v0.asl", 0x0F4D, "PTOv0WriteContextRegister(target, 0x0f4d, Zeros{PTO_XLEN});"),
+        ("asl/profiles/pto-v0.asl", 0x0F4E, "PTOv0WriteContextRegister(target, 0x0f4e, Zeros{PTO_XLEN});"),
+        ("asl/profiles/pto-v0.asl", 0x0FB7, "for low_index = 0x0f00 to 0x0fb7 do"),
+    }
+    occurrences: list[dict[str, Any]] = []
+    for path in sorted((ROOT / "asl").rglob("*.asl")):
+        relative = str(path.relative_to(ROOT))
+        for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+            if line.strip().startswith("//"):
+                continue
+            for token in re.findall(r"0x[0-9a-fA-F]+", line):
+                address = int(token, 16)
+                if address not in address_to_names:
+                    continue
+                normalized = line.strip()
+                require(
+                    (relative, address, normalized) in allowed,
+                    f"storage-only register gained an unreviewed semantic consumer: {relative}:{line_number}: {normalized}",
+                )
+                occurrences.append(
+                    {
+                        "path": relative,
+                        "line": line_number,
+                        "address": f"0x{address:04X}",
+                        "registers": sorted(address_to_names[address]),
+                        "contract": (
+                            "trap-save-clears-value"
+                            if address in {0x0F4D, 0x0F4E}
+                            else "profile-reset-range-bound"
+                        ),
+                    }
+                )
+    require(len(occurrences) == 3, "storage-only semantic allowlist occurrence drift")
+    return {
+        "guard_id": "sysreg-consumer-exclusion-pto-v0-storage-only",
+        "status": "closed-no-unreviewed-consumers",
+        "register_count": len(rows),
+        "registers": [row["name"] for row in rows],
+        "allowed_normative_occurrences": occurrences,
+        "rule": "No storage-only register address may appear in normative ASL except the exact reviewed reset/save contracts above; generic read/write backing does not consume a stored value.",
+    }
+
+
+def trap_consumer_exclusion(catalog: dict[str, Any]) -> dict[str, Any]:
+    traps = [
+        row
+        for row in catalog["trap_numbers"]
+        if row["pto_v0_status"] == "envelope-only-no-trigger"
+    ]
+    require([row["number"] for row in traps] == [33, 49, 51], "envelope-only trap set drift")
+    rows = []
+    for trap in traps:
+        producer = trap["producers"][0]
+        match = re.fullmatch(r"SetFault\((Fault_[A-Za-z]+)\)", producer)
+        require(match is not None, f"envelope-only trap lacks SetFault envelope: {trap['name']}")
+        fault = match.group(1)
+        occurrences = []
+        for path in sorted((ROOT / "asl").rglob("*.asl")):
+            relative = str(path.relative_to(ROOT))
+            for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+                if re.search(rf"\b{re.escape(fault)}\b", line) is None:
+                    continue
+                normalized = line.strip()
+                allowed = (
+                    relative == "asl/types.asl" and normalized.rstrip(",") == fault
+                ) or (
+                    relative == "asl/state.asl"
+                    and normalized.startswith(f"when {fault} => _ACRTrapNumber[[ring]] =")
+                )
+                require(
+                    allowed,
+                    f"envelope-only trap gained a PTO-v0 trigger: {relative}:{line_number}: {normalized}",
+                )
+                occurrences.append({"path": relative, "line": line_number, "text": normalized})
+        require(len(occurrences) == 2, f"envelope-only declaration/mapping drift: {trap['name']}")
+        rows.append(
+            {
+                "name": trap["name"],
+                "number": trap["number"],
+                "fault": fault,
+                "status": trap["pto_v0_status"],
+                "allowed_normative_occurrences": occurrences,
+            }
+        )
+    return {
+        "guard_id": "trap-consumer-exclusion-pto-v0-envelope-only",
+        "status": "closed-no-production-trigger",
+        "trap_count": len(rows),
+        "traps": rows,
+        "rule": "Envelope-only fault codes may appear only in the FaultCode declaration and SetFault trap-number mapping; any call or other normative use fails this generator.",
+    }
+
+
+def generate() -> dict[str, Any]:
+    catalog = load(CATALOG)
+    decoder = generated_decoder()
+    main = (ROOT / "tests/asl/main.asl").read_text(encoding="utf-8")
+    state_tests = (ROOT / "tests/asl/state-tests.asl").read_text(encoding="utf-8")
+    require(
+        "ValidateSystemRegisterResetAndAccess();" in main,
+        "system-register generated witness is not reachable from canonical main",
+    )
+    require(
+        "TestCompleteTrapEnvelope();" in main,
+        "trap envelope witness is not reachable from canonical main",
+    )
+
+    behaviors = []
+    side_effect_count = 0
+    source_bodies = {
+        path: (ROOT / path).read_text(encoding="utf-8")
+        for path, _ in SIDE_EFFECT_BINDINGS.values()
+    }
+    for behavior in catalog["behavior_classes"]:
+        behavior_id = behavior["id"]
+        reset_marker = f"SYSREG-WITNESS class/{behavior_id}/reset"
+        access_marker = f"SYSREG-WITNESS class/{behavior_id}/access"
+        effects = []
+        for effect in behavior["side_effects"]:
+            binding = SIDE_EFFECT_BINDINGS.get((behavior_id, effect))
+            if binding is None:
+                marker = f"SYSREG-WITNESS effect/{behavior_id}/{slug(effect)}"
+                source_path = "generated:build/decoders.asl"
+                function = "ValidateSystemRegisterResetAndAccess"
+                assertion_body = decoder
+                closure = "static-consumer-exclusion-plus-access-round-trip"
+            else:
+                source_path, function = binding
+                marker = f"SYSREG-EFFECT-WITNESS {behavior_id}/{slug(effect)}"
+                assertion_body = source_bodies[source_path]
+                closure = "direct-effect-assertion"
+            effects.append(
+                {
+                    "side_effect": effect,
+                    "witness_id": f"sysreg-effect:{behavior_id}:{slug(effect)}",
+                    "assertion_marker": marker,
+                    "assertion": assertion_after_marker(assertion_body, marker),
+                    "function": function,
+                    "source": source_path,
+                    "closure": closure,
+                }
+            )
+        side_effect_count += len(effects)
+        behaviors.append(
+            {
+                "behavior_class": behavior_id,
+                "profile_status": behavior["profile_status"],
+                "registers": behavior["registers"],
+                "reset_witness": {
+                    "witness_id": f"sysreg-class:{behavior_id}:reset",
+                    "assertion_marker": reset_marker,
+                    "assertion": assertion_after_marker(decoder, reset_marker),
+                    "function": "ValidateSystemRegisterResetAndAccess",
+                    "source": "generated:build/decoders.asl",
+                },
+                "access_witness": {
+                    "witness_id": f"sysreg-class:{behavior_id}:access",
+                    "assertion_marker": access_marker,
+                    "assertion": assertion_after_marker(decoder, access_marker),
+                    "function": "ValidateSystemRegisterResetAndAccess",
+                    "source": "generated:build/decoders.asl",
+                },
+                "side_effect_witnesses": effects,
+            }
+        )
+
+    synchronous_helper_markers = [
+        "TRAP-WITNESS envelope/assert-number",
+        "TRAP-WITNESS envelope/assert-argument",
+        "TRAP-WITNESS envelope/assert-restart",
+    ]
+    trap_witnesses = []
+    for trap in catalog["trap_numbers"]:
+        case_marker = f"// TRAP-WITNESS case/{trap['name']}"
+        require(state_tests.count(case_marker) == 1, f"trap case marker drift: {trap['name']}")
+        helper_function = (
+            "TestCompleteTrapEnvelope"
+            if trap["name"] == "INTERRUPT"
+            else "CheckSynchronousTrapMapping"
+        )
+        helper_markers = (
+            [
+                "TRAP-WITNESS interrupt/assert-number",
+                "TRAP-WITNESS interrupt/assert-argument",
+                "TRAP-WITNESS interrupt/assert-restart",
+            ]
+            if trap["name"] == "INTERRUPT"
+            else synchronous_helper_markers
+        )
+        helper_assertions = [
+            {
+                "assertion_marker": marker,
+                "assertion": assertion_after_marker(state_tests, marker),
+                "function": helper_function,
+                "source": "tests/asl/state-tests.asl",
+            }
+            for marker in helper_markers
+        ]
+        trap_witnesses.append(
+            {
+                "name": trap["name"],
+                "number": trap["number"],
+                "pto_v0_status": trap["pto_v0_status"],
+                "witness_id": f"trap-envelope:{trap['number']}:{trap['name']}",
+                "case_marker": case_marker.removeprefix("// "),
+                "function": "TestCompleteTrapEnvelope",
+                "source": "tests/asl/state-tests.asl",
+                "helper_assertions": helper_assertions,
+            }
+        )
+
+    concrete_address_count = 0
+    for row in catalog["registers"]:
+        concrete_address_count += 16 if row["scope"] == "context-family" and "fixed_context" not in row else 1
+    require(concrete_address_count == 837, "bank-expanded system-register address count drift")
+    return {
+        "schema_version": 1,
+        "target": "S2-T1:S2-T3:issue-34",
+        "status": "reference-witness-and-consumer-exclusion-closed",
+        "behavior_classes": behaviors,
+        "trap_witnesses": trap_witnesses,
+        "consumer_exclusion": {
+            "storage_only_registers": storage_consumer_exclusion(catalog),
+            "envelope_only_traps": trap_consumer_exclusion(catalog),
+        },
+        "sources": [
+            source("spec/catalog/system-registers.json"),
+            source("scripts/generate-asl-decoders"),
+            source("tests/asl/main.asl"),
+            source("tests/asl/state-tests.asl"),
+            source("asl/types.asl"),
+            source("asl/state.asl"),
+            source("asl/profiles/pto-v0.asl"),
+            source("asl/scalar/system-registers.asl"),
+        ],
+        "summary": {
+            "register_definition_count": len(catalog["registers"]),
+            "bank_expanded_address_count": concrete_address_count,
+            "behavior_class_count": len(behaviors),
+            "side_effect_contract_count": side_effect_count,
+            "storage_only_register_count": len(storage_only_rows(catalog)),
+            "trap_count": len(trap_witnesses),
+            "production_active_trap_count": sum(row["pto_v0_status"] == "production-active" for row in trap_witnesses),
+            "envelope_only_trap_count": sum(row["pto_v0_status"] == "envelope-only-no-trigger" for row in trap_witnesses),
+        },
+    }
+
+
+def serialized() -> str:
+    return json.dumps(generate(), indent=2, ensure_ascii=False) + "\n"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    action = parser.add_mutually_exclusive_group(required=True)
+    action.add_argument("--check", action="store_true")
+    action.add_argument("--write", action="store_true")
+    args = parser.parse_args()
+    expected = serialized()
+    if args.write:
+        OUTPUT.write_text(expected, encoding="utf-8")
+        return 0
+    if not OUTPUT.is_file() or OUTPUT.read_text(encoding="utf-8") != expected:
+        raise SystemExit(f"stale generated evidence: {OUTPUT.relative_to(ROOT)}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
