@@ -26,34 +26,35 @@ fail-closed `PD-02-SC2` binding and availability checkpoint.
 
 1. The public identities are three base floating types, five A5-only
    specialized floating types, and eight signed or unsigned integer types.
-2. The base public types bind to the unambiguous PTO catalog identities:
-   `F16`, `BF16`, `F32`, `S8`, `U8`, `S16`, `U16`, `S32`, `U32`, `S64`, and
-   `U64`.
+2. All 16 public types bind to PTO catalog identities. The three base floating
+   types bind to `FP16`, `BF16`, and `FP32`; the five A5-only specialized
+   floating types bind to `E4M3`, `E5M2`, `HiF8`, `E1M2X2`, and `E2M1X2`; and
+   the eight integer types bind to `S8`, `U8`, `S16`, `U16`, `S32`, `U32`,
+   `S64`, and `U64`.
 3. A2/A3 supports those 11 base identities. A5 supports all 16 published
    identities. These are type-support facts only; they do not make every
    operation/type tuple legal and do not select a numeric result.
-4. `FP8`, `FPL8`, `FP4`, and `FPL4` remain unbound because the public names do
-   not establish a unique mapping to the catalog names. The published E5M2
-   versus `float8_e5m3fn` spelling conflict also remains explicit.
-5. `F64` and `E8M0` remain PTO raw-carrier identities without a public
-   element-type binding at the pinned revision. They are not aliases for a
-   public type by implication.
-6. Public type names and widths do not define NaN payloads, signaling behavior,
+4. Nine catalog types remain outside the public inventory: `FP64`, `TF32`,
+   `HF32`, `E3M2`, `E2M3`, `E8M0`, `HiF4X2`, `S4X2`, and `U4X2`. Their PTO
+   architectural identity is unchanged, and none gains a public alias by
+   implication.
+5. Public type names and widths do not define NaN payloads, signaling behavior,
    subnormal handling, rounding, flags, saturation, conversion overflow,
    accumulation, or any other result rule. Those decisions remain open.
 
 ## Consequences
 
-`S5-T2-A5` closes public type discovery, the 11 unambiguous catalog bindings,
+`S5-T2-A5` closes public type discovery, all 16 accepted catalog bindings,
 and the published A2/A3-versus-A5 type availability baseline. It does not
 accept `PD-02`, populate a domain result rule, select a variation-point route,
 or change the M4 maturity floor.
 
-The remaining `PD-02` work is finite and explicit: bind the specialized
-catalog identities, decide the public role of `F64` and `E8M0`, resolve the
-E5M2/E5M3FN conflict, define bit-exact payload and exceptional-value formats,
-complete the operation/type/profile legality matrix, and publish target
-availability vectors.
+The remaining `PD-02` work is finite and explicit: complete every scalar and
+tile operation/type/profile legality tuple, publish independent numeric result
+and exception vectors, record downstream byte-and-effect parity for the
+immutable hardware profile, and accept architecture and formal-model review
+against the exact 0.57.1 type contract.
+These four legality, vector, parity, and review residuals remain open.
 
 The pinned independent executable model is only structural evidence here. Its
 scalar type fields corroborate carrier namespaces, while its tile numeric

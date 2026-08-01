@@ -116,7 +116,7 @@
   },
   "public_type_baseline": {
     "path": "spec/evidence/public-numeric-type-baseline.json",
-    "sha256": "df73be6d0a4d3cb1cfbdcafb20cbc0cb9232b3d72d29148603789d6d935e27c0",
+    "sha256": "6709b8b301742a985dc549b0518cb7aa3d53af4fe064cdb0aba5ed7e01152498",
     "status": "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
     "acceptance_record": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
     "public_type_count": 16,
@@ -135,7 +135,7 @@
   },
   "public_integer_conversion": {
     "path": "spec/evidence/public-integer-conversion-contract.json",
-    "sha256": "af58f7e35d042339ff6002fc484b2eb89ab535bf65fadf5c06bb6873b0b364c6",
+    "sha256": "bad1906f7fa99c9716fc48f9de1861f6ed03f336874e6c60afdea7c787fb2bb1",
     "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
     "acceptance_record": "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
     "public_integer_type_count": 8,
@@ -173,7 +173,7 @@
   },
   "variation_point_contract": {
     "path": "spec/evidence/numeric-variation-point-ownership.json",
-    "sha256": "bb7b7d015b786a8a1ba5c1fe8b4d661c67980d811b00155b6a6efd33e39988c4",
+    "sha256": "c203e5364f7ed84c1a788bbeaf4cbf44af4844ad9db52336e290ca47ce880703",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
     "acceptance_record": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
     "variation_point_count": 99,

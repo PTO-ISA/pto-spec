@@ -9408,11 +9408,11 @@
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "df73be6d0a4d3cb1cfbdcafb20cbc0cb9232b3d72d29148603789d6d935e27c0"
+      "sha256": "6709b8b301742a985dc549b0518cb7aa3d53af4fe064cdb0aba5ed7e01152498"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "af58f7e35d042339ff6002fc484b2eb89ab535bf65fadf5c06bb6873b0b364c6"
+      "sha256": "bad1906f7fa99c9716fc48f9de1861f6ed03f336874e6c60afdea7c787fb2bb1"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",

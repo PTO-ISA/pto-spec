@@ -54,17 +54,17 @@ accepted architecture decisions remain authoritative.
 - ADR 0040 and `spec/evidence/numeric-format-namespace-contract.json` close
   the PD-02 namespace/carrier checkpoint: five separate code spaces, all 25
   raw-carrier widths, every mapped/reserved code, and low-nibble-first packing
-  for all four 4-bit types.
+  for all five packed four-bit types.
 - ADR 0048 and `asl/numeric/formats.asl` close the shared PD-02/PD-05
   value-class checkpoint: all 25 formats are classified, four internal
   encoding constraints reject invalid carriers, and all ten NaN-capable
   formats have canonical NaNs. Operation-specific propagation, flags,
   legality, and target results remain open.
 - ADR 0043 and `spec/evidence/public-numeric-type-baseline.json` close the
-  next PD-02 checkpoint: all 16 published type identities, 11 unambiguous
-  catalog bindings, and public availability for 11 A2/A3 and 16 A5 types.
-  Six catalog names remain unbound and seven bit-exact format, legality, and
-  vector residuals remain open. No result rule is accepted.
+  next PD-02 checkpoint: all 16 published type identities, 16 accepted catalog
+  bindings, and public availability for 11 A2/A3 and 16 A5 types. Nine catalog
+  types remain outside the public inventory, and four legality, vector, parity,
+  and review residuals remain open. No complete domain rule is accepted.
 - ADR 0044 and `spec/evidence/public-integer-conversion-contract.json` close
   `S5-T2-A6`: three portable rules determine all 48 unequal-width public
   integer `TCVT` results. Profile support remains a separate open decision;
@@ -81,6 +81,10 @@ accepted architecture decisions remain authoritative.
   identity, so the PD-04 contract does not silently claim another route.
 - The current maturity floor remains M4. This register improves decision
   readiness; it does not close `S5-T2-A` or numeric conformance.
+
+The machine-derived closure snapshot is 2 accepted and 10 open decisions,
+0 accepted and 20 open complete domain rules, and 18 selected and 81 open
+variation routes.
 
 ## Profile partitions requiring a decision
 

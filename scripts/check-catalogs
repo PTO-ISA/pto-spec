@@ -7898,15 +7898,12 @@ def main() -> int:
         and predicate_boundary["active_release"] == "PTO ISA 0.57.1"
         and predicate_boundary["current_public_source_release"]
         == "PTO ISA v0.6 micro-instruction surface"
-        and predicate_boundary["disposition"]
-        == "outside-active-0.57.1-release-line"
+        and predicate_boundary["disposition"] == "outside-active-0.57.1-release-line"
         and predicate_boundary["accepted_mapping"] is None
         and "No public v0.6 typed mask is mapped" in predicate_boundary["mapping_rule"],
         "predicate release-line boundary drift",
     )
-    predicate_concepts = {
-        row["id"]: row for row in predicate_boundary["concepts"]
-    }
+    predicate_concepts = {row["id"]: row for row in predicate_boundary["concepts"]}
     require(
         list(predicate_concepts)
         == [
@@ -8394,6 +8391,233 @@ def main() -> int:
     )
     readme_body = (ROOT / "README.md").read_text(encoding="utf-8")
     coverage_body = (ROOT / "docs" / "coverage.md").read_text(encoding="utf-8")
+    profile_contracts_body = (ROOT / "docs" / "profile-contracts.md").read_text(
+        encoding="utf-8"
+    )
+    public_type_adr_body = (
+        ROOT
+        / "docs"
+        / "architecture-decisions"
+        / "0043-public-numeric-type-identity-and-availability.md"
+    ).read_text(encoding="utf-8")
+
+    # Human-facing maturity counts are claims, not commentary. Derive the
+    # published snapshot from the checked evidence so prose drift fails before
+    # any long ASLRef execution begins.
+    publication_counts = {
+        "decision_count": len(numeric_profile_decisions["decision_questions"]),
+        "accepted_decision_count": sum(
+            row["status"] == "accepted"
+            for row in numeric_profile_decisions["decision_questions"]
+        ),
+        "domain_count": len(numeric_profile_decisions["domain_matrix"]),
+        "accepted_domain_rule_count": sum(
+            row["selected_profile_rule"] is not None
+            for row in numeric_profile_decisions["domain_matrix"]
+        ),
+        "profile_hook_count": len(profile_catalog["hooks"]),
+        "numeric_hook_count": sum(
+            row["maturity_target"] == "S5-T2" for row in profile_catalog["hooks"]
+        ),
+        "n5_hook_count": len(
+            next(row for row in numeric_readiness["lanes"] if row["id"] == "N5")[
+                "hooks"
+            ]
+        ),
+        "variation_point_count": len(numeric_variation_ownership["variation_points"]),
+        "selected_variation_route_count": sum(
+            row["selected_route"] is not None
+            for row in numeric_variation_ownership["variation_points"]
+        ),
+        "numeric_operation_count": len(numeric_variation_ownership["operations"]),
+        "public_type_count": len(public_numeric_types["public_types"]),
+        "accepted_catalog_binding_count": len(
+            public_numeric_types["accepted_catalog_bindings"]
+        ),
+        "a2a3_available_type_count": sum(
+            row["a2a3_available"] for row in public_numeric_types["public_types"]
+        ),
+        "a5_available_type_count": sum(
+            row["a5_available"] for row in public_numeric_types["public_types"]
+        ),
+        "non_public_catalog_type_count": len(
+            public_numeric_types["non_public_catalog_types"]
+        ),
+        "public_baseline_residual_count": len(public_numeric_types["open_residuals"]),
+        "packed_four_bit_type_count": len(
+            numeric_format_namespaces["four_bit_packing"]["types"]
+        ),
+    }
+    publication_counts["open_decision_count"] = (
+        publication_counts["decision_count"]
+        - publication_counts["accepted_decision_count"]
+    )
+    publication_counts["open_domain_rule_count"] = (
+        publication_counts["domain_count"]
+        - publication_counts["accepted_domain_rule_count"]
+    )
+    publication_counts["non_numeric_hook_count"] = (
+        publication_counts["profile_hook_count"]
+        - publication_counts["numeric_hook_count"]
+    )
+    publication_counts["open_variation_route_count"] = (
+        publication_counts["variation_point_count"]
+        - publication_counts["selected_variation_route_count"]
+    )
+    number_words = (
+        "zero",
+        "one",
+        "two",
+        "three",
+        "four",
+        "five",
+        "six",
+        "seven",
+        "eight",
+        "nine",
+        "ten",
+    )
+    normalized_publication_docs = {
+        name: " ".join(body.split())
+        for name, body in {
+            "README.md": readme_body,
+            "docs/coverage.md": coverage_body,
+            "docs/maturity-stage-targets.md": maturity_index_body,
+            "docs/profile-contracts.md": profile_contracts_body,
+            "docs/numeric-profile-decision-register.md": numeric_profile_decision_body,
+            "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md": public_type_adr_body,
+        }.items()
+    }
+
+    def require_published_claim(document: str, claim: str) -> None:
+        require(
+            " ".join(claim.split()).casefold()
+            in normalized_publication_docs[document].casefold(),
+            f"published numeric maturity count drift in {document}: {claim}",
+        )
+
+    decisions_claim = (
+        f"{publication_counts['accepted_decision_count']}/{publication_counts['decision_count']} "
+        "complete-decision"
+    )
+    domains_claim = (
+        f"{publication_counts['accepted_domain_rule_count']}/{publication_counts['domain_count']} "
+        "domain-rule"
+    )
+    require_published_claim("docs/coverage.md", decisions_claim)
+    require_published_claim("docs/coverage.md", domains_claim)
+    require_published_claim(
+        "docs/maturity-stage-targets.md",
+        "complete-decision and complete-domain-rule counts remain "
+        f"{publication_counts['accepted_decision_count']}/{publication_counts['decision_count']} "
+        f"and {publication_counts['accepted_domain_rule_count']}/{publication_counts['domain_count']}",
+    )
+    for document in normalized_publication_docs:
+        if document.endswith("0043-public-numeric-type-identity-and-availability.md"):
+            continue
+        require_published_claim(
+            document,
+            f"{publication_counts['accepted_decision_count']} accepted and "
+            f"{publication_counts['open_decision_count']} open",
+        )
+    require_published_claim(
+        "docs/profile-contracts.md",
+        f"{publication_counts['profile_hook_count']}-entry registry",
+    )
+    require_published_claim(
+        "docs/profile-contracts.md",
+        f"{number_words[publication_counts['non_numeric_hook_count']]} closed non-numeric versus "
+        f"{publication_counts['numeric_hook_count']} raw-carrier",
+    )
+    require_published_claim(
+        "docs/maturity-stage-targets.md",
+        f"| N5 — reductions and ordering | `tile-reduction`, `tile-partial`, `tile-order` | 20 | "
+        f"{publication_counts['n5_hook_count']} |",
+    )
+    require_published_claim(
+        "docs/maturity-stage-targets.md",
+        f"| **Total** | **{publication_counts['domain_count']} domains** | "
+        f"**{publication_counts['numeric_operation_count']}** | "
+        f"**{publication_counts['numeric_hook_count']}** |",
+    )
+    for document, claim in {
+        "README.md": (
+            f"A2/A3 ({publication_counts['a2a3_available_type_count']} types) and "
+            f"A5 ({publication_counts['a5_available_type_count']} types)"
+        ),
+        "docs/coverage.md": (
+            f"availability for {publication_counts['a2a3_available_type_count']} A2/A3 "
+            f"and {publication_counts['a5_available_type_count']} A5 types"
+        ),
+        "docs/maturity-stage-targets.md": (
+            f"availability at {publication_counts['a2a3_available_type_count']} types for A2/A3 "
+            f"and {publication_counts['a5_available_type_count']} for A5"
+        ),
+        "docs/profile-contracts.md": (
+            f"A2/A3 availability is fixed at {publication_counts['a2a3_available_type_count']} types, "
+            f"and A5 availability is fixed at {publication_counts['a5_available_type_count']}"
+        ),
+        "docs/numeric-profile-decision-register.md": (
+            f"availability for {publication_counts['a2a3_available_type_count']} A2/A3 "
+            f"and {publication_counts['a5_available_type_count']} A5 types"
+        ),
+        "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md": (
+            f"A2/A3 supports those {publication_counts['a2a3_available_type_count']} base identities. "
+            f"A5 supports all {publication_counts['a5_available_type_count']} published"
+        ),
+    }.items():
+        require_published_claim(document, claim)
+    for document in (
+        "README.md",
+        "docs/coverage.md",
+        "docs/maturity-stage-targets.md",
+        "docs/profile-contracts.md",
+        "docs/numeric-profile-decision-register.md",
+    ):
+        require_published_claim(
+            document,
+            f"{publication_counts['selected_variation_route_count']} selected",
+        )
+        require_published_claim(
+            document,
+            f"{publication_counts['open_variation_route_count']} open",
+        )
+    for document in (
+        "README.md",
+        "docs/coverage.md",
+        "docs/maturity-stage-targets.md",
+        "docs/profile-contracts.md",
+        "docs/numeric-profile-decision-register.md",
+        "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
+    ):
+        require_published_claim(
+            document,
+            f"{publication_counts['public_type_count']} published",
+        )
+        require_published_claim(
+            document,
+            f"{publication_counts['accepted_catalog_binding_count']} accepted",
+        )
+        require_published_claim(
+            document,
+            f"{number_words[publication_counts['non_public_catalog_type_count']]} "
+            "catalog types remain outside the public inventory",
+        )
+        require_published_claim(
+            document,
+            f"{number_words[publication_counts['public_baseline_residual_count']]} "
+            "legality, vector, parity, and review residuals",
+        )
+    for document in (
+        "README.md",
+        "docs/coverage.md",
+        "docs/maturity-stage-targets.md",
+        "docs/numeric-profile-decision-register.md",
+    ):
+        require_published_claim(
+            document,
+            f"{number_words[publication_counts['packed_four_bit_type_count']]} packed four-bit",
+        )
     require(
         "normative draft of the **PTO ISA 0.57.1** contract at\nmaturity M4"
         in readme_body
@@ -8806,6 +9030,19 @@ def main() -> int:
         and release_summary["release_gate_status"] == "open:S6-T2",
         "release-gate readiness summary drift",
     )
+    published_topology_claim = (
+        f"exact {release_summary['shard_count']}-shard/"
+        f"{release_summary['canonical_call_count']}-call/"
+        f"{release_summary['reachable_test_subprogram_count']}-subprogram topology"
+    )
+    for document, body in {
+        "docs/coverage.md": coverage_body,
+        "docs/maturity-bringup-plan.md": maturity_plan_body,
+    }.items():
+        require(
+            published_topology_claim in " ".join(body.split()),
+            f"published release topology drift in {document}: {published_topology_claim}",
+        )
     require(
         len(release_gate["gates"]) == 10
         and all(row["contract_status"] == "closed" for row in release_gate["gates"])

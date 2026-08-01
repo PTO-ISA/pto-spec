@@ -47,7 +47,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "208d9bc1b356a1d2cf1a13c4ccc294a07852260030211ee23080bae1ccb287e0"
+      "sha256": "222d01a75aceac4680531dfe87032f0eb60a4a444931b77d7bcfa35aa18b0dc7"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -59,15 +59,15 @@
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "bb7b7d015b786a8a1ba5c1fe8b4d661c67980d811b00155b6a6efd33e39988c4"
+      "sha256": "c203e5364f7ed84c1a788bbeaf4cbf44af4844ad9db52336e290ca47ce880703"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "df73be6d0a4d3cb1cfbdcafb20cbc0cb9232b3d72d29148603789d6d935e27c0"
+      "sha256": "6709b8b301742a985dc549b0518cb7aa3d53af4fe064cdb0aba5ed7e01152498"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "af58f7e35d042339ff6002fc484b2eb89ab535bf65fadf5c06bb6873b0b364c6"
+      "sha256": "bad1906f7fa99c9716fc48f9de1861f6ed03f336874e6c60afdea7c787fb2bb1"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
