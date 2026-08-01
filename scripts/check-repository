@@ -80,6 +80,7 @@ required_files=(
     spec/evidence/bundle-command-totality.json
     spec/evidence/cube-totality.json
     spec/evidence/executable-model-comparison.json
+    spec/evidence/noncomparable-oracle-coverage.json
     spec/evidence/scalar-agu-totality.json
     spec/evidence/scalar-alu-totality.json
     spec/evidence/scalar-bru-totality.json
@@ -90,6 +91,7 @@ required_files=(
     spec/evidence/tma-totality.json
     scripts/generate-bundle-command-totality
     scripts/generate-executable-model-comparison
+    scripts/generate-noncomparable-oracle-coverage
     scripts/generate-instruction-reference
     scripts/generate-numeric-conformance-readiness
     scripts/generate-numeric-profile-decision-inputs
@@ -201,6 +203,7 @@ done
 
 python3 scripts/check-catalogs
 ./scripts/generate-bundle-command-totality --check
+./scripts/generate-noncomparable-oracle-coverage --check
 ./scripts/generate-numeric-conformance-readiness --check
 ./scripts/generate-numeric-profile-decision-inputs --check
 ./scripts/generate-scalar-numeric-flag-contract --check

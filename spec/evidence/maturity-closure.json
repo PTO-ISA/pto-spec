@@ -299,7 +299,7 @@
       "title": "Close independent numeric conformance"
     },
     {
-      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/public-source-reconciliation.json", "spec/evidence/executable-model-comparison.json", "scripts/generate-executable-model-comparison", "docs/architecture-decisions/0036-executable-model-comparison-dispositions.md"],
+      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/public-source-reconciliation.json", "spec/evidence/executable-model-comparison.json", "scripts/generate-executable-model-comparison", "spec/evidence/noncomparable-oracle-coverage.json", "scripts/generate-noncomparable-oracle-coverage", "docs/architecture-decisions/0036-executable-model-comparison-dispositions.md"],
       "gaps": [],
       "id": "S5-T3",
       "owner": "PTO architecture and formal-model maintainers",

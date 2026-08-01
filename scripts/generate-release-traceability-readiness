@@ -39,6 +39,7 @@ SOURCE_PATHS = (
     "spec/evidence/tepl-totality.json",
     "spec/evidence/tma-totality.json",
     "spec/evidence/cube-totality.json",
+    "spec/evidence/noncomparable-oracle-coverage.json",
     "scripts/generate-asl-decoders",
     "scripts/generate-system-register-witness-closure",
     "tests/asl/main.asl",

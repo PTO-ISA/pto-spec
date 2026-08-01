@@ -51,6 +51,15 @@ The current matrix classifies 693 rows:
 | `non-comparable` | 39 | Independent evidence is decode-only, header-only, or lacks payload execution. |
 | `intentional-extension` | 1 | `TPRELU` is a PTO-owned TEPL extension. |
 
+These classifications close an exhaustive **independent disposition** review,
+not independent executable parity. The orthogonal generated
+`spec/evidence/noncomparable-oracle-coverage.json` ledger preserves the exact
+39-row non-comparable membership and grades executable-oracle coverage without
+changing any matrix classification. Its foundation partition is 10 existing
+exact-value candidates, 15 rows with a possible source path but no attributable
+oracle, and 14 rows with no executable path. All 39 currently have
+`oracle_coverage = none`, so independent executable parity is 0/39.
+
 The comparison explicitly records these model limits:
 
 - Reg5 is not validated as a flat scalar-register model. PTO keeps the
@@ -82,6 +91,21 @@ passes every archived repository, parser, and executable-backend gate. Neither
 obligation is a numeric, hardware, or full independent tile-payload conformance
 claim.
 
+Three closure layers therefore remain distinct:
+
+1. PTO semantic closure is supplied by PTO-owned ASL, legality, fault, state,
+   and Stage 4 executable evidence.
+2. Independent disposition closure is the complete 693-row S5-T3 matrix.
+3. Independent executable parity is a separate 0/39 obligation for rows whose
+   comparison evidence is currently decode-, header-, or manifest-only.
+
+Promoting the third layer requires a publication-safe per-row oracle identity,
+clean snapshot digest, gate token, input and expected-vector hashes, actual
+result/state hash, supported obligations, limitations, execution result, and
+reviewed disposition. Missing commands, stale snapshots, timeouts, nonzero
+exits, unreviewed records, or structural-only evidence fail closed. Numeric
+result parity stays deferred to S5-T2 where applicable.
+
 The comparison snapshot passed the available clean generation, validation,
 canonical encoding, operation-manifest, decode-regeneration, semantic-status,
 semantic-coverage, Sail parser, and Sail C-backend gates. These results are
@@ -100,6 +124,8 @@ add a new ADR for any changed divergence.
 
 - `spec/evidence/executable-model-comparison.json`
 - `scripts/generate-executable-model-comparison`
+- `spec/evidence/noncomparable-oracle-coverage.json`
+- `scripts/generate-noncomparable-oracle-coverage`
 - `spec/evidence/scalar-effect-closure.json`
 - `spec/evidence/bundle-command-totality.json`
 - `spec/evidence/tepl-totality.json`

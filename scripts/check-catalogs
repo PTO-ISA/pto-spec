@@ -1149,7 +1149,11 @@ def main() -> int:
     tepl_totality = load("spec/evidence/tepl-totality.json")
     tma_totality = load("spec/evidence/tma-totality.json")
     cube_totality = load("spec/evidence/cube-totality.json")
+    bundle_command_totality = load("spec/evidence/bundle-command-totality.json")
     executable_model_comparison = load("spec/evidence/executable-model-comparison.json")
+    noncomparable_oracle_coverage = load(
+        "spec/evidence/noncomparable-oracle-coverage.json"
+    )
     maturity_closure = load("spec/evidence/maturity-closure.json")
     numeric_readiness = load("spec/evidence/numeric-conformance-readiness.json")
     numeric_contracts = load("spec/evidence/numeric-contracts.json")
@@ -5124,6 +5128,179 @@ def main() -> int:
         },
         "executable-model comparison snapshot, gate, or model-limit drift",
     )
+    noncomparable_rows = [
+        row for row in comparison_rows if row["classification"] == "non-comparable"
+    ]
+    oracle_rows = noncomparable_oracle_coverage["rows"]
+    oracle_row_keys = {
+        "actual_result_state_sha256",
+        "alternative_evidence_adr",
+        "closure_state",
+        "comparison_classification",
+        "execution",
+        "expected_pto_vector_sha256",
+        "family",
+        "foundation_readiness",
+        "gate_token",
+        "independent_status",
+        "input_manifest_sha256",
+        "limitations",
+        "mnemonic",
+        "numeric_scope",
+        "oracle_coverage",
+        "oracle_identity",
+        "required_obligations",
+        "reviewed_disposition",
+        "sanitized_output_sha256",
+        "snapshot_digest",
+        "stable_id",
+        "supported_obligations",
+        "surface",
+    }
+    expected_noncomparable_projection = {
+        row["stable_id"]: (
+            row["surface"],
+            row["mnemonic"],
+            row.get("family"),
+            row["independent_status"],
+        )
+        for row in noncomparable_rows
+    }
+    oracle_projection = {
+        row["stable_id"]: (
+            row["surface"],
+            row["mnemonic"],
+            row["family"],
+            row["independent_status"],
+        )
+        for row in oracle_rows
+    }
+    oracle_identity_text = "\n".join(sorted(expected_noncomparable_projection)) + "\n"
+    require(
+        set(noncomparable_oracle_coverage)
+        == {
+            "authority",
+            "closure_layers",
+            "oracle_coverage_grades",
+            "publication_contract",
+            "rows",
+            "schema",
+            "scope",
+            "source_comparison",
+            "status",
+            "summary",
+            "target",
+        }
+        and noncomparable_oracle_coverage["schema"]
+        == "pto.noncomparable-oracle-coverage.v1"
+        and noncomparable_oracle_coverage["target"]
+        == "S5-T3-independent-executable-parity"
+        and noncomparable_oracle_coverage["status"] == "foundation-complete-parity-open"
+        and noncomparable_oracle_coverage["oracle_coverage_grades"]
+        == [
+            "none",
+            "source-path-only",
+            "executed-subset",
+            "acceptance-complete",
+            "alternative-evidence",
+        ]
+        and len(oracle_rows) == len(oracle_projection) == 39
+        and oracle_projection == expected_noncomparable_projection
+        and all(
+            set(row) == oracle_row_keys
+            and row["comparison_classification"] == "non-comparable"
+            and row["oracle_coverage"] == "none"
+            and row["oracle_identity"] is None
+            and row["snapshot_digest"] is None
+            and row["gate_token"] is None
+            and row["input_manifest_sha256"] is None
+            and row["expected_pto_vector_sha256"] is None
+            and row["actual_result_state_sha256"] is None
+            and row["sanitized_output_sha256"] is None
+            and row["execution"]
+            == {"exit_code": None, "result": "not-run", "timeout_seconds": None}
+            and row["required_obligations"]
+            and row["supported_obligations"] == []
+            and row["limitations"]
+            and row["reviewed_disposition"] is None
+            and row["alternative_evidence_adr"] is None
+            and row["closure_state"] == "open"
+            for row in oracle_rows
+        )
+        and noncomparable_oracle_coverage["source_comparison"]
+        == {
+            "noncomparable_row_count": 39,
+            "row_count": 693,
+            "schema": "pto.executable-model-comparison.v1",
+            "stable_identity_sha256": hashlib.sha256(
+                oracle_identity_text.encode("utf-8")
+            ).hexdigest(),
+        }
+        and noncomparable_oracle_coverage["scope"]
+        == {
+            "direct_tile_family_counts": {"CUBE": 13, "TMA": 9},
+            "row_count": 39,
+            "surface_counts": {"command": 16, "direct-tile": 22, "scalar": 1},
+        }
+        and noncomparable_oracle_coverage["summary"]
+        == {
+            "alternative_evidence_count": 0,
+            "can_claim_independent_executable_parity": False,
+            "independent_executable_parity_count": 0,
+            "oracle_coverage_counts": {"none": 39},
+            "readiness_counts": {
+                "executable-path-absent-fail-closed": 14,
+                "executable-source-path-no-attributable-oracle": 15,
+                "existing-exact-value-test-candidate": 10,
+            },
+        }
+        and noncomparable_oracle_coverage["closure_layers"]
+        == {
+            "independent_disposition_closure": {
+                "matrix_row_count": 693,
+                "noncomparable_row_count": 39,
+                "status": "closed:S5-T3",
+            },
+            "independent_executable_parity": {
+                "closed_row_count": 0,
+                "required_row_count": 39,
+                "status": "open",
+            },
+            "pto_semantic_closure": {
+                "row_count": 39,
+                "status": "closed-by-pto-owned-asl-and-stage-4-evidence",
+            },
+        },
+        "non-comparable oracle coverage membership, schema, or fail-closed state drift",
+    )
+    command_comparison_rows = [
+        row for row in comparison_rows if row["surface"] == "command"
+    ]
+    command_status_counts = Counter(
+        row["independent_status"] for row in command_comparison_rows
+    )
+    require(
+        bundle_command_totality["independent_comparison"]["matched_form_ids"]
+        == len(command_comparison_rows)
+        == 99
+        and bundle_command_totality["independent_comparison"]["exact_encoding_matches"]
+        == sum(row["encoding_match"] for row in command_comparison_rows)
+        == 92
+        and bundle_command_totality["independent_comparison"][
+            "accepted_abi_encoding_divergences"
+        ]
+        == sum(
+            row["abi_change_acceptance"] is not None for row in command_comparison_rows
+        )
+        == 7
+        and bundle_command_totality["independent_comparison"]["executable_subset"]
+        == command_status_counts["executable-subset"]
+        == 83
+        and bundle_command_totality["independent_comparison"]["decode_only"]
+        == command_status_counts["decode-only"]
+        == 16,
+        "bundle independent-comparison counts must derive from the current 99-row matrix",
+    )
     cube_test_body = (ROOT / "tests/asl/cube-totality-tests.asl").read_text(
         encoding="utf-8"
     )
@@ -8066,6 +8243,16 @@ def main() -> int:
         and targets_by_id["S5-T3"]["gaps"] == []
         and "spec/evidence/executable-model-comparison.json"
         in targets_by_id["S5-T3"]["evidence"]
+        and "spec/evidence/noncomparable-oracle-coverage.json"
+        in targets_by_id["S5-T3"]["evidence"]
+        and "scripts/generate-noncomparable-oracle-coverage"
+        in targets_by_id["S5-T3"]["evidence"]
+        and "noncomparable-oracle-coverage.json" in readme_body
+        and "noncomparable-oracle-coverage.json" in coverage_body
+        and "Independent executable parity is tracked separately and remains 0/39."
+        in maturity_plan_body
+        and "Independent executable parity for the 39 rows is orthogonal and remains 0/39."
+        in maturity_index_body
         and "numeric-conformance-readiness.json" in maturity_index_body
         and "numeric-conformance-readiness.json" in readme_body
         and "numeric-conformance-readiness.json" in coverage_body
@@ -8135,6 +8322,10 @@ def main() -> int:
         and "spec/evidence/executable-model-comparison.json"
         in closure_requirement["model"]
         and "scripts/generate-executable-model-comparison"
+        in closure_requirement["model"]
+        and "spec/evidence/noncomparable-oracle-coverage.json"
+        in closure_requirement["model"]
+        and "scripts/generate-noncomparable-oracle-coverage"
         in closure_requirement["model"]
         and "spec/evidence/numeric-conformance-readiness.json"
         in closure_requirement["model"]

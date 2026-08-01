@@ -1,0 +1,1548 @@
+{
+  "authority": "PTO-owned ASL semantics and the 693-row disposition matrix remain authoritative. Oracle coverage is an orthogonal corroboration grade and cannot change a row classification.",
+  "closure_layers": {
+    "independent_disposition_closure": {
+      "matrix_row_count": 693,
+      "noncomparable_row_count": 39,
+      "status": "closed:S5-T3"
+    },
+    "independent_executable_parity": {
+      "closed_row_count": 0,
+      "required_row_count": 39,
+      "status": "open"
+    },
+    "pto_semantic_closure": {
+      "row_count": 39,
+      "status": "closed-by-pto-owned-asl-and-stage-4-evidence"
+    }
+  },
+  "oracle_coverage_grades": [
+    "none",
+    "source-path-only",
+    "executed-subset",
+    "acceptance-complete",
+    "alternative-evidence"
+  ],
+  "publication_contract": {
+    "allowed_gate_identity": "<independent-oracle-gate:publication-safe-token>",
+    "fail_closed_on": [
+      "missing command",
+      "stale snapshot digest",
+      "timeout",
+      "nonzero exit",
+      "missing or duplicate row",
+      "decode-header-or-manifest-only evidence",
+      "unreviewed disposition"
+    ],
+    "forbidden_material": [
+      "restricted source identity",
+      "repository or host path",
+      "literal command line",
+      "comparison source code or prose"
+    ]
+  },
+  "rows": [
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": null,
+      "foundation_readiness": "executable-source-path-no-attributable-oracle",
+      "gate_token": null,
+      "independent_status": "decode-only",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "A possible execution path exists, but no qualified row-specific vector archive or complete effect attribution is recorded."
+      ],
+      "mnemonic": "BSTART.MGATHER",
+      "numeric_scope": "not-applicable:byte-and-state-effects-only",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "exact-header-reachability",
+        "descriptor-binding",
+        "complete-preflight",
+        "commit-and-rollback",
+        "source-lifetime",
+        "payload-effect-attribution"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "bstart_mgather_32_c9defbf18276",
+      "supported_obligations": [],
+      "surface": "command"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": null,
+      "foundation_readiness": "executable-source-path-no-attributable-oracle",
+      "gate_token": null,
+      "independent_status": "decode-only",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "A possible execution path exists, but no qualified row-specific vector archive or complete effect attribution is recorded."
+      ],
+      "mnemonic": "BSTART.MGATHER.CAS",
+      "numeric_scope": "not-applicable:byte-and-state-effects-only",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "exact-header-reachability",
+        "descriptor-binding",
+        "complete-preflight",
+        "commit-and-rollback",
+        "source-lifetime",
+        "payload-effect-attribution"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "bstart_mgather_cas_32_fd8c8a3b720a",
+      "supported_obligations": [],
+      "surface": "command"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": null,
+      "foundation_readiness": "executable-source-path-no-attributable-oracle",
+      "gate_token": null,
+      "independent_status": "decode-only",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "A possible execution path exists, but no qualified row-specific vector archive or complete effect attribution is recorded."
+      ],
+      "mnemonic": "BSTART.MGATHER.MASK",
+      "numeric_scope": "not-applicable:byte-and-state-effects-only",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "exact-header-reachability",
+        "descriptor-binding",
+        "complete-preflight",
+        "commit-and-rollback",
+        "source-lifetime",
+        "payload-effect-attribution"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "bstart_mgather_mask_32_5573241cd944",
+      "supported_obligations": [],
+      "surface": "command"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": null,
+      "foundation_readiness": "executable-source-path-no-attributable-oracle",
+      "gate_token": null,
+      "independent_status": "decode-only",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "A possible execution path exists, but no qualified row-specific vector archive or complete effect attribution is recorded."
+      ],
+      "mnemonic": "BSTART.MSCATTER",
+      "numeric_scope": "not-applicable:byte-and-state-effects-only",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "exact-header-reachability",
+        "descriptor-binding",
+        "complete-preflight",
+        "commit-and-rollback",
+        "source-lifetime",
+        "payload-effect-attribution"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "bstart_mscatter_32_0f0ba08bd798",
+      "supported_obligations": [],
+      "surface": "command"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": null,
+      "foundation_readiness": "executable-source-path-no-attributable-oracle",
+      "gate_token": null,
+      "independent_status": "decode-only",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "A possible execution path exists, but no qualified row-specific vector archive or complete effect attribution is recorded."
+      ],
+      "mnemonic": "BSTART.MSCATTER.MASK",
+      "numeric_scope": "not-applicable:byte-and-state-effects-only",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "exact-header-reachability",
+        "descriptor-binding",
+        "complete-preflight",
+        "commit-and-rollback",
+        "source-lifetime",
+        "payload-effect-attribution"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "bstart_mscatter_mask_32_2a33eed646f7",
+      "supported_obligations": [],
+      "surface": "command"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": null,
+      "foundation_readiness": "existing-exact-value-test-candidate",
+      "gate_token": null,
+      "independent_status": "decode-only",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "Existing execution evidence lacks immutable row reachability, complete edge obligations, and attributable input/result/state hashes."
+      ],
+      "mnemonic": "BSTART.TGEMV",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "exact-header-reachability",
+        "descriptor-binding",
+        "complete-preflight",
+        "commit-and-rollback",
+        "source-lifetime",
+        "payload-effect-attribution"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "bstart_tgemv_32_ae19f5b678f5",
+      "supported_obligations": [],
+      "surface": "command"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": null,
+      "foundation_readiness": "existing-exact-value-test-candidate",
+      "gate_token": null,
+      "independent_status": "decode-only",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "Existing execution evidence lacks immutable row reachability, complete edge obligations, and attributable input/result/state hashes."
+      ],
+      "mnemonic": "BSTART.TGEMV.ACC",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "exact-header-reachability",
+        "descriptor-binding",
+        "complete-preflight",
+        "commit-and-rollback",
+        "source-lifetime",
+        "payload-effect-attribution"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "bstart_tgemv_acc_32_9a471b21913e",
+      "supported_obligations": [],
+      "surface": "command"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": null,
+      "foundation_readiness": "executable-path-absent-fail-closed",
+      "gate_token": null,
+      "independent_status": "decode-only",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "No qualified independent executable path exists; literal implementation or an accepted row-specific alternative-evidence decision is required."
+      ],
+      "mnemonic": "BSTART.TGEMV.BIAS",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "exact-header-reachability",
+        "descriptor-binding",
+        "complete-preflight",
+        "commit-and-rollback",
+        "source-lifetime",
+        "payload-effect-attribution"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "bstart_tgemv_bias_32_186ee96c0a8b",
+      "supported_obligations": [],
+      "surface": "command"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": null,
+      "foundation_readiness": "executable-path-absent-fail-closed",
+      "gate_token": null,
+      "independent_status": "decode-only",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "No qualified independent executable path exists; literal implementation or an accepted row-specific alternative-evidence decision is required."
+      ],
+      "mnemonic": "BSTART.TGEMVMX",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "exact-header-reachability",
+        "descriptor-binding",
+        "complete-preflight",
+        "commit-and-rollback",
+        "source-lifetime",
+        "payload-effect-attribution"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "bstart_tgemvmx_32_ae5e005f6589",
+      "supported_obligations": [],
+      "surface": "command"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": null,
+      "foundation_readiness": "executable-path-absent-fail-closed",
+      "gate_token": null,
+      "independent_status": "decode-only",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "No qualified independent executable path exists; literal implementation or an accepted row-specific alternative-evidence decision is required."
+      ],
+      "mnemonic": "BSTART.TGEMVMX.ACC",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "exact-header-reachability",
+        "descriptor-binding",
+        "complete-preflight",
+        "commit-and-rollback",
+        "source-lifetime",
+        "payload-effect-attribution"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "bstart_tgemvmx_acc_32_368647b04bb0",
+      "supported_obligations": [],
+      "surface": "command"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": null,
+      "foundation_readiness": "executable-path-absent-fail-closed",
+      "gate_token": null,
+      "independent_status": "decode-only",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "No qualified independent executable path exists; literal implementation or an accepted row-specific alternative-evidence decision is required."
+      ],
+      "mnemonic": "BSTART.TGEMVMX.BIAS",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "exact-header-reachability",
+        "descriptor-binding",
+        "complete-preflight",
+        "commit-and-rollback",
+        "source-lifetime",
+        "payload-effect-attribution"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "bstart_tgemvmx_bias_32_d23011f15171",
+      "supported_obligations": [],
+      "surface": "command"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": null,
+      "foundation_readiness": "existing-exact-value-test-candidate",
+      "gate_token": null,
+      "independent_status": "decode-only",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "Existing execution evidence lacks immutable row reachability, complete edge obligations, and attributable input/result/state hashes."
+      ],
+      "mnemonic": "BSTART.TMATMUL.BIAS",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "exact-header-reachability",
+        "descriptor-binding",
+        "complete-preflight",
+        "commit-and-rollback",
+        "source-lifetime",
+        "payload-effect-attribution"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "bstart_tmatmul_bias_32_4d5a498d12f3",
+      "supported_obligations": [],
+      "surface": "command"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": null,
+      "foundation_readiness": "executable-path-absent-fail-closed",
+      "gate_token": null,
+      "independent_status": "decode-only",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "No qualified independent executable path exists; literal implementation or an accepted row-specific alternative-evidence decision is required."
+      ],
+      "mnemonic": "BSTART.TMATMULMX",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "exact-header-reachability",
+        "descriptor-binding",
+        "complete-preflight",
+        "commit-and-rollback",
+        "source-lifetime",
+        "payload-effect-attribution"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "bstart_tmatmulmx_32_e26cb3874648",
+      "supported_obligations": [],
+      "surface": "command"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": null,
+      "foundation_readiness": "executable-path-absent-fail-closed",
+      "gate_token": null,
+      "independent_status": "decode-only",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "No qualified independent executable path exists; literal implementation or an accepted row-specific alternative-evidence decision is required."
+      ],
+      "mnemonic": "BSTART.TMATMULMX.ACC",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "exact-header-reachability",
+        "descriptor-binding",
+        "complete-preflight",
+        "commit-and-rollback",
+        "source-lifetime",
+        "payload-effect-attribution"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "bstart_tmatmulmx_acc_32_70fa59b0ab4c",
+      "supported_obligations": [],
+      "surface": "command"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": null,
+      "foundation_readiness": "executable-path-absent-fail-closed",
+      "gate_token": null,
+      "independent_status": "decode-only",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "No qualified independent executable path exists; literal implementation or an accepted row-specific alternative-evidence decision is required."
+      ],
+      "mnemonic": "BSTART.TMATMULMX.BIAS",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "exact-header-reachability",
+        "descriptor-binding",
+        "complete-preflight",
+        "commit-and-rollback",
+        "source-lifetime",
+        "payload-effect-attribution"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "bstart_tmatmulmx_bias_32_098c7efa51b0",
+      "supported_obligations": [],
+      "surface": "command"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": null,
+      "foundation_readiness": "executable-source-path-no-attributable-oracle",
+      "gate_token": null,
+      "independent_status": "decode-only",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "A possible execution path exists, but no qualified row-specific vector archive or complete effect attribution is recorded."
+      ],
+      "mnemonic": "BSTART.TPREFETCH",
+      "numeric_scope": "not-applicable:byte-and-state-effects-only",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "exact-header-reachability",
+        "descriptor-binding",
+        "complete-preflight",
+        "commit-and-rollback",
+        "source-lifetime",
+        "payload-effect-attribution"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "bstart_tprefetch_32_d5f83e5aadf6",
+      "supported_obligations": [],
+      "surface": "command"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "CUBE",
+      "foundation_readiness": "existing-exact-value-test-candidate",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "Existing execution evidence lacks immutable row reachability, complete edge obligations, and attributable input/result/state hashes."
+      ],
+      "mnemonic": "TMATMUL",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-shape",
+        "source-destination-aliasing",
+        "accumulator-lifecycle",
+        "fault-and-preservation",
+        "visible-result-and-state-effect"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "cube:0x000:TMATMUL",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "CUBE",
+      "foundation_readiness": "existing-exact-value-test-candidate",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "Existing execution evidence lacks immutable row reachability, complete edge obligations, and attributable input/result/state hashes."
+      ],
+      "mnemonic": "TMATMUL_BIAS",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-shape",
+        "source-destination-aliasing",
+        "accumulator-lifecycle",
+        "fault-and-preservation",
+        "visible-result-and-state-effect"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "cube:0x001:TMATMUL_BIAS",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "CUBE",
+      "foundation_readiness": "existing-exact-value-test-candidate",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "Existing execution evidence lacks immutable row reachability, complete edge obligations, and attributable input/result/state hashes."
+      ],
+      "mnemonic": "TMATMUL_ACC",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-shape",
+        "source-destination-aliasing",
+        "accumulator-lifecycle",
+        "fault-and-preservation",
+        "visible-result-and-state-effect"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "cube:0x002:TMATMUL_ACC",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "CUBE",
+      "foundation_readiness": "executable-path-absent-fail-closed",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "No qualified independent executable path exists; literal implementation or an accepted row-specific alternative-evidence decision is required."
+      ],
+      "mnemonic": "TMATMUL_MX",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-shape",
+        "source-destination-aliasing",
+        "accumulator-lifecycle",
+        "fault-and-preservation",
+        "visible-result-and-state-effect"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "cube:0x004:TMATMUL_MX",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "CUBE",
+      "foundation_readiness": "executable-path-absent-fail-closed",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "No qualified independent executable path exists; literal implementation or an accepted row-specific alternative-evidence decision is required."
+      ],
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-shape",
+        "source-destination-aliasing",
+        "accumulator-lifecycle",
+        "fault-and-preservation",
+        "visible-result-and-state-effect"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "cube:0x005:TMATMUL_MX_BIAS",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "CUBE",
+      "foundation_readiness": "executable-path-absent-fail-closed",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "No qualified independent executable path exists; literal implementation or an accepted row-specific alternative-evidence decision is required."
+      ],
+      "mnemonic": "TMATMUL_MX_ACC",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-shape",
+        "source-destination-aliasing",
+        "accumulator-lifecycle",
+        "fault-and-preservation",
+        "visible-result-and-state-effect"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "cube:0x006:TMATMUL_MX_ACC",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "CUBE",
+      "foundation_readiness": "executable-source-path-no-attributable-oracle",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "A possible execution path exists, but no qualified row-specific vector archive or complete effect attribution is recorded."
+      ],
+      "mnemonic": "ACCCVT",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-shape",
+        "source-destination-aliasing",
+        "accumulator-lifecycle",
+        "fault-and-preservation",
+        "visible-result-and-state-effect"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "cube:0x008:ACCCVT",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "CUBE",
+      "foundation_readiness": "existing-exact-value-test-candidate",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "Existing execution evidence lacks immutable row reachability, complete edge obligations, and attributable input/result/state hashes."
+      ],
+      "mnemonic": "TGEMV",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-shape",
+        "source-destination-aliasing",
+        "accumulator-lifecycle",
+        "fault-and-preservation",
+        "visible-result-and-state-effect"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "cube:0x010:TGEMV",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "CUBE",
+      "foundation_readiness": "executable-path-absent-fail-closed",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "No qualified independent executable path exists; literal implementation or an accepted row-specific alternative-evidence decision is required."
+      ],
+      "mnemonic": "TGEMV_BIAS",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-shape",
+        "source-destination-aliasing",
+        "accumulator-lifecycle",
+        "fault-and-preservation",
+        "visible-result-and-state-effect"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "cube:0x011:TGEMV_BIAS",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "CUBE",
+      "foundation_readiness": "existing-exact-value-test-candidate",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "Existing execution evidence lacks immutable row reachability, complete edge obligations, and attributable input/result/state hashes."
+      ],
+      "mnemonic": "TGEMV_ACC",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-shape",
+        "source-destination-aliasing",
+        "accumulator-lifecycle",
+        "fault-and-preservation",
+        "visible-result-and-state-effect"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "cube:0x012:TGEMV_ACC",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "CUBE",
+      "foundation_readiness": "executable-path-absent-fail-closed",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "No qualified independent executable path exists; literal implementation or an accepted row-specific alternative-evidence decision is required."
+      ],
+      "mnemonic": "TGEMV_MX",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-shape",
+        "source-destination-aliasing",
+        "accumulator-lifecycle",
+        "fault-and-preservation",
+        "visible-result-and-state-effect"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "cube:0x014:TGEMV_MX",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "CUBE",
+      "foundation_readiness": "executable-path-absent-fail-closed",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "No qualified independent executable path exists; literal implementation or an accepted row-specific alternative-evidence decision is required."
+      ],
+      "mnemonic": "TGEMV_MX_BIAS",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-shape",
+        "source-destination-aliasing",
+        "accumulator-lifecycle",
+        "fault-and-preservation",
+        "visible-result-and-state-effect"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "cube:0x015:TGEMV_MX_BIAS",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "CUBE",
+      "foundation_readiness": "executable-path-absent-fail-closed",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "No qualified independent executable path exists; literal implementation or an accepted row-specific alternative-evidence decision is required."
+      ],
+      "mnemonic": "TGEMV_MX_ACC",
+      "numeric_scope": "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-shape",
+        "source-destination-aliasing",
+        "accumulator-lifecycle",
+        "fault-and-preservation",
+        "visible-result-and-state-effect"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "cube:0x016:TGEMV_MX_ACC",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "TMA",
+      "foundation_readiness": "existing-exact-value-test-candidate",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "Existing execution evidence lacks immutable row reachability, complete edge obligations, and attributable input/result/state hashes."
+      ],
+      "mnemonic": "TLOAD",
+      "numeric_scope": "not-applicable:byte-and-state-effects-only",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-definedness",
+        "layout-and-aliasing",
+        "mask-duplicate-and-cas-behavior",
+        "packed-four-bit-containing-byte",
+        "first-middle-last-fault-preflight",
+        "restart-and-memory-events"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "tma:0x000:TLOAD",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "TMA",
+      "foundation_readiness": "existing-exact-value-test-candidate",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "Existing execution evidence lacks immutable row reachability, complete edge obligations, and attributable input/result/state hashes."
+      ],
+      "mnemonic": "TSTORE",
+      "numeric_scope": "not-applicable:byte-and-state-effects-only",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-definedness",
+        "layout-and-aliasing",
+        "mask-duplicate-and-cas-behavior",
+        "packed-four-bit-containing-byte",
+        "first-middle-last-fault-preflight",
+        "restart-and-memory-events"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "tma:0x001:TSTORE",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "TMA",
+      "foundation_readiness": "executable-source-path-no-attributable-oracle",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "A possible execution path exists, but no qualified row-specific vector archive or complete effect attribution is recorded."
+      ],
+      "mnemonic": "TMOV",
+      "numeric_scope": "not-applicable:byte-and-state-effects-only",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-definedness",
+        "layout-and-aliasing",
+        "mask-duplicate-and-cas-behavior",
+        "packed-four-bit-containing-byte",
+        "first-middle-last-fault-preflight",
+        "restart-and-memory-events"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "tma:0x002:TMOV",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "TMA",
+      "foundation_readiness": "executable-source-path-no-attributable-oracle",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "A possible execution path exists, but no qualified row-specific vector archive or complete effect attribution is recorded."
+      ],
+      "mnemonic": "TPREFETCH",
+      "numeric_scope": "not-applicable:byte-and-state-effects-only",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-definedness",
+        "layout-and-aliasing",
+        "mask-duplicate-and-cas-behavior",
+        "packed-four-bit-containing-byte",
+        "first-middle-last-fault-preflight",
+        "restart-and-memory-events"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "tma:0x003:TPREFETCH",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "TMA",
+      "foundation_readiness": "executable-source-path-no-attributable-oracle",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "A possible execution path exists, but no qualified row-specific vector archive or complete effect attribution is recorded."
+      ],
+      "mnemonic": "MGATHER",
+      "numeric_scope": "not-applicable:byte-and-state-effects-only",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-definedness",
+        "layout-and-aliasing",
+        "mask-duplicate-and-cas-behavior",
+        "packed-four-bit-containing-byte",
+        "first-middle-last-fault-preflight",
+        "restart-and-memory-events"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "tma:0x004:MGATHER",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "TMA",
+      "foundation_readiness": "executable-source-path-no-attributable-oracle",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "A possible execution path exists, but no qualified row-specific vector archive or complete effect attribution is recorded."
+      ],
+      "mnemonic": "MSCATTER",
+      "numeric_scope": "not-applicable:byte-and-state-effects-only",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-definedness",
+        "layout-and-aliasing",
+        "mask-duplicate-and-cas-behavior",
+        "packed-four-bit-containing-byte",
+        "first-middle-last-fault-preflight",
+        "restart-and-memory-events"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "tma:0x005:MSCATTER",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "TMA",
+      "foundation_readiness": "executable-source-path-no-attributable-oracle",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "A possible execution path exists, but no qualified row-specific vector archive or complete effect attribution is recorded."
+      ],
+      "mnemonic": "MGATHER_MASK",
+      "numeric_scope": "not-applicable:byte-and-state-effects-only",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-definedness",
+        "layout-and-aliasing",
+        "mask-duplicate-and-cas-behavior",
+        "packed-four-bit-containing-byte",
+        "first-middle-last-fault-preflight",
+        "restart-and-memory-events"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "tma:0x006:MGATHER_MASK",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "TMA",
+      "foundation_readiness": "executable-source-path-no-attributable-oracle",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "A possible execution path exists, but no qualified row-specific vector archive or complete effect attribution is recorded."
+      ],
+      "mnemonic": "MSCATTER_MASK",
+      "numeric_scope": "not-applicable:byte-and-state-effects-only",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-definedness",
+        "layout-and-aliasing",
+        "mask-duplicate-and-cas-behavior",
+        "packed-four-bit-containing-byte",
+        "first-middle-last-fault-preflight",
+        "restart-and-memory-events"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "tma:0x007:MSCATTER_MASK",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": "TMA",
+      "foundation_readiness": "executable-source-path-no-attributable-oracle",
+      "gate_token": null,
+      "independent_status": "header-manifest",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "A possible execution path exists, but no qualified row-specific vector archive or complete effect attribution is recorded."
+      ],
+      "mnemonic": "MGATHER_CAS",
+      "numeric_scope": "not-applicable:byte-and-state-effects-only",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "legality-and-definedness",
+        "layout-and-aliasing",
+        "mask-duplicate-and-cas-behavior",
+        "packed-four-bit-containing-byte",
+        "first-middle-last-fault-preflight",
+        "restart-and-memory-events"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "tma:0x008:MGATHER_CAS",
+      "supported_obligations": [],
+      "surface": "direct-tile"
+    },
+    {
+      "actual_result_state_sha256": null,
+      "alternative_evidence_adr": null,
+      "closure_state": "open",
+      "comparison_classification": "non-comparable",
+      "execution": {
+        "exit_code": null,
+        "result": "not-run",
+        "timeout_seconds": null
+      },
+      "expected_pto_vector_sha256": null,
+      "family": null,
+      "foundation_readiness": "executable-source-path-no-attributable-oracle",
+      "gate_token": null,
+      "independent_status": "decode-only",
+      "input_manifest_sha256": null,
+      "limitations": [
+        "A possible execution path exists, but no qualified row-specific vector archive or complete effect attribution is recorded."
+      ],
+      "mnemonic": "DMA",
+      "numeric_scope": "not-applicable",
+      "oracle_coverage": "none",
+      "oracle_identity": null,
+      "required_obligations": [
+        "source-snapshot",
+        "destination-effect",
+        "memory-event-order",
+        "source-and-destination-fault-boundaries",
+        "overlap-and-restart"
+      ],
+      "reviewed_disposition": null,
+      "sanitized_output_sha256": null,
+      "snapshot_digest": null,
+      "stable_id": "dma_32_a168aeca5fa5",
+      "supported_obligations": [],
+      "surface": "scalar"
+    }
+  ],
+  "schema": "pto.noncomparable-oracle-coverage.v1",
+  "scope": {
+    "direct_tile_family_counts": {
+      "CUBE": 13,
+      "TMA": 9
+    },
+    "row_count": 39,
+    "surface_counts": {
+      "command": 16,
+      "direct-tile": 22,
+      "scalar": 1
+    }
+  },
+  "source_comparison": {
+    "noncomparable_row_count": 39,
+    "row_count": 693,
+    "schema": "pto.executable-model-comparison.v1",
+    "stable_identity_sha256": "30ec11e36eadc33423a2b68ac1184b48c09cbbbc26648f71cf46905858495db5"
+  },
+  "status": "foundation-complete-parity-open",
+  "summary": {
+    "alternative_evidence_count": 0,
+    "can_claim_independent_executable_parity": false,
+    "independent_executable_parity_count": 0,
+    "oracle_coverage_counts": {
+      "none": 39
+    },
+    "readiness_counts": {
+      "executable-path-absent-fail-closed": 14,
+      "executable-source-path-no-attributable-oracle": 15,
+      "existing-exact-value-test-candidate": 10
+    }
+  },
+  "target": "S5-T3-independent-executable-parity"
+}

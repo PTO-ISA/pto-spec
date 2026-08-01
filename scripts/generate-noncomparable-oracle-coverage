@@ -1,0 +1,342 @@
+#!/usr/bin/env python3
+"""Generate fail-closed oracle coverage for non-comparable S5-T3 rows."""
+
+from __future__ import annotations
+
+import argparse
+import copy
+import hashlib
+import json
+import sys
+from collections import Counter
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
+DEFAULT_OUTPUT = ROOT / "spec/evidence/noncomparable-oracle-coverage.json"
+
+ORACLE_COVERAGE_GRADES = (
+    "none",
+    "source-path-only",
+    "executed-subset",
+    "acceptance-complete",
+    "alternative-evidence",
+)
+
+CANDIDATE_COMMANDS = {
+    "BSTART.TGEMV",
+    "BSTART.TGEMV.ACC",
+    "BSTART.TMATMUL.BIAS",
+}
+CANDIDATE_CUBE = {"TMATMUL", "TMATMUL_BIAS", "TMATMUL_ACC", "TGEMV", "TGEMV_ACC"}
+CANDIDATE_TMA = {"TLOAD", "TSTORE"}
+SOURCE_PATH_COMMANDS = {
+    "BSTART.MGATHER",
+    "BSTART.MGATHER.CAS",
+    "BSTART.MGATHER.MASK",
+    "BSTART.MSCATTER",
+    "BSTART.MSCATTER.MASK",
+    "BSTART.TPREFETCH",
+}
+
+
+def load_json(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def stable_json(data: Any) -> str:
+    return json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
+
+
+def stable_identity_digest(rows: list[dict[str, Any]]) -> str:
+    identities = "\n".join(sorted(row["stable_id"] for row in rows)) + "\n"
+    return hashlib.sha256(identities.encode("utf-8")).hexdigest()
+
+
+def validate_comparison(comparison: dict[str, Any]) -> list[dict[str, Any]]:
+    if comparison.get("schema") != "pto.executable-model-comparison.v1":
+        raise ValueError("unsupported executable-model comparison schema")
+    rows = comparison.get("rows")
+    if not isinstance(rows, list) or len(rows) != 693:
+        raise ValueError("comparison must contain exactly 693 rows")
+    stable_ids = [row.get("stable_id") for row in rows]
+    if None in stable_ids or len(set(stable_ids)) != len(stable_ids):
+        raise ValueError("comparison stable identities must be present and unique")
+    noncomparable = [
+        row for row in rows if row.get("classification") == "non-comparable"
+    ]
+    surface_counts = Counter(row.get("surface") for row in noncomparable)
+    family_counts = Counter(
+        row.get("family")
+        for row in noncomparable
+        if row.get("surface") == "direct-tile"
+    )
+    if len(noncomparable) != 39:
+        raise ValueError("comparison must expose exactly 39 non-comparable rows")
+    if surface_counts != Counter({"scalar": 1, "command": 16, "direct-tile": 22}):
+        raise ValueError(f"non-comparable surface membership drift: {surface_counts}")
+    if family_counts != Counter({"CUBE": 13, "TMA": 9}):
+        raise ValueError(
+            f"non-comparable direct-tile membership drift: {family_counts}"
+        )
+    if (
+        comparison.get("summary", {})
+        .get("classification_counts", {})
+        .get("non-comparable")
+        != 39
+    ):
+        raise ValueError("comparison summary does not agree with the 39-row membership")
+    return noncomparable
+
+
+def readiness(row: dict[str, Any]) -> str:
+    surface = row["surface"]
+    mnemonic = row["mnemonic"]
+    family = row.get("family")
+    if (
+        (surface == "command" and mnemonic in CANDIDATE_COMMANDS)
+        or (family == "CUBE" and mnemonic in CANDIDATE_CUBE)
+        or (family == "TMA" and mnemonic in CANDIDATE_TMA)
+    ):
+        return "existing-exact-value-test-candidate"
+    if (
+        (surface == "scalar" and mnemonic == "DMA")
+        or (surface == "command" and mnemonic in SOURCE_PATH_COMMANDS)
+        or (family == "TMA" and mnemonic not in CANDIDATE_TMA)
+        or (family == "CUBE" and mnemonic == "ACCCVT")
+    ):
+        return "executable-source-path-no-attributable-oracle"
+    return "executable-path-absent-fail-closed"
+
+
+def required_obligations(row: dict[str, Any]) -> list[str]:
+    if row["surface"] == "scalar":
+        return [
+            "source-snapshot",
+            "destination-effect",
+            "memory-event-order",
+            "source-and-destination-fault-boundaries",
+            "overlap-and-restart",
+        ]
+    if row["surface"] == "command":
+        return [
+            "exact-header-reachability",
+            "descriptor-binding",
+            "complete-preflight",
+            "commit-and-rollback",
+            "source-lifetime",
+            "payload-effect-attribution",
+        ]
+    if row.get("family") == "TMA":
+        return [
+            "legality-and-definedness",
+            "layout-and-aliasing",
+            "mask-duplicate-and-cas-behavior",
+            "packed-four-bit-containing-byte",
+            "first-middle-last-fault-preflight",
+            "restart-and-memory-events",
+        ]
+    return [
+        "legality-and-shape",
+        "source-destination-aliasing",
+        "accumulator-lifecycle",
+        "fault-and-preservation",
+        "visible-result-and-state-effect",
+    ]
+
+
+def numeric_scope(row: dict[str, Any]) -> str:
+    if row["surface"] == "scalar":
+        return "not-applicable"
+    if row.get("family") == "CUBE" or any(
+        token in row["mnemonic"] for token in ("ACCCVT", "TGEMV", "TMATMUL")
+    ):
+        return "nonnumeric-effects-only:numeric-result-parity-deferred:S5-T2"
+    return "not-applicable:byte-and-state-effects-only"
+
+
+def limitation(row: dict[str, Any], readiness_grade: str) -> str:
+    if readiness_grade == "existing-exact-value-test-candidate":
+        return (
+            "Existing execution evidence lacks immutable row reachability, complete edge obligations, "
+            "and attributable input/result/state hashes."
+        )
+    if readiness_grade == "executable-source-path-no-attributable-oracle":
+        return (
+            "A possible execution path exists, but no qualified row-specific vector archive or "
+            "complete effect attribution is recorded."
+        )
+    return (
+        "No qualified independent executable path exists; literal implementation or an accepted "
+        "row-specific alternative-evidence decision is required."
+    )
+
+
+def build(comparison: dict[str, Any]) -> dict[str, Any]:
+    noncomparable = validate_comparison(comparison)
+    rows = []
+    for source_row in noncomparable:
+        readiness_grade = readiness(source_row)
+        rows.append(
+            {
+                "stable_id": source_row["stable_id"],
+                "surface": source_row["surface"],
+                "mnemonic": source_row["mnemonic"],
+                "family": source_row.get("family"),
+                "comparison_classification": "non-comparable",
+                "independent_status": source_row["independent_status"],
+                "foundation_readiness": readiness_grade,
+                "oracle_coverage": "none",
+                "oracle_identity": None,
+                "snapshot_digest": None,
+                "gate_token": None,
+                "input_manifest_sha256": None,
+                "expected_pto_vector_sha256": None,
+                "actual_result_state_sha256": None,
+                "sanitized_output_sha256": None,
+                "execution": {
+                    "result": "not-run",
+                    "exit_code": None,
+                    "timeout_seconds": None,
+                },
+                "required_obligations": required_obligations(source_row),
+                "supported_obligations": [],
+                "numeric_scope": numeric_scope(source_row),
+                "limitations": [limitation(source_row, readiness_grade)],
+                "reviewed_disposition": None,
+                "alternative_evidence_adr": None,
+                "closure_state": "open",
+            }
+        )
+    rows.sort(key=lambda row: (row["surface"], row["stable_id"]))
+    readiness_counts = dict(
+        sorted(Counter(row["foundation_readiness"] for row in rows).items())
+    )
+    if readiness_counts != {
+        "executable-path-absent-fail-closed": 14,
+        "executable-source-path-no-attributable-oracle": 15,
+        "existing-exact-value-test-candidate": 10,
+    }:
+        raise ValueError(f"unexpected readiness partition: {readiness_counts}")
+    return {
+        "schema": "pto.noncomparable-oracle-coverage.v1",
+        "target": "S5-T3-independent-executable-parity",
+        "status": "foundation-complete-parity-open",
+        "authority": (
+            "PTO-owned ASL semantics and the 693-row disposition matrix remain authoritative. "
+            "Oracle coverage is an orthogonal corroboration grade and cannot change a row classification."
+        ),
+        "oracle_coverage_grades": list(ORACLE_COVERAGE_GRADES),
+        "publication_contract": {
+            "allowed_gate_identity": "<independent-oracle-gate:publication-safe-token>",
+            "forbidden_material": [
+                "restricted source identity",
+                "repository or host path",
+                "literal command line",
+                "comparison source code or prose",
+            ],
+            "fail_closed_on": [
+                "missing command",
+                "stale snapshot digest",
+                "timeout",
+                "nonzero exit",
+                "missing or duplicate row",
+                "decode-header-or-manifest-only evidence",
+                "unreviewed disposition",
+            ],
+        },
+        "source_comparison": {
+            "schema": comparison["schema"],
+            "row_count": 693,
+            "noncomparable_row_count": 39,
+            "stable_identity_sha256": stable_identity_digest(noncomparable),
+        },
+        "closure_layers": {
+            "pto_semantic_closure": {
+                "status": "closed-by-pto-owned-asl-and-stage-4-evidence",
+                "row_count": 39,
+            },
+            "independent_disposition_closure": {
+                "status": "closed:S5-T3",
+                "matrix_row_count": 693,
+                "noncomparable_row_count": 39,
+            },
+            "independent_executable_parity": {
+                "status": "open",
+                "closed_row_count": 0,
+                "required_row_count": 39,
+            },
+        },
+        "scope": {
+            "row_count": 39,
+            "surface_counts": {"scalar": 1, "command": 16, "direct-tile": 22},
+            "direct_tile_family_counts": {"CUBE": 13, "TMA": 9},
+        },
+        "rows": rows,
+        "summary": {
+            "readiness_counts": readiness_counts,
+            "oracle_coverage_counts": {"none": 39},
+            "independent_executable_parity_count": 0,
+            "alternative_evidence_count": 0,
+            "can_claim_independent_executable_parity": False,
+        },
+    }
+
+
+def expect_rejected(comparison: dict[str, Any], label: str) -> None:
+    try:
+        build(comparison)
+    except (KeyError, TypeError, ValueError):
+        return
+    raise AssertionError(f"negative canary unexpectedly accepted: {label}")
+
+
+def run_negative_canaries(comparison: dict[str, Any]) -> None:
+    missing = copy.deepcopy(comparison)
+    missing["rows"] = [
+        row for row in missing["rows"] if row.get("stable_id") != "dma_32_a168aeca5fa5"
+    ]
+    expect_rejected(missing, "missing-row")
+
+    duplicate = copy.deepcopy(comparison)
+    duplicate["rows"][1]["stable_id"] = duplicate["rows"][0]["stable_id"]
+    expect_rejected(duplicate, "duplicate-identity")
+
+    reclassified = copy.deepcopy(comparison)
+    row = next(
+        row
+        for row in reclassified["rows"]
+        if row.get("stable_id") == "dma_32_a168aeca5fa5"
+    )
+    row["classification"] = "comparable-match"
+    expect_rejected(reclassified, "classification-drift")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--comparison", type=Path, default=DEFAULT_COMPARISON)
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--check", action="store_true")
+    args = parser.parse_args()
+
+    comparison = load_json(args.comparison)
+    data = build(comparison)
+    rendered = stable_json(data)
+    if args.check:
+        run_negative_canaries(comparison)
+        if (
+            not args.output.exists()
+            or args.output.read_text(encoding="utf-8") != rendered
+        ):
+            print(f"stale generated evidence: {args.output}", file=sys.stderr)
+            return 1
+        return 0
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(rendered, encoding="utf-8")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

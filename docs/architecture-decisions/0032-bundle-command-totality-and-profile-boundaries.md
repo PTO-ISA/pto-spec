@@ -7,7 +7,7 @@
 
 ## Context
 
-PTO accepts 107 bundle-command forms through 22 semantic handlers. Earlier
+PTO accepts 99 bundle-command forms through 12 semantic handlers. Earlier
 closure work proved decode identity, installed operation descriptors, and the
 start/header/stop lifecycle. It did not make every retained command total:
 some commands recorded placeholder metadata, five constant `B.ARG` forms
@@ -22,10 +22,11 @@ address, scalar, immediate, additional source, additional destination, or
 operation-specific control. Silently defaulting those operands would create a
 different instruction from the direct operation.
 
-The content-addressed independent comparison snapshot contains all 107 form IDs, but
-91 are only an executable subset and 16 are decode-only. Its Sail model stages
-bundle headers rather than executing tile payloads. It is useful structural
-evidence, not normative PTO semantics or a conformance oracle.
+The content-addressed independent comparison snapshot contains all 99 form IDs.
+The generated comparison matrix grades 83 as an executable subset and 16 as
+decode-only. Its model stages bundle headers rather than executing tile
+payloads. It is useful structural evidence, not normative PTO semantics or a
+conformance oracle.
 
 ## Decision
 
@@ -116,7 +117,7 @@ consumed fields, retirement disposition, effect class, and all 120 bridge
 representability decisions. The repository gate regenerates it and fails on
 any catalog or policy drift.
 
-`ValidateCanonicalCommandExecution` executes all 107 canonical form witnesses.
+`ValidateCanonicalCommandExecution` executes all 99 canonical form witnesses.
 It asserts success or pre-effect rejection, fault identity, and TPC behavior;
 it additionally checks descriptor installation, argument kind, and hint
 payload where applicable. `TestBundleCommandTotalityBoundaries` covers
