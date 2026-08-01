@@ -27,7 +27,7 @@
     },
     {
       "path": "spec/catalog/system-registers.json",
-      "sha256": "f81a7638a4117937775585e43e922ac4ad972bccc192d5af05aba03bc8179e94"
+      "sha256": "824c0681f6cac16954aaed58785f216f669214af7f54fb29c7e9ec6cb7153f6b"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
@@ -47,7 +47,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "68cd0d2a80f1b57bb677d5404fb8492def3f8f1976b8dd8357cfae5fb3036442"
+      "sha256": "9e5e1f9884034ea1b6c11604bd817bc482d6f561d3a6e10d3c6c9ef53996312c"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",

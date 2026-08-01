@@ -524,7 +524,7 @@
     },
     {
       "path": "spec/catalog/system-registers.json",
-      "sha256": "f81a7638a4117937775585e43e922ac4ad972bccc192d5af05aba03bc8179e94"
+      "sha256": "824c0681f6cac16954aaed58785f216f669214af7f54fb29c7e9ec6cb7153f6b"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",

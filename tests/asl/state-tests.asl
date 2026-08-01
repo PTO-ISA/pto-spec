@@ -171,6 +171,7 @@ begin
     CheckSynchronousTrapMapping(Fault_IllegalInstruction, Zeros{6} + 4);
     CheckSynchronousTrapMapping(Fault_BundleControl, Zeros{6} + 5);
     CheckSynchronousTrapMapping(Fault_TileLegality, Zeros{6} + 5);
+    CheckSynchronousTrapMapping(Fault_TileAllocation, Zeros{6} + 5);
     CheckSynchronousTrapMapping(Fault_ServiceRequest, Zeros{6} + 6);
     CheckSynchronousTrapMapping(Fault_InstructionPC, Zeros{6} + 32);
     CheckSynchronousTrapMapping(Fault_InstructionPage, Zeros{6} + 33);

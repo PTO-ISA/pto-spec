@@ -7,11 +7,13 @@ Accepted.
 ## Context
 
 The canonical catalog assigns 13 trap numbers, but mnemonic presence did not
-prove a production trigger or a complete entry and restart contract. Four
-identities had no justified PTO v0 trigger: execution-state check, instruction
-page fault, hardware breakpoint, and hardware watchpoint. Assigning them to
-convenient instructions or inventing debug and translation field layouts would
-import behavior that PTO has not defined.
+prove a production trigger or a complete entry and restart contract. The
+initial review identified four identities without justified PTO v0 triggers:
+execution-state check, instruction page fault, hardware breakpoint, and
+hardware watchpoint. Execution-state check now has a defined recovery trigger;
+the other three remain envelope-only. Assigning them to convenient instructions
+or inventing debug and translation field layouts would import behavior that PTO
+has not defined.
 
 Trap number zero also cannot use a zero number alone to indicate “no trap.” The
 visible argument-valid state distinguishes an execution-state-check entry from
@@ -43,7 +45,7 @@ an empty trap bank.
   rule. Interrupt entry retains its asynchronous status, source-supplied cause,
   pending ID argument, and saved-context recovery.
 - Generated/catalog checks reject a missing producer declaration, missing
-  cause/argument/restart contract, or a change to the four envelope-only
+  cause/argument/restart contract, or a change to the three envelope-only
   identities without an explicit normative update.
 
 ## Consequences

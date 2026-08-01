@@ -95,7 +95,7 @@
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "4afefe8f2d10a89493c3b8140f9d813f64addeeabe9a809f2aca9d946824fdd8"
+      "sha256": "97e3dbc807b1c437f9ae5cdfb92ede83ea7c45d5acc496fadd78bee9fe74a163"
     },
     {
       "path": "scripts/check-publication-hygiene",
@@ -143,7 +143,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "68cd0d2a80f1b57bb677d5404fb8492def3f8f1976b8dd8357cfae5fb3036442"
+      "sha256": "9e5e1f9884034ea1b6c11604bd817bc482d6f561d3a6e10d3c6c9ef53996312c"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -179,11 +179,11 @@
     },
     {
       "path": "spec/evidence/scalar-numeric-flag-contract.json",
-      "sha256": "61664bd39fca16f335a62bd476c823da56b839e8f2e36a8c59de41f6f3ac7825"
+      "sha256": "1a696bb88881a32fa01486c00798e73c4ce8e2c63549e45e00a0824428c44e83"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "f711903f6d1216ab1a72df5ac630f2ad7c588752f913c40b0f05b7ba83bcc89d"
+      "sha256": "181c39ab1e0a046d4b8df5b1c7decfd711684ff3a86519700275f5d2bb95452b"
     },
     {
       "path": "spec/requirements.json",

@@ -182,7 +182,7 @@
     },
     {
       "path": "docs/architecture-decisions/0018-pto-v0-trap-disposition.md",
-      "sha256": "b94916ad090842fc0fabae8e5516a7549ae72d684ef2259b1b19c745fb7f315b"
+      "sha256": "f8eb335bd3c794c2457b8f982f5afa34f45e87381c478a48cee0395b928c227a"
     },
     {
       "path": "docs/architecture-decisions/0019-predicate-register-contract.md",
@@ -370,7 +370,7 @@
     },
     {
       "path": "spec/catalog/system-registers.json",
-      "sha256": "f81a7638a4117937775585e43e922ac4ad972bccc192d5af05aba03bc8179e94"
+      "sha256": "824c0681f6cac16954aaed58785f216f669214af7f54fb29c7e9ec6cb7153f6b"
     },
     {
       "path": "spec/catalog/tile-operations.json",
@@ -414,7 +414,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "68cd0d2a80f1b57bb677d5404fb8492def3f8f1976b8dd8357cfae5fb3036442"
+      "sha256": "9e5e1f9884034ea1b6c11604bd817bc482d6f561d3a6e10d3c6c9ef53996312c"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
@@ -446,11 +446,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "5c23fe8568a77cf9fd00245c8f0bd4a98ea194fccf658a6b6588baa77aa7a0f5"
+      "sha256": "02c85d5086a2538a0af80cf031edfec1cbf335d05f46505e1c4e93996c48b2c3"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "f711903f6d1216ab1a72df5ac630f2ad7c588752f913c40b0f05b7ba83bcc89d"
+      "sha256": "181c39ab1e0a046d4b8df5b1c7decfd711684ff3a86519700275f5d2bb95452b"
     },
     {
       "path": "spec/evidence/scalar-agu-totality.json",
@@ -478,7 +478,7 @@
     },
     {
       "path": "spec/evidence/scalar-numeric-flag-contract.json",
-      "sha256": "61664bd39fca16f335a62bd476c823da56b839e8f2e36a8c59de41f6f3ac7825"
+      "sha256": "1a696bb88881a32fa01486c00798e73c4ce8e2c63549e45e00a0824428c44e83"
     },
     {
       "path": "spec/evidence/scalar-sys-totality.json",
@@ -531,7 +531,7 @@
     },
     "tile_operations_total": 120
   },
-  "content_sha256": "45fb4faba6ccaed3c20be15200952575841d6d73e1639c96fac153dc9159c00c",
+  "content_sha256": "345f34fd5b0e506d75970b91789301420745052b290d6d5dc1ac530767407b3e",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -613,7 +613,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/instructions/system-registers.md",
-      "sha256": "c79ac2c5eca25b12aad2e6bea4b8aaa207d8ea5d77eedacf9f656cd009b6a6e5"
+      "sha256": "479b24a6b31408956988be4d6988be1c3791fa0fdb7dc36f957257b3b977fc4e"
     },
     {
       "kind": "generated-documentation",

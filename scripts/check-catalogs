@@ -863,6 +863,113 @@ def validate_trap_context_recovery_evidence(
     )
 
 
+def validate_fault_envelope_mapping(
+    types_body: str,
+    state_body: str,
+    complete_trap_test: str,
+    trap_rows: list[dict],
+) -> None:
+    fault_code_match = re.search(
+        r"type\s+FaultCode\s+of\s+enumeration\s*\{(?P<body>.*?)\};",
+        types_body,
+        re.DOTALL,
+    )
+    require(fault_code_match is not None, "FaultCode enumeration is missing")
+    fault_codes = {
+        token
+        for token in re.findall(
+            r"\bFault_[A-Za-z][A-Za-z0-9_]*\b", fault_code_match.group("body")
+        )
+        if token != "Fault_None"
+    }
+    set_fault_body = state_body.split(
+        "func SetFault(code: FaultCode, address: Word)", 1
+    )[1].split("func RaiseServiceRequest", 1)[0]
+    model_fault_trap_numbers: dict[str, int] = {}
+    for fault, suffix in re.findall(
+        r"when\s+(Fault_[A-Za-z][A-Za-z0-9_]*)\s*=>\s*"
+        r"_ACRTrapNumber\[\[ring\]\]\s*=\s*Zeros\{6\}"
+        r"(?:\s*\+\s*(\d+))?\s*;",
+        set_fault_body,
+    ):
+        if fault == "Fault_None":
+            continue
+        require(
+            fault not in model_fault_trap_numbers,
+            f"duplicate SetFault synchronous trap mapping: {fault}",
+        )
+        model_fault_trap_numbers[fault] = int(suffix or "0")
+    require(
+        model_fault_trap_numbers.keys() == fault_codes,
+        "SetFault synchronous trap mapping must cover every non-None FaultCode exactly once",
+    )
+
+    catalog_fault_trap_numbers: dict[str, int] = {}
+    for row in trap_rows:
+        for producer in row["producers"]:
+            fault_match = re.fullmatch(
+                r"SetFault\((Fault_[A-Za-z][A-Za-z0-9_]*)\)", producer
+            )
+            if fault_match is None:
+                continue
+            fault = fault_match.group(1)
+            require(
+                fault not in catalog_fault_trap_numbers,
+                f"duplicate catalog SetFault producer: {fault}",
+            )
+            catalog_fault_trap_numbers[fault] = row["number"]
+    require(
+        catalog_fault_trap_numbers == model_fault_trap_numbers,
+        "catalog SetFault producers must exactly match the model fault-to-trap mapping",
+    )
+
+    witnessed_fault_trap_numbers: dict[str, int] = {}
+    for fault, suffix in re.findall(
+        r"CheckSynchronousTrapMapping\(\s*"
+        r"(Fault_[A-Za-z][A-Za-z0-9_]*)\s*,\s*"
+        r"Zeros\{6\}(?:\s*\+\s*(\d+))?\s*\)",
+        complete_trap_test,
+    ):
+        require(
+            fault not in witnessed_fault_trap_numbers,
+            f"duplicate synchronous trap-envelope witness: {fault}",
+        )
+        witnessed_fault_trap_numbers[fault] = int(suffix or "0")
+    missing_fault_witnesses = sorted(
+        set(model_fault_trap_numbers) - set(witnessed_fault_trap_numbers)
+    )
+    extra_fault_witnesses = sorted(
+        set(witnessed_fault_trap_numbers) - set(model_fault_trap_numbers)
+    )
+    mismatched_fault_witnesses = sorted(
+        fault
+        for fault in model_fault_trap_numbers.keys()
+        & witnessed_fault_trap_numbers.keys()
+        if model_fault_trap_numbers[fault] != witnessed_fault_trap_numbers[fault]
+    )
+    require(
+        witnessed_fault_trap_numbers == model_fault_trap_numbers,
+        "TestCompleteTrapEnvelope must directly witness every non-None FaultCode "
+        f"mapping from SetFault; missing={missing_fault_witnesses}, "
+        f"extra={extra_fault_witnesses}, mismatched={mismatched_fault_witnesses}",
+    )
+
+
+def validate_trap_catalog_projection(
+    trap_rows: list[dict], reference_body: str
+) -> None:
+    for row in trap_rows:
+        expected_row = (
+            f"| {row['name']} | {row['number']} | {row['pto_v0_status']} | "
+            f"{', '.join(row['producers'])} | {row['cause']} | {row['argument']} | "
+            f"{row['restart']} |"
+        )
+        require(
+            reference_body.count(expected_row) == 1,
+            f"trap catalog projection drift for {row['name']}",
+        )
+
+
 def extract_field(row: dict, field_name: str, instruction: int) -> int:
     field = next(field for field in row["fields"] if field["name"] == field_name)
     value = 0
@@ -5765,7 +5872,9 @@ def main() -> int:
     )
     for row in trap_rows:
         for producer in row["producers"]:
-            fault_match = re.fullmatch(r"SetFault\((Fault_[A-Za-z]+)\)", producer)
+            fault_match = re.fullmatch(
+                r"SetFault\((Fault_[A-Za-z][A-Za-z0-9_]*)\)", producer
+            )
             if fault_match is not None:
                 fault = fault_match.group(1)
                 suffix = "" if row["number"] == 0 else rf"\s*\+\s*{row['number']}"
@@ -10081,6 +10190,95 @@ def main() -> int:
     complete_trap_test = state_test_source.split("func TestCompleteTrapEnvelope()", 1)[
         1
     ].split("func Test", 1)[0]
+    validate_fault_envelope_mapping(
+        types_body, state_body, complete_trap_test, trap_rows
+    )
+
+    def fault_mapping_canary_rejects(
+        *,
+        canary_types_body: str = types_body,
+        canary_state_body: str = state_body,
+        canary_test_body: str = complete_trap_test,
+        canary_trap_rows: list[dict] = trap_rows,
+    ) -> bool:
+        try:
+            validate_fault_envelope_mapping(
+                canary_types_body,
+                canary_state_body,
+                canary_test_body,
+                canary_trap_rows,
+            )
+        except (AssertionError, KeyError, ValueError):
+            return True
+        return False
+
+    tile_allocation_witness = (
+        "CheckSynchronousTrapMapping(Fault_TileAllocation, Zeros{6} + 5);"
+    )
+    tile_allocation_mapping = (
+        "when Fault_TileAllocation => _ACRTrapNumber[[ring]] = Zeros{6} + 5;"
+    )
+    missing_witness_test = complete_trap_test.replace(tile_allocation_witness, "", 1)
+    wrong_number_test = complete_trap_test.replace(
+        tile_allocation_witness,
+        "CheckSynchronousTrapMapping(Fault_TileAllocation, Zeros{6} + 4);",
+        1,
+    )
+    duplicate_mapping_state = state_body.replace(
+        tile_allocation_mapping,
+        f"{tile_allocation_mapping}\n        {tile_allocation_mapping}",
+        1,
+    )
+    missing_catalog_rows = json.loads(json.dumps(trap_rows))
+    bundle_trap_row = next(
+        row for row in missing_catalog_rows if row["name"] == "BUNDLE_TRAP"
+    )
+    bundle_trap_row["producers"].remove("SetFault(Fault_TileAllocation)")
+    future_fault = "Fault_Future_2"
+    future_types_body = types_body.replace(
+        "    Fault_ServiceRequest\n};",
+        f"    Fault_ServiceRequest,\n    {future_fault}\n}};",
+        1,
+    )
+    future_state_body = state_body.replace(
+        tile_allocation_mapping,
+        f"{tile_allocation_mapping}\n"
+        f"        when {future_fault} => "
+        "_ACRTrapNumber[[ring]] = Zeros{6} + 5;",
+        1,
+    )
+    future_test_body = complete_trap_test.replace(
+        tile_allocation_witness,
+        f"{tile_allocation_witness}\n"
+        f"    CheckSynchronousTrapMapping({future_fault}, Zeros{{6}} + 5);",
+        1,
+    )
+    require(
+        fault_mapping_canary_rejects(canary_test_body=missing_witness_test)
+        and fault_mapping_canary_rejects(canary_test_body=wrong_number_test)
+        and fault_mapping_canary_rejects(canary_state_body=duplicate_mapping_state)
+        and fault_mapping_canary_rejects(canary_trap_rows=missing_catalog_rows)
+        and fault_mapping_canary_rejects(
+            canary_types_body=future_types_body,
+            canary_state_body=future_state_body,
+            canary_test_body=future_test_body,
+        ),
+        "fault-envelope mapping negative canary failed open",
+    )
+
+    system_register_reference = (
+        ROOT / "docs" / "instructions" / "system-registers.md"
+    ).read_text(encoding="utf-8")
+    validate_trap_catalog_projection(trap_rows, system_register_reference)
+    stale_projection = system_register_reference.replace(
+        ", SetFault(Fault_TileAllocation)", "", 1
+    )
+    try:
+        validate_trap_catalog_projection(trap_rows, stale_projection)
+    except AssertionError:
+        pass
+    else:
+        raise AssertionError("trap catalog projection negative canary failed open")
     require(
         "type InterruptID of integer {0..63};" in types_body
         and interrupt_requirement is not None

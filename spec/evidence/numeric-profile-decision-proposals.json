@@ -16,7 +16,7 @@
   },
   "scalar_flag_contract": {
     "path": "spec/evidence/scalar-numeric-flag-contract.json",
-    "sha256": "61664bd39fca16f335a62bd476c823da56b839e8f2e36a8c59de41f6f3ac7825",
+    "sha256": "1a696bb88881a32fa01486c00798e73c4ce8e2c63549e45e00a0824428c44e83",
     "status": "state-owner-matrix-closed-profile-production-open",
     "acceptance_record": "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
     "producer_owner_closed_form_count": 30,
