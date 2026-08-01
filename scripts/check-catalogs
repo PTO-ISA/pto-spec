@@ -16,6 +16,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
+REVIEWED_NONCOMPARABLE_PROJECTION_SHA256 = (
+    "fd0daccd75a084b8a497aef1e1fd8b0aac3889873c4db2476b0d46e3adcbc160"
+)
+
 
 TILE_SEMANTIC_GROUPS = {
     "ExecuteTileBinary": {
@@ -5176,6 +5180,26 @@ def main() -> int:
         for row in oracle_rows
     }
     oracle_identity_text = "\n".join(sorted(expected_noncomparable_projection)) + "\n"
+    oracle_reviewed_projection = [
+        {
+            "stable_id": row["stable_id"],
+            "surface": row["surface"],
+            "mnemonic": row["mnemonic"],
+            "family": row["family"],
+            "independent_status": row["independent_status"],
+            "foundation_readiness": row["foundation_readiness"],
+        }
+        for row in oracle_rows
+    ]
+    oracle_reviewed_projection.sort(key=lambda row: row["stable_id"])
+    oracle_reviewed_projection_sha256 = hashlib.sha256(
+        json.dumps(
+            oracle_reviewed_projection,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=True,
+        ).encode("utf-8")
+    ).hexdigest()
     require(
         set(noncomparable_oracle_coverage)
         == {
@@ -5231,11 +5255,14 @@ def main() -> int:
         == {
             "noncomparable_row_count": 39,
             "row_count": 693,
+            "reviewed_projection_sha256": REVIEWED_NONCOMPARABLE_PROJECTION_SHA256,
             "schema": "pto.executable-model-comparison.v1",
             "stable_identity_sha256": hashlib.sha256(
                 oracle_identity_text.encode("utf-8")
             ).hexdigest(),
         }
+        and oracle_reviewed_projection_sha256
+        == REVIEWED_NONCOMPARABLE_PROJECTION_SHA256
         and noncomparable_oracle_coverage["scope"]
         == {
             "direct_tile_family_counts": {"CUBE": 13, "TMA": 9},
@@ -5272,6 +5299,48 @@ def main() -> int:
             },
         },
         "non-comparable oracle coverage membership, schema, or fail-closed state drift",
+    )
+    adr_0032_body = (
+        ROOT
+        / "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+    ).read_text(encoding="utf-8")
+    adr_0036_body = (
+        ROOT
+        / "docs/architecture-decisions/0036-executable-model-comparison-dispositions.md"
+    ).read_text(encoding="utf-8")
+    adr_0032_flat = " ".join(adr_0032_body.split())
+    adr_0036_flat = " ".join(adr_0036_body.split())
+    bridge_counts = bundle_command_totality["bundle_tile_bridge"]["counts"]
+    representable_total = sum(row["representable"] for row in bridge_counts.values())
+    rejected_total = sum(row["commit_rejected"] for row in bridge_counts.values())
+    executed_form_count = sum(
+        row["disposition"] == "executed"
+        for row in bundle_command_totality["form_matrix"]
+    )
+    executed_handlers = {
+        row["semantic_handler"]
+        for row in bundle_command_totality["form_matrix"]
+        if row["disposition"] == "executed"
+    }
+    require(
+        f"{bundle_command_totality['accepted_form_count']} bundle-command forms through {len(bundle_command_totality['handler_counts'])} semantic handlers."
+        in adr_0032_flat
+        and f"The {executed_form_count} executed forms use {len(executed_handlers)} handlers;"
+        in adr_0032_flat
+        and f"Of the 120 direct tile operations, {representable_total} use only those fields; the other {rejected_total} require"
+        in adr_0032_flat
+        and all(
+            f"| {family} | {counts['total']} | {counts['representable']} | {counts['commit_rejected']} |"
+            in adr_0032_flat
+            for family, counts in bridge_counts.items()
+        )
+        and f"| **Total** | **120** | **{representable_total}** | **{rejected_total}** |"
+        in adr_0032_flat
+        and "S5-T3 disposition closure is closed, while independent executable parity remains open at 0/39."
+        in adr_0032_flat
+        and f"The bundle bridge can represent {bridge_counts['TEPL']['representable']} TEPL, {bridge_counts['TMA']['representable']} TMA, and {bridge_counts['CUBE']['representable']} CUBE direct operations;"
+        in adr_0036_flat,
+        "ADR 0032/0036 generated command-handler or bundle-bridge projections drift",
     )
     command_comparison_rows = [
         row for row in comparison_rows if row["surface"] == "command"

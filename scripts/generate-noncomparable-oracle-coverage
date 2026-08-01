@@ -25,6 +25,12 @@ ORACLE_COVERAGE_GRADES = (
     "alternative-evidence",
 )
 
+# Reviewed lock over the exact non-comparable projection.  This is deliberately
+# independent of aggregate counts so a paired cross-classification swap fails.
+REVIEWED_NONCOMPARABLE_PROJECTION_SHA256 = (
+    "fd0daccd75a084b8a497aef1e1fd8b0aac3889873c4db2476b0d46e3adcbc160"
+)
+
 CANDIDATE_COMMANDS = {
     "BSTART.TGEMV",
     "BSTART.TGEMV.ACC",
@@ -53,6 +59,28 @@ def stable_json(data: Any) -> str:
 def stable_identity_digest(rows: list[dict[str, Any]]) -> str:
     identities = "\n".join(sorted(row["stable_id"] for row in rows)) + "\n"
     return hashlib.sha256(identities.encode("utf-8")).hexdigest()
+
+
+def reviewed_projection_digest(rows: list[dict[str, Any]]) -> str:
+    projection = [
+        {
+            "stable_id": row["stable_id"],
+            "surface": row["surface"],
+            "mnemonic": row["mnemonic"],
+            "family": row.get("family"),
+            "independent_status": row["independent_status"],
+            "foundation_readiness": readiness(row),
+        }
+        for row in rows
+    ]
+    projection.sort(key=lambda row: row["stable_id"])
+    encoded = json.dumps(
+        projection,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def validate_comparison(comparison: dict[str, Any]) -> list[dict[str, Any]]:
@@ -88,6 +116,11 @@ def validate_comparison(comparison: dict[str, Any]) -> list[dict[str, Any]]:
         != 39
     ):
         raise ValueError("comparison summary does not agree with the 39-row membership")
+    projection_sha256 = reviewed_projection_digest(noncomparable)
+    if projection_sha256 != REVIEWED_NONCOMPARABLE_PROJECTION_SHA256:
+        raise ValueError(
+            f"reviewed non-comparable projection drift: {projection_sha256}"
+        )
     return noncomparable
 
 
@@ -252,6 +285,7 @@ def build(comparison: dict[str, Any]) -> dict[str, Any]:
             "row_count": 693,
             "noncomparable_row_count": 39,
             "stable_identity_sha256": stable_identity_digest(noncomparable),
+            "reviewed_projection_sha256": REVIEWED_NONCOMPARABLE_PROJECTION_SHA256,
         },
         "closure_layers": {
             "pto_semantic_closure": {
@@ -312,6 +346,23 @@ def run_negative_canaries(comparison: dict[str, Any]) -> None:
     )
     row["classification"] = "comparable-match"
     expect_rejected(reclassified, "classification-drift")
+
+    paired_swap = copy.deepcopy(comparison)
+    noncomparable_row = next(
+        row
+        for row in paired_swap["rows"]
+        if row.get("stable_id") == "bstart_tgemv_bias_32_186ee96c0a8b"
+    )
+    divergence_row = next(
+        row
+        for row in paired_swap["rows"]
+        if row.get("stable_id") == "b_catr_32_e90bd52fa480"
+    )
+    noncomparable_row["classification"], divergence_row["classification"] = (
+        divergence_row["classification"],
+        noncomparable_row["classification"],
+    )
+    expect_rejected(paired_swap, "paired-cross-classification-swap")
 
 
 def main() -> int:

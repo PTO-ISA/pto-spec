@@ -69,7 +69,7 @@ The comparison explicitly records these model limits:
   PTO-owned; the comparison neither defines their selector encoding nor
   proves equivalent warp-predicate execution.
 - PTO-v0 bundle commit binds only `destination0`, `source0`, and `source1`.
-  The bundle bridge can represent 63 TEPL, 1 TMA, and 5 CUBE direct operations;
+  The bundle bridge can represent 62 TEPL, 1 TMA, and 4 CUBE direct operations;
   other direct operations either use direct tile dispatch or reject at bundle
   commit before effects.
 - TEPL comparison records 18 comparable selector/pattern rows and 79 approved

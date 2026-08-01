@@ -1526,6 +1526,7 @@
   },
   "source_comparison": {
     "noncomparable_row_count": 39,
+    "reviewed_projection_sha256": "fd0daccd75a084b8a497aef1e1fd8b0aac3889873c4db2476b0d46e3adcbc160",
     "row_count": 693,
     "schema": "pto.executable-model-comparison.v1",
     "stable_identity_sha256": "30ec11e36eadc33423a2b68ac1184b48c09cbbbc26648f71cf46905858495db5"
