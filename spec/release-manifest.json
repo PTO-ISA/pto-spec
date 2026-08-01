@@ -14,7 +14,7 @@
     },
     {
       "path": "asl/bundle/state.asl",
-      "sha256": "f53698e3083eb1850865fa8977fd92c495e3e4d40998ee808c69c69630d996be"
+      "sha256": "2f8f8d3c26db75552056b104033991704ac5984e339ac7f7c731f1a3c5e17f0a"
     },
     {
       "path": "asl/concurrency.asl",
@@ -26,11 +26,11 @@
     },
     {
       "path": "asl/numeric/formats.asl",
-      "sha256": "6177f3031c68c4af38b4e57276cd87cc13493eba37cda4914e2de0fe2e8ae6ad"
+      "sha256": "359470d81e446cabaefdb0ebc52529cf76809f6ce64806af596f39ac59e3339b"
     },
     {
       "path": "asl/profiles/pto-v0.asl",
-      "sha256": "beb795edb5aa112c4333d41a68d0a05cd2db4c577f8e516e3d2750e3241ba3d1"
+      "sha256": "09e174b0840b8c99a6fe41046d1ef29fc33fe13738d100964d1ad983ca4abf42"
     },
     {
       "path": "asl/scalar/addressing.asl",
@@ -50,7 +50,7 @@
     },
     {
       "path": "asl/scalar/floating.asl",
-      "sha256": "343bf5c522269034372b2fe916fb011556043fdff142862a0f6ea8738118184b"
+      "sha256": "cc2b1fd8a53e840295363ae45335ca426385565d6f797b4829d760e3e65ba71f"
     },
     {
       "path": "asl/scalar/integer.asl",
@@ -74,7 +74,7 @@
     },
     {
       "path": "asl/state.asl",
-      "sha256": "340acbbd0353cfca9147a3b0fce80447eddb428967134737011a677353a087e7"
+      "sha256": "9a49a4e8209607d8bc04dad49ed97725072f4d6595807bfae2a425a537ddae21"
     },
     {
       "path": "asl/tile/complex.asl",
@@ -122,7 +122,7 @@
     },
     {
       "path": "asl/types.asl",
-      "sha256": "f88b8aaecd3c0578dfe23424fcc75a3ee1b5617e993e4f4aa50f49825d02155a"
+      "sha256": "fd3d680d8c456a6283a50c09d143b4d5e2229a1fa2ba7e4174433f98396614cf"
     },
     {
       "path": "docs/architecture-decisions/0001-pto-architecture-scope.md",
@@ -154,7 +154,7 @@
     },
     {
       "path": "docs/architecture-decisions/0011-visible-ebarg-snapshot.md",
-      "sha256": "4ba89eb9b4dc72057b4b5353889df157e86724a4172d1c3213d1b9e4755c0ef0"
+      "sha256": "bbb45e71ec0d927c71546286a949aac99291bafd4b1dc7000818a651af0ba965"
     },
     {
       "path": "docs/architecture-decisions/0012-acrc-service-request.md",
@@ -162,7 +162,7 @@
     },
     {
       "path": "docs/architecture-decisions/0013-tile-capacity-and-packed-storage.md",
-      "sha256": "2942e8cb1a3f8b0c65ef1f17a77724c06a5a9ec82dff3c24f4ea6480af9b66ce"
+      "sha256": "10ed1439d46f03c658b3d2dad07bee27a66daa022fb17696e07e333633337627"
     },
     {
       "path": "docs/architecture-decisions/0014-element-level-tile-definedness.md",
@@ -182,7 +182,7 @@
     },
     {
       "path": "docs/architecture-decisions/0018-pto-v0-trap-disposition.md",
-      "sha256": "b94916ad090842fc0fabae8e5516a7549ae72d684ef2259b1b19c745fb7f315b"
+      "sha256": "f8eb335bd3c794c2457b8f982f5afa34f45e87381c478a48cee0395b928c227a"
     },
     {
       "path": "docs/architecture-decisions/0019-predicate-register-contract.md",
@@ -222,7 +222,7 @@
     },
     {
       "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
-      "sha256": "0cd5c9eef6525edf16603f9d1c4df1233f59b6e8ffc9750b84bd99995fd55962"
+      "sha256": "07c51707a4f02fa6a451f92ab267b31fe4f0398d3def26f12b461f79d734d6a7"
     },
     {
       "path": "docs/architecture-decisions/0029-scalar-agu-totality-and-restart.md",
@@ -298,27 +298,35 @@
     },
     {
       "path": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
-      "sha256": "eff69e38127dfaf9777c98e0db45b43c212fc7d2491db6f50c81caad96d96086"
+      "sha256": "6595060f3b01749643d01677014308fc89aa02b23670fdef79d82e582f9232f2"
     },
     {
       "path": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
-      "sha256": "20b2d242c6ca44dff15b65e4f539b596168220efc9ba452dbc07a4a84afeaa8e"
+      "sha256": "cca6076b80003179731fe8f843ae230b835b5f0e581024f8e5b4509cd0f33f7e"
+    },
+    {
+      "path": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
+      "sha256": "9065787b60ef2a323515c1deb82331bfde059d8be4455c3c3ffa0d0f50f4311a"
+    },
+    {
+      "path": "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
+      "sha256": "8743491d4ca91d06e7514082d0b878f18087ec9f70e010765153dd52cbd719b9"
     },
     {
       "path": "docs/architecture.md",
-      "sha256": "c5e0fc0322f70d2ae11b5a1392816f92359b6d7363a28ee9484aa175f3e8d527"
+      "sha256": "8cbc3ad20767ed1a5d6a66d9048ffd5149c01f08054e90333c52436f1740a23e"
     },
     {
       "path": "docs/coverage.md",
-      "sha256": "2bd31b95336318ac5daa9a38f3ca6c9d300d544d739f91e16755a805f90936a5"
+      "sha256": "f4f8ed61a5ea2dc706d542ee716d2b3e7a61b5822f504fe42ce14c6c7adf0e77"
     },
     {
       "path": "docs/maturity-bringup-plan.md",
-      "sha256": "3007f9c2278afeb26d0c698943dd5255f1deaabd13e3d02256f0f5ae1d55d5a2"
+      "sha256": "077405259dee14ed02806a01b9fbc40114ee23bcef63eaf49fc3db4d697ff3e1"
     },
     {
       "path": "docs/maturity-stage-targets.md",
-      "sha256": "6e95f0963fbd985b411cb589dadc671e6a8af61b9ae915c8af846b9404e6a0b9"
+      "sha256": "bd618e7945135394c8544d72fdc9f4b257d03778b6cf944bbeb225f95ec6d850"
     },
     {
       "path": "docs/memory-model.md",
@@ -330,15 +338,15 @@
     },
     {
       "path": "docs/normative-sources.md",
-      "sha256": "f4fce08d37a5e2e04e35dbcdabd08561b7b4620942a3f7c814687ca3baf59a3f"
+      "sha256": "1c14680ce2b013b437a8210305b077ac986b67e514e557c03a4f9096a2da54d6"
     },
     {
       "path": "docs/numeric-profile-decision-register.md",
-      "sha256": "9359df8b80a305b1bb9f242b04896f812231e43fdb6c93e5a2b2ea754f3e70e5"
+      "sha256": "9543beed7216c350729372ef95d72d3ecafc973391cb88d76ef22f1e1c419e82"
     },
     {
       "path": "docs/profile-contracts.md",
-      "sha256": "6f3f5b75ac4c80263429e999fe8c5091e2d559038b2164ee60bc1c71d86fb760"
+      "sha256": "737b7b05519f6668a1d39a3198066af42b368e896ce3c62ffdb892b60ab02d1b"
     },
     {
       "path": "docs/review-checklist.md",
@@ -362,7 +370,7 @@
     },
     {
       "path": "spec/catalog/system-registers.json",
-      "sha256": "f81a7638a4117937775585e43e922ac4ad972bccc192d5af05aba03bc8179e94"
+      "sha256": "824c0681f6cac16954aaed58785f216f669214af7f54fb29c7e9ec6cb7153f6b"
     },
     {
       "path": "spec/catalog/tile-operations.json",
@@ -382,11 +390,11 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "1e19669aa90617f63cb25160ce45d5439f74ed6a24a6cae0d104fdc1834040d7"
+      "sha256": "4afdd3cced1e8b560a741e4aab989d45b586f14e91051658295b3c8c357b9c14"
     },
     {
       "path": "spec/evidence/numeric-conformance-readiness.json",
-      "sha256": "55a637a39eda44a771cea304762df51a6689e62aeacdbb0324a66c95337e29a9"
+      "sha256": "dc691ee01f37e82f50699de288418684bed09c80745c67f161e271c7f65cf638"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
@@ -394,35 +402,43 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "1b9d2eabf11081df6631bdf939d405d09d5d86917ea049163a3ed3aa4e10bc3f"
+      "sha256": "4bdddb35de0738fe55eb3266fa02fdc80ae829cb95ac9079fa3aaa60c66c4baf"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "7fe6367d810786017c7cfe299c81271bc47ddefe2877188840c6bab4ef8f63ac"
+      "sha256": "3898a9f3fcb3eb21e3f9d5159b1e2337565a067316128984f14953b1522b4939"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "428fc467ee70e38506c42359b64cb1e0b110fdf29fcde29471686e307f9badcf"
+      "sha256": "4939fd3b5c32bd81c815e0c4b5756d329a8fd207b375d921e6c074d949e000eb"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "5aa6adfbbb0c1797fd04948d03bb8afd5a985120dca88e2c4134082ce48d73d1"
+      "sha256": "9e5e1f9884034ea1b6c11604bd817bc482d6f561d3a6e10d3c6c9ef53996312c"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "713f0b8e4a7ef3d57cfe19f06cc6628f10dae1862398c9234119d5dc1aa6dd66"
+      "sha256": "e277abc6832c38708f3ea0beed4554b4f1cf8cfb8d629e195478bc00e7786c2e"
+    },
+    {
+      "path": "spec/evidence/numeric-special-value-contract.json",
+      "sha256": "7f7c8dfc3ac83c8fbdd3ffd30714ba9381c4a2cccfba1915cab999c5dbf79931"
+    },
+    {
+      "path": "spec/evidence/numeric-subnormal-contract.json",
+      "sha256": "d298d47fd06607053ce894dc8992adad6d3117475a4c76803cf1a6bdb475a94a"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "4d5fbd4345f3661d5a4d9f9b0661af3c884d9e327246f58f83e2768b99170ecc"
+      "sha256": "f1752a5cd060b3dd78826f1a350c0a686472a09d61f97af3c1e41ed742fd708a"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "d7de17c76ec812a4b5cc4f0d74d5d08ba1638af68d65ed59fabfc97c5506ac69"
+      "sha256": "7c13bbec929c6d151f1b57bc8f128c95feb46f0ef82d060ad2978e4695fc8336"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "c7851d1453d7074ecd20410bad88d7d6de733b83b0df8a950bdc7895b3a9f0e3"
+      "sha256": "df73be6d0a4d3cb1cfbdcafb20cbc0cb9232b3d72d29148603789d6d935e27c0"
     },
     {
       "path": "spec/evidence/public-source-reconciliation.json",
@@ -430,11 +446,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "3ee6fd9f4e4bc544cd2a2c455e806169e8094794285566a59178fdee2244237f"
+      "sha256": "02c85d5086a2538a0af80cf031edfec1cbf335d05f46505e1c4e93996c48b2c3"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "5183367806c249457058f85e600664d232e361c6f1cc15f5a382b90138d007ec"
+      "sha256": "181c39ab1e0a046d4b8df5b1c7decfd711684ff3a86519700275f5d2bb95452b"
     },
     {
       "path": "spec/evidence/scalar-agu-totality.json",
@@ -458,11 +474,11 @@
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
-      "sha256": "dadf2f4e38653439296354218a26ad4d057d417372b22708d7d559564a4688ac"
+      "sha256": "d8d188dc06cb4195fcf3d62724591416c17cbd938c0c225d2093890d61eeb7dc"
     },
     {
       "path": "spec/evidence/scalar-numeric-flag-contract.json",
-      "sha256": "a25ecdbef206c1f1b6e87856764a919920ef41af25dbb7351ce6321c0a202b13"
+      "sha256": "1a696bb88881a32fa01486c00798e73c4ce8e2c63549e45e00a0824428c44e83"
     },
     {
       "path": "spec/evidence/scalar-sys-totality.json",
@@ -477,16 +493,20 @@
       "sha256": "4230bd9a729682cdcc725265a4362af857929802f33a0cfc1d2db1221d4b3f24"
     },
     {
+      "path": "spec/evidence/trap-context-recovery-evidence.json",
+      "sha256": "4a70694615ff44cb7851d67ba1b9efc075266ee6471f5b0106a1757d71b586ae"
+    },
+    {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "becfbefcc7a31408e5e5293802493f833f68a2fccebb3f9e8008d8b9f4e7658c"
+      "sha256": "1608fa0c03d139842b85c63c581d8280c37e55ef03a6e2f3cbf75dd8cb8edaab"
     },
     {
       "path": "spec/profile-hooks.json",
-      "sha256": "f686463805e725891d49c00d598d0ecdb209964ab5a34244469a0fa45367817f"
+      "sha256": "83b7a88ca41647bc5189268d07285cf529deeae26cdb310123a386ec49954242"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "36385098316f0ca3b57a51c2cbe1f3e0c84eb891e157ad78156d2c245809de92"
+      "sha256": "b26f3125ca21c5a5673d9e885fb37aa9c82cc4b320355b1912847046825f7d95"
     },
     {
       "path": "specification.toml",
@@ -511,7 +531,7 @@
     },
     "tile_operations_total": 120
   },
-  "content_sha256": "cfa9917a1b92af04ff2da46f337b29d2e4acdcc73c170b9b6dd5be3418651dd1",
+  "content_sha256": "345f34fd5b0e506d75970b91789301420745052b290d6d5dc1ac530767407b3e",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -536,7 +556,7 @@
     "path": "spec/hardware-conformance-profile.json",
     "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
     "repository_implementation_conformance": "unproven",
-    "sha256": "becfbefcc7a31408e5e5293802493f833f68a2fccebb3f9e8008d8b9f4e7658c"
+    "sha256": "1608fa0c03d139842b85c63c581d8280c37e55ef03a6e2f3cbf75dd8cb8edaab"
   },
   "hash_contract": {
     "algorithm": "SHA-256",
@@ -593,7 +613,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/instructions/system-registers.md",
-      "sha256": "c79ac2c5eca25b12aad2e6bea4b8aaa207d8ea5d77eedacf9f656cd009b6a6e5"
+      "sha256": "479b24a6b31408956988be4d6988be1c3791fa0fdb7dc36f957257b3b977fc4e"
     },
     {
       "kind": "generated-documentation",
@@ -613,7 +633,7 @@
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0571-hardware-numeric-vectors.json",
-      "sha256": "a84857dfe146dc61916706b01f0f29b8dfdd31b53b2b58fa7c82a4877021d568"
+      "sha256": "07daa2085c86544ad7dec243ab9ab1e754d1819e1e5d5074aa31b409cb41e17c"
     }
   ],
   "release": "0.57.1",

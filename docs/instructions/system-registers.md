@@ -128,7 +128,7 @@ This page is generated from the canonical PTO catalogs under `spec/catalog/`.
 | --- | --- | --- | --- | --- | --- | --- |
 | EXEC_STATE_CHECK | 0 | production-active | ArchitectureEnterRequest, SetFault(Fault_ExecutionStateCheck) | zero | source-tpc | saved-source-context |
 | ILLEGAL_INST | 4 | production-active | SetFault(Fault_IllegalInstruction) | zero | fault-address | saved-source-context |
-| BUNDLE_TRAP | 5 | production-active | SetFault(Fault_BundleControl), SetFault(Fault_TileLegality) | zero | fault-address | saved-source-context |
+| BUNDLE_TRAP | 5 | production-active | SetFault(Fault_BundleControl), SetFault(Fault_TileAllocation), SetFault(Fault_TileLegality) | zero | fault-address | saved-source-context |
 | SCALL | 6 | production-active | RaiseServiceRequest, SetFault(Fault_ServiceRequest) | request-type | source-tpc | saved-context-resume-next-instruction |
 | INST_PC_FAULT | 32 | production-active | SetFault(Fault_InstructionPC) | zero | invalid-target | saved-source-context |
 | INST_PAGE_FAULT | 33 | envelope-only-no-trigger | SetFault(Fault_InstructionPage) | zero | fault-address | saved-source-context |

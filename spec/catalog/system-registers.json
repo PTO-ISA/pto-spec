@@ -697,7 +697,11 @@
       "cause": "zero",
       "name": "BUNDLE_TRAP",
       "number": 5,
-      "producers": ["SetFault(Fault_BundleControl)", "SetFault(Fault_TileLegality)"],
+      "producers": [
+        "SetFault(Fault_BundleControl)",
+        "SetFault(Fault_TileAllocation)",
+        "SetFault(Fault_TileLegality)"
+      ],
       "pto_v0_status": "production-active",
       "restart": "saved-source-context"
     },
