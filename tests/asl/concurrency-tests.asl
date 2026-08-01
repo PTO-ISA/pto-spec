@@ -584,5 +584,31 @@ begin
     TestTSOMixedSizeAndConditionalAtomicPolicy();
     TestTileMemoryEventOrdering();
     TestDependencyMetadataIsNotFence();
+
+    // Verifier bookkeeping accepts the last representable event, coherence
+    // rank, source index, and read index. Overflow remains a nonarchitectural
+    // assertion pinned by scripts/check-assertion-boundaries.
+    ResetMemoryExecution();
+    let boundary_address = Zeros{PTO_XLEN} + 0x700;
+    var boundary_source = AddInitialWriteEvent(
+        boundary_address, 8, Zeros{PTO_XLEN});
+    for boundary_rank = 1 to PTO_MODEL_MEMORY_EVENTS - 2 do
+        boundary_source = AddStoreEvent(0, boundary_address, 8,
+            Zeros{PTO_XLEN} + boundary_rank, MemoryOrder_Relaxed,
+            boundary_rank as MemoryCoherenceRank);
+    end;
+    assert boundary_source ==
+        ((PTO_MODEL_MEMORY_EVENTS - 2) as MemoryEventIndex);
+    assert _MemoryEventCount == PTO_MODEL_MEMORY_EVENTS - 1;
+    let boundary_final_rank = NextMemoryCoherenceRank(boundary_address, 8);
+    assert boundary_final_rank == PTO_MODEL_MEMORY_EVENTS - 1;
+    let boundary_read = AddLoadEvent(0, boundary_address, 8,
+        Zeros{PTO_XLEN} + (PTO_MODEL_MEMORY_EVENTS - 2),
+        MemoryOrder_Relaxed);
+    assert boundary_read ==
+        ((PTO_MODEL_MEMORY_EVENTS - 1) as MemoryEventIndex);
+    assert _MemoryEventCount == PTO_MODEL_MEMORY_EVENTS;
+    SetMemoryReadFrom(boundary_read, boundary_source);
+    assert _MemoryEvents[[boundary_read]].read_from == boundary_source;
     StopMemoryEventCapture();
 end;

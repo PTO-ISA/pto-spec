@@ -89,6 +89,7 @@ required_files=(
     spec/evidence/scalar-effect-closure.json
     spec/evidence/tepl-totality.json
     spec/evidence/tma-totality.json
+    scripts/check-assertion-boundaries
     scripts/generate-bundle-command-totality
     scripts/generate-executable-model-comparison
     scripts/generate-noncomparable-oracle-coverage
@@ -202,6 +203,7 @@ for script in scripts/*; do
 done
 
 python3 scripts/check-catalogs
+./scripts/check-assertion-boundaries
 ./scripts/generate-bundle-command-totality --check
 ./scripts/generate-noncomparable-oracle-coverage --check
 ./scripts/generate-numeric-conformance-readiness --check

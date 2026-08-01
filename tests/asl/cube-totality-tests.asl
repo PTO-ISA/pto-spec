@@ -295,6 +295,66 @@ begin
     assert shape_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
     assert !_Accumulator.live;
+
+    ResetCubeMXOperands();
+    let mx_operands = CubeTotalityOperands();
+    let (mx_seed_status, -) = ExecuteTileInstruction(
+        TileDecode_CUBE, Zeros{12} + 4, mx_operands);
+    assert mx_seed_status == TileExecution_Executed;
+    let preserved_mx_accumulator = ReadCubeAccumulatorElement();
+    ConfigureTile(3, 256, 1, 2, 1, 2, TileDataType_E8M0,
+        TileLayout_RowMajor, TileLocation_Any);
+    ExecuteTileFillScalar(3, Zeros{PTO_XLEN} + 5);
+    ClearFault();
+    let (mx_scale_shape_status, -) = ExecuteTileInstruction(
+        TileDecode_CUBE, Zeros{12} + 4, mx_operands);
+    assert mx_scale_shape_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert _Accumulator.live;
+    assert ReadCubeAccumulatorElement() == preserved_mx_accumulator;
+
+    ResetCubeOrdinaryOperands();
+    let accumulator_operands = CubeTotalityOperands();
+    let (logical_seed_status, -) = ExecuteTileInstruction(
+        TileDecode_CUBE, Zeros{12}, accumulator_operands);
+    assert logical_seed_status == TileExecution_Executed;
+    let preserved_logical_accumulator = ReadCubeAccumulatorElement();
+    assert _Accumulator.logical_data_type == TileDataType_U64;
+    assert _Accumulator.info.data_type == TileDataType_U64;
+    SelectCubeTotalityDataType('11001');
+    ConfigureCubeUnitTile(1, TileDataType_U32,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureCubeUnitTile(2, TileDataType_U32,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
+    ClearFault();
+    let (accumulator_logical_type_status, -) = ExecuteTileInstruction(
+        TileDecode_CUBE, Zeros{12} + 2, accumulator_operands);
+    assert accumulator_logical_type_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert _Accumulator.live;
+    assert ReadCubeAccumulatorElement() == preserved_logical_accumulator;
+
+    ResetCubeOrdinaryOperands();
+    let physical_operands = CubeTotalityOperands();
+    let (physical_seed_status, -) = ExecuteTileInstruction(
+        TileDecode_CUBE, Zeros{12}, physical_operands);
+    assert physical_seed_status == TileExecution_Executed;
+    let preserved_physical_accumulator = ReadCubeAccumulatorElement();
+    // Physical-only mismatch is not constructible by decoded instructions:
+    // every legal producer commits a coherent logical/physical type pair.
+    // Corrupt the internal invariant solely to prove decoded preflight rejects
+    // before changing the accumulator.
+    _Accumulator.info.data_type = TileDataType_U32;
+    ClearFault();
+    let (accumulator_physical_type_status, -) = ExecuteTileInstruction(
+        TileDecode_CUBE, Zeros{12} + 2, physical_operands);
+    assert accumulator_physical_type_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert _Accumulator.live;
+    assert _Accumulator.info.data_type == TileDataType_U32;
+    assert ReadCubeAccumulatorElement() == preserved_physical_accumulator;
 end;
 
 // PTO-REQ-PROFILE-001: A2/A3 rejects all six MX selectors for every exact

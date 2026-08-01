@@ -1,0 +1,187 @@
+#!/usr/bin/env python3
+"""Fail closed when normative assertion inventory or boundary witnesses drift."""
+
+from __future__ import annotations
+
+import re
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def fail(message: str) -> None:
+    raise SystemExit(f"error: {message}")
+
+
+def source(path: str) -> str:
+    return (ROOT / path).read_text(encoding="utf-8")
+
+
+def without_comments(body: str) -> str:
+    return "\n".join(line.split("//", 1)[0] for line in body.splitlines())
+
+
+def assertion_count(paths: tuple[str, ...]) -> int:
+    count = 0
+    for path in paths:
+        count += len(re.findall(r"\bassert\b", without_comments(source(path))))
+    return count
+
+
+def function_body(path: str, name: str) -> str:
+    body = without_comments(source(path))
+    prefix = r"(?:readonly\s+|pure\s+|implementation\s+|impdef\s+)?"
+    starts = list(
+        re.finditer(rf"^{prefix}func\s+{re.escape(name)}\s*\(", body, re.MULTILINE)
+    )
+    if len(starts) != 1:
+        fail(f"expected exactly one {name} function in {path}, found {len(starts)}")
+    start = starts[0].start()
+    following = re.search(rf"^{prefix}func\s+", body[starts[0].end() :], re.MULTILINE)
+    end = len(body) if following is None else starts[0].end() + following.start()
+    return body[start:end]
+
+
+def require_once(body: str, pattern: str, label: str) -> re.Match[str]:
+    matches = list(re.finditer(pattern, body, re.MULTILINE | re.DOTALL))
+    if len(matches) != 1:
+        fail(f"expected exactly one {label}, found {len(matches)}")
+    return matches[0]
+
+
+all_asl_files = tuple(
+    str(path.relative_to(ROOT)) for path in sorted((ROOT / "asl").rglob("*.asl"))
+)
+tile_assertion_files = tuple(
+    path
+    for path in all_asl_files
+    if path.startswith("asl/tile/") or path.startswith("asl/bundle/")
+)
+scalar_assertion_files = tuple(
+    path for path in all_asl_files if path not in tile_assertion_files
+)
+
+scalar_count = assertion_count(scalar_assertion_files)
+tile_count = assertion_count(tile_assertion_files)
+if scalar_count != 33:
+    fail(f"scalar/system/concurrency assertion inventory drifted: {scalar_count} != 33")
+if tile_count != 204:
+    fail(f"tile/bundle assertion inventory drifted: {tile_count} != 204")
+
+for function, label, guard_pattern, effect_pattern in (
+    (
+        "AddMemoryEvent",
+        "event-capacity guard",
+        r"assert\s+_MemoryEventCount\s*<\s*PTO_MODEL_MEMORY_EVENTS\s*;",
+        r"_MemoryEvents\[\[index\]\]\s*=\s*event\s*;",
+    ),
+    (
+        "NextMemoryCoherenceRank",
+        "coherence-rank guard",
+        r"assert\s+next_rank\s*<\s*PTO_MODEL_MEMORY_EVENTS\s*;",
+        r"return\s+next_rank\s+as\s+MemoryCoherenceRank\s*;",
+    ),
+    (
+        "SetMemoryReadFrom",
+        "read-from bounds guard",
+        r"assert\s+read\s*<\s*_MemoryEventCount\s*&&\s*source\s*<\s*_MemoryEventCount\s*;",
+        r"_MemoryEvents\[\[read\]\]\.read_from\s*=\s*source\s*;",
+    ),
+):
+    body = function_body("asl/concurrency.asl", function)
+    guard = require_once(body, guard_pattern, f"{label} in {function}")
+    effect = require_once(body, effect_pattern, f"guarded effect in {function}")
+    if guard.start() >= effect.start():
+        fail(f"{label} no longer dominates the guarded effect in {function}")
+
+tile_legality = function_body("tests/asl/tile-tests.asl", "TestDecodedTileLegalityFaults")
+for status, selector in (
+    ("reciprocal_zero_status", "000000010100"),
+    ("reciprocal_sqrt_zero_status", "000000010110"),
+    ("quantize_zero_scale_status", "000001101010"),
+    ("scalar_division_zero_status", "000000100011"),
+    ("row_expanded_division_zero_status", "000001001000"),
+    ("column_expanded_division_zero_status", "000001011000"),
+):
+    require_once(
+        tile_legality,
+        rf"let\s*\({status},\s*-\)\s*=\s*ExecuteTileInstruction\(\s*"
+        rf"TileDecode_TEPL,\s*'{selector}',.*?\);\s*"
+        rf"assert\s+{status}\s*==\s*TileExecution_Rejected\s*;\s*"
+        r"assert\s+_LastFault\s*==\s*Fault_TileLegality\s*;\s*"
+        r"assert\s+ReadTileElement\(9,\s*[01],\s*[01]\)\s*==\s*"
+        r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a\s*;",
+        f"decoded {status} rejection and preservation witness",
+    )
+
+tile_definedness = function_body("tests/asl/tile-tests.asl", "TestTileElementDefinedness")
+for status in ("empty_allocation_status", "empty_load_status"):
+    require_once(
+        tile_definedness,
+        rf"assert\s+{status}\s*==\s*TileExecution_Executed\s*;",
+        f"decoded {status} setup",
+    )
+require_once(
+    tile_definedness,
+    r"let\s*\(empty_reduction_status,\s*-\)\s*=\s*ExecuteTileInstruction\(\s*"
+    r"TileDecode_TEPL,\s*'000001000000',\s*empty_reduction\s*\);\s*"
+    r"assert\s+empty_reduction_status\s*==\s*TileExecution_Rejected\s*;\s*"
+    r"assert\s+_LastFault\s*==\s*Fault_TileLegality\s*;",
+    "decoded empty-reduction rejection",
+)
+
+cube_preflight = function_body("tests/asl/cube-totality-tests.asl", "TestCubeCompositePreflight")
+for status in (
+    "mx_scale_shape_status",
+    "accumulator_logical_type_status",
+    "accumulator_physical_type_status",
+):
+    require_once(
+        cube_preflight,
+        rf"assert\s+{status}\s*==\s*TileExecution_Rejected\s*;\s*"
+        r"assert\s+_LastFault\s*==\s*Fault_TileLegality\s*;\s*"
+        r"assert\s+_Accumulator\.live\s*;",
+        f"decoded {status} rejection",
+    )
+
+verifier = function_body("tests/asl/concurrency-tests.asl", "TestTSOConcurrency")
+for label, pattern in (
+    (
+        "maximum source index",
+        r"assert\s+boundary_source\s*==\s*\(\(PTO_MODEL_MEMORY_EVENTS\s*-\s*2\)\s+as\s+MemoryEventIndex\)\s*;",
+    ),
+    (
+        "maximum coherence rank",
+        r"assert\s+boundary_final_rank\s*==\s*PTO_MODEL_MEMORY_EVENTS\s*-\s*1\s*;",
+    ),
+    (
+        "maximum read index",
+        r"assert\s+boundary_read\s*==\s*\(\(PTO_MODEL_MEMORY_EVENTS\s*-\s*1\)\s+as\s+MemoryEventIndex\)\s*;",
+    ),
+    (
+        "full event count",
+        r"assert\s+_MemoryEventCount\s*==\s*PTO_MODEL_MEMORY_EVENTS\s*;",
+    ),
+    (
+        "maximum read-from update",
+        r"SetMemoryReadFrom\(boundary_read,\s*boundary_source\)\s*;",
+    ),
+    (
+        "read-from postcondition",
+        r"assert\s+_MemoryEvents\[\[boundary_read\]\]\.read_from\s*==\s*boundary_source\s*;",
+    ),
+):
+    require_once(verifier, pattern, label)
+
+require_once(
+    without_comments(source("tests/canary/exec-fail.asl")),
+    r"assert\s+FALSE\s*;",
+    "dynamic assertion-failure canary",
+)
+
+print(
+    "assertion-boundary evidence passed: "
+    f"{scalar_count} scalar/system/concurrency assertions, "
+    f"{tile_count} tile/bundle assertions, and 13 pinned boundary witnesses"
+)

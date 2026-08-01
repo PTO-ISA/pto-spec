@@ -988,6 +988,39 @@ begin
     assert ReadTileElement(3, 0, 0) == Zeros{PTO_XLEN} + 0x66;
     assert ReadTileElement(3, 1, 0) == Zeros{PTO_XLEN} + 0x66;
 
+    var empty_allocation = DefaultTileInstructionOperands();
+    empty_allocation.destination0 = 4;
+    empty_allocation.byte_count = 256;
+    empty_allocation.positive0 = 2;
+    empty_allocation.positive1 = 2;
+    empty_allocation.natural0 = 0;
+    empty_allocation.natural1 = 2;
+    empty_allocation.scalar0 = Zeros{PTO_XLEN} + 24;
+    empty_allocation.flag0 = FALSE;
+    ClearFault();
+    let (empty_allocation_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000001111100', empty_allocation);
+    assert empty_allocation_status == TileExecution_Executed;
+
+    var empty_load = DefaultTileInstructionOperands();
+    empty_load.destination0 = 4;
+    empty_load.address = Zeros{PTO_XLEN};
+    ClearFault();
+    let (empty_load_status, -) = ExecuteTileInstruction(
+        TileDecode_TMA, Zeros{12}, empty_load);
+    assert empty_load_status == TileExecution_Executed;
+    assert _Tiles[[4]].contents_defined;
+    var empty_reduction = DefaultTileInstructionOperands();
+    empty_reduction.destination0 = 3;
+    empty_reduction.source0 = 4;
+    ClearFault();
+    let (empty_reduction_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000001000000', empty_reduction);
+    assert empty_reduction_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTileElement(3, 0, 0) == Zeros{PTO_XLEN} + 0x66;
+    assert ReadTileElement(3, 1, 0) == Zeros{PTO_XLEN} + 0x66;
+
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 4);
@@ -1150,6 +1183,61 @@ begin
     assert _ACRTrapNumber[[CurrentACR()]] == Zeros{6} + 5;
     assert ReadTileElement(9, 0, 0) == Zeros{PTO_XLEN} + 0x5a;
     assert ReadTileElement(9, 0, 1) == Zeros{PTO_XLEN} + 0x5a;
+
+    var reciprocal_operands = DefaultTileInstructionOperands();
+    reciprocal_operands.destination0 = 9;
+    reciprocal_operands.source0 = 8;
+    ClearFault();
+    let (reciprocal_zero_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000000010100', reciprocal_operands);
+    assert reciprocal_zero_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTileElement(9, 0, 0) == Zeros{PTO_XLEN} + 0x5a;
+
+    ClearFault();
+    let (reciprocal_sqrt_zero_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000000010110', reciprocal_operands);
+    assert reciprocal_sqrt_zero_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTileElement(9, 0, 0) == Zeros{PTO_XLEN} + 0x5a;
+
+    var quantize_operands = DefaultTileInstructionOperands();
+    quantize_operands.destination0 = 9;
+    quantize_operands.source0 = 7;
+    quantize_operands.scalar0 = Zeros{PTO_XLEN};
+    quantize_operands.scalar1 = Zeros{PTO_XLEN} + 1;
+    ClearFault();
+    let (quantize_zero_scale_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000001101010', quantize_operands);
+    assert quantize_zero_scale_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTileElement(9, 1, 0) == Zeros{PTO_XLEN} + 0x5a;
+
+    var scalar_division_operands = DefaultTileInstructionOperands();
+    scalar_division_operands.destination0 = 9;
+    scalar_division_operands.source0 = 7;
+    scalar_division_operands.scalar0 = Zeros{PTO_XLEN};
+    ClearFault();
+    let (scalar_division_zero_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000000100011', scalar_division_operands);
+    assert scalar_division_zero_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTileElement(9, 1, 1) == Zeros{PTO_XLEN} + 0x5a;
+
+    WriteTileElement(8, 1, 0, Zeros{PTO_XLEN});
+    ClearFault();
+    let (row_expanded_division_zero_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000001001000', division_operands);
+    assert row_expanded_division_zero_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTileElement(9, 0, 0) == Zeros{PTO_XLEN} + 0x5a;
+
+    ClearFault();
+    let (column_expanded_division_zero_status, -) = ExecuteTileInstruction(
+        TileDecode_TEPL, '000001011000', division_operands);
+    assert column_expanded_division_zero_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTileElement(9, 1, 1) == Zeros{PTO_XLEN} + 0x5a;
 
     ReleaseTile(8);
     ClearFault();
