@@ -606,7 +606,7 @@ hidden exceptions.
 promotion input. It covers 935 globally unique traceability units: 46
 requirements, 474 scalar forms, 99 bundle/command forms, 120 direct tile
 operations, 72 system registers, 13 traps, 38 profile hooks, and 73 top-level
-ASL state roots. Composite roots expand to 238 leaf fields so nested bundle,
+ASL state roots. Composite roots expand to 240 leaf fields so nested bundle,
 trap-context, memory-event, system-register, and `TileInfo` fields remain
 visible to review.
 
@@ -626,14 +626,14 @@ generated review fields remain null until a stable post-S5-T2 candidate exists.
 `spec/evidence/release-gate-readiness.json` separates the exact release
 contract from future results. It defines ten local/candidate gates, proves the
 hosted workflow uses full action pins and least-privilege contents access, and
-proves 34 shards partition 105 canonical calls reaching 97 test subprograms.
+proves 34 shards partition 106 canonical calls reaching 98 test subprograms.
 It also inventories ten GitHub repository/branch controls and the two required
 review perspectives.
 
 | Sub-stage | Current state | Target | Exit evidence |
 | --- | --- | --- | --- |
 | `S6-T2-A` | Closed | Exact release-gate contract | Ten commands/evidence boundaries, ten external controls, and two review perspectives are generated and checked. |
-| `S6-T2-B` | Closed | Hosted and parallel execution contract | Full action pins, least-privilege workflow, required `validate`, 360-minute bound, and exact 34/105/97 partition pass fail-closed checks. |
+| `S6-T2-B` | Closed | Hosted and parallel execution contract | Full action pins, least-privilege workflow, required `validate`, 360-minute bound, and exact 34/106/98 partition pass fail-closed checks. |
 | `S6-T2-C` | Blocked by S5-T2 and S6-T1 | Freeze one signed candidate | All cumulative prerequisites close and one immutable commit/tree identity is recorded. |
 | `S6-T2-D` | Waiting on C | Reproduce the candidate | Every local gate and hosted `validate` passes at the same candidate commit. |
 | `S6-T2-E` | Waiting on C–D | Verify controls and reviews | Candidate-specific GitHub control snapshot plus accepted PTO architecture and formal-model dispositions. |

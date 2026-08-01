@@ -281,6 +281,13 @@ result-rule, and result-acceptance fields remain null.
 `release-traceability-readiness.json` is the generated input to S6-T1. It
 enumerates every requirement, accepted scalar and command form, direct tile
 operation, system register, trap, profile hook, and top-level ASL state root.
+`trap-context-recovery-evidence.json` is the fail-closed per-leaf TrapContext
+ledger for issue 27. It derives its leaf order from the release traceability
+state-root inventory, binds every leaf to the executable
+`TestTrapContextAllLeafRecoveryEvidence` witness, and records the PTO v0
+boundary that ECSTATE plus the recovery-active EBARG words are portable
+first-layer saved context while the remaining TrapContext leaves are bounded
+EBSTATE retention rather than portable serialization.
 Composite state types are recursively expanded so nested trap-context, bundle,
 memory-event, system-register, and `TileInfo` fields cannot disappear silently.
 Each unit links to one or more PTO requirements, model paths, executable

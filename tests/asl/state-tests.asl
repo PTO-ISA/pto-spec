@@ -291,6 +291,506 @@ begin
     ResetProfileState();
 end;
 
+// PTO-REQ-FAULT-001, PTO-REQ-SCALAR-SSR-001: all TrapContext leaves have
+// direct nonzero save/preserve/recover/invalidate evidence. ECSTATE and the
+// recovery-active EBARG words form the portable first-layer context snapshot;
+// EBSTATE-only leaves are bounded PTO v0 retention, not portable
+// serialization.
+func TestTrapContextAllLeafRecoveryEvidence()
+begin
+    ResetProfileState();
+    SetCurrentACR(15);
+    _SystemRegisters.core_state = Zeros{PTO_XLEN} + 0xabc0;
+    SetCurrentACR(15);
+    WriteTPC(Zeros{PTO_XLEN} + 0x1200);
+    WriteBPC(Zeros{PTO_XLEN} + 0x2200);
+    _BundleArgument = Zeros{PTO_XLEN} + 0x3300;
+    _CommitArgument = Zeros{PTO_XLEN} + 0x4400;
+    _BundleActive = TRUE;
+    _BundleBodyActive = TRUE;
+    _BundleKind = BundleKind_TileMatrix;
+    _BundleTransfer = BundleTransfer_Conditional;
+    _BundleCondition = FALSE;
+    _BundleTarget = Zeros{PTO_XLEN} + 0x5500;
+    _BundleFallthrough = Zeros{PTO_XLEN} + 0x6600;
+    _BundleReturnTarget = Zeros{PTO_XLEN} + 0x7700;
+    _ReturnAddress = Zeros{PTO_XLEN} + 0x8800;
+    _BundleArgumentKind = Zeros{3} + 5;
+    _BundleBodyAddress = Zeros{PTO_XLEN} + 0x2200;
+    InstallBundleOperationDescriptor(BundleOperationDescriptor {
+        valid = TRUE,
+        form_identity = Zeros{7} + 0x45,
+        operation_class = BundleOperation_TileMatrix,
+        selector_valid = TRUE,
+        selector = Zeros{10} + 0x155,
+        data_type_valid = TRUE,
+        data_type = Zeros{5} + 0x11,
+        mode_valid = TRUE,
+        mode = Zeros{2} + 0x2,
+        branch_type_valid = TRUE,
+        branch_type = Zeros{3} + 0x5
+    });
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 0x101);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 0x102);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 0x103);
+    SetBundleScalarBinding(0, 31, 24, 25, 26, 3);
+    SetBundleScalarBinding(31, 23, 1, 2, 3, 2);
+    SetBundleTileBinding(0, TRUE, 2, 8, TRUE, TRUE, 40, 41, TRUE,
+        FALSE, FALSE);
+    SetBundleTileBinding(15, TRUE, 3, 9, TRUE, FALSE, 63, 0, FALSE,
+        TRUE, TRUE);
+    SetBundleControlAttributeState(TRUE, TRUE, TRUE, FALSE, TRUE, FALSE);
+    _BundleDataAttributes.data_type = Zeros{5} + 0x11;
+    _BundleDataAttributes.data_layout = Zeros{5};
+    _BundleDataAttributes.pad_value = Zeros{2} + 0x2;
+    _BundleDataAttributes.conversion_mode = Zeros{3} + 0x3;
+    _BundleDataAttributes.rounding_mode = Zeros{3} + 0x4;
+    _BundleDataAttributes.saturating = TRUE;
+    _BundleDataAttributes.canonicalize = TRUE;
+    for index = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do
+        _TQueue[[index]] = Zeros{PTO_XLEN} + 0x900 + index;
+        _UQueue[[index]] = Zeros{PTO_XLEN} + 0xa00 + index;
+    end;
+    WriteExecutionMask(Zeros{PTO_XLEN} + 0x5a5a);
+    _PredicateRegisters[[1]] = Zeros{PTO_PREDICATE_WIDTH} + 0x1111;
+    _PredicateRegisters[[7]] = Zeros{PTO_PREDICATE_WIDTH} + 0x7777;
+    _Accumulator.live = TRUE;
+    _Accumulator.logical_data_type = TileDataType_S8;
+    _Accumulator.info.allocated = TRUE;
+    _Accumulator.info.contents_defined = TRUE;
+    _Accumulator.info.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
+    _Accumulator.info.defined_elements[0] = '1';
+    _Accumulator.info.defined_elements[PTO_MODEL_TILE_ELEMENTS - 1] = '1';
+    _Accumulator.info.defined_valid_elements = 1;
+    _Accumulator.info.capacity_bytes = 2048;
+    _Accumulator.info.rows = 16;
+    _Accumulator.info.columns = 16;
+    _Accumulator.info.valid_rows = 1;
+    _Accumulator.info.valid_columns = 1;
+    _Accumulator.info.data_type = TileDataType_S64;
+    _Accumulator.info.layout = TileLayout_ColumnMajor;
+    _Accumulator.info.location = TileLocation_Matrix;
+    _Accumulator.info.payload[[0]] = Zeros{PTO_XLEN} + 0xaaa;
+    _Accumulator.info.payload[[PTO_MODEL_TILE_ELEMENTS - 1]] =
+        Zeros{PTO_XLEN} + 0xbbb;
+    assert TileCapacityIsLegal(_Accumulator.info.capacity_bytes);
+    assert TileStorageFitsCapacity(_Accumulator.info.rows,
+        _Accumulator.info.columns, _Accumulator.info.data_type,
+        _Accumulator.info.capacity_bytes);
+
+    SetFault(Fault_DataPage, Zeros{PTO_XLEN} + 0xdead);
+    assert CurrentACR() == 1;
+    assert _ACRTrapNumber[[1]] == Zeros{6} + 35;
+    assert _ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 0xdead;
+    // TRAP_CONTEXT_PHASE_SAVE_BEGIN
+    assert _TrapContexts[[1]].valid;
+    assert _TrapContexts[[1]].source_acr == 15;
+    assert _TrapContexts[[1]].tpc == Zeros{PTO_XLEN} + 0x1200;
+    assert _TrapContexts[[1]].bpc == Zeros{PTO_XLEN} + 0x2200;
+    assert _TrapContexts[[1]].core_state[3:0] == Zeros{4} + 15;
+    assert _TrapContexts[[1]].bundle_argument ==
+        Zeros{PTO_XLEN} + 0x3300;
+    assert _TrapContexts[[1]].commit_argument ==
+        Zeros{PTO_XLEN} + 0x4400;
+    assert _TrapContexts[[1]].bundle_active;
+    assert _TrapContexts[[1]].bundle_body_active;
+    assert _TrapContexts[[1]].bundle_kind == BundleKind_TileMatrix;
+    assert _TrapContexts[[1]].bundle_transfer ==
+        BundleTransfer_Conditional;
+    assert !_TrapContexts[[1]].bundle_condition;
+    assert _TrapContexts[[1]].bundle_target ==
+        Zeros{PTO_XLEN} + 0x5500;
+    assert _TrapContexts[[1]].bundle_fallthrough ==
+        Zeros{PTO_XLEN} + 0x6600;
+    assert _TrapContexts[[1]].bundle_return_target ==
+        Zeros{PTO_XLEN} + 0x7700;
+    assert _TrapContexts[[1]].return_address ==
+        Zeros{PTO_XLEN} + 0x8800;
+    assert _TrapContexts[[1]].bundle_argument_kind == Zeros{3} + 5;
+    assert _TrapContexts[[1]].bundle_body_address ==
+        Zeros{PTO_XLEN} + 0x2200;
+    assert _TrapContexts[[1]].bundle_operation.valid;
+    assert _TrapContexts[[1]].bundle_operation.form_identity ==
+        Zeros{7} + 0x45;
+    assert _TrapContexts[[1]].bundle_operation.operation_class ==
+        BundleOperation_TileMatrix;
+    assert _TrapContexts[[1]].bundle_operation.selector_valid;
+    assert _TrapContexts[[1]].bundle_operation.selector == Zeros{10} + 0x155;
+    assert _TrapContexts[[1]].bundle_operation.data_type_valid;
+    assert _TrapContexts[[1]].bundle_operation.data_type == Zeros{5} + 0x11;
+    assert _TrapContexts[[1]].bundle_operation.mode_valid;
+    assert _TrapContexts[[1]].bundle_operation.mode == Zeros{2} + 0x2;
+    assert _TrapContexts[[1]].bundle_operation.branch_type_valid;
+    assert _TrapContexts[[1]].bundle_operation.branch_type == Zeros{3} + 0x5;
+    assert _TrapContexts[[1]].bundle_dimensions[[0]] ==
+        Zeros{PTO_XLEN} + 0x101;
+    assert _TrapContexts[[1]].bundle_dimensions[[2]] ==
+        Zeros{PTO_XLEN} + 0x103;
+    assert _TrapContexts[[1]].bundle_scalar_bindings[[0]].valid;
+    assert _TrapContexts[[1]].bundle_scalar_bindings[[0]].destination == 31;
+    assert _TrapContexts[[1]].bundle_scalar_bindings[[0]].source0 == 24;
+    assert _TrapContexts[[1]].bundle_scalar_bindings[[0]].source1 == 25;
+    assert _TrapContexts[[1]].bundle_scalar_bindings[[0]].source2 == 26;
+    assert _TrapContexts[[1]].bundle_scalar_bindings[[0]].source_count == 3;
+    assert _TrapContexts[[1]].bundle_scalar_bindings[[31]].valid;
+    assert _TrapContexts[[1]].bundle_tile_bindings[[0]].valid;
+    assert _TrapContexts[[1]].bundle_tile_bindings[[0]].destination_valid;
+    assert _TrapContexts[[1]].bundle_tile_bindings[[0]].destination == 2;
+    assert _TrapContexts[[1]].bundle_tile_bindings[[0]].destination_hand ==
+        Zeros{2} + 2;
+    assert !_TrapContexts[[1]].bundle_tile_bindings[[0]].destination_allocated_by_bundle;
+    assert _TrapContexts[[1]].bundle_tile_bindings[[0]].destination_size == 8;
+    assert _TrapContexts[[1]].bundle_tile_bindings[[0]].source0_valid;
+    assert _TrapContexts[[1]].bundle_tile_bindings[[0]].source1_valid;
+    assert _TrapContexts[[1]].bundle_tile_bindings[[0]].source0 == 40;
+    assert _TrapContexts[[1]].bundle_tile_bindings[[0]].source1 == 41;
+    assert _TrapContexts[[1]].bundle_tile_bindings[[0]].source0_reuse;
+    assert !_TrapContexts[[1]].bundle_tile_bindings[[0]].source1_reuse;
+    assert !_TrapContexts[[1]].bundle_tile_bindings[[0]].last;
+    assert _TrapContexts[[1]].bundle_tile_bindings[[15]].valid;
+    assert _TrapContexts[[1]].bundle_control_attributes.trap_enabled;
+    assert _TrapContexts[[1]].bundle_control_attributes.atomic;
+    assert _TrapContexts[[1]].bundle_control_attributes.acquire;
+    assert !_TrapContexts[[1]].bundle_control_attributes.release;
+    assert _TrapContexts[[1]].bundle_control_attributes.far;
+    assert !_TrapContexts[[1]].bundle_control_attributes.direct_register;
+    assert _TrapContexts[[1]].bundle_data_attributes.data_type ==
+        Zeros{5} + 0x11;
+    assert _TrapContexts[[1]].bundle_data_attributes.data_layout == Zeros{5};
+    assert _TrapContexts[[1]].bundle_data_attributes.pad_value ==
+        Zeros{2} + 0x2;
+    assert _TrapContexts[[1]].bundle_data_attributes.conversion_mode ==
+        Zeros{3} + 0x3;
+    assert _TrapContexts[[1]].bundle_data_attributes.rounding_mode ==
+        Zeros{3} + 0x4;
+    assert _TrapContexts[[1]].bundle_data_attributes.saturating;
+    assert _TrapContexts[[1]].bundle_data_attributes.canonicalize;
+    assert _TrapContexts[[1]].t_queue[[0]] == Zeros{PTO_XLEN} + 0x900;
+    assert _TrapContexts[[1]].t_queue[[3]] == Zeros{PTO_XLEN} + 0x903;
+    assert _TrapContexts[[1]].u_queue[[0]] == Zeros{PTO_XLEN} + 0xa00;
+    assert _TrapContexts[[1]].u_queue[[3]] == Zeros{PTO_XLEN} + 0xa03;
+    assert _TrapContexts[[1]].execution_mask == Zeros{PTO_XLEN} + 0x5a5a;
+    assert _TrapContexts[[1]].predicates[[1]] ==
+        Zeros{PTO_PREDICATE_WIDTH} + 0x1111;
+    assert _TrapContexts[[1]].predicates[[7]] ==
+        Zeros{PTO_PREDICATE_WIDTH} + 0x7777;
+    assert _TrapContexts[[1]].accumulator.live;
+    assert _TrapContexts[[1]].accumulator.logical_data_type ==
+        TileDataType_S8;
+    assert _TrapContexts[[1]].accumulator.info.allocated;
+    assert _TrapContexts[[1]].accumulator.info.contents_defined;
+    assert _TrapContexts[[1]].accumulator.info.defined_elements[0] == '1';
+    assert _TrapContexts[[1]].accumulator.info.defined_elements[
+        PTO_MODEL_TILE_ELEMENTS - 1] == '1';
+    assert _TrapContexts[[1]].accumulator.info.defined_valid_elements == 1;
+    assert _TrapContexts[[1]].accumulator.info.capacity_bytes == 2048;
+    assert _TrapContexts[[1]].accumulator.info.rows == 16;
+    assert _TrapContexts[[1]].accumulator.info.columns == 16;
+    assert _TrapContexts[[1]].accumulator.info.valid_rows == 1;
+    assert _TrapContexts[[1]].accumulator.info.valid_columns == 1;
+    assert _TrapContexts[[1]].accumulator.info.data_type == TileDataType_S64;
+    assert _TrapContexts[[1]].accumulator.info.layout ==
+        TileLayout_ColumnMajor;
+    assert _TrapContexts[[1]].accumulator.info.location ==
+        TileLocation_Matrix;
+    assert _TrapContexts[[1]].accumulator.info.payload[[0]] ==
+        Zeros{PTO_XLEN} + 0xaaa;
+    assert _TrapContexts[[1]].accumulator.info.payload[[
+        PTO_MODEL_TILE_ELEMENTS - 1]] ==
+        Zeros{PTO_XLEN} + 0xbbb;
+    // TRAP_CONTEXT_PHASE_SAVE_END
+
+    // Every live counterpart is changed after the save. Recovery assertions
+    // below bind each evidence row to the same location and saved value.
+    // TRAP_CONTEXT_PHASE_MUTATE_BEGIN
+    SetCurrentACR(0);
+    WriteTPC(Zeros{PTO_XLEN});
+    WriteBPC(Zeros{PTO_XLEN});
+    _SystemRegisters.core_state = Zeros{PTO_XLEN};
+    _BundleArgument = Zeros{PTO_XLEN};
+    _CommitArgument = Zeros{PTO_XLEN};
+    _BundleActive = FALSE;
+    _BundleBodyActive = FALSE;
+    _BundleKind = BundleKind_Standard;
+    _BundleArgumentKind = Zeros{3};
+    _BundleTransfer = BundleTransfer_Fallthrough;
+    _BundleCondition = TRUE;
+    _BundleTarget = Zeros{PTO_XLEN};
+    _BundleFallthrough = Zeros{PTO_XLEN};
+    _BundleReturnTarget = Zeros{PTO_XLEN};
+    _ReturnAddress = Zeros{PTO_XLEN};
+    _BundleBodyAddress = Zeros{PTO_XLEN};
+    _BundleOperation.valid = FALSE;
+    _BundleOperation.form_identity = Zeros{7};
+    _BundleOperation.operation_class = BundleOperation_Control;
+    _BundleOperation.selector_valid = FALSE;
+    _BundleOperation.selector = Zeros{10};
+    _BundleOperation.data_type_valid = FALSE;
+    _BundleOperation.data_type = Zeros{5};
+    _BundleOperation.mode_valid = FALSE;
+    _BundleOperation.mode = Zeros{2};
+    _BundleOperation.branch_type_valid = FALSE;
+    _BundleOperation.branch_type = Zeros{3};
+    _BundleDimensions[[2]] = Zeros{PTO_XLEN};
+    _BundleScalarBindings[[0]].valid = FALSE;
+    _BundleScalarBindings[[0]].destination = 0;
+    _BundleScalarBindings[[0]].source0 = 0;
+    _BundleScalarBindings[[0]].source1 = 0;
+    _BundleScalarBindings[[0]].source2 = 0;
+    _BundleScalarBindings[[0]].source_count = 0;
+    _BundleTileBindings[[0]].valid = FALSE;
+    _BundleTileBindings[[0]].destination_valid = FALSE;
+    _BundleTileBindings[[0]].destination = 0;
+    _BundleTileBindings[[0]].destination_hand = Zeros{2};
+    _BundleTileBindings[[0]].destination_allocated_by_bundle = TRUE;
+    _BundleTileBindings[[0]].destination_size = 0;
+    _BundleTileBindings[[0]].source0_valid = FALSE;
+    _BundleTileBindings[[0]].source1_valid = FALSE;
+    _BundleTileBindings[[0]].source0 = 0;
+    _BundleTileBindings[[0]].source1 = 0;
+    _BundleTileBindings[[0]].source0_reuse = FALSE;
+    _BundleTileBindings[[0]].source1_reuse = TRUE;
+    _BundleTileBindings[[0]].last = TRUE;
+    _BundleControlAttributes.trap_enabled = FALSE;
+    _BundleControlAttributes.atomic = FALSE;
+    _BundleControlAttributes.acquire = FALSE;
+    _BundleControlAttributes.release = TRUE;
+    _BundleControlAttributes.far = FALSE;
+    _BundleControlAttributes.direct_register = TRUE;
+    _BundleDataAttributes.data_type = Zeros{5};
+    _BundleDataAttributes.data_layout = Zeros{5} + 1;
+    _BundleDataAttributes.pad_value = Zeros{2};
+    _BundleDataAttributes.conversion_mode = Zeros{3};
+    _BundleDataAttributes.rounding_mode = Zeros{3};
+    _BundleDataAttributes.saturating = FALSE;
+    _BundleDataAttributes.canonicalize = FALSE;
+    _TQueue[[3]] = Zeros{PTO_XLEN};
+    _UQueue[[3]] = Zeros{PTO_XLEN};
+    _ExecutionMask = Zeros{PTO_XLEN};
+    _PredicateRegisters[[7]] = Zeros{PTO_PREDICATE_WIDTH};
+    _Accumulator.live = FALSE;
+    _Accumulator.logical_data_type = TileDataType_U64;
+    _Accumulator.info.allocated = FALSE;
+    _Accumulator.info.contents_defined = FALSE;
+    _Accumulator.info.defined_elements[0] = '0';
+    _Accumulator.info.defined_valid_elements = 0;
+    _Accumulator.info.capacity_bytes = 0;
+    _Accumulator.info.rows = 0;
+    _Accumulator.info.columns = 0;
+    _Accumulator.info.valid_rows = 0;
+    _Accumulator.info.valid_columns = 0;
+    _Accumulator.info.data_type = TileDataType_U64;
+    _Accumulator.info.layout = TileLayout_RowMajor;
+    _Accumulator.info.location = TileLocation_Any;
+    _Accumulator.info.payload[[0]] = Zeros{PTO_XLEN};
+    _Accumulator.info.payload[[PTO_MODEL_TILE_ELEMENTS - 1]] =
+        Zeros{PTO_XLEN};
+
+    // Each row proves that its live counterpart no longer has the saved value.
+    // The evidence checker derives these assertions from the recovery ledger.
+    assert CurrentACR() != 15;
+    assert ReadTPC() != Zeros{PTO_XLEN} + 0x1200;
+    assert ReadBPC() != Zeros{PTO_XLEN} + 0x2200;
+    assert _SystemRegisters.core_state[3:0] != Zeros{4} + 15;
+    assert _BundleArgument != Zeros{PTO_XLEN} + 0x3300;
+    assert _CommitArgument != Zeros{PTO_XLEN} + 0x4400;
+    assert !_BundleActive;
+    assert !_BundleBodyActive;
+    assert _BundleKind != BundleKind_TileMatrix;
+    assert _BundleTransfer != BundleTransfer_Conditional;
+    assert _BundleCondition;
+    assert _BundleTarget != Zeros{PTO_XLEN} + 0x5500;
+    assert _BundleFallthrough != Zeros{PTO_XLEN} + 0x6600;
+    assert _BundleReturnTarget != Zeros{PTO_XLEN} + 0x7700;
+    assert _ReturnAddress != Zeros{PTO_XLEN} + 0x8800;
+    assert _BundleArgumentKind != Zeros{3} + 5;
+    assert _BundleBodyAddress != Zeros{PTO_XLEN} + 0x2200;
+    assert !_BundleOperation.valid;
+    assert _BundleOperation.form_identity != Zeros{7} + 0x45;
+    assert _BundleOperation.operation_class != BundleOperation_TileMatrix;
+    assert !_BundleOperation.selector_valid;
+    assert _BundleOperation.selector != Zeros{10} + 0x155;
+    assert !_BundleOperation.data_type_valid;
+    assert _BundleOperation.data_type != Zeros{5} + 0x11;
+    assert !_BundleOperation.mode_valid;
+    assert _BundleOperation.mode != Zeros{2} + 0x2;
+    assert !_BundleOperation.branch_type_valid;
+    assert _BundleOperation.branch_type != Zeros{3} + 0x5;
+    assert _BundleDimensions[[2]] != Zeros{PTO_XLEN} + 0x103;
+    assert !_BundleScalarBindings[[0]].valid;
+    assert _BundleScalarBindings[[0]].destination != 31;
+    assert _BundleScalarBindings[[0]].source0 != 24;
+    assert _BundleScalarBindings[[0]].source1 != 25;
+    assert _BundleScalarBindings[[0]].source2 != 26;
+    assert _BundleScalarBindings[[0]].source_count != 3;
+    assert !_BundleTileBindings[[0]].valid;
+    assert !_BundleTileBindings[[0]].destination_valid;
+    assert _BundleTileBindings[[0]].destination != 2;
+    assert _BundleTileBindings[[0]].destination_hand != Zeros{2} + 2;
+    assert _BundleTileBindings[[0]].destination_allocated_by_bundle;
+    assert _BundleTileBindings[[0]].destination_size != 8;
+    assert !_BundleTileBindings[[0]].source0_valid;
+    assert !_BundleTileBindings[[0]].source1_valid;
+    assert _BundleTileBindings[[0]].source0 != 40;
+    assert _BundleTileBindings[[0]].source1 != 41;
+    assert !_BundleTileBindings[[0]].source0_reuse;
+    assert _BundleTileBindings[[0]].source1_reuse;
+    assert _BundleTileBindings[[0]].last;
+    assert !_BundleControlAttributes.trap_enabled;
+    assert !_BundleControlAttributes.atomic;
+    assert !_BundleControlAttributes.acquire;
+    assert _BundleControlAttributes.release;
+    assert !_BundleControlAttributes.far;
+    assert _BundleControlAttributes.direct_register;
+    assert _BundleDataAttributes.data_type != Zeros{5} + 0x11;
+    assert _BundleDataAttributes.data_layout != Zeros{5};
+    assert _BundleDataAttributes.pad_value != Zeros{2} + 0x2;
+    assert _BundleDataAttributes.conversion_mode != Zeros{3} + 0x3;
+    assert _BundleDataAttributes.rounding_mode != Zeros{3} + 0x4;
+    assert !_BundleDataAttributes.saturating;
+    assert !_BundleDataAttributes.canonicalize;
+    assert _TQueue[[3]] != Zeros{PTO_XLEN} + 0x903;
+    assert _UQueue[[3]] != Zeros{PTO_XLEN} + 0xa03;
+    assert _ExecutionMask != Zeros{PTO_XLEN} + 0x5a5a;
+    assert _PredicateRegisters[[7]] !=
+        Zeros{PTO_PREDICATE_WIDTH} + 0x7777;
+    assert !_Accumulator.live;
+    assert _Accumulator.logical_data_type != TileDataType_S8;
+    assert !_Accumulator.info.allocated;
+    assert !_Accumulator.info.contents_defined;
+    assert _Accumulator.info.defined_elements[0] != '1';
+    assert _Accumulator.info.defined_valid_elements != 1;
+    assert _Accumulator.info.capacity_bytes != 2048;
+    assert _Accumulator.info.rows != 16;
+    assert _Accumulator.info.columns != 16;
+    assert _Accumulator.info.valid_rows != 1;
+    assert _Accumulator.info.valid_columns != 1;
+    assert _Accumulator.info.data_type != TileDataType_S64;
+    assert _Accumulator.info.layout != TileLayout_ColumnMajor;
+    assert _Accumulator.info.location != TileLocation_Matrix;
+    assert _Accumulator.info.payload[[0]] != Zeros{PTO_XLEN} + 0xaaa;
+    // TRAP_CONTEXT_PHASE_MUTATE_END
+
+    // TRAP_CONTEXT_RECOVER_CALL
+    let recovered_all_leaf_context = RecoverTrapContext(1);
+    assert recovered_all_leaf_context;
+    // TRAP_CONTEXT_PHASE_RECOVER_BEGIN
+    assert CurrentACR() == 15;
+    assert ReadTPC() == Zeros{PTO_XLEN} + 0x1200;
+    assert ReadBPC() == Zeros{PTO_XLEN} + 0x2200;
+    assert _SystemRegisters.core_state[3:0] == Zeros{4} + 15;
+    assert _BundleArgument == Zeros{PTO_XLEN} + 0x3300;
+    assert _CommitArgument == Zeros{PTO_XLEN} + 0x4400;
+    assert _BundleActive;
+    assert _BundleBodyActive;
+    assert _BundleKind == BundleKind_TileMatrix;
+    assert _BundleTransfer == BundleTransfer_Conditional;
+    assert !_BundleCondition;
+    assert _BundleTarget == Zeros{PTO_XLEN} + 0x5500;
+    assert _BundleFallthrough == Zeros{PTO_XLEN} + 0x6600;
+    assert _BundleReturnTarget == Zeros{PTO_XLEN} + 0x7700;
+    assert _ReturnAddress == Zeros{PTO_XLEN} + 0x8800;
+    assert _BundleArgumentKind == Zeros{3} + 5;
+    assert _BundleBodyAddress == Zeros{PTO_XLEN} + 0x2200;
+    assert _BundleOperation.valid;
+    assert _BundleOperation.form_identity == Zeros{7} + 0x45;
+    assert _BundleOperation.operation_class == BundleOperation_TileMatrix;
+    assert _BundleOperation.selector_valid;
+    assert _BundleOperation.selector == Zeros{10} + 0x155;
+    assert _BundleOperation.data_type_valid;
+    assert _BundleOperation.data_type == Zeros{5} + 0x11;
+    assert _BundleOperation.mode_valid;
+    assert _BundleOperation.mode == Zeros{2} + 0x2;
+    assert _BundleOperation.branch_type_valid;
+    assert _BundleOperation.branch_type == Zeros{3} + 0x5;
+    assert _BundleDimensions[[2]] == Zeros{PTO_XLEN} + 0x103;
+    assert _BundleScalarBindings[[0]].valid;
+    assert _BundleScalarBindings[[0]].destination == 31;
+    assert _BundleScalarBindings[[0]].source0 == 24;
+    assert _BundleScalarBindings[[0]].source1 == 25;
+    assert _BundleScalarBindings[[0]].source2 == 26;
+    assert _BundleScalarBindings[[0]].source_count == 3;
+    assert _BundleTileBindings[[0]].valid;
+    assert _BundleTileBindings[[0]].destination_valid;
+    assert _BundleTileBindings[[0]].destination == 2;
+    assert _BundleTileBindings[[0]].destination_hand == Zeros{2} + 2;
+    assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
+    assert _BundleTileBindings[[0]].destination_size == 8;
+    assert _BundleTileBindings[[0]].source0_valid;
+    assert _BundleTileBindings[[0]].source1_valid;
+    assert _BundleTileBindings[[0]].source0 == 40;
+    assert _BundleTileBindings[[0]].source1 == 41;
+    assert _BundleTileBindings[[0]].source0_reuse;
+    assert !_BundleTileBindings[[0]].source1_reuse;
+    assert !_BundleTileBindings[[0]].last;
+    assert _BundleControlAttributes.trap_enabled;
+    assert _BundleControlAttributes.atomic;
+    assert _BundleControlAttributes.acquire;
+    assert !_BundleControlAttributes.release;
+    assert _BundleControlAttributes.far;
+    assert !_BundleControlAttributes.direct_register;
+    assert _BundleDataAttributes.data_type == Zeros{5} + 0x11;
+    assert _BundleDataAttributes.data_layout == Zeros{5};
+    assert _BundleDataAttributes.pad_value == Zeros{2} + 0x2;
+    assert _BundleDataAttributes.conversion_mode == Zeros{3} + 0x3;
+    assert _BundleDataAttributes.rounding_mode == Zeros{3} + 0x4;
+    assert _BundleDataAttributes.saturating;
+    assert _BundleDataAttributes.canonicalize;
+    assert _TQueue[[3]] == Zeros{PTO_XLEN} + 0x903;
+    assert _UQueue[[3]] == Zeros{PTO_XLEN} + 0xa03;
+    assert _ExecutionMask == Zeros{PTO_XLEN} + 0x5a5a;
+    assert _PredicateRegisters[[1]] ==
+        Zeros{PTO_PREDICATE_WIDTH} + 0x1111;
+    assert _PredicateRegisters[[7]] ==
+        Zeros{PTO_PREDICATE_WIDTH} + 0x7777;
+    assert _Accumulator.live;
+    assert _Accumulator.logical_data_type == TileDataType_S8;
+    assert _Accumulator.info.allocated;
+    assert _Accumulator.info.contents_defined;
+    assert _Accumulator.info.defined_elements[0] == '1';
+    assert _Accumulator.info.defined_valid_elements == 1;
+    assert _Accumulator.info.capacity_bytes == 2048;
+    assert _Accumulator.info.rows == 16;
+    assert _Accumulator.info.columns == 16;
+    assert _Accumulator.info.valid_rows == 1;
+    assert _Accumulator.info.valid_columns == 1;
+    assert _Accumulator.info.data_type == TileDataType_S64;
+    assert _Accumulator.info.layout == TileLayout_ColumnMajor;
+    assert _Accumulator.info.location == TileLocation_Matrix;
+    assert _Accumulator.info.payload[[0]] == Zeros{PTO_XLEN} + 0xaaa;
+    assert _Accumulator.info.payload[[PTO_MODEL_TILE_ELEMENTS - 1]] ==
+        Zeros{PTO_XLEN} + 0xbbb;
+    // TRAP_CONTEXT_PHASE_RECOVER_END
+    // TRAP_CONTEXT_PHASE_INVALIDATE_BEGIN
+    assert !_TrapContexts[[1]].valid;
+    // TRAP_CONTEXT_PHASE_INVALIDATE_END
+
+    // Execute the portable default helper directly even under the PTO v0
+    // profile, so the concrete override cannot hide default-path drift.
+    ResetProfileState();
+    SetCurrentACR(15);
+    _BundleArgument = Zeros{PTO_XLEN} + 0x1110;
+    _CommitArgument = Zeros{PTO_XLEN} + 0x2220;
+    _BundleReturnTarget = Zeros{PTO_XLEN} + 0x3330;
+    _ReturnAddress = Zeros{PTO_XLEN} + 0x4440;
+    _BundleArgumentKind = Zeros{3} + 6;
+    SavePortableTrapContext(2, 15);
+    _BundleArgument = Zeros{PTO_XLEN};
+    _CommitArgument = Zeros{PTO_XLEN};
+    _BundleReturnTarget = Zeros{PTO_XLEN};
+    _ReturnAddress = Zeros{PTO_XLEN};
+    _BundleArgumentKind = Zeros{3};
+    let recovered_portable_context = RecoverPortableTrapContext(2);
+    assert recovered_portable_context;
+    assert _BundleArgument == Zeros{PTO_XLEN} + 0x1110;
+    assert _CommitArgument == Zeros{PTO_XLEN} + 0x2220;
+    assert _BundleReturnTarget == Zeros{PTO_XLEN} + 0x3330;
+    assert _ReturnAddress == Zeros{PTO_XLEN} + 0x4440;
+    assert _BundleArgumentKind == Zeros{3} + 6;
+
+    ResetProfileState();
+end;
+
 func TestTileRegisterMapping()
 begin
     assert TileHandOf(0) == TileHand_T;

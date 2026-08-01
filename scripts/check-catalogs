@@ -619,6 +619,250 @@ def require(condition: bool, message: str) -> None:
         raise AssertionError(message)
 
 
+TRAP_CONTEXT_PHASE_MARKERS = (
+    "TRAP_CONTEXT_PHASE_SAVE_BEGIN",
+    "TRAP_CONTEXT_PHASE_SAVE_END",
+    "TRAP_CONTEXT_PHASE_MUTATE_BEGIN",
+    "TRAP_CONTEXT_PHASE_MUTATE_END",
+    "TRAP_CONTEXT_RECOVER_CALL",
+    "TRAP_CONTEXT_PHASE_RECOVER_BEGIN",
+    "TRAP_CONTEXT_PHASE_RECOVER_END",
+    "TRAP_CONTEXT_PHASE_INVALIDATE_BEGIN",
+    "TRAP_CONTEXT_PHASE_INVALIDATE_END",
+)
+
+TRAP_CONTEXT_PORTABLE_PATHS = {
+    "_TrapContexts[].source_acr",
+    "_TrapContexts[].tpc",
+    "_TrapContexts[].bpc",
+    "_TrapContexts[].core_state",
+    "_TrapContexts[].bundle_active",
+    "_TrapContexts[].bundle_body_active",
+    "_TrapContexts[].bundle_kind",
+    "_TrapContexts[].bundle_transfer",
+    "_TrapContexts[].bundle_condition",
+    "_TrapContexts[].bundle_target",
+    "_TrapContexts[].return_address",
+    "_TrapContexts[].bundle_body_address",
+    "_TrapContexts[].t_queue[]",
+    "_TrapContexts[].u_queue[]",
+}
+
+
+def validate_trap_context_recovery_evidence(
+    evidence: dict,
+    inventory_paths: list[str],
+    function_body: str,
+    main_body: str,
+) -> None:
+    rows = evidence.get("leaf_fields", [])
+    paths = [row.get("path") for row in rows]
+    require(paths == inventory_paths, "TrapContext recovery inventory/order drift")
+    require(len(paths) == len(set(paths)), "duplicate TrapContext recovery path")
+    require(
+        all(function_body.count(marker) == 1 for marker in TRAP_CONTEXT_PHASE_MARKERS),
+        "TrapContext recovery phase marker drift",
+    )
+    marker_offsets = [
+        function_body.index(marker) for marker in TRAP_CONTEXT_PHASE_MARKERS
+    ]
+    require(
+        marker_offsets == sorted(marker_offsets),
+        "TrapContext recovery phase order drift",
+    )
+
+    def between(start: str, end: str) -> str:
+        return function_body.split(start, 1)[1].split(end, 1)[0]
+
+    def normalize_statement(statement: str) -> str:
+        return re.sub(r"\s+", " ", statement.strip())
+
+    def statements(region: str) -> list[str]:
+        result = []
+        for chunk in region.split(";"):
+            value = re.sub(r"//[^\n]*", "", chunk).strip()
+            if value:
+                result.append(normalize_statement(value + ";"))
+        return result
+
+    save_region = between(
+        "TRAP_CONTEXT_PHASE_SAVE_BEGIN", "TRAP_CONTEXT_PHASE_SAVE_END"
+    )
+    mutate_region = between(
+        "TRAP_CONTEXT_PHASE_MUTATE_BEGIN", "TRAP_CONTEXT_PHASE_MUTATE_END"
+    )
+    recover_region = between(
+        "TRAP_CONTEXT_PHASE_RECOVER_BEGIN", "TRAP_CONTEXT_PHASE_RECOVER_END"
+    )
+    invalidate_region = between(
+        "TRAP_CONTEXT_PHASE_INVALIDATE_BEGIN",
+        "TRAP_CONTEXT_PHASE_INVALIDATE_END",
+    )
+    save_assertions = [
+        normalize_statement(value)
+        for value in re.findall(r"\bassert\s+.*?;", save_region, re.DOTALL)
+    ]
+    mutate_statements = statements(mutate_region)
+    mutate_assertions = [
+        normalize_statement(value)
+        for value in re.findall(r"\bassert\s+.*?;", mutate_region, re.DOTALL)
+    ]
+    recover_assertions = [
+        normalize_statement(value)
+        for value in re.findall(r"\bassert\s+.*?;", recover_region, re.DOTALL)
+    ]
+    invalidate_assertions = [
+        normalize_statement(value)
+        for value in re.findall(r"\bassert\s+.*?;", invalidate_region, re.DOTALL)
+    ]
+
+    def token_count(statements: list[str], token: str) -> int:
+        pattern = re.compile(rf"(?<![A-Za-z0-9_]){re.escape(token)}(?![A-Za-z0-9_])")
+        return sum(pattern.search(statement) is not None for statement in statements)
+
+    def negated_assertion(assertion: str) -> str:
+        expression = assertion.removeprefix("assert ").removesuffix(";")
+        if expression.startswith("!"):
+            return f"assert {expression[1:]};"
+        if " == " in expression:
+            return f"assert {expression.replace(' == ', ' != ', 1)};"
+        return f"assert !{expression};"
+
+    expected_row_keys = {
+        "classification",
+        "invalidate_assertion",
+        "live_lvalue",
+        "mutate_assertion",
+        "mutate_statement",
+        "path",
+        "phase_policy",
+        "recover_assertion",
+        "save_assertion",
+        "saved_lvalue",
+    }
+    for row in rows:
+        path = row["path"]
+        expected_classification = (
+            "validity-control"
+            if path == "_TrapContexts[].valid"
+            else (
+                "portable-first-layer-visible"
+                if path in TRAP_CONTEXT_PORTABLE_PATHS
+                else "internal-ebstate-only"
+            )
+        )
+        require(set(row) == expected_row_keys, f"TrapContext row schema drift: {path}")
+        require(
+            row["classification"] == expected_classification,
+            f"TrapContext exact classification drift: {path}",
+        )
+        require(
+            isinstance(row["saved_lvalue"], str)
+            and row["saved_lvalue"]
+            and row["saved_lvalue"] in row["save_assertion"],
+            f"TrapContext saved lvalue is not bound: {path}",
+        )
+        require(
+            save_assertions.count(row["save_assertion"]) == 1
+            and token_count(save_assertions, row["saved_lvalue"]) == 1,
+            f"TrapContext save assertion phase drift: {path}",
+        )
+        if expected_classification == "validity-control":
+            require(
+                row["phase_policy"] == "save-invalidate"
+                and row["live_lvalue"] is None
+                and row["mutate_assertion"] is None
+                and row["mutate_statement"] is None
+                and row["recover_assertion"] is None
+                and row["invalidate_assertion"] == "assert !_TrapContexts[[1]].valid;"
+                and invalidate_assertions.count(row["invalidate_assertion"]) == 1,
+                "TrapContext validity-control policy drift",
+            )
+            continue
+        require(
+            row["phase_policy"] == "save-clobber-recover"
+            and isinstance(row["live_lvalue"], str)
+            and row["live_lvalue"]
+            and isinstance(row["mutate_statement"], str)
+            and row["mutate_statement"]
+            and isinstance(row["mutate_assertion"], str)
+            and row["mutate_assertion"]
+            and row["mutate_assertion"] == negated_assertion(row["recover_assertion"])
+            and isinstance(row["recover_assertion"], str)
+            and row["recover_assertion"]
+            == row["save_assertion"].replace(row["saved_lvalue"], row["live_lvalue"], 1)
+            and row["invalidate_assertion"] is None,
+            f"TrapContext recoverable phase policy drift: {path}",
+        )
+        special_mutation = {
+            "_TrapContexts[].source_acr": "SetCurrentACR(0);",
+            "_TrapContexts[].tpc": "WriteTPC(Zeros{PTO_XLEN});",
+            "_TrapContexts[].bpc": "WriteBPC(Zeros{PTO_XLEN});",
+            "_TrapContexts[].core_state": (
+                "_SystemRegisters.core_state = Zeros{PTO_XLEN};"
+            ),
+        }.get(path)
+        require(
+            mutate_statements.count(row["mutate_statement"]) == 1
+            and (
+                row["mutate_statement"] == special_mutation
+                if special_mutation is not None
+                else row["mutate_statement"].startswith(row["live_lvalue"] + " =")
+            ),
+            f"TrapContext live mutation phase drift: {path}",
+        )
+        if special_mutation is None:
+            mutation_value = (
+                row["mutate_statement"]
+                .removeprefix(row["live_lvalue"] + " =")
+                .removesuffix(";")
+                .strip()
+            )
+            recovery_expression = (
+                row["recover_assertion"].removeprefix("assert ").removesuffix(";")
+            )
+            if recovery_expression.startswith("!"):
+                saved_value = "FALSE"
+            elif " == " in recovery_expression:
+                saved_value = recovery_expression.split(" == ", 1)[1]
+            else:
+                saved_value = "TRUE"
+            require(
+                mutation_value not in {row["live_lvalue"], saved_value},
+                f"TrapContext mutation is not a clobber: {path}",
+            )
+        require(
+            mutate_assertions.count(row["mutate_assertion"]) == 1
+            and token_count(mutate_assertions, row["live_lvalue"]) == 1,
+            f"TrapContext clobber assertion phase drift: {path}",
+        )
+        require(
+            recover_assertions.count(row["recover_assertion"]) == 1
+            and token_count(recover_assertions, row["live_lvalue"]) == 1,
+            f"TrapContext recovery assertion phase drift: {path}",
+        )
+
+    require(
+        len({row["save_assertion"] for row in rows}) == len(rows),
+        "TrapContext save assertion reuse",
+    )
+    recoverable = [row for row in rows if row["phase_policy"] == "save-clobber-recover"]
+    require(
+        len({row["mutate_statement"] for row in recoverable}) == len(recoverable)
+        and len({row["mutate_assertion"] for row in recoverable}) == len(recoverable)
+        and len({row["recover_assertion"] for row in recoverable}) == len(recoverable),
+        "TrapContext mutation/recovery witness reuse",
+    )
+    require(
+        function_body.count("RecoverTrapContext(1)") == 1
+        and function_body.index("TRAP_CONTEXT_PHASE_MUTATE_END")
+        < function_body.index("RecoverTrapContext(1)")
+        < function_body.index("TRAP_CONTEXT_PHASE_RECOVER_BEGIN")
+        and main_body.count(f"{evidence['evidence_function']}();") == 1,
+        "TrapContext recovery call or canonical reachability drift",
+    )
+
+
 def extract_field(row: dict, field_name: str, instruction: int) -> int:
     field = next(field for field in row["fields"] if field["name"] == field_name)
     value = 0
@@ -762,9 +1006,7 @@ def main() -> int:
     numeric_profile_applicability = load(
         "spec/catalog/numeric-profile-applicability.json"
     )
-    hardware_conformance_profile = load(
-        "spec/hardware-conformance-profile.json"
-    )
+    hardware_conformance_profile = load("spec/hardware-conformance-profile.json")
     reconciliation = load("spec/evidence/public-source-reconciliation.json")
     scalar_effect_closure = load("spec/evidence/scalar-effect-closure.json")
     scalar_agu_totality = load("spec/evidence/scalar-agu-totality.json")
@@ -776,18 +1018,14 @@ def main() -> int:
     numeric_rounding_selectors = load(
         "spec/evidence/numeric-rounding-selector-contract.json"
     )
-    numeric_subnormal_contract = load(
-        "spec/evidence/numeric-subnormal-contract.json"
-    )
+    numeric_subnormal_contract = load("spec/evidence/numeric-subnormal-contract.json")
     numeric_special_value_contract = load(
         "spec/evidence/numeric-special-value-contract.json"
     )
     numeric_format_namespaces = load(
         "spec/evidence/numeric-format-namespace-contract.json"
     )
-    public_numeric_types = load(
-        "spec/evidence/public-numeric-type-baseline.json"
-    )
+    public_numeric_types = load("spec/evidence/public-numeric-type-baseline.json")
     public_integer_conversion = load(
         "spec/evidence/public-integer-conversion-contract.json"
     )
@@ -812,6 +1050,7 @@ def main() -> int:
         "spec/evidence/numeric-profile-decision-proposals.json"
     )
     release_traceability = load("spec/evidence/release-traceability-readiness.json")
+    trap_context_recovery = load("spec/evidence/trap-context-recovery-evidence.json")
     release_gate = load("spec/evidence/release-gate-readiness.json")
     requirements = load("spec/requirements.json")["requirements"]
     profile_catalog = load("spec/profile-hooks.json")
@@ -2461,7 +2700,16 @@ def main() -> int:
     require(
         [row["code"] for row in active_rounding] == list(range(8))
         and [row["encoding_status"] for row in active_rounding]
-        == ["assigned", "assigned", "assigned", "assigned", "reserved", "reserved", "reserved", "reserved"]
+        == [
+            "assigned",
+            "assigned",
+            "assigned",
+            "assigned",
+            "reserved",
+            "reserved",
+            "reserved",
+            "reserved",
+        ]
         and [row["portable_name"] for row in active_rounding]
         == ["RNE", "RTM", "RTP", "RTZ", "RNE", "RNE", "RNE", "RNE"]
         and all(
@@ -2509,8 +2757,7 @@ def main() -> int:
             and row["mnemonic"] == "B.DATR"
             and row["selector_namespace"] == "bundle-data-attribute-rmode"
             and row["binding"] == "BundleDataAttributes.rounding_mode"
-            and row["selection_status"]
-            == "encoding-state-and-semantic-mapping-closed"
+            and row["selection_status"] == "encoding-state-and-semantic-mapping-closed"
             and row["numeric_result_status"]
             == "rounding-rule-closed-other-result-dimensions-open"
             for row in numeric_rounding_selectors["bundle_rmode"]
@@ -2532,7 +2779,9 @@ def main() -> int:
         ]
         and [row["bundle_rmode_code"] for row in public_rounding]
         == [0, 1, 5, 3, 4, 2, 6]
-        and all(row["status"] == "accepted-explicit-translation" for row in public_rounding),
+        and all(
+            row["status"] == "accepted-explicit-translation" for row in public_rounding
+        ),
         "public conversion-to-bundle rounding translation drift",
     )
     pd03 = next(
@@ -2559,8 +2808,7 @@ def main() -> int:
             and row["rounding_rule"]
             and isinstance(row["saturation_order_rule"], str)
             and row["saturation_order_rule"]
-            and row["status"]
-            == "rounding-rule-accepted-other-numeric-dimensions-open"
+            and row["status"] == "rounding-rule-accepted-other-numeric-dimensions-open"
             for row in pd03_domains
         )
         and numeric_rounding_selectors["summary"]
@@ -2733,22 +2981,63 @@ def main() -> int:
         "numeric tile type inventory, width, or namespace binding drift",
     )
     nan_capable_types = {
-        "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "HiF8", "E4M3",
-        "E5M2", "E8M0",
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E8M0",
     }
     signaling_nan_types = {
-        "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "E5M2",
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "E5M2",
     }
     infinity_capable_types = {
-        "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "HiF8", "E5M2",
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E5M2",
     }
     subnormal_capable_types = {
-        "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "HiF8", "E4M3",
-        "E5M2", "E3M2", "E2M3",
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "HiF8",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3",
     }
     signed_zero_types = {
-        "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "E4M3", "E5M2",
-        "E3M2", "E2M3", "E2M1X2", "E1M2X2", "HiF4X2",
+        "FP64",
+        "FP32",
+        "TF32",
+        "HF32",
+        "FP16",
+        "BF16",
+        "E4M3",
+        "E5M2",
+        "E3M2",
+        "E2M3",
+        "E2M1X2",
+        "E1M2X2",
+        "HiF4X2",
     }
     internal_encoding_constraints = {
         "TF32": "bits[12:0] are zero",
@@ -2806,12 +3095,9 @@ def main() -> int:
             // hardware_types_by_name[row["name"]]["lanes_per_storage"]
             and row["profile_class"] == hardware_types_by_name[row["name"]]["class"]
             and row["nan_capable"] == (row["name"] in nan_capable_types)
-            and row["signaling_nan_capable"]
-            == (row["name"] in signaling_nan_types)
-            and row["infinity_capable"]
-            == (row["name"] in infinity_capable_types)
-            and row["subnormal_capable"]
-            == (row["name"] in subnormal_capable_types)
+            and row["signaling_nan_capable"] == (row["name"] in signaling_nan_types)
+            and row["infinity_capable"] == (row["name"] in infinity_capable_types)
+            and row["subnormal_capable"] == (row["name"] in subnormal_capable_types)
             and row["signed_zero"] == (row["name"] in signed_zero_types)
             and row["canonical_nan"]
             == hardware_types_by_name[row["name"]].get("canonical_qnan")
@@ -3046,8 +3332,7 @@ def main() -> int:
         and sum(row["a2a3_available"] for row in public_type_rows) == 11
         and all(row["a5_available"] for row in public_type_rows)
         and all(
-            row["result_rule_id"] is None
-            and row["result_acceptance_record"] is None
+            row["result_rule_id"] is None and row["result_acceptance_record"] is None
             for row in public_type_rows
         ),
         "public numeric type identity, availability, or result boundary drift",
@@ -3084,7 +3369,10 @@ def main() -> int:
         "accepted public numeric type binding drift",
     )
     require(
-        [row["catalog_name"] for row in public_numeric_types["non_public_catalog_types"]]
+        [
+            row["catalog_name"]
+            for row in public_numeric_types["non_public_catalog_types"]
+        ]
         == [
             "FP64",
             "TF32",
@@ -3141,7 +3429,9 @@ def main() -> int:
     require(
         [row["source_id"] for row in public_numeric_types["source_line_contracts"]]
         == ["public-type-system", "public-target-profiles", "public-portability-rules"]
-        and [row["line_ranges"] for row in public_numeric_types["source_line_contracts"]]
+        and [
+            row["line_ranges"] for row in public_numeric_types["source_line_contracts"]
+        ]
         == [["11-20", "24-33"], ["131-170", "175-202"], ["13-24"]]
         and all(
             row["sha256"]
@@ -3209,9 +3499,7 @@ def main() -> int:
         "public integer conversion result-rule drift",
     )
     integer_type_rows = {
-        row["id"]: row
-        for row in public_type_rows
-        if row["class"] == "integer"
+        row["id"]: row for row in public_type_rows if row["class"] == "integer"
     }
     integer_conversion_tuples = public_integer_conversion["conversion_tuples"]
     require(
@@ -3248,8 +3536,7 @@ def main() -> int:
                     else "PTO-NUM-INT-ZERO-EXTEND"
                 )
             )
-            and row["profile_support_status"]
-            == "operation-type-profile-legality-open"
+            and row["profile_support_status"] == "operation-type-profile-legality-open"
             and row["result_status"] == "accepted-if-profile-supported"
             and row["result_acceptance_record"]
             == public_integer_conversion["acceptance_record"]
@@ -3448,7 +3735,9 @@ def main() -> int:
         == "a2a3-mx-unsupported-profile-tuples-closed-results-open"
         and numeric_profile_applicability_closure["acceptance_record"]
         == "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
-        and (ROOT / numeric_profile_applicability_closure["acceptance_record"]).is_file()
+        and (
+            ROOT / numeric_profile_applicability_closure["acceptance_record"]
+        ).is_file()
         and numeric_profile_applicability_closure["profiles"]
         == numeric_profile_applicability["profiles"]
         and numeric_profile_applicability_closure["rules"] == applicability_rules
@@ -3534,9 +3823,7 @@ def main() -> int:
         row["asl_enumerator"]: row["bundle_code"]
         for row in numeric_format_namespaces["tile_data_types"]
     }
-    command_forms_by_mnemonic = {
-        row["mnemonic"]: row for row in command["forms"]
-    }
+    command_forms_by_mnemonic = {row["mnemonic"]: row for row in command["forms"]}
     require(
         len(bundle_execution_matrix) == 150
         and {
@@ -3548,10 +3835,7 @@ def main() -> int:
             for operation_key in expected_applicability_functions
             for tile_type in tile_type_names
         }
-        and len(
-            {row["command_form_id"] for row in bundle_execution_matrix}
-        )
-        == 6
+        and len({row["command_form_id"] for row in bundle_execution_matrix}) == 6
         and all(
             row["profile_id"] == "pto-a2a3-numeric-v1"
             and row["function"]
@@ -3608,8 +3892,7 @@ def main() -> int:
         == numeric_profile_decisions["public_repository"]
         and applicability_source_evidence["public_commit"]
         == numeric_profile_decisions["public_commit"]
-        and applicability_source_evidence["profile_identity"]
-        == a2a3_profile_identity
+        and applicability_source_evidence["profile_identity"] == a2a3_profile_identity
         and a2a3_profile_identity["partition_id"] == "a2a3-target"
         and a2a3_profile_identity["kind"] == "target-numeric-profile"
         and a2a3_profile_identity["normative_identity"] is True
@@ -3667,8 +3950,7 @@ def main() -> int:
             row["family"] == "CUBE"
             and row["selector"] == expected_applicability_selectors[row["mnemonic"]]
             and row["selector_match"] is True
-            and row["stable_id"]
-            == f"cube:{row['selector']}:{row['mnemonic']}"
+            and row["stable_id"] == f"cube:{row['selector']}:{row['mnemonic']}"
             and row["classification"] == "non-comparable"
             and row["bundle_bridge_representable"] is False
             for row in independent_applicability_source_rows
@@ -3690,8 +3972,7 @@ def main() -> int:
             ROOT / expected_applicability_executable_evidence["guard_generator"]
         ).read_text(encoding="utf-8")
         and all(
-            evidence["symbol"]
-            in (ROOT / evidence["path"]).read_text(encoding="utf-8")
+            evidence["symbol"] in (ROOT / evidence["path"]).read_text(encoding="utf-8")
             for evidence in (
                 expected_applicability_executable_evidence["rule_set_type"],
                 expected_applicability_executable_evidence["bundle_guard"],
@@ -4474,9 +4755,7 @@ def main() -> int:
     require(
         len(iot_forms) == 5
         and {
-            tuple(field["name"] for field in row["fields"]): aggregate_encoding(
-                row
-            )
+            tuple(field["name"] for field in row["fields"]): aggregate_encoding(row)
             for row in iot_forms
         }
         == iot_contract,
@@ -4835,10 +5114,7 @@ def main() -> int:
             )
             require(
                 datr_contract["pad_union"] == expected_pad_union
-                and (
-                    "PadValueOrByteId"
-                    in datr_contract["allowed_nonzero_fields"]
-                )
+                and ("PadValueOrByteId" in datr_contract["allowed_nonzero_fields"])
                 == (expected_pad_union != "must-zero"),
                 f"B.DATR PadValue/ByteId union drift for {row['name']}",
             )
@@ -4847,9 +5123,7 @@ def main() -> int:
                 for operand in row["operands"]
             ]
             if family == "CUBE":
-                expected_state_effects.append(
-                    f"implicit:ACC:{row['acc_effect']}"
-                )
+                expected_state_effects.append(f"implicit:ACC:{row['acc_effect']}")
             require(
                 row["state_effects"] == expected_state_effects,
                 f"machine-readable state-effect contract drift for {row['name']}",
@@ -4963,18 +5237,12 @@ def main() -> int:
             f"exact B.DATR {union} operation set drift",
         )
     require(
-        {
-            row["command_mnemonic"]
-            for row in operations
-            if row["family"] == "TEPL"
-        }
+        {row["command_mnemonic"] for row in operations if row["family"] == "TEPL"}
         == {"BSTART.TEPL"},
         "TEPL command mapping drift",
     )
     named_tile_commands = [
-        row["command_mnemonic"]
-        for row in operations
-        if row["family"] != "TEPL"
+        row["command_mnemonic"] for row in operations if row["family"] != "TEPL"
     ]
     require(
         len(named_tile_commands) == len(set(named_tile_commands)) == 22,
@@ -4989,10 +5257,7 @@ def main() -> int:
         "tile command mapping does not identify one command form",
     )
     require(
-        not (
-            {"B.ARG", "BSTART.CUBE", "BSTART.FIXP"}
-            & set(command_mnemonics)
-        ),
+        not ({"B.ARG", "BSTART.CUBE", "BSTART.FIXP"} & set(command_mnemonics)),
         "legacy tile descriptor or generic direct-operation command remains active",
     )
     for operation in operations:
@@ -5007,8 +5272,7 @@ def main() -> int:
         require(
             aggregate_encoding(command_form)
             == (0x07FFFFFF, (operation["function"] << 20) | base)
-            and field_shape(command_form)
-            == {"DataType": (5, ((27, 0, 5),))},
+            and field_shape(command_form) == {"DataType": (5, ((27, 0, 5),))},
             f"named {operation['family']} command raw contract drift: "
             f"{operation['command_mnemonic']}",
         )
@@ -5018,20 +5282,14 @@ def main() -> int:
     }
     require(
         all(
-            not any(
-                operand["field"] == "destination0"
-                for operand in row["operands"]
-            )
+            not any(operand["field"] == "destination0" for operand in row["operands"])
             for name, row in cube_rows_by_name.items()
             if name != "ACCCVT"
         ),
         "CUBE must model ACC implicitly rather than as destination0",
     )
     require(
-        [
-            operand["field"]
-            for operand in cube_rows_by_name["ACCCVT"]["operands"]
-        ]
+        [operand["field"] for operand in cube_rows_by_name["ACCCVT"]["operands"]]
         == ["destination0", "numeric_control"]
         and cube_rows_by_name["ACCCVT"]["arguments"]
         == [{"operand": "destination0"}, {"operand": "numeric_control"}],
@@ -5059,12 +5317,9 @@ def main() -> int:
         == [{"operand": "destination0"}, {"operand": "destination1"}],
         "TSORT value/index destination contract drift",
     )
-    gather_mask_row = next(
-        row for row in operations if row["name"] == "MGATHER_MASK"
-    )
+    gather_mask_row = next(row for row in operations if row["name"] == "MGATHER_MASK")
     require(
-        gather_mask_row["arguments"][-1]
-        == {"runtime": "CurrentBundlePadValue"},
+        gather_mask_row["arguments"][-1] == {"runtime": "CurrentBundlePadValue"},
         "masked gather must consume the current B.DATR pad value",
     )
 
@@ -5092,9 +5347,7 @@ def main() -> int:
     require(
         set(deleted_tepl) == set(tile["deleted_names"])
         and set(tile["rejected_names"]).isdisjoint(deleted_tepl)
-        and set(deleted_tepl).isdisjoint(
-            row["name"] for row in operations
-        )
+        and set(deleted_tepl).isdisjoint(row["name"] for row in operations)
         and set(deleted_tepl.values()) <= tepl_reserved,
         "deleted PTO ISA 0.57.1 TEPL identities must remain absent and reserved",
     )
@@ -5676,15 +5929,13 @@ def main() -> int:
         )
         require(
             f"assert TileHandlerOfIndex({index}) == "
-            f"TileHandler_{row['semantic_handler']};"
-            in generated_tile_dispatch,
+            f"TileHandler_{row['semantic_handler']};" in generated_tile_dispatch,
             f"tile operation lacks handler-identity evidence: {row['name']}",
         )
         for operand in row["operands"]:
             require(
                 f"assert TileOperandPresent({index}, "
-                f"TileOperand_{operand['field']});"
-                in generated_tile_dispatch,
+                f"TileOperand_{operand['field']});" in generated_tile_dispatch,
                 f"tile operation lacks operand-presence evidence: "
                 f"{row['name']}/{operand['field']}",
             )
@@ -5697,8 +5948,7 @@ def main() -> int:
             and datr_witnesses.count("!")
             == len(TILE_DATR_FIELD_ORDER)
             - len(row["datr_contract"]["allowed_nonzero_fields"]),
-            f"B.DATR positive/negative applicability witnesses drift for "
-            f"{row['name']}",
+            f"B.DATR positive/negative applicability witnesses drift for {row['name']}",
         )
     applicability_dispatch = generated_tile_dispatch.split(
         "func ExecuteTileInstructionWithoutTimeWithAcceptedApplicabilityRules(", 1
@@ -5710,8 +5960,7 @@ def main() -> int:
         < applicability_dispatch.index(
             "case TileOperationOfIndex(accepted_operation) of"
         )
-        and "SetFault(Fault_IllegalInstruction, ReadPC())"
-        in applicability_dispatch,
+        and "SetFault(Fault_IllegalInstruction, ReadPC())" in applicability_dispatch,
         "numeric applicability must reject before tile source, legality, and handler effects",
     )
     bundle_dispatch_body = (ROOT / "asl/bundle/dispatch.asl").read_text(
@@ -6460,12 +6709,9 @@ def main() -> int:
             scalar_types_body,
         )
         is not None
-        and "ScalarOperation_FCVTA then return NumericRound_RNA"
-        in scalar_floating_body
-        and "ScalarOperation_FCVTM then return NumericRound_RTM"
-        in scalar_floating_body
-        and "ScalarOperation_FCVTP then return NumericRound_RTP"
-        in scalar_floating_body
+        and "ScalarOperation_FCVTA then return NumericRound_RNA" in scalar_floating_body
+        and "ScalarOperation_FCVTM then return NumericRound_RTM" in scalar_floating_body
+        and "ScalarOperation_FCVTP then return NumericRound_RTP" in scalar_floating_body
         and "ScalarFPFixedConversionRoundingMode(operation)"
         in scalar_effect_dispatch_body,
         "semantic rounding modes and fixed conversion overrides drifted",
@@ -6642,8 +6888,7 @@ def main() -> int:
         "func TestA2A3CubeMxDirectRejectionMatrix()" in test_body
         and "for function_index = 0 to 5 do" in test_body
         and "for data_type_index = 0 to 24 do" in test_body
-        and "ExecuteTileInstructionWithAcceptedApplicabilityRulesForTest("
-        in test_body
+        and "ExecuteTileInstructionWithAcceptedApplicabilityRulesForTest(" in test_body
         and "func TestA2A3CubeMxBundleRejectionMatrix()" in test_body
         and "for data_type_code = 0 to 31 do" in test_body
         and "if BundleDataTypeSupported(data_type) then" in test_body
@@ -7422,8 +7667,7 @@ def main() -> int:
         and "numeric-profile-applicability-closure.json" in maturity_index_body
         and "numeric-profile-applicability-closure.json" in readme_body
         and "numeric-profile-applicability-closure.json" in coverage_body
-        and "numeric-variation-point-ownership.json"
-        in numeric_profile_decision_body
+        and "numeric-variation-point-ownership.json" in numeric_profile_decision_body
         and "numeric-variation-point-ownership.json" in maturity_index_body
         and "numeric-variation-point-ownership.json" in readme_body
         and "numeric-variation-point-ownership.json" in coverage_body
@@ -7431,8 +7675,7 @@ def main() -> int:
         and "public-numeric-type-baseline.json" in maturity_index_body
         and "public-numeric-type-baseline.json" in readme_body
         and "public-numeric-type-baseline.json" in coverage_body
-        and "public-integer-conversion-contract.json"
-        in numeric_profile_decision_body
+        and "public-integer-conversion-contract.json" in numeric_profile_decision_body
         and "public-integer-conversion-contract.json" in maturity_index_body
         and "public-integer-conversion-contract.json" in readme_body
         and "public-integer-conversion-contract.json" in coverage_body
@@ -7610,7 +7853,7 @@ def main() -> int:
         == len(set(release_item_ids))
         == release_traceability["summary"]["traceability_item_count"]
         == 935
-        and release_traceability["summary"]["state_leaf_count"] == 238
+        and release_traceability["summary"]["state_leaf_count"] == 240
         and release_traceability["summary"]["open_requirement_count"] == 11
         and release_traceability["summary"]["open_profile_hook_count"] == 30
         and release_traceability["summary"]["closed_prerequisite_targets"] == 28
@@ -7674,8 +7917,8 @@ def main() -> int:
         and release_summary["required_approval_count"] == 2
         and release_summary["required_external_control_count"] == 10
         and release_summary["shard_count"] == 34
-        and release_summary["canonical_call_count"] == 105
-        and release_summary["reachable_test_subprogram_count"] == 97
+        and release_summary["canonical_call_count"] == 106
+        and release_summary["reachable_test_subprogram_count"] == 98
         and release_summary["open_prerequisite_targets"] == ["S5-T2", "S6-T1"]
         and release_summary["closed_gate_contract_count"] == 10
         and release_summary["candidate_gate_result_count"] == 0
@@ -7885,7 +8128,9 @@ def main() -> int:
             f"profile hook has no ASL call site: {hook['name']}",
         )
         require(
-            isinstance(hook["tests"], list) and hook["tests"],
+            isinstance(hook["tests"], list)
+            and hook["tests"]
+            and "tests/asl/profile-tests.asl" in hook["tests"],
             f"missing profile tests for {hook['name']}",
         )
         for relative in hook["tests"]:
@@ -8146,9 +8391,7 @@ def main() -> int:
                 if "_BIAS" in name:
                     primary_hooks.append("TileProfileMatrixBias")
                 if "_MX" in name:
-                    primary_hooks.append(
-                        "TileProfileMatrixScaledAccumulate"
-                    )
+                    primary_hooks.append("TileProfileMatrixScaledAccumulate")
             reference_helpers = []
             if name == "TSQRT":
                 reference_helpers.append("TileSquareRoot")
@@ -8314,9 +8557,7 @@ def main() -> int:
         == {
             "path": "spec/evidence/numeric-special-value-contract.json",
             "status": numeric_special_value_contract["status"],
-            "acceptance_record": numeric_special_value_contract[
-                "acceptance_record"
-            ],
+            "acceptance_record": numeric_special_value_contract["acceptance_record"],
             **numeric_special_value_contract["summary"],
         },
         "numeric-conformance readiness special-value checkpoint drift",
@@ -8890,8 +9131,7 @@ def main() -> int:
         )
         and numeric_variation_ownership["policy"]["reference_fallback_forbidden"]
         is True
-        and numeric_variation_ownership["policy"]["cpu_observation_is_owner"]
-        is False,
+        and numeric_variation_ownership["policy"]["cpu_observation_is_owner"] is False,
         "numeric variation-point ownership identity or policy drift",
     )
     variation_points = numeric_variation_ownership["variation_points"]
@@ -8928,8 +9168,7 @@ def main() -> int:
                 "selector_dependencies",
                 "status",
             }
-            and row["id"]
-            == f"numeric-vp/{row['domain_id']}/{row['dimension_id']}"
+            and row["id"] == f"numeric-vp/{row['domain_id']}/{row['dimension_id']}"
             and row["lane"] == profile_domains_by_id[row["domain_id"]]["lane"]
             and row["operation_keys"]
             == profile_domains_by_id[row["domain_id"]]["operation_keys"]
@@ -8956,8 +9195,7 @@ def main() -> int:
                     row["decision_ownership"]["primary_decision_id"] == "PD-03"
                     and row["selected_route"]
                     == {"kind": "portable-rule", "profile_id": "pto-numeric-v1"}
-                    and row["result_rule_id"]
-                    == f"pd03-rounding/{row['domain_id']}"
+                    and row["result_rule_id"] == f"pd03-rounding/{row['domain_id']}"
                     and row["result_acceptance_record"]
                     == "docs/architecture-decisions/0047-numeric-rounding-semantics.md"
                     and row["status"] == "portable-rounding-rule-accepted"
@@ -8967,8 +9205,7 @@ def main() -> int:
                     and row["selected_route"] is None
                     and row["result_rule_id"] is None
                     and row["result_acceptance_record"] is None
-                    and row["status"]
-                    == "ownership-inventoried-result-rule-required"
+                    and row["status"] == "ownership-inventoried-result-rule-required"
                 )
             )
             and row["missing_rule_disposition"] == "reject-before-effects"
@@ -9002,8 +9239,7 @@ def main() -> int:
             and row["hooks"]
             == numeric_operations_by_key[key]["primary_hooks"]
             + numeric_operations_by_key[key]["reference_helpers"]
-            and row["variation_point_ids"]
-            == variation_ids_by_domain[row["domain"]]
+            and row["variation_point_ids"] == variation_ids_by_domain[row["domain"]]
             and row["decision_owner_kind"] == "portable-architecture"
             and row["decision_owner_id"] == "pto-numeric-v1"
             and row["accepted_unsupported_profiles"]
@@ -9048,8 +9284,7 @@ def main() -> int:
             row["role"] == numeric_hooks_by_name[name]["role"]
             and row["requirement"] == numeric_hooks_by_name[name]["requirement"]
             and row["domains"] == expected_domains_by_hook[name]
-            and row["operation_keys"]
-            == numeric_hooks_by_name[name]["operation_keys"]
+            and row["operation_keys"] == numeric_hooks_by_name[name]["operation_keys"]
             and row["variation_point_ids"]
             == sorted(
                 point_id
@@ -9083,8 +9318,7 @@ def main() -> int:
                     )
                     and row["selected_route"] is None
                     and row["result_rule_id"] is None
-                    and row["status"]
-                    == "ownership-inventoried-result-rule-required"
+                    and row["status"] == "ownership-inventoried-result-rule-required"
                 )
             )
             for name, row in ownership_hooks_by_name.items()
@@ -9262,8 +9496,7 @@ def main() -> int:
             "path": "spec/evidence/public-integer-conversion-contract.json",
             "sha256": hashlib.sha256(
                 (
-                    ROOT
-                    / "spec/evidence/public-integer-conversion-contract.json"
+                    ROOT / "spec/evidence/public-integer-conversion-contract.json"
                 ).read_bytes()
             ).hexdigest(),
             "status": public_integer_conversion["status"],
@@ -9303,7 +9536,9 @@ def main() -> int:
         == {
             "path": "spec/evidence/numeric-variation-point-ownership.json",
             "sha256": hashlib.sha256(
-                (ROOT / "spec/evidence/numeric-variation-point-ownership.json").read_bytes()
+                (
+                    ROOT / "spec/evidence/numeric-variation-point-ownership.json"
+                ).read_bytes()
             ).hexdigest(),
             "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
             "acceptance_record": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
@@ -9373,9 +9608,7 @@ def main() -> int:
                 ).read_bytes()
             ).hexdigest(),
             "status": numeric_special_value_contract["status"],
-            "acceptance_record": numeric_special_value_contract[
-                "acceptance_record"
-            ],
+            "acceptance_record": numeric_special_value_contract["acceptance_record"],
             **numeric_special_value_contract["summary"],
         },
         "numeric profile proposal special-value checkpoint drift",
@@ -9601,8 +9834,7 @@ def main() -> int:
         and "scripts/generate-numeric-format-namespace-contract" in s5_t2["evidence"]
         and "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md"
         in s5_t2["evidence"]
-        and "spec/evidence/numeric-special-value-contract.json"
-        in s5_t2["evidence"]
+        and "spec/evidence/numeric-special-value-contract.json" in s5_t2["evidence"]
         and "scripts/generate-numeric-special-value-contract" in s5_t2["evidence"]
         and "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md"
         in s5_t2["evidence"]
@@ -9613,22 +9845,16 @@ def main() -> int:
         in s5_t2["evidence"]
         and "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
         in s5_t2["evidence"]
-        and "spec/evidence/numeric-variation-point-ownership.json"
-        in s5_t2["evidence"]
-        and "scripts/generate-numeric-variation-point-ownership"
-        in s5_t2["evidence"]
+        and "spec/evidence/numeric-variation-point-ownership.json" in s5_t2["evidence"]
+        and "scripts/generate-numeric-variation-point-ownership" in s5_t2["evidence"]
         and "docs/architecture-decisions/0042-numeric-variation-point-ownership.md"
         in s5_t2["evidence"]
-        and "spec/evidence/public-numeric-type-baseline.json"
-        in s5_t2["evidence"]
-        and "scripts/generate-public-numeric-type-baseline"
-        in s5_t2["evidence"]
+        and "spec/evidence/public-numeric-type-baseline.json" in s5_t2["evidence"]
+        and "scripts/generate-public-numeric-type-baseline" in s5_t2["evidence"]
         and "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md"
         in s5_t2["evidence"]
-        and "spec/evidence/public-integer-conversion-contract.json"
-        in s5_t2["evidence"]
-        and "scripts/generate-public-integer-conversion-contract"
-        in s5_t2["evidence"]
+        and "spec/evidence/public-integer-conversion-contract.json" in s5_t2["evidence"]
+        and "scripts/generate-public-integer-conversion-contract" in s5_t2["evidence"]
         and "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md"
         in s5_t2["evidence"]
         and next(gap for gap in s5_t2["gaps"] if gap["id"] == "S5-T2-G1")[
@@ -9852,9 +10078,9 @@ def main() -> int:
     interrupt_register_test = state_test_source.split(
         "func TestInterruptRegisterState()", 1
     )[1].split("func Test", 1)[0]
-    complete_trap_test = state_test_source.split(
-        "func TestCompleteTrapEnvelope()", 1
-    )[1].split("func Test", 1)[0]
+    complete_trap_test = state_test_source.split("func TestCompleteTrapEnvelope()", 1)[
+        1
+    ].split("func Test", 1)[0]
     require(
         "type InterruptID of integer {0..63};" in types_body
         and interrupt_requirement is not None
@@ -9863,8 +10089,7 @@ def main() -> int:
         and "SetFault(" not in raise_interrupt_body
         and raise_interrupt_body.index("SetInterruptPending(ring, interrupt_id);")
         < raise_interrupt_body.index("InterruptEnabled(ring, interrupt_id)")
-        and "NaturalToWord(interrupt_id as integer {0..262144})"
-        in raise_interrupt_body
+        and "NaturalToWord(interrupt_id as integer {0..262144})" in raise_interrupt_body
         and "RaiseInterrupt(0," in interrupt_register_test
         and "RaiseInterrupt(63," in interrupt_register_test
         and "boundary_pending[0] == '1' && boundary_pending[63] == '1'"
@@ -9873,8 +10098,7 @@ def main() -> int:
         and "ReadTPC() == Zeros{PTO_XLEN} + 0x5150" in interrupt_register_test
         and "!_TrapContexts[[0]].valid" in interrupt_register_test
         and "RaiseInterrupt(63," in complete_trap_test
-        and "_ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 63"
-        in complete_trap_test
+        and "_ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 63" in complete_trap_test
         and "TestInterruptRegisterState();" in main_test_body,
         "interrupt injection must constrain IDs to 0..63 and witness both boundaries",
     )
@@ -9892,6 +10116,237 @@ def main() -> int:
         and "ResetMemoryExecution();" in profile_implementation_body
         and "_MemoryEventCount == 0" in profile_test_body,
         "active profile reset is not executed and tested",
+    )
+    trap_context_inventory = next(
+        (
+            row
+            for row in release_traceability["inventories"]["state_roots"]
+            if row["id"] == "state:_TrapContexts"
+        ),
+        None,
+    )
+    require(
+        trap_context_inventory is not None,
+        "release traceability omits TrapContext state root",
+    )
+    trap_context_leaf_paths = [
+        leaf["path"] for leaf in trap_context_inventory["leaf_fields"]
+    ]
+    recovery_leaf_rows = trap_context_recovery.get("leaf_fields", [])
+    recovery_leaf_paths = [row.get("path") for row in recovery_leaf_rows]
+    require(
+        set(trap_context_recovery)
+        == {
+            "adr",
+            "classification_counts",
+            "evidence_function",
+            "issue",
+            "leaf_fields",
+            "requirement_ids",
+            "schema_version",
+            "serialization_boundary",
+            "status",
+            "target",
+        }
+        and trap_context_recovery["schema_version"] == 2
+        and trap_context_recovery["target"] == "TrapContext per-leaf recovery evidence"
+        and trap_context_recovery["status"]
+        == "per-leaf-save-preserve-recover-invalidate-closed",
+        "TrapContext recovery evidence identity or schema drift",
+    )
+    require(
+        recovery_leaf_paths == trap_context_leaf_paths,
+        "TrapContext recovery evidence must enumerate every release-traceability leaf in order",
+    )
+    actual_trap_context_classifications = Counter(
+        row["classification"] for row in recovery_leaf_rows
+    )
+    require(
+        trap_context_recovery["classification_counts"]
+        == dict(actual_trap_context_classifications)
+        and set(trap_context_recovery["classification_counts"])
+        == {
+            "internal-ebstate-only",
+            "portable-first-layer-visible",
+            "validity-control",
+        },
+        "TrapContext recovery evidence classification count drift",
+    )
+    require(
+        trap_context_recovery["serialization_boundary"]
+        == {
+            "portable_first_layer_visible": (
+                "Only ECSTATE plus EBARG0, BPC_CUR, BPC_TGT, TPC, LRA, "
+                "TQ0..TQ3, and UQ0..UQ3 are first-layer portable saved-context "
+                "words in PTO v0."
+            ),
+            "internal_ebstate_only": (
+                "All remaining TrapContext leaves are retained by the bounded PTO "
+                "v0 EBSTATE record and are not portable serialized state."
+            ),
+            "extension_rule": (
+                "Adding portable encodings for EBSTATE-only leaves requires a "
+                "separate accepted architecture decision."
+            ),
+        },
+        "TrapContext serialization boundary drift",
+    )
+    require(
+        set(trap_context_recovery["requirement_ids"])
+        == {"PTO-REQ-FAULT-001", "PTO-REQ-SCALAR-SSR-001"}
+        and trap_context_recovery["adr"]
+        == "docs/architecture-decisions/0011-visible-ebarg-snapshot.md"
+        and trap_context_recovery["issue"]
+        == "https://github.com/PTO-ISA/pto-spec/issues/27",
+        "TrapContext recovery evidence traceability drift",
+    )
+    trap_context_function = trap_context_recovery["evidence_function"]
+    require(
+        f"func {trap_context_function}()" in state_test_source,
+        "TrapContext per-leaf recovery evidence function is missing",
+    )
+    trap_context_test_body = state_test_source.split(
+        f"func {trap_context_function}()", 1
+    )[1].split("func Test", 1)[0]
+    require(
+        f"{trap_context_function}();" in main_test_body
+        and "SetFault(Fault_DataPage" in trap_context_test_body
+        and "assert CurrentACR() == 1;" in trap_context_test_body
+        and "SavePortableTrapContext(2, 15);" in trap_context_test_body
+        and "RecoverPortableTrapContext(2)" in trap_context_test_body
+        and "recovered_all_leaf_context" in trap_context_test_body
+        and "_BundleReturnTarget == Zeros{PTO_XLEN} + 0x7700" in trap_context_test_body
+        and "_ReturnAddress == Zeros{PTO_XLEN} + 0x8800" in trap_context_test_body,
+        "TrapContext per-leaf recovery evidence is not directly executable",
+    )
+    validate_trap_context_recovery_evidence(
+        trap_context_recovery,
+        trap_context_leaf_paths,
+        trap_context_test_body,
+        main_test_body,
+    )
+
+    def trap_context_canary_rejects(
+        evidence: dict | None = None,
+        body: str | None = None,
+        main_body: str | None = None,
+    ) -> bool:
+        try:
+            validate_trap_context_recovery_evidence(
+                evidence or trap_context_recovery,
+                trap_context_leaf_paths,
+                body or trap_context_test_body,
+                main_body or main_test_body,
+            )
+        except (AssertionError, KeyError, ValueError):
+            return True
+        return False
+
+    missing_row = json.loads(json.dumps(trap_context_recovery))
+    missing_row["leaf_fields"].pop()
+    duplicate_path = json.loads(json.dumps(trap_context_recovery))
+    duplicate_path["leaf_fields"][1]["path"] = duplicate_path["leaf_fields"][2]["path"]
+    swapped_classification = json.loads(json.dumps(trap_context_recovery))
+    swapped_classification["leaf_fields"][1]["classification"] = "internal-ebstate-only"
+    swapped_classification["leaf_fields"][5]["classification"] = (
+        "portable-first-layer-visible"
+    )
+    wrong_lvalue = json.loads(json.dumps(trap_context_recovery))
+    dimensions_row = next(
+        row
+        for row in wrong_lvalue["leaf_fields"]
+        if row["path"] == "_TrapContexts[].bundle_dimensions[]"
+    )
+    dimensions_row["live_lvalue"] = "_BundleDimensions[[0]]"
+    dimensions_row["recover_assertion"] = (
+        "assert _BundleDimensions[[0]] == Zeros{PTO_XLEN} + 0x103;"
+    )
+    wrong_mutation = json.loads(json.dumps(trap_context_recovery))
+    bundle_argument_row = next(
+        row
+        for row in wrong_mutation["leaf_fields"]
+        if row["path"] == "_TrapContexts[].bundle_argument"
+    )
+    bundle_argument_row["mutate_statement"] = "_BundleKind = BundleKind_Standard;"
+    saved_value_mutation = json.loads(json.dumps(trap_context_recovery))
+    bundle_argument_row = next(
+        row
+        for row in saved_value_mutation["leaf_fields"]
+        if row["path"] == "_TrapContexts[].bundle_argument"
+    )
+    bundle_argument_row["mutate_statement"] = (
+        "_BundleArgument = Zeros{PTO_XLEN} + 0x3300;"
+    )
+    saved_value_mutation_body = trap_context_test_body.replace(
+        "_BundleArgument = Zeros{PTO_XLEN};",
+        "_BundleArgument = Zeros{PTO_XLEN} + 0x3300;",
+        1,
+    )
+    self_assignment = json.loads(json.dumps(trap_context_recovery))
+    bundle_argument_row = next(
+        row
+        for row in self_assignment["leaf_fields"]
+        if row["path"] == "_TrapContexts[].bundle_argument"
+    )
+    bundle_argument_row["mutate_statement"] = "_BundleArgument = _BundleArgument;"
+    self_assignment_body = trap_context_test_body.replace(
+        "_BundleArgument = Zeros{PTO_XLEN};",
+        "_BundleArgument = _BundleArgument;",
+        1,
+    )
+    wrong_recovery = json.loads(json.dumps(trap_context_recovery))
+    bundle_argument_row = next(
+        row
+        for row in wrong_recovery["leaf_fields"]
+        if row["path"] == "_TrapContexts[].bundle_argument"
+    )
+    bundle_argument_row["recover_assertion"] = (
+        "assert _BundleArgument == Zeros{PTO_XLEN};"
+    )
+    wrong_recovery_body = trap_context_test_body.replace(
+        "assert _BundleArgument == Zeros{PTO_XLEN} + 0x3300;",
+        "assert _BundleArgument == Zeros{PTO_XLEN};",
+        1,
+    )
+    require(
+        trap_context_canary_rejects(missing_row)
+        and trap_context_canary_rejects(duplicate_path)
+        and trap_context_canary_rejects(swapped_classification)
+        and trap_context_canary_rejects(wrong_lvalue)
+        and trap_context_canary_rejects(wrong_mutation)
+        and trap_context_canary_rejects(
+            evidence=saved_value_mutation, body=saved_value_mutation_body
+        )
+        and trap_context_canary_rejects(
+            evidence=self_assignment, body=self_assignment_body
+        )
+        and trap_context_canary_rejects(
+            evidence=wrong_recovery, body=wrong_recovery_body
+        )
+        and trap_context_canary_rejects(
+            body=trap_context_test_body.replace(
+                "_BundleArgument = Zeros{PTO_XLEN};", "", 1
+            )
+        )
+        and trap_context_canary_rejects(
+            body=trap_context_test_body.replace(
+                "assert _BundleArgument == Zeros{PTO_XLEN} + 0x3300;", "", 1
+            )
+        )
+        and trap_context_canary_rejects(
+            body=trap_context_test_body.replace(
+                "assert _BundleArgument != Zeros{PTO_XLEN} + 0x3300;", "", 1
+            )
+        )
+        and trap_context_canary_rejects(
+            body=trap_context_test_body.replace(
+                "assert !_TrapContexts[[1]].valid;", "", 1
+            )
+        )
+        and trap_context_canary_rejects(
+            main_body=main_test_body.replace(f"{trap_context_function}();", "", 1)
+        ),
+        "TrapContext recovery negative canary failed open",
     )
     require(
         "func AdvanceArchitecturalTime()" in system_body

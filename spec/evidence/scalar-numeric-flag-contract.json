@@ -540,7 +540,7 @@
     },
     {
       "path": "asl/profiles/pto-v0.asl",
-      "sha256": "beb795edb5aa112c4333d41a68d0a05cd2db4c577f8e516e3d2750e3241ba3d1"
+      "sha256": "09e174b0840b8c99a6fe41046d1ef29fc33fe13738d100964d1ad983ca4abf42"
     },
     {
       "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",

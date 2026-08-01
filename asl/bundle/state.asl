@@ -112,6 +112,8 @@ begin
         _TrapContexts[[ring]].bundle_target = Zeros{PTO_XLEN};
         _TrapContexts[[ring]].bundle_fallthrough = Zeros{PTO_XLEN};
         _TrapContexts[[ring]].bundle_return_target = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].return_address = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].bundle_argument_kind = Zeros{3};
         _TrapContexts[[ring]].bundle_body_address = Zeros{PTO_XLEN};
         _TrapContexts[[ring]].bundle_operation = _BundleOperation;
         _TrapContexts[[ring]].bundle_dimensions = _BundleDimensions;

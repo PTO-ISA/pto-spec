@@ -51,6 +51,7 @@
       "conformance_status": "reference-profile-closed",
       "maturity_target": null,
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/scalar-tests.asl"
       ]
     },
@@ -67,6 +68,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/scalar-tests.asl"
       ]
     },
@@ -83,6 +85,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/scalar-tests.asl"
       ]
     },
@@ -100,6 +103,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/scalar-tests.asl"
       ]
     },
@@ -117,6 +121,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/scalar-tests.asl"
       ]
     },
@@ -134,6 +139,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/scalar-tests.asl"
       ]
     },
@@ -150,6 +156,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/scalar-tests.asl"
       ]
     },
@@ -166,6 +173,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/scalar-tests.asl"
       ]
     },
@@ -182,6 +190,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/scalar-tests.asl"
       ]
     },
@@ -198,6 +207,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     },
@@ -214,6 +224,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     },
@@ -230,6 +241,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     },
@@ -246,6 +258,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     },
@@ -262,6 +275,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     },
@@ -278,6 +292,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     },
@@ -294,6 +309,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     },
@@ -310,6 +326,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     },
@@ -327,6 +344,7 @@
       "maturity_target": null,
       "tests": [
         "tests/asl/bundle-tests.asl",
+        "tests/asl/profile-tests.asl",
         "tests/asl/state-tests.asl"
       ]
     },
@@ -344,6 +362,7 @@
       "maturity_target": null,
       "tests": [
         "tests/asl/bundle-tests.asl",
+        "tests/asl/profile-tests.asl",
         "tests/asl/state-tests.asl"
       ]
     },
@@ -360,6 +379,7 @@
       "conformance_status": "reference-profile-closed",
       "maturity_target": null,
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/scalar-tests.asl"
       ]
     },
@@ -378,6 +398,7 @@
       "conformance_status": "reference-profile-closed",
       "maturity_target": null,
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/scalar-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
@@ -397,6 +418,7 @@
       "conformance_status": "reference-profile-closed",
       "maturity_target": null,
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/scalar-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
@@ -414,6 +436,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     },
@@ -430,6 +453,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     },
@@ -446,6 +470,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     },
@@ -479,6 +504,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     },
@@ -495,6 +521,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     },
@@ -511,6 +538,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     },
@@ -527,6 +555,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     },
@@ -543,6 +572,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     },
@@ -559,6 +589,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     },
@@ -591,6 +622,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     },
@@ -607,6 +639,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     },
@@ -623,6 +656,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
+        "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
     }

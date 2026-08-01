@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "2472d76e774539656a4c23fd04c40a09c973534d84bcfb5b655b1f436ea094ec"
+      "sha256": "b26f3125ca21c5a5673d9e885fb37aa9c82cc4b320355b1912847046825f7d95"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -39,7 +39,7 @@
     },
     {
       "path": "spec/profile-hooks.json",
-      "sha256": "f686463805e725891d49c00d598d0ecdb209964ab5a34244469a0fa45367817f"
+      "sha256": "83b7a88ca41647bc5189268d07285cf529deeae26cdb310123a386ec49954242"
     },
     {
       "path": "spec/evidence/maturity-closure.json",
@@ -47,39 +47,39 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "97e688d4b771550e772d485a3e4a3dc51012f585c3eff688df0cd98a4fcac3df"
+      "sha256": "68cd0d2a80f1b57bb677d5404fb8492def3f8f1976b8dd8357cfae5fb3036442"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "85385ed809b7b09241da60b59f6fadc23c372b2743dc4d2c2f96206a1795c07c"
+      "sha256": "4bdddb35de0738fe55eb3266fa02fdc80ae829cb95ac9079fa3aaa60c66c4baf"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "9daf1f4ef504e951633eb1f6f5bfe91af2880b9731979a009b73bcdd8bebdced"
+      "sha256": "3898a9f3fcb3eb21e3f9d5159b1e2337565a067316128984f14953b1522b4939"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "de1ca443c5ae6535cbb55e67028b3ca1f73419ed5f41cccd238c49c79c3ccdc3"
+      "sha256": "f1752a5cd060b3dd78826f1a350c0a686472a09d61f97af3c1e41ed742fd708a"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "30f658a893144ba433eb4dea036b60ea6e9426056a3809f90967d16a236a3779"
+      "sha256": "df73be6d0a4d3cb1cfbdcafb20cbc0cb9232b3d72d29148603789d6d935e27c0"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "c347f93ca1209edf6b690114227fa954535df4f892d38ad1a0a6753a7425c6fc"
+      "sha256": "7c13bbec929c6d151f1b57bc8f128c95feb46f0ef82d060ad2978e4695fc8336"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "34615282befb735d8bd4dc81df7e8a26c97728ffeba342d93687c3cba4f392d8"
+      "sha256": "e277abc6832c38708f3ea0beed4554b4f1cf8cfb8d629e195478bc00e7786c2e"
     },
     {
       "path": "spec/evidence/numeric-subnormal-contract.json",
-      "sha256": "a6e507749aae2a9b07fb89e23e844ab9efbe317f32b5939d04d8365cc848ea0c"
+      "sha256": "d298d47fd06607053ce894dc8992adad6d3117475a4c76803cf1a6bdb475a94a"
     },
     {
       "path": "spec/evidence/numeric-special-value-contract.json",
-      "sha256": "c336d88b59fd3cf32ca5224737af51c04d542a5b49cc2b3e9b968e2b0e6e9c66"
+      "sha256": "7f7c8dfc3ac83c8fbdd3ffd30714ba9381c4a2cccfba1915cab999c5dbf79931"
     },
     {
       "path": "spec/evidence/scalar-effect-closure.json",
@@ -103,15 +103,15 @@
     },
     {
       "path": "asl/types.asl",
-      "sha256": "efbc90dbcdd0d049edd5450850ff02d922783df9ca5de364f5a5debc1d8dca12"
+      "sha256": "fd3d680d8c456a6283a50c09d143b4d5e2229a1fa2ba7e4174433f98396614cf"
     },
     {
       "path": "asl/state.asl",
-      "sha256": "340acbbd0353cfca9147a3b0fce80447eddb428967134737011a677353a087e7"
+      "sha256": "9a49a4e8209607d8bc04dad49ed97725072f4d6595807bfae2a425a537ddae21"
     },
     {
       "path": "asl/bundle/state.asl",
-      "sha256": "f53698e3083eb1850865fa8977fd92c495e3e4d40998ee808c69c69630d996be"
+      "sha256": "2f8f8d3c26db75552056b104033991704ac5984e339ac7f7c731f1a3c5e17f0a"
     },
     {
       "path": "asl/tile/state.asl",
@@ -139,7 +139,7 @@
     },
     {
       "path": "asl/profiles/pto-v0.asl",
-      "sha256": "beb795edb5aa112c4333d41a68d0a05cd2db4c577f8e516e3d2750e3241ba3d1"
+      "sha256": "09e174b0840b8c99a6fe41046d1ef29fc33fe13738d100964d1ad983ca4abf42"
     },
     {
       "path": "asl/scalar/addressing.asl",
@@ -399,6 +399,7 @@
           "docs/architecture-decisions/0010-acr-routing-and-context-reset.md",
           "docs/architecture-decisions/0018-pto-v0-trap-disposition.md",
           "spec/catalog/system-registers.json",
+          "spec/evidence/trap-context-recovery-evidence.json",
           "spec/profile-hooks.json"
         ],
         "tests": [
@@ -625,7 +626,8 @@
           "asl/scalar/dispatch.asl",
           "docs/architecture-decisions/0012-acrc-service-request.md",
           "docs/architecture-decisions/0031-scalar-sys-totality-and-profile-boundaries.md",
-          "spec/evidence/scalar-sys-totality.json"
+          "spec/evidence/scalar-sys-totality.json",
+          "spec/evidence/trap-context-recovery-evidence.json"
         ],
         "tests": [
           "scripts/check-catalogs",
@@ -19788,6 +19790,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/scalar-tests.asl"
         ],
         "conformance_status": "reference-profile-closed",
@@ -19806,6 +19809,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/scalar-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -19824,6 +19828,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/scalar-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -19842,6 +19847,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/scalar-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -19860,6 +19866,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/scalar-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -19878,6 +19885,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/scalar-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -19896,6 +19904,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/scalar-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -19914,6 +19923,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/scalar-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -19932,6 +19942,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/scalar-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -19950,6 +19961,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -19968,6 +19980,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -19986,6 +19999,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -20004,6 +20018,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -20022,6 +20037,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -20040,6 +20056,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -20058,6 +20075,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -20076,6 +20094,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -20095,6 +20114,7 @@
         ],
         "tests": [
           "tests/asl/bundle-tests.asl",
+          "tests/asl/profile-tests.asl",
           "tests/asl/state-tests.asl"
         ],
         "conformance_status": "reference-profile-closed",
@@ -20114,6 +20134,7 @@
         ],
         "tests": [
           "tests/asl/bundle-tests.asl",
+          "tests/asl/profile-tests.asl",
           "tests/asl/state-tests.asl"
         ],
         "conformance_status": "reference-profile-closed",
@@ -20132,6 +20153,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/scalar-tests.asl"
         ],
         "conformance_status": "reference-profile-closed",
@@ -20150,6 +20172,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/scalar-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
@@ -20169,6 +20192,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/scalar-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
@@ -20188,6 +20212,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -20206,6 +20231,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -20224,6 +20250,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -20261,6 +20288,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -20279,6 +20307,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -20297,6 +20326,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -20315,6 +20345,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -20333,6 +20364,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -20351,6 +20383,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -20387,6 +20420,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -20405,6 +20439,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -20423,6 +20458,7 @@
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "tests/asl/profile-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
@@ -22506,6 +22542,14 @@
             "type": "Word"
           },
           {
+            "path": "_TrapContexts[].return_address",
+            "type": "Word"
+          },
+          {
+            "path": "_TrapContexts[].bundle_argument_kind",
+            "type": "bits(3)"
+          },
+          {
             "path": "_TrapContexts[].bundle_body_address",
             "type": "Word"
           },
@@ -22883,7 +22927,7 @@
     "trap_count": 13,
     "profile_hook_count": 38,
     "state_root_count": 73,
-    "state_leaf_count": 238,
+    "state_leaf_count": 240,
     "traceability_item_count": 935,
     "open_requirement_count": 11,
     "open_requirement_ids": [

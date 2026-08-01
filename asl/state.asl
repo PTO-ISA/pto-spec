@@ -310,15 +310,15 @@ begin
     return FALSE;
 end;
 
-impdef func SaveTrapContext(target: AccessControlRing,
-                            source: AccessControlRing)
+func SavePortableTrapContext(target: AccessControlRing,
+                             source: AccessControlRing)
 begin
     _TrapContexts[[target]].valid = TRUE;
     _TrapContexts[[target]].source_acr = source;
     _TrapContexts[[target]].tpc = ReadTPC();
     _TrapContexts[[target]].bpc = ReadBPC();
     _TrapContexts[[target]].core_state = _SystemRegisters.core_state;
-    _TrapContexts[[target]].bundle_argument = _CommitArgument;
+    _TrapContexts[[target]].bundle_argument = _BundleArgument;
     _TrapContexts[[target]].commit_argument = _CommitArgument;
     _TrapContexts[[target]].bundle_active = _BundleActive;
     _TrapContexts[[target]].bundle_body_active = _BundleBodyActive;
@@ -328,6 +328,8 @@ begin
     _TrapContexts[[target]].bundle_target = _BundleTarget;
     _TrapContexts[[target]].bundle_fallthrough = _BundleFallthrough;
     _TrapContexts[[target]].bundle_return_target = _BundleReturnTarget;
+    _TrapContexts[[target]].return_address = _ReturnAddress;
+    _TrapContexts[[target]].bundle_argument_kind = _BundleArgumentKind;
     _TrapContexts[[target]].bundle_body_address = _BundleBodyAddress;
     _TrapContexts[[target]].bundle_operation = _BundleOperation;
     _TrapContexts[[target]].bundle_dimensions = _BundleDimensions;
@@ -343,7 +345,13 @@ begin
     _TrapContexts[[target]].accumulator = _Accumulator;
 end;
 
-impdef func RecoverTrapContext(target: AccessControlRing) => boolean
+impdef func SaveTrapContext(target: AccessControlRing,
+                            source: AccessControlRing)
+begin
+    SavePortableTrapContext(target, source);
+end;
+
+func RecoverPortableTrapContext(target: AccessControlRing) => boolean
 begin
     if !_TrapContexts[[target]].valid then
         return FALSE;
@@ -351,6 +359,7 @@ begin
     WriteTPC(_TrapContexts[[target]].tpc);
     WriteBPC(_TrapContexts[[target]].bpc);
     _SystemRegisters.core_state = _TrapContexts[[target]].core_state;
+    _BundleArgument = _TrapContexts[[target]].bundle_argument;
     _CommitArgument = _TrapContexts[[target]].commit_argument;
     _BundleActive = _TrapContexts[[target]].bundle_active;
     _BundleBodyActive = _TrapContexts[[target]].bundle_body_active;
@@ -360,6 +369,8 @@ begin
     _BundleTarget = _TrapContexts[[target]].bundle_target;
     _BundleFallthrough = _TrapContexts[[target]].bundle_fallthrough;
     _BundleReturnTarget = _TrapContexts[[target]].bundle_return_target;
+    _ReturnAddress = _TrapContexts[[target]].return_address;
+    _BundleArgumentKind = _TrapContexts[[target]].bundle_argument_kind;
     _BundleBodyAddress = _TrapContexts[[target]].bundle_body_address;
     _BundleOperation = _TrapContexts[[target]].bundle_operation;
     _BundleDimensions = _TrapContexts[[target]].bundle_dimensions;
@@ -376,6 +387,11 @@ begin
     _CurrentACR = _TrapContexts[[target]].source_acr;
     _TrapContexts[[target]].valid = FALSE;
     return TRUE;
+end;
+
+impdef func RecoverTrapContext(target: AccessControlRing) => boolean
+begin
+    return RecoverPortableTrapContext(target);
 end;
 
 func SetFault(code: FaultCode, address: Word)

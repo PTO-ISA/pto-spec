@@ -103,7 +103,7 @@ C-backend gates. This classification closes `S5-T3` without changing the open
 Release traceability is now generated rather than inferred from prose. The
 `spec/evidence/release-traceability-readiness.json` ledger covers 935 exact
 units: all 46 requirements, accepted forms and operations, system registers,
-traps, 38 profile hooks, and 73 ASL state roots expanded to 238 leaf fields. Its
+traps, 38 profile hooks, and 73 ASL state roots expanded to 240 leaf fields. Its
 inventory and links are closed, while S6-T1 promotion remains explicitly open
 on S5-T2 and an immutable-commit claim-hygiene review.
 The generated `spec/evidence/release-gate-readiness.json` ledger separately

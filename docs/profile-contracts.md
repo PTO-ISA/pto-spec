@@ -166,8 +166,8 @@ parity, oracle results, and both review perspectives close `S5-T2`.
 
 The repository checker extracts every `impdef func` under `asl/`, every
 `implementation func` from the active profile, and every direct call in the
-profile conformance test. The three name sets must equal the 37-entry registry
-exactly. It also freezes the eight closed non-numeric versus 29 raw-carrier
+profile conformance test. The three name sets must equal the 38-entry registry
+exactly. It also freezes the eight closed non-numeric versus 30 raw-carrier
 implemented, target-conformance-open classifications. CI requires the active
 profile identity in `specification.toml` and executes the complete ASL suite
 with the pinned ASLRef.
