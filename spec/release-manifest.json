@@ -162,7 +162,7 @@
     },
     {
       "path": "docs/architecture-decisions/0013-tile-capacity-and-packed-storage.md",
-      "sha256": "2942e8cb1a3f8b0c65ef1f17a77724c06a5a9ec82dff3c24f4ea6480af9b66ce"
+      "sha256": "10ed1439d46f03c658b3d2dad07bee27a66daa022fb17696e07e333633337627"
     },
     {
       "path": "docs/architecture-decisions/0014-element-level-tile-definedness.md",
@@ -527,7 +527,7 @@
     },
     "tile_operations_total": 120
   },
-  "content_sha256": "b36b7980236f92d4d31c50693e15b775b15fddc8af85c61267f6498b051ac092",
+  "content_sha256": "0a180a96cb75c6a03fa55ff640c84698aa70f3c86f555bb08fd56bb18c6b8b73",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
