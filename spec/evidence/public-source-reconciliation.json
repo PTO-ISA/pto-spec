@@ -6,7 +6,7 @@
     "previous_reconciliation_commit": "712cbe9f23df5d5362be5e8327599f4285317473",
     "issue_observation_commit": "8e2f0fa10ddc1e887ac2e102666854247aee9b77",
     "current_reconciliation_commit": "1f61a9a28b375e5113761defdc66fd03554b5e0d",
-    "disposition": "current origin/main supersedes the issue observation pin; all current source pages were rehashed at the newer commit"
+    "disposition": "the selected exact reconciliation snapshot supersedes the issue observation pin; all selected source pages are attested by content hash"
   },
   "public_sources": [
     {

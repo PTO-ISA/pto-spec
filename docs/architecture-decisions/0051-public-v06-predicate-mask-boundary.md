@@ -28,8 +28,8 @@ A5-oriented profile and distinguishes it from the tile-level ISA.
 
 The previous public-source ledger was pinned to commit
 `712cbe9f23df5d5362be5e8327599f4285317473`. Issue #28 observed the new mask
-surface at `8e2f0fa10ddc1e887ac2e102666854247aee9b77`. The current public `main` used
-for this decision is the later exact commit
+surface at `8e2f0fa10ddc1e887ac2e102666854247aee9b77`. The selected reconciliation
+snapshot used for this decision is the later exact commit
 `1f61a9a28b375e5113761defdc66fd03554b5e0d`; all required pages exist there
 and are recorded by content hash.
 

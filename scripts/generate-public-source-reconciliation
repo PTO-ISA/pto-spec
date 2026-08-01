@@ -442,7 +442,7 @@ def generate() -> dict:
             "previous_reconciliation_commit": PREVIOUS_RECONCILIATION_COMMIT,
             "issue_observation_commit": ISSUE_OBSERVATION_COMMIT,
             "current_reconciliation_commit": PUBLIC_COMMIT,
-            "disposition": "current origin/main supersedes the issue observation pin; all current source pages were rehashed at the newer commit",
+            "disposition": "the selected exact reconciliation snapshot supersedes the issue observation pin; all selected source pages are attested by content hash",
         },
         "public_sources": source_rows(),
         "public_tile_symbol_inventory": {
