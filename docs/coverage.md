@@ -162,7 +162,7 @@ Release traceability is independently fail-closed. The generated
 model, executable witness, and bounded status links to 935 exact units. It
 covers all 474 scalar forms, 99 command forms, 120 direct tile operations, 72
 system registers, 13 traps, 38 profile hooks, 46 requirements, and 73 top-level
-ASL state roots expanded to 238 leaf fields. State rows distinguish direct
+ASL state roots expanded to 240 leaf fields. State rows distinguish direct
 architectural state, bounded storage and ordering abstractions,
 architectural-effect abstractions, and verification-only instrumentation. The
 inventory and link package is closed; 11 S5-T2-dependent requirements, 30

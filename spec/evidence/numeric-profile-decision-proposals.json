@@ -16,7 +16,7 @@
   },
   "scalar_flag_contract": {
     "path": "spec/evidence/scalar-numeric-flag-contract.json",
-    "sha256": "b19fea1cbc6ecbc0e06a20632460393febdfc53be45487086dfa8fa948ef611b",
+    "sha256": "61664bd39fca16f335a62bd476c823da56b839e8f2e36a8c59de41f6f3ac7825",
     "status": "state-owner-matrix-closed-profile-production-open",
     "acceptance_record": "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
     "producer_owner_closed_form_count": 30,
@@ -26,7 +26,7 @@
   },
   "rounding_selector_contract": {
     "path": "spec/evidence/numeric-rounding-selector-contract.json",
-    "sha256": "34615282befb735d8bd4dc81df7e8a26c97728ffeba342d93687c3cba4f392d8",
+    "sha256": "e277abc6832c38708f3ea0beed4554b4f1cf8cfb8d629e195478bc00e7786c2e",
     "status": "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open",
     "acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
     "scalar_active_selector_count": 8,
@@ -41,7 +41,7 @@
   },
   "subnormal_contract": {
     "path": "spec/evidence/numeric-subnormal-contract.json",
-    "sha256": "a6e507749aae2a9b07fb89e23e844ab9efbe317f32b5939d04d8365cc848ea0c",
+    "sha256": "d298d47fd06607053ce894dc8992adad6d3117475a4c76803cf1a6bdb475a94a",
     "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
     "acceptance_record": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
     "subnormal_capable_type_count": 11,
@@ -61,7 +61,7 @@
   },
   "special_value_contract": {
     "path": "spec/evidence/numeric-special-value-contract.json",
-    "sha256": "c336d88b59fd3cf32ca5224737af51c04d542a5b49cc2b3e9b968e2b0e6e9c66",
+    "sha256": "7f7c8dfc3ac83c8fbdd3ffd30714ba9381c4a2cccfba1915cab999c5dbf79931",
     "status": "named-hardware-special-value-checkpoint-accepted-pd05-open",
     "acceptance_record": "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
     "format_count": 25,
@@ -80,7 +80,7 @@
   },
   "format_namespace_contract": {
     "path": "spec/evidence/numeric-format-namespace-contract.json",
-    "sha256": "85385ed809b7b09241da60b59f6fadc23c372b2743dc4d2c2f96206a1795c07c",
+    "sha256": "4bdddb35de0738fe55eb3266fa02fdc80ae829cb95ac9079fa3aaa60c66c4baf",
     "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
     "acceptance_record": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
     "classification_checkpoint_id": "PD-02-SC2:PD-05-SC1",
@@ -116,7 +116,7 @@
   },
   "public_type_baseline": {
     "path": "spec/evidence/public-numeric-type-baseline.json",
-    "sha256": "30f658a893144ba433eb4dea036b60ea6e9426056a3809f90967d16a236a3779",
+    "sha256": "df73be6d0a4d3cb1cfbdcafb20cbc0cb9232b3d72d29148603789d6d935e27c0",
     "status": "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
     "acceptance_record": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
     "public_type_count": 16,
@@ -135,7 +135,7 @@
   },
   "public_integer_conversion": {
     "path": "spec/evidence/public-integer-conversion-contract.json",
-    "sha256": "c347f93ca1209edf6b690114227fa954535df4f892d38ad1a0a6753a7425c6fc",
+    "sha256": "7c13bbec929c6d151f1b57bc8f128c95feb46f0ef82d060ad2978e4695fc8336",
     "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
     "acceptance_record": "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
     "public_integer_type_count": 8,
@@ -155,7 +155,7 @@
   },
   "profile_applicability_contract": {
     "path": "spec/evidence/numeric-profile-applicability-closure.json",
-    "sha256": "9daf1f4ef504e951633eb1f6f5bfe91af2880b9731979a009b73bcdd8bebdced",
+    "sha256": "3898a9f3fcb3eb21e3f9d5159b1e2337565a067316128984f14953b1522b4939",
     "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
     "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
     "rule_count": 6,
@@ -173,7 +173,7 @@
   },
   "variation_point_contract": {
     "path": "spec/evidence/numeric-variation-point-ownership.json",
-    "sha256": "de1ca443c5ae6535cbb55e67028b3ca1f73419ed5f41cccd238c49c79c3ccdc3",
+    "sha256": "f1752a5cd060b3dd78826f1a350c0a686472a09d61f97af3c1e41ed742fd708a",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
     "acceptance_record": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
     "variation_point_count": 99,

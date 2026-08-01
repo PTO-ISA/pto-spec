@@ -606,7 +606,7 @@ hidden exceptions.
 promotion input. It covers 935 globally unique traceability units: 46
 requirements, 474 scalar forms, 99 bundle/command forms, 120 direct tile
 operations, 72 system registers, 13 traps, 38 profile hooks, and 73 top-level
-ASL state roots. Composite roots expand to 238 leaf fields so nested bundle,
+ASL state roots. Composite roots expand to 240 leaf fields so nested bundle,
 trap-context, memory-event, system-register, and `TileInfo` fields remain
 visible to review.
 

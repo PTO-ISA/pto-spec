@@ -97,6 +97,8 @@ begin
         _TrapContexts[[ring]].core_state = Zeros{PTO_XLEN};
         _TrapContexts[[ring]].bundle_argument = Zeros{PTO_XLEN};
         _TrapContexts[[ring]].commit_argument = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].return_address = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].bundle_argument_kind = Zeros{3};
         _TrapContexts[[ring]].bundle_active = FALSE;
         _TrapContexts[[ring]].bundle_body_active = FALSE;
         _TrapContexts[[ring]].t_queue = _TQueue;
@@ -441,6 +443,8 @@ begin
     _TrapContexts[[target]].bundle_target = _BundleTarget;
     _TrapContexts[[target]].bundle_fallthrough = _BundleFallthrough;
     _TrapContexts[[target]].bundle_return_target = _BundleReturnTarget;
+    _TrapContexts[[target]].return_address = _ReturnAddress;
+    _TrapContexts[[target]].bundle_argument_kind = _BundleArgumentKind;
     _TrapContexts[[target]].bundle_body_address = _BundleBodyAddress;
     _TrapContexts[[target]].bundle_operation = _BundleOperation;
     _TrapContexts[[target]].bundle_dimensions = _BundleDimensions;
@@ -506,9 +510,10 @@ begin
     _BundleTransfer = PTOv0BundleTransferOf(control[13:11]);
     _BundleCondition = control[14] == '1';
     _BundleTarget = PTOv0ReadContextRegister(target, 0x0f42);
-    _BundleReturnTarget = PTOv0ReadContextRegister(target, 0x0f44);
+    _BundleReturnTarget = _TrapContexts[[target]].bundle_return_target;
     _BundleBodyAddress = recovered_bpc;
     _ReturnAddress = PTOv0ReadContextRegister(target, 0x0f44);
+    _BundleArgumentKind = _TrapContexts[[target]].bundle_argument_kind;
     _BundleFallthrough = _TrapContexts[[target]].bundle_fallthrough;
     _BundleOperation = _TrapContexts[[target]].bundle_operation;
     _BundleDimensions = _TrapContexts[[target]].bundle_dimensions;

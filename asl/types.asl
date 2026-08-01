@@ -641,6 +641,8 @@ type TrapContext of record {
     bundle_target: Word,
     bundle_fallthrough: Word,
     bundle_return_target: Word,
+    return_address: Word,
+    bundle_argument_kind: bits(3),
     bundle_body_address: Word,
     bundle_operation: BundleOperationDescriptor,
     bundle_dimensions: BundleDimensionSnapshot,

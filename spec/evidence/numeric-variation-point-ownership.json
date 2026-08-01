@@ -9396,27 +9396,27 @@
     },
     {
       "path": "spec/profile-hooks.json",
-      "sha256": "f686463805e725891d49c00d598d0ecdb209964ab5a34244469a0fa45367817f"
+      "sha256": "83b7a88ca41647bc5189268d07285cf529deeae26cdb310123a386ec49954242"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "34615282befb735d8bd4dc81df7e8a26c97728ffeba342d93687c3cba4f392d8"
+      "sha256": "e277abc6832c38708f3ea0beed4554b4f1cf8cfb8d629e195478bc00e7786c2e"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "85385ed809b7b09241da60b59f6fadc23c372b2743dc4d2c2f96206a1795c07c"
+      "sha256": "4bdddb35de0738fe55eb3266fa02fdc80ae829cb95ac9079fa3aaa60c66c4baf"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "30f658a893144ba433eb4dea036b60ea6e9426056a3809f90967d16a236a3779"
+      "sha256": "df73be6d0a4d3cb1cfbdcafb20cbc0cb9232b3d72d29148603789d6d935e27c0"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "c347f93ca1209edf6b690114227fa954535df4f892d38ad1a0a6753a7425c6fc"
+      "sha256": "7c13bbec929c6d151f1b57bc8f128c95feb46f0ef82d060ad2978e4695fc8336"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "9daf1f4ef504e951633eb1f6f5bfe91af2880b9731979a009b73bcdd8bebdced"
+      "sha256": "3898a9f3fcb3eb21e3f9d5159b1e2337565a067316128984f14953b1522b4939"
     },
     {
       "path": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
