@@ -139,7 +139,7 @@ their contracts.
 | `S2-T1` | State and faults | Closed | Define access, reset, and behavior classes for all 72 visible system registers. |
 | `S2-T2` | State and faults | Closed | Define complete nonzero-seed reset for every architectural state field and all 16 ACR banks. |
 | `S2-T3` | State and faults | Closed | Define producer, routing, saved context, recovery, and restart envelopes for all 13 traps. |
-| `S2-T4` | State and faults | Closed | Separate the 64-bit MPAR/MSEQ execution mask from eight 32-bit warp predicates; hardwire P0 and define reset, trap, and consumer boundaries. |
+| `S2-T4` | State and faults | Closed | Separate the 64-bit MPAR/MSEQ execution mask from eight 32-bit warp predicates; hardwire P0 and define reset, trap, and consumer boundaries; reconcile the public v0.6 `!pto.mask<G>` source layer as outside 0.57.1 without inferring a physical mapping. |
 | `S2-T5` | State and faults | Closed | Enforce per-tile and aggregate capacity through `TILE_CAPACITY`, including sub-byte storage. |
 | `S2-T6` | State and faults | Closed | Define element-level tile validity, layout rejection, handoff, lifetime, ordering, and aliases. |
 | `S3-T1` | Ordering | Closed | Emit normative PTO-TSO events from every production scalar and tile memory path. |

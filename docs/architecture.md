@@ -57,6 +57,11 @@ address, or state-transition rule.
   bodies. Machine-body entry initializes it to all ones, and B.Z/B.NZ consume
   it while that body is active. Everywhere else B.Z/B.NZ consume the bundle
   commit argument. See ADR 0046.
+- The public PTO v0.6 micro-instruction layer's `!pto.mask<G>` values are a
+  separate source-language surface with 64-, 128-, or 256-bit logical widths
+  and public `pto.p*`/`pto.v*` producers and consumers. They are outside the
+  active 0.57.1 release line and have no accepted mapping to P0-P7, the
+  MPAR/MSEQ mask, or a physical predicate register. See ADR 0051.
 - Access-control state is ACR0..ACR15. PTO v0 resets to ACR0; the exact reset
   and access policy are defined by `docs/profile-contracts.md`.
 - PTO v0 treats ACR0 as the root manager, ACR1 as the system manager, and

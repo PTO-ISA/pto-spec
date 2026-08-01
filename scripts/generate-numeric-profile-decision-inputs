@@ -13,7 +13,12 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
 PUBLIC_REPOSITORY = "https://github.com/hw-native-sys/pto-isa"
+# Numeric implementation evidence remains at its separately audited snapshot.
+# The public predicate/mask reconciliation advances independently because two
+# numeric implementation files changed at the newer public commit and have not
+# been re-audited as part of that version-boundary checkpoint.
 PUBLIC_COMMIT = "712cbe9f23df5d5362be5e8327599f4285317473"
+CURRENT_RECONCILIATION_COMMIT = "1f61a9a28b375e5113761defdc66fd03554b5e0d"
 
 
 def source(
@@ -575,7 +580,10 @@ def generate() -> dict[str, Any]:
         reconciliation["public_repository"] == PUBLIC_REPOSITORY,
         "public repository drift",
     )
-    require(reconciliation["public_commit"] == PUBLIC_COMMIT, "public commit drift")
+    require(
+        reconciliation["public_commit"] == CURRENT_RECONCILIATION_COMMIT,
+        "current public reconciliation commit drift",
+    )
     require(readiness["target"] == "S5-T2", "readiness target drift")
     require(
         comparison["target"] == "S5-T3"

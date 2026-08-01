@@ -4000,8 +4000,10 @@ def main() -> int:
     require(
         applicability_source_evidence["public_repository"]
         == numeric_profile_decisions["public_repository"]
-        and applicability_source_evidence["public_commit"]
+        and applicability_source_evidence["numeric_decision_commit"]
         == numeric_profile_decisions["public_commit"]
+        and applicability_source_evidence["public_reconciliation_commit"]
+        == reconciliation["public_commit"]
         and applicability_source_evidence["profile_identity"] == a2a3_profile_identity
         and a2a3_profile_identity["partition_id"] == "a2a3-target"
         and a2a3_profile_identity["kind"] == "target-numeric-profile"
@@ -7378,7 +7380,9 @@ def main() -> int:
     require(
         set(reconciliation)
         == {
+            "pin_history",
             "policy",
+            "predicate_version_boundary",
             "public_commit",
             "public_layer_sources",
             "public_repository",
@@ -7392,8 +7396,8 @@ def main() -> int:
         },
         "public source reconciliation top-level schema drift",
     )
-    require(reconciliation["schema_version"] == 1, "unsupported reconciliation schema")
-    public_commit = "712cbe9f23df5d5362be5e8327599f4285317473"
+    require(reconciliation["schema_version"] == 2, "unsupported reconciliation schema")
+    public_commit = "1f61a9a28b375e5113761defdc66fd03554b5e0d"
     public_repository = "https://github.com/hw-native-sys/pto-isa"
     require(reconciliation["public_commit"] == public_commit, "public source pin drift")
     require(
@@ -7412,17 +7416,21 @@ def main() -> int:
         "public reconciliation policy statements must be non-empty",
     )
     expected_public_hashes = {
-        "include/pto/common/pto_instr.hpp": "6fbd4bfb068606ee7cd00cb0b98d38e8550a026779d3d723d9a08934400e0e98",
+        "include/pto/common/pto_instr.hpp": "d157d4c2b13c0928feb1ce775ba1fbcf49e4b3b207ee8460986ce4c2a2d57800",
         "docs/isa/reference/source-of-truth.md": "50ffe6f25a9f54f8c3ad63016dba9ccb1025182338fda456107993c7948d849e",
         "docs/isa/introduction/current-isa-scope.md": "df65fc48325f478fbf6e1b7fe1a04f418673ae11e25b6612f506bf64c4da87fe",
         "docs/isa/syntax-and-operands/assembly-model.md": "381c2dfe4b6b0031178a87b0a37de09836c90b73d7f952859fa22d350e8777ba",
         "docs/isa/scalar/shared-arith.md": "f8ed82355f975e1ba7d54f8027b404f2d3be9a1b340b9a3824f967d401d799cf",
         "docs/isa/instruction-families/scalar-and-control-families.md": "24a2919faaf0fcb6a1915ce5847f3cce3e471b7de4bc71ac9c4ae3f40fe28864",
+        "docs/isa/scalar/dma-copy.md": "db3b690f00e822aaf5f034ccb6e47d6c8a8253968c5fccd54b30438d60d05289",
+        "docs/isa/scalar/ops/micro-instruction/README.md": "c5385b975251d83f1b8641d8292dca60b8c4996b340898ab277322c55b7fbe41",
+        "docs/isa/scalar/predicate-generation-and-algebra.md": "81a42a3cc0ed9a72280ba1258a35748a08ecba298d723957a39a64c57456ca83",
+        "docs/isa/scalar/predicate-load-store.md": "0f094521a3dee03093185a01c23e7fd713f02ba2fc4446da2f3c952649ed69ba",
     }
     public_sources = reconciliation["public_sources"]
     require(
-        len(public_sources) == 6,
-        "public source inventory must contain six audited files",
+        len(public_sources) == 10,
+        "public source inventory must contain ten audited files",
     )
     require(
         {row["path"]: row["sha256"] for row in public_sources}
@@ -7433,7 +7441,7 @@ def main() -> int:
     require(len(source_ids) == len(public_sources), "duplicate public source IDs")
     for row in public_sources:
         require(
-            set(row) == {"id", "path", "role", "sha256", "url"},
+            set(row) == {"id", "path", "role", "sha256", "source_class", "url"},
             f"public source schema drift for {row.get('path', '<unknown>')}",
         )
         require(
@@ -7444,6 +7452,23 @@ def main() -> int:
             re.fullmatch(r"[0-9a-f]{64}", row["sha256"]) is not None,
             f"bad public source hash for {row['path']}",
         )
+    expected_public_source_classes = {
+        "public-intrinsic-api": "public-tile-source-api",
+        "public-source-precedence": "public-source-governance",
+        "public-isa-scope": "public-current-scope",
+        "public-assembly-model": "public-source-language",
+        "public-shared-scalar-arith": "public-shared-scalar-source",
+        "public-scalar-control": "public-scalar-control-source",
+        "public-v06-release-marker": "public-v0.6-micro-instruction",
+        "public-v06-micro-profile": "public-v0.6-micro-instruction",
+        "public-v06-predicate-algebra": "public-v0.6-micro-instruction",
+        "public-v06-predicate-memory": "public-v0.6-micro-instruction",
+    }
+    require(
+        {row["id"]: row["source_class"] for row in public_sources}
+        == expected_public_source_classes,
+        "public source class drift",
+    )
     public_symbol_inventory = reconciliation["public_tile_symbol_inventory"]
     require(
         set(public_symbol_inventory)
@@ -7485,6 +7510,12 @@ def main() -> int:
             "public-isa-scope",
             "public-assembly-model",
         ],
+        "public-v0.6-predicate-mask-layer": [
+            "public-v06-release-marker",
+            "public-v06-micro-profile",
+            "public-v06-predicate-algebra",
+            "public-v06-predicate-memory",
+        ],
     }
     require(
         reconciliation["public_layer_sources"] == expected_public_layer_sources,
@@ -7494,6 +7525,111 @@ def main() -> int:
         require(
             ids and set(ids) <= source_ids, f"unknown source ID in public layer {layer}"
         )
+
+    require(
+        reconciliation["pin_history"]
+        == {
+            "previous_reconciliation_commit": "712cbe9f23df5d5362be5e8327599f4285317473",
+            "issue_observation_commit": "8e2f0fa10ddc1e887ac2e102666854247aee9b77",
+            "current_reconciliation_commit": public_commit,
+            "disposition": "current origin/main supersedes the issue observation pin; all current source pages were rehashed at the newer commit",
+        },
+        "public reconciliation pin history drift",
+    )
+    predicate_boundary = reconciliation["predicate_version_boundary"]
+    require(
+        set(predicate_boundary)
+        == {
+            "accepted_mapping",
+            "active_release",
+            "concepts",
+            "current_public_source_release",
+            "disposition",
+            "mapping_rule",
+        }
+        and predicate_boundary["active_release"] == "PTO ISA 0.57.1"
+        and predicate_boundary["current_public_source_release"]
+        == "PTO ISA v0.6 micro-instruction surface"
+        and predicate_boundary["disposition"]
+        == "outside-active-0.57.1-release-line"
+        and predicate_boundary["accepted_mapping"] is None
+        and "No public v0.6 typed mask is mapped" in predicate_boundary["mapping_rule"],
+        "predicate release-line boundary drift",
+    )
+    predicate_concepts = {
+        row["id"]: row for row in predicate_boundary["concepts"]
+    }
+    require(
+        list(predicate_concepts)
+        == [
+            "pto-isa-0571-warp-predicate-registers",
+            "pto-isa-0571-machine-execution-mask",
+            "public-v06-typed-mask-values",
+            "future-encoded-physical-predicate-register-mapping",
+        ]
+        and len(predicate_concepts) == 4,
+        "predicate concept identity or ordering drift",
+    )
+    require(
+        predicate_concepts["pto-isa-0571-warp-predicate-registers"]
+        == {
+            "id": "pto-isa-0571-warp-predicate-registers",
+            "source_class": "active-0.57.1-architectural-state",
+            "representation": "P0-P7",
+            "width_bits": 32,
+            "count": 8,
+            "lifecycle": "P0 hardwired all-ones; P1-P7 reset zero; all trap-preserved",
+            "accepted_producers": [],
+            "accepted_consumers": [],
+            "mapping_status": "closed-no-accepted-0.57.1-instruction-mapping",
+        }
+        and predicate_concepts["pto-isa-0571-machine-execution-mask"]
+        == {
+            "id": "pto-isa-0571-machine-execution-mask",
+            "source_class": "active-0.57.1-architectural-state",
+            "representation": "MPAR/MSEQ execution mask",
+            "width_bits": 64,
+            "count": 1,
+            "lifecycle": "machine-body entry initializes all-ones; trap-preserved",
+            "accepted_producers": ["MPAR/MSEQ body entry"],
+            "accepted_consumers": ["B.Z", "B.NZ"],
+            "mapping_status": "distinct-from-P0-P7",
+        },
+        "active 0.57.1 predicate or execution-mask contract drift",
+    )
+    require(
+        predicate_concepts["public-v06-typed-mask-values"]
+        == {
+            "id": "public-v06-typed-mask-values",
+            "source_class": "public-v0.6-micro-instruction",
+            "representation": "!pto.mask<G>",
+            "width_bits": [64, 128, 256],
+            "count": None,
+            "lifecycle": "first-class typed values generated, combined, loaded, and stored by the public source layer",
+            "accepted_producers": [
+                "pto.pset_*",
+                "pto.pge_*",
+                "pto.plt_*",
+                "pto.p* algebra",
+                "pto.pld*",
+            ],
+            "accepted_consumers": ["pto.v*", "pto.p* algebra", "pto.pst*"],
+            "mapping_status": "outside-active-0.57.1-release-line",
+        }
+        and predicate_concepts["future-encoded-physical-predicate-register-mapping"]
+        == {
+            "id": "future-encoded-physical-predicate-register-mapping",
+            "source_class": "future-architecture-decision",
+            "representation": None,
+            "width_bits": None,
+            "count": None,
+            "lifecycle": None,
+            "accepted_producers": [],
+            "accepted_consumers": [],
+            "mapping_status": "undefined-do-not-infer",
+        },
+        "public v0.6 mask or future physical mapping disposition drift",
+    )
 
     scalar_reconciliation = reconciliation["scalar_forms"]
     require(
@@ -9159,7 +9295,9 @@ def main() -> int:
         and numeric_profile_decisions["public_repository"]
         == reconciliation["public_repository"]
         and numeric_profile_decisions["public_commit"]
-        == reconciliation["public_commit"],
+        == "712cbe9f23df5d5362be5e8327599f4285317473"
+        and reconciliation["public_commit"]
+        == "1f61a9a28b375e5113761defdc66fd03554b5e0d",
         "numeric profile decision-input identity or public source pin drift",
     )
     require(
