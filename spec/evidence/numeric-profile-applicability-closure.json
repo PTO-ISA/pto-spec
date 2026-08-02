@@ -5275,7 +5275,8 @@
   ],
   "source_evidence": {
     "public_repository": "https://github.com/hw-native-sys/pto-isa",
-    "public_commit": "712cbe9f23df5d5362be5e8327599f4285317473",
+    "numeric_decision_commit": "712cbe9f23df5d5362be5e8327599f4285317473",
+    "public_reconciliation_commit": "1f61a9a28b375e5113761defdc66fd03554b5e0d",
     "profile_identity": {
       "partition_id": "a2a3-target",
       "id": "pto-a2a3-numeric-v1",
@@ -5330,8 +5331,9 @@
       "id": "public-intrinsic-api",
       "path": "include/pto/common/pto_instr.hpp",
       "role": "typed-cpp-intrinsic-api",
-      "sha256": "6fbd4bfb068606ee7cd00cb0b98d38e8550a026779d3d723d9a08934400e0e98",
-      "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/common/pto_instr.hpp"
+      "source_class": "public-tile-source-api",
+      "sha256": "d157d4c2b13c0928feb1ce775ba1fbcf49e4b3b207ee8460986ce4c2a2d57800",
+      "url": "https://github.com/hw-native-sys/pto-isa/blob/1f61a9a28b375e5113761defdc66fd03554b5e0d/include/pto/common/pto_instr.hpp"
     },
     "independent_executable_model": {
       "role": "structural corroboration only; no tile payload or numeric result oracle",
@@ -5433,7 +5435,7 @@
     },
     {
       "path": "spec/evidence/public-source-reconciliation.json",
-      "sha256": "f7f5a8ffbaff7f4d932481e74ce9eaa1aac7fb377c8463de997e41d3e17fa7f3"
+      "sha256": "4e7a9aca6688cc529bd0db5baaabc1bd6865b82112d6c5237e1324f8bd3352aa"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",

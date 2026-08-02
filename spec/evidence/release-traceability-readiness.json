@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "91b7fd88f0e1afe3a2220854350245e67ca5a41cc6f94f498f9f2b1c1eb5cc11"
+      "sha256": "49cde0da59108f89fa60898fc7341bedf8c682cc55d49992a6c647414936f7d8"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -47,7 +47,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "34c5b9d20a77c9788c8719569dc3a8ae8c7dbfbc9f74712beb3c0cab2455f74f"
+      "sha256": "8e4684f26e46020fa15f4b4bc5cdf3b63ad2ffe4ff3277244159f6343c9954b0"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -55,11 +55,11 @@
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "3abe1b9b2caafbc709fb170fda48ba9068e99895b880523f8fd85461ec639ad3"
+      "sha256": "d37059c18f7d591fffe3d560beb2c72c8d68254a23af754e74aebfe5e66d37c2"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "33fa8ea3a49fd11909959dcd5cf9b5a2aaeb6dc5a7c84e52036df3ffcf01518e"
+      "sha256": "c84de52e5701d115c321c0ef95fc6654c479a66458ae3d57f31bc82060b478d3"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
@@ -332,8 +332,8 @@
       },
       {
         "id": "PTO-REQ-PREDICATE-001",
-        "status": "implemented-by-pto-v0-profile",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0046-separate-execution-mask-and-warp-predicates.md",
+        "status": "implemented-by-pto-v0-profile-public-v06-boundary-reconciled",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0051-public-v06-predicate-mask-boundary.md",
         "model": [
           "asl/types.asl",
           "asl/state.asl",
@@ -342,9 +342,13 @@
           "asl/profiles/pto-v0.asl",
           "docs/architecture-decisions/0019-predicate-register-contract.md",
           "docs/architecture-decisions/0046-separate-execution-mask-and-warp-predicates.md",
+          "docs/architecture-decisions/0051-public-v06-predicate-mask-boundary.md",
+          "scripts/generate-public-source-reconciliation",
+          "spec/evidence/public-source-reconciliation.json",
           "spec/profile-hooks.json"
         ],
         "tests": [
+          "scripts/check-catalogs",
           "tests/asl/state-tests.asl",
           "tests/asl/bundle-tests.asl",
           "tests/asl/scalar-tests.asl",
@@ -1320,6 +1324,7 @@
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
         "model": [
           "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+          "docs/architecture-decisions/0051-public-v06-predicate-mask-boundary.md",
           "specification.toml",
           "spec/release-manifest.json",
           "spec/catalog/command-forms.json",
@@ -1397,6 +1402,7 @@
           "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
           "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
           "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
+          "docs/architecture-decisions/0051-public-v06-predicate-mask-boundary.md",
           "docs/normative-sources.md",
           "docs/coverage.md",
           "docs/maturity-bringup-plan.md",
@@ -1414,6 +1420,7 @@
           "scripts/generate-numeric-variation-point-ownership",
           "scripts/generate-public-numeric-type-baseline",
           "scripts/generate-public-integer-conversion-contract",
+          "scripts/generate-public-source-reconciliation",
           "scripts/generate-numeric-format-namespace-contract",
           "scripts/generate-numeric-profile-applicability-closure",
           "scripts/generate-numeric-rounding-selector-contract",
@@ -1432,6 +1439,7 @@
           "spec/evidence/numeric-variation-point-ownership.json",
           "spec/evidence/public-numeric-type-baseline.json",
           "spec/evidence/public-integer-conversion-contract.json",
+          "spec/evidence/public-source-reconciliation.json",
           "spec/evidence/numeric-format-namespace-contract.json",
           "spec/evidence/numeric-profile-applicability-closure.json",
           "spec/evidence/numeric-rounding-selector-contract.json",

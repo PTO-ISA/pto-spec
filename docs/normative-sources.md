@@ -116,6 +116,16 @@ PTO has no vector instruction execution surface. Adding vector instructions or
 target-specific behavior requires a new PTO requirement, catalog update, ASL
 state and semantics, executable tests, and profile evidence.
 
+The public-source reconciliation ledger is pinned independently from normative
+PTO semantics. Its current public snapshot is commit
+`1f61a9a28b375e5113761defdc66fd03554b5e0d`. ADR 0051 classifies the public
+v0.6 `!pto.mask<G>` source-language values as outside the active 0.57.1 release
+line: they are not P0-P7, are not the MPAR/MSEQ execution mask, and do not
+establish an encoded physical predicate-register mapping. The numeric
+decision-input ledger intentionally remains on its separately audited older
+snapshot until changed numeric implementation files receive their own review.
+An equal spelling or repository origin does not merge these evidence classes.
+
 ## Evidence policy
 
 Evidence files under `spec/evidence/` support audit and change control. They do

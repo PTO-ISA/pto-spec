@@ -300,7 +300,8 @@ def generate() -> dict[str, Any]:
         "bundle_execution_matrix": bundle_execution_matrix,
         "source_evidence": {
             "public_repository": inputs["public_repository"],
-            "public_commit": inputs["public_commit"],
+            "numeric_decision_commit": inputs["public_commit"],
+            "public_reconciliation_commit": reconciliation["public_commit"],
             "profile_identity": profile_identity,
             "decision_input_sources": required_sources,
             "public_intrinsic_api": input_sources["public-intrinsic-api"],
