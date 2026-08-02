@@ -34,6 +34,9 @@ all 20 domains. PD-03 and PD-04 are accepted; the remaining ten complete decisio
 `spec/evidence/scalar-numeric-flag-contract.json` ledger separately close the
 scalar flag lifecycle and 30/30 producer-owner matrix while leaving exact
 conditions open for 19 profile-owned forms, so PD-06 and S5-T2 remain open.
+The machine-derived closure snapshot is 2 accepted and 10 open decisions,
+0 accepted and 20 open complete domain rules, and 18 selected and 81 open
+variation routes.
 ADRs 0039 and 0047 and the generated
 `spec/evidence/numeric-rounding-selector-contract.json` ledger separately map
 all scalar, fixed-conversion, bundle, public, matrix, stochastic, and
@@ -59,16 +62,17 @@ ADRs 0040 and 0048 and the generated
 `spec/evidence/numeric-format-namespace-contract.json` ledger close the
 structural part of PD-02: five independent code namespaces, all 25
 `TileDataType` raw-carrier identities, every mapped and reserved code, and the
-low-nibble-first packing rule for all four 4-bit types. The shared ASL
+low-nibble-first packing rule for all five packed four-bit types. The shared ASL
 classifier additionally assigns all 25 formats a typed value class, rejects
 four internally constrained encodings, and supplies canonical NaNs for the ten
 NaN-capable formats. Operation-specific propagation, quieting, flags,
 legality, target availability, and vectors remain open. ADR 0043 and
 `spec/evidence/public-numeric-type-baseline.json` then bind all 16 published
-type identities, accept 11 unambiguous catalog bindings, and close the A2/A3
-(11 types) and A5 (16 types) availability baseline. Seven bit-exact format,
-legality, and vector obligations remain; no complete result rule is accepted,
-so PD-02 and `S5-T2` remain open while the M4 status is unchanged.
+type identities to 16 accepted catalog identities and close the A2/A3
+(11 types) and A5 (16 types) availability baseline. Nine catalog types remain
+outside the public inventory, and four legality, vector, parity, and
+review residuals remain; no complete domain rule is accepted, so PD-02 and
+`S5-T2` remain open while the M4 status is unchanged.
 ADR 0044 and
 `spec/evidence/public-integer-conversion-contract.json` close the next bounded
 result checkpoint: all 48 unequal-width ordered pairs among the eight public

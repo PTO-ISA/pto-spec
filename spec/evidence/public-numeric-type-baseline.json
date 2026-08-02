@@ -538,7 +538,7 @@
     },
     {
       "path": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
-      "sha256": "7730954ebe136cd213d99e8b66749135b43fa3f2c223e320fcf4b28bf23c7cd4"
+      "sha256": "fde24632cca5661ea86892802f8a8703ce0a0034cb8d84680f71e73eac73fffc"
     }
   ],
   "summary": {

@@ -39,8 +39,9 @@ silently change the portable result of an accepted tuple. A delegated variation
 must name a target profile or visible mode and provide a finite or
 mathematically testable allowed-result contract. Unknown profiles, modes,
 formats, tuples, and missing delegated rules reject before architectural
-effects. The identity spellings and selection rules are closed; the 12 numeric
-decisions and all 20 domain rules remain open.
+effects. The identity spellings and selection rules are closed; PD-03 is the
+two accepted numeric decisions, while the remaining 10 decisions and all 20
+complete domain rules remain open.
 
 ADR 0038 fixes the shared scalar exception-state envelope independently of
 target arithmetic. `CORE_STATE[36:32]` stores sticky NV/DZ/OF/UF/NX; reset,
@@ -183,14 +184,18 @@ inputs for those lanes. It does not by itself fill an implementation result,
 differential parity, or review-acceptance field.
 
 The generated `numeric-profile-decision-inputs.json` ledger is the first
-dependency. It records 12 open questions covering profile identity, formats,
-rounding, FTZ, special values, flags, conversion overflow, elementary-function
-accuracy, reduction/order, quantization, matrix arithmetic, and bounded
+dependency. It records 12 questions—two accepted and 10 open—covering profile
+identity, formats, rounding, FTZ, special values, flags, conversion overflow,
+elementary-function accuracy, reduction/order, quantization, matrix arithmetic, and bounded
 implementation-defined behavior. Its CPU, A2A3, and A5 observations are
 implementation evidence only. They cannot silently become PTO semantics.
 The generated `numeric-profile-decision-proposals.json` ledger imports the
-accepted identity catalog and records `S5-T2-A1` closed while keeping every
-question acceptance and domain result rule null.
+accepted identity catalog and records `S5-T2-A1` closed. PD-03 has an accepted
+record; the other 11 decisions and all 20 complete domain result rules remain
+open.
+The machine-derived closure snapshot is 2 accepted and 10 open decisions,
+0 accepted and 20 open complete domain rules, and 18 selected and 81 open
+variation routes.
 The generated `scalar-numeric-flag-contract.json` ledger records the accepted
 flag lifecycle and 30/30 producer-owner matrix without closing PD-06.
 The generated `numeric-rounding-selector-contract.json` ledger records the
@@ -218,11 +223,11 @@ and canonical NaNs for ten formats. It does not close PD-02 or PD-05:
 operation-specific exceptional results, flags, legality,
 target-availability, and vectors remain open.
 The generated `public-numeric-type-baseline.json` ledger and ADR 0043 close
-`S5-T2-A5`: all 16 published types are identified, 11 unambiguous catalog
-bindings are accepted, A2/A3 availability is fixed at 11 types, and A5
-availability is fixed at 16. Six catalog names and seven bit-exact format,
-legality, and vector residuals remain open; availability never implies an
-operation result rule.
+`S5-T2-A5`: all 16 published types are identified and bound to 16 accepted
+catalog identities, A2/A3 availability is fixed at 11 types, and A5
+availability is fixed at 16. Nine catalog types remain outside the public
+inventory, and four legality, vector, parity, and review residuals remain open;
+availability never implies a complete domain result rule.
 The generated `public-integer-conversion-contract.json` ledger and ADR 0044
 close `S5-T2-A6`: all 48 unequal-width ordered pairs among the eight public
 integer types have a portable sign-extension, zero-extension, or high-bit
@@ -238,6 +243,6 @@ The executable selector is an accepted negative-rule set, not a complete A2/A3
 profile; an operation absent from that set is not thereby supported.
 The generated `numeric-variation-point-ownership.json` ledger records the
 accepted `S5-T2-A4` discovery and ownership checkpoint. It enumerates 99
-domain/dimension points, proves reachability across all 108 operations and 29
-hooks, and keeps every selected route and result rule null. A missing target
-rule never falls back to `pto-v0` or a backend observation.
+domain/dimension points, proves reachability across all 108 operations and 30
+hooks, and records 18 selected portable rounding routes plus 81 open routes.
+A missing target rule never falls back to `pto-v0` or a backend observation.

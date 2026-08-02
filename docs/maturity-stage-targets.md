@@ -82,7 +82,7 @@ later sections define their complete evidence packages.
 
 | Priority | Target | Accountable owner | Immediate target | Promotion blocker |
 | ---: | --- | --- | --- | --- |
-| 1 | `S5-T2` | PTO numeric conformance maintainers | Accept the profile rules, qualify independent oracles, execute complete vectors, and adjudicate every result across 20 domains, 30 hooks, and 108 operations. | Twelve numeric decisions and 20 domain result rules are not yet accepted; independent oracle, vector, result, and review evidence is incomplete. |
+| 1 | `S5-T2` | PTO numeric conformance maintainers | Accept the profile rules, qualify independent oracles, execute complete vectors, and adjudicate every result across 20 domains, 30 hooks, and 108 operations. | Eleven of 12 numeric decisions and all 20 domain result rules are not yet accepted; independent oracle, vector, result, and review evidence is incomplete. |
 | 2 | `S6-T1` | PTO release maintainers | Close the 11 Stage-5-dependent requirements and 30 numeric hooks, then review the 935-unit traceability ledger at one immutable commit. | Depends on `S5-T2`; immutable-commit claim-hygiene review is absent. |
 | 3 | `S6-T2` | PTO release maintainers | Freeze one signed candidate and reproduce all local, hosted, repository-control, and review gates against it. | Depends on `S5-T2` and `S6-T1`; candidate results and approvals are absent. |
 
@@ -224,6 +224,9 @@ disposition and mapping while importing the four identities accepted in
 `spec/catalog/numeric-profile-identities.json`. `S5-T2-A1` is closed; all 12
 question records are populated, PD-03 and PD-04 are accepted, and the remaining ten
 complete decisions plus all 20 complete domain rules remain open.
+The machine-derived closure snapshot is 2 accepted and 10 open decisions,
+and the complete-decision and complete-domain-rule counts remain 2/12 and
+0/20; 18 selected and 81 open variation routes remain.
 ADR 0038 and `spec/evidence/scalar-numeric-flag-contract.json` additionally
 close flag state/lifecycle and the 30/30 FSU producer-owner matrix. Eleven
 architecture-owned conditions are exact; 19 profile-owned conditions keep
@@ -244,8 +247,9 @@ The decision count is therefore 2/12. The generic selected-route count remains
 ADR 0040 and `spec/evidence/numeric-format-namespace-contract.json` close the
 PD-02 structural checkpoint: five independent code spaces, all 25
 `TileDataType` raw-carrier widths, complete mapped/reserved tables, and
-low-nibble-first packing for FP4, FPL4, S4, and U4. Eight residuals keep exact
-floating formats, exceptional values, operation/type/profile legality, target
+low-nibble-first packing for the five packed four-bit types E2M1X2, E1M2X2,
+HiF4X2, S4X2, and U4X2. Eight residuals keep exact floating formats,
+exceptional values, operation/type/profile legality, target
 availability, and vectors open. PD-02 likewise does not increment the
 S5-T2-A2 decision count.
 ADR 0048 closes the shared PD-02/PD-05 value-class checkpoint. The ASL model
@@ -276,11 +280,10 @@ Eighteen rounding routes are selected; the remaining 81 routes and all generic
 hardware-profile discovery remain open, so PD-12 and S5-T2 remain open.
 ADR 0043 and `spec/evidence/public-numeric-type-baseline.json` close
 `S5-T2-A5`, the PD-02 public identity and target-availability checkpoint. The
-baseline enumerates all 16 published types, accepts 11 unambiguous catalog
-bindings, and fixes availability at 11 types for A2/A3 and 16 for A5. It keeps
-F64, FP8, FPL8, FP4, FPL4, and E8M0 unbound where the public contract is absent
-or ambiguous. Seven bit-exact format, legality, and vector residuals remain;
-accepted result and domain-rule counts remain zero.
+baseline enumerates all 16 published types, accepts 16 catalog bindings, and
+fixes availability at 11 types for A2/A3 and 16 for A5. Nine catalog types
+remain outside the public inventory, and four legality, vector, parity, and
+review residuals remain; accepted complete-domain-rule counts remain zero.
 ADR 0044 and `spec/evidence/public-integer-conversion-contract.json` close
 `S5-T2-A6`, the first bounded PD-07 result checkpoint. Its 48 generated tuples
 cover every ordered unequal-width pair among the eight public integer types.
@@ -307,9 +310,9 @@ operation-key and hook assignment for each lane; CI regenerates it from
 | N2 — scalar conversion | `scalar-fp-to-integer`, `scalar-fp-convert`, `scalar-integer-to-fp` | 8 | 4 | format mapping, signedness, all rounding directions, inexact results, out-of-range behavior, saturation or indefinite results, and exception flags |
 | N3 — tile elementwise | `tile-binary`, `tile-unary`, `tile-axpy`, `tile-prelu`, `tile-compare`, `tile-expand` | 53 | 11 | carrier interpretation, transcendental helpers, comparison ordering, divide/domain errors, multiply-add precision, rounding, saturation, and exceptional values |
 | N4 — tile conversion | `tile-convert`, `cube-convert`, `tile-quantize`, `tile-dequantize` | 4 | 3 | source/destination formats, scale and zero point, rounding, clamping, NaN payloads, overflow, and underflow |
-| N5 — reductions and ordering | `tile-reduction`, `tile-partial`, `tile-order` | 20 | 4 | accumulation width and order, tie-breaking, stability, NaN placement, signed zero, partial-result precision, and ascending/descending behavior |
+| N5 — reductions and ordering | `tile-reduction`, `tile-partial`, `tile-order` | 20 | 5 | accumulation width and order, tie-breaking, stability, NaN placement, signed zero, partial-result precision, and ascending/descending behavior |
 | N6 — matrix arithmetic | `cube-matrix` | 12 | 3 | product precision, accumulation width, bias and MX scaling, rounding, saturation, NaN, infinity, overflow, and underflow |
-| **Total** | **20 domains** | **108** | **29** | **Complete `S5-T1` numeric inventory** |
+| **Total** | **20 domains** | **108** | **30** | **Complete `S5-T1` numeric inventory** |
 
 #### S5-T2 promotion checklist
 
@@ -389,9 +392,10 @@ configuration from being confused with a passing release candidate.
   PD-02 namespace/carrier inventory. It closes structural ownership while
   handing its eight residuals to later PD-02 checkpoints.
 - `spec/evidence/public-numeric-type-baseline.json` is the generated PD-02
-  public identity/availability baseline. It closes 16 public identities, 11
-  catalog bindings, and the two target partitions while retaining seven
-  explicit format, legality, and vector residuals.
+  public identity/availability baseline. It closes 16 public identities, 16
+  catalog bindings, and the two target partitions while retaining nine
+  non-public catalog types and four legality, vector, parity, and review
+  residuals.
 - `spec/evidence/public-integer-conversion-contract.json` is the generated
   PD-07 bounded-result package. It closes three portable rules across 48
   unequal-width public integer `TCVT` tuples while keeping profile support and
@@ -401,7 +405,8 @@ configuration from being confused with a passing release candidate.
   tuples and leaves result semantics open.
 - `spec/evidence/numeric-variation-point-ownership.json` is the generated
   PD-12 discovery and decision-owner package. It closes 99-row ownership
-  coverage while retaining every route, allowed result, and result rule.
+  coverage with 18 selected rounding routes while retaining 81 open routes and
+  every complete domain result rule.
 - `spec/evidence/release-traceability-readiness.json` is the generated S6-T1
   source of truth for exact release inventory, link coverage, state-boundary
   classification, cumulative blockers, and immutable-commit review readiness.
