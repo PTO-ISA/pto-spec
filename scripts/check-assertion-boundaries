@@ -1,0 +1,359 @@
+#!/usr/bin/env python3
+"""Fail closed when normative assertion inventory or boundary witnesses drift."""
+
+from __future__ import annotations
+
+import re
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def fail(message: str) -> None:
+    raise SystemExit(f"error: {message}")
+
+
+def source(path: str) -> str:
+    return (ROOT / path).read_text(encoding="utf-8")
+
+
+def without_comments(body: str) -> str:
+    return "\n".join(line.split("//", 1)[0] for line in body.splitlines())
+
+
+def assertion_count(paths: tuple[str, ...]) -> int:
+    count = 0
+    for path in paths:
+        count += len(re.findall(r"\bassert\b", without_comments(source(path))))
+    return count
+
+
+def named_function_body(body: str, path: str, name: str) -> str:
+    body = without_comments(body)
+    prefix = r"(?:readonly\s+|pure\s+|implementation\s+|impdef\s+)?"
+    starts = list(
+        re.finditer(rf"^{prefix}func\s+{re.escape(name)}\s*\(", body, re.MULTILINE)
+    )
+    if len(starts) != 1:
+        fail(f"expected exactly one {name} function in {path}, found {len(starts)}")
+    start = starts[0].start()
+    following = re.search(rf"^{prefix}func\s+", body[starts[0].end() :], re.MULTILINE)
+    end = len(body) if following is None else starts[0].end() + following.start()
+    return body[start:end]
+
+
+def function_body(path: str, name: str) -> str:
+    return named_function_body(source(path), path, name)
+
+
+def require_once(body: str, pattern: str, label: str) -> re.Match[str]:
+    matches = list(re.finditer(pattern, body, re.MULTILINE | re.DOTALL))
+    if len(matches) != 1:
+        fail(f"expected exactly one {label}, found {len(matches)}")
+    return matches[0]
+
+
+def block_depth_at(body: str, offset: int) -> int:
+    """Return ASL statement-block depth before offset.
+
+    These witnesses deliberately constrain the guarded assertion and effect to
+    the direct function body. An assertion nested under an if/for/case cannot
+    satisfy that contract even when it appears first in the file.
+    """
+
+    depth = 0
+    for token in re.finditer(
+        r"\b(begin|if|for|case|while|repeat|end)\b", body[:offset]
+    ):
+        if token.group(1) == "end":
+            depth -= 1
+            if depth < 0:
+                fail("ASL block-depth parser encountered an unmatched end")
+        else:
+            depth += 1
+    return depth
+
+
+def directly_dominates(body: str, guard_pattern: str, effect_pattern: str) -> bool:
+    guards = list(re.finditer(guard_pattern, body, re.MULTILINE | re.DOTALL))
+    effects = list(re.finditer(effect_pattern, body, re.MULTILINE | re.DOTALL))
+    if len(guards) != 1 or len(effects) != 1:
+        return False
+    guard = guards[0]
+    effect = effects[0]
+    return (
+        guard.start() < effect.start()
+        and block_depth_at(body, guard.start()) == 1
+        and block_depth_at(body, effect.start()) == 1
+    )
+
+
+def status_region(body: str, status: str) -> str:
+    start = re.search(rf"let\s*\({re.escape(status)},\s*-\)\s*=", body)
+    if start is None:
+        return ""
+    following = re.search(r"\blet\s*\([A-Za-z0-9_]+,\s*-\)\s*=", body[start.end() :])
+    end = len(body) if following is None else start.end() + following.start()
+    return body[start.start() : end]
+
+
+def direct_match_in_region(
+    body: str, region: str, pattern: str, expected_depth: int
+) -> bool:
+    region_start = body.find(region)
+    matches = list(re.finditer(pattern, region, re.MULTILINE | re.DOTALL))
+    return (
+        region_start >= 0
+        and len(matches) == 1
+        and block_depth_at(body, region_start + matches[0].start()) == expected_depth
+    )
+
+
+def tile_preservation_valid(tile_source: str) -> bool:
+    try:
+        helper = named_function_body(
+            tile_source, "tests/asl/tile-tests.asl", "AssertTwoByTwoTileEquals"
+        )
+        legality = named_function_body(
+            tile_source, "tests/asl/tile-tests.asl", "TestDecodedTileLegalityFaults"
+        )
+        definedness = named_function_body(
+            tile_source, "tests/asl/tile-tests.asl", "TestTileElementDefinedness"
+        )
+    except SystemExit:
+        return False
+
+    row_loop_pattern = r"for\s+row\s*=\s*0\s+to\s+1\s+do"
+    column_loop_pattern = r"for\s+column\s*=\s*0\s+to\s+1\s+do"
+    element_assertion_pattern = (
+        r"assert\s+ReadTileElement\(index,\s*row,\s*column\)\s*==\s*expected\s*;"
+    )
+    if not all(
+        direct_match_in_region(helper, helper, pattern, depth)
+        for pattern, depth in (
+            (row_loop_pattern, 1),
+            (column_loop_pattern, 2),
+            (element_assertion_pattern, 3),
+        )
+    ):
+        return False
+
+    preservation_specs = (
+        ("undefined_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
+        ("division_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
+        ("reciprocal_zero_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
+        ("reciprocal_sqrt_zero_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
+        ("quantize_zero_scale_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
+        ("scalar_division_zero_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
+        ("row_expanded_division_zero_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
+        ("column_expanded_division_zero_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
+        ("shape_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
+        ("matrix_status", "12", r"Zeros\{PTO_XLEN\}\s*\+\s*0x66"),
+    )
+    for status, destination, expected in preservation_specs:
+        region = status_region(legality, status)
+        pattern = (
+            rf"assert\s+{status}\s*==\s*TileExecution_Rejected\s*;.*?"
+            r"assert\s+_LastFault\s*==\s*Fault_TileLegality\s*;.*?"
+            rf"AssertTwoByTwoTileEquals\({destination},\s*{expected}\)\s*;"
+        )
+        if len(re.findall(pattern, region, re.MULTILINE | re.DOTALL)) != 1:
+            return False
+        call_pattern = rf"AssertTwoByTwoTileEquals\({destination},\s*{expected}\)\s*;"
+        if not direct_match_in_region(legality, region, call_pattern, 1):
+            return False
+    partial_region = status_region(definedness, "partial_status")
+    partial_pattern = (
+        r"assert\s+partial_status\s*==\s*TileExecution_Rejected\s*;.*?"
+        r"assert\s+_LastFault\s*==\s*Fault_TileLegality\s*;.*?"
+        r"AssertTwoByTwoTileEquals\(2,\s*Zeros\{PTO_XLEN\}\s*\+\s*0x5a\)\s*;"
+    )
+    if len(re.findall(partial_pattern, partial_region, re.MULTILINE | re.DOTALL)) != 1:
+        return False
+    partial_call_pattern = (
+        r"AssertTwoByTwoTileEquals\(2,\s*Zeros\{PTO_XLEN\}\s*\+\s*0x5a\)\s*;"
+    )
+    if not direct_match_in_region(definedness, partial_region, partial_call_pattern, 1):
+        return False
+    return True
+
+
+all_asl_files = tuple(
+    str(path.relative_to(ROOT)) for path in sorted((ROOT / "asl").rglob("*.asl"))
+)
+tile_assertion_files = tuple(
+    path
+    for path in all_asl_files
+    if path.startswith("asl/tile/") or path.startswith("asl/bundle/")
+)
+scalar_assertion_files = tuple(
+    path for path in all_asl_files if path not in tile_assertion_files
+)
+
+scalar_count = assertion_count(scalar_assertion_files)
+tile_count = assertion_count(tile_assertion_files)
+if scalar_count != 34:
+    fail(f"scalar/system/concurrency assertion inventory drifted: {scalar_count} != 34")
+if tile_count != 204:
+    fail(f"tile/bundle assertion inventory drifted: {tile_count} != 204")
+
+concurrency_source = source("asl/concurrency.asl")
+for function, label, guard_pattern, effect_pattern in (
+    (
+        "AddMemoryEvent",
+        "event-capacity guard",
+        r"assert\s+_MemoryEventCount\s*<\s*PTO_MODEL_MEMORY_EVENTS\s*;",
+        r"_MemoryEvents\[\[index\]\]\s*=\s*event\s*;",
+    ),
+    (
+        "NextMemoryCoherenceRank",
+        "coherence-rank guard",
+        r"assert\s+next_rank\s*<\s*PTO_MODEL_MEMORY_EVENTS\s*;",
+        r"return\s+next_rank\s+as\s+MemoryCoherenceRank\s*;",
+    ),
+    (
+        "SetMemoryReadFrom",
+        "read-from bounds guard",
+        r"assert\s+read\s*<\s*_MemoryEventCount\s*&&\s*source\s*<\s*_MemoryEventCount\s*;",
+        r"_MemoryEvents\[\[read\]\]\.read_from\s*=\s*source\s*;",
+    ),
+):
+    body = named_function_body(concurrency_source, "asl/concurrency.asl", function)
+    if not directly_dominates(body, guard_pattern, effect_pattern):
+        fail(
+            f"{label} must be a direct function-scope assertion before "
+            f"the guarded effect in {function}"
+        )
+    conditional_guard = re.sub(
+        guard_pattern,
+        lambda match: f"if FALSE then\n        {match.group(0)}\n    end;",
+        body,
+        count=1,
+    )
+    if conditional_guard == body or directly_dominates(
+        conditional_guard, guard_pattern, effect_pattern
+    ):
+        fail(f"conditional-guard negative canary failed open for {function}")
+
+tile_source = source("tests/asl/tile-tests.asl")
+if not tile_preservation_valid(tile_source):
+    fail("decoded 2x2 rejection witnesses must call the pinned full-region helper")
+missing_preservation_call = tile_source.replace(
+    "    AssertTwoByTwoTileEquals(9, Zeros{PTO_XLEN} + 0x5a);",
+    "",
+    1,
+)
+if missing_preservation_call == tile_source or tile_preservation_valid(
+    missing_preservation_call
+):
+    fail("missing full-region helper-call negative canary failed open")
+weakened_helper = tile_source.replace(
+    "            assert ReadTileElement(index, row, column) == expected;",
+    "            assert ReadTileElement(index, 0, 0) == expected;",
+    1,
+)
+if weakened_helper == tile_source or tile_preservation_valid(weakened_helper):
+    fail("weakened full-region helper negative canary failed open")
+unreachable_helper = tile_source.replace(
+    "    for row = 0 to 1 do\n"
+    "        for column = 0 to 1 do\n"
+    "            assert ReadTileElement(index, row, column) == expected;\n"
+    "        end;\n"
+    "    end;",
+    "    if FALSE then\n"
+    "        for row = 0 to 1 do\n"
+    "            for column = 0 to 1 do\n"
+    "                assert ReadTileElement(index, row, column) == expected;\n"
+    "            end;\n"
+    "        end;\n"
+    "    end;",
+    1,
+)
+if unreachable_helper == tile_source or tile_preservation_valid(unreachable_helper):
+    fail("unreachable full-region helper negative canary failed open")
+unreachable_call = tile_source.replace(
+    "    AssertTwoByTwoTileEquals(9, Zeros{PTO_XLEN} + 0x5a);",
+    "    if FALSE then\n"
+    "        AssertTwoByTwoTileEquals(9, Zeros{PTO_XLEN} + 0x5a);\n"
+    "    end;",
+    1,
+)
+if unreachable_call == tile_source or tile_preservation_valid(unreachable_call):
+    fail("unreachable full-region helper-call negative canary failed open")
+
+tile_definedness = function_body(
+    "tests/asl/tile-tests.asl", "TestTileElementDefinedness"
+)
+for status in ("empty_allocation_status", "empty_load_status"):
+    require_once(
+        tile_definedness,
+        rf"assert\s+{status}\s*==\s*TileExecution_Executed\s*;",
+        f"decoded {status} setup",
+    )
+require_once(
+    tile_definedness,
+    r"let\s*\(empty_reduction_status,\s*-\)\s*=\s*ExecuteTileInstruction\(\s*"
+    r"TileDecode_TEPL,\s*'000001000000',\s*empty_reduction\s*\);\s*"
+    r"assert\s+empty_reduction_status\s*==\s*TileExecution_Rejected\s*;\s*"
+    r"assert\s+_LastFault\s*==\s*Fault_TileLegality\s*;",
+    "decoded empty-reduction rejection",
+)
+
+cube_preflight = function_body(
+    "tests/asl/cube-totality-tests.asl", "TestCubeCompositePreflight"
+)
+for status in (
+    "mx_scale_shape_status",
+    "accumulator_logical_type_status",
+    "accumulator_physical_type_status",
+):
+    require_once(
+        cube_preflight,
+        rf"assert\s+{status}\s*==\s*TileExecution_Rejected\s*;\s*"
+        r"assert\s+_LastFault\s*==\s*Fault_TileLegality\s*;\s*"
+        r"assert\s+_Accumulator\.live\s*;",
+        f"decoded {status} rejection",
+    )
+
+verifier = function_body("tests/asl/concurrency-tests.asl", "TestTSOConcurrency")
+for label, pattern in (
+    (
+        "maximum source index",
+        r"assert\s+boundary_source\s*==\s*\(\(PTO_MODEL_MEMORY_EVENTS\s*-\s*2\)\s+as\s+MemoryEventIndex\)\s*;",
+    ),
+    (
+        "maximum coherence rank",
+        r"assert\s+boundary_final_rank\s*==\s*PTO_MODEL_MEMORY_EVENTS\s*-\s*1\s*;",
+    ),
+    (
+        "maximum read index",
+        r"assert\s+boundary_read\s*==\s*\(\(PTO_MODEL_MEMORY_EVENTS\s*-\s*1\)\s+as\s+MemoryEventIndex\)\s*;",
+    ),
+    (
+        "full event count",
+        r"assert\s+_MemoryEventCount\s*==\s*PTO_MODEL_MEMORY_EVENTS\s*;",
+    ),
+    (
+        "maximum read-from update",
+        r"SetMemoryReadFrom\(boundary_read,\s*boundary_source\)\s*;",
+    ),
+    (
+        "read-from postcondition",
+        r"assert\s+_MemoryEvents\[\[boundary_read\]\]\.read_from\s*==\s*boundary_source\s*;",
+    ),
+):
+    require_once(verifier, pattern, label)
+
+require_once(
+    without_comments(source("tests/canary/exec-fail.asl")),
+    r"assert\s+FALSE\s*;",
+    "dynamic assertion-failure canary",
+)
+
+print(
+    "assertion-boundary evidence passed: "
+    f"{scalar_count} scalar/system/concurrency assertions, "
+    f"{tile_count} tile/bundle assertions, three structural dominance "
+    "canaries, and eleven full-region rejection witnesses"
+)

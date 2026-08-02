@@ -5459,7 +5459,7 @@
     },
     {
       "path": "tests/asl/cube-totality-tests.asl",
-      "sha256": "acb25340527f842b898ea9c985a30d0ada5f7ee8eeb2040a4081dcee48b6f3ec"
+      "sha256": "d2eb1af81c7f949225ce9c7bc99e8d00cb4f57549c8fb2d4c1be8d33de47bf53"
     },
     {
       "path": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
