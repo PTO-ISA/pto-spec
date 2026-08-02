@@ -238,7 +238,7 @@
     },
     {
       "path": "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md",
-      "sha256": "2af8db98fd316dced2ec1cd7e4eafccbcef73a3fbbb38956c194f15cc45446d2"
+      "sha256": "6eb4f4b0e71c324f2721e6eb80cd23586987bbda613de36c7058e1ada7e92ca1"
     },
     {
       "path": "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
@@ -254,7 +254,7 @@
     },
     {
       "path": "docs/architecture-decisions/0036-executable-model-comparison-dispositions.md",
-      "sha256": "c5683ee89631cd206089c0953c1bfa9c0a9d87a13dac1cd41b642c05bfa64ff6"
+      "sha256": "6c337c1842260aef48b3ecc61d01ddcc762a93d7d76f89b24fe4bdd04df189c9"
     },
     {
       "path": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
@@ -322,15 +322,15 @@
     },
     {
       "path": "docs/coverage.md",
-      "sha256": "68d3410634c0a3db609bad9a6a251257a961938e0aeb02ff523f1b4fbe382086"
+      "sha256": "6367438b96f7350963733a2e2af27de3757cfe2dcac9e3fe74961e2303069292"
     },
     {
       "path": "docs/maturity-bringup-plan.md",
-      "sha256": "b3fc5020c9b0de2afff6d5bde5f3bec36229ef8bddf323cf38b9875922370623"
+      "sha256": "30b187e958f85a7628abd4ade5483f8940dacaa1981032a76405b8809e57d283"
     },
     {
       "path": "docs/maturity-stage-targets.md",
-      "sha256": "3e6dcfa993118b83a973b9fa2e172ddbea037cf866fd30f209f8547d9c2bab70"
+      "sha256": "978677dcdb4d83deeba6f1181d32b2faf070ef46549e3ba25f0e3267f21e7f82"
     },
     {
       "path": "docs/memory-model.md",
@@ -342,7 +342,7 @@
     },
     {
       "path": "docs/normative-sources.md",
-      "sha256": "a30205872003c7dd3fbdc5efdb73ba38fe7eaf424da0e1e512de9811ec098ca3"
+      "sha256": "38d8d31b4d23115007829d11b22ee865a0e248f0ec762ef435822f1e6c117831"
     },
     {
       "path": "docs/numeric-profile-decision-register.md",
@@ -382,7 +382,7 @@
     },
     {
       "path": "spec/evidence/bundle-command-totality.json",
-      "sha256": "968bc6d62e29d109b9c95bcec47943ec1517bd563098b11d55046b6548aa795d"
+      "sha256": "d7fee94580f0d575028a8fb0c1aafae59d942da3ad8248109539e17452b54286"
     },
     {
       "path": "spec/evidence/cube-totality.json",
@@ -394,7 +394,11 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "4afdd3cced1e8b560a741e4aab989d45b586f14e91051658295b3c8c357b9c14"
+      "sha256": "b22863c494fb013f7027424c9b7799fff0e4c348a3c112759cdb6f1cfb480cbb"
+    },
+    {
+      "path": "spec/evidence/noncomparable-oracle-coverage.json",
+      "sha256": "fdf86a759763ce6432e0f229352fdce27370fa64c003daeb330c661a0150a82c"
     },
     {
       "path": "spec/evidence/numeric-conformance-readiness.json",
@@ -450,11 +454,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "ca98b8fa83b7c0a8b395c0c5ca5a05ccf662839dbf2307814c7cd7838008c435"
+      "sha256": "628750ccf3e1bee3fe47d00f51b4153f38ee59facdf0b5983adffad54626733f"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "a44a113249bfd767db248f8828889f220f06203e0b4dddf7cd87e098a6030235"
+      "sha256": "163c9fe6d188bdec104e1004b00f1b5a827e48abad8f078d75a21ef54e4bdb3f"
     },
     {
       "path": "spec/evidence/scalar-agu-totality.json",
@@ -514,7 +518,7 @@
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "49cde0da59108f89fa60898fc7341bedf8c682cc55d49992a6c647414936f7d8"
+      "sha256": "83c4e7f127ce57882c32b22859a8a0605dd4ecafc431658353a4d8c51b33ccf6"
     },
     {
       "path": "specification.toml",
@@ -539,7 +543,7 @@
     },
     "tile_operations_total": 120
   },
-  "content_sha256": "41421d8e4cc53cfd5b11e81ea3d03a049e937c1669c4799d10129634b9d28dde",
+  "content_sha256": "8c71b5e32ad782289b28f0aa09fa5999c38cba05621ed90a701dbef00e290802",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",

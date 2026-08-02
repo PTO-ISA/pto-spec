@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import math
@@ -15,6 +16,13 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
+
+REVIEWED_NONCOMPARABLE_PROJECTION_SHA256 = (
+    "fd0daccd75a084b8a497aef1e1fd8b0aac3889873c4db2476b0d46e3adcbc160"
+)
+
+BUNDLE_BRIDGE_FIELDS = {"destination0", "source0", "source1"}
+BUNDLE_BRIDGE_FAMILIES = ("TEPL", "TMA", "CUBE")
 
 
 TILE_SEMANTIC_GROUPS = {
@@ -1104,6 +1112,75 @@ def field_shape(
     }
 
 
+def expected_bundle_tile_bridge(operations: list[dict]) -> dict:
+    matrix = []
+    for row in operations:
+        operand_fields = [operand["field"] for operand in row["operands"]]
+        unsupported_fields = sorted(set(operand_fields) - BUNDLE_BRIDGE_FIELDS)
+        representable = not unsupported_fields
+        matrix.append(
+            {
+                "family": row["family"],
+                "selector": (
+                    row["selector"] if "selector" in row else f"0x{row['function']:03x}"
+                ),
+                "operation": row["name"],
+                "operand_fields": operand_fields,
+                "representable": representable,
+                "unsupported_operand_fields": unsupported_fields,
+                "commit_disposition": (
+                    "execute-after-complete-binding"
+                    if representable
+                    else "reject-bundle-control-before-tile-effect"
+                ),
+            }
+        )
+    counts = {
+        family: {
+            "total": sum(row["family"] == family for row in matrix),
+            "representable": sum(
+                row["family"] == family and row["representable"] for row in matrix
+            ),
+            "commit_rejected": sum(
+                row["family"] == family and not row["representable"] for row in matrix
+            ),
+        }
+        for family in BUNDLE_BRIDGE_FAMILIES
+    }
+    return {
+        "bound_operand_fields": sorted(BUNDLE_BRIDGE_FIELDS),
+        "counts": counts,
+        "operation_matrix": matrix,
+    }
+
+
+def validate_bundle_tile_bridge(evidence: dict, operations: list[dict]) -> None:
+    expected = expected_bundle_tile_bridge(operations)
+    require(
+        expected["counts"]
+        == {
+            "TEPL": {"total": 98, "representable": 62, "commit_rejected": 36},
+            "TMA": {"total": 9, "representable": 1, "commit_rejected": 8},
+            "CUBE": {"total": 13, "representable": 4, "commit_rejected": 9},
+        }
+        and sum(row["representable"] for row in expected["counts"].values()) == 67
+        and sum(row["commit_rejected"] for row in expected["counts"].values()) == 53,
+        "derived bundle-to-tile bridge partition drift",
+    )
+    require(
+        evidence.get("bundle_tile_bridge") == expected,
+        "bundle-to-tile bridge evidence does not match the canonical tile operands",
+    )
+
+
+def bundle_tile_bridge_canary_rejects(evidence: dict, operations: list[dict]) -> bool:
+    try:
+        validate_bundle_tile_bridge(evidence, operations)
+    except AssertionError:
+        return True
+    return False
+
+
 def main() -> int:
     scalar = load("spec/catalog/scalar-forms.json")
     command = load("spec/catalog/command-forms.json")
@@ -1149,7 +1226,11 @@ def main() -> int:
     tepl_totality = load("spec/evidence/tepl-totality.json")
     tma_totality = load("spec/evidence/tma-totality.json")
     cube_totality = load("spec/evidence/cube-totality.json")
+    bundle_command_totality = load("spec/evidence/bundle-command-totality.json")
     executable_model_comparison = load("spec/evidence/executable-model-comparison.json")
+    noncomparable_oracle_coverage = load(
+        "spec/evidence/noncomparable-oracle-coverage.json"
+    )
     maturity_closure = load("spec/evidence/maturity-closure.json")
     numeric_readiness = load("spec/evidence/numeric-conformance-readiness.json")
     numeric_contracts = load("spec/evidence/numeric-contracts.json")
@@ -4904,6 +4985,35 @@ def main() -> int:
         == Counter({"TEPL": 98, "TMA": 9, "CUBE": 13}),
         "tile family counts changed",
     )
+    validate_bundle_tile_bridge(bundle_command_totality, operations)
+
+    wrong_aggregate = copy.deepcopy(bundle_command_totality)
+    wrong_aggregate["bundle_tile_bridge"]["counts"]["TEPL"].update(
+        {"representable": 63, "commit_rejected": 35}
+    )
+    wrong_aggregate["bundle_tile_bridge"]["counts"]["CUBE"].update(
+        {"representable": 5, "commit_rejected": 8}
+    )
+
+    paired_row_swap = copy.deepcopy(bundle_command_totality)
+    paired_tepl_rows = paired_row_swap["bundle_tile_bridge"]["operation_matrix"]
+    representable_tepl = next(
+        row
+        for row in paired_tepl_rows
+        if row["family"] == "TEPL" and row["representable"]
+    )
+    rejected_tepl = next(
+        row
+        for row in paired_tepl_rows
+        if row["family"] == "TEPL" and not row["representable"]
+    )
+    representable_tepl["representable"] = False
+    rejected_tepl["representable"] = True
+    require(
+        bundle_tile_bridge_canary_rejects(wrong_aggregate, operations)
+        and bundle_tile_bridge_canary_rejects(paired_row_swap, operations),
+        "bundle-to-tile bridge aggregate or row-membership canary failed open",
+    )
     require(
         len(tile["deleted_names"]) == len(set(tile["deleted_names"])) == 9
         and len(tile["rejected_names"]) == len(set(tile["rejected_names"]))
@@ -5123,6 +5233,244 @@ def main() -> int:
             "tma-and-cube-manifest-boundary",
         },
         "executable-model comparison snapshot, gate, or model-limit drift",
+    )
+    noncomparable_rows = [
+        row for row in comparison_rows if row["classification"] == "non-comparable"
+    ]
+    oracle_rows = noncomparable_oracle_coverage["rows"]
+    oracle_row_keys = {
+        "actual_result_state_sha256",
+        "alternative_evidence_adr",
+        "closure_state",
+        "comparison_classification",
+        "execution",
+        "expected_pto_vector_sha256",
+        "family",
+        "foundation_readiness",
+        "gate_token",
+        "independent_status",
+        "input_manifest_sha256",
+        "limitations",
+        "mnemonic",
+        "numeric_scope",
+        "oracle_coverage",
+        "oracle_identity",
+        "required_obligations",
+        "reviewed_disposition",
+        "sanitized_output_sha256",
+        "snapshot_digest",
+        "stable_id",
+        "supported_obligations",
+        "surface",
+    }
+    expected_noncomparable_projection = {
+        row["stable_id"]: (
+            row["surface"],
+            row["mnemonic"],
+            row.get("family"),
+            row["independent_status"],
+        )
+        for row in noncomparable_rows
+    }
+    oracle_projection = {
+        row["stable_id"]: (
+            row["surface"],
+            row["mnemonic"],
+            row["family"],
+            row["independent_status"],
+        )
+        for row in oracle_rows
+    }
+    oracle_identity_text = "\n".join(sorted(expected_noncomparable_projection)) + "\n"
+    oracle_reviewed_projection = [
+        {
+            "stable_id": row["stable_id"],
+            "surface": row["surface"],
+            "mnemonic": row["mnemonic"],
+            "family": row["family"],
+            "independent_status": row["independent_status"],
+            "foundation_readiness": row["foundation_readiness"],
+        }
+        for row in oracle_rows
+    ]
+    oracle_reviewed_projection.sort(key=lambda row: row["stable_id"])
+    oracle_reviewed_projection_sha256 = hashlib.sha256(
+        json.dumps(
+            oracle_reviewed_projection,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=True,
+        ).encode("utf-8")
+    ).hexdigest()
+    require(
+        set(noncomparable_oracle_coverage)
+        == {
+            "authority",
+            "closure_layers",
+            "oracle_coverage_grades",
+            "publication_contract",
+            "rows",
+            "schema",
+            "scope",
+            "source_comparison",
+            "status",
+            "summary",
+            "target",
+        }
+        and noncomparable_oracle_coverage["schema"]
+        == "pto.noncomparable-oracle-coverage.v1"
+        and noncomparable_oracle_coverage["target"]
+        == "S5-T3-independent-executable-parity"
+        and noncomparable_oracle_coverage["status"] == "foundation-complete-parity-open"
+        and noncomparable_oracle_coverage["oracle_coverage_grades"]
+        == [
+            "none",
+            "source-path-only",
+            "executed-subset",
+            "acceptance-complete",
+            "alternative-evidence",
+        ]
+        and len(oracle_rows) == len(oracle_projection) == 39
+        and oracle_projection == expected_noncomparable_projection
+        and all(
+            set(row) == oracle_row_keys
+            and row["comparison_classification"] == "non-comparable"
+            and row["oracle_coverage"] == "none"
+            and row["oracle_identity"] is None
+            and row["snapshot_digest"] is None
+            and row["gate_token"] is None
+            and row["input_manifest_sha256"] is None
+            and row["expected_pto_vector_sha256"] is None
+            and row["actual_result_state_sha256"] is None
+            and row["sanitized_output_sha256"] is None
+            and row["execution"]
+            == {"exit_code": None, "result": "not-run", "timeout_seconds": None}
+            and row["required_obligations"]
+            and row["supported_obligations"] == []
+            and row["limitations"]
+            and row["reviewed_disposition"] is None
+            and row["alternative_evidence_adr"] is None
+            and row["closure_state"] == "open"
+            for row in oracle_rows
+        )
+        and noncomparable_oracle_coverage["source_comparison"]
+        == {
+            "noncomparable_row_count": 39,
+            "row_count": 693,
+            "reviewed_projection_sha256": REVIEWED_NONCOMPARABLE_PROJECTION_SHA256,
+            "schema": "pto.executable-model-comparison.v1",
+            "stable_identity_sha256": hashlib.sha256(
+                oracle_identity_text.encode("utf-8")
+            ).hexdigest(),
+        }
+        and oracle_reviewed_projection_sha256
+        == REVIEWED_NONCOMPARABLE_PROJECTION_SHA256
+        and noncomparable_oracle_coverage["scope"]
+        == {
+            "direct_tile_family_counts": {"CUBE": 13, "TMA": 9},
+            "row_count": 39,
+            "surface_counts": {"command": 16, "direct-tile": 22, "scalar": 1},
+        }
+        and noncomparable_oracle_coverage["summary"]
+        == {
+            "alternative_evidence_count": 0,
+            "can_claim_independent_executable_parity": False,
+            "independent_executable_parity_count": 0,
+            "oracle_coverage_counts": {"none": 39},
+            "readiness_counts": {
+                "executable-path-absent-fail-closed": 14,
+                "executable-source-path-no-attributable-oracle": 15,
+                "existing-exact-value-test-candidate": 10,
+            },
+        }
+        and noncomparable_oracle_coverage["closure_layers"]
+        == {
+            "independent_disposition_closure": {
+                "matrix_row_count": 693,
+                "noncomparable_row_count": 39,
+                "status": "closed:S5-T3",
+            },
+            "independent_executable_parity": {
+                "closed_row_count": 0,
+                "required_row_count": 39,
+                "status": "open",
+            },
+            "pto_semantic_closure": {
+                "row_count": 39,
+                "status": "closed-by-pto-owned-asl-and-stage-4-evidence",
+            },
+        },
+        "non-comparable oracle coverage membership, schema, or fail-closed state drift",
+    )
+    adr_0032_body = (
+        ROOT
+        / "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+    ).read_text(encoding="utf-8")
+    adr_0036_body = (
+        ROOT
+        / "docs/architecture-decisions/0036-executable-model-comparison-dispositions.md"
+    ).read_text(encoding="utf-8")
+    adr_0032_flat = " ".join(adr_0032_body.split())
+    adr_0036_flat = " ".join(adr_0036_body.split())
+    bridge_counts = bundle_command_totality["bundle_tile_bridge"]["counts"]
+    representable_total = sum(row["representable"] for row in bridge_counts.values())
+    rejected_total = sum(row["commit_rejected"] for row in bridge_counts.values())
+    executed_form_count = sum(
+        row["disposition"] == "executed"
+        for row in bundle_command_totality["form_matrix"]
+    )
+    executed_handlers = {
+        row["semantic_handler"]
+        for row in bundle_command_totality["form_matrix"]
+        if row["disposition"] == "executed"
+    }
+    require(
+        f"{bundle_command_totality['accepted_form_count']} bundle-command forms through {len(bundle_command_totality['handler_counts'])} semantic handlers."
+        in adr_0032_flat
+        and f"The {executed_form_count} executed forms use {len(executed_handlers)} handlers;"
+        in adr_0032_flat
+        and f"Of the 120 direct tile operations, {representable_total} use only those fields; the other {rejected_total} require"
+        in adr_0032_flat
+        and all(
+            f"| {family} | {counts['total']} | {counts['representable']} | {counts['commit_rejected']} |"
+            in adr_0032_flat
+            for family, counts in bridge_counts.items()
+        )
+        and f"| **Total** | **120** | **{representable_total}** | **{rejected_total}** |"
+        in adr_0032_flat
+        and "S5-T3 disposition closure is closed, while independent executable parity remains open at 0/39."
+        in adr_0032_flat
+        and f"The bundle bridge can represent {bridge_counts['TEPL']['representable']} TEPL, {bridge_counts['TMA']['representable']} TMA, and {bridge_counts['CUBE']['representable']} CUBE direct operations;"
+        in adr_0036_flat,
+        "ADR 0032/0036 generated command-handler or bundle-bridge projections drift",
+    )
+    command_comparison_rows = [
+        row for row in comparison_rows if row["surface"] == "command"
+    ]
+    command_status_counts = Counter(
+        row["independent_status"] for row in command_comparison_rows
+    )
+    require(
+        bundle_command_totality["independent_comparison"]["matched_form_ids"]
+        == len(command_comparison_rows)
+        == 99
+        and bundle_command_totality["independent_comparison"]["exact_encoding_matches"]
+        == sum(row["encoding_match"] for row in command_comparison_rows)
+        == 92
+        and bundle_command_totality["independent_comparison"][
+            "accepted_abi_encoding_divergences"
+        ]
+        == sum(
+            row["abi_change_acceptance"] is not None for row in command_comparison_rows
+        )
+        == 7
+        and bundle_command_totality["independent_comparison"]["executable_subset"]
+        == command_status_counts["executable-subset"]
+        == 83
+        and bundle_command_totality["independent_comparison"]["decode_only"]
+        == command_status_counts["decode-only"]
+        == 16,
+        "bundle independent-comparison counts must derive from the current 99-row matrix",
     )
     cube_test_body = (ROOT / "tests/asl/cube-totality-tests.asl").read_text(
         encoding="utf-8"
@@ -8066,6 +8414,16 @@ def main() -> int:
         and targets_by_id["S5-T3"]["gaps"] == []
         and "spec/evidence/executable-model-comparison.json"
         in targets_by_id["S5-T3"]["evidence"]
+        and "spec/evidence/noncomparable-oracle-coverage.json"
+        in targets_by_id["S5-T3"]["evidence"]
+        and "scripts/generate-noncomparable-oracle-coverage"
+        in targets_by_id["S5-T3"]["evidence"]
+        and "noncomparable-oracle-coverage.json" in readme_body
+        and "noncomparable-oracle-coverage.json" in coverage_body
+        and "Independent executable parity is tracked separately and remains 0/39."
+        in maturity_plan_body
+        and "Independent executable parity for the 39 rows is orthogonal and remains 0/39."
+        in maturity_index_body
         and "numeric-conformance-readiness.json" in maturity_index_body
         and "numeric-conformance-readiness.json" in readme_body
         and "numeric-conformance-readiness.json" in coverage_body
@@ -8135,6 +8493,10 @@ def main() -> int:
         and "spec/evidence/executable-model-comparison.json"
         in closure_requirement["model"]
         and "scripts/generate-executable-model-comparison"
+        in closure_requirement["model"]
+        and "spec/evidence/noncomparable-oracle-coverage.json"
+        in closure_requirement["model"]
+        and "scripts/generate-noncomparable-oracle-coverage"
         in closure_requirement["model"]
         and "spec/evidence/numeric-conformance-readiness.json"
         in closure_requirement["model"]

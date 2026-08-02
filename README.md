@@ -100,6 +100,13 @@ intentional rejected-command differences. The clean content-addressed snapshot
 passes its generation, validation, documentation, Sail parser, and Sail
 C-backend gates. This classification closes `S5-T3` without changing the open
 `S5-T2` and Stage 6 claims.
+
+The generated `spec/evidence/noncomparable-oracle-coverage.json` ledger keeps a
+separate independent-executable-parity grade for the 39 non-comparable rows.
+PTO semantic closure and the S5-T3 disposition matrix remain closed, while
+qualified executable parity is currently 0/39 and fails closed on structural-
+only, stale, missing, timed-out, nonzero, or unreviewed evidence.
+
 Release traceability is now generated rather than inferred from prose. The
 `spec/evidence/release-traceability-readiness.json` ledger covers 935 exact
 units: all 46 requirements, accepted forms and operations, system registers,

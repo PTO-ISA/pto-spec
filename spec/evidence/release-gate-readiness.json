@@ -95,7 +95,7 @@
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "73cdaeab81ab42036733d15e5acd799b834b27b36af340b5d4f802ae3d8609ca"
+      "sha256": "cdd51b58f88c557d4ce4ce4b7d537a72889c558ed1aa87f51453d259dbdc7823"
     },
     {
       "path": "scripts/check-publication-hygiene",
@@ -103,7 +103,7 @@
     },
     {
       "path": "scripts/check-repository",
-      "sha256": "7aa7077c5a7ffcee29b5c48605a2d7fec81cb525e09260bace1a07245ee2e60b"
+      "sha256": "295649467e74ed24c13eb110f90f92c4b5ef3715bd8ef0f324f3b90c9fb1e5dc"
     },
     {
       "path": "scripts/check-toolchain",
@@ -139,7 +139,7 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "4afdd3cced1e8b560a741e4aab989d45b586f14e91051658295b3c8c357b9c14"
+      "sha256": "b22863c494fb013f7027424c9b7799fff0e4c348a3c112759cdb6f1cfb480cbb"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
@@ -183,11 +183,11 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "a44a113249bfd767db248f8828889f220f06203e0b4dddf7cd87e098a6030235"
+      "sha256": "163c9fe6d188bdec104e1004b00f1b5a827e48abad8f078d75a21ef54e4bdb3f"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "49cde0da59108f89fa60898fc7341bedf8c682cc55d49992a6c647414936f7d8"
+      "sha256": "83c4e7f127ce57882c32b22859a8a0605dd4ecafc431658353a4d8c51b33ccf6"
     },
     {
       "path": "spec/catalog/numeric-profile-applicability.json",

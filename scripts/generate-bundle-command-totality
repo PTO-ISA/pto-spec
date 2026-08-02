@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 COMMAND_CATALOG = ROOT / "spec/catalog/command-forms.json"
 TILE_CATALOG = ROOT / "spec/catalog/tile-operations.json"
 DEFAULT_OUTPUT = ROOT / "spec/evidence/bundle-command-totality.json"
+EXECUTABLE_COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
 
 UNSUPPORTED_HANDLERS = {
     "SaveExecutionContext",
@@ -62,6 +63,11 @@ def command_rejected(row: dict) -> bool:
 def build_evidence() -> dict:
     command_rows = load_json(COMMAND_CATALOG)["forms"]
     tile_rows = load_json(TILE_CATALOG)["operations"]
+    comparison_rows = [
+        row
+        for row in load_json(EXECUTABLE_COMPARISON)["rows"]
+        if row["surface"] == "command"
+    ]
 
     form_matrix = []
     for index, row in enumerate(command_rows):
@@ -131,6 +137,25 @@ def build_evidence() -> dict:
         }
         for family in ("TEPL", "TMA", "CUBE")
     }
+    comparison_status_counts = Counter(
+        row["independent_status"] for row in comparison_rows
+    )
+    exact_encoding_matches = sum(row["encoding_match"] for row in comparison_rows)
+    accepted_abi_encoding_divergences = sum(
+        row["abi_change_acceptance"] is not None for row in comparison_rows
+    )
+    if len(comparison_rows) != len(command_rows) or {
+        row["stable_id"] for row in comparison_rows
+    } != {row["form_id"] for row in command_rows}:
+        raise ValueError(
+            "command comparison must cover every canonical command form exactly once"
+        )
+    if comparison_status_counts != Counter(
+        {"executable-subset": 83, "decode-only": 16}
+    ):
+        raise ValueError(
+            f"unexpected independent command status counts: {comparison_status_counts}"
+        )
 
     return {
         "schema_version": 1,
@@ -168,11 +193,11 @@ def build_evidence() -> dict:
         "independent_comparison": {
             "source": "content-addressed independent executable ISA snapshot",
             "aggregate_sha256": "1f8862ef90ee72d0e917398b2d96b2799f541f2e7198c103d9fc47af998a54ec",
-            "matched_form_ids": 99,
-            "exact_encoding_matches": 92,
-            "accepted_abi_encoding_divergences": 7,
-            "executable_subset": 85,
-            "decode_only": 14,
+            "matched_form_ids": len(comparison_rows),
+            "exact_encoding_matches": exact_encoding_matches,
+            "accepted_abi_encoding_divergences": accepted_abi_encoding_divergences,
+            "executable_subset": comparison_status_counts["executable-subset"],
+            "decode_only": comparison_status_counts["decode-only"],
             "authority": "non-normative structural comparison only",
             "limitation": "The independent snapshot predates seven accepted PTO 0.57.1 command encoding changes and stages bundle payload execution, so it neither matches those masks nor validates PTO tile payload effects; ADR 0045, the PTO catalogs, and PTO-owned ASL evidence remain authoritative.",
         },

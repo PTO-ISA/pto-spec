@@ -3452,8 +3452,8 @@
     "matched_form_ids": 99,
     "exact_encoding_matches": 92,
     "accepted_abi_encoding_divergences": 7,
-    "executable_subset": 85,
-    "decode_only": 14,
+    "executable_subset": 83,
+    "decode_only": 16,
     "authority": "non-normative structural comparison only",
     "limitation": "The independent snapshot predates seven accepted PTO 0.57.1 command encoding changes and stages bundle payload execution, so it neither matches those masks nor validates PTO tile payload effects; ADR 0045, the PTO catalogs, and PTO-owned ASL evidence remain authoritative."
   },
