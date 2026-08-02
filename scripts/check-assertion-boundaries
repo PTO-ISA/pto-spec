@@ -98,6 +98,18 @@ def status_region(body: str, status: str) -> str:
     return body[start.start() : end]
 
 
+def direct_match_in_region(
+    body: str, region: str, pattern: str, expected_depth: int
+) -> bool:
+    region_start = body.find(region)
+    matches = list(re.finditer(pattern, region, re.MULTILINE | re.DOTALL))
+    return (
+        region_start >= 0
+        and len(matches) == 1
+        and block_depth_at(body, region_start + matches[0].start()) == expected_depth
+    )
+
+
 def tile_preservation_valid(tile_source: str) -> bool:
     try:
         helper = named_function_body(
@@ -112,13 +124,19 @@ def tile_preservation_valid(tile_source: str) -> bool:
     except SystemExit:
         return False
 
-    helper_pattern = (
-        r"for\s+row\s*=\s*0\s+to\s+1\s+do\s*"
-        r"for\s+column\s*=\s*0\s+to\s+1\s+do\s*"
-        r"assert\s+ReadTileElement\(index,\s*row,\s*column\)\s*==\s*expected\s*;\s*"
-        r"end\s*;\s*end\s*;"
+    row_loop_pattern = r"for\s+row\s*=\s*0\s+to\s+1\s+do"
+    column_loop_pattern = r"for\s+column\s*=\s*0\s+to\s+1\s+do"
+    element_assertion_pattern = (
+        r"assert\s+ReadTileElement\(index,\s*row,\s*column\)\s*==\s*expected\s*;"
     )
-    if len(re.findall(helper_pattern, helper, re.MULTILINE | re.DOTALL)) != 1:
+    if not all(
+        direct_match_in_region(helper, helper, pattern, depth)
+        for pattern, depth in (
+            (row_loop_pattern, 1),
+            (column_loop_pattern, 2),
+            (element_assertion_pattern, 3),
+        )
+    ):
         return False
 
     preservation_specs = (
@@ -142,6 +160,9 @@ def tile_preservation_valid(tile_source: str) -> bool:
         )
         if len(re.findall(pattern, region, re.MULTILINE | re.DOTALL)) != 1:
             return False
+        call_pattern = rf"AssertTwoByTwoTileEquals\({destination},\s*{expected}\)\s*;"
+        if not direct_match_in_region(legality, region, call_pattern, 1):
+            return False
     partial_region = status_region(definedness, "partial_status")
     partial_pattern = (
         r"assert\s+partial_status\s*==\s*TileExecution_Rejected\s*;.*?"
@@ -149,6 +170,11 @@ def tile_preservation_valid(tile_source: str) -> bool:
         r"AssertTwoByTwoTileEquals\(2,\s*Zeros\{PTO_XLEN\}\s*\+\s*0x5a\)\s*;"
     )
     if len(re.findall(partial_pattern, partial_region, re.MULTILINE | re.DOTALL)) != 1:
+        return False
+    partial_call_pattern = (
+        r"AssertTwoByTwoTileEquals\(2,\s*Zeros\{PTO_XLEN\}\s*\+\s*0x5a\)\s*;"
+    )
+    if not direct_match_in_region(definedness, partial_region, partial_call_pattern, 1):
         return False
     return True
 
@@ -229,6 +255,32 @@ weakened_helper = tile_source.replace(
 )
 if weakened_helper == tile_source or tile_preservation_valid(weakened_helper):
     fail("weakened full-region helper negative canary failed open")
+unreachable_helper = tile_source.replace(
+    "    for row = 0 to 1 do\n"
+    "        for column = 0 to 1 do\n"
+    "            assert ReadTileElement(index, row, column) == expected;\n"
+    "        end;\n"
+    "    end;",
+    "    if FALSE then\n"
+    "        for row = 0 to 1 do\n"
+    "            for column = 0 to 1 do\n"
+    "                assert ReadTileElement(index, row, column) == expected;\n"
+    "            end;\n"
+    "        end;\n"
+    "    end;",
+    1,
+)
+if unreachable_helper == tile_source or tile_preservation_valid(unreachable_helper):
+    fail("unreachable full-region helper negative canary failed open")
+unreachable_call = tile_source.replace(
+    "    AssertTwoByTwoTileEquals(9, Zeros{PTO_XLEN} + 0x5a);",
+    "    if FALSE then\n"
+    "        AssertTwoByTwoTileEquals(9, Zeros{PTO_XLEN} + 0x5a);\n"
+    "    end;",
+    1,
+)
+if unreachable_call == tile_source or tile_preservation_valid(unreachable_call):
+    fail("unreachable full-region helper-call negative canary failed open")
 
 tile_definedness = function_body(
     "tests/asl/tile-tests.asl", "TestTileElementDefinedness"
