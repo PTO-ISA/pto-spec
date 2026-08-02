@@ -103,7 +103,7 @@
     },
     {
       "path": "scripts/check-repository",
-      "sha256": "295649467e74ed24c13eb110f90f92c4b5ef3715bd8ef0f324f3b90c9fb1e5dc"
+      "sha256": "4479ee8c76738fde0390df3620f6585d3b2c3e3c49c85c18316ee5bd7fb1d20f"
     },
     {
       "path": "scripts/check-toolchain",
@@ -143,7 +143,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "8e4684f26e46020fa15f4b4bc5cdf3b63ad2ffe4ff3277244159f6343c9954b0"
+      "sha256": "208d9bc1b356a1d2cf1a13c4ccc294a07852260030211ee23080bae1ccb287e0"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -151,11 +151,11 @@
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "d37059c18f7d591fffe3d560beb2c72c8d68254a23af754e74aebfe5e66d37c2"
+      "sha256": "1360be3eb821d421a1d73610b757ba09c30e7fea28db948dd013b5a760610468"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "c84de52e5701d115c321c0ef95fc6654c479a66458ae3d57f31bc82060b478d3"
+      "sha256": "bb7b7d015b786a8a1ba5c1fe8b4d661c67980d811b00155b6a6efd33e39988c4"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
@@ -163,7 +163,7 @@
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "74c5b70c75acff6100934e343fa56fe1b42cbab4dfa76416105df25ba174053a"
+      "sha256": "af58f7e35d042339ff6002fc484b2eb89ab535bf65fadf5c06bb6873b0b364c6"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
@@ -183,7 +183,7 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "163c9fe6d188bdec104e1004b00f1b5a827e48abad8f078d75a21ef54e4bdb3f"
+      "sha256": "c698af432094da05a85f9947b1e3ea1258d3a16dd3c097dbfd3296b090b0c37c"
     },
     {
       "path": "spec/requirements.json",

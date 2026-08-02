@@ -9412,11 +9412,11 @@
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "74c5b70c75acff6100934e343fa56fe1b42cbab4dfa76416105df25ba174053a"
+      "sha256": "af58f7e35d042339ff6002fc484b2eb89ab535bf65fadf5c06bb6873b0b364c6"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "d37059c18f7d591fffe3d560beb2c72c8d68254a23af754e74aebfe5e66d37c2"
+      "sha256": "1360be3eb821d421a1d73610b757ba09c30e7fea28db948dd013b5a760610468"
     },
     {
       "path": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",

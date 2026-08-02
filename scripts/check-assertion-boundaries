@@ -29,8 +29,8 @@ def assertion_count(paths: tuple[str, ...]) -> int:
     return count
 
 
-def function_body(path: str, name: str) -> str:
-    body = without_comments(source(path))
+def named_function_body(body: str, path: str, name: str) -> str:
+    body = without_comments(body)
     prefix = r"(?:readonly\s+|pure\s+|implementation\s+|impdef\s+)?"
     starts = list(
         re.finditer(rf"^{prefix}func\s+{re.escape(name)}\s*\(", body, re.MULTILINE)
@@ -43,11 +43,114 @@ def function_body(path: str, name: str) -> str:
     return body[start:end]
 
 
+def function_body(path: str, name: str) -> str:
+    return named_function_body(source(path), path, name)
+
+
 def require_once(body: str, pattern: str, label: str) -> re.Match[str]:
     matches = list(re.finditer(pattern, body, re.MULTILINE | re.DOTALL))
     if len(matches) != 1:
         fail(f"expected exactly one {label}, found {len(matches)}")
     return matches[0]
+
+
+def block_depth_at(body: str, offset: int) -> int:
+    """Return ASL statement-block depth before offset.
+
+    These witnesses deliberately constrain the guarded assertion and effect to
+    the direct function body. An assertion nested under an if/for/case cannot
+    satisfy that contract even when it appears first in the file.
+    """
+
+    depth = 0
+    for token in re.finditer(
+        r"\b(begin|if|for|case|while|repeat|end)\b", body[:offset]
+    ):
+        if token.group(1) == "end":
+            depth -= 1
+            if depth < 0:
+                fail("ASL block-depth parser encountered an unmatched end")
+        else:
+            depth += 1
+    return depth
+
+
+def directly_dominates(body: str, guard_pattern: str, effect_pattern: str) -> bool:
+    guards = list(re.finditer(guard_pattern, body, re.MULTILINE | re.DOTALL))
+    effects = list(re.finditer(effect_pattern, body, re.MULTILINE | re.DOTALL))
+    if len(guards) != 1 or len(effects) != 1:
+        return False
+    guard = guards[0]
+    effect = effects[0]
+    return (
+        guard.start() < effect.start()
+        and block_depth_at(body, guard.start()) == 1
+        and block_depth_at(body, effect.start()) == 1
+    )
+
+
+def status_region(body: str, status: str) -> str:
+    start = re.search(rf"let\s*\({re.escape(status)},\s*-\)\s*=", body)
+    if start is None:
+        return ""
+    following = re.search(r"\blet\s*\([A-Za-z0-9_]+,\s*-\)\s*=", body[start.end() :])
+    end = len(body) if following is None else start.end() + following.start()
+    return body[start.start() : end]
+
+
+def tile_preservation_valid(tile_source: str) -> bool:
+    try:
+        helper = named_function_body(
+            tile_source, "tests/asl/tile-tests.asl", "AssertTwoByTwoTileEquals"
+        )
+        legality = named_function_body(
+            tile_source, "tests/asl/tile-tests.asl", "TestDecodedTileLegalityFaults"
+        )
+        definedness = named_function_body(
+            tile_source, "tests/asl/tile-tests.asl", "TestTileElementDefinedness"
+        )
+    except SystemExit:
+        return False
+
+    helper_pattern = (
+        r"for\s+row\s*=\s*0\s+to\s+1\s+do\s*"
+        r"for\s+column\s*=\s*0\s+to\s+1\s+do\s*"
+        r"assert\s+ReadTileElement\(index,\s*row,\s*column\)\s*==\s*expected\s*;\s*"
+        r"end\s*;\s*end\s*;"
+    )
+    if len(re.findall(helper_pattern, helper, re.MULTILINE | re.DOTALL)) != 1:
+        return False
+
+    preservation_specs = (
+        ("undefined_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
+        ("division_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
+        ("reciprocal_zero_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
+        ("reciprocal_sqrt_zero_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
+        ("quantize_zero_scale_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
+        ("scalar_division_zero_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
+        ("row_expanded_division_zero_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
+        ("column_expanded_division_zero_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
+        ("shape_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
+        ("matrix_status", "12", r"Zeros\{PTO_XLEN\}\s*\+\s*0x66"),
+    )
+    for status, destination, expected in preservation_specs:
+        region = status_region(legality, status)
+        pattern = (
+            rf"assert\s+{status}\s*==\s*TileExecution_Rejected\s*;.*?"
+            r"assert\s+_LastFault\s*==\s*Fault_TileLegality\s*;.*?"
+            rf"AssertTwoByTwoTileEquals\({destination},\s*{expected}\)\s*;"
+        )
+        if len(re.findall(pattern, region, re.MULTILINE | re.DOTALL)) != 1:
+            return False
+    partial_region = status_region(definedness, "partial_status")
+    partial_pattern = (
+        r"assert\s+partial_status\s*==\s*TileExecution_Rejected\s*;.*?"
+        r"assert\s+_LastFault\s*==\s*Fault_TileLegality\s*;.*?"
+        r"AssertTwoByTwoTileEquals\(2,\s*Zeros\{PTO_XLEN\}\s*\+\s*0x5a\)\s*;"
+    )
+    if len(re.findall(partial_pattern, partial_region, re.MULTILINE | re.DOTALL)) != 1:
+        return False
+    return True
 
 
 all_asl_files = tuple(
@@ -64,11 +167,12 @@ scalar_assertion_files = tuple(
 
 scalar_count = assertion_count(scalar_assertion_files)
 tile_count = assertion_count(tile_assertion_files)
-if scalar_count != 33:
-    fail(f"scalar/system/concurrency assertion inventory drifted: {scalar_count} != 33")
+if scalar_count != 34:
+    fail(f"scalar/system/concurrency assertion inventory drifted: {scalar_count} != 34")
 if tile_count != 204:
     fail(f"tile/bundle assertion inventory drifted: {tile_count} != 204")
 
+concurrency_source = source("asl/concurrency.asl")
 for function, label, guard_pattern, effect_pattern in (
     (
         "AddMemoryEvent",
@@ -89,33 +193,46 @@ for function, label, guard_pattern, effect_pattern in (
         r"_MemoryEvents\[\[read\]\]\.read_from\s*=\s*source\s*;",
     ),
 ):
-    body = function_body("asl/concurrency.asl", function)
-    guard = require_once(body, guard_pattern, f"{label} in {function}")
-    effect = require_once(body, effect_pattern, f"guarded effect in {function}")
-    if guard.start() >= effect.start():
-        fail(f"{label} no longer dominates the guarded effect in {function}")
-
-tile_legality = function_body("tests/asl/tile-tests.asl", "TestDecodedTileLegalityFaults")
-for status, selector in (
-    ("reciprocal_zero_status", "000000010100"),
-    ("reciprocal_sqrt_zero_status", "000000010110"),
-    ("quantize_zero_scale_status", "000001101010"),
-    ("scalar_division_zero_status", "000000100011"),
-    ("row_expanded_division_zero_status", "000001001000"),
-    ("column_expanded_division_zero_status", "000001011000"),
-):
-    require_once(
-        tile_legality,
-        rf"let\s*\({status},\s*-\)\s*=\s*ExecuteTileInstruction\(\s*"
-        rf"TileDecode_TEPL,\s*'{selector}',.*?\);\s*"
-        rf"assert\s+{status}\s*==\s*TileExecution_Rejected\s*;\s*"
-        r"assert\s+_LastFault\s*==\s*Fault_TileLegality\s*;\s*"
-        r"assert\s+ReadTileElement\(9,\s*[01],\s*[01]\)\s*==\s*"
-        r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a\s*;",
-        f"decoded {status} rejection and preservation witness",
+    body = named_function_body(concurrency_source, "asl/concurrency.asl", function)
+    if not directly_dominates(body, guard_pattern, effect_pattern):
+        fail(
+            f"{label} must be a direct function-scope assertion before "
+            f"the guarded effect in {function}"
+        )
+    conditional_guard = re.sub(
+        guard_pattern,
+        lambda match: f"if FALSE then\n        {match.group(0)}\n    end;",
+        body,
+        count=1,
     )
+    if conditional_guard == body or directly_dominates(
+        conditional_guard, guard_pattern, effect_pattern
+    ):
+        fail(f"conditional-guard negative canary failed open for {function}")
 
-tile_definedness = function_body("tests/asl/tile-tests.asl", "TestTileElementDefinedness")
+tile_source = source("tests/asl/tile-tests.asl")
+if not tile_preservation_valid(tile_source):
+    fail("decoded 2x2 rejection witnesses must call the pinned full-region helper")
+missing_preservation_call = tile_source.replace(
+    "    AssertTwoByTwoTileEquals(9, Zeros{PTO_XLEN} + 0x5a);",
+    "",
+    1,
+)
+if missing_preservation_call == tile_source or tile_preservation_valid(
+    missing_preservation_call
+):
+    fail("missing full-region helper-call negative canary failed open")
+weakened_helper = tile_source.replace(
+    "            assert ReadTileElement(index, row, column) == expected;",
+    "            assert ReadTileElement(index, 0, 0) == expected;",
+    1,
+)
+if weakened_helper == tile_source or tile_preservation_valid(weakened_helper):
+    fail("weakened full-region helper negative canary failed open")
+
+tile_definedness = function_body(
+    "tests/asl/tile-tests.asl", "TestTileElementDefinedness"
+)
 for status in ("empty_allocation_status", "empty_load_status"):
     require_once(
         tile_definedness,
@@ -131,7 +248,9 @@ require_once(
     "decoded empty-reduction rejection",
 )
 
-cube_preflight = function_body("tests/asl/cube-totality-tests.asl", "TestCubeCompositePreflight")
+cube_preflight = function_body(
+    "tests/asl/cube-totality-tests.asl", "TestCubeCompositePreflight"
+)
 for status in (
     "mx_scale_shape_status",
     "accumulator_logical_type_status",
@@ -183,5 +302,6 @@ require_once(
 print(
     "assertion-boundary evidence passed: "
     f"{scalar_count} scalar/system/concurrency assertions, "
-    f"{tile_count} tile/bundle assertions, and 13 pinned boundary witnesses"
+    f"{tile_count} tile/bundle assertions, three structural dominance "
+    "canaries, and eleven full-region rejection witnesses"
 )
