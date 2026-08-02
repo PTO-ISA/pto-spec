@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import math
@@ -19,6 +20,9 @@ ROOT = Path(__file__).resolve().parent.parent
 REVIEWED_NONCOMPARABLE_PROJECTION_SHA256 = (
     "fd0daccd75a084b8a497aef1e1fd8b0aac3889873c4db2476b0d46e3adcbc160"
 )
+
+BUNDLE_BRIDGE_FIELDS = {"destination0", "source0", "source1"}
+BUNDLE_BRIDGE_FAMILIES = ("TEPL", "TMA", "CUBE")
 
 
 TILE_SEMANTIC_GROUPS = {
@@ -1106,6 +1110,75 @@ def field_shape(
         )
         for field in row["fields"]
     }
+
+
+def expected_bundle_tile_bridge(operations: list[dict]) -> dict:
+    matrix = []
+    for row in operations:
+        operand_fields = [operand["field"] for operand in row["operands"]]
+        unsupported_fields = sorted(set(operand_fields) - BUNDLE_BRIDGE_FIELDS)
+        representable = not unsupported_fields
+        matrix.append(
+            {
+                "family": row["family"],
+                "selector": (
+                    row["selector"] if "selector" in row else f"0x{row['function']:03x}"
+                ),
+                "operation": row["name"],
+                "operand_fields": operand_fields,
+                "representable": representable,
+                "unsupported_operand_fields": unsupported_fields,
+                "commit_disposition": (
+                    "execute-after-complete-binding"
+                    if representable
+                    else "reject-bundle-control-before-tile-effect"
+                ),
+            }
+        )
+    counts = {
+        family: {
+            "total": sum(row["family"] == family for row in matrix),
+            "representable": sum(
+                row["family"] == family and row["representable"] for row in matrix
+            ),
+            "commit_rejected": sum(
+                row["family"] == family and not row["representable"] for row in matrix
+            ),
+        }
+        for family in BUNDLE_BRIDGE_FAMILIES
+    }
+    return {
+        "bound_operand_fields": sorted(BUNDLE_BRIDGE_FIELDS),
+        "counts": counts,
+        "operation_matrix": matrix,
+    }
+
+
+def validate_bundle_tile_bridge(evidence: dict, operations: list[dict]) -> None:
+    expected = expected_bundle_tile_bridge(operations)
+    require(
+        expected["counts"]
+        == {
+            "TEPL": {"total": 98, "representable": 62, "commit_rejected": 36},
+            "TMA": {"total": 9, "representable": 1, "commit_rejected": 8},
+            "CUBE": {"total": 13, "representable": 4, "commit_rejected": 9},
+        }
+        and sum(row["representable"] for row in expected["counts"].values()) == 67
+        and sum(row["commit_rejected"] for row in expected["counts"].values()) == 53,
+        "derived bundle-to-tile bridge partition drift",
+    )
+    require(
+        evidence.get("bundle_tile_bridge") == expected,
+        "bundle-to-tile bridge evidence does not match the canonical tile operands",
+    )
+
+
+def bundle_tile_bridge_canary_rejects(evidence: dict, operations: list[dict]) -> bool:
+    try:
+        validate_bundle_tile_bridge(evidence, operations)
+    except AssertionError:
+        return True
+    return False
 
 
 def main() -> int:
@@ -4911,6 +4984,35 @@ def main() -> int:
         Counter(row["family"] for row in operations)
         == Counter({"TEPL": 98, "TMA": 9, "CUBE": 13}),
         "tile family counts changed",
+    )
+    validate_bundle_tile_bridge(bundle_command_totality, operations)
+
+    wrong_aggregate = copy.deepcopy(bundle_command_totality)
+    wrong_aggregate["bundle_tile_bridge"]["counts"]["TEPL"].update(
+        {"representable": 63, "commit_rejected": 35}
+    )
+    wrong_aggregate["bundle_tile_bridge"]["counts"]["CUBE"].update(
+        {"representable": 5, "commit_rejected": 8}
+    )
+
+    paired_row_swap = copy.deepcopy(bundle_command_totality)
+    paired_tepl_rows = paired_row_swap["bundle_tile_bridge"]["operation_matrix"]
+    representable_tepl = next(
+        row
+        for row in paired_tepl_rows
+        if row["family"] == "TEPL" and row["representable"]
+    )
+    rejected_tepl = next(
+        row
+        for row in paired_tepl_rows
+        if row["family"] == "TEPL" and not row["representable"]
+    )
+    representable_tepl["representable"] = False
+    rejected_tepl["representable"] = True
+    require(
+        bundle_tile_bridge_canary_rejects(wrong_aggregate, operations)
+        and bundle_tile_bridge_canary_rejects(paired_row_swap, operations),
+        "bundle-to-tile bridge aggregate or row-membership canary failed open",
     )
     require(
         len(tile["deleted_names"]) == len(set(tile["deleted_names"])) == 9

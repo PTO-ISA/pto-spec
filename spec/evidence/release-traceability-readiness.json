@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "49cde0da59108f89fa60898fc7341bedf8c682cc55d49992a6c647414936f7d8"
+      "sha256": "83c4e7f127ce57882c32b22859a8a0605dd4ecafc431658353a4d8c51b33ccf6"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -43,7 +43,7 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "4afdd3cced1e8b560a741e4aab989d45b586f14e91051658295b3c8c357b9c14"
+      "sha256": "b22863c494fb013f7027424c9b7799fff0e4c348a3c112759cdb6f1cfb480cbb"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
@@ -91,7 +91,7 @@
     },
     {
       "path": "spec/evidence/bundle-command-totality.json",
-      "sha256": "968bc6d62e29d109b9c95bcec47943ec1517bd563098b11d55046b6548aa795d"
+      "sha256": "d7fee94580f0d575028a8fb0c1aafae59d942da3ad8248109539e17452b54286"
     },
     {
       "path": "spec/evidence/tepl-totality.json",
@@ -104,6 +104,10 @@
     {
       "path": "spec/evidence/cube-totality.json",
       "sha256": "4f17f7da1225d2f2c2ad4eac3ff6eb05ee0b4a3529cf4f44389d96a8f1f37abc"
+    },
+    {
+      "path": "spec/evidence/noncomparable-oracle-coverage.json",
+      "sha256": "fdf86a759763ce6432e0f229352fdce27370fa64c003daeb330c661a0150a82c"
     },
     {
       "path": "scripts/generate-asl-decoders",
@@ -1414,6 +1418,7 @@
           "scripts/check-release-manifest",
           "scripts/check-repository",
           "scripts/generate-executable-model-comparison",
+          "scripts/generate-noncomparable-oracle-coverage",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
@@ -1450,6 +1455,7 @@
           "spec/catalog/numeric-profile-applicability.json",
           "spec/evidence/numeric-contracts.json",
           "spec/evidence/executable-model-comparison.json",
+          "spec/evidence/noncomparable-oracle-coverage.json",
           "spec/evidence/release-traceability-readiness.json",
           "spec/evidence/release-gate-readiness.json",
           "spec/release-manifest.json"
