@@ -27,8 +27,8 @@
 
 ## 架构边界
 
-- 本仓的 106 条 Tile 指令是 DavinciOO 当前 PTO ISA 的唯一正式目录，Markdown、catalog、ASL、Excel 与 HTML 必须保持同一集合。
-- `GMOV` 是 DavinciOO v5 extension；`TFMA`、`THISTOGRAM` 与带显式 `sort_width` 的 `TSORT` 属于 canonical catalog；`TRANDOM` 保留，`SYNCALL` 不属于 Tile 集合。
+- 本仓的 109 条 Tile 指令是 PTO ISA 0.58 的唯一正式目录，Markdown、catalog、ASL、Excel 与 HTML 必须保持同一集合。
+- `GMOV`、`MGATHER_MASK`、`MSCATTER_MASK`、`MGATHER_CAS`、`TFMA`、`THISTOGRAM` 与带显式 `sort_width` 的 `TSORT` 属于 canonical catalog；`TRANDOM` 的 selector 保留，`TSORT32` 与 `SYNCALL` 不属于 Tile 指令集合。
 - 每条正式指令只有一份 Markdown 权威页；HTML 是可重复生成并受 Git 跟踪的发布视图。
 
 ## 维护流程

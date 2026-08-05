@@ -330,11 +330,11 @@
     },
     {
       "path": "docs/coverage.md",
-      "sha256": "05e91d529e5f94da734851f1de77645393c0cfd5af02b75c5033c262e9ffa5ba"
+      "sha256": "d9105ba64e6f48361c060c797135197900a095dae8e650b5cfe0c3e23def40eb"
     },
     {
       "path": "docs/maturity-bringup-plan.md",
-      "sha256": "733dc7026d48b061683451d58cd59f2ff7e55a5a352f52b74b9d1e68610d6f03"
+      "sha256": "b9a588a4c69fa1ebaa325c249168c147226eb42740e688dd21aab2db6b7a5052"
     },
     {
       "path": "docs/maturity-stage-targets.md",
@@ -556,7 +556,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "fe37df305702aa92a3b3b9fae674b820ebe016a68eff2f8920d3093792f8a946",
+  "content_sha256": "f1a92b4107e96a117619d6545ce7cdc7f402593441ba2c4df9f455b77d3a8d8e",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",

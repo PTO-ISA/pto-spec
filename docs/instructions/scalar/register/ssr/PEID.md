@@ -1,6 +1,6 @@
 # PEID
 
-> DavinciOO v5 scalar SSR 扩展；Linx v0.57 未分配该寄存器。
+> PTO ISA 0.58 定义的 Core-local PE 标识只读 SSR。
 
 ## 作用
 
@@ -9,7 +9,7 @@
 | 属性 | 定义 |
 | --- | --- |
 | SSR ID | `0x0802` |
-| 地址空间 | Linx light-core custom space（`0x0800–0x08FF`） |
+| 地址空间 | PTO light-core custom space（`0x0800–0x08FF`） |
 | 宽度 | 64 bit |
 | 访问属性 | 只读（RO） |
 | `[1:0]` | 当前 PE 编号：PE0–PE3 分别为 `0..3` |
@@ -17,21 +17,21 @@
 
 该值在一个程序实例执行期间不可变。读取无副作用，异常恢复、flush 或 replay 不得改变读取值；每条读取必须返回实际执行该指令的 PE 编号。
 
-## 编号分配与兼容性
+## 编号分配
 
-Linx v0.57 将 `0x0800–0x08FF` 留给 light-core 自定义 SSR，现行公开分配如下：
+PTO ISA 0.58 将 `0x0800–0x08FF` 定义为 light-core 自定义 SSR 空间，公开分配如下：
 
 | SSR ID | 现有定义 |
 | --- | --- |
 | `0x0800` | `TR1`，每线程私有 RW 寄存器 |
 | `0x0801` | `TR2`，每线程私有 RW 寄存器 |
-| `0x0802` | `PEID`，DavinciOO v5 新增只读寄存器 |
+| `0x0802` | `PEID`，Core 内 PE 编号只读寄存器 |
 | `0x0803–0x080F` | 保留 |
 | `0x0810` | `SYSCNT` |
 | `0x0820` | `CW` |
 | `0x0830–0x083A` | `MSGBCR`、`MSGBD1–MSGBD10` |
 
-DavinciOO、Linx v0.57 与 PTOISA 当前仓库中均没有其他 `0x0802` 分配。选择该编号不会占用 common SSR 空间，也不会与逻辑 Core ID `LXLCID=0x0021` 或 `BLOCKID=0x0051` 冲突。
+`0x0802` 是 PTO ISA 0.58 对该编号的唯一分配；它不占用 common SSR 空间，也不与逻辑 Core ID `LXLCID=0x0021` 或 `BLOCKID=0x0051` 冲突。
 
 ## 访问与 lowering
 
@@ -55,4 +55,4 @@ uint32_t get_thread_id();
 - `SSRSWAP PEID` 因包含写入而非法，并触发同一异常。
 - 实现不得把非法写入静默忽略，也不得允许软件改变 `PEID`。
 
-`PEID` 只表示 Core 内 PE rank。需要构造跨 Core 的全局编号时，软件可以显式组合 Linx `LXLCID` 与 `PEID`；`LXLCID`、`BLOCKID` 均不能替代 `PEID`。
+`PEID` 只表示 Core 内 PE rank。需要构造跨 Core 的全局编号时，软件可以显式组合 `LXLCID` 与 `PEID`；`LXLCID`、`BLOCKID` 均不能替代 `PEID`。

@@ -1,4 +1,4 @@
-> DavinciOO v5 SYS extension. Linx `FENCE.D` keeps its v0.57 local encoding; `FENCE.D.CORE4` assigns a profile-isolated Core PE4 fence mode.
+> PTO ISA 0.58 defines `FENCE.D` for per-PE ordering and `FENCE.D.CORE4` for Core-wide PE0–PE3 ordering.
 
 # FENCE.D / FENCE.D.CORE4
 
@@ -28,7 +28,7 @@ FENCE.D.CORE4 pred_imm, succ_imm
 
 ## Local Fence
 
-`FENCE.D pred,succ` keeps Linx memory-ordering semantics for the executing PE.
+`FENCE.D pred,succ` orders the selected memory effects of the executing PE.
 
 ## Core4 Fence
 

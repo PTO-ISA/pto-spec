@@ -23,15 +23,13 @@ The Linx ISA has two instruction layers:
 The scalar layer is the minimum required for general-purpose computation.
 The vector/tile layer is an optional extension for accelerated workloads.
 
-## Source
+## Normative definition
 
-The detailed pages originate from the Linx ISA v0.57.1 scalar baseline in the
-[linx-isa](https://github.com/LinxISA/linx-isa) superproject. The canonical
-PTO 0.58 catalog is `spec/catalog/scalar-forms.json`; Linx ISA 0.58 imports
-that catalog unchanged as `isa/v0.58/state/pto_scalar_forms.json`. Alignment
-requires exact equality of form identity, assembly spelling, length, encoding,
-operand field layout, signedness, and legality constraints—not merely equal
-mnemonic counts.
+The canonical PTO ISA 0.58 scalar definition is
+`spec/catalog/scalar-forms.json`. Linx ISA 0.58 imports that catalog unchanged
+as `isa/v0.58/state/pto_scalar_forms.json`. Alignment requires exact equality
+of form identity, assembly spelling, length, encoding, operand field layout,
+signedness, and legality constraints—not merely equal mnemonic counts.
 
 The Scalar ISA is separate from the 109-operation Tile catalog.
 `spec/evidence/source-locks/` records the provenance of imported source pages.

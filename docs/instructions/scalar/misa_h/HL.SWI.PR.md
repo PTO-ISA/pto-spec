@@ -1,5 +1,4 @@
-> DavinciOO 继承 Linx scalar ISA 原文页。Source: `docs/zh/isa/inst/misa_h/HL.SWI.PR.md`
-> 本页作为 ordinary GPR / `meta_gpr` 构造能力的参考；opcode/encoding 保持 Linx v0.57。
+> 本页是 PTO ISA 0.58 标量指令的规范页；opcode、encoding、操作数与语义以本页和 canonical catalog 为准。
 
 # HL.SWI.PR
 
