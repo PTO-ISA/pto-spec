@@ -17,8 +17,8 @@ canonical release inputs but are not accepted PTO instructions.
 | Surface | Count | Scope |
 | --- | ---: | --- |
 | Scalar forms | 474 | AGU, ALU, AMO, BRU, FSU, and SYS |
-| Bundle/command forms | 96 | bundle start, dimension, control, data, IO, hint, stop, and context forms |
-| Direct tile operations | 106 | 87 TEPL, 7 TMA, and 12 CUBE operations |
+| Bundle/command forms | 99 | bundle start, dimension, control, data, IO, hint, stop, and context forms |
+| Direct tile operations | 109 | 87 TEPL, 10 TLSU, and 12 CUBE operations |
 | System registers | 72 | base, context, trap snapshot, translation, interrupt, and debug registers |
 | Linx-only vector reservations | 6 | reserved in PTO; executable only in Linx |
 
@@ -157,22 +157,23 @@ programs must avoid overlap or synchronize explicitly.
 The ASL payload array is bounded by `PTO_MODEL_TILE_ELEMENTS` for executable
 verification. Descriptor capacity defines architectural legality; the ASL array
 bound is not an architectural shape limit. Packed capacity accounting does not
-by itself define the address and packing protocol of sub-byte TMA transfers.
+by itself define the address and packing protocol of sub-byte TLSU transfers.
 
 ## Direct tile families
 
 - TEPL contains 87 accepted element, reduction, expansion, layout, management,
   and utility operations.
-- TMA contains 7 accepted tile memory operations: load, store, prefetch,
-  gather, scatter, TMOV, and the DavinciOO-v5 GMOV extension. TLSU Functions
-  8–11 are Shared TMOV encoding variants and Function 12 is the Shared
+- TLSU contains 10 accepted tile memory operations: load, store, prefetch,
+  gather, scatter, masked gather, masked scatter, gather-CAS, TMOV, and the
+  DavinciOO-v5 GMOV extension. TLSU Functions 9–12 are Shared TMOV encoding
+  variants and Function 14 is the Shared
   partition-store variant; they do not add direct-operation identities.
 - CUBE contains 12 accepted matrix operations, including base, bias,
   accumulate, MX, and matrix/vector variants. Every operation names Local D;
   ACC variants additionally name Local C.
 
 The canonical selector and descriptor fields define encoding and operand facts.
-TEPL, TMA, and CUBE operations have explicit tile operands. CUBE base forms
+TEPL, TLSU, and CUBE operations have explicit tile operands. CUBE base forms
 compute `D = PostProcess(A*B)`, BIAS forms add explicit Bias, and ACC forms
 read explicit C before writing D. `D == C` is legal only when dtype, shape,
 layout, and allocation agree and has read-old/write-new behavior. `TileAcc` is
@@ -198,7 +199,7 @@ dependency metadata never creates a PTO-TSO fence.
 
 Numeric format codes are namespace-local, not one shared enumeration. Scalar
 2-bit source types, scalar 5-bit floating destinations, scalar 5-bit integer
-destinations, 6-bit TMA types, and 5-bit bundle `DataType` fields are
+destinations, 6-bit TLSU types, and 5-bit bundle `DataType` fields are
 decoded independently; equal integers do not imply equal types. ADR 0040 and
 `spec/evidence/numeric-format-namespace-contract.json` define every mapped and
 reserved code, all 25 `TileDataType` raw-carrier identities, and low-nibble-first

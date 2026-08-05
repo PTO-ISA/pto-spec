@@ -195,11 +195,15 @@ begin
     // Generic selector and DataType fields are preserved exactly.
     ResetProfileState();
     WriteTPC(Zeros{PTO_XLEN} + 0x100);
-    let tepl = ExecuteCommandInstruction(
-        BundleTestTEPLStart(Zeros{10} + 0x2b, Zeros{5} + 24), 32);
+    let tepl_instruction =
+        BundleTestTEPLStart(Zeros{10} + 0x2b, Zeros{5} + 24);
+    let tepl_decoded = DecodeCommandForm(tepl_instruction, 32);
+    assert tepl_decoded != PTO_COMMAND_FORM_COUNT;
+    let tepl_form = tepl_decoded as integer {0..PTO_COMMAND_FORM_COUNT-1};
+    let tepl = ExecuteCommandInstruction(tepl_instruction, 32);
     assert tepl == CommandExecution_Executed;
     assert _BundleOperation.valid;
-    assert _BundleOperation.form_identity == Zeros{7} + 36;
+    assert _BundleOperation.form_identity == Zeros{7} + tepl_form;
     assert _BundleOperation.operation_class == BundleOperation_TileElement;
     assert _BundleOperation.selector == Zeros{10} + 0x2b;
     assert _BundleOperation.data_type == Zeros{5} + 24;
@@ -560,16 +564,16 @@ end;
 
 func TestBundleTileBindingV5Schemas()
 begin
-    // TMOV Local-to-Shared uses Function 8/9, requires a nonzero TSize,
+    // TMOV Local-to-Shared uses Function 9/10, requires a nonzero TSize,
     // carries no Local destination, and reserves DstTile as zero.
     ResetProfileState();
     let insert_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01000', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
     let size_one = ExecuteCommandInstruction(
         BundleTestTileBindingV5('001', '00', '0011', Zeros{6}, TRUE), 32);
     assert insert_start == CommandExecution_Executed;
     assert size_one == CommandExecution_Executed;
-    assert _BundleOperation.selector == Zeros{10} + 8;
+    assert _BundleOperation.selector == Zeros{10} + 9;
     assert _BundleTileBindings[[0]].valid;
     assert !_BundleTileBindings[[0]].destination_valid;
     assert _BundleTileBindings[[0]].destination_size == 1;
@@ -577,7 +581,7 @@ begin
 
     ResetProfileState();
     let publish_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
     let size_seven = ExecuteCommandInstruction(
         BundleTestTileBindingV5('111', '00', '1100', Zeros{6}, TRUE), 32);
     assert publish_start == CommandExecution_Executed;
@@ -587,7 +591,7 @@ begin
 
     ResetProfileState();
     let zero_size_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01000', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
     let zero_size = ExecuteCommandInstruction(
         BundleTestTileBindingV5('000', '00', '1111', Zeros{6}, TRUE), 32);
     assert zero_size_start == CommandExecution_Executed;
@@ -597,7 +601,7 @@ begin
 
     ResetProfileState();
     let nonzero_destination_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
     let nonzero_destination = ExecuteCommandInstruction(
         BundleTestTileBindingV5('001', '01', '1111', Zeros{6}, TRUE), 32);
     assert nonzero_destination_start == CommandExecution_Executed;
@@ -665,7 +669,7 @@ end;
 
 // PTO-REQ-SHARED-TILE-001: decoded Shared TLSU companions create, consume,
 // move, and store persistent Shared-register state without adding tile identities.
-func TestBundleSharedTMAExecution()
+func TestBundleSharedTLSUExecution()
 begin
     // GM-to-Shared uses C.B.IOS+B.IOR, with SharedTSize in RegDst[11:9].
     ResetProfileState();
@@ -690,6 +694,22 @@ begin
     assert SharedTileRecord(Zeros{8} + 17).tile.capacity_bytes == 512;
     assert SharedTileRecord(Zeros{8} + 17).tile.payload[[0]] ==
         Zeros{PTO_XLEN} + 0x2a;
+
+    // An unmasked Shared store reads all four quarters.
+    ResetBundleControlState();
+    WriteGPR(2, Zeros{PTO_XLEN} + 8);
+    let store_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('00001', Zeros{5} + 24), 32);
+    let store_shared = ExecuteCommandInstruction(
+        BundleTestSharedBinding(Zeros{8} + 17), 16);
+    let store_address = ExecuteCommandInstruction(
+        BundleTestScalarBinding('00000', '00010', '00000', '00000'), 32);
+    assert store_start == CommandExecution_Executed;
+    assert store_shared == CommandExecution_Executed;
+    assert store_address == CommandExecution_Executed;
+    let store_completed = ExecuteBundleTileOperation();
+    assert store_completed;
+    assert _Memory[[8]] == Zeros{8} + 0x2a;
 
     // An optional mask-only B.IOT predicates fixed-offset quarters. An absent
     // companion above means 1111; 0000 below is a true no-op that performs no
@@ -716,22 +736,6 @@ begin
     assert _LastFault == Fault_None;
     assert !SharedTileRecord(Zeros{8} + 255).descriptor_valid;
 
-    // An unmasked Shared store reads all four quarters.
-    ResetBundleControlState();
-    WriteGPR(2, Zeros{PTO_XLEN} + 8);
-    let store_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('00001', Zeros{5} + 24), 32);
-    let store_shared = ExecuteCommandInstruction(
-        BundleTestSharedBinding(Zeros{8} + 17), 16);
-    let store_address = ExecuteCommandInstruction(
-        BundleTestScalarBinding('00000', '00010', '00000', '00000'), 32);
-    assert store_start == CommandExecution_Executed;
-    assert store_shared == CommandExecution_Executed;
-    assert store_address == CommandExecution_Executed;
-    let store_completed = ExecuteBundleTileOperation();
-    assert store_completed;
-    assert _Memory[[8]] == Zeros{8} + 0x2a;
-
     // Publish creates a fully initialized register; both Shared-to-Local forms
     // preserve descriptor size and apply PE_MASK as a quarter predicate.
     ResetProfileState();
@@ -739,7 +743,7 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 11);
     let publish_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
     let publish_shared = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 19), 16);
     let publish_local = ExecuteCommandInstruction(
@@ -754,7 +758,7 @@ begin
 
     ResetBundleControlState();
     let broadcast_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('01011', Zeros{5} + 24), 32);
     let broadcast_shared = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 19), 16);
     let broadcast_destination = ExecuteCommandInstruction(
@@ -771,7 +775,7 @@ begin
 
     ResetBundleControlState();
     let extract_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01011', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('01100', Zeros{5} + 24), 32);
     let extract_shared = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 19), 16);
     let extract_destination = ExecuteCommandInstruction(
@@ -792,7 +796,7 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 7);
     let insert_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01000', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
     let insert_shared = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 23), 16);
     let insert_local = ExecuteCommandInstruction(
@@ -800,8 +804,8 @@ begin
     assert insert_start == CommandExecution_Executed;
     assert insert_shared == CommandExecution_Executed;
     assert insert_local == CommandExecution_Executed;
-    assert _BundleOperation.selector == Zeros{10} + 8;
-    assert BundleSharedTMASelected();
+    assert _BundleOperation.selector == Zeros{10} + 9;
+    assert BundleSharedTLSUSelected();
     assert BundleSharedBindingCount() == 1;
     assert BundleTileBindingCount() == 1;
     assert _BundleTileBindings[[0]].valid;
@@ -825,7 +829,7 @@ begin
     // undefined-register values rather than raising a fault.
     ResetBundleControlState();
     let partial_broadcast_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('01011', Zeros{5} + 24), 32);
     let partial_broadcast_shared = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 23), 16);
     let partial_broadcast_destination = ExecuteCommandInstruction(
@@ -864,7 +868,7 @@ begin
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 9);
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 10);
     let mismatch_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01000', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
     let mismatch_shared = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 23), 16);
     let mismatch_local = ExecuteCommandInstruction(
@@ -888,7 +892,7 @@ begin
     ResetBundleControlState();
     ClearFault();
     let zero_insert_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01000', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
     let zero_insert_shared = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 23), 16);
     let zero_insert_local = ExecuteCommandInstruction(
@@ -910,7 +914,7 @@ begin
     ResetBundleControlState();
     ClearFault();
     let zero_extract_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01011', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('01100', Zeros{5} + 24), 32);
     let zero_extract_shared = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 23), 16);
     let zero_extract_destination = ExecuteCommandInstruction(
@@ -923,13 +927,13 @@ begin
     assert _LastFault == Fault_None;
     assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
 
-    // Function 12 is the accepted partition-store encoding variant.
+    // Function 14 is the accepted partition-store encoding variant.
     ResetBundleControlState();
     ClearFault();
     _SystemRegisters.thread_id = Zeros{PTO_XLEN};
     WriteGPR(2, Zeros{PTO_XLEN} + 16);
     let partition_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01100', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('01110', Zeros{5} + 24), 32);
     let partition_shared = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 23), 16);
     let partition_address = ExecuteCommandInstruction(
@@ -947,7 +951,7 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);
     let missing_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
     let missing_local = ExecuteCommandInstruction(
         BundleTestTileBindingV5('001', '00', '1111', Zeros{6}, TRUE), 32);
     assert missing_start == CommandExecution_Executed;
@@ -1291,8 +1295,12 @@ begin
     BeginBundle(BundleKind_Standard, BundleTransfer_Direct,
         Zeros{PTO_XLEN} + 0x500, Zeros{PTO_XLEN} + 0x304,
         Zeros{PTO_XLEN} + 0x304, TRUE);
-    InstallBundleOperationDescriptor(DecodeBundleOperationDescriptor(
-        BundleTestTEPLStart(Zeros{10}, Zeros{5} + 24), 36));
+    let tepl_instruction = BundleTestTEPLStart(Zeros{10}, Zeros{5} + 24);
+    let tepl_decoded = DecodeCommandForm(tepl_instruction, 32);
+    assert tepl_decoded != PTO_COMMAND_FORM_COUNT;
+    let tepl_form = tepl_decoded as integer {0..PTO_COMMAND_FORM_COUNT-1};
+    InstallBundleOperationDescriptor(
+        DecodeBundleOperationDescriptor(tepl_instruction, tepl_form));
     EnterBundleBody();
     SetBundleDimension(2, Zeros{PTO_XLEN} + 0x33);
     SetBundleScalarBinding(31, 5, 2, 3, 4, 3);
@@ -1313,7 +1321,8 @@ begin
     assert _TrapContexts[[1]].bpc == Zeros{PTO_XLEN} + 0x500;
     assert _TrapContexts[[1]].bundle_argument == Zeros{PTO_XLEN} + 0x55;
     assert _TrapContexts[[1]].bundle_operation.valid;
-    assert _TrapContexts[[1]].bundle_operation.form_identity == Zeros{7} + 36;
+    assert _TrapContexts[[1]].bundle_operation.form_identity ==
+        Zeros{7} + tepl_form;
     assert _TrapContexts[[1]].bundle_operation.selector == Zeros{10};
     assert _TrapContexts[[1]].bundle_operation.data_type == Zeros{5} + 24;
     assert _TrapContexts[[1]].bundle_body_active;
@@ -1341,7 +1350,7 @@ begin
     assert ReadBPC() == Zeros{PTO_XLEN} + 0x500;
     assert _BundleArgument == Zeros{PTO_XLEN} + 0x55;
     assert _BundleOperation.valid;
-    assert _BundleOperation.form_identity == Zeros{7} + 36;
+    assert _BundleOperation.form_identity == Zeros{7} + tepl_form;
     assert _BundleOperation.selector == Zeros{10};
     assert _BundleOperation.data_type == Zeros{5} + 24;
     assert _CommitArgument == Zeros{PTO_XLEN} + 0x55;

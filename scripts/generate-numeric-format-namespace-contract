@@ -14,7 +14,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
 SCALAR_FSU_TOTALITY = ROOT / "spec/evidence/scalar-fsu-totality.json"
-TMA_TOTALITY = ROOT / "spec/evidence/tma-totality.json"
+TLSU_TOTALITY = ROOT / "spec/evidence/tlsu-totality.json"
 COMMAND_CATALOG = ROOT / "spec/catalog/command-forms.json"
 EXECUTABLE_COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
 HARDWARE_PROFILE = ROOT / "spec/hardware-conformance-profile.json"
@@ -112,7 +112,7 @@ def code_rows(
 def generate() -> dict[str, Any]:
     inputs = load(DECISION_INPUTS)
     scalar_totality = load(SCALAR_FSU_TOTALITY)
-    tma_totality = load(TMA_TOTALITY)
+    tlsu_totality = load(TLSU_TOTALITY)
     command_catalog = load(COMMAND_CATALOG)
     executable_comparison = load(EXECUTABLE_COMPARISON)
     hardware_profile = load(HARDWARE_PROFILE)
@@ -128,8 +128,8 @@ def generate() -> dict[str, Any]:
         "scalar FSU totality drift",
     )
     require(
-        tma_totality["status"] == "closed" and tma_totality["target"] == "S4-T9",
-        "TMA totality drift",
+        tlsu_totality["status"] == "closed" and tlsu_totality["target"] == "S4-T9",
+        "TLSU totality drift",
     )
     require(
         executable_comparison["status"]
@@ -156,7 +156,7 @@ def generate() -> dict[str, Any]:
     bundle_mapping = {
         code: name for name, _, _, code, _ in TILE_DATA_TYPES
     }
-    require(len(tma_mapping) == 25, "TMA/TALLOC mapping count drift")
+    require(len(tma_mapping) == 25, "TLSU/TALLOC mapping count drift")
     require(len(bundle_mapping) == 25, "bundle mapping count drift")
     hardware_types = {
         (row["name"], row["code"]) for row in hardware_profile["data_types"]
@@ -290,7 +290,7 @@ def generate() -> dict[str, Any]:
         "classification_acceptance_record": CLASSIFICATION_ACCEPTANCE_RECORD,
         "classification_checkpoint_id": "PD-02-SC2:PD-05-SC1",
         "policy": {
-            "namespace_locality": "Scalar source, scalar floating destination, scalar integer destination, TMA/TALLOC, and bundle DataType codes are distinct namespaces. Equal integers do not imply equal types across namespaces.",
+            "namespace_locality": "Scalar source, scalar floating destination, scalar integer destination, TLSU/TALLOC, and bundle DataType codes are distinct namespaces. Equal integers do not imply equal types across namespaces.",
             "reserved_codes": "Every unmapped code rejects before architectural effects; helper fallback values are unreachable after legality succeeds and are not architectural aliases.",
             "raw_carrier_boundary": "Widths and signedness describe Stage 4 raw carriers only. Floating bit layouts and target numeric results remain S5-T2 rules.",
             "four_bit_packing": "E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 use low-index/low-nibble and odd-index/high-nibble packing with sibling preservation on stores.",
@@ -384,13 +384,13 @@ def generate() -> dict[str, Any]:
             "tests/asl/state-tests.asl:TestTileRegisterMapping",
             "tests/asl/scalar-tests.asl:TestScalarFloating",
             "tests/asl/bundle-tests.asl:TestBundleOperationDescriptorFields",
-            "tests/asl/tma-totality-tests.asl:TestTmaAllFourBitTypes",
+            "tests/asl/tlsu-totality-tests.asl:TestTlsuAllFourBitTypes",
             "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUTotality",
         ],
         "sources": [
             source("spec/evidence/numeric-profile-decision-inputs.json"),
             source("spec/evidence/scalar-fsu-totality.json"),
-            source("spec/evidence/tma-totality.json"),
+            source("spec/evidence/tlsu-totality.json"),
             source("spec/evidence/executable-model-comparison.json"),
             source("spec/hardware-conformance-profile.json"),
             source("spec/catalog/command-forms.json"),

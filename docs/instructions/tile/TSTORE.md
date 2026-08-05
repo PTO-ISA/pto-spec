@@ -13,7 +13,7 @@
   },
   "opcode": "TSTORE",
   "family": "memory-tlsu",
-  "bundle": "Local form\nBSTART.TLSU TSTORE\nB.DATR/B.DIM\nB.IOT\nB.IOR\nShared full form\nBSTART.TLSU Function 1\nC.B.IOS\nB.IOR\nShared pe_scope form\nBSTART.TLSU Function 12\nC.B.IOS\nB.IOR",
+  "bundle": "Local form\nBSTART.TLSU TSTORE\nB.DATR/B.DIM\nB.IOT\nB.IOR\nShared full form\nBSTART.TLSU Function 1\nC.B.IOS\nB.IOR\nShared pe_scope form\nBSTART.TLSU Function 14\nC.B.IOS\nB.IOR",
   "operands": {
     "output": "GlobalTensor/partition-view destination",
     "input0": "Local tile or SharedTile source",
@@ -24,7 +24,7 @@
     "PTO TSTORE dtype/layout combinations supported by the v5 TLSU profile"
   ],
   "encoding": {
-    "text": "TLSU Function 1; Shared pe_scope Function 12;"
+    "text": "TLSU Function 1; Shared pe_scope Function 14;"
   },
   "xlsx": {
     "include": true,
@@ -82,7 +82,7 @@ B.IOR       a0, a1, 0
 
 ## Shared Partition Form
 
-`TSTORE<pe_scope>` uses Function 12. The optional mask-only B.IOT chooses fixed
+`TSTORE<pe_scope>` uses Function 14. The optional mask-only B.IOT chooses fixed
 offset quarters; multiple bits are permitted and `0000` is a no-op. When B.IOT
 is absent the effective mask is `1111`.
 

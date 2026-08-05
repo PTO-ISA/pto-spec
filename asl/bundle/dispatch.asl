@@ -234,7 +234,7 @@ pure func BundleTileDecodeFamily(operation_class: BundleOperationClass)
 begin
     case operation_class of
         when BundleOperation_TileElement => return TileDecode_TEPL;
-        when BundleOperation_TileMemory => return TileDecode_TMA;
+        when BundleOperation_TileMemory => return TileDecode_TLSU;
         when BundleOperation_TileMatrix => return TileDecode_CUBE;
         otherwise => unreachable;
     end;
@@ -258,12 +258,12 @@ begin
     let code = BundleSelectorCode(descriptor);
     if descriptor.operation_class == BundleOperation_TileMemory &&
        !descriptor.mode_valid then
-        if descriptor.selector[4:0] == '01000' ||
-           descriptor.selector[4:0] == '01001' ||
+        if descriptor.selector[4:0] == '01001' ||
            descriptor.selector[4:0] == '01010' ||
-           descriptor.selector[4:0] == '01011' then
+           descriptor.selector[4:0] == '01011' ||
+           descriptor.selector[4:0] == '01100' then
             return Zeros{12} + 2;
-        elsif descriptor.selector[4:0] == '01100' then
+        elsif descriptor.selector[4:0] == '01110' then
             return Zeros{12} + 1;
         end;
     end;
@@ -441,6 +441,9 @@ begin
     end;
     if dimension0 <= 262144 then
         operands.byte_count = dimension0 as integer {0..262144};
+    end;
+    if dimension0 >= 1 && dimension0 <= 64 then
+        operands.sort_width = dimension0 as integer {1..64};
     end;
     operands.selected_byte = UInt(_BundleDataAttributes.pad_value)
         as integer {0..3};
@@ -658,7 +661,7 @@ begin
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid then
             let mask = _BundleTileBindings[[binding]].pe_mask;
-            if mask == Zeros{4} && !BundleSharedTMASelected() then
+            if mask == Zeros{4} && !BundleSharedTLSUSelected() then
                 return FALSE;
             end;
             if first_mask_seen && mask != first_mask then return FALSE; end;
@@ -906,14 +909,14 @@ begin
     end;
 end;
 
-readonly func BundleSharedTMASelected() => boolean
+readonly func BundleSharedTLSUSelected() => boolean
 begin
     if !_BundleOperation.valid ||
        _BundleOperation.operation_class != BundleOperation_TileMemory ||
        !_BundleOperation.selector_valid then return FALSE; end;
     let function = UInt(_BundleOperation.selector[4:0]);
     return BundleSharedBindingCount() > 0 ||
-           (8 <= function && function <= 12);
+           (9 <= function && function <= 12) || function == 14;
 end;
 
 readonly func BundleSharedMaskCompanionLegal() => boolean
@@ -972,11 +975,11 @@ begin
     return local_size == shared_size;
 end;
 
-func ExecuteBundleSharedTMAOperation() => boolean
+func ExecuteBundleSharedTLSUOperation() => boolean
 begin
     let function = UInt(_BundleOperation.selector[4:0]);
     if !SelectedBundleTileDataAttributesLegal(
-        DecodeTileOperation(TileDecode_TMA,
+        DecodeTileOperation(TileDecode_TLSU,
             BundleOperationDecodeCode(_BundleOperation)) as
                 integer {0..PTO_TILE_OPERATION_COUNT-1}) then
         return FALSE;
@@ -1012,7 +1015,7 @@ begin
             TileDataTypeFromEncoding(ZeroExtend{PTO_XLEN}(
                 CurrentBundleTileOperationDataTypeCode())),
             CurrentBundleTileLayout(), EffectiveSharedPEMask());
-    elsif function == 1 || function == 12 then
+    elsif function == 1 || function == 14 then
         if !BundleSharedMaskCompanionLegal() ||
            !BundleSharedScalarSchemaLegal(FALSE) ||
            (EffectiveSharedPEMask() != Zeros{4} &&
@@ -1023,7 +1026,7 @@ begin
         TSTOREShared(
             ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source0),
             shared_id, EffectiveSharedPEMask());
-    elsif function == 8 || function == 9 then
+    elsif function == 9 || function == 10 then
         if !BundleSharedTMOVLocalSchemaLegal() then
             SetFault(Fault_TileLegality, ReadTPC());
             return FALSE;
@@ -1035,7 +1038,7 @@ begin
         end;
         TMOVLocalToShared(shared_id, binding.source0,
             binding.destination_size as integer {1..7}, binding.pe_mask);
-    elsif function == 10 || function == 11 then
+    elsif function == 11 || function == 12 then
         if !BundleSharedTMOVDestinationSchemaLegal(shared_id) ||
            !SelectedBundleTileMasksLegal() then
             if _LastFault == Fault_None then
@@ -1098,8 +1101,8 @@ func ExecuteBundleTileOperationWithAcceptedApplicabilityRules(
 begin
     if BundleSharedCubeSelected() then
         return ExecuteBundleSharedCubeOperation();
-    elsif BundleSharedTMASelected() then
-        return ExecuteBundleSharedTMAOperation();
+    elsif BundleSharedTLSUSelected() then
+        return ExecuteBundleSharedTLSUOperation();
     elsif BundleSharedBindingsUnconsumed() then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
@@ -1310,16 +1313,16 @@ begin
                 DecodeCommandOperandRaw(
                     instruction, form, CommandField_DstTile) == Zeros{PTO_XLEN};
             let shared_mask_only =
-                BundleSharedTMASelected() && mask_only_binding &&
+                BundleSharedTLSUSelected() && mask_only_binding &&
                 (_BundleOperation.selector[4:0] == '00000' ||
                  _BundleOperation.selector[4:0] == '00001' ||
-                 _BundleOperation.selector[4:0] == '01100');
+                 _BundleOperation.selector[4:0] == '01110');
             let local_to_shared =
                 _BundleOperation.valid &&
                 _BundleOperation.operation_class == BundleOperation_TileMemory &&
                 _BundleOperation.selector_valid &&
-                (_BundleOperation.selector[4:0] == '01000' ||
-                 _BundleOperation.selector[4:0] == '01001');
+                (_BundleOperation.selector[4:0] == '01001' ||
+                 _BundleOperation.selector[4:0] == '01010');
             let local_destination =
                 CommandOperandPresent(form, CommandField_TSize) &&
                 !local_to_shared && !mask_only_binding;

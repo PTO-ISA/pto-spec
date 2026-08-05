@@ -424,7 +424,7 @@
         "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
         "spec/evidence/scalar-agu-totality.json",
         "spec/evidence/scalar-amo-totality.json",
-        "spec/evidence/tma-totality.json",
+        "spec/evidence/tlsu-totality.json",
         "spec/profile-hooks.json"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
@@ -433,7 +433,7 @@
         "scripts/check-catalogs",
         "tests/asl/main.asl",
         "tests/asl/scalar-tests.asl",
-        "tests/asl/tma-totality-tests.asl"
+        "tests/asl/tlsu-totality-tests.asl"
       ]
     },
     {
@@ -448,7 +448,7 @@
         "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
         "spec/evidence/scalar-agu-totality.json",
         "spec/evidence/scalar-amo-totality.json",
-        "spec/evidence/tma-totality.json",
+        "spec/evidence/tlsu-totality.json",
         "spec/profile-hooks.json"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
@@ -458,7 +458,7 @@
         "tests/asl/main.asl",
         "tests/asl/scalar-tests.asl",
         "tests/asl/tile-tests.asl",
-        "tests/asl/tma-totality-tests.asl"
+        "tests/asl/tlsu-totality-tests.asl"
       ]
     },
     {
@@ -475,7 +475,7 @@
         "docs/architecture-decisions/0030-scalar-amo-totality-and-reservation.md",
         "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
         "spec/evidence/scalar-amo-totality.json",
-        "spec/evidence/tma-totality.json",
+        "spec/evidence/tlsu-totality.json",
         "docs/memory-model.md"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/memory-model.md",
@@ -809,7 +809,7 @@
       ]
     },
     {
-      "id": "PTO-REQ-TMA-001",
+      "id": "PTO-REQ-TLSU-001",
       "model": [
         "asl/tile/memory.asl",
         "asl/scalar/memory.asl",
@@ -817,14 +817,14 @@
         "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
         "scripts/generate-numeric-format-namespace-contract",
         "spec/evidence/numeric-format-namespace-contract.json",
-        "spec/evidence/tma-totality.json",
+        "spec/evidence/tlsu-totality.json",
         "spec/profile-hooks.json"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
       "status": "packed-reference-totality-closed:S4-T9",
       "tests": [
         "tests/asl/tile-tests.asl",
-        "tests/asl/tma-totality-tests.asl"
+        "tests/asl/tlsu-totality-tests.asl"
       ]
     },
     {

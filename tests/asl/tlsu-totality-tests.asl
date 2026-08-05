@@ -395,6 +395,36 @@ begin
 
     operands = DefaultTileInstructionOperands();
     operands.destination0 = 20;
+    operands.address = Zeros{PTO_XLEN} + 0x300;
+    operands.source0 = 22;
+    operands.source1 = 23;
+    let (masked_gather_status, -) = ExecuteTileInstruction(
+        TileDecode_TLSU, Zeros{12} + 6, operands);
+    assert masked_gather_status == TileExecution_Executed;
+    assert ReadTileElement(20, 0, 0) == Zeros{PTO_XLEN} + 3;
+
+    operands = DefaultTileInstructionOperands();
+    operands.address = Zeros{PTO_XLEN} + 0x300;
+    operands.source0 = 21;
+    operands.source1 = 22;
+    operands.source2 = 23;
+    let (masked_scatter_status, -) = ExecuteTileInstruction(
+        TileDecode_TLSU, Zeros{12} + 7, operands);
+    assert masked_scatter_status == TileExecution_Executed;
+
+    operands = DefaultTileInstructionOperands();
+    operands.destination0 = 20;
+    operands.address = Zeros{PTO_XLEN} + 0x300;
+    operands.source0 = 22;
+    operands.source1 = 24;
+    operands.source2 = 25;
+    let (gather_cas_status, -) = ExecuteTileInstruction(
+        TileDecode_TLSU, Zeros{12} + 8, operands);
+    assert gather_cas_status == TileExecution_Executed;
+    assert ReadTileElement(20, 0, 0) == Zeros{PTO_XLEN} + 3;
+
+    operands = DefaultTileInstructionOperands();
+    operands.destination0 = 20;
     operands.source0 = 21;
     operands.scalar0 = Zeros{PTO_XLEN} + 2;
     let (gmov_status, -) = ExecuteTileInstruction(

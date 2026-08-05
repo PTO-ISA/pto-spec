@@ -60,4 +60,4 @@ surrounding operation role 相反的箭头形式。SharedID 是绝对索引 0..2
 CUBE 中 C.B.IOS 只对 Function 0–2、4–6 合法；Function 16–18、20–22
 （TGEMV）以及 CUBE reserved/illegal Function 9–14 遇到该 prefix 必须产生
 确定的 profile diagnostic。TLSU namespace 另行允许 TLOAD Function 0、
-TSTORE Function 1/12 与 TMOV Function 8–11 的单 binder companion schema。
+TSTORE Function 1/14 与 TMOV Function 9–12 的单 binder companion schema。

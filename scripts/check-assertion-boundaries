@@ -189,8 +189,8 @@ scalar_count = assertion_count(scalar_assertion_files)
 tile_count = assertion_count(tile_assertion_files)
 if scalar_count != 34:
     fail(f"scalar/system/concurrency assertion inventory drifted: {scalar_count} != 34")
-if tile_count != 180:
-    fail(f"tile/bundle assertion inventory drifted: {tile_count} != 180")
+if tile_count != 200:
+    fail(f"tile/bundle assertion inventory drifted: {tile_count} != 200")
 
 concurrency_source = source("asl/concurrency.asl")
 for function, label, guard_pattern, effect_pattern in (

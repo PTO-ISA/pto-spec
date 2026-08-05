@@ -528,7 +528,7 @@
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "b4d79c47c80e82c83bdb64cc111c0a744006ec60b5b05a798e7105060068122b"
+      "sha256": "9637ce69b1b2f12d76e65c73fb7536fe66c22a1dde19c11b7827c4f5b60cc24b"
     },
     {
       "path": "asl/scalar/floating.asl",

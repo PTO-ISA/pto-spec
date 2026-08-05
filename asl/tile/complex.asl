@@ -155,13 +155,13 @@ begin
         indices[[element as ModelTileElementIndex]] =
             Zeros{PTO_XLEN} + (element MOD sort_width);
     end;
-    let group_count: integer = (extent + 31) DIVRM 32;
-    for group = 0 to group_count - 1 looplimit 128 do
-        let group_begin: integer = group * 32;
-        let group_end: integer = if group_begin + 32 < extent then
-            group_begin + 32 else extent;
-        for sort_pass = 0 to 31 do
-            for offset = 0 to 30 do
+    let group_count: integer = (extent + (sort_width - 1)) DIVRM sort_width;
+    for group = 0 to group_count - 1 looplimit 4096 do
+        let group_begin: integer = group * sort_width;
+        let group_end: integer = if group_begin + sort_width < extent then
+            group_begin + sort_width else extent;
+        for sort_pass = 0 to 63 do
+            for offset = 0 to 62 do
                 let element: integer = group_begin + offset;
                 if element + 1 < group_end then
                     let left = values[[element as ModelTileElementIndex]];
@@ -191,6 +191,11 @@ begin
     end;
     MarkTileValidRegionDefined(destination);
     MarkTileValidRegionDefined(destination_indices);
+end;
+
+pure func ExtractWordByte(value: Word, byte_index: integer {0..3}) => Byte
+begin
+    return value[(byte_index * 8) +: 8];
 end;
 
 func THISTOGRAM(destination: TileIndex, source: TileIndex, indices: TileIndex,

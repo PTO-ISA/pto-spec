@@ -236,9 +236,9 @@ TILE_LAYER_RESOLUTIONS = {
         "explicit-layer-difference",
         "The public typed API exposes two destination tiles; the direct binary operation has one architectural destination and two sources.",
     ),
-    "TSORT32": (
+    "TSORT": (
         "explicit-layer-difference",
-        "The public source spelling is TSORT32 and carries index or temporary tiles; the direct binary operation is TSORT32 with an explicit descending flag.",
+        "The public source spelling is TSORT32 and carries index or temporary tiles; the direct binary operation is TSORT with explicit sort-width and descending operands.",
     ),
     "THISTOGRAM": (
         "public-api-aligned",
@@ -281,7 +281,6 @@ EXCLUDED_PUBLIC_TILE_OPERATIONS = {
         "TDEINTERLEAVE",
         "TFREE",
         "TGATHERB",
-        "THISTOGRAM",
         "TINTERLEAVE",
         "TPARTARGMAX",
         "TPARTARGMIN",
@@ -334,7 +333,7 @@ def tile_rows(operations: list[dict]) -> list[dict]:
     rows = []
     for operation in operations:
         name = operation["name"]
-        public_symbol = "TSORT32" if name == "TSORT32" else name
+        public_symbol = "TSORT32" if name == "TSORT" else name
         if name in TILE_LAYER_RESOLUTIONS:
             closure_basis, resolution = TILE_LAYER_RESOLUTIONS[name]
         elif public_symbol not in PUBLIC_TILE_SYMBOLS:
@@ -359,7 +358,7 @@ def tile_rows(operations: list[dict]) -> list[dict]:
                 "public_symbol": public_symbol,
                 "public_symbol_relation": (
                     "documented-spelling-mapping"
-                    if name == "TSORT32"
+                    if name == "TSORT"
                     else "exact-name"
                     if public_symbol in PUBLIC_TILE_SYMBOLS
                     else "catalog-defined"

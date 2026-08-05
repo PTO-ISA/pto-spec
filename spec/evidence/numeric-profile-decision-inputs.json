@@ -1452,7 +1452,7 @@
       "operation_count": 2,
       "operation_keys": [
         "tile:TEPL:TMRGSORT",
-        "tile:TEPL:TSORT32"
+        "tile:TEPL:TSORT"
       ],
       "hooks": [
         "TileProfileOrderLeft",

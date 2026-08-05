@@ -11,7 +11,7 @@ The repository is the normative draft of the **PTO ISA 0.58.0** contract at
 maturity M4. The release identity and active executable profile identity are
 separate: 0.58.0 fixes the encoding ABI, while `pto-v0` remains the deterministic
 raw-carrier reference profile. Accepted catalogs, decoded execution paths,
-architectural state/fault envelopes, ordering, and scalar, bundle, TEPL, TMA,
+architectural state/fault envelopes, ordering, and scalar, bundle, TEPL, TLSU,
 and CUBE reference semantics are cumulatively closed through Stage 4. The
 independent executable-model comparison is also closed under `S5-T3`; target
 numeric conformance and release closure remain staged work. See the
@@ -96,24 +96,21 @@ The numeric maturity counters remain unchanged by bounded checkpoints that do
 not accept a complete decision or domain: two of 12 complete decisions are
 accepted, ten remain open, no complete numeric domain is closed, and the
 generic variation-route count remains 16/89.
-The executable-model comparison has an exhaustive 676-row disposition matrix:
-557 exact matches, 84 explicit divergences, 32 non-comparable rows, and three
-intentional extensions. Of the divergences, 67 direct-tile and 7 command rows
-retain the accepted ABI-remap disposition; the remaining 10 are intentional
-rejected-command differences. The three extensions are `BSTART.GMOV`, `GMOV`,
-and `TFMA`. The clean content-addressed snapshot
+The executable-model comparison has an exhaustive 682-row disposition matrix:
+554 exact matches, 90 explicit divergences, and 38 non-comparable rows. The
+clean content-addressed snapshot
 passes its generation, validation, documentation, Sail parser, and Sail
 C-backend gates. This classification closes `S5-T3` without changing the open
 `S5-T2` and Stage 6 claims.
 
 The generated `spec/evidence/noncomparable-oracle-coverage.json` ledger keeps a
-separate independent-executable-parity grade for the 32 non-comparable rows.
+separate independent-executable-parity grade for the 38 non-comparable rows.
 PTO semantic closure and the S5-T3 disposition matrix remain closed, while
-qualified executable parity is currently 0/32 and fails closed on structural-
+qualified executable parity is currently 0/38 and fails closed on structural-
 only, stale, missing, timed-out, nonzero, or unreviewed evidence.
 
 Release traceability is now generated rather than inferred from prose. The
-`spec/evidence/release-traceability-readiness.json` ledger covers 918 exact
+`spec/evidence/release-traceability-readiness.json` ledger covers 924 exact
 units: all 47 requirements, accepted forms and operations, system registers,
 traps, 36 profile hooks, and 74 ASL state roots expanded to 229 leaf fields. Its
 inventory and links are closed, while S6-T1 promotion remains explicitly open
@@ -128,9 +125,9 @@ approval evidence.
 ## Architecture scope
 
 - 474 scalar forms across AGU, ALU, AMO, BRU, FSU, and SYS.
-- 96 bundle/command forms for bundle start, dimension,
+- 99 bundle/command forms for bundle start, dimension,
   attributes, IO binding, hints, stop, and context handling.
-- 106 direct tile operations: 87 TEPL, 7 TMA, and 12 CUBE.
+- 109 direct tile operations: 87 TEPL, 10 TLSU, and 12 CUBE.
 - PTO ISA 0.58.0 Mode/Function tile encoding with no untagged legacy decoder.
 - A 32-code scalar namespace: 24 absolute GPRs plus four-entry T and U
   temporary queues, eight 32-bit per-warp predicate registers, one independent
@@ -197,7 +194,7 @@ contracts:
 | --- | --- |
 | [Instruction reference](docs/instructions/index.md) | Generated catalog reference for scalar forms, bundle/command forms, direct tile operations, and system registers |
 | [Architecture boundary](docs/architecture.md) | State, execution, legality, faults, and excluded implementation detail |
-| [PTO ISA 0.58.0 decision](docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md) | 106-operation DavinciOO catalog, Mode/Function encoding, documentation, ASL, HTML, and Excel closure |
+| [PTO ISA 0.58.0 decision](docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md) | 109-operation DavinciOO catalog, Mode/Function encoding, documentation, ASL, HTML, and Excel closure |
 | [Memory model](docs/memory-model.md) | PTO-TSO events, relations, axioms, and executable evidence |
 | [Profile contracts](docs/profile-contracts.md) | `pto-v0` behavior and alternate-profile obligations |
 | [Maturity bring-up plan](docs/maturity-bringup-plan.md) | Staged targets and exit gates from executable draft to architectural completeness |
@@ -251,7 +248,7 @@ validation always uses the pinned source wrapper.
 asl/                     Normative ASL1 sources
   scalar/                Scalar operand, arithmetic, control, memory, atomic, system, and FP semantics
   bundle/                 Bundle/command state and semantics
-  tile/                  Flat tile state, legality, TEPL, TMA, and CUBE semantics
+  tile/                  Flat tile state, legality, TEPL, TLSU, and CUBE semantics
   profiles/              Concrete architecture profiles
 spec/                    Machine-readable catalogs, requirements, profiles, and evidence
 tests/

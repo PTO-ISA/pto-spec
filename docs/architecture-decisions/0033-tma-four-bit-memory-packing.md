@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-07-30
-- Requirements: PTO-REQ-TMA-001, PTO-REQ-MEMORY-COMPLETION-001,
+- Requirements: PTO-REQ-TLSU-001, PTO-REQ-MEMORY-COMPLETION-001,
   PTO-REQ-MEMORY-TSO-001
 
 ## Context
@@ -69,7 +69,7 @@ definedness from source to destination.
 - The packed layout is PTO-v0 architecture. A future profile may add another
   layout only by defining a profile-specific TMA contract and preserving the
   generic totality, preflight, event, and restart guarantees.
-- `spec/evidence/tma-totality.json` and `TestTmaTotality()` are the closure
+- `spec/evidence/tlsu-totality.json` and `TestTlsuTotality()` are the closure
   hooks for this decision.
 
 The executable matrix reaches all nine TMA selectors through decoded tile

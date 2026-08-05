@@ -16,7 +16,7 @@ PTO currently defines:
 
 - 474 scalar forms;
 - 99 bundle/command forms;
-- 120 direct tile operations: 98 TEPL, 9 TMA, and 13 CUBE.
+- 109 direct tile operations: 87 TEPL, 10 TLSU, and 12 CUBE.
 
 The independent evidence is useful for scalar and command stable form IDs, and
 for tile selector/header manifests. It is not a substitute for PTO-owned ASL
@@ -40,26 +40,25 @@ The allowed row classifications are:
 - `non-comparable`: the independent evidence is decode/header/manifest-only or
   lacks an equivalent executable payload contract;
 - `intentional-extension`: PTO owns the operation without an independent
-  equivalent.
+  equivalent. The current matrix has no row in this class; missing equivalents
+  remain explicit divergences.
 
-The current matrix classifies 676 rows:
+The current matrix classifies 682 rows:
 
 | Classification | Rows | Disposition |
 | --- | ---: | --- |
-| `comparable-match` | 556 | Stable scalar/command identities or tile selector/header patterns agree. |
-| `comparable-divergence` | 1 | `C.B.IOS` retains its encoding but intentionally replaces the historical compressed dimension meaning. |
-| `divergence` | 84 | 67 direct-tile and 7 command rows retain accepted ABI remaps; 10 command rows retain intentional pre-effect rejection. |
-| `non-comparable` | 32 | Independent evidence is decode-only, header-only, or lacks payload execution. |
-| `intentional-extension` | 3 | `BSTART.GMOV`, `GMOV`, and `TFMA` are PTO-owned extensions. |
+| `comparable-match` | 554 | Stable scalar/command identities or tile selector/header patterns agree. |
+| `divergence` | 90 | 68 direct-tile and 7 command rows retain accepted ABI remaps; other rows record missing identities or intentional PTO-v0 rejection. |
+| `non-comparable` | 38 | Independent evidence is decode-only, header-only, or lacks payload execution. |
 
 These classifications close an exhaustive **independent disposition** review,
 not independent executable parity. The orthogonal generated
 `spec/evidence/noncomparable-oracle-coverage.json` ledger preserves the exact
-32-row non-comparable membership and grades executable-oracle coverage without
+38-row non-comparable membership and grades executable-oracle coverage without
 changing any matrix classification. Its foundation partition is 10 existing
-exact-value candidates, 15 rows with a possible source path but no attributable
-oracle, and 14 rows with no executable path. All 32 currently have
-`oracle_coverage = none`, so independent executable parity is 0/32.
+exact-value candidates, 14 rows with a possible source path but no attributable
+oracle, and 14 rows with no executable path. All 38 currently have
+`oracle_coverage = none`, so independent executable parity is 0/38.
 
 The comparison explicitly records these model limits:
 
@@ -70,13 +69,13 @@ The comparison explicitly records these model limits:
   PTO-owned; the comparison neither defines their selector encoding nor
   proves equivalent warp-predicate execution.
 - PTO-v0 bundle commit binds only `destination0`, `source0`, and `source1`.
-  The bundle bridge can represent 56 TEPL, 1 TMA, and 2 CUBE direct operations;
+  The bundle bridge can represent 56 TEPL, 1 TLSU, and 2 CUBE direct operations;
   other direct operations either use direct tile dispatch or reject at bundle
   commit before effects.
-- TEPL comparison records 18 comparable selector/pattern rows and 79 approved
-  issue-18/ADR-0045 ABI-remap divergences after PTO spelling normalization for
-  transpose. `TPRELU` is the one PTO-owned extension.
-- The independent engine manifest contains 9 TMA and 13 CUBE functions, but
+- TEPL comparison records 18 comparable selector/pattern rows. The remaining
+  selector differences stay explicit row-level divergences, including the
+  accepted issue-18/ADR-0045 ABI remaps.
+- The independent engine manifest supplies TLSU and CUBE header/function rows, but
   those rows are header/function evidence, not independent tile payload
   execution.
 - No independent evidence closes tile payload execution. PTO-owned ASL tests and
@@ -96,8 +95,8 @@ Three closure layers therefore remain distinct:
 
 1. PTO semantic closure is supplied by PTO-owned ASL, legality, fault, state,
    and Stage 4 executable evidence.
-2. Independent disposition closure is the complete 676-row S5-T3 matrix.
-3. Independent executable parity is a separate 0/32 obligation for rows whose
+2. Independent disposition closure is the complete 682-row S5-T3 matrix.
+3. Independent executable parity is a separate 0/38 obligation for rows whose
    comparison evidence is currently decode-, header-, or manifest-only.
 
 Promoting the third layer requires a publication-safe per-row oracle identity,
@@ -130,5 +129,5 @@ add a new ADR for any changed divergence.
 - `spec/evidence/scalar-effect-closure.json`
 - `spec/evidence/bundle-command-totality.json`
 - `spec/evidence/tepl-totality.json`
-- `spec/evidence/tma-totality.json`
+- `spec/evidence/tlsu-totality.json`
 - `spec/evidence/cube-totality.json`

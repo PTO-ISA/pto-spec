@@ -9,11 +9,11 @@ This page is generated from the canonical PTO catalogs under `spec/catalog/`.
 | Surface | Count | Reference |
 | --- | --- | --- |
 | Scalar encoded forms | 474 | [scalar summary](scalar.md) |
-| Bundle/command encoded forms | 96 | [bundle/command](bundle-command.md) |
-| Direct tile operations | 106 | [tile operations](tile.md) |
+| Bundle/command encoded forms | 99 | [bundle/command](bundle-command.md) |
+| Direct tile operations | 109 | [tile operations](tile.md) |
 | System registers | 72 | [system registers](system-registers.md) |
 
-The PTO encoded instruction catalog contains 570 forms: 474 scalar forms and 96 bundle/command forms. Direct tile operations are selector-catalog operations with explicit decoded operands and effects. The separate vector execution instruction class is outside the PTO ISA scope.
+The PTO encoded instruction catalog contains 573 forms: 474 scalar forms and 99 bundle/command forms. Direct tile operations are selector-catalog operations with explicit decoded operands and effects. The separate vector execution instruction class is outside the PTO ISA scope.
 
 Bundle is the grouped-execution term used throughout this specification. The stable `BSTART`, `BSTOP`, `B.*`, and BPC spellings use `B` for bundle. Separately, `BLOCKNUM`, `BLOCKID`, and `CROSS_BID` identify virtual core blocks. Their encodings and operand layouts are unchanged.
 
@@ -33,12 +33,12 @@ Bundle is the grouped-execution term used throughout this specification. The sta
 | Family | Forms |
 | --- | --- |
 | BBD | 25 |
-| CMD | 71 |
+| CMD | 74 |
 
 ## Tile families
 
 | Family | Operations | Role |
 | --- | --- | --- |
 | TEPL | 87 | Element, scalar, reduction, expansion, generation, conversion, rearrangement, and utility operations. |
-| TMA | 7 | Tile memory, movement, gather, scatter, and prefetch operations. |
+| TLSU | 10 | Tile memory, movement, gather, scatter, and prefetch operations. |
 | CUBE | 12 | Matrix operations. |

@@ -1,4 +1,4 @@
-// PTO-REQ-TMA-001, PTO-REQ-MEMORY-COMPLETION-001,
+// PTO-REQ-TLSU-001, PTO-REQ-MEMORY-COMPLETION-001,
 // PTO-REQ-MEMORY-TSO-001: precise, restartable direct
 // TLOAD/TSTORE/MGATHER/MSCATTER and destination-free TPREFETCH.
 
@@ -213,7 +213,7 @@ end;
 
 pure func TileMemoryElementBytes(data_type: TileDataType) => integer {1,2,4,8}
 begin
-    // PTO-v0 TMA exposes four-bit elements through byte-sized containing
+    // PTO-v0 TLSU exposes four-bit elements through byte-sized containing
     // accesses. Tile capacity remains packed in TileInfo.
     if TileDataTypeIsFourBit(data_type) then return 1;
     else return TileElementBytes(data_type);

@@ -47,8 +47,9 @@ following selector ranges are accepted in PTO ISA 0.58.0:
 | 3 | 0, 2–7, 9–20 | Complex Tile operations |
 
 The active non-contiguous selectors are `TFMA` (Mode 0 / Function 28),
-`TSELS` (Mode 1 / Function 26), `TRANDOM` (Mode 3 / Function 9), and
-`TSORT32` (Mode 3 / Function 12).  `TSEL` is Mode 0 / Function 26.
+`TSELS` (Mode 1 / Function 26), `THISTOGRAM` (Mode 3 / Function 8), and
+`TSORT` (Mode 3 / Function 12). Mode 3 / Function 9 is reserved. `TSEL` is
+Mode 0 / Function 26.
 
 Every selector outside the accepted rows is reserved or illegal.  Removed
 identities are not listed here and do not have public instruction pages; see

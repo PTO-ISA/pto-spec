@@ -14,9 +14,9 @@ direct tile. PTO does not include vector instruction execution.
 | System registers and traps | 72 register definitions, including 18 EBARG snapshot registers; 13 trap identities | Stage 2 register and trap targets closed | checked reset/read/write/side-effect/profile classes, generated all-bank reset and access witnesses, authoritative EBARG recovery, per-trap entry/routing/recovery tests, per-leaf TrapContext save/preserve/recover/invalidate evidence with an explicit EBARG/EBSTATE serialization boundary, and coherent interrupt/pending/timer/EOI behavior | active translation or debug-trigger profiles require new trigger, precedence, and conformance contracts |
 | Tile registers | 64 `TileInfo` records; 128-byte CELL and B.IOT size codes 3..9 | capacity, definedness, and explicit handoff invariants closed; Stage 2 tile-state target closed | hand mapping, 128-byte minimum, every B.IOT size code, maximum/aggregate capacity, packed sub-byte storage, no-effect rejection, per-element and reduction incomplete-source rejection, reconfiguration reset, layout, aliasing, push/full-slot, pop/empty-slot, source lifetime, double-free, and multi-slot tests | instruction-family numeric and memory-order refinements are tracked in Stages 3–5 |
 | TEPL | 98 operations | Stage 4 raw-carrier reference totality closed; Stage 5 conformance open | all-98 decoded deterministic state transitions, all-30 reserved selectors, 25 carrier types, layout rejection, multi-destination alias rejection, preserved regions, invalid indices/offsets, duplicate scatter, stable merge, and histogram corners | target floating, quantized, rounding, saturation, and exceptional-value conformance |
-| TMA | 9 operations | Stage 4 reference totality closed; Stage 3 ordering closed | all-nine decoded effects, packed four-bit accesses, duplicate-lane ordering, masks, CAS, production events, restart, and first/middle/last preflight faults | target numeric conformance remains a Stage 5 obligation where profile hooks apply |
+| TLSU | 10 operations | Stage 4 reference totality closed; Stage 3 ordering closed | all-ten decoded effects, packed four-bit accesses, duplicate-lane ordering, masks, CAS, production events, restart, and first/middle/last preflight faults | target numeric conformance remains a Stage 5 obligation where profile hooks apply |
 | CUBE | 13 operations with implicit ACC | Stage 4 raw-carrier reference totality closed; 0.57.1 logical/physical ACC contract defined; Stage 5 conformance open | all-13 decoded results, all-25 type identities, mixed layouts/locations, aliases, ACC initialization/update/conversion/release, trap preservation, and composite preflight | named hardware accumulation, rounding, saturation, exceptional-value, and numeric conformance |
-| Encodings and execution status | 474 scalar forms + 99 bundle/command forms + 120 direct tile operations | PTO ISA 0.57.1 Mode/Function ABI and M4 instruction reference semantics closed; S5-T3 independent disposition comparison closed | generated decoders, operand/handler bindings, reserved-code rejection, no-legacy-decode witnesses, one-tick success/rejection matrix, stale-fault isolation, preserved trap record, scalar/command/tile legality witnesses, and a 693-row comparison matrix with 557 exact matches, 96 classified divergences (86 approved 0.57.1 ABI-break remaps and 10 intentional rejected-command differences), 39 non-comparable rows, and one intentional extension, with all clean-snapshot documentation and Sail gates | Independent executable parity remains 0/39 for the non-comparable rows; Stage 5 numeric conformance and Stage 6 immutable-candidate evidence also remain open |
+| Encodings and execution status | 474 scalar forms + 99 bundle/command forms + 109 direct tile operations | PTO ISA 0.58.0 Mode/Function ABI and M4 instruction reference semantics closed; S5-T3 independent disposition comparison closed | generated decoders, operand/handler bindings, reserved-code rejection, no-legacy-decode witnesses, one-tick success/rejection matrix, stale-fault isolation, preserved trap record, scalar/command/tile legality witnesses, and a 682-row comparison matrix with 554 exact matches, 90 classified divergences, and 38 non-comparable rows, with all clean-snapshot documentation and Sail gates | Independent executable parity remains 0/38 for the non-comparable rows; Stage 5 numeric conformance and Stage 6 immutable-candidate evidence also remain open |
 | Named hardware numeric profile | `pto-hardware-numeric-0.57.1-ieee-v1` | contract and boundary-vector schema defined; implementation conformance open | checked profile identity, low-precision formats, packed lanes, subnormal policy, produced canonical NaNs, NaN/signed-zero comparison results, MIN/MAX special results, invalid-result/RHB rules, matrix operand and physical ACC classes, and MX scale shape/order | infinity arithmetic, broader NaN creation, conversions, reductions, quantization, matrix results, complete flag/status behavior, independent oracle results, downstream byte/effect parity, and accepted target review under `S5-T2` |
 | PTO-TSO concurrency | 16-event/four-agent verification bound | production-connected candidate graph; Stage 3 closed | standalone litmus construction, axiomatic checks, scalar/tile/DMA/fence extraction, atomic ordering, reservation boundaries, conditional writes, and mixed-size fail-closed tests | byte-level mixed-size coherence is an explicit future extension |
 
@@ -30,10 +30,10 @@ and owned residual gaps are in `docs/maturity-bringup-plan.md` and
 
 The comparison evidence has three separate grades. PTO semantic closure comes
 from the PTO ASL and Stage 4 witnesses. S5-T3 independently closes exhaustive
-row disposition across all 676 identities. The generated
+row disposition across all 682 identities. The generated
 `noncomparable-oracle-coverage.json` ledger separately keeps independent
-executable parity open at 0/32: 10 rows are candidates for focused execution,
-8 have an executable source path without an attributable oracle, and 14 have
+executable parity open at 0/38: 10 rows are candidates for focused execution,
+14 have an executable source path without an attributable oracle, and 14 have
 no qualified path. Decode, header, and manifest agreement cannot promote that
 third grade, and numeric result parity remains under S5-T2 where applicable.
 
@@ -57,7 +57,7 @@ generation emits strict ASL for:
 - all 99 bundle/command form masks and matches, priority-selected exact-form
   witnesses, operand extraction, constraints, command-state bindings, and
   handler dispatch;
-- all 120 direct tile operation selectors, semantic handlers, typed operand
+- all 109 direct tile operation selectors, semantic handlers, typed operand
   presence, ordered handler arguments, and decoded execution cases; and
 - positive witnesses for every accepted form, operand occurrence, bundle command,
   and tile selector; negative witnesses for each declared constraint and
@@ -173,8 +173,8 @@ S5-T2, and M4 remain unchanged.
 
 Release traceability is independently fail-closed. The generated
 `spec/evidence/release-traceability-readiness.json` ledger assigns requirement,
-model, executable witness, and bounded status links to 918 exact units. It
-covers all 474 scalar forms, 96 command forms, 106 direct tile operations, 72
+model, executable witness, and bounded status links to 924 exact units. It
+covers all 474 scalar forms, 99 command forms, 109 direct tile operations, 72
 system registers, 13 traps, 36 profile hooks, 47 requirements, and 74 top-level
 ASL state roots expanded to 229 leaf fields. State rows distinguish direct
 architectural state, bounded storage and ordering abstractions,
@@ -185,7 +185,7 @@ numeric hooks, and the later immutable-commit review keep S6-T1 open.
 The generated `spec/evidence/release-gate-readiness.json` ledger closes the
 S6-T2 contract inventory independently of candidate execution. It defines ten
 clone-verifiable release gates, proves the pinned least-privilege hosted
-workflow and exact 34-shard/110-call/105-subprogram topology, and enumerates ten
+workflow and exact 34-shard/110-call/104-subprogram topology, and enumerates ten
 external repository controls plus the PTO architecture and formal-model review
 perspectives. All candidate commit, runtime result, hosted-run, control-snapshot,
 and approval fields remain null. S5-T2 and S6-T1 therefore block candidate

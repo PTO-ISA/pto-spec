@@ -24,7 +24,7 @@ begin
     TestBundleTileCommitRollback();
     TestBundleTileBindingV5Schemas();
     TestBundleSharedBindingV5();
-    TestBundleSharedTMAExecution();
+    TestBundleSharedTLSUExecution();
     TestBundleSharedCubeExecution();
     TestBundleDataAttributes0580();
     TestBundleTileAllocationAndLifetime();

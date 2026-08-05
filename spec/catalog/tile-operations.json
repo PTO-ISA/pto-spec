@@ -4823,7 +4823,7 @@
     {
       "disposition": "accepted-direct-operation",
       "family": "TLSU",
-      "command_mnemonic": "BSTART.TLSU",
+      "command_mnemonic": "BSTART.MGATHER.MASK",
       "function": 6,
       "name": "MGATHER_MASK",
       "semantic_handler": "MGATHER_MASK",
@@ -4859,7 +4859,7 @@
     {
       "disposition": "accepted-direct-operation",
       "family": "TLSU",
-      "command_mnemonic": "BSTART.TLSU",
+      "command_mnemonic": "BSTART.MSCATTER.MASK",
       "function": 7,
       "name": "MSCATTER_MASK",
       "semantic_handler": "MSCATTER_MASK",
@@ -4894,7 +4894,7 @@
     {
       "disposition": "accepted-direct-operation",
       "family": "TLSU",
-      "command_mnemonic": "BSTART.TLSU",
+      "command_mnemonic": "BSTART.MGATHER.CAS",
       "function": 8,
       "name": "MGATHER_CAS",
       "semantic_handler": "MGATHER_CAS",
@@ -5760,21 +5760,17 @@
         "0x061"
       ],
       [
-        "0x068",
-        "0x068"
+        "0x069",
+        "0x069"
       ],
       [
         "0x075",
         "0x07F"
       ]
     ],
-    "tma_functions": [
+    "tlsu_functions": [
       [
-        6,
-        7
-      ],
-      [
-        14,
+        15,
         31
       ]
     ]
@@ -5800,7 +5796,9 @@
     "TPUSH",
     "TRESHAPE",
     "TSUBC",
-    "TSUBSC"
+    "TSUBSC",
+    "TRANDOM",
+    "TSORT32"
   ],
   "rejected_names": [
     "TEXRACT",

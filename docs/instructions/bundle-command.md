@@ -8,15 +8,15 @@ Bundle/command forms update the bundle descriptor, bundle arguments, bundle-visi
 
 The `B` prefix in `BSTART`, `BSTOP`, `C.BSTART`, `C.BSTOP`, and `B.*` means bundle. BPC is the bundle-body program counter. `BID` in `CROSS_BID` instead means virtual core-block identifier. These are stable ISA spellings.
 
-PTO ISA 0.58.0 freezes this 96-form command ABI. `BSTART.TEPL` carries the two-bit Mode and five-bit Function fields; named TMA and CUBE starts each have one command encoding. `B.IOT`, `B.DATR`, and `B.CATR` define tile lifetime, data attributes, and bundle-control attributes. The removed `B.ARG`, generic `BSTART.CUBE`, and generic `BSTART.FIXP` forms are not accepted. See [ADR 0052](../architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md).
+PTO ISA 0.58.0 freezes this 99-form command ABI. `BSTART.TEPL` carries the two-bit Mode and five-bit Function fields; named TLSU and CUBE starts each have one command encoding. `B.IOT`, `B.DATR`, and `B.CATR` define tile lifetime, data attributes, and bundle-control attributes. The removed `B.ARG`, generic `BSTART.CUBE`, and generic `BSTART.FIXP` forms are not accepted. See [ADR 0052](../architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md).
 
 ## Summary
 
 | Metric | Value |
 | --- | --- |
-| Accepted forms | 96 |
-| Operand fields | 56 |
-| Operand pieces | 186 |
+| Accepted forms | 99 |
+| Operand fields | 57 |
+| Operand pieces | 189 |
 | Semantic handlers | 21 |
 
 ## Groups
@@ -33,7 +33,7 @@ PTO ISA 0.58.0 freezes this 96-form command ABI. `BSTART.TEPL` carries the two-b
 | Bundle Hint | 2 |
 | BSTART | 20 |
 | C.BSTART | 5 |
-| Bundle Split | 52 |
+| Bundle Split | 55 |
 | Bundle Shared Operand Binding | 1 |
 
 ## Handler coverage
@@ -43,7 +43,7 @@ PTO ISA 0.58.0 freezes this 96-form command ABI. `BSTART.TEPL` carries the two-b
 | BindBundleScalarIO | 1 |
 | BindBundleSharedIO | 1 |
 | BindBundleTileIO | 5 |
-| ExecuteBundleStart | 66 |
+| ExecuteBundleStart | 69 |
 | ExecuteBundleStop | 2 |
 | ExecuteCrossBlockTransfer | 1 |
 | ExecuteFrameEntry | 1 |
@@ -171,8 +171,11 @@ PTO ISA 0.58.0 freezes this 96-form command ABI. `BSTART.TEPL` carries the two-b
 | BSTART.FP | BSTART.FP RET | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0xffffffff match=0x00007101 | none | none |
 | BSTART.GMOV | BSTART.GMOV DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00d11181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
 | BSTART.MGATHER | BSTART.MGATHER DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00411181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.MGATHER.CAS | BSTART.MGATHER.CAS DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00811181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.MGATHER.MASK | BSTART.MGATHER.MASK DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00611181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
 | BSTART.MPAR | BSTART.MPAR &lt;VS8, VS16&gt; | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0xf9ffffff match=0x00001181 | Mode[2] encoding-defined (i25:2→v0) | none |
 | BSTART.MSCATTER | BSTART.MSCATTER DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00511181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.MSCATTER.MASK | BSTART.MSCATTER.MASK DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00711181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
 | BSTART.MSEQ | BSTART.MSEQ &lt;VS8, VS16&gt; | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0xf9ffffff match=0x00009181 | Mode[2] encoding-defined (i25:2→v0) | none |
 | BSTART.STD | BSTART.STD CALL, &lt;label&gt; | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x00007fff match=0x00004001 | simm17[17] signed (i15:17→v0) | none |
 | BSTART.STD | BSTART.STD COND, &lt;label&gt; | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x00007fff match=0x00003001 | simm17[17] signed (i15:17→v0) | none |
@@ -196,9 +199,9 @@ PTO ISA 0.58.0 freezes this 96-form command ABI. `BSTART.TEPL` carries the two-b
 | BSTART.TMATMULMX | BSTART.TMATMULMX DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00431181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
 | BSTART.TMATMULMX.ACC | BSTART.TMATMULMX.ACC DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00631181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
 | BSTART.TMATMULMX.BIAS | BSTART.TMATMULMX.BIAS DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00531181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
-| BSTART.TMOV | BSTART.TMOV DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00211181&lt;br&gt;TMOV.L2S.INSERT (Function 8): 0:32b mask=0x07ffffff match=0x00811181&lt;br&gt;TMOV.L2S.PUBLISH (Function 9): 0:32b mask=0x07ffffff match=0x00911181&lt;br&gt;TMOV.S2L.BROADCAST (Function 10): 0:32b mask=0x07ffffff match=0x00a11181&lt;br&gt;TMOV.S2L.EXTRACT (Function 11): 0:32b mask=0x07ffffff match=0x00b11181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.TMOV | BSTART.TMOV DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00211181&lt;br&gt;TMOV.L2S.INSERT (Function 9): 0:32b mask=0x07ffffff match=0x00911181&lt;br&gt;TMOV.L2S.PUBLISH (Function 10): 0:32b mask=0x07ffffff match=0x00a11181&lt;br&gt;TMOV.S2L.BROADCAST (Function 11): 0:32b mask=0x07ffffff match=0x00b11181&lt;br&gt;TMOV.S2L.EXTRACT (Function 12): 0:32b mask=0x07ffffff match=0x00c11181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
 | BSTART.TPREFETCH | BSTART.TPREFETCH DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00311181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
-| BSTART.TSTORE | BSTART.TSTORE DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00111181&lt;br&gt;TSTORE.SPART (Function 12): 0:32b mask=0x07ffffff match=0x00c11181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
+| BSTART.TSTORE | BSTART.TSTORE DataType | 32 | L32 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:32b mask=0x07ffffff match=0x00111181&lt;br&gt;TSTORE.SPART (Function 14): 0:32b mask=0x07ffffff match=0x00e11181 | DataType[5] encoding-defined (i27:5→v0) | DataType one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28} |
 | BSTOP | BSTOP | 32 | L32 | ExecuteBundleStop | Commits the current bundle and transfers to its selected continuation. | 0:32b mask=0xffffffff match=0x00000001 | none | none |
 | C.BSTART | C.BSTART COND,  label | 16 | C16 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:16b mask=0x000f match=0x0004 | simm12[12] signed (i4:12→v0) | none |
 | C.BSTART | C.BSTART DIRECT, label | 16 | C16 | ExecuteBundleStart | Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind. | 0:16b mask=0x000f match=0x0002 | simm12[12] signed (i4:12→v0) | none |

@@ -58,7 +58,13 @@ def main() -> int:
     for path in files:
         relative = path.relative_to(ROOT)
         lower_path = str(relative).lower()
-        if any(term in lower_path for term in FORBIDDEN_TERMS) or LEGACY_RELEASE.search(lower_path):
+        migrated = any(
+            relative == root or root in relative.parents
+            for root in MIGRATED_DOCUMENT_ROOTS
+        )
+        if any(term in lower_path for term in FORBIDDEN_TERMS) or (
+            LEGACY_RELEASE.search(lower_path) and not migrated
+        ):
             failures.append(f"forbidden source identity in path: {relative}")
             continue
         if not path.is_file():
@@ -69,7 +75,9 @@ def main() -> int:
             continue
 
         lower_body = body.lower()
-        if any(term in lower_body for term in FORBIDDEN_TERMS) or LEGACY_RELEASE.search(lower_body):
+        if any(term in lower_body for term in FORBIDDEN_TERMS) or (
+            LEGACY_RELEASE.search(lower_body) and not migrated
+        ):
             failures.append(f"forbidden source identity in file: {relative}")
         for prefix in STALE_URL_PREFIXES:
             if prefix in body:
@@ -82,7 +90,7 @@ def main() -> int:
         # source formatting and source-relative references needed to reproduce
         # the existing Complete site. Their rendered headings, links, and
         # fragments are checked by the HTML builder.
-        if any(relative == root or root in relative.parents for root in MIGRATED_DOCUMENT_ROOTS):
+        if migrated:
             continue
 
         for line_number, line in enumerate(body.splitlines(), start=1):

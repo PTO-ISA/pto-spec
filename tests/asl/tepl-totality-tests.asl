@@ -167,6 +167,11 @@ begin
         ConfigureTeplTile(0, 1, 4, TileDataType_U64);
         ConfigureTeplFilledTile(1, 1, 2, TileDataType_U64, 10);
         ConfigureTeplFilledTile(2, 1, 2, TileDataType_U64, 20);
+    elsif operation == TileOperation_THISTOGRAM then
+        ConfigureTeplTile(0, 1, 256, TileDataType_U64);
+        ConfigureTeplFilledTile(1, 1, 4, TileDataType_U32, 0);
+        ConfigureTeplFilledTile(2, 3, 1, TileDataType_U8, 0);
+        operands.selected_byte = 3;
     elsif TeplOperationIsPartial(operation) then
         ConfigureTeplTile(0, 1, 3, TileDataType_U64);
         ConfigureTeplFilledTile(1, 1, 3, TileDataType_U64, 10);
@@ -379,13 +384,16 @@ begin
     sort.destination0 = 0;
     sort.destination1 = 2;
     sort.source0 = 1;
+    sort.sort_width = 2;
     sort.flag0 = TRUE;
     ClearFault();
     let (sort_status, -) = ExecuteTileInstruction(
         TileDecode_TEPL, '000001101100', sort);
     assert sort_status == TileExecution_Executed;
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 4;
-    assert ReadTileElement(0, 0, 3) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(0, 0, 2) == Zeros{PTO_XLEN} + 3;
+    assert ReadTileElement(0, 0, 3) == Zeros{PTO_XLEN} + 2;
 
 end;
 

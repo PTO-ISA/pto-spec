@@ -6,14 +6,14 @@ This page is generated from the canonical PTO catalogs under `spec/catalog/`.
 
 Direct tile operations are selected by the tile operation catalog and execute against explicit tile, scalar, memory, and descriptor operands. The selector catalog is normative for operation identity, operand roles, semantic handler, and argument order.
 
-In PTO ISA 0.58.0, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TMA and CUBE operations bind directly to their corresponding `BSTART.*` command forms. CUBE operations carry an explicit Local destination D; ACC variants also carry an explicit Local input C, with `D == C` defined as read-old/write-new. Accepted `B.IOT` forms encode `PE_MASK`, `TSize`, and a 2-bit destination Tile field without reuse bits. `B.DATR` fields apply only to the operation sets recorded in the catalog. See [ADR 0052](../architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md).
+In PTO ISA 0.58.0, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TLSU and CUBE operations bind directly to their corresponding `BSTART.*` command forms. CUBE operations carry an explicit Local destination D; ACC variants also carry an explicit Local input C, with `D == C` defined as read-old/write-new. Accepted `B.IOT` forms encode `PE_MASK`, `TSize`, and a 2-bit destination Tile field without reuse bits. `B.DATR` fields apply only to the operation sets recorded in the catalog. See [ADR 0052](../architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md).
 
 ## Families
 
 | Family | Operations | Role |
 | --- | --- | --- |
 | TEPL | 87 | Element, scalar, reduction, expansion, generation, conversion, rearrangement, and utility operations. |
-| TMA | 7 | Tile memory, movement, gather, scatter, and prefetch operations. |
+| TLSU | 10 | Tile memory, movement, gather, scatter, and prefetch operations. |
 | CUBE | 12 | Matrix operations. |
 
 ## TEPL
@@ -95,10 +95,10 @@ In PTO ISA 0.58.0, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TMA and C
 | TFILLPAD | mode=3, function=5, selector=0x065 | TFILLPAD | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:padding | destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
 | TCI | mode=3, function=6, selector=0x066 | TCI | destination0:destination&lt;br&gt;scalar0:start&lt;br&gt;flag0:descending | destination0&lt;br&gt;scalar0&lt;br&gt;flag0 |
 | TTRI | mode=3, function=7, selector=0x067 | TTRI | destination0:destination&lt;br&gt;flag0:upper&lt;br&gt;diagonal:diagonal | destination0&lt;br&gt;flag0&lt;br&gt;diagonal |
-| TRANDOM | mode=3, function=9, selector=0x069 | TRANDOM | destination0:destination&lt;br&gt;scalar0:key-64&lt;br&gt;scalar1:counter-low-64&lt;br&gt;address:counter-high-64&lt;br&gt;flag0:seven-rounds | destination0&lt;br&gt;scalar0&lt;br&gt;scalar1&lt;br&gt;address&lt;br&gt;flag0 |
+| THISTOGRAM | mode=3, function=8, selector=0x068 | THISTOGRAM | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:indices&lt;br&gt;selected_byte:selected-byte | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;selected_byte |
 | TQUANT | mode=3, function=10, selector=0x06A | TQUANT | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scale&lt;br&gt;scalar1:zero-point&lt;br&gt;numeric_control:rounding-and-saturation | destination0&lt;br&gt;source0&lt;br&gt;scalar0&lt;br&gt;scalar1&lt;br&gt;numeric_control |
 | TDEQUANT | mode=3, function=11, selector=0x06B | TDEQUANT | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scale&lt;br&gt;scalar1:zero-point&lt;br&gt;numeric_control:rounding-and-saturation | destination0&lt;br&gt;source0&lt;br&gt;scalar0&lt;br&gt;scalar1&lt;br&gt;numeric_control |
-| TSORT32 | mode=3, function=12, selector=0x06C | TSORT32 | destination0:destination&lt;br&gt;destination1:original-indices-u32&lt;br&gt;source0:source&lt;br&gt;flag0:descending | destination0&lt;br&gt;destination1&lt;br&gt;source0&lt;br&gt;flag0 |
+| TSORT | mode=3, function=12, selector=0x06C | TSORT | destination0:destination&lt;br&gt;destination1:original-indices-u32&lt;br&gt;source0:source&lt;br&gt;sort_width:sort-width&lt;br&gt;flag0:descending | destination0&lt;br&gt;destination1&lt;br&gt;source0&lt;br&gt;sort_width&lt;br&gt;flag0 |
 | TMRGSORT | mode=3, function=13, selector=0x06D | TMRGSORT | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right&lt;br&gt;flag0:descending | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;flag0 |
 | TTRANS | mode=3, function=14, selector=0x06E | TTRANS | destination0:destination&lt;br&gt;source0:source | destination0&lt;br&gt;source0 |
 | TGATHER | mode=3, function=15, selector=0x06F | TGATHER | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:indices | destination0&lt;br&gt;source0&lt;br&gt;source1 |
@@ -108,7 +108,7 @@ In PTO ISA 0.58.0, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TMA and C
 | TPARTMAX | mode=3, function=19, selector=0x073 | ExecuteTilePartial | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TilePartial_MAX&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
 | TPARTMIN | mode=3, function=20, selector=0x074 | ExecuteTilePartial | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TilePartial_MIN&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
 
-## TMA
+## TLSU
 
 | Name | Selector | Handler | Operands | Arguments |
 | --- | --- | --- | --- | --- |
@@ -118,6 +118,9 @@ In PTO ISA 0.58.0, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TMA and C
 | TPREFETCH | function=3 | TPREFETCH | address:base-address&lt;br&gt;byte_count:byte-count | address&lt;br&gt;byte_count |
 | MGATHER | function=4 | MGATHER | destination0:destination&lt;br&gt;address:base-address&lt;br&gt;source0:indices | destination0&lt;br&gt;address&lt;br&gt;source0 |
 | MSCATTER | function=5 | MSCATTER | address:base-address&lt;br&gt;source0:source&lt;br&gt;source1:indices | address&lt;br&gt;source0&lt;br&gt;source1 |
+| MGATHER_MASK | function=6 | MGATHER_MASK | destination0:destination&lt;br&gt;address:base-address&lt;br&gt;source0:indices&lt;br&gt;source1:mask | destination0&lt;br&gt;address&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;{"runtime": "CurrentBundlePadValue"} |
+| MSCATTER_MASK | function=7 | MSCATTER_MASK | address:base-address&lt;br&gt;source0:source&lt;br&gt;source1:indices&lt;br&gt;source2:mask | address&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2 |
+| MGATHER_CAS | function=8 | MGATHER_CAS | destination0:destination&lt;br&gt;address:base-address&lt;br&gt;source0:indices&lt;br&gt;source1:expected&lt;br&gt;source2:replacement | destination0&lt;br&gt;address&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2 |
 | GMOV | function=13 | GMOV | destination0:destination&lt;br&gt;source0:resolved-peer-source&lt;br&gt;scalar0:peer-tid | destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
 
 ## CUBE

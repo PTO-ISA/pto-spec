@@ -8,7 +8,7 @@
   "classification_acceptance_record": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
   "classification_checkpoint_id": "PD-02-SC2:PD-05-SC1",
   "policy": {
-    "namespace_locality": "Scalar source, scalar floating destination, scalar integer destination, TMA/TALLOC, and bundle DataType codes are distinct namespaces. Equal integers do not imply equal types across namespaces.",
+    "namespace_locality": "Scalar source, scalar floating destination, scalar integer destination, TLSU/TALLOC, and bundle DataType codes are distinct namespaces. Equal integers do not imply equal types across namespaces.",
     "reserved_codes": "Every unmapped code rejects before architectural effects; helper fallback values are unreachable after legality succeeds and are not architectural aliases.",
     "raw_carrier_boundary": "Widths and signedness describe Stage 4 raw carriers only. Floating bit layouts and target numeric results remain S5-T2 rules.",
     "four_bit_packing": "E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 use low-index/low-nibble and odd-index/high-nibble packing with sibling preservation on stores.",
@@ -1918,25 +1918,25 @@
     "tests/asl/state-tests.asl:TestTileRegisterMapping",
     "tests/asl/scalar-tests.asl:TestScalarFloating",
     "tests/asl/bundle-tests.asl:TestBundleOperationDescriptorFields",
-    "tests/asl/tma-totality-tests.asl:TestTmaAllFourBitTypes",
+    "tests/asl/tlsu-totality-tests.asl:TestTlsuAllFourBitTypes",
     "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUTotality"
   ],
   "sources": [
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ecbc4d29caf4a82581b81c5f829c7a16cc9cc985133f43516e861d15c2ef99cd"
+      "sha256": "94d48007a9082fae64a0ec0a089f3ab146afe5f8a3b3b4a859ccfaa41519ef03"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
       "sha256": "d8d188dc06cb4195fcf3d62724591416c17cbd938c0c225d2093890d61eeb7dc"
     },
     {
-      "path": "spec/evidence/tma-totality.json",
-      "sha256": "0e09c514b38ba87120aa5d1cb1c07e5a4ddf38c6c4751b020821c0fbbaa95350"
+      "path": "spec/evidence/tlsu-totality.json",
+      "sha256": "2f328da3c97093603d7a3295571dcac841eb5f2c18ad0d738a963fc643b3f099"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "a21760edef8d377e313b44851c361b5d5de69f989a1218b8e72b4d67fc63e9a8"
+      "sha256": "ef5b0ef5155618bccaf46376f9cdbcab5c1883cb931f4f08e8957f8cacafa943"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -1944,11 +1944,11 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "58cb445f7a4bc690859f017db4e9ec7b054ab1c10d50773eb2d6cf3a2a87d94a"
+      "sha256": "014501ed69c25cca527a67649c365c2da91859076479d7218111bda97df38f37"
     },
     {
       "path": "asl/types.asl",
-      "sha256": "e23a59bfc8ae54b84b0ba06e5af4593b331fbf7f6ef45f901bcaa83f1d6e8f43"
+      "sha256": "a70daffa65d924e3581ce19a3876a06506c2d1d4c3a06fff9377cb6735532b24"
     },
     {
       "path": "asl/numeric/formats.asl",
@@ -1964,11 +1964,11 @@
     },
     {
       "path": "asl/tile/memory.asl",
-      "sha256": "ddf64264ba57cec0dd3772b815b3fd3d0ff3899e7c447a60f1737862b9d1bb22"
+      "sha256": "39d20f62a49f0c33d9990e89bf490ebe151cd5df45ebd2b612544a9a043c4161"
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "6a3e8fe318bb85a632998caa14a3c158b727fa9bf059c56c7c4a50c4c8fe8f6e"
+      "sha256": "8ac6dd8f0d960645d871b37bc8ededd8905944dd36a5d1745af45a5ac85e37d2"
     },
     {
       "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
@@ -1976,7 +1976,7 @@
     },
     {
       "path": "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
-      "sha256": "133d78e770cedb49f0b7cac66b52e0fc6efb6a687f99bd7cb630ca9fb7ec6714"
+      "sha256": "9ef2dcf86fec5b1f39cf85faf82357e077aa9f9c17d1774a2f854d81c50cbced"
     },
     {
       "path": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",

@@ -533,6 +533,7 @@ end;
 readonly func TileOperandsLegal_TSORT(destination: TileIndex,
                                       destination_indices: TileIndex,
                                       source: TileIndex,
+                                      sort_width: integer {1..64},
                                       descending: boolean) => boolean
 begin
     return destination != destination_indices &&
@@ -547,6 +548,30 @@ begin
                _Tiles[[source]].valid_rows * _Tiles[[source]].valid_columns &&
            _Tiles[[destination]].data_type == _Tiles[[source]].data_type &&
            _Tiles[[destination_indices]].data_type == TileDataType_U32;
+end;
+
+readonly func TileOperandsLegal_THISTOGRAM(
+    destination: TileIndex, source: TileIndex, indices: TileIndex,
+    selected_byte: integer {0..3}) => boolean
+begin
+    if !TileDescriptorLegal(destination) || !TileDescriptorLegal(source) ||
+       !TileDescriptorLegal(indices) ||
+       _Tiles[[destination]].valid_rows != _Tiles[[source]].valid_rows ||
+       _Tiles[[destination]].valid_columns < 256 ||
+       !(_Tiles[[source]].data_type == TileDataType_U16 ||
+         _Tiles[[source]].data_type == TileDataType_U32) then return FALSE; end;
+    if _Tiles[[source]].data_type == TileDataType_U16 then
+        if selected_byte > 1 then return FALSE; end;
+        return selected_byte == 1 ||
+               (_Tiles[[indices]].valid_rows >= _Tiles[[source]].valid_rows &&
+                _Tiles[[indices]].valid_columns >= 1);
+    else
+        let required_rows: integer = if selected_byte == 0 then 3 else
+                                     if selected_byte == 1 then 2 else
+                                     if selected_byte == 2 then 1 else 0;
+        return _Tiles[[indices]].valid_rows >= required_rows &&
+               (required_rows == 0 || _Tiles[[indices]].valid_columns >= 1);
+    end;
 end;
 
 readonly func TileOperandsLegal_GMOV(

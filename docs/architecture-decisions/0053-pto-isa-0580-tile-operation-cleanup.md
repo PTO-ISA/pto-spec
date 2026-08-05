@@ -45,14 +45,21 @@ family's role (tile ↔ global memory data movement) and avoids
 confusion with the hardware TMA unit naming.
 
 All `"family": "TMA"` references in catalogs, ASL sources, and tests
-are renamed to `"family": "TLSU"`. Bundle command mnemonics
-(`BSTART.TMA`) are renamed to `BSTART.TLSU`.
+are renamed to `"family": "TLSU"`. `BSTART.TLSU` is the family notation
+used by explanatory assembly sequences; the accepted binary command forms
+remain the exact named `BSTART.*` instructions. In particular, the restored
+selectors use `BSTART.MGATHER.MASK`, `BSTART.MSCATTER.MASK`, and
+`BSTART.MGATHER.CAS`; a generic `BSTART.TLSU` encoded form is not introduced.
 
 ## Consequences
 
 - Operation count changes: 106 → 109 (remove TRANDOM: −1, restore
   THISTOGRAM: +1, restore MGATHER_MASK/MSCATTER_MASK/MGATHER_CAS: +3)
 - Encoding ABI: TSORT selector unchanged, sort width becomes a
-  parameter. TLSU selectors unchanged.
-- Generated evidence files must be regenerated to reflect the new
-  family name and operation count.
+  parameter. The retained masked/CAS selectors keep Functions 6–8. To avoid
+  an encoding collision, the newer Shared-TLSU variants use Functions 9–12
+  for TMOV and Function 14 for `TSTORE.SPART`; Function 13 remains `GMOV`.
+- Command-form count changes from 96 to 99 by restoring the three exact
+  masked/CAS bundle-start forms.
+- Generated evidence files must be regenerated to reflect the new family
+  name and operation/command counts.

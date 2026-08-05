@@ -41,17 +41,18 @@
 | 3 | `TPREFETCH` | existing Local/cache schema |
 | 4 | `MGATHER` | existing Local schema |
 | 5 | `MSCATTER` | existing Local schema |
-| 6 | legacy `MGATHER.MASK`, removed | illegal |
-| 7 | legacy `MSCATTER.MASK`, removed | illegal |
-| 8 | `TMOV.L2S_INSERT` | `C.B.IOS+B.IOT(Local src)` |
-| 9 | `TMOV.L2S_PUBLISH` | `C.B.IOS+B.IOT(Local src)` |
-| 10 | `TMOV.S2L_BROADCAST` | `C.B.IOS+B.IOT(Local dst)` |
-| 11 | `TMOV.S2L_EXTRACT` | `C.B.IOS+B.IOT(Local dst)` |
-| 12 | `TSTORE.SPART` | `C.B.IOS+B.IOR` |
+| 6 | `MGATHER.MASK` | existing Local masked-gather schema |
+| 7 | `MSCATTER.MASK` | existing Local masked-scatter schema |
+| 8 | `MGATHER.CAS` | existing Local atomic gather-CAS schema |
+| 9 | `TMOV.L2S.INSERT` | `C.B.IOS+B.IOT(Local src)` |
+| 10 | `TMOV.L2S.PUBLISH` | `C.B.IOS+B.IOT(Local src)` |
+| 11 | `TMOV.S2L.BROADCAST` | `C.B.IOS+B.IOT(Local dst)` |
+| 12 | `TMOV.S2L.EXTRACT` | `C.B.IOS+B.IOT(Local dst)` |
 | 13 | `GMOV` | `B.IOT(Local src,dst,PE_MASK,TSize)+B.IOR(peer_tid,0,0)` |
-| 14–31 | reserved | illegal |
+| 14 | `TSTORE.SPART` | `C.B.IOS+B.IOR` |
+| 15–31 | reserved | illegal |
 
-Function 8–11 由公开 `SharedMoveMode` 选择。Function 12 只由 Shared source 的 `TSTORE<pe_scope>` 选择；即使 source 已完整定义，full store 与 partition store 仍使用不同 Function。Function 13 是固定 Core4 collective `GMOV`，没有 scope 重载。
+Function 9–12 由公开 `SharedMoveMode` 选择。Function 14 只由 Shared source 的 `TSTORE<pe_scope>` 选择；即使 source 已完整定义，full store 与 partition store 仍使用不同 Function。Function 13 是固定 Core4 collective `GMOV`，没有 scope 重载。
 
 ## Size 与 Mask
 
