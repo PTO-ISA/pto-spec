@@ -318,7 +318,7 @@
     },
     {
       "path": "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
-      "sha256": "a02f68c27c45a6955656f82c6aeba3ae2dff954cd774a4866d7937f310f48767"
+      "sha256": "d501fb4f122208e427bb2e59503322c1349fec5f5e2b599ef9b185d28fa386fc"
     },
     {
       "path": "docs/architecture.md",
@@ -552,7 +552,7 @@
     },
     "tile_operations_total": 106
   },
-  "content_sha256": "d657760f7cd998f9735f72b68bddff478f44b2c0487ee0c071fde091174d0b5b",
+  "content_sha256": "bb40f506cef2f28795ba204b6757999af60ceb63292b832169b384216facda01",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
