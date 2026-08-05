@@ -5,7 +5,7 @@
   "checkpoint_id": "PD-05-SC2",
   "status": "named-hardware-special-value-checkpoint-accepted-pd05-open",
   "acceptance_record": "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
-  "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
+  "profile_id": "pto-hardware-numeric-0.58.0-ieee-v1",
   "policy": {
     "produced_nan": "canonical-destination-format-nan",
     "comparison_nan": "NE-true-all-other-relations-false",
@@ -586,15 +586,15 @@
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "1608fa0c03d139842b85c63c581d8280c37e55ef03a6e2f3cbf75dd8cb8edaab"
+      "sha256": "c4076cf8ac6ebd0c6db8a070b7c290b9928ed7f98c089538ee53ed4644e1531a"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "4bdddb35de0738fe55eb3266fa02fdc80ae829cb95ac9079fa3aaa60c66c4baf"
+      "sha256": "5e2d939f8f7dd64a386352d908669aef0db0d31508adc0580e057c241f0ead97"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "6984a2c6bcafa208a1458001fc1105a7820b0a8005d54ca77bf07846c00d7b49"
+      "sha256": "b4d79c47c80e82c83bdb64cc111c0a744006ec60b5b05a798e7105060068122b"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -602,15 +602,15 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "c1a370fbdb17caa54aeeaa733f22bd55e6777322e3dd8a7e1ed6fa62ab35249a"
+      "sha256": "a21760edef8d377e313b44851c361b5d5de69f989a1218b8e72b4d67fc63e9a8"
     },
     {
       "path": "asl/numeric/formats.asl",
-      "sha256": "359470d81e446cabaefdb0ebc52529cf76809f6ce64806af596f39ac59e3339b"
+      "sha256": "d2f16eef9b310107df3090613e76d6f05693a0cc39a1c69c8c241f33cc5bb2f4"
     },
     {
       "path": "asl/scalar/floating.asl",
-      "sha256": "cc2b1fd8a53e840295363ae45335ca426385565d6f797b4829d760e3e65ba71f"
+      "sha256": "ef1eee6e90063dd0ea41c48bd1792f060a19467aa303112caea3877fb46d38ba"
     },
     {
       "path": "asl/scalar/dispatch.asl",
@@ -618,7 +618,7 @@
     },
     {
       "path": "tests/asl/profile-tests.asl",
-      "sha256": "dae9a72ca6ea569082bed29df1f35942a67ffc5e1ba53affedcb3019a138216e"
+      "sha256": "47248debd7876d0117b0738a44d226e4352806581d574895a7f10a8cb8949f89"
     }
   ],
   "summary": {

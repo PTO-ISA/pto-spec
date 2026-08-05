@@ -2,15 +2,17 @@
   "schema_version": 1,
   "target": "S4-T7",
   "status": "closed",
-  "accepted_form_count": 99,
+  "accepted_form_count": 96,
+  "encoding_variant_count": 5,
   "disposition_counts": {
-    "executed": 89,
+    "executed": 86,
     "pto-v0-rejected": 10
   },
   "handler_counts": {
     "BindBundleScalarIO": 1,
+    "BindBundleSharedIO": 1,
     "BindBundleTileIO": 5,
-    "ExecuteBundleStart": 69,
+    "ExecuteBundleStart": 66,
     "ExecuteBundleStop": 2,
     "ExecuteCrossBlockTransfer": 1,
     "ExecuteFrameEntry": 1,
@@ -27,7 +29,7 @@
     "SetBundleBodyAddress": 1,
     "SetBundleControlAttributes": 1,
     "SetBundleDataAttributes": 1,
-    "SetBundleDimension": 5,
+    "SetBundleDimension": 4,
     "SetBundleHint": 2
   },
   "architecture_contract": {
@@ -232,15 +234,15 @@
       "decoded_fields": [
         "SrcTile0",
         "L",
-        "imm4",
-        "S0R",
+        "PE_MASK",
+        "TSize",
         "DstTile"
       ],
       "consumed_fields": [
         "SrcTile0",
         "L",
-        "imm4",
-        "S0R",
+        "PE_MASK",
+        "TSize",
         "DstTile"
       ],
       "disposition": "executed",
@@ -257,15 +259,13 @@
         "SrcTile1",
         "SrcTile0",
         "L",
-        "S1R",
-        "S0R"
+        "PE_MASK"
       ],
       "consumed_fields": [
         "SrcTile1",
         "SrcTile0",
         "L",
-        "S1R",
-        "S0R"
+        "PE_MASK"
       ],
       "disposition": "executed",
       "effect_class": "bundle-tile-binding",
@@ -281,18 +281,16 @@
         "SrcTile1",
         "SrcTile0",
         "L",
-        "imm4",
-        "S1R",
-        "S0R",
+        "PE_MASK",
+        "TSize",
         "DstTile"
       ],
       "consumed_fields": [
         "SrcTile1",
         "SrcTile0",
         "L",
-        "imm4",
-        "S1R",
-        "S0R",
+        "PE_MASK",
+        "TSize",
         "DstTile"
       ],
       "disposition": "executed",
@@ -308,12 +306,12 @@
       "decoded_fields": [
         "SrcTile0",
         "L",
-        "S0R"
+        "PE_MASK"
       ],
       "consumed_fields": [
         "SrcTile0",
         "L",
-        "S0R"
+        "PE_MASK"
       ],
       "disposition": "executed",
       "effect_class": "bundle-tile-binding",
@@ -327,12 +325,14 @@
       "semantic_handler": "BindBundleTileIO",
       "decoded_fields": [
         "L",
-        "imm4",
+        "PE_MASK",
+        "TSize",
         "DstTile"
       ],
       "consumed_fields": [
         "L",
-        "imm4",
+        "PE_MASK",
+        "TSize",
         "DstTile"
       ],
       "disposition": "executed",
@@ -408,22 +408,6 @@
     },
     {
       "form_index": 17,
-      "form_id": "bstart_acccvt_32_56c3ce3838c5",
-      "mnemonic": "BSTART.ACCCVT",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "DataType"
-      ],
-      "consumed_fields": [
-        "DataType"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 18,
       "form_id": "bstart_fp_32_0c671a644214",
       "mnemonic": "BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -435,7 +419,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 19,
+      "form_index": 18,
       "form_id": "bstart_fp_32_24db3966d6ba",
       "mnemonic": "BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -447,7 +431,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 20,
+      "form_index": 19,
       "form_id": "bstart_fp_32_58ad7954fb49",
       "mnemonic": "BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -463,7 +447,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 21,
+      "form_index": 20,
       "form_id": "bstart_fp_32_7978795a29a1",
       "mnemonic": "BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -475,7 +459,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 22,
+      "form_index": 21,
       "form_id": "bstart_fp_32_d00a708a81f0",
       "mnemonic": "BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -491,7 +475,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 23,
+      "form_index": 22,
       "form_id": "bstart_fp_32_dd7bc8dd694c",
       "mnemonic": "BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -507,7 +491,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 24,
+      "form_index": 23,
       "form_id": "bstart_fp_32_face4f238d84",
       "mnemonic": "BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -523,7 +507,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 25,
+      "form_index": 24,
       "form_id": "bstart_mgather_32_c9defbf18276",
       "mnemonic": "BSTART.MGATHER",
       "semantic_handler": "ExecuteBundleStart",
@@ -539,39 +523,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 26,
-      "form_id": "bstart_mgather_cas_32_fd8c8a3b720a",
-      "mnemonic": "BSTART.MGATHER.CAS",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "DataType"
-      ],
-      "consumed_fields": [
-        "DataType"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 27,
-      "form_id": "bstart_mgather_mask_32_5573241cd944",
-      "mnemonic": "BSTART.MGATHER.MASK",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "DataType"
-      ],
-      "consumed_fields": [
-        "DataType"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 28,
+      "form_index": 25,
       "form_id": "bstart_mpar_32_2d163417c615",
       "mnemonic": "BSTART.MPAR",
       "semantic_handler": "ExecuteBundleStart",
@@ -587,7 +539,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 29,
+      "form_index": 26,
       "form_id": "bstart_mscatter_32_0f0ba08bd798",
       "mnemonic": "BSTART.MSCATTER",
       "semantic_handler": "ExecuteBundleStart",
@@ -603,23 +555,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 30,
-      "form_id": "bstart_mscatter_mask_32_2a33eed646f7",
-      "mnemonic": "BSTART.MSCATTER.MASK",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "DataType"
-      ],
-      "consumed_fields": [
-        "DataType"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 31,
+      "form_index": 27,
       "form_id": "bstart_mseq_32_39343a456ec5",
       "mnemonic": "BSTART.MSEQ",
       "semantic_handler": "ExecuteBundleStart",
@@ -635,7 +571,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 32,
+      "form_index": 28,
       "form_id": "bstart_std_32_1ef99c4cedcb",
       "mnemonic": "BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -651,7 +587,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 33,
+      "form_index": 29,
       "form_id": "bstart_std_32_3f6980d013f7",
       "mnemonic": "BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -663,7 +599,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 34,
+      "form_index": 30,
       "form_id": "bstart_std_32_441ad677fffe",
       "mnemonic": "BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -679,7 +615,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 35,
+      "form_index": 31,
       "form_id": "bstart_std_32_816dfa76cc4a",
       "mnemonic": "BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -691,7 +627,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 36,
+      "form_index": 32,
       "form_id": "bstart_std_32_986b7ee2cf6a",
       "mnemonic": "BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -703,7 +639,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 37,
+      "form_index": 33,
       "form_id": "bstart_std_32_b05390d367cf",
       "mnemonic": "BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -719,7 +655,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 38,
+      "form_index": 34,
       "form_id": "bstart_std_32_c1de85e06878",
       "mnemonic": "BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -735,7 +671,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 39,
+      "form_index": 35,
       "form_id": "bstart_sys_32_762d9d84a6d8",
       "mnemonic": "BSTART.SYS",
       "semantic_handler": "ExecuteBundleStart",
@@ -751,7 +687,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 40,
+      "form_index": 36,
       "form_id": "bstart_tepl_32_d022db6dacb3",
       "mnemonic": "BSTART.TEPL",
       "semantic_handler": "ExecuteBundleStart",
@@ -771,7 +707,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 41,
+      "form_index": 37,
       "form_id": "bstart_tgemv_32_ae19f5b678f5",
       "mnemonic": "BSTART.TGEMV",
       "semantic_handler": "ExecuteBundleStart",
@@ -787,7 +723,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 42,
+      "form_index": 38,
       "form_id": "bstart_tgemv_acc_32_9a471b21913e",
       "mnemonic": "BSTART.TGEMV.ACC",
       "semantic_handler": "ExecuteBundleStart",
@@ -803,7 +739,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 43,
+      "form_index": 39,
       "form_id": "bstart_tgemv_bias_32_186ee96c0a8b",
       "mnemonic": "BSTART.TGEMV.BIAS",
       "semantic_handler": "ExecuteBundleStart",
@@ -819,7 +755,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 44,
+      "form_index": 40,
       "form_id": "bstart_tgemvmx_32_ae5e005f6589",
       "mnemonic": "BSTART.TGEMVMX",
       "semantic_handler": "ExecuteBundleStart",
@@ -835,7 +771,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 45,
+      "form_index": 41,
       "form_id": "bstart_tgemvmx_acc_32_368647b04bb0",
       "mnemonic": "BSTART.TGEMVMX.ACC",
       "semantic_handler": "ExecuteBundleStart",
@@ -851,7 +787,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 46,
+      "form_index": 42,
       "form_id": "bstart_tgemvmx_bias_32_d23011f15171",
       "mnemonic": "BSTART.TGEMVMX.BIAS",
       "semantic_handler": "ExecuteBundleStart",
@@ -867,7 +803,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 47,
+      "form_index": 43,
       "form_id": "bstart_tload_32_d0c18bb0ab15",
       "mnemonic": "BSTART.TLOAD",
       "semantic_handler": "ExecuteBundleStart",
@@ -883,7 +819,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 48,
+      "form_index": 44,
       "form_id": "bstart_tmatmul_32_f9da70e4e0ad",
       "mnemonic": "BSTART.TMATMUL",
       "semantic_handler": "ExecuteBundleStart",
@@ -899,7 +835,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 49,
+      "form_index": 45,
       "form_id": "bstart_tmatmul_acc_32_0c8c62e5f00a",
       "mnemonic": "BSTART.TMATMUL.ACC",
       "semantic_handler": "ExecuteBundleStart",
@@ -915,7 +851,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 50,
+      "form_index": 46,
       "form_id": "bstart_tmatmul_bias_32_4d5a498d12f3",
       "mnemonic": "BSTART.TMATMUL.BIAS",
       "semantic_handler": "ExecuteBundleStart",
@@ -931,7 +867,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 51,
+      "form_index": 47,
       "form_id": "bstart_tmatmulmx_32_e26cb3874648",
       "mnemonic": "BSTART.TMATMULMX",
       "semantic_handler": "ExecuteBundleStart",
@@ -947,7 +883,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 52,
+      "form_index": 48,
       "form_id": "bstart_tmatmulmx_acc_32_70fa59b0ab4c",
       "mnemonic": "BSTART.TMATMULMX.ACC",
       "semantic_handler": "ExecuteBundleStart",
@@ -963,7 +899,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 53,
+      "form_index": 49,
       "form_id": "bstart_tmatmulmx_bias_32_098c7efa51b0",
       "mnemonic": "BSTART.TMATMULMX.BIAS",
       "semantic_handler": "ExecuteBundleStart",
@@ -979,7 +915,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 54,
+      "form_index": 50,
       "form_id": "bstart_tmov_32_211446509efb",
       "mnemonic": "BSTART.TMOV",
       "semantic_handler": "ExecuteBundleStart",
@@ -995,7 +931,23 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 55,
+      "form_index": 51,
+      "form_id": "bstart_gmov_32_6c21e223eaa7",
+      "mnemonic": "BSTART.GMOV",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 52,
       "form_id": "bstart_tprefetch_32_d5f83e5aadf6",
       "mnemonic": "BSTART.TPREFETCH",
       "semantic_handler": "ExecuteBundleStart",
@@ -1011,7 +963,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 56,
+      "form_index": 53,
       "form_id": "bstart_tstore_32_4048b6e8b0f4",
       "mnemonic": "BSTART.TSTORE",
       "semantic_handler": "ExecuteBundleStart",
@@ -1027,7 +979,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 57,
+      "form_index": 54,
       "form_id": "bstop_32_d25b09fdd59c",
       "mnemonic": "BSTOP",
       "semantic_handler": "ExecuteBundleStop",
@@ -1039,25 +991,23 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 58,
-      "form_id": "c_b_dim_16_14f1b8fba5e6",
-      "mnemonic": "C.B.DIM",
-      "semantic_handler": "SetBundleDimension",
+      "form_index": 55,
+      "form_id": "c_b_ios_16_14f1b8fba5e6",
+      "mnemonic": "C.B.IOS",
+      "semantic_handler": "BindBundleSharedIO",
       "decoded_fields": [
-        "LoopNest",
-        "RegSrc"
+        "SharedTID"
       ],
       "consumed_fields": [
-        "LoopNest",
-        "RegSrc"
+        "SharedTID"
       ],
       "disposition": "executed",
-      "effect_class": "bundle-dimension",
+      "effect_class": "bundle-shared-binding",
       "rejection_precedes_effects": false,
       "sequential_tpc_advance": true
     },
     {
-      "form_index": 59,
+      "form_index": 56,
       "form_id": "c_b_dimi_16_3f1b113c76ce",
       "mnemonic": "C.B.DIMI",
       "semantic_handler": "SetBundleDimension",
@@ -1075,7 +1025,7 @@
       "sequential_tpc_advance": true
     },
     {
-      "form_index": 60,
+      "form_index": 57,
       "form_id": "c_bstart_16_c4e238a9227a",
       "mnemonic": "C.BSTART",
       "semantic_handler": "ExecuteBundleStart",
@@ -1091,7 +1041,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 61,
+      "form_index": 58,
       "form_id": "c_bstart_16_f833d2a4753c",
       "mnemonic": "C.BSTART",
       "semantic_handler": "ExecuteBundleStart",
@@ -1107,7 +1057,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 62,
+      "form_index": 59,
       "form_id": "c_bstart_fp_16_9dcef7e3a85b",
       "mnemonic": "C.BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -1123,7 +1073,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 63,
+      "form_index": 60,
       "form_id": "c_bstart_mpar_16_66c3ef2226ec",
       "mnemonic": "C.BSTART.MPAR",
       "semantic_handler": "ExecuteBundleStart",
@@ -1135,7 +1085,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 64,
+      "form_index": 61,
       "form_id": "c_bstart_mseq_16_b5597e0e41c2",
       "mnemonic": "C.BSTART.MSEQ",
       "semantic_handler": "ExecuteBundleStart",
@@ -1147,7 +1097,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 65,
+      "form_index": 62,
       "form_id": "c_bstart_std_16_8b40f078c14a",
       "mnemonic": "C.BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -1163,7 +1113,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 66,
+      "form_index": 63,
       "form_id": "c_bstart_sys_16_ec213ce96eb7",
       "mnemonic": "C.BSTART.SYS",
       "semantic_handler": "ExecuteBundleStart",
@@ -1175,7 +1125,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 67,
+      "form_index": 64,
       "form_id": "c_bstop_16_ca4743d8a95e",
       "mnemonic": "C.BSTOP",
       "semantic_handler": "ExecuteBundleStop",
@@ -1187,7 +1137,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 68,
+      "form_index": 65,
       "form_id": "ercov_32_dc0be14a2d8b",
       "mnemonic": "ERCOV",
       "semantic_handler": "RecoverExecutionContext",
@@ -1203,7 +1153,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 69,
+      "form_index": 66,
       "form_id": "esave_32_4c4f79fe3171",
       "mnemonic": "ESAVE",
       "semantic_handler": "SaveExecutionContext",
@@ -1219,7 +1169,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 70,
+      "form_index": 67,
       "form_id": "fentry_32_a47584ec13b6",
       "mnemonic": "FENTRY",
       "semantic_handler": "ExecuteFrameEntry",
@@ -1235,7 +1185,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 71,
+      "form_index": 68,
       "form_id": "fexit_32_37b663f2a34d",
       "mnemonic": "FEXIT",
       "semantic_handler": "ExecuteFrameExit",
@@ -1251,7 +1201,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 72,
+      "form_index": 69,
       "form_id": "fret_ra_32_659c886221c1",
       "mnemonic": "FRET.RA",
       "semantic_handler": "ExecuteFrameReturnAddress",
@@ -1267,7 +1217,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 73,
+      "form_index": 70,
       "form_id": "fret_stk_32_4fe246bd8241",
       "mnemonic": "FRET.STK",
       "semantic_handler": "ExecuteFrameReturnStack",
@@ -1283,7 +1233,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 74,
+      "form_index": 71,
       "form_id": "hl_bstart_call_48_3c784c583c90",
       "mnemonic": "HL.BSTART CALL",
       "semantic_handler": "ExecuteBundleStart",
@@ -1301,7 +1251,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 75,
+      "form_index": 72,
       "form_id": "hl_bstart_fp_48_038e2e96cf64",
       "mnemonic": "HL.BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -1317,7 +1267,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 76,
+      "form_index": 73,
       "form_id": "hl_bstart_fp_48_43530d2ebfae",
       "mnemonic": "HL.BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -1333,7 +1283,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 77,
+      "form_index": 74,
       "form_id": "hl_bstart_fp_48_81b457553844",
       "mnemonic": "HL.BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -1349,7 +1299,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 78,
+      "form_index": 75,
       "form_id": "hl_bstart_fp_48_eb938e9200eb",
       "mnemonic": "HL.BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -1365,7 +1315,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 79,
+      "form_index": 76,
       "form_id": "hl_bstart_std_48_51f78942222e",
       "mnemonic": "HL.BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -1381,8 +1331,8 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 80,
-      "form_id": "hl_bstart_std_48_9ba705710872",
+      "form_index": 77,
+      "form_id": "hl_bstart_std_48_9ba705800872",
       "mnemonic": "HL.BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
@@ -1397,7 +1347,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 81,
+      "form_index": 78,
       "form_id": "hl_bstart_std_48_b13f22c7c4a3",
       "mnemonic": "HL.BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -1413,7 +1363,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 82,
+      "form_index": 79,
       "form_id": "hl_bstart_std_48_d814d26508a4",
       "mnemonic": "HL.BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -1429,7 +1379,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 83,
+      "form_index": 80,
       "form_id": "hl_bstart_sys_48_5bf0381f7bf8",
       "mnemonic": "HL.BSTART.SYS",
       "semantic_handler": "ExecuteBundleStart",
@@ -1445,7 +1395,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 84,
+      "form_index": 81,
       "form_id": "hl_qmt_48_eb9e41958045",
       "mnemonic": "HL.QMT",
       "semantic_handler": "ExecuteQueueMove",
@@ -1465,7 +1415,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 85,
+      "form_index": 82,
       "form_id": "hl_qpop_48_a2c57f5bc27b",
       "mnemonic": "HL.QPOP",
       "semantic_handler": "ExecuteQueuePop",
@@ -1484,7 +1434,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 86,
+      "form_index": 83,
       "form_id": "hl_qpush_48_3eab8e05d61a",
       "mnemonic": "HL.QPUSH",
       "semantic_handler": "ExecuteQueuePush",
@@ -1503,7 +1453,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 87,
+      "form_index": 84,
       "form_id": "l_bstart_fp_64_098e57019d7b",
       "mnemonic": "L.BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -1519,7 +1469,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 88,
+      "form_index": 85,
       "form_id": "l_bstart_fp_64_0cac9941f7d4",
       "mnemonic": "L.BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -1535,7 +1485,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 89,
+      "form_index": 86,
       "form_id": "l_bstart_fp_64_2067ad6667ed",
       "mnemonic": "L.BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -1551,7 +1501,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 90,
+      "form_index": 87,
       "form_id": "l_bstart_fp_64_8115c042ef26",
       "mnemonic": "L.BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -1567,7 +1517,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 91,
+      "form_index": 88,
       "form_id": "l_bstart_std_64_37e84068ce61",
       "mnemonic": "L.BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -1583,7 +1533,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 92,
+      "form_index": 89,
       "form_id": "l_bstart_std_64_463a1567da91",
       "mnemonic": "L.BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -1599,7 +1549,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 93,
+      "form_index": 90,
       "form_id": "l_bstart_std_64_72d502fcd30d",
       "mnemonic": "L.BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -1615,7 +1565,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 94,
+      "form_index": 91,
       "form_id": "l_bstart_std_64_899592f9c5bc",
       "mnemonic": "L.BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -1631,7 +1581,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 95,
+      "form_index": 92,
       "form_id": "l_bstart_sys_64_919e576c79e4",
       "mnemonic": "L.BSTART.SYS",
       "semantic_handler": "ExecuteBundleStart",
@@ -1647,7 +1597,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 96,
+      "form_index": 93,
       "form_id": "mcopy_32_4fc4a803e995",
       "mnemonic": "MCOPY",
       "semantic_handler": "ExecuteMemoryCopy",
@@ -1667,7 +1617,7 @@
       "sequential_tpc_advance": true
     },
     {
-      "form_index": 97,
+      "form_index": 94,
       "form_id": "mset_32_0b932f291932",
       "mnemonic": "MSET",
       "semantic_handler": "ExecuteMemorySet",
@@ -1687,7 +1637,7 @@
       "sequential_tpc_advance": true
     },
     {
-      "form_index": 98,
+      "form_index": 95,
       "form_id": "xb_32_40ad190a0a7f",
       "mnemonic": "XB",
       "semantic_handler": "ExecuteCrossBlockTransfer",
@@ -1702,6 +1652,93 @@
       "sequential_tpc_advance": false
     }
   ],
+  "encoding_variant_matrix": [
+    {
+      "form_index": 50,
+      "form_id": "bstart_tmov_32_211446509efb",
+      "mnemonic": "BSTART.TMOV",
+      "variant_name": "TMOV.L2S.INSERT",
+      "function": 8,
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x00811181",
+          "width_bits": 32
+        }
+      ],
+      "operation_identity_rule": "same-form-identity",
+      "decoder_disposition": "executed"
+    },
+    {
+      "form_index": 50,
+      "form_id": "bstart_tmov_32_211446509efb",
+      "mnemonic": "BSTART.TMOV",
+      "variant_name": "TMOV.L2S.PUBLISH",
+      "function": 9,
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x00911181",
+          "width_bits": 32
+        }
+      ],
+      "operation_identity_rule": "same-form-identity",
+      "decoder_disposition": "executed"
+    },
+    {
+      "form_index": 50,
+      "form_id": "bstart_tmov_32_211446509efb",
+      "mnemonic": "BSTART.TMOV",
+      "variant_name": "TMOV.S2L.BROADCAST",
+      "function": 10,
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x00a11181",
+          "width_bits": 32
+        }
+      ],
+      "operation_identity_rule": "same-form-identity",
+      "decoder_disposition": "executed"
+    },
+    {
+      "form_index": 50,
+      "form_id": "bstart_tmov_32_211446509efb",
+      "mnemonic": "BSTART.TMOV",
+      "variant_name": "TMOV.S2L.EXTRACT",
+      "function": 11,
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x00b11181",
+          "width_bits": 32
+        }
+      ],
+      "operation_identity_rule": "same-form-identity",
+      "decoder_disposition": "executed"
+    },
+    {
+      "form_index": 53,
+      "form_id": "bstart_tstore_32_4048b6e8b0f4",
+      "mnemonic": "BSTART.TSTORE",
+      "variant_name": "TSTORE.SPART",
+      "function": 12,
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x00c11181",
+          "width_bits": 32
+        }
+      ],
+      "operation_identity_rule": "same-form-identity",
+      "decoder_disposition": "executed"
+    }
+  ],
   "bundle_tile_bridge": {
     "bound_operand_fields": [
       "destination0",
@@ -1710,19 +1747,19 @@
     ],
     "counts": {
       "TEPL": {
-        "total": 98,
-        "representable": 62,
-        "commit_rejected": 36
+        "total": 87,
+        "representable": 56,
+        "commit_rejected": 31
       },
       "TMA": {
-        "total": 9,
+        "total": 7,
         "representable": 1,
-        "commit_rejected": 8
+        "commit_rejected": 6
       },
       "CUBE": {
-        "total": 13,
-        "representable": 4,
-        "commit_rejected": 9
+        "total": 12,
+        "representable": 2,
+        "commit_rejected": 10
       }
     },
     "operation_matrix": [
@@ -1767,8 +1804,8 @@
       },
       {
         "family": "TEPL",
-        "selector": "0x00B",
-        "operation": "TMAX",
+        "selector": "0x003",
+        "operation": "TDIV",
         "operand_fields": [
           "destination0",
           "source0",
@@ -1780,8 +1817,8 @@
       },
       {
         "family": "TEPL",
-        "selector": "0x00C",
-        "operation": "TMIN",
+        "selector": "0x004",
+        "operation": "TREM",
         "operand_fields": [
           "destination0",
           "source0",
@@ -1858,6 +1895,32 @@
       },
       {
         "family": "TEPL",
+        "selector": "0x00B",
+        "operation": "TMAX",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x00C",
+        "operation": "TMIN",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
         "selector": "0x00D",
         "operation": "TCMP",
         "operand_fields": [
@@ -1869,22 +1932,6 @@
         "representable": false,
         "unsupported_operand_fields": [
           "comparison"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x01A",
-        "operation": "TSEL",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "source1",
-          "source2"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2"
         ],
         "commit_disposition": "reject-bundle-control-before-tile-effect"
       },
@@ -1926,61 +1973,8 @@
       },
       {
         "family": "TEPL",
-        "selector": "0x017",
-        "operation": "TRELU",
-        "operand_fields": [
-          "destination0",
-          "source0"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x00E",
-        "operation": "TPRELU",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "scalar0"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x003",
-        "operation": "TDIV",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "source1"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x004",
-        "operation": "TREM",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "source1"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x015",
-        "operation": "TSQRT",
+        "selector": "0x012",
+        "operation": "TEXP",
         "operand_fields": [
           "destination0",
           "source0"
@@ -2015,8 +2009,8 @@
       },
       {
         "family": "TEPL",
-        "selector": "0x012",
-        "operation": "TEXP",
+        "selector": "0x015",
+        "operation": "TSQRT",
         "operand_fields": [
           "destination0",
           "source0"
@@ -2039,23 +2033,67 @@
       },
       {
         "family": "TEPL",
-        "selector": "0x020",
-        "operation": "TADDS",
+        "selector": "0x017",
+        "operation": "TRELU",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x01A",
+        "operation": "TSEL",
         "operand_fields": [
           "destination0",
           "source0",
-          "scalar0"
+          "source1",
+          "source2"
         ],
         "representable": false,
         "unsupported_operand_fields": [
-          "scalar0"
+          "source2"
         ],
         "commit_disposition": "reject-bundle-control-before-tile-effect"
       },
       {
         "family": "TEPL",
-        "selector": "0x02F",
-        "operation": "TAXPY",
+        "selector": "0x01B",
+        "operation": "TCVT",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "numeric_control"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "numeric_control"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x01C",
+        "operation": "TFMA",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "source2"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "source2"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x020",
+        "operation": "TADDS",
         "operand_fields": [
           "destination0",
           "source0",
@@ -2101,36 +2139,6 @@
         "family": "TEPL",
         "selector": "0x023",
         "operation": "TDIVS",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "scalar0"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x02C",
-        "operation": "TMINS",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "scalar0"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x02B",
-        "operation": "TMAXS",
         "operand_fields": [
           "destination0",
           "source0",
@@ -2204,6 +2212,66 @@
       },
       {
         "family": "TEPL",
+        "selector": "0x029",
+        "operation": "TSHLS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x02A",
+        "operation": "TSHRS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x02B",
+        "operation": "TMAXS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x02C",
+        "operation": "TMINS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
         "selector": "0x02D",
         "operation": "TCMPS",
         "operand_fields": [
@@ -2237,26 +2305,10 @@
       },
       {
         "family": "TEPL",
-        "selector": "0x029",
-        "operation": "TSHLS",
+        "selector": "0x03B",
+        "operation": "TEXPANDS",
         "operand_fields": [
           "destination0",
-          "source0",
-          "scalar0"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x02A",
-        "operation": "TSHRS",
-        "operand_fields": [
-          "destination0",
-          "source0",
           "scalar0"
         ],
         "representable": false,
@@ -2269,18 +2321,6 @@
         "family": "TEPL",
         "selector": "0x040",
         "operation": "TROWSUM",
-        "operand_fields": [
-          "destination0",
-          "source0"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x043",
-        "operation": "TROWPROD",
         "operand_fields": [
           "destination0",
           "source0"
@@ -2315,92 +2355,8 @@
       },
       {
         "family": "TEPL",
-        "selector": "0x04C",
-        "operation": "TROWARGMAX",
-        "operand_fields": [
-          "destination0",
-          "source0"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x04D",
-        "operation": "TROWARGMIN",
-        "operand_fields": [
-          "destination0",
-          "source0"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x050",
-        "operation": "TCOLSUM",
-        "operand_fields": [
-          "destination0",
-          "source0"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x053",
-        "operation": "TCOLPROD",
-        "operand_fields": [
-          "destination0",
-          "source0"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x051",
-        "operation": "TCOLMAX",
-        "operand_fields": [
-          "destination0",
-          "source0"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x052",
-        "operation": "TCOLMIN",
-        "operand_fields": [
-          "destination0",
-          "source0"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x05C",
-        "operation": "TCOLARGMAX",
-        "operand_fields": [
-          "destination0",
-          "source0"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x05D",
-        "operation": "TCOLARGMIN",
+        "selector": "0x043",
+        "operation": "TROWPROD",
         "operand_fields": [
           "destination0",
           "source0"
@@ -2515,6 +2471,78 @@
       },
       {
         "family": "TEPL",
+        "selector": "0x04C",
+        "operation": "TROWARGMAX",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x04D",
+        "operation": "TROWARGMIN",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x050",
+        "operation": "TCOLSUM",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x051",
+        "operation": "TCOLMAX",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x052",
+        "operation": "TCOLMIN",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x053",
+        "operation": "TCOLPROD",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
         "selector": "0x054",
         "operation": "TCOLEXPAND",
         "operand_fields": [
@@ -2618,333 +2646,113 @@
         "commit_disposition": "execute-after-complete-binding"
       },
       {
-        "family": "CUBE",
-        "selector": "0x000",
-        "operation": "TMATMUL",
-        "operand_fields": [
-          "source0",
-          "source1"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "CUBE",
-        "selector": "0x001",
-        "operation": "TMATMUL_BIAS",
-        "operand_fields": [
-          "source0",
-          "source1",
-          "source2"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "CUBE",
-        "selector": "0x002",
-        "operation": "TMATMUL_ACC",
-        "operand_fields": [
-          "source0",
-          "source1"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "CUBE",
-        "selector": "0x004",
-        "operation": "TMATMUL_MX",
-        "operand_fields": [
-          "source0",
-          "source1",
-          "source2",
-          "source3"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2",
-          "source3"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "CUBE",
-        "selector": "0x005",
-        "operation": "TMATMUL_MX_BIAS",
-        "operand_fields": [
-          "source0",
-          "source1",
-          "source2",
-          "source3",
-          "source4"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2",
-          "source3",
-          "source4"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "CUBE",
-        "selector": "0x006",
-        "operation": "TMATMUL_MX_ACC",
-        "operand_fields": [
-          "source0",
-          "source1",
-          "source2",
-          "source3"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2",
-          "source3"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "CUBE",
-        "selector": "0x008",
-        "operation": "ACCCVT",
+        "family": "TEPL",
+        "selector": "0x05C",
+        "operation": "TCOLARGMAX",
         "operand_fields": [
           "destination0",
-          "numeric_control"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "numeric_control"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "CUBE",
-        "selector": "0x010",
-        "operation": "TGEMV",
-        "operand_fields": [
-          "source0",
-          "source1"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "CUBE",
-        "selector": "0x011",
-        "operation": "TGEMV_BIAS",
-        "operand_fields": [
-          "source0",
-          "source1",
-          "source2"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "CUBE",
-        "selector": "0x012",
-        "operation": "TGEMV_ACC",
-        "operand_fields": [
-          "source0",
-          "source1"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "CUBE",
-        "selector": "0x014",
-        "operation": "TGEMV_MX",
-        "operand_fields": [
-          "source0",
-          "source1",
-          "source2",
-          "source3"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2",
-          "source3"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "CUBE",
-        "selector": "0x015",
-        "operation": "TGEMV_MX_BIAS",
-        "operand_fields": [
-          "source0",
-          "source1",
-          "source2",
-          "source3",
-          "source4"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2",
-          "source3",
-          "source4"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "CUBE",
-        "selector": "0x016",
-        "operation": "TGEMV_MX_ACC",
-        "operand_fields": [
-          "source0",
-          "source1",
-          "source2",
-          "source3"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2",
-          "source3"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "TMA",
-        "selector": "0x000",
-        "operation": "TLOAD",
-        "operand_fields": [
-          "destination0",
-          "address"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "address"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "TMA",
-        "selector": "0x001",
-        "operation": "TSTORE",
-        "operand_fields": [
-          "address",
           "source0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "address"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
-        "family": "TMA",
-        "selector": "0x003",
-        "operation": "TPREFETCH",
-        "operand_fields": [
-          "address",
-          "byte_count"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "address",
-          "byte_count"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "TMA",
-        "selector": "0x004",
-        "operation": "MGATHER",
+        "family": "TEPL",
+        "selector": "0x05D",
+        "operation": "TCOLARGMIN",
         "operand_fields": [
           "destination0",
-          "address",
           "source0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "address"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
-        "family": "TMA",
-        "selector": "0x005",
-        "operation": "MSCATTER",
-        "operand_fields": [
-          "address",
-          "source0",
-          "source1"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "address"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "TMA",
-        "selector": "0x006",
-        "operation": "MGATHER_MASK",
+        "family": "TEPL",
+        "selector": "0x060",
+        "operation": "TCONCAT",
         "operand_fields": [
           "destination0",
-          "address",
-          "source0",
-          "source1"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "address"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "TMA",
-        "selector": "0x007",
-        "operation": "MSCATTER_MASK",
-        "operand_fields": [
-          "address",
           "source0",
           "source1",
-          "source2"
+          "axis"
         ],
         "representable": false,
         "unsupported_operand_fields": [
-          "address",
-          "source2"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "TMA",
-        "selector": "0x008",
-        "operation": "MGATHER_CAS",
-        "operand_fields": [
-          "destination0",
-          "address",
-          "source0",
-          "source1",
-          "source2"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "address",
-          "source2"
+          "axis"
         ],
         "commit_disposition": "reject-bundle-control-before-tile-effect"
       },
       {
         "family": "TEPL",
-        "selector": "0x03B",
-        "operation": "TEXPANDS",
+        "selector": "0x062",
+        "operation": "TEXTRACT",
         "operand_fields": [
           "destination0",
+          "source0",
+          "natural0",
+          "natural1"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "natural0",
+          "natural1"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x063",
+        "operation": "TINSERT",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "natural0",
+          "natural1"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "natural0",
+          "natural1"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x064",
+        "operation": "TIMG2COL",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "positive0",
+          "positive1",
+          "positive2",
+          "positive3",
+          "natural0",
+          "natural1",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "natural0",
+          "natural1",
+          "positive0",
+          "positive1",
+          "positive2",
+          "positive3",
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x065",
+        "operation": "TFILLPAD",
+        "operand_fields": [
+          "destination0",
+          "source0",
           "scalar0"
         ],
         "representable": false,
@@ -2987,31 +2795,21 @@
       },
       {
         "family": "TEPL",
-        "selector": "0x065",
-        "operation": "TFILLPAD",
+        "selector": "0x069",
+        "operation": "TRANDOM",
         "operand_fields": [
           "destination0",
-          "source0",
-          "scalar0"
+          "scalar0",
+          "scalar1",
+          "address",
+          "flag0"
         ],
         "representable": false,
         "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x01B",
-        "operation": "TCVT",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "numeric_control"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "numeric_control"
+          "address",
+          "flag0",
+          "scalar0",
+          "scalar1"
         ],
         "commit_disposition": "reject-bundle-control-before-tile-effect"
       },
@@ -3055,188 +2853,8 @@
       },
       {
         "family": "TEPL",
-        "selector": "0x062",
-        "operation": "TEXTRACT",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "natural0",
-          "natural1"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "natural0",
-          "natural1"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x063",
-        "operation": "TINSERT",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "natural0",
-          "natural1"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "natural0",
-          "natural1"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x06F",
-        "operation": "TGATHER",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "source1"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x070",
-        "operation": "TSCATTER",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "source1"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x060",
-        "operation": "TCONCAT",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "source1",
-          "axis"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "axis"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x06E",
-        "operation": "TTRANS",
-        "operand_fields": [
-          "destination0",
-          "source0"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x064",
-        "operation": "TIMG2COL",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "positive0",
-          "positive1",
-          "positive2",
-          "positive3",
-          "natural0",
-          "natural1",
-          "scalar0"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "natural0",
-          "natural1",
-          "positive0",
-          "positive1",
-          "positive2",
-          "positive3",
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "TMA",
-        "selector": "0x002",
-        "operation": "TMOV",
-        "operand_fields": [
-          "destination0",
-          "source0"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x061",
-        "operation": "TGATHERB",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "source1"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x078",
-        "operation": "TDEINTERLEAVE",
-        "operand_fields": [
-          "destination0",
-          "destination1",
-          "source0"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "destination1"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x079",
-        "operation": "TINTERLEAVE",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "source1"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x077",
-        "operation": "TRESHAPE",
-        "operand_fields": [
-          "destination0",
-          "source0"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
         "selector": "0x06C",
-        "operation": "TSORT",
+        "operation": "TSORT32",
         "operand_fields": [
           "destination0",
           "destination1",
@@ -3268,27 +2886,24 @@
       },
       {
         "family": "TEPL",
-        "selector": "0x068",
-        "operation": "THISTOGRAM",
+        "selector": "0x06E",
+        "operation": "TTRANS",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x06F",
+        "operation": "TGATHER",
         "operand_fields": [
           "destination0",
           "source0",
-          "source1",
-          "selected_byte"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "selected_byte"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x07A",
-        "operation": "TPUSH",
-        "operand_fields": [
-          "destination0",
-          "source0"
+          "source1"
         ],
         "representable": true,
         "unsupported_operand_fields": [],
@@ -3296,48 +2911,12 @@
       },
       {
         "family": "TEPL",
-        "selector": "0x07B",
-        "operation": "TPOP",
+        "selector": "0x070",
+        "operation": "TSCATTER",
         "operand_fields": [
           "destination0",
-          "source0"
-        ],
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x07C",
-        "operation": "TALLOC",
-        "operand_fields": [
-          "destination0",
-          "byte_count",
-          "positive0",
-          "positive1",
-          "natural0",
-          "natural1",
-          "scalar0",
-          "flag0"
-        ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "byte_count",
-          "flag0",
-          "natural0",
-          "natural1",
-          "positive0",
-          "positive1",
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x07D",
-        "operation": "TFREE",
-        "operand_fields": [
-          "destination0"
+          "source0",
+          "source1"
         ],
         "representable": true,
         "unsupported_operand_fields": [],
@@ -3396,12 +2975,156 @@
         "commit_disposition": "execute-after-complete-binding"
       },
       {
-        "family": "TEPL",
-        "selector": "0x075",
-        "operation": "TPARTARGMAX",
+        "family": "TMA",
+        "selector": "0x000",
+        "operation": "TLOAD",
         "operand_fields": [
           "destination0",
-          "destination1",
+          "address"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "address"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TMA",
+        "selector": "0x001",
+        "operation": "TSTORE",
+        "operand_fields": [
+          "address",
+          "source0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "address"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TMA",
+        "selector": "0x002",
+        "operation": "TMOV",
+        "operand_fields": [
+          "destination0",
+          "source0"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TMA",
+        "selector": "0x003",
+        "operation": "TPREFETCH",
+        "operand_fields": [
+          "address",
+          "byte_count"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "address",
+          "byte_count"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TMA",
+        "selector": "0x004",
+        "operation": "MGATHER",
+        "operand_fields": [
+          "destination0",
+          "address",
+          "source0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "address"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TMA",
+        "selector": "0x005",
+        "operation": "MSCATTER",
+        "operand_fields": [
+          "address",
+          "source0",
+          "source1"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "address"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "TMA",
+        "selector": "0x00d",
+        "operation": "GMOV",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "scalar0"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x000",
+        "operation": "TMATMUL",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x001",
+        "operation": "TMATMUL_BIAS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "source2"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "source2"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x002",
+        "operation": "TMATMUL_ACC",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "source2"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "source2"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x004",
+        "operation": "TMATMUL_MX",
+        "operand_fields": [
+          "destination0",
           "source0",
           "source1",
           "source2",
@@ -3409,19 +3132,102 @@
         ],
         "representable": false,
         "unsupported_operand_fields": [
-          "destination1",
           "source2",
           "source3"
         ],
         "commit_disposition": "reject-bundle-control-before-tile-effect"
       },
       {
-        "family": "TEPL",
-        "selector": "0x076",
-        "operation": "TPARTARGMIN",
+        "family": "CUBE",
+        "selector": "0x005",
+        "operation": "TMATMUL_MX_BIAS",
         "operand_fields": [
           "destination0",
-          "destination1",
+          "source0",
+          "source1",
+          "source2",
+          "source3",
+          "source4"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "source2",
+          "source3",
+          "source4"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x006",
+        "operation": "TMATMUL_MX_ACC",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "source2",
+          "source3",
+          "source4"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "source2",
+          "source3",
+          "source4"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x010",
+        "operation": "TGEMV",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x011",
+        "operation": "TGEMV_BIAS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "source2"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "source2"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x012",
+        "operation": "TGEMV_ACC",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "source2"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "source2"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x014",
+        "operation": "TGEMV_MX",
+        "operand_fields": [
+          "destination0",
           "source0",
           "source1",
           "source2",
@@ -3429,9 +3235,48 @@
         ],
         "representable": false,
         "unsupported_operand_fields": [
-          "destination1",
           "source2",
           "source3"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x015",
+        "operation": "TGEMV_MX_BIAS",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "source2",
+          "source3",
+          "source4"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "source2",
+          "source3",
+          "source4"
+        ],
+        "commit_disposition": "reject-bundle-control-before-tile-effect"
+      },
+      {
+        "family": "CUBE",
+        "selector": "0x016",
+        "operation": "TGEMV_MX_ACC",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "source2",
+          "source3",
+          "source4"
+        ],
+        "representable": false,
+        "unsupported_operand_fields": [
+          "source2",
+          "source3",
+          "source4"
         ],
         "commit_disposition": "reject-bundle-control-before-tile-effect"
       }
@@ -3444,7 +3289,7 @@
       "tests/asl/bundle-tests.asl:TestBundleTileCommitLifecycle",
       "tests/asl/bundle-tests.asl:TestBundleTileCommitRollback"
     ],
-    "canonical_form_case_count": 99
+    "canonical_form_case_count": 96
   },
   "independent_comparison": {
     "source": "content-addressed independent executable ISA snapshot",
@@ -3455,7 +3300,7 @@
     "executable_subset": 83,
     "decode_only": 16,
     "authority": "non-normative structural comparison only",
-    "limitation": "The independent snapshot predates seven accepted PTO 0.57.1 command encoding changes and stages bundle payload execution, so it neither matches those masks nor validates PTO tile payload effects; ADR 0045, the PTO catalogs, and PTO-owned ASL evidence remain authoritative."
+    "limitation": "The independent snapshot predates seven accepted PTO 0.58.0 command encoding changes and stages bundle payload execution, so it neither matches those masks nor validates PTO tile payload effects; ADR 0045, the PTO catalogs, and PTO-owned ASL evidence remain authoritative."
   },
   "requirement_ids": [
     "PTO-REQ-BUNDLE-DISPATCH-001",

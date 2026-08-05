@@ -43,20 +43,12 @@ begin
         _Tiles[[index]].layout = TileLayout_RowMajor;
         _Tiles[[index]].location = TileLocation_Any;
     end;
-    _Accumulator.live = FALSE;
-    _Accumulator.logical_data_type = TileDataType_U64;
-    _Accumulator.info.allocated = FALSE;
-    _Accumulator.info.contents_defined = FALSE;
-    _Accumulator.info.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
-    _Accumulator.info.defined_valid_elements = 0;
-    _Accumulator.info.capacity_bytes = 0;
-    _Accumulator.info.rows = 0;
-    _Accumulator.info.columns = 0;
-    _Accumulator.info.valid_rows = 0;
-    _Accumulator.info.valid_columns = 0;
-    _Accumulator.info.data_type = TileDataType_U64;
-    _Accumulator.info.layout = TileLayout_RowMajor;
-    _Accumulator.info.location = TileLocation_Any;
+    for index = 0 to PTO_MODEL_SHARED_TILE_VERSIONS - 1 do
+        _SharedTiles[[index]].valid = FALSE;
+        _SharedTiles[[index]].shared_id = Zeros{8};
+        _SharedTiles[[index]].defined_mask = Zeros{4};
+        _SharedTiles[[index]].ready_mask = Zeros{4};
+    end;
     _PC = Zeros{PTO_XLEN};
     _BPC = Zeros{PTO_XLEN};
     _BundleActive = FALSE;
@@ -105,7 +97,6 @@ begin
         _TrapContexts[[ring]].u_queue = _UQueue;
         _TrapContexts[[ring]].execution_mask = Zeros{PTO_XLEN};
         _TrapContexts[[ring]].predicates = _PredicateRegisters;
-        _TrapContexts[[ring]].accumulator = _Accumulator;
     end;
     _SystemRegisters.thread_ptr = Zeros{PTO_XLEN};
     _SystemRegisters.global_ptr = Zeros{PTO_XLEN};
@@ -450,6 +441,7 @@ begin
     _TrapContexts[[target]].bundle_dimensions = _BundleDimensions;
     _TrapContexts[[target]].bundle_scalar_bindings = _BundleScalarBindings;
     _TrapContexts[[target]].bundle_tile_bindings = _BundleTileBindings;
+    _TrapContexts[[target]].bundle_shared_bindings = _BundleSharedBindings;
     _TrapContexts[[target]].bundle_control_attributes =
         _BundleControlAttributes;
     _TrapContexts[[target]].bundle_data_attributes = _BundleDataAttributes;
@@ -457,7 +449,6 @@ begin
     _TrapContexts[[target]].u_queue = _UQueue;
     _TrapContexts[[target]].execution_mask = _ExecutionMask;
     _TrapContexts[[target]].predicates = _PredicateRegisters;
-    _TrapContexts[[target]].accumulator = _Accumulator;
 
     var ecstate = _SystemRegisters.core_state;
     ecstate[3:0] = Zeros{4} + source;
@@ -519,6 +510,7 @@ begin
     _BundleDimensions = _TrapContexts[[target]].bundle_dimensions;
     _BundleScalarBindings = _TrapContexts[[target]].bundle_scalar_bindings;
     _BundleTileBindings = _TrapContexts[[target]].bundle_tile_bindings;
+    _BundleSharedBindings = _TrapContexts[[target]].bundle_shared_bindings;
     _BundleControlAttributes =
         _TrapContexts[[target]].bundle_control_attributes;
     _BundleDataAttributes = _TrapContexts[[target]].bundle_data_attributes;
@@ -528,7 +520,6 @@ begin
     end;
     _ExecutionMask = _TrapContexts[[target]].execution_mask;
     _PredicateRegisters = _TrapContexts[[target]].predicates;
-    _Accumulator = _TrapContexts[[target]].accumulator;
     _CurrentACR = UInt(ecstate[3:0]) as AccessControlRing;
     control[4] = '0';
     PTOv0WriteContextRegister(target, 0x0f40, control);
@@ -548,23 +539,6 @@ implementation func TileProfileUnary(op: TileUnaryOperation,
                                       value: Word) => Word
 begin
     return TileUnaryValue(op, value);
-end;
-
-implementation func TileProfileAxpy(destination_value: Word,
-                                     source_value: Word, scalar: Word,
-                                     data_type: TileDataType) => Word
-begin
-    return destination_value + MultiplyWord(scalar, source_value);
-end;
-
-implementation func TileProfilePReLU(value: Word, negative_slope: Word,
-                                     data_type: TileDataType) => Word
-begin
-    if SInt(value) < 0 then
-        return MultiplyWord(value, negative_slope);
-    else
-        return value;
-    end;
 end;
 
 implementation func TileProfileCompare(comparison: TileComparison,

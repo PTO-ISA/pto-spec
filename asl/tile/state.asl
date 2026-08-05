@@ -1,6 +1,104 @@
 // PTO-REQ-TILE-001: 64 flat tile registers and TileInfo legality.
 
 var _Tiles : array [[PTO_TILE_REGISTER_COUNT]] of TileInfo;
+var _SharedTiles : SharedTileSnapshot;
+
+readonly func SharedTileSlotOf(shared_id: bits(8)) => SharedTileSlotLookup
+begin
+    var result: SharedTileSlotLookup = PTO_MODEL_SHARED_TILE_VERSIONS;
+    for slot = 0 to PTO_MODEL_SHARED_TILE_VERSIONS - 1 do
+        if result == PTO_MODEL_SHARED_TILE_VERSIONS &&
+           _SharedTiles[[slot]].valid &&
+           _SharedTiles[[slot]].shared_id == shared_id then
+            result = slot as SharedTileSlotLookup;
+        end;
+    end;
+    return result;
+end;
+
+readonly func SharedTileVersionValid(shared_id: bits(8)) => boolean
+begin
+    return SharedTileSlotOf(shared_id) < PTO_MODEL_SHARED_TILE_VERSIONS;
+end;
+
+readonly func SharedTileRecord(shared_id: bits(8)) => SharedTileInfo
+begin
+    let slot = SharedTileSlotOf(shared_id);
+    assert slot < PTO_MODEL_SHARED_TILE_VERSIONS;
+    return _SharedTiles[[slot as SharedTileSlotIndex]];
+end;
+
+readonly func SharedTileVersionReady(shared_id: bits(8)) => boolean
+begin
+    let slot = SharedTileSlotOf(shared_id);
+    if slot == PTO_MODEL_SHARED_TILE_VERSIONS then return FALSE; end;
+    let shared = _SharedTiles[[slot as SharedTileSlotIndex]];
+    return shared.defined_mask != Zeros{4} &&
+           (shared.ready_mask AND shared.defined_mask) == shared.defined_mask;
+end;
+
+readonly func SharedTileVersionFullyDefined(shared_id: bits(8)) => boolean
+begin
+    let slot = SharedTileSlotOf(shared_id);
+    if slot == PTO_MODEL_SHARED_TILE_VERSIONS then return FALSE; end;
+    let shared = _SharedTiles[[slot as SharedTileSlotIndex]];
+    return SharedTileVersionReady(shared_id) &&
+           shared.defined_mask == '1111' && shared.ready_mask == '1111' &&
+           shared.tile.contents_defined;
+end;
+
+readonly func SharedTileDescriptorLegal(shared_id: bits(8)) => boolean
+begin
+    let slot = SharedTileSlotOf(shared_id);
+    if slot == PTO_MODEL_SHARED_TILE_VERSIONS then return FALSE; end;
+    let shared = _SharedTiles[[slot as SharedTileSlotIndex]];
+    return shared.tile.allocated &&
+           TileCapacityIsLegal(shared.tile.capacity_bytes) &&
+           shared.tile.rows > 0 && shared.tile.columns > 0 &&
+           shared.tile.valid_rows <= shared.tile.rows &&
+           shared.tile.valid_columns <= shared.tile.columns &&
+           TileStorageFitsCapacity(shared.tile.rows, shared.tile.columns,
+               shared.tile.data_type, shared.tile.capacity_bytes) &&
+           shared.tile.rows * shared.tile.columns <= PTO_MODEL_TILE_ELEMENTS &&
+           TileGenericIndexingPermitted(shared.tile);
+end;
+
+func InstallSharedTileVersion(shared_id: bits(8), tile: TileInfo,
+                              defined_mask: bits(4), ready_mask: bits(4))
+begin
+    assert tile.allocated;
+    assert defined_mask != Zeros{4};
+    assert (ready_mask AND NOT(defined_mask)) == Zeros{4};
+    var selected = SharedTileSlotOf(shared_id);
+    for slot = 0 to PTO_MODEL_SHARED_TILE_VERSIONS - 1 do
+        if selected == PTO_MODEL_SHARED_TILE_VERSIONS &&
+           !_SharedTiles[[slot]].valid then
+            selected = slot as SharedTileSlotLookup;
+        end;
+    end;
+    // Exhaustion is an executable-model bound, like PTO_MODEL_MEMORY_BYTES;
+    // it is not an architectural limit on the S#0..S#255 namespace.
+    assert selected < PTO_MODEL_SHARED_TILE_VERSIONS;
+    let slot = selected as SharedTileSlotIndex;
+    _SharedTiles[[slot]].valid = TRUE;
+    _SharedTiles[[slot]].shared_id = shared_id;
+    _SharedTiles[[slot]].defined_mask = defined_mask;
+    _SharedTiles[[slot]].ready_mask = ready_mask;
+    _SharedTiles[[slot]].tile = tile;
+end;
+
+func InvalidateSharedTileVersion(shared_id: bits(8))
+begin
+    let selected = SharedTileSlotOf(shared_id);
+    if selected < PTO_MODEL_SHARED_TILE_VERSIONS then
+        let slot = selected as SharedTileSlotIndex;
+        _SharedTiles[[slot]].valid = FALSE;
+        _SharedTiles[[slot]].defined_mask = Zeros{4};
+        _SharedTiles[[slot]].ready_mask = Zeros{4};
+        _SharedTiles[[slot]].tile.allocated = FALSE;
+        _SharedTiles[[slot]].tile.contents_defined = FALSE;
+    end;
+end;
 
 readonly func TileCapacityLimitBytes() => integer {0..262144}
 begin
@@ -54,20 +152,20 @@ end;
 
 pure func TileSizeCodeIsLegal(size_code: integer {0..15}) => boolean
 begin
-    return 3 <= size_code && size_code <= 9;
+    return 1 <= size_code && size_code <= 7;
 end;
 
-pure func TileSizeCodeBytes(size_code: integer {3..9})
-    => integer {128,256,512,1024,2048,4096,8192}
+pure func TileSizeCodeBytes(size_code: integer {1..7})
+    => integer {512,1024,2048,4096,8192,16384,32768}
 begin
     case size_code of
-        when 3 => return 128;
-        when 4 => return 256;
-        when 5 => return 512;
-        when 6 => return 1024;
-        when 7 => return 2048;
-        when 8 => return 4096;
-        when 9 => return 8192;
+        when 1 => return 512;
+        when 2 => return 1024;
+        when 3 => return 2048;
+        when 4 => return 4096;
+        when 5 => return 8192;
+        when 6 => return 16384;
+        when 7 => return 32768;
     end;
 end;
 

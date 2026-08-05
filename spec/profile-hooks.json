@@ -285,7 +285,7 @@
       "name": "TileProfileConvert",
       "portable_default": "Preserve the raw payload for conversions involving a floating type.",
       "profile_obligations": [
-        "Consume NumericExecutionControl, apply the TCVT or ACCCVT operation default or explicit mode once at the destination boundary, then saturate; define accepted type pairs, packing, nonsaturating range results, and exceptional values."
+        "Consume NumericExecutionControl, apply the TCVT operation default or explicit mode once at the destination boundary, then saturate; define accepted type pairs, packing, nonsaturating range results, and exceptional values."
       ],
       "requirement": "PTO-REQ-TEPL-CONVERT-001",
       "implementation_status": "implemented-by-pto-v0",
@@ -458,40 +458,6 @@
       ]
     },
     {
-      "domain": "tile-elementwise",
-      "model": "asl/tile/elementwise.asl",
-      "name": "TileProfileAxpy",
-      "portable_default": "Multiply and add raw bitvectors at architectural word width.",
-      "profile_obligations": [
-        "Use operation-fixed RNE once at the operation-defined floating destination boundary; define multiplication/addition intermediate precision and exceptional values."
-      ],
-      "requirement": "PTO-REQ-TEPL-001",
-      "implementation_status": "implemented-by-pto-v0",
-      "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
-      "maturity_target": "S5-T2",
-      "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
-      ]
-    },
-    {
-      "domain": "tile-elementwise",
-      "model": "asl/tile/elementwise.asl",
-      "name": "TileProfilePReLU",
-      "portable_default": "Apply negative-slope multiplication to signed-negative raw payloads and preserve non-negative payloads.",
-      "profile_obligations": [
-        "Use operation-fixed RNE once for a floating negative-branch result and no rounding for the identity branch; define signedness, negative-zero behavior, multiplication precision, saturation, and exceptional values."
-      ],
-      "requirement": "PTO-REQ-TEPL-001",
-      "implementation_status": "implemented-by-pto-v0",
-      "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
-      "maturity_target": "S5-T2",
-      "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
-      ]
-    },
-    {
       "domain": "tile-comparison",
       "model": "asl/tile/elementwise.asl",
       "name": "TileProfileCompare",
@@ -599,7 +565,7 @@
       "name": "TileProfileValueIsNaN",
       "portable_default": "Classify no raw carrier as NaN in the deterministic PTO v0 reference profile.",
       "profile_obligations": [
-        "Define NaN classification for every floating Tile data type used by stable TSORT ordering."
+        "Define NaN classification for every floating Tile data type used by stable TSORT32 ordering."
       ],
       "requirement": "PTO-REQ-TEPL-COMPLEX-001",
       "implementation_status": "implemented-by-pto-v0",

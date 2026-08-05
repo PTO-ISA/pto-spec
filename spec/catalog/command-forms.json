@@ -1,6 +1,6 @@
 {
-  "form_count": 99,
-  "form_constraint_count": 35,
+  "form_count": 96,
+  "form_constraint_count": 37,
   "forms": [
     {
       "asm": "B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}",
@@ -601,8 +601,26 @@
       "status": "accepted"
     },
     {
-      "asm": "B.IOT SrcTile0<.reuse>, <last>, ->DstTile<Size>",
+      "asm": "B.IOT SrcTile0, mask=PE_MASK, <last>, ->DstTile<TSize>",
       "constraints": [
+        {
+          "field": "PE_MASK",
+          "operator": "one-of",
+          "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        },
+        {
+          "field": "TSize",
+          "operator": "one-of",
+          "values": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
         {
           "field": "DstTile",
           "operator": "one-of",
@@ -612,25 +630,12 @@
             2,
             3
           ]
-        },
-        {
-          "field": "imm4",
-          "operator": "one-of",
-          "values": [
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9
-          ]
         }
       ],
       "encoding": [
         {
           "index": 0,
-          "mask": "0xfc00787f",
+          "mask": "0xfc00707f",
           "match": "0x00005013",
           "width_bits": 32
         }
@@ -662,7 +667,7 @@
           "width": 1
         },
         {
-          "name": "imm4",
+          "name": "PE_MASK",
           "pieces": [
             {
               "instruction_lsb": 15,
@@ -674,16 +679,16 @@
           "width": 4
         },
         {
-          "name": "S0R",
+          "name": "TSize",
           "pieces": [
             {
-              "instruction_lsb": 10,
+              "instruction_lsb": 9,
               "value_lsb": 0,
-              "width": 1
+              "width": 3
             }
           ],
           "signedness": "encoding-defined",
-          "width": 1
+          "width": 3
         },
         {
           "name": "DstTile",
@@ -691,11 +696,11 @@
             {
               "instruction_lsb": 7,
               "value_lsb": 0,
-              "width": 3
+              "width": 2
             }
           ],
           "signedness": "encoding-defined",
-          "width": 3
+          "width": 2
         }
       ],
       "form_id": "b_iot_32_10db6db84f5d",
@@ -704,16 +709,22 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleTileIO",
-      "semantic_summary": "Binds encoded tile inputs and outputs, reuse, last-use, and allocation-size metadata.",
+      "semantic_summary": "Binds v5 PE_MASK, ordered Local tile sources, last-use, and optional TSize/2-bit Local destination metadata; reuse bits do not exist.",
       "status": "accepted"
     },
     {
-      "asm": "B.IOT SrcTile0<.reuse>, SrcTile1<.reuse>, <last>",
-      "constraints": [],
+      "asm": "B.IOT SrcTile0, SrcTile1, mask=PE_MASK, <last>",
+      "constraints": [
+        {
+          "field": "PE_MASK",
+          "operator": "one-of",
+          "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
-          "mask": "0x0007f3ff",
+          "mask": "0x00007e7f",
           "match": "0x00004013",
           "width_bits": 32
         }
@@ -757,28 +768,16 @@
           "width": 1
         },
         {
-          "name": "S1R",
+          "name": "PE_MASK",
           "pieces": [
             {
-              "instruction_lsb": 11,
+              "instruction_lsb": 15,
               "value_lsb": 0,
-              "width": 1
+              "width": 4
             }
           ],
           "signedness": "encoding-defined",
-          "width": 1
-        },
-        {
-          "name": "S0R",
-          "pieces": [
-            {
-              "instruction_lsb": 10,
-              "value_lsb": 0,
-              "width": 1
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 1
+          "width": 4
         }
       ],
       "form_id": "b_iot_32_2c07e7177fad",
@@ -787,12 +786,30 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleTileIO",
-      "semantic_summary": "Binds encoded tile inputs and outputs, reuse, last-use, and allocation-size metadata.",
+      "semantic_summary": "Binds v5 PE_MASK, ordered Local tile sources, last-use, and optional TSize/2-bit Local destination metadata; reuse bits do not exist.",
       "status": "accepted"
     },
     {
-      "asm": "B.IOT SrcTile0<.reuse>, SrcTile1<.reuse>, <last>, ->DstTile<Size>",
+      "asm": "B.IOT SrcTile0, SrcTile1, mask=PE_MASK, <last>, ->DstTile<TSize>",
       "constraints": [
+        {
+          "field": "PE_MASK",
+          "operator": "one-of",
+          "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        },
+        {
+          "field": "TSize",
+          "operator": "one-of",
+          "values": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
         {
           "field": "DstTile",
           "operator": "one-of",
@@ -801,19 +818,6 @@
             1,
             2,
             3
-          ]
-        },
-        {
-          "field": "imm4",
-          "operator": "one-of",
-          "values": [
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9
           ]
         }
       ],
@@ -864,7 +868,7 @@
           "width": 1
         },
         {
-          "name": "imm4",
+          "name": "PE_MASK",
           "pieces": [
             {
               "instruction_lsb": 15,
@@ -876,28 +880,16 @@
           "width": 4
         },
         {
-          "name": "S1R",
+          "name": "TSize",
           "pieces": [
             {
-              "instruction_lsb": 11,
+              "instruction_lsb": 9,
               "value_lsb": 0,
-              "width": 1
+              "width": 3
             }
           ],
           "signedness": "encoding-defined",
-          "width": 1
-        },
-        {
-          "name": "S0R",
-          "pieces": [
-            {
-              "instruction_lsb": 10,
-              "value_lsb": 0,
-              "width": 1
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 1
+          "width": 3
         },
         {
           "name": "DstTile",
@@ -905,11 +897,11 @@
             {
               "instruction_lsb": 7,
               "value_lsb": 0,
-              "width": 3
+              "width": 2
             }
           ],
           "signedness": "encoding-defined",
-          "width": 3
+          "width": 2
         }
       ],
       "form_id": "b_iot_32_8b8bce6bffe8",
@@ -918,16 +910,22 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleTileIO",
-      "semantic_summary": "Binds encoded tile inputs and outputs, reuse, last-use, and allocation-size metadata.",
+      "semantic_summary": "Binds v5 PE_MASK, ordered Local tile sources, last-use, and optional TSize/2-bit Local destination metadata; reuse bits do not exist.",
       "status": "accepted"
     },
     {
-      "asm": "B.IOT SrcTile0<.reuse>, <last>",
-      "constraints": [],
+      "asm": "B.IOT SrcTile0, mask=PE_MASK, <last>",
+      "constraints": [
+        {
+          "field": "PE_MASK",
+          "operator": "one-of",
+          "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
-          "mask": "0xfc07fbff",
+          "mask": "0xfc007e7f",
           "match": "0x00005013",
           "width_bits": 32
         }
@@ -959,16 +957,16 @@
           "width": 1
         },
         {
-          "name": "S0R",
+          "name": "PE_MASK",
           "pieces": [
             {
-              "instruction_lsb": 10,
+              "instruction_lsb": 15,
               "value_lsb": 0,
-              "width": 1
+              "width": 4
             }
           ],
           "signedness": "encoding-defined",
-          "width": 1
+          "width": 4
         }
       ],
       "form_id": "b_iot_32_c11eb189dd83",
@@ -977,12 +975,30 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleTileIO",
-      "semantic_summary": "Binds encoded tile inputs and outputs, reuse, last-use, and allocation-size metadata.",
+      "semantic_summary": "Binds v5 PE_MASK, ordered Local tile sources, last-use, and optional TSize/2-bit Local destination metadata; reuse bits do not exist.",
       "status": "accepted"
     },
     {
-      "asm": "B.IOT <last>, ->DstTile<Size>",
+      "asm": "B.IOT mask=PE_MASK, <last>, ->DstTile<TSize>",
       "constraints": [
+        {
+          "field": "PE_MASK",
+          "operator": "one-of",
+          "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        },
+        {
+          "field": "TSize",
+          "operator": "one-of",
+          "values": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
         {
           "field": "DstTile",
           "operator": "one-of",
@@ -992,25 +1008,12 @@
             2,
             3
           ]
-        },
-        {
-          "field": "imm4",
-          "operator": "one-of",
-          "values": [
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9
-          ]
         }
       ],
       "encoding": [
         {
           "index": 0,
-          "mask": "0xfff07c7f",
+          "mask": "0xfff0707f",
           "match": "0x00006013",
           "width_bits": 32
         }
@@ -1030,7 +1033,7 @@
           "width": 1
         },
         {
-          "name": "imm4",
+          "name": "PE_MASK",
           "pieces": [
             {
               "instruction_lsb": 15,
@@ -1042,16 +1045,28 @@
           "width": 4
         },
         {
-          "name": "DstTile",
+          "name": "TSize",
           "pieces": [
             {
-              "instruction_lsb": 7,
+              "instruction_lsb": 9,
               "value_lsb": 0,
               "width": 3
             }
           ],
           "signedness": "encoding-defined",
           "width": 3
+        },
+        {
+          "name": "DstTile",
+          "pieces": [
+            {
+              "instruction_lsb": 7,
+              "value_lsb": 0,
+              "width": 2
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 2
         }
       ],
       "form_id": "b_iot_32_efa0fe3fe49a",
@@ -1060,7 +1075,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleTileIO",
-      "semantic_summary": "Binds encoded tile inputs and outputs, reuse, last-use, and allocation-size metadata.",
+      "semantic_summary": "Binds v5 PE_MASK, ordered Local tile sources, last-use, and optional TSize/2-bit Local destination metadata; reuse bits do not exist.",
       "status": "accepted"
     },
     {
@@ -1211,73 +1226,6 @@
       "mnemonic": "BSTART CALL",
       "semantic_family": "BBD",
       "semantic_group": "BSTART",
-      "semantic_handler": "ExecuteBundleStart",
-      "semantic_summary": "Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.",
-      "status": "accepted"
-    },
-    {
-      "asm": "BSTART.ACCCVT DataType",
-      "constraints": [
-        {
-          "field": "DataType",
-          "operator": "one-of",
-          "values": [
-            0,
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            16,
-            17,
-            18,
-            19,
-            20,
-            24,
-            25,
-            26,
-            27,
-            28
-          ]
-        }
-      ],
-      "encoding": [
-        {
-          "index": 0,
-          "mask": "0x07ffffff",
-          "match": "0x00831181",
-          "width_bits": 32
-        }
-      ],
-      "encoding_kind": "L32",
-      "fields": [
-        {
-          "name": "DataType",
-          "pieces": [
-            {
-              "instruction_lsb": 27,
-              "value_lsb": 0,
-              "width": 5
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 5
-        }
-      ],
-      "form_id": "bstart_acccvt_32_56c3ce3838c5",
-      "length_bits": 32,
-      "mnemonic": "BSTART.ACCCVT",
-      "semantic_family": "CMD",
-      "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
       "semantic_summary": "Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.",
       "status": "accepted"
@@ -1556,140 +1504,6 @@
       "status": "accepted"
     },
     {
-      "asm": "BSTART.MGATHER.CAS DataType",
-      "constraints": [
-        {
-          "field": "DataType",
-          "operator": "one-of",
-          "values": [
-            0,
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            16,
-            17,
-            18,
-            19,
-            20,
-            24,
-            25,
-            26,
-            27,
-            28
-          ]
-        }
-      ],
-      "encoding": [
-        {
-          "index": 0,
-          "mask": "0x07ffffff",
-          "match": "0x00811181",
-          "width_bits": 32
-        }
-      ],
-      "encoding_kind": "L32",
-      "fields": [
-        {
-          "name": "DataType",
-          "pieces": [
-            {
-              "instruction_lsb": 27,
-              "value_lsb": 0,
-              "width": 5
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 5
-        }
-      ],
-      "form_id": "bstart_mgather_cas_32_fd8c8a3b720a",
-      "length_bits": 32,
-      "mnemonic": "BSTART.MGATHER.CAS",
-      "semantic_family": "CMD",
-      "semantic_group": "Bundle Split",
-      "semantic_handler": "ExecuteBundleStart",
-      "semantic_summary": "Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.",
-      "status": "accepted"
-    },
-    {
-      "asm": "BSTART.MGATHER.MASK DataType",
-      "constraints": [
-        {
-          "field": "DataType",
-          "operator": "one-of",
-          "values": [
-            0,
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            16,
-            17,
-            18,
-            19,
-            20,
-            24,
-            25,
-            26,
-            27,
-            28
-          ]
-        }
-      ],
-      "encoding": [
-        {
-          "index": 0,
-          "mask": "0x07ffffff",
-          "match": "0x00611181",
-          "width_bits": 32
-        }
-      ],
-      "encoding_kind": "L32",
-      "fields": [
-        {
-          "name": "DataType",
-          "pieces": [
-            {
-              "instruction_lsb": 27,
-              "value_lsb": 0,
-              "width": 5
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 5
-        }
-      ],
-      "form_id": "bstart_mgather_mask_32_5573241cd944",
-      "length_bits": 32,
-      "mnemonic": "BSTART.MGATHER.MASK",
-      "semantic_family": "CMD",
-      "semantic_group": "Bundle Split",
-      "semantic_handler": "ExecuteBundleStart",
-      "semantic_summary": "Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.",
-      "status": "accepted"
-    },
-    {
       "asm": "BSTART.MPAR <VS8, VS16>",
       "constraints": [],
       "encoding": [
@@ -1785,73 +1599,6 @@
       "form_id": "bstart_mscatter_32_0f0ba08bd798",
       "length_bits": 32,
       "mnemonic": "BSTART.MSCATTER",
-      "semantic_family": "CMD",
-      "semantic_group": "Bundle Split",
-      "semantic_handler": "ExecuteBundleStart",
-      "semantic_summary": "Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.",
-      "status": "accepted"
-    },
-    {
-      "asm": "BSTART.MSCATTER.MASK DataType",
-      "constraints": [
-        {
-          "field": "DataType",
-          "operator": "one-of",
-          "values": [
-            0,
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            16,
-            17,
-            18,
-            19,
-            20,
-            24,
-            25,
-            26,
-            27,
-            28
-          ]
-        }
-      ],
-      "encoding": [
-        {
-          "index": 0,
-          "mask": "0x07ffffff",
-          "match": "0x00711181",
-          "width_bits": 32
-        }
-      ],
-      "encoding_kind": "L32",
-      "fields": [
-        {
-          "name": "DataType",
-          "pieces": [
-            {
-              "instruction_lsb": 27,
-              "value_lsb": 0,
-              "width": 5
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 5
-        }
-      ],
-      "form_id": "bstart_mscatter_mask_32_2a33eed646f7",
-      "length_bits": 32,
-      "mnemonic": "BSTART.MSCATTER.MASK",
       "semantic_family": "CMD",
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
@@ -3139,6 +2886,56 @@
           "width_bits": 32
         }
       ],
+      "encoding_variants": [
+        {
+          "name": "TMOV.L2S.INSERT",
+          "function": 8,
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0x07ffffff",
+              "match": "0x00811181",
+              "width_bits": 32
+            }
+          ]
+        },
+        {
+          "name": "TMOV.L2S.PUBLISH",
+          "function": 9,
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0x07ffffff",
+              "match": "0x00911181",
+              "width_bits": 32
+            }
+          ]
+        },
+        {
+          "name": "TMOV.S2L.BROADCAST",
+          "function": 10,
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0x07ffffff",
+              "match": "0x00a11181",
+              "width_bits": 32
+            }
+          ]
+        },
+        {
+          "name": "TMOV.S2L.EXTRACT",
+          "function": 11,
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0x07ffffff",
+              "match": "0x00b11181",
+              "width_bits": 32
+            }
+          ]
+        }
+      ],
       "encoding_kind": "L32",
       "fields": [
         {
@@ -3157,6 +2954,73 @@
       "form_id": "bstart_tmov_32_211446509efb",
       "length_bits": 32,
       "mnemonic": "BSTART.TMOV",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Split",
+      "semantic_handler": "ExecuteBundleStart",
+      "semantic_summary": "Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.",
+      "status": "accepted"
+    },
+    {
+      "asm": "BSTART.GMOV DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x00d11181",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "DataType",
+          "pieces": [
+            {
+              "instruction_lsb": 27,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "bstart_gmov_32_6c21e223eaa7",
+      "length_bits": 32,
+      "mnemonic": "BSTART.GMOV",
       "semantic_family": "CMD",
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
@@ -3273,6 +3137,20 @@
           "width_bits": 32
         }
       ],
+      "encoding_variants": [
+        {
+          "name": "TSTORE.SPART",
+          "function": 12,
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0x07ffffff",
+              "match": "0x00c11181",
+              "width_bits": 32
+            }
+          ]
+        }
+      ],
       "encoding_kind": "L32",
       "fields": [
         {
@@ -3320,7 +3198,7 @@
       "status": "accepted"
     },
     {
-      "asm": "C.B.DIM RegSrc, ->{LB0, LB1, LB2}",
+      "asm": "C.B.IOS SharedTID",
       "constraints": [],
       "encoding": [
         {
@@ -3333,37 +3211,25 @@
       "encoding_kind": "C16",
       "fields": [
         {
-          "name": "LoopNest",
-          "pieces": [
-            {
-              "instruction_lsb": 11,
-              "value_lsb": 0,
-              "width": 3
-            }
-          ],
-          "signedness": "encoding-defined",
-          "width": 3
-        },
-        {
-          "name": "RegSrc",
+          "name": "SharedTID",
           "pieces": [
             {
               "instruction_lsb": 6,
               "value_lsb": 0,
-              "width": 5
+              "width": 8
             }
           ],
           "signedness": "encoding-defined",
-          "width": 5
+          "width": 8
         }
       ],
-      "form_id": "c_b_dim_16_14f1b8fba5e6",
+      "form_id": "c_b_ios_16_14f1b8fba5e6",
       "length_bits": 16,
-      "mnemonic": "C.B.DIM",
+      "mnemonic": "C.B.IOS",
       "semantic_family": "CMD",
-      "semantic_group": "Bundle Dimension",
-      "semantic_handler": "SetBundleDimension",
-      "semantic_summary": "Writes one of the three bundle-local dimension registers.",
+      "semantic_group": "Bundle Shared Operand Binding",
+      "semantic_handler": "BindBundleSharedIO",
+      "semantic_summary": "Binds one Shared tile ID for a cooperative CUBE operand schema; the binder is consumed once.",
       "status": "accepted"
     },
     {
@@ -4311,7 +4177,7 @@
           "width": 30
         }
       ],
-      "form_id": "hl_bstart_std_48_9ba705710872",
+      "form_id": "hl_bstart_std_48_9ba705800872",
       "length_bits": 48,
       "mnemonic": "HL.BSTART.STD",
       "semantic_family": "BBD",
@@ -5318,23 +5184,23 @@
     }
   ],
   "isa": "PTO Instruction Set Architecture",
-  "operand_field_count": 57,
-  "operand_piece_count": 190,
+  "operand_field_count": 56,
+  "operand_piece_count": 186,
   "reviewed_encoding_overlaps": [
     {
       "broad_form_id": "b_iot_32_10db6db84f5d",
       "narrow_form_id": "b_iot_32_c11eb189dd83",
-      "reason": "destination-free form fixes DstTile and imm4 to zero; destination form requires DstTile 0..3 and imm4 3..9"
+      "reason": "source-only form fixes TSize to zero; destination form requires TSize 1..7 and a 2-bit DstTile"
     },
     {
       "broad_form_id": "b_iot_32_8b8bce6bffe8",
       "narrow_form_id": "b_iot_32_2c07e7177fad",
-      "reason": "destination-free form fixes DstTile and imm4 to zero; destination form requires DstTile 0..3 and imm4 3..9"
+      "reason": "source-only form fixes TSize to zero; destination form requires TSize 1..7 and a 2-bit DstTile"
     },
     {
       "broad_form_id": "c_b_dimi_16_3f1b113c76ce",
-      "narrow_form_id": "c_b_dim_16_14f1b8fba5e6",
-      "reason": "register form fixes the immediate-form LoopNest projection to excluded value 3"
+      "narrow_form_id": "c_b_ios_16_14f1b8fba5e6",
+      "reason": "C.B.IOS occupies the v5 compressed register-dimension encoding slot reassigned from C.B.DIM"
     },
     {
       "broad_form_id": "c_bstart_std_16_8b40f078c14a",

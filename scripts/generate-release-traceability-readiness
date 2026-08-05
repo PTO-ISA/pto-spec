@@ -53,14 +53,14 @@ SOURCE_PATHS = (
 )
 
 EXPECTED_COUNTS = {
-    "requirement_count": 46,
+    "requirement_count": 47,
     "scalar_form_count": 474,
-    "command_form_count": 99,
-    "tile_operation_count": 120,
+    "command_form_count": 96,
+    "tile_operation_count": 106,
     "system_register_count": 72,
     "trap_count": 13,
-    "profile_hook_count": 38,
-    "state_root_count": 73,
+    "profile_hook_count": 36,
+    "state_root_count": 74,
 }
 
 SCALAR_TRACE = {
@@ -173,6 +173,7 @@ TILE_TRACE = {
             "PTO-REQ-MEMORY-COMPLETION-001",
             "PTO-REQ-MEMORY-TSO-001",
             "PTO-REQ-TILE-DISPATCH-001",
+            "PTO-REQ-SHARED-TILE-001",
         ],
         "model": [
             "asl/tile/memory.asl",
@@ -191,6 +192,7 @@ TILE_TRACE = {
             "PTO-REQ-TILE-DISPATCH-001",
             "PTO-REQ-TILE-LEGALITY-001",
             "PTO-REQ-PROFILE-001",
+            "PTO-REQ-SHARED-TILE-001",
         ],
         "model": [
             "asl/tile/cube.asl",
@@ -214,6 +216,7 @@ TEPL_HANDLER_TRACE = {
             "ExecuteTileCompareScalar",
             "ExecuteTileSelectScalar",
             "ExecuteTileFillScalar",
+            "TFMA",
         },
         "requirement": "PTO-REQ-TEPL-001",
         "model": "asl/tile/elementwise.asl",
@@ -257,11 +260,12 @@ TEPL_HANDLER_TRACE = {
     },
     "complex": {
         "handlers": {
-            "TSORT",
+            "TSORT32",
             "TMRGSORT",
             "THISTOGRAM",
             "ExecuteTilePartial",
             "ExecuteTilePartialArg",
+            "TRANDOM",
         },
         "requirement": "PTO-REQ-TEPL-COMPLEX-001",
         "model": "asl/tile/complex.asl",
@@ -315,11 +319,12 @@ STATE_GROUPS = {
         "_BundleDimensions",
         "_BundleScalarBindings",
         "_BundleTileBindings",
+        "_BundleSharedBindings",
         "_BundleControlAttributes",
         "_BundleDataAttributes",
         "_FrameDepth",
         "_Tiles",
-        "_Accumulator",
+        "_SharedTiles",
         "_TileDataLayoutCapabilities",
     },
     "architectural-storage-abstraction": {"_Memory"},
@@ -458,10 +463,10 @@ def state_requirements(name: str, model: str) -> list[str]:
                 "PTO-REQ-TILE-MANAGEMENT-001",
             }
         )
+    if name == "_SharedTiles":
+        requirements.add("PTO-REQ-SHARED-TILE-001")
     if name in {"_ExecutionMask", "_PredicateRegisters"}:
         requirements.add("PTO-REQ-PREDICATE-001")
-    if name == "_Accumulator":
-        requirements.update({"PTO-REQ-CUBE-001", "PTO-REQ-PROFILE-001"})
     if name == "_TileDataLayoutCapabilities":
         requirements.update(
             {
@@ -519,12 +524,12 @@ def state_tests(name: str, model: str) -> list[str]:
         tests.add("tests/asl/bundle-tests.asl")
     if model == "asl/tile/state.asl":
         tests.add("tests/asl/tile-tests.asl")
+    if name == "_SharedTiles":
+        tests.add("tests/asl/bundle-tests.asl")
     if name.startswith("_Memory") or name.startswith("_Reservation"):
         tests.add("tests/asl/concurrency-tests.asl")
     if name in {"_ExtendedSystemRegisters", "_SystemRegisters"}:
         tests.add("tests/asl/scalar-tests.asl")
-    if name == "_Accumulator":
-        tests.update({"tests/asl/cube-totality-tests.asl", "tests/asl/tile-tests.asl"})
     if name in {"_ExecutionMask", "_PredicateRegisters"}:
         tests.update(
             {
@@ -1004,7 +1009,7 @@ def build_evidence() -> dict[str, Any]:
         for row in hook_rows
         if row["bounded_status"] == "target-conformance-open"
     ]
-    require(len(open_hooks) == 30, "the expected 30 S5-T2 hooks are not open")
+    require(len(open_hooks) == 28, "the expected 28 S5-T2 hooks are not open")
 
     return {
         "schema_version": 1,

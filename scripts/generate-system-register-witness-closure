@@ -17,10 +17,10 @@ CATALOG = ROOT / "spec/catalog/system-registers.json"
 OUTPUT = ROOT / "spec/evidence/system-register-witness-closure.json"
 
 EXPECTED_STORAGE_SEMANTIC_INVENTORY_SHA256 = (
-    "8df976bb0c6031430e39f2e6968f2a92fa810b3cdb5b3ae36ac7099b151fe4e4"
+    "a7e4f345c3b8ad892da88a423ac14020bccd6a0e60877e96ea5fb73e8b4902e2"
 )
 EXPECTED_TRAP_ACTIVATION_INVENTORY_SHA256 = (
-    "c73ffb653ee840028525815de399b8c754fad313ec59a9650ccdcf1c8f278645"
+    "a140de9bb19b68ab5f64ba7cd81f4d15c8996e6ebd655f55c17de2e31d2ed3d7"
 )
 
 STORAGE_BOUNDARY_SYMBOLS = {

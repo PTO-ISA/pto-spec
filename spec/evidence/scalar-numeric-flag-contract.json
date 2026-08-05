@@ -528,11 +528,11 @@
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "6984a2c6bcafa208a1458001fc1105a7820b0a8005d54ca77bf07846c00d7b49"
+      "sha256": "b4d79c47c80e82c83bdb64cc111c0a744006ec60b5b05a798e7105060068122b"
     },
     {
       "path": "asl/scalar/floating.asl",
-      "sha256": "cc2b1fd8a53e840295363ae45335ca426385565d6f797b4829d760e3e65ba71f"
+      "sha256": "ef1eee6e90063dd0ea41c48bd1792f060a19467aa303112caea3877fb46d38ba"
     },
     {
       "path": "asl/scalar/dispatch.asl",
@@ -540,7 +540,7 @@
     },
     {
       "path": "asl/profiles/pto-v0.asl",
-      "sha256": "09e174b0840b8c99a6fe41046d1ef29fc33fe13738d100964d1ad983ca4abf42"
+      "sha256": "e98a9bed720e84aef2c352a466499d508363731f624785b50a307d7aaa930cac"
     },
     {
       "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",

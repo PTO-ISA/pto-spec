@@ -135,7 +135,10 @@ pure func DecodeBundleOperationDescriptor(
 begin
     var selector = Zeros{10};
     var selector_valid = FALSE;
-    if CommandFormSelectsTileOperation(form) then
+    if CommandBundleSelectorUsesEncodingVariant(form) then
+        selector = CommandBundleSelectorConstantOfForm(instruction, form);
+        selector_valid = TRUE;
+    elsif CommandFormSelectsTileOperation(form) then
         selector = CommandTileCodeOfForm(instruction, form)[9:0];
         selector_valid = TRUE;
     elsif CommandOperandPresent(form, CommandField_Function) then
@@ -143,7 +146,7 @@ begin
             CommandField_Function)[4:0];
         selector_valid = TRUE;
     elsif CommandBundleSelectorConstantPresent(form) then
-        selector = CommandBundleSelectorConstantOfForm(form);
+        selector = CommandBundleSelectorConstantOfForm(instruction, form);
         selector_valid = TRUE;
     end;
     return BundleOperationDescriptor {
@@ -249,6 +252,24 @@ begin
     return code;
 end;
 
+pure func BundleOperationDecodeCode(
+    descriptor: BundleOperationDescriptor) => bits(12)
+begin
+    let code = BundleSelectorCode(descriptor);
+    if descriptor.operation_class == BundleOperation_TileMemory &&
+       !descriptor.mode_valid then
+        if descriptor.selector[4:0] == '01000' ||
+           descriptor.selector[4:0] == '01001' ||
+           descriptor.selector[4:0] == '01010' ||
+           descriptor.selector[4:0] == '01011' then
+            return Zeros{12} + 2;
+        elsif descriptor.selector[4:0] == '01100' then
+            return Zeros{12} + 1;
+        end;
+    end;
+    return code;
+end;
+
 pure func BundleOperationDescriptorLegal(
     descriptor: BundleOperationDescriptor) => boolean
 begin
@@ -266,7 +287,7 @@ begin
             end;
             let operation = DecodeTileOperation(
                 BundleTileDecodeFamily(descriptor.operation_class),
-                BundleSelectorCode(descriptor));
+                BundleOperationDecodeCode(descriptor));
             return operation != PTO_TILE_OPERATION_COUNT;
         when BundleOperation_FixedPoint =>
             // PTO v0 has no direct FIXP selector family. The accepted spelling
@@ -287,7 +308,7 @@ begin
             if !descriptor.selector_valid then return FALSE; end;
             let decoded = DecodeTileOperation(
                 BundleTileDecodeFamily(descriptor.operation_class),
-                BundleSelectorCode(descriptor));
+                BundleOperationDecodeCode(descriptor));
             if decoded == PTO_TILE_OPERATION_COUNT then return FALSE; end;
             let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
             return TileOperationRejectedByAcceptedApplicabilityRules(
@@ -469,8 +490,6 @@ begin
         return UInt(_BundleDimensions[[0]]) as integer {1..65535};
     elsif shape_source_valid && TileDescriptorConfigured(shape_source) then
         return _Tiles[[shape_source]].valid_rows;
-    elsif _Accumulator.live then
-        return _Accumulator.info.valid_rows;
     else
         return 1;
     end;
@@ -485,8 +504,6 @@ begin
         return UInt(_BundleDimensions[[1]]) as integer {1..65535};
     elsif shape_source_valid && TileDescriptorConfigured(shape_source) then
         return _Tiles[[shape_source]].valid_columns;
-    elsif _Accumulator.live then
-        return _Accumulator.info.valid_columns;
     else
         return 1;
     end;
@@ -634,6 +651,399 @@ begin
     return TRUE;
 end;
 
+readonly func SelectedBundleTileMasksLegal() => boolean
+begin
+    var first_mask = Zeros{4};
+    var first_mask_seen = FALSE;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            let mask = _BundleTileBindings[[binding]].pe_mask;
+            if mask == Zeros{4} then return FALSE; end;
+            if first_mask_seen && mask != first_mask then return FALSE; end;
+            first_mask = mask;
+            first_mask_seen = TRUE;
+            if _BundleOperation.operation_class == BundleOperation_TileMemory &&
+               _BundleOperation.selector_valid &&
+               _BundleOperation.selector[4:0] == '01101' &&
+               mask != '1111' then return FALSE; end;
+        end;
+    end;
+    return TRUE;
+end;
+
+readonly func BundleTileBindingCount() => integer {0..16}
+begin
+    var count: integer {0..16} = 0;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            count = (count + 1) as integer {0..16};
+        end;
+    end;
+    return count;
+end;
+
+readonly func BundleLocalTileSourceCount() => integer {0..32}
+begin
+    var count: integer {0..32} = 0;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            if _BundleTileBindings[[binding]].source0_valid then
+                count = (count + 1) as integer {0..32};
+            end;
+            if _BundleTileBindings[[binding]].source1_valid then
+                count = (count + 1) as integer {0..32};
+            end;
+        end;
+    end;
+    return count;
+end;
+
+readonly func BundleLocalTileDestinationCount() => integer {0..16}
+begin
+    var count: integer {0..16} = 0;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].destination_valid then
+            count = (count + 1) as integer {0..16};
+        end;
+    end;
+    return count;
+end;
+
+readonly func BundleTileBindingStreamTerminated() => boolean
+begin
+    var last_count: integer {0..16} = 0;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].last then
+            last_count = (last_count + 1) as integer {0..16};
+        end;
+    end;
+    return BundleTileBindingCount() > 0 && last_count == 1;
+end;
+
+readonly func BundleSharedCubeSelected() => boolean
+begin
+    return _BundleOperation.valid &&
+           _BundleOperation.operation_class == BundleOperation_TileMatrix &&
+           _BundleOperation.selector_valid && BundleSharedBindingCount() > 0;
+end;
+
+readonly func BundleSharedCubeSchemaLegal(function: integer {0..31},
+                                           shared_count: integer {0..4},
+                                           local_count: integer {0..32})
+                                           => boolean
+begin
+    if function == 0 then
+        return (shared_count == 1 && local_count == 1) ||
+               (shared_count == 2 && local_count == 0);
+    elsif function == 1 then
+        return (shared_count == 1 && local_count == 2) ||
+               (shared_count == 2 && local_count == 1);
+    elsif function == 2 then
+        return (shared_count == 1 && local_count == 2) ||
+               (shared_count == 2 && local_count == 1);
+    elsif function == 4 then
+        return (shared_count == 2 && local_count == 2) ||
+               (shared_count == 4 && local_count == 0);
+    elsif function == 5 then
+        return (shared_count == 2 && local_count == 3) ||
+               (shared_count == 4 && local_count == 1);
+    elsif function == 6 then
+        return (shared_count == 2 && local_count == 3) ||
+               (shared_count == 4 && local_count == 1);
+    else
+        return FALSE;
+    end;
+end;
+
+readonly func BundleSharedCubeVersionsReady(count: integer {1..4}) => boolean
+begin
+    for ordinal = 0 to count - 1 looplimit 4 do
+        let shared_id = BundleSharedBindingId(
+            ordinal as integer {0..3});
+        if !SharedTileDescriptorLegal(shared_id) ||
+           !SharedTileVersionFullyDefined(shared_id) then return FALSE; end;
+    end;
+    return TRUE;
+end;
+
+func ExecuteBundleSharedCubeOperation() => boolean
+begin
+    let function = UInt(_BundleOperation.selector[4:0]);
+    let shared_count = BundleSharedBindingCount();
+    let local_count = BundleLocalTileSourceCount();
+    let decoded = DecodeTileOperation(TileDecode_CUBE,
+        BundleOperationDecodeCode(_BundleOperation));
+    if decoded == PTO_TILE_OPERATION_COUNT ||
+       !BundleSharedCubeSchemaLegal(function, shared_count, local_count) ||
+       BundleLocalTileDestinationCount() != 1 ||
+       !BundleTileBindingStreamTerminated() ||
+       !SelectedBundleTileDataAttributesLegal(
+           decoded as integer {0..PTO_TILE_OPERATION_COUNT-1}) ||
+       !SelectedBundleTileMasksLegal() ||
+       _BundleTileBindings[[0]].pe_mask != '1111' ||
+       !BundleSharedCubeVersionsReady(shared_count as integer {1..4}) ||
+       !ResolveBundleTileDestinations() then
+        if _LastFault == Fault_None then
+            SetFault(Fault_TileLegality, ReadTPC());
+        end;
+        return FALSE;
+    end;
+    let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
+    let operands = BundleTileInstructionOperands(operation);
+    let destination = operands.destination0;
+    var left = _Tiles[[0]];
+    var right = _Tiles[[0]];
+    var left_scale = _Tiles[[0]];
+    var right_scale = _Tiles[[0]];
+    var accumulator: TileIndex = destination;
+    var bias: TileIndex = destination;
+    var use_bias = FALSE;
+    var accumulate = FALSE;
+    if function <= 2 then
+        if shared_count == 1 then
+            right = SharedTileRecord(BundleSharedBindingId(0)).tile;
+            if function == 0 then
+                left = _Tiles[[operands.source0]];
+            elsif function == 1 then
+                left = _Tiles[[operands.source0]];
+                bias = operands.source1;
+                use_bias = TRUE;
+            else
+                accumulator = operands.source0;
+                left = _Tiles[[operands.source1]];
+                accumulate = TRUE;
+            end;
+        else
+            left = SharedTileRecord(BundleSharedBindingId(0)).tile;
+            right = SharedTileRecord(BundleSharedBindingId(1)).tile;
+            if function == 1 then
+                bias = operands.source0;
+                use_bias = TRUE;
+            elsif function == 2 then
+                accumulator = operands.source0;
+                accumulate = TRUE;
+            end;
+        end;
+        if !TileOrdinaryMatrixInfosLegal(left, right) ||
+           !TileMatrixInfoDestinationLegal(destination, left, right) ||
+           (use_bias && !TileMatrixInfoBiasLegal(left, right, bias, FALSE)) ||
+           (accumulate && !TileMatrixInfoAccumulatorLegal(
+               destination, accumulator, left, right)) then
+            RollBackBundleTileDestinations();
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        TMATMULShared(destination, accumulator, left, right,
+            bias, use_bias, accumulate);
+    else
+        if shared_count == 2 then
+            right = SharedTileRecord(BundleSharedBindingId(0)).tile;
+            right_scale = SharedTileRecord(BundleSharedBindingId(1)).tile;
+            if function == 4 then
+                left = _Tiles[[operands.source0]];
+                left_scale = _Tiles[[operands.source1]];
+            elsif function == 5 then
+                left = _Tiles[[operands.source0]];
+                left_scale = _Tiles[[operands.source1]];
+                bias = operands.source2;
+                use_bias = TRUE;
+            else
+                accumulator = operands.source0;
+                left = _Tiles[[operands.source1]];
+                left_scale = _Tiles[[operands.source2]];
+                accumulate = TRUE;
+            end;
+        else
+            left = SharedTileRecord(BundleSharedBindingId(0)).tile;
+            left_scale = SharedTileRecord(BundleSharedBindingId(1)).tile;
+            right = SharedTileRecord(BundleSharedBindingId(2)).tile;
+            right_scale = SharedTileRecord(BundleSharedBindingId(3)).tile;
+            if function == 5 then
+                bias = operands.source0;
+                use_bias = TRUE;
+            elsif function == 6 then
+                accumulator = operands.source0;
+                accumulate = TRUE;
+            end;
+        end;
+        if !TileMatrixInfoScalesLegal(left, left_scale, right, right_scale) ||
+           !TileMatrixInfoDestinationLegal(destination, left, right) ||
+           (use_bias && !TileMatrixInfoBiasLegal(left, right, bias, TRUE)) ||
+           (accumulate && !TileMatrixInfoAccumulatorLegal(
+               destination, accumulator, left, right)) then
+            RollBackBundleTileDestinations();
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        TMATMULMXShared(destination, accumulator, left, left_scale,
+            right, right_scale, bias, use_bias, accumulate);
+    end;
+    if _LastFault != Fault_None then
+        RollBackBundleTileDestinations();
+        return FALSE;
+    end;
+    ConsumeBundleSharedBindings(shared_count as integer {1..4});
+    FinalizeBundleTileAttempt(TileExecution_Executed);
+    return TRUE;
+end;
+
+readonly func BundleSharedScalarSchemaLegal(shared_load: boolean) => boolean
+begin
+    if !_BundleScalarBindings[[0]].valid ||
+       _BundleScalarBindings[[0]].source2 != 0 then return FALSE; end;
+    let destination = _BundleScalarBindings[[0]].destination;
+    if shared_load then
+        return destination MOD 4 == 0 &&
+               TileSizeCodeIsLegal(destination DIVRM 4);
+    else
+        return destination == 0;
+    end;
+end;
+
+readonly func BundleSharedTMASelected() => boolean
+begin
+    if !_BundleOperation.valid ||
+       _BundleOperation.operation_class != BundleOperation_TileMemory ||
+       !_BundleOperation.selector_valid then return FALSE; end;
+    let function = UInt(_BundleOperation.selector[4:0]);
+    return BundleSharedBindingCount() > 0 ||
+           (8 <= function && function <= 12);
+end;
+
+readonly func BundleSharedTMOVLocalSchemaLegal() => boolean
+begin
+    if BundleSharedBindingCount() != 1 ||
+       BundleTileBindingCount() != 1 then return FALSE; end;
+    let binding = _BundleTileBindings[[0]];
+    return binding.valid && !binding.destination_valid &&
+           binding.source0_valid && !binding.source1_valid && binding.last &&
+           TileSizeCodeIsLegal(binding.destination_size) &&
+           binding.pe_mask != Zeros{4} &&
+           TileSourceContentsDefined(binding.source0) &&
+           _Tiles[[binding.source0]].capacity_bytes ==
+               TileSizeCodeBytes(binding.destination_size as integer {1..7});
+end;
+
+readonly func BundleSharedTMOVDestinationSchemaLegal(
+    shared_id: bits(8), broadcast: boolean) => boolean
+begin
+    if BundleSharedBindingCount() != 1 ||
+       BundleTileBindingCount() != 1 ||
+       !SharedTileDescriptorLegal(shared_id) ||
+       !SharedTileVersionReady(shared_id) then return FALSE; end;
+    let binding = _BundleTileBindings[[0]];
+    if !binding.valid || !binding.destination_valid ||
+       binding.source0_valid || binding.source1_valid || !binding.last ||
+       !TileSizeCodeIsLegal(binding.destination_size) then return FALSE; end;
+    if broadcast && !SharedTileVersionFullyDefined(shared_id) then
+        return FALSE;
+    end;
+    let shared_size =
+        SharedTileRecord(shared_id).tile.capacity_bytes;
+    let local_size = TileSizeCodeBytes(
+        binding.destination_size as integer {1..7});
+    return if broadcast then local_size == shared_size * 4
+           else local_size == shared_size;
+end;
+
+func ExecuteBundleSharedTMAOperation() => boolean
+begin
+    let function = UInt(_BundleOperation.selector[4:0]);
+    if !SelectedBundleTileDataAttributesLegal(
+        DecodeTileOperation(TileDecode_TMA,
+            BundleOperationDecodeCode(_BundleOperation)) as
+                integer {0..PTO_TILE_OPERATION_COUNT-1}) then
+        return FALSE;
+    end;
+    if BundleSharedBindingCount() != 1 then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    let shared_id = BundleSharedBindingId(0);
+    if function == 0 then
+        if BundleTileBindingCount() != 0 ||
+           !BundleSharedScalarSchemaLegal(TRUE) then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        let valid_columns = UInt(_BundleDimensions[[0]]);
+        let valid_rows = UInt(_BundleDimensions[[1]]);
+        let columns = UInt(_BundleDimensions[[2]]);
+        if valid_columns < 1 || valid_columns > 65535 ||
+           valid_rows < 1 || valid_rows > 65535 ||
+           columns < 1 || columns > 65535 || valid_columns > columns then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        let size_code = (_BundleScalarBindings[[0]].destination DIVRM 4)
+            as integer {1..7};
+        TLOADShared(shared_id,
+            ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source0),
+            size_code, valid_rows as integer {1..65535},
+            columns as integer {1..65535},
+            valid_rows as integer {1..65535},
+            valid_columns as integer {1..65535},
+            TileDataTypeFromEncoding(ZeroExtend{PTO_XLEN}(
+                CurrentBundleTileOperationDataTypeCode())),
+            CurrentBundleTileLayout());
+    elsif function == 1 || function == 12 then
+        if BundleTileBindingCount() != 0 ||
+           !BundleSharedScalarSchemaLegal(FALSE) ||
+           !SharedTileDescriptorLegal(shared_id) ||
+           !SharedTileVersionReady(shared_id) ||
+           (function == 1 && !SharedTileVersionFullyDefined(shared_id)) then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        TSTOREShared(
+            ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source0),
+            shared_id, function == 12);
+    elsif function == 8 || function == 9 then
+        if !BundleSharedTMOVLocalSchemaLegal() then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        let binding = _BundleTileBindings[[0]];
+        TMOVLocalToShared(shared_id, binding.source0,
+            binding.destination_size as integer {1..7}, binding.pe_mask);
+    elsif function == 10 || function == 11 then
+        let broadcast = function == 10;
+        if !BundleSharedTMOVDestinationSchemaLegal(shared_id, broadcast) ||
+           !SelectedBundleTileMasksLegal() ||
+           !ResolveBundleTileDestinations() then
+            if _LastFault == Fault_None then
+                SetFault(Fault_TileLegality, ReadTPC());
+            end;
+            return FALSE;
+        end;
+        let destination = _BundleTileBindings[[0]].destination;
+        let shared = SharedTileRecord(shared_id).tile;
+        if _Tiles[[destination]].rows != shared.rows ||
+           _Tiles[[destination]].columns != shared.columns ||
+           _Tiles[[destination]].valid_rows != shared.valid_rows ||
+           _Tiles[[destination]].valid_columns != shared.valid_columns ||
+           _Tiles[[destination]].data_type != shared.data_type ||
+           _Tiles[[destination]].layout != shared.layout then
+            RollBackBundleTileDestinations();
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        TMOVSharedToLocal(destination, shared_id, broadcast);
+    else
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if _LastFault != Fault_None then
+        RollBackBundleTileDestinations();
+        return FALSE;
+    end;
+    ConsumeBundleSharedBindings(1);
+    FinalizeBundleTileAttempt(TileExecution_Executed);
+    return TRUE;
+end;
+
 readonly func BundleTileTypesMatch(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1},
     operands: TileInstructionOperands,
@@ -654,8 +1064,16 @@ end;
 func ExecuteBundleTileOperationWithAcceptedApplicabilityRules(
     rules: NumericApplicabilityRuleSet) => boolean
 begin
+    if BundleSharedCubeSelected() then
+        return ExecuteBundleSharedCubeOperation();
+    elsif BundleSharedTMASelected() then
+        return ExecuteBundleSharedTMAOperation();
+    elsif BundleSharedBindingsUnconsumed() then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
     let family = BundleTileDecodeFamily(_BundleOperation.operation_class);
-    let code = BundleSelectorCode(_BundleOperation);
+    let code = BundleOperationDecodeCode(_BundleOperation);
     let decoded = DecodeTileOperation(family, code);
     if decoded == PTO_TILE_OPERATION_COUNT then
         SetFault(Fault_IllegalInstruction, ReadTPC());
@@ -667,6 +1085,10 @@ begin
         return FALSE;
     end;
     if !SelectedBundleTileDataAttributesLegal(operation) then
+        return FALSE;
+    end;
+    if !SelectedBundleTileMasksLegal() then
+        SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
     if !ResolveBundleTileDestinations() then return FALSE; end;
@@ -804,7 +1226,7 @@ begin
                 CommandDecodedBool(instruction, form, CommandField_far),
                 CommandDecodedBool(instruction, form, CommandField_DR));
         when CommandHandler_SetBundleDataAttributes =>
-            SetBundleDataAttributeState0571(
+            SetBundleDataAttributeState0580(
                 DecodeCommandOperandRaw(instruction, form,
                     CommandField_DataType)[4:0],
                 DecodeCommandOperandRaw(instruction, form,
@@ -830,6 +1252,10 @@ begin
                 SetBundleDimension(CommandDecodedBundleDimension(instruction, form),
                     CommandDecodedWord(instruction, form, CommandField_imm8));
             end;
+        when CommandHandler_BindBundleSharedIO =>
+            BindBundleSharedIO(
+                DecodeCommandOperandRaw(instruction, form,
+                    CommandField_SharedTID)[7:0]);
         when CommandHandler_SetBundleBodyAddress =>
             SetBundleBodyAddress(CommandDecodedBundleTarget(instruction, form));
         when CommandHandler_BindBundleScalarIO =>
@@ -839,14 +1265,41 @@ begin
                 CommandDecodedReg5(instruction, form, CommandField_RegSrc1),
                 CommandDecodedReg5(instruction, form, CommandField_RegSrc2), 3);
         when CommandHandler_BindBundleTileIO =>
+            let tile_size = if CommandOperandPresent(form, CommandField_TSize) then
+                CommandDecodedSmall(instruction, form, CommandField_TSize)
+                else 0;
+            let pe_mask = DecodeCommandOperandRaw(
+                instruction, form, CommandField_PE_MASK)[3:0];
+            let local_to_shared =
+                _BundleOperation.valid &&
+                _BundleOperation.operation_class == BundleOperation_TileMemory &&
+                _BundleOperation.selector_valid &&
+                (_BundleOperation.selector[4:0] == '01000' ||
+                 _BundleOperation.selector[4:0] == '01001');
+            let local_destination =
+                CommandOperandPresent(form, CommandField_TSize) &&
+                !local_to_shared;
+            if !BundleTileMaskCanAppend(pe_mask) ||
+               (local_destination && tile_size == 0) ||
+               (local_to_shared &&
+               (tile_size == 0 ||
+                DecodeCommandOperandRaw(
+                    instruction, form, CommandField_DstTile)[1:0] != Zeros{2})) ||
+               (_BundleOperation.valid &&
+                _BundleOperation.operation_class == BundleOperation_TileMemory &&
+                _BundleOperation.selector_valid &&
+                _BundleOperation.selector[4:0] == '01101' &&
+                pe_mask != '1111') then
+                SetFault(Fault_TileLegality, ReadTPC());
+                return CommandExecution_Rejected;
+            end;
             AddBundleTileBinding(
-                CommandOperandPresent(form, CommandField_DstTile),
+                local_destination,
                 if CommandOperandPresent(form, CommandField_DstTile) then
                     CommandDecodedTile(instruction, form, CommandField_DstTile)
                 else 0,
-                if CommandOperandPresent(form, CommandField_imm4) then
-                    CommandDecodedSmall(instruction, form, CommandField_imm4)
-                else 0,
+                tile_size,
+                pe_mask,
                 CommandOperandPresent(form, CommandField_SrcTile0),
                 CommandOperandPresent(form, CommandField_SrcTile1),
                 if CommandOperandPresent(form, CommandField_SrcTile0) then
@@ -855,10 +1308,6 @@ begin
                 if CommandOperandPresent(form, CommandField_SrcTile1) then
                     CommandDecodedTile(instruction, form, CommandField_SrcTile1)
                 else 0,
-                CommandOperandPresent(form, CommandField_S0R) &&
-                    CommandDecodedBool(instruction, form, CommandField_S0R),
-                CommandOperandPresent(form, CommandField_S1R) &&
-                    CommandDecodedBool(instruction, form, CommandField_S1R),
                 CommandOperandPresent(form, CommandField_L) &&
                     CommandDecodedBool(instruction, form, CommandField_L));
         when CommandHandler_ExecuteBundleStart =>

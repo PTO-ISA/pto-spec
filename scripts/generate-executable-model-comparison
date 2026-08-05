@@ -421,11 +421,11 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
             disposition = "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence."
         elif not encoding_match:
             classification = "divergence"
-            disposition = "The independent snapshot retains the superseded command encoding. PTO ISA 0.57.1 intentionally changes this mask/match under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest encoding divergence."
+            disposition = "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest encoding divergence."
             abi_change_acceptance = {
                 "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
                 "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-                "kind": "accepted-0.57.1-command-encoding-break",
+                "kind": "accepted-0.58.0-command-encoding-break",
             }
         elif (
             pto_effect == "pto-v0-rejected"
@@ -514,11 +514,11 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
             )
         elif not selector_match:
             classification = "divergence"
-            disposition = "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.57.1 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence."
+            disposition = "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence."
             abi_change_acceptance = {
                 "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
                 "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-                "kind": "accepted-0.57.1-compact-tepl-selector-break",
+                "kind": "accepted-0.58.0-compact-tepl-selector-break",
             }
         elif family == "TEPL":
             classification = "comparable-match"
@@ -606,15 +606,15 @@ def build(snapshot_root: Path) -> dict[str, Any]:
         },
         "scope": {
             "scalar_forms": 474,
-            "command_forms": 99,
-            "direct_tile_operations": 120,
-            "total_rows": 693,
-            "direct_tile_breakdown": {"TEPL": 98, "TMA": 9, "CUBE": 13},
+            "command_forms": 96,
+            "direct_tile_operations": 106,
+            "total_rows": 676,
+            "direct_tile_breakdown": {"TEPL": 87, "TMA": 7, "CUBE": 12},
         },
         "model_limits": [
             {
-                "id": "accepted-0.57.1-abi-break",
-                "disposition": "The immutable independent snapshot predates the approved 0.57.1 command-encoding and compact TEPL-selector ABI. The matrix therefore preserves 7 command encoding divergences and 79 TEPL selector divergences, each traced to ADR 0045 and issue #18, instead of relabeling them as exact matches.",
+                "id": "accepted-0.58.0-abi-break",
+                "disposition": "The immutable independent snapshot predates the accepted command-encoding and compact TEPL-selector ABI. The retained matrix preserves 7 command encoding divergences and 67 direct-tile selector divergences instead of relabeling them as exact matches.",
             },
             {
                 "id": "reg5-flat-model-mismatch",
@@ -630,11 +630,11 @@ def build(snapshot_root: Path) -> dict[str, Any]:
             },
             {
                 "id": "tepl-selector-boundary",
-                "disposition": "PTO defines 98 TEPL operations. Ninety-seven match the independent TEPL selector/pattern evidence after PTO spelling normalization for transpose; TPRELU is a PTO-owned extension.",
+                "disposition": "PTO defines 87 TEPL operations. The retained independent selector evidence is classified row by row; TFMA is an explicit PTO-owned extension.",
             },
             {
                 "id": "tma-and-cube-manifest-boundary",
-                "disposition": "The independent engine manifest lists 9 TMA and 13 CUBE functions, but those rows are header/function evidence rather than independent tile payload execution.",
+                "disposition": "The retained TMA and CUBE manifest rows are header/function evidence rather than independent tile payload execution; GMOV is an explicit PTO-owned extension.",
             },
             {
                 "id": "no-independent-tile-payload-execution",
@@ -655,13 +655,13 @@ def build(snapshot_root: Path) -> dict[str, Any]:
             ],
         },
     }
-    if summary["row_count"] != 693:
-        raise SystemExit(f"expected 693 rows, got {summary['row_count']}")
+    if summary["row_count"] != 676:
+        raise SystemExit(f"expected 676 rows, got {summary['row_count']}")
     if summary["classification_counts"] != {
         "comparable-match": 557,
-        "divergence": 96,
-        "intentional-extension": 1,
-        "non-comparable": 39,
+        "divergence": 84,
+        "intentional-extension": 3,
+        "non-comparable": 32,
     }:
         raise SystemExit(
             f"unexpected comparison classification counts: {summary['classification_counts']}"
@@ -670,9 +670,93 @@ def build(snapshot_root: Path) -> dict[str, Any]:
         row for row in rows if row.get("abi_change_acceptance") is not None
     ]
     if Counter(row["surface"] for row in accepted_abi_breaks) != Counter(
-        {"command": 7, "direct-tile": 79}
+        {"command": 7, "direct-tile": 67}
     ):
-        raise SystemExit("expected exactly 7 command and 79 TEPL accepted ABI divergences")
+        raise SystemExit("expected exactly 7 command and 67 direct-tile accepted ABI divergences")
+    return data
+
+
+def prune_existing_to_catalog() -> dict[str, Any]:
+    """Prune a frozen comparison when canonical forms are removed.
+
+    This preserves the content-addressed independent snapshot and its archived
+    gates while removing only rows that no longer exist in the canonical
+    command catalog. It deliberately cannot add or rewrite comparison rows.
+    """
+    if not OUTPUT.exists():
+        raise SystemExit(f"missing existing evidence to prune: {OUTPUT}")
+    data = load_json(OUTPUT)
+    command_catalog = load_json(ROOT / "spec/catalog/command-forms.json")
+    accepted_ids = {row["form_id"] for row in command_catalog["forms"]}
+    existing_command_ids = {
+        row["stable_id"] for row in data["rows"] if row["surface"] == "command"
+    }
+    removed_ids = existing_command_ids - accepted_ids
+    reassigned_ids = {
+        "c_b_dim_16_14f1b8fba5e6": "c_b_ios_16_14f1b8fba5e6",
+    }
+    allowed_retired_ids = {
+        "bstart_acccvt_32_56c3ce3838c5",
+        "bstart_mgather_cas_32_fd8c8a3b720a",
+        "bstart_mgather_mask_32_5573241cd944",
+        "bstart_mscatter_mask_32_2a33eed646f7",
+        *reassigned_ids,
+    }
+    if removed_ids - allowed_retired_ids:
+        raise SystemExit(
+            f"refusing to prune unexpected command rows: {sorted(removed_ids)}"
+        )
+    missing_ids = accepted_ids - existing_command_ids - set(reassigned_ids.values())
+    if missing_ids:
+        raise SystemExit(
+            f"existing comparison cannot synthesize new command rows: {sorted(missing_ids)}"
+        )
+    rows = [
+        row
+        for row in data["rows"]
+        if row["surface"] != "command" or row["stable_id"] in accepted_ids
+    ]
+    for old_id, new_id in reassigned_ids.items():
+        if old_id not in existing_command_ids or new_id not in accepted_ids:
+            continue
+        source_row = next(row for row in data["rows"] if row["stable_id"] == old_id)
+        command_row = next(row for row in command_catalog["forms"] if row["form_id"] == new_id)
+        rows.append(
+            {
+                **source_row,
+                "stable_id": new_id,
+                "mnemonic": command_row["mnemonic"],
+                "semantic_handler": command_row["semantic_handler"],
+                "classification": "comparable-divergence",
+                "pto_disposition": (
+                    "PTO ISA 0.58.0 reassigns the inherited compressed C.B.DIM "
+                    "register encoding to C.B.IOS SharedTID; the independent "
+                    "snapshot retains the historical dimension meaning."
+                ),
+                "evidence": sorted(
+                    set(source_row["evidence"])
+                    | {"docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md"}
+                ),
+            }
+        )
+    command_index = 0
+    for row in rows:
+        if row["surface"] == "command":
+            row["index"] = command_index
+            command_index += 1
+    data["rows"] = rows
+    data["scope"]["command_forms"] = len(accepted_ids)
+    data["scope"]["total_rows"] = len(rows)
+    data["summary"]["row_count"] = len(rows)
+    data["summary"]["classification_counts"] = dict(
+        sorted(Counter(row["classification"] for row in rows).items())
+    )
+    data["summary"]["independent_status_counts"] = dict(
+        sorted(Counter(row["independent_status"] for row in rows).items())
+    )
+    data["summary"]["surface_counts"] = dict(
+        sorted(Counter(row["surface"] for row in rows).items())
+    )
     return data
 
 
@@ -685,11 +769,19 @@ def main() -> int:
         help=f"Path to the neutral independent snapshot. Defaults to ${SNAPSHOT_ENV}.",
     )
     parser.add_argument("--check", action="store_true")
+    parser.add_argument(
+        "--prune-existing-to-catalog",
+        action="store_true",
+        help="Remove only retired canonical command rows from existing frozen evidence.",
+    )
     args = parser.parse_args()
 
-    if args.independent_root is None:
+    if args.prune_existing_to_catalog:
+        data = prune_existing_to_catalog()
+    elif args.independent_root is None:
         raise SystemExit(f"set {SNAPSHOT_ENV} or pass --independent-root")
-    data = build(args.independent_root.resolve())
+    else:
+        data = build(args.independent_root.resolve())
     rendered = stable_json(data)
     if args.check:
         if not OUTPUT.exists():

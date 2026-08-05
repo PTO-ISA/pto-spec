@@ -1,7 +1,8 @@
 // PTO-REQ-CUBE-001: profile-defined matrix arithmetic with portable integer
-// defaults. CUBE arithmetic uses implicit ACC state. Normal, BIAS, and MX
-// forms replace ACC; .ACC forms read and replace it; ACCCVT is the only
-// operation that publishes ACC to a Tile.
+// defaults. DavinciOO v5 CUBE operations name their Local destination D
+// explicitly. ACC forms also name their Local accumulator input C explicitly;
+// C is snapshotted before D is written so D == C has read-old/write-new
+// behavior.
 
 impdef func TileProfileMatrixAccumulate(accumulator: Word, left: Word, right: Word,
                                          destination_type: TileDataType,
@@ -47,11 +48,14 @@ begin
     return result;
 end;
 
-func MatrixProductResult(left: TileIndex, right: TileIndex,
-                         accumulate: boolean) => TileInfo
+func MatrixProductResultFromTiles(destination: TileIndex,
+                                  accumulator: TileIndex,
+                                  left_tile: TileInfo,
+                                  right_tile: TileInfo,
+                                  accumulate: boolean) => TileInfo
 begin
-    let left_tile = _Tiles[[left]];
-    let right_tile = _Tiles[[right]];
+    let destination_tile = _Tiles[[destination]];
+    let accumulator_tile = _Tiles[[accumulator]];
     let selected_data_type = TileDataTypeFromEncoding(
         ZeroExtend{PTO_XLEN}(CurrentBundleTileOperationDataTypeCode()));
     let accumulator_data_type =
@@ -59,38 +63,38 @@ begin
     assert left_tile.allocated && left_tile.contents_defined;
     assert right_tile.allocated && right_tile.contents_defined;
     assert left_tile.valid_columns == right_tile.valid_rows;
+    assert destination_tile.allocated;
+    assert destination_tile.valid_rows == left_tile.valid_rows;
+    assert destination_tile.valid_columns == right_tile.valid_columns;
+    assert destination_tile.data_type == accumulator_data_type;
     if accumulate then
-        assert _Accumulator.live && _Accumulator.info.contents_defined;
-        assert _Accumulator.info.valid_rows == left_tile.valid_rows;
-        assert _Accumulator.info.valid_columns == right_tile.valid_columns;
-        assert _Accumulator.logical_data_type == selected_data_type;
-        assert _Accumulator.info.data_type == accumulator_data_type;
+        assert accumulator_tile.allocated && accumulator_tile.contents_defined;
+        assert accumulator_tile.valid_rows == left_tile.valid_rows;
+        assert accumulator_tile.valid_columns == right_tile.valid_columns;
+        assert accumulator_tile.data_type == accumulator_data_type;
+        assert accumulator_tile.layout == destination_tile.layout;
+        assert accumulator_tile.capacity_bytes == destination_tile.capacity_bytes;
     end;
 
     let left_payload = left_tile.payload;
     let right_payload = right_tile.payload;
-    var result: TileInfo = if accumulate then _Accumulator.info else left_tile;
-    if !accumulate then
-        result.allocated = TRUE;
-        result.contents_defined = FALSE;
-        result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
-        result.defined_valid_elements = 0;
-        result.capacity_bytes = PTO_TILE_CAPACITY_BYTES;
-        result.rows = left_tile.valid_rows;
-        result.columns = right_tile.valid_columns;
-        result.valid_rows = left_tile.valid_rows;
-        result.valid_columns = right_tile.valid_columns;
-        result.data_type = accumulator_data_type;
-        result.layout = TileLayout_RowMajor;
-        result.location = TileLocation_Matrix;
-    end;
-    var result_payload: TilePayload = result.payload;
+    var result: TileInfo = destination_tile;
+    result.contents_defined = FALSE;
+    result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
+    result.defined_valid_elements = 0;
+    result.location = TileLocation_Matrix;
+    var result_payload: TilePayload = destination_tile.payload;
+    let accumulator_payload = accumulator_tile.payload;
     for row = 0 to left_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to right_tile.valid_columns - 1 looplimit 65536 do
             let result_element = TileLinearIndex(result,
                 row as integer {0..65535}, column as integer {0..65535});
+            let accumulator_element = if accumulate then
+                TileLinearIndex(accumulator_tile,
+                    row as integer {0..65535}, column as integer {0..65535})
+                else 0;
             var sum: Word = if accumulate then
-                result_payload[[result_element]] else Zeros{PTO_XLEN};
+                accumulator_payload[[accumulator_element]] else Zeros{PTO_XLEN};
             for inner = 0 to left_tile.valid_columns - 1 looplimit 65536 do
                 let left_element = TileLinearIndex(left_tile,
                     row as integer {0..65535}, inner as integer {0..65535});
@@ -106,6 +110,14 @@ begin
     end;
     result.payload = result_payload;
     return MarkLocalTileValidRegionDefined(result);
+end;
+
+func MatrixProductResult(destination: TileIndex, accumulator: TileIndex,
+                         left: TileIndex, right: TileIndex,
+                         accumulate: boolean) => TileInfo
+begin
+    return MatrixProductResultFromTiles(destination, accumulator,
+        _Tiles[[left]], _Tiles[[right]], accumulate);
 end;
 
 func MatrixBiasResult(input: TileInfo, bias: TileIndex) => TileInfo
@@ -136,14 +148,16 @@ begin
     return result;
 end;
 
-func MatrixMXProductResult(left: TileIndex, right: TileIndex,
-                           left_scale: TileIndex, right_scale: TileIndex,
-                           accumulate: boolean) => TileInfo
+func MatrixMXProductResultFromTiles(destination: TileIndex,
+                                    accumulator: TileIndex,
+                                    left_tile: TileInfo,
+                                    left_scale_tile: TileInfo,
+                                    right_tile: TileInfo,
+                                    right_scale_tile: TileInfo,
+                                    accumulate: boolean) => TileInfo
 begin
-    let left_tile = _Tiles[[left]];
-    let right_tile = _Tiles[[right]];
-    let left_scale_tile = _Tiles[[left_scale]];
-    let right_scale_tile = _Tiles[[right_scale]];
+    let destination_tile = _Tiles[[destination]];
+    let accumulator_tile = _Tiles[[accumulator]];
     let selected_data_type = TileDataTypeFromEncoding(
         ZeroExtend{PTO_XLEN}(CurrentBundleTileOperationDataTypeCode()));
     let accumulator_data_type =
@@ -153,40 +167,40 @@ begin
     assert left_scale_tile.allocated && left_scale_tile.contents_defined;
     assert right_scale_tile.allocated && right_scale_tile.contents_defined;
     assert left_tile.valid_columns == right_tile.valid_rows;
+    assert destination_tile.allocated;
+    assert destination_tile.valid_rows == left_tile.valid_rows;
+    assert destination_tile.valid_columns == right_tile.valid_columns;
+    assert destination_tile.data_type == accumulator_data_type;
     if accumulate then
-        assert _Accumulator.live && _Accumulator.info.contents_defined;
-        assert _Accumulator.info.valid_rows == left_tile.valid_rows;
-        assert _Accumulator.info.valid_columns == right_tile.valid_columns;
-        assert _Accumulator.logical_data_type == selected_data_type;
-        assert _Accumulator.info.data_type == accumulator_data_type;
+        assert accumulator_tile.allocated && accumulator_tile.contents_defined;
+        assert accumulator_tile.valid_rows == left_tile.valid_rows;
+        assert accumulator_tile.valid_columns == right_tile.valid_columns;
+        assert accumulator_tile.data_type == accumulator_data_type;
+        assert accumulator_tile.layout == destination_tile.layout;
+        assert accumulator_tile.capacity_bytes == destination_tile.capacity_bytes;
     end;
 
     let left_payload = left_tile.payload;
     let right_payload = right_tile.payload;
     let left_scale_payload = left_scale_tile.payload;
     let right_scale_payload = right_scale_tile.payload;
-    var result: TileInfo = if accumulate then _Accumulator.info else left_tile;
-    if !accumulate then
-        result.allocated = TRUE;
-        result.contents_defined = FALSE;
-        result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
-        result.defined_valid_elements = 0;
-        result.capacity_bytes = PTO_TILE_CAPACITY_BYTES;
-        result.rows = left_tile.valid_rows;
-        result.columns = right_tile.valid_columns;
-        result.valid_rows = left_tile.valid_rows;
-        result.valid_columns = right_tile.valid_columns;
-        result.data_type = accumulator_data_type;
-        result.layout = TileLayout_RowMajor;
-        result.location = TileLocation_Matrix;
-    end;
-    var result_payload = result.payload;
+    var result: TileInfo = destination_tile;
+    result.contents_defined = FALSE;
+    result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
+    result.defined_valid_elements = 0;
+    result.location = TileLocation_Matrix;
+    var result_payload = destination_tile.payload;
+    let accumulator_payload = accumulator_tile.payload;
     for row = 0 to left_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to right_tile.valid_columns - 1 looplimit 65536 do
             let result_element = TileLinearIndex(result,
                 row as integer {0..65535}, column as integer {0..65535});
+            let accumulator_element = if accumulate then
+                TileLinearIndex(accumulator_tile,
+                    row as integer {0..65535}, column as integer {0..65535})
+                else 0;
             var sum: Word = if accumulate then
-                result_payload[[result_element]] else Zeros{PTO_XLEN};
+                accumulator_payload[[accumulator_element]] else Zeros{PTO_XLEN};
             for inner = 0 to left_tile.valid_columns - 1 looplimit 65536 do
                 let left_element = TileLinearIndex(left_tile,
                     row as integer {0..65535}, inner as integer {0..65535});
@@ -214,132 +228,154 @@ begin
     return MarkLocalTileValidRegionDefined(result);
 end;
 
-func CommitAccumulator(result: TileInfo, logical_data_type: TileDataType)
+func MatrixMXProductResult(destination: TileIndex, accumulator: TileIndex,
+                           left: TileIndex, left_scale: TileIndex,
+                           right: TileIndex, right_scale: TileIndex,
+                           accumulate: boolean) => TileInfo
 begin
-    _Accumulator.info = result;
-    _Accumulator.logical_data_type = logical_data_type;
-    _Accumulator.live = TRUE;
+    return MatrixMXProductResultFromTiles(destination, accumulator,
+        _Tiles[[left]], _Tiles[[left_scale]], _Tiles[[right]],
+        _Tiles[[right_scale]], accumulate);
 end;
 
-func TMATMUL(left: TileIndex, right: TileIndex, accumulate: boolean)
+func TMATMULShared(destination: TileIndex, accumulator: TileIndex,
+                   left: TileInfo, right: TileInfo,
+                   bias: TileIndex, use_bias: boolean,
+                   accumulate: boolean)
 begin
-    let result = MatrixProductResult(left, right, accumulate);
-    CommitAccumulator(result, _Tiles[[left]].data_type);
+    let product = MatrixProductResultFromTiles(destination, accumulator,
+        left, right, accumulate);
+    let result = if use_bias then MatrixBiasResult(product, bias)
+        else product;
+    CommitMatrixResult(destination, result);
 end;
 
-func TMATMUL_BIAS(left: TileIndex, right: TileIndex, bias: TileIndex)
+func TMATMULMXShared(destination: TileIndex, accumulator: TileIndex,
+                     left: TileInfo, left_scale: TileInfo,
+                     right: TileInfo, right_scale: TileInfo,
+                     bias: TileIndex, use_bias: boolean,
+                     accumulate: boolean)
 begin
-    let product = MatrixProductResult(left, right, FALSE);
+    let product = MatrixMXProductResultFromTiles(destination, accumulator,
+        left, left_scale, right, right_scale, accumulate);
+    let result = if use_bias then MatrixBiasResult(product, bias)
+        else product;
+    CommitMatrixResult(destination, result);
+end;
+
+func CommitMatrixResult(destination: TileIndex, result: TileInfo)
+begin
+    _Tiles[[destination]] = result;
+end;
+
+func TMATMUL(destination: TileIndex, left: TileIndex, right: TileIndex)
+begin
+    let result = MatrixProductResult(destination, destination,
+        left, right, FALSE);
+    CommitMatrixResult(destination, result);
+end;
+
+func TMATMUL_BIAS(destination: TileIndex, left: TileIndex, right: TileIndex,
+                  bias: TileIndex)
+begin
+    let product = MatrixProductResult(destination, destination,
+        left, right, FALSE);
     let result = MatrixBiasResult(product, bias);
-    CommitAccumulator(result, _Tiles[[left]].data_type);
+    CommitMatrixResult(destination, result);
 end;
 
-func TMATMUL_ACC(left: TileIndex, right: TileIndex)
+func TMATMUL_ACC(destination: TileIndex, accumulator: TileIndex,
+                 left: TileIndex, right: TileIndex)
 begin
-    let result = MatrixProductResult(left, right, TRUE);
-    CommitAccumulator(result, _Tiles[[left]].data_type);
+    let result = MatrixProductResult(destination, accumulator,
+        left, right, TRUE);
+    CommitMatrixResult(destination, result);
 end;
 
-func TMATMUL_MX(left: TileIndex, right: TileIndex, left_scale: TileIndex,
+func TMATMUL_MX(destination: TileIndex, left: TileIndex,
+                left_scale: TileIndex, right: TileIndex,
                 right_scale: TileIndex)
 begin
-    let result = MatrixMXProductResult(
-        left, right, left_scale, right_scale, FALSE);
-    CommitAccumulator(result, TileDataType_FP32);
+    let result = MatrixMXProductResult(destination, destination,
+        left, left_scale, right, right_scale, FALSE);
+    CommitMatrixResult(destination, result);
 end;
 
-func TMATMUL_MX_BIAS(left: TileIndex, right: TileIndex,
-                     left_scale: TileIndex, right_scale: TileIndex,
+func TMATMUL_MX_BIAS(destination: TileIndex, left: TileIndex,
+                     left_scale: TileIndex, right: TileIndex,
+                     right_scale: TileIndex,
                      bias: TileIndex)
 begin
-    let product = MatrixMXProductResult(
-        left, right, left_scale, right_scale, FALSE);
+    let product = MatrixMXProductResult(destination, destination,
+        left, left_scale, right, right_scale, FALSE);
     let result = MatrixBiasResult(product, bias);
-    CommitAccumulator(result, TileDataType_FP32);
+    CommitMatrixResult(destination, result);
 end;
 
-func TMATMUL_MX_ACC(left: TileIndex, right: TileIndex,
-                    left_scale: TileIndex, right_scale: TileIndex)
+func TMATMUL_MX_ACC(destination: TileIndex, accumulator: TileIndex,
+                    left: TileIndex, left_scale: TileIndex,
+                    right: TileIndex, right_scale: TileIndex)
 begin
-    let result = MatrixMXProductResult(
-        left, right, left_scale, right_scale, TRUE);
-    CommitAccumulator(result, TileDataType_FP32);
+    let result = MatrixMXProductResult(destination, accumulator,
+        left, left_scale, right, right_scale, TRUE);
+    CommitMatrixResult(destination, result);
 end;
 
-func ACCCVT(destination: TileIndex, control: NumericExecutionControl)
-begin
-    assert _Accumulator.live && _Accumulator.info.contents_defined;
-    let destination_tile = _Tiles[[destination]];
-    let accumulator_info = _Accumulator.info;
-    assert destination_tile.allocated;
-    assert destination_tile.valid_rows == accumulator_info.valid_rows;
-    assert destination_tile.valid_columns == accumulator_info.valid_columns;
-    var destination_payload = destination_tile.payload;
-    for row = 0 to accumulator_info.valid_rows - 1 looplimit 65536 do
-        for column = 0 to accumulator_info.valid_columns - 1
-            looplimit 65536 do
-            let source_element = TileLinearIndex(accumulator_info,
-                row as integer {0..65535}, column as integer {0..65535});
-            let destination_element = TileLinearIndex(destination_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            destination_payload[[destination_element]] = TileConvertValue(
-                accumulator_info.payload[[source_element]],
-                accumulator_info.data_type, destination_tile.data_type,
-                control);
-        end;
-    end;
-    _Tiles[[destination]].payload = destination_payload;
-    MarkTileValidRegionDefined(destination);
-    _Accumulator.live = FALSE;
-end;
-
-func TGEMV(matrix: TileIndex, vector: TileIndex)
+func TGEMV(destination: TileIndex, matrix: TileIndex, vector: TileIndex)
 begin
     assert _Tiles[[vector]].valid_columns == 1;
-    let result = MatrixProductResult(matrix, vector, FALSE);
-    CommitAccumulator(result, _Tiles[[matrix]].data_type);
+    let result = MatrixProductResult(destination, destination,
+        matrix, vector, FALSE);
+    CommitMatrixResult(destination, result);
 end;
 
-func TGEMV_BIAS(matrix: TileIndex, vector: TileIndex, bias: TileIndex)
+func TGEMV_BIAS(destination: TileIndex, matrix: TileIndex,
+                vector: TileIndex, bias: TileIndex)
 begin
     assert _Tiles[[vector]].valid_columns == 1;
-    let product = MatrixProductResult(matrix, vector, FALSE);
+    let product = MatrixProductResult(destination, destination,
+        matrix, vector, FALSE);
     let result = MatrixBiasResult(product, bias);
-    CommitAccumulator(result, _Tiles[[matrix]].data_type);
+    CommitMatrixResult(destination, result);
 end;
 
-func TGEMV_ACC(matrix: TileIndex, vector: TileIndex)
+func TGEMV_ACC(destination: TileIndex, accumulator: TileIndex,
+               matrix: TileIndex, vector: TileIndex)
 begin
     assert _Tiles[[vector]].valid_columns == 1;
-    let result = MatrixProductResult(matrix, vector, TRUE);
-    CommitAccumulator(result, _Tiles[[matrix]].data_type);
+    let result = MatrixProductResult(destination, accumulator,
+        matrix, vector, TRUE);
+    CommitMatrixResult(destination, result);
 end;
 
-func TGEMV_MX(matrix: TileIndex, vector: TileIndex,
-              left_scale: TileIndex, right_scale: TileIndex)
+func TGEMV_MX(destination: TileIndex, matrix: TileIndex,
+              left_scale: TileIndex, vector: TileIndex,
+              right_scale: TileIndex)
 begin
     assert _Tiles[[vector]].valid_columns == 1;
-    let result = MatrixMXProductResult(
-        matrix, vector, left_scale, right_scale, FALSE);
-    CommitAccumulator(result, TileDataType_FP32);
+    let result = MatrixMXProductResult(destination, destination,
+        matrix, left_scale, vector, right_scale, FALSE);
+    CommitMatrixResult(destination, result);
 end;
 
-func TGEMV_MX_BIAS(matrix: TileIndex, vector: TileIndex,
-                   left_scale: TileIndex, right_scale: TileIndex,
+func TGEMV_MX_BIAS(destination: TileIndex, matrix: TileIndex,
+                   left_scale: TileIndex, vector: TileIndex,
+                   right_scale: TileIndex,
                    bias: TileIndex)
 begin
     assert _Tiles[[vector]].valid_columns == 1;
-    let product = MatrixMXProductResult(
-        matrix, vector, left_scale, right_scale, FALSE);
+    let product = MatrixMXProductResult(destination, destination,
+        matrix, left_scale, vector, right_scale, FALSE);
     let result = MatrixBiasResult(product, bias);
-    CommitAccumulator(result, TileDataType_FP32);
+    CommitMatrixResult(destination, result);
 end;
 
-func TGEMV_MX_ACC(matrix: TileIndex, vector: TileIndex,
-                  left_scale: TileIndex, right_scale: TileIndex)
+func TGEMV_MX_ACC(destination: TileIndex, accumulator: TileIndex,
+                  matrix: TileIndex, left_scale: TileIndex,
+                  vector: TileIndex, right_scale: TileIndex)
 begin
     assert _Tiles[[vector]].valid_columns == 1;
-    let result = MatrixMXProductResult(
-        matrix, vector, left_scale, right_scale, TRUE);
-    CommitAccumulator(result, TileDataType_FP32);
+    let result = MatrixMXProductResult(destination, accumulator,
+        matrix, left_scale, vector, right_scale, TRUE);
+    CommitMatrixResult(destination, result);
 end;

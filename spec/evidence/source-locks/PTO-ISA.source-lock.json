@@ -1,0 +1,778 @@
+{
+  "version": 1,
+  "repository": "https://github.com/hw-native-sys/pto-isa.git",
+  "commit": "cc93c4d40593e9dd4c0b958c33dac9cbb27b7ecc",
+  "source_tree_sha256": "0eb5121b435c387ffcbcec6af30b99df2885da98fbad7aa7e70886702857551b",
+  "operations": [
+    {
+      "opcode": "ALLOC_TILE",
+      "family": "element-wise",
+      "source_path": "tile/ops/view-and-tile-buf/alloc-tile.md"
+    },
+    {
+      "opcode": "comm/TBROADCAST",
+      "family": "communication",
+      "source_path": "comm/TBROADCAST.md"
+    },
+    {
+      "opcode": "comm/TGATHER",
+      "family": "communication",
+      "source_path": "comm/TGATHER.md"
+    },
+    {
+      "opcode": "comm/TGET",
+      "family": "communication",
+      "source_path": "comm/TGET.md"
+    },
+    {
+      "opcode": "comm/TGET_ASYNC",
+      "family": "communication",
+      "source_path": "comm/TGET_ASYNC.md"
+    },
+    {
+      "opcode": "comm/TNOTIFY",
+      "family": "communication",
+      "source_path": "comm/TNOTIFY.md"
+    },
+    {
+      "opcode": "comm/TPUT",
+      "family": "communication",
+      "source_path": "comm/TPUT.md"
+    },
+    {
+      "opcode": "comm/TPUT_ASYNC",
+      "family": "communication",
+      "source_path": "comm/TPUT_ASYNC.md"
+    },
+    {
+      "opcode": "comm/TREDUCE",
+      "family": "communication",
+      "source_path": "comm/TREDUCE.md"
+    },
+    {
+      "opcode": "comm/TSCATTER",
+      "family": "communication",
+      "source_path": "comm/TSCATTER.md"
+    },
+    {
+      "opcode": "comm/TTEST",
+      "family": "communication",
+      "source_path": "comm/TTEST.md"
+    },
+    {
+      "opcode": "comm/TWAIT",
+      "family": "communication",
+      "source_path": "comm/TWAIT.md"
+    },
+    {
+      "opcode": "GET_TENSOR_VIEW_DIM",
+      "family": "element-wise",
+      "source_path": "tile/ops/view-and-tile-buf/get-tensor-view-dim.md"
+    },
+    {
+      "opcode": "GET_TENSOR_VIEW_STRIDE",
+      "family": "element-wise",
+      "source_path": "tile/ops/view-and-tile-buf/get-tensor-view-stride.md"
+    },
+    {
+      "opcode": "MAKE_TENSOR_VIEW",
+      "family": "element-wise",
+      "source_path": "tile/ops/view-and-tile-buf/make-tensor-view.md"
+    },
+    {
+      "opcode": "MGATHER",
+      "family": "memory-tlsu",
+      "source_path": "tile/ops/memory-and-data-movement/mgather.md"
+    },
+    {
+      "opcode": "MSCATTER",
+      "family": "memory-tlsu",
+      "source_path": "tile/ops/memory-and-data-movement/mscatter.md"
+    },
+    {
+      "opcode": "PARTITION_VIEW",
+      "family": "element-wise",
+      "source_path": "tile/ops/view-and-tile-buf/partition-view.md"
+    },
+    {
+      "opcode": "SET_VALIDSHAPE",
+      "family": "element-wise",
+      "source_path": "tile/ops/view-and-tile-buf/set-validshape.md"
+    },
+    {
+      "opcode": "SUBSET",
+      "family": "element-wise",
+      "source_path": "tile/ops/view-and-tile-buf/subset.md"
+    },
+    {
+      "opcode": "SYNCALL",
+      "family": "sync-config",
+      "source_path": "tile/ops/sync-and-config/syncall.md"
+    },
+    {
+      "opcode": "TABS",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tabs.md"
+    },
+    {
+      "opcode": "TADD",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tadd.md"
+    },
+    {
+      "opcode": "TADDC",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/taddc.md"
+    },
+    {
+      "opcode": "TADDS",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/tadds.md"
+    },
+    {
+      "opcode": "TADDSC",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/taddsc.md"
+    },
+    {
+      "opcode": "TALIAS",
+      "family": "sync-config",
+      "source_path": "tile/ops/sync-and-config/talias.md"
+    },
+    {
+      "opcode": "TALLOC",
+      "family": "system-scheduling",
+      "source_path": "TALLOC.md"
+    },
+    {
+      "opcode": "TAND",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tand.md"
+    },
+    {
+      "opcode": "TANDS",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/tands.md"
+    },
+    {
+      "opcode": "TASSIGN",
+      "family": "sync-config",
+      "source_path": "tile/ops/sync-and-config/tassign.md"
+    },
+    {
+      "opcode": "TAXPY",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/taxpy.md"
+    },
+    {
+      "opcode": "TCI",
+      "family": "complex-special",
+      "source_path": "tile/ops/irregular-and-complex/tci.md"
+    },
+    {
+      "opcode": "TCMP",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tcmp.md"
+    },
+    {
+      "opcode": "TCMPS",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/tcmps.md"
+    },
+    {
+      "opcode": "TCOLARGMAX",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/tcolargmax.md"
+    },
+    {
+      "opcode": "TCOLARGMIN",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/tcolargmin.md"
+    },
+    {
+      "opcode": "TCOLEXPAND",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/tcolexpand.md"
+    },
+    {
+      "opcode": "TCOLEXPANDADD",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/tcolexpandadd.md"
+    },
+    {
+      "opcode": "TCOLEXPANDDIV",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/tcolexpanddiv.md"
+    },
+    {
+      "opcode": "TCOLEXPANDEXPDIF",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/tcolexpandexpdif.md"
+    },
+    {
+      "opcode": "TCOLEXPANDMAX",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/tcolexpandmax.md"
+    },
+    {
+      "opcode": "TCOLEXPANDMIN",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/tcolexpandmin.md"
+    },
+    {
+      "opcode": "TCOLEXPANDMUL",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/tcolexpandmul.md"
+    },
+    {
+      "opcode": "TCOLEXPANDSUB",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/tcolexpandsub.md"
+    },
+    {
+      "opcode": "TCOLMAX",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/tcolmax.md"
+    },
+    {
+      "opcode": "TCOLMIN",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/tcolmin.md"
+    },
+    {
+      "opcode": "TCOLPROD",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/tcolprod.md"
+    },
+    {
+      "opcode": "TCOLSUM",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/tcolsum.md"
+    },
+    {
+      "opcode": "TCONCAT",
+      "family": "layout-movement",
+      "source_path": "tile/ops/layout-and-rearrangement/tconcat.md"
+    },
+    {
+      "opcode": "TCVT",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tcvt.md"
+    },
+    {
+      "opcode": "TDEQUANT",
+      "family": "complex-special",
+      "source_path": "tile/ops/irregular-and-complex/tdequant.md"
+    },
+    {
+      "opcode": "TDIV",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tdiv.md"
+    },
+    {
+      "opcode": "TDIVS",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/tdivs.md"
+    },
+    {
+      "opcode": "TENSOR_VIEW_ADDR",
+      "family": "element-wise",
+      "source_path": "tile/ops/view-and-tile-buf/tensor-view-addr.md"
+    },
+    {
+      "opcode": "TEXP",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/texp.md"
+    },
+    {
+      "opcode": "TEXPANDS",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/texpands.md"
+    },
+    {
+      "opcode": "TEXTRACT",
+      "family": "layout-movement",
+      "source_path": "tile/ops/layout-and-rearrangement/textract.md"
+    },
+    {
+      "opcode": "TFILLPAD",
+      "family": "layout-movement",
+      "source_path": "tile/ops/layout-and-rearrangement/tfillpad.md"
+    },
+    {
+      "opcode": "TFILLPAD_EXPAND",
+      "family": "layout-movement",
+      "source_path": "tile/ops/layout-and-rearrangement/tfillpad-expand.md"
+    },
+    {
+      "opcode": "TFILLPAD_INPLACE",
+      "family": "layout-movement",
+      "source_path": "tile/ops/layout-and-rearrangement/tfillpad-inplace.md"
+    },
+    {
+      "opcode": "TFMOD",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tfmod.md"
+    },
+    {
+      "opcode": "TFMODS",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/tfmods.md"
+    },
+    {
+      "opcode": "TFREE",
+      "family": "system-scheduling",
+      "source_path": "system/ops/TFREE.md"
+    },
+    {
+      "opcode": "TGATHER",
+      "family": "complex-special",
+      "source_path": "tile/ops/irregular-and-complex/tgather.md"
+    },
+    {
+      "opcode": "TGATHERB",
+      "family": "complex-special",
+      "source_path": "tile/ops/irregular-and-complex/tgatherb.md"
+    },
+    {
+      "opcode": "TGEMV",
+      "family": "matrix-cube",
+      "source_path": "tile/ops/matrix-and-matrix-vector/tgemv.md"
+    },
+    {
+      "opcode": "TGEMV_ACC",
+      "family": "matrix-cube",
+      "source_path": "tile/ops/matrix-and-matrix-vector/tgemv-acc.md"
+    },
+    {
+      "opcode": "TGEMV_BIAS",
+      "family": "matrix-cube",
+      "source_path": "tile/ops/matrix-and-matrix-vector/tgemv-bias.md"
+    },
+    {
+      "opcode": "TGEMV_MX",
+      "family": "matrix-cube",
+      "source_path": "tile/ops/matrix-and-matrix-vector/tgemv-mx.md"
+    },
+    {
+      "opcode": "TGET_SCALE_ADDR",
+      "family": "sync-config",
+      "source_path": "tile/ops/sync-and-config/get-scale-addr.md"
+    },
+    {
+      "opcode": "THISTOGRAM",
+      "family": "complex-special",
+      "source_path": "tile/ops/irregular-and-complex/thistogram.md"
+    },
+    {
+      "opcode": "TILE_BUF_ADDR",
+      "family": "element-wise",
+      "source_path": "tile/ops/view-and-tile-buf/tile-buf-addr.md"
+    },
+    {
+      "opcode": "TIMG2COL",
+      "family": "layout-movement",
+      "source_path": "tile/ops/layout-and-rearrangement/timg2col.md"
+    },
+    {
+      "opcode": "TINSERT",
+      "family": "layout-movement",
+      "source_path": "tile/ops/layout-and-rearrangement/tinsert.md"
+    },
+    {
+      "opcode": "TLOAD",
+      "family": "memory-tlsu",
+      "source_path": "tile/ops/memory-and-data-movement/tload.md"
+    },
+    {
+      "opcode": "TLOG",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tlog.md"
+    },
+    {
+      "opcode": "TLRELU",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/tlrelu.md"
+    },
+    {
+      "opcode": "TMATMUL",
+      "family": "matrix-cube",
+      "source_path": "tile/ops/matrix-and-matrix-vector/tmatmul.md"
+    },
+    {
+      "opcode": "TMATMUL_ACC",
+      "family": "matrix-cube",
+      "source_path": "tile/ops/matrix-and-matrix-vector/tmatmul-acc.md"
+    },
+    {
+      "opcode": "TMATMUL_BIAS",
+      "family": "matrix-cube",
+      "source_path": "tile/ops/matrix-and-matrix-vector/tmatmul-bias.md"
+    },
+    {
+      "opcode": "TMATMUL_MX",
+      "family": "matrix-cube",
+      "source_path": "tile/ops/matrix-and-matrix-vector/tmatmul-mx.md"
+    },
+    {
+      "opcode": "TMAX",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tmax.md"
+    },
+    {
+      "opcode": "TMAXS",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/tmaxs.md"
+    },
+    {
+      "opcode": "TMIN",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tmin.md"
+    },
+    {
+      "opcode": "TMINS",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/tmins.md"
+    },
+    {
+      "opcode": "TMOV",
+      "family": "layout-movement",
+      "source_path": "tile/ops/layout-and-rearrangement/tmov.md"
+    },
+    {
+      "opcode": "TMRGSORT",
+      "family": "complex-special",
+      "source_path": "tile/ops/irregular-and-complex/tmrgsort.md"
+    },
+    {
+      "opcode": "TMUL",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tmul.md"
+    },
+    {
+      "opcode": "TMULS",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/tmuls.md"
+    },
+    {
+      "opcode": "TNEG",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tneg.md"
+    },
+    {
+      "opcode": "TNOT",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tnot.md"
+    },
+    {
+      "opcode": "TOR",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tor.md"
+    },
+    {
+      "opcode": "TORS",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/tors.md"
+    },
+    {
+      "opcode": "TPACK",
+      "family": "layout-movement",
+      "source_path": "tile/ops/layout-and-rearrangement/tpack.md"
+    },
+    {
+      "opcode": "TPARTADD",
+      "family": "complex-special",
+      "source_path": "tile/ops/irregular-and-complex/tpartadd.md"
+    },
+    {
+      "opcode": "TPARTMAX",
+      "family": "complex-special",
+      "source_path": "tile/ops/irregular-and-complex/tpartmax.md"
+    },
+    {
+      "opcode": "TPARTMIN",
+      "family": "complex-special",
+      "source_path": "tile/ops/irregular-and-complex/tpartmin.md"
+    },
+    {
+      "opcode": "TPARTMUL",
+      "family": "complex-special",
+      "source_path": "tile/ops/irregular-and-complex/tpartmul.md"
+    },
+    {
+      "opcode": "TPOP",
+      "family": "system-scheduling",
+      "source_path": "system/ops/TPOP.md"
+    },
+    {
+      "opcode": "TPOW",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tpow.md"
+    },
+    {
+      "opcode": "TPOWS",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/tpows.md"
+    },
+    {
+      "opcode": "TPREFETCH",
+      "family": "memory-tlsu",
+      "source_path": "tile/ops/memory-and-data-movement/tprefetch.md"
+    },
+    {
+      "opcode": "TPREFETCH_ASYNC",
+      "family": "memory-tlsu",
+      "source_path": "tile/ops/memory-and-data-movement/tprefetch-async.md"
+    },
+    {
+      "opcode": "TPRELU",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tprelu.md"
+    },
+    {
+      "opcode": "TPRINT",
+      "family": "complex-special",
+      "source_path": "tile/ops/irregular-and-complex/tprint.md"
+    },
+    {
+      "opcode": "TPUSH",
+      "family": "system-scheduling",
+      "source_path": "system/ops/TPUSH.md"
+    },
+    {
+      "opcode": "TQUANT",
+      "family": "complex-special",
+      "source_path": "tile/ops/irregular-and-complex/tquant.md"
+    },
+    {
+      "opcode": "TRANDOM",
+      "family": "complex-special",
+      "source_path": "tile/ops/irregular-and-complex/trandom.md"
+    },
+    {
+      "opcode": "TRECIP",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/trecip.md"
+    },
+    {
+      "opcode": "TRELU",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/trelu.md"
+    },
+    {
+      "opcode": "TREM",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/trem.md"
+    },
+    {
+      "opcode": "TREMS",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/trems.md"
+    },
+    {
+      "opcode": "TRESHAPE",
+      "family": "layout-movement",
+      "source_path": "tile/ops/layout-and-rearrangement/treshape.md"
+    },
+    {
+      "opcode": "TROWARGMAX",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/trowargmax.md"
+    },
+    {
+      "opcode": "TROWARGMIN",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/trowargmin.md"
+    },
+    {
+      "opcode": "TROWEXPAND",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/trowexpand.md"
+    },
+    {
+      "opcode": "TROWEXPANDADD",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/trowexpandadd.md"
+    },
+    {
+      "opcode": "TROWEXPANDDIV",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/trowexpanddiv.md"
+    },
+    {
+      "opcode": "TROWEXPANDEXPDIF",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/trowexpandexpdif.md"
+    },
+    {
+      "opcode": "TROWEXPANDMAX",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/trowexpandmax.md"
+    },
+    {
+      "opcode": "TROWEXPANDMIN",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/trowexpandmin.md"
+    },
+    {
+      "opcode": "TROWEXPANDMUL",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/trowexpandmul.md"
+    },
+    {
+      "opcode": "TROWEXPANDSUB",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/trowexpandsub.md"
+    },
+    {
+      "opcode": "TROWMAX",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/trowmax.md"
+    },
+    {
+      "opcode": "TROWMIN",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/trowmin.md"
+    },
+    {
+      "opcode": "TROWPROD",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/trowprod.md"
+    },
+    {
+      "opcode": "TROWSUM",
+      "family": "reduce-expand",
+      "source_path": "tile/ops/reduce-and-expand/trowsum.md"
+    },
+    {
+      "opcode": "TRSQRT",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/trsqrt.md"
+    },
+    {
+      "opcode": "TSCATTER",
+      "family": "complex-special",
+      "source_path": "tile/ops/irregular-and-complex/tscatter.md"
+    },
+    {
+      "opcode": "TSEL",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tsel.md"
+    },
+    {
+      "opcode": "TSELS",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/tsels.md"
+    },
+    {
+      "opcode": "TSET_IMG2COL_PADDING",
+      "family": "sync-config",
+      "source_path": "tile/ops/sync-and-config/set-img2col-padding.md"
+    },
+    {
+      "opcode": "TSET_IMG2COL_RPT",
+      "family": "sync-config",
+      "source_path": "tile/ops/sync-and-config/set-img2col-rpt.md"
+    },
+    {
+      "opcode": "TSETFMATRIX",
+      "family": "sync-config",
+      "source_path": "tile/ops/sync-and-config/setfmatrix.md"
+    },
+    {
+      "opcode": "TSETHF32MODE",
+      "family": "sync-config",
+      "source_path": "tile/ops/sync-and-config/sethf32mode.md"
+    },
+    {
+      "opcode": "TSETTF32MODE",
+      "family": "sync-config",
+      "source_path": "tile/ops/sync-and-config/settf32mode.md"
+    },
+    {
+      "opcode": "TSHL",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tshl.md"
+    },
+    {
+      "opcode": "TSHLS",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/tshls.md"
+    },
+    {
+      "opcode": "TSHR",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tshr.md"
+    },
+    {
+      "opcode": "TSHRS",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/tshrs.md"
+    },
+    {
+      "opcode": "TSORT32",
+      "family": "complex-special",
+      "source_path": "tile/ops/irregular-and-complex/tsort32.md"
+    },
+    {
+      "opcode": "TSQRT",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tsqrt.md"
+    },
+    {
+      "opcode": "TSTORE",
+      "family": "memory-tlsu",
+      "source_path": "tile/ops/memory-and-data-movement/tstore.md"
+    },
+    {
+      "opcode": "TSUB",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tsub.md"
+    },
+    {
+      "opcode": "TSUBC",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/tsubc.md"
+    },
+    {
+      "opcode": "TSUBS",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/tsubs.md"
+    },
+    {
+      "opcode": "TSUBSC",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/tsubsc.md"
+    },
+    {
+      "opcode": "TSUBVIEW",
+      "family": "sync-config",
+      "source_path": "tile/ops/sync-and-config/subview.md"
+    },
+    {
+      "opcode": "TSYNC",
+      "family": "sync-config",
+      "source_path": "tile/ops/sync-and-config/tsync.md"
+    },
+    {
+      "opcode": "TTRANS",
+      "family": "layout-movement",
+      "source_path": "tile/ops/layout-and-rearrangement/ttrans.md"
+    },
+    {
+      "opcode": "TTRI",
+      "family": "complex-special",
+      "source_path": "tile/ops/irregular-and-complex/ttri.md"
+    },
+    {
+      "opcode": "TXOR",
+      "family": "element-wise",
+      "source_path": "tile/ops/elementwise-tile-tile/txor.md"
+    },
+    {
+      "opcode": "TXORS",
+      "family": "tile-scalar",
+      "source_path": "tile/ops/tile-scalar-and-immediate/txors.md"
+    }
+  ]
+}

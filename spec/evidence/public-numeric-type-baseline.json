@@ -10,7 +10,7 @@
     "support_not_semantics": "Availability is a type-support fact, not an operation/type legality or numeric-result rule.",
     "profile_narrowing": "A named target profile may narrow support but may not redefine portable PTO semantics.",
     "cpu_observation": "The CPU simulator is implementation evidence and is neither a target-profile authority nor a numeric oracle.",
-    "non_public_catalog_names": "The nine remaining PTO TileDataType identities are defined by the 0.57.1 hardware contract but have no alias in the pinned public type inventory; that absence does not weaken their architectural identity."
+    "non_public_catalog_names": "The nine remaining PTO TileDataType identities are defined by the 0.58.0 hardware contract but have no alias in the pinned public type inventory; that absence does not weaken their architectural identity."
   },
   "public_types": [
     {
@@ -520,21 +520,21 @@
     },
     {
       "id": "PD-02-R4",
-      "rule": "accept architecture and formal-model review against the exact 0.57.1 type contract"
+      "rule": "accept architecture and formal-model review against the exact 0.58.0 type contract"
     }
   ],
   "sources": [
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "4939fd3b5c32bd81c815e0c4b5756d329a8fd207b375d921e6c074d949e000eb"
+      "sha256": "ecbc4d29caf4a82581b81c5f829c7a16cc9cc985133f43516e861d15c2ef99cd"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "4bdddb35de0738fe55eb3266fa02fdc80ae829cb95ac9079fa3aaa60c66c4baf"
+      "sha256": "5e2d939f8f7dd64a386352d908669aef0db0d31508adc0580e057c241f0ead97"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "c1a370fbdb17caa54aeeaa733f22bd55e6777322e3dd8a7e1ed6fa62ab35249a"
+      "sha256": "a21760edef8d377e313b44851c361b5d5de69f989a1218b8e72b4d67fc63e9a8"
     },
     {
       "path": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",

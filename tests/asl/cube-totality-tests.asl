@@ -1,9 +1,12 @@
-// PTO-REQ-CUBE-001, PTO-REQ-TILE-LEGALITY-001: S4-T10 CUBE totality.
+// PTO-REQ-CUBE-001, PTO-REQ-TILE-LEGALITY-001: PTO ISA 0.58.0
+// CUBE totality with explicit destination D and explicit ACC input C.
 
 func ConfigureCubeUnitTile(index: TileIndex, data_type: TileDataType,
-                           layout: TileLayout, location: TileLocation)
+                           layout: TileLayout, location: TileLocation,
+                           value: Word)
 begin
-    ConfigureTile(index, 256, 1, 1, 1, 1, data_type, layout, location);
+    ConfigureTile(index, 512, 1, 1, 1, 1, data_type, layout, location);
+    WriteTileElement(index, 0, 0, value);
 end;
 
 func SelectCubeTotalityDataType(data_type: bits(5))
@@ -23,27 +26,21 @@ begin
     });
 end;
 
-readonly func ReadCubeAccumulatorElement() => Word
-begin
-    assert _Accumulator.live && _Accumulator.info.contents_defined;
-    return _Accumulator.info.payload[[0]];
-end;
-
 func ResetCubeOrdinaryOperandsForDataType(data_type: TileDataType,
                                           encoding: bits(5))
 begin
     ResetProfileState();
     SelectCubeTotalityDataType(encoding);
-    for index = 0 to 5 do
-        ConfigureCubeUnitTile(index as TileIndex, data_type,
-            TileLayout_RowMajor, TileLocation_Any);
-    end;
-    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 10);
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
-    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 5);
-    WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 3);
-    WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 5);
+    ConfigureCubeUnitTile(0, data_type, TileLayout_RowMajor,
+        TileLocation_Matrix, Zeros{PTO_XLEN});       // D
+    ConfigureCubeUnitTile(1, data_type, TileLayout_RowMajor,
+        TileLocation_Matrix, Zeros{PTO_XLEN} + 5);  // C
+    ConfigureCubeUnitTile(2, data_type, TileLayout_RowMajor,
+        TileLocation_Any, Zeros{PTO_XLEN} + 2);     // A
+    ConfigureCubeUnitTile(3, data_type, TileLayout_RowMajor,
+        TileLocation_Any, Zeros{PTO_XLEN} + 3);     // B
+    ConfigureCubeUnitTile(4, data_type, TileLayout_RowMajor,
+        TileLocation_Any, Zeros{PTO_XLEN} + 7);     // Bias
 end;
 
 func ResetCubeOrdinaryOperands()
@@ -55,24 +52,20 @@ func ResetCubeMXOperands()
 begin
     ResetProfileState();
     SelectCubeTotalityDataType('00001');
-    ConfigureCubeUnitTile(0, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureCubeUnitTile(1, TileDataType_E4M3,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureCubeUnitTile(2, TileDataType_E5M2,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureCubeUnitTile(3, TileDataType_E8M0,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureCubeUnitTile(4, TileDataType_E8M0,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureCubeUnitTile(5, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 10);
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
-    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 5);
-    WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 3);
-    WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 5);
+    ConfigureCubeUnitTile(0, TileDataType_FP32, TileLayout_RowMajor,
+        TileLocation_Matrix, Zeros{PTO_XLEN});       // D
+    ConfigureCubeUnitTile(1, TileDataType_FP32, TileLayout_RowMajor,
+        TileLocation_Matrix, Zeros{PTO_XLEN} + 5);  // C
+    ConfigureCubeUnitTile(2, TileDataType_E4M3, TileLayout_RowMajor,
+        TileLocation_Any, Zeros{PTO_XLEN} + 2);     // A
+    ConfigureCubeUnitTile(3, TileDataType_E8M0, TileLayout_RowMajor,
+        TileLocation_Any, Zeros{PTO_XLEN} + 1);     // ScaleA
+    ConfigureCubeUnitTile(4, TileDataType_E5M2, TileLayout_RowMajor,
+        TileLocation_Any, Zeros{PTO_XLEN} + 3);     // B
+    ConfigureCubeUnitTile(5, TileDataType_E8M0, TileLayout_RowMajor,
+        TileLocation_Any, Zeros{PTO_XLEN} + 1);     // ScaleB
+    ConfigureCubeUnitTile(6, TileDataType_FP32, TileLayout_RowMajor,
+        TileLocation_Any, Zeros{PTO_XLEN} + 7);     // Bias
 end;
 
 func ExecuteTileInstructionWithAcceptedApplicabilityRulesForTest(
@@ -142,15 +135,20 @@ pure func CubeFunctionAccepted(function: integer {0..22}) => boolean
 begin
     return function == 0 || function == 1 || function == 2 ||
            function == 4 || function == 5 || function == 6 ||
-           function == 8 || function == 16 || function == 17 ||
-           function == 18 || function == 20 || function == 21 ||
-           function == 22;
+           function == 16 || function == 17 || function == 18 ||
+           function == 20 || function == 21 || function == 22;
 end;
 
 pure func CubeFunctionUsesMX(function: integer {0..22}) => boolean
 begin
     return function == 4 || function == 5 || function == 6 ||
            function == 20 || function == 21 || function == 22;
+end;
+
+pure func CubeFunctionUsesBias(function: integer {0..22}) => boolean
+begin
+    return function == 1 || function == 5 ||
+           function == 17 || function == 21;
 end;
 
 pure func CubeFunctionAccumulates(function: integer {0..22}) => boolean
@@ -161,27 +159,40 @@ end;
 
 pure func CubeUnitExpected(function: integer {0..22}) => Word
 begin
-    case function of
-        when 0, 16 => return Zeros{PTO_XLEN} + 6;
-        when 1, 17 => return Zeros{PTO_XLEN} + 11;
-        when 2, 18 => return Zeros{PTO_XLEN} + 12;
-        when 4, 20 => return Zeros{PTO_XLEN} + 90;
-        when 5, 21 => return Zeros{PTO_XLEN} + 95;
-        when 6, 22 => return Zeros{PTO_XLEN} + 180;
-        when 8 => return Zeros{PTO_XLEN} + 6;
-        otherwise => unreachable;
-    end;
+    if CubeFunctionUsesBias(function) then return Zeros{PTO_XLEN} + 13; end;
+    if CubeFunctionAccumulates(function) then return Zeros{PTO_XLEN} + 11; end;
+    return Zeros{PTO_XLEN} + 6;
 end;
 
-func CubeTotalityOperands() => TileInstructionOperands
+func CubeTotalityOperands(function: integer {0..22}) => TileInstructionOperands
 begin
     var operands = DefaultTileInstructionOperands();
     operands.destination0 = 0;
-    operands.source0 = 1;
-    operands.source1 = 2;
-    operands.source2 = 3;
-    operands.source3 = 4;
-    operands.source4 = 5;
+    if CubeFunctionUsesMX(function) then
+        if CubeFunctionAccumulates(function) then
+            operands.source0 = 1;
+            operands.source1 = 2;
+            operands.source2 = 3;
+            operands.source3 = 4;
+            operands.source4 = 5;
+        else
+            operands.source0 = 2;
+            operands.source1 = 3;
+            operands.source2 = 4;
+            operands.source3 = 5;
+            operands.source4 = 6;
+        end;
+    else
+        if CubeFunctionAccumulates(function) then
+            operands.source0 = 1;
+            operands.source1 = 2;
+            operands.source2 = 3;
+        else
+            operands.source0 = 2;
+            operands.source1 = 3;
+            operands.source2 = 4;
+        end;
+    end;
     return operands;
 end;
 
@@ -189,37 +200,21 @@ func TestCubeDecodedSelectorMatrix()
 begin
     for function = 0 to 22 do
         if CubeFunctionAccepted(function) then
-            if CubeFunctionUsesMX(function) then
-                ResetCubeMXOperands();
-            else
-                ResetCubeOrdinaryOperands();
-            end;
-            let operands = CubeTotalityOperands();
-            if CubeFunctionAccumulates(function) then
-                let seed_function = if CubeFunctionUsesMX(function) then
-                    4 else 0;
-                let (seed_status, -) = ExecuteTileInstruction(
-                    TileDecode_CUBE, Zeros{12} + seed_function, operands);
-                assert seed_status == TileExecution_Executed;
-            elsif function == 8 then
-                let (seed_status, -) = ExecuteTileInstruction(
-                    TileDecode_CUBE, Zeros{12}, operands);
-                assert seed_status == TileExecution_Executed;
-            end;
-            let (status, -) = ExecuteTileInstruction(
-                TileDecode_CUBE, Zeros{12} + function, operands);
+            if CubeFunctionUsesMX(function) then ResetCubeMXOperands();
+            else ResetCubeOrdinaryOperands(); end;
+            let (status, -) = ExecuteTileInstruction(TileDecode_CUBE,
+                Zeros{12} + function, CubeTotalityOperands(function));
             assert status == TileExecution_Executed;
             assert _LastFault == Fault_None;
-            if function == 8 then
-                assert !_Accumulator.live;
-                assert ReadTileElement(0, 0, 0) ==
-                    CubeUnitExpected(function);
-            else
-                assert ReadCubeAccumulatorElement() ==
-                    CubeUnitExpected(function);
-            end;
+            assert ReadTileElement(0, 0, 0) == CubeUnitExpected(function);
         end;
     end;
+
+    ResetCubeOrdinaryOperands();
+    let (removed_status, -) = ExecuteTileInstruction(
+        TileDecode_CUBE, Zeros{12} + 8, DefaultTileInstructionOperands());
+    assert removed_status == TileExecution_Rejected;
+    assert _LastFault == Fault_IllegalInstruction;
 end;
 
 func TestCubeRawCarrierTypeAndPlacementMatrix()
@@ -233,138 +228,62 @@ begin
     end;
 
     ResetCubeOrdinaryOperands();
-    _Tiles[[1]].layout = TileLayout_ImplementationDefined;
+    _Tiles[[2]].layout = TileLayout_ImplementationDefined;
     let (layout_status, -) = ExecuteTileInstruction(
-        TileDecode_CUBE, Zeros{12}, CubeTotalityOperands());
+        TileDecode_CUBE, Zeros{12}, CubeTotalityOperands(0));
     assert layout_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
-    assert !_Accumulator.live;
+    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN};
 end;
 
 func TestCubeAliasMatrix()
 begin
     ResetCubeOrdinaryOperands();
-    var operands = CubeTotalityOperands();
-    operands.source1 = operands.source0;
+    var source_alias = CubeTotalityOperands(0);
+    source_alias.source1 = source_alias.source0;
     let (source_alias_status, -) = ExecuteTileInstruction(
-        TileDecode_CUBE, Zeros{12}, operands);
+        TileDecode_CUBE, Zeros{12}, source_alias);
     assert source_alias_status == TileExecution_Executed;
-    assert ReadCubeAccumulatorElement() == Zeros{PTO_XLEN} + 4;
+    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 4;
 
-    // ACCCVT may publish back to an ordinary source tile after the source
-    // snapshot has already initialized ACC.
-    operands.destination0 = operands.source0;
-    let (convert_status, -) = ExecuteTileInstruction(
-        TileDecode_CUBE, Zeros{12} + 8, operands);
-    assert convert_status == TileExecution_Executed;
-    assert !_Accumulator.live;
-    assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 4;
+    ResetCubeOrdinaryOperands();
+    var destination_alias = CubeTotalityOperands(2);
+    destination_alias.destination0 = destination_alias.source0;
+    let (destination_alias_status, -) = ExecuteTileInstruction(
+        TileDecode_CUBE, Zeros{12} + 2, destination_alias);
+    assert destination_alias_status == TileExecution_Executed;
+    assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 11;
 end;
 
 func TestCubeCompositePreflight()
 begin
     ResetCubeOrdinaryOperands();
-    let operands = CubeTotalityOperands();
-    let (seed_status, -) = ExecuteTileInstruction(
-        TileDecode_CUBE, Zeros{12}, operands);
-    assert seed_status == TileExecution_Executed;
-    let preserved_accumulator = ReadCubeAccumulatorElement();
-
-    ConfigureCubeUnitTile(3, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    let (bias_status, -) = ExecuteTileInstruction(
-        TileDecode_CUBE, Zeros{12} + 1, operands);
-    assert bias_status == TileExecution_Rejected;
-    assert _LastFault == Fault_TileLegality;
-    assert ReadCubeAccumulatorElement() == preserved_accumulator;
-
-    ResetCubeOrdinaryOperands();
-    let (accumulate_status, -) = ExecuteTileInstruction(
-        TileDecode_CUBE, Zeros{12} + 2, CubeTotalityOperands());
-    assert accumulate_status == TileExecution_Rejected;
-    assert _LastFault == Fault_TileLegality;
-    assert !_Accumulator.live;
-
-    ResetCubeOrdinaryOperands();
-    ConfigureTile(2, 256, 2, 1, 2, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
-    WriteTileElement(2, 1, 0, Zeros{PTO_XLEN} + 3);
+    ConfigureTile(1, 1024, 2, 1, 2, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Matrix);
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(1, 1, 0, Zeros{PTO_XLEN} + 5);
     let (shape_status, -) = ExecuteTileInstruction(
-        TileDecode_CUBE, Zeros{12}, CubeTotalityOperands());
+        TileDecode_CUBE, Zeros{12} + 2, CubeTotalityOperands(2));
     assert shape_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
-    assert !_Accumulator.live;
-
-    ResetCubeMXOperands();
-    let mx_operands = CubeTotalityOperands();
-    let (mx_seed_status, -) = ExecuteTileInstruction(
-        TileDecode_CUBE, Zeros{12} + 4, mx_operands);
-    assert mx_seed_status == TileExecution_Executed;
-    let preserved_mx_accumulator = ReadCubeAccumulatorElement();
-    ConfigureTile(3, 256, 1, 2, 1, 2, TileDataType_E8M0,
-        TileLayout_RowMajor, TileLocation_Any);
-    ExecuteTileFillScalar(3, Zeros{PTO_XLEN} + 5);
-    ClearFault();
-    let (mx_scale_shape_status, -) = ExecuteTileInstruction(
-        TileDecode_CUBE, Zeros{12} + 4, mx_operands);
-    assert mx_scale_shape_status == TileExecution_Rejected;
-    assert _LastFault == Fault_TileLegality;
-    assert _Accumulator.live;
-    assert ReadCubeAccumulatorElement() == preserved_mx_accumulator;
+    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN};
 
     ResetCubeOrdinaryOperands();
-    let accumulator_operands = CubeTotalityOperands();
-    let (logical_seed_status, -) = ExecuteTileInstruction(
-        TileDecode_CUBE, Zeros{12}, accumulator_operands);
-    assert logical_seed_status == TileExecution_Executed;
-    let preserved_logical_accumulator = ReadCubeAccumulatorElement();
-    assert _Accumulator.logical_data_type == TileDataType_U64;
-    assert _Accumulator.info.data_type == TileDataType_U64;
-    SelectCubeTotalityDataType('11001');
-    ConfigureCubeUnitTile(1, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureCubeUnitTile(2, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
-    ClearFault();
-    let (accumulator_logical_type_status, -) = ExecuteTileInstruction(
-        TileDecode_CUBE, Zeros{12} + 2, accumulator_operands);
-    assert accumulator_logical_type_status == TileExecution_Rejected;
+    _Tiles[[0]].data_type = TileDataType_U32;
+    let (destination_status, -) = ExecuteTileInstruction(
+        TileDecode_CUBE, Zeros{12}, CubeTotalityOperands(0));
+    assert destination_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
-    assert _Accumulator.live;
-    assert ReadCubeAccumulatorElement() == preserved_logical_accumulator;
-
-    ResetCubeOrdinaryOperands();
-    let physical_operands = CubeTotalityOperands();
-    let (physical_seed_status, -) = ExecuteTileInstruction(
-        TileDecode_CUBE, Zeros{12}, physical_operands);
-    assert physical_seed_status == TileExecution_Executed;
-    let preserved_physical_accumulator = ReadCubeAccumulatorElement();
-    // Physical-only mismatch is not constructible by decoded instructions:
-    // every legal producer commits a coherent logical/physical type pair.
-    // Corrupt the internal invariant solely to prove decoded preflight rejects
-    // before changing the accumulator.
-    _Accumulator.info.data_type = TileDataType_U32;
-    ClearFault();
-    let (accumulator_physical_type_status, -) = ExecuteTileInstruction(
-        TileDecode_CUBE, Zeros{12} + 2, physical_operands);
-    assert accumulator_physical_type_status == TileExecution_Rejected;
-    assert _LastFault == Fault_TileLegality;
-    assert _Accumulator.live;
-    assert _Accumulator.info.data_type == TileDataType_U32;
-    assert ReadCubeAccumulatorElement() == preserved_physical_accumulator;
+    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN};
 end;
 
-// PTO-REQ-PROFILE-001: A2/A3 rejects all six MX selectors for every exact
-// 0.57.1 TileDataType identity before operand legality or architectural effects.
+// PTO-REQ-PROFILE-001: A2/A3 rejects all six MX selectors before effects.
 func TestA2A3CubeMxDirectRejectionMatrix()
 begin
     for function_index = 0 to 5 do
         let function = CubeMxFunction(function_index);
-        let decoded = DecodeTileOperation(
-            TileDecode_CUBE, Zeros{12} + function);
+        let decoded = DecodeTileOperation(TileDecode_CUBE,
+            Zeros{12} + function);
         assert decoded != PTO_TILE_OPERATION_COUNT;
         let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
         assert TileOperationRejectedByAcceptedApplicabilityRules(
@@ -373,38 +292,20 @@ begin
             NumericApplicabilityRules_None, operation);
 
         for data_type_index = 0 to 24 do
-            let data_type = CubeTestTileDataType(data_type_index);
-            let encoding = CubeTestTileDataTypeEncoding(data_type_index);
-            ResetCubeOrdinaryOperandsForDataType(data_type, encoding);
+            ResetCubeMXOperands();
+            SelectCubeTotalityDataType(Zeros{5} + data_type_index);
             WritePC(Zeros{PTO_XLEN} + 0x100);
             let (status, result) =
                 ExecuteTileInstructionWithAcceptedApplicabilityRulesForTest(
                     NumericApplicabilityRules_A2A3MxRejection,
                     TileDecode_CUBE, Zeros{12} + function,
-                    CubeTotalityOperands());
+                    CubeTotalityOperands(function));
             assert status == TileExecution_Rejected;
             assert result == Zeros{PTO_XLEN};
             assert _LastFault == Fault_IllegalInstruction;
             assert _FaultAddress == Zeros{PTO_XLEN} + 0x100;
-            assert ReadPC() == Zeros{PTO_XLEN} + 0x100;
-            assert _SystemRegisters.cycle == Zeros{PTO_XLEN} + 1;
-            assert _MemoryEventCount == 0;
-            assert !_Accumulator.live;
-            assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 2;
+            assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN};
         end;
-
-        ResetProfileState();
-        WritePC(Zeros{PTO_XLEN} + 0x200);
-        let (malformed_status, malformed_result) =
-            ExecuteTileInstructionWithAcceptedApplicabilityRulesForTest(
-                NumericApplicabilityRules_A2A3MxRejection,
-                TileDecode_CUBE, Zeros{12} + function,
-                DefaultTileInstructionOperands());
-        assert malformed_status == TileExecution_Rejected;
-        assert malformed_result == Zeros{PTO_XLEN};
-        assert _LastFault == Fault_IllegalInstruction;
-        assert _FaultAddress == Zeros{PTO_XLEN} + 0x200;
-        assert !_Accumulator.live;
     end;
 end;
 

@@ -123,7 +123,7 @@ begin
 end;
 
 // Public conversion controls are not B.DATR encodings. Translate the seven
-// assigned public ordinals explicitly; ordinal 7 is unassigned in PTO 0.57.1.
+// assigned public ordinals explicitly; ordinal 7 is unassigned in PTO 0.58.0.
 pure func DecodePublicConversionRoundingSelection(encoded: bits(3))
                                                 => (boolean, TileNumericSelection)
 begin

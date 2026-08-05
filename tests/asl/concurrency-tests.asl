@@ -315,14 +315,8 @@ begin
     ConfigureOneElementMemoryTile(40);
     ConfigureOneElementMemoryTile(41);
     ConfigureOneElementMemoryTile(42);
-    ConfigureOneElementMemoryTile(43);
-    ConfigureOneElementMemoryTile(44);
-    ConfigureOneElementMemoryTile(45);
     WriteTileElement(41, 0, 0, Zeros{PTO_XLEN} + 7);
     WriteTileElement(42, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(43, 0, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(44, 0, 0, Zeros{PTO_XLEN} + 7);
-    WriteTileElement(45, 0, 0, Zeros{PTO_XLEN} + 9);
 
     StartMemoryEventCapture(3);
     TLOAD(40, source_address);
@@ -349,36 +343,6 @@ begin
     MSCATTER(destination_address, 41, 42);
     assert _MemoryEventCount == 1;
     assert _MemoryEvents[[0]].kind == MemoryEvent_Store;
-    StopMemoryEventCapture();
-
-    StartMemoryEventCapture(1);
-    MGATHER_MASK(40, source_address, 42, 43, TilePad_Zero);
-    assert _MemoryEventCount == 1;
-    assert _MemoryEvents[[0]].kind == MemoryEvent_Load;
-    StopMemoryEventCapture();
-
-    StartMemoryEventCapture(1);
-    MSCATTER_MASK(destination_address, 41, 42, 43);
-    assert _MemoryEventCount == 1;
-    assert _MemoryEvents[[0]].kind == MemoryEvent_Store;
-    StopMemoryEventCapture();
-
-    Store(source_address, 8, Zeros{PTO_XLEN} + 7);
-    StartMemoryEventCapture(0);
-    MGATHER_CAS(40, source_address, 42, 44, 45);
-    assert _MemoryEventCount == 1;
-    assert _MemoryEvents[[0]].kind == MemoryEvent_Atomic;
-    assert _MemoryEvents[[0]].write_performed;
-    assert _MemoryEvents[[0]].read_value == Zeros{PTO_XLEN} + 7;
-    assert _MemoryEvents[[0]].write_value == Zeros{PTO_XLEN} + 9;
-    StopMemoryEventCapture();
-
-    WriteTileElement(44, 0, 0, Zeros{PTO_XLEN} + 8);
-    StartMemoryEventCapture(0);
-    MGATHER_CAS(40, source_address, 42, 44, 45);
-    assert _MemoryEventCount == 1;
-    assert _MemoryEvents[[0]].kind == MemoryEvent_Atomic;
-    assert !_MemoryEvents[[0]].write_performed;
     StopMemoryEventCapture();
 
     // Scalar and tile accesses occupy one event domain and one same-agent
@@ -438,53 +402,10 @@ begin
     assert MemoryExecutionAllowedTSO();
 end;
 
-func RunTileCASOrderCase(bundle_atomic: boolean, acquire: boolean,
-                         release: boolean, expected_order: MemoryOrder)
-begin
-    StopMemoryEventCapture();
-    Store(Zeros{PTO_XLEN} + 256, 8, Zeros{PTO_XLEN} + 10);
-    StartMemoryEventCapture(0);
-    let initial = AddInitialWriteEvent(Zeros{PTO_XLEN} + 256, 8,
-        Zeros{PTO_XLEN} + 10);
-    SetBundleControlAttributeState(FALSE, bundle_atomic, acquire, release,
-        FALSE, FALSE);
-    assert CurrentBundleAtomic() == bundle_atomic;
-    assert CurrentBundleMemoryOrder() == expected_order;
-    ClearFault();
-    MGATHER_CAS(0, Zeros{PTO_XLEN} + 256, 1, 2, 3);
-    assert _LastFault == Fault_None;
-    assert _MemoryEventCount == 2;
-    assert _MemoryEvents[[1]].kind == MemoryEvent_Atomic;
-    assert _MemoryEvents[[1]].order == expected_order;
-    assert _MemoryEvents[[1]].read_value == Zeros{PTO_XLEN} + 10;
-    assert _MemoryEvents[[1]].write_value == Zeros{PTO_XLEN} + 11;
-    assert _MemoryEvents[[1]].read_from == initial;
-    assert MemoryCandidateExecutionValid();
-    StopMemoryEventCapture();
-end;
 
 func TestTileMemoryEventOrdering()
 begin
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(2, 128, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(3, 128, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 10);
-    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 11);
-
-    // MGATHER.CAS is represented as an indivisible atomic event even without
-    // the bundle-atomic hint. aq/rl select the exact event order.
-    RunTileCASOrderCase(FALSE, FALSE, FALSE, MemoryOrder_Relaxed);
-    RunTileCASOrderCase(TRUE, TRUE, FALSE, MemoryOrder_Acquire);
-    RunTileCASOrderCase(TRUE, FALSE, TRUE, MemoryOrder_Release);
-    RunTileCASOrderCase(TRUE, TRUE, TRUE, MemoryOrder_AcquireRelease);
-
     ConfigureTile(4, 128, 1, 1, 1, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     StopMemoryEventCapture();

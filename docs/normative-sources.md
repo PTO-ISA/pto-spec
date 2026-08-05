@@ -19,10 +19,11 @@ A lower-precedence source cannot override a higher-precedence source. The PTO
 ASL and catalogs are the golden specification for accepted encodings and
 architectural behavior.
 
-PTO ISA 0.57.1 is the architecture release identity. `pto-v0` is the active
+PTO ISA 0.58.0 is the architecture release identity. `pto-v0` is the active
 executable reference profile. These identities are independent: the release
 selects the Mode/Function encoding ABI, while the profile supplies deterministic
-reference implementations for registered hooks. ADR 0045 defines that boundary.
+reference implementations for registered hooks. ADR 0052 defines the 0.58.0
+DavinciOO-aligned catalog boundary; ADR 0045 remains the historical 0.57.1 ABI decision.
 
 ## Normative catalogs
 
@@ -33,18 +34,21 @@ signedness, form-local constraints, and semantic handler. The generated ASL
 decoder provides a positive witness for every form and every operand
 extraction.
 
-The bundle/command catalog contains 99 accepted forms. It covers bundle start,
+The bundle/command catalog contains 96 accepted forms. It covers bundle start,
 split, argument, dimension, control attribute, data attribute, scalar IO, tile
 IO, hint, stop, and context-control forms. Vector-only bundle and queue forms are
 not part of the PTO ISA. The retained `BSTART`, `BSTOP`, `B.*`, and BPC
 spellings use `B` for bundle. Separately, `BLOCKNUM`, `BLOCKID`, and
 `CROSS_BID` identify virtual core blocks rather than bundles.
 
-The direct tile catalog contains exactly 120 operations: 98 TEPL, 9 TMA, and 13
+The direct tile catalog contains exactly 106 operations: 87 TEPL, 7 TMA, and 12
 CUBE. Allocated and reserved selectors are part of the PTO contract, and the
 generated ASL selector decoder witnesses every accepted operation. CUBE
-operations use implicit architectural ACC state as defined by function identity;
-ACC is not an ordinary B.IOT tile operand.
+operations all write explicit Local D, and ACC forms read explicit Local C with
+read-old/write-new alias semantics. There is no architectural ACC singleton.
+Shared TMOV Functions 8–11 and partition-store Function 12 are checked encoding
+variants of the existing TMOV/TSTORE identities, not additional direct Tile
+operations.
 
 The system-register catalog defines 72 base, context-family, trap-snapshot,
 translation, interrupt, and debug-register entries in a canonical 24-bit
@@ -72,7 +76,7 @@ Hook implementation, numeric-contract ownership, and target conformance are
 separate grades. PTO-v0 implements all registered hooks deterministically. The
 registry marks eight non-numeric reference contracts closed. The checked
 `spec/evidence/numeric-contracts.json` inventory closes `S5-T1` by assigning 19
-scalar forms and 89 direct-tile operations to all 30 numeric hooks and a profile
+scalar forms and 85 direct-tile operations to all 28 numeric hooks and a profile
 owner. Those hooks remain open toward `S5-T2`; a direct PTO-v0 test does not
 establish hardware or IEEE numeric conformance.
 
@@ -82,7 +86,7 @@ profile cannot silently alter PTO v0; it needs a distinct identity, a complete
 implementation of the registry, and conformance evidence for every replaced
 interface.
 
-The separately named `pto-hardware-numeric-0.57.1-ieee-v1` record is a normative
+The separately named `pto-hardware-numeric-0.58.0-ieee-v1` record is a normative
 hardware numeric contract, not the active ASL implementation profile. It fixes
 format, packed-lane, special-value, rounding, conversion, matrix, and ACC
 requirements. Its checked-in vectors define conformance inputs and expected
@@ -91,7 +95,7 @@ boundaries; they do not prove hardware, RTL, emulator, or model parity.
 
 ## Release identity and manifest
 
-`specification.toml` names the 0.57.1 release and its encoding ABI.
+`specification.toml` names the 0.58.0 release and its encoding ABI.
 `spec/release-manifest.json` is a generated content-addressed projection of the
 normative inputs. A draft manifest documents identity and reproducibility; it is
 not Stage 6 release evidence. Candidate status requires regeneration from one
@@ -119,7 +123,7 @@ state and semantics, executable tests, and profile evidence.
 The public-source reconciliation ledger is pinned independently from normative
 PTO semantics. Its current public snapshot is commit
 `1f61a9a28b375e5113761defdc66fd03554b5e0d`. ADR 0051 classifies the public
-v0.6 `!pto.mask<G>` source-language values as outside the active 0.57.1 release
+v0.6 `!pto.mask<G>` source-language values as outside the active 0.58.0 release
 line: they are not P0-P7, are not the MPAR/MSEQ execution mask, and do not
 establish an encoded physical predicate-register mapping. The numeric
 decision-input ledger intentionally remains on its separately audited older
@@ -198,7 +202,7 @@ keeps every target-dependent arithmetic dimension explicitly open under
 `S5-T2` until independent conformance evidence exists.
 
 `numeric-conformance-readiness.json` is generated from that ownership ledger.
-It partitions all 20 numeric domains, 30 hooks, and 108 affected operations
+It partitions all 18 numeric domains, 28 hooks, and 104 affected operations
 exactly once across six parallel lanes, records the ordered S5-T2 promotion
 dependencies, and leaves profile, oracle, vector, differential-result, and
 review fields explicitly empty until their evidence exists. Generation fails
@@ -215,7 +219,7 @@ until architecture review accepts it.
 
 `numeric-profile-decision-proposals.json` imports the accepted identity catalog,
 records the five accepted selection-framework rules, and proposes dispositions
-for all 12 questions and 20 domains. PD-03 and PD-04 carry accepted decision
+for all 12 questions and 18 domains. PD-03 and PD-04 carry accepted decision
 records; the other ten questions and all complete domain rules remain open.
 
 `scalar-numeric-flag-contract.json` is generated from the scalar catalog and
@@ -229,15 +233,15 @@ bundle catalogs, accepted profile identities, and numeric decision inputs.
 ADR 0039 makes selector discovery and namespace separation normative. ADR 0047
 completes PD-03 by accepting the scalar reserved-code fallback, fixed-mnemonic,
 bundle, and public translations; exact tie behavior; operation defaults; all
-18 domain rounding points; and rounding-before-saturation order. PD-02 and
+16 domain rounding points; and rounding-before-saturation order. PD-02 and
 PD-05 through PD-12 continue to own every other numeric result dimension.
 
 `numeric-subnormal-contract.json` is generated from the accepted PD-04 record,
 hardware profile, numeric-domain inventory, format classifier, and independent
 comparison ledger. ADR 0049 fixes input preservation, gradual underflow,
 after-rounding tininess, and the absence of FTZ/DAZ state or operation override
-for `pto-hardware-numeric-0.57.1-ieee-v1`. Its 95 operation rows expand to
-1,045 conditional operation/type obligations across eleven subnormal-capable
+for `pto-hardware-numeric-0.58.0-ieee-v1`. Its 95 operation rows expand to
+1,023 conditional operation/type obligations across eleven subnormal-capable
 formats. The conditions do not create operation/type support, do not change
 `pto-v0`, and are not Stage 5 arithmetic-conformance vectors.
 
@@ -293,7 +297,7 @@ corroboration only; it does not define MX arithmetic or close `cube-matrix`.
 
 `numeric-variation-point-ownership.json` is generated from the closed numeric
 inventory, decision inputs, profile identities, hook registry, selector and
-format contracts, and accepted applicability slice. ADR 0042 makes the 99-row
+format contracts, and accepted applicability slice. ADR 0042 makes the 89-row
 variation-point inventory and current portable decision owner normative. Its
 admissible routes are review choices, not accepted results: all selected-route,
 result-rule, and result-acceptance fields remain null.

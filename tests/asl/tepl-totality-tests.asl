@@ -108,12 +108,6 @@ begin
            operation == TileOperation_TPARTMIN;
 end;
 
-pure func TeplOperationIsPartialArg(operation: TileOperation) => boolean
-begin
-    return operation == TileOperation_TPARTARGMAX ||
-           operation == TileOperation_TPARTARGMIN;
-end;
-
 func ConfigureTeplDecodedCase(operation: TileOperation) => TileInstructionOperands
 begin
     ResetProfileState();
@@ -149,12 +143,6 @@ begin
         ConfigureTeplTile(2, 1, 2, TileDataType_U64);
         WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
         WriteTileElement(2, 0, 1, Zeros{PTO_XLEN});
-    elsif operation == TileOperation_TGATHERB then
-        ConfigureTeplTile(0, 1, 2, TileDataType_U64);
-        ConfigureTeplFilledTile(1, 2, 2, TileDataType_U64, 10);
-        ConfigureTeplTile(2, 1, 2, TileDataType_U64);
-        WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 24);
-        WriteTileElement(2, 0, 1, Zeros{PTO_XLEN});
     elsif operation == TileOperation_TSCATTER then
         ConfigureTeplFilledTile(0, 2, 2, TileDataType_U64, 40);
         ConfigureTeplFilledTile(1, 1, 2, TileDataType_U64, 10);
@@ -171,19 +159,7 @@ begin
         ConfigureTeplFilledTile(1, 3, 3, TileDataType_U64, 10);
         operands.positive0 = 2;
         operands.positive1 = 2;
-    elsif operation == TileOperation_TDEINTERLEAVE then
-        ConfigureTeplTile(0, 1, 2, TileDataType_U64);
-        ConfigureTeplTile(5, 1, 2, TileDataType_U64);
-        ConfigureTeplFilledTile(1, 1, 4, TileDataType_U64, 10);
-        operands.destination1 = 5;
-    elsif operation == TileOperation_TINTERLEAVE then
-        ConfigureTeplTile(0, 1, 4, TileDataType_U64);
-        ConfigureTeplFilledTile(1, 1, 2, TileDataType_U64, 10);
-        ConfigureTeplFilledTile(2, 1, 2, TileDataType_U64, 20);
-    elsif operation == TileOperation_TRESHAPE then
-        ConfigureTeplTile(0, 4, 1, TileDataType_U64);
-        ConfigureTeplFilledTile(1, 2, 2, TileDataType_U64, 10);
-    elsif operation == TileOperation_TSORT then
+    elsif operation == TileOperation_TSORT32 then
         ConfigureTeplTile(0, 1, 4, TileDataType_U64);
         ConfigureTeplTile(5, 1, 4, TileDataType_U32);
         ConfigureTeplFilledTile(1, 1, 4, TileDataType_U64, 10);
@@ -191,40 +167,12 @@ begin
         ConfigureTeplTile(0, 1, 4, TileDataType_U64);
         ConfigureTeplFilledTile(1, 1, 2, TileDataType_U64, 10);
         ConfigureTeplFilledTile(2, 1, 2, TileDataType_U64, 20);
-    elsif operation == TileOperation_THISTOGRAM then
-        ConfigureTeplTile(0, 1, 256, TileDataType_U64);
-        ConfigureTeplFilledTile(1, 1, 4, TileDataType_U32, 0);
-        ConfigureTeplFilledTile(2, 3, 1, TileDataType_U8, 0);
-        operands.selected_byte = 3;
-    elsif operation == TileOperation_TPUSH then
-        operands.destination0 = 6;
-    elsif operation == TileOperation_TPOP then
-        ConfigureTeplFilledTile(6, 2, 2, TileDataType_U64, 60);
-        operands.source0 = 6;
-    elsif operation == TileOperation_TALLOC then
-        ResetProfileState();
-        operands = DefaultTileInstructionOperands();
-        operands.destination0 = 0;
-        operands.byte_count = 256;
-        operands.positive0 = 1;
-        operands.positive1 = 1;
-        operands.natural0 = 1;
-        operands.natural1 = 1;
-        operands.scalar0 = Zeros{PTO_XLEN} + 24;
-    elsif operation == TileOperation_TFREE then
-        ConfigureTeplFilledTile(0, 2, 2, TileDataType_U64, 40);
+    elsif operation == TileOperation_TRANDOM then
+        ConfigureTeplTile(0, 2, 2, TileDataType_U32);
     elsif TeplOperationIsPartial(operation) then
         ConfigureTeplTile(0, 1, 3, TileDataType_U64);
         ConfigureTeplFilledTile(1, 1, 3, TileDataType_U64, 10);
         ConfigureTeplFilledTile(2, 1, 2, TileDataType_U64, 20);
-    elsif TeplOperationIsPartialArg(operation) then
-        ConfigureTeplTile(0, 1, 3, TileDataType_U64);
-        ConfigureTeplTile(5, 1, 3, TileDataType_U64);
-        ConfigureTeplFilledTile(1, 1, 3, TileDataType_U64, 10);
-        ConfigureTeplFilledTile(2, 1, 2, TileDataType_U64, 20);
-        ConfigureTeplFilledTile(3, 1, 3, TileDataType_U64, 30);
-        ConfigureTeplFilledTile(4, 1, 2, TileDataType_U64, 40);
-        operands.destination1 = 5;
     end;
     return operands;
 end;
@@ -312,7 +260,7 @@ begin
             accepted = (accepted + 1) as integer {0..256};
         end;
     end;
-    assert accepted == 98;
+    assert accepted == 87;
 end;
 
 func TestTeplReservedSelectorRejection()
@@ -334,7 +282,7 @@ begin
             rejected = (rejected + 1) as integer {0..256};
         end;
     end;
-    assert rejected == 30;
+    assert rejected == 41;
 end;
 
 func TestTeplRawCarrierAndLayoutPolicy()
@@ -384,39 +332,6 @@ end;
 
 func TestTeplAliasAndPreservedRegionPolicy()
 begin
-    ResetProfileState();
-    ConfigureTeplTile(0, 1, 2, TileDataType_U64);
-    ConfigureTeplTile(1, 1, 4, TileDataType_U64);
-    FillTeplTile(1, 10);
-    var deinterleave = DefaultTileInstructionOperands();
-    deinterleave.destination0 = 0;
-    deinterleave.destination1 = 0;
-    deinterleave.source0 = 1;
-    ClearFault();
-    let (deinterleave_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000001111000', deinterleave);
-    assert deinterleave_status == TileExecution_Rejected;
-    assert _LastFault == Fault_TileLegality;
-
-    ResetProfileState();
-    ConfigureTeplTile(0, 1, 3, TileDataType_U64);
-    ConfigureTeplFilledTile(1, 1, 3, TileDataType_U64, 10);
-    ConfigureTeplFilledTile(2, 1, 2, TileDataType_U64, 20);
-    ConfigureTeplFilledTile(3, 1, 3, TileDataType_U64, 30);
-    ConfigureTeplFilledTile(4, 1, 2, TileDataType_U64, 40);
-    var partial_arg = DefaultTileInstructionOperands();
-    partial_arg.destination0 = 0;
-    partial_arg.destination1 = 0;
-    partial_arg.source0 = 1;
-    partial_arg.source1 = 2;
-    partial_arg.source2 = 3;
-    partial_arg.source3 = 4;
-    ClearFault();
-    let (partial_arg_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000001110101', partial_arg);
-    assert partial_arg_status == TileExecution_Rejected;
-    assert _LastFault == Fault_TileLegality;
-
     ResetProfileState();
     ConfigureTeplFilledTile(0, 2, 2, TileDataType_U64, 40);
     ConfigureTeplFilledTile(1, 1, 1, TileDataType_U64, 10);
@@ -474,26 +389,6 @@ begin
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 4;
     assert ReadTileElement(0, 0, 3) == Zeros{PTO_XLEN} + 1;
 
-    ResetProfileState();
-    ConfigureTeplTile(0, 1, 256, TileDataType_U64);
-    ConfigureTeplTile(1, 1, 3, TileDataType_U16);
-    ConfigureTeplTile(2, 1, 1, TileDataType_U8);
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x1201);
-    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 0x1201);
-    WriteTileElement(1, 0, 2, Zeros{PTO_XLEN} + 0x3401);
-    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 0x12);
-    var histogram = DefaultTileInstructionOperands();
-    histogram.destination0 = 0;
-    histogram.source0 = 1;
-    histogram.source1 = 2;
-    histogram.selected_byte = 0;
-    ClearFault();
-    let (histogram_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000001101000', histogram);
-    assert histogram_status == TileExecution_Executed;
-    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN};
-    assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN} + 2;
-    assert ReadTileElement(0, 0, 2) == Zeros{PTO_XLEN} + 2;
 end;
 
 func TestTeplInvalidIndexAndOffsetNoEffect()
@@ -512,15 +407,6 @@ begin
     let (gather_status, -) = ExecuteTileInstruction(
         TileDecode_TEPL, '000001101111', gather);
     assert gather_status == TileExecution_Rejected;
-    assert _LastFault == Fault_TileLegality;
-    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 91;
-    assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN} + 92;
-
-    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 1);
-    ClearFault();
-    let (gatherb_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000001100001', gather);
-    assert gatherb_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 91;
     assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN} + 92;

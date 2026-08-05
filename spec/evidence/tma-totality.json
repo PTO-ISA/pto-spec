@@ -8,11 +8,10 @@
       "store_rule": "replace-selected-nibble-preserve-sibling-nibble",
       "odd_tail": "preserve-unused-sibling-bits"
     },
-    "indexed_operations": "Gather, scatter, masked gather, masked scatter, and CAS apply the packing rule to the index payload value and execute duplicate lanes in row-major order after instruction-wide preflight.",
+    "indexed_operations": "Gather and scatter apply the packing rule to the index payload value and execute duplicate lanes in row-major order after instruction-wide preflight.",
     "events": "Each four-bit logical lane emits one byte-sized memory event over the containing byte.",
     "preflight": "The complete containing-byte footprint is probed before payload, memory, event, or reservation effects.",
-    "masked_gather": "Inactive masked-gather lanes preserve existing destination elements; direct helper use requires the destination valid region to be defined.",
-    "cas": "CAS compares the selected nibble, writes only the selected nibble on success, records byte-sized atomic events, and leaves memory unchanged on mismatch."
+    "gmov": "Core4 peer source is resolved before the one-level direct-operation carrier; GMOV copies that read-old fragment to the compatible local destination."
   },
   "covered_selectors": {
     "0": "TLOAD",
@@ -21,9 +20,7 @@
     "3": "TPREFETCH",
     "4": "MGATHER",
     "5": "MSCATTER",
-    "6": "MGATHER_MASK",
-    "7": "MSCATTER_MASK",
-    "8": "MGATHER_CAS"
+    "13": "GMOV"
   },
   "evidence_files": [
     "asl/tile/memory.asl",
@@ -45,7 +42,7 @@
       "status": "pass"
     }
   ],
-  "decoded_selector_case_count": 9,
+  "decoded_selector_case_count": 7,
   "decoded_selector_test": "tests/asl/tma-totality-tests.asl:TestTmaDecodedSelectorClosure",
   "requirement_ids": [
     "PTO-REQ-TMA-001",
@@ -60,15 +57,13 @@
     "FP4, FPL4, S4, and U4 packed TLOAD/MGATHER zero-extension plus TSTORE sibling preservation",
     "packed TSTORE sibling-nibble preservation and odd-tail preservation",
     "TMOV payload and definedness copy",
+    "GMOV resolved-peer fragment payload and definedness copy",
     "TPREFETCH byte-sized footprint events",
     "MGATHER packed indexed duplicate loads",
     "MSCATTER packed duplicate-lane row-major writes",
-    "MGATHER_MASK preserved inactive lanes",
-    "MSCATTER_MASK active-lane-only byte events",
-    "MGATHER_CAS packed duplicate compare, mismatch, and success events",
     "first, middle, and last containing-byte TLOAD and TSTORE faults",
-    "first, middle, and last indexed-lane gather, scatter, masked, CAS, and TPREFETCH preflight with no partial effects",
+    "first, middle, and last indexed-lane gather, scatter, and TPREFETCH preflight with no partial effects",
     "successful TLOAD restart after repaired footprint"
   ],
-  "scenario_count": 12
+  "scenario_count": 10
 }

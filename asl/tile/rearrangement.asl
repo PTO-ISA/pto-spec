@@ -62,20 +62,6 @@ begin
     end;
 end;
 
-func TRESHAPE(destination: TileIndex, source: TileIndex)
-begin
-    let destination_tile = _Tiles[[destination]];
-    let source_tile = _Tiles[[source]];
-    assert destination_tile.allocated && source_tile.allocated;
-    assert destination_tile.rows * destination_tile.columns == source_tile.rows * source_tile.columns;
-    assert destination_tile.valid_rows * destination_tile.valid_columns ==
-        source_tile.valid_rows * source_tile.valid_columns;
-    assert destination_tile.data_type == source_tile.data_type;
-    assert source_tile.contents_defined;
-    _Tiles[[destination]].payload = source_tile.payload;
-    MarkTileValidRegionDefined(destination);
-end;
-
 func TCONCAT(destination: TileIndex, source_left: TileIndex,
              source_right: TileIndex, axis: TileAxis)
 begin
@@ -138,32 +124,6 @@ begin
     MarkTileValidRegionDefined(destination);
 end;
 
-func TGATHERB(destination: TileIndex, source: TileIndex, byte_offsets: TileIndex)
-begin
-    let source_tile = _Tiles[[source]];
-    let offsets_tile = _Tiles[[byte_offsets]];
-    let offsets_payload = offsets_tile.payload;
-    let element_bytes = TileElementBytes(source_tile.data_type);
-    let source_extent: integer = source_tile.valid_rows * source_tile.valid_columns;
-    let destination_tile = _Tiles[[destination]];
-    assert destination_tile.valid_rows == offsets_tile.valid_rows;
-    assert destination_tile.valid_columns == offsets_tile.valid_columns;
-    let source_payload = source_tile.payload;
-    for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
-            let output_element = TileLinearIndex(destination_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            let byte_offset = UInt(offsets_payload[[output_element]]);
-            assert byte_offset MOD element_bytes == 0;
-            let source_index: integer = byte_offset DIV element_bytes;
-            assert source_index < source_extent;
-            _Tiles[[destination]].payload[[output_element]] =
-                source_payload[[source_index as ModelTileElementIndex]];
-        end;
-    end;
-    MarkTileValidRegionDefined(destination);
-end;
-
 func TSCATTER(destination: TileIndex, source: TileIndex, indices: TileIndex)
 begin
     let destination_tile = _Tiles[[destination]];
@@ -185,46 +145,6 @@ begin
         end;
     end;
     MarkTileValidRegionDefined(destination);
-end;
-
-func TINTERLEAVE(destination: TileIndex, source_even: TileIndex, source_odd: TileIndex)
-begin
-    let destination_tile = _Tiles[[destination]];
-    let even_tile = _Tiles[[source_even]];
-    let odd_tile = _Tiles[[source_odd]];
-    let extent: integer = even_tile.valid_rows * even_tile.valid_columns;
-    assert extent <= PTO_MODEL_TILE_ELEMENTS DIV 2;
-    assert extent == odd_tile.valid_rows * odd_tile.valid_columns;
-    assert destination_tile.valid_rows * destination_tile.valid_columns == extent * 2;
-    let even_payload = even_tile.payload;
-    let odd_payload = odd_tile.payload;
-    for element = 0 to extent - 1 looplimit 4096 do
-        _Tiles[[destination]].payload[[(element * 2) as ModelTileElementIndex]] =
-            even_payload[[element as ModelTileElementIndex]];
-        _Tiles[[destination]].payload[[(element * 2 + 1) as ModelTileElementIndex]] =
-            odd_payload[[element as ModelTileElementIndex]];
-    end;
-    MarkTileValidRegionDefined(destination);
-end;
-
-func TDEINTERLEAVE(destination_even: TileIndex, destination_odd: TileIndex, source: TileIndex)
-begin
-    let source_tile = _Tiles[[source]];
-    let even_tile = _Tiles[[destination_even]];
-    let odd_tile = _Tiles[[destination_odd]];
-    let extent: integer = even_tile.valid_rows * even_tile.valid_columns;
-    assert extent <= PTO_MODEL_TILE_ELEMENTS DIV 2;
-    assert extent == odd_tile.valid_rows * odd_tile.valid_columns;
-    assert source_tile.valid_rows * source_tile.valid_columns == extent * 2;
-    let source_payload = source_tile.payload;
-    for element = 0 to extent - 1 looplimit 4096 do
-        _Tiles[[destination_even]].payload[[element as ModelTileElementIndex]] =
-            source_payload[[(element * 2) as ModelTileElementIndex]];
-        _Tiles[[destination_odd]].payload[[element as ModelTileElementIndex]] =
-            source_payload[[(element * 2 + 1) as ModelTileElementIndex]];
-    end;
-    MarkTileValidRegionDefined(destination_even);
-    MarkTileValidRegionDefined(destination_odd);
 end;
 
 func TIMG2COL(destination: TileIndex, source: TileIndex,

@@ -516,6 +516,34 @@
       ]
     },
     {
+      "id": "PTO-REQ-SHARED-TILE-001",
+      "model": [
+        "asl/types.asl",
+        "asl/tile/state.asl",
+        "asl/tile/memory.asl",
+        "asl/tile/cube.asl",
+        "asl/tile/legality.asl",
+        "asl/bundle/state.asl",
+        "asl/bundle/dispatch.asl",
+        "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
+        "docs/davincioo-arch/programming-model.md",
+        "docs/davincioo-arch/state-and-data-types.md",
+        "docs/davincioo-arch/memory-ordering-and-exceptions.md",
+        "docs/instructions/bundle/operands/C.B.IOS.md",
+        "docs/instructions/tile/TLOAD.md",
+        "docs/instructions/tile/TSTORE.md",
+        "docs/instructions/tile/TMOV.md"
+      ],
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
+      "status": "implemented-pto-isa-0580-shared-model",
+      "tests": [
+        "scripts/check-catalogs",
+        "tests/asl/bundle-tests.asl",
+        "tests/asl/state-tests.asl",
+        "tests/asl/main.asl"
+      ]
+    },
+    {
       "id": "PTO-REQ-TILE-DEFINEDNESS-001",
       "model": [
         "asl/types.asl",
@@ -965,13 +993,14 @@
       "id": "PTO-REQ-RELEASE-ISA-001",
       "model": [
         "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
         "docs/architecture-decisions/0051-public-v06-predicate-mask-boundary.md",
         "specification.toml",
         "spec/release-manifest.json",
         "spec/catalog/command-forms.json",
         "spec/catalog/tile-operations.json",
-        "spec/evidence/pto-isa-0571-abi-vectors.json",
-        "spec/evidence/pto-isa-0571-encoding-totality.json",
+        "spec/evidence/pto-isa-0580-abi-vectors.json",
+        "spec/evidence/pto-isa-0580-encoding-totality.json",
         "asl/bundle/state.asl",
         "asl/bundle/dispatch.asl",
         "asl/tile/state.asl",
@@ -980,7 +1009,7 @@
         "asl/tile/cube.asl",
         "scripts/generate-release-manifest"
       ],
-      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+      "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
       "status": "accepted-implementation-in-progress",
       "tests": [
         "scripts/check-catalogs",
@@ -995,7 +1024,7 @@
       "id": "PTO-REQ-HARDWARE-NUMERIC-001",
       "model": [
         "spec/hardware-conformance-profile.json",
-        "spec/evidence/pto-isa-0571-hardware-numeric-vectors.json",
+        "spec/evidence/pto-isa-0580-hardware-numeric-vectors.json",
         "asl/tile/cube.asl",
         "asl/tile/legality.asl",
         "asl/tile/state.asl",

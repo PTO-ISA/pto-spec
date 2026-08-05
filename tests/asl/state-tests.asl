@@ -403,10 +403,16 @@ begin
     SetBundleDimension(2, Zeros{PTO_XLEN} + 0x103);
     SetBundleScalarBinding(0, 31, 24, 25, 26, 3);
     SetBundleScalarBinding(31, 23, 1, 2, 3, 2);
-    SetBundleTileBinding(0, TRUE, 2, 8, TRUE, TRUE, 40, 41, TRUE,
-        FALSE, FALSE);
-    SetBundleTileBinding(15, TRUE, 3, 9, TRUE, FALSE, 63, 0, FALSE,
-        TRUE, TRUE);
+    SetBundleTileBinding(0, TRUE, 2, 7, '1111', TRUE, TRUE, 40, 41,
+        FALSE);
+    SetBundleTileBinding(15, TRUE, 3, 7, '0011', TRUE, FALSE, 63, 0,
+        TRUE);
+    BindBundleSharedIO(Zeros{8} + 0x12);
+    BindBundleSharedIO(Zeros{8} + 0x34);
+    _BundleSharedBindings[[0]].consumed = TRUE;
+    assert _BundleSharedBindings[[0]].valid;
+    assert _BundleSharedBindings[[0]].shared_id == Zeros{8} + 0x12;
+    assert _BundleSharedBindings[[0]].consumed;
     SetBundleControlAttributeState(TRUE, TRUE, TRUE, FALSE, TRUE, FALSE);
     _BundleDataAttributes.data_type = Zeros{5} + 0x11;
     _BundleDataAttributes.data_layout = Zeros{5};
@@ -422,30 +428,6 @@ begin
     WriteExecutionMask(Zeros{PTO_XLEN} + 0x5a5a);
     _PredicateRegisters[[1]] = Zeros{PTO_PREDICATE_WIDTH} + 0x1111;
     _PredicateRegisters[[7]] = Zeros{PTO_PREDICATE_WIDTH} + 0x7777;
-    _Accumulator.live = TRUE;
-    _Accumulator.logical_data_type = TileDataType_S8;
-    _Accumulator.info.allocated = TRUE;
-    _Accumulator.info.contents_defined = TRUE;
-    _Accumulator.info.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
-    _Accumulator.info.defined_elements[0] = '1';
-    _Accumulator.info.defined_elements[PTO_MODEL_TILE_ELEMENTS - 1] = '1';
-    _Accumulator.info.defined_valid_elements = 1;
-    _Accumulator.info.capacity_bytes = 2048;
-    _Accumulator.info.rows = 16;
-    _Accumulator.info.columns = 16;
-    _Accumulator.info.valid_rows = 1;
-    _Accumulator.info.valid_columns = 1;
-    _Accumulator.info.data_type = TileDataType_S64;
-    _Accumulator.info.layout = TileLayout_ColumnMajor;
-    _Accumulator.info.location = TileLocation_Matrix;
-    _Accumulator.info.payload[[0]] = Zeros{PTO_XLEN} + 0xaaa;
-    _Accumulator.info.payload[[PTO_MODEL_TILE_ELEMENTS - 1]] =
-        Zeros{PTO_XLEN} + 0xbbb;
-    assert TileCapacityIsLegal(_Accumulator.info.capacity_bytes);
-    assert TileStorageFitsCapacity(_Accumulator.info.rows,
-        _Accumulator.info.columns, _Accumulator.info.data_type,
-        _Accumulator.info.capacity_bytes);
-
     SetFault(Fault_DataPage, Zeros{PTO_XLEN} + 0xdead);
     assert CurrentACR() == 1;
     assert _ACRTrapNumber[[1]] == Zeros{6} + 35;
@@ -507,15 +489,18 @@ begin
     assert _TrapContexts[[1]].bundle_tile_bindings[[0]].destination_hand ==
         Zeros{2} + 2;
     assert !_TrapContexts[[1]].bundle_tile_bindings[[0]].destination_allocated_by_bundle;
-    assert _TrapContexts[[1]].bundle_tile_bindings[[0]].destination_size == 8;
+    assert _TrapContexts[[1]].bundle_tile_bindings[[0]].destination_size == 7;
+    assert _TrapContexts[[1]].bundle_tile_bindings[[0]].pe_mask == '1111';
     assert _TrapContexts[[1]].bundle_tile_bindings[[0]].source0_valid;
     assert _TrapContexts[[1]].bundle_tile_bindings[[0]].source1_valid;
     assert _TrapContexts[[1]].bundle_tile_bindings[[0]].source0 == 40;
     assert _TrapContexts[[1]].bundle_tile_bindings[[0]].source1 == 41;
-    assert _TrapContexts[[1]].bundle_tile_bindings[[0]].source0_reuse;
-    assert !_TrapContexts[[1]].bundle_tile_bindings[[0]].source1_reuse;
     assert !_TrapContexts[[1]].bundle_tile_bindings[[0]].last;
     assert _TrapContexts[[1]].bundle_tile_bindings[[15]].valid;
+    assert _TrapContexts[[1]].bundle_shared_bindings[[0]].valid;
+    assert _TrapContexts[[1]].bundle_shared_bindings[[0]].shared_id ==
+        Zeros{8} + 0x12;
+    assert _TrapContexts[[1]].bundle_shared_bindings[[0]].consumed;
     assert _TrapContexts[[1]].bundle_control_attributes.trap_enabled;
     assert _TrapContexts[[1]].bundle_control_attributes.atomic;
     assert _TrapContexts[[1]].bundle_control_attributes.acquire;
@@ -542,30 +527,6 @@ begin
         Zeros{PTO_PREDICATE_WIDTH} + 0x1111;
     assert _TrapContexts[[1]].predicates[[7]] ==
         Zeros{PTO_PREDICATE_WIDTH} + 0x7777;
-    assert _TrapContexts[[1]].accumulator.live;
-    assert _TrapContexts[[1]].accumulator.logical_data_type ==
-        TileDataType_S8;
-    assert _TrapContexts[[1]].accumulator.info.allocated;
-    assert _TrapContexts[[1]].accumulator.info.contents_defined;
-    assert _TrapContexts[[1]].accumulator.info.defined_elements[0] == '1';
-    assert _TrapContexts[[1]].accumulator.info.defined_elements[
-        PTO_MODEL_TILE_ELEMENTS - 1] == '1';
-    assert _TrapContexts[[1]].accumulator.info.defined_valid_elements == 1;
-    assert _TrapContexts[[1]].accumulator.info.capacity_bytes == 2048;
-    assert _TrapContexts[[1]].accumulator.info.rows == 16;
-    assert _TrapContexts[[1]].accumulator.info.columns == 16;
-    assert _TrapContexts[[1]].accumulator.info.valid_rows == 1;
-    assert _TrapContexts[[1]].accumulator.info.valid_columns == 1;
-    assert _TrapContexts[[1]].accumulator.info.data_type == TileDataType_S64;
-    assert _TrapContexts[[1]].accumulator.info.layout ==
-        TileLayout_ColumnMajor;
-    assert _TrapContexts[[1]].accumulator.info.location ==
-        TileLocation_Matrix;
-    assert _TrapContexts[[1]].accumulator.info.payload[[0]] ==
-        Zeros{PTO_XLEN} + 0xaaa;
-    assert _TrapContexts[[1]].accumulator.info.payload[[
-        PTO_MODEL_TILE_ELEMENTS - 1]] ==
-        Zeros{PTO_XLEN} + 0xbbb;
     // TRAP_CONTEXT_PHASE_SAVE_END
 
     // Every live counterpart is changed after the save. Recovery assertions
@@ -612,13 +573,15 @@ begin
     _BundleTileBindings[[0]].destination_hand = Zeros{2};
     _BundleTileBindings[[0]].destination_allocated_by_bundle = TRUE;
     _BundleTileBindings[[0]].destination_size = 0;
+    _BundleTileBindings[[0]].pe_mask = Zeros{4};
     _BundleTileBindings[[0]].source0_valid = FALSE;
     _BundleTileBindings[[0]].source1_valid = FALSE;
     _BundleTileBindings[[0]].source0 = 0;
     _BundleTileBindings[[0]].source1 = 0;
-    _BundleTileBindings[[0]].source0_reuse = FALSE;
-    _BundleTileBindings[[0]].source1_reuse = TRUE;
     _BundleTileBindings[[0]].last = TRUE;
+    _BundleSharedBindings[[0]].valid = FALSE;
+    _BundleSharedBindings[[0]].shared_id = Zeros{8};
+    _BundleSharedBindings[[0]].consumed = FALSE;
     _BundleControlAttributes.trap_enabled = FALSE;
     _BundleControlAttributes.atomic = FALSE;
     _BundleControlAttributes.acquire = FALSE;
@@ -636,24 +599,6 @@ begin
     _UQueue[[3]] = Zeros{PTO_XLEN};
     _ExecutionMask = Zeros{PTO_XLEN};
     _PredicateRegisters[[7]] = Zeros{PTO_PREDICATE_WIDTH};
-    _Accumulator.live = FALSE;
-    _Accumulator.logical_data_type = TileDataType_U64;
-    _Accumulator.info.allocated = FALSE;
-    _Accumulator.info.contents_defined = FALSE;
-    _Accumulator.info.defined_elements[0] = '0';
-    _Accumulator.info.defined_valid_elements = 0;
-    _Accumulator.info.capacity_bytes = 0;
-    _Accumulator.info.rows = 0;
-    _Accumulator.info.columns = 0;
-    _Accumulator.info.valid_rows = 0;
-    _Accumulator.info.valid_columns = 0;
-    _Accumulator.info.data_type = TileDataType_U64;
-    _Accumulator.info.layout = TileLayout_RowMajor;
-    _Accumulator.info.location = TileLocation_Any;
-    _Accumulator.info.payload[[0]] = Zeros{PTO_XLEN};
-    _Accumulator.info.payload[[PTO_MODEL_TILE_ELEMENTS - 1]] =
-        Zeros{PTO_XLEN};
-
     // Each row proves that its live counterpart no longer has the saved value.
     // The evidence checker derives these assertions from the recovery ledger.
     assert CurrentACR() != 15;
@@ -696,14 +641,16 @@ begin
     assert _BundleTileBindings[[0]].destination != 2;
     assert _BundleTileBindings[[0]].destination_hand != Zeros{2} + 2;
     assert _BundleTileBindings[[0]].destination_allocated_by_bundle;
-    assert _BundleTileBindings[[0]].destination_size != 8;
+    assert _BundleTileBindings[[0]].destination_size != 7;
+    assert _BundleTileBindings[[0]].pe_mask != '1111';
     assert !_BundleTileBindings[[0]].source0_valid;
     assert !_BundleTileBindings[[0]].source1_valid;
     assert _BundleTileBindings[[0]].source0 != 40;
     assert _BundleTileBindings[[0]].source1 != 41;
-    assert !_BundleTileBindings[[0]].source0_reuse;
-    assert _BundleTileBindings[[0]].source1_reuse;
     assert _BundleTileBindings[[0]].last;
+    assert !_BundleSharedBindings[[0]].valid;
+    assert _BundleSharedBindings[[0]].shared_id != Zeros{8} + 0x12;
+    assert !_BundleSharedBindings[[0]].consumed;
     assert !_BundleControlAttributes.trap_enabled;
     assert !_BundleControlAttributes.atomic;
     assert !_BundleControlAttributes.acquire;
@@ -722,21 +669,6 @@ begin
     assert _ExecutionMask != Zeros{PTO_XLEN} + 0x5a5a;
     assert _PredicateRegisters[[7]] !=
         Zeros{PTO_PREDICATE_WIDTH} + 0x7777;
-    assert !_Accumulator.live;
-    assert _Accumulator.logical_data_type != TileDataType_S8;
-    assert !_Accumulator.info.allocated;
-    assert !_Accumulator.info.contents_defined;
-    assert _Accumulator.info.defined_elements[0] != '1';
-    assert _Accumulator.info.defined_valid_elements != 1;
-    assert _Accumulator.info.capacity_bytes != 2048;
-    assert _Accumulator.info.rows != 16;
-    assert _Accumulator.info.columns != 16;
-    assert _Accumulator.info.valid_rows != 1;
-    assert _Accumulator.info.valid_columns != 1;
-    assert _Accumulator.info.data_type != TileDataType_S64;
-    assert _Accumulator.info.layout != TileLayout_ColumnMajor;
-    assert _Accumulator.info.location != TileLocation_Matrix;
-    assert _Accumulator.info.payload[[0]] != Zeros{PTO_XLEN} + 0xaaa;
     // TRAP_CONTEXT_PHASE_MUTATE_END
 
     // TRAP_CONTEXT_RECOVER_CALL
@@ -783,14 +715,16 @@ begin
     assert _BundleTileBindings[[0]].destination == 2;
     assert _BundleTileBindings[[0]].destination_hand == Zeros{2} + 2;
     assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
-    assert _BundleTileBindings[[0]].destination_size == 8;
+    assert _BundleTileBindings[[0]].destination_size == 7;
+    assert _BundleTileBindings[[0]].pe_mask == '1111';
     assert _BundleTileBindings[[0]].source0_valid;
     assert _BundleTileBindings[[0]].source1_valid;
     assert _BundleTileBindings[[0]].source0 == 40;
     assert _BundleTileBindings[[0]].source1 == 41;
-    assert _BundleTileBindings[[0]].source0_reuse;
-    assert !_BundleTileBindings[[0]].source1_reuse;
     assert !_BundleTileBindings[[0]].last;
+    assert _BundleSharedBindings[[0]].valid;
+    assert _BundleSharedBindings[[0]].shared_id == Zeros{8} + 0x12;
+    assert _BundleSharedBindings[[0]].consumed;
     assert _BundleControlAttributes.trap_enabled;
     assert _BundleControlAttributes.atomic;
     assert _BundleControlAttributes.acquire;
@@ -811,23 +745,6 @@ begin
         Zeros{PTO_PREDICATE_WIDTH} + 0x1111;
     assert _PredicateRegisters[[7]] ==
         Zeros{PTO_PREDICATE_WIDTH} + 0x7777;
-    assert _Accumulator.live;
-    assert _Accumulator.logical_data_type == TileDataType_S8;
-    assert _Accumulator.info.allocated;
-    assert _Accumulator.info.contents_defined;
-    assert _Accumulator.info.defined_elements[0] == '1';
-    assert _Accumulator.info.defined_valid_elements == 1;
-    assert _Accumulator.info.capacity_bytes == 2048;
-    assert _Accumulator.info.rows == 16;
-    assert _Accumulator.info.columns == 16;
-    assert _Accumulator.info.valid_rows == 1;
-    assert _Accumulator.info.valid_columns == 1;
-    assert _Accumulator.info.data_type == TileDataType_S64;
-    assert _Accumulator.info.layout == TileLayout_ColumnMajor;
-    assert _Accumulator.info.location == TileLocation_Matrix;
-    assert _Accumulator.info.payload[[0]] == Zeros{PTO_XLEN} + 0xaaa;
-    assert _Accumulator.info.payload[[PTO_MODEL_TILE_ELEMENTS - 1]] ==
-        Zeros{PTO_XLEN} + 0xbbb;
     // TRAP_CONTEXT_PHASE_RECOVER_END
     // TRAP_CONTEXT_PHASE_INVALIDATE_BEGIN
     assert !_TrapContexts[[1]].valid;
@@ -875,10 +792,10 @@ begin
     assert TileCapacityIsLegal(262144);
     assert !TileCapacityIsLegal(192);
     assert !TileCapacityIsLegal(32);
-    assert TileSizeCodeBytes(3) == 128;
-    assert TileSizeCodeBytes(9) == 8192;
-    assert !TileSizeCodeIsLegal(2);
-    assert !TileSizeCodeIsLegal(10);
+    assert TileSizeCodeBytes(1) == 512;
+    assert TileSizeCodeBytes(7) == 32768;
+    assert !TileSizeCodeIsLegal(0);
+    assert !TileSizeCodeIsLegal(8);
 
     assert TileElementBits(TileDataType_FP64) == 64;
     assert TileElementBits(TileDataType_FP32) == 32;

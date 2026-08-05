@@ -6,7 +6,6 @@ begin
     TestDecodedTileExecution();
     TestTileCapacityLegality();
     TestTileElementDefinedness();
-    TestTileManagementHandoff();
     TestDecodedTileLegalityFaults();
     TestTileMemoryCompletionAndRestart();
     return 0;

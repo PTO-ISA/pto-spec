@@ -84,8 +84,6 @@ LANE_SPECS: tuple[dict[str, Any], ...] = (
         "contract_domains": [
             "tile-binary",
             "tile-unary",
-            "tile-axpy",
-            "tile-prelu",
             "tile-compare",
             "tile-expand",
         ],
@@ -112,7 +110,6 @@ LANE_SPECS: tuple[dict[str, Any], ...] = (
         "title": "tile conversion",
         "contract_domains": [
             "tile-convert",
-            "cube-convert",
             "tile-quantize",
             "tile-dequantize",
         ],
@@ -159,7 +156,7 @@ LANE_SPECS: tuple[dict[str, Any], ...] = (
     {
         "id": "N6",
         "title": "matrix arithmetic",
-        "contract_domains": ["cube-matrix"],
+        "contract_domains": ["tile-fused", "cube-matrix"],
         "unbound_hooks": [],
         "required_vector_classes": [
             "normal",
@@ -182,10 +179,10 @@ LANE_SPECS: tuple[dict[str, Any], ...] = (
 )
 
 EXPECTED_COUNTS = {
-    "contract_domain_count": 20,
-    "hook_count": 30,
+    "contract_domain_count": 18,
+    "hook_count": 28,
     "lane_count": 6,
-    "operation_count": 108,
+    "operation_count": 104,
 }
 
 
@@ -229,10 +226,10 @@ def build_evidence() -> dict[str, Any]:
         variation_ownership.get("status")
         == "variation-point-discovery-and-ownership-closed-result-bounds-open"
         and variation_ownership.get("summary", {}).get("variation_point_count")
-        == 99
-        and variation_ownership.get("summary", {}).get("selected_route_count") == 18
+        == 89
+        and variation_ownership.get("summary", {}).get("selected_route_count") == 16
         and variation_ownership.get("summary", {}).get("accepted_result_rule_count")
-        == 18,
+        == 16,
         "numeric variation-point ownership checkpoint drift",
     )
     require(
@@ -270,12 +267,12 @@ def build_evidence() -> dict[str, Any]:
         subnormal_contract.get("status")
         == "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open"
         and subnormal_contract.get("summary", {}).get("pd04_complete") is True
-        and subnormal_contract.get("summary", {}).get("affected_domain_count") == 16
-        and subnormal_contract.get("summary", {}).get("affected_operation_count") == 95
+        and subnormal_contract.get("summary", {}).get("affected_domain_count") == 14
+        and subnormal_contract.get("summary", {}).get("affected_operation_count") == 93
         and subnormal_contract.get("summary", {}).get(
             "conditional_operation_type_tuple_count"
         )
-        == 1045,
+        == 1023,
         "numeric subnormal contract drift",
     )
 
@@ -375,9 +372,9 @@ def build_evidence() -> dict[str, Any]:
             "path": "spec/evidence/numeric-variation-point-ownership.json",
             "status": variation_ownership["status"],
             "acceptance_record": variation_ownership["acceptance_record"],
-            "variation_point_count": 99,
-            "selected_route_count": 18,
-            "accepted_result_rule_count": 18,
+            "variation_point_count": 89,
+            "selected_route_count": 16,
+            "accepted_result_rule_count": 16,
         },
         "public_type_baseline": {
             "path": "spec/evidence/public-numeric-type-baseline.json",

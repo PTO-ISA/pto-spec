@@ -10,9 +10,9 @@
     "path": "spec/evidence/numeric-variation-point-ownership.json",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
     "acceptance_record": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
-    "variation_point_count": 99,
-    "selected_route_count": 18,
-    "accepted_result_rule_count": 18
+    "variation_point_count": 89,
+    "selected_route_count": 16,
+    "accepted_result_rule_count": 16
   },
   "public_type_baseline": {
     "path": "spec/evidence/public-numeric-type-baseline.json",
@@ -40,11 +40,11 @@
     "boundary_vector_count": 55,
     "configuration_vector_count": 8,
     "non_applicable_type_count": 14,
-    "affected_domain_count": 16,
-    "affected_operation_count": 95,
-    "operation_applicability_row_count": 95,
-    "conditional_operation_type_tuple_count": 1045,
-    "affected_hook_count": 23,
+    "affected_domain_count": 14,
+    "affected_operation_count": 93,
+    "operation_applicability_row_count": 93,
+    "conditional_operation_type_tuple_count": 1023,
+    "affected_hook_count": 21,
     "accepted_decision_count": 1,
     "accepted_complete_domain_rule_count": 0,
     "pd04_complete": true,
@@ -300,8 +300,6 @@
       "contract_domains": [
         "tile-binary",
         "tile-unary",
-        "tile-axpy",
-        "tile-prelu",
         "tile-compare",
         "tile-expand"
       ],
@@ -311,7 +309,6 @@
         "tile:TEPL:TADDS",
         "tile:TEPL:TAND",
         "tile:TEPL:TANDS",
-        "tile:TEPL:TAXPY",
         "tile:TEPL:TCMP",
         "tile:TEPL:TCMPS",
         "tile:TEPL:TCOLEXPAND",
@@ -336,7 +333,6 @@
         "tile:TEPL:TNOT",
         "tile:TEPL:TOR",
         "tile:TEPL:TORS",
-        "tile:TEPL:TPRELU",
         "tile:TEPL:TRECIP",
         "tile:TEPL:TRELU",
         "tile:TEPL:TREM",
@@ -364,31 +360,25 @@
         "TileExpDifference",
         "TileExponential",
         "TileLogarithm",
-        "TileProfileAxpy",
         "TileProfileBinary",
         "TileProfileCompare",
         "TileProfileExpand",
-        "TileProfilePReLU",
         "TileProfileUnary",
         "TileReciprocal",
         "TileSquareRoot"
       ],
       "counts": {
-        "contract_domains": 6,
-        "operations": 53,
-        "hooks": 11
+        "contract_domains": 4,
+        "operations": 51,
+        "hooks": 9
       },
       "open_numeric_dimensions": [
         "NaN and infinity",
         "NaN behavior",
-        "comparison domain",
         "data-type interpretation",
         "divide-by-zero",
         "domain errors",
-        "multiply precision",
-        "multiply-add precision",
         "ordered and unordered comparison",
-        "overflow",
         "result encoding",
         "rounding",
         "saturation",
@@ -423,12 +413,10 @@
       "status": "profile-and-oracle-required",
       "contract_domains": [
         "tile-convert",
-        "cube-convert",
         "tile-quantize",
         "tile-dequantize"
       ],
       "operation_keys": [
-        "tile:CUBE:ACCCVT",
         "tile:TEPL:TCVT",
         "tile:TEPL:TDEQUANT",
         "tile:TEPL:TQUANT"
@@ -439,8 +427,8 @@
         "TileProfileQuantize"
       ],
       "counts": {
-        "contract_domains": 4,
-        "operations": 4,
+        "contract_domains": 3,
+        "operations": 3,
         "hooks": 3
       },
       "open_numeric_dimensions": [
@@ -495,8 +483,6 @@
         "tile:TEPL:TCOLSUM",
         "tile:TEPL:TMRGSORT",
         "tile:TEPL:TPARTADD",
-        "tile:TEPL:TPARTARGMAX",
-        "tile:TEPL:TPARTARGMIN",
         "tile:TEPL:TPARTMAX",
         "tile:TEPL:TPARTMIN",
         "tile:TEPL:TPARTMUL",
@@ -506,7 +492,7 @@
         "tile:TEPL:TROWMIN",
         "tile:TEPL:TROWPROD",
         "tile:TEPL:TROWSUM",
-        "tile:TEPL:TSORT"
+        "tile:TEPL:TSORT32"
       ],
       "hooks": [
         "TileProfileOrderLeft",
@@ -517,7 +503,7 @@
       ],
       "counts": {
         "contract_domains": 3,
-        "operations": 20,
+        "operations": 18,
         "hooks": 5
       },
       "open_numeric_dimensions": [
@@ -563,6 +549,7 @@
       "parallel_shard": "numeric-matrix-arithmetic",
       "status": "profile-and-oracle-required",
       "contract_domains": [
+        "tile-fused",
         "cube-matrix"
       ],
       "operation_keys": [
@@ -577,7 +564,8 @@
         "tile:CUBE:TMATMUL_BIAS",
         "tile:CUBE:TMATMUL_MX",
         "tile:CUBE:TMATMUL_MX_ACC",
-        "tile:CUBE:TMATMUL_MX_BIAS"
+        "tile:CUBE:TMATMUL_MX_BIAS",
+        "tile:TEPL:TFMA"
       ],
       "hooks": [
         "TileProfileMatrixAccumulate",
@@ -585,14 +573,16 @@
         "TileProfileMatrixScaledAccumulate"
       ],
       "counts": {
-        "contract_domains": 1,
-        "operations": 12,
+        "contract_domains": 2,
+        "operations": 13,
         "hooks": 3
       },
       "open_numeric_dimensions": [
         "NaN and infinity",
         "accumulation width",
         "input product precision",
+        "multiply-add precision",
+        "overflow",
         "rounding",
         "saturation"
       ],
@@ -621,10 +611,10 @@
     }
   ],
   "summary": {
-    "contract_domain_count": 20,
-    "hook_count": 30,
+    "contract_domain_count": 18,
+    "hook_count": 28,
     "lane_count": 6,
-    "operation_count": 108,
+    "operation_count": 104,
     "accepted_configuration_identity_count": 4,
     "accepted_selection_framework_rule_count": 5,
     "accepted_public_type_binding_count": 16,
