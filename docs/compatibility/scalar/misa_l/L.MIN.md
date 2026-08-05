@@ -1,5 +1,5 @@
 > DavinciOO 继承 Linx scalar ISA 原文页。Source: `docs/zh/isa/inst/misa_l/L.MIN.md`
-> 本页作为 ordinary GPR / `meta_gpr` 构造能力的参考；opcode/encoding 保持 Linx v0.56。
+> 本页作为 ordinary GPR / `meta_gpr` 构造能力的参考；opcode/encoding 保持 Linx v0.57。
 
 # L.MIN
 

@@ -1,6 +1,6 @@
 # PEID
 
-> DavinciOO v5 scalar SSR 扩展；Linx v0.56 未分配该寄存器。
+> DavinciOO v5 scalar SSR 扩展；Linx v0.57 未分配该寄存器。
 
 ## 作用
 
@@ -19,7 +19,7 @@
 
 ## 编号分配与兼容性
 
-Linx v0.56 将 `0x0800–0x08FF` 留给 light-core 自定义 SSR，现行公开分配如下：
+Linx v0.57 将 `0x0800–0x08FF` 留给 light-core 自定义 SSR，现行公开分配如下：
 
 | SSR ID | 现有定义 |
 | --- | --- |
@@ -31,7 +31,7 @@ Linx v0.56 将 `0x0800–0x08FF` 留给 light-core 自定义 SSR，现行公开�
 | `0x0820` | `CW` |
 | `0x0830–0x083A` | `MSGBCR`、`MSGBD1–MSGBD10` |
 
-DavinciOO、Linx v0.56 与 PTOISA 当前仓库中均没有其他 `0x0802` 分配。选择该编号不会占用 common SSR 空间，也不会与逻辑 Core ID `LXLCID=0x0021` 或 `BLOCKID=0x0051` 冲突。
+DavinciOO、Linx v0.57 与 PTOISA 当前仓库中均没有其他 `0x0802` 分配。选择该编号不会占用 common SSR 空间，也不会与逻辑 Core ID `LXLCID=0x0021` 或 `BLOCKID=0x0051` 冲突。
 
 ## 访问与 lowering
 

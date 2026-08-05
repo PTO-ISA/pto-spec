@@ -1,4 +1,4 @@
-> DavinciOO v5 SYS extension. Linx `FENCE.D` keeps its v0.56 local encoding; `FENCE.D.CORE4` assigns a profile-isolated Core PE4 fence mode.
+> DavinciOO v5 SYS extension. Linx `FENCE.D` keeps its v0.57 local encoding; `FENCE.D.CORE4` assigns a profile-isolated Core PE4 fence mode.
 
 # FENCE.D / FENCE.D.CORE4
 
