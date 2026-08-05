@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "ea73d8c8b5dc56222d5c3112f0cb0e8e604d1ee746e821f68c9b59f11f075b5d"
+      "sha256": "09f73698470cf555d541638f65e42f2f7b5da2ad58c3d8fa28af7152ffb837e3"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -873,7 +873,7 @@
           "docs/davincioo-arch/programming-model.md",
           "docs/davincioo-arch/state-and-data-types.md",
           "docs/davincioo-arch/memory-ordering-and-exceptions.md",
-          "docs/instructions/bundle/operands/C.B.IOS.md",
+          "docs/instructions/block/operands/C.B.IOS.md",
           "docs/instructions/tile/TLOAD.md",
           "docs/instructions/tile/TSTORE.md",
           "docs/instructions/tile/TMOV.md"

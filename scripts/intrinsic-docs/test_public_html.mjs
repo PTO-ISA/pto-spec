@@ -25,8 +25,8 @@ if (!errors.length) {
   const files = walk(siteRoot);
   const htmlFiles = files.filter((file) => file.endsWith(".html"));
   const assetFiles = files.filter((file) => !file.endsWith(".html"));
-  if (files.length !== 1251) errors.push(`docs/html must contain 1251 files, found ${files.length}`);
-  if (htmlFiles.length !== 1249) errors.push(`docs/html must contain 1249 HTML files, found ${htmlFiles.length}`);
+  if (files.length !== 1255) errors.push(`docs/html must contain 1255 files, found ${files.length}`);
+  if (htmlFiles.length !== 1253) errors.push(`docs/html must contain 1253 HTML files, found ${htmlFiles.length}`);
   if (assetFiles.length !== 2) errors.push(`docs/html must contain 2 assets, found ${assetFiles.length}`);
 
   for (const filePath of [landingPath, ...htmlFiles]) {
@@ -47,7 +47,7 @@ if (!errors.length) {
   }
 
   const indexHtml = fs.readFileSync(path.join(siteRoot, "index.html"), "utf8");
-  for (const label of ["Home", "Architecture Reference", "Tile Intrinsics", "Block Intrinsics", "Scalar & System ISA", "Support Status"]) {
+  for (const label of ["Home", "Architecture Reference", "Scalar ISA", "Block ISA", "Tile ISA", "Support Status"]) {
     if (!indexHtml.includes(label)) errors.push(`docs/html/index.html: missing navigation label ${label}`);
   }
   const landingHtml = fs.readFileSync(landingPath, "utf8");
@@ -58,5 +58,5 @@ if (errors.length) {
   console.error(errors.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log("public_html_ok files=1251 html=1249 assets=2");
+  console.log("public_html_ok files=1255 html=1253 assets=2");
 }

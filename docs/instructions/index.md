@@ -9,7 +9,7 @@ This page is generated from the canonical PTO catalogs under `spec/catalog/`.
 | Surface | Count | Reference |
 | --- | --- | --- |
 | Scalar encoded forms | 474 | [scalar summary](scalar.md) |
-| Bundle/command encoded forms | 99 | [bundle/command](bundle-command.md) |
+| Bundle/command encoded forms | 99 | [block/command](block-command.md) |
 | Direct tile operations | 109 | [tile operations](tile.md) |
 | System registers | 72 | [system registers](system-registers.md) |
 

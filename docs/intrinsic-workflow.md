@@ -23,7 +23,7 @@
 3. [状态与类型](davincioo-arch/state-and-data-types.md)定义 Local/Shared storage、distribution、persistent register state 与 TileAcc。
 4. [内存与异常](davincioo-arch/memory-ordering-and-exceptions.md)定义数据搬运、完成、顺序与非法程序行为。
 5. [汇编语法](davincioo-arch/assembly-syntax.md)和 [Encoding](davincioo-arch/encoding-conventions.md)定义编码与语法。
-6. 106 条正式指令位于 [instructions/tile/](instructions/README.md)，Block/Header 文档位于 [instructions/bundle/](instructions/bundle/overview/block-header-model.md)。
+6. 正式指令按 [Scalar ISA](instructions/scalar/README.md)、[Block ISA](instructions/block/overview/block-header-model.md) 和 [Tile ISA](instructions/README.md) 三类发布；Tile ISA 当前包含 109 条 operation。
 
 ## 架构边界
 
@@ -55,7 +55,9 @@ node scripts/intrinsic-docs/intrinsic_docs.mjs preview-change --handoff <file>
 ```text
 node scripts/intrinsic-docs/intrinsic_docs.mjs generate-indexes
 node --test scripts/intrinsic-docs/test_intrinsic_docs.mjs
-node scripts/intrinsic-docs/intrinsic_docs.mjs check
+node --test scripts/intrinsic-docs/test_intrinsic_docs.mjs
+python3 scripts/check-publication-hygiene
+python3 scripts/check-repository
 node scripts/intrinsic-docs/sync_intrinsic_xlsx.mjs audit
 node scripts/intrinsic-docs/intrinsic_docs.mjs build-html
 ```
@@ -74,9 +76,9 @@ node scripts/intrinsic-docs/sync_intrinsic_xlsx.mjs audit
 <!-- BEGIN GENERATED: instruction-index -->
 ## 正式指令目录
 
-- [106 条 Tile 指令](instructions/README.md)
-- [Block / Header 文档](instructions/bundle/overview/block-header-model.md)
-- [Scalar 兼容性附录](compatibility/README.md)
+- [Scalar ISA](instructions/scalar/README.md)
+- [Block ISA](instructions/block/overview/block-header-model.md)
+- [109 条 Tile ISA operation](instructions/README.md)
 - [覆盖率与迁移状态](status/README.md)
 - Complete HTML 入口：`docs/DavinciOO_PTO_Intrinsic_Complete.html`
 

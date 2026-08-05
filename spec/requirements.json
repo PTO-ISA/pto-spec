@@ -529,7 +529,7 @@
         "docs/davincioo-arch/programming-model.md",
         "docs/davincioo-arch/state-and-data-types.md",
         "docs/davincioo-arch/memory-ordering-and-exceptions.md",
-        "docs/instructions/bundle/operands/C.B.IOS.md",
+        "docs/instructions/block/operands/C.B.IOS.md",
         "docs/instructions/tile/TLOAD.md",
         "docs/instructions/tile/TSTORE.md",
         "docs/instructions/tile/TMOV.md"

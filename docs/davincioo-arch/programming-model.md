@@ -16,7 +16,7 @@
 
 ## Program Instance and Execution
 
-一个程序实例覆盖一个 Core 内的 PE0–PE3。四个 PE 执行同一份程序映像，各自拥有独立 PC 和固定 `thread_id`。`thread_id` 等于只读 [PEID SSR](../compatibility/scalar/register/ssr/PEID.md) 的低 2 bit，PE0–PE3 分别读取到 `0..3`；高位恒为零。普通独立区域允许分歧；collective 区域必须能静态证明收敛，并以相同动态顺序执行 collective 指令。
+一个程序实例覆盖一个 Core 内的 PE0–PE3。四个 PE 执行同一份程序映像，各自拥有独立 PC 和固定 `thread_id`。`thread_id` 等于只读 [PEID SSR](../instructions/scalar/register/ssr/PEID.md) 的低 2 bit，PE0–PE3 分别读取到 `0..3`；高位恒为零。普通独立区域允许分歧；collective 区域必须能静态证明收敛，并以相同动态顺序执行 collective 指令。
 
 编译器提供以下源级接口，并固定降低为现有 32-bit `SSRGET`，不新增独立 opcode：
 

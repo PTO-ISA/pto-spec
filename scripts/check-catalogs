@@ -8636,10 +8636,10 @@ def main() -> int:
     readme_body = (ROOT / "README.md").read_text(encoding="utf-8")
     coverage_body = (ROOT / "docs" / "coverage.md").read_text(encoding="utf-8")
     shared_binding_doc = (
-        ROOT / "docs/instructions/bundle/operands/C.B.IOS.md"
+        ROOT / "docs/instructions/block/operands/C.B.IOS.md"
     ).read_text(encoding="utf-8")
     shared_mask_doc = (
-        ROOT / "docs/instructions/bundle/operands/B.IOT.md"
+        ROOT / "docs/instructions/block/operands/B.IOT.md"
     ).read_text(encoding="utf-8")
     for spelling in (
         "C.B.IOS S0",
@@ -8658,8 +8658,8 @@ def main() -> int:
         ROOT / "docs/davincioo-arch/programming-model.md",
         ROOT / "docs/davincioo-arch/assembly-syntax.md",
         ROOT / "docs/davincioo-arch/state-and-data-types.md",
-        ROOT / "docs/instructions/bundle/operands/C.B.IOS.md",
-        ROOT / "docs/instructions/bundle/operands/B.IOT.md",
+        ROOT / "docs/instructions/block/operands/C.B.IOS.md",
+        ROOT / "docs/instructions/block/operands/B.IOT.md",
         ROOT / "docs/instructions/tile/TLOAD.md",
         ROOT / "docs/instructions/tile/TSTORE.md",
         ROOT / "docs/instructions/tile/TMOV.md",

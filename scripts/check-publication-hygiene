@@ -17,8 +17,8 @@ FORBIDDEN_TERMS = (
     "heng" + "liao1972",
 )
 MIGRATED_DOCUMENT_ROOTS = (
-    Path("docs/compatibility"),
-    Path("docs/instructions/bundle"),
+    Path("docs/instructions/scalar"),
+    Path("docs/instructions/block"),
     Path("docs/instructions/tile"),
     Path("docs/status"),
 )
@@ -86,9 +86,9 @@ def main() -> int:
         if path.suffix != ".md":
             continue
 
-        # Migrated intrinsic and compatibility pages intentionally retain the
-        # source formatting and source-relative references needed to reproduce
-        # the existing Complete site. Their rendered headings, links, and
+        # Imported and generated instruction-reference pages intentionally
+        # retain source formatting and source-relative references needed to
+        # reproduce the Complete site. Their rendered headings, links, and
         # fragments are checked by the HTML builder.
         if migrated:
             continue

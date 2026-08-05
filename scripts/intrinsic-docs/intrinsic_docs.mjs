@@ -116,7 +116,7 @@ function linxSysFiles(root) {
 
 function linxSnapshotRoot(roots) {
   return roots.repoRoot
-    ? path.join(roots.repoRoot, "docs", "compatibility", "scalar", "support", "linx-v0.56")
+    ? path.join(roots.repoRoot, "docs", "instructions", "scalar", "support", "linx-v0.56")
     : path.join(roots.intrinsicRoot, "scalar", "support", "linx-v0.56");
 }
 
@@ -487,7 +487,7 @@ function ensureMaintenanceSection(body) {
     "- Complete HTML 入口见 `docs/DavinciOO_PTO_Intrinsic_Complete.html`；当前 encoding workbook 位于 `spec/encoding/PTO-ISA-Encoding.xlsx`。\n",
   );
   if (/^## (?:Maintenance Workflow|维护流程)$/m.test(output)) return output;
-  const section = `## 维护流程\n\n- Markdown frontmatter 与固定正文段落是结构化事实和语义的权威源。\n- 运行 \`node scripts/intrinsic-docs/intrinsic_docs.mjs check\` 检查 schema、coverage、链接和派生索引。\n- 使用 \`sync_intrinsic_xlsx.mjs\` 增量同步 Excel；sidecar 会保护人工修改。\n- 使用 \`build_intrinsic_html.mjs\` 生成并验证 Complete HTML 候选站点。\n\n`;
+  const section = `## 维护流程\n\n- Markdown frontmatter 与固定正文段落是结构化事实和语义的权威源。\n- 运行 \`node --test scripts/intrinsic-docs/test_intrinsic_docs.mjs\` 检查文档工具链。\n- 运行 \`python3 scripts/check-publication-hygiene\` 和 \`python3 scripts/check-repository\` 检查链接、投影和仓库闭包。\n- 使用 \`sync_intrinsic_xlsx.mjs\` 增量同步 Excel；sidecar 会保护人工修改。\n- 使用 \`build_intrinsic_html.mjs\` 生成并验证 Complete HTML 候选站点。\n\n`;
   const marker = "<!-- BEGIN GENERATED: instruction-index -->";
   return output.includes(marker) ? output.replace(marker, `${section}${marker}`) : `${output.trimEnd()}\n\n${section}`;
 }
@@ -825,7 +825,7 @@ function renderInline(text, doc, pageByRel, roots) {
         "status/LINX_COVERAGE.md": "LINX_COVERAGE.md",
         "status/SOURCE_GAPS_AND_CONFLICTS.md": "SOURCE_GAPS_AND_CONFLICTS.md",
       };
-      const legacySource = legacyOverviewSources[doc.relativePath] || doc.relativePath.replace(/^compatibility\//, "");
+      const legacySource = legacyOverviewSources[doc.relativePath] || doc.relativePath.replace(/^instructions\/scalar\//, "scalar/");
       const baseline = fs.existsSync(legacyBaselinePath(roots)) ? readJson(legacyBaselinePath(roots)).missing : [];
       const knownLegacy = baseline.some((item) => item.source === legacySource && item.href === href);
       if (knownLegacy) return `<span title="Legacy source link is not part of the public PTO ISA site">${renderInline(label, doc, pageByRel, roots)}</span>`;
@@ -840,15 +840,15 @@ function renderInline(text, doc, pageByRel, roots) {
         ? scalarSupportPath
         : /^(?:arch|register|blockIntro|instset|inst|header\/templateblock)\//.test(normalized) ? normalized : inherited;
       const supportRel = roots.repoRoot
-        ? `compatibility/scalar/support/linx-v0.56/${supportPath}`
+        ? `instructions/scalar/support/linx-v0.56/${supportPath}`
         : `scalar/support/linx-v0.56/${supportPath}`;
       const tileCandidate = `instructions/tile/${path.posix.basename(filePart)}`;
-      const bundleCandidate = `instructions/bundle/${filePart.replace(/^(?:\.\.\/|\.\/|header\/)+/, "")}`;
-      const scalarCandidate = `compatibility/scalar/${filePart.replace(/^(?:\.\.\/|\.\/|scalar\/)+/, "")}`;
+      const blockCandidate = `instructions/block/${filePart.replace(/^(?:\.\.\/|\.\/|header\/)+/, "")}`;
+      const scalarCandidate = `instructions/scalar/${filePart.replace(/^(?:\.\.\/|\.\/|scalar\/)+/, "")}`;
       const statusCandidate = `status/${filePart.replace(/^(?:\.\.\/|\.\/|status\/)+/, "")}`;
       const overviewCandidate = `overview/${path.posix.basename(filePart).toLowerCase()}`;
       const targetPage = pageByRel.get(normalized) || pageByRel.get(supportRel) ||
-        pageByRel.get(tileCandidate) || pageByRel.get(bundleCandidate) ||
+        pageByRel.get(tileCandidate) || pageByRel.get(blockCandidate) ||
         pageByRel.get(scalarCandidate) || pageByRel.get(statusCandidate) ||
         pageByRel.get(overviewCandidate);
       const renderedLabel = renderInline(label, doc, pageByRel, roots);
@@ -1009,8 +1009,9 @@ function buildPublicHtml(roots) {
 
 const COMPLETE_OVERVIEW = [
   ["index.html", "home", "Home"],
-  ["tile-intrinsics.html", "tile", "Tile Intrinsics"],
-  ["scalar-system-isa.html", "scalar", "Scalar & System ISA"],
+  ["scalar-isa.html", "scalar", "Scalar ISA"],
+  ["block-isa.html", "block", "Block ISA"],
+  ["tile-isa.html", "tile", "Tile ISA"],
 ];
 
 const TILE_FAMILY_ORDER = [
@@ -1045,14 +1046,17 @@ function completeFamilyForHeader(relativePath, metadata = null) {
   return family;
 }
 
-function completeLegacyDocs(roots) {
+function completeScalarDocs(roots) {
   const files = [
-    ...walk(path.join(roots.repoRoot, "docs", "compatibility", "scalar"), (file) => file.endsWith(".md")),
+    ...walk(
+      path.join(roots.repoRoot, "docs", "instructions", "scalar"),
+      (file) => file.endsWith(".md") && path.basename(file) !== "README.md",
+    ),
   ];
   const familyLabels = new Map([
     ["misa_c", "MISA-C"], ["misa_f", "MISA-F"], ["misa_g", "MISA-G"],
     ["misa_h", "MISA-H"], ["misa_l", "MISA-L"], ["misa_s", "MISA-S"],
-    ["register", "Registers"], ["support", "Supporting Reference"],
+    ["register", "Registers"], ["support", "Architecture Support"],
   ]);
   return files.sort().map((filePath) => {
     const relativePath = toPosix(path.relative(path.join(roots.repoRoot, "docs"), filePath));
@@ -1062,9 +1066,9 @@ function completeLegacyDocs(roots) {
       relativePath,
       body: parsed.body,
       title: titleFromBody(parsed.body, path.basename(relativePath, ".md")),
-      metadata: { kind: "scalar", status: "legacy" },
+      metadata: { kind: "scalar", status: "reference" },
       section: "scalar",
-      family: familyLabels.get(relativePath.split("/")[2]) || "Supporting Reference",
+      family: familyLabels.get(relativePath.split("/")[3]) || "Architecture Support",
       label: path.posix.basename(relativePath, ".md"),
     };
   });
@@ -1081,7 +1085,7 @@ function completeDocs(roots) {
   const docsRoot = path.join(roots.repoRoot, "docs");
   const managedRoots = [
     [path.join(docsRoot, "instructions", "tile"), "instructions/tile", "intrinsic"],
-    [path.join(docsRoot, "instructions", "bundle"), "instructions/bundle", "header"],
+    [path.join(docsRoot, "instructions", "block"), "instructions/block", "header"],
     [path.join(docsRoot, "status", "public"), "status/public", "coverage"],
   ];
   const selected = managedRoots.flatMap(([directory, prefix, defaultKind]) =>
@@ -1139,14 +1143,14 @@ function completeDocs(roots) {
     }
     return { ...doc, body: sanitizeCompleteMarkdown(doc.body), section, family, label };
   });
-  return [...managed, ...completeLegacyDocs(roots)].map((doc) => ({ ...doc, page: `doc-${slug(doc.relativePath)}.html` }));
+  return [...managed, ...completeScalarDocs(roots)].map((doc) => ({ ...doc, page: `doc-${slug(doc.relativePath)}.html` }));
 }
 
 const COMPLETE_FAMILY_ORDER = [
   "Architecture Reference",
-  ...TILE_FAMILY_ORDER,
+  "MISA-C", "MISA-F", "MISA-G", "MISA-H", "MISA-L", "MISA-S", "Registers", "Architecture Support",
   "Overview", "Lifecycle & Control", "Execution Classes", "Operand Bindings", "Dimensions & Attributes", "Encoding Forms",
-  "MISA-C", "MISA-F", "MISA-G", "MISA-H", "MISA-L", "MISA-S", "Registers", "Supporting Reference",
+  ...TILE_FAMILY_ORDER,
   "Support Status",
 ];
 
@@ -1169,7 +1173,7 @@ export function validateEnglishNavigationLabels(labels) {
 }
 
 function completeVisibleNavigationLabels(bySection) {
-  const labels = ["Home", "Architecture Reference", "Tile Intrinsics", "Block Intrinsics", "Scalar & System ISA", "Support Status", "Overview"];
+  const labels = ["Home", "Architecture Reference", "Scalar ISA", "Block ISA", "Tile ISA", "Support Status", "Overview"];
   for (const docs of bySection.values()) {
     for (const doc of docs) labels.push(doc.label, doc.family);
   }
@@ -1183,9 +1187,8 @@ function completeNavHtml(currentPage, bySection) {
   const architectureDocs = bySection.get("architecture") || [];
   const blockDocs = bySection.get("block") || [];
   const architectureEntry = architectureDocs.find((doc) => doc.metadata.id === "overview.isa_overview").page;
-  const blockEntry = blockDocs.find((doc) => doc.metadata.id === "header.header-intro").page;
   const statusEntry = statusDocs.find((doc) => doc.metadata.id === "status.version-history").page;
-  return `<a class="${currentPage === "index.html" ? "active" : ""}" data-search="home" href="index.html">Home</a>${directGroup("Architecture Reference", architectureEntry, architectureDocs)}${categorizedGroup("Tile Intrinsics", "tile-intrinsics.html", bySection.get("tile") || [])}${directGroup("Block Intrinsics", blockEntry, blockDocs)}${categorizedGroup("Scalar & System ISA", "scalar-system-isa.html", bySection.get("scalar") || [])}${directGroup("Support Status", statusEntry, statusDocs)}`;
+  return `<a class="${currentPage === "index.html" ? "active" : ""}" data-search="home" href="index.html">Home</a>${directGroup("Architecture Reference", architectureEntry, architectureDocs)}${categorizedGroup("Scalar ISA", "scalar-isa.html", bySection.get("scalar") || [])}${categorizedGroup("Block ISA", "block-isa.html", blockDocs)}${categorizedGroup("Tile ISA", "tile-isa.html", bySection.get("tile") || [])}${directGroup("Support Status", statusEntry, statusDocs)}`;
 }
 
 function completeSiteJs() {
@@ -1194,8 +1197,8 @@ function completeSiteJs() {
 
 function renderCompleteHtml(roots, { log = true } = {}) {
   const docs = completeDocs(roots);
-  const bySection = new Map(["architecture", "tile", "block", "scalar", "status"].map((section) => [section, docs.filter((doc) => doc.section === section)]));
-  const requiredCounts = { architecture: 6, tile: 106, block: 26, scalar: 1105, status: 3 };
+  const bySection = new Map(["architecture", "scalar", "block", "tile", "status"].map((section) => [section, docs.filter((doc) => doc.section === section)]));
+  const requiredCounts = { architecture: 6, scalar: 1105, block: 26, tile: 109, status: 3 };
   for (const [section, expected] of Object.entries(requiredCounts)) {
     const actual = bySection.get(section)?.length || 0;
     if (actual !== expected) throw new Error(`Complete public ${section} count mismatch: expected ${expected}, got ${actual}`);
@@ -1212,13 +1215,12 @@ function renderCompleteHtml(roots, { log = true } = {}) {
   const cards = (page, section, description) => `<h2>${escapeHtml(page.title)}</h2><p>${escapeHtml(description)}</p><div class="family-grid">${completeGroups(bySection.get(section) || []).map(([family, entries]) => `<div class="family-card searchable" data-search="${escapeHtml(`${family} ${entries.map((doc) => `${doc.label} ${doc.title}`).join(" ")}`)}"><strong>${escapeHtml(family)}</strong><span>${entries.length} pages</span>${entries.slice(0, 12).map((doc) => `<a href="${doc.page}">${escapeHtml(doc.label)}</a>`).join("")}${entries.length > 12 ? `<em>+ ${entries.length - 12} more</em>` : ""}</div>`).join("")}</div>`;
   const counts = Object.fromEntries([...bySection].map(([section, entries]) => [section, entries.length]));
   const architectureEntry = bySection.get("architecture").find((doc) => doc.metadata.id === "overview.isa_overview").page;
-  const blockEntry = bySection.get("block").find((doc) => doc.metadata.id === "header.header-intro").page;
   const statusEntry = bySection.get("status").find((doc) => doc.metadata.id === "status.version-history").page;
   for (const [file, section, title] of COMPLETE_OVERVIEW) {
     const page = { file, section, title };
     let body;
     if (section === "home") {
-      body = `<div class="hero"><h2>DavinciOO PTO Intrinsic Manual</h2><p>Public PTO ISA 0.58.0 architecture, Tile, Block, Scalar/System, and encoding reference.</p></div><div class="stats"><div class="stat"><strong>${counts.tile}</strong><span>Tile Intrinsics</span></div><div class="stat"><strong>${counts.block}</strong><span>Block pages</span></div><div class="stat"><strong>${counts.scalar}</strong><span>Scalar & System pages</span></div><div class="stat"><strong>0.58.0</strong><span>Documentation version</span></div></div><div class="family-grid"><div class="family-card"><strong>Architecture Reference</strong><span>Start with the architecture and programming model.</span><a href="${architectureEntry}">Open reference</a></div><div class="family-card"><strong>Instruction Reference</strong><span>Browse Tile, Block, Scalar and System ISA.</span><a href="tile-intrinsics.html">Open Tile Intrinsics</a><a href="${blockEntry}">Open Block Intrinsics</a></div><div class="family-card"><strong>Encoding Workbook</strong><span>Open the canonical Tile and Block encoding workbook.</span><a href="../../spec/encoding/PTO-ISA-Encoding.xlsx">Open workbook</a></div><div class="family-card"><strong>Support Status</strong><span>Review version history and supported boundaries.</span><a href="${statusEntry}">Open status</a></div></div>`;
+      body = `<div class="hero"><h2>DavinciOO PTO Intrinsic Manual</h2><p>Public PTO ISA 0.58.0 architecture, Scalar ISA, Block ISA, Tile ISA, and encoding reference.</p></div><div class="stats"><div class="stat"><strong>${counts.scalar}</strong><span>Scalar ISA pages</span></div><div class="stat"><strong>${counts.block}</strong><span>Block ISA pages</span></div><div class="stat"><strong>${counts.tile}</strong><span>Tile ISA operations</span></div><div class="stat"><strong>0.58.0</strong><span>Documentation version</span></div></div><div class="family-grid"><div class="family-card"><strong>Architecture Reference</strong><span>Start with the architecture and programming model.</span><a href="${architectureEntry}">Open reference</a></div><div class="family-card"><strong>Instruction Reference</strong><span>Browse Scalar, Block, and Tile ISA.</span><a href="scalar-isa.html">Open Scalar ISA</a><a href="block-isa.html">Open Block ISA</a><a href="tile-isa.html">Open Tile ISA</a></div><div class="family-card"><strong>Encoding Workbook</strong><span>Open the canonical Tile and Block encoding workbook.</span><a href="../../spec/encoding/PTO-ISA-Encoding.xlsx">Open workbook</a></div><div class="family-card"><strong>Support Status</strong><span>Review version history and supported boundaries.</span><a href="${statusEntry}">Open status</a></div></div>`;
     } else {
       body = cards(page, section, `Browse the published ${title} pages.`);
     }
@@ -1226,8 +1228,7 @@ function renderCompleteHtml(roots, { log = true } = {}) {
   }
   const pageByRel = new Map(docs.map((doc) => [doc.relativePath, doc.page]));
   for (const doc of docs) {
-    const compatibilityNotice = doc.family === "Supporting Reference" ? `<blockquote><strong>Compatibility reference:</strong> this inherited Linx material is preserved for context and does not independently declare PTO ISA 0.58.0 support.</blockquote>` : "";
-    const body = `<article class="doc-card searchable" data-search="${escapeHtml(`${doc.label} ${doc.title} ${doc.family}`)}"><div class="doc-head"><div><p class="eyebrow">${escapeHtml(doc.relativePath)}</p><p>${escapeHtml(doc.title)}</p></div><span>${escapeHtml(doc.family)}</span></div><div class="markdown-body">${compatibilityNotice}${renderMarkdown(doc.body, doc, pageByRel, roots)}</div></article>`;
+    const body = `<article class="doc-card searchable" data-search="${escapeHtml(`${doc.label} ${doc.title} ${doc.family}`)}"><div class="doc-head"><div><p class="eyebrow">${escapeHtml(doc.relativePath)}</p><p>${escapeHtml(doc.title)}</p></div><span>${escapeHtml(doc.family)}</span></div><div class="markdown-body">${renderMarkdown(doc.body, doc, pageByRel, roots)}</div></article>`;
     writeText(path.join(siteDir, doc.page), shell({ file: doc.page, title: doc.title }, body));
   }
   writeText(landingPath, `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=${siteName}/index.html"><title>DavinciOO PTO Intrinsic Manual</title></head><body><p>Open <a href="${siteName}/index.html">DavinciOO PTO Intrinsic Manual</a>.</p></body></html>`);

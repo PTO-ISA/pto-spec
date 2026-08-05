@@ -135,13 +135,13 @@ Shared-A form 在上述 binder 前追加 `Left`、`ScaleLeft`，完整顺序为 
 
 | Header | 本指令用途 | 公共定义 |
 | --- | --- | --- |
-| `BSTART.CUBE` | 选择 `TMATMULMX.ACC` 与 AType | [`header/BSTART.CUBE.md`](../bundle/BSTART.CUBE.md) |
-| `B.DATR` | 必需；表达 BType、RMode、Sat | [`header/B.DATR.md`](../bundle/B.DATR.md) |
-| `B.FPATR` | 必需；表达完整 PostProcessConfig，包括 canonical None | [`header/B.FPATR.md`](../bundle/B.FPATR.md) |
-| `B.DIM` | 表达 M/N/K；TGEMV 要求 M=1 | [`header/B.DIM.md`](../bundle/B.DIM.md) |
-| `B.IOT` | 绑定 Local source、D 与 auxiliary output | [`header/B.IOT.md`](../bundle/B.IOT.md) |
-| `B.IOR` | 按 config 绑定 scalar quant/ReLU 参数 | [`header/B.IOR.md`](../bundle/B.IOR.md) |
-| `C.B.IOS` | 仅 cooperative TMATMUL；绑定 Shared Left/Right role | [`header/C.B.IOS.md`](../bundle/C.B.IOS.md) |
+| `BSTART.CUBE` | 选择 `TMATMULMX.ACC` 与 AType | [`header/BSTART.CUBE.md`](../block/BSTART.CUBE.md) |
+| `B.DATR` | 必需；表达 BType、RMode、Sat | [`header/B.DATR.md`](../block/B.DATR.md) |
+| `B.FPATR` | 必需；表达完整 PostProcessConfig，包括 canonical None | [`header/B.FPATR.md`](../block/B.FPATR.md) |
+| `B.DIM` | 表达 M/N/K；TGEMV 要求 M=1 | [`header/B.DIM.md`](../block/B.DIM.md) |
+| `B.IOT` | 绑定 Local source、D 与 auxiliary output | [`header/B.IOT.md`](../block/B.IOT.md) |
+| `B.IOR` | 按 config 绑定 scalar quant/ReLU 参数 | [`header/B.IOR.md`](../block/B.IOR.md) |
+| `C.B.IOS` | 仅 cooperative TMATMUL；绑定 Shared Left/Right role | [`header/C.B.IOS.md`](../block/C.B.IOS.md) |
 
 ## 约束与合法性
 

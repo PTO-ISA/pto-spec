@@ -95,11 +95,11 @@
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "04cdf10f694f51a72ba66fa7462ba0f85791f799679638ac6a5763b23149d792"
+      "sha256": "d08ed1d59f0b1c1f55e0e6ccf1e61661aa7c90f338f0fcccc38533c41e510bc3"
     },
     {
       "path": "scripts/check-publication-hygiene",
-      "sha256": "077b1007da0e64c7d56c253817d29b5d7e1256e23f832dda1caacd4c8b3fbe9a"
+      "sha256": "9248b71e1f424cad3c516ca94502f75c03228b5d77e73441c88d106daf2b9e0e"
     },
     {
       "path": "scripts/check-repository",
@@ -183,11 +183,11 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "ff32033d55eac5a898a5baa14357d1009dd47ca92318c95360ae81adcec8e77c"
+      "sha256": "34ffb0adecad8b0d0e7cba9b667ebca395c5d65fa90d6960bf88204ee97cf656"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "ea73d8c8b5dc56222d5c3112f0cb0e8e604d1ee746e821f68c9b59f11f075b5d"
+      "sha256": "09f73698470cf555d541638f65e42f2f7b5da2ad58c3d8fa28af7152ffb837e3"
     },
     {
       "path": "spec/catalog/numeric-profile-applicability.json",

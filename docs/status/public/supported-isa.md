@@ -17,12 +17,12 @@ PTO ISA 0.58.0 publishes the following architecture documentation:
 
 | Area | Published scope |
 | --- | --- |
-| Tile Intrinsics | 106 operations in eight functional categories |
-| Block Intrinsics | 26 active/public Block and Header pages in six document categories |
-| Scalar & System ISA | 1105 compatibility pages grouped as MISA-C/F/G/H/L/S, Registers and Supporting Reference |
+| Scalar ISA | 474 accepted binary forms; 1105 published pages grouped as MISA-C/F/G/H/L/S, Registers, and Architecture Support |
+| Block ISA | 26 active/public Block and Header pages in six document categories |
+| Tile ISA | 109 operations in eight functional categories |
 | Architecture Reference | Six introductory architecture documents |
 | Encoding Workbook | One canonical workbook at `spec/encoding/PTO-ISA-Encoding.xlsx` |
 
-The Tile catalog and encoding workbook determine the accepted Tile identities and encodings. Block support is limited to the pages in the public Block Intrinsics index. Scalar and System pages are compatibility reference material retained without semantic changes in this documentation release.
+The scalar form catalog determines the accepted Scalar ISA encodings and field constraints. The command catalog and public Block ISA pages determine accepted block forms. The Tile catalog and encoding workbook determine accepted Tile identities and encodings.
 
 `BSTART.MPAR` and `BSTART.MSEQ` are supported forms documented within the `BSTART` page; they do not have separate instruction pages.

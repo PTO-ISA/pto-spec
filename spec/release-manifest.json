@@ -466,11 +466,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "cd974a1b2bef96211458664c53861a8a2a6693a267d8a5b66188ee097eb865a6"
+      "sha256": "c8e8987638ca1dacf1ee1a6656cf6b7c97a52561dd3ba83f487b29340f510ccc"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "ff32033d55eac5a898a5baa14357d1009dd47ca92318c95360ae81adcec8e77c"
+      "sha256": "34ffb0adecad8b0d0e7cba9b667ebca395c5d65fa90d6960bf88204ee97cf656"
     },
     {
       "path": "spec/evidence/scalar-agu-totality.json",
@@ -530,7 +530,7 @@
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "ea73d8c8b5dc56222d5c3112f0cb0e8e604d1ee746e821f68c9b59f11f075b5d"
+      "sha256": "09f73698470cf555d541638f65e42f2f7b5da2ad58c3d8fa28af7152ffb837e3"
     },
     {
       "path": "specification.toml",
@@ -556,7 +556,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "ff136d687b037678f2773068e88d6d6f6b573f6332038fff47df524d0c57b293",
+  "content_sha256": "fe37df305702aa92a3b3b9fae674b820ebe016a68eff2f8920d3093792f8a946",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -592,13 +592,13 @@
   "owned_artifacts": [
     {
       "kind": "generated-documentation",
-      "path": "docs/instructions/bundle-command.md",
+      "path": "docs/instructions/block-command.md",
       "sha256": "98632adb37cc9d16b40413ae5399df1d208f71005e7396710fcfe1c82e691062"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/instructions/index.md",
-      "sha256": "c0c7b4e5285a41367296b6d130c4beb76c64e877a7489f26d390d9ff8a869982"
+      "sha256": "0c19aed0d35a2be738dd651320e46c65b47e4bf9d17d94885f245f4d716c1217"
     },
     {
       "kind": "generated-documentation",

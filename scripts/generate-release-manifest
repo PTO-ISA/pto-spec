@@ -150,7 +150,7 @@ DELETED_TEPL_NAMES = (
 )
 
 GENERATED_DOCS = (
-    "docs/instructions/bundle-command.md",
+    "docs/instructions/block-command.md",
     "docs/instructions/index.md",
     "docs/instructions/scalar-agu.md",
     "docs/instructions/scalar-alu.md",

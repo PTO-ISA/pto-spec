@@ -49,7 +49,7 @@
 ---
 # TROWEXPAND Intrinsic
 
-> 状态：DavinciOO v5 superscalar 指令页。本文只描述 `TROWEXPAND` 的 PTO 语义、DavinciOO block intrinsic 展开与合法性；公共 header 的 opcode/bitfield 编码见 [`header/`](../bundle/overview/block-header-model.md)。
+> 状态：DavinciOO v5 superscalar 指令页。本文只描述 `TROWEXPAND` 的 PTO 语义、DavinciOO block intrinsic 展开与合法性；公共 header 的 opcode/bitfield 编码见 [`header/`](../block/overview/block-header-model.md)。
 
 ## PTO 语义来源
 
@@ -109,10 +109,10 @@ B.IOT       T#10, mask=1111, last, ->T<1KB>
 
 | Header | 本指令用途 | 公共定义 |
 | --- | --- | --- |
-| `BSTART.TEPL` | 选择 `TROWEXPAND` opcode profile 与主 `DataType` | [`header/BSTART.TEPL.md`](../bundle/BSTART.TEPL.md) |
-| `B.DATR` | 可选；描述 `PadValue`、dtype 扩展、round/sat/compare 等非默认数据属性 | [`header/B.DATR.md`](../bundle/B.DATR.md) |
-| `B.DIM` | 描述 `ValidCol/ValidRow/Col`，即 `LB0/LB1/LB2` | [`header/B.DIM.md`](../bundle/B.DIM.md) |
-| `B.IOT` | 绑定 source/destination Tile operand 并声明 output size class | [`header/B.IOT.md`](../bundle/B.IOT.md) |
+| `BSTART.TEPL` | 选择 `TROWEXPAND` opcode profile 与主 `DataType` | [`header/BSTART.TEPL.md`](../block/BSTART.TEPL.md) |
+| `B.DATR` | 可选；描述 `PadValue`、dtype 扩展、round/sat/compare 等非默认数据属性 | [`header/B.DATR.md`](../block/B.DATR.md) |
+| `B.DIM` | 描述 `ValidCol/ValidRow/Col`，即 `LB0/LB1/LB2` | [`header/B.DIM.md`](../block/B.DIM.md) |
+| `B.IOT` | 绑定 source/destination Tile operand 并声明 output size class | [`header/B.IOT.md`](../block/B.IOT.md) |
 
 ## 约束与合法性
 

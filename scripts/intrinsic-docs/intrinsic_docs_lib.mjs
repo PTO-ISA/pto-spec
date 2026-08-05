@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 export const SCHEMA_VERSION = 1;
-export const PROFILES = Object.freeze(["davincioo-v4-pe-local", "davincioo-v5-superscalar"]);
+export const PROFILES = Object.freeze(["davincioo-v4-pe-local", "davincioo-v5-superscalar", "pto-isa-0.58.0"]);
 export const PROFILE = "davincioo-v5-superscalar";
 export const FRONTMATTER_RULES = Object.freeze({
   required: ["schema_version", "id", "kind", "title", "status", "visibility", "profile", "sources"],

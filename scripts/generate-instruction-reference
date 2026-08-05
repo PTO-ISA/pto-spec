@@ -221,7 +221,7 @@ def render_index(scalar: dict, command: dict, tile: dict, system: dict) -> str:
                     [
                         "Bundle/command encoded forms",
                         len(command_forms),
-                        link("bundle/command", "bundle-command.md"),
+                        link("block/command", "block-command.md"),
                     ],
                     [
                         "Direct tile operations",
@@ -658,7 +658,7 @@ def build_pages() -> dict[Path, str]:
     pages = {
         OUT_DIR / "index.md": render_index(scalar, command, tile, system),
         OUT_DIR / "scalar.md": render_scalar_summary(scalar),
-        OUT_DIR / "bundle-command.md": render_command(command),
+        OUT_DIR / "block-command.md": render_command(command),
         OUT_DIR / "tile.md": render_tile(tile),
         OUT_DIR / "system-registers.md": render_system_registers(system),
     }
