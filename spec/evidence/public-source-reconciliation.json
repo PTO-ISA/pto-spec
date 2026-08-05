@@ -234,26 +234,26 @@
     ]
   },
   "predicate_version_boundary": {
-    "active_release": "PTO ISA 0.57.1",
+    "active_release": "PTO ISA 0.58.0",
     "current_public_source_release": "PTO ISA v0.6 micro-instruction surface",
-    "disposition": "outside-active-0.57.1-release-line",
+    "disposition": "outside-active-0.58.0-release-line",
     "accepted_mapping": null,
-    "mapping_rule": "No public v0.6 typed mask is mapped to a PTO ISA 0.57.1 architectural register, selector, encoding, producer, or consumer.",
+    "mapping_rule": "No public v0.6 typed mask is mapped to a PTO ISA 0.58.0 architectural register, selector, encoding, producer, or consumer.",
     "concepts": [
       {
-        "id": "pto-isa-0571-warp-predicate-registers",
-        "source_class": "active-0.57.1-architectural-state",
+        "id": "pto-isa-0580-warp-predicate-registers",
+        "source_class": "active-0.58.0-architectural-state",
         "representation": "P0-P7",
         "width_bits": 32,
         "count": 8,
         "lifecycle": "P0 hardwired all-ones; P1-P7 reset zero; all trap-preserved",
         "accepted_producers": [],
         "accepted_consumers": [],
-        "mapping_status": "closed-no-accepted-0.57.1-instruction-mapping"
+        "mapping_status": "closed-no-accepted-0.58.0-instruction-mapping"
       },
       {
-        "id": "pto-isa-0571-machine-execution-mask",
-        "source_class": "active-0.57.1-architectural-state",
+        "id": "pto-isa-0580-machine-execution-mask",
+        "source_class": "active-0.58.0-architectural-state",
         "representation": "MPAR/MSEQ execution mask",
         "width_bits": 64,
         "count": 1,
@@ -290,7 +290,7 @@
           "pto.p* algebra",
           "pto.pst*"
         ],
-        "mapping_status": "outside-active-0.57.1-release-line"
+        "mapping_status": "outside-active-0.58.0-release-line"
       },
       {
         "id": "future-encoded-physical-predicate-register-mapping",
@@ -312,21 +312,21 @@
       "open": 0
     },
     "tile_operations": {
-      "count": 120,
-      "closed": 120,
+      "count": 106,
+      "closed": 106,
       "open": 0,
-      "public_exact_name": 110,
+      "public_exact_name": 98,
       "public_spelling_mapping": 1
     },
     "excluded_public_tile_operations": {
-      "count": 0,
-      "closed": 0
+      "count": 12,
+      "closed": 12
     },
     "closure_basis": {
-      "public_source_supported": 97,
-      "catalog_defined_direct_binary": 9,
-      "public_api_aligned": 5,
-      "explicit_layer_difference": 9,
+      "public_source_supported": 95,
+      "catalog_defined_direct_binary": 7,
+      "public_api_aligned": 0,
+      "explicit_layer_difference": 4,
       "open": 0
     }
   },
@@ -3682,22 +3682,22 @@
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
     {
-      "name": "TMAX",
+      "name": "TDIV",
       "family": "TEPL",
-      "selector": "0x00B",
+      "selector": "0x003",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
-      "public_symbol": "TMAX",
+      "public_symbol": "TDIV",
       "public_symbol_relation": "exact-name",
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
     {
-      "name": "TMIN",
+      "name": "TREM",
       "family": "TEPL",
-      "selector": "0x00C",
+      "selector": "0x004",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
-      "public_symbol": "TMIN",
+      "public_symbol": "TREM",
       "public_symbol_relation": "exact-name",
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
@@ -3752,22 +3752,32 @@
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
     {
+      "name": "TMAX",
+      "family": "TEPL",
+      "selector": "0x00B",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TMAX",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TMIN",
+      "family": "TEPL",
+      "selector": "0x00C",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TMIN",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
       "name": "TCMP",
       "family": "TEPL",
       "selector": "0x00D",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TCMP",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TSEL",
-      "family": "TEPL",
-      "selector": "0x01A",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TSEL",
       "public_symbol_relation": "exact-name",
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
@@ -3802,52 +3812,12 @@
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
     {
-      "name": "TRELU",
+      "name": "TEXP",
       "family": "TEPL",
-      "selector": "0x017",
+      "selector": "0x012",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
-      "public_symbol": "TRELU",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TPRELU",
-      "family": "TEPL",
-      "selector": "0x00E",
-      "closure_status": "closed",
-      "closure_basis": "catalog-defined-direct-binary",
-      "public_symbol": "TPRELU",
-      "public_symbol_relation": "catalog-defined",
-      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
-    },
-    {
-      "name": "TDIV",
-      "family": "TEPL",
-      "selector": "0x003",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TDIV",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TREM",
-      "family": "TEPL",
-      "selector": "0x004",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TREM",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TSQRT",
-      "family": "TEPL",
-      "selector": "0x015",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TSQRT",
+      "public_symbol": "TEXP",
       "public_symbol_relation": "exact-name",
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
@@ -3872,12 +3842,12 @@
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
     {
-      "name": "TEXP",
+      "name": "TSQRT",
       "family": "TEPL",
-      "selector": "0x012",
+      "selector": "0x015",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
-      "public_symbol": "TEXP",
+      "public_symbol": "TSQRT",
       "public_symbol_relation": "exact-name",
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
@@ -3892,6 +3862,46 @@
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
     {
+      "name": "TRELU",
+      "family": "TEPL",
+      "selector": "0x017",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TRELU",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TSEL",
+      "family": "TEPL",
+      "selector": "0x01A",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TSEL",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TCVT",
+      "family": "TEPL",
+      "selector": "0x01B",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TCVT",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TFMA",
+      "family": "TEPL",
+      "selector": "0x01C",
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "TFMA",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
       "name": "TADDS",
       "family": "TEPL",
       "selector": "0x020",
@@ -3900,16 +3910,6 @@
       "public_symbol": "TADDS",
       "public_symbol_relation": "exact-name",
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TAXPY",
-      "family": "TEPL",
-      "selector": "0x02F",
-      "closure_status": "closed",
-      "closure_basis": "public-api-aligned",
-      "public_symbol": "TAXPY",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The public intrinsic exposes destination, source, and scalar roles matching the direct operation."
     },
     {
       "name": "TSUBS",
@@ -3938,26 +3938,6 @@
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TDIVS",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TMINS",
-      "family": "TEPL",
-      "selector": "0x02C",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TMINS",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TMAXS",
-      "family": "TEPL",
-      "selector": "0x02B",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TMAXS",
       "public_symbol_relation": "exact-name",
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
@@ -4002,26 +3982,6 @@
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
     {
-      "name": "TCMPS",
-      "family": "TEPL",
-      "selector": "0x02D",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TCMPS",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TSELS",
-      "family": "TEPL",
-      "selector": "0x03A",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TSELS",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
       "name": "TSHLS",
       "family": "TEPL",
       "selector": "0x029",
@@ -4042,22 +4002,62 @@
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
     {
+      "name": "TMAXS",
+      "family": "TEPL",
+      "selector": "0x02B",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TMAXS",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TMINS",
+      "family": "TEPL",
+      "selector": "0x02C",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TMINS",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TCMPS",
+      "family": "TEPL",
+      "selector": "0x02D",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TCMPS",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TSELS",
+      "family": "TEPL",
+      "selector": "0x03A",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TSELS",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TEXPANDS",
+      "family": "TEPL",
+      "selector": "0x03B",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TEXPANDS",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
       "name": "TROWSUM",
       "family": "TEPL",
       "selector": "0x040",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TROWSUM",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TROWPROD",
-      "family": "TEPL",
-      "selector": "0x043",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TROWPROD",
       "public_symbol_relation": "exact-name",
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
@@ -4082,82 +4082,12 @@
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
     {
-      "name": "TROWARGMAX",
+      "name": "TROWPROD",
       "family": "TEPL",
-      "selector": "0x04C",
+      "selector": "0x043",
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
-      "public_symbol": "TROWARGMAX",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TROWARGMIN",
-      "family": "TEPL",
-      "selector": "0x04D",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TROWARGMIN",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TCOLSUM",
-      "family": "TEPL",
-      "selector": "0x050",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TCOLSUM",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TCOLPROD",
-      "family": "TEPL",
-      "selector": "0x053",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TCOLPROD",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TCOLMAX",
-      "family": "TEPL",
-      "selector": "0x051",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TCOLMAX",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TCOLMIN",
-      "family": "TEPL",
-      "selector": "0x052",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TCOLMIN",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TCOLARGMAX",
-      "family": "TEPL",
-      "selector": "0x05C",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TCOLARGMAX",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TCOLARGMIN",
-      "family": "TEPL",
-      "selector": "0x05D",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TCOLARGMIN",
+      "public_symbol": "TROWPROD",
       "public_symbol_relation": "exact-name",
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
@@ -4242,6 +4172,66 @@
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
     {
+      "name": "TROWARGMAX",
+      "family": "TEPL",
+      "selector": "0x04C",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TROWARGMAX",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TROWARGMIN",
+      "family": "TEPL",
+      "selector": "0x04D",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TROWARGMIN",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TCOLSUM",
+      "family": "TEPL",
+      "selector": "0x050",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TCOLSUM",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TCOLMAX",
+      "family": "TEPL",
+      "selector": "0x051",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TCOLMAX",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TCOLMIN",
+      "family": "TEPL",
+      "selector": "0x052",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TCOLMIN",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TCOLPROD",
+      "family": "TEPL",
+      "selector": "0x053",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TCOLPROD",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
       "name": "TCOLEXPAND",
       "family": "TEPL",
       "selector": "0x054",
@@ -4322,6 +4312,286 @@
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
     {
+      "name": "TCOLARGMAX",
+      "family": "TEPL",
+      "selector": "0x05C",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TCOLARGMAX",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TCOLARGMIN",
+      "family": "TEPL",
+      "selector": "0x05D",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TCOLARGMIN",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TCONCAT",
+      "family": "TEPL",
+      "selector": "0x060",
+      "closure_status": "closed",
+      "closure_basis": "explicit-layer-difference",
+      "public_symbol": "TCONCAT",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The public typed API derives layout and offers index-tile overloads; the direct binary operation carries an explicit axis operand."
+    },
+    {
+      "name": "TEXTRACT",
+      "family": "TEPL",
+      "selector": "0x062",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TEXTRACT",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TINSERT",
+      "family": "TEPL",
+      "selector": "0x063",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TINSERT",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TIMG2COL",
+      "family": "TEPL",
+      "selector": "0x064",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TIMG2COL",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TFILLPAD",
+      "family": "TEPL",
+      "selector": "0x065",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TFILLPAD",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TCI",
+      "family": "TEPL",
+      "selector": "0x066",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TCI",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TTRI",
+      "family": "TEPL",
+      "selector": "0x067",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TTRI",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TRANDOM",
+      "family": "TEPL",
+      "selector": "0x069",
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "TRANDOM",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "TQUANT",
+      "family": "TEPL",
+      "selector": "0x06A",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TQUANT",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TDEQUANT",
+      "family": "TEPL",
+      "selector": "0x06B",
+      "closure_status": "closed",
+      "closure_basis": "explicit-layer-difference",
+      "public_symbol": "TDEQUANT",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The public typed API carries scale and offset tiles; the direct binary operation carries scalar scale and zero-point operands."
+    },
+    {
+      "name": "TSORT32",
+      "family": "TEPL",
+      "selector": "0x06C",
+      "closure_status": "closed",
+      "closure_basis": "explicit-layer-difference",
+      "public_symbol": "TSORT32",
+      "public_symbol_relation": "documented-spelling-mapping",
+      "resolution": "The public source spelling is TSORT32 and carries index or temporary tiles; the direct binary operation is TSORT32 with an explicit descending flag."
+    },
+    {
+      "name": "TMRGSORT",
+      "family": "TEPL",
+      "selector": "0x06D",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TMRGSORT",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TTRANS",
+      "family": "TEPL",
+      "selector": "0x06E",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TTRANS",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TGATHER",
+      "family": "TEPL",
+      "selector": "0x06F",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TGATHER",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TSCATTER",
+      "family": "TEPL",
+      "selector": "0x070",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TSCATTER",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TPARTADD",
+      "family": "TEPL",
+      "selector": "0x071",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TPARTADD",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TPARTMUL",
+      "family": "TEPL",
+      "selector": "0x072",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TPARTMUL",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TPARTMAX",
+      "family": "TEPL",
+      "selector": "0x073",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TPARTMAX",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TPARTMIN",
+      "family": "TEPL",
+      "selector": "0x074",
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TPARTMIN",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TLOAD",
+      "family": "TMA",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TLOAD",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TSTORE",
+      "family": "TMA",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TSTORE",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TMOV",
+      "family": "TMA",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "TMOV",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "TPREFETCH",
+      "family": "TMA",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "explicit-layer-difference",
+      "public_symbol": "TPREFETCH",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The typed intrinsic carries a destination-shaped lowering context; the direct architecture operation is a destination-free address hint and writes no tile state."
+    },
+    {
+      "name": "MGATHER",
+      "family": "TMA",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "MGATHER",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "MSCATTER",
+      "family": "TMA",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "public-source-supported",
+      "public_symbol": "MSCATTER",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+    },
+    {
+      "name": "GMOV",
+      "family": "TMA",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "GMOV",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
       "name": "TMATMUL",
       "family": "CUBE",
       "selector": null,
@@ -4378,16 +4648,6 @@
       "closure_status": "closed",
       "closure_basis": "catalog-defined-direct-binary",
       "public_symbol": "TMATMUL_MX_ACC",
-      "public_symbol_relation": "catalog-defined",
-      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
-    },
-    {
-      "name": "ACCCVT",
-      "family": "CUBE",
-      "selector": null,
-      "closure_status": "closed",
-      "closure_basis": "catalog-defined-direct-binary",
-      "public_symbol": "ACCCVT",
       "public_symbol_relation": "catalog-defined",
       "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
     },
@@ -4450,407 +4710,80 @@
       "public_symbol": "TGEMV_MX_ACC",
       "public_symbol_relation": "catalog-defined",
       "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    }
+  ],
+  "excluded_public_tile_operations": [
+    {
+      "name": "TALLOC",
+      "public_symbol": "TALLOC",
+      "disposition": "source-api-only-not-a-direct-operation",
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.0 does not accept it as a direct DavinciOO Tile operation."
     },
     {
-      "name": "TLOAD",
-      "family": "TMA",
-      "selector": null,
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TLOAD",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TSTORE",
-      "family": "TMA",
-      "selector": null,
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TSTORE",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TPREFETCH",
-      "family": "TMA",
-      "selector": null,
-      "closure_status": "closed",
-      "closure_basis": "explicit-layer-difference",
-      "public_symbol": "TPREFETCH",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The typed intrinsic carries a destination-shaped lowering context; the direct architecture operation is a destination-free address hint and writes no tile state."
-    },
-    {
-      "name": "MGATHER",
-      "family": "TMA",
-      "selector": null,
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "MGATHER",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "MSCATTER",
-      "family": "TMA",
-      "selector": null,
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "MSCATTER",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "MGATHER_MASK",
-      "family": "TMA",
-      "selector": null,
-      "closure_status": "closed",
-      "closure_basis": "catalog-defined-direct-binary",
-      "public_symbol": "MGATHER_MASK",
-      "public_symbol_relation": "catalog-defined",
-      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
-    },
-    {
-      "name": "MSCATTER_MASK",
-      "family": "TMA",
-      "selector": null,
-      "closure_status": "closed",
-      "closure_basis": "catalog-defined-direct-binary",
-      "public_symbol": "MSCATTER_MASK",
-      "public_symbol_relation": "catalog-defined",
-      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
-    },
-    {
-      "name": "MGATHER_CAS",
-      "family": "TMA",
-      "selector": null,
-      "closure_status": "closed",
-      "closure_basis": "catalog-defined-direct-binary",
-      "public_symbol": "MGATHER_CAS",
-      "public_symbol_relation": "catalog-defined",
-      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
-    },
-    {
-      "name": "TEXPANDS",
-      "family": "TEPL",
-      "selector": "0x03B",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TEXPANDS",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TCI",
-      "family": "TEPL",
-      "selector": "0x066",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TCI",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TTRI",
-      "family": "TEPL",
-      "selector": "0x067",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TTRI",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TFILLPAD",
-      "family": "TEPL",
-      "selector": "0x065",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TFILLPAD",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TCVT",
-      "family": "TEPL",
-      "selector": "0x01B",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TCVT",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TQUANT",
-      "family": "TEPL",
-      "selector": "0x06A",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TQUANT",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TDEQUANT",
-      "family": "TEPL",
-      "selector": "0x06B",
-      "closure_status": "closed",
-      "closure_basis": "explicit-layer-difference",
-      "public_symbol": "TDEQUANT",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The public typed API carries scale and offset tiles; the direct binary operation carries scalar scale and zero-point operands."
-    },
-    {
-      "name": "TEXTRACT",
-      "family": "TEPL",
-      "selector": "0x062",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TEXTRACT",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TINSERT",
-      "family": "TEPL",
-      "selector": "0x063",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TINSERT",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TGATHER",
-      "family": "TEPL",
-      "selector": "0x06F",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TGATHER",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TSCATTER",
-      "family": "TEPL",
-      "selector": "0x070",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TSCATTER",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TCONCAT",
-      "family": "TEPL",
-      "selector": "0x060",
-      "closure_status": "closed",
-      "closure_basis": "explicit-layer-difference",
-      "public_symbol": "TCONCAT",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The public typed API derives layout and offers index-tile overloads; the direct binary operation carries an explicit axis operand."
-    },
-    {
-      "name": "TTRANS",
-      "family": "TEPL",
-      "selector": "0x06E",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TTRANS",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TIMG2COL",
-      "family": "TEPL",
-      "selector": "0x064",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TIMG2COL",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TMOV",
-      "family": "TMA",
-      "selector": null,
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TMOV",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TGATHERB",
-      "family": "TEPL",
-      "selector": "0x061",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TGATHERB",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+      "name": "TAXPY",
+      "public_symbol": "TAXPY",
+      "disposition": "source-api-only-not-a-direct-operation",
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.0 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TDEINTERLEAVE",
-      "family": "TEPL",
-      "selector": "0x078",
-      "closure_status": "closed",
-      "closure_basis": "public-api-aligned",
       "public_symbol": "TDEINTERLEAVE",
-      "public_symbol_relation": "exact-name",
-      "resolution": "A public intrinsic overload exposes two destinations and one source, matching the direct operation's core roles."
-    },
-    {
-      "name": "TINTERLEAVE",
-      "family": "TEPL",
-      "selector": "0x079",
-      "closure_status": "closed",
-      "closure_basis": "explicit-layer-difference",
-      "public_symbol": "TINTERLEAVE",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The public typed API exposes two destination tiles; the direct binary operation has one architectural destination and two sources."
-    },
-    {
-      "name": "TRESHAPE",
-      "family": "TEPL",
-      "selector": "0x077",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TRESHAPE",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TSORT",
-      "family": "TEPL",
-      "selector": "0x06C",
-      "closure_status": "closed",
-      "closure_basis": "explicit-layer-difference",
-      "public_symbol": "TSORT32",
-      "public_symbol_relation": "documented-spelling-mapping",
-      "resolution": "The public source spelling is TSORT32 and carries index or temporary tiles; the direct binary operation is TSORT with an explicit descending flag."
-    },
-    {
-      "name": "TMRGSORT",
-      "family": "TEPL",
-      "selector": "0x06D",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TMRGSORT",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "THISTOGRAM",
-      "family": "TEPL",
-      "selector": "0x068",
-      "closure_status": "closed",
-      "closure_basis": "public-api-aligned",
-      "public_symbol": "THISTOGRAM",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The public intrinsic exposes destination, source, index, and selected-byte roles corresponding to the direct operation."
-    },
-    {
-      "name": "TPUSH",
-      "family": "TEPL",
-      "selector": "0x07A",
-      "closure_status": "closed",
-      "closure_basis": "explicit-layer-difference",
-      "public_symbol": "TPUSH",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The typed source helper is a producer-side API; the direct architecture operation publishes a defined source into an explicit free TileInfo slot, preserves the producer, and has no hidden pipe state."
-    },
-    {
-      "name": "TPOP",
-      "family": "TEPL",
-      "selector": "0x07B",
-      "closure_status": "closed",
-      "closure_basis": "explicit-layer-difference",
-      "public_symbol": "TPOP",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The typed source helper is a consumer-side API; the direct architecture operation copies an explicit source slot into a matching configured consumer and then releases that source slot, with no hidden pipe state."
-    },
-    {
-      "name": "TALLOC",
-      "family": "TEPL",
-      "selector": "0x07C",
-      "closure_status": "closed",
-      "closure_basis": "explicit-layer-difference",
-      "public_symbol": "TALLOC",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The typed source helper requests storage; the direct architecture operation allocates TileInfo capacity bounded by TILE_CAPACITY and makes contents undefined."
+      "disposition": "source-api-only-not-a-direct-operation",
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.0 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TFREE",
-      "family": "TEPL",
-      "selector": "0x07D",
-      "closure_status": "closed",
-      "closure_basis": "explicit-layer-difference",
       "public_symbol": "TFREE",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The typed source helper releases storage; the direct architecture operation clears the corresponding TileInfo allocation state."
+      "disposition": "source-api-only-not-a-direct-operation",
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.0 does not accept it as a direct DavinciOO Tile operation."
     },
     {
-      "name": "TPARTADD",
-      "family": "TEPL",
-      "selector": "0x071",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TPARTADD",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+      "name": "TGATHERB",
+      "public_symbol": "TGATHERB",
+      "disposition": "source-api-only-not-a-direct-operation",
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.0 does not accept it as a direct DavinciOO Tile operation."
     },
     {
-      "name": "TPARTMUL",
-      "family": "TEPL",
-      "selector": "0x072",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TPARTMUL",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+      "name": "THISTOGRAM",
+      "public_symbol": "THISTOGRAM",
+      "disposition": "source-api-only-not-a-direct-operation",
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.0 does not accept it as a direct DavinciOO Tile operation."
     },
     {
-      "name": "TPARTMAX",
-      "family": "TEPL",
-      "selector": "0x073",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TPARTMAX",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TPARTMIN",
-      "family": "TEPL",
-      "selector": "0x074",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TPARTMIN",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
+      "name": "TINTERLEAVE",
+      "public_symbol": "TINTERLEAVE",
+      "disposition": "source-api-only-not-a-direct-operation",
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.0 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TPARTARGMAX",
-      "family": "TEPL",
-      "selector": "0x075",
-      "closure_status": "closed",
-      "closure_basis": "public-api-aligned",
       "public_symbol": "TPARTARGMAX",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The public intrinsic exposes value and index destinations plus left and right value/index sources."
+      "disposition": "source-api-only-not-a-direct-operation",
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.0 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TPARTARGMIN",
-      "family": "TEPL",
-      "selector": "0x076",
-      "closure_status": "closed",
-      "closure_basis": "public-api-aligned",
       "public_symbol": "TPARTARGMIN",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The public intrinsic exposes value and index destinations plus left and right value/index sources."
+      "disposition": "source-api-only-not-a-direct-operation",
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.0 does not accept it as a direct DavinciOO Tile operation."
+    },
+    {
+      "name": "TPOP",
+      "public_symbol": "TPOP",
+      "disposition": "source-api-only-not-a-direct-operation",
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.0 does not accept it as a direct DavinciOO Tile operation."
+    },
+    {
+      "name": "TPUSH",
+      "public_symbol": "TPUSH",
+      "disposition": "source-api-only-not-a-direct-operation",
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.0 does not accept it as a direct DavinciOO Tile operation."
+    },
+    {
+      "name": "TRESHAPE",
+      "public_symbol": "TRESHAPE",
+      "disposition": "source-api-only-not-a-direct-operation",
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.0 does not accept it as a direct DavinciOO Tile operation."
     }
-  ],
-  "excluded_public_tile_operations": []
+  ]
 }

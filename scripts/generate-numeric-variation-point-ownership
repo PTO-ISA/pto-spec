@@ -67,8 +67,6 @@ DIMENSION_IDS = {
     "saturation": "saturation",
     "divide-by-zero": "divide-by-zero",
     "multiply-add precision": "multiply-add-precision",
-    "comparison domain": "comparison-domain",
-    "multiply precision": "multiply-precision",
     "ordered and unordered comparison": "ordered-and-unordered-comparison",
     "NaN behavior": "nan-behavior",
     "result encoding": "result-encoding",
@@ -111,8 +109,6 @@ PRIMARY_DECISION_CANDIDATES = {
     "saturation": ("PD-07", "PD-11", "PD-12"),
     "divide-by-zero": ("PD-08", "PD-05", "PD-12"),
     "multiply-add precision": ("PD-12",),
-    "comparison domain": ("PD-09", "PD-12"),
-    "multiply precision": ("PD-12",),
     "ordered and unordered comparison": ("PD-09",),
     "NaN behavior": ("PD-05",),
     "result encoding": ("PD-02",),
@@ -217,12 +213,12 @@ def generate() -> dict[str, Any]:
     integer_conversion = load(INTEGER_CONVERSION_CONTRACT)
     applicability = load(APPLICABILITY_CONTRACT)
 
-    require(inventory["summary"]["numeric_hook_count"] == 30, "hook count drift")
-    require(inventory["summary"]["decoded_operation_count"] == 108, "operation count drift")
-    require(len(inventory["contract_domains"]) == 20, "domain count drift")
+    require(inventory["summary"]["numeric_hook_count"] == 28, "hook count drift")
+    require(inventory["summary"]["decoded_operation_count"] == 104, "operation count drift")
+    require(len(inventory["contract_domains"]) == 18, "domain count drift")
     require(identities["summary"]["accepted_identity_count"] == 4, "identity drift")
     require(
-        rounding["summary"]["accepted_domain_rounding_rule_count"] == 18
+        rounding["summary"]["accepted_domain_rounding_rule_count"] == 16
         and rounding["summary"]["pd03_complete"] is True,
         "accepted rounding result-rule set drift",
     )
@@ -418,17 +414,17 @@ def generate() -> dict[str, Any]:
             }
         )
 
-    require(len(variation_points) == 99, "variation-point count drift")
-    require(len({row["id"] for row in variation_points}) == 99, "duplicate variation point")
-    require(len(operation_rows) == 108, "operation ownership coverage drift")
-    require(len(hook_rows) == 30, "hook ownership coverage drift")
+    require(len(variation_points) == 89, "variation-point count drift")
+    require(len({row["id"] for row in variation_points}) == 89, "duplicate variation point")
+    require(len(operation_rows) == 104, "operation ownership coverage drift")
+    require(len(hook_rows) == 28, "hook ownership coverage drift")
     require(
         Counter(row["domain"] for row in operation_rows)
         == Counter(row["numeric_contract"] for row in operations.values()),
         "operation domain mapping drift",
     )
     require(
-        sum(len(row["primary_hooks"]) for row in operations.values()) == 134
+        sum(len(row["primary_hooks"]) for row in operations.values()) == 128
         and sum(len(row["reference_helpers"]) for row in operations.values()) == 8,
         "operation-to-hook edge count drift",
     )
@@ -436,7 +432,7 @@ def generate() -> dict[str, Any]:
         Counter(row["role"] for row in hook_rows)
         == Counter(
             {
-                "portable-profile-boundary": 23,
+                "portable-profile-boundary": 21,
                 "pto-v0-reference-helper": 5,
                 "numeric-library-helper-no-decoded-operation": 2,
             }
@@ -498,14 +494,14 @@ def generate() -> dict[str, Any]:
         ],
         "sources": [source(path) for path in SOURCE_PATHS],
         "summary": {
-            "variation_point_count": 99,
+            "variation_point_count": 89,
             "unique_dimension_count": len({row["dimension_id"] for row in variation_points}),
-            "domain_count": 20,
-            "operation_count": 108,
-            "hook_count": 30,
-            "primary_operation_hook_edge_count": 134,
+            "domain_count": 18,
+            "operation_count": 104,
+            "hook_count": 28,
+            "primary_operation_hook_edge_count": 128,
             "reference_helper_operation_edge_count": 8,
-            "portable_decision_owner_point_count": 99,
+            "portable_decision_owner_point_count": 89,
             "selected_route_count": sum(
                 row["selected_route"] is not None for row in variation_points
             ),

@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "83c4e7f127ce57882c32b22859a8a0605dd4ecafc431658353a4d8c51b33ccf6"
+      "sha256": "c34b0b673f68c6a6f39a29c45dee2063f3db678a1dba15a3017e6fe6227a2f37"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -19,11 +19,11 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "e5a98441098fdd88c0f5837bb3e1367d7b272ebc2ba506275e9e2be1b4c1978a"
+      "sha256": "58cb445f7a4bc690859f017db4e9ec7b054ab1c10d50773eb2d6cf3a2a87d94a"
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "52c84c4b40b8c8f5fa52ba6a7cabc8ebb394b65907e34c0923f98a6885096550"
+      "sha256": "99f7b99a881c60ba0cbd92b4ad6f02d36bac3bd3b43b650585d04c7bedc4ad08"
     },
     {
       "path": "spec/catalog/system-registers.json",
@@ -39,47 +39,47 @@
     },
     {
       "path": "spec/profile-hooks.json",
-      "sha256": "83b7a88ca41647bc5189268d07285cf529deeae26cdb310123a386ec49954242"
+      "sha256": "663fc4d944a020f12f385555765ca6b23f2f26483b226f514d4d7fde8000a145"
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "b22863c494fb013f7027424c9b7799fff0e4c348a3c112759cdb6f1cfb480cbb"
+      "sha256": "6f8d5b0a7143a01f76c2b2ef0694caaa48a3277d2cd01b7e3f401e67b9283ecf"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "222d01a75aceac4680531dfe87032f0eb60a4a444931b77d7bcfa35aa18b0dc7"
+      "sha256": "aeb37690f0a65ff5df71fc8a3c5b0b420d532f5598cf87f291aec40c15e8463e"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "4bdddb35de0738fe55eb3266fa02fdc80ae829cb95ac9079fa3aaa60c66c4baf"
+      "sha256": "91b88692f7cabe60ca9e255db278a39ec2431a58d19b3b2be7941fc58abdec6e"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "1360be3eb821d421a1d73610b757ba09c30e7fea28db948dd013b5a760610468"
+      "sha256": "d3e1d07e4bd29adf4c582625507eac882ffae2eddb1930d628e27604bd9ebc10"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "c203e5364f7ed84c1a788bbeaf4cbf44af4844ad9db52336e290ca47ce880703"
+      "sha256": "fe36a3f4f2dc39d98f6ac60dbf25d2129dbd8724401fa170ffb9fc516cae89d8"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "6709b8b301742a985dc549b0518cb7aa3d53af4fe064cdb0aba5ed7e01152498"
+      "sha256": "8a32fe64469311963c7b64debbfb7620825ba65b05e56bc21bff7fc3358911f7"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "bad1906f7fa99c9716fc48f9de1861f6ed03f336874e6c60afdea7c787fb2bb1"
+      "sha256": "74484654028a35f7ab73c2d591d33edf6b649f1a79b1add2480959f061c0ee26"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "e277abc6832c38708f3ea0beed4554b4f1cf8cfb8d629e195478bc00e7786c2e"
+      "sha256": "a7f10d3fac177d3d9cc0531bd9f9749a2d1a1583b92567880790d37b3d154df1"
     },
     {
       "path": "spec/evidence/numeric-subnormal-contract.json",
-      "sha256": "d298d47fd06607053ce894dc8992adad6d3117475a4c76803cf1a6bdb475a94a"
+      "sha256": "251d075872fdeed7e83fb56975943dad89b0f78a007c50d69e72c817d902eeaf"
     },
     {
       "path": "spec/evidence/numeric-special-value-contract.json",
-      "sha256": "7f7c8dfc3ac83c8fbdd3ffd30714ba9381c4a2cccfba1915cab999c5dbf79931"
+      "sha256": "1e076ce3fc5aa5a652094ec1edb439cfa81d1e9c1e71011f9709d42248a1b8f2"
     },
     {
       "path": "spec/evidence/scalar-effect-closure.json",
@@ -87,39 +87,39 @@
     },
     {
       "path": "spec/evidence/system-register-witness-closure.json",
-      "sha256": "c5a167a0282d71e1c15a3d7c96a3318bfd4aaa3ad94c3e9c4a49c1043876864a"
+      "sha256": "b4f5285d1da95d72084034617d069f88a055d273cd3be76635e390be9ca52ba2"
     },
     {
       "path": "spec/evidence/bundle-command-totality.json",
-      "sha256": "d7fee94580f0d575028a8fb0c1aafae59d942da3ad8248109539e17452b54286"
+      "sha256": "6a4c35c7f7bf1c26ec6cedd36406cdb0e640b4d164e010f7f0ec9bca8c544a5b"
     },
     {
       "path": "spec/evidence/tepl-totality.json",
-      "sha256": "a8e956cc88f6f21a8cb02bb5ffd94b553929feec42fda1fea73380b65ae0de43"
+      "sha256": "43157b0af6b9d1aa59cf4040a8d275a804a994a10377dd8809d3891e9141ec08"
     },
     {
       "path": "spec/evidence/tma-totality.json",
-      "sha256": "4230bd9a729682cdcc725265a4362af857929802f33a0cfc1d2db1221d4b3f24"
+      "sha256": "0e09c514b38ba87120aa5d1cb1c07e5a4ddf38c6c4751b020821c0fbbaa95350"
     },
     {
       "path": "spec/evidence/cube-totality.json",
-      "sha256": "4f17f7da1225d2f2c2ad4eac3ff6eb05ee0b4a3529cf4f44389d96a8f1f37abc"
+      "sha256": "de4862fe26b3db0542b6e26c4c7a17e983bef3a237d4d3370cb170a9eaed1065"
     },
     {
       "path": "spec/evidence/noncomparable-oracle-coverage.json",
-      "sha256": "fdf86a759763ce6432e0f229352fdce27370fa64c003daeb330c661a0150a82c"
+      "sha256": "8848a378a19953fc5a897839355c5f3205a2e2bc4461b9162e12562c25fede5e"
     },
     {
       "path": "scripts/generate-asl-decoders",
-      "sha256": "842a224f61a149d775ad404b75abc4e09c026386558dab55fdd369d0be603975"
+      "sha256": "d297cbe0931dd4551abfc45c1271efb533840e7cf7af6fb573da0601f3097274"
     },
     {
       "path": "scripts/generate-system-register-witness-closure",
-      "sha256": "bb830bdfd8adbf474d2dd2809dbf53ff0600f22faafd1458951b14c340d3c808"
+      "sha256": "c747254ced71e155e2b0d6e32640cfc417edfb48094b98c7851985a74211ff90"
     },
     {
       "path": "tests/asl/main.asl",
-      "sha256": "9d0aa2fd7ab490fe8c786b5fd8820ff5fc4287b86ee333a659535ca830230582"
+      "sha256": "e704200ff0b42aa66f0118861418afe4f1c9f438aa0c776408d716940c289900"
     },
     {
       "path": "tests/asl/scalar-tests.asl",
@@ -127,35 +127,35 @@
     },
     {
       "path": "tests/asl/state-tests.asl",
-      "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+      "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
     },
     {
       "path": "tests/asl/tile-tests.asl",
-      "sha256": "35094e9633dfc75820ab026289a7ea360b5ce0da666daac3442ef23dd52743ff"
+      "sha256": "24f9c60f3cbddbc0c25aac104e7c5bf3cf275f3a9a079138552209ae5206192c"
     },
     {
       "path": "asl/types.asl",
-      "sha256": "fd3d680d8c456a6283a50c09d143b4d5e2229a1fa2ba7e4174433f98396614cf"
+      "sha256": "e23a59bfc8ae54b84b0ba06e5af4593b331fbf7f6ef45f901bcaa83f1d6e8f43"
     },
     {
       "path": "asl/state.asl",
-      "sha256": "9a49a4e8209607d8bc04dad49ed97725072f4d6595807bfae2a425a537ddae21"
+      "sha256": "089a8a05c5bfbb1681173459b3ec77a0c852d2073263624eaab52fd1c0c2e406"
     },
     {
       "path": "asl/bundle/state.asl",
-      "sha256": "2f8f8d3c26db75552056b104033991704ac5984e339ac7f7c731f1a3c5e17f0a"
+      "sha256": "a84d0145cd372c4ec640ebbe18afb1488098f88870b57a35341d7499b128f42f"
     },
     {
       "path": "asl/tile/state.asl",
-      "sha256": "8fe56df1f993a81c451d0420aec31e993b84ecb296e84b809eef2c794159f245"
+      "sha256": "1d8f6a0a65e50eb71cddc3d7f28cf44175e0287b6b055bc6d42866b6ddaf98af"
     },
     {
       "path": "asl/architecture.asl",
-      "sha256": "cf410a71d0357d90af4374427b72a3722da0aa056443adb7cd5f8069d635d895"
+      "sha256": "f65ba4a83c5a81e7ab4496c5bc1db5e506c768b842680a38c16a541275243c01"
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "fd3c014af09354d56835239a9063a7fef3d363f18e00efe4b6c3b87b1e3bb1d9"
+      "sha256": "6a3e8fe318bb85a632998caa14a3c158b727fa9bf059c56c7c4a50c4c8fe8f6e"
     },
     {
       "path": "asl/concurrency.asl",
@@ -167,11 +167,11 @@
     },
     {
       "path": "asl/numeric/formats.asl",
-      "sha256": "359470d81e446cabaefdb0ebc52529cf76809f6ce64806af596f39ac59e3339b"
+      "sha256": "d2f16eef9b310107df3090613e76d6f05693a0cc39a1c69c8c241f33cc5bb2f4"
     },
     {
       "path": "asl/profiles/pto-v0.asl",
-      "sha256": "09e174b0840b8c99a6fe41046d1ef29fc33fe13738d100964d1ad983ca4abf42"
+      "sha256": "769c434c5df39dd6de33b6edb24a45cdc81d1274693f74e595f55055b0b256c9"
     },
     {
       "path": "asl/scalar/addressing.asl",
@@ -191,7 +191,7 @@
     },
     {
       "path": "asl/scalar/floating.asl",
-      "sha256": "cc2b1fd8a53e840295363ae45335ca426385565d6f797b4829d760e3e65ba71f"
+      "sha256": "ef1eee6e90063dd0ea41c48bd1792f060a19467aa303112caea3877fb46d38ba"
     },
     {
       "path": "asl/scalar/integer.asl",
@@ -215,7 +215,7 @@
     },
     {
       "path": "asl/tile/complex.asl",
-      "sha256": "dcd81b56bae377cc418f6c5721abb1a20d56b28f80aa55fa9fc9245c6106b1fb"
+      "sha256": "d147dbd128db069ff6833c1974ca55cd7fe88fc7c992518eb2941e341cb4f1f1"
     },
     {
       "path": "asl/tile/conversion.asl",
@@ -223,11 +223,11 @@
     },
     {
       "path": "asl/tile/cube.asl",
-      "sha256": "47cc1428bbf5a7e5c7e8931d5413fffa6116e3debfd8b9c6174dee16d9dc8aef"
+      "sha256": "2eec5feb790b5f7eedd8c45cff5f5946275a4fd8357e18ce6573bccdedad3745"
     },
     {
       "path": "asl/tile/elementwise.asl",
-      "sha256": "0bee4334c9dfb58738f7c9bdb9ee78b86bfd6a77d22431e246ea1d2306f0ec9e"
+      "sha256": "f0ff9f357fdc2fc0108340bb14895eb1227b72bb050ff0a16f490ac6aff7365a"
     },
     {
       "path": "asl/tile/expansion.asl",
@@ -239,15 +239,15 @@
     },
     {
       "path": "asl/tile/legality.asl",
-      "sha256": "5887c911832f567b6b292bdedfd6d6134a332c052e9a608226d0b53aba1ca82f"
+      "sha256": "0bdf91a90b7dcdcadc9cc9eaf4382fd52a356a291aa4b9afd580f056f5ff7243"
     },
     {
       "path": "asl/tile/memory.asl",
-      "sha256": "04a523c7d759c55761ab4cb48767ea199c0e2f21fd8e69a5fc6b86fb5cc3c027"
+      "sha256": "ddf64264ba57cec0dd3772b815b3fd3d0ff3899e7c447a60f1737862b9d1bb22"
     },
     {
       "path": "asl/tile/rearrangement.asl",
-      "sha256": "9a3a14f65ca2135dec01975537161d195af745214b3cfe2d36c1b341cbcf1e5b"
+      "sha256": "a538dbd3b55a9cc2f49d3c5aef7e865e0a451d5d894ca2669afaebdd4e7d48b0"
     },
     {
       "path": "asl/tile/reduction.asl",
@@ -858,6 +858,35 @@
         "bounded_status": "closed"
       },
       {
+        "id": "PTO-REQ-SHARED-TILE-001",
+        "status": "implemented-pto-isa-0580-shared-model",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
+        "model": [
+          "asl/types.asl",
+          "asl/tile/state.asl",
+          "asl/tile/memory.asl",
+          "asl/tile/cube.asl",
+          "asl/tile/legality.asl",
+          "asl/bundle/state.asl",
+          "asl/bundle/dispatch.asl",
+          "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
+          "docs/davincioo-arch/programming-model.md",
+          "docs/davincioo-arch/state-and-data-types.md",
+          "docs/davincioo-arch/memory-ordering-and-exceptions.md",
+          "docs/instructions/bundle/operands/C.B.IOS.md",
+          "docs/instructions/tile/TLOAD.md",
+          "docs/instructions/tile/TSTORE.md",
+          "docs/instructions/tile/TMOV.md"
+        ],
+        "tests": [
+          "scripts/check-catalogs",
+          "tests/asl/bundle-tests.asl",
+          "tests/asl/state-tests.asl",
+          "tests/asl/main.asl"
+        ],
+        "bounded_status": "closed"
+      },
+      {
         "id": "PTO-REQ-TILE-DEFINEDNESS-001",
         "status": "implemented",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0014-element-level-tile-definedness.md",
@@ -1325,16 +1354,17 @@
       {
         "id": "PTO-REQ-RELEASE-ISA-001",
         "status": "accepted-implementation-in-progress",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
         "model": [
           "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+          "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
           "docs/architecture-decisions/0051-public-v06-predicate-mask-boundary.md",
           "specification.toml",
           "spec/release-manifest.json",
           "spec/catalog/command-forms.json",
           "spec/catalog/tile-operations.json",
-          "spec/evidence/pto-isa-0571-abi-vectors.json",
-          "spec/evidence/pto-isa-0571-encoding-totality.json",
+          "spec/evidence/pto-isa-0580-abi-vectors.json",
+          "spec/evidence/pto-isa-0580-encoding-totality.json",
           "asl/bundle/state.asl",
           "asl/bundle/dispatch.asl",
           "asl/tile/state.asl",
@@ -1359,7 +1389,7 @@
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/hardware-conformance-profile.json",
         "model": [
           "spec/hardware-conformance-profile.json",
-          "spec/evidence/pto-isa-0571-hardware-numeric-vectors.json",
+          "spec/evidence/pto-isa-0580-hardware-numeric-vectors.json",
           "asl/tile/cube.asl",
           "asl/tile/legality.asl",
           "asl/tile/state.asl",
@@ -13397,28 +13427,6 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "bstart_acccvt_32_56c3ce3838c5",
-        "mnemonic": "BSTART.ACCCVT",
-        "group": "Bundle Split",
-        "handler": "ExecuteBundleStart",
-        "requirements": [
-          "PTO-REQ-BUNDLE-STATE-001",
-          "PTO-REQ-BUNDLE-DISPATCH-001",
-          "PTO-REQ-BUNDLE-OPERATION-001"
-        ],
-        "model": [
-          "spec/catalog/command-forms.json",
-          "asl/bundle/dispatch.asl",
-          "asl/bundle/state.asl",
-          "spec/evidence/bundle-command-totality.json"
-        ],
-        "tests": [
-          "tests/asl/bundle-tests.asl",
-          "tests/asl/main.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
         "id": "bstart_fp_32_0c671a644214",
         "mnemonic": "BSTART.FP",
         "group": "Bundle Split",
@@ -13595,50 +13603,6 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "bstart_mgather_cas_32_fd8c8a3b720a",
-        "mnemonic": "BSTART.MGATHER.CAS",
-        "group": "Bundle Split",
-        "handler": "ExecuteBundleStart",
-        "requirements": [
-          "PTO-REQ-BUNDLE-STATE-001",
-          "PTO-REQ-BUNDLE-DISPATCH-001",
-          "PTO-REQ-BUNDLE-OPERATION-001"
-        ],
-        "model": [
-          "spec/catalog/command-forms.json",
-          "asl/bundle/dispatch.asl",
-          "asl/bundle/state.asl",
-          "spec/evidence/bundle-command-totality.json"
-        ],
-        "tests": [
-          "tests/asl/bundle-tests.asl",
-          "tests/asl/main.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "bstart_mgather_mask_32_5573241cd944",
-        "mnemonic": "BSTART.MGATHER.MASK",
-        "group": "Bundle Split",
-        "handler": "ExecuteBundleStart",
-        "requirements": [
-          "PTO-REQ-BUNDLE-STATE-001",
-          "PTO-REQ-BUNDLE-DISPATCH-001",
-          "PTO-REQ-BUNDLE-OPERATION-001"
-        ],
-        "model": [
-          "spec/catalog/command-forms.json",
-          "asl/bundle/dispatch.asl",
-          "asl/bundle/state.asl",
-          "spec/evidence/bundle-command-totality.json"
-        ],
-        "tests": [
-          "tests/asl/bundle-tests.asl",
-          "tests/asl/main.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
         "id": "bstart_mpar_32_2d163417c615",
         "mnemonic": "BSTART.MPAR",
         "group": "Bundle Split",
@@ -13663,28 +13627,6 @@
       {
         "id": "bstart_mscatter_32_0f0ba08bd798",
         "mnemonic": "BSTART.MSCATTER",
-        "group": "Bundle Split",
-        "handler": "ExecuteBundleStart",
-        "requirements": [
-          "PTO-REQ-BUNDLE-STATE-001",
-          "PTO-REQ-BUNDLE-DISPATCH-001",
-          "PTO-REQ-BUNDLE-OPERATION-001"
-        ],
-        "model": [
-          "spec/catalog/command-forms.json",
-          "asl/bundle/dispatch.asl",
-          "asl/bundle/state.asl",
-          "spec/evidence/bundle-command-totality.json"
-        ],
-        "tests": [
-          "tests/asl/bundle-tests.asl",
-          "tests/asl/main.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "bstart_mscatter_mask_32_2a33eed646f7",
-        "mnemonic": "BSTART.MSCATTER.MASK",
         "group": "Bundle Split",
         "handler": "ExecuteBundleStart",
         "requirements": [
@@ -14233,6 +14175,28 @@
         "bounded_status": "reference-totality-closed"
       },
       {
+        "id": "bstart_gmov_32_6c21e223eaa7",
+        "mnemonic": "BSTART.GMOV",
+        "group": "Bundle Split",
+        "handler": "ExecuteBundleStart",
+        "requirements": [
+          "PTO-REQ-BUNDLE-STATE-001",
+          "PTO-REQ-BUNDLE-DISPATCH-001",
+          "PTO-REQ-BUNDLE-OPERATION-001"
+        ],
+        "model": [
+          "spec/catalog/command-forms.json",
+          "asl/bundle/dispatch.asl",
+          "asl/bundle/state.asl",
+          "spec/evidence/bundle-command-totality.json"
+        ],
+        "tests": [
+          "tests/asl/bundle-tests.asl",
+          "tests/asl/main.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
         "id": "bstart_tprefetch_32_d5f83e5aadf6",
         "mnemonic": "BSTART.TPREFETCH",
         "group": "Bundle Split",
@@ -14299,10 +14263,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "c_b_dim_16_14f1b8fba5e6",
-        "mnemonic": "C.B.DIM",
-        "group": "Bundle Dimension",
-        "handler": "SetBundleDimension",
+        "id": "c_b_ios_16_14f1b8fba5e6",
+        "mnemonic": "C.B.IOS",
+        "group": "Bundle Shared Operand Binding",
+        "handler": "BindBundleSharedIO",
         "requirements": [
           "PTO-REQ-BUNDLE-STATE-001",
           "PTO-REQ-BUNDLE-DISPATCH-001",
@@ -14783,7 +14747,7 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "hl_bstart_std_48_9ba705710872",
+        "id": "hl_bstart_std_48_9ba705800872",
         "mnemonic": "HL.BSTART.STD",
         "group": "BSTART",
         "handler": "ExecuteBundleStart",
@@ -15272,10 +15236,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x00B:TMAX",
-        "name": "TMAX",
+        "id": "TEPL:0x003:TDIV",
+        "name": "TDIV",
         "family": "TEPL",
-        "selector_or_function": "0x00B",
+        "selector_or_function": "0x003",
         "handler": "ExecuteTileBinary",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15295,10 +15259,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x00C:TMIN",
-        "name": "TMIN",
+        "id": "TEPL:0x004:TREM",
+        "name": "TREM",
         "family": "TEPL",
-        "selector_or_function": "0x00C",
+        "selector_or_function": "0x004",
         "handler": "ExecuteTileBinary",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15433,11 +15397,11 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x00D:TCMP",
-        "name": "TCMP",
+        "id": "TEPL:0x00B:TMAX",
+        "name": "TMAX",
         "family": "TEPL",
-        "selector_or_function": "0x00D",
-        "handler": "ExecuteTileCompare",
+        "selector_or_function": "0x00B",
+        "handler": "ExecuteTileBinary",
         "requirements": [
           "PTO-REQ-TEPL-001",
           "PTO-REQ-TILE-DISPATCH-001",
@@ -15456,11 +15420,34 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x01A:TSEL",
-        "name": "TSEL",
+        "id": "TEPL:0x00C:TMIN",
+        "name": "TMIN",
         "family": "TEPL",
-        "selector_or_function": "0x01A",
-        "handler": "ExecuteTileSelect",
+        "selector_or_function": "0x00C",
+        "handler": "ExecuteTileBinary",
+        "requirements": [
+          "PTO-REQ-TEPL-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/elementwise.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x00D:TCMP",
+        "name": "TCMP",
+        "family": "TEPL",
+        "selector_or_function": "0x00D",
+        "handler": "ExecuteTileCompare",
         "requirements": [
           "PTO-REQ-TEPL-001",
           "PTO-REQ-TILE-DISPATCH-001",
@@ -15548,102 +15535,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x017:TRELU",
-        "name": "TRELU",
+        "id": "TEPL:0x012:TEXP",
+        "name": "TEXP",
         "family": "TEPL",
-        "selector_or_function": "0x017",
-        "handler": "ExecuteTileUnary",
-        "requirements": [
-          "PTO-REQ-TEPL-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/elementwise.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x00E:TPRELU",
-        "name": "TPRELU",
-        "family": "TEPL",
-        "selector_or_function": "0x00E",
-        "handler": "TPRELU",
-        "requirements": [
-          "PTO-REQ-TEPL-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/elementwise.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x003:TDIV",
-        "name": "TDIV",
-        "family": "TEPL",
-        "selector_or_function": "0x003",
-        "handler": "ExecuteTileBinary",
-        "requirements": [
-          "PTO-REQ-TEPL-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/elementwise.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x004:TREM",
-        "name": "TREM",
-        "family": "TEPL",
-        "selector_or_function": "0x004",
-        "handler": "ExecuteTileBinary",
-        "requirements": [
-          "PTO-REQ-TEPL-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/elementwise.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x015:TSQRT",
-        "name": "TSQRT",
-        "family": "TEPL",
-        "selector_or_function": "0x015",
+        "selector_or_function": "0x012",
         "handler": "ExecuteTileUnary",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15709,10 +15604,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x012:TEXP",
-        "name": "TEXP",
+        "id": "TEPL:0x015:TSQRT",
+        "name": "TSQRT",
         "family": "TEPL",
-        "selector_or_function": "0x012",
+        "selector_or_function": "0x015",
         "handler": "ExecuteTileUnary",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -15755,11 +15650,11 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x020:TADDS",
-        "name": "TADDS",
+        "id": "TEPL:0x017:TRELU",
+        "name": "TRELU",
         "family": "TEPL",
-        "selector_or_function": "0x020",
-        "handler": "ExecuteTileScalar",
+        "selector_or_function": "0x017",
+        "handler": "ExecuteTileUnary",
         "requirements": [
           "PTO-REQ-TEPL-001",
           "PTO-REQ-TILE-DISPATCH-001",
@@ -15778,11 +15673,81 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x02F:TAXPY",
-        "name": "TAXPY",
+        "id": "TEPL:0x01A:TSEL",
+        "name": "TSEL",
         "family": "TEPL",
-        "selector_or_function": "0x02F",
-        "handler": "ExecuteTileAxpy",
+        "selector_or_function": "0x01A",
+        "handler": "ExecuteTileSelect",
+        "requirements": [
+          "PTO-REQ-TEPL-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/elementwise.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x01B:TCVT",
+        "name": "TCVT",
+        "family": "TEPL",
+        "selector_or_function": "0x01B",
+        "handler": "TCVT",
+        "requirements": [
+          "PTO-REQ-TEPL-CONVERT-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/conversion.asl",
+          "spec/evidence/public-integer-conversion-contract.json"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x01C:TFMA",
+        "name": "TFMA",
+        "family": "TEPL",
+        "selector_or_function": "0x01C",
+        "handler": "TFMA",
+        "requirements": [
+          "PTO-REQ-TEPL-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/elementwise.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x020:TADDS",
+        "name": "TADDS",
+        "family": "TEPL",
+        "selector_or_function": "0x020",
+        "handler": "ExecuteTileScalar",
         "requirements": [
           "PTO-REQ-TEPL-001",
           "PTO-REQ-TILE-DISPATCH-001",
@@ -15851,52 +15816,6 @@
         "name": "TDIVS",
         "family": "TEPL",
         "selector_or_function": "0x023",
-        "handler": "ExecuteTileScalar",
-        "requirements": [
-          "PTO-REQ-TEPL-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/elementwise.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x02C:TMINS",
-        "name": "TMINS",
-        "family": "TEPL",
-        "selector_or_function": "0x02C",
-        "handler": "ExecuteTileScalar",
-        "requirements": [
-          "PTO-REQ-TEPL-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/elementwise.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x02B:TMAXS",
-        "name": "TMAXS",
-        "family": "TEPL",
-        "selector_or_function": "0x02B",
         "handler": "ExecuteTileScalar",
         "requirements": [
           "PTO-REQ-TEPL-001",
@@ -16008,52 +15927,6 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x02D:TCMPS",
-        "name": "TCMPS",
-        "family": "TEPL",
-        "selector_or_function": "0x02D",
-        "handler": "ExecuteTileCompareScalar",
-        "requirements": [
-          "PTO-REQ-TEPL-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/elementwise.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x03A:TSELS",
-        "name": "TSELS",
-        "family": "TEPL",
-        "selector_or_function": "0x03A",
-        "handler": "ExecuteTileSelectScalar",
-        "requirements": [
-          "PTO-REQ-TEPL-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/elementwise.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
         "id": "TEPL:0x029:TSHLS",
         "name": "TSHLS",
         "family": "TEPL",
@@ -16100,13 +15973,13 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x040:TROWSUM",
-        "name": "TROWSUM",
+        "id": "TEPL:0x02B:TMAXS",
+        "name": "TMAXS",
         "family": "TEPL",
-        "selector_or_function": "0x040",
-        "handler": "ExecuteTileReduction",
+        "selector_or_function": "0x02B",
+        "handler": "ExecuteTileScalar",
         "requirements": [
-          "PTO-REQ-TEPL-REDUCE-001",
+          "PTO-REQ-TEPL-001",
           "PTO-REQ-TILE-DISPATCH-001",
           "PTO-REQ-TILE-LEGALITY-001"
         ],
@@ -16114,7 +15987,7 @@
           "spec/catalog/tile-operations.json",
           "asl/tile/legality.asl",
           "spec/evidence/tepl-totality.json",
-          "asl/tile/reduction.asl"
+          "asl/tile/elementwise.asl"
         ],
         "tests": [
           "tests/asl/tepl-totality-tests.asl",
@@ -16123,10 +15996,102 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x043:TROWPROD",
-        "name": "TROWPROD",
+        "id": "TEPL:0x02C:TMINS",
+        "name": "TMINS",
         "family": "TEPL",
-        "selector_or_function": "0x043",
+        "selector_or_function": "0x02C",
+        "handler": "ExecuteTileScalar",
+        "requirements": [
+          "PTO-REQ-TEPL-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/elementwise.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x02D:TCMPS",
+        "name": "TCMPS",
+        "family": "TEPL",
+        "selector_or_function": "0x02D",
+        "handler": "ExecuteTileCompareScalar",
+        "requirements": [
+          "PTO-REQ-TEPL-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/elementwise.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x03A:TSELS",
+        "name": "TSELS",
+        "family": "TEPL",
+        "selector_or_function": "0x03A",
+        "handler": "ExecuteTileSelectScalar",
+        "requirements": [
+          "PTO-REQ-TEPL-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/elementwise.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x03B:TEXPANDS",
+        "name": "TEXPANDS",
+        "family": "TEPL",
+        "selector_or_function": "0x03B",
+        "handler": "ExecuteTileFillScalar",
+        "requirements": [
+          "PTO-REQ-TEPL-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/elementwise.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x040:TROWSUM",
+        "name": "TROWSUM",
+        "family": "TEPL",
+        "selector_or_function": "0x040",
         "handler": "ExecuteTileReduction",
         "requirements": [
           "PTO-REQ-TEPL-REDUCE-001",
@@ -16192,171 +16157,10 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x04C:TROWARGMAX",
-        "name": "TROWARGMAX",
+        "id": "TEPL:0x043:TROWPROD",
+        "name": "TROWPROD",
         "family": "TEPL",
-        "selector_or_function": "0x04C",
-        "handler": "ExecuteTileReduction",
-        "requirements": [
-          "PTO-REQ-TEPL-REDUCE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/reduction.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x04D:TROWARGMIN",
-        "name": "TROWARGMIN",
-        "family": "TEPL",
-        "selector_or_function": "0x04D",
-        "handler": "ExecuteTileReduction",
-        "requirements": [
-          "PTO-REQ-TEPL-REDUCE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/reduction.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x050:TCOLSUM",
-        "name": "TCOLSUM",
-        "family": "TEPL",
-        "selector_or_function": "0x050",
-        "handler": "ExecuteTileReduction",
-        "requirements": [
-          "PTO-REQ-TEPL-REDUCE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/reduction.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x053:TCOLPROD",
-        "name": "TCOLPROD",
-        "family": "TEPL",
-        "selector_or_function": "0x053",
-        "handler": "ExecuteTileReduction",
-        "requirements": [
-          "PTO-REQ-TEPL-REDUCE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/reduction.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x051:TCOLMAX",
-        "name": "TCOLMAX",
-        "family": "TEPL",
-        "selector_or_function": "0x051",
-        "handler": "ExecuteTileReduction",
-        "requirements": [
-          "PTO-REQ-TEPL-REDUCE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/reduction.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x052:TCOLMIN",
-        "name": "TCOLMIN",
-        "family": "TEPL",
-        "selector_or_function": "0x052",
-        "handler": "ExecuteTileReduction",
-        "requirements": [
-          "PTO-REQ-TEPL-REDUCE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/reduction.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x05C:TCOLARGMAX",
-        "name": "TCOLARGMAX",
-        "family": "TEPL",
-        "selector_or_function": "0x05C",
-        "handler": "ExecuteTileReduction",
-        "requirements": [
-          "PTO-REQ-TEPL-REDUCE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/reduction.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x05D:TCOLARGMIN",
-        "name": "TCOLARGMIN",
-        "family": "TEPL",
-        "selector_or_function": "0x05D",
+        "selector_or_function": "0x043",
         "handler": "ExecuteTileReduction",
         "requirements": [
           "PTO-REQ-TEPL-REDUCE-001",
@@ -16560,6 +16364,144 @@
         "bounded_status": "reference-totality-closed"
       },
       {
+        "id": "TEPL:0x04C:TROWARGMAX",
+        "name": "TROWARGMAX",
+        "family": "TEPL",
+        "selector_or_function": "0x04C",
+        "handler": "ExecuteTileReduction",
+        "requirements": [
+          "PTO-REQ-TEPL-REDUCE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/reduction.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x04D:TROWARGMIN",
+        "name": "TROWARGMIN",
+        "family": "TEPL",
+        "selector_or_function": "0x04D",
+        "handler": "ExecuteTileReduction",
+        "requirements": [
+          "PTO-REQ-TEPL-REDUCE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/reduction.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x050:TCOLSUM",
+        "name": "TCOLSUM",
+        "family": "TEPL",
+        "selector_or_function": "0x050",
+        "handler": "ExecuteTileReduction",
+        "requirements": [
+          "PTO-REQ-TEPL-REDUCE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/reduction.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x051:TCOLMAX",
+        "name": "TCOLMAX",
+        "family": "TEPL",
+        "selector_or_function": "0x051",
+        "handler": "ExecuteTileReduction",
+        "requirements": [
+          "PTO-REQ-TEPL-REDUCE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/reduction.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x052:TCOLMIN",
+        "name": "TCOLMIN",
+        "family": "TEPL",
+        "selector_or_function": "0x052",
+        "handler": "ExecuteTileReduction",
+        "requirements": [
+          "PTO-REQ-TEPL-REDUCE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/reduction.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x053:TCOLPROD",
+        "name": "TCOLPROD",
+        "family": "TEPL",
+        "selector_or_function": "0x053",
+        "handler": "ExecuteTileReduction",
+        "requirements": [
+          "PTO-REQ-TEPL-REDUCE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/reduction.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
         "id": "TEPL:0x054:TCOLEXPAND",
         "name": "TCOLEXPAND",
         "family": "TEPL",
@@ -16744,533 +16686,13 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "CUBE:0:TMATMUL",
-        "name": "TMATMUL",
-        "family": "CUBE",
-        "selector_or_function": 0,
-        "handler": "TMATMUL",
-        "requirements": [
-          "PTO-REQ-CUBE-001",
-          "PTO-REQ-PROFILE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/cube.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/cube-totality.json"
-        ],
-        "tests": [
-          "tests/asl/cube-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "CUBE:1:TMATMUL_BIAS",
-        "name": "TMATMUL_BIAS",
-        "family": "CUBE",
-        "selector_or_function": 1,
-        "handler": "TMATMUL_BIAS",
-        "requirements": [
-          "PTO-REQ-CUBE-001",
-          "PTO-REQ-PROFILE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/cube.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/cube-totality.json"
-        ],
-        "tests": [
-          "tests/asl/cube-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "CUBE:2:TMATMUL_ACC",
-        "name": "TMATMUL_ACC",
-        "family": "CUBE",
-        "selector_or_function": 2,
-        "handler": "TMATMUL_ACC",
-        "requirements": [
-          "PTO-REQ-CUBE-001",
-          "PTO-REQ-PROFILE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/cube.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/cube-totality.json"
-        ],
-        "tests": [
-          "tests/asl/cube-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "CUBE:4:TMATMUL_MX",
-        "name": "TMATMUL_MX",
-        "family": "CUBE",
-        "selector_or_function": 4,
-        "handler": "TMATMUL_MX",
-        "requirements": [
-          "PTO-REQ-CUBE-001",
-          "PTO-REQ-PROFILE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/cube.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/cube-totality.json"
-        ],
-        "tests": [
-          "tests/asl/cube-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "CUBE:5:TMATMUL_MX_BIAS",
-        "name": "TMATMUL_MX_BIAS",
-        "family": "CUBE",
-        "selector_or_function": 5,
-        "handler": "TMATMUL_MX_BIAS",
-        "requirements": [
-          "PTO-REQ-CUBE-001",
-          "PTO-REQ-PROFILE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/cube.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/cube-totality.json"
-        ],
-        "tests": [
-          "tests/asl/cube-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "CUBE:6:TMATMUL_MX_ACC",
-        "name": "TMATMUL_MX_ACC",
-        "family": "CUBE",
-        "selector_or_function": 6,
-        "handler": "TMATMUL_MX_ACC",
-        "requirements": [
-          "PTO-REQ-CUBE-001",
-          "PTO-REQ-PROFILE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/cube.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/cube-totality.json"
-        ],
-        "tests": [
-          "tests/asl/cube-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "CUBE:8:ACCCVT",
-        "name": "ACCCVT",
-        "family": "CUBE",
-        "selector_or_function": 8,
-        "handler": "ACCCVT",
-        "requirements": [
-          "PTO-REQ-CUBE-001",
-          "PTO-REQ-PROFILE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/cube.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/cube-totality.json"
-        ],
-        "tests": [
-          "tests/asl/cube-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "CUBE:16:TGEMV",
-        "name": "TGEMV",
-        "family": "CUBE",
-        "selector_or_function": 16,
-        "handler": "TGEMV",
-        "requirements": [
-          "PTO-REQ-CUBE-001",
-          "PTO-REQ-PROFILE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/cube.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/cube-totality.json"
-        ],
-        "tests": [
-          "tests/asl/cube-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "CUBE:17:TGEMV_BIAS",
-        "name": "TGEMV_BIAS",
-        "family": "CUBE",
-        "selector_or_function": 17,
-        "handler": "TGEMV_BIAS",
-        "requirements": [
-          "PTO-REQ-CUBE-001",
-          "PTO-REQ-PROFILE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/cube.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/cube-totality.json"
-        ],
-        "tests": [
-          "tests/asl/cube-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "CUBE:18:TGEMV_ACC",
-        "name": "TGEMV_ACC",
-        "family": "CUBE",
-        "selector_or_function": 18,
-        "handler": "TGEMV_ACC",
-        "requirements": [
-          "PTO-REQ-CUBE-001",
-          "PTO-REQ-PROFILE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/cube.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/cube-totality.json"
-        ],
-        "tests": [
-          "tests/asl/cube-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "CUBE:20:TGEMV_MX",
-        "name": "TGEMV_MX",
-        "family": "CUBE",
-        "selector_or_function": 20,
-        "handler": "TGEMV_MX",
-        "requirements": [
-          "PTO-REQ-CUBE-001",
-          "PTO-REQ-PROFILE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/cube.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/cube-totality.json"
-        ],
-        "tests": [
-          "tests/asl/cube-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "CUBE:21:TGEMV_MX_BIAS",
-        "name": "TGEMV_MX_BIAS",
-        "family": "CUBE",
-        "selector_or_function": 21,
-        "handler": "TGEMV_MX_BIAS",
-        "requirements": [
-          "PTO-REQ-CUBE-001",
-          "PTO-REQ-PROFILE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/cube.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/cube-totality.json"
-        ],
-        "tests": [
-          "tests/asl/cube-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "CUBE:22:TGEMV_MX_ACC",
-        "name": "TGEMV_MX_ACC",
-        "family": "CUBE",
-        "selector_or_function": 22,
-        "handler": "TGEMV_MX_ACC",
-        "requirements": [
-          "PTO-REQ-CUBE-001",
-          "PTO-REQ-PROFILE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/cube.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/cube-totality.json"
-        ],
-        "tests": [
-          "tests/asl/cube-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TMA:0:TLOAD",
-        "name": "TLOAD",
-        "family": "TMA",
-        "selector_or_function": 0,
-        "handler": "TLOAD",
-        "requirements": [
-          "PTO-REQ-MEMORY-001",
-          "PTO-REQ-MEMORY-COMPLETION-001",
-          "PTO-REQ-MEMORY-TSO-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TMA-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/memory.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/tma-totality.json"
-        ],
-        "tests": [
-          "tests/asl/tma-totality-tests.asl",
-          "tests/asl/tile-tests.asl",
-          "tests/asl/concurrency-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TMA:1:TSTORE",
-        "name": "TSTORE",
-        "family": "TMA",
-        "selector_or_function": 1,
-        "handler": "TSTORE",
-        "requirements": [
-          "PTO-REQ-MEMORY-001",
-          "PTO-REQ-MEMORY-COMPLETION-001",
-          "PTO-REQ-MEMORY-TSO-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TMA-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/memory.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/tma-totality.json"
-        ],
-        "tests": [
-          "tests/asl/tma-totality-tests.asl",
-          "tests/asl/tile-tests.asl",
-          "tests/asl/concurrency-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TMA:3:TPREFETCH",
-        "name": "TPREFETCH",
-        "family": "TMA",
-        "selector_or_function": 3,
-        "handler": "TPREFETCH",
-        "requirements": [
-          "PTO-REQ-MEMORY-001",
-          "PTO-REQ-MEMORY-COMPLETION-001",
-          "PTO-REQ-MEMORY-TSO-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TMA-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/memory.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/tma-totality.json"
-        ],
-        "tests": [
-          "tests/asl/tma-totality-tests.asl",
-          "tests/asl/tile-tests.asl",
-          "tests/asl/concurrency-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TMA:4:MGATHER",
-        "name": "MGATHER",
-        "family": "TMA",
-        "selector_or_function": 4,
-        "handler": "MGATHER",
-        "requirements": [
-          "PTO-REQ-MEMORY-001",
-          "PTO-REQ-MEMORY-COMPLETION-001",
-          "PTO-REQ-MEMORY-TSO-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TMA-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/memory.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/tma-totality.json"
-        ],
-        "tests": [
-          "tests/asl/tma-totality-tests.asl",
-          "tests/asl/tile-tests.asl",
-          "tests/asl/concurrency-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TMA:5:MSCATTER",
-        "name": "MSCATTER",
-        "family": "TMA",
-        "selector_or_function": 5,
-        "handler": "MSCATTER",
-        "requirements": [
-          "PTO-REQ-MEMORY-001",
-          "PTO-REQ-MEMORY-COMPLETION-001",
-          "PTO-REQ-MEMORY-TSO-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TMA-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/memory.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/tma-totality.json"
-        ],
-        "tests": [
-          "tests/asl/tma-totality-tests.asl",
-          "tests/asl/tile-tests.asl",
-          "tests/asl/concurrency-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TMA:6:MGATHER_MASK",
-        "name": "MGATHER_MASK",
-        "family": "TMA",
-        "selector_or_function": 6,
-        "handler": "MGATHER_MASK",
-        "requirements": [
-          "PTO-REQ-MEMORY-001",
-          "PTO-REQ-MEMORY-COMPLETION-001",
-          "PTO-REQ-MEMORY-TSO-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TMA-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/memory.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/tma-totality.json"
-        ],
-        "tests": [
-          "tests/asl/tma-totality-tests.asl",
-          "tests/asl/tile-tests.asl",
-          "tests/asl/concurrency-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TMA:7:MSCATTER_MASK",
-        "name": "MSCATTER_MASK",
-        "family": "TMA",
-        "selector_or_function": 7,
-        "handler": "MSCATTER_MASK",
-        "requirements": [
-          "PTO-REQ-MEMORY-001",
-          "PTO-REQ-MEMORY-COMPLETION-001",
-          "PTO-REQ-MEMORY-TSO-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TMA-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/memory.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/tma-totality.json"
-        ],
-        "tests": [
-          "tests/asl/tma-totality-tests.asl",
-          "tests/asl/tile-tests.asl",
-          "tests/asl/concurrency-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TMA:8:MGATHER_CAS",
-        "name": "MGATHER_CAS",
-        "family": "TMA",
-        "selector_or_function": 8,
-        "handler": "MGATHER_CAS",
-        "requirements": [
-          "PTO-REQ-MEMORY-001",
-          "PTO-REQ-MEMORY-COMPLETION-001",
-          "PTO-REQ-MEMORY-TSO-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TMA-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/memory.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/tma-totality.json"
-        ],
-        "tests": [
-          "tests/asl/tma-totality-tests.asl",
-          "tests/asl/tile-tests.asl",
-          "tests/asl/concurrency-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x03B:TEXPANDS",
-        "name": "TEXPANDS",
+        "id": "TEPL:0x05C:TCOLARGMAX",
+        "name": "TCOLARGMAX",
         "family": "TEPL",
-        "selector_or_function": "0x03B",
-        "handler": "ExecuteTileFillScalar",
+        "selector_or_function": "0x05C",
+        "handler": "ExecuteTileReduction",
         "requirements": [
-          "PTO-REQ-TEPL-001",
+          "PTO-REQ-TEPL-REDUCE-001",
           "PTO-REQ-TILE-DISPATCH-001",
           "PTO-REQ-TILE-LEGALITY-001"
         ],
@@ -17278,7 +16700,145 @@
           "spec/catalog/tile-operations.json",
           "asl/tile/legality.asl",
           "spec/evidence/tepl-totality.json",
-          "asl/tile/elementwise.asl"
+          "asl/tile/reduction.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x05D:TCOLARGMIN",
+        "name": "TCOLARGMIN",
+        "family": "TEPL",
+        "selector_or_function": "0x05D",
+        "handler": "ExecuteTileReduction",
+        "requirements": [
+          "PTO-REQ-TEPL-REDUCE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/reduction.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x060:TCONCAT",
+        "name": "TCONCAT",
+        "family": "TEPL",
+        "selector_or_function": "0x060",
+        "handler": "TCONCAT",
+        "requirements": [
+          "PTO-REQ-TEPL-REARRANGE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/rearrangement.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x062:TEXTRACT",
+        "name": "TEXTRACT",
+        "family": "TEPL",
+        "selector_or_function": "0x062",
+        "handler": "TEXTRACT",
+        "requirements": [
+          "PTO-REQ-TEPL-REARRANGE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/rearrangement.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x063:TINSERT",
+        "name": "TINSERT",
+        "family": "TEPL",
+        "selector_or_function": "0x063",
+        "handler": "TINSERT",
+        "requirements": [
+          "PTO-REQ-TEPL-REARRANGE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/rearrangement.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x064:TIMG2COL",
+        "name": "TIMG2COL",
+        "family": "TEPL",
+        "selector_or_function": "0x064",
+        "handler": "TIMG2COL",
+        "requirements": [
+          "PTO-REQ-TEPL-REARRANGE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/rearrangement.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x065:TFILLPAD",
+        "name": "TFILLPAD",
+        "family": "TEPL",
+        "selector_or_function": "0x065",
+        "handler": "TFILLPAD",
+        "requirements": [
+          "PTO-REQ-TEPL-GENERATE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/generation.asl"
         ],
         "tests": [
           "tests/asl/tepl-totality-tests.asl",
@@ -17333,13 +16893,13 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x065:TFILLPAD",
-        "name": "TFILLPAD",
+        "id": "TEPL:0x069:TRANDOM",
+        "name": "TRANDOM",
         "family": "TEPL",
-        "selector_or_function": "0x065",
-        "handler": "TFILLPAD",
+        "selector_or_function": "0x069",
+        "handler": "TRANDOM",
         "requirements": [
-          "PTO-REQ-TEPL-GENERATE-001",
+          "PTO-REQ-TEPL-COMPLEX-001",
           "PTO-REQ-TILE-DISPATCH-001",
           "PTO-REQ-TILE-LEGALITY-001"
         ],
@@ -17347,31 +16907,7 @@
           "spec/catalog/tile-operations.json",
           "asl/tile/legality.asl",
           "spec/evidence/tepl-totality.json",
-          "asl/tile/generation.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x01B:TCVT",
-        "name": "TCVT",
-        "family": "TEPL",
-        "selector_or_function": "0x01B",
-        "handler": "TCVT",
-        "requirements": [
-          "PTO-REQ-TEPL-CONVERT-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/conversion.asl",
-          "spec/evidence/public-integer-conversion-contract.json"
+          "asl/tile/complex.asl"
         ],
         "tests": [
           "tests/asl/tepl-totality-tests.asl",
@@ -17426,13 +16962,13 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x062:TEXTRACT",
-        "name": "TEXTRACT",
+        "id": "TEPL:0x06C:TSORT32",
+        "name": "TSORT32",
         "family": "TEPL",
-        "selector_or_function": "0x062",
-        "handler": "TEXTRACT",
+        "selector_or_function": "0x06C",
+        "handler": "TSORT32",
         "requirements": [
-          "PTO-REQ-TEPL-REARRANGE-001",
+          "PTO-REQ-TEPL-COMPLEX-001",
           "PTO-REQ-TILE-DISPATCH-001",
           "PTO-REQ-TILE-LEGALITY-001"
         ],
@@ -17440,7 +16976,7 @@
           "spec/catalog/tile-operations.json",
           "asl/tile/legality.asl",
           "spec/evidence/tepl-totality.json",
-          "asl/tile/rearrangement.asl"
+          "asl/tile/complex.asl"
         ],
         "tests": [
           "tests/asl/tepl-totality-tests.asl",
@@ -17449,11 +16985,34 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x063:TINSERT",
-        "name": "TINSERT",
+        "id": "TEPL:0x06D:TMRGSORT",
+        "name": "TMRGSORT",
         "family": "TEPL",
-        "selector_or_function": "0x063",
-        "handler": "TINSERT",
+        "selector_or_function": "0x06D",
+        "handler": "TMRGSORT",
+        "requirements": [
+          "PTO-REQ-TEPL-COMPLEX-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/legality.asl",
+          "spec/evidence/tepl-totality.json",
+          "asl/tile/complex.asl"
+        ],
+        "tests": [
+          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TEPL:0x06E:TTRANS",
+        "name": "TTRANS",
+        "family": "TEPL",
+        "selector_or_function": "0x06E",
+        "handler": "TTRANS",
         "requirements": [
           "PTO-REQ-TEPL-REARRANGE-001",
           "PTO-REQ-TILE-DISPATCH-001",
@@ -17510,359 +17069,6 @@
           "asl/tile/legality.asl",
           "spec/evidence/tepl-totality.json",
           "asl/tile/rearrangement.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x060:TCONCAT",
-        "name": "TCONCAT",
-        "family": "TEPL",
-        "selector_or_function": "0x060",
-        "handler": "TCONCAT",
-        "requirements": [
-          "PTO-REQ-TEPL-REARRANGE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/rearrangement.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x06E:TTRANS",
-        "name": "TTRANS",
-        "family": "TEPL",
-        "selector_or_function": "0x06E",
-        "handler": "TTRANS",
-        "requirements": [
-          "PTO-REQ-TEPL-REARRANGE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/rearrangement.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x064:TIMG2COL",
-        "name": "TIMG2COL",
-        "family": "TEPL",
-        "selector_or_function": "0x064",
-        "handler": "TIMG2COL",
-        "requirements": [
-          "PTO-REQ-TEPL-REARRANGE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/rearrangement.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TMA:2:TMOV",
-        "name": "TMOV",
-        "family": "TMA",
-        "selector_or_function": 2,
-        "handler": "TMOV",
-        "requirements": [
-          "PTO-REQ-MEMORY-001",
-          "PTO-REQ-MEMORY-COMPLETION-001",
-          "PTO-REQ-MEMORY-TSO-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TMA-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/memory.asl",
-          "asl/tile/legality.asl",
-          "spec/evidence/tma-totality.json"
-        ],
-        "tests": [
-          "tests/asl/tma-totality-tests.asl",
-          "tests/asl/tile-tests.asl",
-          "tests/asl/concurrency-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x061:TGATHERB",
-        "name": "TGATHERB",
-        "family": "TEPL",
-        "selector_or_function": "0x061",
-        "handler": "TGATHERB",
-        "requirements": [
-          "PTO-REQ-TEPL-REARRANGE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/rearrangement.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x078:TDEINTERLEAVE",
-        "name": "TDEINTERLEAVE",
-        "family": "TEPL",
-        "selector_or_function": "0x078",
-        "handler": "TDEINTERLEAVE",
-        "requirements": [
-          "PTO-REQ-TEPL-REARRANGE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/rearrangement.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x079:TINTERLEAVE",
-        "name": "TINTERLEAVE",
-        "family": "TEPL",
-        "selector_or_function": "0x079",
-        "handler": "TINTERLEAVE",
-        "requirements": [
-          "PTO-REQ-TEPL-REARRANGE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/rearrangement.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x077:TRESHAPE",
-        "name": "TRESHAPE",
-        "family": "TEPL",
-        "selector_or_function": "0x077",
-        "handler": "TRESHAPE",
-        "requirements": [
-          "PTO-REQ-TEPL-REARRANGE-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/rearrangement.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x06C:TSORT",
-        "name": "TSORT",
-        "family": "TEPL",
-        "selector_or_function": "0x06C",
-        "handler": "TSORT",
-        "requirements": [
-          "PTO-REQ-TEPL-COMPLEX-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/complex.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x06D:TMRGSORT",
-        "name": "TMRGSORT",
-        "family": "TEPL",
-        "selector_or_function": "0x06D",
-        "handler": "TMRGSORT",
-        "requirements": [
-          "PTO-REQ-TEPL-COMPLEX-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/complex.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x068:THISTOGRAM",
-        "name": "THISTOGRAM",
-        "family": "TEPL",
-        "selector_or_function": "0x068",
-        "handler": "THISTOGRAM",
-        "requirements": [
-          "PTO-REQ-TEPL-COMPLEX-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/complex.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x07A:TPUSH",
-        "name": "TPUSH",
-        "family": "TEPL",
-        "selector_or_function": "0x07A",
-        "handler": "TPUSH",
-        "requirements": [
-          "PTO-REQ-TILE-DEFINEDNESS-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001",
-          "PTO-REQ-TILE-MANAGEMENT-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/state.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x07B:TPOP",
-        "name": "TPOP",
-        "family": "TEPL",
-        "selector_or_function": "0x07B",
-        "handler": "TPOP",
-        "requirements": [
-          "PTO-REQ-TILE-DEFINEDNESS-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001",
-          "PTO-REQ-TILE-MANAGEMENT-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/state.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x07C:TALLOC",
-        "name": "TALLOC",
-        "family": "TEPL",
-        "selector_or_function": "0x07C",
-        "handler": "TALLOC",
-        "requirements": [
-          "PTO-REQ-TILE-CAPACITY-001",
-          "PTO-REQ-TILE-DEFINEDNESS-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001",
-          "PTO-REQ-TILE-MANAGEMENT-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/state.asl"
-        ],
-        "tests": [
-          "tests/asl/tepl-totality-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "bounded_status": "reference-totality-closed"
-      },
-      {
-        "id": "TEPL:0x07D:TFREE",
-        "name": "TFREE",
-        "family": "TEPL",
-        "selector_or_function": "0x07D",
-        "handler": "TFREE",
-        "requirements": [
-          "PTO-REQ-TILE-DEFINEDNESS-001",
-          "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TILE-LEGALITY-001",
-          "PTO-REQ-TILE-MANAGEMENT-001"
-        ],
-        "model": [
-          "spec/catalog/tile-operations.json",
-          "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/state.asl"
         ],
         "tests": [
           "tests/asl/tepl-totality-tests.asl",
@@ -17963,47 +17169,490 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x075:TPARTARGMAX",
-        "name": "TPARTARGMAX",
-        "family": "TEPL",
-        "selector_or_function": "0x075",
-        "handler": "ExecuteTilePartialArg",
+        "id": "TMA:0:TLOAD",
+        "name": "TLOAD",
+        "family": "TMA",
+        "selector_or_function": 0,
+        "handler": "TLOAD",
         "requirements": [
-          "PTO-REQ-TEPL-COMPLEX-001",
+          "PTO-REQ-MEMORY-001",
+          "PTO-REQ-MEMORY-COMPLETION-001",
+          "PTO-REQ-MEMORY-TSO-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TMA-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/memory.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/tma-totality.json"
+        ],
+        "tests": [
+          "tests/asl/tma-totality-tests.asl",
+          "tests/asl/tile-tests.asl",
+          "tests/asl/concurrency-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TMA:1:TSTORE",
+        "name": "TSTORE",
+        "family": "TMA",
+        "selector_or_function": 1,
+        "handler": "TSTORE",
+        "requirements": [
+          "PTO-REQ-MEMORY-001",
+          "PTO-REQ-MEMORY-COMPLETION-001",
+          "PTO-REQ-MEMORY-TSO-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TMA-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/memory.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/tma-totality.json"
+        ],
+        "tests": [
+          "tests/asl/tma-totality-tests.asl",
+          "tests/asl/tile-tests.asl",
+          "tests/asl/concurrency-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TMA:2:TMOV",
+        "name": "TMOV",
+        "family": "TMA",
+        "selector_or_function": 2,
+        "handler": "TMOV",
+        "requirements": [
+          "PTO-REQ-MEMORY-001",
+          "PTO-REQ-MEMORY-COMPLETION-001",
+          "PTO-REQ-MEMORY-TSO-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TMA-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/memory.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/tma-totality.json"
+        ],
+        "tests": [
+          "tests/asl/tma-totality-tests.asl",
+          "tests/asl/tile-tests.asl",
+          "tests/asl/concurrency-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TMA:3:TPREFETCH",
+        "name": "TPREFETCH",
+        "family": "TMA",
+        "selector_or_function": 3,
+        "handler": "TPREFETCH",
+        "requirements": [
+          "PTO-REQ-MEMORY-001",
+          "PTO-REQ-MEMORY-COMPLETION-001",
+          "PTO-REQ-MEMORY-TSO-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TMA-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/memory.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/tma-totality.json"
+        ],
+        "tests": [
+          "tests/asl/tma-totality-tests.asl",
+          "tests/asl/tile-tests.asl",
+          "tests/asl/concurrency-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TMA:4:MGATHER",
+        "name": "MGATHER",
+        "family": "TMA",
+        "selector_or_function": 4,
+        "handler": "MGATHER",
+        "requirements": [
+          "PTO-REQ-MEMORY-001",
+          "PTO-REQ-MEMORY-COMPLETION-001",
+          "PTO-REQ-MEMORY-TSO-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TMA-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/memory.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/tma-totality.json"
+        ],
+        "tests": [
+          "tests/asl/tma-totality-tests.asl",
+          "tests/asl/tile-tests.asl",
+          "tests/asl/concurrency-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TMA:5:MSCATTER",
+        "name": "MSCATTER",
+        "family": "TMA",
+        "selector_or_function": 5,
+        "handler": "MSCATTER",
+        "requirements": [
+          "PTO-REQ-MEMORY-001",
+          "PTO-REQ-MEMORY-COMPLETION-001",
+          "PTO-REQ-MEMORY-TSO-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TMA-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/memory.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/tma-totality.json"
+        ],
+        "tests": [
+          "tests/asl/tma-totality-tests.asl",
+          "tests/asl/tile-tests.asl",
+          "tests/asl/concurrency-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TMA:13:GMOV",
+        "name": "GMOV",
+        "family": "TMA",
+        "selector_or_function": 13,
+        "handler": "GMOV",
+        "requirements": [
+          "PTO-REQ-MEMORY-001",
+          "PTO-REQ-MEMORY-COMPLETION-001",
+          "PTO-REQ-MEMORY-TSO-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TMA-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/memory.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/tma-totality.json"
+        ],
+        "tests": [
+          "tests/asl/tma-totality-tests.asl",
+          "tests/asl/tile-tests.asl",
+          "tests/asl/concurrency-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "CUBE:0:TMATMUL",
+        "name": "TMATMUL",
+        "family": "CUBE",
+        "selector_or_function": 0,
+        "handler": "TMATMUL",
+        "requirements": [
+          "PTO-REQ-CUBE-001",
+          "PTO-REQ-PROFILE-001",
+          "PTO-REQ-SHARED-TILE-001",
           "PTO-REQ-TILE-DISPATCH-001",
           "PTO-REQ-TILE-LEGALITY-001"
         ],
         "model": [
           "spec/catalog/tile-operations.json",
+          "asl/tile/cube.asl",
           "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/complex.asl"
+          "spec/evidence/cube-totality.json"
         ],
         "tests": [
-          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/cube-totality-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x076:TPARTARGMIN",
-        "name": "TPARTARGMIN",
-        "family": "TEPL",
-        "selector_or_function": "0x076",
-        "handler": "ExecuteTilePartialArg",
+        "id": "CUBE:1:TMATMUL_BIAS",
+        "name": "TMATMUL_BIAS",
+        "family": "CUBE",
+        "selector_or_function": 1,
+        "handler": "TMATMUL_BIAS",
         "requirements": [
-          "PTO-REQ-TEPL-COMPLEX-001",
+          "PTO-REQ-CUBE-001",
+          "PTO-REQ-PROFILE-001",
+          "PTO-REQ-SHARED-TILE-001",
           "PTO-REQ-TILE-DISPATCH-001",
           "PTO-REQ-TILE-LEGALITY-001"
         ],
         "model": [
           "spec/catalog/tile-operations.json",
+          "asl/tile/cube.asl",
           "asl/tile/legality.asl",
-          "spec/evidence/tepl-totality.json",
-          "asl/tile/complex.asl"
+          "spec/evidence/cube-totality.json"
         ],
         "tests": [
-          "tests/asl/tepl-totality-tests.asl",
+          "tests/asl/cube-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "CUBE:2:TMATMUL_ACC",
+        "name": "TMATMUL_ACC",
+        "family": "CUBE",
+        "selector_or_function": 2,
+        "handler": "TMATMUL_ACC",
+        "requirements": [
+          "PTO-REQ-CUBE-001",
+          "PTO-REQ-PROFILE-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/cube.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/cube-totality.json"
+        ],
+        "tests": [
+          "tests/asl/cube-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "CUBE:4:TMATMUL_MX",
+        "name": "TMATMUL_MX",
+        "family": "CUBE",
+        "selector_or_function": 4,
+        "handler": "TMATMUL_MX",
+        "requirements": [
+          "PTO-REQ-CUBE-001",
+          "PTO-REQ-PROFILE-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/cube.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/cube-totality.json"
+        ],
+        "tests": [
+          "tests/asl/cube-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "CUBE:5:TMATMUL_MX_BIAS",
+        "name": "TMATMUL_MX_BIAS",
+        "family": "CUBE",
+        "selector_or_function": 5,
+        "handler": "TMATMUL_MX_BIAS",
+        "requirements": [
+          "PTO-REQ-CUBE-001",
+          "PTO-REQ-PROFILE-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/cube.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/cube-totality.json"
+        ],
+        "tests": [
+          "tests/asl/cube-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "CUBE:6:TMATMUL_MX_ACC",
+        "name": "TMATMUL_MX_ACC",
+        "family": "CUBE",
+        "selector_or_function": 6,
+        "handler": "TMATMUL_MX_ACC",
+        "requirements": [
+          "PTO-REQ-CUBE-001",
+          "PTO-REQ-PROFILE-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/cube.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/cube-totality.json"
+        ],
+        "tests": [
+          "tests/asl/cube-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "CUBE:16:TGEMV",
+        "name": "TGEMV",
+        "family": "CUBE",
+        "selector_or_function": 16,
+        "handler": "TGEMV",
+        "requirements": [
+          "PTO-REQ-CUBE-001",
+          "PTO-REQ-PROFILE-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/cube.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/cube-totality.json"
+        ],
+        "tests": [
+          "tests/asl/cube-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "CUBE:17:TGEMV_BIAS",
+        "name": "TGEMV_BIAS",
+        "family": "CUBE",
+        "selector_or_function": 17,
+        "handler": "TGEMV_BIAS",
+        "requirements": [
+          "PTO-REQ-CUBE-001",
+          "PTO-REQ-PROFILE-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/cube.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/cube-totality.json"
+        ],
+        "tests": [
+          "tests/asl/cube-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "CUBE:18:TGEMV_ACC",
+        "name": "TGEMV_ACC",
+        "family": "CUBE",
+        "selector_or_function": 18,
+        "handler": "TGEMV_ACC",
+        "requirements": [
+          "PTO-REQ-CUBE-001",
+          "PTO-REQ-PROFILE-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/cube.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/cube-totality.json"
+        ],
+        "tests": [
+          "tests/asl/cube-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "CUBE:20:TGEMV_MX",
+        "name": "TGEMV_MX",
+        "family": "CUBE",
+        "selector_or_function": 20,
+        "handler": "TGEMV_MX",
+        "requirements": [
+          "PTO-REQ-CUBE-001",
+          "PTO-REQ-PROFILE-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/cube.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/cube-totality.json"
+        ],
+        "tests": [
+          "tests/asl/cube-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "CUBE:21:TGEMV_MX_BIAS",
+        "name": "TGEMV_MX_BIAS",
+        "family": "CUBE",
+        "selector_or_function": 21,
+        "handler": "TGEMV_MX_BIAS",
+        "requirements": [
+          "PTO-REQ-CUBE-001",
+          "PTO-REQ-PROFILE-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/cube.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/cube-totality.json"
+        ],
+        "tests": [
+          "tests/asl/cube-totality-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "CUBE:22:TGEMV_MX_ACC",
+        "name": "TGEMV_MX_ACC",
+        "family": "CUBE",
+        "selector_or_function": 22,
+        "handler": "TGEMV_MX_ACC",
+        "requirements": [
+          "PTO-REQ-CUBE-001",
+          "PTO-REQ-PROFILE-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TILE-LEGALITY-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/cube.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/cube-totality.json"
+        ],
+        "tests": [
+          "tests/asl/cube-totality-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
         "bounded_status": "reference-totality-closed"
@@ -18034,14 +17683,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/base-pointer-storage/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18085,14 +17734,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/base-pointer-storage/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18139,7 +17788,7 @@
               "function": "TestInterruptRegisterState",
               "assertion_marker": "SYSREG-EFFECT-WITNESS architectural-time/advances-on-every-execution-attempt",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -18147,11 +17796,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18207,7 +17856,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/scalar-tests.asl",
@@ -18256,14 +17905,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18307,14 +17956,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18358,14 +18007,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/version-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18409,14 +18058,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18460,14 +18109,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/feature-enable-storage/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18511,14 +18160,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18565,7 +18214,7 @@
               "function": "TestTileCapacityLegality",
               "assertion_marker": "SYSREG-EFFECT-WITNESS tile-capacity-profile-limit/limits-per-tile-and-aggregate-allocation",
               "source": "tests/asl/tile-tests.asl",
-              "source_sha256": "35094e9633dfc75820ab026289a7ea360b5ce0da666daac3442ef23dd52743ff",
+              "source_sha256": "24f9c60f3cbddbc0c25aac104e7c5bf3cf275f3a9a079138552209ae5206192c",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -18573,11 +18222,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/tile-tests.asl",
-            "sha256": "35094e9633dfc75820ab026289a7ea360b5ce0da666daac3442ef23dd52743ff"
+            "sha256": "24f9c60f3cbddbc0c25aac104e7c5bf3cf275f3a9a079138552209ae5206192c"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18622,14 +18271,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18673,14 +18322,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18727,7 +18376,7 @@
               "function": "TestInterruptRegisterState",
               "assertion_marker": "SYSREG-EFFECT-WITNESS architectural-time/advances-on-every-execution-attempt",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -18735,11 +18384,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18787,7 +18436,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS execution-context-state/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -18795,11 +18444,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18855,7 +18504,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/scalar-tests.asl",
@@ -18907,7 +18556,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS trap-status/reads-and-writes-trap-bank-fields",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -18915,11 +18564,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18967,7 +18616,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS trap-argument/reads-and-writes-trap-bank-argument",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -18975,11 +18624,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -19024,14 +18673,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/exception-temporary-storage/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -19075,14 +18724,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/exception-temporary-storage/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -19129,7 +18778,7 @@
               "function": "TestInterruptRegisterState",
               "assertion_marker": "SYSREG-EFFECT-WITNESS interrupt-configuration/controls-external-and-timer-trap-entry",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -19137,11 +18786,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -19189,7 +18838,7 @@
               "function": "TestInterruptRegisterState",
               "assertion_marker": "SYSREG-EFFECT-WITNESS interrupt-pending/reflects-external-and-timer-pending-sources",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -19197,11 +18846,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -19249,7 +18898,7 @@
               "function": "TestInterruptRegisterState",
               "assertion_marker": "SYSREG-EFFECT-WITNESS top-pending-interrupt/priority-derived-from-pending-bitmap",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -19257,11 +18906,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -19311,7 +18960,7 @@
               "function": "TestInterruptRegisterState",
               "assertion_marker": "SYSREG-EFFECT-WITNESS end-of-interrupt/clears-selected-pending-id",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             },
             {
@@ -19319,7 +18968,7 @@
               "function": "TestInterruptRegisterState",
               "assertion_marker": "SYSREG-EFFECT-WITNESS end-of-interrupt/clears-asynchronous-trap-status",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -19327,11 +18976,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -19379,7 +19028,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19387,7 +19036,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19434,7 +19083,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19442,7 +19091,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19489,7 +19138,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19497,7 +19146,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19544,7 +19193,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19552,7 +19201,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19599,7 +19248,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19607,7 +19256,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19654,7 +19303,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19662,7 +19311,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19709,7 +19358,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19717,7 +19366,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19764,7 +19413,7 @@
               "function": "TestInterruptRegisterState",
               "assertion_marker": "SYSREG-EFFECT-WITNESS timer-time/aliases-architectural-time",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -19772,11 +19421,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -19824,7 +19473,7 @@
               "function": "TestInterruptRegisterState",
               "assertion_marker": "SYSREG-EFFECT-WITNESS timer-compare/refreshes-timer-pending-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -19832,11 +19481,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -19884,7 +19533,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/acr-parameter-storage/pto-v0-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19892,7 +19541,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19939,7 +19588,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/acr-parameter-storage/pto-v0-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19947,7 +19596,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19994,7 +19643,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20002,11 +19651,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20054,7 +19703,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20062,11 +19711,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20114,7 +19763,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20122,11 +19771,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20174,7 +19823,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20182,11 +19831,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20234,7 +19883,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20242,11 +19891,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20294,7 +19943,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20302,11 +19951,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20354,7 +20003,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20362,11 +20011,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20414,7 +20063,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20422,11 +20071,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20474,7 +20123,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20482,11 +20131,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20534,7 +20183,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20542,11 +20191,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20594,7 +20243,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20602,11 +20251,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20654,7 +20303,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20662,11 +20311,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20714,7 +20363,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20722,11 +20371,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20776,7 +20425,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-loop-context-storage/trap-save-clears-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             },
             {
@@ -20784,7 +20433,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-loop-context-storage/pto-v0-recovery-does-not-consume-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20792,11 +20441,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -20846,7 +20495,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-loop-context-storage/trap-save-clears-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             },
             {
@@ -20854,7 +20503,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-loop-context-storage/pto-v0-recovery-does-not-consume-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20862,11 +20511,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -20916,7 +20565,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/trap-save-preserves-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             },
             {
@@ -20924,7 +20573,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/pto-v0-recovery-does-not-consume-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20932,11 +20581,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -20986,7 +20635,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/trap-save-preserves-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             },
             {
@@ -20994,7 +20643,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/pto-v0-recovery-does-not-consume-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -21002,11 +20651,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21056,7 +20705,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/trap-save-preserves-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             },
             {
@@ -21064,7 +20713,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/pto-v0-recovery-does-not-consume-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -21072,11 +20721,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49"
+            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21124,7 +20773,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-identity-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21132,7 +20781,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21179,7 +20828,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21187,7 +20836,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21234,7 +20883,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21242,7 +20891,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21289,7 +20938,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21297,7 +20946,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21344,7 +20993,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21352,7 +21001,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21399,7 +21048,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21407,7 +21056,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21454,7 +21103,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21462,7 +21111,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21509,7 +21158,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21517,7 +21166,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21564,7 +21213,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21572,7 +21221,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21619,7 +21268,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21627,7 +21276,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21674,7 +21323,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21682,7 +21331,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21729,7 +21378,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21737,7 +21386,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21784,7 +21433,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21792,7 +21441,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21839,7 +21488,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21847,7 +21496,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21894,7 +21543,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21902,7 +21551,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21949,7 +21598,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21957,7 +21606,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -22004,7 +21653,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -22012,7 +21661,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -22059,7 +21708,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -22067,7 +21716,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -22114,7 +21763,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8",
+              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -22122,7 +21771,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "f9cbda71bde10edb45381372a2d777729d8b6d8defce8954748cd232783eaab8"
+            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -22167,7 +21816,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22213,7 +21862,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22261,7 +21910,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22308,7 +21957,7 @@
             "restart": "saved-context-resume-next-instruction"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
           "assertion_markers": [
             "TRAP-WITNESS scall/assert-number",
             "TRAP-WITNESS scall/assert-argument",
@@ -22361,7 +22010,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22407,7 +22056,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22453,7 +22102,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22499,7 +22148,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22545,7 +22194,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
           "assertion_markers": [
             "TRAP-WITNESS interrupt/assert-number",
             "TRAP-WITNESS interrupt/assert-argument",
@@ -22591,7 +22240,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22637,7 +22286,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22683,7 +22332,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22729,7 +22378,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "77ee6734ca4228ab6599dfb88292210cf672b75c3ee834dd2d88ba1896871e49",
+          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -23235,44 +22884,6 @@
       {
         "id": "profile-hook:TileProfileUnary",
         "name": "TileProfileUnary",
-        "domain": "tile-elementwise",
-        "requirements": [
-          "PTO-REQ-TEPL-001"
-        ],
-        "model": [
-          "asl/tile/elementwise.asl",
-          "spec/profile-hooks.json"
-        ],
-        "tests": [
-          "tests/asl/profile-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
-        "maturity_target": "S5-T2",
-        "bounded_status": "target-conformance-open"
-      },
-      {
-        "id": "profile-hook:TileProfileAxpy",
-        "name": "TileProfileAxpy",
-        "domain": "tile-elementwise",
-        "requirements": [
-          "PTO-REQ-TEPL-001"
-        ],
-        "model": [
-          "asl/tile/elementwise.asl",
-          "spec/profile-hooks.json"
-        ],
-        "tests": [
-          "tests/asl/profile-tests.asl",
-          "tests/asl/tile-tests.asl"
-        ],
-        "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
-        "maturity_target": "S5-T2",
-        "bounded_status": "target-conformance-open"
-      },
-      {
-        "id": "profile-hook:TileProfilePReLU",
-        "name": "TileProfilePReLU",
         "domain": "tile-elementwise",
         "requirements": [
           "PTO-REQ-TEPL-001"
@@ -23885,6 +23496,39 @@
         "bounded_status": "reference-model-closed"
       },
       {
+        "id": "state:_BundleSharedBindings",
+        "root": "_BundleSharedBindings",
+        "type": "BundleSharedBindingSnapshot",
+        "classification": "architectural-state",
+        "leaf_fields": [
+          {
+            "path": "_BundleSharedBindings[].valid",
+            "type": "boolean"
+          },
+          {
+            "path": "_BundleSharedBindings[].shared_id",
+            "type": "bits(8)"
+          },
+          {
+            "path": "_BundleSharedBindings[].consumed",
+            "type": "boolean"
+          }
+        ],
+        "requirements": [
+          "PTO-REQ-BUNDLE-OPERATION-001",
+          "PTO-REQ-BUNDLE-STATE-001",
+          "PTO-REQ-STATE-001"
+        ],
+        "model": [
+          "asl/bundle/state.asl"
+        ],
+        "tests": [
+          "tests/asl/bundle-tests.asl",
+          "tests/asl/state-tests.asl"
+        ],
+        "bounded_status": "reference-model-closed"
+      },
+      {
         "id": "state:_BundleTarget",
         "root": "_BundleTarget",
         "type": "Word",
@@ -23940,6 +23584,10 @@
             "type": "integer {0..15}"
           },
           {
+            "path": "_BundleTileBindings[].pe_mask",
+            "type": "bits(4)"
+          },
+          {
             "path": "_BundleTileBindings[].source0_valid",
             "type": "boolean"
           },
@@ -23954,14 +23602,6 @@
           {
             "path": "_BundleTileBindings[].source1",
             "type": "TileIndex"
-          },
-          {
-            "path": "_BundleTileBindings[].source0_reuse",
-            "type": "boolean"
-          },
-          {
-            "path": "_BundleTileBindings[].source1_reuse",
-            "type": "boolean"
           },
           {
             "path": "_BundleTileBindings[].last",
@@ -24452,88 +24092,6 @@
         ],
         "tests": [
           "tests/asl/state-tests.asl"
-        ],
-        "bounded_status": "reference-model-closed"
-      },
-      {
-        "id": "state:_Accumulator",
-        "root": "_Accumulator",
-        "type": "AccumulatorState",
-        "classification": "architectural-state",
-        "leaf_fields": [
-          {
-            "path": "_Accumulator.live",
-            "type": "boolean"
-          },
-          {
-            "path": "_Accumulator.logical_data_type",
-            "type": "TileDataType"
-          },
-          {
-            "path": "_Accumulator.info.allocated",
-            "type": "boolean"
-          },
-          {
-            "path": "_Accumulator.info.contents_defined",
-            "type": "boolean"
-          },
-          {
-            "path": "_Accumulator.info.defined_elements",
-            "type": "bits(PTO_MODEL_TILE_ELEMENTS)"
-          },
-          {
-            "path": "_Accumulator.info.defined_valid_elements",
-            "type": "integer {0..4096}"
-          },
-          {
-            "path": "_Accumulator.info.capacity_bytes",
-            "type": "integer {0..262144}"
-          },
-          {
-            "path": "_Accumulator.info.rows",
-            "type": "integer {0..65535}"
-          },
-          {
-            "path": "_Accumulator.info.columns",
-            "type": "integer {0..65535}"
-          },
-          {
-            "path": "_Accumulator.info.valid_rows",
-            "type": "integer {0..65535}"
-          },
-          {
-            "path": "_Accumulator.info.valid_columns",
-            "type": "integer {0..65535}"
-          },
-          {
-            "path": "_Accumulator.info.data_type",
-            "type": "TileDataType"
-          },
-          {
-            "path": "_Accumulator.info.layout",
-            "type": "TileLayout"
-          },
-          {
-            "path": "_Accumulator.info.location",
-            "type": "TileLocation"
-          },
-          {
-            "path": "_Accumulator.info.payload",
-            "type": "TilePayload"
-          }
-        ],
-        "requirements": [
-          "PTO-REQ-CUBE-001",
-          "PTO-REQ-PROFILE-001",
-          "PTO-REQ-STATE-001"
-        ],
-        "model": [
-          "asl/state.asl"
-        ],
-        "tests": [
-          "tests/asl/cube-totality-tests.asl",
-          "tests/asl/state-tests.asl",
-          "tests/asl/tile-tests.asl"
         ],
         "bounded_status": "reference-model-closed"
       },
@@ -25663,6 +25221,10 @@
             "type": "integer {0..15}"
           },
           {
+            "path": "_TrapContexts[].bundle_tile_bindings[].pe_mask",
+            "type": "bits(4)"
+          },
+          {
             "path": "_TrapContexts[].bundle_tile_bindings[].source0_valid",
             "type": "boolean"
           },
@@ -25679,15 +25241,19 @@
             "type": "TileIndex"
           },
           {
-            "path": "_TrapContexts[].bundle_tile_bindings[].source0_reuse",
-            "type": "boolean"
-          },
-          {
-            "path": "_TrapContexts[].bundle_tile_bindings[].source1_reuse",
-            "type": "boolean"
-          },
-          {
             "path": "_TrapContexts[].bundle_tile_bindings[].last",
+            "type": "boolean"
+          },
+          {
+            "path": "_TrapContexts[].bundle_shared_bindings[].valid",
+            "type": "boolean"
+          },
+          {
+            "path": "_TrapContexts[].bundle_shared_bindings[].shared_id",
+            "type": "bits(8)"
+          },
+          {
+            "path": "_TrapContexts[].bundle_shared_bindings[].consumed",
             "type": "boolean"
           },
           {
@@ -25757,66 +25323,6 @@
           {
             "path": "_TrapContexts[].predicates[]",
             "type": "PredicateWord"
-          },
-          {
-            "path": "_TrapContexts[].accumulator.live",
-            "type": "boolean"
-          },
-          {
-            "path": "_TrapContexts[].accumulator.logical_data_type",
-            "type": "TileDataType"
-          },
-          {
-            "path": "_TrapContexts[].accumulator.info.allocated",
-            "type": "boolean"
-          },
-          {
-            "path": "_TrapContexts[].accumulator.info.contents_defined",
-            "type": "boolean"
-          },
-          {
-            "path": "_TrapContexts[].accumulator.info.defined_elements",
-            "type": "bits(PTO_MODEL_TILE_ELEMENTS)"
-          },
-          {
-            "path": "_TrapContexts[].accumulator.info.defined_valid_elements",
-            "type": "integer {0..4096}"
-          },
-          {
-            "path": "_TrapContexts[].accumulator.info.capacity_bytes",
-            "type": "integer {0..262144}"
-          },
-          {
-            "path": "_TrapContexts[].accumulator.info.rows",
-            "type": "integer {0..65535}"
-          },
-          {
-            "path": "_TrapContexts[].accumulator.info.columns",
-            "type": "integer {0..65535}"
-          },
-          {
-            "path": "_TrapContexts[].accumulator.info.valid_rows",
-            "type": "integer {0..65535}"
-          },
-          {
-            "path": "_TrapContexts[].accumulator.info.valid_columns",
-            "type": "integer {0..65535}"
-          },
-          {
-            "path": "_TrapContexts[].accumulator.info.data_type",
-            "type": "TileDataType"
-          },
-          {
-            "path": "_TrapContexts[].accumulator.info.layout",
-            "type": "TileLayout"
-          },
-          {
-            "path": "_TrapContexts[].accumulator.info.location",
-            "type": "TileLocation"
-          },
-          {
-            "path": "_TrapContexts[].accumulator.info.payload",
-            "type": "TilePayload"
           }
         ],
         "requirements": [
@@ -25851,6 +25357,91 @@
         ],
         "tests": [
           "tests/asl/state-tests.asl"
+        ],
+        "bounded_status": "reference-model-closed"
+      },
+      {
+        "id": "state:_SharedTiles",
+        "root": "_SharedTiles",
+        "type": "SharedTileSnapshot",
+        "classification": "architectural-state",
+        "leaf_fields": [
+          {
+            "path": "_SharedTiles[].descriptor_valid",
+            "type": "boolean"
+          },
+          {
+            "path": "_SharedTiles[].initialized_mask",
+            "type": "bits(4)"
+          },
+          {
+            "path": "_SharedTiles[].tile.allocated",
+            "type": "boolean"
+          },
+          {
+            "path": "_SharedTiles[].tile.contents_defined",
+            "type": "boolean"
+          },
+          {
+            "path": "_SharedTiles[].tile.defined_elements",
+            "type": "bits(PTO_MODEL_TILE_ELEMENTS)"
+          },
+          {
+            "path": "_SharedTiles[].tile.defined_valid_elements",
+            "type": "integer {0..4096}"
+          },
+          {
+            "path": "_SharedTiles[].tile.capacity_bytes",
+            "type": "integer {0..262144}"
+          },
+          {
+            "path": "_SharedTiles[].tile.rows",
+            "type": "integer {0..65535}"
+          },
+          {
+            "path": "_SharedTiles[].tile.columns",
+            "type": "integer {0..65535}"
+          },
+          {
+            "path": "_SharedTiles[].tile.valid_rows",
+            "type": "integer {0..65535}"
+          },
+          {
+            "path": "_SharedTiles[].tile.valid_columns",
+            "type": "integer {0..65535}"
+          },
+          {
+            "path": "_SharedTiles[].tile.data_type",
+            "type": "TileDataType"
+          },
+          {
+            "path": "_SharedTiles[].tile.layout",
+            "type": "TileLayout"
+          },
+          {
+            "path": "_SharedTiles[].tile.location",
+            "type": "TileLocation"
+          },
+          {
+            "path": "_SharedTiles[].tile.payload",
+            "type": "TilePayload"
+          }
+        ],
+        "requirements": [
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-STATE-001",
+          "PTO-REQ-TILE-001",
+          "PTO-REQ-TILE-CAPACITY-001",
+          "PTO-REQ-TILE-DEFINEDNESS-001",
+          "PTO-REQ-TILE-MANAGEMENT-001"
+        ],
+        "model": [
+          "asl/tile/state.asl"
+        ],
+        "tests": [
+          "tests/asl/bundle-tests.asl",
+          "tests/asl/state-tests.asl",
+          "tests/asl/tile-tests.asl"
         ],
         "bounded_status": "reference-model-closed"
       },
@@ -25932,16 +25523,16 @@
     ]
   },
   "summary": {
-    "requirement_count": 46,
+    "requirement_count": 47,
     "scalar_form_count": 474,
-    "command_form_count": 99,
-    "tile_operation_count": 120,
+    "command_form_count": 96,
+    "tile_operation_count": 106,
     "system_register_count": 72,
     "trap_count": 13,
-    "profile_hook_count": 38,
-    "state_root_count": 73,
-    "state_leaf_count": 240,
-    "traceability_item_count": 935,
+    "profile_hook_count": 36,
+    "state_root_count": 74,
+    "state_leaf_count": 229,
+    "traceability_item_count": 918,
     "open_requirement_count": 11,
     "open_requirement_ids": [
       "PTO-REQ-PROFILE-001",
@@ -25956,7 +25547,7 @@
       "PTO-REQ-HARDWARE-NUMERIC-001",
       "PTO-REQ-CLOSURE-001"
     ],
-    "open_profile_hook_count": 30,
+    "open_profile_hook_count": 28,
     "open_profile_hooks": [
       "FloatingExponential",
       "FloatingRoundNearest",
@@ -25976,8 +25567,6 @@
       "TileProfileDequantize",
       "TileProfileBinary",
       "TileProfileUnary",
-      "TileProfileAxpy",
-      "TileProfilePReLU",
       "TileProfileCompare",
       "TileProfileReductionInitial",
       "TileProfileReductionStep",

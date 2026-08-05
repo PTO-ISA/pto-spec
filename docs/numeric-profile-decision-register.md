@@ -36,13 +36,13 @@ accepted architecture decisions remain authoritative.
   `spec/evidence/numeric-rounding-selector-contract.json` close PD-03: eight
   scalar raw values, five fixed conversion overrides, eight bundle `RMode`
   codes, seven public conversion values, four external selector classes, 18
-  domains, 102 operations, and 25 hooks. All domain rounding points and
+  affected domains, 100 operations, and 23 hooks. All 16 domain rounding points and
   saturation-order rules are accepted; other numeric dimensions remain open.
 - ADR 0049 and `spec/evidence/numeric-subnormal-contract.json` close PD-04 for
-  `pto-hardware-numeric-0.57.1-ieee-v1`: eleven formats preserve input
+  `pto-hardware-numeric-0.58.0-ieee-v1`: eleven formats preserve input
   subnormals, produce subnormals by gradual underflow, detect tininess after
   rounding, and expose no FTZ/DAZ mode or operation override. The generated
-  contract covers 16 domains, 95 operations, and 1,045 conditional
+  contract covers 14 domains, 93 operations, and 1,023 conditional
   operation/type rows without creating support or changing `pto-v0`.
 - ADR 0050 and `spec/evidence/numeric-special-value-contract.json` add the
   bounded PD-05-SC2 checkpoint for the named hardware profile: produced NaNs
@@ -75,15 +75,15 @@ accepted architecture decisions remain authoritative.
   selectors for every `TileDataType` before effects. All result rules and the
   rest of the applicability matrix remain open.
 - ADR 0042 and `spec/evidence/numeric-variation-point-ownership.json` close
-  PD-12 discovery and current-owner assignment: 99 stable variation points
-  cover all 20 domains, 108 operations, and 30 hooks. Eighteen rounding routes
+  PD-12 discovery and current-owner assignment: 89 stable variation points
+  cover all 18 domains, 104 operations, and 28 hooks. Sixteen rounding routes
   are selected; the hardware profile is not yet a generic PD-12 selection
   identity, so the PD-04 contract does not silently claim another route.
 - The current maturity floor remains M4. This register improves decision
   readiness; it does not close `S5-T2-A` or numeric conformance.
 
 The machine-derived closure snapshot is 2 accepted and 10 open decisions,
-0 accepted and 20 open complete domain rules, and 18 selected and 81 open
+0 accepted and 18 open complete domain rules, and 16 selected and 73 open
 variation routes.
 
 ## Profile partitions requiring a decision
@@ -116,8 +116,8 @@ acceptance-record fields.
 | --- | --- | --- |
 | `PD-01` | ADR 0041 fixes the A2/A3 unsupported-in-profile MX CUBE slice; portable results plus other named support restrictions and bounded target variations remain open | Complete the full applicability matrix for the accepted identities; keep CPU observational |
 | `PD-02` | ADRs 0040 and 0048 fix five separate code namespaces, all 25 raw-carrier identities and value classes, reserved/internal rejection, packed four-bit order, and ten canonical NaNs | Resolve operation-specific format results, exceptional-value propagation, the complete operation/type/profile legality matrix, target availability, and positive/reserved vectors |
-| `PD-03` | Accepted by ADR 0047: separate scalar/fixed/bundle/public mappings, RNE/RTM/RTP/RTZ/RNA/RTO/RHB ties, operation defaults, 18 domain rounding points, and round-before-saturation | Closed; retain PD-02 and PD-05 through PD-12 boundaries for formats, exceptional values, flags, range results, accuracy, quantization, and matrix detail |
-| `PD-04` | Accepted by ADR 0049 for `pto-hardware-numeric-0.57.1-ieee-v1`: preserve input subnormals, gradual underflow, after-rounding tininess, no FTZ/DAZ state, and no operation override | Closed for the named profile; support legality and Stage 5 oracle/vector/result/review evidence remain separate |
+| `PD-03` | Accepted by ADR 0047: separate scalar/fixed/bundle/public mappings, RNE/RTM/RTP/RTZ/RNA/RTO/RHB ties, operation defaults, 16 domain rounding points, and round-before-saturation | Closed; retain PD-02 and PD-05 through PD-12 boundaries for formats, exceptional values, flags, range results, accuracy, quantization, and matrix detail |
+| `PD-04` | Accepted by ADR 0049 for `pto-hardware-numeric-0.58.0-ieee-v1`: preserve input subnormals, gradual underflow, after-rounding tininess, no FTZ/DAZ state, and no operation override | Closed for the named profile; support legality and Stage 5 oracle/vector/result/review evidence remain separate |
 | `PD-05` | ADR 0048 fixes format-level NaN, infinity, signed-zero, subnormal, and canonical-NaN classification; ADR 0050 fixes the named-hardware produced-canonical-NaN, comparison NaN/signed-zero, and MIN/MAX NaN/signed-zero checkpoint across eight operations and 154 conditional rows | Complete infinity arithmetic, broader NaN creation, conversions, reductions, quantization, matrix results, and full flag/status behavior |
 | `PD-06` | Portable sticky NV/DZ/OF/UF/NX state; lifecycle and producer owners fixed by ADR 0038 | Accept exact flag conditions and independent vectors for all 19 profile-owned forms |
 | `PD-07` | Deterministic conversion, enumerated target result set, or pre-effect rejection | Eliminate unbounded overflow; complete saturation-on/off/default and narrowing tables |
@@ -133,8 +133,8 @@ acceptance-record fields.
 | --- | --- | --- | --- |
 | `PD-01` | Profile identity and support-versus-semantics boundary | Published profiles are described as support narrowing, but the numeric contract also permits target-dependent results. | Versioned profile taxonomy and complete domain-to-profile applicability matrix |
 | `PD-02` | Numeric format encodings and availability | ADRs 0040 and 0048 close namespace/carrier ownership and value classification for all 25 types, but public bindings, operation results, legality, and target support remain incomplete. | Complete operation/type/profile legality and result matrices, target availability, and positive/reserved vectors |
-| `PD-03` | Rounding taxonomy, selection, and ties | ADR 0047 accepts scalar reserved values 4–7 as RNE fallback, fixed FCVT overrides, bundle/public translations, seven exact semantic modes, operation defaults, and all 18 domain rounding and saturation-order rules. | Closed by ADR 0047 and executable signed halfway, reserved-code, public-translation, operation-default, and saturation-carrier witnesses |
-| `PD-04` | Subnormal handling, FTZ, and mode state | ADR 0049 fixes input preservation, gradual underflow, after-rounding tininess, and the absence of architectural FTZ/DAZ state for the named hardware profile. | Closed by the generated eleven-format boundary table, eight configuration cases, 95-operation applicability matrix, and executable ASL assertions |
+| `PD-03` | Rounding taxonomy, selection, and ties | ADR 0047 accepts scalar reserved values 4–7 as RNE fallback, fixed FCVT overrides, bundle/public translations, seven exact semantic modes, operation defaults, and all 16 domain rounding and saturation-order rules. | Closed by ADR 0047 and executable signed halfway, reserved-code, public-translation, operation-default, and saturation-carrier witnesses |
+| `PD-04` | Subnormal handling, FTZ, and mode state | ADR 0049 fixes input preservation, gradual underflow, after-rounding tininess, and the absence of architectural FTZ/DAZ state for the named hardware profile. | Closed by the generated eleven-format boundary table, eight configuration cases, 93-operation applicability matrix, and executable ASL assertions |
 | `PD-05` | NaN, infinity, signed zero, and payloads | ADR 0048 classifies every encoding and fixes canonical NaNs. ADR 0050 accepts produced canonical NaNs, comparison NaN/signed-zero results, and MIN/MAX NaN/signed-zero results for the named hardware profile, but broader NaN creation, infinity arithmetic, conversions, reductions, quantization, matrix results, and full flag/status behavior remain incomplete. | Bit-exact operation-result table covering every numeric family |
 | `PD-06` | Scalar numeric exception flags | ADR 0038 closes CORE_STATE storage, reset, sticky OR, software replacement, rejection, no-numeric-trap, trap recovery, and all 30 producer owners. | Exact NV/DZ/OF/UF/NX conditions, simultaneous cases, tininess/NX coupling, and independent vectors for 19 profile-owned forms |
 | `PD-07` | Conversion overflow, saturation, wrap, and indefinite results | Public hardware overflow may be undefined while CPU paths may saturate; target paths also expose non-saturating wrap and control combinations. | Deterministic result or explicit bounded result set for the complete conversion cross-product |
@@ -179,7 +179,7 @@ structural checkpoints do not accept complete result decisions. ADR 0050 adds
 three bounded PD-05 special-value rules but likewise does not close a complete
 decision or domain. PD-03 is the first accepted numeric decision and selects
 18 rounding variation routes. The accepted-decision count remains 2/12 with
-ten open decisions, 0/20 complete domains, and 18/99 selected generic
+ten open decisions, 0/18 complete domains, and 16/89 selected generic
 variation routes. `S5-T2-A` closes only when all 12 decisions and each of the
 20 domain rows have an
 accepted profile rule and decision record. Only then

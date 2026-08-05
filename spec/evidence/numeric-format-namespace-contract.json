@@ -12,7 +12,7 @@
     "reserved_codes": "Every unmapped code rejects before architectural effects; helper fallback values are unreachable after legality succeeds and are not architectural aliases.",
     "raw_carrier_boundary": "Widths and signedness describe Stage 4 raw carriers only. Floating bit layouts and target numeric results remain S5-T2 rules.",
     "four_bit_packing": "E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 use low-index/low-nibble and odd-index/high-nibble packing with sibling preservation on stores.",
-    "pd02_boundary": "The 0.57.1 type identities and format contract are fixed, while operation/type legality, target execution results, and implementation conformance remain open under S5-T2.",
+    "pd02_boundary": "The 0.58.0 type identities and format contract are fixed, while operation/type legality, target execution results, and implementation conformance remain open under S5-T2.",
     "value_class_boundary": "TileNumericValueClass defines only bit-exact encoding classes and canonical NaN values. It does not select arithmetic results, exception flags, operation/type support, or target conformance."
   },
   "tile_data_types": [
@@ -1882,7 +1882,7 @@
   "open_residuals": [
     {
       "id": "PD-02-R1",
-      "rule": "close every operation/type/profile legality tuple against the 0.57.1 type namespace"
+      "rule": "close every operation/type/profile legality tuple against the 0.58.0 type namespace"
     },
     {
       "id": "PD-02-R2",
@@ -1924,7 +1924,7 @@
   "sources": [
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "4939fd3b5c32bd81c815e0c4b5756d329a8fd207b375d921e6c074d949e000eb"
+      "sha256": "ecbc4d29caf4a82581b81c5f829c7a16cc9cc985133f43516e861d15c2ef99cd"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
@@ -1932,43 +1932,43 @@
     },
     {
       "path": "spec/evidence/tma-totality.json",
-      "sha256": "4230bd9a729682cdcc725265a4362af857929802f33a0cfc1d2db1221d4b3f24"
+      "sha256": "0e09c514b38ba87120aa5d1cb1c07e5a4ddf38c6c4751b020821c0fbbaa95350"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "c1a370fbdb17caa54aeeaa733f22bd55e6777322e3dd8a7e1ed6fa62ab35249a"
+      "sha256": "a21760edef8d377e313b44851c361b5d5de69f989a1218b8e72b4d67fc63e9a8"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "1608fa0c03d139842b85c63c581d8280c37e55ef03a6e2f3cbf75dd8cb8edaab"
+      "sha256": "c4076cf8ac6ebd0c6db8a070b7c290b9928ed7f98c089538ee53ed4644e1531a"
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "e5a98441098fdd88c0f5837bb3e1367d7b272ebc2ba506275e9e2be1b4c1978a"
+      "sha256": "58cb445f7a4bc690859f017db4e9ec7b054ab1c10d50773eb2d6cf3a2a87d94a"
     },
     {
       "path": "asl/types.asl",
-      "sha256": "fd3d680d8c456a6283a50c09d143b4d5e2229a1fa2ba7e4174433f98396614cf"
+      "sha256": "e23a59bfc8ae54b84b0ba06e5af4593b331fbf7f6ef45f901bcaa83f1d6e8f43"
     },
     {
       "path": "asl/numeric/formats.asl",
-      "sha256": "359470d81e446cabaefdb0ebc52529cf76809f6ce64806af596f39ac59e3339b"
+      "sha256": "d2f16eef9b310107df3090613e76d6f05693a0cc39a1c69c8c241f33cc5bb2f4"
     },
     {
       "path": "asl/scalar/floating.asl",
-      "sha256": "cc2b1fd8a53e840295363ae45335ca426385565d6f797b4829d760e3e65ba71f"
+      "sha256": "ef1eee6e90063dd0ea41c48bd1792f060a19467aa303112caea3877fb46d38ba"
     },
     {
       "path": "asl/tile/state.asl",
-      "sha256": "8fe56df1f993a81c451d0420aec31e993b84ecb296e84b809eef2c794159f245"
+      "sha256": "1d8f6a0a65e50eb71cddc3d7f28cf44175e0287b6b055bc6d42866b6ddaf98af"
     },
     {
       "path": "asl/tile/memory.asl",
-      "sha256": "04a523c7d759c55761ab4cb48767ea199c0e2f21fd8e69a5fc6b86fb5cc3c027"
+      "sha256": "ddf64264ba57cec0dd3772b815b3fd3d0ff3899e7c447a60f1737862b9d1bb22"
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "fd3c014af09354d56835239a9063a7fef3d363f18e00efe4b6c3b87b1e3bb1d9"
+      "sha256": "6a3e8fe318bb85a632998caa14a3c158b727fa9bf059c56c7c4a50c4c8fe8f6e"
     },
     {
       "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",

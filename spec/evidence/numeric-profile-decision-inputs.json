@@ -249,7 +249,6 @@
         "complete domain-to-profile applicability matrix"
       ],
       "domains": [
-        "cube-convert",
         "cube-matrix",
         "scalar-binary",
         "scalar-fp-convert",
@@ -257,15 +256,14 @@
         "scalar-fused",
         "scalar-integer-to-fp",
         "scalar-unary",
-        "tile-axpy",
         "tile-binary",
         "tile-compare",
         "tile-convert",
         "tile-dequantize",
         "tile-expand",
+        "tile-fused",
         "tile-order",
         "tile-partial",
-        "tile-prelu",
         "tile-quantize",
         "tile-reduction",
         "tile-unary"
@@ -297,7 +295,6 @@
         "positive and reserved-format vectors"
       ],
       "domains": [
-        "cube-convert",
         "cube-matrix",
         "scalar-binary",
         "scalar-fp-convert",
@@ -305,15 +302,14 @@
         "scalar-fused",
         "scalar-integer-to-fp",
         "scalar-unary",
-        "tile-axpy",
         "tile-binary",
         "tile-compare",
         "tile-convert",
         "tile-dequantize",
         "tile-expand",
+        "tile-fused",
         "tile-order",
         "tile-partial",
-        "tile-prelu",
         "tile-quantize",
         "tile-reduction",
         "tile-unary"
@@ -345,7 +341,6 @@
         "rounding-and-saturation ordering vectors"
       ],
       "domains": [
-        "cube-convert",
         "cube-matrix",
         "scalar-binary",
         "scalar-fp-convert",
@@ -353,13 +348,12 @@
         "scalar-fused",
         "scalar-integer-to-fp",
         "scalar-unary",
-        "tile-axpy",
         "tile-binary",
         "tile-convert",
         "tile-dequantize",
         "tile-expand",
+        "tile-fused",
         "tile-partial",
-        "tile-prelu",
         "tile-quantize",
         "tile-reduction",
         "tile-unary"
@@ -390,19 +384,17 @@
         "per-operation FTZ applicability matrix"
       ],
       "domains": [
-        "cube-convert",
         "cube-matrix",
         "scalar-binary",
         "scalar-fp-convert",
         "scalar-fused",
         "scalar-unary",
-        "tile-axpy",
         "tile-binary",
         "tile-convert",
         "tile-dequantize",
         "tile-expand",
+        "tile-fused",
         "tile-partial",
-        "tile-prelu",
         "tile-quantize",
         "tile-reduction",
         "tile-unary"
@@ -434,22 +426,20 @@
         "binary, unary, conversion, compare, reduction, quantization, and matrix vectors"
       ],
       "domains": [
-        "cube-convert",
         "cube-matrix",
         "scalar-binary",
         "scalar-fp-convert",
         "scalar-fp-to-integer",
         "scalar-fused",
         "scalar-unary",
-        "tile-axpy",
         "tile-binary",
         "tile-compare",
         "tile-convert",
         "tile-dequantize",
         "tile-expand",
+        "tile-fused",
         "tile-order",
         "tile-partial",
-        "tile-prelu",
         "tile-quantize",
         "tile-reduction",
         "tile-unary"
@@ -512,7 +502,6 @@
         "saturation-off wrap vectors"
       ],
       "domains": [
-        "cube-convert",
         "scalar-fp-convert",
         "scalar-fp-to-integer",
         "scalar-integer-to-fp",
@@ -673,7 +662,6 @@
         "unknown-profile and missing-rule rejection tests"
       ],
       "domains": [
-        "cube-convert",
         "cube-matrix",
         "scalar-binary",
         "scalar-fp-convert",
@@ -681,15 +669,14 @@
         "scalar-fused",
         "scalar-integer-to-fp",
         "scalar-unary",
-        "tile-axpy",
         "tile-binary",
         "tile-compare",
         "tile-convert",
         "tile-dequantize",
         "tile-expand",
+        "tile-fused",
         "tile-order",
         "tile-partial",
-        "tile-prelu",
         "tile-quantize",
         "tile-reduction",
         "tile-unary"
@@ -1088,14 +1075,14 @@
       "selected_profile_rule": null
     },
     {
-      "domain": "tile-axpy",
-      "lane": "N3",
+      "domain": "tile-fused",
+      "lane": "N6",
       "operation_count": 1,
       "operation_keys": [
-        "tile:TEPL:TAXPY"
+        "tile:TEPL:TFMA"
       ],
       "hooks": [
-        "TileProfileAxpy"
+        "TileProfileMatrixAccumulate"
       ],
       "open_numeric_dimensions": [
         "multiply-add precision",
@@ -1103,45 +1090,6 @@
         "overflow",
         "saturation",
         "NaN and infinity"
-      ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a5-conversion",
-        "a5-division",
-        "a5-quantization",
-        "cpu-conversion",
-        "cpu-quantization",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
-      ],
-      "status": "profile-rule-required",
-      "selected_profile_rule": null
-    },
-    {
-      "domain": "tile-prelu",
-      "lane": "N3",
-      "operation_count": 1,
-      "operation_keys": [
-        "tile:TEPL:TPRELU"
-      ],
-      "hooks": [
-        "TileProfilePReLU"
-      ],
-      "open_numeric_dimensions": [
-        "comparison domain",
-        "multiply precision",
-        "rounding",
-        "overflow",
-        "saturation"
       ],
       "decision_question_ids": [
         "PD-01",
@@ -1363,46 +1311,6 @@
       "selected_profile_rule": null
     },
     {
-      "domain": "cube-convert",
-      "lane": "N4",
-      "operation_count": 1,
-      "operation_keys": [
-        "tile:CUBE:ACCCVT"
-      ],
-      "hooks": [
-        "TileProfileConvert"
-      ],
-      "open_numeric_dimensions": [
-        "source and destination format mapping",
-        "rounding",
-        "NaN payload",
-        "overflow and underflow",
-        "saturation"
-      ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-07",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a5-conversion",
-        "a5-division",
-        "a5-quantization",
-        "cpu-conversion",
-        "cpu-quantization",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
-      ],
-      "status": "profile-rule-required",
-      "selected_profile_rule": null
-    },
-    {
       "domain": "tile-quantize",
       "lane": "N4",
       "operation_count": 1,
@@ -1541,12 +1449,10 @@
     {
       "domain": "tile-order",
       "lane": "N5",
-      "operation_count": 4,
+      "operation_count": 2,
       "operation_keys": [
         "tile:TEPL:TMRGSORT",
-        "tile:TEPL:TPARTARGMAX",
-        "tile:TEPL:TPARTARGMIN",
-        "tile:TEPL:TSORT"
+        "tile:TEPL:TSORT32"
       ],
       "hooks": [
         "TileProfileOrderLeft",
@@ -1646,8 +1552,8 @@
     "implementation_evidence_source_count": 21,
     "decision_question_count": 12,
     "open_decision_question_count": 10,
-    "numeric_domain_count": 20,
-    "open_numeric_domain_count": 20,
+    "numeric_domain_count": 18,
+    "open_numeric_domain_count": 18,
     "selected_profile_rule_count": 0,
     "profile_identity_count": 4
   }

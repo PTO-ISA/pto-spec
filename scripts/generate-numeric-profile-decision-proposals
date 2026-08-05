@@ -55,7 +55,7 @@ PROPOSALS: dict[str, dict[str, Any]] = {
             "named-target-profile-rule",
             "unsupported-in-profile",
         ],
-        "proposed_rule": "The 0.57.1 contract closes five distinct code namespaces and all 25 TileDataType identities, raw widths, reserved codes, and packed four-bit order. All 16 published public type identities have unambiguous catalog bindings and retain the A2/A3-versus-A5 availability baseline. Operation/type/profile legality and implementation conformance remain open. Backend carrier types cannot create implicit PTO formats.",
+        "proposed_rule": "The 0.58.0 contract closes five distinct code namespaces and all 25 TileDataType identities, raw widths, reserved codes, and packed four-bit order. All 16 published public type identities have unambiguous catalog bindings and retain the A2/A3-versus-A5 availability baseline. Operation/type/profile legality and implementation conformance remain open. Backend carrier types cannot create implicit PTO formats.",
         "open_items": [
             "bind the specialized floating raw carriers and decide the public roles of F64 and E8M0",
             "publish bit-exact payload fields and exceptional-value classes for every floating type",
@@ -78,7 +78,7 @@ PROPOSALS: dict[str, dict[str, Any]] = {
             "named-target-profile-rule",
             "implementation-defined-with-explicit-allowed-set",
         ],
-        "proposed_rule": "ADR 0049 fixes the pto-hardware-numeric-0.57.1-ieee-v1 rule: preserve every defined input subnormal, use gradual underflow for every defined result subnormal, detect tininess after rounding, expose no FTZ/DAZ architectural state or operation override, and reject a nonconforming configuration before effects. The rule is conditional on independent operation/type support and does not change pto-v0.",
+        "proposed_rule": "ADR 0049 fixes the pto-hardware-numeric-0.58.0-ieee-v1 rule: preserve every defined input subnormal, use gradual underflow for every defined result subnormal, detect tininess after rounding, expose no FTZ/DAZ architectural state or operation override, and reject a nonconforming configuration before effects. The rule is conditional on independent operation/type support and does not change pto-v0.",
         "open_items": [],
     },
     "PD-05": {
@@ -223,11 +223,11 @@ def generate() -> dict[str, Any]:
             "boundary_vector_count": 55,
             "configuration_vector_count": 8,
             "non_applicable_type_count": 14,
-            "affected_domain_count": 16,
-            "affected_operation_count": 95,
-            "operation_applicability_row_count": 95,
-            "conditional_operation_type_tuple_count": 1045,
-            "affected_hook_count": 23,
+            "affected_domain_count": 14,
+            "affected_operation_count": 93,
+            "operation_applicability_row_count": 93,
+            "conditional_operation_type_tuple_count": 1023,
+            "affected_hook_count": 21,
             "accepted_decision_count": 1,
             "accepted_complete_domain_rule_count": 0,
             "pd04_complete": True,
@@ -302,10 +302,10 @@ def generate() -> dict[str, Any]:
             "scalar_fixed_override_count": 5,
             "bundle_rmode_selector_count": 8,
             "external_selector_class_count": 4,
-            "affected_domain_count": 18,
-            "affected_operation_count": 102,
-            "affected_hook_count": 25,
-            "accepted_domain_rounding_rule_count": 18,
+            "affected_domain_count": 16,
+            "affected_operation_count": 100,
+            "affected_hook_count": 23,
+            "accepted_domain_rounding_rule_count": 16,
             "pd03_complete": True,
         },
         "numeric rounding selector contract drift",
@@ -418,7 +418,7 @@ def generate() -> dict[str, Any]:
             "tuple_count": 150,
             "bundle_execution_tuple_count": 150,
             "bundle_command_form_count": 6,
-            "accepted_command_form_count": 99,
+            "accepted_command_form_count": 96,
             "result_rule_count": 0,
             "parent_pd01_complete": False,
             "cube_matrix_complete": False,
@@ -524,9 +524,9 @@ def generate() -> dict[str, Any]:
     profile_hooks = sorted(
         {hook for lane in readiness["lanes"] for hook in lane["hooks"]}
     )
-    require(len(domain_proposals) == 20, "numeric domain count drift")
-    require(operation_count == 108, "numeric operation count drift")
-    require(len(profile_hooks) == 30, "numeric hook count drift")
+    require(len(domain_proposals) == 18, "numeric domain count drift")
+    require(operation_count == 104, "numeric operation count drift")
+    require(len(profile_hooks) == 28, "numeric hook count drift")
     require(
         readiness["summary"]["operation_count"] == operation_count,
         "readiness operation count drift",
@@ -691,14 +691,14 @@ def generate() -> dict[str, Any]:
                 "id": "S5-T2-A3",
                 "target": "populate accepted rules for every numeric domain",
                 "current": 0,
-                "required": 20,
+                "required": 18,
                 "status": "open",
             },
             {
                 "id": "S5-T2-A4",
                 "target": "inventory and assign the current owner for every numeric variation point",
-                "current": 99,
-                "required": 99,
+                "current": 89,
+                "required": 89,
                 "status": "closed",
             },
             {
@@ -726,7 +726,7 @@ def generate() -> dict[str, Any]:
                 "id": "S5-T2-C",
                 "target": "publish normal, boundary, exceptional, and adversarial vectors for every domain",
                 "current": 0,
-                "required": 20,
+                "required": 18,
                 "status": "open",
             },
             {

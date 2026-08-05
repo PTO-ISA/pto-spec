@@ -9,11 +9,13 @@ type PredicateWord of bits(PTO_PREDICATE_WIDTH);
 type GPRIndex of integer {0..PTO_ABSOLUTE_GPR_COUNT-1};
 type Reg5Selector of integer {0..31};
 type TileIndex of integer {0..PTO_TILE_REGISTER_COUNT-1};
+type SharedTileIndex of integer {0..PTO_SHARED_TILE_COUNT-1};
 type TemporaryQueueIndex of integer {0..PTO_TEMPORARY_QUEUE_DEPTH-1};
 type PredicateIndex of integer {0..PTO_PREDICATE_REGISTER_COUNT-1};
 type BundleDimensionIndex of integer {0..PTO_BUNDLE_DIMENSION_COUNT-1};
 type BundleScalarBindingIndex of integer {0..PTO_BUNDLE_SCALAR_BINDING_COUNT-1};
 type BundleTileBindingIndex of integer {0..PTO_BUNDLE_TILE_BINDING_COUNT-1};
+type BundleSharedBindingIndex of integer {0..3};
 type TileBaseIndex of integer {0..PTO_TILE_BASE_COUNT-1};
 type ModelTileElementIndex of integer {0..PTO_MODEL_TILE_ELEMENTS-1};
 type ModelAddress of integer {0..PTO_MODEL_MEMORY_BYTES-1};
@@ -105,13 +107,18 @@ type BundleTileBinding of record {
     destination_hand: bits(2),
     destination_allocated_by_bundle: boolean,
     destination_size: integer {0..15},
+    pe_mask: bits(4),
     source0_valid: boolean,
     source1_valid: boolean,
     source0: TileIndex,
     source1: TileIndex,
-    source0_reuse: boolean,
-    source1_reuse: boolean,
     last: boolean
+};
+
+type BundleSharedBinding of record {
+    valid: boolean,
+    shared_id: bits(8),
+    consumed: boolean
 };
 
 type BundleControlAttributes of record {
@@ -144,6 +151,7 @@ type BundleScalarBindingSnapshot of array [[PTO_BUNDLE_SCALAR_BINDING_COUNT]]
     of BundleScalarBinding;
 type BundleTileBindingSnapshot of array [[PTO_BUNDLE_TILE_BINDING_COUNT]]
     of BundleTileBinding;
+type BundleSharedBindingSnapshot of array [[4]] of BundleSharedBinding;
 
 type DataAccessProbe of record {
     fault: FaultCode,
@@ -619,11 +627,18 @@ type TileInfo of record {
     payload: TilePayload
 };
 
-type AccumulatorState of record {
-    live: boolean,
-    logical_data_type: TileDataType,
-    info: TileInfo
+// PTO-REQ-SHARED-TILE-001: S0..S255 are absolute, core-private architectural
+// Shared registers. Each record is persistent descriptor-plus-payload state;
+// initialized_mask identifies the fixed-offset quarters whose payload has
+// been written. All four PEs in one core address the same 256 records.
+type SharedTileInfo of record {
+    descriptor_valid: boolean,
+    initialized_mask: bits(4),
+    tile: TileInfo
 };
+
+type SharedTileSnapshot of array [[PTO_SHARED_TILE_COUNT]]
+    of SharedTileInfo;
 
 type TrapContext of record {
     valid: boolean,
@@ -648,11 +663,11 @@ type TrapContext of record {
     bundle_dimensions: BundleDimensionSnapshot,
     bundle_scalar_bindings: BundleScalarBindingSnapshot,
     bundle_tile_bindings: BundleTileBindingSnapshot,
+    bundle_shared_bindings: BundleSharedBindingSnapshot,
     bundle_control_attributes: BundleControlAttributes,
     bundle_data_attributes: BundleDataAttributes,
     t_queue: TemporaryQueueSnapshot,
     u_queue: TemporaryQueueSnapshot,
     execution_mask: Word,
-    predicates: PredicateSnapshot,
-    accumulator: AccumulatorState
+    predicates: PredicateSnapshot
 };

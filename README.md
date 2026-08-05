@@ -7,9 +7,9 @@ Architecture. It specifies a 64-bit scalar ISA, bundle/command forms, direct
 tile operations, visible architectural state, legality, faults, completion,
 profiles, and memory ordering in one executable model.
 
-The repository is the normative draft of the **PTO ISA 0.57.1** contract at
+The repository is the normative draft of the **PTO ISA 0.58.0** contract at
 maturity M4. The release identity and active executable profile identity are
-separate: 0.57.1 fixes the encoding ABI, while `pto-v0` remains the deterministic
+separate: 0.58.0 fixes the encoding ABI, while `pto-v0` remains the deterministic
 raw-carrier reference profile. Accepted catalogs, decoded execution paths,
 architectural state/fault envelopes, ordering, and scalar, bundle, TEPL, TMA,
 and CUBE reference semantics are cumulatively closed through Stage 4. The
@@ -20,7 +20,7 @@ numeric conformance and release closure remain staged work. See the
 [formal model coverage](docs/coverage.md).
 
 The Stage 5 numeric ownership inventory is already closed: 19 scalar forms and
-89 direct-tile operations are assigned to all 30 numeric profile hooks in
+85 direct-tile operations are assigned to all 30 numeric profile hooks in
 `spec/evidence/numeric-contracts.json`. This inventory does not claim numerical
 or target-hardware conformance; those obligations remain open under `S5-T2`.
 The generated `spec/evidence/numeric-conformance-readiness.json` ledger
@@ -29,26 +29,26 @@ profile, oracle, vector, result, and review identity explicit.
 The generated `spec/evidence/numeric-profile-decision-proposals.json` ledger
 imports four versioned identities and five selection rules accepted by ADR
 0037, then proposes dispositions for all 12 numeric decisions and mappings for
-all 20 domains. PD-03 and PD-04 are accepted; the remaining ten complete decisions and all
-20 complete domain rules remain open. ADR 0038 and the generated
+all 18 domains. PD-03 and PD-04 are accepted; the remaining ten complete decisions and all
+18 complete domain rules remain open. ADR 0038 and the generated
 `spec/evidence/scalar-numeric-flag-contract.json` ledger separately close the
 scalar flag lifecycle and 30/30 producer-owner matrix while leaving exact
 conditions open for 19 profile-owned forms, so PD-06 and S5-T2 remain open.
 The machine-derived closure snapshot is 2 accepted and 10 open decisions,
-0 accepted and 20 open complete domain rules, and 18 selected and 81 open
+0 accepted and 18 open complete domain rules, and 16 selected and 73 open
 variation routes.
 ADRs 0039 and 0047 and the generated
 `spec/evidence/numeric-rounding-selector-contract.json` ledger separately map
 all scalar, fixed-conversion, bundle, public, matrix, stochastic, and
 backend-only rounding selector namespaces. PD-03 now accepts the complete
 selector translations, tie behavior, operation defaults, rounding points, and
-rounding-before-saturation order across 18 domains, 102 operations, and 25
-hooks. Other numeric decisions keep S5-T2 open.
+rounding-before-saturation order across 16 affected domains, 100 operations,
+and 23 hooks. Other numeric decisions keep S5-T2 open.
 ADR 0049 and the generated `numeric-subnormal-contract.json` accept PD-04 for
 the named hardware profile: all eleven subnormal-capable formats preserve
 input subnormals, use gradual underflow, detect tininess after rounding, and
-expose no FTZ/DAZ state or operation override. The contract covers 16 domains,
-95 operations, and 1,045 conditional operation/type obligations without
+expose no FTZ/DAZ state or operation override. The contract covers 14 domains,
+93 operations, and 1,023 conditional operation/type obligations without
 changing `pto-v0` or claiming operation/type support.
 ADR 0050 and the generated `numeric-special-value-contract.json` add the
 bounded PD-05-SC2 hardware special-value checkpoint. The checkpoint fixes
@@ -87,34 +87,35 @@ negative PD-01 applicability slice: A2/A3 rejects the six MX CUBE selectors
 for all 25 `TileDataType` identities with `IllegalInstruction` before effects.
 It accepts no result rule, so PD-01, `cube-matrix`, and S5-T2 remain open.
 ADR 0042 and the generated
-`spec/evidence/numeric-variation-point-ownership.json` ledger enumerate all 99
-open domain/dimension variation points and map them to all 108 numeric
-operations and 30 hooks. Every point remains owned by `pto-numeric-v1`; no
+`spec/evidence/numeric-variation-point-ownership.json` ledger enumerate all 89
+open domain/dimension variation points and map them to all 104 numeric
+operations and 28 hooks. Every point remains owned by `pto-numeric-v1`; no
 delegation, allowed-result contract, or domain result rule is accepted, so
 PD-12 and S5-T2 remain open.
 The numeric maturity counters remain unchanged by bounded checkpoints that do
 not accept a complete decision or domain: two of 12 complete decisions are
 accepted, ten remain open, no complete numeric domain is closed, and the
-generic variation-route count remains 18/99.
-The executable-model comparison has an exhaustive 693-row disposition matrix:
-557 exact matches, 96 explicit divergences, 39 non-comparable rows, and one
-intentional extension. Of the divergences, 79 TEPL and 7 command rows are the
-approved 0.57.1 ABI break traced to issue 18 and ADR 0045; the remaining 10 are
-intentional rejected-command differences. The clean content-addressed snapshot
+generic variation-route count remains 16/89.
+The executable-model comparison has an exhaustive 676-row disposition matrix:
+557 exact matches, 84 explicit divergences, 32 non-comparable rows, and three
+intentional extensions. Of the divergences, 67 direct-tile and 7 command rows
+retain the accepted ABI-remap disposition; the remaining 10 are intentional
+rejected-command differences. The three extensions are `BSTART.GMOV`, `GMOV`,
+and `TFMA`. The clean content-addressed snapshot
 passes its generation, validation, documentation, Sail parser, and Sail
 C-backend gates. This classification closes `S5-T3` without changing the open
 `S5-T2` and Stage 6 claims.
 
 The generated `spec/evidence/noncomparable-oracle-coverage.json` ledger keeps a
-separate independent-executable-parity grade for the 39 non-comparable rows.
+separate independent-executable-parity grade for the 32 non-comparable rows.
 PTO semantic closure and the S5-T3 disposition matrix remain closed, while
-qualified executable parity is currently 0/39 and fails closed on structural-
+qualified executable parity is currently 0/32 and fails closed on structural-
 only, stale, missing, timed-out, nonzero, or unreviewed evidence.
 
 Release traceability is now generated rather than inferred from prose. The
-`spec/evidence/release-traceability-readiness.json` ledger covers 935 exact
-units: all 46 requirements, accepted forms and operations, system registers,
-traps, 38 profile hooks, and 73 ASL state roots expanded to 240 leaf fields. Its
+`spec/evidence/release-traceability-readiness.json` ledger covers 918 exact
+units: all 47 requirements, accepted forms and operations, system registers,
+traps, 36 profile hooks, and 74 ASL state roots expanded to 229 leaf fields. Its
 inventory and links are closed, while S6-T1 promotion remains explicitly open
 on S5-T2 and an immutable-commit claim-hygiene review.
 The generated `spec/evidence/release-gate-readiness.json` ledger separately
@@ -127,10 +128,10 @@ approval evidence.
 ## Architecture scope
 
 - 474 scalar forms across AGU, ALU, AMO, BRU, FSU, and SYS.
-- 99 bundle/command forms for bundle start, dimension,
+- 96 bundle/command forms for bundle start, dimension,
   attributes, IO binding, hints, stop, and context handling.
-- 120 direct tile operations: 98 TEPL, 9 TMA, and 13 CUBE.
-- PTO ISA 0.57.1 Mode/Function tile encoding with no untagged legacy decoder.
+- 106 direct tile operations: 87 TEPL, 7 TMA, and 12 CUBE.
+- PTO ISA 0.58.0 Mode/Function tile encoding with no untagged legacy decoder.
 - A 32-code scalar namespace: 24 absolute GPRs plus four-entry T and U
   temporary queues, eight 32-bit per-warp predicate registers, one independent
   64-bit MPAR/MSEQ execution mask, and 64 flat T/U/M/N tiles.
@@ -147,7 +148,7 @@ approval evidence.
 - Explicit tile and scalar-queue legality before effects.
 - Instruction-granular memory completion and restart behavior.
 - A concrete `pto-v0` numeric, memory, ACR, reset, and time profile.
-- A named `pto-hardware-numeric-0.57.1-ieee-v1` contract whose independent
+- A named `pto-hardware-numeric-0.58.0-ieee-v1` contract whose independent
   implementation conformance remains open under `S5-T2`.
 - A bounded production-connected PTO-TSO candidate model.
 - No vector instruction execution surface; vector-only encodings are outside
@@ -196,7 +197,7 @@ contracts:
 | --- | --- |
 | [Instruction reference](docs/instructions/index.md) | Generated catalog reference for scalar forms, bundle/command forms, direct tile operations, and system registers |
 | [Architecture boundary](docs/architecture.md) | State, execution, legality, faults, and excluded implementation detail |
-| [PTO ISA 0.57.1 decision](docs/architecture-decisions/0045-pto-isa-release-tile-contract.md) | Release identity, Mode/Function encoding, bundle attributes, CELL allocation, ACC, and hardware-profile boundary |
+| [PTO ISA 0.58.0 decision](docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md) | 106-operation DavinciOO catalog, Mode/Function encoding, documentation, ASL, HTML, and Excel closure |
 | [Memory model](docs/memory-model.md) | PTO-TSO events, relations, axioms, and executable evidence |
 | [Profile contracts](docs/profile-contracts.md) | `pto-v0` behavior and alternate-profile obligations |
 | [Maturity bring-up plan](docs/maturity-bringup-plan.md) | Staged targets and exit gates from executable draft to architectural completeness |

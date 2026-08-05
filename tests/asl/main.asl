@@ -22,7 +22,11 @@ begin
     TestA2A3CubeMxBundleRejectionMatrix();
     TestBundleTileCommitLifecycle();
     TestBundleTileCommitRollback();
-    TestBundleDataAttributes0571();
+    TestBundleTileBindingV5Schemas();
+    TestBundleSharedBindingV5();
+    TestBundleSharedTMAExecution();
+    TestBundleSharedCubeExecution();
+    TestBundleDataAttributes0580();
     TestBundleTileAllocationAndLifetime();
     TestBundleTileUndersizedAllocation();
     TestTileRegisterMapping();
@@ -99,7 +103,7 @@ begin
     TestDecodedTileExecution();
     TestTileCapacityLegality();
     TestTileElementDefinedness();
-    TestTileManagementHandoff();
+    TestSharedRegisterAtomicUpdates();
     TestDecodedTileLegalityFaults();
     TestTileMemoryCompletionAndRestart();
     TestTeplTotality();

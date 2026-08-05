@@ -4,7 +4,7 @@
   "status": "proposal-complete-two-decisions-accepted",
   "input": {
     "path": "spec/evidence/numeric-profile-decision-inputs.json",
-    "sha256": "4939fd3b5c32bd81c815e0c4b5756d329a8fd207b375d921e6c074d949e000eb",
+    "sha256": "ecbc4d29caf4a82581b81c5f829c7a16cc9cc985133f43516e861d15c2ef99cd",
     "public_repository": "https://github.com/hw-native-sys/pto-isa",
     "public_commit": "712cbe9f23df5d5362be5e8327599f4285317473"
   },
@@ -16,7 +16,7 @@
   },
   "scalar_flag_contract": {
     "path": "spec/evidence/scalar-numeric-flag-contract.json",
-    "sha256": "1a696bb88881a32fa01486c00798e73c4ce8e2c63549e45e00a0824428c44e83",
+    "sha256": "b835a16e2b75f965dbdb02a4706a2c7385905f08a0447f992e897c67aaca3d9e",
     "status": "state-owner-matrix-closed-profile-production-open",
     "acceptance_record": "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
     "producer_owner_closed_form_count": 30,
@@ -26,33 +26,33 @@
   },
   "rounding_selector_contract": {
     "path": "spec/evidence/numeric-rounding-selector-contract.json",
-    "sha256": "e277abc6832c38708f3ea0beed4554b4f1cf8cfb8d629e195478bc00e7786c2e",
+    "sha256": "a7f10d3fac177d3d9cc0531bd9f9749a2d1a1583b92567880790d37b3d154df1",
     "status": "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open",
     "acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
     "scalar_active_selector_count": 8,
     "scalar_fixed_override_count": 5,
     "bundle_rmode_selector_count": 8,
     "external_selector_class_count": 4,
-    "affected_domain_count": 18,
-    "affected_operation_count": 102,
-    "affected_hook_count": 25,
-    "accepted_domain_rounding_rule_count": 18,
+    "affected_domain_count": 16,
+    "affected_operation_count": 100,
+    "affected_hook_count": 23,
+    "accepted_domain_rounding_rule_count": 16,
     "pd03_complete": true
   },
   "subnormal_contract": {
     "path": "spec/evidence/numeric-subnormal-contract.json",
-    "sha256": "d298d47fd06607053ce894dc8992adad6d3117475a4c76803cf1a6bdb475a94a",
+    "sha256": "251d075872fdeed7e83fb56975943dad89b0f78a007c50d69e72c817d902eeaf",
     "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
     "acceptance_record": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
     "subnormal_capable_type_count": 11,
     "boundary_vector_count": 55,
     "configuration_vector_count": 8,
     "non_applicable_type_count": 14,
-    "affected_domain_count": 16,
-    "affected_operation_count": 95,
-    "operation_applicability_row_count": 95,
-    "conditional_operation_type_tuple_count": 1045,
-    "affected_hook_count": 23,
+    "affected_domain_count": 14,
+    "affected_operation_count": 93,
+    "operation_applicability_row_count": 93,
+    "conditional_operation_type_tuple_count": 1023,
+    "affected_hook_count": 21,
     "accepted_decision_count": 1,
     "accepted_complete_domain_rule_count": 0,
     "pd04_complete": true,
@@ -61,7 +61,7 @@
   },
   "special_value_contract": {
     "path": "spec/evidence/numeric-special-value-contract.json",
-    "sha256": "7f7c8dfc3ac83c8fbdd3ffd30714ba9381c4a2cccfba1915cab999c5dbf79931",
+    "sha256": "1e076ce3fc5aa5a652094ec1edb439cfa81d1e9c1e71011f9709d42248a1b8f2",
     "status": "named-hardware-special-value-checkpoint-accepted-pd05-open",
     "acceptance_record": "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
     "format_count": 25,
@@ -80,7 +80,7 @@
   },
   "format_namespace_contract": {
     "path": "spec/evidence/numeric-format-namespace-contract.json",
-    "sha256": "4bdddb35de0738fe55eb3266fa02fdc80ae829cb95ac9079fa3aaa60c66c4baf",
+    "sha256": "91b88692f7cabe60ca9e255db278a39ec2431a58d19b3b2be7941fc58abdec6e",
     "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
     "acceptance_record": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
     "classification_checkpoint_id": "PD-02-SC2:PD-05-SC1",
@@ -116,7 +116,7 @@
   },
   "public_type_baseline": {
     "path": "spec/evidence/public-numeric-type-baseline.json",
-    "sha256": "6709b8b301742a985dc549b0518cb7aa3d53af4fe064cdb0aba5ed7e01152498",
+    "sha256": "8a32fe64469311963c7b64debbfb7620825ba65b05e56bc21bff7fc3358911f7",
     "status": "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
     "acceptance_record": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
     "public_type_count": 16,
@@ -135,7 +135,7 @@
   },
   "public_integer_conversion": {
     "path": "spec/evidence/public-integer-conversion-contract.json",
-    "sha256": "bad1906f7fa99c9716fc48f9de1861f6ed03f336874e6c60afdea7c787fb2bb1",
+    "sha256": "74484654028a35f7ab73c2d591d33edf6b649f1a79b1add2480959f061c0ee26",
     "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
     "acceptance_record": "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
     "public_integer_type_count": 8,
@@ -155,7 +155,7 @@
   },
   "profile_applicability_contract": {
     "path": "spec/evidence/numeric-profile-applicability-closure.json",
-    "sha256": "1360be3eb821d421a1d73610b757ba09c30e7fea28db948dd013b5a760610468",
+    "sha256": "d3e1d07e4bd29adf4c582625507eac882ffae2eddb1930d628e27604bd9ebc10",
     "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
     "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
     "rule_count": 6,
@@ -165,7 +165,7 @@
     "tuple_count": 150,
     "bundle_execution_tuple_count": 150,
     "bundle_command_form_count": 6,
-    "accepted_command_form_count": 99,
+    "accepted_command_form_count": 96,
     "result_rule_count": 0,
     "parent_pd01_complete": false,
     "cube_matrix_complete": false,
@@ -173,19 +173,19 @@
   },
   "variation_point_contract": {
     "path": "spec/evidence/numeric-variation-point-ownership.json",
-    "sha256": "c203e5364f7ed84c1a788bbeaf4cbf44af4844ad9db52336e290ca47ce880703",
+    "sha256": "fe36a3f4f2dc39d98f6ac60dbf25d2129dbd8724401fa170ffb9fc516cae89d8",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
     "acceptance_record": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
-    "variation_point_count": 99,
-    "unique_dimension_count": 41,
-    "domain_count": 20,
-    "operation_count": 108,
-    "hook_count": 30,
-    "primary_operation_hook_edge_count": 134,
+    "variation_point_count": 89,
+    "unique_dimension_count": 39,
+    "domain_count": 18,
+    "operation_count": 104,
+    "hook_count": 28,
+    "primary_operation_hook_edge_count": 128,
     "reference_helper_operation_edge_count": 8,
-    "portable_decision_owner_point_count": 99,
-    "selected_route_count": 18,
-    "accepted_result_rule_count": 18,
+    "portable_decision_owner_point_count": 89,
+    "selected_route_count": 16,
+    "accepted_result_rule_count": 16,
     "accepted_bounded_result_subset_rule_count": 3,
     "accepted_bounded_result_subset_tuple_count": 48,
     "accepted_unsupported_tuple_count": 150,
@@ -314,7 +314,6 @@
     "TileExpDifference",
     "TileExponential",
     "TileLogarithm",
-    "TileProfileAxpy",
     "TileProfileBinary",
     "TileProfileCompare",
     "TileProfileConvert",
@@ -324,7 +323,6 @@
     "TileProfileMatrixBias",
     "TileProfileMatrixScaledAccumulate",
     "TileProfileOrderLeft",
-    "TileProfilePReLU",
     "TileProfilePartialValue",
     "TileProfileQuantize",
     "TileProfileReductionInitial",
@@ -345,7 +343,6 @@
         "public-type-system"
       ],
       "affected_domains": [
-        "cube-convert",
         "cube-matrix",
         "scalar-binary",
         "scalar-fp-convert",
@@ -353,15 +350,14 @@
         "scalar-fused",
         "scalar-integer-to-fp",
         "scalar-unary",
-        "tile-axpy",
         "tile-binary",
         "tile-compare",
         "tile-convert",
         "tile-dequantize",
         "tile-expand",
+        "tile-fused",
         "tile-order",
         "tile-partial",
-        "tile-prelu",
         "tile-quantize",
         "tile-reduction",
         "tile-unary"
@@ -395,7 +391,6 @@
         "a5-conversion"
       ],
       "affected_domains": [
-        "cube-convert",
         "cube-matrix",
         "scalar-binary",
         "scalar-fp-convert",
@@ -403,15 +398,14 @@
         "scalar-fused",
         "scalar-integer-to-fp",
         "scalar-unary",
-        "tile-axpy",
         "tile-binary",
         "tile-compare",
         "tile-convert",
         "tile-dequantize",
         "tile-expand",
+        "tile-fused",
         "tile-order",
         "tile-partial",
-        "tile-prelu",
         "tile-quantize",
         "tile-reduction",
         "tile-unary"
@@ -421,7 +415,7 @@
         "named-target-profile-rule",
         "unsupported-in-profile"
       ],
-      "proposed_rule": "The 0.57.1 contract closes five distinct code namespaces and all 25 TileDataType identities, raw widths, reserved codes, and packed four-bit order. All 16 published public type identities have unambiguous catalog bindings and retain the A2/A3-versus-A5 availability baseline. Operation/type/profile legality and implementation conformance remain open. Backend carrier types cannot create implicit PTO formats.",
+      "proposed_rule": "The 0.58.0 contract closes five distinct code namespaces and all 25 TileDataType identities, raw widths, reserved codes, and packed four-bit order. All 16 published public type identities have unambiguous catalog bindings and retain the A2/A3-versus-A5 availability baseline. Operation/type/profile legality and implementation conformance remain open. Backend carrier types cannot create implicit PTO formats.",
       "open_items": [
         "bind the specialized floating raw carriers and decide the public roles of F64 and E8M0",
         "publish bit-exact payload fields and exceptional-value classes for every floating type",
@@ -449,7 +443,6 @@
         "a5-conversion"
       ],
       "affected_domains": [
-        "cube-convert",
         "cube-matrix",
         "scalar-binary",
         "scalar-fp-convert",
@@ -457,13 +450,12 @@
         "scalar-fused",
         "scalar-integer-to-fp",
         "scalar-unary",
-        "tile-axpy",
         "tile-binary",
         "tile-convert",
         "tile-dequantize",
         "tile-expand",
+        "tile-fused",
         "tile-partial",
-        "tile-prelu",
         "tile-quantize",
         "tile-reduction",
         "tile-unary"
@@ -494,19 +486,17 @@
         "public-target-profiles"
       ],
       "affected_domains": [
-        "cube-convert",
         "cube-matrix",
         "scalar-binary",
         "scalar-fp-convert",
         "scalar-fused",
         "scalar-unary",
-        "tile-axpy",
         "tile-binary",
         "tile-convert",
         "tile-dequantize",
         "tile-expand",
+        "tile-fused",
         "tile-partial",
-        "tile-prelu",
         "tile-quantize",
         "tile-reduction",
         "tile-unary"
@@ -515,7 +505,7 @@
         "named-target-profile-rule",
         "implementation-defined-with-explicit-allowed-set"
       ],
-      "proposed_rule": "ADR 0049 fixes the pto-hardware-numeric-0.57.1-ieee-v1 rule: preserve every defined input subnormal, use gradual underflow for every defined result subnormal, detect tininess after rounding, expose no FTZ/DAZ architectural state or operation override, and reject a nonconforming configuration before effects. The rule is conditional on independent operation/type support and does not change pto-v0.",
+      "proposed_rule": "ADR 0049 fixes the pto-hardware-numeric-0.58.0-ieee-v1 rule: preserve every defined input subnormal, use gradual underflow for every defined result subnormal, detect tininess after rounding, expose no FTZ/DAZ architectural state or operation override, and reject a nonconforming configuration before effects. The rule is conditional on independent operation/type support and does not change pto-v0.",
       "open_items": [],
       "acceptance_evidence": [
         "mode-state reset and transition contract",
@@ -537,22 +527,20 @@
         "a5-quantization"
       ],
       "affected_domains": [
-        "cube-convert",
         "cube-matrix",
         "scalar-binary",
         "scalar-fp-convert",
         "scalar-fp-to-integer",
         "scalar-fused",
         "scalar-unary",
-        "tile-axpy",
         "tile-binary",
         "tile-compare",
         "tile-convert",
         "tile-dequantize",
         "tile-expand",
+        "tile-fused",
         "tile-order",
         "tile-partial",
-        "tile-prelu",
         "tile-quantize",
         "tile-reduction",
         "tile-unary"
@@ -621,7 +609,6 @@
         "a5-conversion"
       ],
       "affected_domains": [
-        "cube-convert",
         "scalar-fp-convert",
         "scalar-fp-to-integer",
         "scalar-integer-to-fp",
@@ -805,7 +792,6 @@
         "public-type-system"
       ],
       "affected_domains": [
-        "cube-convert",
         "cube-matrix",
         "scalar-binary",
         "scalar-fp-convert",
@@ -813,15 +799,14 @@
         "scalar-fused",
         "scalar-integer-to-fp",
         "scalar-unary",
-        "tile-axpy",
         "tile-binary",
         "tile-compare",
         "tile-convert",
         "tile-dequantize",
         "tile-expand",
+        "tile-fused",
         "tile-order",
         "tile-partial",
-        "tile-prelu",
         "tile-quantize",
         "tile-reduction",
         "tile-unary"
@@ -1187,49 +1172,14 @@
       "status": "proposal-mapped-conformance-open"
     },
     {
-      "domain": "tile-axpy",
-      "lane": "N3",
+      "domain": "tile-fused",
+      "lane": "N6",
       "operation_count": 1,
       "operation_keys": [
-        "tile:TEPL:TAXPY"
+        "tile:TEPL:TFMA"
       ],
       "hooks": [
-        "TileProfileAxpy"
-      ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-12"
-      ],
-      "proposed_profile_ids": [
-        "pto-numeric-v1",
-        "pto-cpu-observation-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
-      ],
-      "portable_rule_status": "rule-required",
-      "a2a3_support_status": "operation-type-matrix-required",
-      "a5_support_status": "operation-type-matrix-required",
-      "cpu_observation_status": "capture-plan-required-not-oracle",
-      "independent_oracle_status": "qualification-required",
-      "vector_status": "generation-required",
-      "result_status": "capture-required",
-      "review_status": "acceptance-required",
-      "accepted_profile_rule": null,
-      "status": "proposal-mapped-conformance-open"
-    },
-    {
-      "domain": "tile-prelu",
-      "lane": "N3",
-      "operation_count": 1,
-      "operation_keys": [
-        "tile:TEPL:TPRELU"
-      ],
-      "hooks": [
-        "TileProfilePReLU"
+        "TileProfileMatrixAccumulate"
       ],
       "decision_question_ids": [
         "PD-01",
@@ -1428,42 +1378,6 @@
       "status": "proposal-mapped-conformance-open"
     },
     {
-      "domain": "cube-convert",
-      "lane": "N4",
-      "operation_count": 1,
-      "operation_keys": [
-        "tile:CUBE:ACCCVT"
-      ],
-      "hooks": [
-        "TileProfileConvert"
-      ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-07",
-        "PD-12"
-      ],
-      "proposed_profile_ids": [
-        "pto-numeric-v1",
-        "pto-cpu-observation-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
-      ],
-      "portable_rule_status": "rule-required",
-      "a2a3_support_status": "operation-type-matrix-required",
-      "a5_support_status": "operation-type-matrix-required",
-      "cpu_observation_status": "capture-plan-required-not-oracle",
-      "independent_oracle_status": "qualification-required",
-      "vector_status": "generation-required",
-      "result_status": "capture-required",
-      "review_status": "acceptance-required",
-      "accepted_profile_rule": null,
-      "status": "proposal-mapped-conformance-open"
-    },
-    {
       "domain": "tile-quantize",
       "lane": "N4",
       "operation_count": 1,
@@ -1579,12 +1493,10 @@
     {
       "domain": "tile-order",
       "lane": "N5",
-      "operation_count": 4,
+      "operation_count": 2,
       "operation_keys": [
         "tile:TEPL:TMRGSORT",
-        "tile:TEPL:TPARTARGMAX",
-        "tile:TEPL:TPARTARGMIN",
-        "tile:TEPL:TSORT"
+        "tile:TEPL:TSORT32"
       ],
       "hooks": [
         "TileProfileOrderLeft",
@@ -1683,14 +1595,14 @@
       "id": "S5-T2-A3",
       "target": "populate accepted rules for every numeric domain",
       "current": 0,
-      "required": 20,
+      "required": 18,
       "status": "open"
     },
     {
       "id": "S5-T2-A4",
       "target": "inventory and assign the current owner for every numeric variation point",
-      "current": 99,
-      "required": 99,
+      "current": 89,
+      "required": 89,
       "status": "closed"
     },
     {
@@ -1718,7 +1630,7 @@
       "id": "S5-T2-C",
       "target": "publish normal, boundary, exceptional, and adversarial vectors for every domain",
       "current": 0,
-      "required": 20,
+      "required": 18,
       "status": "open"
     },
     {
@@ -1742,12 +1654,12 @@
     "accepted_framework_rule_count": 5,
     "decision_proposal_count": 12,
     "accepted_decision_count": 2,
-    "numeric_domain_count": 20,
+    "numeric_domain_count": 18,
     "accepted_domain_rule_count": 0,
-    "numeric_operation_count": 108,
-    "numeric_hook_count": 30,
-    "numeric_variation_point_count": 99,
-    "selected_variation_route_count": 18,
+    "numeric_operation_count": 104,
+    "numeric_hook_count": 28,
+    "numeric_variation_point_count": 89,
+    "selected_variation_route_count": 16,
     "accepted_public_type_binding_count": 16,
     "public_type_identity_count": 16,
     "accepted_bounded_result_rule_count": 3,

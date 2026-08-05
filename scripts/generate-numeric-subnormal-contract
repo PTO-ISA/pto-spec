@@ -18,7 +18,7 @@ COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
 HARDWARE_PROFILE = ROOT / "spec/hardware-conformance-profile.json"
 OUTPUT = ROOT / "spec/evidence/numeric-subnormal-contract.json"
 ACCEPTANCE_RECORD = "docs/architecture-decisions/0049-hardware-subnormal-policy.md"
-PROFILE_ID = "pto-hardware-numeric-0.57.1-ieee-v1"
+PROFILE_ID = "pto-hardware-numeric-0.58.0-ieee-v1"
 
 
 # name, ASL enumerator, logical width, minimum positive subnormal,
@@ -91,7 +91,7 @@ def generate() -> dict[str, Any]:
             "flush_to_zero": False,
             "input_subnormals": "preserve exact source value",
             "operation_override": False,
-            "profile_selection": "fixed by pto-hardware-numeric-0.57.1-ieee-v1",
+            "profile_selection": "fixed by pto-hardware-numeric-0.58.0-ieee-v1",
             "result_subnormals": "gradual underflow to the destination format",
             "scope": "Every otherwise-supported operation/type tuple whose source or destination format defines subnormal encodings.",
             "tininess_detection": "after-rounding",
@@ -182,7 +182,7 @@ def generate() -> dict[str, Any]:
         "PD-04 domain membership drift",
     )
     domain_rows = [domain_rows_by_name[name] for name in pd04["domains"]]
-    require(len(domain_rows) == 16, "PD-04 domain count drift")
+    require(len(domain_rows) == 14, "PD-04 domain count drift")
     operation_rows = [
         {
             "operation_key": operation_key,
@@ -197,7 +197,7 @@ def generate() -> dict[str, Any]:
         for row in domain_rows
         for operation_key in row["operation_keys"]
     ]
-    require(len(operation_rows) == 95, "PD-04 operation applicability count drift")
+    require(len(operation_rows) == 93, "PD-04 operation applicability count drift")
 
     independent = formats["independent_comparison"]
     require(

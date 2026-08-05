@@ -337,26 +337,6 @@
   ],
   "domains": [
     {
-      "domain": "cube-convert",
-      "lane": "N4",
-      "operation_count": 1,
-      "operation_keys": [
-        "tile:CUBE:ACCCVT"
-      ],
-      "hooks": [
-        "TileProfileConvert"
-      ],
-      "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
-      ],
-      "selector_owner": "TileNumericSelection from direct operands or B.DATR.RMode",
-      "rounding_rule": "Resolve NONE to RNE; explicit codes 1 through 7 use their bundle mapping, then round each logical ACC lane once to the destination format.",
-      "saturation_order_rule": "round-before-saturation-clamp-or-PD-07-nonsaturating-result-selection",
-      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
-    },
-    {
       "domain": "cube-matrix",
       "lane": "N6",
       "operation_count": 12,
@@ -385,7 +365,7 @@
         "pto-a5-numeric-v1"
       ],
       "selector_owner": "operation-fixed pto-v0 rule",
-      "rounding_rule": "Use RNE for each fused multiply-add into the declared accumulator in increasing logical K order and for the post-dot bias addition; conversion out of ACC follows cube-convert.",
+      "rounding_rule": "Use RNE for each fused multiply-add into the declared accumulator in increasing logical K order and for the post-dot bias addition.",
       "saturation_order_rule": "not-applicable-to-matrix-accumulation",
       "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
@@ -523,26 +503,6 @@
       "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
-      "domain": "tile-axpy",
-      "lane": "N3",
-      "operation_count": 1,
-      "operation_keys": [
-        "tile:TEPL:TAXPY"
-      ],
-      "hooks": [
-        "TileProfileAxpy"
-      ],
-      "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
-      ],
-      "selector_owner": "operation-fixed pto-v0 rule",
-      "rounding_rule": "Round the operation-defined floating destination result once using RNE; integer results are exact modulo their independently specified overflow rule.",
-      "saturation_order_rule": "not-applicable",
-      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
-    },
-    {
       "domain": "tile-binary",
       "lane": "N3",
       "operation_count": 24,
@@ -662,6 +622,26 @@
       "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
+      "domain": "tile-fused",
+      "lane": "N6",
+      "operation_count": 1,
+      "operation_keys": [
+        "tile:TEPL:TFMA"
+      ],
+      "hooks": [
+        "TileProfileMatrixAccumulate"
+      ],
+      "candidate_profile_ids": [
+        "pto-numeric-v1",
+        "pto-a2a3-numeric-v1",
+        "pto-a5-numeric-v1"
+      ],
+      "selector_owner": "operation-fixed pto-v0 rule",
+      "rounding_rule": "Evaluate the exact fused multiply-add expression and round once, only at the destination-format boundary.",
+      "saturation_order_rule": "not-applicable",
+      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
+    },
+    {
       "domain": "tile-partial",
       "lane": "N5",
       "operation_count": 4,
@@ -681,26 +661,6 @@
       ],
       "selector_owner": "operation-fixed pto-v0 rule",
       "rounding_rule": "Each floating partial add or multiply step rounds to its declared accumulator type using RNE; min and max selection do not round.",
-      "saturation_order_rule": "not-applicable",
-      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
-    },
-    {
-      "domain": "tile-prelu",
-      "lane": "N3",
-      "operation_count": 1,
-      "operation_keys": [
-        "tile:TEPL:TPRELU"
-      ],
-      "hooks": [
-        "TileProfilePReLU"
-      ],
-      "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
-      ],
-      "selector_owner": "operation-fixed pto-v0 rule",
-      "rounding_rule": "When the negative branch multiplies floating values, round its destination result once using RNE; the identity branch does not round.",
       "saturation_order_rule": "not-applicable",
       "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
@@ -817,7 +777,7 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "e5a98441098fdd88c0f5837bb3e1367d7b272ebc2ba506275e9e2be1b4c1978a"
+      "sha256": "58cb445f7a4bc690859f017db4e9ec7b054ab1c10d50773eb2d6cf3a2a87d94a"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
@@ -825,7 +785,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "4939fd3b5c32bd81c815e0c4b5756d329a8fd207b375d921e6c074d949e000eb"
+      "sha256": "ecbc4d29caf4a82581b81c5f829c7a16cc9cc985133f43516e861d15c2ef99cd"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
@@ -833,7 +793,7 @@
     },
     {
       "path": "asl/scalar/floating.asl",
-      "sha256": "cc2b1fd8a53e840295363ae45335ca426385565d6f797b4829d760e3e65ba71f"
+      "sha256": "ef1eee6e90063dd0ea41c48bd1792f060a19467aa303112caea3877fb46d38ba"
     },
     {
       "path": "asl/scalar/dispatch.asl",
@@ -841,11 +801,11 @@
     },
     {
       "path": "asl/bundle/state.asl",
-      "sha256": "2f8f8d3c26db75552056b104033991704ac5984e339ac7f7c731f1a3c5e17f0a"
+      "sha256": "a84d0145cd372c4ec640ebbe18afb1488098f88870b57a35341d7499b128f42f"
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "fd3c014af09354d56835239a9063a7fef3d363f18e00efe4b6c3b87b1e3bb1d9"
+      "sha256": "6a3e8fe318bb85a632998caa14a3c158b727fa9bf059c56c7c4a50c4c8fe8f6e"
     },
     {
       "path": "asl/tile/conversion.asl",
@@ -853,15 +813,15 @@
     },
     {
       "path": "asl/tile/cube.asl",
-      "sha256": "47cc1428bbf5a7e5c7e8931d5413fffa6116e3debfd8b9c6174dee16d9dc8aef"
+      "sha256": "2eec5feb790b5f7eedd8c45cff5f5946275a4fd8357e18ce6573bccdedad3745"
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "52c84c4b40b8c8f5fa52ba6a7cabc8ebb394b65907e34c0923f98a6885096550"
+      "sha256": "99f7b99a881c60ba0cbd92b4ad6f02d36bac3bd3b43b650585d04c7bedc4ad08"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "1608fa0c03d139842b85c63c581d8280c37e55ef03a6e2f3cbf75dd8cb8edaab"
+      "sha256": "c4076cf8ac6ebd0c6db8a070b7c290b9928ed7f98c089538ee53ed4644e1531a"
     },
     {
       "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
@@ -881,10 +841,10 @@
     "scalar_fixed_override_count": 5,
     "bundle_rmode_selector_count": 8,
     "external_selector_class_count": 4,
-    "affected_domain_count": 18,
-    "affected_operation_count": 102,
-    "affected_hook_count": 25,
-    "accepted_domain_rounding_rule_count": 18,
+    "affected_domain_count": 16,
+    "affected_operation_count": 100,
+    "affected_hook_count": 23,
+    "accepted_domain_rounding_rule_count": 16,
     "pd03_complete": true
   }
 }

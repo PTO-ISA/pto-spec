@@ -71,6 +71,13 @@ begin
     assert ReadTileElement(2, 0, 1) == Zeros{PTO_XLEN} + 2;
     assert ReadTileElement(2, 0, 2) == Zeros{PTO_XLEN} + 3;
 
+    // The one-level PTO model receives the peer fragment as the resolved
+    // source tile; peer_tid remains an explicit legality/control operand.
+    GMOV(0, 1, Zeros{PTO_XLEN} + 1);
+    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN} + 2;
+    assert ReadTileElement(0, 0, 2) == Zeros{PTO_XLEN} + 3;
+
     StartMemoryEventCapture(0);
     TPREFETCH(Zeros{PTO_XLEN} + 0x120, 2);
     assert _MemoryEventCount == 2;
@@ -163,65 +170,6 @@ begin
     let scatter_byte = LoadUnsigned(Zeros{PTO_XLEN} + 0x190, 1);
     assert scatter_byte == Zeros{PTO_XLEN} + 0x65;
 
-    WriteTileElement(6, 0, 0, Zeros{PTO_XLEN} + 7);
-    WriteTileElement(6, 0, 1, Zeros{PTO_XLEN} + 8);
-    WriteTileElement(6, 0, 2, Zeros{PTO_XLEN} + 9);
-    WriteTileElement(7, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(7, 0, 1, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(7, 0, 2, Zeros{PTO_XLEN});
-    WriteTileElement(8, 0, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(8, 0, 1, Zeros{PTO_XLEN});
-    WriteTileElement(8, 0, 2, Zeros{PTO_XLEN} + 1);
-    Store(Zeros{PTO_XLEN} + 0x1a0, 1, Zeros{PTO_XLEN} + 0x21);
-    StartMemoryEventCapture(1);
-    MGATHER_MASK(6, Zeros{PTO_XLEN} + 0x1a0, 7, 8, TilePad_Zero);
-    assert _MemoryEventCount == 2;
-    assert _MemoryEvents[[0]].kind == MemoryEvent_Load;
-    assert _MemoryEvents[[1]].kind == MemoryEvent_Load;
-    assert ReadTileElement(6, 0, 0) == Zeros{PTO_XLEN} + 1;
-    assert ReadTileElement(6, 0, 1) == Zeros{PTO_XLEN};
-    assert ReadTileElement(6, 0, 2) == Zeros{PTO_XLEN} + 1;
-    StopMemoryEventCapture();
-
-    Store(Zeros{PTO_XLEN} + 0x1b0, 1, Zeros{PTO_XLEN} + 0xa9);
-    StartMemoryEventCapture(1);
-    MSCATTER_MASK(Zeros{PTO_XLEN} + 0x1b0, 5, 4, 8);
-    assert _MemoryEventCount == 2;
-    assert _MemoryEvents[[0]].kind == MemoryEvent_Store;
-    assert _MemoryEvents[[0]].write_value == Zeros{PTO_XLEN} + 0xa4;
-    assert _MemoryEvents[[1]].write_value == Zeros{PTO_XLEN} + 0x64;
-    StopMemoryEventCapture();
-    let masked_scatter_byte = LoadUnsigned(Zeros{PTO_XLEN} + 0x1b0, 1);
-    assert masked_scatter_byte == Zeros{PTO_XLEN} + 0x64;
-
-    WriteTileElement(10, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(10, 0, 1, Zeros{PTO_XLEN});
-    WriteTileElement(10, 0, 2, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(11, 0, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(11, 0, 1, Zeros{PTO_XLEN} + 9);
-    WriteTileElement(11, 0, 2, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(12, 0, 0, Zeros{PTO_XLEN} + 4);
-    WriteTileElement(12, 0, 1, Zeros{PTO_XLEN} + 5);
-    WriteTileElement(12, 0, 2, Zeros{PTO_XLEN} + 6);
-    Store(Zeros{PTO_XLEN} + 0x1c0, 1, Zeros{PTO_XLEN} + 0x21);
-    StartMemoryEventCapture(1);
-    MGATHER_CAS(9, Zeros{PTO_XLEN} + 0x1c0, 10, 11, 12);
-    assert _MemoryEventCount == 3;
-    assert _MemoryEvents[[0]].kind == MemoryEvent_Atomic;
-    assert _MemoryEvents[[0]].write_performed;
-    assert _MemoryEvents[[0]].read_value == Zeros{PTO_XLEN} + 0x21;
-    assert _MemoryEvents[[0]].write_value == Zeros{PTO_XLEN} + 0x24;
-    assert !_MemoryEvents[[1]].write_performed;
-    assert _MemoryEvents[[1]].read_value == Zeros{PTO_XLEN} + 0x24;
-    assert _MemoryEvents[[1]].write_value == Zeros{PTO_XLEN} + 0x25;
-    assert _MemoryEvents[[2]].write_performed;
-    assert _MemoryEvents[[2]].write_value == Zeros{PTO_XLEN} + 0x64;
-    StopMemoryEventCapture();
-    assert ReadTileElement(9, 0, 0) == Zeros{PTO_XLEN} + 1;
-    assert ReadTileElement(9, 0, 1) == Zeros{PTO_XLEN} + 4;
-    assert ReadTileElement(9, 0, 2) == Zeros{PTO_XLEN} + 2;
-    let cas_byte = LoadUnsigned(Zeros{PTO_XLEN} + 0x1c0, 1);
-    assert cas_byte == Zeros{PTO_XLEN} + 0x64;
 end;
 
 func TestTmaPackedPreflightAndRestart()
@@ -314,22 +262,6 @@ begin
     assert fault_scatter_byte0 == Zeros{PTO_XLEN} + 0xaa;
     assert fault_scatter_byte1 == Zeros{PTO_XLEN} + 0xbb;
 
-    WriteTileElement(16, 0, 0, Zeros{PTO_XLEN} + 0xa);
-    WriteTileElement(16, 0, 1, Zeros{PTO_XLEN} + 0xa);
-    WriteTileElement(16, 0, 2, Zeros{PTO_XLEN} + 0xa);
-    WriteTileElement(17, 0, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(17, 0, 1, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(17, 0, 2, Zeros{PTO_XLEN} + 3);
-    ClearFault();
-    StartMemoryEventCapture(2);
-    MGATHER_CAS(15, Zeros{PTO_XLEN} + 4094, 14, 16, 17);
-    assert _LastFault == Fault_DataPage;
-    assert _MemoryEventCount == 0;
-    StopMemoryEventCapture();
-    let fault_cas_byte0 = LoadUnsigned(Zeros{PTO_XLEN} + 4094, 1);
-    let fault_cas_byte1 = LoadUnsigned(Zeros{PTO_XLEN} + 4095, 1);
-    assert fault_cas_byte0 == Zeros{PTO_XLEN} + 0xaa;
-    assert fault_cas_byte1 == Zeros{PTO_XLEN} + 0xbb;
 end;
 
 func TestTmaFaultPositionMatrix()
@@ -365,20 +297,14 @@ begin
 
     ConfigurePackedTmaTile(27, 3);
     ConfigureIndexTmaTile(28, 3);
-    ConfigurePackedTmaTile(29, 3);
     ConfigurePackedTmaTile(30, 3);
-    ConfigurePackedTmaTile(31, 3);
-    ConfigurePackedTmaTile(32, 3);
     for lane = 0 to 2 do
         WriteTileElement(27, 0, lane, Zeros{PTO_XLEN} + 9);
-        WriteTileElement(29, 0, lane, Zeros{PTO_XLEN} + 1);
         WriteTileElement(30, 0, lane, Zeros{PTO_XLEN} + 2);
-        WriteTileElement(31, 0, lane, Zeros{PTO_XLEN} + 3);
-        WriteTileElement(32, 0, lane, Zeros{PTO_XLEN} + 4);
     end;
 
-    // Indexed gather, scatter, masked variants, and CAS all share the same
-    // complete-footprint rule. Exercise the fault in every lane position.
+    // Indexed gather and scatter share the same complete-footprint rule.
+    // Exercise the fault in every lane position.
     for fault_position = 0 to 2 do
         for lane = 0 to 2 do
             let index_value = if lane == fault_position then
@@ -392,7 +318,7 @@ begin
 
         ClearFault();
         StartMemoryEventCapture(1);
-        MGATHER_MASK(27, base_address, 28, 29, TilePad_Zero);
+        MGATHER(27, base_address, 28);
         assert _LastFault == Fault_DataPage;
         assert _FaultAddress == Zeros{PTO_XLEN} + 4096;
         assert _MemoryEventCount == 0;
@@ -404,20 +330,6 @@ begin
         ClearFault();
         StartMemoryEventCapture(1);
         MSCATTER(base_address, 30, 28);
-        assert _LastFault == Fault_DataPage;
-        assert _MemoryEventCount == 0;
-        StopMemoryEventCapture();
-
-        ClearFault();
-        StartMemoryEventCapture(1);
-        MSCATTER_MASK(base_address, 30, 28, 29);
-        assert _LastFault == Fault_DataPage;
-        assert _MemoryEventCount == 0;
-        StopMemoryEventCapture();
-
-        ClearFault();
-        StartMemoryEventCapture(1);
-        MGATHER_CAS(27, base_address, 28, 31, 32);
         assert _LastFault == Fault_DataPage;
         assert _MemoryEventCount == 0;
         StopMemoryEventCapture();
@@ -498,34 +410,12 @@ begin
 
     operands = DefaultTileInstructionOperands();
     operands.destination0 = 20;
-    operands.address = Zeros{PTO_XLEN} + 0x300;
-    operands.source0 = 22;
-    operands.source1 = 23;
-    let (masked_gather_status, -) = ExecuteTileInstruction(
-        TileDecode_TMA, Zeros{12} + 6, operands);
-    assert masked_gather_status == TileExecution_Executed;
-
-    operands = DefaultTileInstructionOperands();
-    operands.address = Zeros{PTO_XLEN} + 0x300;
     operands.source0 = 21;
-    operands.source1 = 22;
-    operands.source2 = 23;
-    let (masked_scatter_status, -) = ExecuteTileInstruction(
-        TileDecode_TMA, Zeros{12} + 7, operands);
-    assert masked_scatter_status == TileExecution_Executed;
-
-    operands = DefaultTileInstructionOperands();
-    operands.destination0 = 20;
-    operands.address = Zeros{PTO_XLEN} + 0x300;
-    operands.source0 = 22;
-    operands.source1 = 24;
-    operands.source2 = 25;
-    let (cas_status, -) = ExecuteTileInstruction(
-        TileDecode_TMA, Zeros{12} + 8, operands);
-    assert cas_status == TileExecution_Executed;
+    operands.scalar0 = Zeros{PTO_XLEN} + 2;
+    let (gmov_status, -) = ExecuteTileInstruction(
+        TileDecode_TMA, Zeros{12} + 13, operands);
+    assert gmov_status == TileExecution_Executed;
     assert ReadTileElement(20, 0, 0) == Zeros{PTO_XLEN} + 3;
-    let cas_byte = LoadUnsigned(Zeros{PTO_XLEN} + 0x300, 1);
-    assert cas_byte == Zeros{PTO_XLEN} + 0xa4;
 end;
 
 func TestTmaTotality()

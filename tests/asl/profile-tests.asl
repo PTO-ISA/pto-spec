@@ -725,18 +725,12 @@ begin
         Zeros{PTO_XLEN} + 2, Zeros{PTO_XLEN} + 3);
     let tile_unary = TileProfileUnary(TileUnary_NEG, TileDataType_S64,
         Zeros{PTO_XLEN} + 2);
-    let tile_axpy = TileProfileAxpy(Zeros{PTO_XLEN} + 1,
-        Zeros{PTO_XLEN} + 2, Zeros{PTO_XLEN} + 3, TileDataType_U64);
-    let tile_prelu = TileProfilePReLU(Zeros{PTO_XLEN} - 3,
-        Zeros{PTO_XLEN} + 2, TileDataType_S64);
     let tile_compare = TileProfileCompare(TileComparison_LT, TileDataType_S64,
         Zeros{PTO_XLEN} + 2, Zeros{PTO_XLEN} + 3);
     let reduction_initial = TileProfileReductionInitial(
         TileReduction_SUM, TileDataType_U64, Zeros{PTO_XLEN} + 9);
     assert tile_binary == Zeros{PTO_XLEN} + 5;
     assert tile_unary == Zeros{PTO_XLEN} - 2;
-    assert tile_axpy == Zeros{PTO_XLEN} + 7;
-    assert tile_prelu == Zeros{PTO_XLEN} - 6;
     assert tile_compare == Zeros{PTO_XLEN} + 1;
     assert reduction_initial == Zeros{PTO_XLEN};
     let (reduction_sum, reduction_selected) = TileProfileReductionStep(
@@ -812,8 +806,8 @@ begin
     SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 3);
     SetBundleScalarBinding(31, 1, 2, 3, 4, 3);
-    SetBundleTileBinding(15, TRUE, 3, 3, TRUE, TRUE, 0, 63,
-        TRUE, TRUE, TRUE);
+    SetBundleTileBinding(15, TRUE, 3, 3, '1111', TRUE, TRUE, 0, 63,
+        TRUE);
     SetBundleControlAttributeState(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE);
     SetBundleDataAttributeState(Zeros{5} + 1, Zeros{5} + 2,
         Zeros{2} + 3, Zeros{3} + 1, Zeros{3} + 2, TRUE);
@@ -859,7 +853,6 @@ begin
     assert !_BundleTileBindings[[15]].valid;
     assert !_BundleControlAttributes.trap_enabled;
     assert !_BundleDataAttributes.saturating;
-    assert !_Accumulator.live;
     assert !_Tiles[[0]].allocated && !_Tiles[[63]].allocated;
     assert !_Tiles[[0]].contents_defined && !_Tiles[[63]].contents_defined;
     assert _Tiles[[0]].capacity_bytes == 0 &&

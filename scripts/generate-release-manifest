@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the reproducible PTO ISA 0.57.1 release identity artifacts."""
+"""Generate the reproducible PTO ISA 0.58.0 release identity artifacts."""
 
 from __future__ import annotations
 
@@ -13,18 +13,18 @@ import tomllib
 
 
 ROOT = Path(__file__).resolve().parent.parent
-RELEASE = "0.57.1"
-ENCODING_ABI = "pto-isa-0.57.1-mode-function-v1"
+RELEASE = "0.58.0"
+ENCODING_ABI = "pto-isa-0.58.0-mode-function-v1"
 MANIFEST_PATH = Path("spec/release-manifest.json")
-TOTALITY_PATH = Path("spec/evidence/pto-isa-0571-encoding-totality.json")
-ABI_VECTORS_PATH = Path("spec/evidence/pto-isa-0571-abi-vectors.json")
+TOTALITY_PATH = Path("spec/evidence/pto-isa-0580-encoding-totality.json")
+ABI_VECTORS_PATH = Path("spec/evidence/pto-isa-0580-abi-vectors.json")
 NUMERIC_PROFILE_PATH = Path("spec/hardware-conformance-profile.json")
-NUMERIC_VECTORS_PATH = Path("spec/evidence/pto-isa-0571-hardware-numeric-vectors.json")
-NUMERIC_PROFILE_ID = "pto-hardware-numeric-0.57.1-ieee-v1"
+NUMERIC_VECTORS_PATH = Path("spec/evidence/pto-isa-0580-hardware-numeric-vectors.json")
+NUMERIC_PROFILE_ID = "pto-hardware-numeric-0.58.0-ieee-v1"
 
-FAMILY_COUNTS = {"TEPL": 98, "TMA": 9, "CUBE": 13}
-FORM_COUNTS = {"scalar_forms": 474, "command_forms": 99}
-COMMAND_FAMILY_COUNTS = {"CMD": 74, "BBD": 25}
+FAMILY_COUNTS = {'TEPL': 87, 'TMA': 7, 'CUBE': 12}
+FORM_COUNTS = {'scalar_forms': 474, 'command_forms': 96}
+COMMAND_FAMILY_COUNTS = {'CMD': 71, 'BBD': 25}
 VALID_DATATYPES = tuple(range(0, 15)) + tuple(range(16, 21)) + tuple(range(24, 29))
 RESERVED_DATATYPES = (15, 21, 22, 23, 29, 30)
 ILLEGAL_DATATYPES = (31,)
@@ -60,91 +60,86 @@ EXPECTED_DATA_TYPE_NAMES = {
 # the manifest a verification action, not a way to bless arbitrary ABI drift.
 EXPECTED_TEPL_MAP_TEXT = """
 000:TADD 001:TSUB 002:TMUL 003:TDIV 004:TREM 006:TAND 007:TOR 008:TXOR
-009:TSHL 00A:TSHR 00B:TMAX 00C:TMIN 00D:TCMP 00E:TPRELU 00F:TABS
-010:TNOT 011:TNEG 012:TEXP 013:TLOG 014:TRECIP 015:TSQRT 016:TRSQRT
-017:TRELU 01A:TSEL 01B:TCVT
-020:TADDS 021:TSUBS 022:TMULS 023:TDIVS 024:TREMS 026:TANDS 027:TORS
-028:TXORS 029:TSHLS 02A:TSHRS 02B:TMAXS 02C:TMINS 02D:TCMPS
-02F:TAXPY 03A:TSELS 03B:TEXPANDS
-040:TROWSUM 041:TROWMAX 042:TROWMIN 043:TROWPROD 044:TROWEXPAND
-045:TROWEXPANDADD 046:TROWEXPANDSUB 047:TROWEXPANDMUL
-048:TROWEXPANDDIV 049:TROWEXPANDMAX 04A:TROWEXPANDMIN
-04B:TROWEXPANDEXPDIF 04C:TROWARGMAX 04D:TROWARGMIN 050:TCOLSUM
-051:TCOLMAX 052:TCOLMIN 053:TCOLPROD 054:TCOLEXPAND
-055:TCOLEXPANDADD 056:TCOLEXPANDSUB 057:TCOLEXPANDMUL
-058:TCOLEXPANDDIV 059:TCOLEXPANDMAX 05A:TCOLEXPANDMIN
-05B:TCOLEXPANDEXPDIF 05C:TCOLARGMAX 05D:TCOLARGMIN
-060:TCONCAT 061:TGATHERB 062:TEXTRACT 063:TINSERT 064:TIMG2COL
-065:TFILLPAD 066:TCI 067:TTRI 068:THISTOGRAM 06A:TQUANT
-06B:TDEQUANT 06C:TSORT 06D:TMRGSORT 06E:TTRANS 06F:TGATHER
-070:TSCATTER 071:TPARTADD 072:TPARTMUL 073:TPARTMAX 074:TPARTMIN
-075:TPARTARGMAX 076:TPARTARGMIN 077:TRESHAPE 078:TDEINTERLEAVE
-079:TINTERLEAVE 07A:TPUSH 07B:TPOP 07C:TALLOC 07D:TFREE
+009:TSHL 00A:TSHR 00B:TMAX 00C:TMIN 00D:TCMP 00F:TABS 010:TNOT 011:TNEG
+012:TEXP 013:TLOG 014:TRECIP 015:TSQRT 016:TRSQRT 017:TRELU 01A:TSEL 01B:TCVT
+01C:TFMA 020:TADDS 021:TSUBS 022:TMULS 023:TDIVS 024:TREMS 026:TANDS 027:TORS
+028:TXORS 029:TSHLS 02A:TSHRS 02B:TMAXS 02C:TMINS 02D:TCMPS 03A:TSELS 03B:TEXPANDS
+040:TROWSUM 041:TROWMAX 042:TROWMIN 043:TROWPROD 044:TROWEXPAND 045:TROWEXPANDADD 046:TROWEXPANDSUB 047:TROWEXPANDMUL
+048:TROWEXPANDDIV 049:TROWEXPANDMAX 04A:TROWEXPANDMIN 04B:TROWEXPANDEXPDIF 04C:TROWARGMAX 04D:TROWARGMIN 050:TCOLSUM 051:TCOLMAX
+052:TCOLMIN 053:TCOLPROD 054:TCOLEXPAND 055:TCOLEXPANDADD 056:TCOLEXPANDSUB 057:TCOLEXPANDMUL 058:TCOLEXPANDDIV 059:TCOLEXPANDMAX
+05A:TCOLEXPANDMIN 05B:TCOLEXPANDEXPDIF 05C:TCOLARGMAX 05D:TCOLARGMIN 060:TCONCAT 062:TEXTRACT 063:TINSERT 064:TIMG2COL
+065:TFILLPAD 066:TCI 067:TTRI 069:TRANDOM 06A:TQUANT 06B:TDEQUANT 06C:TSORT32 06D:TMRGSORT
+06E:TTRANS 06F:TGATHER 070:TSCATTER 071:TPARTADD 072:TPARTMUL 073:TPARTMAX 074:TPARTMIN
 """
 EXPECTED_TEPL_MAP = {
     int(token.split(":", 1)[0], 16): token.split(":", 1)[1]
     for token in EXPECTED_TEPL_MAP_TEXT.split()
 }
 EXPECTED_TMA_MAP = {
-    0: "TLOAD",
-    1: "TSTORE",
-    2: "TMOV",
-    3: "TPREFETCH",
-    4: "MGATHER",
-    5: "MSCATTER",
-    6: "MGATHER_MASK",
-    7: "MSCATTER_MASK",
-    8: "MGATHER_CAS",
+    0: 'TLOAD',
+    1: 'TSTORE',
+    2: 'TMOV',
+    3: 'TPREFETCH',
+    4: 'MGATHER',
+    5: 'MSCATTER',
+    13: 'GMOV',
 }
 EXPECTED_CUBE_MAP = {
-    0: "TMATMUL",
-    1: "TMATMUL_BIAS",
-    2: "TMATMUL_ACC",
-    4: "TMATMUL_MX",
-    5: "TMATMUL_MX_BIAS",
-    6: "TMATMUL_MX_ACC",
-    8: "ACCCVT",
-    16: "TGEMV",
-    17: "TGEMV_BIAS",
-    18: "TGEMV_ACC",
-    20: "TGEMV_MX",
-    21: "TGEMV_MX_BIAS",
-    22: "TGEMV_MX_ACC",
+    0: 'TMATMUL',
+    1: 'TMATMUL_BIAS',
+    2: 'TMATMUL_ACC',
+    4: 'TMATMUL_MX',
+    5: 'TMATMUL_MX_BIAS',
+    6: 'TMATMUL_MX_ACC',
+    16: 'TGEMV',
+    17: 'TGEMV_BIAS',
+    18: 'TGEMV_ACC',
+    20: 'TGEMV_MX',
+    21: 'TGEMV_MX_BIAS',
+    22: 'TGEMV_MX_ACC',
 }
 EXPECTED_NON_TEPL_COMMANDS = {
-    "TLOAD": "BSTART.TLOAD",
-    "TSTORE": "BSTART.TSTORE",
-    "TMOV": "BSTART.TMOV",
-    "TPREFETCH": "BSTART.TPREFETCH",
-    "MGATHER": "BSTART.MGATHER",
-    "MSCATTER": "BSTART.MSCATTER",
-    "MGATHER_MASK": "BSTART.MGATHER.MASK",
-    "MSCATTER_MASK": "BSTART.MSCATTER.MASK",
-    "MGATHER_CAS": "BSTART.MGATHER.CAS",
-    "TMATMUL": "BSTART.TMATMUL",
-    "TMATMUL_BIAS": "BSTART.TMATMUL.BIAS",
-    "TMATMUL_ACC": "BSTART.TMATMUL.ACC",
-    "TMATMUL_MX": "BSTART.TMATMULMX",
-    "TMATMUL_MX_BIAS": "BSTART.TMATMULMX.BIAS",
-    "TMATMUL_MX_ACC": "BSTART.TMATMULMX.ACC",
-    "ACCCVT": "BSTART.ACCCVT",
-    "TGEMV": "BSTART.TGEMV",
-    "TGEMV_BIAS": "BSTART.TGEMV.BIAS",
-    "TGEMV_ACC": "BSTART.TGEMV.ACC",
-    "TGEMV_MX": "BSTART.TGEMVMX",
-    "TGEMV_MX_BIAS": "BSTART.TGEMVMX.BIAS",
-    "TGEMV_MX_ACC": "BSTART.TGEMVMX.ACC",
+    'TLOAD': 'BSTART.TLOAD',
+    'TSTORE': 'BSTART.TSTORE',
+    'TMOV': 'BSTART.TMOV',
+    'TPREFETCH': 'BSTART.TPREFETCH',
+    'MGATHER': 'BSTART.MGATHER',
+    'MSCATTER': 'BSTART.MSCATTER',
+    'GMOV': 'BSTART.GMOV',
+    'TMATMUL': 'BSTART.TMATMUL',
+    'TMATMUL_BIAS': 'BSTART.TMATMUL.BIAS',
+    'TMATMUL_ACC': 'BSTART.TMATMUL.ACC',
+    'TMATMUL_MX': 'BSTART.TMATMULMX',
+    'TMATMUL_MX_BIAS': 'BSTART.TMATMULMX.BIAS',
+    'TMATMUL_MX_ACC': 'BSTART.TMATMULMX.ACC',
+    'TGEMV': 'BSTART.TGEMV',
+    'TGEMV_BIAS': 'BSTART.TGEMV.BIAS',
+    'TGEMV_ACC': 'BSTART.TGEMV.ACC',
+    'TGEMV_MX': 'BSTART.TGEMVMX',
+    'TGEMV_MX_BIAS': 'BSTART.TGEMVMX.BIAS',
+    'TGEMV_MX_ACC': 'BSTART.TGEMVMX.ACC',
 }
 DELETED_TEPL_NAMES = (
-    "TFMA",
-    "TFMOD",
-    "TFMODS",
-    "TADDC",
-    "TSUBC",
-    "TADDSC",
-    "TSUBSC",
-    "TLRELU",
-    "TRANDOM",
+    'TPRELU',
+    'TAXPY',
+    'TGATHERB',
+    'THISTOGRAM',
+    'TPARTARGMAX',
+    'TPARTARGMIN',
+    'TRESHAPE',
+    'TDEINTERLEAVE',
+    'TINTERLEAVE',
+    'TPUSH',
+    'TPOP',
+    'TALLOC',
+    'TFREE',
+    'TFMOD',
+    'TFMODS',
+    'TADDC',
+    'TSUBC',
+    'TADDSC',
+    'TSUBSC',
+    'TLRELU',
 )
 
 GENERATED_DOCS = (
@@ -172,6 +167,7 @@ CANONICAL_STATIC_INPUTS = (
     "spec/hardware-conformance-profile.json",
     "spec/requirements.json",
     "spec/catalog/command-forms.json",
+    "spec/catalog/linx-vector-reservations.json",
     "spec/catalog/numeric-profile-applicability.json",
     "spec/catalog/numeric-profile-identities.json",
     "spec/catalog/scalar-forms.json",
@@ -188,6 +184,7 @@ CANONICAL_STATIC_INPUTS = (
     "docs/profile-contracts.md",
     "docs/review-checklist.md",
     "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+    "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
 )
 FORM_PROJECTION_KEYS = (
     "form_id",
@@ -277,7 +274,7 @@ def validate_tile_catalog() -> tuple[dict, dict[str, list[dict]]]:
             f"tile operation closure must be exactly {FAMILY_COUNTS}, got {actual_counts}"
         )
     if catalog.get("operation_count") != sum(FAMILY_COUNTS.values()):
-        raise SystemExit("tile operation_count must be exactly 120")
+        raise SystemExit("tile operation_count must be exactly 106")
     names = [row.get("name") for row in operations]
     if None in names or len(names) != len(set(names)):
         raise SystemExit("tile operation names must be present and globally unique")
@@ -288,7 +285,7 @@ def validate_tile_catalog() -> tuple[dict, dict[str, list[dict]]]:
     if tepl_map != EXPECTED_TEPL_MAP:
         missing = sorted(set(EXPECTED_TEPL_MAP.items()) - set(tepl_map.items()))
         extra = sorted(set(tepl_map.items()) - set(EXPECTED_TEPL_MAP.items()))
-        raise SystemExit(f"TEPL 0.57.1 map mismatch; missing={missing}, unexpected={extra}")
+        raise SystemExit(f"TEPL 0.58.0 map mismatch; missing={missing}, unexpected={extra}")
 
     for family, expected in (
         ("TMA", EXPECTED_TMA_MAP),
@@ -296,7 +293,7 @@ def validate_tile_catalog() -> tuple[dict, dict[str, list[dict]]]:
     ):
         actual = {operation_function(row): row["name"] for row in by_family[family]}
         if actual != expected:
-            raise SystemExit(f"{family} 0.57.1 function map must be {expected}, got {actual}")
+            raise SystemExit(f"{family} 0.58.0 function map must be {expected}, got {actual}")
 
     for row in operations:
         expected_command = (
@@ -384,8 +381,12 @@ def encoding_projection(tile_catalog: dict) -> dict:
             ),
         )
     ]
+    vector_reservation_projection = load_json(
+        "spec/catalog/linx-vector-reservations.json"
+    )["reservations"]
     return {
         "encoding_abi": ENCODING_ABI,
+        "linx_vector_reservations": vector_reservation_projection,
         "scalar_and_command_forms": form_projection,
         "system_registers": register_projection,
         "tile_operations": tile_projection,
@@ -418,16 +419,11 @@ def build_totality_evidence(encoding_hash: str) -> dict:
                 classifications.append(label)
 
     positive_names = (
-        "TADD",
-        "TPARTARGMAX",
-        "TPARTARGMIN",
-        "TRESHAPE",
-        "TDEINTERLEAVE",
-        "TINTERLEAVE",
-        "TPUSH",
-        "TPOP",
-        "TALLOC",
-        "TFREE",
+        'TADD',
+        'TSEL',
+        'TFMA',
+        'TRANDOM',
+        'TSORT32',
     )
     positive_vectors = []
     inverse = {name: selector for selector, name in EXPECTED_TEPL_MAP.items()}
@@ -445,15 +441,26 @@ def build_totality_evidence(encoding_hash: str) -> dict:
         )
 
     deleted_selectors = {
-        "TFMA": (0, 5),
-        "TFMOD": (0, 24),
-        "TFMODS": (0, 25),
-        "TADDC": (0, 28),
-        "TSUBC": (1, 5),
-        "TADDSC": (1, 14),
-        "TSUBSC": (1, 24),
-        "TLRELU": (1, 25),
-        "TRANDOM": (3, 9),
+        'TPRELU': (0, 14),
+        'TAXPY': (1, 15),
+        'TGATHERB': (3, 1),
+        'THISTOGRAM': (3, 8),
+        'TPARTARGMAX': (3, 21),
+        'TPARTARGMIN': (3, 22),
+        'TRESHAPE': (3, 23),
+        'TDEINTERLEAVE': (3, 24),
+        'TINTERLEAVE': (3, 25),
+        'TPUSH': (3, 26),
+        'TPOP': (3, 27),
+        'TALLOC': (3, 28),
+        'TFREE': (3, 29),
+        'TFMOD': (0, 24),
+        'TFMODS': (0, 25),
+        'TADDC': (0, 24),
+        'TSUBC': (1, 5),
+        'TADDSC': (1, 14),
+        'TSUBSC': (1, 24),
+        'TLRELU': (1, 25),
     }
     negative_vectors = [
         {
@@ -468,7 +475,7 @@ def build_totality_evidence(encoding_hash: str) -> dict:
     ]
     negative_vectors.append(
         {
-            "former_encoding": "pre-0.57.1-TADD",
+            "former_encoding": "pre-0.58.0-TADD",
             "raw": "0xC2001181",
             "expected": "encoding-abi-reject",
         }
@@ -555,7 +562,7 @@ def build_abi_vectors(encoding_hash: str) -> dict:
             {"id": "elf-link-match", "stage": "link", "inputs": [identity, identity], "expected": "accept"},
             {"id": "elf-link-missing-identity", "stage": "link", "inputs": [identity, None], "expected": "reject", "reason": "missing-identity"},
             {"id": "elf-link-release-mismatch", "stage": "link", "inputs": [identity, {**identity, "release": "0.58.0"}], "expected": "reject", "reason": "release-mismatch"},
-            {"id": "elf-link-abi-mismatch", "stage": "link", "inputs": [identity, {**identity, "encoding_abi": "pto-isa-0.57.1-legacy-selector-v0"}], "expected": "reject", "reason": "encoding-abi-mismatch"},
+            {"id": "elf-link-abi-mismatch", "stage": "link", "inputs": [identity, {**identity, "encoding_abi": "pto-isa-0.58.0-legacy-selector-v0"}], "expected": "reject", "reason": "encoding-abi-mismatch"},
             {"id": "elf-link-hash-mismatch", "stage": "link", "inputs": [identity, {**identity, "encoding_projection_sha256": "0" * 64}], "expected": "reject", "reason": "encoding-hash-mismatch"},
             {"id": "elf-load-match", "stage": "load", "image": identity, "implementation": identity, "expected": "accept"},
             {"id": "elf-load-missing-identity", "stage": "load", "image": None, "implementation": identity, "expected": "reject", "reason": "missing-identity"},
@@ -591,7 +598,7 @@ def validate_numeric_profile() -> dict:
     if set(profile) != expected_keys:
         raise SystemExit("hardware numeric profile top-level schema drift")
     if profile["schema_version"] != 2 or profile["isa_release"] != RELEASE:
-        raise SystemExit("hardware numeric profile must identify schema 2 and release 0.57.1")
+        raise SystemExit("hardware numeric profile must identify schema 2 and release 0.58.0")
     if profile["profile_id"] != NUMERIC_PROFILE_ID:
         raise SystemExit(f"hardware numeric profile ID must be {NUMERIC_PROFILE_ID}")
     reference = profile["reference_model_relation"]
@@ -611,7 +618,7 @@ def validate_numeric_profile() -> dict:
         "flush_to_zero": False,
         "input_subnormals": "preserve exact source value",
         "operation_override": False,
-        "profile_selection": "fixed by pto-hardware-numeric-0.57.1-ieee-v1",
+        "profile_selection": "fixed by pto-hardware-numeric-0.58.0-ieee-v1",
         "result_subnormals": "gradual underflow to the destination format",
         "scope": "Every otherwise-supported operation/type tuple whose source or destination format defines subnormal encodings.",
         "tininess_detection": "after-rounding",
@@ -747,9 +754,9 @@ def validate_numeric_profile() -> dict:
     ):
         raise SystemExit("B.DATR rounding-mode map drift")
     if profile["sort"].get("group_size") != 32:
-        raise SystemExit("hardware TSORT group size must remain exactly 32")
+        raise SystemExit("hardware TSORT32 group size must remain exactly 32")
     if profile["sort"].get("output") != "value paired with U32 original index":
-        raise SystemExit("hardware TSORT output must retain U32 original indices")
+        raise SystemExit("hardware TSORT32 output must retain U32 original indices")
     if not profile["arithmetic"].get("standard", "").startswith("IEEE 754-2019"):
         raise SystemExit("hardware numeric profile must use IEEE 754-2019 semantics")
     return profile
@@ -860,7 +867,6 @@ def build_numeric_vectors(profile: dict) -> dict:
                 {"namespace": "scalar-core-state-frm", "raw": 4, "expected_mode": "RNE", "encoding_status": "reserved-fallback"},
                 {"namespace": "scalar-core-state-frm", "raw": 7, "expected_mode": "RNE", "encoding_status": "reserved-fallback"},
                 {"namespace": "bundle-rmode", "raw": 0, "operation": "TCVT-float-to-integer", "expected_mode": "RTZ"},
-                {"namespace": "bundle-rmode", "raw": 0, "operation": "ACCCVT", "expected_mode": "RNE"},
                 {"namespace": "public-conversion", "raw": 0, "public_name": "CAST_NONE", "bundle_rmode": 0},
                 {"namespace": "public-conversion", "raw": 1, "public_name": "CAST_RINT", "bundle_rmode": 1},
                 {"namespace": "public-conversion", "raw": 2, "public_name": "CAST_ROUND", "bundle_rmode": 5},
@@ -1007,19 +1013,23 @@ def canonical_input_paths() -> list[str]:
 
 def validate_owned_set() -> None:
     actual_docs = tuple(
-        sorted(str(path.relative_to(ROOT)) for path in (ROOT / "docs/instructions").glob("*.md"))
+        sorted(
+            str(path.relative_to(ROOT))
+            for path in (ROOT / "docs/instructions").glob("*.md")
+            if path.name != "README.md"
+        )
     )
     if actual_docs != GENERATED_DOCS:
         raise SystemExit(
             f"owned generated documentation set drift: expected {GENERATED_DOCS}, got {actual_docs}"
         )
     actual_evidence = tuple(
-        sorted(str(path.relative_to(ROOT)) for path in (ROOT / "spec/evidence").glob("*0571*.json"))
+        sorted(str(path.relative_to(ROOT)) for path in (ROOT / "spec/evidence").glob("*0580*.json"))
     )
     unexpected_evidence = tuple(sorted(set(actual_evidence) - set(EVIDENCE_FILES)))
     if unexpected_evidence:
         raise SystemExit(
-            f"unexpected owned 0.57.1 evidence files: {unexpected_evidence}"
+            f"unexpected owned 0.58.0 evidence files: {unexpected_evidence}"
         )
 
 
@@ -1075,11 +1085,12 @@ def build_artifacts() -> dict[str, dict]:
             "algorithm": "SHA-256",
             "json_encoding": "UTF-8 JSON with lexicographically sorted keys and separators ',' ':'",
             "content_projection": "object mapping each canonical input path to its file SHA-256",
-            "encoding_projection": "encoding ABI ID plus scalar/command forms, tile selector/function assignments, and system-register locations",
+            "encoding_projection": "encoding ABI ID plus scalar/command forms, Linx-only vector reservations, tile selector/function assignments, and system-register locations",
         },
         "catalog_counts": {
             **FORM_COUNTS,
             "command_form_families": COMMAND_FAMILY_COUNTS,
+            "linx_vector_reservations": 6,
             "tile_operations": FAMILY_COUNTS,
             "tile_operations_total": sum(FAMILY_COUNTS.values()),
             "pending_base_operations": 0,

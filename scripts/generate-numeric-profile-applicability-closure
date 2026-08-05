@@ -113,7 +113,7 @@ def generate() -> dict[str, Any]:
     tile_types = [row["asl_enumerator"] for row in tile_type_rows]
     require(len(tile_types) == 25, "TileDataType count drift")
     require(
-        len(command_forms["forms"]) == 99,
+        len(command_forms["forms"]) == 96,
         "accepted command-form count drift",
     )
     command_by_mnemonic = {
@@ -259,7 +259,6 @@ def generate() -> dict[str, Any]:
                     "command_form_id": command["form_id"],
                     "command_mnemonic": command_mnemonic,
                     "command_encoding": command["encoding"][0],
-                    "accumulator_access": operation["acc_effect"],
                     "disposition": "unsupported-in-profile",
                     "rejection": {
                         "fault": "IllegalInstruction",
@@ -360,7 +359,7 @@ def generate() -> dict[str, Any]:
             "tuple_count": 150,
             "bundle_execution_tuple_count": 150,
             "bundle_command_form_count": 6,
-            "accepted_command_form_count": 99,
+            "accepted_command_form_count": 96,
             "result_rule_count": 0,
             "parent_pd01_complete": False,
             "cube_matrix_complete": False,

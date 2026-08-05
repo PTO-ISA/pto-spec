@@ -1,6 +1,6 @@
 {
   "isa": "PTO Instruction Set Architecture",
-  "operation_count": 120,
+  "operation_count": 106,
   "rejected_review_only_codes": {
     "CUBE": [],
     "TEPL": [],
@@ -167,8 +167,8 @@
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "command_mnemonic": "BSTART.TEPL",
-      "name": "TMAX",
-      "selector": "0x00B",
+      "name": "TDIV",
+      "selector": "0x003",
       "semantic_handler": "ExecuteTileBinary",
       "operands": [
         {
@@ -186,7 +186,7 @@
       ],
       "arguments": [
         {
-          "constant": "TileBinary_MAX"
+          "constant": "TileBinary_DIV"
         },
         {
           "operand": "destination0"
@@ -199,7 +199,7 @@
         }
       ],
       "mode": 0,
-      "function": 11,
+      "function": 3,
       "contract_status": "reviewed-complete",
       "legality_handler": "TileOperandsLegal_ExecuteTileBinary",
       "effect_contract": "ExecuteTileBinary",
@@ -219,8 +219,8 @@
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "command_mnemonic": "BSTART.TEPL",
-      "name": "TMIN",
-      "selector": "0x00C",
+      "name": "TREM",
+      "selector": "0x004",
       "semantic_handler": "ExecuteTileBinary",
       "operands": [
         {
@@ -238,7 +238,7 @@
       ],
       "arguments": [
         {
-          "constant": "TileBinary_MIN"
+          "constant": "TileBinary_REM"
         },
         {
           "operand": "destination0"
@@ -251,7 +251,7 @@
         }
       ],
       "mode": 0,
-      "function": 12,
+      "function": 4,
       "contract_status": "reviewed-complete",
       "legality_handler": "TileOperandsLegal_ExecuteTileBinary",
       "effect_contract": "ExecuteTileBinary",
@@ -531,6 +531,110 @@
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "command_mnemonic": "BSTART.TEPL",
+      "name": "TMAX",
+      "selector": "0x00B",
+      "semantic_handler": "ExecuteTileBinary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_MAX"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ],
+      "mode": 0,
+      "function": 11,
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_ExecuteTileBinary",
+      "effect_contract": "ExecuteTileBinary",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:source-left",
+        "operand:source1:source-right"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
+      "name": "TMIN",
+      "selector": "0x00C",
+      "semantic_handler": "ExecuteTileBinary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source-left"
+        },
+        {
+          "field": "source1",
+          "role": "source-right"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_MIN"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ],
+      "mode": 0,
+      "function": 12,
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_ExecuteTileBinary",
+      "effect_contract": "ExecuteTileBinary",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:source-left",
+        "operand:source1:source-right"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
       "name": "TCMP",
       "selector": "0x00D",
       "semantic_handler": "ExecuteTileCompare",
@@ -583,63 +687,6 @@
         "allowed_nonzero_fields": [
           "CMode"
         ],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TSEL",
-      "selector": "0x01A",
-      "semantic_handler": "ExecuteTileSelect",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "mask"
-        },
-        {
-          "field": "source1",
-          "role": "source-true"
-        },
-        {
-          "field": "source2",
-          "role": "source-false"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "operand": "source2"
-        }
-      ],
-      "mode": 0,
-      "function": 26,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTileSelect",
-      "effect_contract": "ExecuteTileSelect",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:mask",
-        "operand:source1:source-true",
-        "operand:source2:source-false"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
       }
     },
@@ -779,8 +826,8 @@
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "command_mnemonic": "BSTART.TEPL",
-      "name": "TRELU",
-      "selector": "0x017",
+      "name": "TEXP",
+      "selector": "0x012",
       "semantic_handler": "ExecuteTileUnary",
       "operands": [
         {
@@ -794,7 +841,7 @@
       ],
       "arguments": [
         {
-          "constant": "TileUnary_RELU"
+          "constant": "TileUnary_EXP"
         },
         {
           "operand": "destination0"
@@ -804,204 +851,7 @@
         }
       ],
       "mode": 0,
-      "function": 23,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTileUnary",
-      "effect_contract": "ExecuteTileUnary",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TPRELU",
-      "selector": "0x00E",
-      "semantic_handler": "TPRELU",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        },
-        {
-          "field": "scalar0",
-          "role": "negative-slope"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "scalar0"
-        }
-      ],
-      "mode": 0,
-      "function": 14,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TPRELU",
-      "effect_contract": "TPRELU",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source",
-        "operand:scalar0:negative-slope"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TDIV",
-      "selector": "0x003",
-      "semantic_handler": "ExecuteTileBinary",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source-left"
-        },
-        {
-          "field": "source1",
-          "role": "source-right"
-        }
-      ],
-      "arguments": [
-        {
-          "constant": "TileBinary_DIV"
-        },
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        }
-      ],
-      "mode": 0,
-      "function": 3,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTileBinary",
-      "effect_contract": "ExecuteTileBinary",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source-left",
-        "operand:source1:source-right"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TREM",
-      "selector": "0x004",
-      "semantic_handler": "ExecuteTileBinary",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source-left"
-        },
-        {
-          "field": "source1",
-          "role": "source-right"
-        }
-      ],
-      "arguments": [
-        {
-          "constant": "TileBinary_REM"
-        },
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        }
-      ],
-      "mode": 0,
-      "function": 4,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTileBinary",
-      "effect_contract": "ExecuteTileBinary",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source-left",
-        "operand:source1:source-right"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TSQRT",
-      "selector": "0x015",
-      "semantic_handler": "ExecuteTileUnary",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        }
-      ],
-      "arguments": [
-        {
-          "constant": "TileUnary_SQRT"
-        },
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        }
-      ],
-      "mode": 0,
-      "function": 21,
+      "function": 18,
       "contract_status": "reviewed-complete",
       "legality_handler": "TileOperandsLegal_ExecuteTileUnary",
       "effect_contract": "ExecuteTileUnary",
@@ -1108,8 +958,8 @@
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "command_mnemonic": "BSTART.TEPL",
-      "name": "TEXP",
-      "selector": "0x012",
+      "name": "TSQRT",
+      "selector": "0x015",
       "semantic_handler": "ExecuteTileUnary",
       "operands": [
         {
@@ -1123,7 +973,7 @@
       ],
       "arguments": [
         {
-          "constant": "TileUnary_EXP"
+          "constant": "TileUnary_SQRT"
         },
         {
           "operand": "destination0"
@@ -1133,7 +983,7 @@
         }
       ],
       "mode": 0,
-      "function": 18,
+      "function": 21,
       "contract_status": "reviewed-complete",
       "legality_handler": "TileOperandsLegal_ExecuteTileUnary",
       "effect_contract": "ExecuteTileUnary",
@@ -1196,6 +1046,219 @@
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "command_mnemonic": "BSTART.TEPL",
+      "name": "TRELU",
+      "selector": "0x017",
+      "semantic_handler": "ExecuteTileUnary",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileUnary_RELU"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ],
+      "mode": 0,
+      "function": 23,
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_ExecuteTileUnary",
+      "effect_contract": "ExecuteTileUnary",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:source"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
+      "name": "TSEL",
+      "selector": "0x01A",
+      "semantic_handler": "ExecuteTileSelect",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "mask"
+        },
+        {
+          "field": "source1",
+          "role": "source-true"
+        },
+        {
+          "field": "source2",
+          "role": "source-false"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        }
+      ],
+      "mode": 0,
+      "function": 26,
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_ExecuteTileSelect",
+      "effect_contract": "ExecuteTileSelect",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:mask",
+        "operand:source1:source-true",
+        "operand:source2:source-false"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
+      "name": "TCVT",
+      "selector": "0x01B",
+      "semantic_handler": "TCVT",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "numeric_control",
+          "role": "rounding-and-saturation"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "numeric_control"
+        }
+      ],
+      "mode": 0,
+      "function": 27,
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TCVT",
+      "effect_contract": "TCVT",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:source",
+        "operand:numeric_control:rounding-and-saturation"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "Sat",
+          "Canonicalize",
+          "DataType",
+          "RMode",
+          "Layout"
+        ],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
+      "name": "TFMA",
+      "semantic_handler": "TFMA",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "multiplicand-left"
+        },
+        {
+          "field": "source1",
+          "role": "multiplicand-right"
+        },
+        {
+          "field": "source2",
+          "role": "addend"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        }
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TFMA",
+      "effect_contract": "TFMA",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:multiplicand-left",
+        "operand:source1:multiplicand-right",
+        "operand:source2:addend"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      },
+      "selector": "0x01C",
+      "mode": 0,
+      "function": 28
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
       "name": "TADDS",
       "selector": "0x020",
       "semantic_handler": "ExecuteTileScalar",
@@ -1232,55 +1295,6 @@
       "contract_status": "reviewed-complete",
       "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
       "effect_contract": "ExecuteTileScalar",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source",
-        "operand:scalar0:scalar"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TAXPY",
-      "selector": "0x02F",
-      "semantic_handler": "ExecuteTileAxpy",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        },
-        {
-          "field": "scalar0",
-          "role": "scalar"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "scalar0"
-        }
-      ],
-      "mode": 1,
-      "function": 15,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTileAxpy",
-      "effect_contract": "ExecuteTileAxpy",
       "fault_contract": "ExecuteTileInstruction",
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
@@ -1434,110 +1448,6 @@
       ],
       "mode": 1,
       "function": 3,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
-      "effect_contract": "ExecuteTileScalar",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source",
-        "operand:scalar0:scalar"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TMINS",
-      "selector": "0x02C",
-      "semantic_handler": "ExecuteTileScalar",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        },
-        {
-          "field": "scalar0",
-          "role": "scalar"
-        }
-      ],
-      "arguments": [
-        {
-          "constant": "TileBinary_MIN"
-        },
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "scalar0"
-        }
-      ],
-      "mode": 1,
-      "function": 12,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
-      "effect_contract": "ExecuteTileScalar",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source",
-        "operand:scalar0:scalar"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TMAXS",
-      "selector": "0x02B",
-      "semantic_handler": "ExecuteTileScalar",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        },
-        {
-          "field": "scalar0",
-          "role": "scalar"
-        }
-      ],
-      "arguments": [
-        {
-          "constant": "TileBinary_MAX"
-        },
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "scalar0"
-        }
-      ],
-      "mode": 1,
-      "function": 11,
       "contract_status": "reviewed-complete",
       "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
       "effect_contract": "ExecuteTileScalar",
@@ -1765,6 +1675,214 @@
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "command_mnemonic": "BSTART.TEPL",
+      "name": "TSHLS",
+      "selector": "0x029",
+      "semantic_handler": "ExecuteTileScalar",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_SHL"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ],
+      "mode": 1,
+      "function": 9,
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
+      "effect_contract": "ExecuteTileScalar",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:source",
+        "operand:scalar0:scalar"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
+      "name": "TSHRS",
+      "selector": "0x02A",
+      "semantic_handler": "ExecuteTileScalar",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_SHR"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ],
+      "mode": 1,
+      "function": 10,
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
+      "effect_contract": "ExecuteTileScalar",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:source",
+        "operand:scalar0:scalar"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
+      "name": "TMAXS",
+      "selector": "0x02B",
+      "semantic_handler": "ExecuteTileScalar",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_MAX"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ],
+      "mode": 1,
+      "function": 11,
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
+      "effect_contract": "ExecuteTileScalar",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:source",
+        "operand:scalar0:scalar"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
+      "name": "TMINS",
+      "selector": "0x02C",
+      "semantic_handler": "ExecuteTileScalar",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "scalar"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileBinary_MIN"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ],
+      "mode": 1,
+      "function": 12,
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
+      "effect_contract": "ExecuteTileScalar",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:source",
+        "operand:scalar0:scalar"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
       "name": "TCMPS",
       "selector": "0x02D",
       "semantic_handler": "ExecuteTileCompareScalar",
@@ -1881,17 +1999,13 @@
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "command_mnemonic": "BSTART.TEPL",
-      "name": "TSHLS",
-      "selector": "0x029",
-      "semantic_handler": "ExecuteTileScalar",
+      "name": "TEXPANDS",
+      "selector": "0x03B",
+      "semantic_handler": "ExecuteTileFillScalar",
       "operands": [
         {
           "field": "destination0",
           "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
         },
         {
           "field": "scalar0",
@@ -1900,80 +2014,21 @@
       ],
       "arguments": [
         {
-          "constant": "TileBinary_SHL"
-        },
-        {
           "operand": "destination0"
-        },
-        {
-          "operand": "source0"
         },
         {
           "operand": "scalar0"
         }
       ],
       "mode": 1,
-      "function": 9,
+      "function": 27,
       "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
-      "effect_contract": "ExecuteTileScalar",
+      "legality_handler": "TileOperandsLegal_ExecuteTileFillScalar",
+      "effect_contract": "ExecuteTileFillScalar",
       "fault_contract": "ExecuteTileInstruction",
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
-        "operand:source0:source",
-        "operand:scalar0:scalar"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TSHRS",
-      "selector": "0x02A",
-      "semantic_handler": "ExecuteTileScalar",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        },
-        {
-          "field": "scalar0",
-          "role": "scalar"
-        }
-      ],
-      "arguments": [
-        {
-          "constant": "TileBinary_SHR"
-        },
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "scalar0"
-        }
-      ],
-      "mode": 1,
-      "function": 10,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTileScalar",
-      "effect_contract": "ExecuteTileScalar",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source",
         "operand:scalar0:scalar"
       ],
       "datr_contract": {
@@ -2014,53 +2069,6 @@
       ],
       "mode": 2,
       "function": 0,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
-      "effect_contract": "ExecuteTileReduction",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TROWPROD",
-      "selector": "0x043",
-      "semantic_handler": "ExecuteTileReduction",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        }
-      ],
-      "arguments": [
-        {
-          "constant": "TileReduction_PRODUCT"
-        },
-        {
-          "constant": "TileAxis_Row"
-        },
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        }
-      ],
-      "mode": 2,
-      "function": 3,
       "contract_status": "reviewed-complete",
       "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
       "effect_contract": "ExecuteTileReduction",
@@ -2173,149 +2181,8 @@
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "command_mnemonic": "BSTART.TEPL",
-      "name": "TROWARGMAX",
-      "selector": "0x04C",
-      "semantic_handler": "ExecuteTileReduction",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        }
-      ],
-      "arguments": [
-        {
-          "constant": "TileReduction_ARGMAX"
-        },
-        {
-          "constant": "TileAxis_Row"
-        },
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        }
-      ],
-      "mode": 2,
-      "function": 12,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
-      "effect_contract": "ExecuteTileReduction",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TROWARGMIN",
-      "selector": "0x04D",
-      "semantic_handler": "ExecuteTileReduction",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        }
-      ],
-      "arguments": [
-        {
-          "constant": "TileReduction_ARGMIN"
-        },
-        {
-          "constant": "TileAxis_Row"
-        },
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        }
-      ],
-      "mode": 2,
-      "function": 13,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
-      "effect_contract": "ExecuteTileReduction",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TCOLSUM",
-      "selector": "0x050",
-      "semantic_handler": "ExecuteTileReduction",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        }
-      ],
-      "arguments": [
-        {
-          "constant": "TileReduction_SUM"
-        },
-        {
-          "constant": "TileAxis_Column"
-        },
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        }
-      ],
-      "mode": 2,
-      "function": 16,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
-      "effect_contract": "ExecuteTileReduction",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TCOLPROD",
-      "selector": "0x053",
+      "name": "TROWPROD",
+      "selector": "0x043",
       "semantic_handler": "ExecuteTileReduction",
       "operands": [
         {
@@ -2332,7 +2199,7 @@
           "constant": "TileReduction_PRODUCT"
         },
         {
-          "constant": "TileAxis_Column"
+          "constant": "TileAxis_Row"
         },
         {
           "operand": "destination0"
@@ -2342,195 +2209,7 @@
         }
       ],
       "mode": 2,
-      "function": 19,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
-      "effect_contract": "ExecuteTileReduction",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TCOLMAX",
-      "selector": "0x051",
-      "semantic_handler": "ExecuteTileReduction",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        }
-      ],
-      "arguments": [
-        {
-          "constant": "TileReduction_MAX"
-        },
-        {
-          "constant": "TileAxis_Column"
-        },
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        }
-      ],
-      "mode": 2,
-      "function": 17,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
-      "effect_contract": "ExecuteTileReduction",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TCOLMIN",
-      "selector": "0x052",
-      "semantic_handler": "ExecuteTileReduction",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        }
-      ],
-      "arguments": [
-        {
-          "constant": "TileReduction_MIN"
-        },
-        {
-          "constant": "TileAxis_Column"
-        },
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        }
-      ],
-      "mode": 2,
-      "function": 18,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
-      "effect_contract": "ExecuteTileReduction",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TCOLARGMAX",
-      "selector": "0x05C",
-      "semantic_handler": "ExecuteTileReduction",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        }
-      ],
-      "arguments": [
-        {
-          "constant": "TileReduction_ARGMAX"
-        },
-        {
-          "constant": "TileAxis_Column"
-        },
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        }
-      ],
-      "mode": 2,
-      "function": 28,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
-      "effect_contract": "ExecuteTileReduction",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TCOLARGMIN",
-      "selector": "0x05D",
-      "semantic_handler": "ExecuteTileReduction",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        }
-      ],
-      "arguments": [
-        {
-          "constant": "TileReduction_ARGMIN"
-        },
-        {
-          "constant": "TileAxis_Column"
-        },
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        }
-      ],
-      "mode": 2,
-      "function": 29,
+      "function": 3,
       "contract_status": "reviewed-complete",
       "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
       "effect_contract": "ExecuteTileReduction",
@@ -2989,6 +2668,288 @@
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "command_mnemonic": "BSTART.TEPL",
+      "name": "TROWARGMAX",
+      "selector": "0x04C",
+      "semantic_handler": "ExecuteTileReduction",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileReduction_ARGMAX"
+        },
+        {
+          "constant": "TileAxis_Row"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ],
+      "mode": 2,
+      "function": 12,
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
+      "effect_contract": "ExecuteTileReduction",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:source"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
+      "name": "TROWARGMIN",
+      "selector": "0x04D",
+      "semantic_handler": "ExecuteTileReduction",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileReduction_ARGMIN"
+        },
+        {
+          "constant": "TileAxis_Row"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ],
+      "mode": 2,
+      "function": 13,
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
+      "effect_contract": "ExecuteTileReduction",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:source"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
+      "name": "TCOLSUM",
+      "selector": "0x050",
+      "semantic_handler": "ExecuteTileReduction",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileReduction_SUM"
+        },
+        {
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ],
+      "mode": 2,
+      "function": 16,
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
+      "effect_contract": "ExecuteTileReduction",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:source"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
+      "name": "TCOLMAX",
+      "selector": "0x051",
+      "semantic_handler": "ExecuteTileReduction",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileReduction_MAX"
+        },
+        {
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ],
+      "mode": 2,
+      "function": 17,
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
+      "effect_contract": "ExecuteTileReduction",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:source"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
+      "name": "TCOLMIN",
+      "selector": "0x052",
+      "semantic_handler": "ExecuteTileReduction",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileReduction_MIN"
+        },
+        {
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ],
+      "mode": 2,
+      "function": 18,
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
+      "effect_contract": "ExecuteTileReduction",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:source"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
+      "name": "TCOLPROD",
+      "selector": "0x053",
+      "semantic_handler": "ExecuteTileReduction",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "constant": "TileReduction_PRODUCT"
+        },
+        {
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ],
+      "mode": 2,
+      "function": 19,
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
+      "effect_contract": "ExecuteTileReduction",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:source"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
       "name": "TCOLEXPAND",
       "selector": "0x054",
       "semantic_handler": "ExecuteTileExpand",
@@ -3427,726 +3388,15 @@
     },
     {
       "disposition": "accepted-direct-operation",
-      "family": "CUBE",
-      "command_mnemonic": "BSTART.TMATMUL",
-      "function": 0,
-      "name": "TMATMUL",
-      "semantic_handler": "TMATMUL",
-      "operands": [
-        {
-          "field": "source0",
-          "role": "left"
-        },
-        {
-          "field": "source1",
-          "role": "right"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "constant": "FALSE"
-        }
-      ],
-      "acc_effect": "write-initialize",
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TMATMUL",
-      "effect_contract": "TMATMUL",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:source0:left",
-        "operand:source1:right",
-        "implicit:ACC:write-initialize"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "CUBE",
-      "command_mnemonic": "BSTART.TMATMUL.BIAS",
-      "function": 1,
-      "name": "TMATMUL_BIAS",
-      "semantic_handler": "TMATMUL_BIAS",
-      "operands": [
-        {
-          "field": "source0",
-          "role": "left"
-        },
-        {
-          "field": "source1",
-          "role": "right"
-        },
-        {
-          "field": "source2",
-          "role": "bias"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "operand": "source2"
-        }
-      ],
-      "acc_effect": "write-initialize",
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TMATMUL_BIAS",
-      "effect_contract": "TMATMUL_BIAS",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:source0:left",
-        "operand:source1:right",
-        "operand:source2:bias",
-        "implicit:ACC:write-initialize"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "CUBE",
-      "command_mnemonic": "BSTART.TMATMUL.ACC",
-      "function": 2,
-      "name": "TMATMUL_ACC",
-      "semantic_handler": "TMATMUL_ACC",
-      "operands": [
-        {
-          "field": "source0",
-          "role": "left"
-        },
-        {
-          "field": "source1",
-          "role": "right"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        }
-      ],
-      "acc_effect": "read-write",
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TMATMUL_ACC",
-      "effect_contract": "TMATMUL_ACC",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:source0:left",
-        "operand:source1:right",
-        "implicit:ACC:read-write"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "CUBE",
-      "command_mnemonic": "BSTART.TMATMULMX",
-      "function": 4,
-      "name": "TMATMUL_MX",
-      "semantic_handler": "TMATMUL_MX",
-      "operands": [
-        {
-          "field": "source0",
-          "role": "left"
-        },
-        {
-          "field": "source1",
-          "role": "right"
-        },
-        {
-          "field": "source2",
-          "role": "row-scale"
-        },
-        {
-          "field": "source3",
-          "role": "column-scale"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "operand": "source2"
-        },
-        {
-          "operand": "source3"
-        }
-      ],
-      "acc_effect": "write-initialize",
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TMATMUL_MX",
-      "effect_contract": "TMATMUL_MX",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:source0:left",
-        "operand:source1:right",
-        "operand:source2:row-scale",
-        "operand:source3:column-scale",
-        "implicit:ACC:write-initialize"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "CUBE",
-      "command_mnemonic": "BSTART.TMATMULMX.BIAS",
-      "function": 5,
-      "name": "TMATMUL_MX_BIAS",
-      "semantic_handler": "TMATMUL_MX_BIAS",
-      "operands": [
-        {
-          "field": "source0",
-          "role": "left"
-        },
-        {
-          "field": "source1",
-          "role": "right"
-        },
-        {
-          "field": "source2",
-          "role": "row-scale"
-        },
-        {
-          "field": "source3",
-          "role": "column-scale"
-        },
-        {
-          "field": "source4",
-          "role": "bias"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "operand": "source2"
-        },
-        {
-          "operand": "source3"
-        },
-        {
-          "operand": "source4"
-        }
-      ],
-      "acc_effect": "write-initialize",
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TMATMUL_MX_BIAS",
-      "effect_contract": "TMATMUL_MX_BIAS",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:source0:left",
-        "operand:source1:right",
-        "operand:source2:row-scale",
-        "operand:source3:column-scale",
-        "operand:source4:bias",
-        "implicit:ACC:write-initialize"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "CUBE",
-      "command_mnemonic": "BSTART.TMATMULMX.ACC",
-      "function": 6,
-      "name": "TMATMUL_MX_ACC",
-      "semantic_handler": "TMATMUL_MX_ACC",
-      "operands": [
-        {
-          "field": "source0",
-          "role": "left"
-        },
-        {
-          "field": "source1",
-          "role": "right"
-        },
-        {
-          "field": "source2",
-          "role": "row-scale"
-        },
-        {
-          "field": "source3",
-          "role": "column-scale"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "operand": "source2"
-        },
-        {
-          "operand": "source3"
-        }
-      ],
-      "acc_effect": "read-write",
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TMATMUL_MX_ACC",
-      "effect_contract": "TMATMUL_MX_ACC",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:source0:left",
-        "operand:source1:right",
-        "operand:source2:row-scale",
-        "operand:source3:column-scale",
-        "implicit:ACC:read-write"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "CUBE",
-      "command_mnemonic": "BSTART.ACCCVT",
-      "function": 8,
-      "name": "ACCCVT",
-      "semantic_handler": "ACCCVT",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
+      "name": "TCOLARGMAX",
+      "selector": "0x05C",
+      "semantic_handler": "ExecuteTileReduction",
       "operands": [
         {
           "field": "destination0",
           "role": "destination"
-        },
-        {
-          "field": "numeric_control",
-          "role": "rounding-and-saturation"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "numeric_control"
-        }
-      ],
-      "acc_effect": "read-release-on-commit",
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ACCCVT",
-      "effect_contract": "ACCCVT",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:numeric_control:rounding-and-saturation",
-        "implicit:ACC:read-release-on-commit"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Sat",
-          "Canonicalize",
-          "DataType",
-          "RMode",
-          "Layout"
-        ],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "CUBE",
-      "command_mnemonic": "BSTART.TGEMV",
-      "function": 16,
-      "name": "TGEMV",
-      "semantic_handler": "TGEMV",
-      "operands": [
-        {
-          "field": "source0",
-          "role": "matrix"
-        },
-        {
-          "field": "source1",
-          "role": "vector"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        }
-      ],
-      "acc_effect": "write-initialize",
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TGEMV",
-      "effect_contract": "TGEMV",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:source0:matrix",
-        "operand:source1:vector",
-        "implicit:ACC:write-initialize"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "CUBE",
-      "command_mnemonic": "BSTART.TGEMV.BIAS",
-      "function": 17,
-      "name": "TGEMV_BIAS",
-      "semantic_handler": "TGEMV_BIAS",
-      "operands": [
-        {
-          "field": "source0",
-          "role": "matrix"
-        },
-        {
-          "field": "source1",
-          "role": "vector"
-        },
-        {
-          "field": "source2",
-          "role": "bias"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "operand": "source2"
-        }
-      ],
-      "acc_effect": "write-initialize",
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TGEMV_BIAS",
-      "effect_contract": "TGEMV_BIAS",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:source0:matrix",
-        "operand:source1:vector",
-        "operand:source2:bias",
-        "implicit:ACC:write-initialize"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "CUBE",
-      "command_mnemonic": "BSTART.TGEMV.ACC",
-      "function": 18,
-      "name": "TGEMV_ACC",
-      "semantic_handler": "TGEMV_ACC",
-      "operands": [
-        {
-          "field": "source0",
-          "role": "matrix"
-        },
-        {
-          "field": "source1",
-          "role": "vector"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        }
-      ],
-      "acc_effect": "read-write",
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TGEMV_ACC",
-      "effect_contract": "TGEMV_ACC",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:source0:matrix",
-        "operand:source1:vector",
-        "implicit:ACC:read-write"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "CUBE",
-      "command_mnemonic": "BSTART.TGEMVMX",
-      "function": 20,
-      "name": "TGEMV_MX",
-      "semantic_handler": "TGEMV_MX",
-      "operands": [
-        {
-          "field": "source0",
-          "role": "matrix"
-        },
-        {
-          "field": "source1",
-          "role": "vector"
-        },
-        {
-          "field": "source2",
-          "role": "row-scale"
-        },
-        {
-          "field": "source3",
-          "role": "column-scale"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "operand": "source2"
-        },
-        {
-          "operand": "source3"
-        }
-      ],
-      "acc_effect": "write-initialize",
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TGEMV_MX",
-      "effect_contract": "TGEMV_MX",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:source0:matrix",
-        "operand:source1:vector",
-        "operand:source2:row-scale",
-        "operand:source3:column-scale",
-        "implicit:ACC:write-initialize"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "CUBE",
-      "command_mnemonic": "BSTART.TGEMVMX.BIAS",
-      "function": 21,
-      "name": "TGEMV_MX_BIAS",
-      "semantic_handler": "TGEMV_MX_BIAS",
-      "operands": [
-        {
-          "field": "source0",
-          "role": "matrix"
-        },
-        {
-          "field": "source1",
-          "role": "vector"
-        },
-        {
-          "field": "source2",
-          "role": "row-scale"
-        },
-        {
-          "field": "source3",
-          "role": "column-scale"
-        },
-        {
-          "field": "source4",
-          "role": "bias"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "operand": "source2"
-        },
-        {
-          "operand": "source3"
-        },
-        {
-          "operand": "source4"
-        }
-      ],
-      "acc_effect": "write-initialize",
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TGEMV_MX_BIAS",
-      "effect_contract": "TGEMV_MX_BIAS",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:source0:matrix",
-        "operand:source1:vector",
-        "operand:source2:row-scale",
-        "operand:source3:column-scale",
-        "operand:source4:bias",
-        "implicit:ACC:write-initialize"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "CUBE",
-      "command_mnemonic": "BSTART.TGEMVMX.ACC",
-      "function": 22,
-      "name": "TGEMV_MX_ACC",
-      "semantic_handler": "TGEMV_MX_ACC",
-      "operands": [
-        {
-          "field": "source0",
-          "role": "matrix"
-        },
-        {
-          "field": "source1",
-          "role": "vector"
-        },
-        {
-          "field": "source2",
-          "role": "row-scale"
-        },
-        {
-          "field": "source3",
-          "role": "column-scale"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "operand": "source2"
-        },
-        {
-          "operand": "source3"
-        }
-      ],
-      "acc_effect": "read-write",
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TGEMV_MX_ACC",
-      "effect_contract": "TGEMV_MX_ACC",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:source0:matrix",
-        "operand:source1:vector",
-        "operand:source2:row-scale",
-        "operand:source3:column-scale",
-        "implicit:ACC:read-write"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TMA",
-      "command_mnemonic": "BSTART.TLOAD",
-      "function": 0,
-      "name": "TLOAD",
-      "semantic_handler": "TLOAD",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "address",
-          "role": "base-address"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "address"
-        }
-      ],
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TLOAD",
-      "effect_contract": "TLOAD",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:address:base-address"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Layout"
-        ],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TMA",
-      "command_mnemonic": "BSTART.TSTORE",
-      "function": 1,
-      "name": "TSTORE",
-      "semantic_handler": "TSTORE",
-      "operands": [
-        {
-          "field": "address",
-          "role": "base-address"
         },
         {
           "field": "source0",
@@ -4155,61 +3405,75 @@
       ],
       "arguments": [
         {
-          "operand": "address"
+          "constant": "TileReduction_ARGMAX"
+        },
+        {
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
         },
         {
           "operand": "source0"
         }
       ],
+      "mode": 2,
+      "function": 28,
       "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TSTORE",
-      "effect_contract": "TSTORE",
+      "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
+      "effect_contract": "ExecuteTileReduction",
       "fault_contract": "ExecuteTileInstruction",
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
-        "operand:address:base-address",
+        "operand:destination0:destination",
         "operand:source0:source"
       ],
       "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Layout"
-        ],
+        "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
       }
     },
     {
       "disposition": "accepted-direct-operation",
-      "family": "TMA",
-      "command_mnemonic": "BSTART.TPREFETCH",
-      "function": 3,
-      "name": "TPREFETCH",
-      "semantic_handler": "TPREFETCH",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
+      "name": "TCOLARGMIN",
+      "selector": "0x05D",
+      "semantic_handler": "ExecuteTileReduction",
       "operands": [
         {
-          "field": "address",
-          "role": "base-address"
+          "field": "destination0",
+          "role": "destination"
         },
         {
-          "field": "byte_count",
-          "role": "byte-count"
+          "field": "source0",
+          "role": "source"
         }
       ],
       "arguments": [
         {
-          "operand": "address"
+          "constant": "TileReduction_ARGMIN"
         },
         {
-          "operand": "byte_count"
+          "constant": "TileAxis_Column"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
         }
       ],
+      "mode": 2,
+      "function": 29,
       "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TPREFETCH",
-      "effect_contract": "TPREFETCH",
+      "legality_handler": "TileOperandsLegal_ExecuteTileReduction",
+      "effect_contract": "ExecuteTileReduction",
       "fault_contract": "ExecuteTileInstruction",
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
-        "operand:address:base-address",
-        "operand:byte_count:byte-count"
+        "operand:destination0:destination",
+        "operand:source0:source"
       ],
       "datr_contract": {
         "allowed_nonzero_fields": [],
@@ -4218,23 +3482,27 @@
     },
     {
       "disposition": "accepted-direct-operation",
-      "family": "TMA",
-      "command_mnemonic": "BSTART.MGATHER",
-      "function": 4,
-      "name": "MGATHER",
-      "semantic_handler": "MGATHER",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
+      "name": "TCONCAT",
+      "selector": "0x060",
+      "semantic_handler": "TCONCAT",
       "operands": [
         {
           "field": "destination0",
           "role": "destination"
         },
         {
-          "field": "address",
-          "role": "base-address"
+          "field": "source0",
+          "role": "source-left"
         },
         {
-          "field": "source0",
-          "role": "indices"
+          "field": "source1",
+          "role": "source-right"
+        },
+        {
+          "field": "axis",
+          "role": "axis"
         }
       ],
       "arguments": [
@@ -4242,253 +3510,27 @@
           "operand": "destination0"
         },
         {
-          "operand": "address"
+          "operand": "source0"
         },
         {
-          "operand": "source0"
+          "operand": "source1"
+        },
+        {
+          "operand": "axis"
         }
       ],
+      "mode": 3,
+      "function": 0,
       "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_MGATHER",
-      "effect_contract": "MGATHER",
+      "legality_handler": "TileOperandsLegal_TCONCAT",
+      "effect_contract": "TCONCAT",
       "fault_contract": "ExecuteTileInstruction",
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
-        "operand:address:base-address",
-        "operand:source0:indices"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Layout"
-        ],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TMA",
-      "command_mnemonic": "BSTART.MSCATTER",
-      "function": 5,
-      "name": "MSCATTER",
-      "semantic_handler": "MSCATTER",
-      "operands": [
-        {
-          "field": "address",
-          "role": "base-address"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        },
-        {
-          "field": "source1",
-          "role": "indices"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "address"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        }
-      ],
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_MSCATTER",
-      "effect_contract": "MSCATTER",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:address:base-address",
-        "operand:source0:source",
-        "operand:source1:indices"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Layout"
-        ],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TMA",
-      "command_mnemonic": "BSTART.MGATHER.MASK",
-      "function": 6,
-      "name": "MGATHER_MASK",
-      "semantic_handler": "MGATHER_MASK",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "address",
-          "role": "base-address"
-        },
-        {
-          "field": "source0",
-          "role": "indices"
-        },
-        {
-          "field": "source1",
-          "role": "mask"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "address"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "runtime": "CurrentBundlePadValue"
-        }
-      ],
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_MGATHER_MASK",
-      "effect_contract": "MGATHER_MASK",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:address:base-address",
-        "operand:source0:indices",
-        "operand:source1:mask"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "PadValueOrByteId",
-          "Layout"
-        ],
-        "pad_union": "pad-value"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TMA",
-      "command_mnemonic": "BSTART.MSCATTER.MASK",
-      "function": 7,
-      "name": "MSCATTER_MASK",
-      "semantic_handler": "MSCATTER_MASK",
-      "operands": [
-        {
-          "field": "address",
-          "role": "base-address"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        },
-        {
-          "field": "source1",
-          "role": "indices"
-        },
-        {
-          "field": "source2",
-          "role": "mask"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "address"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "operand": "source2"
-        }
-      ],
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_MSCATTER_MASK",
-      "effect_contract": "MSCATTER_MASK",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:address:base-address",
-        "operand:source0:source",
-        "operand:source1:indices",
-        "operand:source2:mask"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Layout"
-        ],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TMA",
-      "command_mnemonic": "BSTART.MGATHER.CAS",
-      "function": 8,
-      "name": "MGATHER_CAS",
-      "semantic_handler": "MGATHER_CAS",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "address",
-          "role": "base-address"
-        },
-        {
-          "field": "source0",
-          "role": "indices"
-        },
-        {
-          "field": "source1",
-          "role": "expected"
-        },
-        {
-          "field": "source2",
-          "role": "replacement"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "address"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "operand": "source2"
-        }
-      ],
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_MGATHER_CAS",
-      "effect_contract": "MGATHER_CAS",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:address:base-address",
-        "operand:source0:indices",
-        "operand:source1:expected",
-        "operand:source2:replacement"
+        "operand:source0:source-left",
+        "operand:source1:source-right",
+        "operand:axis:axis"
       ],
       "datr_contract": {
         "allowed_nonzero_fields": [
@@ -4501,17 +3543,25 @@
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "command_mnemonic": "BSTART.TEPL",
-      "name": "TEXPANDS",
-      "selector": "0x03B",
-      "semantic_handler": "ExecuteTileFillScalar",
+      "name": "TEXTRACT",
+      "selector": "0x062",
+      "semantic_handler": "TEXTRACT",
       "operands": [
         {
           "field": "destination0",
           "role": "destination"
         },
         {
-          "field": "scalar0",
-          "role": "scalar"
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "natural0",
+          "role": "row-offset"
+        },
+        {
+          "field": "natural1",
+          "role": "column-offset"
         }
       ],
       "arguments": [
@@ -4519,23 +3569,243 @@
           "operand": "destination0"
         },
         {
-          "operand": "scalar0"
+          "operand": "source0"
+        },
+        {
+          "operand": "natural0"
+        },
+        {
+          "operand": "natural1"
         }
       ],
-      "mode": 1,
-      "function": 27,
+      "mode": 3,
+      "function": 2,
       "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTileFillScalar",
-      "effect_contract": "ExecuteTileFillScalar",
+      "legality_handler": "TileOperandsLegal_TEXTRACT",
+      "effect_contract": "TEXTRACT",
       "fault_contract": "ExecuteTileInstruction",
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
-        "operand:scalar0:scalar"
+        "operand:source0:source",
+        "operand:natural0:row-offset",
+        "operand:natural1:column-offset"
       ],
       "datr_contract": {
-        "allowed_nonzero_fields": [],
+        "allowed_nonzero_fields": [
+          "Layout"
+        ],
         "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
+      "name": "TINSERT",
+      "selector": "0x063",
+      "semantic_handler": "TINSERT",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "natural0",
+          "role": "row-offset"
+        },
+        {
+          "field": "natural1",
+          "role": "column-offset"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "natural0"
+        },
+        {
+          "operand": "natural1"
+        }
+      ],
+      "mode": 3,
+      "function": 3,
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TINSERT",
+      "effect_contract": "TINSERT",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:source",
+        "operand:natural0:row-offset",
+        "operand:natural1:column-offset"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "Layout"
+        ],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
+      "name": "TIMG2COL",
+      "selector": "0x064",
+      "semantic_handler": "TIMG2COL",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "positive0",
+          "role": "kernel-rows"
+        },
+        {
+          "field": "positive1",
+          "role": "kernel-columns"
+        },
+        {
+          "field": "positive2",
+          "role": "stride-rows"
+        },
+        {
+          "field": "positive3",
+          "role": "stride-columns"
+        },
+        {
+          "field": "natural0",
+          "role": "pad-rows"
+        },
+        {
+          "field": "natural1",
+          "role": "pad-columns"
+        },
+        {
+          "field": "scalar0",
+          "role": "padding"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "positive0"
+        },
+        {
+          "operand": "positive1"
+        },
+        {
+          "operand": "positive2"
+        },
+        {
+          "operand": "positive3"
+        },
+        {
+          "operand": "natural0"
+        },
+        {
+          "operand": "natural1"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ],
+      "mode": 3,
+      "function": 4,
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TIMG2COL",
+      "effect_contract": "TIMG2COL",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:source",
+        "operand:positive0:kernel-rows",
+        "operand:positive1:kernel-columns",
+        "operand:positive2:stride-rows",
+        "operand:positive3:stride-columns",
+        "operand:natural0:pad-rows",
+        "operand:natural1:pad-columns",
+        "operand:scalar0:padding"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "Layout"
+        ],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
+      "name": "TFILLPAD",
+      "selector": "0x065",
+      "semantic_handler": "TFILLPAD",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "scalar0",
+          "role": "padding"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ],
+      "mode": 3,
+      "function": 5,
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TFILLPAD",
+      "effect_contract": "TFILLPAD",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:source",
+        "operand:scalar0:padding"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
       }
     },
     {
@@ -4640,108 +3910,66 @@
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "command_mnemonic": "BSTART.TEPL",
-      "name": "TFILLPAD",
-      "selector": "0x065",
-      "semantic_handler": "TFILLPAD",
+      "name": "TRANDOM",
+      "semantic_handler": "TRANDOM",
       "operands": [
         {
           "field": "destination0",
           "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
         },
         {
           "field": "scalar0",
-          "role": "padding"
+          "role": "key-64"
+        },
+        {
+          "field": "scalar1",
+          "role": "counter-low-64"
+        },
+        {
+          "field": "address",
+          "role": "counter-high-64"
+        },
+        {
+          "field": "flag0",
+          "role": "seven-rounds"
         }
       ],
       "arguments": [
         {
           "operand": "destination0"
-        },
-        {
-          "operand": "source0"
         },
         {
           "operand": "scalar0"
+        },
+        {
+          "operand": "scalar1"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "flag0"
         }
       ],
-      "mode": 3,
-      "function": 5,
       "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TFILLPAD",
-      "effect_contract": "TFILLPAD",
+      "legality_handler": "TileOperandsLegal_TRANDOM",
+      "effect_contract": "TRANDOM",
       "fault_contract": "ExecuteTileInstruction",
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
-        "operand:source0:source",
-        "operand:scalar0:padding"
+        "operand:scalar0:key-64",
+        "operand:scalar1:counter-low-64",
+        "operand:address:counter-high-64",
+        "operand:flag0:seven-rounds"
       ],
       "datr_contract": {
-        "allowed_nonzero_fields": [
-          "PadValueOrByteId",
-          "Layout"
-        ],
-        "pad_union": "pad-value"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TCVT",
-      "selector": "0x01B",
-      "semantic_handler": "TCVT",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        },
-        {
-          "field": "numeric_control",
-          "role": "rounding-and-saturation"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "numeric_control"
-        }
-      ],
-      "mode": 0,
-      "function": 27,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TCVT",
-      "effect_contract": "TCVT",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source",
-        "operand:numeric_control:rounding-and-saturation"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Sat",
-          "Canonicalize",
-          "DataType",
-          "RMode",
-          "Layout"
-        ],
+        "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "selector": "0x069",
+      "mode": 3,
+      "function": 9
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4889,25 +4117,25 @@
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "command_mnemonic": "BSTART.TEPL",
-      "name": "TEXTRACT",
-      "selector": "0x062",
-      "semantic_handler": "TEXTRACT",
+      "name": "TSORT32",
+      "selector": "0x06C",
+      "semantic_handler": "TSORT32",
       "operands": [
         {
           "field": "destination0",
           "role": "destination"
         },
         {
+          "field": "destination1",
+          "role": "original-indices-u32"
+        },
+        {
           "field": "source0",
           "role": "source"
         },
         {
-          "field": "natural0",
-          "role": "row-offset"
-        },
-        {
-          "field": "natural1",
-          "role": "column-offset"
+          "field": "flag0",
+          "role": "descending"
         }
       ],
       "arguments": [
@@ -4915,32 +4143,30 @@
           "operand": "destination0"
         },
         {
+          "operand": "destination1"
+        },
+        {
           "operand": "source0"
         },
         {
-          "operand": "natural0"
-        },
-        {
-          "operand": "natural1"
+          "operand": "flag0"
         }
       ],
       "mode": 3,
-      "function": 2,
+      "function": 12,
       "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TEXTRACT",
-      "effect_contract": "TEXTRACT",
+      "legality_handler": "TileOperandsLegal_TSORT32",
+      "effect_contract": "TSORT32",
       "fault_contract": "ExecuteTileInstruction",
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
+        "operand:destination1:original-indices-u32",
         "operand:source0:source",
-        "operand:natural0:row-offset",
-        "operand:natural1:column-offset"
+        "operand:flag0:descending"
       ],
       "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Layout"
-        ],
+        "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
       }
     },
@@ -4948,9 +4174,9 @@
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "command_mnemonic": "BSTART.TEPL",
-      "name": "TINSERT",
-      "selector": "0x063",
-      "semantic_handler": "TINSERT",
+      "name": "TMRGSORT",
+      "selector": "0x06D",
+      "semantic_handler": "TMRGSORT",
       "operands": [
         {
           "field": "destination0",
@@ -4958,15 +4184,15 @@
         },
         {
           "field": "source0",
-          "role": "source"
+          "role": "source-left"
         },
         {
-          "field": "natural0",
-          "role": "row-offset"
+          "field": "source1",
+          "role": "source-right"
         },
         {
-          "field": "natural1",
-          "role": "column-offset"
+          "field": "flag0",
+          "role": "descending"
         }
       ],
       "arguments": [
@@ -4977,24 +4203,65 @@
           "operand": "source0"
         },
         {
-          "operand": "natural0"
+          "operand": "source1"
         },
         {
-          "operand": "natural1"
+          "operand": "flag0"
         }
       ],
       "mode": 3,
-      "function": 3,
+      "function": 13,
       "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TINSERT",
-      "effect_contract": "TINSERT",
+      "legality_handler": "TileOperandsLegal_TMRGSORT",
+      "effect_contract": "TMRGSORT",
       "fault_contract": "ExecuteTileInstruction",
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
-        "operand:source0:source",
-        "operand:natural0:row-offset",
-        "operand:natural1:column-offset"
+        "operand:source0:source-left",
+        "operand:source1:source-right",
+        "operand:flag0:descending"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TEPL",
+      "command_mnemonic": "BSTART.TEPL",
+      "name": "TTRANS",
+      "selector": "0x06E",
+      "semantic_handler": "TTRANS",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ],
+      "mode": 3,
+      "function": 14,
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TTRANS",
+      "effect_contract": "TTRANS",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:source"
       ],
       "datr_contract": {
         "allowed_nonzero_fields": [
@@ -5102,822 +4369,6 @@
         "allowed_nonzero_fields": [
           "Layout"
         ],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TCONCAT",
-      "selector": "0x060",
-      "semantic_handler": "TCONCAT",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source-left"
-        },
-        {
-          "field": "source1",
-          "role": "source-right"
-        },
-        {
-          "field": "axis",
-          "role": "axis"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "operand": "axis"
-        }
-      ],
-      "mode": 3,
-      "function": 0,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TCONCAT",
-      "effect_contract": "TCONCAT",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source-left",
-        "operand:source1:source-right",
-        "operand:axis:axis"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Layout"
-        ],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TTRANS",
-      "selector": "0x06E",
-      "semantic_handler": "TTRANS",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        }
-      ],
-      "mode": 3,
-      "function": 14,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TTRANS",
-      "effect_contract": "TTRANS",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Layout"
-        ],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TIMG2COL",
-      "selector": "0x064",
-      "semantic_handler": "TIMG2COL",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        },
-        {
-          "field": "positive0",
-          "role": "kernel-rows"
-        },
-        {
-          "field": "positive1",
-          "role": "kernel-columns"
-        },
-        {
-          "field": "positive2",
-          "role": "stride-rows"
-        },
-        {
-          "field": "positive3",
-          "role": "stride-columns"
-        },
-        {
-          "field": "natural0",
-          "role": "pad-rows"
-        },
-        {
-          "field": "natural1",
-          "role": "pad-columns"
-        },
-        {
-          "field": "scalar0",
-          "role": "padding"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "positive0"
-        },
-        {
-          "operand": "positive1"
-        },
-        {
-          "operand": "positive2"
-        },
-        {
-          "operand": "positive3"
-        },
-        {
-          "operand": "natural0"
-        },
-        {
-          "operand": "natural1"
-        },
-        {
-          "operand": "scalar0"
-        }
-      ],
-      "mode": 3,
-      "function": 4,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TIMG2COL",
-      "effect_contract": "TIMG2COL",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source",
-        "operand:positive0:kernel-rows",
-        "operand:positive1:kernel-columns",
-        "operand:positive2:stride-rows",
-        "operand:positive3:stride-columns",
-        "operand:natural0:pad-rows",
-        "operand:natural1:pad-columns",
-        "operand:scalar0:padding"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Layout"
-        ],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TMA",
-      "command_mnemonic": "BSTART.TMOV",
-      "function": 2,
-      "name": "TMOV",
-      "semantic_handler": "TMOV",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        }
-      ],
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TMOV",
-      "effect_contract": "TMOV",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Layout"
-        ],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TGATHERB",
-      "selector": "0x061",
-      "semantic_handler": "TGATHERB",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        },
-        {
-          "field": "source1",
-          "role": "byte-offsets"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        }
-      ],
-      "mode": 3,
-      "function": 1,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TGATHERB",
-      "effect_contract": "TGATHERB",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source",
-        "operand:source1:byte-offsets"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Layout"
-        ],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TDEINTERLEAVE",
-      "selector": "0x078",
-      "semantic_handler": "TDEINTERLEAVE",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination-even"
-        },
-        {
-          "field": "destination1",
-          "role": "destination-odd"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "destination1"
-        },
-        {
-          "operand": "source0"
-        }
-      ],
-      "mode": 3,
-      "function": 24,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TDEINTERLEAVE",
-      "effect_contract": "TDEINTERLEAVE",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination-even",
-        "operand:destination1:destination-odd",
-        "operand:source0:source"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Layout"
-        ],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TINTERLEAVE",
-      "selector": "0x079",
-      "semantic_handler": "TINTERLEAVE",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source-left"
-        },
-        {
-          "field": "source1",
-          "role": "source-right"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        }
-      ],
-      "mode": 3,
-      "function": 25,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TINTERLEAVE",
-      "effect_contract": "TINTERLEAVE",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source-left",
-        "operand:source1:source-right"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Layout"
-        ],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TRESHAPE",
-      "selector": "0x077",
-      "semantic_handler": "TRESHAPE",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        }
-      ],
-      "mode": 3,
-      "function": 23,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TRESHAPE",
-      "effect_contract": "TRESHAPE",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Layout"
-        ],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TSORT",
-      "selector": "0x06C",
-      "semantic_handler": "TSORT",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "destination1",
-          "role": "original-indices-u32"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        },
-        {
-          "field": "flag0",
-          "role": "descending"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "destination1"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "flag0"
-        }
-      ],
-      "mode": 3,
-      "function": 12,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TSORT",
-      "effect_contract": "TSORT",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:destination1:original-indices-u32",
-        "operand:source0:source",
-        "operand:flag0:descending"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TMRGSORT",
-      "selector": "0x06D",
-      "semantic_handler": "TMRGSORT",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source-left"
-        },
-        {
-          "field": "source1",
-          "role": "source-right"
-        },
-        {
-          "field": "flag0",
-          "role": "descending"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "operand": "flag0"
-        }
-      ],
-      "mode": 3,
-      "function": 13,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TMRGSORT",
-      "effect_contract": "TMRGSORT",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source-left",
-        "operand:source1:source-right",
-        "operand:flag0:descending"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "THISTOGRAM",
-      "selector": "0x068",
-      "semantic_handler": "THISTOGRAM",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        },
-        {
-          "field": "source1",
-          "role": "indices"
-        },
-        {
-          "field": "selected_byte",
-          "role": "selected-byte"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "operand": "selected_byte"
-        }
-      ],
-      "mode": 3,
-      "function": 8,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_THISTOGRAM",
-      "effect_contract": "THISTOGRAM",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source",
-        "operand:source1:indices",
-        "operand:selected_byte:selected-byte"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "PadValueOrByteId",
-          "DataType"
-        ],
-        "pad_union": "histogram-byte-id"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TPUSH",
-      "selector": "0x07A",
-      "semantic_handler": "TPUSH",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        }
-      ],
-      "mode": 3,
-      "function": 26,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TPUSH",
-      "effect_contract": "TPUSH",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TPOP",
-      "selector": "0x07B",
-      "semantic_handler": "TPOP",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        }
-      ],
-      "mode": 3,
-      "function": 27,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TPOP",
-      "effect_contract": "TPOP",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TALLOC",
-      "selector": "0x07C",
-      "semantic_handler": "TALLOC",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "byte_count",
-          "role": "capacity-bytes"
-        },
-        {
-          "field": "positive0",
-          "role": "rows"
-        },
-        {
-          "field": "positive1",
-          "role": "columns"
-        },
-        {
-          "field": "natural0",
-          "role": "valid-rows"
-        },
-        {
-          "field": "natural1",
-          "role": "valid-columns"
-        },
-        {
-          "field": "scalar0",
-          "role": "data-type-code"
-        },
-        {
-          "field": "flag0",
-          "role": "implementation-defined-layout"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "byte_count"
-        },
-        {
-          "operand": "positive0"
-        },
-        {
-          "operand": "positive1"
-        },
-        {
-          "operand": "natural0"
-        },
-        {
-          "operand": "natural1"
-        },
-        {
-          "operand": "scalar0"
-        },
-        {
-          "operand": "flag0"
-        }
-      ],
-      "mode": 3,
-      "function": 28,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TALLOC",
-      "effect_contract": "TALLOC",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:byte_count:capacity-bytes",
-        "operand:positive0:rows",
-        "operand:positive1:columns",
-        "operand:natural0:valid-rows",
-        "operand:natural1:valid-columns",
-        "operand:scalar0:data-type-code",
-        "operand:flag0:implementation-defined-layout"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      }
-    },
-    {
-      "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TFREE",
-      "selector": "0x07D",
-      "semantic_handler": "TFREE",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        }
-      ],
-      "arguments": [
-        {
-          "operand": "destination0"
-        }
-      ],
-      "mode": 3,
-      "function": 29,
-      "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TFREE",
-      "effect_contract": "TFREE",
-      "fault_contract": "ExecuteTileInstruction",
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "state_effects": [
-        "operand:destination0:destination"
-      ],
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
       }
     },
@@ -6131,74 +4582,160 @@
     },
     {
       "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TPARTARGMAX",
-      "selector": "0x075",
-      "semantic_handler": "ExecuteTilePartialArg",
+      "family": "TMA",
+      "command_mnemonic": "BSTART.TLOAD",
+      "function": 0,
+      "name": "TLOAD",
+      "semantic_handler": "TLOAD",
       "operands": [
         {
           "field": "destination0",
           "role": "destination"
         },
         {
-          "field": "destination1",
-          "role": "destination-indices"
-        },
-        {
-          "field": "source0",
-          "role": "source-left"
-        },
-        {
-          "field": "source1",
-          "role": "source-right"
-        },
-        {
-          "field": "source2",
-          "role": "left-indices"
-        },
-        {
-          "field": "source3",
-          "role": "right-indices"
+          "field": "address",
+          "role": "base-address"
         }
       ],
       "arguments": [
         {
-          "constant": "TRUE"
-        },
-        {
           "operand": "destination0"
         },
         {
-          "operand": "destination1"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "operand": "source2"
-        },
-        {
-          "operand": "source3"
+          "operand": "address"
         }
       ],
-      "mode": 3,
-      "function": 21,
       "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTilePartialArg",
-      "effect_contract": "ExecuteTilePartialArg",
+      "legality_handler": "TileOperandsLegal_TLOAD",
+      "effect_contract": "TLOAD",
       "fault_contract": "ExecuteTileInstruction",
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
-        "operand:destination1:destination-indices",
-        "operand:source0:source-left",
-        "operand:source1:source-right",
-        "operand:source2:left-indices",
-        "operand:source3:right-indices"
+        "operand:address:base-address"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "Layout"
+        ],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TMA",
+      "command_mnemonic": "BSTART.TSTORE",
+      "function": 1,
+      "name": "TSTORE",
+      "semantic_handler": "TSTORE",
+      "operands": [
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        }
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TSTORE",
+      "effect_contract": "TSTORE",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:address:base-address",
+        "operand:source0:source"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "Layout"
+        ],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TMA",
+      "command_mnemonic": "BSTART.TMOV",
+      "function": 2,
+      "name": "TMOV",
+      "semantic_handler": "TMOV",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        }
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TMOV",
+      "effect_contract": "TMOV",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:source"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "Layout"
+        ],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TMA",
+      "command_mnemonic": "BSTART.TPREFETCH",
+      "function": 3,
+      "name": "TPREFETCH",
+      "semantic_handler": "TPREFETCH",
+      "operands": [
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "byte_count",
+          "role": "byte-count"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "byte_count"
+        }
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TPREFETCH",
+      "effect_contract": "TPREFETCH",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:address:base-address",
+        "operand:byte_count:byte-count"
       ],
       "datr_contract": {
         "allowed_nonzero_fields": [],
@@ -6207,46 +4744,340 @@
     },
     {
       "disposition": "accepted-direct-operation",
-      "family": "TEPL",
-      "command_mnemonic": "BSTART.TEPL",
-      "name": "TPARTARGMIN",
-      "selector": "0x076",
-      "semantic_handler": "ExecuteTilePartialArg",
+      "family": "TMA",
+      "command_mnemonic": "BSTART.MGATHER",
+      "function": 4,
+      "name": "MGATHER",
+      "semantic_handler": "MGATHER",
       "operands": [
         {
           "field": "destination0",
           "role": "destination"
         },
         {
-          "field": "destination1",
-          "role": "destination-indices"
+          "field": "address",
+          "role": "base-address"
         },
         {
           "field": "source0",
-          "role": "source-left"
-        },
-        {
-          "field": "source1",
-          "role": "source-right"
-        },
-        {
-          "field": "source2",
-          "role": "left-indices"
-        },
-        {
-          "field": "source3",
-          "role": "right-indices"
+          "role": "indices"
         }
       ],
       "arguments": [
         {
-          "constant": "FALSE"
+          "operand": "destination0"
         },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        }
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_MGATHER",
+      "effect_contract": "MGATHER",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:address:base-address",
+        "operand:source0:indices"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "Layout"
+        ],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TMA",
+      "command_mnemonic": "BSTART.MSCATTER",
+      "function": 5,
+      "name": "MSCATTER",
+      "semantic_handler": "MSCATTER",
+      "operands": [
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "indices"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_MSCATTER",
+      "effect_contract": "MSCATTER",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:address:base-address",
+        "operand:source0:source",
+        "operand:source1:indices"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "Layout"
+        ],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TMA",
+      "command_mnemonic": "BSTART.GMOV",
+      "name": "GMOV",
+      "semantic_handler": "GMOV",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "resolved-peer-source"
+        },
+        {
+          "field": "scalar0",
+          "role": "peer-tid"
+        }
+      ],
+      "arguments": [
         {
           "operand": "destination0"
         },
         {
-          "operand": "destination1"
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_GMOV",
+      "effect_contract": "GMOV",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:resolved-peer-source",
+        "operand:scalar0:peer-tid"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "Layout"
+        ],
+        "pad_union": "must-zero"
+      },
+      "function": 13
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "command_mnemonic": "BSTART.TMATMUL",
+      "function": 0,
+      "name": "TMATMUL",
+      "semantic_handler": "TMATMUL",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "left"
+        },
+        {
+          "field": "source1",
+          "role": "right"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TMATMUL",
+      "effect_contract": "TMATMUL",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:left",
+        "operand:source1:right"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "command_mnemonic": "BSTART.TMATMUL.BIAS",
+      "function": 1,
+      "name": "TMATMUL_BIAS",
+      "semantic_handler": "TMATMUL_BIAS",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "left"
+        },
+        {
+          "field": "source1",
+          "role": "right"
+        },
+        {
+          "field": "source2",
+          "role": "bias"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        }
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TMATMUL_BIAS",
+      "effect_contract": "TMATMUL_BIAS",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:left",
+        "operand:source1:right",
+        "operand:source2:bias"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "command_mnemonic": "BSTART.TMATMUL.ACC",
+      "function": 2,
+      "name": "TMATMUL_ACC",
+      "semantic_handler": "TMATMUL_ACC",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "accumulator"
+        },
+        {
+          "field": "source1",
+          "role": "left"
+        },
+        {
+          "field": "source2",
+          "role": "right"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        }
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TMATMUL_ACC",
+      "effect_contract": "TMATMUL_ACC",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:accumulator",
+        "operand:source1:left",
+        "operand:source2:right"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "command_mnemonic": "BSTART.TMATMULMX",
+      "function": 4,
+      "name": "TMATMUL_MX",
+      "semantic_handler": "TMATMUL_MX",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "left"
+        },
+        {
+          "field": "source1",
+          "role": "row-scale"
+        },
+        {
+          "field": "source2",
+          "role": "right"
+        },
+        {
+          "field": "source3",
+          "role": "column-scale"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
         },
         {
           "operand": "source0"
@@ -6261,20 +5092,521 @@
           "operand": "source3"
         }
       ],
-      "mode": 3,
-      "function": 22,
       "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_ExecuteTilePartialArg",
-      "effect_contract": "ExecuteTilePartialArg",
+      "legality_handler": "TileOperandsLegal_TMATMUL_MX",
+      "effect_contract": "TMATMUL_MX",
       "fault_contract": "ExecuteTileInstruction",
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
-        "operand:destination1:destination-indices",
-        "operand:source0:source-left",
-        "operand:source1:source-right",
-        "operand:source2:left-indices",
-        "operand:source3:right-indices"
+        "operand:source0:left",
+        "operand:source1:row-scale",
+        "operand:source2:right",
+        "operand:source3:column-scale"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "command_mnemonic": "BSTART.TMATMULMX.BIAS",
+      "function": 5,
+      "name": "TMATMUL_MX_BIAS",
+      "semantic_handler": "TMATMUL_MX_BIAS",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "left"
+        },
+        {
+          "field": "source1",
+          "role": "row-scale"
+        },
+        {
+          "field": "source2",
+          "role": "right"
+        },
+        {
+          "field": "source3",
+          "role": "column-scale"
+        },
+        {
+          "field": "source4",
+          "role": "bias"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        },
+        {
+          "operand": "source3"
+        },
+        {
+          "operand": "source4"
+        }
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TMATMUL_MX_BIAS",
+      "effect_contract": "TMATMUL_MX_BIAS",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:left",
+        "operand:source1:row-scale",
+        "operand:source2:right",
+        "operand:source3:column-scale",
+        "operand:source4:bias"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "command_mnemonic": "BSTART.TMATMULMX.ACC",
+      "function": 6,
+      "name": "TMATMUL_MX_ACC",
+      "semantic_handler": "TMATMUL_MX_ACC",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "accumulator"
+        },
+        {
+          "field": "source1",
+          "role": "left"
+        },
+        {
+          "field": "source2",
+          "role": "row-scale"
+        },
+        {
+          "field": "source3",
+          "role": "right"
+        },
+        {
+          "field": "source4",
+          "role": "column-scale"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        },
+        {
+          "operand": "source3"
+        },
+        {
+          "operand": "source4"
+        }
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TMATMUL_MX_ACC",
+      "effect_contract": "TMATMUL_MX_ACC",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:accumulator",
+        "operand:source1:left",
+        "operand:source2:row-scale",
+        "operand:source3:right",
+        "operand:source4:column-scale"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "command_mnemonic": "BSTART.TGEMV",
+      "function": 16,
+      "name": "TGEMV",
+      "semantic_handler": "TGEMV",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "matrix"
+        },
+        {
+          "field": "source1",
+          "role": "vector"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TGEMV",
+      "effect_contract": "TGEMV",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:matrix",
+        "operand:source1:vector"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "command_mnemonic": "BSTART.TGEMV.BIAS",
+      "function": 17,
+      "name": "TGEMV_BIAS",
+      "semantic_handler": "TGEMV_BIAS",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "matrix"
+        },
+        {
+          "field": "source1",
+          "role": "vector"
+        },
+        {
+          "field": "source2",
+          "role": "bias"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        }
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TGEMV_BIAS",
+      "effect_contract": "TGEMV_BIAS",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:matrix",
+        "operand:source1:vector",
+        "operand:source2:bias"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "command_mnemonic": "BSTART.TGEMV.ACC",
+      "function": 18,
+      "name": "TGEMV_ACC",
+      "semantic_handler": "TGEMV_ACC",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "accumulator"
+        },
+        {
+          "field": "source1",
+          "role": "matrix"
+        },
+        {
+          "field": "source2",
+          "role": "vector"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        }
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TGEMV_ACC",
+      "effect_contract": "TGEMV_ACC",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:accumulator",
+        "operand:source1:matrix",
+        "operand:source2:vector"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "command_mnemonic": "BSTART.TGEMVMX",
+      "function": 20,
+      "name": "TGEMV_MX",
+      "semantic_handler": "TGEMV_MX",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "matrix"
+        },
+        {
+          "field": "source1",
+          "role": "row-scale"
+        },
+        {
+          "field": "source2",
+          "role": "vector"
+        },
+        {
+          "field": "source3",
+          "role": "column-scale"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        },
+        {
+          "operand": "source3"
+        }
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TGEMV_MX",
+      "effect_contract": "TGEMV_MX",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:matrix",
+        "operand:source1:row-scale",
+        "operand:source2:vector",
+        "operand:source3:column-scale"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "command_mnemonic": "BSTART.TGEMVMX.BIAS",
+      "function": 21,
+      "name": "TGEMV_MX_BIAS",
+      "semantic_handler": "TGEMV_MX_BIAS",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "matrix"
+        },
+        {
+          "field": "source1",
+          "role": "row-scale"
+        },
+        {
+          "field": "source2",
+          "role": "vector"
+        },
+        {
+          "field": "source3",
+          "role": "column-scale"
+        },
+        {
+          "field": "source4",
+          "role": "bias"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        },
+        {
+          "operand": "source3"
+        },
+        {
+          "operand": "source4"
+        }
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TGEMV_MX_BIAS",
+      "effect_contract": "TGEMV_MX_BIAS",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:matrix",
+        "operand:source1:row-scale",
+        "operand:source2:vector",
+        "operand:source3:column-scale",
+        "operand:source4:bias"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": [],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "CUBE",
+      "command_mnemonic": "BSTART.TGEMVMX.ACC",
+      "function": 22,
+      "name": "TGEMV_MX_ACC",
+      "semantic_handler": "TGEMV_MX_ACC",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "accumulator"
+        },
+        {
+          "field": "source1",
+          "role": "matrix"
+        },
+        {
+          "field": "source2",
+          "role": "row-scale"
+        },
+        {
+          "field": "source3",
+          "role": "vector"
+        },
+        {
+          "field": "source4",
+          "role": "column-scale"
+        }
+      ],
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        },
+        {
+          "operand": "source3"
+        },
+        {
+          "operand": "source4"
+        }
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_TGEMV_MX_ACC",
+      "effect_contract": "TGEMV_MX_ACC",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:source0:accumulator",
+        "operand:source1:matrix",
+        "operand:source2:row-scale",
+        "operand:source3:vector",
+        "operand:source4:column-scale"
       ],
       "datr_contract": {
         "allowed_nonzero_fields": [],
@@ -6286,6 +5618,7 @@
     "cube_functions_without_named_alias": [
       3,
       7,
+      8,
       [
         9,
         15
@@ -6302,11 +5635,15 @@
         "0x005"
       ],
       [
+        "0x00E",
+        "0x00E"
+      ],
+      [
         "0x018",
         "0x019"
       ],
       [
-        "0x01C",
+        "0x01D",
         "0x01F"
       ],
       [
@@ -6315,10 +5652,6 @@
       ],
       [
         "0x02E",
-        "0x02E"
-      ],
-      [
-        "0x030",
         "0x039"
       ],
       [
@@ -6334,30 +5667,53 @@
         "0x05F"
       ],
       [
-        "0x069",
-        "0x069"
+        "0x061",
+        "0x061"
       ],
       [
-        "0x07E",
+        "0x068",
+        "0x068"
+      ],
+      [
+        "0x075",
         "0x07F"
       ]
     ],
     "tma_functions": [
       [
-        9,
+        6,
+        7
+      ],
+      [
+        14,
         31
       ]
     ]
   },
   "schema_version": 3,
   "deleted_names": [
+    "ACCCVT",
+    "MGATHER_CAS",
+    "MGATHER_MASK",
+    "MSCATTER_MASK",
     "TADDC",
     "TADDSC",
-    "TFMA",
+    "TALLOC",
+    "TAXPY",
+    "TDEINTERLEAVE",
     "TFMOD",
     "TFMODS",
+    "TFREE",
+    "TGATHERB",
+    "THISTOGRAM",
+    "TINTERLEAVE",
     "TLRELU",
-    "TRANDOM",
+    "TPARTARGMAX",
+    "TPARTARGMIN",
+    "TPOP",
+    "TPRELU",
+    "TPUSH",
+    "TRESHAPE",
     "TSUBC",
     "TSUBSC"
   ],

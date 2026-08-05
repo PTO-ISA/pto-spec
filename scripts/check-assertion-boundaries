@@ -142,12 +142,6 @@ def tile_preservation_valid(tile_source: str) -> bool:
     preservation_specs = (
         ("undefined_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
         ("division_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
-        ("reciprocal_zero_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
-        ("reciprocal_sqrt_zero_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
-        ("quantize_zero_scale_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
-        ("scalar_division_zero_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
-        ("row_expanded_division_zero_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
-        ("column_expanded_division_zero_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
         ("shape_status", "9", r"Zeros\{PTO_XLEN\}\s*\+\s*0x5a"),
         ("matrix_status", "12", r"Zeros\{PTO_XLEN\}\s*\+\s*0x66"),
     )
@@ -195,8 +189,8 @@ scalar_count = assertion_count(scalar_assertion_files)
 tile_count = assertion_count(tile_assertion_files)
 if scalar_count != 34:
     fail(f"scalar/system/concurrency assertion inventory drifted: {scalar_count} != 34")
-if tile_count != 204:
-    fail(f"tile/bundle assertion inventory drifted: {tile_count} != 204")
+if tile_count != 180:
+    fail(f"tile/bundle assertion inventory drifted: {tile_count} != 180")
 
 concurrency_source = source("asl/concurrency.asl")
 for function, label, guard_pattern, effect_pattern in (
@@ -285,34 +279,35 @@ if unreachable_call == tile_source or tile_preservation_valid(unreachable_call):
 tile_definedness = function_body(
     "tests/asl/tile-tests.asl", "TestTileElementDefinedness"
 )
-for status in ("empty_allocation_status", "empty_load_status"):
-    require_once(
-        tile_definedness,
-        rf"assert\s+{status}\s*==\s*TileExecution_Executed\s*;",
-        f"decoded {status} setup",
-    )
 require_once(
     tile_definedness,
-    r"let\s*\(empty_reduction_status,\s*-\)\s*=\s*ExecuteTileInstruction\(\s*"
-    r"TileDecode_TEPL,\s*'000001000000',\s*empty_reduction\s*\);\s*"
-    r"assert\s+empty_reduction_status\s*==\s*TileExecution_Rejected\s*;\s*"
+    r"assert\s+TileElementDefined\(0,\s*0,\s*0\)\s*;\s*"
+    r"assert\s+!TileElementDefined\(0,\s*0,\s*1\)\s*;\s*"
+    r"assert\s+_Tiles\[\[0\]\]\.defined_valid_elements\s*==\s*1\s*;\s*"
+    r"assert\s+!_Tiles\[\[0\]\]\.contents_defined\s*;",
+    "partial source definedness setup",
+)
+require_once(
+    tile_definedness,
+    r"let\s*\(partial_reduction_status,\s*-\)\s*=\s*ExecuteTileInstruction\(\s*"
+    r"TileDecode_TEPL,\s*'000001000000',\s*reduction\s*\);\s*"
+    r"assert\s+partial_reduction_status\s*==\s*TileExecution_Rejected\s*;\s*"
     r"assert\s+_LastFault\s*==\s*Fault_TileLegality\s*;",
-    "decoded empty-reduction rejection",
+    "decoded partial-reduction rejection",
 )
 
 cube_preflight = function_body(
     "tests/asl/cube-totality-tests.asl", "TestCubeCompositePreflight"
 )
 for status in (
-    "mx_scale_shape_status",
-    "accumulator_logical_type_status",
-    "accumulator_physical_type_status",
+    "shape_status",
+    "destination_status",
 ):
     require_once(
         cube_preflight,
         rf"assert\s+{status}\s*==\s*TileExecution_Rejected\s*;\s*"
         r"assert\s+_LastFault\s*==\s*Fault_TileLegality\s*;\s*"
-        r"assert\s+_Accumulator\.live\s*;",
+        r"assert\s+ReadTileElement\(0,\s*0,\s*0\)\s*==\s*Zeros\{PTO_XLEN\}\s*;",
         f"decoded {status} rejection",
     )
 
@@ -355,5 +350,5 @@ print(
     "assertion-boundary evidence passed: "
     f"{scalar_count} scalar/system/concurrency assertions, "
     f"{tile_count} tile/bundle assertions, three structural dominance "
-    "canaries, and eleven full-region rejection witnesses"
+    "canaries, and five full-region rejection witnesses"
 )

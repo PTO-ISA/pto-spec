@@ -14,9 +14,10 @@ constant PTO_PREDICATE_REGISTER_COUNT = 8;
 constant PTO_PREDICATE_WIDTH = 32;
 constant PTO_ACR_COUNT = 16;
 constant PTO_TILE_REGISTER_COUNT = 64;
+constant PTO_SHARED_TILE_COUNT = 256;
 constant PTO_MODEL_MEMORY_AGENTS = 4;
 constant PTO_MODEL_MEMORY_EVENTS = 16;
-// PTO ISA 0.57.1 exposes 2048 architectural 128-byte cells per PE.
+// PTO ISA 0.58.0 exposes 2048 architectural 128-byte cells per PE.
 // The executable model uses the architectural capacity as its upper bound.
 constant PTO_TILE_CELL_BYTES = 128;
 constant PTO_TILE_CELL_COUNT = 2048;

@@ -101,14 +101,9 @@ DOMAIN_RULES = {
         "Floating results round once using RNE at the destination boundary; exact sign, bitwise, and selection operations do not round; PD-08 retains approximation bounds.",
         "not-applicable",
     ),
-    "tile-axpy": (
+    "tile-fused": (
         "operation-fixed pto-v0 rule",
-        "Round the operation-defined floating destination result once using RNE; integer results are exact modulo their independently specified overflow rule.",
-        "not-applicable",
-    ),
-    "tile-prelu": (
-        "operation-fixed pto-v0 rule",
-        "When the negative branch multiplies floating values, round its destination result once using RNE; the identity branch does not round.",
+        "Evaluate the exact fused multiply-add expression and round once, only at the destination-format boundary.",
         "not-applicable",
     ),
     "tile-reduction": (
@@ -131,11 +126,6 @@ DOMAIN_RULES = {
         "Resolve NONE to RTZ for floating-to-integer TCVT and to RNE otherwise; explicit codes 1 through 7 use their bundle mapping, then round once to the destination format.",
         "round-before-saturation-clamp-or-PD-07-nonsaturating-result-selection",
     ),
-    "cube-convert": (
-        "TileNumericSelection from direct operands or B.DATR.RMode",
-        "Resolve NONE to RNE; explicit codes 1 through 7 use their bundle mapping, then round each logical ACC lane once to the destination format.",
-        "round-before-saturation-clamp-or-PD-07-nonsaturating-result-selection",
-    ),
     "tile-quantize": (
         "TileNumericSelection from direct operands or B.DATR.RMode",
         "Resolve NONE to RNE; explicit codes 1 through 7 use their bundle mapping, then round once after the affine quantization expression and before destination packing.",
@@ -148,7 +138,7 @@ DOMAIN_RULES = {
     ),
     "cube-matrix": (
         "operation-fixed pto-v0 rule",
-        "Use RNE for each fused multiply-add into the declared accumulator in increasing logical K order and for the post-dot bias addition; conversion out of ACC follows cube-convert.",
+        "Use RNE for each fused multiply-add into the declared accumulator in increasing logical K order and for the post-dot bias addition.",
         "not-applicable-to-matrix-accumulation",
     ),
 }

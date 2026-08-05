@@ -10,9 +10,9 @@ The machine-readable authority is `spec/profile-hooks.json`.
 The interface declaration, active implementation, and direct profile tests
 travel together. Removing, renaming, or adding a hook must update all three in
 one reviewable change. The registry records implementation status separately
-from target-conformance status: all 38 hooks have deterministic PTO-v0
+from target-conformance status: all 36 hooks have deterministic PTO-v0
 implementations, and eight non-numeric hooks close their reference contracts.
-The checked `S5-T1` inventory assigns all 30 numeric hooks to their affected
+The checked `S5-T1` inventory assigns all 28 numeric hooks to their affected
 scalar and tile operations. Those hooks retain `S5-T2` target-conformance
 obligations. The generated
 `spec/evidence/numeric-conformance-readiness.json` ledger divides those
@@ -40,7 +40,7 @@ must name a target profile or visible mode and provide a finite or
 mathematically testable allowed-result contract. Unknown profiles, modes,
 formats, tuples, and missing delegated rules reject before architectural
 effects. The identity spellings and selection rules are closed; PD-03 is the
-two accepted numeric decisions, while the remaining 10 decisions and all 20
+two accepted numeric decisions, while the remaining 10 decisions and all 18
 complete domain rules remain open.
 
 ADR 0038 fixes the shared scalar exception-state envelope independently of
@@ -161,14 +161,14 @@ parity, oracle results, and both review perspectives close `S5-T2`.
 | Tile comparison, reduction, expansion, and partial | signed raw ordering and modular accumulation |
 | Tile conversion | raw normalization, quantization, and dequantization |
 | Tile matrix arithmetic | modular word-width multiply, bias, accumulate, and scale |
-| Named hardware numeric contract | 0.57.1 format, result, physical ACC, and MX-scale obligations; no implementation claim |
+| Named hardware numeric contract | 0.58.0 format, result, explicit destination/accumulator, and MX-scale obligations; no implementation claim |
 
 ## Validation rule
 
 The repository checker extracts every `impdef func` under `asl/`, every
 `implementation func` from the active profile, and every direct call in the
-profile conformance test. The three name sets must equal the 38-entry registry
-exactly. It also freezes the eight closed non-numeric versus 30 raw-carrier
+profile conformance test. The three name sets must equal the 36-entry registry
+exactly. It also freezes the eight closed non-numeric versus 28 raw-carrier
 implemented, target-conformance-open classifications. CI requires the active
 profile identity in `specification.toml` and executes the complete ASL suite
 with the pinned ASLRef.
@@ -191,16 +191,16 @@ implementation-defined behavior. Its CPU, A2A3, and A5 observations are
 implementation evidence only. They cannot silently become PTO semantics.
 The generated `numeric-profile-decision-proposals.json` ledger imports the
 accepted identity catalog and records `S5-T2-A1` closed. PD-03 has an accepted
-record; the other 11 decisions and all 20 complete domain result rules remain
+record; the other 10 decisions and all 18 complete domain result rules remain
 open.
 The machine-derived closure snapshot is 2 accepted and 10 open decisions,
-0 accepted and 20 open complete domain rules, and 18 selected and 81 open
+0 accepted and 18 open complete domain rules, and 16 selected and 73 open
 variation routes.
 The generated `scalar-numeric-flag-contract.json` ledger records the accepted
 flag lifecycle and 30/30 producer-owner matrix without closing PD-06.
 The generated `numeric-rounding-selector-contract.json` ledger records the
 accepted selector namespaces and owners from ADR 0039 and the complete PD-03
-semantics accepted by ADR 0047. All 18 affected domain rounding and
+semantics accepted by ADR 0047. All 16 affected domain rounding and
 saturation-order rules are populated; other numeric dimensions remain open.
 The generated `numeric-subnormal-contract.json` ledger records ADR 0049's
 named-hardware-profile PD-04 rule. All eleven subnormal-capable types preserve
@@ -242,7 +242,7 @@ remaining applicability tables, and `cube-matrix` conformance open.
 The executable selector is an accepted negative-rule set, not a complete A2/A3
 profile; an operation absent from that set is not thereby supported.
 The generated `numeric-variation-point-ownership.json` ledger records the
-accepted `S5-T2-A4` discovery and ownership checkpoint. It enumerates 99
-domain/dimension points, proves reachability across all 108 operations and 30
-hooks, and records 18 selected portable rounding routes plus 81 open routes.
+accepted `S5-T2-A4` discovery and ownership checkpoint. It enumerates 89
+domain/dimension points, proves reachability across all 104 operations and 28
+hooks, and records 16 selected portable rounding routes plus 73 open routes.
 A missing target rule never falls back to `pto-v0` or a backend observation.

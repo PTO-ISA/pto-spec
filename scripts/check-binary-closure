@@ -10,12 +10,12 @@ import subprocess
 
 
 ROOT = Path(__file__).resolve().parent.parent
-EXPECTED_FORM_COUNT = 573
+EXPECTED_FORM_COUNT = 570
 EXPECTED_FINGERPRINT = (
-    "d658ad0390d942e9e441d751ce43305bd6d154efd2de13ed724d652923efa708"
+    "aaaf95c76cacd6843637ebc7ce5b9939ed82d4bafe18f65660bd809dd02acf8c"
 )
-EXPECTED_RELEASE = "0.57.1"
-EXPECTED_ENCODING_ABI = "pto-isa-0.57.1-mode-function-v1"
+EXPECTED_RELEASE = "0.58.0"
+EXPECTED_ENCODING_ABI = "pto-isa-0.58.0-mode-function-v1"
 PROJECTION_KEYS = (
     "form_id",
     "mnemonic",
@@ -83,22 +83,22 @@ def main() -> int:
             f"{manifest_encoding_hash}, computed {computed_encoding_hash}"
         )
     counts = manifest.get("catalog_counts", {})
-    if counts.get("scalar_forms") != 474 or counts.get("command_forms") != 99:
+    if counts.get("scalar_forms") != 474 or counts.get("command_forms") != 96:
         raise SystemExit(
-            "release manifest scalar/command closure must remain exactly 474/99"
+            "release manifest scalar/command closure must remain exactly 474/96"
         )
-    if counts.get("command_form_families") != {"CMD": 74, "BBD": 25}:
+    if counts.get("command_form_families") != {"CMD": 71, "BBD": 25}:
         raise SystemExit(
-            "release manifest command families must remain exactly CMD=74/BBD=25"
+            "release manifest command families must remain exactly CMD=71/BBD=25"
         )
-    if counts.get("tile_operations") != {"TEPL": 98, "TMA": 9, "CUBE": 13}:
-        raise SystemExit("release manifest tile closure must be exactly 98/9/13")
-    if counts.get("tile_operations_total") != 120:
-        raise SystemExit("release manifest tile operation total must be exactly 120")
+    if counts.get("tile_operations") != {"TEPL": 87, "TMA": 7, "CUBE": 12}:
+        raise SystemExit("release manifest tile closure must be exactly 87/7/12")
+    if counts.get("tile_operations_total") != 106:
+        raise SystemExit("release manifest tile operation total must be exactly 106")
     if counts.get("pending_base_operations") != 0:
         raise SystemExit("release manifest must have zero pending base operations")
-    if counts.get("contract_status_counts") != {"reviewed-complete": 120}:
-        raise SystemExit("release manifest must close all 120 operation contracts")
+    if counts.get("contract_status_counts") != {"reviewed-complete": 106}:
+        raise SystemExit("release manifest must close all 106 operation contracts")
     print(
         f"binary closure passed: {EXPECTED_FORM_COUNT} encoded forms, "
         f"fingerprint {fingerprint}, release encoding {computed_encoding_hash}"

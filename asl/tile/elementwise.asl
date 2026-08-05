@@ -75,6 +75,34 @@ begin
     MarkTileValidRegionDefined(destination);
 end;
 
+// PTO-REQ-TEPL-001: TFMA is one profile-defined fused multiply-add per
+// destination element.  The matrix multiply-add hook is deliberately reused:
+// it already owns the profile boundary between raw-carrier execution and the
+// selected floating-point implementation, and receives the addend first.
+func TFMA(destination: TileIndex, source_left: TileIndex,
+          source_right: TileIndex, addend: TileIndex)
+begin
+    let destination_tile = _Tiles[[destination]];
+    let left_tile = _Tiles[[source_left]];
+    let right_tile = _Tiles[[source_right]];
+    let addend_tile = _Tiles[[addend]];
+    let left_payload = left_tile.payload;
+    let right_payload = right_tile.payload;
+    let addend_payload = addend_tile.payload;
+    for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
+            let element = TileLinearIndex(destination_tile,
+                row as integer {0..65535}, column as integer {0..65535});
+            _Tiles[[destination]].payload[[element]] =
+                TileProfileMatrixAccumulate(addend_payload[[element]],
+                    left_payload[[element]], right_payload[[element]],
+                    destination_tile.data_type, left_tile.data_type,
+                    right_tile.data_type);
+        end;
+    end;
+    MarkTileValidRegionDefined(destination);
+end;
+
 func TileUnaryValue(op: TileUnaryOperation, value: Word) => Word
 begin
     case op of
@@ -96,32 +124,6 @@ impdef func TileProfileUnary(op: TileUnaryOperation, data_type: TileDataType,
                              value: Word) => Word
 begin
     return TileUnaryValue(op, value);
-end;
-
-impdef func TileProfileAxpy(destination_value: Word, source_value: Word,
-                            scalar: Word, data_type: TileDataType) => Word
-begin
-    return destination_value + MultiplyWord(scalar, source_value);
-end;
-
-func ExecuteTileAxpy(destination: TileIndex, source: TileIndex, scalar: Word)
-begin
-    let destination_tile = _Tiles[[destination]];
-    let source_tile = _Tiles[[source]];
-    assert TileShapesMatch(destination_tile, source_tile);
-    assert destination_tile.data_type == source_tile.data_type;
-    let destination_payload = destination_tile.payload;
-    let source_payload = source_tile.payload;
-    for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(source_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            _Tiles[[destination]].payload[[element]] =
-                TileProfileAxpy(destination_payload[[element]],
-                    source_payload[[element]], scalar, source_tile.data_type);
-        end;
-    end;
-    MarkTileValidRegionDefined(destination);
 end;
 
 func ExecuteTileFillScalar(destination: TileIndex, scalar: Word)
@@ -151,35 +153,6 @@ begin
             _Tiles[[destination]].payload[[element]] =
                 TileProfileUnary(op, source_tile.data_type,
                     source_payload[[element]]);
-        end;
-    end;
-    MarkTileValidRegionDefined(destination);
-end;
-
-impdef func TileProfilePReLU(value: Word, negative_slope: Word,
-                             data_type: TileDataType) => Word
-begin
-    if SInt(value) < 0 then
-        return MultiplyWord(value, negative_slope);
-    else
-        return value;
-    end;
-end;
-
-func TPRELU(destination: TileIndex, source: TileIndex, negative_slope: Word)
-begin
-    let source_tile = _Tiles[[source]];
-    assert source_tile.allocated;
-    assert TileShapesMatch(_Tiles[[destination]], source_tile);
-    assert _Tiles[[destination]].data_type == source_tile.data_type;
-    let source_payload = source_tile.payload;
-    for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(source_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            _Tiles[[destination]].payload[[element]] =
-                TileProfilePReLU(source_payload[[element]], negative_slope,
-                    source_tile.data_type);
         end;
     end;
     MarkTileValidRegionDefined(destination);

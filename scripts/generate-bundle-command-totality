@@ -33,6 +33,7 @@ REJECTED_START_MNEMONICS = {"BSTART.CUBE", "BSTART.FIXP"}
 EFFECT_BY_HANDLER = {
     "BindBundleScalarIO": "bundle-scalar-binding",
     "BindBundleTileIO": "bundle-tile-binding",
+    "BindBundleSharedIO": "bundle-shared-binding",
     "ExecuteBundleStart": "bundle-start-descriptor",
     "ExecuteBundleStop": "bundle-commit-and-stop",
     "ExecuteMemoryCopy": "bounded-memory-copy",
@@ -70,6 +71,7 @@ def build_evidence() -> dict:
     ]
 
     form_matrix = []
+    encoding_variant_matrix = []
     for index, row in enumerate(command_rows):
         fields = [field["name"] for field in row["fields"]]
         rejected = command_rejected(row)
@@ -97,6 +99,19 @@ def build_evidence() -> dict:
                 ),
             }
         )
+        for variant in row.get("encoding_variants", []):
+            encoding_variant_matrix.append(
+                {
+                    "form_index": index,
+                    "form_id": row["form_id"],
+                    "mnemonic": row["mnemonic"],
+                    "variant_name": variant["name"],
+                    "function": variant["function"],
+                    "encoding": variant["encoding"],
+                    "operation_identity_rule": "same-form-identity",
+                    "decoder_disposition": "executed",
+                }
+            )
 
     bridge_matrix = []
     for row in tile_rows:
@@ -151,7 +166,7 @@ def build_evidence() -> dict:
             "command comparison must cover every canonical command form exactly once"
         )
     if comparison_status_counts != Counter(
-        {"executable-subset": 83, "decode-only": 16}
+        {"executable-subset": 82, "decode-only": 13, "header-manifest": 1}
     ):
         raise ValueError(
             f"unexpected independent command status counts: {comparison_status_counts}"
@@ -162,6 +177,7 @@ def build_evidence() -> dict:
         "target": "S4-T7",
         "status": "closed",
         "accepted_form_count": len(command_rows),
+        "encoding_variant_count": len(encoding_variant_matrix),
         "disposition_counts": dict(sorted(disposition_counts.items())),
         "handler_counts": dict(sorted(handler_counts.items())),
         "architecture_contract": {
@@ -176,6 +192,7 @@ def build_evidence() -> dict:
             "bridge_rule": "The PTO-v0 bundle bridge binds destination0, source0, and source1 only; operations needing any other operand reject at commit before tile effects.",
         },
         "form_matrix": form_matrix,
+        "encoding_variant_matrix": encoding_variant_matrix,
         "bundle_tile_bridge": {
             "bound_operand_fields": sorted(BRIDGE_FIELDS),
             "counts": bridge_counts,
@@ -199,7 +216,7 @@ def build_evidence() -> dict:
             "executable_subset": comparison_status_counts["executable-subset"],
             "decode_only": comparison_status_counts["decode-only"],
             "authority": "non-normative structural comparison only",
-            "limitation": "The independent snapshot predates seven accepted PTO 0.57.1 command encoding changes and stages bundle payload execution, so it neither matches those masks nor validates PTO tile payload effects; ADR 0045, the PTO catalogs, and PTO-owned ASL evidence remain authoritative.",
+            "limitation": "The independent snapshot predates seven accepted PTO 0.58.0 command encoding changes and stages bundle payload execution, so it neither matches those masks nor validates PTO tile payload effects; ADR 0045, the PTO catalogs, and PTO-owned ASL evidence remain authoritative.",
         },
         "requirement_ids": [
             "PTO-REQ-BUNDLE-DISPATCH-001",

@@ -6,15 +6,15 @@ This page is generated from the canonical PTO catalogs under `spec/catalog/`.
 
 Direct tile operations are selected by the tile operation catalog and execute against explicit tile, scalar, memory, and descriptor operands. The selector catalog is normative for operation identity, operand roles, semantic handler, and argument order.
 
-In PTO ISA 0.57.1, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TMA and CUBE operations bind directly to their corresponding `BSTART.*` command forms. CUBE uses implicit ACC state; `ACCCVT` publishes and releases ACC. Tile allocation selects the first free Tile in the requested hand, and accepted `B.IOT` reuse bits control commit-qualified source release. `B.DATR` fields apply only to the operation sets recorded in the catalog. See [ADR 0045](../architecture-decisions/0045-pto-isa-release-tile-contract.md).
+In PTO ISA 0.58.0, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TMA and CUBE operations bind directly to their corresponding `BSTART.*` command forms. CUBE operations carry an explicit Local destination D; ACC variants also carry an explicit Local input C, with `D == C` defined as read-old/write-new. Accepted `B.IOT` forms encode `PE_MASK`, `TSize`, and a 2-bit destination Tile field without reuse bits. `B.DATR` fields apply only to the operation sets recorded in the catalog. See [ADR 0052](../architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md).
 
 ## Families
 
 | Family | Operations | Role |
 | --- | --- | --- |
-| TEPL | 98 | Element, scalar, reduction, expansion, generation, conversion, rearrangement, and utility operations. |
-| TMA | 9 | Tile memory, movement, gather, scatter, and prefetch operations. |
-| CUBE | 13 | Matrix operations. |
+| TEPL | 87 | Element, scalar, reduction, expansion, generation, conversion, rearrangement, and utility operations. |
+| TMA | 7 | Tile memory, movement, gather, scatter, and prefetch operations. |
+| CUBE | 12 | Matrix operations. |
 
 ## TEPL
 
@@ -33,7 +33,6 @@ In PTO ISA 0.57.1, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TMA and C
 | TMAX | mode=0, function=11, selector=0x00B | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_MAX&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
 | TMIN | mode=0, function=12, selector=0x00C | ExecuteTileBinary | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TileBinary_MIN&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
 | TCMP | mode=0, function=13, selector=0x00D | ExecuteTileCompare | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right&lt;br&gt;comparison:comparison | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;comparison |
-| TPRELU | mode=0, function=14, selector=0x00E | TPRELU | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:negative-slope | destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
 | TABS | mode=0, function=15, selector=0x00F | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_ABS&lt;br&gt;destination0&lt;br&gt;source0 |
 | TNOT | mode=0, function=16, selector=0x010 | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_NOT&lt;br&gt;destination0&lt;br&gt;source0 |
 | TNEG | mode=0, function=17, selector=0x011 | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_NEG&lt;br&gt;destination0&lt;br&gt;source0 |
@@ -45,6 +44,7 @@ In PTO ISA 0.57.1, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TMA and C
 | TRELU | mode=0, function=23, selector=0x017 | ExecuteTileUnary | destination0:destination&lt;br&gt;source0:source | TileUnary_RELU&lt;br&gt;destination0&lt;br&gt;source0 |
 | TSEL | mode=0, function=26, selector=0x01A | ExecuteTileSelect | destination0:destination&lt;br&gt;source0:mask&lt;br&gt;source1:source-true&lt;br&gt;source2:source-false | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2 |
 | TCVT | mode=0, function=27, selector=0x01B | TCVT | destination0:destination&lt;br&gt;source0:source&lt;br&gt;numeric_control:rounding-and-saturation | destination0&lt;br&gt;source0&lt;br&gt;numeric_control |
+| TFMA | mode=0, function=28, selector=0x01C | TFMA | destination0:destination&lt;br&gt;source0:multiplicand-left&lt;br&gt;source1:multiplicand-right&lt;br&gt;source2:addend | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2 |
 | TADDS | mode=1, function=0, selector=0x020 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_ADD&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
 | TSUBS | mode=1, function=1, selector=0x021 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_SUB&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
 | TMULS | mode=1, function=2, selector=0x022 | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_MUL&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
@@ -58,7 +58,6 @@ In PTO ISA 0.57.1, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TMA and C
 | TMAXS | mode=1, function=11, selector=0x02B | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_MAX&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
 | TMINS | mode=1, function=12, selector=0x02C | ExecuteTileScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | TileBinary_MIN&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
 | TCMPS | mode=1, function=13, selector=0x02D | ExecuteTileCompareScalar | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar&lt;br&gt;comparison:comparison | destination0&lt;br&gt;source0&lt;br&gt;scalar0&lt;br&gt;comparison |
-| TAXPY | mode=1, function=15, selector=0x02F | ExecuteTileAxpy | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scalar | destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
 | TSELS | mode=1, function=26, selector=0x03A | ExecuteTileSelectScalar | destination0:destination&lt;br&gt;source0:mask&lt;br&gt;source1:source-true&lt;br&gt;scalar0:scalar-false | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;scalar0 |
 | TEXPANDS | mode=1, function=27, selector=0x03B | ExecuteTileFillScalar | destination0:destination&lt;br&gt;scalar0:scalar | destination0&lt;br&gt;scalar0 |
 | TROWSUM | mode=2, function=0, selector=0x040 | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_SUM&lt;br&gt;TileAxis_Row&lt;br&gt;destination0&lt;br&gt;source0 |
@@ -90,17 +89,16 @@ In PTO ISA 0.57.1, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TMA and C
 | TCOLARGMAX | mode=2, function=28, selector=0x05C | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_ARGMAX&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0 |
 | TCOLARGMIN | mode=2, function=29, selector=0x05D | ExecuteTileReduction | destination0:destination&lt;br&gt;source0:source | TileReduction_ARGMIN&lt;br&gt;TileAxis_Column&lt;br&gt;destination0&lt;br&gt;source0 |
 | TCONCAT | mode=3, function=0, selector=0x060 | TCONCAT | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right&lt;br&gt;axis:axis | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;axis |
-| TGATHERB | mode=3, function=1, selector=0x061 | TGATHERB | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:byte-offsets | destination0&lt;br&gt;source0&lt;br&gt;source1 |
 | TEXTRACT | mode=3, function=2, selector=0x062 | TEXTRACT | destination0:destination&lt;br&gt;source0:source&lt;br&gt;natural0:row-offset&lt;br&gt;natural1:column-offset | destination0&lt;br&gt;source0&lt;br&gt;natural0&lt;br&gt;natural1 |
 | TINSERT | mode=3, function=3, selector=0x063 | TINSERT | destination0:destination&lt;br&gt;source0:source&lt;br&gt;natural0:row-offset&lt;br&gt;natural1:column-offset | destination0&lt;br&gt;source0&lt;br&gt;natural0&lt;br&gt;natural1 |
 | TIMG2COL | mode=3, function=4, selector=0x064 | TIMG2COL | destination0:destination&lt;br&gt;source0:source&lt;br&gt;positive0:kernel-rows&lt;br&gt;positive1:kernel-columns&lt;br&gt;positive2:stride-rows&lt;br&gt;positive3:stride-columns&lt;br&gt;natural0:pad-rows&lt;br&gt;natural1:pad-columns&lt;br&gt;scalar0:padding | destination0&lt;br&gt;source0&lt;br&gt;positive0&lt;br&gt;positive1&lt;br&gt;positive2&lt;br&gt;positive3&lt;br&gt;natural0&lt;br&gt;natural1&lt;br&gt;scalar0 |
 | TFILLPAD | mode=3, function=5, selector=0x065 | TFILLPAD | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:padding | destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
 | TCI | mode=3, function=6, selector=0x066 | TCI | destination0:destination&lt;br&gt;scalar0:start&lt;br&gt;flag0:descending | destination0&lt;br&gt;scalar0&lt;br&gt;flag0 |
 | TTRI | mode=3, function=7, selector=0x067 | TTRI | destination0:destination&lt;br&gt;flag0:upper&lt;br&gt;diagonal:diagonal | destination0&lt;br&gt;flag0&lt;br&gt;diagonal |
-| THISTOGRAM | mode=3, function=8, selector=0x068 | THISTOGRAM | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:indices&lt;br&gt;selected_byte:selected-byte | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;selected_byte |
+| TRANDOM | mode=3, function=9, selector=0x069 | TRANDOM | destination0:destination&lt;br&gt;scalar0:key-64&lt;br&gt;scalar1:counter-low-64&lt;br&gt;address:counter-high-64&lt;br&gt;flag0:seven-rounds | destination0&lt;br&gt;scalar0&lt;br&gt;scalar1&lt;br&gt;address&lt;br&gt;flag0 |
 | TQUANT | mode=3, function=10, selector=0x06A | TQUANT | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scale&lt;br&gt;scalar1:zero-point&lt;br&gt;numeric_control:rounding-and-saturation | destination0&lt;br&gt;source0&lt;br&gt;scalar0&lt;br&gt;scalar1&lt;br&gt;numeric_control |
 | TDEQUANT | mode=3, function=11, selector=0x06B | TDEQUANT | destination0:destination&lt;br&gt;source0:source&lt;br&gt;scalar0:scale&lt;br&gt;scalar1:zero-point&lt;br&gt;numeric_control:rounding-and-saturation | destination0&lt;br&gt;source0&lt;br&gt;scalar0&lt;br&gt;scalar1&lt;br&gt;numeric_control |
-| TSORT | mode=3, function=12, selector=0x06C | TSORT | destination0:destination&lt;br&gt;destination1:original-indices-u32&lt;br&gt;source0:source&lt;br&gt;flag0:descending | destination0&lt;br&gt;destination1&lt;br&gt;source0&lt;br&gt;flag0 |
+| TSORT32 | mode=3, function=12, selector=0x06C | TSORT32 | destination0:destination&lt;br&gt;destination1:original-indices-u32&lt;br&gt;source0:source&lt;br&gt;flag0:descending | destination0&lt;br&gt;destination1&lt;br&gt;source0&lt;br&gt;flag0 |
 | TMRGSORT | mode=3, function=13, selector=0x06D | TMRGSORT | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right&lt;br&gt;flag0:descending | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;flag0 |
 | TTRANS | mode=3, function=14, selector=0x06E | TTRANS | destination0:destination&lt;br&gt;source0:source | destination0&lt;br&gt;source0 |
 | TGATHER | mode=3, function=15, selector=0x06F | TGATHER | destination0:destination&lt;br&gt;source0:source&lt;br&gt;source1:indices | destination0&lt;br&gt;source0&lt;br&gt;source1 |
@@ -109,15 +107,6 @@ In PTO ISA 0.57.1, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TMA and C
 | TPARTMUL | mode=3, function=18, selector=0x072 | ExecuteTilePartial | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TilePartial_MUL&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
 | TPARTMAX | mode=3, function=19, selector=0x073 | ExecuteTilePartial | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TilePartial_MAX&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
 | TPARTMIN | mode=3, function=20, selector=0x074 | ExecuteTilePartial | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | TilePartial_MIN&lt;br&gt;destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TPARTARGMAX | mode=3, function=21, selector=0x075 | ExecuteTilePartialArg | destination0:destination&lt;br&gt;destination1:destination-indices&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right&lt;br&gt;source2:left-indices&lt;br&gt;source3:right-indices | TRUE&lt;br&gt;destination0&lt;br&gt;destination1&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |
-| TPARTARGMIN | mode=3, function=22, selector=0x076 | ExecuteTilePartialArg | destination0:destination&lt;br&gt;destination1:destination-indices&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right&lt;br&gt;source2:left-indices&lt;br&gt;source3:right-indices | FALSE&lt;br&gt;destination0&lt;br&gt;destination1&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |
-| TRESHAPE | mode=3, function=23, selector=0x077 | TRESHAPE | destination0:destination&lt;br&gt;source0:source | destination0&lt;br&gt;source0 |
-| TDEINTERLEAVE | mode=3, function=24, selector=0x078 | TDEINTERLEAVE | destination0:destination-even&lt;br&gt;destination1:destination-odd&lt;br&gt;source0:source | destination0&lt;br&gt;destination1&lt;br&gt;source0 |
-| TINTERLEAVE | mode=3, function=25, selector=0x079 | TINTERLEAVE | destination0:destination&lt;br&gt;source0:source-left&lt;br&gt;source1:source-right | destination0&lt;br&gt;source0&lt;br&gt;source1 |
-| TPUSH | mode=3, function=26, selector=0x07A | TPUSH | destination0:destination&lt;br&gt;source0:source | destination0&lt;br&gt;source0 |
-| TPOP | mode=3, function=27, selector=0x07B | TPOP | destination0:destination&lt;br&gt;source0:source | destination0&lt;br&gt;source0 |
-| TALLOC | mode=3, function=28, selector=0x07C | TALLOC | destination0:destination&lt;br&gt;byte_count:capacity-bytes&lt;br&gt;positive0:rows&lt;br&gt;positive1:columns&lt;br&gt;natural0:valid-rows&lt;br&gt;natural1:valid-columns&lt;br&gt;scalar0:data-type-code&lt;br&gt;flag0:implementation-defined-layout | destination0&lt;br&gt;byte_count&lt;br&gt;positive0&lt;br&gt;positive1&lt;br&gt;natural0&lt;br&gt;natural1&lt;br&gt;scalar0&lt;br&gt;flag0 |
-| TFREE | mode=3, function=29, selector=0x07D | TFREE | destination0:destination | destination0 |
 
 ## TMA
 
@@ -129,24 +118,21 @@ In PTO ISA 0.57.1, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TMA and C
 | TPREFETCH | function=3 | TPREFETCH | address:base-address&lt;br&gt;byte_count:byte-count | address&lt;br&gt;byte_count |
 | MGATHER | function=4 | MGATHER | destination0:destination&lt;br&gt;address:base-address&lt;br&gt;source0:indices | destination0&lt;br&gt;address&lt;br&gt;source0 |
 | MSCATTER | function=5 | MSCATTER | address:base-address&lt;br&gt;source0:source&lt;br&gt;source1:indices | address&lt;br&gt;source0&lt;br&gt;source1 |
-| MGATHER_MASK | function=6 | MGATHER_MASK | destination0:destination&lt;br&gt;address:base-address&lt;br&gt;source0:indices&lt;br&gt;source1:mask | destination0&lt;br&gt;address&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;{"runtime": "CurrentBundlePadValue"} |
-| MSCATTER_MASK | function=7 | MSCATTER_MASK | address:base-address&lt;br&gt;source0:source&lt;br&gt;source1:indices&lt;br&gt;source2:mask | address&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2 |
-| MGATHER_CAS | function=8 | MGATHER_CAS | destination0:destination&lt;br&gt;address:base-address&lt;br&gt;source0:indices&lt;br&gt;source1:expected&lt;br&gt;source2:replacement | destination0&lt;br&gt;address&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2 |
+| GMOV | function=13 | GMOV | destination0:destination&lt;br&gt;source0:resolved-peer-source&lt;br&gt;scalar0:peer-tid | destination0&lt;br&gt;source0&lt;br&gt;scalar0 |
 
 ## CUBE
 
 | Name | Selector | Handler | Operands | Arguments |
 | --- | --- | --- | --- | --- |
-| TMATMUL | function=0 | TMATMUL | source0:left&lt;br&gt;source1:right | source0&lt;br&gt;source1&lt;br&gt;FALSE |
-| TMATMUL_BIAS | function=1 | TMATMUL_BIAS | source0:left&lt;br&gt;source1:right&lt;br&gt;source2:bias | source0&lt;br&gt;source1&lt;br&gt;source2 |
-| TMATMUL_ACC | function=2 | TMATMUL_ACC | source0:left&lt;br&gt;source1:right | source0&lt;br&gt;source1 |
-| TMATMUL_MX | function=4 | TMATMUL_MX | source0:left&lt;br&gt;source1:right&lt;br&gt;source2:row-scale&lt;br&gt;source3:column-scale | source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |
-| TMATMUL_MX_BIAS | function=5 | TMATMUL_MX_BIAS | source0:left&lt;br&gt;source1:right&lt;br&gt;source2:row-scale&lt;br&gt;source3:column-scale&lt;br&gt;source4:bias | source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3&lt;br&gt;source4 |
-| TMATMUL_MX_ACC | function=6 | TMATMUL_MX_ACC | source0:left&lt;br&gt;source1:right&lt;br&gt;source2:row-scale&lt;br&gt;source3:column-scale | source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |
-| ACCCVT | function=8 | ACCCVT | destination0:destination&lt;br&gt;numeric_control:rounding-and-saturation | destination0&lt;br&gt;numeric_control |
-| TGEMV | function=16 | TGEMV | source0:matrix&lt;br&gt;source1:vector | source0&lt;br&gt;source1 |
-| TGEMV_BIAS | function=17 | TGEMV_BIAS | source0:matrix&lt;br&gt;source1:vector&lt;br&gt;source2:bias | source0&lt;br&gt;source1&lt;br&gt;source2 |
-| TGEMV_ACC | function=18 | TGEMV_ACC | source0:matrix&lt;br&gt;source1:vector | source0&lt;br&gt;source1 |
-| TGEMV_MX | function=20 | TGEMV_MX | source0:matrix&lt;br&gt;source1:vector&lt;br&gt;source2:row-scale&lt;br&gt;source3:column-scale | source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |
-| TGEMV_MX_BIAS | function=21 | TGEMV_MX_BIAS | source0:matrix&lt;br&gt;source1:vector&lt;br&gt;source2:row-scale&lt;br&gt;source3:column-scale&lt;br&gt;source4:bias | source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3&lt;br&gt;source4 |
-| TGEMV_MX_ACC | function=22 | TGEMV_MX_ACC | source0:matrix&lt;br&gt;source1:vector&lt;br&gt;source2:row-scale&lt;br&gt;source3:column-scale | source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |
+| TMATMUL | function=0 | TMATMUL | destination0:destination&lt;br&gt;source0:left&lt;br&gt;source1:right | destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TMATMUL_BIAS | function=1 | TMATMUL_BIAS | destination0:destination&lt;br&gt;source0:left&lt;br&gt;source1:right&lt;br&gt;source2:bias | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2 |
+| TMATMUL_ACC | function=2 | TMATMUL_ACC | destination0:destination&lt;br&gt;source0:accumulator&lt;br&gt;source1:left&lt;br&gt;source2:right | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2 |
+| TMATMUL_MX | function=4 | TMATMUL_MX | destination0:destination&lt;br&gt;source0:left&lt;br&gt;source1:row-scale&lt;br&gt;source2:right&lt;br&gt;source3:column-scale | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |
+| TMATMUL_MX_BIAS | function=5 | TMATMUL_MX_BIAS | destination0:destination&lt;br&gt;source0:left&lt;br&gt;source1:row-scale&lt;br&gt;source2:right&lt;br&gt;source3:column-scale&lt;br&gt;source4:bias | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3&lt;br&gt;source4 |
+| TMATMUL_MX_ACC | function=6 | TMATMUL_MX_ACC | destination0:destination&lt;br&gt;source0:accumulator&lt;br&gt;source1:left&lt;br&gt;source2:row-scale&lt;br&gt;source3:right&lt;br&gt;source4:column-scale | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3&lt;br&gt;source4 |
+| TGEMV | function=16 | TGEMV | destination0:destination&lt;br&gt;source0:matrix&lt;br&gt;source1:vector | destination0&lt;br&gt;source0&lt;br&gt;source1 |
+| TGEMV_BIAS | function=17 | TGEMV_BIAS | destination0:destination&lt;br&gt;source0:matrix&lt;br&gt;source1:vector&lt;br&gt;source2:bias | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2 |
+| TGEMV_ACC | function=18 | TGEMV_ACC | destination0:destination&lt;br&gt;source0:accumulator&lt;br&gt;source1:matrix&lt;br&gt;source2:vector | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2 |
+| TGEMV_MX | function=20 | TGEMV_MX | destination0:destination&lt;br&gt;source0:matrix&lt;br&gt;source1:row-scale&lt;br&gt;source2:vector&lt;br&gt;source3:column-scale | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3 |
+| TGEMV_MX_BIAS | function=21 | TGEMV_MX_BIAS | destination0:destination&lt;br&gt;source0:matrix&lt;br&gt;source1:row-scale&lt;br&gt;source2:vector&lt;br&gt;source3:column-scale&lt;br&gt;source4:bias | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3&lt;br&gt;source4 |
+| TGEMV_MX_ACC | function=22 | TGEMV_MX_ACC | destination0:destination&lt;br&gt;source0:accumulator&lt;br&gt;source1:matrix&lt;br&gt;source2:row-scale&lt;br&gt;source3:vector&lt;br&gt;source4:column-scale | destination0&lt;br&gt;source0&lt;br&gt;source1&lt;br&gt;source2&lt;br&gt;source3&lt;br&gt;source4 |

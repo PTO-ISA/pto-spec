@@ -13,6 +13,7 @@ var _BundleOperation : BundleOperationDescriptor;
 var _BundleDimensions : BundleDimensionSnapshot;
 var _BundleScalarBindings : BundleScalarBindingSnapshot;
 var _BundleTileBindings : BundleTileBindingSnapshot;
+var _BundleSharedBindings : BundleSharedBindingSnapshot;
 var _BundleControlAttributes : BundleControlAttributes;
 var _BundleDataAttributes : BundleDataAttributes;
 // NORM is mandatory. Other accepted layout bits require an advertised
@@ -73,13 +74,17 @@ begin
         _BundleTileBindings[[index]].destination_hand = Zeros{2};
         _BundleTileBindings[[index]].destination_allocated_by_bundle = FALSE;
         _BundleTileBindings[[index]].destination_size = 0;
+        _BundleTileBindings[[index]].pe_mask = Zeros{4};
         _BundleTileBindings[[index]].source0_valid = FALSE;
         _BundleTileBindings[[index]].source1_valid = FALSE;
         _BundleTileBindings[[index]].source0 = 0;
         _BundleTileBindings[[index]].source1 = 0;
-        _BundleTileBindings[[index]].source0_reuse = FALSE;
-        _BundleTileBindings[[index]].source1_reuse = FALSE;
         _BundleTileBindings[[index]].last = FALSE;
+    end;
+    for index = 0 to 3 do
+        _BundleSharedBindings[[index]].valid = FALSE;
+        _BundleSharedBindings[[index]].shared_id = Zeros{8};
+        _BundleSharedBindings[[index]].consumed = FALSE;
     end;
     _BundleControlAttributes.trap_enabled = FALSE;
     _BundleControlAttributes.atomic = FALSE;
@@ -119,6 +124,7 @@ begin
         _TrapContexts[[ring]].bundle_dimensions = _BundleDimensions;
         _TrapContexts[[ring]].bundle_scalar_bindings = _BundleScalarBindings;
         _TrapContexts[[ring]].bundle_tile_bindings = _BundleTileBindings;
+        _TrapContexts[[ring]].bundle_shared_bindings = _BundleSharedBindings;
         _TrapContexts[[ring]].bundle_control_attributes =
             _BundleControlAttributes;
         _TrapContexts[[ring]].bundle_data_attributes = _BundleDataAttributes;
@@ -126,7 +132,6 @@ begin
         _TrapContexts[[ring]].u_queue = _UQueue;
         _TrapContexts[[ring]].execution_mask = _ExecutionMask;
         _TrapContexts[[ring]].predicates = _PredicateRegisters;
-        _TrapContexts[[ring]].accumulator = _Accumulator;
     end;
     _FrameDepth = 0;
     _LastFrameBegin = 0;
@@ -250,7 +255,7 @@ begin
     return _BundleDataAttributes.canonicalize;
 end;
 
-func SetBundleDataAttributeState0571(
+func SetBundleDataAttributeState0580(
     data_type: bits(5), data_layout: bits(5), pad_value: bits(2),
     conversion_mode: bits(3), rounding_mode: bits(3), saturating: boolean,
     canonicalize: boolean)
@@ -304,6 +309,11 @@ begin
         _BundleTileBindings[[index]].source1_valid = FALSE;
         _BundleTileBindings[[index]].last = FALSE;
     end;
+    for index = 0 to 3 do
+        _BundleSharedBindings[[index]].valid = FALSE;
+        _BundleSharedBindings[[index]].shared_id = Zeros{8};
+        _BundleSharedBindings[[index]].consumed = FALSE;
+    end;
     _BundleControlAttributes.trap_enabled = FALSE;
     _BundleControlAttributes.atomic = FALSE;
     _BundleControlAttributes.acquire = FALSE;
@@ -322,6 +332,76 @@ end;
 func SetBundleDimension(index: BundleDimensionIndex, value: Word)
 begin
     _BundleDimensions[[index]] = value;
+end;
+
+func BindBundleSharedIO(shared_id: bits(8))
+begin
+    for index = 0 to 3 do
+        if _BundleSharedBindings[[index]].valid &&
+           _BundleSharedBindings[[index]].shared_id == shared_id &&
+           !_BundleSharedBindings[[index]].consumed then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return;
+        end;
+    end;
+    for index = 0 to 3 do
+        if !_BundleSharedBindings[[index]].valid then
+            _BundleSharedBindings[[index]].valid = TRUE;
+            _BundleSharedBindings[[index]].shared_id = shared_id;
+            _BundleSharedBindings[[index]].consumed = FALSE;
+            return;
+        end;
+    end;
+    SetFault(Fault_TileLegality, ReadTPC());
+end;
+
+readonly func BundleSharedBindingCount() => integer {0..4}
+begin
+    var count: integer {0..4} = 0;
+    for index = 0 to 3 do
+        if _BundleSharedBindings[[index]].valid then
+            count = (count + 1) as integer {0..4};
+        end;
+    end;
+    return count;
+end;
+
+readonly func BundleSharedBindingId(ordinal: integer {0..3}) => bits(8)
+begin
+    assert _BundleSharedBindings[[ordinal]].valid &&
+           !_BundleSharedBindings[[ordinal]].consumed;
+    return _BundleSharedBindings[[ordinal]].shared_id;
+end;
+
+func ConsumeBundleSharedBindings(count: integer {1..4})
+begin
+    assert BundleSharedBindingCount() == count;
+    for index = 0 to count - 1 looplimit 4 do
+        assert _BundleSharedBindings[[index]].valid &&
+               !_BundleSharedBindings[[index]].consumed;
+        _BundleSharedBindings[[index]].consumed = TRUE;
+    end;
+end;
+
+readonly func BundleSharedBindingsUnconsumed() => boolean
+begin
+    for index = 0 to 3 do
+        if _BundleSharedBindings[[index]].valid &&
+           !_BundleSharedBindings[[index]].consumed then return TRUE; end;
+    end;
+    return FALSE;
+end;
+
+readonly func BundleTileMaskCanAppend(pe_mask: bits(4)) => boolean
+begin
+    if pe_mask == Zeros{4} then return FALSE; end;
+    for index = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[index]].valid &&
+           _BundleTileBindings[[index]].pe_mask != pe_mask then
+            return FALSE;
+        end;
+    end;
+    return TRUE;
 end;
 
 func SetBundleArgument(value: Word)
@@ -367,12 +447,11 @@ func SetBundleTileBinding(index: BundleTileBindingIndex,
                          destination_valid: boolean,
                          destination: TileIndex,
                          destination_size: integer {0..15},
+                         pe_mask: bits(4),
                          source0_valid: boolean,
                          source1_valid: boolean,
                          source0: TileIndex,
                          source1: TileIndex,
-                         source0_reuse: boolean,
-                         source1_reuse: boolean,
                          last: boolean)
 begin
     if destination_valid &&
@@ -387,33 +466,30 @@ begin
         Zeros{2} + (destination MOD 4);
     _BundleTileBindings[[index]].destination_allocated_by_bundle = FALSE;
     _BundleTileBindings[[index]].destination_size = destination_size;
+    _BundleTileBindings[[index]].pe_mask = pe_mask;
     _BundleTileBindings[[index]].source0_valid = source0_valid;
     _BundleTileBindings[[index]].source1_valid = source1_valid;
     _BundleTileBindings[[index]].source0 = source0;
     _BundleTileBindings[[index]].source1 = source1;
-    _BundleTileBindings[[index]].source0_reuse = source0_reuse;
-    _BundleTileBindings[[index]].source1_reuse = source1_reuse;
     _BundleTileBindings[[index]].last = last;
 end;
 
 func AddBundleTileBinding(destination_valid: boolean,
                           destination: TileIndex,
                           destination_size: integer {0..15},
+                          pe_mask: bits(4),
                           source0_valid: boolean,
                           source1_valid: boolean,
                           source0: TileIndex,
                           source1: TileIndex,
-                          source0_reuse: boolean,
-                          source1_reuse: boolean,
                           last: boolean)
 begin
     var added = FALSE;
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if !added && !_BundleTileBindings[[binding]].valid then
             SetBundleTileBinding(binding as BundleTileBindingIndex,
-                destination_valid, destination, destination_size,
-                source0_valid, source1_valid, source0, source1,
-                source0_reuse, source1_reuse, last);
+                destination_valid, destination, destination_size, pe_mask,
+                source0_valid, source1_valid, source0, source1, last);
             added = TRUE;
         end;
     end;
@@ -430,22 +506,34 @@ end;
 
 readonly func BundleTileDestinationSizeBytes(
     binding: BundleTileBindingIndex)
-    => integer {0,128,256,512,1024,2048,4096,8192}
+    => integer {0,512,1024,2048,4096,8192,16384,32768}
 begin
     if !_BundleTileBindings[[binding]].destination_valid then return 0; end;
     assert BundleTileDestinationSizeLegal(binding);
     return TileSizeCodeBytes(
-        _BundleTileBindings[[binding]].destination_size as integer {3..9});
+        _BundleTileBindings[[binding]].destination_size as integer {1..7});
+end;
+
+readonly func BundleTileIsDestination(tile: TileIndex) => boolean
+begin
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].destination_valid &&
+           _BundleTileBindings[[binding]].destination == tile then
+            return TRUE;
+        end;
+    end;
+    return FALSE;
 end;
 
 func CommitBundleTileSourceLifetime(binding: BundleTileBindingIndex)
 begin
     if _BundleTileBindings[[binding]].source0_valid &&
-       !_BundleTileBindings[[binding]].source0_reuse then
+       !BundleTileIsDestination(_BundleTileBindings[[binding]].source0) then
         ReleaseTile(_BundleTileBindings[[binding]].source0);
     end;
     if _BundleTileBindings[[binding]].source1_valid &&
-       !_BundleTileBindings[[binding]].source1_reuse &&
+       !BundleTileIsDestination(_BundleTileBindings[[binding]].source1) &&
        (!_BundleTileBindings[[binding]].source0_valid ||
         _BundleTileBindings[[binding]].source1 !=
             _BundleTileBindings[[binding]].source0) then

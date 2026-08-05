@@ -198,7 +198,7 @@ def generate() -> dict[str, Any]:
             "support_not_semantics": "Availability is a type-support fact, not an operation/type legality or numeric-result rule.",
             "profile_narrowing": "A named target profile may narrow support but may not redefine portable PTO semantics.",
             "cpu_observation": "The CPU simulator is implementation evidence and is neither a target-profile authority nor a numeric oracle.",
-            "non_public_catalog_names": "The nine remaining PTO TileDataType identities are defined by the 0.57.1 hardware contract but have no alias in the pinned public type inventory; that absence does not weaken their architectural identity.",
+            "non_public_catalog_names": "The nine remaining PTO TileDataType identities are defined by the 0.58.0 hardware contract but have no alias in the pinned public type inventory; that absence does not weaken their architectural identity.",
         },
         "public_types": public_types,
         "accepted_catalog_bindings": accepted_bindings,
@@ -260,7 +260,7 @@ def generate() -> dict[str, Any]:
             {"id": "PD-02-R1", "rule": "complete every scalar and tile operation/type/profile legality tuple"},
             {"id": "PD-02-R2", "rule": "publish independent numeric result and exception vectors for every supported tuple"},
             {"id": "PD-02-R3", "rule": "record downstream byte-and-effect parity for the immutable hardware profile"},
-            {"id": "PD-02-R4", "rule": "accept architecture and formal-model review against the exact 0.57.1 type contract"},
+            {"id": "PD-02-R4", "rule": "accept architecture and formal-model review against the exact 0.58.0 type contract"},
         ],
         "sources": [
             source("spec/evidence/numeric-profile-decision-inputs.json"),

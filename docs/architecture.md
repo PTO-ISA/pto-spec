@@ -3,20 +3,24 @@
 PTO is a 64-bit scalar, bundle/command, and tile instruction set. The ASL files
 and machine-readable catalogs in this repository are the normative definition of
 the architecture. They define accepted encodings, architectural state, legality,
-faults, completion, ordering, and named conformance profiles. PTO ISA 0.57.1
+faults, completion, ordering, and named conformance profiles. PTO ISA 0.58.0
 release identity and profile identity are separate machine-readable fields.
 
 PTO does not define vector instructions. Encodings and bundle forms that exist
-only to host vector execution are outside the accepted PTO ISA surface.
+only to host vector execution are outside the accepted PTO ISA surface. The six
+Linx-only two-level vector encodings reserved against future PTO allocation are
+listed exactly in `spec/catalog/linx-vector-reservations.json`; they are
+canonical release inputs but are not accepted PTO instructions.
 
 ## Accepted instruction surface
 
 | Surface | Count | Scope |
 | --- | ---: | --- |
 | Scalar forms | 474 | AGU, ALU, AMO, BRU, FSU, and SYS |
-| Bundle/command forms | 99 | bundle start, dimension, control, data, IO, hint, stop, and context forms |
-| Direct tile operations | 120 | 98 TEPL, 9 TMA, and 13 CUBE operations |
+| Bundle/command forms | 96 | bundle start, dimension, control, data, IO, hint, stop, and context forms |
+| Direct tile operations | 106 | 87 TEPL, 7 TMA, and 12 CUBE operations |
 | System registers | 72 | base, context, trap snapshot, translation, interrupt, and debug registers |
+| Linx-only vector reservations | 6 | reserved in PTO; executable only in Linx |
 
 Exact masks, matches, operand pieces, signedness, selector values, and
 constraints live in `spec/catalog/`. Generated ASL decoders bind those catalog
@@ -51,7 +55,7 @@ address, or state-transition rule.
   30 pushes U and selector 31 pushes T. A push shifts older entries toward
   `#4` and discards the previous `#4`.
 - P0..P7 are 32-bit per-warp predicate registers. P0 is hardwired all-ones;
-  P1..P7 reset to zero and are independently trap-preserved. PTO ISA 0.57.1
+  P1..P7 reset to zero and are independently trap-preserved. PTO ISA 0.58.0
   has no instruction producer, consumer, or selector for this register file.
 - A separate 64-bit execution mask belongs only to active MPAR and MSEQ
   bodies. Machine-body entry initializes it to all ones, and B.Z/B.NZ consume
@@ -60,7 +64,7 @@ address, or state-transition rule.
 - The public PTO v0.6 micro-instruction layer's `!pto.mask<G>` values are a
   separate source-language surface with 64-, 128-, or 256-bit logical widths
   and public `pto.p*`/`pto.v*` producers and consumers. They are outside the
-  active 0.57.1 release line and have no accepted mapping to P0-P7, the
+  active 0.58.0 release line and have no accepted mapping to P0-P7, the
   MPAR/MSEQ mask, or a physical predicate register. See ADR 0051.
 - Access-control state is ACR0..ACR15. PTO v0 resets to ACR0; the exact reset
   and access policy are defined by `docs/profile-contracts.md`.
@@ -78,8 +82,8 @@ Bundle execution is architectural state, not a hidden backend queue. PTO exposes
 - bundle condition and commit argument state;
 - the exact bundle-start form, operation class, selector, DataType, Mode, and
   compressed BrType presence and values;
-- bundle arguments, dimensions, scalar IO bindings, tile IO bindings, control
-  attributes, and data attributes.
+- bundle arguments, dimensions, scalar IO bindings, tile IO bindings, ordered
+  one-use Shared bindings, control attributes, and data attributes.
 
 Bundle/command forms configure or transfer this state explicitly. A bundle start
 checks its target and descriptor before updating bundle state or committing an
@@ -89,7 +93,7 @@ executes exactly one selected direct tile operation when present, and then
 commits the transfer. Failed descriptor, binding, type, or tile-legality checks
 preserve tile destinations and save the live bundle state in the trap context.
 The exact selector, DataType, BrType, direct B.IOT boundary, and unsupported
-families are defined by ADR 0022. ADR 0045 additionally fixes the 0.57.1
+families are defined by ADR 0022. ADR 0045 additionally fixes the 0.58.0
 Mode/Function encoding, B.IOT allocation and lifetime fields, B.DATR data
 attributes, and B.CATR ordering attributes. Vector-only bundle and queue forms
 are rejected by the PTO catalog because PTO has no vector instruction execution
@@ -101,8 +105,8 @@ surface.
 - T/U/M/N hands occupy codes 0..15, 16..31, 32..47, and 48..63.
 - Each register has a `TileInfo` record containing allocation, capacity, shape,
   valid region, data type, layout, location intent, and definedness.
-- Architectural CELL size is 128 bytes. B.IOT size codes 3 through 9 allocate
-  128 bytes, 256 bytes, 512 bytes, 1 KiB, 2 KiB, 4 KiB, or 8 KiB. An active
+- Architectural CELL size is 128 bytes. B.IOT `TSize` codes 1 through 7 allocate
+  512 bytes, 1 KiB, 2 KiB, 4 KiB, 8 KiB, 16 KiB, or 32 KiB. An active
   tile cannot exceed the read-only `TILE_CAPACITY` system register, and the sum
   of active capacities must also stay within it.
 - Descriptor storage is `ceil(rows * columns * element_bits / 8)` bytes and
@@ -126,17 +130,29 @@ surface.
 - Source operands are snapshotted before destination writes, defining
   read-before-write behavior for permitted aliases.
 
-B.IOT source-reuse bits are architectural lifetime controls. Zero releases the
-source only after a successful bundle commit; one preserves it. Rejection,
-fault, retry, and squash preserve sources and any pre-attempt destination state.
+B.IOT has no source-reuse bits in PTO ISA 0.58.0. Sources are released only
+after successful bundle completion; rejection, fault, retry, and squash
+preserve sources and pre-attempt destination state. A source that aliases an
+explicit destination is read before the destination write and remains the
+newly produced destination after commit.
 
-Tile management uses explicit tile indices rather than hidden pipe state.
-`TPUSH destination, source` publishes a defined source into a free destination
-slot and preserves the producer. `TPOP destination, source` copies a defined
-source slot into a matching configured consumer, preserves the consumer
-descriptor, and releases the source slot. `TFREE` releases an allocated index;
-double-free is illegal. Different slot indices have no implicit FIFO order:
-their operands and architectural program order select the handoff sequence.
+PTO ISA 0.58.0 additionally exposes 256 absolute Core-local Shared registers,
+`S0` through `S255`. Each core owns one bank shared by its four PEs; different
+cores have independent banks. Each register persists until overwritten or core
+reset and contains descriptor state, payload divided into four fixed-offset
+quarters, and a four-bit initialization mask. The compiler allocates S numbers;
+the C++ API does not expose physical Shared-register selection. C.B.IOS binder
+state remains architecture-visible and trap-preserved until its companion
+consumes it.
+
+A Shared destination is one atomic descriptor-plus-payload read-modify-write.
+`PE_MASK` selects fixed-offset quarters, permits multiple bits, and treats
+`0000` as a no-op. A partial first write establishes the descriptor; later
+partial writes require descriptor compatibility and preserve unselected
+quarters. A full `1111` write may replace descriptor and payload. Reads never
+modify state, and uninitialized data has undefined-register semantics without a
+trap. The architecture defines no order for conflicting concurrent accesses;
+programs must avoid overlap or synchronize explicitly.
 
 The ASL payload array is bounded by `PTO_MODEL_TILE_ELEMENTS` for executable
 verification. Descriptor capacity defines architectural legality; the ASL array
@@ -145,27 +161,35 @@ by itself define the address and packing protocol of sub-byte TMA transfers.
 
 ## Direct tile families
 
-- TEPL contains 98 accepted element, reduction, expansion, layout, management,
+- TEPL contains 87 accepted element, reduction, expansion, layout, management,
   and utility operations.
-- TMA contains 9 accepted tile memory operations, including load, store, move,
-  prefetch, gather, scatter, masked gather/scatter, and gather-CAS forms.
-- CUBE contains 13 accepted matrix operations, including base, bias,
-  accumulate, MX, ACCCVT, and matrix/vector variants. ACC is implicit
-  architectural state and has no B.IOT source or destination code.
+- TMA contains 7 accepted tile memory operations: load, store, prefetch,
+  gather, scatter, TMOV, and the DavinciOO-v5 GMOV extension. TLSU Functions
+  8–11 are Shared TMOV encoding variants and Function 12 is the Shared
+  partition-store variant; they do not add direct-operation identities.
+- CUBE contains 12 accepted matrix operations, including base, bias,
+  accumulate, MX, and matrix/vector variants. Every operation names Local D;
+  ACC variants additionally name Local C.
 
 The canonical selector and descriptor fields define encoding and operand facts.
-TEPL and TMA operations have explicit tile operands. CUBE function identity
-declares implicit ACC access: ordinary and BIAS forms initialize ACC, `.ACC`
-forms update it, and ACCCVT publishes a tile and releases ACC only after
-successful commit. ACC retains logical type separately from physical
-accumulation type and is included in trap context. Pipe state is not
-architectural.
+TEPL, TMA, and CUBE operations have explicit tile operands. CUBE base forms
+compute `D = PostProcess(A*B)`, BIAS forms add explicit Bias, and ACC forms
+read explicit C before writing D. `D == C` is legal only when dtype, shape,
+layout, and allocation agree and has read-old/write-new behavior. `TileAcc` is
+a logical type role, not an independent architectural register.
+
+TMATMUL Functions 0–2 accept Shared Right or ordered Shared Left,Right;
+Functions 4–6 accept Shared Right,ScaleRight or the complete ordered
+Left,ScaleLeft,Right,ScaleRight set. `PE_MASK` predicates selected Shared
+quarters; selected uninitialized data has undefined-register semantics.
+TGEMV Functions
+16–18 and 20–22 reject every C.B.IOS binder.
 
 B.DATR compare, padding/byte-selection, saturation, canonicalization, DataType,
 rounding, and layout fields are legal only when the selected operation consumes
 them. An inapplicable nonzero field rejects before allocation or effects.
 `RMode` values 0–7 are NONE, RNE, RTZ, RDN, RUP, RNA, RTO, and RHB. Only
-`ACCCVT`, `TCVT`, `TQUANT`, and `TDEQUANT` consume the resulting
+`TCVT`, `TQUANT`, and `TDEQUANT` consume the resulting
 `TileNumericSelection`; NONE is RNE except for floating-to-integer `TCVT`, where
 it is RTZ. Rounding precedes saturation. Public conversion-mode ordinals use an
 explicit translation and must not be copied into `RMode` directly.
@@ -174,7 +198,7 @@ dependency metadata never creates a PTO-TSO fence.
 
 Numeric format codes are namespace-local, not one shared enumeration. Scalar
 2-bit source types, scalar 5-bit floating destinations, scalar 5-bit integer
-destinations, 6-bit TMA/TALLOC types, and 5-bit bundle `DataType` fields are
+destinations, 6-bit TMA types, and 5-bit bundle `DataType` fields are
 decoded independently; equal integers do not imply equal types. ADR 0040 and
 `spec/evidence/numeric-format-namespace-contract.json` define every mapped and
 reserved code, all 25 `TileDataType` raw-carrier identities, and low-nibble-first
@@ -194,7 +218,7 @@ are checked for their internal zero-bit constraints before classification.
 These pure helpers do not change the active `pto-v0` raw-carrier semantics and
 do not decide operation-specific propagation, flags, or other result rules.
 ADR 0049 and `spec/evidence/numeric-subnormal-contract.json` separately fix
-PD-04 for `pto-hardware-numeric-0.57.1-ieee-v1`: each of the eleven formats
+PD-04 for `pto-hardware-numeric-0.58.0-ieee-v1`: each of the eleven formats
 that defines subnormals preserves exact input values, uses gradual underflow
 for results, and detects tininess after rounding. The profile exposes no FTZ
 or DAZ state and no operation-local override; a configuration requesting one
@@ -226,13 +250,13 @@ profile result rules remain open. The ASL selector is deliberately named
 negative slice and must not be read as a complete executable A2/A3 profile.
 
 ADR 0042 and `spec/evidence/numeric-variation-point-ownership.json` make every
-open numeric variation point explicit. The 99 stable domain/dimension rows
-cover all 108 operations and 30 hooks. `pto-numeric-v1` owns each decision
+open numeric variation point explicit. The generated ledger owns the current
+domain/dimension rows, operation set, and profile-hook coverage. `pto-numeric-v1` owns each decision
 until an accepted PTO record selects a portable rule, named target profile,
 visible selector, or unsupported tuple. No backend or independent-model
 fallback supplies a missing rule.
 
-The named `pto-hardware-numeric-0.57.1-ieee-v1` contract fixes the 0.57.1
+The named `pto-hardware-numeric-0.58.0-ieee-v1` contract fixes the 0.58.0
 low-precision formats, packed-lane order, canonical NaNs, signed zero, invalid
 integer results, RHB ties, matrix operand classes, physical ACC classes, and MX
 scale layout. This is a contract definition, not an implementation-conformance

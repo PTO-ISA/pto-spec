@@ -7,8 +7,8 @@
 
 ## Context
 
-PTO accepts 99 bundle-command forms through 21 semantic handlers. The 89
-executed forms use 11 handlers; 10 forms map to 10 unsupported handlers and
+PTO accepts 96 bundle-command forms through 22 semantic handlers. The 86
+executed forms use 12 handlers; 10 forms map to 10 unsupported handlers and
 reject before effects. Earlier closure work proved decode identity, installed
 operation descriptors, and the start/header/stop lifecycle. It did not make
 every retained command total:
@@ -18,15 +18,15 @@ silently truncated their length, and several successful commands retired
 without advancing TPC.
 
 The bundle-to-tile bridge also exposes a smaller operand surface than direct
-tile dispatch. It can bind `destination0`, `source0`, and `source1`. Of the 120
-direct tile operations, 67 use only those fields; the other 53 require an
+tile dispatch. It can bind `destination0`, `source0`, and `source1`. Of the 106
+direct tile operations, 59 use only those fields; the other 47 require an
 address, scalar, immediate, additional source, additional destination, or
 operation-specific control. Silently defaulting those operands would create a
 different instruction from the direct operation.
 
-The content-addressed independent comparison snapshot contains all 99 form IDs.
-The generated comparison matrix grades 83 as an executable subset and 16 as
-decode-only. Its model stages bundle headers rather than executing tile
+The content-addressed independent comparison snapshot contains all 96 form IDs.
+The generated comparison matrix grades 82 as an executable subset, 13 as
+decode-only, and one as header-manifest evidence. Its model stages bundle headers rather than executing tile
 payloads. It is useful structural evidence, not normative PTO semantics or a
 conformance oracle.
 
@@ -102,10 +102,10 @@ The checked bridge inventory is:
 
 | Family | Direct operations | Representable | Commit-rejected |
 | --- | ---: | ---: | ---: |
-| TEPL | 98 | 62 | 36 |
-| TMA | 9 | 1 | 8 |
-| CUBE | 13 | 4 | 9 |
-| **Total** | **120** | **67** | **53** |
+| TEPL | 87 | 56 | 31 |
+| TMA | 7 | 1 | 6 |
+| CUBE | 12 | 2 | 10 |
+| **Total** | **106** | **59** | **47** |
 
 This is an explicit PTO-v0 limitation, not an implicit placeholder. Extending
 the bridge requires additional architectural binding state plus complete
@@ -115,11 +115,11 @@ fault, alias, and restart evidence.
 
 `spec/evidence/bundle-command-totality.json` is generated from the canonical
 command and tile catalogs. It contains every command `form_id`, decoded and
-consumed fields, retirement disposition, effect class, and all 120 bridge
+consumed fields, retirement disposition, effect class, and all 106 bridge
 representability decisions. The repository gate regenerates it and fails on
 any catalog or policy drift.
 
-`ValidateCanonicalCommandExecution` executes all 99 canonical form witnesses.
+`ValidateCanonicalCommandExecution` executes all 96 canonical form witnesses.
 It asserts success or pre-effect rejection, fault identity, and TPC behavior;
 it additionally checks descriptor installation, argument kind, and hint
 payload where applicable. `TestBundleCommandTotalityBoundaries` covers
@@ -130,7 +130,7 @@ representable execution and missing/incompatible binding rollback.
 The clean comparison snapshot has aggregate SHA-256
 `1f8862ef90ee72d0e917398b2d96b2799f541f2e7198c103d9fc47af998a54ec`.
 S5-T3 disposition closure is closed, while independent executable parity
-remains open at 0/39.
+remains open at 0/32.
 
 ## Consequences
 

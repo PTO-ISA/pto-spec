@@ -236,9 +236,9 @@ TILE_LAYER_RESOLUTIONS = {
         "explicit-layer-difference",
         "The public typed API exposes two destination tiles; the direct binary operation has one architectural destination and two sources.",
     ),
-    "TSORT": (
+    "TSORT32": (
         "explicit-layer-difference",
-        "The public source spelling is TSORT32 and carries index or temporary tiles; the direct binary operation is TSORT with an explicit descending flag.",
+        "The public source spelling is TSORT32 and carries index or temporary tiles; the direct binary operation is TSORT32 with an explicit descending flag.",
     ),
     "THISTOGRAM": (
         "public-api-aligned",
@@ -270,7 +270,26 @@ TILE_LAYER_RESOLUTIONS = {
     ),
 }
 
-EXCLUDED_PUBLIC_TILE_OPERATIONS = {}
+EXCLUDED_PUBLIC_TILE_OPERATIONS = {
+    name: (
+        "The symbol remains in the pinned public source API, but PTO ISA 0.58.0 "
+        "does not accept it as a direct DavinciOO Tile operation."
+    )
+    for name in {
+        "TALLOC",
+        "TAXPY",
+        "TDEINTERLEAVE",
+        "TFREE",
+        "TGATHERB",
+        "THISTOGRAM",
+        "TINTERLEAVE",
+        "TPARTARGMAX",
+        "TPARTARGMIN",
+        "TPOP",
+        "TPUSH",
+        "TRESHAPE",
+    }
+}
 
 
 def load(relative: str):
@@ -315,7 +334,7 @@ def tile_rows(operations: list[dict]) -> list[dict]:
     rows = []
     for operation in operations:
         name = operation["name"]
-        public_symbol = "TSORT32" if name == "TSORT" else name
+        public_symbol = "TSORT32" if name == "TSORT32" else name
         if name in TILE_LAYER_RESOLUTIONS:
             closure_basis, resolution = TILE_LAYER_RESOLUTIONS[name]
         elif public_symbol not in PUBLIC_TILE_SYMBOLS:
@@ -340,7 +359,7 @@ def tile_rows(operations: list[dict]) -> list[dict]:
                 "public_symbol": public_symbol,
                 "public_symbol_relation": (
                     "documented-spelling-mapping"
-                    if name == "TSORT"
+                    if name == "TSORT32"
                     else "exact-name"
                     if public_symbol in PUBLIC_TILE_SYMBOLS
                     else "catalog-defined"
@@ -365,29 +384,29 @@ def excluded_public_tile_rows() -> list[dict]:
 
 def predicate_version_boundary() -> dict:
     return {
-        "active_release": "PTO ISA 0.57.1",
+        "active_release": "PTO ISA 0.58.0",
         "current_public_source_release": "PTO ISA v0.6 micro-instruction surface",
-        "disposition": "outside-active-0.57.1-release-line",
+        "disposition": "outside-active-0.58.0-release-line",
         "accepted_mapping": None,
         "mapping_rule": (
-            "No public v0.6 typed mask is mapped to a PTO ISA 0.57.1 "
+            "No public v0.6 typed mask is mapped to a PTO ISA 0.58.0 "
             "architectural register, selector, encoding, producer, or consumer."
         ),
         "concepts": [
             {
-                "id": "pto-isa-0571-warp-predicate-registers",
-                "source_class": "active-0.57.1-architectural-state",
+                "id": "pto-isa-0580-warp-predicate-registers",
+                "source_class": "active-0.58.0-architectural-state",
                 "representation": "P0-P7",
                 "width_bits": 32,
                 "count": 8,
                 "lifecycle": "P0 hardwired all-ones; P1-P7 reset zero; all trap-preserved",
                 "accepted_producers": [],
                 "accepted_consumers": [],
-                "mapping_status": "closed-no-accepted-0.57.1-instruction-mapping",
+                "mapping_status": "closed-no-accepted-0.58.0-instruction-mapping",
             },
             {
-                "id": "pto-isa-0571-machine-execution-mask",
-                "source_class": "active-0.57.1-architectural-state",
+                "id": "pto-isa-0580-machine-execution-mask",
+                "source_class": "active-0.58.0-architectural-state",
                 "representation": "MPAR/MSEQ execution mask",
                 "width_bits": 64,
                 "count": 1,
@@ -411,7 +430,7 @@ def predicate_version_boundary() -> dict:
                     "pto.pld*",
                 ],
                 "accepted_consumers": ["pto.v*", "pto.p* algebra", "pto.pst*"],
-                "mapping_status": "outside-active-0.57.1-release-line",
+                "mapping_status": "outside-active-0.58.0-release-line",
             },
             {
                 "id": "future-encoded-physical-predicate-register-mapping",

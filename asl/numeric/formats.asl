@@ -64,7 +64,7 @@ begin
 end;
 
 // These booleans describe a candidate conformance configuration. They are not
-// architectural mode bits. The 0.57.1 hardware profile exposes no FTZ/DAZ
+// architectural mode bits. The 0.58.0 hardware profile exposes no FTZ/DAZ
 // state and permits no operation-local override.
 pure func HardwareNumericSubnormalConfigurationValid(flush_to_zero: boolean,
                                                        denormals_are_zero: boolean,

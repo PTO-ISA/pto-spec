@@ -147,10 +147,10 @@
       "target_conformance_status": "open:S5-T2"
     },
     {
-      "id": "tile-axpy",
+      "id": "tile-fused",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
-        "TileProfileAxpy"
+        "TileProfileMatrixAccumulate"
       ],
       "requirement": "PTO-REQ-TEPL-001",
       "stage4_target": "S4-T8",
@@ -160,23 +160,6 @@
         "overflow",
         "saturation",
         "NaN and infinity"
-      ],
-      "target_conformance_status": "open:S5-T2"
-    },
-    {
-      "id": "tile-prelu",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "primary_hooks": [
-        "TileProfilePReLU"
-      ],
-      "requirement": "PTO-REQ-TEPL-001",
-      "stage4_target": "S4-T8",
-      "open_numeric_dimensions": [
-        "comparison domain",
-        "multiply precision",
-        "rounding",
-        "overflow",
-        "saturation"
       ],
       "target_conformance_status": "open:S5-T2"
     },
@@ -239,23 +222,6 @@
       ],
       "requirement": "PTO-REQ-TEPL-CONVERT-001",
       "stage4_target": "S4-T8",
-      "open_numeric_dimensions": [
-        "source and destination format mapping",
-        "rounding",
-        "NaN payload",
-        "overflow and underflow",
-        "saturation"
-      ],
-      "target_conformance_status": "open:S5-T2"
-    },
-    {
-      "id": "cube-convert",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "primary_hooks": [
-        "TileProfileConvert"
-      ],
-      "requirement": "PTO-REQ-CUBE-001",
-      "stage4_target": "S4-T10",
       "open_numeric_dimensions": [
         "source and destination format mapping",
         "rounding",
@@ -474,16 +440,6 @@
       ]
     },
     {
-      "name": "TileProfileAxpy",
-      "role": "portable-profile-boundary",
-      "model": "asl/tile/elementwise.asl",
-      "requirement": "PTO-REQ-TEPL-001",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "operation_keys": [
-        "tile:TEPL:TAXPY"
-      ]
-    },
-    {
       "name": "TileProfileBinary",
       "role": "portable-profile-boundary",
       "model": "asl/tile/elementwise.asl",
@@ -534,7 +490,6 @@
       "requirement": "PTO-REQ-TEPL-CONVERT-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
-        "tile:CUBE:ACCCVT",
         "tile:TEPL:TCVT"
       ]
     },
@@ -591,7 +546,8 @@
         "tile:CUBE:TMATMUL_BIAS",
         "tile:CUBE:TMATMUL_MX",
         "tile:CUBE:TMATMUL_MX_ACC",
-        "tile:CUBE:TMATMUL_MX_BIAS"
+        "tile:CUBE:TMATMUL_MX_BIAS",
+        "tile:TEPL:TFMA"
       ]
     },
     {
@@ -630,9 +586,7 @@
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
         "tile:TEPL:TMRGSORT",
-        "tile:TEPL:TPARTARGMAX",
-        "tile:TEPL:TPARTARGMIN",
-        "tile:TEPL:TSORT"
+        "tile:TEPL:TSORT32"
       ]
     },
     {
@@ -643,9 +597,7 @@
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
         "tile:TEPL:TMRGSORT",
-        "tile:TEPL:TPARTARGMAX",
-        "tile:TEPL:TPARTARGMIN",
-        "tile:TEPL:TSORT"
+        "tile:TEPL:TSORT32"
       ]
     },
     {
@@ -659,16 +611,6 @@
         "tile:TEPL:TPARTMAX",
         "tile:TEPL:TPARTMIN",
         "tile:TEPL:TPARTMUL"
-      ]
-    },
-    {
-      "name": "TileProfilePReLU",
-      "role": "portable-profile-boundary",
-      "model": "asl/tile/elementwise.asl",
-      "requirement": "PTO-REQ-TEPL-001",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "operation_keys": [
-        "tile:TEPL:TPRELU"
       ]
     },
     {
@@ -1070,22 +1012,6 @@
       "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
     },
     {
-      "key": "tile:CUBE:ACCCVT",
-      "surface": "direct-tile-operation",
-      "family": "CUBE",
-      "name": "ACCCVT",
-      "catalog_identity": "ACCCVT",
-      "numeric_contract": "cube-convert",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "primary_hooks": [
-        "TileProfileConvert"
-      ],
-      "reference_helpers": [],
-      "requirement": "PTO-REQ-CUBE-001",
-      "stage4_target": "S4-T10",
-      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
-    },
-    {
       "key": "tile:CUBE:TGEMV",
       "surface": "direct-tile-operation",
       "family": "CUBE",
@@ -1368,15 +1294,15 @@
       "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
     },
     {
-      "key": "tile:TEPL:TAXPY",
+      "key": "tile:TEPL:TFMA",
       "surface": "direct-tile-operation",
       "family": "TEPL",
-      "name": "TAXPY",
-      "catalog_identity": "0x02F",
-      "numeric_contract": "tile-axpy",
+      "name": "TFMA",
+      "catalog_identity": "0x01C",
+      "numeric_contract": "tile-fused",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
-        "TileProfileAxpy"
+        "TileProfileMatrixAccumulate"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-TEPL-001",
@@ -1941,40 +1867,6 @@
       "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
     },
     {
-      "key": "tile:TEPL:TPARTARGMAX",
-      "surface": "direct-tile-operation",
-      "family": "TEPL",
-      "name": "TPARTARGMAX",
-      "catalog_identity": "0x075",
-      "numeric_contract": "tile-order",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "primary_hooks": [
-        "TileProfileOrderLeft",
-        "TileProfileValueIsNaN"
-      ],
-      "reference_helpers": [],
-      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
-      "stage4_target": "S4-T8",
-      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
-    },
-    {
-      "key": "tile:TEPL:TPARTARGMIN",
-      "surface": "direct-tile-operation",
-      "family": "TEPL",
-      "name": "TPARTARGMIN",
-      "catalog_identity": "0x076",
-      "numeric_contract": "tile-order",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "primary_hooks": [
-        "TileProfileOrderLeft",
-        "TileProfileValueIsNaN"
-      ],
-      "reference_helpers": [],
-      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
-      "stage4_target": "S4-T8",
-      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
-    },
-    {
       "key": "tile:TEPL:TPARTMAX",
       "surface": "direct-tile-operation",
       "family": "TEPL",
@@ -2019,22 +1911,6 @@
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-TEPL-COMPLEX-001",
-      "stage4_target": "S4-T8",
-      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
-    },
-    {
-      "key": "tile:TEPL:TPRELU",
-      "surface": "direct-tile-operation",
-      "family": "TEPL",
-      "name": "TPRELU",
-      "catalog_identity": "0x00E",
-      "numeric_contract": "tile-prelu",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "primary_hooks": [
-        "TileProfilePReLU"
-      ],
-      "reference_helpers": [],
-      "requirement": "PTO-REQ-TEPL-001",
       "stage4_target": "S4-T8",
       "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
     },
@@ -2436,10 +2312,10 @@
       "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
     },
     {
-      "key": "tile:TEPL:TSORT",
+      "key": "tile:TEPL:TSORT32",
       "surface": "direct-tile-operation",
       "family": "TEPL",
-      "name": "TSORT",
+      "name": "TSORT32",
       "catalog_identity": "0x06C",
       "numeric_contract": "tile-order",
       "profile_owner": "PTO numeric architecture maintainers",
@@ -2536,11 +2412,11 @@
     }
   ],
   "summary": {
-    "numeric_hook_count": 30,
-    "decoded_operation_count": 108,
+    "numeric_hook_count": 28,
+    "decoded_operation_count": 104,
     "scalar_form_count": 19,
-    "direct_tile_operation_count": 89,
-    "primary_profile_boundary_hook_count": 23,
+    "direct_tile_operation_count": 85,
+    "primary_profile_boundary_hook_count": 21,
     "reference_helper_hook_count": 5,
     "library_only_hook_count": 2,
     "target_conformance_status": "open:S5-T2"

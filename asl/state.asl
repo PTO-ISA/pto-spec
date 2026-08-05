@@ -46,7 +46,6 @@ var _ACRTrapNumber : array [[PTO_ACR_COUNT]] of TrapNumber;
 var _ACRTrapArgument0 : array [[PTO_ACR_COUNT]] of Word;
 var _TrapContexts : array [[PTO_ACR_COUNT]] of TrapContext;
 var _CurrentACR : AccessControlRing;
-var _Accumulator : AccumulatorState;
 
 type BaseSystemRegisterState of record {
     thread_ptr: Word,
@@ -305,7 +304,7 @@ end;
 pure func PredicateRegisterHasInstructionConsumer(index: PredicateIndex)
         => boolean
 begin
-    // PTO 0.57.1 has no warp-vector execution surface. Machine-body B.Z and
+    // PTO 0.58.0 has no warp-vector execution surface. Machine-body B.Z and
     // B.NZ consume the distinct execution mask, not P0..P7.
     return FALSE;
 end;
@@ -335,6 +334,7 @@ begin
     _TrapContexts[[target]].bundle_dimensions = _BundleDimensions;
     _TrapContexts[[target]].bundle_scalar_bindings = _BundleScalarBindings;
     _TrapContexts[[target]].bundle_tile_bindings = _BundleTileBindings;
+    _TrapContexts[[target]].bundle_shared_bindings = _BundleSharedBindings;
     _TrapContexts[[target]].bundle_control_attributes =
         _BundleControlAttributes;
     _TrapContexts[[target]].bundle_data_attributes = _BundleDataAttributes;
@@ -342,7 +342,6 @@ begin
     _TrapContexts[[target]].u_queue = _UQueue;
     _TrapContexts[[target]].execution_mask = _ExecutionMask;
     _TrapContexts[[target]].predicates = _PredicateRegisters;
-    _TrapContexts[[target]].accumulator = _Accumulator;
 end;
 
 impdef func SaveTrapContext(target: AccessControlRing,
@@ -376,6 +375,7 @@ begin
     _BundleDimensions = _TrapContexts[[target]].bundle_dimensions;
     _BundleScalarBindings = _TrapContexts[[target]].bundle_scalar_bindings;
     _BundleTileBindings = _TrapContexts[[target]].bundle_tile_bindings;
+    _BundleSharedBindings = _TrapContexts[[target]].bundle_shared_bindings;
     _BundleControlAttributes =
         _TrapContexts[[target]].bundle_control_attributes;
     _BundleDataAttributes = _TrapContexts[[target]].bundle_data_attributes;
@@ -383,7 +383,6 @@ begin
     _UQueue = _TrapContexts[[target]].u_queue;
     _ExecutionMask = _TrapContexts[[target]].execution_mask;
     _PredicateRegisters = _TrapContexts[[target]].predicates;
-    _Accumulator = _TrapContexts[[target]].accumulator;
     _CurrentACR = _TrapContexts[[target]].source_acr;
     _TrapContexts[[target]].valid = FALSE;
     return TRUE;

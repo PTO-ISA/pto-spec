@@ -294,7 +294,7 @@ def generate() -> dict[str, Any]:
             "reserved_codes": "Every unmapped code rejects before architectural effects; helper fallback values are unreachable after legality succeeds and are not architectural aliases.",
             "raw_carrier_boundary": "Widths and signedness describe Stage 4 raw carriers only. Floating bit layouts and target numeric results remain S5-T2 rules.",
             "four_bit_packing": "E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 use low-index/low-nibble and odd-index/high-nibble packing with sibling preservation on stores.",
-            "pd02_boundary": "The 0.57.1 type identities and format contract are fixed, while operation/type legality, target execution results, and implementation conformance remain open under S5-T2.",
+            "pd02_boundary": "The 0.58.0 type identities and format contract are fixed, while operation/type legality, target execution results, and implementation conformance remain open under S5-T2.",
             "value_class_boundary": "TileNumericValueClass defines only bit-exact encoding classes and canonical NaN values. It does not select arithmetic results, exception flags, operation/type support, or target conformance.",
         },
         "tile_data_types": tile_rows,
@@ -348,7 +348,7 @@ def generate() -> dict[str, Any]:
         "open_residuals": [
             {
                 "id": "PD-02-R1",
-                "rule": "close every operation/type/profile legality tuple against the 0.57.1 type namespace",
+                "rule": "close every operation/type/profile legality tuple against the 0.58.0 type namespace",
             },
             {
                 "id": "PD-02-R2",
