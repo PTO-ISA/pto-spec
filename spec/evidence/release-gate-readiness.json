@@ -91,7 +91,7 @@
     },
     {
       "path": "scripts/check-binary-closure",
-      "sha256": "4e8d14a6c3c83090a3565d3783195f12af50338b35384d613b04182da062a3a0"
+      "sha256": "4295c1b0208cb6bb8b72a1387ac08c8650952aece491605a984ededd822e0467"
     },
     {
       "path": "scripts/check-catalogs",
@@ -143,7 +143,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "116ef283e894d12e6f680fc6b9cb3aeb46c9253563a87c5215113881cdef0995"
+      "sha256": "aeb37690f0a65ff5df71fc8a3c5b0b420d532f5598cf87f291aec40c15e8463e"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -155,7 +155,7 @@
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "7121485fe2f8a6d54a7eb51935720e06512170815c1d9b5d8c9a4d401ef988b8"
+      "sha256": "fe36a3f4f2dc39d98f6ac60dbf25d2129dbd8724401fa170ffb9fc516cae89d8"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
@@ -163,7 +163,7 @@
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "093e09b29fd4f8243cea9ea0705fc4ec3b0a5690e8bd50f4333b230b8e2983d7"
+      "sha256": "74484654028a35f7ab73c2d591d33edf6b649f1a79b1add2480959f061c0ee26"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
@@ -183,7 +183,7 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "5ee15b60f44374412c3d5b211b4936ff8bc7b79beea254ace5cb6fd5773625de"
+      "sha256": "c312d3b4fd791c6bc5be960360be09657fd03833582442571a68091666b0b52f"
     },
     {
       "path": "spec/requirements.json",

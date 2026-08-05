@@ -47,7 +47,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "116ef283e894d12e6f680fc6b9cb3aeb46c9253563a87c5215113881cdef0995"
+      "sha256": "aeb37690f0a65ff5df71fc8a3c5b0b420d532f5598cf87f291aec40c15e8463e"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -59,7 +59,7 @@
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "7121485fe2f8a6d54a7eb51935720e06512170815c1d9b5d8c9a4d401ef988b8"
+      "sha256": "fe36a3f4f2dc39d98f6ac60dbf25d2129dbd8724401fa170ffb9fc516cae89d8"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
@@ -67,7 +67,7 @@
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "093e09b29fd4f8243cea9ea0705fc4ec3b0a5690e8bd50f4333b230b8e2983d7"
+      "sha256": "74484654028a35f7ab73c2d591d33edf6b649f1a79b1add2480959f061c0ee26"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
@@ -131,7 +131,7 @@
     },
     {
       "path": "tests/asl/tile-tests.asl",
-      "sha256": "aeeeab6153872a1394447f8b775e3e056cdd9d018ab8e8129cdce5b643c2195f"
+      "sha256": "24f9c60f3cbddbc0c25aac104e7c5bf3cf275f3a9a079138552209ae5206192c"
     },
     {
       "path": "asl/types.asl",
