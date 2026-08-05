@@ -15,8 +15,8 @@
 <h4 id="sharedtile">SharedTile</h4>
 <p>公开 C++ 类型为：</p>
 <pre><code data-lang="cpp">SharedTile&lt;BaseTile&gt;</code></pre>
-<p><code>SharedTile</code> 保留 BaseTile 的 shape/layout/role 描述符，但表示 Core-local Shared 存储。C++ 不暴露 Shared architectural ID、physical version、<code>defined_mask</code> 或 <code>ready_mask</code>。编译器分配 <code>S[0]..S[255]</code> 架构 ID，并管理 SSA 与 liveness；<code>S#n</code> 只出现在 PTO-AS、汇编、反汇编和调试界面中。</p>
-<p>Shared version 的 defined region 不可变，并按 region 跟踪 ready 状态。四个 region 全部 ready 后，fully-defined version 才原子可见。partial version 可以继续搬运或执行 partition store，但不能作为计算源。全部 reader 完成后，version 由硬件自动回收。</p>
+<p><code>SharedTile</code> 保留 BaseTile 的 shape/layout/role 描述符，但表示 Core-local Shared 存储。每个 Core 有一组 <code>S0..S255</code>，由该 Core 的四个 PE 共享；不同 Core 的 bank 相互独立。C++ 不暴露 Shared architectural ID。编译器分配绝对 S register 并管理其 liveness；PTO-AS、汇编、反汇编和调试界面使用 <code>S0</code> 到 <code>S255</code>。</p>
+<p>每个 S register 持久保存 descriptor、payload 和四位 quarter initialization mask，直到 overwrite 或 Core reset。destination write 是 atomic read-modify-write；partial write 保留未选 quarter 并要求已有 descriptor compatible，<code>1111</code> 可替换 descriptor/payload，<code>0000</code> 是 no-op。读取 uninitialized state 合法，行为与读取 undefined register 相同且不修改 descriptor。</p>
 <p>CUBE 中 <code>Right</code> 和 <code>ScaleRight</code> 可以使用 Shared storage；cooperative TMATMUL 的 <code>Left</code>/<code>ScaleLeft</code> 也可以 Shared，但只能与 Shared <code>Right</code>/<code>ScaleRight</code> 成对使用。<code>Bias</code>、<code>Acc</code> 以及所有 output role 必须为 Local。</p>
 <h3 id="shared-data-movement">Shared Data Movement</h3>
 <p>v5 在既有 intrinsic family 上扩展以下公开 API：</p>
@@ -26,12 +26,12 @@ TMOV&lt;SharedMoveMode::Insert&gt;(sharedDst, localSrc);
 TMOV&lt;SharedMoveMode::Publish&gt;(sharedDst, localSrc);
 TMOV&lt;SharedMoveMode::Broadcast&gt;(localDst, sharedSrc);
 TMOV&lt;SharedMoveMode::Extract&gt;(localDst, sharedSrc);</code></pre>
-<ul><li><code>Insert</code> 把静态选中的 Local region 写入 partial Shared version。</li><li><code>Publish</code> 按静态 producer mask 完成一个 Shared version。</li><li><code>Broadcast</code> 把 fully-defined Shared payload 复制到选中的 Local destination；内容相同的 Local payload 不构成新的 Tile 类型。</li><li><code>Extract</code> 把当前 PE 对应的固定 Shared region 复制到其 Local destination。</li></ul>
+<ul><li><code>Insert</code>/<code>Publish</code> 把 <code>PE_MASK</code> 选中的 Local quarter 原子写入 Shared register。</li><li><code>Broadcast</code>/<code>Extract</code> 把 <code>PE_MASK</code> 选中的固定 Shared quarter 复制到 Local destination；未选 quarter 保持不变。</li><li>多个 mask bit 可以同时为 1；selected quarter 不 pack，<code>0000</code> 不读写任何 payload。</li></ul>
 <p>mode 必须在编译期给出。公开 API 不新增 <code>_SHARED</code> intrinsic family，也不提供 Shared→Shared TMOV。</p>
 <h3 id="gm-data-movement">GM Data Movement</h3>
 <p>普通 <code>TLOAD/TSTORE</code> 接收完整 logical <code>GlobalTensor</code> 描述符；编译器结合 distribution 与 <code>thread_id</code> 推导各 PE fragment 地址。</p>
-<p><code>TLOAD(shared, gm)</code> 是由恰好一个 PE 发起的完整 GM→Shared 操作。issuer 的指针指向整个 logical object；实现按每个 512 B stripe 自动拆成四个 128 B fragment，并创建一个 fully-defined Shared version。</p>
-<p><code>TSTORE(gm, shared)</code> 是默认的 full/core form，同样要求 exactly-one issuer。<code>TSTORE&lt;pe_scope&gt;(gm, shared)</code> 保存各参与 PE 对应的固定 defined region；每个 PE 提供独立指针，所有写入区间不得重叠。Shared store 完成只表示请求已接受且源已捕获或 pin 住，并不表示其他 PE 已能观察到 GM 内容。</p>
+<p><code>TLOAD(shared, gm)</code> 支持 optional mask-only B.IOT。省略 companion 时 mask 为 <code>1111</code>；否则只传输 selected fixed-offset quarter，并以一次 atomic RMW 更新 Shared destination。</p>
+<p><code>TSTORE(gm, shared)</code> 同样接受 optional mask-only B.IOT；省略时读取四个 quarter。selected uninitialized bytes 产生 undefined-register value。不同 PE 可提供不同 tile offset，但程序必须保证并发区间不冲突。Shared store 完成只表示请求已接受且源已捕获或 pin 住，并不表示其他 PE 已能观察到 GM 内容。</p>
 <h3 id="inter-pe-local-movement">Inter-PE Local Movement</h3>
 <pre><code data-lang="cpp">GMOV(dst, peer_tid, src);</code></pre>
 <p><code>GMOV</code> 在同一 Core 的 PE0–PE3 之间搬运 Local Tile fragment。它是固定 Core4 collective，不提供 <code>pe_scope/full_scope</code> 重载；<code>PE_MASK</code> 只控制 request/write，不缩小 participant 或 source-ready 集合。<code>peer_tid</code> 必须位于 <code>0..3</code>，传输按完整逻辑 Tile 的 <code>TSize</code> 自动选择固定四分之一 fragment，并保持 bytes、dtype、layout 与 fragment descriptor 不变。</p>

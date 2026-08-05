@@ -5,7 +5,7 @@
 
 ## 说明
 
-块内无条件跳转 (*Jump*)  
+块内无条件跳转 (*Jump*)
 无条件地跳转到当前指令`TPC`加上左移一位的立即数偏移指示的目标地址处。
 
 ## 汇编语法
@@ -39,10 +39,10 @@
 
 本指令属于[基础指令集](../../instset/baseInstrs.md)，可用于向量Tile块、并行Tile块和访存Tile块的块体中。
 
-<!-- 
+<!--
 !!! info 块内跳转限制
 
-	块内跳转目前不能跳出块指令标定的范围【TPC.START】和【TPC.START + BSize * ISize】。块指令的最后一条指令为【TPC.START + BSize * ISize】所指的指令。  
+	块内跳转目前不能跳出块指令标定的范围【TPC.START】和【TPC.START + BSize * ISize】。块指令的最后一条指令为【TPC.START + BSize * ISize】所指的指令。
 	32bit编码格式下，ISize为4；16bit编码格式下，ISize为2。
 
 !!! info 原子块指令限制

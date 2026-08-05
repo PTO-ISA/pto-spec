@@ -2,7 +2,7 @@
 
 ## 说明
 
-按虚拟地址无效化微指令缓存(*Invalidate Instruction Cache by Virtual Address*)  
+按虚拟地址无效化微指令缓存(*Invalidate Instruction Cache by Virtual Address*)
 无效化源寄存器中虚拟地址在微指令缓存 `Instruction Cache` 中对应的缓存行 `Cacheline`。
 
 ## 汇编语法

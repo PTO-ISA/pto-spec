@@ -15,7 +15,7 @@
 ---
 # B.CACR
 
-> **NON-NORMATIVE / UNSUPPORTED**  
+> **NON-NORMATIVE / UNSUPPORTED**
 > This document is not part of PTO ISA 0.58.0 and must not be used as assembler, decoder, ASL, encoding, or implementation input.
 
 > `B.CACR` 在继承的 Linx header index 中被列为跨特权级/控制类补充 header，但当前可追溯文档没有给出完整 bit-level encoding 和执行语义，因此在 v5 中标为 unsupported/unmapped。

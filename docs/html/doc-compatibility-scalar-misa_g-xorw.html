@@ -26,7 +26,7 @@
         when 2b01 then operand2 = SignExtend(operand2[31:0]);
         when 2b10 then operand2 = ZeroExtend(operand2[31:0]);
         when 2b11 then operand2 = Not(operand2);
-        
+
     bits(datawidth) result = operand1 ^ (operand2 &lt;&lt; shamt);
     bits(datawidth) result = SignExtend(result[31:0]);
 

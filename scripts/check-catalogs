@@ -18,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 REVIEWED_NONCOMPARABLE_PROJECTION_SHA256 = (
-    "fd0daccd75a084b8a497aef1e1fd8b0aac3889873c4db2476b0d46e3adcbc160"
+    "3c84c50bccc25350f3cb342e9cfba38318ac28dd0da648ab97420eb66eeca20f"
 )
 
 BUNDLE_BRIDGE_FIELDS = {"destination0", "source0", "source1"}
@@ -1146,12 +1146,12 @@ def validate_bundle_tile_bridge(evidence: dict, operations: list[dict]) -> None:
     require(
         expected["counts"]
         == {
-            "TEPL": {"total": 98, "representable": 62, "commit_rejected": 36},
-            "TMA": {"total": 9, "representable": 1, "commit_rejected": 8},
-            "CUBE": {"total": 13, "representable": 4, "commit_rejected": 9},
+            "TEPL": {"total": 87, "representable": 56, "commit_rejected": 31},
+            "TMA": {"total": 7, "representable": 1, "commit_rejected": 6},
+            "CUBE": {"total": 12, "representable": 2, "commit_rejected": 10},
         }
-        and sum(row["representable"] for row in expected["counts"].values()) == 67
-        and sum(row["commit_rejected"] for row in expected["counts"].values()) == 53,
+        and sum(row["representable"] for row in expected["counts"].values()) == 59
+        and sum(row["commit_rejected"] for row in expected["counts"].values()) == 47,
         "derived bundle-to-tile bridge partition drift",
     )
     require(
@@ -1171,6 +1171,9 @@ def bundle_tile_bridge_canary_rejects(evidence: dict, operations: list[dict]) ->
 def main() -> int:
     scalar = load("spec/catalog/scalar-forms.json")
     command = load("spec/catalog/command-forms.json")
+    linx_vector_reservations = load(
+        "spec/catalog/linx-vector-reservations.json"
+    )
     system_registers = load("spec/catalog/system-registers.json")
     tile = load("spec/catalog/tile-operations.json")
     numeric_profile_identities = load("spec/catalog/numeric-profile-identities.json")
@@ -1272,6 +1275,147 @@ def main() -> int:
         "command catalog top-level schema drift",
     )
     require(command["schema_version"] == 2, "unsupported command catalog schema")
+    expected_linx_vector_reservations = {
+        "BSTART.VPAR": (32, ((0, 32, "0xf9ffffff", "0x00021181"),), ("Mode",)),
+        "BSTART.VSEQ": (32, ((0, 32, "0xf9ffffff", "0x00029181"),), ("Mode",)),
+        "C.BSTART.VPAR": (16, ((0, 16, "0xffff", "0x88c0"),), ()),
+        "C.BSTART.VSEQ": (16, ((0, 16, "0xffff", "0xc8c0"),), ()),
+        "V.QPOP": (
+            64,
+            (
+                (0, 32, "0xfff0707f", "0x0000007f"),
+                (1, 32, "0xfff0707f", "0x0000207d"),
+            ),
+            ("RegDst", "SrcL"),
+        ),
+        "V.QPUSH": (
+            64,
+            (
+                (0, 32, "0xfe00707f", "0x0000007f"),
+                (1, 32, "0xfe00707f", "0x0000107d"),
+            ),
+            ("RegDst", "SrcL", "SrcR"),
+        ),
+    }
+    expected_linx_vector_field_shapes = {
+        "BSTART.VPAR": (("Mode", 2, ((0, 25, 0, 2),)),),
+        "BSTART.VSEQ": (("Mode", 2, ((0, 25, 0, 2),)),),
+        "C.BSTART.VPAR": (),
+        "C.BSTART.VSEQ": (),
+        "V.QPOP": (
+            ("RegDst", 10, ((0, 7, 5, 5), (1, 7, 0, 5))),
+            ("SrcL", 10, ((0, 15, 5, 5), (1, 15, 0, 5))),
+        ),
+        "V.QPUSH": (
+            ("RegDst", 10, ((0, 7, 5, 5), (1, 7, 0, 5))),
+            ("SrcL", 10, ((0, 15, 5, 5), (1, 15, 0, 5))),
+            ("SrcR", 10, ((0, 20, 5, 5), (1, 20, 0, 5))),
+        ),
+    }
+    require(
+        set(linx_vector_reservations)
+        == {"isa", "release", "reservation_count", "reservations", "schema_version"}
+        and linx_vector_reservations["schema_version"] == 1
+        and linx_vector_reservations["isa"] == isa_name
+        and linx_vector_reservations["release"] == "0.58.0"
+        and linx_vector_reservations["reservation_count"] == 6,
+        "Linx vector reservation catalog top-level schema drift",
+    )
+    reservation_rows = linx_vector_reservations["reservations"]
+    require(
+        len(reservation_rows) == 6
+        and {row.get("mnemonic") for row in reservation_rows}
+        == set(expected_linx_vector_reservations),
+        "Linx vector reservation membership drift",
+    )
+    for row in reservation_rows:
+        require(
+            set(row)
+            == {"encoding", "fields", "length_bits", "mnemonic", "owner", "status"}
+            and row["owner"] == "Linx ISA two-level vector extension"
+            and row["status"] == "reserved-in-pto",
+            f"Linx vector reservation schema drift for {row.get('mnemonic', '<unknown>')}",
+        )
+        width, expected_parts, expected_fields = expected_linx_vector_reservations[
+            row["mnemonic"]
+        ]
+        actual_parts = tuple(
+            (part["index"], part["width_bits"], part["mask"], part["match"])
+            for part in row["encoding"]
+        )
+        require(
+            row["length_bits"] == width and actual_parts == expected_parts,
+            f"Linx vector reservation encoding drift for {row['mnemonic']}",
+        )
+        require(
+            tuple(field["name"] for field in row["fields"]) == expected_fields,
+            f"Linx vector reservation field membership drift for {row['mnemonic']}",
+        )
+        actual_field_shapes = tuple(
+            (
+                field["name"],
+                field["width"],
+                tuple(
+                    (
+                        piece["part_index"],
+                        piece["instruction_lsb"],
+                        piece["value_lsb"],
+                        piece["width"],
+                    )
+                    for piece in field["pieces"]
+                ),
+            )
+            for field in row["fields"]
+        )
+        require(
+            actual_field_shapes
+            == expected_linx_vector_field_shapes[row["mnemonic"]],
+            f"Linx vector reservation field placement drift for {row['mnemonic']}",
+        )
+        field_names: set[str] = set()
+        for field in row["fields"]:
+            require(
+                set(field) == {"name", "pieces", "width"}
+                and field["name"] not in field_names,
+                f"Linx vector reservation field schema drift for {row['mnemonic']}",
+            )
+            field_names.add(field["name"])
+            value_bits: set[int] = set()
+            instruction_bits: set[tuple[int, int]] = set()
+            for piece in field["pieces"]:
+                require(
+                    set(piece)
+                    == {"instruction_lsb", "part_index", "value_lsb", "width"}
+                    and piece["part_index"] < len(row["encoding"])
+                    and piece["width"] > 0,
+                    f"Linx vector reservation field piece drift for {row['mnemonic']}",
+                )
+                part_width = row["encoding"][piece["part_index"]]["width_bits"]
+                require(
+                    piece["instruction_lsb"] + piece["width"] <= part_width,
+                    f"Linx vector reservation field exceeds encoding for {row['mnemonic']}",
+                )
+                new_value_bits = set(
+                    range(piece["value_lsb"], piece["value_lsb"] + piece["width"])
+                )
+                new_instruction_bits = {
+                    (piece["part_index"], bit)
+                    for bit in range(
+                        piece["instruction_lsb"],
+                        piece["instruction_lsb"] + piece["width"],
+                    )
+                }
+                require(
+                    not value_bits & new_value_bits
+                    and not instruction_bits & new_instruction_bits,
+                    f"overlapping Linx vector reservation field pieces for {row['mnemonic']}",
+                )
+                value_bits.update(new_value_bits)
+                instruction_bits.update(new_instruction_bits)
+            require(
+                value_bits == set(range(field["width"])),
+                f"non-contiguous Linx vector reservation field for {row['mnemonic']}",
+            )
     require(specification["specification"]["name"] == isa_name, "wrong ISA name")
     require(
         specification["specification"]["normative"] is True,
@@ -4914,6 +5058,23 @@ def main() -> int:
         f"reviewed={sorted(reviewed_command_overlaps)}",
     )
 
+    accepted_forms = [*forms, *command_forms]
+    for reservation in reservation_rows:
+        reservation_mask, reservation_match = aggregate_encoding(reservation)
+        for accepted in accepted_forms:
+            if reservation["length_bits"] != accepted["length_bits"]:
+                continue
+            for accepted_encoding in encoding_alternatives(accepted):
+                accepted_mask, accepted_match = aggregate_encoding_parts(
+                    accepted_encoding
+                )
+                common = reservation_mask & accepted_mask
+                require(
+                    reservation_match & common != accepted_match & common,
+                    "accepted PTO form claims Linx-only reserved encoding: "
+                    f"{accepted['form_id']} overlaps {reservation['mnemonic']}",
+                )
+
     command_variant_contract = {
         "BSTART.TMOV": {
             "TMOV.L2S.INSERT": (8, 0x00811181),
@@ -5017,12 +5178,12 @@ def main() -> int:
             {
                 "field": "PE_MASK",
                 "operator": "one-of",
-                "values": list(range(1, 16)),
+                "values": list(range(16)),
             }
             in row["constraints"]
             for row in iot_forms
         ),
-        "PTO ISA 0.58.0 B.IOT PE_MASK must be nonzero in every form",
+        "PTO ISA 0.58.0 B.IOT must encode zero for Shared no-op use",
     )
 
     operations = tile["operations"]
@@ -5059,10 +5220,10 @@ def main() -> int:
 
     wrong_aggregate = copy.deepcopy(bundle_command_totality)
     wrong_aggregate["bundle_tile_bridge"]["counts"]["TEPL"].update(
-        {"representable": 63, "commit_rejected": 35}
+        {"representable": 57, "commit_rejected": 30}
     )
     wrong_aggregate["bundle_tile_bridge"]["counts"]["CUBE"].update(
-        {"representable": 5, "commit_rejected": 8}
+        {"representable": 3, "commit_rejected": 9}
     )
 
     paired_row_swap = copy.deepcopy(bundle_command_totality)
@@ -5400,7 +5561,7 @@ def main() -> int:
             "acceptance-complete",
             "alternative-evidence",
         ]
-        and len(oracle_rows) == len(oracle_projection) == 39
+        and len(oracle_rows) == len(oracle_projection) == 32
         and oracle_projection == expected_noncomparable_projection
         and all(
             set(row) == oracle_row_keys
@@ -5425,8 +5586,8 @@ def main() -> int:
         )
         and noncomparable_oracle_coverage["source_comparison"]
         == {
-            "noncomparable_row_count": 39,
-            "row_count": 693,
+            "noncomparable_row_count": 32,
+            "row_count": 676,
             "reviewed_projection_sha256": REVIEWED_NONCOMPARABLE_PROJECTION_SHA256,
             "schema": "pto.executable-model-comparison.v1",
             "stable_identity_sha256": hashlib.sha256(
@@ -5437,36 +5598,36 @@ def main() -> int:
         == REVIEWED_NONCOMPARABLE_PROJECTION_SHA256
         and noncomparable_oracle_coverage["scope"]
         == {
-            "direct_tile_family_counts": {"CUBE": 13, "TMA": 9},
-            "row_count": 39,
-            "surface_counts": {"command": 16, "direct-tile": 22, "scalar": 1},
+            "direct_tile_family_counts": {"CUBE": 12, "TMA": 6},
+            "row_count": 32,
+            "surface_counts": {"command": 13, "direct-tile": 18, "scalar": 1},
         }
         and noncomparable_oracle_coverage["summary"]
         == {
             "alternative_evidence_count": 0,
             "can_claim_independent_executable_parity": False,
             "independent_executable_parity_count": 0,
-            "oracle_coverage_counts": {"none": 39},
+            "oracle_coverage_counts": {"none": 32},
             "readiness_counts": {
                 "executable-path-absent-fail-closed": 14,
-                "executable-source-path-no-attributable-oracle": 15,
+                "executable-source-path-no-attributable-oracle": 8,
                 "existing-exact-value-test-candidate": 10,
             },
         }
         and noncomparable_oracle_coverage["closure_layers"]
         == {
             "independent_disposition_closure": {
-                "matrix_row_count": 693,
-                "noncomparable_row_count": 39,
+                "matrix_row_count": 676,
+                "noncomparable_row_count": 32,
                 "status": "closed:S5-T3",
             },
             "independent_executable_parity": {
                 "closed_row_count": 0,
-                "required_row_count": 39,
+                "required_row_count": 32,
                 "status": "open",
             },
             "pto_semantic_closure": {
-                "row_count": 39,
+                "row_count": 32,
                 "status": "closed-by-pto-owned-asl-and-stage-4-evidence",
             },
         },
@@ -5499,16 +5660,16 @@ def main() -> int:
         in adr_0032_flat
         and f"The {executed_form_count} executed forms use {len(executed_handlers)} handlers;"
         in adr_0032_flat
-        and f"Of the 120 direct tile operations, {representable_total} use only those fields; the other {rejected_total} require"
+        and f"Of the 106 direct tile operations, {representable_total} use only those fields; the other {rejected_total} require"
         in adr_0032_flat
         and all(
             f"| {family} | {counts['total']} | {counts['representable']} | {counts['commit_rejected']} |"
             in adr_0032_flat
             for family, counts in bridge_counts.items()
         )
-        and f"| **Total** | **120** | **{representable_total}** | **{rejected_total}** |"
+        and f"| **Total** | **106** | **{representable_total}** | **{rejected_total}** |"
         in adr_0032_flat
-        and "S5-T3 disposition closure is closed, while independent executable parity remains open at 0/39."
+        and "S5-T3 disposition closure is closed, while independent executable parity remains open at 0/32."
         in adr_0032_flat
         and f"The bundle bridge can represent {bridge_counts['TEPL']['representable']} TEPL, {bridge_counts['TMA']['representable']} TMA, and {bridge_counts['CUBE']['representable']} CUBE direct operations;"
         in adr_0036_flat,
@@ -5523,10 +5684,10 @@ def main() -> int:
     require(
         bundle_command_totality["independent_comparison"]["matched_form_ids"]
         == len(command_comparison_rows)
-        == 99
+        == 96
         and bundle_command_totality["independent_comparison"]["exact_encoding_matches"]
         == sum(row["encoding_match"] for row in command_comparison_rows)
-        == 92
+        == 88
         and bundle_command_totality["independent_comparison"][
             "accepted_abi_encoding_divergences"
         ]
@@ -5536,11 +5697,11 @@ def main() -> int:
         == 7
         and bundle_command_totality["independent_comparison"]["executable_subset"]
         == command_status_counts["executable-subset"]
-        == 83
+        == 82
         and bundle_command_totality["independent_comparison"]["decode_only"]
         == command_status_counts["decode-only"]
-        == 16,
-        "bundle independent-comparison counts must derive from the current 99-row matrix",
+        == 13,
+        "bundle independent-comparison counts must derive from the current 96-row matrix",
     )
     cube_test_body = (ROOT / "tests/asl/cube-totality-tests.asl").read_text(
         encoding="utf-8"
@@ -8467,6 +8628,41 @@ def main() -> int:
     )
     readme_body = (ROOT / "README.md").read_text(encoding="utf-8")
     coverage_body = (ROOT / "docs" / "coverage.md").read_text(encoding="utf-8")
+    shared_binding_doc = (
+        ROOT / "docs/instructions/bundle/operands/C.B.IOS.md"
+    ).read_text(encoding="utf-8")
+    shared_mask_doc = (
+        ROOT / "docs/instructions/bundle/operands/B.IOT.md"
+    ).read_text(encoding="utf-8")
+    for spelling in (
+        "C.B.IOS S0",
+        "C.B.IOS S255",
+        "C.B.IOS -> S0",
+        "C.B.IOS -> S255",
+    ):
+        require(spelling in shared_binding_doc, f"missing Shared syntax boundary: {spelling}")
+    require(
+        "B.IOT mask=PE_MASK, last" in shared_mask_doc
+        and "mask=0000" in shared_mask_doc,
+        "Shared mask-only B.IOT syntax or zero-mask contract is absent",
+    )
+    active_shared_docs = (
+        ROOT / "docs/architecture.md",
+        ROOT / "docs/davincioo-arch/programming-model.md",
+        ROOT / "docs/davincioo-arch/assembly-syntax.md",
+        ROOT / "docs/davincioo-arch/state-and-data-types.md",
+        ROOT / "docs/instructions/bundle/operands/C.B.IOS.md",
+        ROOT / "docs/instructions/bundle/operands/B.IOT.md",
+        ROOT / "docs/instructions/tile/TLOAD.md",
+        ROOT / "docs/instructions/tile/TSTORE.md",
+        ROOT / "docs/instructions/tile/TMOV.md",
+    )
+    for path in active_shared_docs:
+        body = path.read_text(encoding="utf-8")
+        require(
+            re.search(r"S#[0-9]+", body) is None,
+            f"retired relative Shared syntax remains active in {path.relative_to(ROOT)}",
+        )
     profile_contracts_body = (ROOT / "docs" / "profile-contracts.md").read_text(
         encoding="utf-8"
     )
@@ -8720,9 +8916,9 @@ def main() -> int:
         in targets_by_id["S5-T3"]["evidence"]
         and "noncomparable-oracle-coverage.json" in readme_body
         and "noncomparable-oracle-coverage.json" in coverage_body
-        and "Independent executable parity is tracked separately and remains 0/39."
+        and "Independent executable parity is tracked separately and remains 0/32."
         in maturity_plan_body
-        and "Independent executable parity for the 39 rows is orthogonal and remains 0/39."
+        and "Independent executable parity for the 32 rows is orthogonal and remains 0/32."
         in maturity_index_body
         and "numeric-conformance-readiness.json" in maturity_index_body
         and "numeric-conformance-readiness.json" in readme_body
@@ -9030,7 +9226,7 @@ def main() -> int:
         == len(set(release_item_ids))
         == release_traceability["summary"]["traceability_item_count"]
         == 918
-        and release_traceability["summary"]["state_leaf_count"] == 231
+        and release_traceability["summary"]["state_leaf_count"] == 229
         and release_traceability["summary"]["open_requirement_count"] == 11
         and release_traceability["summary"]["open_profile_hook_count"] == 28
         and release_traceability["summary"]["closed_prerequisite_targets"] == 28
@@ -9094,8 +9290,8 @@ def main() -> int:
         and release_summary["required_approval_count"] == 2
         and release_summary["required_external_control_count"] == 10
         and release_summary["shard_count"] == 34
-        and release_summary["canonical_call_count"] == 109
-        and release_summary["reachable_test_subprogram_count"] == 101
+        and release_summary["canonical_call_count"] == 110
+        and release_summary["reachable_test_subprogram_count"] == 105
         and release_summary["open_prerequisite_targets"] == ["S5-T2", "S6-T1"]
         and release_summary["closed_gate_contract_count"] == 10
         and release_summary["candidate_gate_result_count"] == 0

@@ -15,7 +15,7 @@
 ---
 # B.ATTR（兼容跳转）
 
-> **NON-NORMATIVE / UNSUPPORTED**  
+> **NON-NORMATIVE / UNSUPPORTED**
 > This document is not part of PTO ISA 0.58.0 and must not be used as assembler, decoder, ASL, encoding, or implementation input.
 
 该页面只用于兼容旧链接，不属于 v5 active header 集合。

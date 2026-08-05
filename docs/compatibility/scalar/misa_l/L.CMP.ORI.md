@@ -40,12 +40,12 @@
 
 ```c
     integer {m, 64} = DecodeINT(SrcL);
-    integer {d, 64} = DecodeDst(RegDst); 
+    integer {d, 64} = DecodeDst(RegDst);
 
     bits(64) operand = SREG[m, 64];
     bits(64) simm = SignExtend(simm12);
     bits(64) result = ((operand | simm) != 0 ? 1 : 0);
-    
+
     SREG[d, 64] = result;
 ```
 

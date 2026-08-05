@@ -35,7 +35,7 @@ all 18 domains. PD-03 and PD-04 are accepted; the remaining ten complete decisio
 scalar flag lifecycle and 30/30 producer-owner matrix while leaving exact
 conditions open for 19 profile-owned forms, so PD-06 and S5-T2 remain open.
 The machine-derived closure snapshot is 2 accepted and 10 open decisions,
-0 accepted and 20 open complete domain rules, and 18 selected and 81 open
+0 accepted and 18 open complete domain rules, and 16 selected and 73 open
 variation routes.
 ADRs 0039 and 0047 and the generated
 `spec/evidence/numeric-rounding-selector-contract.json` ledger separately map
@@ -107,15 +107,15 @@ C-backend gates. This classification closes `S5-T3` without changing the open
 `S5-T2` and Stage 6 claims.
 
 The generated `spec/evidence/noncomparable-oracle-coverage.json` ledger keeps a
-separate independent-executable-parity grade for the 39 non-comparable rows.
+separate independent-executable-parity grade for the 32 non-comparable rows.
 PTO semantic closure and the S5-T3 disposition matrix remain closed, while
-qualified executable parity is currently 0/39 and fails closed on structural-
+qualified executable parity is currently 0/32 and fails closed on structural-
 only, stale, missing, timed-out, nonzero, or unreviewed evidence.
 
 Release traceability is now generated rather than inferred from prose. The
 `spec/evidence/release-traceability-readiness.json` ledger covers 918 exact
 units: all 47 requirements, accepted forms and operations, system registers,
-traps, 36 profile hooks, and 74 ASL state roots expanded to 231 leaf fields. Its
+traps, 36 profile hooks, and 74 ASL state roots expanded to 229 leaf fields. Its
 inventory and links are closed, while S6-T1 promotion remains explicitly open
 on S5-T2 and an immutable-commit claim-hygiene review.
 The generated `spec/evidence/release-gate-readiness.json` ledger separately

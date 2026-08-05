@@ -8,7 +8,7 @@ and rejects the active v0.57.1 PTO ABI.
 
 **Architecture:** Add isa/v0.58 from a checked PTO exact-head lock. Carry
 forward only Linx-owned/vector definitions, generate codecs and Sail from the
-new profile, and retain isa/v0.57 only as immutable history.
+new profile, and retain isa/v0.57.1 only as immutable history.
 
 **Tech Stack:** Python 3, JSON opcode/profile sources, Sail, generated C/decode
 tables, AsciiDoc, Markdown.
@@ -22,7 +22,7 @@ tables, AsciiDoc, Markdown.
 - The six vector-control patterns are reserved by PTO and executable only in
   Linx.
 - No active v0.58 decoder accepts retired v0.57.1 PTO patterns.
-- Historical isa/v0.57 files remain immutable.
+- Historical isa/v0.57.1 files remain immutable.
 
 ---
 
@@ -165,7 +165,7 @@ git commit -m "feat: add standalone LinxISA v0.58 profile"
 
 - [ ] **Step 1: Switch generator defaults to v0.58**
 
-Keep v0.57 available only through an explicit historical profile argument.
+Keep v0.57.1 available only through an explicit historical profile argument.
 
 - [ ] **Step 2: Regenerate codecs and Sail decode**
 
@@ -213,7 +213,7 @@ git commit -m "feat: generate LinxISA v0.58 codecs and Sail"
 
 - [ ] **Step 1: Switch active commands to profile v0.58**
 
-Retain v0.57 references only in historical release/upgrade documents.
+Retain v0.57.1 references only in historical release/upgrade documents.
 
 - [ ] **Step 2: Document PTO equality and Linx vector additions**
 

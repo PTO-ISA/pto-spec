@@ -37,8 +37,8 @@
 
 ```c
     integer {m, srcType1} = DecodeFP(SrcL);
-    integer {n, srcType2} = DecodeFP(SrcR); 
-    integer {d, dstWidth} = DecodeDst(RegDst); 
+    integer {n, srcType2} = DecodeFP(SrcR);
+    integer {d, dstWidth} = DecodeDst(RegDst);
 
     if srcType1 != srcType2 then undefined;
 
@@ -46,11 +46,11 @@
     srcType2 operand2 = SREG[n, srcWidth2];
 
     bits(64) result = (operand1 >= operand2 ? 1 : 0);
-    SREG[d, dstWidth] = result;   
+    SREG[d, dstWidth] = result;
 ```
 
 !!! note "注意！"
-    
+
     如果任意操作数是SNaN，该指令则触发无效操作异常。
 
 ## 备注

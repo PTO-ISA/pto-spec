@@ -5,7 +5,7 @@
 
 ## 说明
 
-无符号最小值(*Minimum, Unsigned*)  
+无符号最小值(*Minimum, Unsigned*)
 无符号比较左源操作数和右源操作数，将较小值写入到目的寄存器中。
 
 ## 汇编语法
@@ -36,7 +36,7 @@
     integer d = UInt(RegDst);
     integer m = UInt(SrcL);
     integer n = UInt(SrcR);
-    
+
     bits(64) operand1 = R[m, 64];
     bits(64) operand2 = R[n, 64];
 

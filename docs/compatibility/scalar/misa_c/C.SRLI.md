@@ -5,7 +5,7 @@
 
 ## 说明
 
-立即数逻辑右移(*Shift Right Logical by Immediate*)  
+立即数逻辑右移(*Shift Right Logical by Immediate*)
 将前序T队列中指令结果逻辑右移（低位舍弃，高位补零）立即数指示的位数，结果写到T寄存器队列。
 
 本指令的标准形式请见[SRLI](../misa_g/SRLI.md)。
@@ -32,7 +32,7 @@
 ```c
     integer datawidth = 64;
     interger uimm = UInt(uimm5);
-    
+
     bits(datawidth) operand = TR1[63:0];
     bits(datawidth) result = operand >>(u) uimm;
 

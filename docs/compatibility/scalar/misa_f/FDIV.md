@@ -5,7 +5,7 @@
 
 ## 说明
 
-浮点数除法(*Floating-point Divide*)  
+浮点数除法(*Floating-point Divide*)
 左源寄存器中的浮点数除以右源寄存器中浮点数，将舍入后的结果写入到目的寄存器中。
 
 ## 汇编语法

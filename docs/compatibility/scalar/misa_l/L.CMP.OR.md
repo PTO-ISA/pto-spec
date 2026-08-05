@@ -43,8 +43,8 @@
 
 ```c
     integer {m, 64, sign1} = DecodeINT(SrcL);
-    integer {n, 64, sign2} = DecodeINT(SrcR); 
-    integer {d, 64} = DecodeDst(RegDst); 
+    integer {n, 64, sign2} = DecodeINT(SrcR);
+    integer {d, 64} = DecodeDst(RegDst);
     bits(64) operand1, operand2;
 
     if sign1 == 0 then
@@ -58,7 +58,7 @@
         operand2 = SignExtend(SREG[n, 64]);
 
     bits(64) result = ((operand1 | operand2) != 0 ? 1 : 0);
-    
+
     SREG[d, 64] = result;
 ```
 

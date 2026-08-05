@@ -39,7 +39,7 @@
 
 ```c
     integer {m, 64} = DecodeINT(SrcL);
-    integer {d, 64} = DecodeDst(RegDst); 
+    integer {d, 64} = DecodeDst(RegDst);
 
     bits(64) operand = SREG[m, 64];
     bits(64) result = operand << shamt;

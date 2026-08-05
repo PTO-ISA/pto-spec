@@ -46,7 +46,7 @@ l.lw.or<.{aq, rl, f, aqrl, aqf, rlf, aqrlf}> [SrcL<.ud>], SrcR.<T>, ->RegDst.d
 
 ```c
 integer {m, srcWidth1} = DecodeINT(SrcL);
-integer {n, srcWidth2} = DecodeINT(SrcR); 
+integer {n, srcWidth2} = DecodeINT(SrcR);
 integer {d, dstWidth} = DecodeDst(RegDst);
 
 Atomic {
@@ -57,7 +57,7 @@ Atomic {
     bits(32) newValue = oldValue | operand;   // 按位或
 
     Mem[address] = newValue;
-    SREG[d, dstWidth] = SignExtend(oldValue, 64);    
+    SREG[d, dstWidth] = SignExtend(oldValue, 64);
 }
 ```
 

@@ -2,7 +2,7 @@
 
 ## 说明
 
-同步指令流(*Fence Instruction Stream*)  
+同步指令流(*Fence Instruction Stream*)
 该指令用于同步指令流，使对内存指令区域的读写，对后续取指令操作可见。
 
 ## 汇编语法

@@ -166,7 +166,7 @@ def build_evidence() -> dict:
             "command comparison must cover every canonical command form exactly once"
         )
     if comparison_status_counts != Counter(
-        {"executable-subset": 83, "decode-only": 16}
+        {"executable-subset": 82, "decode-only": 13, "header-manifest": 1}
     ):
         raise ValueError(
             f"unexpected independent command status counts: {comparison_status_counts}"

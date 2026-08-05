@@ -167,6 +167,7 @@ CANONICAL_STATIC_INPUTS = (
     "spec/hardware-conformance-profile.json",
     "spec/requirements.json",
     "spec/catalog/command-forms.json",
+    "spec/catalog/linx-vector-reservations.json",
     "spec/catalog/numeric-profile-applicability.json",
     "spec/catalog/numeric-profile-identities.json",
     "spec/catalog/scalar-forms.json",
@@ -380,8 +381,12 @@ def encoding_projection(tile_catalog: dict) -> dict:
             ),
         )
     ]
+    vector_reservation_projection = load_json(
+        "spec/catalog/linx-vector-reservations.json"
+    )["reservations"]
     return {
         "encoding_abi": ENCODING_ABI,
+        "linx_vector_reservations": vector_reservation_projection,
         "scalar_and_command_forms": form_projection,
         "system_registers": register_projection,
         "tile_operations": tile_projection,
@@ -1080,11 +1085,12 @@ def build_artifacts() -> dict[str, dict]:
             "algorithm": "SHA-256",
             "json_encoding": "UTF-8 JSON with lexicographically sorted keys and separators ',' ':'",
             "content_projection": "object mapping each canonical input path to its file SHA-256",
-            "encoding_projection": "encoding ABI ID plus scalar/command forms, tile selector/function assignments, and system-register locations",
+            "encoding_projection": "encoding ABI ID plus scalar/command forms, Linx-only vector reservations, tile selector/function assignments, and system-register locations",
         },
         "catalog_counts": {
             **FORM_COUNTS,
             "command_form_families": COMMAND_FAMILY_COUNTS,
+            "linx_vector_reservations": 6,
             "tile_operations": FAMILY_COUNTS,
             "tile_operations_total": sum(FAMILY_COUNTS.values()),
             "pending_base_operations": 0,

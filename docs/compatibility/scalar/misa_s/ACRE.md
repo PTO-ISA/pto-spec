@@ -2,7 +2,7 @@
 
 ## 说明
 
-ACR切换(*ACR Enter*)  
+ACR切换(*ACR Enter*)
 ACRE指令设置当前块的ACR切换要求。用于立即提交当前块并执行ACR_ENTER流程，把当前ARC切换为目标ACR。
 
 目标ACR由执行acre指令所在特权级的[ECSTATE](../../register/ssr/ECSTATE.md)寄存器指定。
@@ -20,7 +20,7 @@ ACRE指令设置当前块的ACR切换要求。用于立即提交当前块并执�
 **RRA_Type** 是用于指定方法参数（Return Request Argument，简称RRA）的立即数。有效取值范围包括：
 
 | RRA_Type类型 | 说明 |
-|-------------|----------| 
+|-------------|----------|
 | **RRAT_DEFAULT(0)** | BSTATE在提交的时候复位为默认状态。 |
 | **RRAT_RESTORE(1)** | 用EBSTATE初始化BSTATE。  |
 | 其他值保留 | 如果执行时遇到其他值，提交时触发**非法指令异常**。 |

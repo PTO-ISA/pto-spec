@@ -5,7 +5,7 @@
 
 ## 说明
 
-立即数不相等比较(*Compare with Immediate if Not Equal*)  
+立即数不相等比较(*Compare with Immediate if Not Equal*)
 比较前序输出至T队列的指令结果和有符号扩展立即数，如果不等则将1写到T寄存器中，否则写入0。
 
 本指令的标准形式请见[CMP.NEI](../misa_g/CMP.NEI.md)。

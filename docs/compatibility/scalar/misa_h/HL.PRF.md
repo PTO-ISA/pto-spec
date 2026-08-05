@@ -5,7 +5,7 @@
 
 ## 说明
 
-内存预取 (*Prefetch*)  
+内存预取 (*Prefetch*)
 由 **基址寄存器值** 加 **偏移寄存器值** 计算得到地址，将包含该地址的 Cache Line 预加载到指定的 Cache 中。偏移寄存器值可以有选择的进行移位和扩展。
 
 ## 汇编语法
@@ -61,7 +61,7 @@
         when 2b01 then offset = SignExtend(offset[31:0]);
         when 2b10 then offset = ZeroExtend(offset[31:0]);
         when 2b11 then undefined;
-    
+
     bits(64) address = baseAddr + (offset << shamt);
 
     case model of

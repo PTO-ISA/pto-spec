@@ -5,8 +5,8 @@
 
 ## 说明
 
-PC相对寻址.存储储半字(*Store Halfword with PC-Relative*)  
-将源数据寄存器的两个字节（byte）存入目标地址指向的内存，目标地址由 **当前TPC** 加 **有符号立即数偏移** 计算得到。 
+PC相对寻址.存储储半字(*Store Halfword with PC-Relative*)
+将源数据寄存器的两个字节（byte）存入目标地址指向的内存，目标地址由 **当前TPC** 加 **有符号立即数偏移** 计算得到。
 
 ## 汇编语法
 

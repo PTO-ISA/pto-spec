@@ -54,7 +54,7 @@
 ```c
 
     integer {m, 64}  = DecodeINT(SrcL);
-    integer {d, 64} = DecodeDst(RegDst); 
+    integer {d, 64} = DecodeDst(RegDst);
     integer M = UInt(imms);
     integer N = UInt(imml) + 1;
 
@@ -70,7 +70,7 @@
     SREG[d, 64] = result;
 ```
 
-<!-- 
+<!--
 ## 汇编索引模式
 
 ```asm

@@ -14,10 +14,10 @@
 <ul><li>解码源寄存器域：<span title="Legacy source link is not part of the public PTO ISA site">DecodeFP</span></li><li>解码输出参数：<span title="Legacy source link is not part of the public PTO ISA site">DecodeDst</span></li><li>标量寄存器读写：<span title="Legacy source link is not part of the public PTO ISA site">SREG[]</span></li><li>判断浮点类型：<span title="Legacy source link is not part of the public PTO ISA site">FP_Class()</span></li></ul>
 <pre><code data-lang="c">
     integer {m, srcWidth} = DecodeFP(SrcL);
-    integer {d, dstWidth} = DecodeDst(RegDst); 
+    integer {d, dstWidth} = DecodeDst(RegDst);
 
     bits(srcWidth) operand = SREG[m, srcWidth];
-    
+
     bits(64) result;
     (fptype, sign) = FP_Class(operand);
 

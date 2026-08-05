@@ -17,7 +17,7 @@
 <h3 id="执行方式">执行方式</h3>
 <ul><li>解码输入参数：<span title="Legacy source link is not part of the public PTO ISA site">DecodeINT</span></li><li>解码输出参数：<span title="Legacy source link is not part of the public PTO ISA site">DecodeDst</span></li><li>标量寄存器读写：<span title="Legacy source link is not part of the public PTO ISA site">SREG[]</span></li><li>转换为十进制数：<span title="Legacy source link is not part of the public PTO ISA site">UInt()</span></li></ul>
 <pre><code data-lang="c">    integer {m, srcWidth}  = DecodeINT(SrcL);
-    integer {d, dstWidth} = DecodeDst(RegDst); 
+    integer {d, dstWidth} = DecodeDst(RegDst);
     integer M = UInt(imms);
     integer N = UInt(imml) + 1;
 

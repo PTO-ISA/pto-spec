@@ -39,13 +39,13 @@
 
 ```c
     integer {m, 64} = DecodeINT(SrcL);
-    integer {n, 64} = DecodeINT(SrcR); 
-    integer {d, 64} = DecodeDst(RegDst); 
+    integer {n, 64} = DecodeINT(SrcR);
+    integer {d, 64} = DecodeDst(RegDst);
 
     bits(64) operand1 = SREG[m, 64];
     bits(64) operand2 = SREG[n, 64];
     bits(64) result = (operand1 <(u) operand2 ? 1 : 0);
-    
+
     SREG[d, 64] = result;
 ```
 

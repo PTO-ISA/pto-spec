@@ -5,7 +5,7 @@
 
 ## 说明
 
-立即数偏移无缩放·内存预取·写地址(*Prefetch with Unscaled Immediate offset with Address update*)  
+立即数偏移无缩放·内存预取·写地址(*Prefetch with Unscaled Immediate offset with Address update*)
 由 **基址寄存器值** 加 **有符号立即数偏移** 计算得到地址，将包含该地址的 Cache Line 预取到指定的 Cache中，并将该地址写到目的寄存器中。
 
 ## 汇编语法

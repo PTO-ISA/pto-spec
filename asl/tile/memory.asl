@@ -10,7 +10,9 @@ readonly func SharedTileElementRegion(tile: TileInfo,
 begin
     let bit_offset: integer = element * TileElementBits(tile.data_type);
     let byte_offset: integer = bit_offset DIVRM 8;
-    return ((byte_offset MOD 512) DIVRM 128) as integer {0..3};
+    assert byte_offset < tile.capacity_bytes;
+    return ((byte_offset * 4) DIVRM tile.capacity_bytes)
+        as integer {0..3};
 end;
 
 func SharedTileFromLocal(source: TileIndex,
@@ -28,39 +30,39 @@ end;
 func TMOVLocalToShared(shared_id: bits(8), source: TileIndex,
                        size_code: integer {1..7}, pe_mask: bits(4))
 begin
+    if pe_mask == Zeros{4} then return; end;
     let capacity_bytes = TileSizeCodeBytes(size_code);
     let shared_tile = SharedTileFromLocal(source, capacity_bytes);
-    // Bundle completion is the architectural visibility point. Internal
-    // producer latency is represented by ready_mask; a completed TMOV makes
-    // every statically defined producer region ready together.
-    InstallSharedTileVersion(shared_id, shared_tile, pe_mask, pe_mask);
+    let updated = AtomicUpdateSharedTile(shared_id, shared_tile, pe_mask);
+    if !updated then SetFault(Fault_TileLegality, ReadTPC()); end;
 end;
 
 func TMOVSharedToLocal(destination: TileIndex, shared_id: bits(8),
-                       broadcast: boolean)
+                       pe_mask: bits(4))
 begin
+    if pe_mask == Zeros{4} then return; end;
     let shared = SharedTileRecord(shared_id);
     let destination_tile = _Tiles[[destination]];
-    assert SharedTileDescriptorLegal(shared_id) &&
-           SharedTileVersionReady(shared_id);
-    if broadcast then
-        assert SharedTileVersionFullyDefined(shared_id);
-        assert destination_tile.capacity_bytes ==
-            shared.tile.capacity_bytes * 4;
-    else
-        assert destination_tile.capacity_bytes == shared.tile.capacity_bytes;
-        let region = UInt(_SystemRegisters.thread_id[1:0]);
-        assert shared.defined_mask[region] == '1' &&
-               shared.ready_mask[region] == '1';
-    end;
+    assert SharedTileDescriptorLegal(shared_id);
+    assert destination_tile.capacity_bytes == shared.tile.capacity_bytes;
     assert destination_tile.rows == shared.tile.rows &&
            destination_tile.columns == shared.tile.columns &&
            destination_tile.valid_rows == shared.tile.valid_rows &&
            destination_tile.valid_columns == shared.tile.valid_columns &&
            destination_tile.data_type == shared.tile.data_type &&
            destination_tile.layout == shared.tile.layout;
-    _Tiles[[destination]].payload = shared.tile.payload;
-    MarkTileValidRegionDefined(destination);
+    for element = 0 to shared.tile.rows * shared.tile.columns - 1
+        looplimit 4096 do
+        let region = SharedTileElementRegion(shared.tile,
+            element as ModelTileElementIndex);
+        if pe_mask[region] == '1' then
+            _Tiles[[destination]].payload[[element]] = ReadSharedTileWord(
+                shared_id, element as ModelTileElementIndex);
+            _Tiles[[destination]].defined_elements[element] = '1';
+        end;
+    end;
+    _Tiles[[destination]].contents_defined = pe_mask == '1111';
+    if pe_mask == '1111' then MarkTileValidRegionDefined(destination); end;
 end;
 
 func TLOADShared(shared_id: bits(8), base_address: Word,
@@ -68,8 +70,10 @@ func TLOADShared(shared_id: bits(8), base_address: Word,
                  rows: integer {1..65535}, columns: integer {1..65535},
                  valid_rows: integer {1..65535},
                  valid_columns: integer {1..65535},
-                 data_type: TileDataType, layout: TileLayout)
+                 data_type: TileDataType, layout: TileLayout,
+                 pe_mask: bits(4))
 begin
+    if pe_mask == Zeros{4} then return; end;
     let capacity_bytes = TileSizeCodeBytes(size_code);
     assert valid_rows <= rows && valid_columns <= columns;
     assert rows * columns <= PTO_MODEL_TILE_ELEMENTS;
@@ -86,52 +90,61 @@ begin
     tile.valid_columns = valid_columns;
     tile.data_type = data_type;
     tile.layout = layout;
-    tile.location = TileLocation_Memory;
+    tile.location = TileLocation_Any;
+    if !SharedTileUpdateCompatible(shared_id, tile, pe_mask) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return;
+    end;
     var translated_addresses: TilePayload;
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
             let element = TileLinearIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let address = TileMemoryElementAddress(base_address, element,
-                tile.data_type);
-            let probe = ProbeTileMemoryAccess(address, tile.data_type, FALSE);
-            if RaiseDataAccessFault(probe, address) then return; end;
-            translated_addresses[[element]] = probe.translated_address;
+            let region = SharedTileElementRegion(tile, element);
+            if pe_mask[region] == '1' then
+                let address = TileMemoryElementAddress(base_address, element,
+                    tile.data_type);
+                let probe = ProbeTileMemoryAccess(address, tile.data_type, FALSE);
+                if RaiseDataAccessFault(probe, address) then return; end;
+                translated_addresses[[element]] = probe.translated_address;
+            end;
         end;
     end;
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
             let element = TileLinearIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let high_nibble = TileMemoryElementHighNibble(element,
-                tile.data_type);
-            let raw = LoadTranslatedUnsigned(translated_addresses[[element]],
-                TileMemoryElementBytes(tile.data_type));
-            RecordLoadEvent(translated_addresses[[element]],
-                TileMemoryElementBytes(tile.data_type), raw,
-                CurrentBundleMemoryOrder());
-            tile.payload[[element]] = LoadTileMemoryElement(
-                translated_addresses[[element]], tile.data_type, high_nibble);
-            tile.defined_elements[element] = '1';
+            let region = SharedTileElementRegion(tile, element);
+            if pe_mask[region] == '1' then
+                let high_nibble = TileMemoryElementHighNibble(element,
+                    tile.data_type);
+                let raw = LoadTranslatedUnsigned(translated_addresses[[element]],
+                    TileMemoryElementBytes(tile.data_type));
+                RecordLoadEvent(translated_addresses[[element]],
+                    TileMemoryElementBytes(tile.data_type), raw,
+                    CurrentBundleMemoryOrder());
+                tile.payload[[element]] = LoadTileMemoryElement(
+                    translated_addresses[[element]], tile.data_type, high_nibble);
+                tile.defined_elements[element] = '1';
+            end;
         end;
     end;
-    tile.defined_valid_elements =
-        (tile.valid_rows * tile.valid_columns) as integer {0..4096};
-    tile.contents_defined = TRUE;
-    InstallSharedTileVersion(shared_id, tile, '1111', '1111');
+    if pe_mask == '1111' then
+        tile.defined_valid_elements =
+            (tile.valid_rows * tile.valid_columns) as integer {0..4096};
+        tile.contents_defined = TRUE;
+    end;
+    let updated = AtomicUpdateSharedTile(shared_id, tile, pe_mask);
+    assert updated;
 end;
 
 func TSTOREShared(base_address: Word, shared_id: bits(8),
-                  partition: boolean)
+                  pe_mask: bits(4))
 begin
+    if pe_mask == Zeros{4} then return; end;
     let shared = SharedTileRecord(shared_id);
-    assert SharedTileDescriptorLegal(shared_id) &&
-           SharedTileVersionReady(shared_id);
-    if !partition then assert SharedTileVersionFullyDefined(shared_id); end;
+    assert SharedTileDescriptorLegal(shared_id);
     let tile = shared.tile;
-    let payload = tile.payload;
-    let current_region = UInt(_SystemRegisters.thread_id[1:0]);
-    if partition && shared.defined_mask[current_region] == '0' then return; end;
     var original_addresses: TilePayload;
     var translated_addresses: TilePayload;
     var high_nibbles: bits(PTO_MODEL_TILE_ELEMENTS);
@@ -139,8 +152,7 @@ begin
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
             let element = TileLinearIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let selected = !partition ||
-                SharedTileElementRegion(tile, element) == current_region;
+            let selected = pe_mask[SharedTileElementRegion(tile, element)] == '1';
             if selected then
                 let address = TileMemoryElementAddress(base_address, element,
                     tile.data_type);
@@ -157,13 +169,13 @@ begin
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
             let element = TileLinearIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let selected = !partition ||
-                SharedTileElementRegion(tile, element) == current_region;
+            let selected = pe_mask[SharedTileElementRegion(tile, element)] == '1';
             if selected then
                 let stored_value = StoreTileMemoryElement(
                     original_addresses[[element]],
                     translated_addresses[[element]], tile.data_type,
-                    high_nibbles[element] == '1', payload[[element]]);
+                    high_nibbles[element] == '1',
+                    ReadSharedTileWord(shared_id, element));
                 RecordStoreEvent(translated_addresses[[element]],
                     TileMemoryElementBytes(tile.data_type), stored_value,
                     CurrentBundleMemoryOrder());

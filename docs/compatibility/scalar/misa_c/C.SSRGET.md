@@ -5,7 +5,7 @@
 
 ## 说明
 
-读取系统寄存器(*System Status Register Get*)  
+读取系统寄存器(*System Status Register Get*)
 读取 ***SSR-ID*** 对应系统寄存器的值并写到目的T寄存器中。
 
 本指令的标准形式请见[SSRGET](../misa_g/SSRGET.md)。

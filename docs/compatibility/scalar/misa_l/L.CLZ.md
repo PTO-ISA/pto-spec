@@ -47,7 +47,7 @@
 
 ```c
     integer {m, srcWidth}  = DecodeINT(SrcL);
-    integer {d, dstWidth} = DecodeDst(RegDst); 
+    integer {d, dstWidth} = DecodeDst(RegDst);
     integer M = UInt(imms);
     integer N = UInt(imml) + 1;
 

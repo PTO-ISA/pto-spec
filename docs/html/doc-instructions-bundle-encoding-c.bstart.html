@@ -3,7 +3,7 @@
 <p>有三种C.BSTART指令提供给用户选择：</p>
 <ul><li>第一种可以用于不同类型的块，但是只支持非偏移类跳转。</li><li>第二种仅用于标量块且跳转方式只能是DIRECT或CALL类型的。</li><li>第三种仅用于标量块且跳转方式只能是COND类型的。</li></ul>
 <h3 id="汇编语法">汇编语法</h3>
-<pre><code data-lang="asm">    C.BSTART&lt;.BlockType&gt; BrType           
+<pre><code data-lang="asm">    C.BSTART&lt;.BlockType&gt; BrType
     C.BSTART&lt;.STD&gt; {direct, call}, label
     C.BSTART&lt;.STD&gt; cond, label</code></pre>
 <p>其中：</p>

@@ -16,9 +16,9 @@
     "Description",
     "Constraints"
   ],
-  "workbook_sha256": "32f3964096eeda62baabbca23e0967e3f7e02afa0894fc795fde76df7c406298",
-  "source_fingerprint": "5cb855d2b49e61e46d4c84ee59a6eb35ab1a7791d7fb5260e0a3d48f9624cfd1",
-  "projection_fingerprint": "d09cd80bce161e704815e6bb68506950d07f29fd1a5a722f679ab6d6cf68610f",
+  "workbook_sha256": "c010f9d70b95fd4ba3807f500140216d70785e3430a758d9e20e130ccaefff91",
+  "source_fingerprint": "d7db1963d4c94c73e29a9b3f5d5856e583867c17380c0c64bdbfb37485b9a19e",
+  "projection_fingerprint": "095dbbb8bd43f0782010412c672329557d27ff7808f75f9db1d74c019ef8733d",
   "rows": {
     "intrinsic.mgather": {
       "opcode": "MGATHER",
@@ -2638,7 +2638,7 @@
         "Dtype": "AccType S32 or F32; DType is AccType for canonical None and otherwise follows PostProcessConfig",
         "Encoding": "CUBE Mode 0, Function 6;",
         "Description": "C 是显式 Local AccType Tile input，并在 K 乘积累加前读入 P；它不是隐式 ACC。 PostProcess 只在完整 K 累加后执行一次。",
-        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\nCooperative form 中 C/D、RowMaxIn/Out、GroupMaxOut 为 MShard4；Bias、vector QuantParam、vector PReLU 是四 PE 上内容相同的完整 Local N-vector；scalar GPR 参数也必须在四 PE 上相等。\nD==C 仅在 D 保持 TileAcc role 且 dtype、shape、layout、allocation 完全相同时合法；实现必须 read-old/rename-new，禁止物理原地覆盖。C 不携带 partial-sum provenance 要求。\nCooperative TMATMUL 要求所有 Shared value fully-defined、四 PE 静态收敛并以相同动态顺序到达；该 rendezvous 不建立 GM ordering。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
+        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\nCooperative form 中 C/D、RowMaxIn/Out、GroupMaxOut 为 MShard4；Bias、vector QuantParam、vector PReLU 是四 PE 上内容相同的完整 Local N-vector；scalar GPR 参数也必须在四 PE 上相等。\nD==C 仅在 D 保持 TileAcc role 且 dtype、shape、layout、allocation 完全相同时合法；实现必须 read-old/rename-new，禁止物理原地覆盖。C 不携带 partial-sum provenance 要求。\nCooperative TMATMUL 的 Shared read 不修改 descriptor/payload；并发 overlap 由程序避免，且该 rendezvous 不建立 GM ordering。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
       },
       "overrides": {},
       "layout_placeholders": {}
@@ -2658,7 +2658,7 @@
         "Dtype": "AccType S32 or F32; DType is AccType for canonical None and otherwise follows PostProcessConfig",
         "Encoding": "CUBE Mode 0, Function 5;",
         "Description": "Bias 是显式 Local Tile input，并在 K 乘积累加前预装入 P。 PostProcess 只在完整 K 累加后执行一次。",
-        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\nCooperative form 中 C/D、RowMaxIn/Out、GroupMaxOut 为 MShard4；Bias、vector QuantParam、vector PReLU 是四 PE 上内容相同的完整 Local N-vector；scalar GPR 参数也必须在四 PE 上相等。\nD 必须是显式 ordinary physical Local destination。\nCooperative TMATMUL 要求所有 Shared value fully-defined、四 PE 静态收敛并以相同动态顺序到达；该 rendezvous 不建立 GM ordering。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
+        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\nCooperative form 中 C/D、RowMaxIn/Out、GroupMaxOut 为 MShard4；Bias、vector QuantParam、vector PReLU 是四 PE 上内容相同的完整 Local N-vector；scalar GPR 参数也必须在四 PE 上相等。\nD 必须是显式 ordinary physical Local destination。\nCooperative TMATMUL 的 Shared read 不修改 descriptor/payload；并发 overlap 由程序避免，且该 rendezvous 不建立 GM ordering。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
       },
       "overrides": {},
       "layout_placeholders": {}
@@ -2698,7 +2698,7 @@
         "Dtype": "byte-preserving; descriptors must be compatible",
         "Encoding": "TLSU Function 2, Shared Functions 8–11;",
         "Description": "Ordinary PTO TMOV(dst,src) remains a Local Tile move/conversion. DavinciOO v5 adds strongly typed Local↔Shared forms under the same intrinsic name; no _SHARED operation is introduced.",
-        "Constraints": "Shared→Shared TMOV is absent in v5; copy/transform through Local Tile.\nRuntime mode, owner or size is illegal.\nPartial Shared values may be moved or partition-stored but not used by CUBE compute or Broadcast.\nPE_MASK selects destination/local payloads but does not reduce Shared source-ready or collective participation requirements.\nShared IDs and versions are compiler-managed; C++ cannot specify S#n.\nRecordEvent is reused; there is no SharedEvent, and event completion is not a cross-PE GM fence."
+        "Constraints": "Shared→Shared TMOV is absent in v5; copy/transform through Local Tile.\nRuntime mode, owner or size is illegal.\nPE_MASK is a four-bit quarter predicate; multiple bits are allowed and\n  0000 is a no-op.\nAbsolute Shared registers are compiler-managed; C++ cannot specify Sx.\nRecordEvent is reused; there is no SharedEvent, and event completion is not a cross-PE GM fence."
       },
       "overrides": {},
       "layout_placeholders": {}

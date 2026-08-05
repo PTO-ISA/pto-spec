@@ -5,7 +5,7 @@
 
 ## 说明
 
-无条件寄存器跳转 (*Jump Register*)  
+无条件寄存器跳转 (*Jump Register*)
 无条件跳转至源寄存器内`TPC`加左移一位的立即数偏移指示的目标地址处。
 
 ## 汇编语法
@@ -67,7 +67,7 @@ jr t#1, %tpcrel_lo(label)
 
 <!-- !!! info 块内跳转限制
 
-	块内跳转目前不能跳出块指令标定的范围【TPC.START】和【TPC.START + BSize * ISize】。块指令的最后一条指令为【TPC.START + BSize * ISize】所指的指令。  
+	块内跳转目前不能跳出块指令标定的范围【TPC.START】和【TPC.START + BSize * ISize】。块指令的最后一条指令为【TPC.START + BSize * ISize】所指的指令。
     32bit编码格式下，ISize为4；16bit编码格式下，ISize为2。
 
 !!! info 原子块指令限制

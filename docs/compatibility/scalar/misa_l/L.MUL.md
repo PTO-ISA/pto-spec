@@ -41,8 +41,8 @@
 
 ```c
     integer {m, sign1} = DecodeINT(SrcL);
-    integer {n, sign2} = DecodeINT(SrcR); 
-    integer {d, 64} = DecodeDst(RegDst); 
+    integer {n, sign2} = DecodeINT(SrcR);
+    integer {d, 64} = DecodeDst(RegDst);
 
     if sign1 != sign2 then undefined;
 
@@ -54,8 +54,8 @@
         result = operand1 *(u) operand2;  // 无符号乘
     else
         result = operand1 *(s) operand2;  // 有符号乘
-    
-    SREG[d, 64] = result;       
+
+    SREG[d, 64] = result;
 ```
 
 ## 备注

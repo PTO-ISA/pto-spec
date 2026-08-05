@@ -41,8 +41,8 @@
 
 ```c
     integer {m, sign1} = DecodeINT(SrcL);
-    integer {n, sign2} = DecodeINT(SrcR);  
-    integer {d, 64} = DecodeDst(RegDst); 
+    integer {n, sign2} = DecodeINT(SrcR);
+    integer {d, 64} = DecodeDst(RegDst);
 
     if sign1 != sign2 then undefined;
 
@@ -53,14 +53,14 @@
     if sign1 == 0 then
         result = operand1 /(u) operand2;    // 无符号除法
     else
-        result = operand1 /(s) operand2;    // 有符号除法       
-    
+        result = operand1 /(s) operand2;    // 有符号除法
+
     SREG[d, 64] = result;
 ```
 
 !!! note "注意"
 
-    如果发生除法溢出情况，商置为 "-2^(XLEN-1)"。  
+    如果发生除法溢出情况，商置为 "-2^(XLEN-1)"。
     如果出现除以零的情况，商使用"-1"，即对所有位都置1。
 
 ## 备注

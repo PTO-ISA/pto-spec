@@ -2,7 +2,7 @@
 
 ## 说明
 
-PC相对寻址·字节加载 (*Load Unsigned Byte with PC-Relative*)  
+PC相对寻址·字节加载 (*Load Unsigned Byte with PC-Relative*)
 以 **当前TPC** 加 **有符号立即数偏移** 的结果为地址，从内存加载 `一个字节` 的数据并无符号扩展后写到目的寄存器中。
 
 ## 汇编语法
@@ -35,7 +35,7 @@ PC相对寻址·字节加载 (*Load Unsigned Byte with PC-Relative*)
     bits(64) offset = SignExtend(simm17);
     bits(64) address = current_tpc + offset;        // current_tpc为当前指令TPC
     bits(64) data = ZeroExtend(Mem[address][7:0]);
-    
+
     R[d, 64] = data;
 ```
 

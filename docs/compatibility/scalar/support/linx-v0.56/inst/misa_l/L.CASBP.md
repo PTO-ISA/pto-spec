@@ -2,7 +2,7 @@
 
 ## 说明
 
-原子比较交换·一对字节(*Compare and Swap Pair of Byte*)  
+原子比较交换·一对字节(*Compare and Swap Pair of Byte*)
 本指令执行如下的原子操作：从寄存器SrcL指定的内存位置连续加载两个`8位`数据，分别与寄存器SrcR0和SrcR1的`低8位`进行比较，如果相同的话，把寄存器SrcD0和SrcD1的`低8位`的值存入原内存中。不管前面比较的结果如何，都将从内存读取两个的`8位`数据无符号扩展后分别写入两个目的寄存器中。
 
 ## 汇编语法
@@ -55,7 +55,7 @@
 
         if oldvalue == cmpvalue then
             Mem[address] = newvalue;
-            
+
         R[d0, 64] = ZeroExtend(oldvalue[7:0]);
         R[d1, 64] = ZeroExtend(oldvalue[15:8]);
     }

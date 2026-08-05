@@ -5,7 +5,7 @@
 
 ## 说明
 
-设置目标地址(*Set Commit Argument, Target*)  
+设置目标地址(*Set Commit Argument, Target*)
 在本块指令提交后，无条件设置NEXTBPC为源寄存器中块间跳转的目标地址并跳转至下一个块执行。
 
 ## 汇编语法

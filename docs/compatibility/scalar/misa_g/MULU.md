@@ -5,7 +5,7 @@
 
 ## 说明
 
-无符号乘(*Multiply, Unsigned*)  
+无符号乘(*Multiply, Unsigned*)
 无符号计算左源操作数乘以右源操作数，将结果的`低64位`写到目的寄存器中。
 
 ## 汇编语法
@@ -36,7 +36,7 @@
     integer d = UInt(RegDst);
     integer m = UInt(SrcL);
     integer n = UInt(SrcR);
-    
+
     bits(64) operand1 = R[m, 64];
     bits(64) operand2 = R[n, 64];
     bits(128) result = operand1 *(u) operand2;

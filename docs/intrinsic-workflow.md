@@ -20,7 +20,7 @@
 
 1. [ISA 总览](davincioo-arch/isa-overview.md)说明执行层级和指令族。
 2. [编程模型](davincioo-arch/programming-model.md)定义 Tile、scope、SharedTile、CUBE 与同步语义。
-3. [状态与类型](davincioo-arch/state-and-data-types.md)定义 Local/Shared storage、distribution、version 与 TileAcc。
+3. [状态与类型](davincioo-arch/state-and-data-types.md)定义 Local/Shared storage、distribution、persistent register state 与 TileAcc。
 4. [内存与异常](davincioo-arch/memory-ordering-and-exceptions.md)定义数据搬运、完成、顺序与非法程序行为。
 5. [汇编语法](davincioo-arch/assembly-syntax.md)和 [Encoding](davincioo-arch/encoding-conventions.md)定义编码与语法。
 6. 106 条正式指令位于 [instructions/tile/](instructions/README.md)，Block/Header 文档位于 [instructions/bundle/](instructions/bundle/overview/block-header-model.md)。

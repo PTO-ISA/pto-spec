@@ -5,7 +5,7 @@
 
 ## 说明
 
-寄存器偏移·存储字节·后索引 (*Store Byte with register offset, Post-index*)  
+寄存器偏移·存储字节·后索引 (*Store Byte with register offset, Post-index*)
 将数据寄存器的低位 `一个字节` 存入 **基址寄存器** 指示的地址内存中，并将 **基址寄存器** 加 **偏移寄存器** 计算得到的更新地址写到目的寄存器中。偏移寄存器的值可以有选择的进行取低字有符号或无符号扩展。
 
 ## 汇编语法

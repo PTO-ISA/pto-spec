@@ -46,12 +46,12 @@
 |-------|------|--------|--------|
 |  0-3    | VTR1-VTR4     | VT#1-VT#4     | VT结果队列前第一至第四条指令结果       |
 |  4-7    | Reserve       | Reserve       | 预留  |
-|  8-11   | VUR1-VUR4     | VU#1-VU#4     | VU结果队列前第一至第四条指令结果      | 
+|  8-11   | VUR1-VUR4     | VU#1-VU#4     | VU结果队列前第一至第四条指令结果      |
 |  12-15  | Reserve       | Reserve       | 预留  |
 |  16-19  | VMR1-VMR4     | VM#1-VM#4     | VM结果队列前第一至第四条指令结果       |
-|  20-23  | Reserve       | Reserve       | 预留  | 
+|  20-23  | Reserve       | Reserve       | 预留  |
 |  24-27  | VNR1-VNR4     | VN#1-VN#4     | VN结果队列前第一至第四条指令结果     |
-|  28-31  | Reserve       | Reserve       | 预留  | 
+|  28-31  | Reserve       | Reserve       | 预留  |
 |  32-41  | RI0-RI11      | RI0-RI11      | 全局寄存器输入形参           |
 |  42-55  | Reserve       | Reserve       | 预留  |
 | 56-59   | TR1-TR4       | T#1-T#4       | T结果队列前第一至第四条指令结果       |
@@ -94,12 +94,12 @@
 | 113     | VMR2.REUSE      | VM#2.REUSE  | VM结果队列前第二条指令结果     |
 | 114     | VMR3.REUSE      | VM#3.REUSE  | VM结果队列前第三条指令结果     |
 | 115     | VMR4.REUSE      | VM#4.REUSE  | VM结果队列前第四条指令结果     |
-| 116-119 | Reserve       | Reserve       | 预留  | 
+| 116-119 | Reserve       | Reserve       | 预留  |
 | 120     | VNR1.REUSE      | VN#1.REUSE  | VN结果队列前第一条指令结果     |
 | 121     | VNR2.REUSE      | VN#2.REUSE  | VN结果队列前第二条指令结果     |
 | 122     | VNR3.REUSE      | VN#3.REUSE  | VN结果队列前第三条指令结果     |
 | 123     | VNR4.REUSE      | VN#4.REUSE  | VN结果队列前第四条指令结果     |
-| 124-127 | Reserve       | Reserve       | 预留  | 
+| 124-127 | Reserve       | Reserve       | 预留  |
 
 ### <span id="locationA">操作数参数域</span>
 

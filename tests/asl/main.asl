@@ -103,6 +103,7 @@ begin
     TestDecodedTileExecution();
     TestTileCapacityLegality();
     TestTileElementDefinedness();
+    TestSharedRegisterAtomicUpdates();
     TestDecodedTileLegalityFaults();
     TestTileMemoryCompletionAndRestart();
     TestTeplTotality();

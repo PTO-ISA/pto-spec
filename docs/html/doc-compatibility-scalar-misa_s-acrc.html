@@ -24,7 +24,7 @@
     ldi [a0, 16], -&gt;t
     mul t#1, t#2, -&gt;t
     acrc SCT_SYS      &lt;--- TPC
-    BSTART.STD        &lt;--- NextBPC       
+    BSTART.STD        &lt;--- NextBPC
     ...</code></pre>
 <p>ACRC触发系统调用后如何继续执行的方式说明如下：</p>
 <div class="table-wrap"><table><thead><tr><th>异常保存寄存器</th><th>硬件保存</th><th>软件不修改，重新发起请求</th><th>软件修改，返回执行下一条指令</th></tr></thead><tbody><tr><td><a href="doc-compatibility-scalar-support-linx-v0.56-register-ssr-ebpc.html">EBPC</a></td><td>BPC</td><td>BPC</td><td>TPC+4</td></tr><tr><td><a href="doc-compatibility-scalar-support-linx-v0.56-register-ssr-etpc.html">ETPC</a></td><td>TPC</td><td>TPC</td><td>TPC+4</td></tr></tbody></table></div>

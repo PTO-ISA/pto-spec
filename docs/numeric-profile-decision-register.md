@@ -83,7 +83,7 @@ accepted architecture decisions remain authoritative.
   readiness; it does not close `S5-T2-A` or numeric conformance.
 
 The machine-derived closure snapshot is 2 accepted and 10 open decisions,
-0 accepted and 20 open complete domain rules, and 18 selected and 81 open
+0 accepted and 18 open complete domain rules, and 16 selected and 73 open
 variation routes.
 
 ## Profile partitions requiring a decision

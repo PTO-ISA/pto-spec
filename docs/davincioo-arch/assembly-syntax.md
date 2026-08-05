@@ -33,27 +33,31 @@ Local operand 使用 6-bit T/U/M/N producer-age namespace。v5 不提供 `.reuse
 B.IOT T#1, T#2, mask=1111, last, ->M<8KB>
 ```
 
-同一 block 内所有 `B.IOT` 必须使用相同且非零的 `PE_MASK`。`mask=1111` 表示四个 Local payload 都执行，但本身不会建立 rendezvous。
+同一 ordinary Local operation 内所有 `B.IOT` 使用相同的 `PE_MASK`。
+Shared operation 把它作为四位 quarter predicate；多位可同时为 1，
+`mask=0000` 是 no-op，`mask=1111` 选择全部 quarter。mask 本身不建立
+rendezvous。
 
 ## Shared Binders
 
-C.B.IOS S#n 是一次性 Shared operand binder。cooperative TMATMUL 由后续
+C.B.IOS 使用 absolute `S0..S255`，是一次性 Shared operand binder。source
+写作 `C.B.IOS S17`，destination 写作 `C.B.IOS -> S17`。cooperative TMATMUL 由后续
 Local B.IOT stream 按固定 role 顺序消费；Shared TLOAD/TSTORE 由 B.IOR
 消费，Shared TMOV 由 B.IOT companion 消费：
 
 ```asm
 # non-MX, Local A
-C.B.IOS S#right
+C.B.IOS S17
 
 # non-MX, Shared A
-C.B.IOS S#left
-C.B.IOS S#right
+C.B.IOS S16
+C.B.IOS S17
 
 # MX, Shared A pair
-C.B.IOS S#left
-C.B.IOS S#scale_left
-C.B.IOS S#right
-C.B.IOS S#scale_right
+C.B.IOS S16
+C.B.IOS S18
+C.B.IOS S17
+C.B.IOS S19
 ```
 
 顺序由 Function 固定，所有 ID 必须不同。TGEMV 不允许任何 binder。
@@ -63,17 +67,20 @@ C.B.IOS S#scale_right
 ```asm
 /* exactly-one GM -> Shared full load */
 BSTART.TLSU TLOAD, FP16
-C.B.IOS     S#17
+C.B.IOS     -> S17
+B.IOT       mask=0101, last   # optional; absent means 1111
 B.IOR       a0, a1, 0, ->SharedTSize<4KB>
 
 /* exactly-one Shared -> GM full store */
 BSTART.TLSU TSTORE, FP16
-C.B.IOS     S#17
+C.B.IOS     S17
+B.IOT       mask=0101, last   # optional; absent means 1111
 B.IOR       a0, a1, 0
 
 /* per-PE Shared partition store */
 BSTART.TLSU TSTORE.SPART, FP16
-C.B.IOS     S#17
+C.B.IOS     S17
+B.IOT       mask=0101, last
 B.IOR       a0, a1, 0
 ```
 
@@ -83,11 +90,11 @@ GM→Shared 把 `B.IOR.RegDst[11:9]` 解释为 `SharedTSize`，其中 `000` 非�
 
 ```asm
 BSTART.TLSU TMOV.L2S.INSERT, FP16
-C.B.IOS     S#17
+C.B.IOS     -> S17
 B.IOT       T#1, mask=1100, TSize=4KB, last
 
 BSTART.TLSU TMOV.S2L.BROADCAST, FP16
-C.B.IOS     S#17
+C.B.IOS     S17
 B.IOT       mask=1111, last, ->T<16KB>
 ```
 

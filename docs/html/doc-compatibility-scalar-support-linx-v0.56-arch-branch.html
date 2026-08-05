@@ -6,25 +6,25 @@
 <h4 id="1.-fall-顺延执行">1. Fall（顺延执行）</h4>
 <ul><li>特点：默认执行模式，无显式跳转指令</li><li>行为：顺序执行下一条指令</li></ul>
 <p>使用场景：</p>
-<pre><code data-lang="asm">.block0: 
+<pre><code data-lang="asm">.block0:
     BSTART.STD FALL
     inst0
     inst1
     ...
     instx
-.block1: 
+.block1:
     BSTART.SYS FALL  # 执行完.block0，顺序执行.block1
     ...</code></pre>
 <h4 id="2.-direct-直接跳转">2. Direct（直接跳转）</h4>
 <ul><li>特点：绝对地址跳转</li><li>指令格式：<code>BSTART.BType DIRECT, &lt;label&gt;</code></li></ul>
 <p>使用场景：</p>
-<pre><code data-lang="asm">.block0: 
+<pre><code data-lang="asm">.block0:
     BSTART.STD DIRECT, .block2
     inst0
     inst1
     ...
     instx
-.block1: 
+.block1:
     BSTART.SYS FALL
     ...
 .block2:
@@ -33,13 +33,13 @@
 <h4 id="3.-call-调用">3. Call（调用）</h4>
 <ul><li>特点：保存返回地址到专用寄存器</li><li>指令格式：<code>BSTART.BType CALL, &lt;label&gt;</code></li></ul>
 <p>使用场景：</p>
-<pre><code data-lang="asm">.block0: 
+<pre><code data-lang="asm">.block0:
     BSTART.STD CALL, .block2   # 调用执行block2处程序
     setret .block1, -&gt;ra       # 保存返回地址
     inst1
     ...
     instx
-.block1: 
+.block1:
     BSTART.SYS FALL
     ...
 .block2:
@@ -50,8 +50,8 @@
 <h4 id="4.-cond-条件跳转">4. Cond（条件跳转）</h4>
 <ul><li>特点：基于块内<code>setc.cond</code>指令条件判断结果决定是否跳转，不跳转则顺延执行下个块。</li><li>约束：不能是空块，<strong>块内必须包含一条setc.cond指令</strong>。</li></ul>
 <p>使用场景：</p>
-<pre><code data-lang="asm">.block0: 
-    BSTART.STD COND, .block2   
+<pre><code data-lang="asm">.block0:
+    BSTART.STD COND, .block2
     inst0
     setc.eq a0, t#1     # 判断a0和t#1是否相等，决定是否跳转到block2
     ...
@@ -65,7 +65,7 @@
 <h4 id="5.-ind-间接跳转">5. Ind（间接跳转）</h4>
 <ul><li>特点：目标地址来自块内计算结果</li><li>约束：不能是空块，<strong>块内必须包含一条setc.tgt指令</strong>。</li></ul>
 <p>使用场景：</p>
-<pre><code data-lang="asm">.block0: 
+<pre><code data-lang="asm">.block0:
     BSTART.STD IND
     inst0
     add a0, t#1, -&gt;t
@@ -81,7 +81,7 @@
 <h4 id="6.-icall-间接调用">6. Icall（间接调用）</h4>
 <ul><li>特点：动态函数调用</li><li>约束：不能是空块，<strong>块内必须包含一条setc.tgt指令和一条setret指令</strong>。</li></ul>
 <p>使用场景：</p>
-<pre><code data-lang="asm">.block0: 
+<pre><code data-lang="asm">.block0:
     BSTART.STD ICALL
     setret .block1, -&gt;ra   # 保存返回地址
     add a0, t#1, -&gt;t
@@ -97,7 +97,7 @@
 <h4 id="7.-ret-调用返回">7. Ret（调用返回）</h4>
 <ul><li>特点：恢复调用上下文</li><li>约束：不能是空块，<strong>块内必须包含一条setc.tgt指令</strong>。</li></ul>
 <p>使用场景：</p>
-<pre><code data-lang="asm">.block0: 
+<pre><code data-lang="asm">.block0:
     BSTART.STD RET
     inst0
     setc.tgt ra           # 设置返回地址

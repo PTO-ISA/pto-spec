@@ -13,12 +13,12 @@
 <h3 id="执行方式">执行方式</h3>
 <ul><li>解码源寄存器域：<span title="Legacy source link is not part of the public PTO ISA site">DecodeFP</span></li><li>解码输出参数：<span title="Legacy source link is not part of the public PTO ISA site">DecodeDst</span></li><li>标量寄存器读写：<span title="Legacy source link is not part of the public PTO ISA site">SREG[]</span></li></ul>
 <pre><code data-lang="c">    integer {m, srcWidth} = DecodeFP(SrcL);
-    integer {d, dstWidth} = DecodeDst(RegDst); 
+    integer {d, dstWidth} = DecodeDst(RegDst);
 
     bits(srcWidth) operand = SREG[m, srcWidth];
     bits(64) result = SQRT(operand);
-    
-    SREG[d, dstWidth] = result;    </code></pre>
+
+    SREG[d, dstWidth] = result;</code></pre>
 <p>!!! note &quot;注意&quot;</p>
 <p>当源操作数为负数时，该指令会触发非法操作例外(NV)。</p>
 <h3 id="备注">备注</h3>

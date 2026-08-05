@@ -5,7 +5,7 @@
 
 ## 说明
 
-算术右移(*Shift Right Arithmetic*)  
+算术右移(*Shift Right Arithmetic*)
 左源操作数算数右移（低位舍弃，高位补符号位）右源操作数 **低6位** 表达的位数，结果写到目的寄存器中。
 
 ## 汇编语法

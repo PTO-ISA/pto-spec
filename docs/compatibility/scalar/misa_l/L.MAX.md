@@ -37,14 +37,14 @@
 
 ```c
     integer {m, srcWidth1} = DecodeFP(SrcL);
-    integer {n, srcWidth2} = DecodeFP(SrcR); 
-    integer {d, dstWidth} = DecodeDst(RegDst); 
+    integer {n, srcWidth2} = DecodeFP(SrcR);
+    integer {d, dstWidth} = DecodeDst(RegDst);
 
     bits(srcWidth1) operand1 = SREG[m, srcWidth1];
     bits(srcWidth2) operand2 = SREG[n, srcWidth2];
 
     bits(64) result = (operand1 > operand2 ? operand1 : operand2);
-    SREG[d, dstWidth] = result;    
+    SREG[d, dstWidth] = result;
 ```
 
 ## 备注

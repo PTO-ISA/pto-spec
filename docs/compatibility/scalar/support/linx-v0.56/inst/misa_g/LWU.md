@@ -2,7 +2,7 @@
 
 ## 说明
 
-寄存器偏移·无符号字加载 (*Load Unsigned Word with Register Offset*)  
+寄存器偏移·无符号字加载 (*Load Unsigned Word with Register Offset*)
 以 **基址寄存器** 加 **偏移寄存器** 的结果为地址，从内存加载 `四个字节` 的数据并无符号扩展后写到目的寄存器中。偏移寄存器值可以有选择的进行移位和扩展。
 
 ## 汇编语法

@@ -12,7 +12,7 @@
 ---
 # Unsupported Block/Header Archive
 
-> **NON-NORMATIVE / UNSUPPORTED**  
+> **NON-NORMATIVE / UNSUPPORTED**
 > Every document in this directory is excluded from PTO ISA 0.58.0 public documentation and must not be used as assembler, decoder, ASL, encoding, or implementation input.
 
 本目录保留上一轮 DavinciOO-only PE-local header 草案，仅作为历史参考。

@@ -41,8 +41,8 @@
 
 ```c
     integer {m, sign1} = DecodeINT(SrcL);
-    integer {n, sign2} = DecodeINT(SrcR); 
-    integer {d, 64} = DecodeDst(RegDst); 
+    integer {n, sign2} = DecodeINT(SrcR);
+    integer {d, 64} = DecodeDst(RegDst);
 
     if sign1 != sign2 then undefined;
 
@@ -50,18 +50,18 @@
     bits(64) operand2 = SREG[n, 64];
     bits(64) result;
 
-    if sign1 == 0 then   
+    if sign1 == 0 then
         result = operand1 % (u) operand2;   // 无符号运算
-    else                  
+    else
         result = operand1 % (s) operand2;   // 有符号运算
-    
-    SREG[d, 64] = result;       
+
+    SREG[d, 64] = result;
 ```
 
 !!! note "注意"
-  
-    余数的符号与被除数的符号相同。  
-    如果发生除法溢出情况，余数等于"0"。  
+
+    余数的符号与被除数的符号相同。
+    如果发生除法溢出情况，余数等于"0"。
     如果发生除以零的情况，余数等于被除数。
 
 ## 备注

@@ -3,12 +3,13 @@
 <p>B.IOT 绑定 Matrix 的 Local source、显式 C/Bias、PostProcess Tile parameter，以及 D/RowMaxOut/GroupMaxOut。它不再表示 implicit ACC destination。</p>
 <h3 id="汇编语法">汇编语法</h3>
 <pre><code data-lang="asm">B.IOT SrcTile0, SrcTile1, mask=PE_MASK &lt;,last&gt;, -&gt;DstTile&lt;SIZE&gt;
-B.IOT SrcTile0, mask=PE_MASK, TSize=SIZE &lt;,last&gt;</code></pre>
-<p>第一种是普通 Local destination form；destination allocation size 只由 <code>-&gt;DstTile&lt;SIZE&gt;</code> 表达，不再重复书写 <code>TSize=SIZE</code>。第二种是 TMOV Local-to-Shared 的 source-only form：它没有 Local destination TReg，使用 <code>TSize=SIZE</code> 声明 Shared destination size。其他 one-source 与 no-source form 省略无效 source operand。v5 不存在 <code>.reuse</code> modifier。</p>
+B.IOT SrcTile0, mask=PE_MASK, TSize=SIZE &lt;,last&gt;
+B.IOT mask=PE_MASK, last</code></pre>
+<p>第一种是普通 Local destination form；destination allocation size 只由 <code>-&gt;DstTile&lt;SIZE&gt;</code> 表达，不再重复书写 <code>TSize=SIZE</code>。第二种是 TMOV Local-to-Shared 的 source-only form：它没有 Local destination TReg，使用 <code>TSize=SIZE</code> 声明 Shared destination size。第三种是 Shared TLOAD/TSTORE 的 optional mask-only companion；省略时 effective mask 为 <code>1111</code>。mask-only form 的 source、destination 和 TSize 编码必须全零。其他 one-source 与 no-source form 省略无效 source operand。v5 不存在 <code>.reuse</code> modifier。</p>
 <h3 id="v5-bit-level-编码">v5 Bit-level 编码</h3>
 <div class="table-wrap"><table><thead><tr><th>Bits</th><th>Field</th><th>Width</th><th>Fixed value</th></tr></thead><tbody><tr><td><code>[31:26]</code></td><td><code>SrcTile1</code></td><td>6</td><td></td></tr><tr><td><code>[25:20]</code></td><td><code>SrcTile0</code></td><td>6</td><td></td></tr><tr><td><code>[19]</code></td><td><code>last</code></td><td>1</td><td></td></tr><tr><td><code>[18:15]</code></td><td><code>PE_MASK</code></td><td>4</td><td></td></tr><tr><td><code>[14:12]</code></td><td><code>Func</code></td><td>3</td><td></td></tr><tr><td><code>[11:9]</code></td><td><code>TSize</code></td><td>3</td><td></td></tr><tr><td><code>[8:7]</code></td><td><code>DstTile</code></td><td>2</td><td></td></tr><tr><td><code>[6:4]</code></td><td><code>Opc1</code></td><td>3</td><td><code>1</code></td></tr><tr><td><code>[3:1]</code></td><td><code>Opcode</code></td><td>3</td><td><code>1</code></td></tr><tr><td><code>[0]</code></td><td><code>W</code></td><td>1</td><td><code>1</code></td></tr></tbody></table></div>
 <h3 id="字段">字段</h3>
-<p>Matrix logical operand 顺序由 Function 与 PostProcessConfig 固定。Local stream 移除所有已由 C.B.IOS 绑定的 Shared role；destination 顺序固定为 D、RowMaxOut、GroupMaxOut。PE_MASK 对 cooperative TMATMUL 固定 1111，对 TGEMV 仍选择独立 PE。</p>
+<p>Matrix logical operand 顺序由 Function 与 PostProcessConfig 固定。Local stream 移除所有已由 C.B.IOS 绑定的 Shared role；destination 顺序固定为 D、RowMaxOut、GroupMaxOut。Shared form 中 PE_MASK 是四位 quarter predicate： 允许多位，<code>0000</code> 是 no-op，selected quarter 保持固定 offset 而不 pack。</p>
 <h3 id="示例">示例</h3>
 <pre><code data-lang="asm">/* two Local inputs, one 4 KB logical output */
 B.IOT T#1, U#2, mask=1111, last, -&gt;T&lt;4KB&gt;
@@ -20,7 +21,11 @@ B.IOT T#1, mask=1111, last
 B.IOT T#1, mask=1100, TSize=4KB, last
 
 /* Shared-B CUBE: Shared prefix removes Right from Local stream */
-C.B.IOS S#17
-B.IOT T#1, mask=1111, last</code></pre>
+C.B.IOS S17
+B.IOT T#1, mask=1111, last
+
+/* Shared TLOAD/TSTORE quarter predicate; all non-mask fields are zero */
+B.IOT mask=0101, last</code></pre>
 <h3 id="合法性">合法性</h3>
-<ul><li>最后一条 B.IOT 必须设置 last。</li><li>D 和 auxiliary output 必须是 Local TReg destination。</li><li>普通 Local destination form 必须把 size 写在 <code>-&gt;DstTile&lt;SIZE&gt;</code> 中，不得同时书写 <code>TSize=SIZE</code>。</li><li>仅 TMOV Local-to-Shared source-only form 使用无 destination TReg 的 <code>TSize=SIZE</code> 语法。</li><li>source-only store 不显式书写 size；编码中的 <code>TSize=000</code> 表示 size 来自 source descriptor。</li><li>config 未启用的 Tile parameter/output 不得出现。</li><li>TGEMV 的所有 operand 都必须留在 Local B.IOT stream。</li><li>cooperative TMATMUL 不得重复编码已由 C.B.IOS 提供的 source。</li></ul></div></article></section></main></div><script src="assets/site.js"></script></body></html>
+<ul><li>最后一条 B.IOT 必须设置 last。</li><li>D 和 auxiliary output 必须是 Local TReg destination。</li><li>普通 Local destination form 必须把 size 写在 <code>-&gt;DstTile&lt;SIZE&gt;</code> 中，不得同时书写 <code>TSize=SIZE</code>。</li><li>仅 TMOV Local-to-Shared source-only form 使用无 destination TReg 的 <code>TSize=SIZE</code> 语法。</li><li>source-only store 不显式书写 size；编码中的 <code>TSize=000</code> 表示 size 来自 source descriptor。</li><li>config 未启用的 Tile parameter/output 不得出现。</li><li>TGEMV 的所有 operand 都必须留在 Local B.IOT stream。</li><li>cooperative TMATMUL 不得重复编码已由 C.B.IOS 提供的 source。</li><li>Shared TLOAD/TSTORE 最多一个 mask-only companion；没有 companion 等价于</li></ul>
+<p><code>mask=1111</code>，而 <code>mask=0000</code> 不访问 Shared 或 memory state。</p></div></article></section></main></div><script src="assets/site.js"></script></body></html>

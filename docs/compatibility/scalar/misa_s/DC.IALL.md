@@ -2,7 +2,7 @@
 
 ## 说明
 
-无效所有数据缓存(*Invalidate All Data Cache*)  
+无效所有数据缓存(*Invalidate All Data Cache*)
 在数据缓存 `Data Cache` 中无效化所有的缓存行。
 
 ## 汇编语法

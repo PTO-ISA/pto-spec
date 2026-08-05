@@ -14,12 +14,12 @@
 <h3 id="执行方式">执行方式</h3>
 <ul><li>解码输入参数：<span title="Legacy source link is not part of the public PTO ISA site">DecodeINT</span></li><li>解码输出参数：<span title="Legacy source link is not part of the public PTO ISA site">DecodeDst</span></li><li>标量寄存器读写：<span title="Legacy source link is not part of the public PTO ISA site">SREG[]</span></li><li>对数据符号扩展：<span title="Legacy source link is not part of the public PTO ISA site">SignExtend()</span></li></ul>
 <pre><code data-lang="c">    integer {m, 64} = DecodeINT(SrcL);
-    integer {d, 64} = DecodeDst(RegDst); 
+    integer {d, 64} = DecodeDst(RegDst);
     bits(64) operand = SREG[m, 64];
 
     bits(64) simm = SignExtend(simm12);
     bits(64) result = (operand == simm ? 1 : 0);
-    
+
     SREG[d, 64] = result;</code></pre>
 <h3 id="备注">备注</h3>
 <ol><li>本指令属于<a href="doc-compatibility-scalar-support-linx-v0.56-instset-longinstrs.html">超长指令扩展</a>，可用于向量数据块或访存数据块的块体内。</li><li>本指令的向量版本请见<span title="Legacy source link is not part of the public PTO ISA site">V.CMP.EQI</span>。</li></ol></div></article></section></main></div><script src="assets/site.js"></script></body></html>

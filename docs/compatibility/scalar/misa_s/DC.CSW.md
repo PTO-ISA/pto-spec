@@ -2,7 +2,7 @@
 
 ## 说明
 
-数据缓存清除缓存行(*Clean Data Cache by Set/Way*)  
+数据缓存清除缓存行(*Clean Data Cache by Set/Way*)
 在数据缓存 `Data Cache` 中将源寄存器中所表明的Set/Way对应的 `Cacheline` 写回到下一级高速缓存或主处理器中。
 
 ## 汇编语法

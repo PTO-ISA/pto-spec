@@ -21,8 +21,8 @@
 
     bits(64) address = R[m, datawidth];
     bits(64) operand = R[n, datawidth];
-    
-    if i == 0 then 
+
+    if i == 0 then
         remainNums = GQM[address].size();             //输出队列中剩余的单元数量
         R[d, datawidth] = remainNums;
     else

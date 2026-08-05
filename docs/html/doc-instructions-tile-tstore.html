@@ -19,16 +19,20 @@ B.IOR       a0, a1, 0</code></pre>
 <h3 id="shared-full-core-form">Shared Full/Core Form</h3>
 <p>The default Shared overload uses TLSU Function 1 and exactly one issuer. Size comes from the bound Shared descriptor; <code>B.IOR.RegDst</code> is zero.</p>
 <pre><code data-lang="asm">BSTART.TLSU TSTORE, FP16
-C.B.IOS     S#17
+C.B.IOS     S17
+B.IOT       mask=0101, last   /* optional */
 B.IOR       a0, a1, 0</code></pre>
 <h3 id="shared-partition-form">Shared Partition Form</h3>
-<p><code>TSTORE&lt;pe_scope&gt;</code> uses Function 12. Every PE in the Shared <code>defined_mask</code> writes its fixed region through its own pointer. The effective participant mask equals <code>defined_mask</code> and is not runtime-selectable.</p>
+<p><code>TSTORE&lt;pe_scope&gt;</code> uses Function 12. The optional mask-only B.IOT chooses fixed offset quarters; multiple bits are permitted and <code>0000</code> is a no-op. When B.IOT is absent the effective mask is <code>1111</code>.</p>
 <pre><code data-lang="asm">BSTART.TLSU TSTORE.SPART, FP16
-C.B.IOS     S#17
+C.B.IOS     S17
+B.IOT       mask=0101, last
 B.IOR       a0, a1, 0</code></pre>
 <h3 id="completion-and-ordering">Completion And Ordering</h3>
 <p>Shared store completion means the request has been accepted and the source has been captured or pinned. It does not mean another PE's later GM load must observe the data. Use <code>SYNCALL&lt;core_scope&gt;()</code> when a cross-PE GM happens-before relation is required.</p>
 <h3 id="约束与合法性">约束与合法性</h3>
-<ul><li>Bare Shared TSTORE is full/core and exactly-one issuer; <code>pe_scope</code> is the only partition form.</li><li>Partition pointers are independent per PE and all written byte ranges must be non-overlapping.</li><li>Full and partition Shared stores use zero <code>B.IOR.RegDst</code>; there is no runtime size or owner GPR.</li><li>A partial Shared value may be partition-stored but cannot be full-stored unless the full object is defined.</li><li>Source storage and scope are compile-time. Unsupported combinations are diagnostics, not runtime modes.</li><li>GM alignment, dtype, layout, shape, atomic and ordinary quantized-store rules remain PTO/target-specific.</li></ul>
+<ul><li>Bare Shared TSTORE is full/core and exactly-one issuer; <code>pe_scope</code> is the only partition form.</li><li>Partition pointers are independent per PE and all written byte ranges must be non-overlapping.</li><li>Full and partition Shared stores use zero <code>B.IOR.RegDst</code>; there is no runtime size or owner GPR.</li><li>Reading an uninitialized selected quarter is legal and produces an</li></ul>
+<p>undefined-register value without modifying the Shared descriptor.</p>
+<ul><li>Source storage and scope are compile-time. Unsupported combinations are diagnostics, not runtime modes.</li><li>GM alignment, dtype, layout, shape, atomic and ordinary quantized-store rules remain PTO/target-specific.</li></ul>
 <h3 id="lowering-摘要">Lowering 摘要</h3>
-<p>Local form emits distributed <code>B.IOT+B.IOR</code>. Shared full form proves one issuer and emits Function 1 with <code>C.B.IOS+B.IOR</code>. Partition form verifies static defined regions and non-overlap, then emits Function 12 on participating PE paths.</p></div></article></section></main></div><script src="assets/site.js"></script></body></html>
+<p>Local form emits <code>B.IOT+B.IOR</code>. Shared form emits source <code>C.B.IOS</code>, optional mask-only <code>B.IOT</code>, and <code>B.IOR</code>. Programs must prevent overlapping concurrent stores; the architecture provides no conflict detector or total order.</p></div></article></section></main></div><script src="assets/site.js"></script></body></html>

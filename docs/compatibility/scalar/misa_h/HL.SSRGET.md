@@ -5,7 +5,7 @@
 
 ## 说明
 
-读取系统寄存器(*System Status Register Get*)  
+读取系统寄存器(*System Status Register Get*)
 读取 **SSR-ID** 对应系统寄存器中的值并写到目的寄存器中。
 
 ## 汇编语法
@@ -49,7 +49,7 @@
 
 指令输出到块内t寄存器:
 ```asm
-hl.ssrget SSR-ID,           ->t 
+hl.ssrget SSR-ID,           ->t
 ```
 
 指令输出到块内u寄存器：

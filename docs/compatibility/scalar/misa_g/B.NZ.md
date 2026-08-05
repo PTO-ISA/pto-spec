@@ -5,7 +5,7 @@
 
 ## 说明
 
-非全零时跳转(*Branch if Not all Zeros*)  
+非全零时跳转(*Branch if Not all Zeros*)
 如果[P寄存器](../../register/common/pred.md)的**所有位不全都为0时**，跳转到当前`TPC`加上左移一位的立即数偏移指示的目标地址处；否则，顺序执行。
 
 ## 汇编语法
@@ -32,7 +32,7 @@
     bits(64) mask = P[63:0];
     bits(64) simm = SignExtend(simm22);
     bits(64) offset = simm << 1;
-    
+
     if mask != 0 then
         TPC += offset;
     else

@@ -5,7 +5,7 @@
 
 ## 说明
 
-有符号最大值(*Maximum*)  
+有符号最大值(*Maximum*)
 有符号比较左源操作数和右源操作数，将较大值写入到目的寄存器中。
 
 ## 汇编语法
@@ -36,7 +36,7 @@
     integer d = UInt(RegDst);
     integer m = UInt(SrcL);
     integer n = UInt(SrcR);
-    
+
     bits(64) operand1 = R[m, 64];
     bits(64) operand2 = R[n, 64];
 

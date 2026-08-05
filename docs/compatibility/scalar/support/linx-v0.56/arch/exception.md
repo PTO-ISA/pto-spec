@@ -64,7 +64,7 @@ BSTATE 中其他 T/U 等标量寄存器是否保存至内存及是否恢复，�
 BSTATE 中其他寄存器状态是否保存至Tile寄存器或内存及是否恢复，由操作系统自行决定。其中包括：
 
 - 可以通过调用 TSTORE 指令将所有或某一类Tile寄存器保存至内存；
-- 可以通过调用 ESAVE 模版块保存Group的TPC和LPR至Tile寄存器; 
+- 可以通过调用 ESAVE 模版块保存Group的TPC和LPR至Tile寄存器;
 - 可以通过调用 TSTORE 指令将ESAVE输出的Tile寄存器内容保存至内存。
 
 ## <span id="blockexception">异常与陷出</span>

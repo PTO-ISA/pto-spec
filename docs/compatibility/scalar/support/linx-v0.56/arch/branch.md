@@ -23,13 +23,13 @@
 
 使用场景：
 ```asm
-.block0: 
+.block0:
     BSTART.STD FALL
     inst0
     inst1
     ...
     instx
-.block1: 
+.block1:
     BSTART.SYS FALL  # 执行完.block0，顺序执行.block1
     ...
 ```
@@ -41,13 +41,13 @@
 
 使用场景：
 ```asm
-.block0: 
+.block0:
     BSTART.STD DIRECT, .block2
     inst0
     inst1
     ...
     instx
-.block1: 
+.block1:
     BSTART.SYS FALL
     ...
 .block2:
@@ -62,13 +62,13 @@
 
 使用场景：
 ```asm
-.block0: 
+.block0:
     BSTART.STD CALL, .block2   # 调用执行block2处程序
     setret .block1, ->ra       # 保存返回地址
     inst1
     ...
     instx
-.block1: 
+.block1:
     BSTART.SYS FALL
     ...
 .block2:
@@ -88,8 +88,8 @@
 
 使用场景：
 ```asm
-.block0: 
-    BSTART.STD COND, .block2   
+.block0:
+    BSTART.STD COND, .block2
     inst0
     setc.eq a0, t#1     # 判断a0和t#1是否相等，决定是否跳转到block2
     ...
@@ -109,7 +109,7 @@
 
 使用场景：
 ```asm
-.block0: 
+.block0:
     BSTART.STD IND
     inst0
     add a0, t#1, ->t
@@ -131,7 +131,7 @@
 
 使用场景：
 ```asm
-.block0: 
+.block0:
     BSTART.STD ICALL
     setret .block1, ->ra   # 保存返回地址
     add a0, t#1, ->t
@@ -153,7 +153,7 @@
 
 使用场景：
 ```asm
-.block0: 
+.block0:
     BSTART.STD RET
     inst0
     setc.tgt ra           # 设置返回地址

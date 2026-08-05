@@ -5,7 +5,7 @@
 
 ## 说明
 
-立即数无符号小于比较(*Compare with Immediate if Less Than by Unsigned*)  
+立即数无符号小于比较(*Compare with Immediate if Less Than by Unsigned*)
 无符号比较源操作数与立即数，如果源操作数小于立即数则结果为1，否则为0，结果写入目的寄存器中。
 
 ## 汇编语法

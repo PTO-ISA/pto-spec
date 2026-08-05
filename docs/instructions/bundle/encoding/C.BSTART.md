@@ -26,7 +26,7 @@
 ## 汇编语法
 
 ```asm
-    C.BSTART<.BlockType> BrType           
+    C.BSTART<.BlockType> BrType
     C.BSTART<.STD> {direct, call}, label
     C.BSTART<.STD> cond, label
 ```
@@ -37,7 +37,7 @@
 - **BrType**：该参数代表块指令的跳转方式，根据块类型不同可选类型也不同，具体见下表。
 - **label**：该参数代表跳转目标位置的标签，其相对于本指令的偏移距离除以2后编码于simm12字段。
 
-| BlockType | 支持的BrType | 
+| BlockType | 支持的BrType |
 |------------|-------------|
 | 标量块（.STD）  | fall, ind, icall, ret |
 | 系统块（.SYS）  | fall, ind, icall, ret |

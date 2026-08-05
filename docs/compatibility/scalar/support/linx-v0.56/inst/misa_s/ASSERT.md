@@ -1,7 +1,7 @@
 # ASSERT
 
 ## 说明
-断言指令(*Assertion instruction*)  
+断言指令(*Assertion instruction*)
 如果输入寄存器SrcL的值为0，则触发断言异常。该异常可以被自修复块捕获。
 
 ## 汇编语法

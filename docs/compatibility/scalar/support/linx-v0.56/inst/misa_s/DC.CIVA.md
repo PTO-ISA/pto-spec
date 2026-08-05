@@ -2,7 +2,7 @@
 
 ## 说明
 
-按虚拟地址清除并无效化数据缓存(*Clean and Invalidate Data Cache by Virtual Address*)  
+按虚拟地址清除并无效化数据缓存(*Clean and Invalidate Data Cache by Virtual Address*)
 将源寄存器中的虚拟地址在数据缓存 `Data Cache` 中所对应的缓存行 `Cacheline` 写回到下一级高速缓存或主处理器中，并标记该 `Cacheline` 无效。
 
 ## 汇编语法

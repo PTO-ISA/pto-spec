@@ -17,18 +17,20 @@ B.DIM       rCol, 0, -&gt;LB2
 B.IOT       T#1, mask=1111, last, -&gt;T&lt;4KB&gt;</code></pre>
 <p>It performs four asynchronous Local fragment moves under the ordinary distributed logical-Tile contract.</p>
 <h3 id="shared-modes">Shared Modes</h3>
-<div class="table-wrap"><table><thead><tr><th>Mode</th><th>TLSU Function</th><th>Direction</th><th>Size relation</th></tr></thead><tbody><tr><td>Insert</td><td>8</td><td>Local→Shared partial insert</td><td>Shared <code>S = L</code></td></tr><tr><td>Publish</td><td>9</td><td>Local→Shared publication</td><td>Shared <code>S = L</code></td></tr><tr><td>Broadcast</td><td>10</td><td>Shared→selected Local full payload</td><td>Local logical <code>L = 4S</code></td></tr><tr><td>Extract</td><td>11</td><td>Shared fixed region→Local</td><td>Local logical <code>L = S</code></td></tr></tbody></table></div>
-<p><code>L</code> is <code>B.IOT.TSize</code>; <code>S</code> is the Shared physical-version size. Insert/Publish require nonzero <code>TSize</code> even without a Local destination.</p>
+<div class="table-wrap"><table><thead><tr><th>Mode</th><th>TLSU Function</th><th>Direction</th><th>Size relation</th></tr></thead><tbody><tr><td>Insert</td><td>8</td><td>Local→Shared masked atomic update</td><td>Shared <code>S = L</code></td></tr><tr><td>Publish</td><td>9</td><td>Local→Shared masked atomic update</td><td>Shared <code>S = L</code></td></tr><tr><td>Broadcast</td><td>10</td><td>Shared→selected Local quarters</td><td>Local logical <code>L = S</code></td></tr><tr><td>Extract</td><td>11</td><td>Shared→selected Local quarters</td><td>Local logical <code>L = S</code></td></tr></tbody></table></div>
+<p><code>L</code> is <code>B.IOT.TSize</code>; <code>S</code> is the Shared descriptor size. Insert/Publish require nonzero <code>TSize</code> even without a Local destination.</p>
 <pre><code data-lang="asm">BSTART.TLSU TMOV.L2S.INSERT, FP16
-C.B.IOS     S#17
+C.B.IOS     -&gt; S17
 B.IOT       T#1, mask=1100, TSize=4KB, last
 
 BSTART.TLSU TMOV.S2L.BROADCAST, FP16
-C.B.IOS     S#17
-B.IOT       mask=1111, last, -&gt;T&lt;16KB&gt;</code></pre>
-<h3 id="version-semantics">Version Semantics</h3>
-<p>Insert/Publish create or complete a new Shared SSA/version with an immutable static <code>defined_mask</code>. Broadcast waits for a fully-defined version. Extract reads only the current PE's fixed region. A broadcast may leave equal Local payloads on multiple PEs, but this is not a <code>Replicated4</code> Tile type.</p>
+C.B.IOS     S17
+B.IOT       mask=0101, last, -&gt;T&lt;4KB&gt;</code></pre>
+<h3 id="register-semantics">Register Semantics</h3>
+<p>Insert/Publish perform atomic descriptor-plus-payload RMW. A partial first write establishes the descriptor; later partial writes require compatibility and preserve unselected quarters. Broadcast/Extract read selected fixed-offset quarters; uninitialized selected data follows undefined-register semantics.</p>
 <h3 id="约束与合法性">约束与合法性</h3>
-<ul><li>Shared→Shared TMOV is absent in v5; copy/transform through Local Tile.</li><li>Runtime mode, owner or size is illegal.</li><li>Partial Shared values may be moved or partition-stored but not used by CUBE compute or Broadcast.</li><li><code>PE_MASK</code> selects destination/local payloads but does not reduce Shared source-ready or collective participation requirements.</li><li>Shared IDs and versions are compiler-managed; C++ cannot specify <code>S#n</code>.</li><li><code>RecordEvent</code> is reused; there is no <code>SharedEvent</code>, and event completion is not a cross-PE GM fence.</li></ul>
+<ul><li>Shared→Shared TMOV is absent in v5; copy/transform through Local Tile.</li><li>Runtime mode, owner or size is illegal.</li><li><code>PE_MASK</code> is a four-bit quarter predicate; multiple bits are allowed and</li></ul>
+<p><code>0000</code> is a no-op.</p>
+<ul><li>Absolute Shared registers are compiler-managed; C++ cannot specify <code>Sx</code>.</li><li><code>RecordEvent</code> is reused; there is no <code>SharedEvent</code>, and event completion is not a cross-PE GM fence.</li></ul>
 <h3 id="lowering-摘要">Lowering 摘要</h3>
-<p>The verifier resolves operand storage and mode, derives static size/mask relations, allocates/binds a Shared version and emits Function 8–11 with <code>C.B.IOS+B.IOT</code>. The binder is consumed by the companion and never remains sticky.</p></div></article></section></main></div><script src="assets/site.js"></script></body></html>
+<p>The verifier resolves operand storage and mode, derives size/mask relations, allocates/binds an absolute Shared register and emits Function 8–11 with direction-correct <code>C.B.IOS+B.IOT</code>. The binder is consumed once.</p></div></article></section></main></div><script src="assets/site.js"></script></body></html>

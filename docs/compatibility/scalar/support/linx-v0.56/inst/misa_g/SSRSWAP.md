@@ -2,7 +2,7 @@
 
 ## 说明
 
-系统寄存器交换(*System Status Register Swap*)  
+系统寄存器交换(*System Status Register Swap*)
 该指令执行如下原子操作：读取 **SSR_ID** 指示的系统寄存器值写入目的寄存器，并将输入寄存器SrcL的值写入该系统寄存器中。
 
 本指令保证整个执行过程是原子的。

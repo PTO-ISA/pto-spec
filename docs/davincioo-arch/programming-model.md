@@ -49,9 +49,9 @@ Local T/U/M/N 是四个相互独立、深度为 16 的 producer-age window。目
 SharedTile<BaseTile>
 ```
 
-`SharedTile` 保留 BaseTile 的 shape/layout/role 描述符，但表示 Core-local Shared 存储。C++ 不暴露 Shared architectural ID、physical version、`defined_mask` 或 `ready_mask`。编译器分配 `S[0]..S[255]` 架构 ID，并管理 SSA 与 liveness；`S#n` 只出现在 PTO-AS、汇编、反汇编和调试界面中。
+`SharedTile` 保留 BaseTile 的 shape/layout/role 描述符，但表示 Core-local Shared 存储。每个 Core 有一组 `S0..S255`，由该 Core 的四个 PE 共享；不同 Core 的 bank 相互独立。C++ 不暴露 Shared architectural ID。编译器分配绝对 S register 并管理其 liveness；PTO-AS、汇编、反汇编和调试界面使用 `S0` 到 `S255`。
 
-Shared version 的 defined region 不可变，并按 region 跟踪 ready 状态。四个 region 全部 ready 后，fully-defined version 才原子可见。partial version 可以继续搬运或执行 partition store，但不能作为计算源。全部 reader 完成后，version 由硬件自动回收。
+每个 S register 持久保存 descriptor、payload 和四位 quarter initialization mask，直到 overwrite 或 Core reset。destination write 是 atomic read-modify-write；partial write 保留未选 quarter 并要求已有 descriptor compatible，`1111` 可替换 descriptor/payload，`0000` 是 no-op。读取 uninitialized state 合法，行为与读取 undefined register 相同且不修改 descriptor。
 
 CUBE 中 `Right` 和 `ScaleRight` 可以使用 Shared storage；cooperative TMATMUL 的 `Left`/`ScaleLeft` 也可以 Shared，但只能与 Shared `Right`/`ScaleRight` 成对使用。`Bias`、`Acc` 以及所有 output role 必须为 Local。
 
@@ -68,10 +68,9 @@ TMOV<SharedMoveMode::Broadcast>(localDst, sharedSrc);
 TMOV<SharedMoveMode::Extract>(localDst, sharedSrc);
 ```
 
-- `Insert` 把静态选中的 Local region 写入 partial Shared version。
-- `Publish` 按静态 producer mask 完成一个 Shared version。
-- `Broadcast` 把 fully-defined Shared payload 复制到选中的 Local destination；内容相同的 Local payload 不构成新的 Tile 类型。
-- `Extract` 把当前 PE 对应的固定 Shared region 复制到其 Local destination。
+- `Insert`/`Publish` 把 `PE_MASK` 选中的 Local quarter 原子写入 Shared register。
+- `Broadcast`/`Extract` 把 `PE_MASK` 选中的固定 Shared quarter 复制到 Local destination；未选 quarter 保持不变。
+- 多个 mask bit 可以同时为 1；selected quarter 不 pack，`0000` 不读写任何 payload。
 
 mode 必须在编译期给出。公开 API 不新增 `_SHARED` intrinsic family，也不提供 Shared→Shared TMOV。
 
@@ -79,9 +78,9 @@ mode 必须在编译期给出。公开 API 不新增 `_SHARED` intrinsic family�
 
 普通 `TLOAD/TSTORE` 接收完整 logical `GlobalTensor` 描述符；编译器结合 distribution 与 `thread_id` 推导各 PE fragment 地址。
 
-`TLOAD(shared, gm)` 是由恰好一个 PE 发起的完整 GM→Shared 操作。issuer 的指针指向整个 logical object；实现按每个 512 B stripe 自动拆成四个 128 B fragment，并创建一个 fully-defined Shared version。
+`TLOAD(shared, gm)` 支持 optional mask-only B.IOT。省略 companion 时 mask 为 `1111`；否则只传输 selected fixed-offset quarter，并以一次 atomic RMW 更新 Shared destination。
 
-`TSTORE(gm, shared)` 是默认的 full/core form，同样要求 exactly-one issuer。`TSTORE<pe_scope>(gm, shared)` 保存各参与 PE 对应的固定 defined region；每个 PE 提供独立指针，所有写入区间不得重叠。Shared store 完成只表示请求已接受且源已捕获或 pin 住，并不表示其他 PE 已能观察到 GM 内容。
+`TSTORE(gm, shared)` 同样接受 optional mask-only B.IOT；省略时读取四个 quarter。selected uninitialized bytes 产生 undefined-register value。不同 PE 可提供不同 tile offset，但程序必须保证并发区间不冲突。Shared store 完成只表示请求已接受且源已捕获或 pin 住，并不表示其他 PE 已能观察到 GM 内容。
 
 ## Inter-PE Local Movement
 

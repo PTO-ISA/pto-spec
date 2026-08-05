@@ -5,7 +5,7 @@
 
 ## 说明
 
-大于等于无符号比较(*Compare if Greater than or Equal by Unsigned*)  
+大于等于无符号比较(*Compare if Greater than or Equal by Unsigned*)
 首先可以有选择的对右源操作数 **截取低32位有符号或无符号扩展**，然后无符号比较左源操作数和右源操作数。如果左源操作数大于等于右源操作数则结果为1，否则为0，将结果写入目的寄存器。
 
 ## 汇编语法

@@ -13,7 +13,7 @@
 ## 汇编语法
 
 ```asm
-    c.ebreak imm 
+    c.ebreak imm
 ```
 
 其中，立即数imm的含义由操作系统定义。
@@ -29,9 +29,9 @@
    lui 20,         ->t
    addi a0, t#1,   ->t
    c.ldi [a1, 0],  ->t    <----- c.ebreak 0
-   ldi [a0, 8],    ->t                      
+   ldi [a0, 8],    ->t
    ldi [a1, 0],    ->u
-   add t#1, u#1,   ->u          
+   add t#1, u#1,   ->u
    BSTART/BSTOP
 ```
 

@@ -62,7 +62,7 @@ template <PostProcessConfig PP = PostProcessConfig::None, typename TileDst, type
 RecordEvent TMATMUL_BIAS(TileDst &d, TileA &a, TileB &b, TileBias &bias, PostProcessOperands<PP> &...ppOperands, WaitEvents &...events);
 ```
 
-Local form 使用 Local A/B，由 `PE_MASK` 选择相互独立的 PE。Cooperative form 固定四 PE 且 `PE_MASK=1111`：B 必须为 fully-defined Shared；A 可以全 Local 或全 Shared。Shared A 配 Local B 非法；MX 的 data/scale pair 不允许 mixed storage。API 不增加 `<core_scope>`，由 operand storage type 选择 form。
+Local form 使用 Local A/B。Cooperative form 的 `PE_MASK` 选择 Shared fixed-offset quarter；B 必须为 Shared，A 可以全 Local 或全 Shared。Shared A 配 Local B 非法；selected uninitialized data 采用 undefined-register semantics。
 
 `PostProcessConfig` 完整、静态地描述 PreQuant、ReLU、RowMax、GroupMax、RowMaxInit、MaxAbs、RMode 与 Sat。默认配置为 canonical None，但 lowering 仍发出一个 canonical `B.FPATR`。
 
@@ -100,7 +100,7 @@ B.FPATR     PreQuant.None, ReLU.None, RowMax.Off, GroupMax.Off, RowMaxInit.Off, 
 B.DIM       rM, 0, ->LB0
 B.DIM       rN, 0, ->LB1
 B.DIM       rK, 0, ->LB2
-C.B.IOS     S#right
+C.B.IOS     S17
 B.IOT       A, Bias, mask=1111, last, ->D<TSize>
 ```
 
@@ -113,8 +113,8 @@ B.FPATR     PreQuant.None, ReLU.None, RowMax.Off, GroupMax.Off, RowMaxInit.Off, 
 B.DIM       rM, 0, ->LB0
 B.DIM       rN, 0, ->LB1
 B.DIM       rK, 0, ->LB2
-C.B.IOS     S#left
-C.B.IOS     S#right
+C.B.IOS     S16
+C.B.IOS     S17
 B.IOT       Bias, mask=1111, last, ->D<TSize>
 ```
 
@@ -146,7 +146,7 @@ Shared-A form 在上述 binder 前追加 `Left`，完整顺序为 Left、Right�
 - D、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。
 - Cooperative form 中 C/D、RowMaxIn/Out、GroupMaxOut 为 MShard4；Bias、vector QuantParam、vector PReLU 是四 PE 上内容相同的完整 Local N-vector；scalar GPR 参数也必须在四 PE 上相等。
 - D 必须是显式 ordinary physical Local destination。
-- Cooperative TMATMUL 要求所有 Shared value fully-defined、四 PE 静态收敛并以相同动态顺序到达；该 rendezvous 不建立 GM ordering。
+- Cooperative TMATMUL 的 Shared read 不修改 descriptor/payload；并发 overlap 由程序避免，且该 rendezvous 不建立 GM ordering。
 - 一个 block 中最后一条 `B.IOT` 必须设置 `last`；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。
 - nondefault `AccPhase` 一律拒绝；K blocking 使用显式 `_ACC(D,C,...)`。
 

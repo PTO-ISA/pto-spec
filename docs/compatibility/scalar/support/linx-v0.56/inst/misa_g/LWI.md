@@ -2,7 +2,7 @@
 
 ## 说明
 
-立即数偏移·字加载 (*Load Word with Immediate Offset*)  
+立即数偏移·字加载 (*Load Word with Immediate Offset*)
 以 **基址寄存器** 加 **左移两位的有符号立即数偏移** 的结果为地址，从内存加载 `四个字节` 的数据并有符号扩展后写到目的寄存器中。
 
 ## 汇编语法
@@ -40,7 +40,7 @@
 
     bits(datawidth) address = baseAddr + (offset << 2);
     bits(datawidth) data = SignExtend(Mem[address][31:0]);
-    
+
     R[d, datawidth] = data;
 ```
 

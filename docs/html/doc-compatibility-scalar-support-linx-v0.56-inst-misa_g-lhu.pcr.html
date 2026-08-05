@@ -14,7 +14,7 @@
     bits(64) offset = SignExtend(simm17);
     bits(64) address = current_tpc + offset;        // current_tpc为当前指令TPC
     bits(64) data = ZeroExtend(Mem[address][15:0]);
-    
+
     R[d, 64] = data;</code></pre>
 <h3 id="汇编索引模式">汇编索引模式</h3>
 <pre><code data-lang="asm">lhu.pcr [symbol],    -&gt;t                /* 指令输出到块内t寄存器 */

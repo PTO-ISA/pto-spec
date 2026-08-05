@@ -2,7 +2,7 @@
 
 ## 说明
 
-立即数逻辑右移(*Shift Right Logical by Immediate*)  
+立即数逻辑右移(*Shift Right Logical by Immediate*)
 左源操作数逻辑右移（低位舍弃，高位补零）**shamt** 位，结果写到目的寄存器中。
 
 ## 汇编语法
@@ -65,4 +65,4 @@ srli u#1, shamt,          ->a3            /* 单寄存器相对索引 */
 
 ## 备注
 
-本指令属于[基础指令集](../../instset/baseInstrs.md)，可用于任意类型的块指令块体中。 
+本指令属于[基础指令集](../../instset/baseInstrs.md)，可用于任意类型的块指令块体中。

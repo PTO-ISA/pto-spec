@@ -1,7 +1,7 @@
 # TLB.IAV
 
 ## 说明
-清除指定ASID和虚拟地址的所有TLB数据(*Translation Lookaside Buffer, Invalidate by ASID and Virtual address*)  
+清除指定ASID和虚拟地址的所有TLB数据(*Translation Lookaside Buffer, Invalidate by ASID and Virtual address*)
 清除当前ACR翻译级别下，{SrcL}指定ASID和虚拟地址范围的TLB数据
 
 ## 汇编语法

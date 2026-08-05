@@ -2,7 +2,7 @@
 
 ## 说明
 
-寄存器偏移·存储字·前索引 (*Store Word with Register offset, Pre-index*)  
+寄存器偏移·存储字·前索引 (*Store Word with Register offset, Pre-index*)
 将数据寄存器的低位 `四个字节` 存入 **基址寄存器** 加 **左移两位的偏移寄存器** 计算得到的地址内存中，并将该地址写到目的寄存器中。偏移寄存器的值可以有选择的进行取低字有符号或无符号扩展。
 
 ## 汇编语法
@@ -113,4 +113,4 @@ hl.sw.pr a1, [a2, u#3.sw<<2]      ->a3          /* SrcR寄存器格式转换，�
 
 ## 备注
 
-本指令属于[增强指令扩展](../../instset/haflLongInstrs.md)，可用于任意类型的块指令块体中。 
+本指令属于[增强指令扩展](../../instset/haflLongInstrs.md)，可用于任意类型的块指令块体中。

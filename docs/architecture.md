@@ -7,7 +7,10 @@ faults, completion, ordering, and named conformance profiles. PTO ISA 0.58.0
 release identity and profile identity are separate machine-readable fields.
 
 PTO does not define vector instructions. Encodings and bundle forms that exist
-only to host vector execution are outside the accepted PTO ISA surface.
+only to host vector execution are outside the accepted PTO ISA surface. The six
+Linx-only two-level vector encodings reserved against future PTO allocation are
+listed exactly in `spec/catalog/linx-vector-reservations.json`; they are
+canonical release inputs but are not accepted PTO instructions.
 
 ## Accepted instruction surface
 
@@ -17,6 +20,7 @@ only to host vector execution are outside the accepted PTO ISA surface.
 | Bundle/command forms | 96 | bundle start, dimension, control, data, IO, hint, stop, and context forms |
 | Direct tile operations | 106 | 87 TEPL, 7 TMA, and 12 CUBE operations |
 | System registers | 72 | base, context, trap snapshot, translation, interrupt, and debug registers |
+| Linx-only vector reservations | 6 | reserved in PTO; executable only in Linx |
 
 Exact masks, matches, operand pieces, signedness, selector values, and
 constraints live in `spec/catalog/`. Generated ASL decoders bind those catalog
@@ -132,18 +136,23 @@ preserve sources and pre-attempt destination state. A source that aliases an
 explicit destination is read before the destination write and remains the
 newly produced destination after commit.
 
-PTO ISA 0.58.0 additionally exposes 256 Core-local Shared architectural IDs,
-`S#0` through `S#255`. Each ID names the current SharedTile version descriptor
-and payload together with an immutable four-region `defined_mask` and an
-internal `ready_mask`. A completed full producer makes all four regions ready
-atomically. Partial versions may be moved, extracted, or partition-stored, but
-full store, Broadcast, and cooperative CUBE consumers require a fully-defined
-version. Physical version numbers, reader counts, allocation capacity, and
-reclamation are implementation details; C.B.IOS binder state remains
-architecture-visible and trap-preserved until its companion consumes it.
-The executable ASL keeps eight simultaneously resident SharedTile versions;
-this is a verification-storage bound, analogous to `PTO_MODEL_MEMORY_BYTES`,
-and does not reduce the architectural `S#0` through `S#255` namespace.
+PTO ISA 0.58.0 additionally exposes 256 absolute Core-local Shared registers,
+`S0` through `S255`. Each core owns one bank shared by its four PEs; different
+cores have independent banks. Each register persists until overwritten or core
+reset and contains descriptor state, payload divided into four fixed-offset
+quarters, and a four-bit initialization mask. The compiler allocates S numbers;
+the C++ API does not expose physical Shared-register selection. C.B.IOS binder
+state remains architecture-visible and trap-preserved until its companion
+consumes it.
+
+A Shared destination is one atomic descriptor-plus-payload read-modify-write.
+`PE_MASK` selects fixed-offset quarters, permits multiple bits, and treats
+`0000` as a no-op. A partial first write establishes the descriptor; later
+partial writes require descriptor compatibility and preserve unselected
+quarters. A full `1111` write may replace descriptor and payload. Reads never
+modify state, and uninitialized data has undefined-register semantics without a
+trap. The architecture defines no order for conflicting concurrent accesses;
+programs must avoid overlap or synchronize explicitly.
 
 The ASL payload array is bounded by `PTO_MODEL_TILE_ELEMENTS` for executable
 verification. Descriptor capacity defines architectural legality; the ASL array
@@ -171,8 +180,9 @@ a logical type role, not an independent architectural register.
 
 TMATMUL Functions 0–2 accept Shared Right or ordered Shared Left,Right;
 Functions 4–6 accept Shared Right,ScaleRight or the complete ordered
-Left,ScaleLeft,Right,ScaleRight set. Every bound Shared version must be fully
-defined and every cooperative B.IOT uses `PE_MASK=1111`. TGEMV Functions
+Left,ScaleLeft,Right,ScaleRight set. `PE_MASK` predicates selected Shared
+quarters; selected uninitialized data has undefined-register semantics.
+TGEMV Functions
 16–18 and 20–22 reject every C.B.IOS binder.
 
 B.DATR compare, padding/byte-selection, saturation, canonicalization, DataType,

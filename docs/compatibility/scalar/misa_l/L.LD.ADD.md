@@ -45,7 +45,7 @@ l.ld.add<.{aq, rl, f, aqrl, aqf, rlf, aqrlf}> [SrcL<.ud>], SrcR.<T>, ->RegDst.d
 
 ```c
 integer {m, srcWidth1} = DecodeINT(SrcL);
-integer {n, srcWidth2} = DecodeINT(SrcR); 
+integer {n, srcWidth2} = DecodeINT(SrcR);
 integer {d, dstWidth} = DecodeDst(RegDst);
 
 Atomic {

@@ -1944,11 +1944,11 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "231f83ccb99ba52abe9cbd1466854ed0ac3893d432d7d27acf3e4e19c1094229"
+      "sha256": "58cb445f7a4bc690859f017db4e9ec7b054ab1c10d50773eb2d6cf3a2a87d94a"
     },
     {
       "path": "asl/types.asl",
-      "sha256": "934abcfe2d2ec70c029eb66bf8a7074236cb59511819ad8542b72b940b3272d3"
+      "sha256": "e23a59bfc8ae54b84b0ba06e5af4593b331fbf7f6ef45f901bcaa83f1d6e8f43"
     },
     {
       "path": "asl/numeric/formats.asl",
@@ -1960,15 +1960,15 @@
     },
     {
       "path": "asl/tile/state.asl",
-      "sha256": "20cfb564d6ad9a6d06db1cce4058d9c983e2d2cbf5b445bddd90c5b1725cc65f"
+      "sha256": "1d8f6a0a65e50eb71cddc3d7f28cf44175e0287b6b055bc6d42866b6ddaf98af"
     },
     {
       "path": "asl/tile/memory.asl",
-      "sha256": "e8a7656ce748ea43df15a43ecd2947bd6f19478537bb0522cad96a1fccbcf98b"
+      "sha256": "ddf64264ba57cec0dd3772b815b3fd3d0ff3899e7c447a60f1737862b9d1bb22"
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "689bb8fc5a953b994823c3a6b8b885b253ac9780904bf828099ec23d98dcfd0b"
+      "sha256": "6a3e8fe318bb85a632998caa14a3c158b727fa9bf059c56c7c4a50c4c8fe8f6e"
     },
     {
       "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",

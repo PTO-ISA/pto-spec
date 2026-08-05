@@ -2,7 +2,7 @@
 
 ## 说明
 
-立即数偏移·字加载 (*Load Word with Immediate Offset*)  
+立即数偏移·字加载 (*Load Word with Immediate Offset*)
 以 **基址寄存器值** 加 **左移两位后的有符号立即数偏移** 的结果为地址，从内存加载 `四个字节` 的数据并符号扩展后写到T寄存器。
 
 本指令的标准形式请见[LWI](../misa_g/LWI.md)。

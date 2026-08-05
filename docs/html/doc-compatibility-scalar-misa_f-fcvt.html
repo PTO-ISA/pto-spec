@@ -33,7 +33,7 @@
         when 2 then dstType = FP16;
         when 3 then dstType = FP8;
         otherwise undefined;        # 其他编码未定义
-        
+
     bits(64) operand = R[m, 64];
     bits(64) result = FPConvert(operand, srcType, dstType, rmode);
 
@@ -49,7 +49,7 @@ fcvt.d t#1.uw          /* 无符号整型转换为双精度浮点数 */
 fcvt.s a1.sw,-&gt;a2     /* 指令输出到私有寄存器 */
 fcvt.s t#1.sw,-&gt;a2    /* 指令输出到私有寄存器 */
 fcvt.d a1.sw,=&gt;a2     /* 指令输出到全局寄存器 */
-fcvt.d t#1.sw,=&gt;a2    /* 指令输出到全局寄存器 */ </code></pre>
+fcvt.d t#1.sw,=&gt;a2    /* 指令输出到全局寄存器 */</code></pre>
 <h3 id="舍入模式">舍入模式</h3>
 <p>此指令使用的舍入模式由系统寄存器<a href="doc-compatibility-scalar-support-linx-v0.56-register-ssr-cstate.html">CSTATE</a>的FRM字段决定，如果CSTATE中舍入模式是无效的，则使用默认的RNE模式。</p>
 <h3 id="备注">备注</h3>

@@ -50,7 +50,7 @@ logical Tile 的大小为 512 B–32 KB，始终包含四个等大的 128 B–8 
 v5 profile 保留 `TLOAD`、`TSTORE` 与 `TMOV` 名称：
 
 - GM↔Local 使用普通 distributed logical-Tile 合同。
-- GM→Shared 由 exactly-one issuer 发起，并创建 fully-defined Shared version。
+- GM→Shared 由 exactly-one issuer 发起，并原子更新 selected Shared register quarters。
 - Shared→GM 默认为 exactly-one full/core store；`TSTORE<pe_scope>` 使用各 PE 不重叠的指针保存固定 region。
 - Local↔Shared 使用 `TMOV<SharedMoveMode::{Insert,Publish,Broadcast,Extract}>`。
 - PE 间 Local Tile 搬运使用固定 Core4 collective `GMOV(dst, peer_tid, src)`；`peer_tid` 为 `0..3`，不提供 scope 重载。
@@ -62,7 +62,7 @@ v5 profile 保留 `TLOAD`、`TSTORE` 与 `TMOV` 名称：
 
 ## Synchronization
 
-Shared register RAW wait 只建立该 Shared version 的 producer-to-consumer ready 关系，并不是 GM fence。`SYNCALL<core_scope>()` 降低为 `FENCE.D.CORE4 RW,RW`，合并较老 scalar/TLSU/MTE GM access 的 release、固定四 PE rendezvous，以及较新 GM access 的 acquire ordering。无 scope 的 `SYNCALL()` 保留 PTO cross-core/device 语义，本 backend 不支持映射。
+Shared register RAW wait 只建立该 register 的 producer-to-consumer ready 关系，并不是 GM fence。`SYNCALL<core_scope>()` 降低为 `FENCE.D.CORE4 RW,RW`，合并较老 scalar/TLSU/MTE GM access 的 release、固定四 PE rendezvous，以及较新 GM access 的 acquire ordering。无 scope 的 `SYNCALL()` 保留 PTO cross-core/device 语义，本 backend 不支持映射。
 
 ## Instruction Families
 

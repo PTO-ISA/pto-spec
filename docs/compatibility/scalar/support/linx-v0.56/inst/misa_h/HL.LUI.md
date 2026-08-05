@@ -2,7 +2,7 @@
 
 ## 说明
 
-高位立即数加载(*Load Upper Immediate*)  
+高位立即数加载(*Load Upper Immediate*)
 将符号位扩展的 `32位` 立即数左移 `32位`，将低32位置零后写到目的寄存器中。
 
 本指令的标准版本请见[LUI](../misa_g/LUI.md)。

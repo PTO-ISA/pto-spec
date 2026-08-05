@@ -2,7 +2,7 @@
 
 ## 说明
 
-内存预取·写地址(*Prefetch with Address update*)  
+内存预取·写地址(*Prefetch with Address update*)
 由 **基址寄存器值** 加 **偏移寄存器值** 计算得到地址，将包含该地址的 Cache Line 预取到指定的 Cache 中，并将该地址写到目的寄存器中。偏移寄存器值可以有选择的进行移位和扩展。
 
 ## 汇编语法

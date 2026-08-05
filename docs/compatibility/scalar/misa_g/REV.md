@@ -5,7 +5,7 @@
 
 ## 说明
 
-翻转(*Reverse*)  
+翻转(*Reverse*)
 在源操作数的每个 `M` 位范围内以 `N` 位为单位进行高低位翻转，结果写到目的寄存器中。
 
 ## 汇编语法
@@ -42,7 +42,7 @@
     // 以下情况报非法指令
     if M isnot in range{2, 4, 8, 16, 32, 64} then Exception(EC_ILLEGAL);
     if N isnot in range{1, 2, 4, 8, 16, 32}  then Exception(EC_ILLEGAL);
-    if M <= N                                then Exception(EC_ILLEGAL);  
+    if M <= N                                then Exception(EC_ILLEGAL);
 
     bits(64) operand = R[s, 64];
     bits(64) result;

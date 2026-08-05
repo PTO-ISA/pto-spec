@@ -17,7 +17,7 @@
 <p>多维模型下，必须保证：</p>
 <ul><li>同一个Group内LC0的值必须是连续递增的；</li><li>同一个Group内LC1的值必须保持不变；</li><li>同一个Group内LC2的值必须保持不变；</li></ul>
 <p>该模型下，一个Tile块拆分出来的Group的数量计算公式为：</p>
-<pre><code data-lang="c++">if (LB0 % 64 &gt; 0) 
+<pre><code data-lang="c++">if (LB0 % 64 &gt; 0)
     innerNum = LB0 / 64 +1;
 else
     innerNum = LB0 / 64;

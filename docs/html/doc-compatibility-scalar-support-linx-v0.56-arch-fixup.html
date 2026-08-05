@@ -13,17 +13,17 @@
 <p>主动修复块主要用于简化参数检查的成本，示例如下：</p>
 <pre><code data-lang="asm">    # 假定本块的入口参数如下：
     # a0 - 数组地址; a1 - 数组下标
-    BSTART.STD FALL, .bar          # .bar 
+    BSTART.STD FALL, .bar          # .bar
     cmp.lti a1, ARRAY_SIZE, -&gt;t    # 检查a1的范围
     assert t#1                     # 如果assert失败，则跳转到.bar位置
     ld [a0, a1&lt;&lt;3],         -&gt;t    # 直接开始使用数组
-    ...                            
+    ...
 
     BSTART.STD RET
     add zero, 0,           -&gt;a0    # 返回成功
     setc.tgt ra
 
-.bar: 
+.bar:
     BSTART.STD RET
     add zero, 1,           -&gt;a0    # 返回错误
     setc.tgt ra

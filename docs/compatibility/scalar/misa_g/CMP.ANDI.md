@@ -5,7 +5,7 @@
 
 ## 说明
 
-立即数相与·比较(*Compare by And Immediate*)  
+立即数相与·比较(*Compare by And Immediate*)
 源操作数和有符号立即数执行按位与运算，结果为`非0`则将`1`写入目的寄存器，否则写入`0`。
 
 ## 汇编语法

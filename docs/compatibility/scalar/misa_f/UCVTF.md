@@ -5,7 +5,7 @@
 
 ## 说明
 
-无符号整数向浮点数转换(*Unsigned integer Convert to Floating-point*)  
+无符号整数向浮点数转换(*Unsigned integer Convert to Floating-point*)
 将输入寄存器中无符号整数转换为指定精度的浮点数，舍入模式由系统寄存器[CSTATE](../../register/ssr/CSTATE.md)确定，结果写入到目的寄存器中。
 
 ## 汇编语法
@@ -94,7 +94,7 @@ fcvt.d t#1.uw          /* 无符号整型转换为双精度浮点数 */
 fcvt.s a1.sw,->a2     /* 指令输出到私有寄存器 */
 fcvt.s t#1.sw,->a2    /* 指令输出到私有寄存器 */
 fcvt.d a1.sw,=>a2     /* 指令输出到全局寄存器 */
-fcvt.d t#1.sw,=>a2    /* 指令输出到全局寄存器 */ 
+fcvt.d t#1.sw,=>a2    /* 指令输出到全局寄存器 */
 ```-->
 
 ## 备注

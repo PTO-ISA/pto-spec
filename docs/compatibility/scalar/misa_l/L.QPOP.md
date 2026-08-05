@@ -36,7 +36,7 @@
 
 ```c
     integer {m, 64}  = DecodeINT(SrcL);
-    integer {d, 64} = DecodeDst(RegDst); 
+    integer {d, 64} = DecodeDst(RegDst);
 
     integer state;
     bit(64) data;

@@ -5,7 +5,7 @@
 
 ## 说明
 
-立即数偏移·双字加载 (*Load Doubleword with Immediate Offset*)  
+立即数偏移·双字加载 (*Load Doubleword with Immediate Offset*)
 以 **基址寄存器值** 加 **左移三位后的有符号立即数偏移** 的结果为地址，从内存加载 `八个字节` 的数据后写到T寄存器。
 
 本指令的标准形式请见[LDI](../misa_g/LDI.md)。

@@ -5,7 +5,7 @@
 
 ## 说明
 
-相等时置位提交(*Set Commit Argument if Equal*)  
+相等时置位提交(*Set Commit Argument if Equal*)
 当左源操作数等于右源操作数，在本块指令提交时，跳转到指定BPC。
 
 本指令的标准形式请见[SETC.EQ](../misa_g/SETC.EQ.md)

@@ -46,8 +46,8 @@
 
 ```c
     integer {m, srcWidth1, sign1} = DecodeINT(SrcL);
-    integer {n, srcWidth2, sign2} = DecodeINT(SrcR);  
-    integer {c, srcWidth3, sign3} = DecodeINT(SrcD); 
+    integer {n, srcWidth2, sign2} = DecodeINT(SrcR);
+    integer {c, srcWidth3, sign3} = DecodeINT(SrcD);
 
     bits(64) base = SREG[m, srcWidth1];
     bits(64) offset;

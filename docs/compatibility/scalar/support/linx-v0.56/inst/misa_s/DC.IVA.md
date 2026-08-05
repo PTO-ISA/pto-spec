@@ -2,7 +2,7 @@
 
 ## 说明
 
-按虚拟地址无效化数据缓存(*Invalidate Data Cache by Virtual Address*)  
+按虚拟地址无效化数据缓存(*Invalidate Data Cache by Virtual Address*)
 无效化源寄存器中虚拟地址在数据缓存 `Data Cache` 中对应的缓存行 `Cacheline`。
 
 ## 汇编语法
@@ -28,7 +28,7 @@ dc.iva u#1      /* 单寄存器相对索引 */
 ```
 
 !!! note "注意"
-    
+
     该指令可能造成未写回数据的丢失，软件应当慎重使用。一般场景下建议使用Clean&Invalidate。
     某些微架构实现允许直接将Invalidate视作Clean&Invalidate。
 

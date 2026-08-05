@@ -5,7 +5,7 @@
 
 ## 说明
 
-不等时置位提交(*Set Commit Argument if Not Equal with Immediate*)  
+不等时置位提交(*Set Commit Argument if Not Equal with Immediate*)
 如果源操作数不等于有符号立即数，在本块指令提交时，跳转到指定BPC。
 
 ## 汇编语法

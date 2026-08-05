@@ -5,7 +5,7 @@
 
 ## 说明
 
-立即数偏移·存双字(*Store Doubleword with Immediate Offset*)  
+立即数偏移·存双字(*Store Doubleword with Immediate Offset*)
 将源数据寄存器中低位 `四个字节` 存入目标地址指向的内存中，目标地址由 **基址寄存器值** 加 **左移两位的有符号立即数偏移** 计算得到。
 
 本指令的标准形式请见[SWI](../misa_g/SWI.md)。

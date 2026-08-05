@@ -21,7 +21,7 @@
 
     bits(64) address = baseAddr + (offset &lt;&lt; 2);
     bits(64) doubledata = Mem[address][63:0];
-    
+
     R[d0, 64] = ZeroExtend(doubledata[31:0]);
     R[d1, 64] = ZeroExtend(doubledata[63:32]);</code></pre>
 <h3 id="汇编索引模式">汇编索引模式</h3>

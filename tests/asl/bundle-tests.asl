@@ -150,6 +150,14 @@ begin
     return instruction;
 end;
 
+pure func BundleTestSharedMask(pe_mask: bits(4), last: boolean) => bits(64)
+begin
+    var instruction: bits(64) = Zeros{64} + 0x00006013;
+    instruction[18:15] = pe_mask;
+    instruction[19] = if last then '1' else '0';
+    return instruction;
+end;
+
 func BundleTestConfigureTile(index: TileIndex, data_type: TileDataType)
 begin
     ConfigureTile(index, 256, 1, 1, 1, 1, data_type,
@@ -656,7 +664,7 @@ begin
 end;
 
 // PTO-REQ-SHARED-TILE-001: decoded Shared TLSU companions create, consume,
-// move, and store versioned SharedTile state without adding tile identities.
+// move, and store persistent Shared-register state without adding tile identities.
 func TestBundleSharedTMAExecution()
 begin
     // GM-to-Shared uses C.B.IOS+B.IOR, with SharedTSize in RegDst[11:9].
@@ -678,12 +686,37 @@ begin
     let load_completed = ExecuteBundleTileOperation();
     assert load_completed;
     assert _BundleSharedBindings[[0]].consumed;
-    assert SharedTileVersionFullyDefined(Zeros{8} + 17);
+    assert SharedTileFullyInitialized(Zeros{8} + 17);
     assert SharedTileRecord(Zeros{8} + 17).tile.capacity_bytes == 512;
     assert SharedTileRecord(Zeros{8} + 17).tile.payload[[0]] ==
         Zeros{PTO_XLEN} + 0x2a;
 
-    // Full Shared store consumes only a fully-defined version.
+    // An optional mask-only B.IOT predicates fixed-offset quarters. An absent
+    // companion above means 1111; 0000 below is a true no-op that performs no
+    // memory access and does not initialize the Shared destination.
+    ResetProfileState();
+    WriteGPR(2, Zeros{PTO_XLEN} + 4096);
+    let zero_load_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('00000', Zeros{5} + 24), 32);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 1);
+    let zero_load_shared = ExecuteCommandInstruction(
+        BundleTestSharedBinding(Zeros{8} + 255), 16);
+    let zero_load_address = ExecuteCommandInstruction(
+        BundleTestScalarBinding('00100', '00010', '00000', '00000'), 32);
+    let zero_load_mask = ExecuteCommandInstruction(
+        BundleTestSharedMask(Zeros{4}, TRUE), 32);
+    assert zero_load_start == CommandExecution_Executed;
+    assert zero_load_shared == CommandExecution_Executed;
+    assert zero_load_address == CommandExecution_Executed;
+    assert zero_load_mask == CommandExecution_Executed;
+    let zero_load_completed = ExecuteBundleTileOperation();
+    assert zero_load_completed;
+    assert _LastFault == Fault_None;
+    assert !SharedTileRecord(Zeros{8} + 255).descriptor_valid;
+
+    // An unmasked Shared store reads all four quarters.
     ResetBundleControlState();
     WriteGPR(2, Zeros{PTO_XLEN} + 8);
     let store_start = ExecuteCommandInstruction(
@@ -699,8 +732,8 @@ begin
     assert store_completed;
     assert _Memory[[8]] == Zeros{8} + 0x2a;
 
-    // Publish creates a full version; Broadcast expands its Local capacity by
-    // Core4, while Extract preserves the Shared capacity.
+    // Publish creates a fully initialized register; both Shared-to-Local forms
+    // preserve descriptor size and apply PE_MASK as a quarter predicate.
     ResetProfileState();
     ConfigureTile(0, 512, 1, 1, 1, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
@@ -716,7 +749,7 @@ begin
     assert publish_local == CommandExecution_Executed;
     let publish_completed = ExecuteBundleTileOperation();
     assert publish_completed;
-    assert SharedTileVersionFullyDefined(Zeros{8} + 19);
+    assert SharedTileFullyInitialized(Zeros{8} + 19);
     assert !_Tiles[[0]].allocated;
 
     ResetBundleControlState();
@@ -725,14 +758,14 @@ begin
     let broadcast_shared = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 19), 16);
     let broadcast_destination = ExecuteCommandInstruction(
-        BundleTestTileDestinationV5('011', '01', '1111', TRUE), 32);
+        BundleTestTileDestinationV5('001', '01', '1111', TRUE), 32);
     assert broadcast_start == CommandExecution_Executed;
     assert broadcast_shared == CommandExecution_Executed;
     assert broadcast_destination == CommandExecution_Executed;
     let broadcast_completed = ExecuteBundleTileOperation();
     assert broadcast_completed;
     let broadcast_tile = _BundleTileBindings[[0]].destination;
-    assert _Tiles[[broadcast_tile]].capacity_bytes == 2048;
+    assert _Tiles[[broadcast_tile]].capacity_bytes == 512;
     assert ReadTileElement(broadcast_tile, 0, 0) ==
         Zeros{PTO_XLEN} + 11;
 
@@ -784,25 +817,25 @@ begin
     let insert_completed = ExecuteBundleTileOperation();
     assert insert_completed;
     assert _BundleSharedBindings[[0]].consumed;
-    assert SharedTileRecord(Zeros{8} + 23).defined_mask == '0001';
-    assert SharedTileRecord(Zeros{8} + 23).ready_mask == '0001';
-    assert !SharedTileVersionFullyDefined(Zeros{8} + 23);
+    assert SharedTileRecord(Zeros{8} + 23).initialized_mask == '0001';
+    assert !SharedTileFullyInitialized(Zeros{8} + 23);
     assert !_Tiles[[0]].allocated;
 
-    // Partial versions cannot Broadcast or full-store.
+    // A partial register may be read. Uninitialized quarters use
+    // undefined-register values rather than raising a fault.
     ResetBundleControlState();
     let partial_broadcast_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
     let partial_broadcast_shared = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 23), 16);
     let partial_broadcast_destination = ExecuteCommandInstruction(
-        BundleTestTileDestinationV5('011', '00', '1111', TRUE), 32);
+        BundleTestTileDestinationV5('001', '00', '0001', TRUE), 32);
     assert partial_broadcast_start == CommandExecution_Executed;
     assert partial_broadcast_shared == CommandExecution_Executed;
     assert partial_broadcast_destination == CommandExecution_Executed;
     let partial_broadcast_completed = ExecuteBundleTileOperation();
-    assert !partial_broadcast_completed;
-    assert _LastFault == Fault_TileLegality;
+    assert partial_broadcast_completed;
+    assert _LastFault == Fault_None;
 
     ResetBundleControlState();
     ClearFault();
@@ -812,12 +845,83 @@ begin
         BundleTestSharedBinding(Zeros{8} + 23), 16);
     let partial_store_address = ExecuteCommandInstruction(
         BundleTestScalarBinding('00000', '00010', '00000', '00000'), 32);
+    let partial_store_mask = ExecuteCommandInstruction(
+        BundleTestSharedMask('0001', TRUE), 32);
     assert partial_store_start == CommandExecution_Executed;
     assert partial_store_shared == CommandExecution_Executed;
     assert partial_store_address == CommandExecution_Executed;
+    assert partial_store_mask == CommandExecution_Executed;
     let partial_store_completed = ExecuteBundleTileOperation();
-    assert !partial_store_completed;
+    assert partial_store_completed;
+    assert _LastFault == Fault_None;
+
+    // A partial Local-to-Shared descriptor mismatch is rejected before the
+    // source lifetime or Shared record changes.
+    ResetBundleControlState();
+    ClearFault();
+    ConfigureTile(0, 512, 1, 2, 1, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 9);
+    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 10);
+    let mismatch_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('01000', Zeros{5} + 24), 32);
+    let mismatch_shared = ExecuteCommandInstruction(
+        BundleTestSharedBinding(Zeros{8} + 23), 16);
+    let mismatch_local = ExecuteCommandInstruction(
+        BundleTestTileBindingV5('001', '00', '0010', Zeros{6}, TRUE), 32);
+    assert mismatch_start == CommandExecution_Executed;
+    assert mismatch_shared == CommandExecution_Executed;
+    assert mismatch_local == CommandExecution_Executed;
+    assert !BundleSharedTMOVLocalSchemaLegal();
+    let mismatch_completed = ExecuteBundleTileOperation();
+    assert !mismatch_completed;
     assert _LastFault == Fault_TileLegality;
+    assert SharedTileRecord(Zeros{8} + 23).tile.columns == 1;
+    assert _Tiles[[0]].allocated;
+
+    // A zero-masked Local-to-Shared move is a true no-op: it neither updates
+    // the Shared record nor consumes the encoded last-use source lifetime.
+    let zero_insert_mask =
+        SharedTileRecord(Zeros{8} + 23).initialized_mask;
+    let zero_insert_value =
+        ReadSharedTileWord(Zeros{8} + 23, 0);
+    ResetBundleControlState();
+    ClearFault();
+    let zero_insert_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('01000', Zeros{5} + 24), 32);
+    let zero_insert_shared = ExecuteCommandInstruction(
+        BundleTestSharedBinding(Zeros{8} + 23), 16);
+    let zero_insert_local = ExecuteCommandInstruction(
+        BundleTestTileBindingV5('001', '00', Zeros{4}, Zeros{6}, TRUE), 32);
+    assert zero_insert_start == CommandExecution_Executed;
+    assert zero_insert_shared == CommandExecution_Executed;
+    assert zero_insert_local == CommandExecution_Executed;
+    let zero_insert_completed = ExecuteBundleTileOperation();
+    assert zero_insert_completed;
+    assert _LastFault == Fault_None;
+    assert _Tiles[[0]].allocated;
+    assert SharedTileRecord(Zeros{8} + 23).initialized_mask ==
+        zero_insert_mask;
+    assert ReadSharedTileWord(Zeros{8} + 23, 0) ==
+        zero_insert_value;
+
+    // A zero-masked Shared-to-Local move is a true no-op and therefore does
+    // not allocate its encoded Local destination.
+    ResetBundleControlState();
+    ClearFault();
+    let zero_extract_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('01011', Zeros{5} + 24), 32);
+    let zero_extract_shared = ExecuteCommandInstruction(
+        BundleTestSharedBinding(Zeros{8} + 23), 16);
+    let zero_extract_destination = ExecuteCommandInstruction(
+        BundleTestTileDestinationV5('001', '10', Zeros{4}, TRUE), 32);
+    assert zero_extract_start == CommandExecution_Executed;
+    assert zero_extract_shared == CommandExecution_Executed;
+    assert zero_extract_destination == CommandExecution_Executed;
+    let zero_extract_completed = ExecuteBundleTileOperation();
+    assert zero_extract_completed;
+    assert _LastFault == Fault_None;
+    assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
 
     // Function 12 is the accepted partition-store encoding variant.
     ResetBundleControlState();
@@ -863,7 +967,7 @@ begin
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 6);
     var right = _Tiles[[0]];
     right.payload[[0]] = Zeros{PTO_XLEN} + 7;
-    InstallSharedTileVersion(Zeros{8} + 31, right, '1111', '1111');
+    InstallSharedTile(Zeros{8} + 31, right, '1111');
     let start = ExecuteCommandInstruction(
         BundleTestCUBEStart('00000', Zeros{5} + 24), 32);
     let bind_right = ExecuteCommandInstruction(
@@ -888,8 +992,8 @@ begin
     var shared_right = _Tiles[[10]];
     shared_left.payload[[0]] = Zeros{PTO_XLEN} + 4;
     shared_right.payload[[0]] = Zeros{PTO_XLEN} + 5;
-    InstallSharedTileVersion(Zeros{8} + 40, shared_left, '1111', '1111');
-    InstallSharedTileVersion(Zeros{8} + 41, shared_right, '1111', '1111');
+    InstallSharedTile(Zeros{8} + 40, shared_left, '1111');
+    InstallSharedTile(Zeros{8} + 41, shared_right, '1111');
     let both_start = ExecuteCommandInstruction(
         BundleTestCUBEStart('00000', Zeros{5} + 24), 32);
     let bind_left = ExecuteCommandInstruction(
@@ -921,8 +1025,8 @@ begin
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(10, 0, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(11, 0, 0, Zeros{PTO_XLEN} + 1);
-    InstallSharedTileVersion(Zeros{8} + 42, _Tiles[[10]], '1111', '1111');
-    InstallSharedTileVersion(Zeros{8} + 43, _Tiles[[11]], '1111', '1111');
+    InstallSharedTile(Zeros{8} + 42, _Tiles[[10]], '1111');
+    InstallSharedTile(Zeros{8} + 43, _Tiles[[11]], '1111');
     let mx_two_start = ExecuteCommandInstruction(
         BundleTestNamedMxStart(4, Zeros{5} + 1), 32);
     let mx_bind_right = ExecuteCommandInstruction(
@@ -957,10 +1061,10 @@ begin
     WriteTileElement(11, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(12, 0, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(13, 0, 0, Zeros{PTO_XLEN} + 1);
-    InstallSharedTileVersion(Zeros{8} + 44, _Tiles[[10]], '1111', '1111');
-    InstallSharedTileVersion(Zeros{8} + 45, _Tiles[[11]], '1111', '1111');
-    InstallSharedTileVersion(Zeros{8} + 46, _Tiles[[12]], '1111', '1111');
-    InstallSharedTileVersion(Zeros{8} + 47, _Tiles[[13]], '1111', '1111');
+    InstallSharedTile(Zeros{8} + 44, _Tiles[[10]], '1111');
+    InstallSharedTile(Zeros{8} + 45, _Tiles[[11]], '1111');
+    InstallSharedTile(Zeros{8} + 46, _Tiles[[12]], '1111');
+    InstallSharedTile(Zeros{8} + 47, _Tiles[[13]], '1111');
     let mx_four_start = ExecuteCommandInstruction(
         BundleTestNamedMxStart(4, Zeros{5} + 1), 32);
     let mx_bind_left = ExecuteCommandInstruction(

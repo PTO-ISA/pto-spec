@@ -2,7 +2,7 @@
 
 ## 说明
 
-函数返回出口(*Function Exit and Return by Stack*)  
+函数返回出口(*Function Exit and Return by Stack*)
 本指令从栈中加载返回地址至 [BARG](../../register/common/barg.md).BPCN 域，更新栈指针后，从新栈指针指向的内存加载 8 字节数据至连续寄存器组。
 
 本指令用于函数出口的收栈操作(Function Epilogue)。
@@ -116,7 +116,7 @@ integer M = UInt(DstBegin), N = UInt(DstEnd);
 integer cnt2 = (M <= N ? (N - M + 1) : (23 - M + N))
 ```
 
-<!-- 
+<!--
 ## 模板块状态机实现
 
 模板块状态机执行F.RET块指令时会根据以下定义产生指令。

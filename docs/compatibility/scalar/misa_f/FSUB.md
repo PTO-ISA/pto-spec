@@ -5,7 +5,7 @@
 
 ## 说明
 
-浮点减(*Floating-point Subtract*)  
+浮点减(*Floating-point Subtract*)
 左源寄存器和右源寄存器中低/半/单/双精度浮点数相减，将结果写入到目的寄存器中。
 
 ## 汇编语法

@@ -5,7 +5,7 @@
 
 ## 说明
 
-立即数偏移无缩放·半字加载·后索引 (*Load Halfword with Unscaled Immediate Offset, Post-index*)  
+立即数偏移无缩放·半字加载·后索引 (*Load Halfword with Unscaled Immediate Offset, Post-index*)
 以 **基址寄存器** 的值为地址，从内存加载 `两个字节` 的数据并有符号扩展后写入第一个目的寄存器，**基址寄存器** 加 **有符号立即数偏移** 的结果写入第二个目的寄存器中。
 
 ## 汇编语法
@@ -48,7 +48,7 @@
 
     bits(64) data = SignExtend(Mem[address][15:0]);
     bits(64) newaddr = address + offset;
-    
+
     R[d0, 64] = data;
     R[d1, 64] = newaddr;
 ```

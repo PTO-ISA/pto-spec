@@ -1,7 +1,7 @@
 # TLB.IV
 
 ## 说明
-清除指定虚拟地址的TLB数据(*Translation Lookaside Buffer, Invalidate by Virtual address*)  
+清除指定虚拟地址的TLB数据(*Translation Lookaside Buffer, Invalidate by Virtual address*)
 清除当前ACR对应翻译级别下，由{SrcL}指定的虚拟地址范围内的TLB数据
 
 ## 汇编语法

@@ -5,7 +5,7 @@
 <p>普通 logical-Tile <code>TLOAD/TSTORE</code> 接收完整 <code>GlobalTensor</code> descriptor。编译器结合静态 distribution 与 <code>thread_id</code> 推导各 PE fragment 地址。Shared full load/store 则使用选定 issuer 的指针表示整个对象。Partition store 是例外：每个 PE 提供自己的指针，且各地址区间不得重叠。</p>
 <h3 id="completion-and-visibility">Completion and Visibility</h3>
 <p>operation event 根据对应 intrinsic 合同表示 issue/completion。对 Shared→GM，完成表示请求已经接受且 Shared source 已被捕获或 pin 住；它本身不保证另一个 PE 的后续 GM load 能观察到该数据。</p>
-<p>Shared RAW 只建立 Shared version readiness；<code>B.IOD</code> 只建立 block scheduling dependency。两者都不是 GM memory fence。</p>
+<p>Shared RAW 只建立 Shared register producer-to-consumer readiness；<code>B.IOD</code> 只建立 block scheduling dependency。两者都不是 GM memory fence。</p>
 <h3 id="core-scope-gm-ordering">Core-scope GM Ordering</h3>
 <p><code>SYNCALL&lt;core_scope&gt;()</code> 降低为 <code>FENCE.D.CORE4 RW,RW</code>。对每个 PE，该指令：</p>
 <ol><li>使较老的 scalar LSU 与 TLSU/MTE GM read/write 到达 release point；</li><li>为当前唯一的隐式 Core generation 登记 arrival；</li><li>等待 PE0–PE3 到达同一 dynamic barrier；</li><li>同时释放四个 PE；</li><li>在 acquire release 前阻止较新的 GM read/write 到达可观察点。</li></ol>

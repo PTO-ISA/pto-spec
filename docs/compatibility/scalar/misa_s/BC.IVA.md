@@ -2,7 +2,7 @@
 
 ## 说明
 
-按虚拟地址无效化块指令缓存(*Invalidate Block Cache by Virtual Address*)  
+按虚拟地址无效化块指令缓存(*Invalidate Block Cache by Virtual Address*)
 无效化源寄存器中虚拟地址在块指令缓存 `Block Header Cache` 中对应的缓存行。
 
 ## 汇编语法

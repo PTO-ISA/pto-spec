@@ -5,7 +5,7 @@
 
 ## 说明
 
-符号扩展半字(*Sign-extend Halfword*)  
+符号扩展半字(*Sign-extend Halfword*)
 将源寄存器的 **低16位** 进行有符号扩展，结果写入T寄存器队列。
 
 ## 汇编格式

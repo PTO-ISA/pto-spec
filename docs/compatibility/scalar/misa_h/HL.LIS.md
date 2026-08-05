@@ -5,7 +5,7 @@
 
 ## 说明
 
-有符号长立即数加载(*Load Signed Immediate*)  
+有符号长立即数加载(*Load Signed Immediate*)
 将 `32位` 长立即数有符号扩展后写到目的寄存器中。
 
 ## 汇编语法

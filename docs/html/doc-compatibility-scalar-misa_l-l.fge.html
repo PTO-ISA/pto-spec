@@ -13,8 +13,8 @@
 <h3 id="执行方式">执行方式</h3>
 <ul><li>解码源寄存器域：<span title="Legacy source link is not part of the public PTO ISA site">DecodeFP</span></li><li>解码输出参数：<span title="Legacy source link is not part of the public PTO ISA site">DecodeDst</span></li><li>标量寄存器读写：<span title="Legacy source link is not part of the public PTO ISA site">SREG[]</span></li></ul>
 <pre><code data-lang="c">    integer {m, srcType1} = DecodeFP(SrcL);
-    integer {n, srcType2} = DecodeFP(SrcR); 
-    integer {d, dstWidth} = DecodeDst(RegDst); 
+    integer {n, srcType2} = DecodeFP(SrcR);
+    integer {d, dstWidth} = DecodeDst(RegDst);
 
     if srcType1 != srcType2 then undefined;
 
@@ -22,7 +22,7 @@
     srcType2 operand2 = SREG[n, srcWidth2];
 
     bits(64) result = (operand1 &gt;= operand2 ? 1 : 0);
-    SREG[d, dstWidth] = result;   </code></pre>
+    SREG[d, dstWidth] = result;</code></pre>
 <p>!!! note &quot;注意！&quot;</p>
 <p>如果任意操作数是SNaN，该指令则触发无效操作异常。</p>
 <h3 id="备注">备注</h3>

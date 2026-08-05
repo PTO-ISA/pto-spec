@@ -15,17 +15,20 @@ B.DIM       rCol, 0, -&gt;LB2
 B.IOT       mask=1111, last, -&gt;T&lt;4KB&gt;
 B.IOR       a0, a1, 0</code></pre>
 <h3 id="gm-to-shared-full-form">GM-to-Shared Full Form</h3>
-<p>Exactly one statically selected PE issues the full operation using its GM pointer. The Core sequencer automatically divides each 512 B stripe into four 128 B regions and creates one fully-defined Shared version.</p>
+<p>The destination is one absolute Core-local Shared register. The transfer uses <code>PE_MASK</code> as a fixed-offset quarter predicate; omitting the optional mask-only B.IOT means <code>1111</code>, while <code>0000</code> performs no GM or Shared access.</p>
 <pre><code data-lang="asm">BSTART.TLSU TLOAD, FP16
 B.DIM       rValidCol, 0, -&gt;LB0
 B.DIM       rValidRow, 0, -&gt;LB1
 B.DIM       rCol, 0, -&gt;LB2
-C.B.IOS     S#17
+C.B.IOS     -&gt; S17
+B.IOT       mask=0101, last   /* optional */
 B.IOR       a0, a1, 0, -&gt;SharedTSize&lt;4KB&gt;</code></pre>
-<p><code>B.IOR.RegDst[11:9]</code> carries nonzero SharedTSize only in this schema. No <code>B.IOT</code> destination exists.</p>
+<p><code>B.IOR.RegDst[11:9]</code> carries nonzero SharedTSize only in this schema. B.IOT, if present, is mask-only: source, destination, and TSize fields are zero.</p>
 <h3 id="header-expansion">Header Expansion</h3>
 <div class="table-wrap"><table><thead><tr><th>Header</th><th>Role</th></tr></thead><tbody><tr><td><code>BSTART.TLSU</code></td><td>Function 0 and main dtype</td></tr><tr><td><code>B.DATR/B.DIM</code></td><td>pad/layout and ValidCol/ValidRow/Col</td></tr><tr><td><code>B.IOT</code></td><td>Local destination, logical TSize and PE mask</td></tr><tr><td><code>C.B.IOS</code></td><td>Shared destination ID for GM→Shared form</td></tr><tr><td><code>B.IOR</code></td><td>base, row stride and SharedTSize when applicable</td></tr></tbody></table></div>
 <h3 id="约束与合法性">约束与合法性</h3>
-<ul><li>Local and Shared destinations are distinguished by static type; no runtime storage switch is allowed.</li><li>Shared supports only the full exactly-one-issuer load; <code>TLOAD&lt;pe_scope&gt;</code>, partition load, gather/scatter and prefetch-to-Shared are illegal.</li><li>The issuer pointer addresses the full object; it is not a per-PE fragment pointer.</li><li>SharedTSize is 512 B–32 KB and cannot be implicit.</li><li>GM alignment, dtype, layout, shape and valid-region constraints remain those of PTO TLOAD and the TLSU target.</li><li><code>RecordEvent</code> completion controls operation readiness but is not a cross-PE GM visibility fence.</li></ul>
+<ul><li>Local and Shared destinations are distinguished by static type; no runtime storage switch is allowed.</li><li>Shared TLOAD updates selected quarters atomically. Partial writes to an</li></ul>
+<p>initialized Sx require descriptor compatibility; a partial first write establishes the descriptor and leaves unselected quarters uninitialized.</p>
+<ul><li>The issuer pointer addresses the full object; it is not a per-PE fragment pointer.</li><li>SharedTSize is 512 B–32 KB and cannot be implicit.</li><li>GM alignment, dtype, layout, shape and valid-region constraints remain those of PTO TLOAD and the TLSU target.</li><li><code>RecordEvent</code> completion controls operation readiness but is not a cross-PE GM visibility fence.</li></ul>
 <h3 id="lowering-摘要">Lowering 摘要</h3>
-<p>The verifier first resolves destination storage. Local form emits <code>B.IOT+B.IOR</code> on distributed PE paths. Shared form proves exactly one issuer, allocates a compiler-managed Shared ID/version and emits <code>C.B.IOS+B.IOR</code>. Hardware waits/captures according to the ordinary event contract and publishes the Shared version only after all defined regions are ready.</p></div></article></section></main></div><script src="assets/site.js"></script></body></html>
+<p>The verifier first resolves destination storage. Local form emits <code>B.IOT+B.IOR</code>. Shared form allocates a compiler-managed absolute S register and emits destination <code>C.B.IOS</code>, optional mask-only <code>B.IOT</code>, and <code>B.IOR</code>. The descriptor and selected payload quarters become visible at one atomic commit.</p></div></article></section></main></div><script src="assets/site.js"></script></body></html>

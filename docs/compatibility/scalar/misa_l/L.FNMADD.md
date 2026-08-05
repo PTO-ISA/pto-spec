@@ -39,8 +39,8 @@
 ```c
     integer {m, srcType1} = DecodeFP(SrcL);
     integer {n, srcType2} = DecodeFP(SrcR);
-    integer {a, srcType3} = DecodeFP(SrcA); 
-    integer {d, dstWidth} = DecodeDst(RegDst); 
+    integer {a, srcType3} = DecodeFP(SrcA);
+    integer {d, dstWidth} = DecodeDst(RegDst);
 
     if (srcType1 != srcType2 || srcType1 != srcType3) then undefined;
 

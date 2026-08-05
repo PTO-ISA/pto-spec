@@ -5,7 +5,7 @@
 
 ## 说明
 
-浮点数倒数(*Floating-point Reciprocal Value*)  
+浮点数倒数(*Floating-point Reciprocal Value*)
 取源寄存器中低/半/单/双精度浮点数的倒数，即用1.0除以这个浮点数后得到的近似结果，写入到目的寄存器中。
 
 ## 汇编语法
@@ -54,7 +54,7 @@ SrcType域编码如下：
 
     DataType operand = R[m, 64];
     bits(64) result = FRECIP(operand);
-    
+
     R[d, 64] = result;
 ```
 

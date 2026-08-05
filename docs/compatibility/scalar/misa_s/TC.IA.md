@@ -1,7 +1,7 @@
 # TLB.IA
 
 ## 说明
-清除指定ASID的TLB数据(*Translation Lookaside Buffer, Invalidate by ASID*)  
+清除指定ASID的TLB数据(*Translation Lookaside Buffer, Invalidate by ASID*)
 用来清除指定ASID（地址空间标识符，用于区分非全局的虚拟内存页）相关的TLB数据, 由{SrcL}指定ASID。
 
 ## 汇编语法

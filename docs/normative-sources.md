@@ -145,13 +145,13 @@ checks require every closed member to exist exactly once and require the stated
 class total to agree with the 474-form inventory.
 
 `noncomparable-oracle-coverage.json` is the generated, non-normative
-corroboration ledger for the exact 39 rows classified non-comparable by the
-693-row executable-model matrix. It keeps PTO semantic closure, independent
+corroboration ledger for the exact 32 rows classified non-comparable by the
+676-row executable-model matrix. It keeps PTO semantic closure, independent
 disposition closure, and independent executable parity separate. Every row has
 an orthogonal `oracle_coverage` grade and publication-safe evidence slots;
 decode/header/manifest evidence, missing tools, stale snapshots, timeouts,
 nonzero exits, duplicate or missing rows, and unreviewed results fail closed.
-The current ledger records 0/39 executable parity and does not alter any PTO
+The current ledger records 0/32 executable parity and does not alter any PTO
 classification, semantic rule, or S5-T2 numeric obligation.
 
 `scalar-agu-totality.json` is the Stage 4 address, completion, prefetch, alias,

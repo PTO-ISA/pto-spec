@@ -5,7 +5,7 @@
 
 ## 说明
 
-T寄存器逻辑左移立即数(*Shift Left Logical by Immediate*)  
+T寄存器逻辑左移立即数(*Shift Left Logical by Immediate*)
 将前序T队列中指令结果逻辑左移（低位补零，高位舍弃）立即数指示的位数，结果写到T寄存器队列。
 
 本指令的标准形式请见[SLLI](../misa_g/SLLI.md)。

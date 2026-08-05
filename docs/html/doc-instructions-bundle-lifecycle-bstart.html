@@ -3,7 +3,7 @@
 <blockquote>DavinciOO v5 发布 TEPL、TLSU、CUBE 和 programmable coupled SYS。SYS 仅允许 FALL；本页其他 SYS BrType 组合属于未在 v5 激活的 inherited encoding。<code>.PAR/.VEC</code>、<code>BSTART.VPAR</code> 和 <code>BSTART.VSEQ</code> 仍只作为 Linx inherited reference。</blockquote>
 <ul><li>第一种可以用于不同类型的块，并且支持全量跳转方式。</li><li>第二种仅用于标量块且跳转方式只能是DIRECT或CALL类型的，这种指令相比第一种可表达的跳转距离更远。</li><li>第三种仅用于标量块且跳转方式只能是COND类型的，跳转距离与第二种相同。</li></ul>
 <h3 id="汇编语法">汇编语法</h3>
-<pre><code data-lang="asm">    BSTART&lt;.BlockType&gt; BrType&lt;.label&gt;          
+<pre><code data-lang="asm">    BSTART&lt;.BlockType&gt; BrType&lt;.label&gt;
     BSTART&lt;.STD&gt; {direct, call}, label
     BSTART&lt;.STD&gt; cond, label</code></pre>
 <p>其中：</p>

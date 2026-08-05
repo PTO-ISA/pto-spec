@@ -2,7 +2,7 @@
 
 ## 说明
 
-内存写入(*Block Memory Set*)  
+内存写入(*Block Memory Set*)
 将某一块内存中的内容全部设置为指定字节的值。
 
 ## 汇编语法

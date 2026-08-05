@@ -5,7 +5,7 @@
 
 ## 说明
 
-小于时跳转(*Branch if Less Than by Signed*)  
+小于时跳转(*Branch if Less Than by Signed*)
 有符号比较两源操作数，如果左源操作数小于右源操作数时，跳转到当前`TPC`加上左移一位的立即数偏移指示的目标地址处；否则，顺序执行。
 
 ## 汇编语法

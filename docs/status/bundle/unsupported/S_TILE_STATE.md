@@ -12,7 +12,7 @@
 ---
 # Unused Linx S Tile State
 
-> **NON-NORMATIVE / UNSUPPORTED**  
+> **NON-NORMATIVE / UNSUPPORTED**
 > This document is not part of PTO ISA 0.58.0 and must not be used as assembler, decoder, ASL, encoding, or implementation input.
 
 本文保留 Linx `S` Tile state / `TS` scratch contract 的历史说明。当前 DavinciOO active PE-local intrinsic profile 不引入该 state，也不允许 `B.IOT.DstTile=5` 作为 active destination queue。

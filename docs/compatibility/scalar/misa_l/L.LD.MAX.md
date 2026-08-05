@@ -45,7 +45,7 @@ l.ld.max<.aq, .rl, .aqrl> [SrcL<.ud>], SrcL.<T>, ->RegDst.d
 
 ```c
 integer {m, srcWidth1, sign1} = DecodeINT(SrcL);
-integer {n, srcWidth2, sign2} = DecodeINT(SrcR); 
+integer {n, srcWidth2, sign2} = DecodeINT(SrcR);
 integer {d, dstWidth} = DecodeDst(RegDst);
 
 Atomic {
@@ -57,7 +57,7 @@ Atomic {
 
     if sign2 == 0 then
         newValue = (operand >(u) oldValue ? operand : oldValue);  // 无符号最大值
-    else 
+    else
         newValue = (operand >(s) oldValue ? operand : oldValue);  // 有符号最大值
 
     Mem[address] = newValue;

@@ -68,36 +68,42 @@ It performs four asynchronous Local fragment moves under the ordinary distribute
 
 | Mode | TLSU Function | Direction | Size relation |
 | --- | ---: | --- | --- |
-| Insert | 8 | Local→Shared partial insert | Shared `S = L` |
-| Publish | 9 | Local→Shared publication | Shared `S = L` |
-| Broadcast | 10 | Shared→selected Local full payload | Local logical `L = 4S` |
-| Extract | 11 | Shared fixed region→Local | Local logical `L = S` |
+| Insert | 8 | Local→Shared masked atomic update | Shared `S = L` |
+| Publish | 9 | Local→Shared masked atomic update | Shared `S = L` |
+| Broadcast | 10 | Shared→selected Local quarters | Local logical `L = S` |
+| Extract | 11 | Shared→selected Local quarters | Local logical `L = S` |
 
-`L` is `B.IOT.TSize`; `S` is the Shared physical-version size. Insert/Publish require nonzero `TSize` even without a Local destination.
+`L` is `B.IOT.TSize`; `S` is the Shared descriptor size. Insert/Publish require
+nonzero `TSize` even without a Local destination.
 
 ```asm
 BSTART.TLSU TMOV.L2S.INSERT, FP16
-C.B.IOS     S#17
+C.B.IOS     -> S17
 B.IOT       T#1, mask=1100, TSize=4KB, last
 
 BSTART.TLSU TMOV.S2L.BROADCAST, FP16
-C.B.IOS     S#17
-B.IOT       mask=1111, last, ->T<16KB>
+C.B.IOS     S17
+B.IOT       mask=0101, last, ->T<4KB>
 ```
 
-## Version Semantics
+## Register Semantics
 
-Insert/Publish create or complete a new Shared SSA/version with an immutable static `defined_mask`. Broadcast waits for a fully-defined version. Extract reads only the current PE's fixed region. A broadcast may leave equal Local payloads on multiple PEs, but this is not a `Replicated4` Tile type.
+Insert/Publish perform atomic descriptor-plus-payload RMW. A partial first write
+establishes the descriptor; later partial writes require compatibility and
+preserve unselected quarters. Broadcast/Extract read selected fixed-offset
+quarters; uninitialized selected data follows undefined-register semantics.
 
 ## 约束与合法性
 
 - Shared→Shared TMOV is absent in v5; copy/transform through Local Tile.
 - Runtime mode, owner or size is illegal.
-- Partial Shared values may be moved or partition-stored but not used by CUBE compute or Broadcast.
-- `PE_MASK` selects destination/local payloads but does not reduce Shared source-ready or collective participation requirements.
-- Shared IDs and versions are compiler-managed; C++ cannot specify `S#n`.
+- `PE_MASK` is a four-bit quarter predicate; multiple bits are allowed and
+  `0000` is a no-op.
+- Absolute Shared registers are compiler-managed; C++ cannot specify `Sx`.
 - `RecordEvent` is reused; there is no `SharedEvent`, and event completion is not a cross-PE GM fence.
 
 ## Lowering 摘要
 
-The verifier resolves operand storage and mode, derives static size/mask relations, allocates/binds a Shared version and emits Function 8–11 with `C.B.IOS+B.IOT`. The binder is consumed by the companion and never remains sticky.
+The verifier resolves operand storage and mode, derives size/mask relations,
+allocates/binds an absolute Shared register and emits Function 8–11 with
+direction-correct `C.B.IOS+B.IOT`. The binder is consumed once.

@@ -55,7 +55,7 @@ RqtType字段用于编码参数request_type。
     ldi [a0, 16], ->t
     mul t#1, t#2, ->t
     acrc SCT_SYS      <--- TPC
-    BSTART.STD        <--- NextBPC       
+    BSTART.STD        <--- NextBPC
     ...
 ```
 

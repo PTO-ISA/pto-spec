@@ -5,7 +5,7 @@
 
 ## 说明
 
-大于等于有符号比较(*Compare if Greater than or Equal by signed*)  
+大于等于有符号比较(*Compare if Greater than or Equal by signed*)
 首先可以有选择的对右源操作数 **截取低32位有符号或无符号扩展**，然后有符号比较两源操作数。如果左源操作数大于等于右源操作数则结果为1，否则为0，将结果写入目的寄存器。
 
 ## 汇编语法

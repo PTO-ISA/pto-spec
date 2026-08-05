@@ -5,7 +5,7 @@
 
 ## 说明
 
-立即数偏移·无符号半字加载 (*Load Unsigned Halfword with Immediate Offset*)  
+立即数偏移·无符号半字加载 (*Load Unsigned Halfword with Immediate Offset*)
 以 **基址寄存器** 加 **左移一位的有符号立即数偏移** 的结果为地址，从内存加载 `两个字节` 的数据并无符号扩展（即零扩展）后写到目的寄存器中。
 
 ## 汇编语法
@@ -44,7 +44,7 @@
 
     bits(datawidth) address = baseAddr + (offset << 1);
     bits(datawidth) data = ZeroExtend(Mem[address][15:0]);
-    
+
     R[d, datawidth] = data;
 ```
 

@@ -2,7 +2,7 @@
 
 ## 说明
 
-设置返回地址(*Set Return Address*)  
+设置返回地址(*Set Return Address*)
 立即数左移1位(低位置零)后与当前指令的`TPC`相加，结果写到ra寄存器中。
 
 ## 汇编语法

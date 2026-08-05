@@ -5,7 +5,7 @@
 
 ## 说明
 
-立即数小于置位提交(*Set Commit Argument if Less Than, Unsigned Immediate*)  
+立即数小于置位提交(*Set Commit Argument if Less Than, Unsigned Immediate*)
 无符号比较源操作数和立即数，如果源操作数小于立即数，在本块指令提交时，跳转到指定BPC。
 
 ## 汇编语法

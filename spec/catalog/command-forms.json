@@ -606,7 +606,7 @@
         {
           "field": "PE_MASK",
           "operator": "one-of",
-          "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+          "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
         },
         {
           "field": "TSize",
@@ -718,7 +718,7 @@
         {
           "field": "PE_MASK",
           "operator": "one-of",
-          "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+          "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
         }
       ],
       "encoding": [
@@ -795,7 +795,7 @@
         {
           "field": "PE_MASK",
           "operator": "one-of",
-          "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+          "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
         },
         {
           "field": "TSize",
@@ -919,7 +919,7 @@
         {
           "field": "PE_MASK",
           "operator": "one-of",
-          "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+          "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
         }
       ],
       "encoding": [
@@ -979,17 +979,18 @@
       "status": "accepted"
     },
     {
-      "asm": "B.IOT mask=PE_MASK, <last>, ->DstTile<TSize>",
+      "asm": "B.IOT mask=PE_MASK, <last> <, ->DstTile<TSize>>",
       "constraints": [
         {
           "field": "PE_MASK",
           "operator": "one-of",
-          "values": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+          "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
         },
         {
           "field": "TSize",
           "operator": "one-of",
           "values": [
+            0,
             1,
             2,
             3,
@@ -1075,7 +1076,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleTileIO",
-      "semantic_summary": "Binds v5 PE_MASK, ordered Local tile sources, last-use, and optional TSize/2-bit Local destination metadata; reuse bits do not exist.",
+      "semantic_summary": "Binds v5 PE_MASK, ordered Local tile sources, last-use, and optional TSize/2-bit Local destination metadata; TSize=DstTile=0 is the mask-only Shared TLOAD/TSTORE companion and PE_MASK=0000 is a legal no-op.",
       "status": "accepted"
     },
     {
@@ -3198,7 +3199,7 @@
       "status": "accepted"
     },
     {
-      "asm": "C.B.IOS SharedTID",
+      "asm": "C.B.IOS S<SharedTID> | C.B.IOS -> S<SharedTID>",
       "constraints": [],
       "encoding": [
         {
@@ -3229,7 +3230,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Shared Operand Binding",
       "semantic_handler": "BindBundleSharedIO",
-      "semantic_summary": "Binds one Shared tile ID for a cooperative CUBE operand schema; the binder is consumed once.",
+      "semantic_summary": "Binds one absolute core-private Shared register S0..S255; source or destination role is derived from the surrounding BSTART schema and the binder is consumed once.",
       "status": "accepted"
     },
     {

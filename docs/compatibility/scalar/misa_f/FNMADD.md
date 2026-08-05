@@ -5,7 +5,7 @@
 
 ## 说明
 
-浮点数乘加取负(*Floating-point Multiply-Add Negative*)  
+浮点数乘加取负(*Floating-point Multiply-Add Negative*)
 将第一个源寄存器和第二个源寄存器中的低/半/单/双精度浮点数相乘，用未舍入的积和第三个源寄存器中的低/半/单/双精度浮点数相加，将舍入后的结果取负后写入到目的寄存器中。
 
 ## 汇编语法

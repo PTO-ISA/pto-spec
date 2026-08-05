@@ -5,7 +5,7 @@
 
 ## 说明
 
-浮点数转换(*Floating-point Convert, rounding toward Minus infinity*)  
+浮点数转换(*Floating-point Convert, rounding toward Minus infinity*)
 将输入寄存器中浮点数转换为有符号或无符号整数，使用默认的 **RDN舍入模式**，结果写入到目的寄存器中。
 
 ## 汇编语法
@@ -78,7 +78,7 @@ DstType字段编码如下表：
         when 6 then dstType = INT16;
         when 7 then dstType = INT8;
         otherwise undefined;        # 其他编码未定义
-        
+
     bits(64) operand = R[m, 64];
     bits(64) result = FPConvert(operand, srcType, dstType, rmode);
 
@@ -99,7 +99,7 @@ fcvt.d t#1.uw          /* 无符号整型转换为双精度浮点数 */
 fcvt.s a1.sw,->a2     /* 指令输出到私有寄存器 */
 fcvt.s t#1.sw,->a2    /* 指令输出到私有寄存器 */
 fcvt.d a1.sw,=>a2     /* 指令输出到全局寄存器 */
-fcvt.d t#1.sw,=>a2    /* 指令输出到全局寄存器 */ 
+fcvt.d t#1.sw,=>a2    /* 指令输出到全局寄存器 */
 ```-->
 
 ## 备注

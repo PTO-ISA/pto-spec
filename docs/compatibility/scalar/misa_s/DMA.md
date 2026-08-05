@@ -31,7 +31,7 @@
 
     bits(64) src_address = R[l, 64];
     bits(64) dst_address = R[r, 64];
-    
+
     bits(512) data = Mem[src_address];
     Mem[dst_address] = data;
 ```

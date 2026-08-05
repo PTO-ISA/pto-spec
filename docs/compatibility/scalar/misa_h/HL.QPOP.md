@@ -5,7 +5,7 @@
 
 ## 说明
 
-出队列(*Pop from Queue*)  
+出队列(*Pop from Queue*)
 读出 SrcL 指定的GQM队列的数据输出到第一个目的寄存器并且将执行结果输出到第二个目的寄存器。
 
 ## 汇编语法
@@ -52,12 +52,12 @@
     integer d1 = UInt(RegDst1);
     integer m = UInt(SrcL);
     integer remainNums, state;
-    
+
     if b == 1 then
         GQM[address].notify();                         //同时向总线广播BWE通知，可唤醒所有处于等待状态的BWE事件
-    
+
     bits(64) result;                              //执行的结果
-    bits(64) data; 
+    bits(64) data;
 
     bits(64) address = R[m, 64];
     {remainNums, state, data} = GQM[address].pop();

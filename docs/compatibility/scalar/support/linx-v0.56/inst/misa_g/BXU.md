@@ -2,7 +2,7 @@
 
 ## 说明
 
-无符号位提取(*Bit eXtract Unsigned*)  
+无符号位提取(*Bit eXtract Unsigned*)
 从源操作数的第 `M` 位开始连续截取 `N` 位，无符号扩展后写到目的寄存器中。
 
 ## 汇编语法

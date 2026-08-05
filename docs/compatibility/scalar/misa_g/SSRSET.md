@@ -5,7 +5,7 @@
 
 ## 说明
 
-写入系统寄存器(*System Status Register Set*)  
+写入系统寄存器(*System Status Register Set*)
 将源寄存器中的值写到 **SSR-ID** 指示的系统寄存器中。
 
 ## 汇编语法

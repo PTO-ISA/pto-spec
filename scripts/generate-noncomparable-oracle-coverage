@@ -28,7 +28,7 @@ ORACLE_COVERAGE_GRADES = (
 # Reviewed lock over the exact non-comparable projection.  This is deliberately
 # independent of aggregate counts so a paired cross-classification swap fails.
 REVIEWED_NONCOMPARABLE_PROJECTION_SHA256 = (
-    "fd0daccd75a084b8a497aef1e1fd8b0aac3889873c4db2476b0d46e3adcbc160"
+    "3c84c50bccc25350f3cb342e9cfba38318ac28dd0da648ab97420eb66eeca20f"
 )
 
 CANDIDATE_COMMANDS = {
@@ -87,8 +87,8 @@ def validate_comparison(comparison: dict[str, Any]) -> list[dict[str, Any]]:
     if comparison.get("schema") != "pto.executable-model-comparison.v1":
         raise ValueError("unsupported executable-model comparison schema")
     rows = comparison.get("rows")
-    if not isinstance(rows, list) or len(rows) != 693:
-        raise ValueError("comparison must contain exactly 693 rows")
+    if not isinstance(rows, list) or len(rows) != 676:
+        raise ValueError("comparison must contain exactly 676 rows")
     stable_ids = [row.get("stable_id") for row in rows]
     if None in stable_ids or len(set(stable_ids)) != len(stable_ids):
         raise ValueError("comparison stable identities must be present and unique")
@@ -101,11 +101,11 @@ def validate_comparison(comparison: dict[str, Any]) -> list[dict[str, Any]]:
         for row in noncomparable
         if row.get("surface") == "direct-tile"
     )
-    if len(noncomparable) != 39:
-        raise ValueError("comparison must expose exactly 39 non-comparable rows")
-    if surface_counts != Counter({"scalar": 1, "command": 16, "direct-tile": 22}):
+    if len(noncomparable) != 32:
+        raise ValueError("comparison must expose exactly 32 non-comparable rows")
+    if surface_counts != Counter({"scalar": 1, "command": 13, "direct-tile": 18}):
         raise ValueError(f"non-comparable surface membership drift: {surface_counts}")
-    if family_counts != Counter({"CUBE": 13, "TMA": 9}):
+    if family_counts != Counter({"CUBE": 12, "TMA": 6}):
         raise ValueError(
             f"non-comparable direct-tile membership drift: {family_counts}"
         )
@@ -113,9 +113,9 @@ def validate_comparison(comparison: dict[str, Any]) -> list[dict[str, Any]]:
         comparison.get("summary", {})
         .get("classification_counts", {})
         .get("non-comparable")
-        != 39
+        != 32
     ):
-        raise ValueError("comparison summary does not agree with the 39-row membership")
+        raise ValueError("comparison summary does not agree with the 32-row membership")
     projection_sha256 = reviewed_projection_digest(noncomparable)
     if projection_sha256 != REVIEWED_NONCOMPARABLE_PROJECTION_SHA256:
         raise ValueError(
@@ -249,7 +249,7 @@ def build(comparison: dict[str, Any]) -> dict[str, Any]:
     )
     if readiness_counts != {
         "executable-path-absent-fail-closed": 14,
-        "executable-source-path-no-attributable-oracle": 15,
+        "executable-source-path-no-attributable-oracle": 8,
         "existing-exact-value-test-candidate": 10,
     }:
         raise ValueError(f"unexpected readiness partition: {readiness_counts}")
@@ -258,7 +258,7 @@ def build(comparison: dict[str, Any]) -> dict[str, Any]:
         "target": "S5-T3-independent-executable-parity",
         "status": "foundation-complete-parity-open",
         "authority": (
-            "PTO-owned ASL semantics and the 693-row disposition matrix remain authoritative. "
+            "PTO-owned ASL semantics and the 676-row disposition matrix remain authoritative. "
             "Oracle coverage is an orthogonal corroboration grade and cannot change a row classification."
         ),
         "oracle_coverage_grades": list(ORACLE_COVERAGE_GRADES),
@@ -282,36 +282,36 @@ def build(comparison: dict[str, Any]) -> dict[str, Any]:
         },
         "source_comparison": {
             "schema": comparison["schema"],
-            "row_count": 693,
-            "noncomparable_row_count": 39,
+            "row_count": 676,
+            "noncomparable_row_count": 32,
             "stable_identity_sha256": stable_identity_digest(noncomparable),
             "reviewed_projection_sha256": REVIEWED_NONCOMPARABLE_PROJECTION_SHA256,
         },
         "closure_layers": {
             "pto_semantic_closure": {
                 "status": "closed-by-pto-owned-asl-and-stage-4-evidence",
-                "row_count": 39,
+                "row_count": 32,
             },
             "independent_disposition_closure": {
                 "status": "closed:S5-T3",
-                "matrix_row_count": 693,
-                "noncomparable_row_count": 39,
+                "matrix_row_count": 676,
+                "noncomparable_row_count": 32,
             },
             "independent_executable_parity": {
                 "status": "open",
                 "closed_row_count": 0,
-                "required_row_count": 39,
+                "required_row_count": 32,
             },
         },
         "scope": {
-            "row_count": 39,
-            "surface_counts": {"scalar": 1, "command": 16, "direct-tile": 22},
-            "direct_tile_family_counts": {"CUBE": 13, "TMA": 9},
+            "row_count": 32,
+            "surface_counts": {"scalar": 1, "command": 13, "direct-tile": 18},
+            "direct_tile_family_counts": {"CUBE": 12, "TMA": 6},
         },
         "rows": rows,
         "summary": {
             "readiness_counts": readiness_counts,
-            "oracle_coverage_counts": {"none": 39},
+            "oracle_coverage_counts": {"none": 32},
             "independent_executable_parity_count": 0,
             "alternative_evidence_count": 0,
             "can_claim_independent_executable_parity": False,

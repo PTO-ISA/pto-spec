@@ -471,6 +471,58 @@ begin
     assert ReadTileElement(0, 0, 4) == Zeros{PTO_XLEN} + 1;
 end;
 
+// A missing TFMA dispatch or wrong source ordering changes 5 + 2 * 3 = 11.
+func TestTeplTfmaExactResult()
+begin
+    ResetProfileState();
+    ConfigureTeplTile(0, 1, 1, TileDataType_U64);
+    ConfigureTeplTile(1, 1, 1, TileDataType_U64);
+    ConfigureTeplTile(2, 1, 1, TileDataType_U64);
+    ConfigureTeplTile(3, 1, 1, TileDataType_U64);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 99);
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 5);
+    TFMA(0, 1, 2, 3);
+    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 11;
+end;
+
+// A wrong Philox round count, multiplier, lane order, or key update changes
+// this independently derived zero-key/zero-counter reference block.
+func TestTeplTrandomReferenceBlock()
+begin
+    ResetProfileState();
+    ConfigureTeplTile(0, 1, 4, TileDataType_U32);
+    TRANDOM(0, Zeros{PTO_XLEN}, Zeros{PTO_XLEN}, Zeros{PTO_XLEN}, FALSE);
+    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 0x6627e8d5;
+    assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN} + 0xe169c58d;
+    assert ReadTileElement(0, 0, 2) == Zeros{PTO_XLEN} + 0xbc57ac4c;
+    assert ReadTileElement(0, 0, 3) == Zeros{PTO_XLEN} + 0x9b00dbd8;
+end;
+
+// A wrong TSORT32 direction, comparison, or index permutation changes this
+// four-lane ascending result and its original-lane indices.
+func TestTeplTsort32ExactPermutation()
+begin
+    ResetProfileState();
+    ConfigureTeplTile(0, 1, 4, TileDataType_U64);
+    ConfigureTeplTile(1, 1, 4, TileDataType_U32);
+    ConfigureTeplTile(2, 1, 4, TileDataType_U64);
+    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(2, 0, 1, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(2, 0, 2, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(2, 0, 3, Zeros{PTO_XLEN} + 2);
+    TSORT32(0, 1, 2, FALSE);
+    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN} + 2;
+    assert ReadTileElement(0, 0, 2) == Zeros{PTO_XLEN} + 3;
+    assert ReadTileElement(0, 0, 3) == Zeros{PTO_XLEN} + 4;
+    assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(1, 0, 1) == Zeros{PTO_XLEN} + 3;
+    assert ReadTileElement(1, 0, 2) == Zeros{PTO_XLEN} + 2;
+    assert ReadTileElement(1, 0, 3) == Zeros{PTO_XLEN};
+end;
+
 func TestTeplTotality()
 begin
     TestTeplDecodedSelectorMatrix();
@@ -480,4 +532,7 @@ begin
     TestTeplIndexSortHistogramCorners();
     TestTeplInvalidIndexAndOffsetNoEffect();
     TestTeplMergeDuplicateOrdering();
+    TestTeplTfmaExactResult();
+    TestTeplTrandomReferenceBlock();
+    TestTeplTsort32ExactPermutation();
 end;

@@ -14,7 +14,7 @@
 <h3 id="执行方式">执行方式</h3>
 <ul><li>解码输入参数：<span title="Legacy source link is not part of the public PTO ISA site">DecodeINT</span></li><li>解码输出参数：<span title="Legacy source link is not part of the public PTO ISA site">DecodeDst</span></li><li>标量寄存器读写：<span title="Legacy source link is not part of the public PTO ISA site">SREG[]</span></li><li>对数据符号扩展：<span title="Legacy source link is not part of the public PTO ISA site">SignExtend()</span></li></ul>
 <pre><code data-lang="c">integer {m, srcWidth1} = DecodeINT(SrcL);
-integer {n, srcWidth2} = DecodeINT(SrcR); 
+integer {n, srcWidth2} = DecodeINT(SrcR);
 integer {d, dstWidth} = DecodeDst(RegDst);
 
 Atomic {
@@ -25,7 +25,7 @@ Atomic {
     bits(32) newValue = oldValue + operand;
 
     Mem[address] = newValue;
-    SREG[d, dstWidth] = SignExtend(oldValue, 64);    
+    SREG[d, dstWidth] = SignExtend(oldValue, 64);
 }</code></pre>
 <h3 id="注意事项">注意事项</h3>
 <ol><li>如果源寄存器位宽不满足本指令的要求，那么硬件不保证执行结果的正确性（执行结果不可知）。</li><li>如果源寄存器是向量寄存器，那么目的寄存器最终写入的值由实现定义。</li></ol>

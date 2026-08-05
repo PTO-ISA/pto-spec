@@ -14,7 +14,7 @@
 <pre><code data-lang="c">    bits(64) mask = P[63:0];
     bits(64) simm = SignExtend(simm22);
     bits(64) offset = simm &lt;&lt; 1;
-    
+
     if mask != 0 then
         TPC += offset;
     else

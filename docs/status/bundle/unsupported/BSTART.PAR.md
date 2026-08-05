@@ -15,7 +15,7 @@
 ---
 # BSTART.PAR
 
-> **NON-NORMATIVE / UNSUPPORTED**  
+> **NON-NORMATIVE / UNSUPPORTED**
 > This document is not part of PTO ISA 0.58.0 and must not be used as assembler, decoder, ASL, encoding, or implementation input.
 
 > Linx inherited reference / current profile boundary. DavinciOO v5 superscalar intrinsic 不发布可编程 parallel/vector block body，也不使用 `BSTART.PAR` 作为 tile/matrix/TLSU intrinsic 的 block start。

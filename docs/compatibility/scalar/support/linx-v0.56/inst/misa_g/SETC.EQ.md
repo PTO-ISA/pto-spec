@@ -2,7 +2,7 @@
 
 ## 说明
 
-相等时置位提交(*Set Commit Argument if Equal*)  
+相等时置位提交(*Set Commit Argument if Equal*)
 如果左源操作数等于右源操作数，在本块指令提交时，跳转到指定BPC。
 
 ## 汇编语法

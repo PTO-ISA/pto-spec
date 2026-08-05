@@ -5,7 +5,7 @@
 
 ## 说明
 
-浮点数以e为底的指数值(*Floating-point Exponential Value*)  
+浮点数以e为底的指数值(*Floating-point Exponential Value*)
 取源寄存器中低/半/单/双精度浮点数的以e为底的指数值，写入到目的寄存器中。
 
 ## 汇编语法

@@ -37,8 +37,8 @@
 
 ```c
     integer {m, srcWidth1} = DecodeINT(SrcL);
-    integer {n, srcWidth2} = DecodeINT(SrcR); 
-    integer {d, dstWidth} = DecodeDst(RegDst); 
+    integer {n, srcWidth2} = DecodeINT(SrcR);
+    integer {d, dstWidth} = DecodeDst(RegDst);
 
     bits(srcWidth1) address = SREG[m, srcWidth1];
     bits(srcWidth2) operand = SREG[n, srcWidth2];

@@ -627,21 +627,17 @@ type TileInfo of record {
     payload: TilePayload
 };
 
-// PTO-REQ-SHARED-TILE-001: S#0..S#255 name the current architectural
-// SharedTile versions. Physical version numbers and reader reclamation are
-// implementation details; the portable model exposes the bound descriptor,
-// payload, immutable definition domain, and per-region readiness.
+// PTO-REQ-SHARED-TILE-001: S0..S255 are absolute, core-private architectural
+// Shared registers. Each record is persistent descriptor-plus-payload state;
+// initialized_mask identifies the fixed-offset quarters whose payload has
+// been written. All four PEs in one core address the same 256 records.
 type SharedTileInfo of record {
-    valid: boolean,
-    shared_id: bits(8),
-    defined_mask: bits(4),
-    ready_mask: bits(4),
+    descriptor_valid: boolean,
+    initialized_mask: bits(4),
     tile: TileInfo
 };
 
-type SharedTileSlotIndex of integer {0..PTO_MODEL_SHARED_TILE_VERSIONS-1};
-type SharedTileSlotLookup of integer {0..PTO_MODEL_SHARED_TILE_VERSIONS};
-type SharedTileSnapshot of array [[PTO_MODEL_SHARED_TILE_VERSIONS]]
+type SharedTileSnapshot of array [[PTO_SHARED_TILE_COUNT]]
     of SharedTileInfo;
 
 type TrapContext of record {

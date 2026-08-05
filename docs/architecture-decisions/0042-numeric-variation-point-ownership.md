@@ -11,7 +11,8 @@ remain open.
 result to have a discoverable selector and a finite or mathematically testable
 allowed-result contract. The closed numeric inventory already assigns 108
 operations to 20 domains and 30 hooks, but it did not enumerate the individual
-open dimensions within those domains. That made it possible to discuss a
+open dimensions within those domains. In PTO ISA 0.58.0 that inventory contains
+104 operations, 18 domains, and 28 hooks. That made it possible to discuss a
 profile or hook without proving ownership of every unresolved result choice.
 
 The public PTO contract identifies target profiles and numeric variation but

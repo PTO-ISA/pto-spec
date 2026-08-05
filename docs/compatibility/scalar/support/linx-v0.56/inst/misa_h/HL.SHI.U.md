@@ -2,8 +2,8 @@
 
 ## 说明
 
-立即数偏移无缩放.存储半字(*Store Halfword with Unscaled Immediate Offset*)  
-将源数据寄存器中 `两个字节` 存入目标地址指向的内存中，目标地址由 **基址寄存器** 加 **有符号立即数偏移** 计算得到。 
+立即数偏移无缩放.存储半字(*Store Halfword with Unscaled Immediate Offset*)
+将源数据寄存器中 `两个字节` 存入目标地址指向的内存中，目标地址由 **基址寄存器** 加 **有符号立即数偏移** 计算得到。
 
 ## 汇编语法
 

@@ -36,12 +36,12 @@
 
 ```c
     integer {m, srcWidth} = DecodeFP(SrcL);
-    integer {d, dstWidth} = DecodeDst(RegDst); 
+    integer {d, dstWidth} = DecodeDst(RegDst);
 
     bits(srcWidth) operand = SREG[m, 64];
     bits(64) result = |operand|;
 
-    SREG[d, dstWidth] = result;       
+    SREG[d, dstWidth] = result;
 ```
 
 ## 备注

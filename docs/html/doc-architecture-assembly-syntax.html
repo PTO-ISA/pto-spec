@@ -9,45 +9,48 @@ B.IOT       T#1, T#3, mask=1111, last, -&gt;T&lt;4KB&gt;</code></pre>
 <h3 id="local-tile-operands">Local Tile Operands</h3>
 <p>Local operand 使用 6-bit T/U/M/N producer-age namespace。v5 不提供 <code>.reuse</code> 语法。destination size 表示 512 B–32 KB 的完整 logical Tile；每个 PE 获得四分之一 payload。</p>
 <pre><code data-lang="asm">B.IOT T#1, T#2, mask=1111, last, -&gt;M&lt;8KB&gt;</code></pre>
-<p>同一 block 内所有 <code>B.IOT</code> 必须使用相同且非零的 <code>PE_MASK</code>。<code>mask=1111</code> 表示四个 Local payload 都执行，但本身不会建立 rendezvous。</p>
+<p>同一 ordinary Local operation 内所有 <code>B.IOT</code> 使用相同的 <code>PE_MASK</code>。 Shared operation 把它作为四位 quarter predicate；多位可同时为 1， <code>mask=0000</code> 是 no-op，<code>mask=1111</code> 选择全部 quarter。mask 本身不建立 rendezvous。</p>
 <h3 id="shared-binders">Shared Binders</h3>
-<p>C.B.IOS S#n 是一次性 Shared operand binder。cooperative TMATMUL 由后续 Local B.IOT stream 按固定 role 顺序消费；Shared TLOAD/TSTORE 由 B.IOR 消费，Shared TMOV 由 B.IOT companion 消费：</p>
+<p>C.B.IOS 使用 absolute <code>S0..S255</code>，是一次性 Shared operand binder。source 写作 <code>C.B.IOS S17</code>，destination 写作 <code>C.B.IOS -&gt; S17</code>。cooperative TMATMUL 由后续 Local B.IOT stream 按固定 role 顺序消费；Shared TLOAD/TSTORE 由 B.IOR 消费，Shared TMOV 由 B.IOT companion 消费：</p>
 <pre><code data-lang="asm"># non-MX, Local A
-C.B.IOS S#right
+C.B.IOS S17
 
 # non-MX, Shared A
-C.B.IOS S#left
-C.B.IOS S#right
+C.B.IOS S16
+C.B.IOS S17
 
 # MX, Shared A pair
-C.B.IOS S#left
-C.B.IOS S#scale_left
-C.B.IOS S#right
-C.B.IOS S#scale_right</code></pre>
+C.B.IOS S16
+C.B.IOS S18
+C.B.IOS S17
+C.B.IOS S19</code></pre>
 <p>顺序由 Function 固定，所有 ID 必须不同。TGEMV 不允许任何 binder。</p>
 <h3 id="shared-gm-forms">Shared GM Forms</h3>
 <pre><code data-lang="asm">/* exactly-one GM -&gt; Shared full load */
 BSTART.TLSU TLOAD, FP16
-C.B.IOS     S#17
+C.B.IOS     -&gt; S17
+B.IOT       mask=0101, last   # optional; absent means 1111
 B.IOR       a0, a1, 0, -&gt;SharedTSize&lt;4KB&gt;
 
 /* exactly-one Shared -&gt; GM full store */
 BSTART.TLSU TSTORE, FP16
-C.B.IOS     S#17
+C.B.IOS     S17
+B.IOT       mask=0101, last   # optional; absent means 1111
 B.IOR       a0, a1, 0
 
 /* per-PE Shared partition store */
 BSTART.TLSU TSTORE.SPART, FP16
-C.B.IOS     S#17
+C.B.IOS     S17
+B.IOT       mask=0101, last
 B.IOR       a0, a1, 0</code></pre>
 <p>GM→Shared 把 <code>B.IOR.RegDst[11:9]</code> 解释为 <code>SharedTSize</code>，其中 <code>000</code> 非法。Shared store 要求整个 RegDst 字段为零。</p>
 <h3 id="shared-tmov-forms">Shared TMOV Forms</h3>
 <pre><code data-lang="asm">BSTART.TLSU TMOV.L2S.INSERT, FP16
-C.B.IOS     S#17
+C.B.IOS     -&gt; S17
 B.IOT       T#1, mask=1100, TSize=4KB, last
 
 BSTART.TLSU TMOV.S2L.BROADCAST, FP16
-C.B.IOS     S#17
+C.B.IOS     S17
 B.IOT       mask=1111, last, -&gt;T&lt;16KB&gt;</code></pre>
 <p>TLSU Function 8–11 分别选择 Insert、Publish、Broadcast 与 Extract；Function 12 选择 partition store。</p>
 <h3 id="coupled-sys-body">Coupled SYS Body</h3>

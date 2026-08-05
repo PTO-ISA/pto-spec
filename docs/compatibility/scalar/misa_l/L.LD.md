@@ -18,7 +18,7 @@
 
 - **local**：表示访问Tile寄存器的空间，缺省表示访问内存空间。
 - **SrcL**：基址寄存器，可以索引的寄存器类型请见[长指令介绍](../../blockIntro/vecinstrs/instIntro.md)。
-- **SrcR**：偏移寄存器，可以索引的寄存器类型请见[长指令介绍](../../blockIntro/vecinstrs/instIntro.md)。 
+- **SrcR**：偏移寄存器，可以索引的寄存器类型请见[长指令介绍](../../blockIntro/vecinstrs/instIntro.md)。
 - **shamt**：表示右源操作数逻辑左移位数，范围[0, 31]。左移0位默认缺省。
 - **T**：指定操作数的数据类型，可选参数根据寄存器类型不同而有所区别。
 - **->**：用于指示目的寄存器。
@@ -51,8 +51,8 @@
 
 ```c
     integer {m, srcWidth1, sign1} = DecodeINT(SrcL);
-    integer {n, srcWidth2, sign2} = DecodeINT(SrcR); 
-    integer {d, dstWidth} = DecodeDst(RegDst); 
+    integer {n, srcWidth2, sign2} = DecodeINT(SrcR);
+    integer {d, dstWidth} = DecodeDst(RegDst);
     integer shift_amount = UInt(shamt);
 
     bits(64) base = SREG[m, srcWidth1];
@@ -64,7 +64,7 @@
         offset = SignExtend(SREG[n, srcWidth2], 64);
 
     bits(64) address = base + (offset << shift_amount);
-    
+
     bits(64) data = Mem[address][63:0];
     SREG[d, dstWidth] = data;
 ```

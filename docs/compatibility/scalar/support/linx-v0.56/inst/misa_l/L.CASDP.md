@@ -2,7 +2,7 @@
 
 ## 说明
 
-原子比较交换·一对双字(*Compare and Swap Pair of Doubleword*)  
+原子比较交换·一对双字(*Compare and Swap Pair of Doubleword*)
 本指令执行如下的原子操作：从寄存器SrcL指定的内存位置连续加载两个`64位`数据，分别与寄存器SrcR0和SrcR1的值进行比较，如果相同的话，把寄存器SrcD0和SrcD1的值存入原内存中。不管前面比较的结果如何，都将从内存读取的两个`64位`数据分别写入两个目的寄存器中。
 
 ## 汇编语法

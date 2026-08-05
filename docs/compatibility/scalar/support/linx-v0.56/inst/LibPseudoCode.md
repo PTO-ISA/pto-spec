@@ -84,7 +84,7 @@ bits(width) SSRRD[integer index, integer width]
         return System_Register[0x0011]<width-1 : 0>;    // GP
     when index == 2
         return System_Register[0x0012]<width-1 : 0>;    // EBSTATEP
-    when index >=3 
+    when index >=3
         return 0;
 ```
 
@@ -206,7 +206,7 @@ bits(width) DecodeImm(bit N, bits(6) imms, bits(6) immr)
 
     for i = 0 to 6
         if x<i> == 1 then index += 2^i;     // 2^i：表示2的i次方
-    
+
     when x[9:7] == 000 : datatype = Unsigned INT64;
     when x[9:7] == 001 : datatype = Unsigned INT32;
     when x[9:7] == 010 : datatype = Unsigned INT16;
@@ -231,7 +231,7 @@ bits(width) DecodeImm(bit N, bits(6) imms, bits(6) immr)
 
     for i = 0 to 6
         if x<i> == 1 then index += 2^i;     // 2^i：表示2的i次方
-    
+
     when x[9:7] == 000 : datatype = FP64;
     when x[9:7] == 001 : datatype = FP32;
     when x[9:7] == 010 : datatype = FP16;
@@ -256,7 +256,7 @@ bits(width) DecodeImm(bit N, bits(6) imms, bits(6) immr)
 
     for i = 0 to 6
         if x<i> == 1 then index += 2^i;     // 2^i：表示2的i次方
-    
+
     when x[8:7] == 00 : datawidth = 64;
     when x[8:7] == 01 : datawidth = 32;
     when x[8:7] == 10 : datawidth = 16;
@@ -265,7 +265,7 @@ bits(width) DecodeImm(bit N, bits(6) imms, bits(6) immr)
     return {index, datawidth};
 ```
 
-<!-- 
+<!--
 
 ## 寄存器读写函数
 
@@ -302,7 +302,7 @@ bits(64) DecodeINT[bits(10) coding]
         when 11 then width =  8;
 
     bits(width) value = V[index, width];
-    if coding[9] == 0 then 
+    if coding[9] == 0 then
         return ZeroExtend(value);
     else
         return SignExtend(value);
@@ -386,7 +386,7 @@ V[integer index, integer dstwidth] = bits(width) value
     exponent;                                 // 指数部分
     fraction;                                 // 尾数部分
 
-    when type == fp64 : 
+    when type == fp64 :
         sign = value<63>;
         bits(11) exponent = value<62:52>;
         bits(52) fraction = value<51:0>;
@@ -458,7 +458,7 @@ bits(width) FRECIP(Type value, integer width)
             when fp32  then result<22> = 1;
             when fp64  then result<51> = 1;
         // 输入为发信非数，根据SSR寄存器的Enables位决定是否产生异常
-        ProcessException(InvalidOp, Enables);    
+        ProcessException(InvalidOp, Enables);
     else undefined;
 
     return result;

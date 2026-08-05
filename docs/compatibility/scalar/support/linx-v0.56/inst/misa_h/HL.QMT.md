@@ -2,7 +2,7 @@
 
 ## 说明
 
-队列维护指令(*Queue Management Transfer*)  
+队列维护指令(*Queue Management Transfer*)
 对SrcL指定的GQM队列进行管理和维护，使得通讯过程更加规范和高效，QMT指令通常用于在多处理器或多核之间传递数据或指令，确保消息的有序传递和处理。
 
 GQM队列的最大空间是 2^10 字节。
@@ -53,8 +53,8 @@ GQM队列的最大空间是 2^10 字节。
 
     bits(64) address = R[m, datawidth];
     bits(64) operand = R[n, datawidth];
-    
-    if i == 0 then 
+
+    if i == 0 then
         remainNums = GQM[address].size();             //输出队列中剩余的单元数量
         R[d, datawidth] = remainNums;
     else

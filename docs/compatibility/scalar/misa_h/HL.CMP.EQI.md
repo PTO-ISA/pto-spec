@@ -5,7 +5,7 @@
 
 ## 说明
 
-立即数相等比较(*Compare with Immediate if Equal*)  
+立即数相等比较(*Compare with Immediate if Equal*)
 比较左源操作数和有符号立即数，如果相等则结果为1，否则为0，结果写到目的寄存器中。
 
 ## 汇编语法

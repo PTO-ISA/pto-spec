@@ -42,23 +42,24 @@ The allowed row classifications are:
 - `intentional-extension`: PTO owns the operation without an independent
   equivalent.
 
-The current matrix classifies 693 rows:
+The current matrix classifies 676 rows:
 
 | Classification | Rows | Disposition |
 | --- | ---: | --- |
-| `comparable-match` | 557 | Stable scalar/command identities or tile selector/header patterns agree. |
-| `divergence` | 96 | 79 TEPL and 7 command rows record the issue-18/ADR-0045 0.57.1 ABI break; 10 command rows retain intentional pre-effect rejection. |
-| `non-comparable` | 39 | Independent evidence is decode-only, header-only, or lacks payload execution. |
-| `intentional-extension` | 1 | `TPRELU` is a PTO-owned TEPL extension. |
+| `comparable-match` | 556 | Stable scalar/command identities or tile selector/header patterns agree. |
+| `comparable-divergence` | 1 | `C.B.IOS` retains its encoding but intentionally replaces the historical compressed dimension meaning. |
+| `divergence` | 84 | 67 direct-tile and 7 command rows retain accepted ABI remaps; 10 command rows retain intentional pre-effect rejection. |
+| `non-comparable` | 32 | Independent evidence is decode-only, header-only, or lacks payload execution. |
+| `intentional-extension` | 3 | `BSTART.GMOV`, `GMOV`, and `TFMA` are PTO-owned extensions. |
 
 These classifications close an exhaustive **independent disposition** review,
 not independent executable parity. The orthogonal generated
 `spec/evidence/noncomparable-oracle-coverage.json` ledger preserves the exact
-39-row non-comparable membership and grades executable-oracle coverage without
+32-row non-comparable membership and grades executable-oracle coverage without
 changing any matrix classification. Its foundation partition is 10 existing
 exact-value candidates, 15 rows with a possible source path but no attributable
-oracle, and 14 rows with no executable path. All 39 currently have
-`oracle_coverage = none`, so independent executable parity is 0/39.
+oracle, and 14 rows with no executable path. All 32 currently have
+`oracle_coverage = none`, so independent executable parity is 0/32.
 
 The comparison explicitly records these model limits:
 
@@ -69,7 +70,7 @@ The comparison explicitly records these model limits:
   PTO-owned; the comparison neither defines their selector encoding nor
   proves equivalent warp-predicate execution.
 - PTO-v0 bundle commit binds only `destination0`, `source0`, and `source1`.
-  The bundle bridge can represent 62 TEPL, 1 TMA, and 4 CUBE direct operations;
+  The bundle bridge can represent 56 TEPL, 1 TMA, and 2 CUBE direct operations;
   other direct operations either use direct tile dispatch or reject at bundle
   commit before effects.
 - TEPL comparison records 18 comparable selector/pattern rows and 79 approved
@@ -95,8 +96,8 @@ Three closure layers therefore remain distinct:
 
 1. PTO semantic closure is supplied by PTO-owned ASL, legality, fault, state,
    and Stage 4 executable evidence.
-2. Independent disposition closure is the complete 693-row S5-T3 matrix.
-3. Independent executable parity is a separate 0/39 obligation for rows whose
+2. Independent disposition closure is the complete 676-row S5-T3 matrix.
+3. Independent executable parity is a separate 0/32 obligation for rows whose
    comparison evidence is currently decode-, header-, or manifest-only.
 
 Promoting the third layer requires a publication-safe per-row oracle identity,

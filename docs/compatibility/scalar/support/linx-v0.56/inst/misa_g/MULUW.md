@@ -2,7 +2,7 @@
 
 ## 说明
 
-无符号乘·字(*Multiply Word，Unsigned*)  
+无符号乘·字(*Multiply Word，Unsigned*)
 无符号计算左源操作数的低32位乘以右源操作数的低32位，结果取`低32位`无符号扩展后写到目的寄存器。
 
 ## 汇编语法
@@ -39,7 +39,7 @@
     bits(32) operand1 = R[m, 32];
     bits(32) operand2 = R[n, 32];
     bits(64) result = operand1 *(u) operand2;
-    
+
     R[d, datawidth] = ZeroExtend(result[31:0]);
 ```
 

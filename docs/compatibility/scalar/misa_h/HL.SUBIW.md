@@ -5,7 +5,7 @@
 
 ## 说明
 
-减立即数取字(*Substract Immediate, Word*)  
+减立即数取字(*Substract Immediate, Word*)
 左源操作数减无符号立即数，结果的`低32位`有符号扩展后写到目的寄存器中。
 
 ## 汇编语法

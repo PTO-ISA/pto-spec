@@ -5,7 +5,7 @@
 
 ## 说明
 
-相等时跳转(*Branch if Equal*)  
+相等时跳转(*Branch if Equal*)
 如果左源操作数与右源操作数相等，跳转到当前`TPC`加上左移一位的立即数偏移指示的目标地址处；否则，顺序执行。
 
 ## 汇编语法
@@ -38,7 +38,7 @@
     bits(64) operand2 = R[n, 64];
     bits(64) simm = SignExtend(simm12);
     bits(64) offset = simm << 1;
-    
+
     TPC += (operand1 == operand2 ? offset : 4);
 ```
 

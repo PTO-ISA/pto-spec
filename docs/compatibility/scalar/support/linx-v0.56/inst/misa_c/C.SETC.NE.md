@@ -2,7 +2,7 @@
 
 ## 说明
 
-不等时置位提交(*Set Commit Argument if Not Equal*)  
+不等时置位提交(*Set Commit Argument if Not Equal*)
 当左源操作数不等于右源操作数，在本块指令提交时，跳转到指定BPC。
 
 本指令的标准形式请见[SETC.NE](../misa_g/SETC.NE.md)

@@ -12,7 +12,7 @@
 ---
 # B.ITP
 
-> **NON-NORMATIVE / UNSUPPORTED**  
+> **NON-NORMATIVE / UNSUPPORTED**
 > This document is not part of PTO ISA 0.58.0 and must not be used as assembler, decoder, ASL, encoding, or implementation input.
 
 > Unused draft / historical reference. 当前 Linx-style active PE-local profile 不使用本 header；Tile operand binding 使用 `B.IOT`。

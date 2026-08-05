@@ -1,6 +1,6 @@
 # BSE
 
-发送事件(*Block Send Event*)  
+发送事件(*Block Send Event*)
 将左源寄存器中的控制信息写到MSGBCR寄存器。左源寄存器里存储着消息的控制信息，包括消息地址和消息种类，0为不发消息。
 
 本指令提交后当前块指令立即结束执行并提交，因此本指令必须是当前块内的最后一条指令。
@@ -29,7 +29,7 @@ static __inline__ void pushMsg(MessageControl *msgCtrl, UINT64 *data)
         "BSTART.SYS FALL\n"
         "B.CATR aqrl\n"
         "ldi [%1, 0],->t\n"
-        "ssrset t#1, 0x0831\n"   
+        "ssrset t#1, 0x0831\n"
         "ldi [%1, 8],->t\n"
         "ssrset t#1, 0x0832\n"
         "ldi [%1, 16],->t\n"

@@ -5,7 +5,7 @@
 
 ## 说明
 
-立即数乘减(*Multiply and Subtract with Immediate*)  
+立即数乘减(*Multiply and Subtract with Immediate*)
 左源寄存器 减去 右源寄存器 与 无符号立即数的乘积，结果的`低64位`写到目的寄存器中。
 
 ## 汇编语法

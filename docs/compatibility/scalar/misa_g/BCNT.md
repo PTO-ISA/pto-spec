@@ -5,7 +5,7 @@
 
 ## 说明
 
-计数置位位数(*Count set Bits*)  
+计数置位位数(*Count set Bits*)
 计数源操作数的第 **M** 位开始连续 **N** 位的范围内 **置位为1** 的位数，结果写到目的寄存器中。
 
 ## 汇编语法
@@ -41,7 +41,7 @@
 
     bits(64)  operand = R[s, 64];
     bits(64)  result = 0;
-    bits(128) newoperand = (operand << 64) | operand; 
+    bits(128) newoperand = (operand << 64) | operand;
 
     foreach (i from 0 to (N-1) by 1 in dec) {
         if newoperand[M+i] == 1 then result++;

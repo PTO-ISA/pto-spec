@@ -5,7 +5,7 @@
 
 ## 说明
 
-立即数与置位提交(*Set Commit Argument by And Immediate*)  
+立即数与置位提交(*Set Commit Argument by And Immediate*)
 如果源操作数和有符号立即数执行按位与的结果为非0，在本块指令提交时，跳转到指定BPC。
 
 ## 汇编语法

@@ -5,7 +5,7 @@
 
 ## 说明
 
-入队列(*Push to Queue*)  
+入队列(*Push to Queue*)
 GQM提供了跨核的原子操作队列管理能力，QPUSH指令把SrcR的数据写到SrcL指定的GQM队列中，将执行结果写入到目的寄存器。
 
 ## 汇编语法
@@ -52,7 +52,7 @@ GQM提供了跨核的原子操作队列管理能力，QPUSH指令把SrcR的数�
 
     bits(datawidth) address = R[m, datawidth];
     bits(datawidth) operand = R[n, datawidth];
-    
+
     if h == 1 then
         {remainNums, state} = GQM[address].push_front(operand);   //push到队首，否则默认push到队尾
     else
@@ -60,7 +60,7 @@ GQM提供了跨核的原子操作队列管理能力，QPUSH指令把SrcR的数�
 
     if b == 1 then
         GQM[address].notify();                                     //同时向总线广播BWE通知，可唤醒所有处于等待状态的BWE事件
-    
+
     bits(datawidth) result;                                          //执行的结果
     result[9:0] = remainNums;                                       //表示写入后队列中的剩余单元数。
     result[63:62] = state;                                          //0表示写入成功，1表示队列满，2表示数据破坏，3保留。

@@ -70,18 +70,22 @@ B.IOR       a0, a1, 0
 
 ## GM-to-Shared Full Form
 
-Exactly one statically selected PE issues the full operation using its GM pointer. The Core sequencer automatically divides each 512 B stripe into four 128 B regions and creates one fully-defined Shared version.
+The destination is one absolute Core-local Shared register. The transfer uses
+`PE_MASK` as a fixed-offset quarter predicate; omitting the optional mask-only
+B.IOT means `1111`, while `0000` performs no GM or Shared access.
 
 ```asm
 BSTART.TLSU TLOAD, FP16
 B.DIM       rValidCol, 0, ->LB0
 B.DIM       rValidRow, 0, ->LB1
 B.DIM       rCol, 0, ->LB2
-C.B.IOS     S#17
+C.B.IOS     -> S17
+B.IOT       mask=0101, last   /* optional */
 B.IOR       a0, a1, 0, ->SharedTSize<4KB>
 ```
 
-`B.IOR.RegDst[11:9]` carries nonzero SharedTSize only in this schema. No `B.IOT` destination exists.
+`B.IOR.RegDst[11:9]` carries nonzero SharedTSize only in this schema. B.IOT, if
+present, is mask-only: source, destination, and TSize fields are zero.
 
 ## Header Expansion
 
@@ -96,7 +100,9 @@ B.IOR       a0, a1, 0, ->SharedTSize<4KB>
 ## 约束与合法性
 
 - Local and Shared destinations are distinguished by static type; no runtime storage switch is allowed.
-- Shared supports only the full exactly-one-issuer load; `TLOAD<pe_scope>`, partition load, gather/scatter and prefetch-to-Shared are illegal.
+- Shared TLOAD updates selected quarters atomically. Partial writes to an
+  initialized Sx require descriptor compatibility; a partial first write
+  establishes the descriptor and leaves unselected quarters uninitialized.
 - The issuer pointer addresses the full object; it is not a per-PE fragment pointer.
 - SharedTSize is 512 B–32 KB and cannot be implicit.
 - GM alignment, dtype, layout, shape and valid-region constraints remain those of PTO TLOAD and the TLSU target.
@@ -104,4 +110,7 @@ B.IOR       a0, a1, 0, ->SharedTSize<4KB>
 
 ## Lowering 摘要
 
-The verifier first resolves destination storage. Local form emits `B.IOT+B.IOR` on distributed PE paths. Shared form proves exactly one issuer, allocates a compiler-managed Shared ID/version and emits `C.B.IOS+B.IOR`. Hardware waits/captures according to the ordinary event contract and publishes the Shared version only after all defined regions are ready.
+The verifier first resolves destination storage. Local form emits
+`B.IOT+B.IOR`. Shared form allocates a compiler-managed absolute S register and
+emits destination `C.B.IOS`, optional mask-only `B.IOT`, and `B.IOR`. The
+descriptor and selected payload quarters become visible at one atomic commit.

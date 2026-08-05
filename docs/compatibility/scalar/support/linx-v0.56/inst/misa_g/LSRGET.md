@@ -2,7 +2,7 @@
 
 ## 说明
 
-读取块内状态寄存器(*Local Status Register, Get*)  
+读取块内状态寄存器(*Local Status Register, Get*)
 读取LSR_ID指定的块参数寄存器[BARG](../../register/common/barg.md)某个字段的内容到目的寄存器中。
 
 ## 汇编语法

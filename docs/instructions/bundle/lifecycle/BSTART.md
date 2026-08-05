@@ -26,7 +26,7 @@
 ## 汇编语法
 
 ```asm
-    BSTART<.BlockType> BrType<.label>          
+    BSTART<.BlockType> BrType<.label>
     BSTART<.STD> {direct, call}, label
     BSTART<.STD> cond, label
 ```

@@ -2,7 +2,7 @@
 
 ## 说明
 
-立即数异或(*Exclusive-OR Immediate*)  
+立即数异或(*Exclusive-OR Immediate*)
 左源操作数和有符号立即数按位异或，结果写到目的寄存器中。
 
 ## 汇编语法

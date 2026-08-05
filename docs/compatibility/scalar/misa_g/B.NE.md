@@ -5,7 +5,7 @@
 
 ## 说明
 
-不等时跳转(*Branch if Not Equal*)  
+不等时跳转(*Branch if Not Equal*)
 如果左源操作数与右源操作数不相等，跳转到当前`TPC`加上左移一位的立即数偏移指示的目标地址处；否则，顺序执行。
 
 ## 汇编语法
@@ -64,7 +64,7 @@ b.ne u#1, u#2, label     /* 双寄存器相对索引 */
 
 本指令属于[基础指令集](../../instset/baseInstrs.md)，可用于向量Tile块、并行Tile块和访存Tile块的块体中。
 
-<!-- 
+<!--
 !!! info 块内跳转限制
 
 	块内跳转目前不能跳出块指令标定的范围【TPC.START】和【TPC.START + BSize * 4】。块指令的最后一条指令为【TPC.START + BSize * 4】所指的指令。

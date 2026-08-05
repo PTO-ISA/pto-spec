@@ -40,16 +40,16 @@
 
 ```c
     integer {m, 64} = DecodeINT(SrcL);
-    integer {n, 64} = DecodeINT(SrcR); 
-    integer {c, 64} = DecodeINT(SrcP); 
-    integer {d, 64} = DecodeDst(RegDst); 
+    integer {n, 64} = DecodeINT(SrcR);
+    integer {c, 64} = DecodeINT(SrcP);
+    integer {d, 64} = DecodeDst(RegDst);
 
     bits(64) operand1 = SREG[m, 64];
     bits(64) operand2 = SREG[n, 64];
     bits(64) condition = SREG[c, 64];
     bits(64) result = (condition != 0 ? operand1 : operand2);
-    
-    SREG[d, 64] = result;     
+
+    SREG[d, 64] = result;
 ```
 
 ## 备注

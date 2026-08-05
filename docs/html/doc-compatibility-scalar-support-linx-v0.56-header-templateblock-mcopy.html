@@ -157,7 +157,7 @@ else
         // 如果前一阶段的最后一步，有完整8字节的数据写出，那么剩余未写出的数据目前在t#2寄存器中且不在低位，所以需要将寄存器中有效数据右移至低位；
         // 如果前一阶段的最后一步，没有完整8字节的数据写出，那么剩余未写出的数据目前在t#1寄存器中且在低位，所以不需要移位。
         if(vld == 1){
-            // if(srcAddr[2:0] &lt; dstAddr[2:0]) imm = 64 - (dstAddr[2:0] - srcAddr[2:0]) * 8; 
+            // if(srcAddr[2:0] &lt; dstAddr[2:0]) imm = 64 - (dstAddr[2:0] - srcAddr[2:0]) * 8;
             // if(srcAddr[2:0] &gt; dstAddr[2:0]) imm = (srcAddr[2:0] - dstAddr[2:0]) * 8;
             generate(srli t#2, imm, -&gt;t);
         }

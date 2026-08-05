@@ -20,12 +20,12 @@
     integer d1 = UInt(RegDst1);
     integer m = UInt(SrcL);
     integer remainNums, state;
-    
+
     if b == 1 then
         GQM[address].notify();                         //同时向总线广播BWE通知，可唤醒所有处于等待状态的BWE事件
-    
+
     bits(64) result;                              //执行的结果
-    bits(64) data; 
+    bits(64) data;
 
     bits(64) address = R[m, 64];
     {remainNums, state, data} = GQM[address].pop();

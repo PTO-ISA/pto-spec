@@ -5,7 +5,7 @@
 
 ## 说明
 
-立即数偏移·存储双字·前索引 (*Store Doubleword with Immediate offset, Pre-index*)  
+立即数偏移·存储双字·前索引 (*Store Doubleword with Immediate offset, Pre-index*)
 将数据寄存器中完整的 `八个字节` 存入 **基址寄存器** 加 **左移三位的有符号立即数偏移** 计算得到的地址内存中，并将该地址写到目的寄存器中。
 
 ## 汇编语法

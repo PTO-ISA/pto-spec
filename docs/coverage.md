@@ -30,10 +30,10 @@ and owned residual gaps are in `docs/maturity-bringup-plan.md` and
 
 The comparison evidence has three separate grades. PTO semantic closure comes
 from the PTO ASL and Stage 4 witnesses. S5-T3 independently closes exhaustive
-row disposition across all 693 identities. The generated
+row disposition across all 676 identities. The generated
 `noncomparable-oracle-coverage.json` ledger separately keeps independent
-executable parity open at 0/39: 10 rows are candidates for focused execution,
-15 have an executable source path without an attributable oracle, and 14 have
+executable parity open at 0/32: 10 rows are candidates for focused execution,
+8 have an executable source path without an attributable oracle, and 14 have
 no qualified path. Decode, header, and manifest agreement cannot promote that
 third grade, and numeric result parity remains under S5-T2 where applicable.
 
@@ -90,41 +90,41 @@ requires generated instruction-reference freshness.
 The profile implementation registry is closed for PTO v0: CI requires exact
 equality among all registered hooks, ASL `impdef` declarations, active
 implementations, and direct profile-test calls. The `S5-T1` inventory is also
-closed: `spec/evidence/numeric-contracts.json` assigns all 19 scalar and 89
-direct-tile numeric-dependent operations to 30 hooks and an explicit profile
+closed: `spec/evidence/numeric-contracts.json` assigns all 19 scalar and 85
+direct-tile numeric-dependent operations to 28 hooks and an explicit profile
 owner. Target conformance is graded separately: eight non-numeric contracts are
-closed and the 30 numeric raw-carrier hooks remain assigned to `S5-T2`. Green
+closed and the 28 numeric raw-carrier hooks remain assigned to `S5-T2`. Green
 validation does not turn PTO v0 into an IEEE or hardware profile. The generated
 `spec/evidence/numeric-conformance-readiness.json` ledger makes the remaining
 six-lane partition and its absent profile/oracle/vector/result/review evidence
 fail closed before expensive runtime validation begins. The generated
-`numeric-profile-decision-inputs.json` ledger further covers all 20 domains
+`numeric-profile-decision-inputs.json` ledger further covers all 18 domains
 with 12 explicit profile questions, ten still open, and 24 content-addressed public
 evidence sources. The generated
 `numeric-profile-decision-proposals.json` ledger adds four versioned profile
 identities, proposed dispositions for all 12 questions, and an exact mapping
-for all 20 domains. ADR 0037 and
+for all 18 domains. ADR 0037 and
 `spec/catalog/numeric-profile-identities.json` now close the four identity and
 five selection-framework records. PD-03 and PD-04 are accepted; ten complete decisions and
-all 20 complete domain result rules remain open. The generated
+all 18 complete domain result rules remain open. The generated
 `scalar-numeric-flag-contract.json` ledger and ADR 0038 close the scalar flag
 state/lifecycle and assign all 30 FSU forms to one producer owner; exact flag
 conditions remain open for 19 profile-owned forms. PD-06, S5-T2-A, and numeric
 conformance therefore remain open.
 The machine-derived closure snapshot is 2 accepted and 10 open decisions
-(2/12 complete-decision), 0 accepted and 20 open complete domain rules
-(0/20 domain-rule), and 18 selected and 81 open variation routes.
+(2/12 complete-decision), 0 accepted and 18 open complete domain rules
+(0/18 domain-rule), and 16 selected and 73 open variation routes.
 The generated `numeric-rounding-selector-contract.json` ledger and ADRs 0039
 and 0047 close PD-03 across eight scalar raw values, five fixed overrides,
 eight bundle codes, seven public conversion values, four external selector
-classes, 18 domains, 102 operations, and 25 hooks. The ledger accepts all 18
+classes, 16 domains, 100 operations, and 23 hooks. The ledger accepts all 16
 domain rounding points and saturation-order rules and increments the accepted
 decision count to one.
 The generated `numeric-subnormal-contract.json` ledger and ADR 0049 accept the
 second complete decision, PD-04, for the named hardware profile. Eleven
 subnormal-capable types have exact positive/negative boundaries, preserved
 inputs, gradual-underflow results, after-rounding tininess, and fail-closed
-configuration selection. Sixteen domains and 95 operations expand to 1,045
+configuration selection. Fourteen domains and 93 operations expand to 1,023
 conditional operation/type obligations; support, arithmetic conformance, and
 all complete domain rules remain open. Other numeric dimensions keep the
 repository floor at M4.
@@ -134,8 +134,8 @@ special-value rules cover produced canonical NaNs, comparison NaN/signed-zero
 results, and MIN/MAX NaN/signed-zero results across eight operations and 154
 conditional operation/type tuples. These rows are conditional on separate
 support and do not change `pto-v0`. They do not increment the two-of-12
-complete-decision count, close any of the 20 numeric domains, or change the
-18/99 selected generic variation routes.
+complete-decision count, close any of the 18 numeric domains, or change the
+16/89 selected generic variation routes.
 The generated `numeric-format-namespace-contract.json` ledger and ADRs 0040
 and 0048
 close the structural namespace portion of PD-02. Five code spaces remain
@@ -156,7 +156,7 @@ portable result rules cover signed widening, unsigned widening, and narrowing;
 executable boundary witnesses confirm source-width interpretation. Profile
 support, same-width conversions, floating conversions, overflow/saturation,
 rounding, flags, and target vectors remain open. The accepted bounded subset
-does not change the current 2/12 accepted-decision count or the 0/20
+does not change the current 2/12 accepted-decision count or the 0/18
 complete-domain-rule count, so PD-07, S5-T2, and the M4 floor remain
 unchanged.
 The generated `numeric-profile-applicability-closure.json` ledger and ADR 0041
@@ -165,27 +165,27 @@ selectors for any of the 25 `TileDataType` identities, and every one of the
 150 operation/type tuples rejects before effects. No result rule is selected,
 so PD-01, `cube-matrix`, S5-T2, and the M4 floor remain unchanged.
 The generated `numeric-variation-point-ownership.json` ledger and ADR 0042
-close PD-12 discovery and current-owner assignment for 99 stable
-domain/dimension rows. The rows reach all 108 numeric operations and 30 hooks,
-including the two library-only helpers. ADR 0047 selects 18 portable rounding
-routes; 81 routes and every complete domain result rule remain open, so PD-12,
+close PD-12 discovery and current-owner assignment for 89 stable
+domain/dimension rows. The rows reach all 104 numeric operations and 28 hooks.
+ADR 0047 selects 16 portable rounding routes; 73 routes and every complete
+domain result rule remain open, so PD-12,
 S5-T2, and M4 remain unchanged.
 
 Release traceability is independently fail-closed. The generated
 `spec/evidence/release-traceability-readiness.json` ledger assigns requirement,
-model, executable witness, and bounded status links to 935 exact units. It
-covers all 474 scalar forms, 99 command forms, 120 direct tile operations, 72
-system registers, 13 traps, 38 profile hooks, 46 requirements, and 73 top-level
-ASL state roots expanded to 240 leaf fields. State rows distinguish direct
+model, executable witness, and bounded status links to 918 exact units. It
+covers all 474 scalar forms, 96 command forms, 106 direct tile operations, 72
+system registers, 13 traps, 36 profile hooks, 47 requirements, and 74 top-level
+ASL state roots expanded to 229 leaf fields. State rows distinguish direct
 architectural state, bounded storage and ordering abstractions,
 architectural-effect abstractions, and verification-only instrumentation. The
-inventory and link package is closed; 11 S5-T2-dependent requirements, 30
+inventory and link package is closed; 11 S5-T2-dependent requirements, 28
 numeric hooks, and the later immutable-commit review keep S6-T1 open.
 
 The generated `spec/evidence/release-gate-readiness.json` ledger closes the
 S6-T2 contract inventory independently of candidate execution. It defines ten
 clone-verifiable release gates, proves the pinned least-privilege hosted
-workflow and exact 34-shard/106-call/98-subprogram topology, and enumerates ten
+workflow and exact 34-shard/110-call/105-subprogram topology, and enumerates ten
 external repository controls plus the PTO architecture and formal-model review
 perspectives. All candidate commit, runtime result, hosted-run, control-snapshot,
 and approval fields remain null. S5-T2 and S6-T1 therefore block candidate

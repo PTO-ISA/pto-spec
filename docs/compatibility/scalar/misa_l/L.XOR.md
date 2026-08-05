@@ -49,8 +49,8 @@
 
 ```c
     integer {m, 64} = DecodeINT(SrcL);
-    integer {n, 64} = DecodeINT(SrcR); 
-    integer {d, 64} = DecodeDst(RegDst); 
+    integer {n, 64} = DecodeINT(SrcR);
+    integer {d, 64} = DecodeDst(RegDst);
     integer shift_amount = UInt(shamt);
 
     bits(64) operand1 = SREG[m, 64];

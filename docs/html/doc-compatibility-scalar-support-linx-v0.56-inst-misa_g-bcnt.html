@@ -16,7 +16,7 @@
 
     bits(64)  operand = R[s, 64];
     bits(64)  result = 0;
-    bits(128) newoperand = (operand &lt;&lt; 64) | operand; 
+    bits(128) newoperand = (operand &lt;&lt; 64) | operand;
 
     foreach (i from 0 to (N-1) by 1 in dec) {
         if newoperand[M+i] == 1 then result++;

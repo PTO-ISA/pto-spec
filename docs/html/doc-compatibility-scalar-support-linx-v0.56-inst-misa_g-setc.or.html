@@ -23,7 +23,7 @@
         when 2b01 then operand2 = SignExtend(operand2[31:0]);
         when 2b10 then operand2 = ZeroExtend(operand2[31:0]);
         when 2b11 then operand2 = Not(operand2);
-    
+
     BARG.TAKEN = (operand1 | operand2 != 0 ? 1 : 0);</code></pre>
 <h3 id="汇编索引模式">汇编索引模式</h3>
 <pre><code data-lang="asm">setc.or a1, a2,       /* 双寄存器绝对索引 */

@@ -5,7 +5,7 @@
 
 ## 说明
 
-浮点数最大值(*Floating-point Maximum*)  
+浮点数最大值(*Floating-point Maximum*)
 将左源寄存器和右源寄存器中低/半/单/双精度浮点数的较大值写入到目的寄存器中。
 
 ## 汇编语法
@@ -52,7 +52,7 @@ SrcType域编码如下：
         when 01 then DataType = FP32;
         when 10 then DataType = FP16;
         when 11 then DataType = FP8;
-    
+
     DataType operand1 = R[m, 64];
     DataType operand2 = R[n, 64];
 
@@ -83,8 +83,8 @@ fmax.d t#1, t#2,=>a1    /* 指令输出到全局寄存器 */
 
 !!! note "注意！"
 
-    值-0.0被视为小于值+0.0。  
-    如果两个输入都是NaN，则结果是规范NaN。  
+    值-0.0被视为小于值+0.0。
+    如果两个输入都是NaN，则结果是规范NaN。
     如果只有一个操作数是NaN，则结果是非NaN操作数。
 
 ## 备注

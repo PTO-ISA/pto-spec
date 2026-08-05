@@ -29,17 +29,17 @@ fixup执行示意图如下：
 ```asm
     # 假定本块的入口参数如下：
     # a0 - 数组地址; a1 - 数组下标
-    BSTART.STD FALL, .bar          # .bar 
+    BSTART.STD FALL, .bar          # .bar
     cmp.lti a1, ARRAY_SIZE, ->t    # 检查a1的范围
     assert t#1                     # 如果assert失败，则跳转到.bar位置
     ld [a0, a1<<3],         ->t    # 直接开始使用数组
-    ...                            
+    ...
 
     BSTART.STD RET
     add zero, 0,           ->a0    # 返回成功
     setc.tgt ra
 
-.bar: 
+.bar:
     BSTART.STD RET
     add zero, 1,           ->a0    # 返回错误
     setc.tgt ra

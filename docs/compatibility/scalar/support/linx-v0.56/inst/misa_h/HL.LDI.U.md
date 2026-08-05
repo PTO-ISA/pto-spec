@@ -2,7 +2,7 @@
 
 ## 说明
 
-立即数偏移无缩放·双字加载 (*Load Doubleword with Unscaled Immediate Offset*)  
+立即数偏移无缩放·双字加载 (*Load Doubleword with Unscaled Immediate Offset*)
 以 **基址寄存器**加 **有符号立即数偏移** 的结果为地址，从内存加载 `八个字节` 的数据后写到目的寄存器。
 
 ## 汇编语法
@@ -45,7 +45,7 @@
 
     bits(64) address = baseAddr + offset;
     bits(64) data = Mem[address][63:0];
-    
+
     R[d, 64] = data;
 ```
 

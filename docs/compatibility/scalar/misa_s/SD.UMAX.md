@@ -2,7 +2,7 @@
 
 ## 说明
 
-存储双字·无符号最大值(*Store Doubleword, Unsigned Maximum*)  
+存储双字·无符号最大值(*Store Doubleword, Unsigned Maximum*)
 本指令执行如下的原子操作：从左源寄存器的值为地址的内存加载`64bit`的数据，与右源寄存器的值进行无符号比较，将较大值写回到原内存中。
 
 ## 汇编语法

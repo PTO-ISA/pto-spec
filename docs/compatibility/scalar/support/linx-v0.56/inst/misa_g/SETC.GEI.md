@@ -2,7 +2,7 @@
 
 ## 说明
 
-立即数大于等于置位提交(*Set Commit Argument if Greater than or Equal, Immediate*)  
+立即数大于等于置位提交(*Set Commit Argument if Greater than or Equal, Immediate*)
 有符号比较源操作数和立即数，如果源操作数大于等于立即数，在本块指令提交时，跳转到指定BPC。
 
 ## 汇编语法

@@ -18,13 +18,12 @@
 | --- | ---: | ---: |
 | 普通 logical Tile | 512 B–32 KB | 四个固定的 128 B–8 KB PE fragment |
 | Local Tile fragment | logical size / 4 | 单 PE 的 TReg payload |
-| SharedTile version | 512 B–32 KB | Core-local versioned Shared storage |
+| Shared register | 512 B–32 KB descriptor capacity | Core-local persistent S0–S255 storage |
 
 `PE_MASK` 不改变 logical size，也不改变四分之一 fragment 的大小。
 
-The executable ASL accepts the full `S#0`–`S#255` identifier namespace and
-keeps eight versions resident at once. That fixed verification bound is not a
-hardware or architectural SharedTile-capacity limit.
+The executable ASL models the full direct `S0`–`S255` bank. All four PEs in one
+core access the same bank; each other core has a private bank.
 
 ## Storage and Distribution
 
@@ -54,15 +53,20 @@ SharedTile<TileRightScale<...>>
 
 ## Shared Architectural and Physical State
 
-C++ source 不直接命名 `S#n`。编译器分配 8-bit architectural Shared ID，并把每个 SSA definition 映射到 physical version。descriptor 记录 shape/layout/role、logical size、不可变 `defined_mask`、内部 `ready_mask` 以及 reader/lifetime 状态。
+C++ source 不直接命名 `Sx`。编译器分配 8-bit absolute Shared index。每个
+register 保存 descriptor、payload 和四位 initialization mask，并跨 block
+持久存在直到 overwrite 或 core reset。source read 不修改这些状态。
 
-程序不能读取这两个 mask。full consumer 绑定一个 physical version，并等待全部所需 region ready。重新定义会创建新 version，不会改变旧 version 的 reader；各 version 在自身 reader 全部完成后独立回收。
+destination 使用 one-step atomic read-modify-write。partial initialized write
+要求 descriptor compatible；partial uninitialized write 建立 descriptor；full
+`1111` write 可整体替换；`0000` 是 no-op。并发 overlap 没有 architecture
+order，属于 programmer error/undefined behavior，hardware 不要求检测。
 
-## Partial and Fully Defined Shared Values
+## Partial and Fully Initialized Shared Registers
 
 - Insert/Publish 可以构造静态 partial value。
 - Partial value 只能参与搬运和 TSTORE<pe_scope>。
-- Broadcast 与 cooperative TMATMUL 都要求所绑定 Shared version fully-defined。
+- uninitialized quarter read 合法，返回 undefined-register value，不产生 trap。
 - Shared A 使用 MShard4；它不等价于 broadcast 或 Replicated4。
 - 全部 defined region ready 后，full publication 原子生效。
 

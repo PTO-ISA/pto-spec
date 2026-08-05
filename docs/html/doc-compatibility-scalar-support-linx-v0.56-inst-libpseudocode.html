@@ -68,7 +68,7 @@ bits(width) SSRRD[integer index, integer width]
         return System_Register[0x0011]&lt;width-1 : 0&gt;;    // GP
     when index == 2
         return System_Register[0x0012]&lt;width-1 : 0&gt;;    // EBSTATEP
-    when index &gt;=3 
+    when index &gt;=3
         return 0;</code></pre>
 <h3 id="将操作数左移">&lt;span id=&quot;locationE&quot;&gt;将操作数左移&lt;/span&gt;</h3>
 <pre><code data-lang="c">// LeftShift()
@@ -158,7 +158,7 @@ bits(width) DecodeImm(bit N, bits(6) imms, bits(6) immr)
 
     for i = 0 to 6
         if x&lt;i&gt; == 1 then index += 2^i;     // 2^i：表示2的i次方
-    
+
     when x[9:7] == 000 : datatype = Unsigned INT64;
     when x[9:7] == 001 : datatype = Unsigned INT32;
     when x[9:7] == 010 : datatype = Unsigned INT16;
@@ -179,7 +179,7 @@ bits(width) DecodeImm(bit N, bits(6) imms, bits(6) immr)
 
     for i = 0 to 6
         if x&lt;i&gt; == 1 then index += 2^i;     // 2^i：表示2的i次方
-    
+
     when x[9:7] == 000 : datatype = FP64;
     when x[9:7] == 001 : datatype = FP32;
     when x[9:7] == 010 : datatype = FP16;
@@ -200,7 +200,7 @@ bits(width) DecodeImm(bit N, bits(6) imms, bits(6) immr)
 
     for i = 0 to 6
         if x&lt;i&gt; == 1 then index += 2^i;     // 2^i：表示2的i次方
-    
+
     when x[8:7] == 00 : datawidth = 64;
     when x[8:7] == 01 : datawidth = 32;
     when x[8:7] == 10 : datawidth = 16;

@@ -44,14 +44,14 @@
 
 ```c
     integer {m, srcWidth}  = DecodeINT(SrcL);
-    integer {d, dstWidth} = DecodeDst(RegDst); 
+    integer {d, dstWidth} = DecodeDst(RegDst);
     integer M = UInt(immr) + 1;
     integer N = UInt(imml);
 
     // 以下情况报非法指令
     if M isnot in range{2, 4, 8, 16, 32, 64} then Exception(EC_ILLEGAL);
     if N isnot in range{1, 2, 4, 8, 16, 32}  then Exception(EC_ILLEGAL);
-    if M <= N                                then Exception(EC_ILLEGAL);  
+    if M <= N                                then Exception(EC_ILLEGAL);
 
     bits(srcWidth) operand = SREG[m, srcWidth];
     bits(dstWidth) result;
@@ -69,7 +69,7 @@
         }
     }
 
-    SREG[d, dstWidth] = result;    
+    SREG[d, dstWidth] = result;
 ```
 
 ## 备注

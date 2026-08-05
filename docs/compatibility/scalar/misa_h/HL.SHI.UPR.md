@@ -5,7 +5,7 @@
 
 ## 说明
 
-立即数偏移无缩放·存储半字·前索引 (*Store Halfword with Unscaled Immediate Offset, Pre-index*)  
+立即数偏移无缩放·存储半字·前索引 (*Store Halfword with Unscaled Immediate Offset, Pre-index*)
 将数据寄存器的低位 `两个字节` 存入 **基址寄存器** 加 **有符号立即数偏移** 计算得到的地址内存中，并将该地址写到目的寄存器中。
 
 ## 汇编语法

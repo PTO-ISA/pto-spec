@@ -5,7 +5,7 @@
 
 ## 说明
 
-小于置位提交(*Set Commit Argument if Less Than*)  
+小于置位提交(*Set Commit Argument if Less Than*)
 如果左源操作数小于右源操作数，在本块指令提交时，跳转到指定BPC。
 
 ## 汇编语法
@@ -54,7 +54,7 @@
         when 2b01 then operand2 = SignExtend(operand2[31:0]);
         when 2b10 then operand2 = ZeroExtend(operand2[31:0]);
         when 2b11 then undefined;
-    
+
     BARG.TAKEN = (operand1 <(s) operand2 != 0 ? 1 : 0);
 ```
 

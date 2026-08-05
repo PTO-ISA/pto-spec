@@ -47,7 +47,7 @@
 
 ```c
     integer {m, srcWidth}  = DecodeINT(SrcL);
-    integer {d, dstWidth} = DecodeDst(RegDst); 
+    integer {d, dstWidth} = DecodeDst(RegDst);
 
     bits(64) base = SREG[m, srcWidth];
     bits(64) offset = SignExtend(simm24);

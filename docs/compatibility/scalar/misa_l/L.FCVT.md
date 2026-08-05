@@ -84,14 +84,14 @@ SrcType和DstType字段编码方式如下：
 
 ```c
 enum DataType {
-    FP64, FP32, TF32, HF32, FP16, BF16, HiF8, E4M3, 
+    FP64, FP32, TF32, HF32, FP16, BF16, HiF8, E4M3,
     E5M2, E3M2, E2M3, E2M1x2, E1M2x2, HIF4x2, E8M0, E6M2,
     FP16x2, BF16x2, E4M3x4, E5M2x4, E4M3x2, E5M2x2, E6M2x2
 };
 
 integer {m, srcwidth} = DecodeFP(SrcL);
 integer {n, srcwidth} = DecodeFP(SrcR);
-integer {d, dstWidth} = DecodeDst(RegDst); 
+integer {d, dstWidth} = DecodeDst(RegDst);
 
 DataType srcT = SrcType;
 DataType dstT = DstType;

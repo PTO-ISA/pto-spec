@@ -2,7 +2,7 @@
 
 ## 说明
 
-数据缓存清除并无效缓存行(*Data Cache Clean and Invalidate by Set/Way*)  
+数据缓存清除并无效缓存行(*Data Cache Clean and Invalidate by Set/Way*)
 在数据缓存 `Data Cache` 中将源寄存器中所表明的Set/Way对应的缓存行 `Cacheline` 写回到下一级高速缓存或主处理器中，并标记对应 `Cacheline` 无效。
 
 ## 汇编语法

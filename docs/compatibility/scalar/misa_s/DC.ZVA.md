@@ -2,7 +2,7 @@
 
 ## 说明
 
-按虚拟地址将数据缓存清零(*Zero Data Cache Virtual Address*)  
+按虚拟地址将数据缓存清零(*Zero Data Cache Virtual Address*)
 在数据缓存 `Data Cache` 中将SrcL中所表明的 `Cacheline` 全部清零，并写回到下一级高速缓存或主处理器中。
 
 本条指令用于CodeTemplate的MEMSET。

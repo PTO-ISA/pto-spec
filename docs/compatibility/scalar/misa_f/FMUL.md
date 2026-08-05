@@ -5,7 +5,7 @@
 
 ## 说明
 
-浮点乘(*Floating-point Multiply*)  
+浮点乘(*Floating-point Multiply*)
 左源寄存器和右源寄存器中低/半/单/双精度浮点数相乘，将舍入后的结果写入到目的寄存器中。
 
 ## 汇编语法

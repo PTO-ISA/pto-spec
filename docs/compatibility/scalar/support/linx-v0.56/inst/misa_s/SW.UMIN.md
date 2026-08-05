@@ -2,7 +2,7 @@
 
 ## 说明
 
-存储字·无符号最小值(*Store Word, Unsigned Minimum*)  
+存储字·无符号最小值(*Store Word, Unsigned Minimum*)
 本指令执行如下的原子操作：从左源寄存器的值为地址的内存加载`32bit`的数据，与右源寄存器低`32bit`的值进行无符号比较，将较小值写回到原内存中。
 
 ## 汇编语法

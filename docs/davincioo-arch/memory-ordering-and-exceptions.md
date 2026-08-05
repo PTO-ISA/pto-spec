@@ -32,7 +32,7 @@
 
 operation event 根据对应 intrinsic 合同表示 issue/completion。对 Shared→GM，完成表示请求已经接受且 Shared source 已被捕获或 pin 住；它本身不保证另一个 PE 的后续 GM load 能观察到该数据。
 
-Shared RAW 只建立 Shared version readiness；`B.IOD` 只建立 block scheduling dependency。两者都不是 GM memory fence。
+Shared RAW 只建立 Shared register producer-to-consumer readiness；`B.IOD` 只建立 block scheduling dependency。两者都不是 GM memory fence。
 
 ## Core-scope GM Ordering
 

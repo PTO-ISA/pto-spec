@@ -2,7 +2,7 @@
 
 ## 说明
 
-内存加载双字无符号最大值(*Load Doubleword, Unsigned Maximum*)  
+内存加载双字无符号最大值(*Load Doubleword, Unsigned Maximum*)
 本指令执行如下的原子操作：以左源寄存器值为地址的内存中加载`64bit`的数据与右源操作数进行无符号比较，将较大值写回到原内存中，并把加载的数据写到目的寄存器中。
 
 ## 汇编语法

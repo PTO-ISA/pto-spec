@@ -2,7 +2,7 @@
 
 ## 说明
 
-寄存器偏移无缩放·存储字·后索引 (*Store Word with Unscaled Register offset, Post-index*)  
+寄存器偏移无缩放·存储字·后索引 (*Store Word with Unscaled Register offset, Post-index*)
 将数据寄存器的低位 `四个字节` 存入 **基址寄存器** 指示的地址内存中，并将 **基址寄存器** 加 **偏移寄存器值** 计算得到的更新地址写到目的寄存器中。偏移寄存器的值可以有选择的进行取低字有符号或无符号扩展。
 
 ## 汇编语法

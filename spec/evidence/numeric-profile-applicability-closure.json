@@ -1986,7 +1986,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2008,7 +2007,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2030,7 +2028,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2052,7 +2049,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2074,7 +2070,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2096,7 +2091,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2118,7 +2112,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2140,7 +2133,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2162,7 +2154,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2184,7 +2175,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2206,7 +2196,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2228,7 +2217,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2250,7 +2238,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2272,7 +2259,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2294,7 +2280,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2316,7 +2301,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2338,7 +2322,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2360,7 +2343,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2382,7 +2364,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2404,7 +2385,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2426,7 +2406,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2448,7 +2427,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2470,7 +2448,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2492,7 +2469,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2514,7 +2490,6 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2536,7 +2511,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2558,7 +2532,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2580,7 +2553,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2602,7 +2574,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2624,7 +2595,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2646,7 +2616,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2668,7 +2637,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2690,7 +2658,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2712,7 +2679,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2734,7 +2700,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2756,7 +2721,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2778,7 +2742,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2800,7 +2763,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2822,7 +2784,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2844,7 +2805,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2866,7 +2826,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2888,7 +2847,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2910,7 +2868,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2932,7 +2889,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2954,7 +2910,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2976,7 +2931,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -2998,7 +2952,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3020,7 +2973,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3042,7 +2994,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3064,7 +3015,6 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3086,7 +3036,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3108,7 +3057,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3130,7 +3078,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3152,7 +3099,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3174,7 +3120,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3196,7 +3141,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3218,7 +3162,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3240,7 +3183,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3262,7 +3204,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3284,7 +3225,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3306,7 +3246,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3328,7 +3267,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3350,7 +3288,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3372,7 +3309,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3394,7 +3330,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3416,7 +3351,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3438,7 +3372,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3460,7 +3393,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3482,7 +3414,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3504,7 +3435,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3526,7 +3456,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3548,7 +3477,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3570,7 +3498,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3592,7 +3519,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3614,7 +3540,6 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3636,7 +3561,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3658,7 +3582,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3680,7 +3603,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3702,7 +3624,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3724,7 +3645,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3746,7 +3666,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3768,7 +3687,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3790,7 +3708,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3812,7 +3729,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3834,7 +3750,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3856,7 +3771,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3878,7 +3792,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3900,7 +3813,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3922,7 +3834,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3944,7 +3855,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3966,7 +3876,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -3988,7 +3897,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4010,7 +3918,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4032,7 +3939,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4054,7 +3960,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4076,7 +3981,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4098,7 +4002,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4120,7 +4023,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4142,7 +4044,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4164,7 +4065,6 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4186,7 +4086,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4208,7 +4107,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4230,7 +4128,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4252,7 +4149,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4274,7 +4170,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4296,7 +4191,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4318,7 +4212,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4340,7 +4233,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4362,7 +4254,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4384,7 +4275,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4406,7 +4296,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4428,7 +4317,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4450,7 +4338,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4472,7 +4359,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4494,7 +4380,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4516,7 +4401,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4538,7 +4422,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4560,7 +4443,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4582,7 +4464,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4604,7 +4485,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4626,7 +4506,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4648,7 +4527,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4670,7 +4548,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4692,7 +4569,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4714,7 +4590,6 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "accumulator_access": "write-initialize",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4736,7 +4611,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4758,7 +4632,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4780,7 +4653,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4802,7 +4674,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4824,7 +4695,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4846,7 +4716,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4868,7 +4737,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4890,7 +4758,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4912,7 +4779,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4934,7 +4800,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4956,7 +4821,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -4978,7 +4842,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -5000,7 +4863,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -5022,7 +4884,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -5044,7 +4905,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -5066,7 +4926,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -5088,7 +4947,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -5110,7 +4968,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -5132,7 +4989,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -5154,7 +5010,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -5176,7 +5031,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -5198,7 +5052,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -5220,7 +5073,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -5242,7 +5094,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -5264,7 +5115,6 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "accumulator_access": "read-write",
       "disposition": "unsupported-in-profile",
       "rejection": {
         "fault": "IllegalInstruction",
@@ -5419,47 +5269,47 @@
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "52c84c4b40b8c8f5fa52ba6a7cabc8ebb394b65907e34c0923f98a6885096550"
+      "sha256": "99f7b99a881c60ba0cbd92b4ad6f02d36bac3bd3b43b650585d04c7bedc4ad08"
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "e5a98441098fdd88c0f5837bb3e1367d7b272ebc2ba506275e9e2be1b4c1978a"
+      "sha256": "58cb445f7a4bc690859f017db4e9ec7b054ab1c10d50773eb2d6cf3a2a87d94a"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "4bdddb35de0738fe55eb3266fa02fdc80ae829cb95ac9079fa3aaa60c66c4baf"
+      "sha256": "91b88692f7cabe60ca9e255db278a39ec2431a58d19b3b2be7941fc58abdec6e"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "4939fd3b5c32bd81c815e0c4b5756d329a8fd207b375d921e6c074d949e000eb"
+      "sha256": "ecbc4d29caf4a82581b81c5f829c7a16cc9cc985133f43516e861d15c2ef99cd"
     },
     {
       "path": "spec/evidence/public-source-reconciliation.json",
-      "sha256": "4e7a9aca6688cc529bd0db5baaabc1bd6865b82112d6c5237e1324f8bd3352aa"
+      "sha256": "e70b824de8fe49c820d814f0060bcf02668aa879279f1a37418d0dbab335734b"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "c1a370fbdb17caa54aeeaa733f22bd55e6777322e3dd8a7e1ed6fa62ab35249a"
+      "sha256": "a21760edef8d377e313b44851c361b5d5de69f989a1218b8e72b4d67fc63e9a8"
     },
     {
       "path": "scripts/generate-asl-decoders",
-      "sha256": "842a224f61a149d775ad404b75abc4e09c026386558dab55fdd369d0be603975"
+      "sha256": "d297cbe0931dd4551abfc45c1271efb533840e7cf7af6fb573da0601f3097274"
     },
     {
       "path": "asl/types.asl",
-      "sha256": "fd3d680d8c456a6283a50c09d143b4d5e2229a1fa2ba7e4174433f98396614cf"
+      "sha256": "e23a59bfc8ae54b84b0ba06e5af4593b331fbf7f6ef45f901bcaa83f1d6e8f43"
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "fd3c014af09354d56835239a9063a7fef3d363f18e00efe4b6c3b87b1e3bb1d9"
+      "sha256": "6a3e8fe318bb85a632998caa14a3c158b727fa9bf059c56c7c4a50c4c8fe8f6e"
     },
     {
       "path": "tests/asl/bundle-tests.asl",
-      "sha256": "0ec3b59d2460775934af18b06258e35d109064fbf4fc3529f9d0fee34543fddd"
+      "sha256": "3e96f7bf10293dbdd1db6950fa42fb04e0e1c2e4dede291150a3ffd7e0135e85"
     },
     {
       "path": "tests/asl/cube-totality-tests.asl",
-      "sha256": "d2eb1af81c7f949225ce9c7bc99e8d00cb4f57549c8fb2d4c1be8d33de47bf53"
+      "sha256": "11852190191d1f29cef1c372e9f2c5276cb46218fdf4464da36b89770d3800f2"
     },
     {
       "path": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
@@ -5479,7 +5329,7 @@
     "tuple_count": 150,
     "bundle_execution_tuple_count": 150,
     "bundle_command_form_count": 6,
-    "accepted_command_form_count": 99,
+    "accepted_command_form_count": 96,
     "result_rule_count": 0,
     "parent_pd01_complete": false,
     "cube_matrix_complete": false,

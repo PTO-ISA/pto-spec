@@ -2,7 +2,7 @@
 
 ## 说明
 
-立即数逻辑左移字(*Shift Left Logical by Immediate, Word*)  
+立即数逻辑左移字(*Shift Left Logical by Immediate, Word*)
 左源操作数左移（低位补零，高位舍弃）**shamt** 位，结果的低32位有符号扩展后写到目的寄存器中。
 
 ## 汇编语法

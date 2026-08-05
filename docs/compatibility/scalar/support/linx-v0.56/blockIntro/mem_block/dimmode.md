@@ -40,7 +40,7 @@
 
 该模型下，一个Tile块拆分出来的Group的数量计算公式为：
 ```c++
-if (LB0 % 64 > 0) 
+if (LB0 % 64 > 0)
     innerNum = LB0 / 64 +1;
 else
     innerNum = LB0 / 64;

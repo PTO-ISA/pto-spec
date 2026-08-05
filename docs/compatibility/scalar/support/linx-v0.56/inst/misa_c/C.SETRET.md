@@ -2,7 +2,7 @@
 
 ## 说明
 
-设置返回地址(*Set Return Address*)  
+设置返回地址(*Set Return Address*)
 立即数左移1位(低位置零)后与本指令的`TPC`相加，结果写到ra寄存器中。
 
 本指令的标准形式请见[SETRET](../misa_g/SETRET.md)。

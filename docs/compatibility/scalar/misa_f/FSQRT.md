@@ -5,7 +5,7 @@
 
 ## 说明
 
-浮点数平方根(*Floating-point Square Root*)  
+浮点数平方根(*Floating-point Square Root*)
 把源寄存器中低/半/单/双精度浮点数的平方根舍入后写入到目的寄存器中。
 
 ## 汇编语法

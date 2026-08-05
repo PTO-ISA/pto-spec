@@ -8,7 +8,7 @@
 ## 汇编语法
 
 ```asm
-    ebreak imm 
+    ebreak imm
 ```
 
 其中，立即数imm的含义由操作系统定义。
@@ -25,9 +25,9 @@
    lui 20,       ->t
    addi a0, t#1, ->t
    ld [a1, t#1],  ->t    <----- ebreak imm
-   ldi [a0, 8],   ->t                      
+   ldi [a0, 8],   ->t
    ldi [a1, 0],  ->u
-   add t#1, u#1, ->u          
+   add t#1, u#1, ->u
    BSTART/BSTOP
 ```
 
@@ -35,9 +35,9 @@
 ```asm
    BSTART
    lui 20,      ->t
-   addi a0, t#1, ->t    
-   ld [a1, t#1], ->t    
-   ldi [a0, 8],  ->t    
+   addi a0, t#1, ->t
+   ld [a1, t#1], ->t
+   ldi [a0, 8],  ->t
    BSTART/BSTOP     <---- ebreak imm
     ...
 ```
@@ -48,9 +48,9 @@
    lui 20,       ->t
    addi a0, t#1, ->t
    ld [a1, t#1],  ->t
-   ldi [a0, 8],   ->t                      
+   ldi [a0, 8],   ->t
    ldi [a1, 0],  ->u
-   add t#1, u#1, ->u          
+   add t#1, u#1, ->u
    BSTART/BSTOP
    B.CATR                <----- ebreak imm
    addi a0, a1 ->t

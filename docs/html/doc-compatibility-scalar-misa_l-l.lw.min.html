@@ -13,7 +13,7 @@
 <h3 id="执行方式">执行方式</h3>
 <ul><li>解码输入参数：<span title="Legacy source link is not part of the public PTO ISA site">DecodeINT</span></li><li>解码输出参数：<span title="Legacy source link is not part of the public PTO ISA site">DecodeDst</span></li><li>标量寄存器读写：<span title="Legacy source link is not part of the public PTO ISA site">SREG[]</span></li><li>对数据符号扩展：<span title="Legacy source link is not part of the public PTO ISA site">SignExtend()</span></li></ul>
 <pre><code data-lang="c">integer {m, srcWidth1, sign1} = DecodeINT(SrcL);
-integer {n, srcWidth2, sign2} = DecodeINT(SrcR); 
+integer {n, srcWidth2, sign2} = DecodeINT(SrcR);
 integer {d, dstWidth} = DecodeDst(RegDst);
 
 Atomic {
@@ -25,7 +25,7 @@ Atomic {
 
     if sign2 == 0 then
         newValue = (operand &lt;(u) oldValue ? operand : oldValue);  // 无符号最小值
-    else 
+    else
         newValue = (operand &lt;(s) oldValue ? operand : oldValue);  // 有符号最小值
 
     Mem[address] = newValue;

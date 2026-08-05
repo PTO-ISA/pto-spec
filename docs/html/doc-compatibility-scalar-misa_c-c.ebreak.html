@@ -5,7 +5,7 @@
 <p>异常中断(*Exception Break*)&lt;br&gt; 本指令通过抛出断点异常 <strong>E_BREAKPOINT</strong> 的方式请求调试器，并将立即数写入<a href="doc-compatibility-scalar-support-linx-v0.56-register-ssr-trapno.html">SSR:TRAPNO</a>寄存器的<strong>cause</strong> 字段低位。</p>
 <p>本指令的32bit版本请见<a href="doc-compatibility-scalar-misa_s-ebreak.html">EBREAK</a>。</p>
 <h3 id="汇编语法">汇编语法</h3>
-<pre><code data-lang="asm">    c.ebreak imm </code></pre>
+<pre><code data-lang="asm">    c.ebreak imm</code></pre>
 <p>其中，立即数imm的含义由操作系统定义。</p>
 <h3 id="编码格式">编码格式</h3>
 <blockquote>原 Linx 图片引用已省略；如需查看图形 bitfield，请打开本页 Source 路径对应的 Linx 原文。</blockquote>
@@ -14,8 +14,8 @@
    lui 20,         -&gt;t
    addi a0, t#1,   -&gt;t
    c.ldi [a1, 0],  -&gt;t    &lt;----- c.ebreak 0
-   ldi [a0, 8],    -&gt;t                      
+   ldi [a0, 8],    -&gt;t
    ldi [a1, 0],    -&gt;u
-   add t#1, u#1,   -&gt;u          
+   add t#1, u#1,   -&gt;u
    BSTART/BSTOP</code></pre>
 <p>异常响应完成后，重新开启一个块并继承前半部分块的状态，从后半部分块的第一条指令开始继续执行。详见<span title="Legacy source link is not part of the public PTO ISA site">块指令异常</span>。</p></div></article></section></main></div><script src="assets/site.js"></script></body></html>

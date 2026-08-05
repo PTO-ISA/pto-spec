@@ -2,7 +2,7 @@
 
 ## 说明
 
-按位与置位提交(*Set Commit Argument by And*)  
+按位与置位提交(*Set Commit Argument by And*)
 如果左源操作数与右源操作数按位与的结果为非0，在本块指令提交时，跳转到指定BPC。
 
 ## 汇编语法

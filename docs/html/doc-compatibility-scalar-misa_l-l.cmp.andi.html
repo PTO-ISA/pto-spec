@@ -13,7 +13,7 @@
 <h3 id="执行方式">执行方式</h3>
 <ul><li>解码输入参数：<span title="Legacy source link is not part of the public PTO ISA site">DecodeINT</span></li><li>标量寄存器读写：<span title="Legacy source link is not part of the public PTO ISA site">SREG[]</span></li><li>对数据符号扩展：<span title="Legacy source link is not part of the public PTO ISA site">SignExtend()</span></li></ul>
 <pre><code data-lang="c">    integer {m, 64, sign} = DecodeINT(SrcL);
-    integer {d, 64} = DecodeDst(RegDst); 
+    integer {d, 64} = DecodeDst(RegDst);
     bits(64) operand = SREG[m, 64];
 
     bits(64) simm = SignExtend(simm12);

@@ -5,7 +5,7 @@
 
 ## 说明
 
-立即数偏移·存储字节·前索引 (*Store Byte with Immediate offset, Pre-index*)  
+立即数偏移·存储字节·前索引 (*Store Byte with Immediate offset, Pre-index*)
 将数据寄存器的低位 `一个字节` 存入 **基址寄存器** 加 **有符号立即数偏移** 计算得到的地址内存中，并将该地址写到目的寄存器中。
 
 ## 汇编语法

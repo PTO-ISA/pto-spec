@@ -30,7 +30,7 @@ ct.offset = 0;                  /* 状态机的内部缓存，用来记录读写
     generate(andi RegSrc1, 0, -&gt;u);                   /* 读取源地址到块内私有U寄存器中 */
     // 如果拷贝字节数为0（即ct.count=0），则状态机不会继续产生内存搬运的指令。但是需要生成上面两条指令占位，用作该模板块的块体结束的标志。
     while(ct.count &gt; 0)
-    {   
+    {
         // 64字节对齐
         if(ct.srcAddr[5:0]==0 &amp;&amp; ct.count &gt;= 64) {
             generate(addi u#2, offset, -&gt;u)           /* 更新目的地址 */

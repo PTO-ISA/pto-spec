@@ -50,8 +50,8 @@
 
 ```c
     integer {m, srcWidth1, sign1} = DecodeINT(SrcL);
-    integer {n, srcWidth2, sign2} = DecodeINT(SrcR); 
-    integer {d, dstWidth} = DecodeDst(RegDst); 
+    integer {n, srcWidth2, sign2} = DecodeINT(SrcR);
+    integer {d, dstWidth} = DecodeDst(RegDst);
     integer shift_amount = UInt(shamt);
 
     bits(64) base = SREG[m, srcWidth];

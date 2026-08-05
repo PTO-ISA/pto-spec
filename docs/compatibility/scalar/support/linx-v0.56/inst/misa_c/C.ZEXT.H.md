@@ -2,7 +2,7 @@
 
 ## 说明
 
-无符号扩展半字(*Zero-extend Halfword*)  
+无符号扩展半字(*Zero-extend Halfword*)
 将源寄存器的 **低16位** 进行无符号扩展，结果写入T寄存器队列。
 
 ## 汇编格式

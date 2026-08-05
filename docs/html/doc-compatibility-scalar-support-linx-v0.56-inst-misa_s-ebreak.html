@@ -2,7 +2,7 @@
 <h3 id="说明">说明</h3>
 <p>异常中断(*Exception Break*)&lt;br&gt; 本指令通过抛出断点异常 <strong>E_BREAKPOINT</strong> 的方式请求调试器，并将立即数写入<a href="doc-compatibility-scalar-support-linx-v0.56-register-ssr-trapno.html">SSR:TRAPNO</a>寄存器的<strong>cause</strong> 字段低位。</p>
 <h3 id="汇编语法">汇编语法</h3>
-<pre><code data-lang="asm">    ebreak imm </code></pre>
+<pre><code data-lang="asm">    ebreak imm</code></pre>
 <p>其中，立即数imm的含义由操作系统定义。</p>
 <h3 id="编码格式">编码格式</h3>
 <p>!<span title="Legacy source link is not part of the public PTO ISA site">EBREAK</span></p>
@@ -12,16 +12,16 @@
    lui 20,       -&gt;t
    addi a0, t#1, -&gt;t
    ld [a1, t#1],  -&gt;t    &lt;----- ebreak imm
-   ldi [a0, 8],   -&gt;t                      
+   ldi [a0, 8],   -&gt;t
    ldi [a1, 0],  -&gt;u
-   add t#1, u#1, -&gt;u          
+   add t#1, u#1, -&gt;u
    BSTART/BSTOP</code></pre>
 <p>示例二：断点打在当前块的提交指令上，观察本块所有指令执行后的状态</p>
 <pre><code data-lang="asm">   BSTART
    lui 20,      -&gt;t
-   addi a0, t#1, -&gt;t    
-   ld [a1, t#1], -&gt;t    
-   ldi [a0, 8],  -&gt;t    
+   addi a0, t#1, -&gt;t
+   ld [a1, t#1], -&gt;t
+   ldi [a0, 8],  -&gt;t
    BSTART/BSTOP     &lt;---- ebreak imm
     ...</code></pre>
 <p>示例三：断点打在块头指令上，只能观察到块间状态。</p>
@@ -29,9 +29,9 @@
    lui 20,       -&gt;t
    addi a0, t#1, -&gt;t
    ld [a1, t#1],  -&gt;t
-   ldi [a0, 8],   -&gt;t                      
+   ldi [a0, 8],   -&gt;t
    ldi [a1, 0],  -&gt;u
-   add t#1, u#1, -&gt;u          
+   add t#1, u#1, -&gt;u
    BSTART/BSTOP
    B.CATR                &lt;----- ebreak imm
    addi a0, a1 -&gt;t</code></pre>

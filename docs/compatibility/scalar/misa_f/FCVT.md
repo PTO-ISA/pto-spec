@@ -5,7 +5,7 @@
 
 ## 说明
 
-浮点数转换(*Floating-point Convert*)  
+浮点数转换(*Floating-point Convert*)
 将输入寄存器中浮点型数据转换为目标类型的精度，舍入模式由系统寄存器[CSTATE](../../register/ssr/CSTATE.md)确定，结果写入到目的寄存器中。
 
 ## 汇编语法
@@ -36,7 +36,7 @@ SrcType和DstType域编码如下表：
 | 1 | FS | 32bit单精度浮点数 |
 | 2 | FH | 16bit半精度浮点数 |
 | 3 | FB | 8bit低精度浮点数 |
-| >3 | reserve | 保留 | 
+| >3 | reserve | 保留 |
 
 ## 执行方式
 
@@ -64,7 +64,7 @@ SrcType和DstType域编码如下表：
         when 2 then dstType = FP16;
         when 3 then dstType = FP8;
         otherwise undefined;        # 其他编码未定义
-        
+
     bits(64) operand = R[m, 64];
     bits(64) result = FPConvert(operand, srcType, dstType, rmode);
 
@@ -85,7 +85,7 @@ fcvt.d t#1.uw          /* 无符号整型转换为双精度浮点数 */
 fcvt.s a1.sw,->a2     /* 指令输出到私有寄存器 */
 fcvt.s t#1.sw,->a2    /* 指令输出到私有寄存器 */
 fcvt.d a1.sw,=>a2     /* 指令输出到全局寄存器 */
-fcvt.d t#1.sw,=>a2    /* 指令输出到全局寄存器 */ 
+fcvt.d t#1.sw,=>a2    /* 指令输出到全局寄存器 */
 ```-->
 
 ## 舍入模式

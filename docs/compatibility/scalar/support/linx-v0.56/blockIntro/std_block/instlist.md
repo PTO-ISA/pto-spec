@@ -11,7 +11,7 @@
 | 分类 | 指令 |
 | --| --|
 | **注册移动** | [C.MOVR](../../inst/misa_c/C.MOVR.md) |
-| **立即数移动** | [C.MOVI](../../inst/misa_c/C.MOVI.md) | 
+| **立即数移动** | [C.MOVI](../../inst/misa_c/C.MOVI.md) |
 | **PC相对** | [C.SETRET](../../inst/misa_c/C.SETRET.md) |
 | **跳转参数设置** | [C.SETC.EQ](../../inst/misa_c/C.SETC.EQ.md)、[C.SETC.NE](../../inst/misa_c/C.SETC.NE.md)、[C.SETC.TGT](../../inst/misa_c/C.SETC.TGT.md) |
 | **算术侵犯** | [C.ADD](../../inst/misa_c/C.ADD.md)、[C.SUB](../../inst/misa_c/C.SUB.md)、[C.AND](../../inst/misa_c/C.AND.md)、[C.OR](../../inst/misa_c/C.OR.md) |

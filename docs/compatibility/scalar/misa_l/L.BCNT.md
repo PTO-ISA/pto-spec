@@ -45,12 +45,12 @@
 
 ```c
     integer {m, srcWidth} = DecodeINT(SrcL);
-    integer {d, dstWidth} = DecodeDst(RegDst); 
+    integer {d, dstWidth} = DecodeDst(RegDst);
     integer M = UInt(imms);
     integer N = UInt(imml) + 1;
 
     bits(srcWidth) operand = SREG[m, srcWidth];
-    bits(srcWidth*2) newoperand = (operand << srcWidth) | operand; 
+    bits(srcWidth*2) newoperand = (operand << srcWidth) | operand;
     bits(64) result;
 
     foreach (i from 0 to (N-1) by 1 in dec) {

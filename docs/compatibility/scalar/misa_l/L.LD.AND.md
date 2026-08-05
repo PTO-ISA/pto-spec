@@ -48,9 +48,9 @@ l.ld.and<.{aq, rl, f, aqrl, aqf, rlf, aqrlf}> [SrcL<.ud>], SrcL.<T>, ->RegDst.d
 
 ```c
 integer {m, srcWidth1} = DecodeINT(SrcL);
-integer {n, srcWidth2} = DecodeINT(SrcR); 
+integer {n, srcWidth2} = DecodeINT(SrcR);
 integer {d, dstWidth} = DecodeDst(RegDst);
-    
+
 Atomic {
     bits(64) address = SREG[m, srcWidth1];
     bits(64) operand = SREG[n, srcWidth2];

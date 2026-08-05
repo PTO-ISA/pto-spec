@@ -2,7 +2,7 @@
 
 ## 说明
 
-无效所有数据缓存(*Invalidate All Instruction Cache*)  
+无效所有数据缓存(*Invalidate All Instruction Cache*)
 在微指令缓存 `Instruction Cache`中无效化所有的缓存行 `Cacheline`。
 
 ## 汇编语法

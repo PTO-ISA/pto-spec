@@ -31,7 +31,7 @@
 
 HL.BSTART指令支持的块类型和跳转方式见下表：
 
-| BlockType | 支持的BrType | 
+| BlockType | 支持的BrType |
 |------------|-------------|
 | STD  | direct, call, cond |
 | SYS  | direct, call, cond |

@@ -5,7 +5,7 @@
 
 ## 说明
 
-减字(*Substract Word*)  
+减字(*Substract Word*)
 首先可以有选择的对右源操作数 **截取低32位有符号或无符号扩展** 或 **按位取反加一**，接着左移 **shamt** 位。然后用左源操作数减去右源操作数，结果的`低32位`有符号扩展后写到目的寄存器中。
 
 ## 汇编语法
@@ -65,7 +65,7 @@
 
     bits(datawidth) result = operand1 - (operand2 << shamt);
     bits(datawidth) result = SignExtend(result[31:0]);
-    
+
     R[d, datawidth] = result;
 ```
 

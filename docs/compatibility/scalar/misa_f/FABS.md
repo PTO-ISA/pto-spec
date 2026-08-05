@@ -5,7 +5,7 @@
 
 ## 说明
 
-浮点数绝对值(*Floating-point Absolute Value*)  
+浮点数绝对值(*Floating-point Absolute Value*)
 计算源寄存器中低/半/单/双精度浮点数的绝对值，结果写入到目的寄存器中。
 
 ## 汇编语法

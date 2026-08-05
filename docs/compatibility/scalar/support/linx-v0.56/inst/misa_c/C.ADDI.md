@@ -2,7 +2,7 @@
 
 ## 说明
 
-加立即数(*ADD Immediate*)  
+加立即数(*ADD Immediate*)
 寄存器值与有符号立即数相加，结果写到目的T寄存器。
 
 本指令的标准形式请见[ADDI](../misa_g/ADDI.md)。

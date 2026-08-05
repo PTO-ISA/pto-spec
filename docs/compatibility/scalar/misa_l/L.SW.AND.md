@@ -40,7 +40,7 @@ l.sw.and<.{rl, f, rlf}> [SrcL<.ud>], SrcR.<T>
 
 ```c
 integer {m, srcWidth1} = DecodeINT(SrcL);
-integer {n, srcWidth2} = DecodeINT(SrcR); 
+integer {n, srcWidth2} = DecodeINT(SrcR);
 integer {d, dstWidth} = DecodeDst(RegDst);
 
 Atomic {

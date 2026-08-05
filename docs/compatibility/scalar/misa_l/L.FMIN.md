@@ -37,8 +37,8 @@
 
 ```c
     integer {m, srcType1} = DecodeFP(SrcL);
-    integer {n, srcType2} = DecodeFP(SrcR); 
-    integer {d, dstWidth} = DecodeDst(RegDst); 
+    integer {n, srcType2} = DecodeFP(SrcR);
+    integer {d, dstWidth} = DecodeDst(RegDst);
 
     if srcType1 != srcType2 then undefined;
 
@@ -46,13 +46,13 @@
     srcType2 operand2 = SREG[n, srcWidth2];
 
     bits(64) result = (operand1 < operand2 ? operand1 : operand2);
-    SREG[d, dstWidth] = result;    
+    SREG[d, dstWidth] = result;
 ```
 
 !!! note "注意！"
 
-    值-0.0被视为小于值+0.0。  
-    如果两个输入都是NaN，则结果是规范NaN。  
+    值-0.0被视为小于值+0.0。
+    如果两个输入都是NaN，则结果是规范NaN。
     如果只有一个操作数是NaN，则结果是非NaN操作数。
 
 ## 备注

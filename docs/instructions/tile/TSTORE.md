@@ -75,17 +75,21 @@ The default Shared overload uses TLSU Function 1 and exactly one issuer. Size co
 
 ```asm
 BSTART.TLSU TSTORE, FP16
-C.B.IOS     S#17
+C.B.IOS     S17
+B.IOT       mask=0101, last   /* optional */
 B.IOR       a0, a1, 0
 ```
 
 ## Shared Partition Form
 
-`TSTORE<pe_scope>` uses Function 12. Every PE in the Shared `defined_mask` writes its fixed region through its own pointer. The effective participant mask equals `defined_mask` and is not runtime-selectable.
+`TSTORE<pe_scope>` uses Function 12. The optional mask-only B.IOT chooses fixed
+offset quarters; multiple bits are permitted and `0000` is a no-op. When B.IOT
+is absent the effective mask is `1111`.
 
 ```asm
 BSTART.TLSU TSTORE.SPART, FP16
-C.B.IOS     S#17
+C.B.IOS     S17
+B.IOT       mask=0101, last
 B.IOR       a0, a1, 0
 ```
 
@@ -98,10 +102,13 @@ Shared store completion means the request has been accepted and the source has b
 - Bare Shared TSTORE is full/core and exactly-one issuer; `pe_scope` is the only partition form.
 - Partition pointers are independent per PE and all written byte ranges must be non-overlapping.
 - Full and partition Shared stores use zero `B.IOR.RegDst`; there is no runtime size or owner GPR.
-- A partial Shared value may be partition-stored but cannot be full-stored unless the full object is defined.
+- Reading an uninitialized selected quarter is legal and produces an
+  undefined-register value without modifying the Shared descriptor.
 - Source storage and scope are compile-time. Unsupported combinations are diagnostics, not runtime modes.
 - GM alignment, dtype, layout, shape, atomic and ordinary quantized-store rules remain PTO/target-specific.
 
 ## Lowering 摘要
 
-Local form emits distributed `B.IOT+B.IOR`. Shared full form proves one issuer and emits Function 1 with `C.B.IOS+B.IOR`. Partition form verifies static defined regions and non-overlap, then emits Function 12 on participating PE paths.
+Local form emits `B.IOT+B.IOR`. Shared form emits source `C.B.IOS`, optional
+mask-only `B.IOT`, and `B.IOR`. Programs must prevent overlapping concurrent
+stores; the architecture provides no conflict detector or total order.

@@ -1,7 +1,7 @@
 # TLB.IALL
 
 ## 说明
-清除所有TLB数据(*Translation Lookaside Buffer, Invalidate All*)  
+清除所有TLB数据(*Translation Lookaside Buffer, Invalidate All*)
 用来清除所有的TLB数据。
 
 ## 汇编语法

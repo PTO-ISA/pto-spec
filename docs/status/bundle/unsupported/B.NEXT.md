@@ -15,7 +15,7 @@
 ---
 # B.NEXT
 
-> **NON-NORMATIVE / UNSUPPORTED**  
+> **NON-NORMATIVE / UNSUPPORTED**
 > This document is not part of PTO ISA 0.58.0 and must not be used as assembler, decoder, ASL, encoding, or implementation input.
 
 > 本页保留 Linx 历史 `B.NEXT` 名称，用于说明当前 profile 的边界；v5 将其标为 unsupported/unmapped，不定义 bit-level encoding，也不要求 assembler 生成该 header。

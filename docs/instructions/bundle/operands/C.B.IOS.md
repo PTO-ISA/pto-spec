@@ -15,17 +15,24 @@
 
 ## 用途
 
-C.B.IOS 为 cooperative TMATMUL 绑定 fully-defined Shared
-Left/ScaleLeft/Right/ScaleRight version，也为 Shared TLOAD/TSTORE/TMOV
-绑定其单个 Shared destination/source。TGEMV 不支持该 prefix。
+C.B.IOS 为 cooperative TMATMUL 绑定 Shared Left/ScaleLeft/Right/ScaleRight
+source，也为 Shared TLOAD/TSTORE/TMOV 绑定其单个 Shared destination/source。
+TGEMV 不支持该 prefix。
 
 ## 汇编语法
 
 ```asm
-C.B.IOS S#shared_id
+C.B.IOS S17
+C.B.IOS -> S17
 ```
 
-role 不另占字段，而由 BSTART.CUBE Function、binder 个数和固定顺序确定。
+边界拼写同样是 canonical：source `C.B.IOS S0` / `C.B.IOS S255`，
+destination `C.B.IOS -> S0` / `C.B.IOS -> S255`。旧 hash-prefixed Shared
+spelling 不是 0.58.0 syntax。
+
+第一种是 source，第二种是 destination。role 不另占字段，而由 BSTART
+Function、binder 个数和固定顺序确定；assembler/verifier 必须拒绝与
+surrounding operation role 相反的箭头形式。SharedID 是绝对索引 0..255。
 
 ## 编码
 
@@ -45,6 +52,8 @@ role 不另占字段，而由 BSTART.CUBE Function、binder 个数和固定顺�
 - binder 在随后的 B.IOT stream 中一次消费，不得跨 block 或重复绑定。
 - Shared TLOAD/TSTORE/TMOV 恰好使用一个 binder，并由对应 B.IOR/B.IOT
   companion 一次消费。
+- TLOAD、Local-to-Shared TMOV 使用 destination `-> Sx`；TSTORE、
+  Shared-to-Local TMOV 和所有 CUBE binder 使用 source `Sx`。
 
 ## Profile Collision
 

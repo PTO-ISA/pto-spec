@@ -20,7 +20,7 @@
 
     bits(datawidth) address = baseAddr + (offset &lt;&lt; 1);
     bits(datawidth) data = ZeroExtend(Mem[address][15:0]);
-    
+
     R[d, datawidth] = data;</code></pre>
 <h3 id="汇编索引模式">汇编索引模式</h3>
 <p>指令输出到块内t寄存器:</p>

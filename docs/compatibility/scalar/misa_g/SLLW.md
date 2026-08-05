@@ -5,7 +5,7 @@
 
 ## 说明
 
-逻辑左移字(*Shift Left Logical Word*)  
+逻辑左移字(*Shift Left Logical Word*)
 左源操作数的低 32 位逻辑左移（低位补零，高位舍弃）右源操作数 **低5位** 表达的位数，结果有符号扩展后写到目的寄存器中。
 
 ## 汇编语法
@@ -44,7 +44,7 @@
 
     bits(datawidth) result = operand1 << operand2[4:0];
     bits(datawidth) result = SignExtend(result[31:0]);
-    
+
     R[d, datawidth] = result;
 ```
 

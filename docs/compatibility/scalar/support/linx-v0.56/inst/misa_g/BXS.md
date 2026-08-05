@@ -2,7 +2,7 @@
 
 ## 说明
 
-有符号位提取(*Bit eXtract Signed*)  
+有符号位提取(*Bit eXtract Signed*)
 从源操作数的第 `M` 位开始连续截取 `N` 位，有符号扩展后写到目的寄存器中。
 
 ## 汇编语法
@@ -46,7 +46,7 @@
     else
         operand_t[63-M : 0] = operand[63 : M];
         operand_t[N-1 : 64-M] = operand[M+N-65 : 0];
-        
+
     bits(datawidth) result = SignExtend(operand_t[N-1:0]);
 
     R[d, datawidth] = result;

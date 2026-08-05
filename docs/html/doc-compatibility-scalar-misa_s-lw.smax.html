@@ -22,7 +22,7 @@
         bits(datawidth) newValue = (operand &gt;(s) oldValue ? operand : oldValue);
 
         Mem[address] = newValue;
-        R[d, datawidth] = SignExtend(oldValue);   
+        R[d, datawidth] = SignExtend(oldValue);
     }</code></pre>
 <h3 id="汇编索引模式">汇编索引模式</h3>
 <ul><li>指令输出至块内t寄存器</li></ul>

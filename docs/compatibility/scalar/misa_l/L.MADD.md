@@ -42,9 +42,9 @@
 
 ```c
     integer {m, sign1} = DecodeINT(SrcL);
-    integer {n, sign2} = DecodeINT(SrcR); 
-    integer {c, sign3} = DecodeINT(SrcD); 
-    integer {d, 64} = DecodeDst(RegDst); 
+    integer {n, sign2} = DecodeINT(SrcR);
+    integer {c, sign3} = DecodeINT(SrcD);
+    integer {d, 64} = DecodeDst(RegDst);
 
     if sign1 != sign2 then undefined;
 

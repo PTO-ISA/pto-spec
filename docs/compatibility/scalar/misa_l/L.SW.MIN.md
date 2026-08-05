@@ -40,7 +40,7 @@ l.sw.min<.{rl, f, rlf}> [SrcL<.ud>], SrcR.<T>
 
 ```c
 integer {m, srcWidth1} = DecodeINT(SrcL);
-integer {n, srcWidth2} = DecodeINT(SrcR); 
+integer {n, srcWidth2} = DecodeINT(SrcR);
 integer {d, dstWidth} = DecodeDst(RegDst);
 
 Atomic {
@@ -52,7 +52,7 @@ Atomic {
 
     if sign2 == 0 then
         newValue = (operand <(u) oldValue ? operand : oldValue);  // 无符号比较
-    else 
+    else
         newValue = (operand <(s) oldValue ? operand : oldValue);  // 有符号比较
 
     Mem[address] = newValue;

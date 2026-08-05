@@ -43,11 +43,14 @@ begin
         _Tiles[[index]].layout = TileLayout_RowMajor;
         _Tiles[[index]].location = TileLocation_Any;
     end;
-    for index = 0 to PTO_MODEL_SHARED_TILE_VERSIONS - 1 do
-        _SharedTiles[[index]].valid = FALSE;
-        _SharedTiles[[index]].shared_id = Zeros{8};
-        _SharedTiles[[index]].defined_mask = Zeros{4};
-        _SharedTiles[[index]].ready_mask = Zeros{4};
+    for index = 0 to PTO_SHARED_TILE_COUNT - 1 do
+        _SharedTiles[[index]].descriptor_valid = FALSE;
+        _SharedTiles[[index]].initialized_mask = Zeros{4};
+        _SharedTiles[[index]].tile.allocated = FALSE;
+        _SharedTiles[[index]].tile.contents_defined = FALSE;
+        _SharedTiles[[index]].tile.defined_elements =
+            Zeros{PTO_MODEL_TILE_ELEMENTS};
+        _SharedTiles[[index]].tile.defined_valid_elements = 0;
     end;
     _PC = Zeros{PTO_XLEN};
     _BPC = Zeros{PTO_XLEN};

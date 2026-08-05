@@ -2,8 +2,8 @@
 
 ## 说明
 
-立即数偏移无缩放.存储一对字(*Store Pair of Word with Unscaled Immediate Offset*)  
-将两个数据寄存器的低位 `四个字节` 依次存入目标地址指向的内存中，目标地址由 **基址寄存器** 加 **有符号立即数偏移** 计算得到。 
+立即数偏移无缩放.存储一对字(*Store Pair of Word with Unscaled Immediate Offset*)
+将两个数据寄存器的低位 `四个字节` 依次存入目标地址指向的内存中，目标地址由 **基址寄存器** 加 **有符号立即数偏移** 计算得到。
 
 ## 汇编语法
 

@@ -5,7 +5,7 @@
 
 ## 说明
 
-大于等于时跳转(*Branch if Greater Than or Equal by Unsigned*)  
+大于等于时跳转(*Branch if Greater Than or Equal by Unsigned*)
 无符号比较两源操作数，如果左源操作数大于等于右源操作数时，跳转到当前`TPC`加上左移一位的立即数偏移指示的目标地址处；否则，顺序执行。
 
 ## 汇编语法
@@ -38,7 +38,7 @@
     bits(64) operand2 = R[n, 64];
     bits(64) simm = SignExtend(simm12);
     bits(64) offset = simm << 1;
-    
+
     TPC += (operand1 >=(u) operand2 ? offset : 4);
 ```
 

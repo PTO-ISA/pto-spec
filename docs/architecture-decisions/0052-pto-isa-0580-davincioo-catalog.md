@@ -33,14 +33,22 @@ Function 24; the encoding remains reserved and is not conflated with `TFMA`.
 `SYNCALL` remains a scalar/system scheduling operation and is not a Tile
 operation.
 
+PTO also reserves, but does not execute, the exact Linx-only two-level vector
+encodings for `BSTART.VPAR`, `BSTART.VSEQ`, `C.BSTART.VPAR`,
+`C.BSTART.VSEQ`, `V.QPOP`, and `V.QPUSH`. The authoritative masks, matches,
+split fields, and widths are published in
+`spec/catalog/linx-vector-reservations.json`. No accepted PTO scalar or command
+form may overlap those patterns. Linx ISA 0.58.0 consumes the same reservation
+catalog when enabling its additional vector architecture.
+
 The release replaces the v4 compressed `C.B.DIM RegSrc` slot with the 8-bit
-`C.B.IOS SharedTID` binder. `S#0` through `S#255` name Core-local SharedTile
-versions with descriptor/payload plus immutable four-region `defined_mask` and
-internal `ready_mask`. Shared TLOAD, full/partition TSTORE, TMOV Functions
-8–11, and cooperative TMATMUL consume the binder schemas defined by the public
-0.58.0 architecture and instruction pages. Partial versions remain eligible
-for movement and partition store, while Broadcast, full store, and cooperative
-CUBE require fully-defined versions. TGEMV rejects every Shared binder.
+`C.B.IOS SharedTID` binder. `S0` through `S255` name absolute Core-local Shared
+registers with persistent descriptor/payload plus a four-quarter initialization
+mask. Shared TLOAD/TSTORE accept optional mask-only B.IOT, TMOV Functions 8–11
+and cooperative TMATMUL consume the binder schemas defined by the public 0.58.0
+architecture and instruction pages. Destination updates are atomic RMWs;
+uninitialized reads have undefined-register semantics. TGEMV rejects every
+Shared binder.
 
 All 12 CUBE operations write explicit Local D. ACC variants additionally read
 explicit Local C with read-old/write-new alias behavior; PTO ISA 0.58.0 has no
@@ -58,6 +66,8 @@ HTML is tracked under `docs/html/`, with
   Markdown, HTML, and Excel inventories must all report 106.
 - Removed operations remain reserved or explicitly absent; they do not retain
   formal instruction pages in the Complete site.
+- The six Linx-only vector encodings are fail-closed canonical release inputs;
+  PTO decoders must continue to reject them while Linx may define them.
 - The 0.57.1 decision remains historical evidence and is not rewritten.
 - DavinciOO consumes this repository as a later integration step; no profile
   fork is introduced in pto-spec.

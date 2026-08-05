@@ -27,7 +27,7 @@
         when 2b01 then offset = SignExtend(offset[31:0]);
         when 2b10 then offset = ZeroExtend(offset[31:0]);
         when 2b11 then undefined;
-    
+
     bits(64) address = baseAddr + (offset &lt;&lt; shamt);
 
     case model of

@@ -2,7 +2,7 @@
 
 ## 说明
 
-无效所有块指令缓存(*Invalidate All Block Cache*)  
+无效所有块指令缓存(*Invalidate All Block Cache*)
 在块指令缓存 `Block Header Cache` 中无效化所有的缓存行。
 
 ## 汇编语法

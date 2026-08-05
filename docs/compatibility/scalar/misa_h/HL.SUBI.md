@@ -5,7 +5,7 @@
 
 ## 说明
 
-减立即数(*Substract Immediate*)  
+减立即数(*Substract Immediate*)
 左源操作数减无符号立即数，结果写到目的寄存器中。
 
 ## 汇编语法

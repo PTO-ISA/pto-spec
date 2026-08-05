@@ -31,7 +31,7 @@
 
 L.BSTART指令支持的块类型和跳转方式见下表：
 
-| BlockType | 支持的BrType | 
+| BlockType | 支持的BrType |
 |------------|-------------|
 | STD  | fall, direct, call, cond |
 | SYS  | fall, direct, call, cond |

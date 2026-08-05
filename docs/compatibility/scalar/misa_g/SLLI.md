@@ -5,7 +5,7 @@
 
 ## 说明
 
-立即数逻辑左移(*Shift Left Logical by Immediate*)  
+立即数逻辑左移(*Shift Left Logical by Immediate*)
 左源操作数逻辑左移（低位补零，高位舍弃）**shamt** 位，结果写到目的寄存器中。
 
 ## 汇编语法

@@ -15,8 +15,8 @@
 <h3 id="执行方式">执行方式</h3>
 <ul><li>解码输入参数：<span title="Legacy source link is not part of the public PTO ISA site">DecodeINT</span></li><li>解码输出参数：<span title="Legacy source link is not part of the public PTO ISA site">DecodeDst</span></li><li>标量寄存器读写：<span title="Legacy source link is not part of the public PTO ISA site">SREG[]</span></li></ul>
 <pre><code data-lang="c">    integer {m, sign1} = DecodeINT(SrcL);
-    integer {n, sign2} = DecodeINT(SrcR); 
-    integer {d, 64} = DecodeDst(RegDst); 
+    integer {n, sign2} = DecodeINT(SrcR);
+    integer {d, 64} = DecodeDst(RegDst);
 
     if sign1 != sign2 then undefined;
 
@@ -24,12 +24,12 @@
     bits(64) operand2 = SREG[n, 64];
     bits(64) result;
 
-    if sign1 == 0 then   
+    if sign1 == 0 then
         result = operand1 % (u) operand2;   // 无符号运算
-    else                  
+    else
         result = operand1 % (s) operand2;   // 有符号运算
-    
-    SREG[d, 64] = result;       </code></pre>
+
+    SREG[d, 64] = result;</code></pre>
 <p>!!! note &quot;注意&quot;</p>
 <p>余数的符号与被除数的符号相同。 如果发生除法溢出情况，余数等于&quot;0&quot;。 如果发生除以零的情况，余数等于被除数。</p>
 <h3 id="备注">备注</h3>

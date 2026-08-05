@@ -15,9 +15,6 @@ constant PTO_PREDICATE_WIDTH = 32;
 constant PTO_ACR_COUNT = 16;
 constant PTO_TILE_REGISTER_COUNT = 64;
 constant PTO_SHARED_TILE_COUNT = 256;
-// Executable-model bound for simultaneously resident SharedTile versions.
-// The architectural identifier namespace remains the full S#0..S#255 range.
-constant PTO_MODEL_SHARED_TILE_VERSIONS = 8;
 constant PTO_MODEL_MEMORY_AGENTS = 4;
 constant PTO_MODEL_MEMORY_EVENTS = 16;
 // PTO ISA 0.58.0 exposes 2048 architectural 128-byte cells per PE.

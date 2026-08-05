@@ -2,7 +2,7 @@
 
 ## 说明
 
-TPC加高位立即数(*Add TPC with Upper immediate*)  
+TPC加高位立即数(*Add TPC with Upper immediate*)
 将 `20位` 立即数有符号扩展并左移 `12位`(低12位置零)后与当前微指令的`TPC`相加，结果写到目的寄存器。
 
 ## 汇编语法
@@ -49,7 +49,7 @@ addtpc simm,    ->a3        /* 指令输出到全局寄存器R1-R23 */
 
 !!! note "注意"
 
-	此微指令可用于TPC-Relative跳转和寻址。  
+	此微指令可用于TPC-Relative跳转和寻址。
     如果结果溢出，则舍弃额外的位。
 
 ## 备注

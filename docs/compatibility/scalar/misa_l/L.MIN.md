@@ -37,14 +37,14 @@
 
 ```c
     integer {m, 64} = DecodeINT(SrcL);
-    integer {n, 64} = DecodeINT(SrcR); 
-    integer {d, 64} = DecodeDst(RegDst); 
+    integer {n, 64} = DecodeINT(SrcR);
+    integer {d, 64} = DecodeDst(RegDst);
 
     bits(64) operand1 = SREG[m, 64];
     bits(64) operand2 = SREG[n, 64];
 
     bits(64) result = (operand1 < operand2 ? operand1 : operand2);
-    SREG[d, dstWidth] = result;    
+    SREG[d, dstWidth] = result;
 ```
 
 ## 备注

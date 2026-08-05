@@ -590,7 +590,7 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "5e2d939f8f7dd64a386352d908669aef0db0d31508adc0580e057c241f0ead97"
+      "sha256": "91b88692f7cabe60ca9e255db278a39ec2431a58d19b3b2be7941fc58abdec6e"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
