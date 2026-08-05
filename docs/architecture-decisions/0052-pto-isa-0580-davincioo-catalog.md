@@ -70,6 +70,8 @@ HTML is tracked under `docs/html/`, with
 
 - Catalog, ASL decoder, semantic handler, operand binding, executable witness,
   Markdown, HTML, and Excel inventories must all report 106.
+- The normative Tile/Bundle ASL assertion inventory is pinned at 180 after the
+  removed operations and replacement Shared-register model are accounted for.
 - Removed operations remain reserved or explicitly absent; they do not retain
   formal instruction pages in the Complete site.
 - The six Linx-only vector encodings are fail-closed canonical release inputs;

@@ -4,6 +4,15 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
 end;
 
+func AssertTwoByTwoTileEquals(index: TileIndex, expected: Word)
+begin
+    for row = 0 to 1 do
+        for column = 0 to 1 do
+            assert ReadTileElement(index, row, column) == expected;
+        end;
+    end;
+end;
+
 func SelectTestCUBEDataType(data_type: bits(5))
 begin
     InstallBundleOperationDescriptor(BundleOperationDescriptor {
@@ -796,8 +805,7 @@ begin
         TileDecode_TEPL, '000000000000', add);
     assert partial_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
-    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 0x5a;
-    assert ReadTileElement(2, 1, 1) == Zeros{PTO_XLEN} + 0x5a;
+    AssertTwoByTwoTileEquals(2, Zeros{PTO_XLEN} + 0x5a);
 
     ConfigureTile(3, 256, 2, 1, 2, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
@@ -855,7 +863,7 @@ begin
         TileDecode_TEPL, '000000000000', undefined_operands);
     assert undefined_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
-    assert ReadTileElement(9, 0, 0) == Zeros{PTO_XLEN} + 0x5a;
+    AssertTwoByTwoTileEquals(9, Zeros{PTO_XLEN} + 0x5a);
 
     ExecuteTileFillScalar(7, Zeros{PTO_XLEN} + 8);
     WriteTileElement(8, 0, 1, Zeros{PTO_XLEN});
@@ -871,8 +879,7 @@ begin
     assert _LastFault == Fault_TileLegality;
     assert _FaultAddress == Zeros{PTO_XLEN} + 0x280;
     assert _ACRTrapNumber[[CurrentACR()]] == Zeros{6} + 5;
-    assert ReadTileElement(9, 0, 0) == Zeros{PTO_XLEN} + 0x5a;
-    assert ReadTileElement(9, 0, 1) == Zeros{PTO_XLEN} + 0x5a;
+    AssertTwoByTwoTileEquals(9, Zeros{PTO_XLEN} + 0x5a);
 
     ReleaseTile(8);
     ClearFault();
@@ -880,7 +887,7 @@ begin
         TileDecode_TEPL, '000000000000', division_operands);
     assert shape_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
-    assert ReadTileElement(9, 1, 1) == Zeros{PTO_XLEN} + 0x5a;
+    AssertTwoByTwoTileEquals(9, Zeros{PTO_XLEN} + 0x5a);
 
     ConfigureTwoByTwo(10);
     ConfigureTwoByTwo(11);
@@ -902,8 +909,7 @@ begin
         TileDecode_CUBE, '000000000001', matrix_operands);
     assert matrix_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
-    assert ReadTileElement(12, 0, 0) == Zeros{PTO_XLEN} + 0x66;
-    assert ReadTileElement(12, 1, 1) == Zeros{PTO_XLEN} + 0x66;
+    AssertTwoByTwoTileEquals(12, Zeros{PTO_XLEN} + 0x66);
 end;
 
 // PTO-REQ-MEMORY-COMPLETION-001: a gather fault at the first, middle, or last
