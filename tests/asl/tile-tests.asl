@@ -385,18 +385,11 @@ begin
     WriteTileElement(32, 0, 1, Zeros{PTO_XLEN} + 1);
     WriteTileElement(32, 0, 2, Zeros{PTO_XLEN} + 3);
     WriteTileElement(32, 0, 3, Zeros{PTO_XLEN} + 2);
-    TSORT32(33, 38, 32, FALSE);
+    TSORT(33, 38, 32, 32, FALSE);
     assert ReadTileElement(33, 0, 0) == Zeros{PTO_XLEN} + 1;
     assert ReadTileElement(33, 0, 3) == Zeros{PTO_XLEN} + 4;
     assert ReadTileElement(38, 0, 0) == Zeros{PTO_XLEN} + 1;
     assert ReadTileElement(38, 0, 3) == Zeros{PTO_XLEN};
-
-    TRANDOM(33, Zeros{PTO_XLEN} + 7, Zeros{PTO_XLEN} + 11,
-        Zeros{PTO_XLEN} + 13, FALSE);
-    let random_witness = ReadTileElement(33, 0, 0);
-    TRANDOM(33, Zeros{PTO_XLEN} + 7, Zeros{PTO_XLEN} + 11,
-        Zeros{PTO_XLEN} + 13, FALSE);
-    assert ReadTileElement(33, 0, 0) == random_witness;
 
     ConfigureTile(34, 256, 1, 2, 1, 2, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);

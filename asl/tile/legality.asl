@@ -530,7 +530,7 @@ begin
            _Tiles[[destination]].data_type == _Tiles[[source_right]].data_type;
 end;
 
-readonly func TileOperandsLegal_TSORT32(destination: TileIndex,
+readonly func TileOperandsLegal_TSORT(destination: TileIndex,
                                       destination_indices: TileIndex,
                                       source: TileIndex,
                                       descending: boolean) => boolean
@@ -547,16 +547,6 @@ begin
                _Tiles[[source]].valid_rows * _Tiles[[source]].valid_columns &&
            _Tiles[[destination]].data_type == _Tiles[[source]].data_type &&
            _Tiles[[destination_indices]].data_type == TileDataType_U32;
-end;
-
-readonly func TileOperandsLegal_TRANDOM(
-    destination: TileIndex, key: Word, counter_low: Word,
-    counter_high: Word, seven_rounds: boolean) => boolean
-begin
-    return TileDescriptorLegal(destination) &&
-           (_Tiles[[destination]].data_type == TileDataType_S32 ||
-            _Tiles[[destination]].data_type == TileDataType_U32) &&
-           _Tiles[[destination]].layout == TileLayout_RowMajor;
 end;
 
 readonly func TileOperandsLegal_GMOV(

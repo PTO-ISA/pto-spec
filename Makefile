@@ -45,7 +45,7 @@ ASL_TEST_LIB := \
 	tests/asl/scalar-tests.asl \
 	tests/asl/tile-tests.asl \
 	tests/asl/tepl-totality-tests.asl \
-	tests/asl/tma-totality-tests.asl \
+	tests/asl/tlsu-totality-tests.asl \
 	tests/asl/cube-totality-tests.asl \
 	tests/asl/dispatch-tests.asl \
 	tests/asl/concurrency-tests.asl \
@@ -79,7 +79,7 @@ ASL_TEST_SHARD_MAINS := \
 	tests/asl/shards/scalar-sys-maintenance-selectors.asl \
 	tests/asl/shards/scalar-sys-maintenance-legality.asl \
 	tests/asl/shards/tepl-totality.asl \
-	tests/asl/shards/tma-totality.asl \
+	tests/asl/shards/tlsu-totality.asl \
 	tests/asl/shards/cube-totality.asl \
 	tests/asl/shards/core-bundle.asl \
 	tests/asl/shards/scalar-base.asl \
@@ -133,7 +133,7 @@ ASL_TEST_LIB_scalar-sys-maintenance-legality := tests/asl/scalar-tests.asl
 ASL_TEST_LIB_tile-ops := tests/asl/tile-tests.asl
 ASL_TEST_LIB_tile-lifecycle := tests/asl/tile-tests.asl
 ASL_TEST_LIB_tepl-totality := tests/asl/tepl-totality-tests.asl
-ASL_TEST_LIB_tma-totality := tests/asl/tma-totality-tests.asl
+ASL_TEST_LIB_tlsu-totality := tests/asl/tlsu-totality-tests.asl
 ASL_TEST_LIB_cube-totality := tests/asl/cube-totality-tests.asl
 ASL_TEST_LIB_concurrency-profile := \
 	tests/asl/concurrency-tests.asl \

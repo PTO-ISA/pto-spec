@@ -139,8 +139,8 @@ begin
     end;
 end;
 
-func TSORT32(destination: TileIndex, destination_indices: TileIndex,
-           source: TileIndex, descending: boolean)
+func TSORT(destination: TileIndex, destination_indices: TileIndex,
+           source: TileIndex, sort_width: integer {1..64}, descending: boolean)
 begin
     let source_tile = _Tiles[[source]];
     let destination_tile = _Tiles[[destination]];
@@ -153,7 +153,7 @@ begin
     var indices: TilePayload;
     for element = 0 to extent - 1 looplimit 4096 do
         indices[[element as ModelTileElementIndex]] =
-            Zeros{PTO_XLEN} + (element MOD 32);
+            Zeros{PTO_XLEN} + (element MOD sort_width);
     end;
     let group_count: integer = (extent + 31) DIVRM 32;
     for group = 0 to group_count - 1 looplimit 128 do
@@ -193,51 +193,56 @@ begin
     MarkTileValidRegionDefined(destination_indices);
 end;
 
-// Counter-based 32-bit generator used by the portable ASL profile.  scalar0
-// carries the 64-bit key, scalar1/address carry the low/high halves of the
-// 128-bit counter, and seven_rounds selects 7 instead of the default 10.
-pure func TRandomRoundWord(value: Word, multiplier: Word) => Word
-begin
-    return MultiplyWord(ZeroExtend{PTO_XLEN}(value[31:0]), multiplier);
-end;
-
-func TRANDOM(destination: TileIndex, key: Word, counter_low: Word,
-             counter_high: Word, seven_rounds: boolean)
+func THISTOGRAM(destination: TileIndex, source: TileIndex, indices: TileIndex,
+                selected_byte: integer {0..3})
 begin
     let destination_tile = _Tiles[[destination]];
-    let extent: integer = destination_tile.valid_rows *
-        destination_tile.valid_columns;
-    let rounds: integer = if seven_rounds then 7 else 10;
-    for element = 0 to extent - 1 looplimit 4096 do
-        let block: integer = element DIVRM 4;
-        var c0: Word = ZeroExtend{PTO_XLEN}(counter_low[31:0]) +
-            (Zeros{PTO_XLEN} + block);
-        var c1: Word = ZeroExtend{PTO_XLEN}(counter_low[63:32]);
-        var c2: Word = ZeroExtend{PTO_XLEN}(counter_high[31:0]);
-        var c3: Word = ZeroExtend{PTO_XLEN}(counter_high[63:32]);
-        if UInt(counter_low[31:0]) + block > 0xffffffff then
-            c1 = c1 + 1;
+    let source_tile = _Tiles[[source]];
+    let index_tile = _Tiles[[indices]];
+    assert destination_tile.valid_rows == source_tile.valid_rows;
+    assert destination_tile.valid_columns >= 256;
+    assert source_tile.data_type == TileDataType_U16 || source_tile.data_type == TileDataType_U32;
+    if source_tile.data_type == TileDataType_U16 then assert selected_byte <= 1; end;
+    let source_payload = source_tile.payload;
+    let index_payload = index_tile.payload;
+    for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
+        var counts: array [[256]] of Word;
+        for bin = 0 to 255 do counts[[bin]] = Zeros{PTO_XLEN}; end;
+        for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
+            let source_element = TileLinearIndex(source_tile,
+                row as integer {0..65535}, column as integer {0..65535});
+            let value = source_payload[[source_element]];
+            var selected = TRUE;
+            if source_tile.data_type == TileDataType_U16 && selected_byte == 0 then
+                let filter_element = TileLinearIndex(index_tile,
+                    row as integer {0..65535}, 0);
+                selected = ExtractWordByte(value, 1) == index_payload[[filter_element]][7:0];
+            elsif source_tile.data_type == TileDataType_U32 then
+                if selected_byte <= 2 then
+                    selected = ExtractWordByte(value, 3) ==
+                        index_payload[[TileLinearIndex(index_tile, 0, 0)]][7:0];
+                end;
+                if selected && selected_byte <= 1 then
+                    selected = ExtractWordByte(value, 2) ==
+                        index_payload[[TileLinearIndex(index_tile, 1, 0)]][7:0];
+                end;
+                if selected && selected_byte == 0 then
+                    selected = ExtractWordByte(value, 1) ==
+                        index_payload[[TileLinearIndex(index_tile, 2, 0)]][7:0];
+                end;
+            end;
+            if selected then
+                let bin = UInt(ExtractWordByte(value, selected_byte));
+                counts[[bin]] = counts[[bin]] + 1;
+            end;
         end;
-        var k0: Word = ZeroExtend{PTO_XLEN}(key[31:0]);
-        var k1: Word = ZeroExtend{PTO_XLEN}(key[63:32]);
-        for round = 0 to rounds - 1 looplimit 10 do
-            let m0 = TRandomRoundWord(c0, Zeros{PTO_XLEN} + 0xD2511F53);
-            let m1 = TRandomRoundWord(c2, Zeros{PTO_XLEN} + 0xCD9E8D57);
-            let n0 = ZeroExtend{PTO_XLEN}(m1[63:32]) XOR c1 XOR k0;
-            let n1 = ZeroExtend{PTO_XLEN}(m1[31:0]);
-            let n2 = ZeroExtend{PTO_XLEN}(m0[63:32]) XOR c3 XOR k1;
-            let n3 = ZeroExtend{PTO_XLEN}(m0[31:0]);
-            c0 = n0; c1 = n1; c2 = n2; c3 = n3;
-            k0 = ZeroExtend{PTO_XLEN}((k0 + 0x9E3779B9)[31:0]);
-            k1 = ZeroExtend{PTO_XLEN}((k1 + 0xBB67AE85)[31:0]);
+        var cumulative: Word = Zeros{PTO_XLEN};
+        for bin = 0 to 255 do
+            cumulative = cumulative + counts[[bin]];
+            WriteTileElement(destination, row as integer {0..65535},
+                bin as integer {0..65535}, cumulative);
         end;
-        let value = if element MOD 4 == 0 then c0
-                    else if element MOD 4 == 1 then c1
-                    else if element MOD 4 == 2 then c2 else c3;
-        _Tiles[[destination]].payload[[element as ModelTileElementIndex]] =
-            ZeroExtend{PTO_XLEN}(value[31:0]);
     end;
-    MarkTileValidRegionDefined(destination);
 end;
 
 func TMRGSORT(destination: TileIndex, source_left: TileIndex, source_right: TileIndex,
