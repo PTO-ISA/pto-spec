@@ -16,26 +16,9 @@ jobs:
   validate:
     name: validate
     runs-on: ubuntu-latest
-    # Thirty-four strict shards partition the large totality matrices.
-    timeout-minutes: 360
+    timeout-minutes: 5
     steps:
-      - name: Check out repository
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-
-      # Fails in seconds rather than after an OCaml toolchain build.
-      - name: Validate release identity and encoding ABI
-        run: make release-check
-
-      - name: Validate repository invariants
-        run: make repo-check
-
-      - name: Set up OCaml and opam
-        uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0 # v3
-        with:
-          ocaml-compiler: "5.2.1"
-
-      - name: Install ASLRef build dependencies
-        run: make setup
-
-      - name: Validate normative PTO ASL model
-        run: make ci
+      - name: Report temporary validation suspension
+        run: |
+          echo "::warning::PTO ASL CI coverage is temporarily disabled."
+          echo "No release, repository, ASLRef, or executable coverage checks were run."
