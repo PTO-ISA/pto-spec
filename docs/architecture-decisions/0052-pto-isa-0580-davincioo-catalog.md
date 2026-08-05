@@ -41,6 +41,12 @@ split fields, and widths are published in
 form may overlap those patterns. Linx ISA 0.58.0 consumes the same reservation
 catalog when enabling its additional vector architecture.
 
+The reviewed 0.58.0 scalar/command encoded-form projection contains exactly
+570 forms and has SHA-256 fingerprint
+`aaaf95c76cacd6843637ebc7ce5b9939ed82d4bafe18f65660bd809dd02acf8c`.
+The binary-closure gate pins this value so any later encoding drift requires a
+new normative decision instead of silently changing the release ABI.
+
 The release replaces the v4 compressed `C.B.DIM RegSrc` slot with the 8-bit
 `C.B.IOS SharedTID` binder. `S0` through `S255` name absolute Core-local Shared
 registers with persistent descriptor/payload plus a four-quarter initialization
