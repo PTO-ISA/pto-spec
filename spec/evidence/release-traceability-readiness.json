@@ -87,7 +87,7 @@
     },
     {
       "path": "spec/evidence/system-register-witness-closure.json",
-      "sha256": "8132bf37177bb358431b6a400ae953d43875d0e49f92e16baff46cb84134e22b"
+      "sha256": "b4f5285d1da95d72084034617d069f88a055d273cd3be76635e390be9ca52ba2"
     },
     {
       "path": "spec/evidence/bundle-command-totality.json",
@@ -18214,7 +18214,7 @@
               "function": "TestTileCapacityLegality",
               "assertion_marker": "SYSREG-EFFECT-WITNESS tile-capacity-profile-limit/limits-per-tile-and-aggregate-allocation",
               "source": "tests/asl/tile-tests.asl",
-              "source_sha256": "aeeeab6153872a1394447f8b775e3e056cdd9d018ab8e8129cdce5b643c2195f",
+              "source_sha256": "24f9c60f3cbddbc0c25aac104e7c5bf3cf275f3a9a079138552209ae5206192c",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -18226,7 +18226,7 @@
           },
           {
             "path": "tests/asl/tile-tests.asl",
-            "sha256": "aeeeab6153872a1394447f8b775e3e056cdd9d018ab8e8129cdce5b643c2195f"
+            "sha256": "24f9c60f3cbddbc0c25aac104e7c5bf3cf275f3a9a079138552209ae5206192c"
           }
         ],
         "consumer_exclusion_guard": null,

@@ -462,11 +462,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "8ee1f1fee15a9901e8f8d5b05406f27705b1329c5c45be8f30fb5eaf6f81f0ee"
+      "sha256": "c317a1251b3c18e080c70884e5f4db36ac3880c925fa062b978b7f36fdd586c0"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "c312d3b4fd791c6bc5be960360be09657fd03833582442571a68091666b0b52f"
+      "sha256": "b793f202b578dc15206798e2d070ad472a280c8f4bcfd6a769a22bb543fdd06c"
     },
     {
       "path": "spec/evidence/scalar-agu-totality.json",
@@ -502,7 +502,7 @@
     },
     {
       "path": "spec/evidence/system-register-witness-closure.json",
-      "sha256": "8132bf37177bb358431b6a400ae953d43875d0e49f92e16baff46cb84134e22b"
+      "sha256": "b4f5285d1da95d72084034617d069f88a055d273cd3be76635e390be9ca52ba2"
     },
     {
       "path": "spec/evidence/tepl-totality.json",
@@ -552,7 +552,7 @@
     },
     "tile_operations_total": 106
   },
-  "content_sha256": "27a0e59030e650a46a2c685fee6af8f6d7a41e17888630de84a2aff845db0ab7",
+  "content_sha256": "27ad208cb7e2a310919b7fa8120a359b531cc699ba6f12985bbc10d093b0436b",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",

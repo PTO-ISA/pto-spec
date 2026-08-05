@@ -183,7 +183,7 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "c312d3b4fd791c6bc5be960360be09657fd03833582442571a68091666b0b52f"
+      "sha256": "b793f202b578dc15206798e2d070ad472a280c8f4bcfd6a769a22bb543fdd06c"
     },
     {
       "path": "spec/requirements.json",
