@@ -139,7 +139,7 @@ their contracts.
 | `S2-T1` | State and faults | Closed | Define access, reset, and behavior classes for all 72 visible system registers. |
 | `S2-T2` | State and faults | Closed | Define complete nonzero-seed reset for every architectural state field and all 16 ACR banks. |
 | `S2-T3` | State and faults | Closed | Define producer, routing, saved context, recovery, and restart envelopes for all 13 traps. |
-| `S2-T4` | State and faults | Closed | Separate the 64-bit MPAR/MSEQ execution mask from eight 32-bit warp predicates; hardwire P0 and define reset, trap, and consumer boundaries; reconcile the public v0.6 `!pto.mask<G>` source layer as outside 0.57.1 without inferring a physical mapping. |
+| `S2-T4` | State and faults | Closed | Separate the 64-bit MPAR/MSEQ execution mask from eight 32-bit warp predicates; hardwire P0 and define reset, trap, and consumer boundaries; keep the public v0.6 `!pto.mask<G>` source layer outside PTO ISA 0.58.0 without inferring a physical mapping. |
 | `S2-T5` | State and faults | Closed | Enforce per-tile and aggregate capacity through `TILE_CAPACITY`, including sub-byte storage. |
 | `S2-T6` | State and faults | Closed | Define element-level tile validity, layout rejection, handoff, lifetime, ordering, and aliases. |
 | `S3-T1` | Ordering | Closed | Emit normative PTO-TSO events from every production scalar and tile memory path. |
@@ -168,9 +168,9 @@ memory, bundle, tile, and compute decisions.
 | `S4-T5` | FSU | Closed | Close raw-carrier reference effects and keep target arithmetic profile-scoped until Stage 5 supplies numeric conformance. |
 | `S4-T6` | SYS | Closed | ADR 0031 and `scalar-sys-totality.json` close all 35 forms with 4,401 unique Stage 4 transfer, Reg5, fence, request, recovery, privilege, and maintenance cases plus 35 retained Stage 1 effects. |
 | `S4-T7` | Bundle commands | Closed | All 99 forms have generated consumed-field and effect-or-rejection dispositions; bridge limitations are explicit and commit-fail-closed. |
-| `S4-T8` | TEPL | Closed | ADR 0035 and `tepl-totality.json` close all 98 accepted selectors, 30 reserved selectors, carrier/layout rules, aliases, regions, indices, sort/merge, histogram, and management effects. |
+| `S4-T8` | TEPL | Closed | ADRs 0035 and 0052 plus `tepl-totality.json` close all 87 accepted selectors, 41 reserved selectors, carrier/layout rules, aliases, regions, indices, sort/merge, histogram, and management effects. |
 | `S4-T9` | TLSU | Closed | All ten selectors have decoded effects plus packed four-bit, duplicate-lane, event, restart, and first/middle/last preflight-fault evidence. |
-| `S4-T10` | CUBE | Closed | All 13 selectors, 25 raw-carrier types, logical layouts/locations, aliases, and composite preflight are closed; hardware numeric conformance remains S5-T2. |
+| `S4-T10` | CUBE | Closed | All 12 accepted operations, 20 reserved selectors, 25 raw-carrier types, logical layouts/locations, explicit C/D aliases, and composite preflight are closed; hardware numeric conformance remains S5-T2. |
 
 ### Stage 4 SYS sub-areas
 

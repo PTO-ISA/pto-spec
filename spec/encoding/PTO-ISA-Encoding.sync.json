@@ -16,7 +16,7 @@
     "Description",
     "Constraints"
   ],
-  "workbook_sha256": "e81ac6ca8d0569a84f7295f10230424d0cc060b19f9fd73a423f43dee2a1ba21",
+  "workbook_sha256": "938c4a75c9363d26b52d9ab8ca70b314219dce28a1ef165e6f2d122fbbf1dba2",
   "source_fingerprint": "d10527b239e0f6c9a3e5ba3773e9927147b278d139067088cb4d30126f42800f",
   "projection_fingerprint": "251aab26373305eb4a0d9134b0cebdd81ac333f87132e6c0e2c0f244c87c9192",
   "rows": {
@@ -923,11 +923,10 @@
         "Dtype": "AccType S32 or F32; DType is AccType for canonical None and otherwise follows PostProcessConfig",
         "Encoding": "CUBE Mode 0, Function 16;",
         "Description": "TGEMV_ACC、TGEMV_BIAS 和 TGEMV_MX 由各自独立页面描述；本页只描述 base TGEMV 的 A/B -> ACC form。",
-        "Constraints": "Source Tile operand 使用 Linx-style 6-bit / 64-entry TReg namespace：T#1..T#16、U#1..U#16、M#1..M#16、N#1..N#16。\nB.IOT 中表达的 operand 顺序必须与 intrinsic operand role 保持一致。\n一个 block 中最后一条 B.IOT 必须设置 last；只有一条 B.IOT 时也必须设置 last。\nM/N/K 均为 16-bit dimension 值，并应满足当前 CUBE target profile 的范围、fractal 和 dtype 约束。\nACC lifetime、accumulator precision 和 export/convert 行为遵循 CUBE/ACC contract；将 ACC 写回普通 Tile 由 ACCCVT 表达。\n当前页不定义 core-level / group-level GMMA、cross-PE register exchange 或 group barrier。"
+        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\n所有 operand/output 都是单 PE Local Tile；M 固定为 1。\nD 必须是显式 ordinary physical Local destination。\nTGEMV 禁止所有 SharedTile、C.B.IOS 和 core rendezvous；K blocking 通过每 PE 显式 TGEMV_ACC(D,C,A,B) 链完成。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
       },
       "overrides": {
-        "Description": "PTO matrix-vector multiplication operation (optional bias), destination-style (DPS) in tile world.",
-        "Constraints": "1. M/N/K are required 16-bit dims in B.DIM(LB0/LB1/LB2).\n2. M/N/K, fractal/layout, and dtype must satisfy the active CUBE target profile.\n3. ACC lifetime, precision, and export/convert behavior follow the CUBE/ACC contract."
+        "Description": "PTO matrix-vector multiplication operation (optional bias), destination-style (DPS) in tile world."
       },
       "layout_placeholders": {
         "类型": null
@@ -948,11 +947,10 @@
         "Dtype": "AccType S32 or F32; DType is AccType for canonical None and otherwise follows PostProcessConfig",
         "Encoding": "CUBE Mode 0, Function 18;",
         "Description": "PTO 来源页：../pto/TGEMV_ACC.md PTO 指令名：TGEMV_ACC C++ intrinsic / RecordEvent 签名摘录：",
-        "Constraints": "Source Tile operand 使用 Linx-style 6-bit / 64-entry TReg namespace：T#1..T#16、U#1..U#16、M#1..M#16、N#1..N#16。\nB.IOT 中表达的 operand 顺序必须与 intrinsic operand role 保持一致。\n一个 block 中最后一条 B.IOT 必须设置 last；只有一条 B.IOT 时也必须设置 last。\nM/N/K 均为 16-bit dimension 值，并应满足当前 CUBE target profile 的范围、fractal 和 dtype 约束。\nACC lifetime、accumulator precision 和 export/convert 行为遵循 CUBE/ACC contract；将 ACC 写回普通 Tile 由 ACCCVT 表达。\n当前页不定义 core-level / group-level GMMA、cross-PE register exchange 或 group barrier。"
+        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\n所有 operand/output 都是单 PE Local Tile；M 固定为 1。\nD==C 仅在 D 保持 TileAcc role 且 dtype、shape、layout、allocation 完全相同时合法；实现必须 read-old/rename-new，禁止物理原地覆盖。C 不携带 partial-sum provenance 要求。\nTGEMV 禁止所有 SharedTile、C.B.IOS 和 core rendezvous；K blocking 通过每 PE 显式 TGEMV_ACC(D,C,A,B) 链完成。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
       },
       "overrides": {
-        "Description": "PTO matrix-vector multiplication accumulate operation, destination-style (DPS, no bias).",
-        "Constraints": "1. M/N/K are required 16-bit dims in B.DIM(LB0/LB1/LB2).\n2. M/N/K, fractal/layout, and dtype must satisfy the active CUBE target profile.\n3. ACC lifetime, precision, and export/convert behavior follow the CUBE/ACC contract."
+        "Description": "PTO matrix-vector multiplication accumulate operation, destination-style (DPS, no bias)."
       },
       "layout_placeholders": {
         "类型": null,
@@ -974,11 +972,10 @@
         "Dtype": "AccType S32 or F32; DType is AccType for canonical None and otherwise follows PostProcessConfig",
         "Encoding": "CUBE Mode 0, Function 17;",
         "Description": "PTO 来源页：../pto/TGEMV_BIAS.md PTO 指令名：TGEMV_BIAS C++ intrinsic / RecordEvent 签名摘录：",
-        "Constraints": "Source Tile operand 使用 Linx-style 6-bit / 64-entry TReg namespace：T#1..T#16、U#1..U#16、M#1..M#16、N#1..N#16。\nB.IOT 中表达的 operand 顺序必须与 intrinsic operand role 保持一致。\n一个 block 中最后一条 B.IOT 必须设置 last；只有一条 B.IOT 时也必须设置 last。\nM/N/K 均为 16-bit dimension 值，并应满足当前 CUBE target profile 的范围、fractal 和 dtype 约束。\nACC lifetime、accumulator precision 和 export/convert 行为遵循 CUBE/ACC contract；将 ACC 写回普通 Tile 由 ACCCVT 表达。\n当前页不定义 core-level / group-level GMMA、cross-PE register exchange 或 group barrier。"
+        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\n所有 operand/output 都是单 PE Local Tile；M 固定为 1。\nD 必须是显式 ordinary physical Local destination。\nTGEMV 禁止所有 SharedTile、C.B.IOS 和 core rendezvous；K blocking 通过每 PE 显式 TGEMV_ACC(D,C,A,B) 链完成。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
       },
       "overrides": {
-        "Description": "GEMV with bias add (tile world, ins/outs).",
-        "Constraints": "1. M/N/K are required 16-bit dims in B.DIM(LB0/LB1/LB2).\n2. M/N/K, fractal/layout, and dtype must satisfy the active CUBE target profile.\n3. ACC lifetime, precision, and export/convert behavior follow the CUBE/ACC contract."
+        "Description": "GEMV with bias add (tile world, ins/outs)."
       },
       "layout_placeholders": {
         "类型": null,
@@ -1000,11 +997,10 @@
         "Dtype": "AccType S32 or F32; DType is AccType for canonical None and otherwise follows PostProcessConfig",
         "Encoding": "CUBE Mode 0, Function 20;",
         "Description": "PTO 来源页：../pto/TGEMV_MX.md PTO 指令名：TGEMV_MX C++ intrinsic / RecordEvent 签名摘录：",
-        "Constraints": "Source Tile operand 使用 Linx-style 6-bit / 64-entry TReg namespace：T#1..T#16、U#1..U#16、M#1..M#16、N#1..N#16。\nB.IOT 中表达的 operand 顺序必须与 intrinsic operand role 保持一致；MX 默认顺序为 A、ScaleA、B、ScaleB。\n一个 block 中最后一条 B.IOT 必须设置 last；只有一条 B.IOT 时也必须设置 last。\nM/N/K 均为 16-bit dimension 值，并应满足当前 CUBE target profile 的范围、fractal 和 dtype 约束。\nACC lifetime、accumulator precision 和 export/convert 行为遵循 CUBE/ACC contract；将 ACC 写回普通 Tile 由 ACCCVT 表达。\n当前页不定义 core-level / group-level GMMA、cross-PE register exchange 或 group barrier。"
+        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\n所有 operand/output 都是单 PE Local Tile；M 固定为 1。\nD 必须是显式 ordinary physical Local destination。\nTGEMV 禁止所有 SharedTile、C.B.IOS 和 core rendezvous；K blocking 通过每 PE 显式 TGEMV_ACC(D,C,A,B) 链完成。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
       },
       "overrides": {
-        "Description": "Mixed-precision GEMV with scale tiles (tile world, ins/outs).",
-        "Constraints": "1. M/N/K are required 16-bit dims in B.DIM(LB0/LB1/LB2).\n2. M/N/K, fractal/layout, and dtype must satisfy the active CUBE target profile.\n3. ACC lifetime, precision, and export/convert behavior follow the CUBE/ACC contract."
+        "Description": "Mixed-precision GEMV with scale tiles (tile world, ins/outs)."
       },
       "layout_placeholders": {
         "类型": null,
@@ -1127,11 +1123,10 @@
         "Dtype": "AccType S32 or F32; DType is AccType for canonical None and otherwise follows PostProcessConfig",
         "Encoding": "CUBE Mode 0, Function 0;",
         "Description": "其中 M = A.ValidRow，K = A.ValidCol，N = B.ValidCol。Accumulator 行为、精度提升和 target-specific dtype/shape 约束以 PTO 来源页和当前 CUBE target profile 为准。本文定义该 PTO intrinsic 在 DavinciOO PE-local CUBE block ISA 上的展开方式；PTO 高级语义仍以 PTO 来源页为准。",
-        "Constraints": "Source Tile operand 使用 Linx-style 6-bit / 64-entry TReg namespace：T#1..T#16、U#1..U#16、M#1..M#16、N#1..N#16。\nB.IOT 中表达的 operand 顺序必须与 intrinsic operand role 保持一致：SrcTile0=A，SrcTile1=B。\n一个 block 中最后一条 B.IOT 必须设置 last；只有一条 B.IOT 时也必须设置 last。\nM/N/K 均为 16-bit dimension 值，并应满足当前 CUBE target profile 的范围、fractal 和 dtype 约束。\nACC lifetime、accumulator precision 和 export/convert 行为遵循 CUBE/ACC contract；将 ACC 写回普通 Tile 由 ACCCVT 表达。\n当前页不新增 fused source-C、resident accumulator、显式 MMA load slot 或 group-level matrix instruction 语义。"
+        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\nCooperative form 中 C/D、RowMaxIn/Out、GroupMaxOut 为 MShard4；Bias、vector QuantParam、vector PReLU 是四 PE 上内容相同的完整 Local N-vector；scalar GPR 参数也必须在四 PE 上相等。\nD 必须是显式 ordinary physical Local destination。\nCooperative TMATMUL 的 Shared read 不修改 descriptor/payload；并发 overlap 由程序避免，且该 rendezvous 不建立 GM ordering。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
       },
       "overrides": {
-        "Description": "PE-local CUBE matrix multiply: C[i,j] = sum_k(A[i,k] * B[k,j]).",
-        "Constraints": "1. M/N/K are required 16-bit dims in B.DIM(LB0/LB1/LB2).\n2. M/N/K, fractal/layout, and dtype must satisfy the active CUBE target profile.\n3. ACC lifetime, precision, and export/convert follow the CUBE/ACC contract; ACCCVT writes ACC back to a normal Tile."
+        "Description": "PE-local CUBE matrix multiply: C[i,j] = sum_k(A[i,k] * B[k,j])."
       },
       "layout_placeholders": {}
     },
@@ -1150,11 +1145,10 @@
         "Dtype": "AccType S32 or F32; DType is AccType for canonical None and otherwise follows PostProcessConfig",
         "Encoding": "CUBE Mode 0, Function 2;",
         "Description": "PTO 来源页：../pto/TMATMUL_ACC.md PTO 指令名：TMATMUL_ACC C++ intrinsic / RecordEvent 签名摘录：",
-        "Constraints": "Source Tile operand 使用 Linx-style 6-bit / 64-entry TReg namespace：T#1..T#16、U#1..U#16、M#1..M#16、N#1..N#16。\nB.IOT 中表达的 operand 顺序必须与 intrinsic operand role 保持一致。\n一个 block 中最后一条 B.IOT 必须设置 last；只有一条 B.IOT 时也必须设置 last。\nM/N/K 均为 16-bit dimension 值，并应满足当前 CUBE target profile 的范围、fractal 和 dtype 约束。\nACC lifetime、accumulator precision 和 export/convert 行为遵循 CUBE/ACC contract；将 ACC 写回普通 Tile 由 ACCCVT 表达。\n当前页不定义 core-level / group-level GMMA、cross-PE register exchange 或 group barrier。"
+        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\nCooperative form 中 C/D、RowMaxIn/Out、GroupMaxOut 为 MShard4；Bias、vector QuantParam、vector PReLU 是四 PE 上内容相同的完整 Local N-vector；scalar GPR 参数也必须在四 PE 上相等。\nD==C 仅在 D 保持 TileAcc role 且 dtype、shape、layout、allocation 完全相同时合法；实现必须 read-old/rename-new，禁止物理原地覆盖。C 不携带 partial-sum provenance 要求。\nCooperative TMATMUL 的 Shared read 不修改 descriptor/payload；并发 overlap 由程序避免，且该 rendezvous 不建立 GM ordering。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
       },
       "overrides": {
-        "Description": "PE-local CUBE matrix multiply accumulate; variant operands are profile-specific.",
-        "Constraints": "1. M/N/K are required 16-bit dims in B.DIM(LB0/LB1/LB2).\n2. Input 2 appears only when the opcode profile requires an input ACC, bias, scale, or other ExtraTile.\n3. Compiler scratch is not ISA-visible; this row does not define group-level GMMA/barrier semantics."
+        "Description": "PE-local CUBE matrix multiply accumulate; variant operands are profile-specific."
       },
       "layout_placeholders": {
         "类型": null,
@@ -1176,11 +1170,10 @@
         "Dtype": "AccType S32 or F32; DType is AccType for canonical None and otherwise follows PostProcessConfig",
         "Encoding": "CUBE Mode 0, Function 1;",
         "Description": "PTO 来源页：../pto/TMATMUL_BIAS.md PTO 指令名：TMATMUL_BIAS C++ intrinsic / RecordEvent 签名摘录：",
-        "Constraints": "Source Tile operand 使用 Linx-style 6-bit / 64-entry TReg namespace：T#1..T#16、U#1..U#16、M#1..M#16、N#1..N#16。\nB.IOT 中表达的 operand 顺序必须与 intrinsic operand role 保持一致。\n一个 block 中最后一条 B.IOT 必须设置 last；只有一条 B.IOT 时也必须设置 last。\nM/N/K 均为 16-bit dimension 值，并应满足当前 CUBE target profile 的范围、fractal 和 dtype 约束。\nACC lifetime、accumulator precision 和 export/convert 行为遵循 CUBE/ACC contract；将 ACC 写回普通 Tile 由 ACCCVT 表达。\n当前页不定义 core-level / group-level GMMA、cross-PE register exchange 或 group barrier。"
+        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\nCooperative form 中 C/D、RowMaxIn/Out、GroupMaxOut 为 MShard4；Bias、vector QuantParam、vector PReLU 是四 PE 上内容相同的完整 Local N-vector；scalar GPR 参数也必须在四 PE 上相等。\nD 必须是显式 ordinary physical Local destination。\nCooperative TMATMUL 的 Shared read 不修改 descriptor/payload；并发 overlap 由程序避免，且该 rendezvous 不建立 GM ordering。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
       },
       "overrides": {
-        "Description": "Matmul with bias add (tile world, ins/outs).",
-        "Constraints": "1. M/N/K are required 16-bit dims in B.DIM(LB0/LB1/LB2).\n2. M/N/K, fractal/layout, and dtype must satisfy the active CUBE target profile.\n3. ACC lifetime, precision, and export/convert behavior follow the CUBE/ACC contract."
+        "Description": "Matmul with bias add (tile world, ins/outs)."
       },
       "layout_placeholders": {
         "类型": null,
@@ -1202,11 +1195,10 @@
         "Dtype": "AccType S32 or F32; DType is AccType for canonical None and otherwise follows PostProcessConfig",
         "Encoding": "CUBE Mode 0, Function 4;",
         "Description": "PTO 来源页：../pto/TMATMUL_MX.md PTO 指令名：TMATMUL_MX C++ intrinsic / RecordEvent 签名摘录：",
-        "Constraints": "Source Tile operand 使用 Linx-style 6-bit / 64-entry TReg namespace：T#1..T#16、U#1..U#16、M#1..M#16、N#1..N#16。\nB.IOT 中表达的 operand 顺序必须与 intrinsic operand role 保持一致；MX 默认顺序为 A、ScaleA、B、ScaleB。\n一个 block 中最后一条 B.IOT 必须设置 last；只有一条 B.IOT 时也必须设置 last。\nM/N/K 均为 16-bit dimension 值，并应满足当前 CUBE target profile 的范围、fractal 和 dtype 约束。\nACC lifetime、accumulator precision 和 export/convert 行为遵循 CUBE/ACC contract；将 ACC 写回普通 Tile 由 ACCCVT 表达。\n当前页不定义 core-level / group-level GMMA、cross-PE register exchange 或 group barrier。"
+        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\nCooperative form 中 C/D、RowMaxIn/Out、GroupMaxOut 为 MShard4；Bias、vector QuantParam、vector PReLU 是四 PE 上内容相同的完整 Local N-vector；scalar GPR 参数也必须在四 PE 上相等。\nD 必须是显式 ordinary physical Local destination。\nCooperative TMATMUL 的 Shared read 不修改 descriptor/payload；并发 overlap 由程序避免，且该 rendezvous 不建立 GM ordering。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
       },
       "overrides": {
-        "Description": "Matmul mx (tile world, ins/outs).",
-        "Constraints": "1. M/N/K are required 16-bit dims in B.DIM(LB0/LB1/LB2).\n2. M/N/K, fractal/layout, and dtype must satisfy the active CUBE target profile.\n3. ACC lifetime, precision, and export/convert behavior follow the CUBE/ACC contract."
+        "Description": "Matmul mx (tile world, ins/outs)."
       },
       "layout_placeholders": {
         "类型": null,

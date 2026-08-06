@@ -130,16 +130,16 @@ host floating library can change execution.
 This profile makes the current formal model total and reproducible. It does not
 silently acquire the rules of another profile.
 
-### PTO ISA 0.57.1 hardware numeric contract
+### PTO ISA 0.58.0 hardware numeric contract
 
-`pto-hardware-numeric-0.57.1-ieee-v1` is the separately named hardware numeric
-contract accepted by ADR 0045. It defines, without changing `pto-v0`:
+`pto-hardware-numeric-0.58.0-ieee-v1` is the separately named hardware numeric
+contract published with ADR 0052. It defines, without changing `pto-v0`:
 
 - low-precision format identities and packed-lane order;
 - canonical NaN, signed-zero, invalid integer-result, and RHB tie behavior;
 - public conversion, reduction, sort, and comparison boundaries;
 - ordinary and MX matrix operand classes;
-- logical versus physical ACC types; and
+- explicit C/D matrix accumulation types and alias behavior; and
 - E8M0 scale shape, K-block indexing, and pre-FMA scale order.
 
 The checked profile record and boundary vectors define what an implementation
@@ -179,7 +179,7 @@ numeric lane. A lane cannot become promotion-ready merely because the active
 raw-carrier profile test passes; it must acquire independent profile, oracle,
 vector, differential-result, and review evidence in dependency order.
 
-The accepted 0.57.1 contract supplies the named-profile and boundary-definition
+The accepted 0.58.0 contract supplies the named-profile and boundary-definition
 inputs for those lanes. It does not by itself fill an implementation result,
 differential parity, or review-acceptance field.
 

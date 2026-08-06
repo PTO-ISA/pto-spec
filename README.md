@@ -137,8 +137,9 @@ approval evidence.
 - Visible TPC/BPC bundle state and `TileInfo` state for every tile register.
 - A 128-byte architectural CELL, B.IOT allocation size codes from 128 bytes
   through 8 KiB, and aggregate capacity enforced by `TILE_CAPACITY`.
-- Implicit architectural ACC state for CUBE, including logical and physical
-  accumulation type and trap-preserved lifetime.
+- Explicit Local D destinations for every CUBE operation; `.ACC` variants read
+  explicit Local C with read-old/write-new alias behavior and no implicit ACC
+  singleton.
 - Exact B.DATR data attributes and B.CATR ordering attributes.
 - Exact encoding masks, operand fields, constraints, selectors, and rejection
   witnesses generated from machine-readable catalogs.
