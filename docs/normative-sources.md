@@ -34,19 +34,19 @@ signedness, form-local constraints, and semantic handler. The generated ASL
 decoder provides a positive witness for every form and every operand
 extraction.
 
-The bundle/command catalog contains 96 accepted forms. It covers bundle start,
+The bundle/command catalog contains 99 accepted forms. It covers bundle start,
 split, argument, dimension, control attribute, data attribute, scalar IO, tile
 IO, hint, stop, and context-control forms. Vector-only bundle and queue forms are
 not part of the PTO ISA. The retained `BSTART`, `BSTOP`, `B.*`, and BPC
 spellings use `B` for bundle. Separately, `BLOCKNUM`, `BLOCKID`, and
 `CROSS_BID` identify virtual core blocks rather than bundles.
 
-The direct tile catalog contains exactly 106 operations: 87 TEPL, 7 TMA, and 12
-CUBE. Allocated and reserved selectors are part of the PTO contract, and the
+The direct tile catalog contains exactly 109 operations: 87 TEPL, 10 TLSU, and
+12 CUBE. Allocated and reserved selectors are part of the PTO contract, and the
 generated ASL selector decoder witnesses every accepted operation. CUBE
 operations all write explicit Local D, and ACC forms read explicit Local C with
 read-old/write-new alias semantics. There is no architectural ACC singleton.
-Shared TMOV Functions 8–11 and partition-store Function 12 are checked encoding
+Shared TMOV Functions 9–12 and partition-store Function 14 are checked encoding
 variants of the existing TMOV/TSTORE identities, not additional direct Tile
 operations.
 
@@ -145,13 +145,13 @@ checks require every closed member to exist exactly once and require the stated
 class total to agree with the 474-form inventory.
 
 `noncomparable-oracle-coverage.json` is the generated, non-normative
-corroboration ledger for the exact 32 rows classified non-comparable by the
-676-row executable-model matrix. It keeps PTO semantic closure, independent
+corroboration ledger for the exact 38 rows classified non-comparable by the
+682-row executable-model matrix. It keeps PTO semantic closure, independent
 disposition closure, and independent executable parity separate. Every row has
 an orthogonal `oracle_coverage` grade and publication-safe evidence slots;
 decode/header/manifest evidence, missing tools, stale snapshots, timeouts,
 nonzero exits, duplicate or missing rows, and unreviewed results fail closed.
-The current ledger records 0/32 executable parity and does not alter any PTO
+The current ledger records 0/38 executable parity and does not alter any PTO
 classification, semantic rule, or S5-T2 numeric obligation.
 
 `scalar-agu-totality.json` is the Stage 4 address, completion, prefetch, alias,
@@ -260,7 +260,7 @@ do not alter `pto-v0`, and do not close PD-05, any complete numeric domain, or
 the generic PD-12 variation-route ledger.
 
 `numeric-format-namespace-contract.json` is generated from the accepted ASL
-carrier types, scalar and command catalogs, TMA closure ledger, pinned public
+carrier types, scalar and command catalogs, TLSU closure ledger, pinned public
 evidence, and independent model comparison. ADR 0040 makes the five namespace
 boundaries, all 25 raw-carrier identities, mapped/reserved code tables, and
 packed 4-bit order normative. ADR 0048 adds the executable value-class

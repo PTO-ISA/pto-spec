@@ -159,7 +159,7 @@ begin
         ConfigureTeplFilledTile(1, 3, 3, TileDataType_U64, 10);
         operands.positive0 = 2;
         operands.positive1 = 2;
-    elsif operation == TileOperation_TSORT32 then
+    elsif operation == TileOperation_TSORT then
         ConfigureTeplTile(0, 1, 4, TileDataType_U64);
         ConfigureTeplTile(5, 1, 4, TileDataType_U32);
         ConfigureTeplFilledTile(1, 1, 4, TileDataType_U64, 10);
@@ -167,8 +167,11 @@ begin
         ConfigureTeplTile(0, 1, 4, TileDataType_U64);
         ConfigureTeplFilledTile(1, 1, 2, TileDataType_U64, 10);
         ConfigureTeplFilledTile(2, 1, 2, TileDataType_U64, 20);
-    elsif operation == TileOperation_TRANDOM then
-        ConfigureTeplTile(0, 2, 2, TileDataType_U32);
+    elsif operation == TileOperation_THISTOGRAM then
+        ConfigureTeplTile(0, 1, 256, TileDataType_U64);
+        ConfigureTeplFilledTile(1, 1, 4, TileDataType_U32, 0);
+        ConfigureTeplFilledTile(2, 3, 1, TileDataType_U8, 0);
+        operands.selected_byte = 3;
     elsif TeplOperationIsPartial(operation) then
         ConfigureTeplTile(0, 1, 3, TileDataType_U64);
         ConfigureTeplFilledTile(1, 1, 3, TileDataType_U64, 10);
@@ -381,13 +384,16 @@ begin
     sort.destination0 = 0;
     sort.destination1 = 2;
     sort.source0 = 1;
+    sort.sort_width = 2;
     sort.flag0 = TRUE;
     ClearFault();
     let (sort_status, -) = ExecuteTileInstruction(
         TileDecode_TEPL, '000001101100', sort);
     assert sort_status == TileExecution_Executed;
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 4;
-    assert ReadTileElement(0, 0, 3) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(0, 0, 2) == Zeros{PTO_XLEN} + 3;
+    assert ReadTileElement(0, 0, 3) == Zeros{PTO_XLEN} + 2;
 
 end;
 
@@ -487,22 +493,9 @@ begin
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 11;
 end;
 
-// A wrong Philox round count, multiplier, lane order, or key update changes
-// this independently derived zero-key/zero-counter reference block.
-func TestTeplTrandomReferenceBlock()
-begin
-    ResetProfileState();
-    ConfigureTeplTile(0, 1, 4, TileDataType_U32);
-    TRANDOM(0, Zeros{PTO_XLEN}, Zeros{PTO_XLEN}, Zeros{PTO_XLEN}, FALSE);
-    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 0x6627e8d5;
-    assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN} + 0xe169c58d;
-    assert ReadTileElement(0, 0, 2) == Zeros{PTO_XLEN} + 0xbc57ac4c;
-    assert ReadTileElement(0, 0, 3) == Zeros{PTO_XLEN} + 0x9b00dbd8;
-end;
-
-// A wrong TSORT32 direction, comparison, or index permutation changes this
+// A wrong TSORT direction, comparison, or index permutation changes this
 // four-lane ascending result and its original-lane indices.
-func TestTeplTsort32ExactPermutation()
+func TestTeplTsortExactPermutation()
 begin
     ResetProfileState();
     ConfigureTeplTile(0, 1, 4, TileDataType_U64);
@@ -512,7 +505,7 @@ begin
     WriteTileElement(2, 0, 1, Zeros{PTO_XLEN} + 1);
     WriteTileElement(2, 0, 2, Zeros{PTO_XLEN} + 3);
     WriteTileElement(2, 0, 3, Zeros{PTO_XLEN} + 2);
-    TSORT32(0, 1, 2, FALSE);
+    TSORT(0, 1, 2, 32, FALSE);
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 1;
     assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN} + 2;
     assert ReadTileElement(0, 0, 2) == Zeros{PTO_XLEN} + 3;
@@ -533,6 +526,5 @@ begin
     TestTeplInvalidIndexAndOffsetNoEffect();
     TestTeplMergeDuplicateOrdering();
     TestTeplTfmaExactResult();
-    TestTeplTrandomReferenceBlock();
-    TestTeplTsort32ExactPermutation();
+    TestTeplTsortExactPermutation();
 end;

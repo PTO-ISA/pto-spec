@@ -312,20 +312,20 @@
       "open": 0
     },
     "tile_operations": {
-      "count": 106,
-      "closed": 106,
+      "count": 109,
+      "closed": 109,
       "open": 0,
-      "public_exact_name": 98,
+      "public_exact_name": 99,
       "public_spelling_mapping": 1
     },
     "excluded_public_tile_operations": {
-      "count": 12,
-      "closed": 12
+      "count": 11,
+      "closed": 11
     },
     "closure_basis": {
       "public_source_supported": 95,
-      "catalog_defined_direct_binary": 7,
-      "public_api_aligned": 0,
+      "catalog_defined_direct_binary": 9,
+      "public_api_aligned": 1,
       "explicit_layer_difference": 4,
       "open": 0
     }
@@ -4402,14 +4402,14 @@
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
     {
-      "name": "TRANDOM",
+      "name": "THISTOGRAM",
       "family": "TEPL",
-      "selector": "0x069",
+      "selector": "0x068",
       "closure_status": "closed",
-      "closure_basis": "catalog-defined-direct-binary",
-      "public_symbol": "TRANDOM",
-      "public_symbol_relation": "catalog-defined",
-      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+      "closure_basis": "public-api-aligned",
+      "public_symbol": "THISTOGRAM",
+      "public_symbol_relation": "exact-name",
+      "resolution": "The public intrinsic exposes destination, source, index, and selected-byte roles corresponding to the direct operation."
     },
     {
       "name": "TQUANT",
@@ -4432,14 +4432,14 @@
       "resolution": "The public typed API carries scale and offset tiles; the direct binary operation carries scalar scale and zero-point operands."
     },
     {
-      "name": "TSORT32",
+      "name": "TSORT",
       "family": "TEPL",
       "selector": "0x06C",
       "closure_status": "closed",
       "closure_basis": "explicit-layer-difference",
       "public_symbol": "TSORT32",
       "public_symbol_relation": "documented-spelling-mapping",
-      "resolution": "The public source spelling is TSORT32 and carries index or temporary tiles; the direct binary operation is TSORT32 with an explicit descending flag."
+      "resolution": "The public source spelling is TSORT32 and carries index or temporary tiles; the direct binary operation is TSORT with explicit sort-width and descending operands."
     },
     {
       "name": "TMRGSORT",
@@ -4523,7 +4523,7 @@
     },
     {
       "name": "TLOAD",
-      "family": "TMA",
+      "family": "TLSU",
       "selector": null,
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
@@ -4533,7 +4533,7 @@
     },
     {
       "name": "TSTORE",
-      "family": "TMA",
+      "family": "TLSU",
       "selector": null,
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
@@ -4543,7 +4543,7 @@
     },
     {
       "name": "TMOV",
-      "family": "TMA",
+      "family": "TLSU",
       "selector": null,
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
@@ -4553,7 +4553,7 @@
     },
     {
       "name": "TPREFETCH",
-      "family": "TMA",
+      "family": "TLSU",
       "selector": null,
       "closure_status": "closed",
       "closure_basis": "explicit-layer-difference",
@@ -4563,7 +4563,7 @@
     },
     {
       "name": "MGATHER",
-      "family": "TMA",
+      "family": "TLSU",
       "selector": null,
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
@@ -4573,7 +4573,7 @@
     },
     {
       "name": "MSCATTER",
-      "family": "TMA",
+      "family": "TLSU",
       "selector": null,
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
@@ -4582,8 +4582,38 @@
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
     {
+      "name": "MGATHER_MASK",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "MGATHER_MASK",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "MSCATTER_MASK",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "MSCATTER_MASK",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "MGATHER_CAS",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "MGATHER_CAS",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
       "name": "GMOV",
-      "family": "TMA",
+      "family": "TLSU",
       "selector": null,
       "closure_status": "closed",
       "closure_basis": "catalog-defined-direct-binary",
@@ -4740,12 +4770,6 @@
     {
       "name": "TGATHERB",
       "public_symbol": "TGATHERB",
-      "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.0 does not accept it as a direct DavinciOO Tile operation."
-    },
-    {
-      "name": "THISTOGRAM",
-      "public_symbol": "THISTOGRAM",
       "disposition": "source-api-only-not-a-direct-operation",
       "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.0 does not accept it as a direct DavinciOO Tile operation."
     },

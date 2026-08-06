@@ -39,7 +39,7 @@
 ---
 # TPREFETCH Intrinsic
 
-> 状态：DavinciOO v5 superscalar 指令页。本文只描述 `TPREFETCH` 的 PTO 语义、DavinciOO block intrinsic 展开与合法性；公共 header 的 opcode/bitfield 编码见 [`header/`](../bundle/overview/block-header-model.md)。
+> 状态：DavinciOO v5 superscalar 指令页。本文只描述 `TPREFETCH` 的 PTO 语义、DavinciOO block intrinsic 展开与合法性；公共 header 的 opcode/bitfield 编码见 [`header/`](../block/overview/block-header-model.md)。
 
 ## PTO 语义来源
 
@@ -103,11 +103,11 @@ B.IOR       rBase, rOffset, rStride, ->- # GM source address/stride profile
 
 | Header | 本指令用途 | 公共定义 |
 | --- | --- | --- |
-| `BSTART.TLSU` | 选择 `TPREFETCH` opcode profile 与主 `DataType` | [`header/BSTART.TLSU.md`](../bundle/BSTART.TLSU.md) |
-| `B.DATR` | 可选；描述 PadValue、dtype/profile、round/sat 或其它非默认数据属性 | [`header/B.DATR.md`](../bundle/B.DATR.md) |
-| `B.DIM` | 描述 `ValidCol/ValidRow/Col`，即 `LB0/LB1/LB2` | [`header/B.DIM.md`](../bundle/B.DIM.md) |
-| `B.IOT` | 绑定 source/destination Tile operand 并声明 output size class | [`header/B.IOT.md`](../bundle/B.IOT.md) |
-| `B.IOR` | 绑定 scalar/GPR/address/index/profile operand | [`header/B.IOR.md`](../bundle/B.IOR.md) |
+| `BSTART.TLSU` | 选择 `TPREFETCH` opcode profile 与主 `DataType` | [`header/BSTART.TLSU.md`](../block/BSTART.TLSU.md) |
+| `B.DATR` | 可选；描述 PadValue、dtype/profile、round/sat 或其它非默认数据属性 | [`header/B.DATR.md`](../block/B.DATR.md) |
+| `B.DIM` | 描述 `ValidCol/ValidRow/Col`，即 `LB0/LB1/LB2` | [`header/B.DIM.md`](../block/B.DIM.md) |
+| `B.IOT` | 绑定 source/destination Tile operand 并声明 output size class | [`header/B.IOT.md`](../block/B.IOT.md) |
+| `B.IOR` | 绑定 scalar/GPR/address/index/profile operand | [`header/B.IOR.md`](../block/B.IOR.md) |
 
 ## 约束与合法性
 

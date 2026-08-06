@@ -34,7 +34,7 @@ TLOAD/TSTORE/TMOV retain PTO-visible names. GM↔Shared uses functions 0/1 with 
 
 ## Scalar 与 SYS 覆盖
 
-Complete HTML 的 scalar appendix 保留继承的 Linx compatibility reference。v5 完整纳入锁定 Linx `blockIntro/sys_block/instlist.md` 及其 71 个 `misa_s` 页面，并在 `scalar/misa_s/` 中追加 Core4 fence 扩展。既有 SYS instruction 的 privilege、legality 与 precise-trap 行为不变；只有 `FENCE.D.CORE4` 新增 v5 encoding。
+Complete HTML 的 Scalar ISA 区保留锁定的 Linx source reference。v5 完整纳入锁定 Linx `blockIntro/sys_block/instlist.md` 及其 71 个 `misa_s` 页面，并在 `scalar/misa_s/` 中追加 Core4 fence 扩展。既有 SYS instruction 的 privilege、legality 与 precise-trap 行为不变；只有 `FENCE.D.CORE4` 新增 v5 encoding。
 
 ## GMOV 覆盖
 

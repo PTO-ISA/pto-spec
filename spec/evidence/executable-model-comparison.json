@@ -7,7 +7,7 @@
   },
   "model_limits": [
     {
-      "disposition": "The immutable independent snapshot predates the approved 0.58.0 command-encoding and compact TEPL-selector ABI. The matrix therefore preserves 7 command encoding divergences and 79 TEPL selector divergences, each traced to ADR 0045 and issue #18, instead of relabeling them as exact matches.",
+      "disposition": "The immutable independent snapshot predates the accepted command-encoding and compact TEPL-selector ABI. The retained matrix preserves 7 command encoding divergences and 67 direct-tile selector divergences instead of relabeling them as exact matches.",
       "id": "accepted-0.58.0-abi-break"
     },
     {
@@ -19,15 +19,15 @@
       "id": "predicate-p0-p7-difference"
     },
     {
-      "disposition": "PTO-v0 bundle commit exposes destination0/source0/source1 only, making 63 TEPL, 1 TMA, and 5 CUBE direct operations representable through the bundle bridge; the remaining direct operations execute only through direct tile dispatch or reject at bundle commit before effects.",
+      "disposition": "PTO-v0 bundle commit exposes destination0/source0/source1 only, making 63 TEPL, 1 TLSU, and 5 CUBE direct operations representable through the bundle bridge; the remaining direct operations execute only through direct tile dispatch or reject at bundle commit before effects.",
       "id": "bundle-bridge-operand-boundary"
     },
     {
-      "disposition": "PTO defines 98 TEPL operations. Ninety-seven match the independent TEPL selector/pattern evidence after PTO spelling normalization for transpose; TPRELU is a PTO-owned extension.",
+      "disposition": "PTO defines 87 TEPL operations. The retained independent selector evidence is classified row by row; TFMA is an explicit PTO-owned extension.",
       "id": "tepl-selector-boundary"
     },
     {
-      "disposition": "The independent engine manifest lists 9 TMA and 13 CUBE functions, but those rows are header/function evidence rather than independent tile payload execution.",
+      "disposition": "The retained TLSU and CUBE manifest rows are header/function evidence rather than independent tile payload execution; GMOV is an explicit PTO-owned extension.",
       "id": "tma-and-cube-manifest-boundary"
     },
     {
@@ -10142,6 +10142,78 @@
     },
     {
       "abi_change_acceptance": null,
+      "classification": "non-comparable",
+      "encoding_match": true,
+      "evidence": [
+        "spec/catalog/command-forms.json",
+        "spec/evidence/bundle-command-totality.json",
+        "tests/asl/bundle-tests.asl",
+        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+      ],
+      "independent_status": "decode-only",
+      "index": 25,
+      "mnemonic": "BSTART.MGATHER.CAS",
+      "pto_command_disposition": "executed",
+      "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_mgather_cas_32_fd8c8a3b720a",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "non-comparable",
+      "encoding_match": true,
+      "evidence": [
+        "spec/catalog/command-forms.json",
+        "spec/evidence/bundle-command-totality.json",
+        "tests/asl/bundle-tests.asl",
+        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+      ],
+      "independent_status": "decode-only",
+      "index": 26,
+      "mnemonic": "BSTART.MGATHER.MASK",
+      "pto_command_disposition": "executed",
+      "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_mgather_mask_32_5573241cd944",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "non-comparable",
+      "encoding_match": true,
+      "evidence": [
+        "spec/catalog/command-forms.json",
+        "spec/evidence/bundle-command-totality.json",
+        "tests/asl/bundle-tests.asl",
+        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+      ],
+      "independent_status": "decode-only",
+      "index": 27,
+      "mnemonic": "BSTART.MSCATTER.MASK",
+      "pto_command_disposition": "executed",
+      "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_mscatter_mask_32_2a33eed646f7",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
@@ -10151,7 +10223,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 25,
+      "index": 28,
       "mnemonic": "BSTART.MPAR",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10175,7 +10247,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
-      "index": 26,
+      "index": 29,
       "mnemonic": "BSTART.MSCATTER",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10199,7 +10271,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 27,
+      "index": 30,
       "mnemonic": "BSTART.MSEQ",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10223,7 +10295,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 28,
+      "index": 31,
       "mnemonic": "BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10247,7 +10319,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 29,
+      "index": 32,
       "mnemonic": "BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10271,7 +10343,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 30,
+      "index": 33,
       "mnemonic": "BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10295,7 +10367,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 31,
+      "index": 34,
       "mnemonic": "BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10319,7 +10391,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 32,
+      "index": 35,
       "mnemonic": "BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10343,7 +10415,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 33,
+      "index": 36,
       "mnemonic": "BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10367,7 +10439,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 34,
+      "index": 37,
       "mnemonic": "BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10391,7 +10463,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 35,
+      "index": 38,
       "mnemonic": "BSTART.SYS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10419,7 +10491,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 36,
+      "index": 39,
       "mnemonic": "BSTART.TEPL",
       "pto_command_disposition": "executed",
       "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest encoding divergence.",
@@ -10443,7 +10515,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
-      "index": 37,
+      "index": 40,
       "mnemonic": "BSTART.TGEMV",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10467,7 +10539,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
-      "index": 38,
+      "index": 41,
       "mnemonic": "BSTART.TGEMV.ACC",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10491,7 +10563,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
-      "index": 39,
+      "index": 42,
       "mnemonic": "BSTART.TGEMV.BIAS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10515,7 +10587,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
-      "index": 40,
+      "index": 43,
       "mnemonic": "BSTART.TGEMVMX",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10539,7 +10611,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
-      "index": 41,
+      "index": 44,
       "mnemonic": "BSTART.TGEMVMX.ACC",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10563,7 +10635,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
-      "index": 42,
+      "index": 45,
       "mnemonic": "BSTART.TGEMVMX.BIAS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10587,7 +10659,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 43,
+      "index": 46,
       "mnemonic": "BSTART.TLOAD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10611,7 +10683,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 44,
+      "index": 47,
       "mnemonic": "BSTART.TMATMUL",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10635,7 +10707,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 45,
+      "index": 48,
       "mnemonic": "BSTART.TMATMUL.ACC",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10659,7 +10731,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
-      "index": 46,
+      "index": 49,
       "mnemonic": "BSTART.TMATMUL.BIAS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10683,7 +10755,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
-      "index": 47,
+      "index": 50,
       "mnemonic": "BSTART.TMATMULMX",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10707,7 +10779,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
-      "index": 48,
+      "index": 51,
       "mnemonic": "BSTART.TMATMULMX.ACC",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10731,7 +10803,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
-      "index": 49,
+      "index": 52,
       "mnemonic": "BSTART.TMATMULMX.BIAS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10755,7 +10827,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 50,
+      "index": 53,
       "mnemonic": "BSTART.TMOV",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10770,19 +10842,19 @@
     },
     {
       "abi_change_acceptance": null,
-      "classification": "intentional-extension",
+      "classification": "divergence",
       "encoding_match": false,
       "evidence": [
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md"
+        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
-      "independent_status": "header-manifest",
-      "index": 51,
+      "independent_status": "missing",
+      "index": 54,
       "mnemonic": "BSTART.GMOV",
       "pto_command_disposition": "executed",
-      "pto_disposition": "PTO ISA 0.58.0 adds the DavinciOO GMOV command encoding; the pinned independent predecessor snapshot has no corresponding row.",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -10803,7 +10875,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
-      "index": 52,
+      "index": 55,
       "mnemonic": "BSTART.TPREFETCH",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10827,7 +10899,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 53,
+      "index": 56,
       "mnemonic": "BSTART.TSTORE",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10851,7 +10923,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 54,
+      "index": 57,
       "mnemonic": "BSTOP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10866,6 +10938,30 @@
     },
     {
       "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json",
+        "spec/evidence/bundle-command-totality.json",
+        "tests/asl/bundle-tests.asl",
+        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+      ],
+      "independent_status": "missing",
+      "index": 58,
+      "mnemonic": "C.B.IOS",
+      "pto_command_disposition": "executed",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "BindBundleSharedIO",
+      "stable_id": "c_b_ios_16_14f1b8fba5e6",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
@@ -10875,7 +10971,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 55,
+      "index": 59,
       "mnemonic": "C.B.DIMI",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10899,7 +10995,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 56,
+      "index": 60,
       "mnemonic": "C.BSTART",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10923,7 +11019,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 57,
+      "index": 61,
       "mnemonic": "C.BSTART",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10947,7 +11043,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 58,
+      "index": 62,
       "mnemonic": "C.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10971,7 +11067,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 59,
+      "index": 63,
       "mnemonic": "C.BSTART.MPAR",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10995,7 +11091,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 60,
+      "index": 64,
       "mnemonic": "C.BSTART.MSEQ",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11019,7 +11115,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 61,
+      "index": 65,
       "mnemonic": "C.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11043,7 +11139,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 62,
+      "index": 66,
       "mnemonic": "C.BSTART.SYS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11067,7 +11163,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 63,
+      "index": 67,
       "mnemonic": "C.BSTOP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11091,7 +11187,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 64,
+      "index": 68,
       "mnemonic": "ERCOV",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11115,7 +11211,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 65,
+      "index": 69,
       "mnemonic": "ESAVE",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11139,7 +11235,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 66,
+      "index": 70,
       "mnemonic": "FENTRY",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11163,7 +11259,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 67,
+      "index": 71,
       "mnemonic": "FEXIT",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11187,7 +11283,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 68,
+      "index": 72,
       "mnemonic": "FRET.RA",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11211,7 +11307,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 69,
+      "index": 73,
       "mnemonic": "FRET.STK",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11235,7 +11331,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 70,
+      "index": 74,
       "mnemonic": "HL.BSTART CALL",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11259,7 +11355,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 71,
+      "index": 75,
       "mnemonic": "HL.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11283,7 +11379,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 72,
+      "index": 76,
       "mnemonic": "HL.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11307,7 +11403,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 73,
+      "index": 77,
       "mnemonic": "HL.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11331,7 +11427,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 74,
+      "index": 78,
       "mnemonic": "HL.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11355,7 +11451,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 75,
+      "index": 79,
       "mnemonic": "HL.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11370,19 +11466,19 @@
     },
     {
       "abi_change_acceptance": null,
-      "classification": "comparable-match",
-      "encoding_match": true,
+      "classification": "divergence",
+      "encoding_match": false,
       "evidence": [
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
-      "independent_status": "executable-subset",
-      "index": 76,
+      "independent_status": "missing",
+      "index": 80,
       "mnemonic": "HL.BSTART.STD",
       "pto_command_disposition": "executed",
-      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -11403,7 +11499,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 77,
+      "index": 81,
       "mnemonic": "HL.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11427,7 +11523,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 78,
+      "index": 82,
       "mnemonic": "HL.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11451,7 +11547,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 79,
+      "index": 83,
       "mnemonic": "HL.BSTART.SYS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11475,7 +11571,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 80,
+      "index": 84,
       "mnemonic": "HL.QMT",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11499,7 +11595,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 81,
+      "index": 85,
       "mnemonic": "HL.QPOP",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11523,7 +11619,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 82,
+      "index": 86,
       "mnemonic": "HL.QPUSH",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11547,7 +11643,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 83,
+      "index": 87,
       "mnemonic": "L.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11571,7 +11667,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 84,
+      "index": 88,
       "mnemonic": "L.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11595,7 +11691,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 85,
+      "index": 89,
       "mnemonic": "L.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11619,7 +11715,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 86,
+      "index": 90,
       "mnemonic": "L.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11643,7 +11739,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 87,
+      "index": 91,
       "mnemonic": "L.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11667,7 +11763,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 88,
+      "index": 92,
       "mnemonic": "L.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11691,7 +11787,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 89,
+      "index": 93,
       "mnemonic": "L.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11715,7 +11811,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 90,
+      "index": 94,
       "mnemonic": "L.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11739,7 +11835,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 91,
+      "index": 95,
       "mnemonic": "L.BSTART.SYS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11763,7 +11859,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 92,
+      "index": 96,
       "mnemonic": "MCOPY",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11787,7 +11883,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 93,
+      "index": 97,
       "mnemonic": "MSET",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11811,7 +11907,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 94,
+      "index": 98,
       "mnemonic": "XB",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -12063,7 +12159,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x00A",
+      "selector": "0x00a",
       "selector_match": true,
       "stable_id": "tepl:0x00a:TSHR",
       "surface": "direct-tile"
@@ -12091,7 +12187,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x00B",
+      "selector": "0x00b",
       "selector_match": false,
       "stable_id": "tepl:0x00b:TMAX",
       "surface": "direct-tile"
@@ -12119,7 +12215,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x00C",
+      "selector": "0x00c",
       "selector_match": false,
       "stable_id": "tepl:0x00c:TMIN",
       "surface": "direct-tile"
@@ -12147,7 +12243,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x00D",
+      "selector": "0x00d",
       "selector_match": false,
       "stable_id": "tepl:0x00d:TCMP",
       "surface": "direct-tile"
@@ -12175,7 +12271,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x00F",
+      "selector": "0x00f",
       "selector_match": false,
       "stable_id": "tepl:0x00f:TABS",
       "surface": "direct-tile"
@@ -12427,7 +12523,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x01A",
+      "selector": "0x01a",
       "selector_match": false,
       "stable_id": "tepl:0x01a:TSEL",
       "surface": "direct-tile"
@@ -12455,31 +12551,31 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x01B",
+      "selector": "0x01b",
       "selector_match": false,
       "stable_id": "tepl:0x01b:TCVT",
       "surface": "direct-tile"
     },
     {
       "abi_change_acceptance": null,
-      "bundle_bridge_representable": true,
-      "classification": "intentional-extension",
+      "bundle_bridge_representable": false,
+      "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md"
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
-      "independent_status": "header-manifest",
+      "independent_status": "missing",
       "index": 24,
       "mnemonic": "TFMA",
-      "pto_disposition": "PTO ISA 0.58.0 accepts this DavinciOO architecture operation; the pinned independent snapshot has no executable counterpart.",
+      "pto_disposition": "PTO selector has no matching independent operation manifest row.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x01C",
+      "selector": "0x01c",
       "selector_match": false,
       "stable_id": "tepl:0x01c:TFMA",
       "surface": "direct-tile"
@@ -12723,7 +12819,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x02A",
+      "selector": "0x02a",
       "selector_match": true,
       "stable_id": "tepl:0x02a:TSHRS",
       "surface": "direct-tile"
@@ -12751,7 +12847,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x02B",
+      "selector": "0x02b",
       "selector_match": false,
       "stable_id": "tepl:0x02b:TMAXS",
       "surface": "direct-tile"
@@ -12779,7 +12875,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x02C",
+      "selector": "0x02c",
       "selector_match": false,
       "stable_id": "tepl:0x02c:TMINS",
       "surface": "direct-tile"
@@ -12807,7 +12903,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x02D",
+      "selector": "0x02d",
       "selector_match": false,
       "stable_id": "tepl:0x02d:TCMPS",
       "surface": "direct-tile"
@@ -12835,7 +12931,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x03A",
+      "selector": "0x03a",
       "selector_match": false,
       "stable_id": "tepl:0x03a:TSELS",
       "surface": "direct-tile"
@@ -12863,7 +12959,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x03B",
+      "selector": "0x03b",
       "selector_match": false,
       "stable_id": "tepl:0x03b:TEXPANDS",
       "surface": "direct-tile"
@@ -13171,7 +13267,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x04A",
+      "selector": "0x04a",
       "selector_match": false,
       "stable_id": "tepl:0x04a:TROWEXPANDMIN",
       "surface": "direct-tile"
@@ -13199,7 +13295,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x04B",
+      "selector": "0x04b",
       "selector_match": false,
       "stable_id": "tepl:0x04b:TROWEXPANDEXPDIF",
       "surface": "direct-tile"
@@ -13227,7 +13323,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x04C",
+      "selector": "0x04c",
       "selector_match": false,
       "stable_id": "tepl:0x04c:TROWARGMAX",
       "surface": "direct-tile"
@@ -13255,7 +13351,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x04D",
+      "selector": "0x04d",
       "selector_match": false,
       "stable_id": "tepl:0x04d:TROWARGMIN",
       "surface": "direct-tile"
@@ -13563,7 +13659,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x05A",
+      "selector": "0x05a",
       "selector_match": false,
       "stable_id": "tepl:0x05a:TCOLEXPANDMIN",
       "surface": "direct-tile"
@@ -13591,7 +13687,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x05B",
+      "selector": "0x05b",
       "selector_match": false,
       "stable_id": "tepl:0x05b:TCOLEXPANDEXPDIF",
       "surface": "direct-tile"
@@ -13619,7 +13715,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x05C",
+      "selector": "0x05c",
       "selector_match": false,
       "stable_id": "tepl:0x05c:TCOLARGMAX",
       "surface": "direct-tile"
@@ -13647,7 +13743,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x05D",
+      "selector": "0x05d",
       "selector_match": false,
       "stable_id": "tepl:0x05d:TCOLARGMIN",
       "surface": "direct-tile"
@@ -13849,27 +13945,31 @@
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": null,
-      "bundle_bridge_representable": true,
-      "classification": "comparable-match",
+      "abi_change_acceptance": {
+        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "kind": "accepted-0.58.0-compact-tepl-selector-break"
+      },
+      "bundle_bridge_representable": false,
+      "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md"
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
       "index": 75,
-      "mnemonic": "TRANDOM",
-      "pto_disposition": "The public selector manifest agrees with the PTO ISA 0.58.0 TRANDOM selector; PTO ASL owns payload semantics.",
+      "mnemonic": "THISTOGRAM",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x069",
-      "selector_match": true,
-      "stable_id": "tepl:0x069:TRANDOM",
+      "selector": "0x068",
+      "selector_match": false,
+      "stable_id": "tepl:0x068:THISTOGRAM",
       "surface": "direct-tile"
     },
     {
@@ -13895,7 +13995,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x06A",
+      "selector": "0x06a",
       "selector_match": false,
       "stable_id": "tepl:0x06a:TQUANT",
       "surface": "direct-tile"
@@ -13923,7 +14023,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x06B",
+      "selector": "0x06b",
       "selector_match": false,
       "stable_id": "tepl:0x06b:TDEQUANT",
       "surface": "direct-tile"
@@ -13944,16 +14044,16 @@
       "family": "TEPL",
       "independent_status": "selector-manifest",
       "index": 78,
-      "mnemonic": "TSORT32",
+      "mnemonic": "TSORT",
       "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x06C",
+      "selector": "0x06c",
       "selector_match": false,
-      "stable_id": "tepl:0x06c:TSORT32",
+      "stable_id": "tepl:0x06c:TSORT",
       "surface": "direct-tile"
     },
     {
@@ -13979,7 +14079,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x06D",
+      "selector": "0x06d",
       "selector_match": false,
       "stable_id": "tepl:0x06d:TMRGSORT",
       "surface": "direct-tile"
@@ -14007,7 +14107,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x06E",
+      "selector": "0x06e",
       "selector_match": false,
       "stable_id": "tepl:0x06e:TTRANS",
       "surface": "direct-tile"
@@ -14035,7 +14135,7 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x06F",
+      "selector": "0x06f",
       "selector_match": false,
       "stable_id": "tepl:0x06f:TGATHER",
       "surface": "direct-tile"
@@ -14186,22 +14286,22 @@
       "classification": "non-comparable",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tma-totality.json",
+        "spec/evidence/tlsu-totality.json",
         "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
       ],
-      "family": "TMA",
+      "family": "TLSU",
       "independent_status": "header-manifest",
       "index": 87,
       "mnemonic": "TLOAD",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
-        "PTO-REQ-TMA-001",
+        "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
         "PTO-REQ-MEMORY-TSO-001"
       ],
       "selector": "0x000",
       "selector_match": true,
-      "stable_id": "tma:0x000:TLOAD",
+      "stable_id": "tlsu:0x000:TLOAD",
       "surface": "direct-tile"
     },
     {
@@ -14210,22 +14310,22 @@
       "classification": "non-comparable",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tma-totality.json",
+        "spec/evidence/tlsu-totality.json",
         "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
       ],
-      "family": "TMA",
+      "family": "TLSU",
       "independent_status": "header-manifest",
       "index": 88,
       "mnemonic": "TSTORE",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
-        "PTO-REQ-TMA-001",
+        "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
         "PTO-REQ-MEMORY-TSO-001"
       ],
       "selector": "0x001",
       "selector_match": true,
-      "stable_id": "tma:0x001:TSTORE",
+      "stable_id": "tlsu:0x001:TSTORE",
       "surface": "direct-tile"
     },
     {
@@ -14234,22 +14334,22 @@
       "classification": "non-comparable",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tma-totality.json",
+        "spec/evidence/tlsu-totality.json",
         "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
       ],
-      "family": "TMA",
+      "family": "TLSU",
       "independent_status": "header-manifest",
       "index": 89,
       "mnemonic": "TMOV",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
-        "PTO-REQ-TMA-001",
+        "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
         "PTO-REQ-MEMORY-TSO-001"
       ],
       "selector": "0x002",
       "selector_match": true,
-      "stable_id": "tma:0x002:TMOV",
+      "stable_id": "tlsu:0x002:TMOV",
       "surface": "direct-tile"
     },
     {
@@ -14258,22 +14358,22 @@
       "classification": "non-comparable",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tma-totality.json",
+        "spec/evidence/tlsu-totality.json",
         "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
       ],
-      "family": "TMA",
+      "family": "TLSU",
       "independent_status": "header-manifest",
       "index": 90,
       "mnemonic": "TPREFETCH",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
-        "PTO-REQ-TMA-001",
+        "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
         "PTO-REQ-MEMORY-TSO-001"
       ],
       "selector": "0x003",
       "selector_match": true,
-      "stable_id": "tma:0x003:TPREFETCH",
+      "stable_id": "tlsu:0x003:TPREFETCH",
       "surface": "direct-tile"
     },
     {
@@ -14282,22 +14382,22 @@
       "classification": "non-comparable",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tma-totality.json",
+        "spec/evidence/tlsu-totality.json",
         "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
       ],
-      "family": "TMA",
+      "family": "TLSU",
       "independent_status": "header-manifest",
       "index": 91,
       "mnemonic": "MGATHER",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
-        "PTO-REQ-TMA-001",
+        "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
         "PTO-REQ-MEMORY-TSO-001"
       ],
       "selector": "0x004",
       "selector_match": true,
-      "stable_id": "tma:0x004:MGATHER",
+      "stable_id": "tlsu:0x004:MGATHER",
       "surface": "direct-tile"
     },
     {
@@ -14306,46 +14406,118 @@
       "classification": "non-comparable",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tma-totality.json",
+        "spec/evidence/tlsu-totality.json",
         "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
       ],
-      "family": "TMA",
+      "family": "TLSU",
       "independent_status": "header-manifest",
       "index": 92,
       "mnemonic": "MSCATTER",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
-        "PTO-REQ-TMA-001",
+        "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
         "PTO-REQ-MEMORY-TSO-001"
       ],
       "selector": "0x005",
       "selector_match": true,
-      "stable_id": "tma:0x005:MSCATTER",
+      "stable_id": "tlsu:0x005:MSCATTER",
       "surface": "direct-tile"
     },
     {
       "abi_change_acceptance": null,
-      "bundle_bridge_representable": true,
-      "classification": "intentional-extension",
+      "bundle_bridge_representable": false,
+      "classification": "non-comparable",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tma-totality.json",
-        "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md"
+        "spec/evidence/tlsu-totality.json",
+        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
       ],
-      "family": "TMA",
+      "family": "TLSU",
       "independent_status": "header-manifest",
       "index": 93,
-      "mnemonic": "GMOV",
-      "pto_disposition": "PTO ISA 0.58.0 accepts this DavinciOO architecture operation; the pinned independent snapshot has no executable counterpart.",
+      "mnemonic": "MGATHER_MASK",
+      "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
-        "PTO-REQ-TMA-001",
+        "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
         "PTO-REQ-MEMORY-TSO-001"
       ],
-      "selector": "0x00D",
+      "selector": "0x006",
+      "selector_match": true,
+      "stable_id": "tlsu:0x006:MGATHER_MASK",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": false,
+      "classification": "non-comparable",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tlsu-totality.json",
+        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
+      ],
+      "family": "TLSU",
+      "independent_status": "header-manifest",
+      "index": 94,
+      "mnemonic": "MSCATTER_MASK",
+      "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
+      "requirements": [
+        "PTO-REQ-TLSU-001",
+        "PTO-REQ-MEMORY-COMPLETION-001",
+        "PTO-REQ-MEMORY-TSO-001"
+      ],
+      "selector": "0x007",
+      "selector_match": true,
+      "stable_id": "tlsu:0x007:MSCATTER_MASK",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": false,
+      "classification": "non-comparable",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tlsu-totality.json",
+        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
+      ],
+      "family": "TLSU",
+      "independent_status": "header-manifest",
+      "index": 95,
+      "mnemonic": "MGATHER_CAS",
+      "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
+      "requirements": [
+        "PTO-REQ-TLSU-001",
+        "PTO-REQ-MEMORY-COMPLETION-001",
+        "PTO-REQ-MEMORY-TSO-001"
+      ],
+      "selector": "0x008",
+      "selector_match": true,
+      "stable_id": "tlsu:0x008:MGATHER_CAS",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": false,
+      "classification": "divergence",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tlsu-totality.json",
+        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
+      ],
+      "family": "TLSU",
+      "independent_status": "missing",
+      "index": 96,
+      "mnemonic": "GMOV",
+      "pto_disposition": "PTO selector has no matching independent operation manifest row.",
+      "requirements": [
+        "PTO-REQ-TLSU-001",
+        "PTO-REQ-MEMORY-COMPLETION-001",
+        "PTO-REQ-MEMORY-TSO-001"
+      ],
+      "selector": "0x00d",
       "selector_match": false,
-      "stable_id": "tma:0x00d:GMOV",
+      "stable_id": "tlsu:0x00d:GMOV",
       "surface": "direct-tile"
     },
     {
@@ -14359,7 +14531,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 94,
+      "index": 97,
       "mnemonic": "TMATMUL",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14383,7 +14555,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 95,
+      "index": 98,
       "mnemonic": "TMATMUL_BIAS",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14398,7 +14570,7 @@
     },
     {
       "abi_change_acceptance": null,
-      "bundle_bridge_representable": true,
+      "bundle_bridge_representable": false,
       "classification": "non-comparable",
       "evidence": [
         "spec/catalog/tile-operations.json",
@@ -14407,7 +14579,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 96,
+      "index": 99,
       "mnemonic": "TMATMUL_ACC",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14431,7 +14603,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 97,
+      "index": 100,
       "mnemonic": "TMATMUL_MX",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14455,7 +14627,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 98,
+      "index": 101,
       "mnemonic": "TMATMUL_MX_BIAS",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14479,7 +14651,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 99,
+      "index": 102,
       "mnemonic": "TMATMUL_MX_ACC",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14503,7 +14675,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 100,
+      "index": 103,
       "mnemonic": "TGEMV",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14527,7 +14699,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 101,
+      "index": 104,
       "mnemonic": "TGEMV_BIAS",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14542,7 +14714,7 @@
     },
     {
       "abi_change_acceptance": null,
-      "bundle_bridge_representable": true,
+      "bundle_bridge_representable": false,
       "classification": "non-comparable",
       "evidence": [
         "spec/catalog/tile-operations.json",
@@ -14551,7 +14723,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 102,
+      "index": 105,
       "mnemonic": "TGEMV_ACC",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14575,7 +14747,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 103,
+      "index": 106,
       "mnemonic": "TGEMV_MX",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14599,7 +14771,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 104,
+      "index": 107,
       "mnemonic": "TGEMV_MX_BIAS",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14623,7 +14795,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 105,
+      "index": 108,
       "mnemonic": "TGEMV_MX_ACC",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14635,44 +14807,19 @@
       "selector_match": true,
       "stable_id": "cube:0x016:TGEMV_MX_ACC",
       "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": null,
-      "classification": "comparable-divergence",
-      "encoding_match": true,
-      "evidence": [
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md",
-        "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
-        "spec/catalog/command-forms.json",
-        "spec/evidence/bundle-command-totality.json",
-        "tests/asl/bundle-tests.asl"
-      ],
-      "independent_status": "executable-subset",
-      "index": 95,
-      "mnemonic": "C.B.IOS",
-      "pto_command_disposition": "executed",
-      "pto_disposition": "PTO ISA 0.58.0 reassigns the inherited compressed C.B.DIM register encoding to C.B.IOS SharedTID; the independent snapshot retains the historical dimension meaning.",
-      "requirements": [
-        "PTO-REQ-BUNDLE-DISPATCH-001",
-        "PTO-REQ-BUNDLE-OPERATION-001",
-        "PTO-REQ-BUNDLE-STATE-001"
-      ],
-      "semantic_handler": "BindBundleSharedIO",
-      "stable_id": "c_b_ios_16_14f1b8fba5e6",
-      "surface": "command"
     }
   ],
   "schema": "pto.executable-model-comparison.v1",
   "scope": {
-    "command_forms": 96,
+    "command_forms": 99,
     "direct_tile_breakdown": {
       "CUBE": 12,
       "TEPL": 87,
-      "TMA": 7
+      "TLSU": 10
     },
-    "direct_tile_operations": 106,
+    "direct_tile_operations": 109,
     "scalar_forms": 474,
-    "total_rows": 676
+    "total_rows": 682
   },
   "snapshot": {
     "content_hashes": {
@@ -14783,28 +14930,27 @@
   "status": "comparison-matrix-closed-clean-gates-passed:S5-T3",
   "summary": {
     "classification_counts": {
-      "comparable-divergence": 1,
-      "comparable-match": 556,
-      "divergence": 84,
-      "intentional-extension": 3,
-      "non-comparable": 32
+      "comparable-match": 554,
+      "divergence": 90,
+      "non-comparable": 38
     },
     "independent_status_counts": {
-      "decode-only": 14,
-      "executable-subset": 555,
+      "decode-only": 17,
+      "executable-subset": 553,
       "header-manifest": 21,
+      "missing": 5,
       "selector-manifest": 86
     },
-    "row_count": 676,
+    "row_count": 682,
     "surface_counts": {
-      "command": 96,
-      "direct-tile": 106,
+      "command": 99,
+      "direct-tile": 109,
       "scalar": 474
     },
     "tile_family_counts": {
       "CUBE": 12,
       "TEPL": 87,
-      "TMA": 7
+      "TLSU": 10
     }
   },
   "target": "S5-T3"

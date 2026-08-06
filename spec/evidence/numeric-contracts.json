@@ -586,7 +586,7 @@
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
         "tile:TEPL:TMRGSORT",
-        "tile:TEPL:TSORT32"
+        "tile:TEPL:TSORT"
       ]
     },
     {
@@ -597,7 +597,7 @@
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
         "tile:TEPL:TMRGSORT",
-        "tile:TEPL:TSORT32"
+        "tile:TEPL:TSORT"
       ]
     },
     {
@@ -2312,10 +2312,10 @@
       "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
     },
     {
-      "key": "tile:TEPL:TSORT32",
+      "key": "tile:TEPL:TSORT",
       "surface": "direct-tile-operation",
       "family": "TEPL",
-      "name": "TSORT32",
+      "name": "TSORT",
       "catalog_identity": "0x06C",
       "numeric_contract": "tile-order",
       "profile_owner": "PTO numeric architecture maintainers",

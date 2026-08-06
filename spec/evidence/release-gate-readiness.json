@@ -31,7 +31,7 @@
     },
     {
       "path": "Makefile",
-      "sha256": "6566203ed52be769bc793e587d2689b0fc7dadf481c935369049c69194cf328f"
+      "sha256": "facb53ac81dd78a74ca8bc4a4e487bafbdeff22247ea4c3c5107f52cf032c22d"
     },
     {
       "path": "docs/review-checklist.md",
@@ -55,7 +55,7 @@
     },
     {
       "path": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
-      "sha256": "86b6c6fb16293133f1b8f221207df4219db0aaacc88ebd5e1aa286cc07d0e86a"
+      "sha256": "6cfc10adb5c9aebe612c248c6c8498d81976971b920638b661539f8751ec9fc5"
     },
     {
       "path": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
@@ -91,19 +91,19 @@
     },
     {
       "path": "scripts/check-binary-closure",
-      "sha256": "4295c1b0208cb6bb8b72a1387ac08c8650952aece491605a984ededd822e0467"
+      "sha256": "0c0e15c3634e75602a359af6d2d00e22c8722353b457c07641817c327b118189"
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "340dc6f8f8588df41470a80f4414c749163b7a753f26ca6ac67ffffd3fcab341"
+      "sha256": "d08ed1d59f0b1c1f55e0e6ccf1e61661aa7c90f338f0fcccc38533c41e510bc3"
     },
     {
       "path": "scripts/check-publication-hygiene",
-      "sha256": "bab683d150b6d8e3ff076dbefcdb706dcc6a26c77d0d67c55da18689bba62361"
+      "sha256": "9248b71e1f424cad3c516ca94502f75c03228b5d77e73441c88d106daf2b9e0e"
     },
     {
       "path": "scripts/check-repository",
-      "sha256": "c1f3a3d8d6caa5152b59d11278ece2f928bab8fb13aed5fe9b0fbe9ad747ce04"
+      "sha256": "aa571ab17038cdd6150e7b48040cfd80b256df96e8baf171d03a1dc29b56b383"
     },
     {
       "path": "scripts/check-toolchain",
@@ -111,11 +111,11 @@
     },
     {
       "path": "scripts/generate-numeric-format-namespace-contract",
-      "sha256": "f8fce5b1594b04564f885c5d52bb2547d0672436b751bef537ab5cc1e5c57399"
+      "sha256": "d22901d7bce98e84e2ae6c5a12f332dd43cc39a57454553726310f6c67f7f907"
     },
     {
       "path": "scripts/generate-numeric-profile-applicability-closure",
-      "sha256": "f5b6693682dc53227bc36c5a457f087e3a0b9b4d3e393db3250614e6395ebbaa"
+      "sha256": "73cb0712a12fbd6aa35ce58e6347f1eab4fe6bca8f97f4854186caa607ed1608"
     },
     {
       "path": "scripts/generate-numeric-subnormal-contract",
@@ -139,55 +139,55 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "6f8d5b0a7143a01f76c2b2ef0694caaa48a3277d2cd01b7e3f401e67b9283ecf"
+      "sha256": "98d4add660f2dcc375c1bc6165665412e2342c14cd60724e3f4ea4e560c757a0"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "aeb37690f0a65ff5df71fc8a3c5b0b420d532f5598cf87f291aec40c15e8463e"
+      "sha256": "3e2cbc5e38cf7ca14d2da8fe1afed0e9830a3be21f697c22313061ad2bbc3a3f"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "91b88692f7cabe60ca9e255db278a39ec2431a58d19b3b2be7941fc58abdec6e"
+      "sha256": "173c5d906e5289b90062d60ca24c00ff45c24b4d00414125e00b2d38894e1ca0"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "d3e1d07e4bd29adf4c582625507eac882ffae2eddb1930d628e27604bd9ebc10"
+      "sha256": "fb2e265ba19fc6c3d64ea88627964401125e75f084f10d5d22be8eaf66040363"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "fe36a3f4f2dc39d98f6ac60dbf25d2129dbd8724401fa170ffb9fc516cae89d8"
+      "sha256": "50d72566221afd967dc919245a295163d855fe914d662e9150487cf6416d405e"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "8a32fe64469311963c7b64debbfb7620825ba65b05e56bc21bff7fc3358911f7"
+      "sha256": "a0d77d43ab4339ac14bc6ccbe79e3a65b256aeb25e57c2da9c95152d6f5c57c1"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "74484654028a35f7ab73c2d591d33edf6b649f1a79b1add2480959f061c0ee26"
+      "sha256": "640de88e607e2683fd755288d0d240ba2bdce6ef4519a1396ab702987c08feef"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "a7f10d3fac177d3d9cc0531bd9f9749a2d1a1583b92567880790d37b3d154df1"
+      "sha256": "f658fc26ebe480299bcdf5e7c423355f13857ad3cbc99b0bde06438419a6284b"
     },
     {
       "path": "spec/evidence/numeric-subnormal-contract.json",
-      "sha256": "251d075872fdeed7e83fb56975943dad89b0f78a007c50d69e72c817d902eeaf"
+      "sha256": "c277afe2b9989f9f3d7961ec61087154cea7a09a31eacd10721a54217e49e426"
     },
     {
       "path": "spec/evidence/numeric-special-value-contract.json",
-      "sha256": "1e076ce3fc5aa5a652094ec1edb439cfa81d1e9c1e71011f9709d42248a1b8f2"
+      "sha256": "2eae113adc992a1f4fd923530c09429cd99f6198660d3a910821c1948a7696c8"
     },
     {
       "path": "spec/evidence/scalar-numeric-flag-contract.json",
-      "sha256": "b835a16e2b75f965dbdb02a4706a2c7385905f08a0447f992e897c67aaca3d9e"
+      "sha256": "9807c6b17f640083b84e09a3c4eab88b6306ead30f449cd439c5841fadd6f6b8"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "b793f202b578dc15206798e2d070ad472a280c8f4bcfd6a769a22bb543fdd06c"
+      "sha256": "34ffb0adecad8b0d0e7cba9b667ebca395c5d65fa90d6960bf88204ee97cf656"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "c34b0b673f68c6a6f39a29c45dee2063f3db678a1dba15a3017e6fe6227a2f37"
+      "sha256": "09f73698470cf555d541638f65e42f2f7b5da2ad58c3d8fa28af7152ffb837e3"
     },
     {
       "path": "spec/catalog/numeric-profile-applicability.json",
@@ -199,7 +199,7 @@
     },
     {
       "path": "specification.toml",
-      "sha256": "e4d705a505aa3bbf5ece693d9d06df205506965da63eadc88d53ab3880d40aa5"
+      "sha256": "9b723251ab19b24783fbfbcf48780c833fc907013f1a457a00c59dc272c80047"
     }
   ],
   "sub_stages": [
@@ -399,7 +399,7 @@
       "tests/asl/shards/scalar-sys-maintenance-selectors.asl",
       "tests/asl/shards/scalar-sys-maintenance-legality.asl",
       "tests/asl/shards/tepl-totality.asl",
-      "tests/asl/shards/tma-totality.asl",
+      "tests/asl/shards/tlsu-totality.asl",
       "tests/asl/shards/cube-totality.asl",
       "tests/asl/shards/core-bundle.asl",
       "tests/asl/shards/scalar-base.asl",
@@ -414,7 +414,7 @@
     ],
     "shard_count": 34,
     "canonical_call_count": 110,
-    "reachable_test_subprogram_count": 105,
+    "reachable_test_subprogram_count": 104,
     "default_parallel_jobs": 4,
     "partition_status": "closed",
     "candidate_runtime_result": null
@@ -718,7 +718,7 @@
     "required_external_control_count": 10,
     "shard_count": 34,
     "canonical_call_count": 110,
-    "reachable_test_subprogram_count": 105,
+    "reachable_test_subprogram_count": 104,
     "open_prerequisite_targets": [
       "S5-T2",
       "S6-T1"

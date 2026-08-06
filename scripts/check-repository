@@ -89,7 +89,7 @@ required_files=(
     spec/evidence/scalar-numeric-flag-contract.json
     spec/evidence/scalar-effect-closure.json
     spec/evidence/tepl-totality.json
-    spec/evidence/tma-totality.json
+    spec/evidence/tlsu-totality.json
     scripts/check-assertion-boundaries
     scripts/generate-bundle-command-totality
     scripts/generate-executable-model-comparison

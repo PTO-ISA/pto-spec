@@ -59,16 +59,16 @@ C.B.IOS 是 cooperative TMATMUL 的一次性 Shared operand binder。non-MX 顺�
 
 ## TLSU Function
 
-Function 0–7 保留 TLOAD/TSTORE/TMOV/PREFETCH/GATHER/SCATTER 含义。v5 新增：
+Function 0–8 保留 TLOAD/TSTORE/TMOV/PREFETCH/GATHER/SCATTER、masked 与 CAS 含义。v5 新增：
 
 | Function | 操作 |
 | ---: | --- |
-| 8 | `TMOV.L2S_INSERT` |
-| 9 | `TMOV.L2S_PUBLISH` |
-| 10 | `TMOV.S2L_BROADCAST` |
-| 11 | `TMOV.S2L_EXTRACT` |
-| 12 | `TSTORE.SPART` |
+| 9 | `TMOV.L2S.INSERT` |
+| 10 | `TMOV.L2S.PUBLISH` |
+| 11 | `TMOV.S2L.BROADCAST` |
+| 12 | `TMOV.S2L.EXTRACT` |
 | 13 | `GMOV` |
+| 14 | `TSTORE.SPART` |
 
 ## B.IOR for Shared GM
 
@@ -93,6 +93,6 @@ Shared B 选择固定 PE4 cooperative TMATMUL，PE_MASK 必须为 1111。A 可�
 
 - CUBE Function 0–2、4–6、16–18、20–22 为 12 个 active Matrix operation。
 - CUBE Function 8 保持 legacy removed selector，不重分配。
-- CUBE Function 9–14 为 reserved/illegal，不再表示 FIXP；TLSU Function 8–12 的 Shared TMOV/TSTORE variants 属于独立 encoding namespace。
+- CUBE Function 9–14 为 reserved/illegal，不再表示 FIXP；TLSU Function 9–12、14 的 Shared TMOV/TSTORE variants 属于独立 encoding namespace。
 - B.FPATR 对 12 个 active operation 都必需，包括 canonical None。
 - TGEMV 不允许 C.B.IOS，因此不存在 group-GEMV 编码。

@@ -48,7 +48,7 @@
 ---
 # MGATHER Intrinsic
 
-> 状态：DavinciOO v5 superscalar 指令页。本文只描述 `MGATHER` 的 PTO/Linx 语义、DavinciOO TLSU block intrinsic 展开与合法性；公共 header 的 opcode/bitfield 编码见 [`header/`](../bundle/overview/block-header-model.md)。
+> 状态：DavinciOO v5 superscalar 指令页。本文只描述 `MGATHER` 的 PTO/Linx 语义、DavinciOO TLSU block intrinsic 展开与合法性；公共 header 的 opcode/bitfield 编码见 [`header/`](../block/overview/block-header-model.md)。
 
 ## PTO 语义来源
 
@@ -111,11 +111,11 @@ B.IOR       a0, a1              # RegSrc0=base address，RegSrc1=GM stride；具
 
 | Header | 本指令用途 | 公共定义 |
 | --- | --- | --- |
-| `BSTART.TLSU` | 选择 `MGATHER` opcode profile 与主 `DataType` | [`header/BSTART.TLSU.md`](../bundle/BSTART.TLSU.md) |
-| `B.DATR` | 可选；描述 `PadValue`、dtype 扩展等非默认数据属性 | [`header/B.DATR.md`](../bundle/B.DATR.md) |
-| `B.DIM` | 描述 `ValidCol/ValidRow/Col`，即 `LB0/LB1/LB2` | [`header/B.DIM.md`](../bundle/B.DIM.md) |
-| `B.IOT` | 绑定 Tile operand 并声明 output size class（若有 Tile output） | [`header/B.IOT.md`](../bundle/B.IOT.md) |
-| `B.IOR` | 声明 GM base address / stride 等 GPR operand | [`header/B.IOR.md`](../bundle/B.IOR.md) |
+| `BSTART.TLSU` | 选择 `MGATHER` opcode profile 与主 `DataType` | [`header/BSTART.TLSU.md`](../block/BSTART.TLSU.md) |
+| `B.DATR` | 可选；描述 `PadValue`、dtype 扩展等非默认数据属性 | [`header/B.DATR.md`](../block/B.DATR.md) |
+| `B.DIM` | 描述 `ValidCol/ValidRow/Col`，即 `LB0/LB1/LB2` | [`header/B.DIM.md`](../block/B.DIM.md) |
+| `B.IOT` | 绑定 Tile operand 并声明 output size class（若有 Tile output） | [`header/B.IOT.md`](../block/B.IOT.md) |
+| `B.IOR` | 声明 GM base address / stride 等 GPR operand | [`header/B.IOR.md`](../block/B.IOR.md) |
 
 ## 约束与合法性
 

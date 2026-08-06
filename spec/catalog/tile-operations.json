@@ -1,10 +1,10 @@
 {
   "isa": "PTO Instruction Set Architecture",
-  "operation_count": 106,
+  "operation_count": 109,
   "rejected_review_only_codes": {
     "CUBE": [],
     "TEPL": [],
-    "TMA": []
+    "TLSU": []
   },
   "operations": [
     {
@@ -3910,66 +3910,38 @@
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "command_mnemonic": "BSTART.TEPL",
-      "name": "TRANDOM",
-      "semantic_handler": "TRANDOM",
+      "name": "THISTOGRAM",
+      "selector": "0x068",
+      "semantic_handler": "THISTOGRAM",
       "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "scalar0",
-          "role": "key-64"
-        },
-        {
-          "field": "scalar1",
-          "role": "counter-low-64"
-        },
-        {
-          "field": "address",
-          "role": "counter-high-64"
-        },
-        {
-          "field": "flag0",
-          "role": "seven-rounds"
-        }
+        {"field": "destination0", "role": "destination"},
+        {"field": "source0", "role": "source"},
+        {"field": "source1", "role": "indices"},
+        {"field": "selected_byte", "role": "selected-byte"}
       ],
       "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "scalar0"
-        },
-        {
-          "operand": "scalar1"
-        },
-        {
-          "operand": "address"
-        },
-        {
-          "operand": "flag0"
-        }
+        {"operand": "destination0"},
+        {"operand": "source0"},
+        {"operand": "source1"},
+        {"operand": "selected_byte"}
       ],
+      "mode": 3,
+      "function": 8,
       "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TRANDOM",
-      "effect_contract": "TRANDOM",
+      "legality_handler": "TileOperandsLegal_THISTOGRAM",
+      "effect_contract": "THISTOGRAM",
       "fault_contract": "ExecuteTileInstruction",
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
-        "operand:scalar0:key-64",
-        "operand:scalar1:counter-low-64",
-        "operand:address:counter-high-64",
-        "operand:flag0:seven-rounds"
+        "operand:source0:source",
+        "operand:source1:indices",
+        "operand:selected_byte:selected-byte"
       ],
       "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      },
-      "selector": "0x069",
-      "mode": 3,
-      "function": 9
+        "allowed_nonzero_fields": ["PadValueOrByteId", "DataType"],
+        "pad_union": "histogram-byte-id"
+      }
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4117,9 +4089,9 @@
       "disposition": "accepted-direct-operation",
       "family": "TEPL",
       "command_mnemonic": "BSTART.TEPL",
-      "name": "TSORT32",
+      "name": "TSORT",
       "selector": "0x06C",
-      "semantic_handler": "TSORT32",
+      "semantic_handler": "TSORT",
       "operands": [
         {
           "field": "destination0",
@@ -4132,6 +4104,10 @@
         {
           "field": "source0",
           "role": "source"
+        },
+        {
+          "field": "sort_width",
+          "role": "sort-width"
         },
         {
           "field": "flag0",
@@ -4149,20 +4125,24 @@
           "operand": "source0"
         },
         {
+          "operand": "sort_width"
+        },
+        {
           "operand": "flag0"
         }
       ],
       "mode": 3,
       "function": 12,
       "contract_status": "reviewed-complete",
-      "legality_handler": "TileOperandsLegal_TSORT32",
-      "effect_contract": "TSORT32",
+      "legality_handler": "TileOperandsLegal_TSORT",
+      "effect_contract": "TSORT",
       "fault_contract": "ExecuteTileInstruction",
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
         "operand:destination1:original-indices-u32",
         "operand:source0:source",
+        "operand:sort_width:sort-width",
         "operand:flag0:descending"
       ],
       "datr_contract": {
@@ -4582,7 +4562,7 @@
     },
     {
       "disposition": "accepted-direct-operation",
-      "family": "TMA",
+      "family": "TLSU",
       "command_mnemonic": "BSTART.TLOAD",
       "function": 0,
       "name": "TLOAD",
@@ -4623,7 +4603,7 @@
     },
     {
       "disposition": "accepted-direct-operation",
-      "family": "TMA",
+      "family": "TLSU",
       "command_mnemonic": "BSTART.TSTORE",
       "function": 1,
       "name": "TSTORE",
@@ -4664,7 +4644,7 @@
     },
     {
       "disposition": "accepted-direct-operation",
-      "family": "TMA",
+      "family": "TLSU",
       "command_mnemonic": "BSTART.TMOV",
       "function": 2,
       "name": "TMOV",
@@ -4705,7 +4685,7 @@
     },
     {
       "disposition": "accepted-direct-operation",
-      "family": "TMA",
+      "family": "TLSU",
       "command_mnemonic": "BSTART.TPREFETCH",
       "function": 3,
       "name": "TPREFETCH",
@@ -4744,7 +4724,7 @@
     },
     {
       "disposition": "accepted-direct-operation",
-      "family": "TMA",
+      "family": "TLSU",
       "command_mnemonic": "BSTART.MGATHER",
       "function": 4,
       "name": "MGATHER",
@@ -4793,7 +4773,7 @@
     },
     {
       "disposition": "accepted-direct-operation",
-      "family": "TMA",
+      "family": "TLSU",
       "command_mnemonic": "BSTART.MSCATTER",
       "function": 5,
       "name": "MSCATTER",
@@ -4842,7 +4822,116 @@
     },
     {
       "disposition": "accepted-direct-operation",
-      "family": "TMA",
+      "family": "TLSU",
+      "command_mnemonic": "BSTART.MGATHER.MASK",
+      "function": 6,
+      "name": "MGATHER_MASK",
+      "semantic_handler": "MGATHER_MASK",
+      "operands": [
+        {"field": "destination0", "role": "destination"},
+        {"field": "address", "role": "base-address"},
+        {"field": "source0", "role": "indices"},
+        {"field": "source1", "role": "mask"}
+      ],
+      "arguments": [
+        {"operand": "destination0"},
+        {"operand": "address"},
+        {"operand": "source0"},
+        {"operand": "source1"},
+        {"runtime": "CurrentBundlePadValue"}
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_MGATHER_MASK",
+      "effect_contract": "MGATHER_MASK",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:address:base-address",
+        "operand:source0:indices",
+        "operand:source1:mask"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": ["PadValueOrByteId", "Layout"],
+        "pad_union": "pad-value"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TLSU",
+      "command_mnemonic": "BSTART.MSCATTER.MASK",
+      "function": 7,
+      "name": "MSCATTER_MASK",
+      "semantic_handler": "MSCATTER_MASK",
+      "operands": [
+        {"field": "address", "role": "base-address"},
+        {"field": "source0", "role": "source"},
+        {"field": "source1", "role": "indices"},
+        {"field": "source2", "role": "mask"}
+      ],
+      "arguments": [
+        {"operand": "address"},
+        {"operand": "source0"},
+        {"operand": "source1"},
+        {"operand": "source2"}
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_MSCATTER_MASK",
+      "effect_contract": "MSCATTER_MASK",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:address:base-address",
+        "operand:source0:source",
+        "operand:source1:indices",
+        "operand:source2:mask"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": ["Layout"],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TLSU",
+      "command_mnemonic": "BSTART.MGATHER.CAS",
+      "function": 8,
+      "name": "MGATHER_CAS",
+      "semantic_handler": "MGATHER_CAS",
+      "operands": [
+        {"field": "destination0", "role": "destination"},
+        {"field": "address", "role": "base-address"},
+        {"field": "source0", "role": "indices"},
+        {"field": "source1", "role": "expected"},
+        {"field": "source2", "role": "replacement"}
+      ],
+      "arguments": [
+        {"operand": "destination0"},
+        {"operand": "address"},
+        {"operand": "source0"},
+        {"operand": "source1"},
+        {"operand": "source2"}
+      ],
+      "contract_status": "reviewed-complete",
+      "legality_handler": "TileOperandsLegal_MGATHER_CAS",
+      "effect_contract": "MGATHER_CAS",
+      "fault_contract": "ExecuteTileInstruction",
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:address:base-address",
+        "operand:source0:indices",
+        "operand:source1:expected",
+        "operand:source2:replacement"
+      ],
+      "datr_contract": {
+        "allowed_nonzero_fields": ["Layout"],
+        "pad_union": "must-zero"
+      }
+    },
+    {
+      "disposition": "accepted-direct-operation",
+      "family": "TLSU",
       "command_mnemonic": "BSTART.GMOV",
       "name": "GMOV",
       "semantic_handler": "GMOV",
@@ -5671,21 +5760,17 @@
         "0x061"
       ],
       [
-        "0x068",
-        "0x068"
+        "0x069",
+        "0x069"
       ],
       [
         "0x075",
         "0x07F"
       ]
     ],
-    "tma_functions": [
+    "tlsu_functions": [
       [
-        6,
-        7
-      ],
-      [
-        14,
+        15,
         31
       ]
     ]
@@ -5693,9 +5778,6 @@
   "schema_version": 3,
   "deleted_names": [
     "ACCCVT",
-    "MGATHER_CAS",
-    "MGATHER_MASK",
-    "MSCATTER_MASK",
     "TADDC",
     "TADDSC",
     "TALLOC",
@@ -5705,7 +5787,6 @@
     "TFMODS",
     "TFREE",
     "TGATHERB",
-    "THISTOGRAM",
     "TINTERLEAVE",
     "TLRELU",
     "TPARTARGMAX",
@@ -5715,7 +5796,9 @@
     "TPUSH",
     "TRESHAPE",
     "TSUBC",
-    "TSUBSC"
+    "TSUBSC",
+    "TRANDOM",
+    "TSORT32"
   ],
   "rejected_names": [
     "TEXRACT",

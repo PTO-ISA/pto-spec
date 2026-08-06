@@ -98,7 +98,7 @@ C.B.IOS     S17
 B.IOT       mask=1111, last, ->T<16KB>
 ```
 
-TLSU Function 8–11 分别选择 Insert、Publish、Broadcast 与 Extract；Function 12 选择 partition store。
+TLSU Function 9–12 分别选择 Insert、Publish、Broadcast 与 Extract；Function 14 选择 partition store。
 
 ## Coupled SYS Body
 

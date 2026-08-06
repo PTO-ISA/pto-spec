@@ -385,18 +385,11 @@ begin
     WriteTileElement(32, 0, 1, Zeros{PTO_XLEN} + 1);
     WriteTileElement(32, 0, 2, Zeros{PTO_XLEN} + 3);
     WriteTileElement(32, 0, 3, Zeros{PTO_XLEN} + 2);
-    TSORT32(33, 38, 32, FALSE);
+    TSORT(33, 38, 32, 32, FALSE);
     assert ReadTileElement(33, 0, 0) == Zeros{PTO_XLEN} + 1;
     assert ReadTileElement(33, 0, 3) == Zeros{PTO_XLEN} + 4;
     assert ReadTileElement(38, 0, 0) == Zeros{PTO_XLEN} + 1;
     assert ReadTileElement(38, 0, 3) == Zeros{PTO_XLEN};
-
-    TRANDOM(33, Zeros{PTO_XLEN} + 7, Zeros{PTO_XLEN} + 11,
-        Zeros{PTO_XLEN} + 13, FALSE);
-    let random_witness = ReadTileElement(33, 0, 0);
-    TRANDOM(33, Zeros{PTO_XLEN} + 7, Zeros{PTO_XLEN} + 11,
-        Zeros{PTO_XLEN} + 13, FALSE);
-    assert ReadTileElement(33, 0, 0) == random_witness;
 
     ConfigureTile(34, 256, 1, 2, 1, 2, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
@@ -425,6 +418,11 @@ begin
     WriteTileElement(50, 0, 1, Zeros{PTO_XLEN} + 1);
     WriteTileElement(50, 0, 2, Zeros{PTO_XLEN} + 1);
     WriteTileElement(50, 0, 3, Zeros{PTO_XLEN} + 3);
+    THISTOGRAM(37, 50, 49, 0);
+    assert ReadTileElement(37, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(37, 0, 1) == Zeros{PTO_XLEN} + 3;
+    assert ReadTileElement(37, 0, 2) == Zeros{PTO_XLEN} + 3;
+    assert ReadTileElement(37, 0, 3) == Zeros{PTO_XLEN} + 4;
 end;
 
 func TestTileConversion()
@@ -628,6 +626,59 @@ begin
     WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} - 5);
     WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 6);
 
+    ConfigureTile(55, 256, 1, 3, 1, 3, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(56, 256, 1, 3, 1, 3, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(57, 256, 1, 3, 1, 3, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ExecuteTileFillScalar(55, Zeros{PTO_XLEN} + 0xaa);
+    WriteTileElement(56, 0, 0, Zeros{PTO_XLEN});
+    WriteTileElement(56, 0, 1, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(56, 0, 2, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(57, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(57, 0, 1, Zeros{PTO_XLEN});
+    WriteTileElement(57, 0, 2, Zeros{PTO_XLEN} + 1);
+    Store(Zeros{PTO_XLEN} + 1536, 8, Zeros{PTO_XLEN} + 11);
+    Store(Zeros{PTO_XLEN} + 1544, 8, Zeros{PTO_XLEN} + 22);
+    Store(Zeros{PTO_XLEN} + 1552, 8, Zeros{PTO_XLEN} + 33);
+    MGATHER_MASK(55, Zeros{PTO_XLEN} + 1536, 56, 57, TilePad_Zero);
+    assert ReadTileElement(55, 0, 0) == Zeros{PTO_XLEN} + 11;
+    assert ReadTileElement(55, 0, 1) == Zeros{PTO_XLEN};
+    assert ReadTileElement(55, 0, 2) == Zeros{PTO_XLEN} + 33;
+
+    Store(Zeros{PTO_XLEN} + 2048, 8, Zeros{PTO_XLEN});
+    Store(Zeros{PTO_XLEN} + 2056, 8, Zeros{PTO_XLEN});
+    Store(Zeros{PTO_XLEN} + 2064, 8, Zeros{PTO_XLEN});
+    MSCATTER_MASK(Zeros{PTO_XLEN} + 2048, 55, 56, 57);
+    let masked_scatter_first = LoadUnsigned(Zeros{PTO_XLEN} + 2048, 8);
+    let masked_scatter_middle = LoadUnsigned(Zeros{PTO_XLEN} + 2056, 8);
+    let masked_scatter_last = LoadUnsigned(Zeros{PTO_XLEN} + 2064, 8);
+    assert masked_scatter_first == Zeros{PTO_XLEN} + 11;
+    assert masked_scatter_middle == Zeros{PTO_XLEN};
+    assert masked_scatter_last == Zeros{PTO_XLEN} + 33;
+
+    ConfigureTile(58, 256, 1, 3, 1, 3, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(59, 256, 1, 3, 1, 3, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(58, 0, 0, Zeros{PTO_XLEN} + 11);
+    WriteTileElement(58, 0, 1, Zeros{PTO_XLEN} + 99);
+    WriteTileElement(58, 0, 2, Zeros{PTO_XLEN} + 33);
+    WriteTileElement(59, 0, 0, Zeros{PTO_XLEN} + 111);
+    WriteTileElement(59, 0, 1, Zeros{PTO_XLEN} + 222);
+    WriteTileElement(59, 0, 2, Zeros{PTO_XLEN} + 333);
+    MGATHER_CAS(55, Zeros{PTO_XLEN} + 1536, 56, 58, 59);
+    assert ReadTileElement(55, 0, 0) == Zeros{PTO_XLEN} + 11;
+    assert ReadTileElement(55, 0, 1) == Zeros{PTO_XLEN} + 22;
+    assert ReadTileElement(55, 0, 2) == Zeros{PTO_XLEN} + 33;
+    let cas_first = LoadUnsigned(Zeros{PTO_XLEN} + 1536, 8);
+    let cas_middle = LoadUnsigned(Zeros{PTO_XLEN} + 1544, 8);
+    let cas_last = LoadUnsigned(Zeros{PTO_XLEN} + 1552, 8);
+    assert cas_first == Zeros{PTO_XLEN} + 111;
+    assert cas_middle == Zeros{PTO_XLEN} + 22;
+    assert cas_last == Zeros{PTO_XLEN} + 333;
+
     ConfigureTwoByTwo(2);
     ConfigureTwoByTwo(3);
     ConfigureTwoByTwo(4);
@@ -703,13 +754,13 @@ begin
     Store(Zeros{PTO_XLEN} + 520, 8, Zeros{PTO_XLEN} + 22);
     Store(Zeros{PTO_XLEN} + 528, 8, Zeros{PTO_XLEN} + 23);
     Store(Zeros{PTO_XLEN} + 536, 8, Zeros{PTO_XLEN} + 24);
-    var tma_operands = DefaultTileInstructionOperands();
-    tma_operands.destination0 = 3;
-    tma_operands.address = Zeros{PTO_XLEN} + 512;
-    let (tma_status, tma_value) = ExecuteTileInstruction(
-        TileDecode_TMA, '000000000000', tma_operands);
-    assert tma_status == TileExecution_Executed;
-    assert tma_value == Zeros{PTO_XLEN};
+    var tlsu_operands = DefaultTileInstructionOperands();
+    tlsu_operands.destination0 = 3;
+    tlsu_operands.address = Zeros{PTO_XLEN} + 512;
+    let (tlsu_status, tlsu_value) = ExecuteTileInstruction(
+        TileDecode_TLSU, '000000000000', tlsu_operands);
+    assert tlsu_status == TileExecution_Executed;
+    assert tlsu_value == Zeros{PTO_XLEN};
     assert ReadTileElement(3, 0, 0) == Zeros{PTO_XLEN} + 21;
     assert ReadTileElement(3, 1, 1) == Zeros{PTO_XLEN} + 24;
 
@@ -934,7 +985,7 @@ begin
     WriteTileElement(15, 0, 2, Zeros{PTO_XLEN} + 2);
     ClearFault();
     let (first_status, -) = ExecuteTileInstruction(
-        TileDecode_TMA, '000000000100', gather_operands);
+        TileDecode_TLSU, '000000000100', gather_operands);
     assert first_status == TileExecution_Rejected;
     assert _LastFault == Fault_DataPage;
     assert _FaultAddress == Zeros{PTO_XLEN} + 4096;
@@ -946,7 +997,7 @@ begin
     WriteTileElement(15, 0, 1, Zeros{PTO_XLEN} + 384);
     ClearFault();
     let (middle_status, -) = ExecuteTileInstruction(
-        TileDecode_TMA, '000000000100', gather_operands);
+        TileDecode_TLSU, '000000000100', gather_operands);
     assert middle_status == TileExecution_Rejected;
     assert _LastFault == Fault_DataPage;
     assert _FaultAddress == Zeros{PTO_XLEN} + 4096;
@@ -958,7 +1009,7 @@ begin
     WriteTileElement(15, 0, 2, Zeros{PTO_XLEN} + 384);
     ClearFault();
     let (last_status, -) = ExecuteTileInstruction(
-        TileDecode_TMA, '000000000100', gather_operands);
+        TileDecode_TLSU, '000000000100', gather_operands);
     assert last_status == TileExecution_Rejected;
     assert _LastFault == Fault_DataPage;
     assert _FaultAddress == Zeros{PTO_XLEN} + 4096;
@@ -969,7 +1020,7 @@ begin
     WriteTileElement(15, 0, 2, Zeros{PTO_XLEN} + 2);
     ClearFault();
     let (restart_status, -) = ExecuteTileInstruction(
-        TileDecode_TMA, '000000000100', gather_operands);
+        TileDecode_TLSU, '000000000100', gather_operands);
     assert restart_status == TileExecution_Executed;
     assert _LastFault == Fault_None;
     assert ReadTileElement(14, 0, 0) == Zeros{PTO_XLEN} + 0x11;
@@ -995,7 +1046,7 @@ begin
     scatter_operands.source1 = 17;
     ClearFault();
     let (scatter_fault_status, -) = ExecuteTileInstruction(
-        TileDecode_TMA, '000000000101', scatter_operands);
+        TileDecode_TLSU, '000000000101', scatter_operands);
     assert scatter_fault_status == TileExecution_Rejected;
     assert _LastFault == Fault_DataPage;
     assert _FaultAddress == Zeros{PTO_XLEN} + 4096;
@@ -1010,7 +1061,7 @@ begin
     WriteTileElement(17, 0, 1, Zeros{PTO_XLEN} + 1);
     ClearFault();
     let (scatter_restart_status, -) = ExecuteTileInstruction(
-        TileDecode_TMA, '000000000101', scatter_operands);
+        TileDecode_TLSU, '000000000101', scatter_operands);
     assert scatter_restart_status == TileExecution_Executed;
     assert _LastFault == Fault_None;
     let scatter_restart_first = LoadUnsigned(Zeros{PTO_XLEN} + 1536, 8);

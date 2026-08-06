@@ -4053,7 +4053,7 @@
           ]
         }
       ],
-      "semantic_access_inventory_sha256": "b431eed34d9b9e55a0edf2605288c954de200eb238720a8fe1d7a23b8a00f3ad",
+      "semantic_access_inventory_sha256": "88e63b6ee923b3071dd7ed1faefca5e52980b4259d78b6d6327c66b072c10c16",
       "semantic_access_inventory": [
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4072,8 +4072,8 @@
         },
         {
           "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteBundleSharedTMAOperation",
-          "sha256": "81a8b622dbf4dfa25b9910ce0c05e621bdef2ffbe94361967ed16d9055d2ca39"
+          "function": "ExecuteBundleSharedTLSUOperation",
+          "sha256": "91f8084e50c8c9c36c57fbb5ccb6d579fdee481de1c7cdfb6b76985f3d7db9f5"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4083,7 +4083,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
-          "sha256": "73c1b2038ce8a2ca60ca210abb98237d450ad0b58794ba5067f2d75b79f51580"
+          "sha256": "e4fa79157fde4b16b845974328d8f052a89c06917ae5332d9a115311c54b90d0"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4093,7 +4093,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteDecodedBundleCommand",
-          "sha256": "fcd3c21724c075a3afd4e7e5de920762a39d1ef7909084b983f3613892391dd8"
+          "sha256": "e2daf1ee977bde643448d4834730879134cc6bd235bfc8febb584b24a759a565"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4557,8 +4557,23 @@
         },
         {
           "path": "asl/tile/memory.asl",
+          "function": "MGATHER_CAS",
+          "sha256": "5a361d60fdc59c9da23a22c73ec991b98accce33ea18cba4b5189bb348147465"
+        },
+        {
+          "path": "asl/tile/memory.asl",
+          "function": "MGATHER_MASK",
+          "sha256": "e511048a8c37f36fa70c4b9dfa98f980df9a6c4a9d4d9f74a3c97f37a774d39b"
+        },
+        {
+          "path": "asl/tile/memory.asl",
           "function": "MSCATTER",
           "sha256": "bc58ad8d1d9fbe166bd3d195036bb19a3c30c819222b28d6eb6226bc51ea7e1e"
+        },
+        {
+          "path": "asl/tile/memory.asl",
+          "function": "MSCATTER_MASK",
+          "sha256": "44d77354cc0231cfb1813c721e4ea17b5738d15f150d866aaa64b04d8deaf0f0"
         },
         {
           "path": "asl/tile/memory.asl",
@@ -4653,7 +4668,7 @@
           ]
         }
       ],
-      "activation_inventory_sha256": "1f2f6d5dce3f16d9357a6289041a42971bc4ca3b5e32ea5256a80bd41ca201fa",
+      "activation_inventory_sha256": "4ebca689645495421337b77112bc3a59b34f7485ca537a290f841d42c66b999c",
       "activation_inventory": [
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4672,8 +4687,8 @@
         },
         {
           "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteBundleSharedTMAOperation",
-          "sha256": "81a8b622dbf4dfa25b9910ce0c05e621bdef2ffbe94361967ed16d9055d2ca39"
+          "function": "ExecuteBundleSharedTLSUOperation",
+          "sha256": "91f8084e50c8c9c36c57fbb5ccb6d579fdee481de1c7cdfb6b76985f3d7db9f5"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4683,7 +4698,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
-          "sha256": "73c1b2038ce8a2ca60ca210abb98237d450ad0b58794ba5067f2d75b79f51580"
+          "sha256": "e4fa79157fde4b16b845974328d8f052a89c06917ae5332d9a115311c54b90d0"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4693,7 +4708,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteDecodedBundleCommand",
-          "sha256": "fcd3c21724c075a3afd4e7e5de920762a39d1ef7909084b983f3613892391dd8"
+          "sha256": "e2daf1ee977bde643448d4834730879134cc6bd235bfc8febb584b24a759a565"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -5207,8 +5222,23 @@
         },
         {
           "path": "asl/tile/memory.asl",
+          "function": "MGATHER_CAS",
+          "sha256": "5a361d60fdc59c9da23a22c73ec991b98accce33ea18cba4b5189bb348147465"
+        },
+        {
+          "path": "asl/tile/memory.asl",
+          "function": "MGATHER_MASK",
+          "sha256": "e511048a8c37f36fa70c4b9dfa98f980df9a6c4a9d4d9f74a3c97f37a774d39b"
+        },
+        {
+          "path": "asl/tile/memory.asl",
           "function": "MSCATTER",
           "sha256": "bc58ad8d1d9fbe166bd3d195036bb19a3c30c819222b28d6eb6226bc51ea7e1e"
+        },
+        {
+          "path": "asl/tile/memory.asl",
+          "function": "MSCATTER_MASK",
+          "sha256": "44d77354cc0231cfb1813c721e4ea17b5738d15f150d866aaa64b04d8deaf0f0"
         },
         {
           "path": "asl/tile/memory.asl",
@@ -5296,7 +5326,7 @@
   "sources": [
     {
       "path": "Makefile",
-      "sha256": "6566203ed52be769bc793e587d2689b0fc7dadf481c935369049c69194cf328f"
+      "sha256": "facb53ac81dd78a74ca8bc4a4e487bafbdeff22247ea4c3c5107f52cf032c22d"
     },
     {
       "path": "spec/catalog/system-registers.json",
@@ -5304,19 +5334,19 @@
     },
     {
       "path": "scripts/generate-asl-decoders",
-      "sha256": "d297cbe0931dd4551abfc45c1271efb533840e7cf7af6fb573da0601f3097274"
+      "sha256": "a3c7c74a4bad788f40ec894741986349c2fb41de08cd5be0cdc82ba008913097"
     },
     {
       "path": "generated:build/decoders.asl",
-      "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+      "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
     },
     {
       "path": "tests/asl/main.asl",
-      "sha256": "e704200ff0b42aa66f0118861418afe4f1c9f438aa0c776408d716940c289900"
+      "sha256": "c89c97fd5c3e94776be38e48ffdb473178bc8842b6cf382b624a976164fd3d09"
     },
     {
       "path": "tests/asl/shards/core-bundle.asl",
-      "sha256": "9419dad25e8afb30f8cf06bdd778994dbcb25aabfdbf65c9a0e0693ea9afff49"
+      "sha256": "5574bae578a63d55489925cc9525e54c2101e8faf4c142deffa52f0788f3905b"
     },
     {
       "path": "tests/asl/scalar-tests.asl",
@@ -5328,11 +5358,11 @@
     },
     {
       "path": "tests/asl/tile-tests.asl",
-      "sha256": "24f9c60f3cbddbc0c25aac104e7c5bf3cf275f3a9a079138552209ae5206192c"
+      "sha256": "6f5b7e1df5203a44d64e703c70a2dcef695adc70885f022089027e41993f844b"
     },
     {
       "path": "asl/types.asl",
-      "sha256": "e23a59bfc8ae54b84b0ba06e5af4593b331fbf7f6ef45f901bcaa83f1d6e8f43"
+      "sha256": "a70daffa65d924e3581ce19a3876a06506c2d1d4c3a06fff9377cb6735532b24"
     },
     {
       "path": "asl/state.asl",

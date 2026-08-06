@@ -82,7 +82,7 @@ complete PD-02 result decision.
 - `spec/evidence/numeric-format-namespace-contract.json`
 - `scripts/generate-numeric-format-namespace-contract`
 - `spec/evidence/scalar-fsu-totality.json`
-- `spec/evidence/tma-totality.json`
+- `spec/evidence/tlsu-totality.json`
 - `asl/types.asl`
 - `asl/numeric/formats.asl`
 - `docs/architecture-decisions/0048-numeric-format-value-classification.md`
@@ -93,7 +93,7 @@ complete PD-02 result decision.
 - `tests/asl/state-tests.asl`
 - `tests/asl/scalar-tests.asl`
 - `tests/asl/bundle-tests.asl`
-- `tests/asl/tma-totality-tests.asl`
+- `tests/asl/tlsu-totality-tests.asl`
 - `docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md`
 - `docs/architecture-decisions/0033-tma-four-bit-memory-packing.md`
 - `docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md`

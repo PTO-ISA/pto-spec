@@ -130,9 +130,9 @@
 | --- | --- | --- | --- |
 | `TCI` | `../pto/TCI.md` | 向 dst tile 生成连续整数序列，支持 runtime `start` 和 compile-time `descending`。 | 相对容易补，但仍需分配 opcode，并定义 `start` 标量、`descending` mode、dtype/shape 与事件语义。 |
 | `TTRI` | `../pto/TTRI.md` | 生成上三角/下三角 mask tile，按 diagonal 参数决定分界。 | 相对容易补，但需要定义 orientation、diagonal 标量/立即数、mask dtype 与 TEPL/TLSU opcode。 |
-| `TSORT32` | `../pto/TSORT32.md` | 对每个 32-element block 排序，并输出排序后的 value-index pair。 | 需要输出 element 格式、index 宽度、稳定性、临时资源和 profile 规则。 |
-| `TMRGSORT` | `../pto/TMRGSORT.md` | 对多条已排序 list 做 merge sort。 | 比 `TSORT32` 更依赖 list 格式、临时 buffer、merge 策略和 profile 限制。 |
-| `TRANDOM` | `../pto/TRANDOM.md` | 使用 key/counter 的 counter-based cipher 生成随机数 tile。 | 需要 RNG key/counter 状态、确定性规则、seed 更新和 profile 行为；不适合临时伪造为普通 TEPL。 |
+| `TSORT` | `../pto/TSORT.md` | 按显式 `sort_width` 对各组排序，并输出排序后的 value-index pair。 | 需要输出 element 格式、index 宽度、稳定性、临时资源和 profile 规则。 |
+| `TMRGSORT` | `../pto/TMRGSORT.md` | 对多条已排序 list 做 merge sort。 | 比 `TSORT` 更依赖 list 格式、临时 buffer、merge 策略和 profile 限制。 |
+| `THISTOGRAM` | `../pto/THISTOGRAM.md` | 按选择的源字节生成直方图。 | 需要 bin 宽度、选择字节和 profile 规则。 |
 | `TPREFETCH` | `../pto/TPREFETCH.md` | 将 GM 数据预取到 tile-local cache/buffer，不隐含同步。 | 有 memory/cache side effect 但没有普通 tile dst；需要 memory/cache header 和 ordering 规则。 |
 | `TPRINT` | `../pto/TPRINT.md` | device-side debug print，可打印 Tile 或 GlobalTensor。 | 调试 side-effect 指令，需要 host/debug 通道、格式和执行副作用模型；不进入普通 compute intrinsic。 |
 

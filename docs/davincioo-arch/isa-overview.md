@@ -20,7 +20,7 @@
 
 ## Execution Hierarchy
 
-四个 PE 执行同一份 SPMD 程序映像，各自拥有独立 PC、ROB 状态和固定为 0–3 的 `thread_id`。该值由 DavinciOO v5 只读 [PEID SSR](../compatibility/scalar/register/ssr/PEID.md)（SSR ID `0x0802`）提供，`get_thread_id()` 固定降低为 `SSRGET PEID`，不新增 opcode。普通区域允许分歧；collective operation 只有在四个 PE 以相同动态顺序到达同一静态操作时才合法。
+四个 PE 执行同一份 SPMD 程序映像，各自拥有独立 PC、ROB 状态和固定为 0–3 的 `thread_id`。该值由 DavinciOO v5 只读 [PEID SSR](../instructions/scalar/register/ssr/PEID.md)（SSR ID `0x0802`）提供，`get_thread_id()` 固定降低为 `SSRGET PEID`，不新增 opcode。普通区域允许分歧；collective operation 只有在四个 PE 以相同动态顺序到达同一静态操作时才合法。
 
 ## Architectural Objects
 
@@ -75,6 +75,6 @@ Shared register RAW wait 只建立该 register 的 producer-to-consumer ready �
 | SYS | coupled SYS body 与 Core collective fence |
 | Scalar 附录 | 继承的 scalar/system micro-instruction 参考 |
 
-## Compatibility Boundary
+## Architecture Boundary
 
 v5 重新定义了 v4 的 `B.IOT` 字段和旧 compressed `C.B.DIM RegSrc` pattern，因此 decode 前必须先确定 profile：v4 保留 `.reuse`、`imm4` 与 `C.B.DIM RegSrc`；v5 使用 `PE_MASK`、`TSize`、压缩后的 `DstTile` 与 `C.B.IOS`。禁止跨 profile 重解释 binary。

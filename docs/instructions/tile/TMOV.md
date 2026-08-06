@@ -68,10 +68,10 @@ It performs four asynchronous Local fragment moves under the ordinary distribute
 
 | Mode | TLSU Function | Direction | Size relation |
 | --- | ---: | --- | --- |
-| Insert | 8 | Local→Shared masked atomic update | Shared `S = L` |
-| Publish | 9 | Local→Shared masked atomic update | Shared `S = L` |
-| Broadcast | 10 | Shared→selected Local quarters | Local logical `L = S` |
-| Extract | 11 | Shared→selected Local quarters | Local logical `L = S` |
+| Insert | 9 | Local→Shared masked atomic update | Shared `S = L` |
+| Publish | 10 | Local→Shared masked atomic update | Shared `S = L` |
+| Broadcast | 11 | Shared→selected Local quarters | Local logical `L = S` |
+| Extract | 12 | Shared→selected Local quarters | Local logical `L = S` |
 
 `L` is `B.IOT.TSize`; `S` is the Shared descriptor size. Insert/Publish require
 nonzero `TSize` even without a Local destination.
@@ -105,5 +105,5 @@ quarters; uninitialized selected data follows undefined-register semantics.
 ## Lowering 摘要
 
 The verifier resolves operand storage and mode, derives size/mask relations,
-allocates/binds an absolute Shared register and emits Function 8–11 with
+allocates/binds an absolute Shared register and emits Function 9–12 with
 direction-correct `C.B.IOS+B.IOT`. The binder is consumed once.

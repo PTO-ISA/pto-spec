@@ -15,18 +15,19 @@ one release boundary.
 
 ## Decision
 
-PTO ISA 0.58.0 accepts exactly 106 direct Tile operations: 87 TEPL, 7 TMA, and
-12 CUBE. It accepts 96 bundle/command forms: the predecessor's 99-form set,
-minus removed `BSTART.ACCCVT`, `BSTART.MGATHER.CAS`, `BSTART.MGATHER.MASK`, and
-`BSTART.MSCATTER.MASK`, plus the new `BSTART.GMOV` form. `BSTART.GMOV` is the
-named TMA start for TLSU Function 13.
+PTO ISA 0.58.0 accepts exactly 109 direct Tile operations: 87 TEPL, 10 TLSU,
+and 12 CUBE. It accepts 99 bundle/command forms. `BSTART.ACCCVT` is removed and
+`BSTART.GMOV` is added; `BSTART.MGATHER.MASK`, `BSTART.MSCATTER.MASK`, and
+`BSTART.MGATHER.CAS` remain accepted at TLSU Functions 6, 7, and 8.
+`BSTART.GMOV` is the named start for TLSU Function 13.
 
-The release adds `GMOV`, `TFMA`, and `TRANDOM`, and uses `TSORT32` as the sole
-canonical spelling for selector `0x06C`.  `TMOV` remains accepted at Local
-Function 2; Shared modes use Functions 8 through 11 at the command/lowering
+The release adds `GMOV` and `TFMA`, retains `THISTOGRAM`, removes `TRANDOM`,
+and uses `TSORT` with an explicit `sort_width` operand as the architecture
+spelling for selector `0x06C`. `TMOV` remains accepted at Local Function 2;
+Shared modes use Functions 9 through 12 at the command/lowering
 boundary.  `TSEL` is fixed at Mode 0 / Function 26 (`0x01A`), while `TSELS`
-remains Mode 1 / Function 26 (`0x03A`).  `TFMA` is Mode 0 / Function 28
-(`0x01C`), and `TRANDOM` is Mode 3 / Function 9 (`0x069`).
+remains Mode 1 / Function 26 (`0x03A`). `TFMA` is Mode 0 / Function 28
+(`0x01C`), and Mode 3 / Function 9 (`0x069`) is reserved.
 
 `TADDC` is not accepted.  Its DavinciOO encoding observation is Mode 0 /
 Function 24; the encoding remains reserved and is not conflated with `TFMA`.
@@ -42,15 +43,15 @@ form may overlap those patterns. Linx ISA 0.58.0 consumes the same reservation
 catalog when enabling its additional vector architecture.
 
 The reviewed 0.58.0 scalar/command encoded-form projection contains exactly
-570 forms and has SHA-256 fingerprint
-`aaaf95c76cacd6843637ebc7ce5b9939ed82d4bafe18f65660bd809dd02acf8c`.
+573 forms and has SHA-256 fingerprint
+`15eec22b1433a88c1ee2c5d524c98d96e48ff0bd1201a3e4aea646c101ca24e3`.
 The binary-closure gate pins this value so any later encoding drift requires a
 new normative decision instead of silently changing the release ABI.
 
 The release replaces the v4 compressed `C.B.DIM RegSrc` slot with the 8-bit
 `C.B.IOS SharedTID` binder. `S0` through `S255` name absolute Core-local Shared
 registers with persistent descriptor/payload plus a four-quarter initialization
-mask. Shared TLOAD/TSTORE accept optional mask-only B.IOT, TMOV Functions 8–11
+mask. Shared TLOAD/TSTORE accept optional mask-only B.IOT, TMOV Functions 9–12
 and cooperative TMATMUL consume the binder schemas defined by the public 0.58.0
 architecture and instruction pages. Destination updates are atomic RMWs;
 uninitialized reads have undefined-register semantics. TGEMV rejects every
@@ -69,8 +70,8 @@ HTML is tracked under `docs/html/`, with
 ## Consequences
 
 - Catalog, ASL decoder, semantic handler, operand binding, executable witness,
-  Markdown, HTML, and Excel inventories must all report 106.
-- The normative Tile/Bundle ASL assertion inventory is pinned at 180 after the
+  Markdown, HTML, and Excel inventories must all report 109.
+- The normative Tile/Bundle ASL assertion inventory is pinned at 200 after the
   removed operations and replacement Shared-register model are accounted for.
 - Removed operations remain reserved or explicitly absent; they do not retain
   formal instruction pages in the Complete site.

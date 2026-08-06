@@ -130,7 +130,7 @@ test("shared frontmatter definition generates the runtime schema", () => {
   assert.equal(schema.additionalProperties, false);
 });
 
-test("profile validation accepts v4 compatibility and v5 active documents", () => {
+test("profile validation accepts declared v4 and v5 documents", () => {
   assert.equal(validateMetadata(fixture({ profile: "davincioo-v4-pe-local" })).length, 0);
   assert.equal(validateMetadata(fixture({ profile: "davincioo-v5-superscalar" })).length, 0);
   assert.ok(validateMetadata(fixture({ profile: "davincioo-v6-unknown" })).some((item) => item.includes("invalid profile")));

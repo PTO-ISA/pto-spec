@@ -260,15 +260,15 @@ def evidence_for_tile_family(family: str, name: str) -> tuple[list[str], list[st
                 "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
             ],
         )
-    if family == "TMA":
+    if family == "TLSU":
         return (
             [
-                "PTO-REQ-TMA-001",
+                "PTO-REQ-TLSU-001",
                 "PTO-REQ-MEMORY-COMPLETION-001",
                 "PTO-REQ-MEMORY-TSO-001",
             ],
             [
-                "spec/evidence/tma-totality.json",
+                "spec/evidence/tlsu-totality.json",
                 "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
             ],
         )
@@ -354,7 +354,7 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
     op_map = snapshot["op_map"]
 
     op_map_names = {
-        (entry["family"], entry["canonical_name"]): entry
+        (entry["family"], entry.get("canonical_name") or entry["name"]): entry
         for entry in op_map.get("entries", [])
     }
     engine_tepl = {entry["name"]: entry for entry in engine["tepl"]["ops"]}
@@ -485,7 +485,7 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
         if family == "TEPL":
             engine_entry = engine_tepl.get(manifest_name)
             independent_status = "selector-manifest"
-        elif family == "TMA":
+        elif family == "TLSU":
             engine_entry = engine_tma.get(tile_header_name(name))
             independent_status = "header-manifest"
         else:
@@ -494,8 +494,13 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
 
         selector_match = False
         if op_map_entry is not None:
-            if "selector" in op_map_entry:
-                selector_match = int(op_map_entry["selector"], 16) == selector_value
+            if op_map_entry.get("selector") is not None:
+                independent_selector = op_map_entry["selector"]
+                selector_match = (
+                    int(independent_selector, 16)
+                    if isinstance(independent_selector, str)
+                    else int(independent_selector)
+                ) == selector_value
             else:
                 selector_match = int(op_map_entry["function"]) == selector_value
         elif engine_entry is not None and family == "TEPL":
@@ -606,10 +611,10 @@ def build(snapshot_root: Path) -> dict[str, Any]:
         },
         "scope": {
             "scalar_forms": 474,
-            "command_forms": 96,
-            "direct_tile_operations": 106,
-            "total_rows": 676,
-            "direct_tile_breakdown": {"TEPL": 87, "TMA": 7, "CUBE": 12},
+            "command_forms": 99,
+            "direct_tile_operations": 109,
+            "total_rows": 682,
+            "direct_tile_breakdown": {"TEPL": 87, "TLSU": 10, "CUBE": 12},
         },
         "model_limits": [
             {
@@ -626,7 +631,7 @@ def build(snapshot_root: Path) -> dict[str, Any]:
             },
             {
                 "id": "bundle-bridge-operand-boundary",
-                "disposition": "PTO-v0 bundle commit exposes destination0/source0/source1 only, making 63 TEPL, 1 TMA, and 5 CUBE direct operations representable through the bundle bridge; the remaining direct operations execute only through direct tile dispatch or reject at bundle commit before effects.",
+                "disposition": "PTO-v0 bundle commit exposes destination0/source0/source1 only, making 63 TEPL, 1 TLSU, and 5 CUBE direct operations representable through the bundle bridge; the remaining direct operations execute only through direct tile dispatch or reject at bundle commit before effects.",
             },
             {
                 "id": "tepl-selector-boundary",
@@ -634,7 +639,7 @@ def build(snapshot_root: Path) -> dict[str, Any]:
             },
             {
                 "id": "tma-and-cube-manifest-boundary",
-                "disposition": "The retained TMA and CUBE manifest rows are header/function evidence rather than independent tile payload execution; GMOV is an explicit PTO-owned extension.",
+                "disposition": "The retained TLSU and CUBE manifest rows are header/function evidence rather than independent tile payload execution; GMOV is an explicit PTO-owned extension.",
             },
             {
                 "id": "no-independent-tile-payload-execution",
@@ -655,13 +660,12 @@ def build(snapshot_root: Path) -> dict[str, Any]:
             ],
         },
     }
-    if summary["row_count"] != 676:
-        raise SystemExit(f"expected 676 rows, got {summary['row_count']}")
+    if summary["row_count"] != 682:
+        raise SystemExit(f"expected 682 rows, got {summary['row_count']}")
     if summary["classification_counts"] != {
-        "comparable-match": 557,
-        "divergence": 84,
-        "intentional-extension": 3,
-        "non-comparable": 32,
+        "comparable-match": 554,
+        "divergence": 90,
+        "non-comparable": 38,
     }:
         raise SystemExit(
             f"unexpected comparison classification counts: {summary['classification_counts']}"
@@ -669,10 +673,12 @@ def build(snapshot_root: Path) -> dict[str, Any]:
     accepted_abi_breaks = [
         row for row in rows if row.get("abi_change_acceptance") is not None
     ]
-    if Counter(row["surface"] for row in accepted_abi_breaks) != Counter(
-        {"command": 7, "direct-tile": 67}
-    ):
-        raise SystemExit("expected exactly 7 command and 67 direct-tile accepted ABI divergences")
+    accepted_abi_break_counts = Counter(row["surface"] for row in accepted_abi_breaks)
+    if accepted_abi_break_counts != Counter({"command": 7, "direct-tile": 68}):
+        raise SystemExit(
+            "unexpected accepted ABI divergence counts: "
+            f"{dict(sorted(accepted_abi_break_counts.items()))}"
+        )
     return data
 
 

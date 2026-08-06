@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "c34b0b673f68c6a6f39a29c45dee2063f3db678a1dba15a3017e6fe6227a2f37"
+      "sha256": "09f73698470cf555d541638f65e42f2f7b5da2ad58c3d8fa28af7152ffb837e3"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -19,11 +19,11 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "58cb445f7a4bc690859f017db4e9ec7b054ab1c10d50773eb2d6cf3a2a87d94a"
+      "sha256": "014501ed69c25cca527a67649c365c2da91859076479d7218111bda97df38f37"
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "99f7b99a881c60ba0cbd92b4ad6f02d36bac3bd3b43b650585d04c7bedc4ad08"
+      "sha256": "2aeff5d762b067923cee2c5c848213fff70aa1622d70e53fc6818ee08bd8d107"
     },
     {
       "path": "spec/catalog/system-registers.json",
@@ -39,47 +39,47 @@
     },
     {
       "path": "spec/profile-hooks.json",
-      "sha256": "663fc4d944a020f12f385555765ca6b23f2f26483b226f514d4d7fde8000a145"
+      "sha256": "ca2ac0b5f26a015203d1053f642fa3ad96fc8dbcd5d29fe236ecc3a8f8f38dd8"
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "6f8d5b0a7143a01f76c2b2ef0694caaa48a3277d2cd01b7e3f401e67b9283ecf"
+      "sha256": "98d4add660f2dcc375c1bc6165665412e2342c14cd60724e3f4ea4e560c757a0"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "aeb37690f0a65ff5df71fc8a3c5b0b420d532f5598cf87f291aec40c15e8463e"
+      "sha256": "3e2cbc5e38cf7ca14d2da8fe1afed0e9830a3be21f697c22313061ad2bbc3a3f"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "91b88692f7cabe60ca9e255db278a39ec2431a58d19b3b2be7941fc58abdec6e"
+      "sha256": "173c5d906e5289b90062d60ca24c00ff45c24b4d00414125e00b2d38894e1ca0"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "d3e1d07e4bd29adf4c582625507eac882ffae2eddb1930d628e27604bd9ebc10"
+      "sha256": "fb2e265ba19fc6c3d64ea88627964401125e75f084f10d5d22be8eaf66040363"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "fe36a3f4f2dc39d98f6ac60dbf25d2129dbd8724401fa170ffb9fc516cae89d8"
+      "sha256": "50d72566221afd967dc919245a295163d855fe914d662e9150487cf6416d405e"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "8a32fe64469311963c7b64debbfb7620825ba65b05e56bc21bff7fc3358911f7"
+      "sha256": "a0d77d43ab4339ac14bc6ccbe79e3a65b256aeb25e57c2da9c95152d6f5c57c1"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "74484654028a35f7ab73c2d591d33edf6b649f1a79b1add2480959f061c0ee26"
+      "sha256": "640de88e607e2683fd755288d0d240ba2bdce6ef4519a1396ab702987c08feef"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "a7f10d3fac177d3d9cc0531bd9f9749a2d1a1583b92567880790d37b3d154df1"
+      "sha256": "f658fc26ebe480299bcdf5e7c423355f13857ad3cbc99b0bde06438419a6284b"
     },
     {
       "path": "spec/evidence/numeric-subnormal-contract.json",
-      "sha256": "251d075872fdeed7e83fb56975943dad89b0f78a007c50d69e72c817d902eeaf"
+      "sha256": "c277afe2b9989f9f3d7961ec61087154cea7a09a31eacd10721a54217e49e426"
     },
     {
       "path": "spec/evidence/numeric-special-value-contract.json",
-      "sha256": "1e076ce3fc5aa5a652094ec1edb439cfa81d1e9c1e71011f9709d42248a1b8f2"
+      "sha256": "2eae113adc992a1f4fd923530c09429cd99f6198660d3a910821c1948a7696c8"
     },
     {
       "path": "spec/evidence/scalar-effect-closure.json",
@@ -87,19 +87,19 @@
     },
     {
       "path": "spec/evidence/system-register-witness-closure.json",
-      "sha256": "b4f5285d1da95d72084034617d069f88a055d273cd3be76635e390be9ca52ba2"
+      "sha256": "6d55b4d61b8282ae875cecdc5f9f8d326d045d1ba84f046792366c1ea1adc247"
     },
     {
       "path": "spec/evidence/bundle-command-totality.json",
-      "sha256": "6a4c35c7f7bf1c26ec6cedd36406cdb0e640b4d164e010f7f0ec9bca8c544a5b"
+      "sha256": "2b613ba8607385bdfff31e98b95d88826d1723b8c85d42b61f6e202bbfe1423e"
     },
     {
       "path": "spec/evidence/tepl-totality.json",
-      "sha256": "43157b0af6b9d1aa59cf4040a8d275a804a994a10377dd8809d3891e9141ec08"
+      "sha256": "56ca4ca9a1ce23966086e2c482ed633828405cbc086d98e5c145266b46915ee4"
     },
     {
-      "path": "spec/evidence/tma-totality.json",
-      "sha256": "0e09c514b38ba87120aa5d1cb1c07e5a4ddf38c6c4751b020821c0fbbaa95350"
+      "path": "spec/evidence/tlsu-totality.json",
+      "sha256": "2f328da3c97093603d7a3295571dcac841eb5f2c18ad0d738a963fc643b3f099"
     },
     {
       "path": "spec/evidence/cube-totality.json",
@@ -107,19 +107,19 @@
     },
     {
       "path": "spec/evidence/noncomparable-oracle-coverage.json",
-      "sha256": "8848a378a19953fc5a897839355c5f3205a2e2bc4461b9162e12562c25fede5e"
+      "sha256": "a3b21ff157e93ef67ba35873dec14289b7f92cd5ea5fef343cc7f8e2f46bdff6"
     },
     {
       "path": "scripts/generate-asl-decoders",
-      "sha256": "d297cbe0931dd4551abfc45c1271efb533840e7cf7af6fb573da0601f3097274"
+      "sha256": "a3c7c74a4bad788f40ec894741986349c2fb41de08cd5be0cdc82ba008913097"
     },
     {
       "path": "scripts/generate-system-register-witness-closure",
-      "sha256": "c747254ced71e155e2b0d6e32640cfc417edfb48094b98c7851985a74211ff90"
+      "sha256": "0058084fa62e2bc9292d7e1e798c2a60dd28a99a060be42eabc316dfdcdc49bb"
     },
     {
       "path": "tests/asl/main.asl",
-      "sha256": "e704200ff0b42aa66f0118861418afe4f1c9f438aa0c776408d716940c289900"
+      "sha256": "c89c97fd5c3e94776be38e48ffdb473178bc8842b6cf382b624a976164fd3d09"
     },
     {
       "path": "tests/asl/scalar-tests.asl",
@@ -131,11 +131,11 @@
     },
     {
       "path": "tests/asl/tile-tests.asl",
-      "sha256": "24f9c60f3cbddbc0c25aac104e7c5bf3cf275f3a9a079138552209ae5206192c"
+      "sha256": "6f5b7e1df5203a44d64e703c70a2dcef695adc70885f022089027e41993f844b"
     },
     {
       "path": "asl/types.asl",
-      "sha256": "e23a59bfc8ae54b84b0ba06e5af4593b331fbf7f6ef45f901bcaa83f1d6e8f43"
+      "sha256": "a70daffa65d924e3581ce19a3876a06506c2d1d4c3a06fff9377cb6735532b24"
     },
     {
       "path": "asl/state.asl",
@@ -155,7 +155,7 @@
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "6a3e8fe318bb85a632998caa14a3c158b727fa9bf059c56c7c4a50c4c8fe8f6e"
+      "sha256": "8ac6dd8f0d960645d871b37bc8ededd8905944dd36a5d1745af45a5ac85e37d2"
     },
     {
       "path": "asl/concurrency.asl",
@@ -215,7 +215,7 @@
     },
     {
       "path": "asl/tile/complex.asl",
-      "sha256": "d147dbd128db069ff6833c1974ca55cd7fe88fc7c992518eb2941e341cb4f1f1"
+      "sha256": "c4f7ab6a33d7c711c5894222ac85e8dd4cf86d6f8a281f8027f1f022e2852cba"
     },
     {
       "path": "asl/tile/conversion.asl",
@@ -239,11 +239,11 @@
     },
     {
       "path": "asl/tile/legality.asl",
-      "sha256": "0bdf91a90b7dcdcadc9cc9eaf4382fd52a356a291aa4b9afd580f056f5ff7243"
+      "sha256": "e260bdaaf62c20ee383f19070fed650678249c0c25ec8410c21d77e272d0ef2a"
     },
     {
       "path": "asl/tile/memory.asl",
-      "sha256": "ddf64264ba57cec0dd3772b815b3fd3d0ff3899e7c447a60f1737862b9d1bb22"
+      "sha256": "39d20f62a49f0c33d9990e89bf490ebe151cd5df45ebd2b612544a9a043c4161"
     },
     {
       "path": "asl/tile/rearrangement.asl",
@@ -763,14 +763,14 @@
           "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
           "spec/evidence/scalar-agu-totality.json",
           "spec/evidence/scalar-amo-totality.json",
-          "spec/evidence/tma-totality.json",
+          "spec/evidence/tlsu-totality.json",
           "spec/profile-hooks.json"
         ],
         "tests": [
           "scripts/check-catalogs",
           "tests/asl/main.asl",
           "tests/asl/scalar-tests.asl",
-          "tests/asl/tma-totality-tests.asl"
+          "tests/asl/tlsu-totality-tests.asl"
         ],
         "bounded_status": "closed"
       },
@@ -788,7 +788,7 @@
           "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
           "spec/evidence/scalar-agu-totality.json",
           "spec/evidence/scalar-amo-totality.json",
-          "spec/evidence/tma-totality.json",
+          "spec/evidence/tlsu-totality.json",
           "spec/profile-hooks.json"
         ],
         "tests": [
@@ -796,7 +796,7 @@
           "tests/asl/main.asl",
           "tests/asl/scalar-tests.asl",
           "tests/asl/tile-tests.asl",
-          "tests/asl/tma-totality-tests.asl"
+          "tests/asl/tlsu-totality-tests.asl"
         ],
         "bounded_status": "closed"
       },
@@ -816,7 +816,7 @@
           "docs/architecture-decisions/0030-scalar-amo-totality-and-reservation.md",
           "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
           "spec/evidence/scalar-amo-totality.json",
-          "spec/evidence/tma-totality.json",
+          "spec/evidence/tlsu-totality.json",
           "docs/memory-model.md"
         ],
         "tests": [
@@ -873,7 +873,7 @@
           "docs/davincioo-arch/programming-model.md",
           "docs/davincioo-arch/state-and-data-types.md",
           "docs/davincioo-arch/memory-ordering-and-exceptions.md",
-          "docs/instructions/bundle/operands/C.B.IOS.md",
+          "docs/instructions/block/operands/C.B.IOS.md",
           "docs/instructions/tile/TLOAD.md",
           "docs/instructions/tile/TSTORE.md",
           "docs/instructions/tile/TMOV.md"
@@ -1163,7 +1163,7 @@
         "bounded_status": "open"
       },
       {
-        "id": "PTO-REQ-TMA-001",
+        "id": "PTO-REQ-TLSU-001",
         "status": "packed-reference-totality-closed:S4-T9",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
@@ -1173,12 +1173,12 @@
           "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
           "scripts/generate-numeric-format-namespace-contract",
           "spec/evidence/numeric-format-namespace-contract.json",
-          "spec/evidence/tma-totality.json",
+          "spec/evidence/tlsu-totality.json",
           "spec/profile-hooks.json"
         ],
         "tests": [
           "tests/asl/tile-tests.asl",
-          "tests/asl/tma-totality-tests.asl"
+          "tests/asl/tlsu-totality-tests.asl"
         ],
         "bounded_status": "closed"
       },
@@ -13603,6 +13603,72 @@
         "bounded_status": "reference-totality-closed"
       },
       {
+        "id": "bstart_mgather_cas_32_fd8c8a3b720a",
+        "mnemonic": "BSTART.MGATHER.CAS",
+        "group": "Bundle Split",
+        "handler": "ExecuteBundleStart",
+        "requirements": [
+          "PTO-REQ-BUNDLE-STATE-001",
+          "PTO-REQ-BUNDLE-DISPATCH-001",
+          "PTO-REQ-BUNDLE-OPERATION-001"
+        ],
+        "model": [
+          "spec/catalog/command-forms.json",
+          "asl/bundle/dispatch.asl",
+          "asl/bundle/state.asl",
+          "spec/evidence/bundle-command-totality.json"
+        ],
+        "tests": [
+          "tests/asl/bundle-tests.asl",
+          "tests/asl/main.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "bstart_mgather_mask_32_5573241cd944",
+        "mnemonic": "BSTART.MGATHER.MASK",
+        "group": "Bundle Split",
+        "handler": "ExecuteBundleStart",
+        "requirements": [
+          "PTO-REQ-BUNDLE-STATE-001",
+          "PTO-REQ-BUNDLE-DISPATCH-001",
+          "PTO-REQ-BUNDLE-OPERATION-001"
+        ],
+        "model": [
+          "spec/catalog/command-forms.json",
+          "asl/bundle/dispatch.asl",
+          "asl/bundle/state.asl",
+          "spec/evidence/bundle-command-totality.json"
+        ],
+        "tests": [
+          "tests/asl/bundle-tests.asl",
+          "tests/asl/main.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "bstart_mscatter_mask_32_2a33eed646f7",
+        "mnemonic": "BSTART.MSCATTER.MASK",
+        "group": "Bundle Split",
+        "handler": "ExecuteBundleStart",
+        "requirements": [
+          "PTO-REQ-BUNDLE-STATE-001",
+          "PTO-REQ-BUNDLE-DISPATCH-001",
+          "PTO-REQ-BUNDLE-OPERATION-001"
+        ],
+        "model": [
+          "spec/catalog/command-forms.json",
+          "asl/bundle/dispatch.asl",
+          "asl/bundle/state.asl",
+          "spec/evidence/bundle-command-totality.json"
+        ],
+        "tests": [
+          "tests/asl/bundle-tests.asl",
+          "tests/asl/main.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
         "id": "bstart_mpar_32_2d163417c615",
         "mnemonic": "BSTART.MPAR",
         "group": "Bundle Split",
@@ -16893,11 +16959,11 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x069:TRANDOM",
-        "name": "TRANDOM",
+        "id": "TEPL:0x068:THISTOGRAM",
+        "name": "THISTOGRAM",
         "family": "TEPL",
-        "selector_or_function": "0x069",
-        "handler": "TRANDOM",
+        "selector_or_function": "0x068",
+        "handler": "THISTOGRAM",
         "requirements": [
           "PTO-REQ-TEPL-COMPLEX-001",
           "PTO-REQ-TILE-DISPATCH-001",
@@ -16962,11 +17028,11 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TEPL:0x06C:TSORT32",
-        "name": "TSORT32",
+        "id": "TEPL:0x06C:TSORT",
+        "name": "TSORT",
         "family": "TEPL",
         "selector_or_function": "0x06C",
-        "handler": "TSORT32",
+        "handler": "TSORT",
         "requirements": [
           "PTO-REQ-TEPL-COMPLEX-001",
           "PTO-REQ-TILE-DISPATCH-001",
@@ -17169,9 +17235,9 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TMA:0:TLOAD",
+        "id": "TLSU:0:TLOAD",
         "name": "TLOAD",
-        "family": "TMA",
+        "family": "TLSU",
         "selector_or_function": 0,
         "handler": "TLOAD",
         "requirements": [
@@ -17180,25 +17246,25 @@
           "PTO-REQ-MEMORY-TSO-001",
           "PTO-REQ-SHARED-TILE-001",
           "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TMA-001"
+          "PTO-REQ-TLSU-001"
         ],
         "model": [
           "spec/catalog/tile-operations.json",
           "asl/tile/memory.asl",
           "asl/tile/legality.asl",
-          "spec/evidence/tma-totality.json"
+          "spec/evidence/tlsu-totality.json"
         ],
         "tests": [
-          "tests/asl/tma-totality-tests.asl",
+          "tests/asl/tlsu-totality-tests.asl",
           "tests/asl/tile-tests.asl",
           "tests/asl/concurrency-tests.asl"
         ],
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TMA:1:TSTORE",
+        "id": "TLSU:1:TSTORE",
         "name": "TSTORE",
-        "family": "TMA",
+        "family": "TLSU",
         "selector_or_function": 1,
         "handler": "TSTORE",
         "requirements": [
@@ -17207,25 +17273,25 @@
           "PTO-REQ-MEMORY-TSO-001",
           "PTO-REQ-SHARED-TILE-001",
           "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TMA-001"
+          "PTO-REQ-TLSU-001"
         ],
         "model": [
           "spec/catalog/tile-operations.json",
           "asl/tile/memory.asl",
           "asl/tile/legality.asl",
-          "spec/evidence/tma-totality.json"
+          "spec/evidence/tlsu-totality.json"
         ],
         "tests": [
-          "tests/asl/tma-totality-tests.asl",
+          "tests/asl/tlsu-totality-tests.asl",
           "tests/asl/tile-tests.asl",
           "tests/asl/concurrency-tests.asl"
         ],
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TMA:2:TMOV",
+        "id": "TLSU:2:TMOV",
         "name": "TMOV",
-        "family": "TMA",
+        "family": "TLSU",
         "selector_or_function": 2,
         "handler": "TMOV",
         "requirements": [
@@ -17234,25 +17300,25 @@
           "PTO-REQ-MEMORY-TSO-001",
           "PTO-REQ-SHARED-TILE-001",
           "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TMA-001"
+          "PTO-REQ-TLSU-001"
         ],
         "model": [
           "spec/catalog/tile-operations.json",
           "asl/tile/memory.asl",
           "asl/tile/legality.asl",
-          "spec/evidence/tma-totality.json"
+          "spec/evidence/tlsu-totality.json"
         ],
         "tests": [
-          "tests/asl/tma-totality-tests.asl",
+          "tests/asl/tlsu-totality-tests.asl",
           "tests/asl/tile-tests.asl",
           "tests/asl/concurrency-tests.asl"
         ],
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TMA:3:TPREFETCH",
+        "id": "TLSU:3:TPREFETCH",
         "name": "TPREFETCH",
-        "family": "TMA",
+        "family": "TLSU",
         "selector_or_function": 3,
         "handler": "TPREFETCH",
         "requirements": [
@@ -17261,25 +17327,25 @@
           "PTO-REQ-MEMORY-TSO-001",
           "PTO-REQ-SHARED-TILE-001",
           "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TMA-001"
+          "PTO-REQ-TLSU-001"
         ],
         "model": [
           "spec/catalog/tile-operations.json",
           "asl/tile/memory.asl",
           "asl/tile/legality.asl",
-          "spec/evidence/tma-totality.json"
+          "spec/evidence/tlsu-totality.json"
         ],
         "tests": [
-          "tests/asl/tma-totality-tests.asl",
+          "tests/asl/tlsu-totality-tests.asl",
           "tests/asl/tile-tests.asl",
           "tests/asl/concurrency-tests.asl"
         ],
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TMA:4:MGATHER",
+        "id": "TLSU:4:MGATHER",
         "name": "MGATHER",
-        "family": "TMA",
+        "family": "TLSU",
         "selector_or_function": 4,
         "handler": "MGATHER",
         "requirements": [
@@ -17288,25 +17354,25 @@
           "PTO-REQ-MEMORY-TSO-001",
           "PTO-REQ-SHARED-TILE-001",
           "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TMA-001"
+          "PTO-REQ-TLSU-001"
         ],
         "model": [
           "spec/catalog/tile-operations.json",
           "asl/tile/memory.asl",
           "asl/tile/legality.asl",
-          "spec/evidence/tma-totality.json"
+          "spec/evidence/tlsu-totality.json"
         ],
         "tests": [
-          "tests/asl/tma-totality-tests.asl",
+          "tests/asl/tlsu-totality-tests.asl",
           "tests/asl/tile-tests.asl",
           "tests/asl/concurrency-tests.asl"
         ],
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TMA:5:MSCATTER",
+        "id": "TLSU:5:MSCATTER",
         "name": "MSCATTER",
-        "family": "TMA",
+        "family": "TLSU",
         "selector_or_function": 5,
         "handler": "MSCATTER",
         "requirements": [
@@ -17315,25 +17381,106 @@
           "PTO-REQ-MEMORY-TSO-001",
           "PTO-REQ-SHARED-TILE-001",
           "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TMA-001"
+          "PTO-REQ-TLSU-001"
         ],
         "model": [
           "spec/catalog/tile-operations.json",
           "asl/tile/memory.asl",
           "asl/tile/legality.asl",
-          "spec/evidence/tma-totality.json"
+          "spec/evidence/tlsu-totality.json"
         ],
         "tests": [
-          "tests/asl/tma-totality-tests.asl",
+          "tests/asl/tlsu-totality-tests.asl",
           "tests/asl/tile-tests.asl",
           "tests/asl/concurrency-tests.asl"
         ],
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "TMA:13:GMOV",
+        "id": "TLSU:6:MGATHER_MASK",
+        "name": "MGATHER_MASK",
+        "family": "TLSU",
+        "selector_or_function": 6,
+        "handler": "MGATHER_MASK",
+        "requirements": [
+          "PTO-REQ-MEMORY-001",
+          "PTO-REQ-MEMORY-COMPLETION-001",
+          "PTO-REQ-MEMORY-TSO-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TLSU-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/memory.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/tlsu-totality.json"
+        ],
+        "tests": [
+          "tests/asl/tlsu-totality-tests.asl",
+          "tests/asl/tile-tests.asl",
+          "tests/asl/concurrency-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TLSU:7:MSCATTER_MASK",
+        "name": "MSCATTER_MASK",
+        "family": "TLSU",
+        "selector_or_function": 7,
+        "handler": "MSCATTER_MASK",
+        "requirements": [
+          "PTO-REQ-MEMORY-001",
+          "PTO-REQ-MEMORY-COMPLETION-001",
+          "PTO-REQ-MEMORY-TSO-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TLSU-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/memory.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/tlsu-totality.json"
+        ],
+        "tests": [
+          "tests/asl/tlsu-totality-tests.asl",
+          "tests/asl/tile-tests.asl",
+          "tests/asl/concurrency-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TLSU:8:MGATHER_CAS",
+        "name": "MGATHER_CAS",
+        "family": "TLSU",
+        "selector_or_function": 8,
+        "handler": "MGATHER_CAS",
+        "requirements": [
+          "PTO-REQ-MEMORY-001",
+          "PTO-REQ-MEMORY-COMPLETION-001",
+          "PTO-REQ-MEMORY-TSO-001",
+          "PTO-REQ-SHARED-TILE-001",
+          "PTO-REQ-TILE-DISPATCH-001",
+          "PTO-REQ-TLSU-001"
+        ],
+        "model": [
+          "spec/catalog/tile-operations.json",
+          "asl/tile/memory.asl",
+          "asl/tile/legality.asl",
+          "spec/evidence/tlsu-totality.json"
+        ],
+        "tests": [
+          "tests/asl/tlsu-totality-tests.asl",
+          "tests/asl/tile-tests.asl",
+          "tests/asl/concurrency-tests.asl"
+        ],
+        "bounded_status": "reference-totality-closed"
+      },
+      {
+        "id": "TLSU:13:GMOV",
         "name": "GMOV",
-        "family": "TMA",
+        "family": "TLSU",
         "selector_or_function": 13,
         "handler": "GMOV",
         "requirements": [
@@ -17342,16 +17489,16 @@
           "PTO-REQ-MEMORY-TSO-001",
           "PTO-REQ-SHARED-TILE-001",
           "PTO-REQ-TILE-DISPATCH-001",
-          "PTO-REQ-TMA-001"
+          "PTO-REQ-TLSU-001"
         ],
         "model": [
           "spec/catalog/tile-operations.json",
           "asl/tile/memory.asl",
           "asl/tile/legality.asl",
-          "spec/evidence/tma-totality.json"
+          "spec/evidence/tlsu-totality.json"
         ],
         "tests": [
-          "tests/asl/tma-totality-tests.asl",
+          "tests/asl/tlsu-totality-tests.asl",
           "tests/asl/tile-tests.asl",
           "tests/asl/concurrency-tests.asl"
         ],
@@ -17683,14 +17830,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/base-pointer-storage/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -17734,14 +17881,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/base-pointer-storage/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -17796,7 +17943,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -17856,7 +18003,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/scalar-tests.asl",
@@ -17905,14 +18052,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -17956,14 +18103,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18007,14 +18154,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/version-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18058,14 +18205,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18109,14 +18256,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/feature-enable-storage/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18160,14 +18307,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18214,7 +18361,7 @@
               "function": "TestTileCapacityLegality",
               "assertion_marker": "SYSREG-EFFECT-WITNESS tile-capacity-profile-limit/limits-per-tile-and-aggregate-allocation",
               "source": "tests/asl/tile-tests.asl",
-              "source_sha256": "24f9c60f3cbddbc0c25aac104e7c5bf3cf275f3a9a079138552209ae5206192c",
+              "source_sha256": "6f5b7e1df5203a44d64e703c70a2dcef695adc70885f022089027e41993f844b",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -18222,11 +18369,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/tile-tests.asl",
-            "sha256": "24f9c60f3cbddbc0c25aac104e7c5bf3cf275f3a9a079138552209ae5206192c"
+            "sha256": "6f5b7e1df5203a44d64e703c70a2dcef695adc70885f022089027e41993f844b"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18271,14 +18418,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18322,14 +18469,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18384,7 +18531,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -18444,7 +18591,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -18504,7 +18651,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/scalar-tests.asl",
@@ -18564,7 +18711,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -18624,7 +18771,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -18673,14 +18820,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/exception-temporary-storage/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18724,14 +18871,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/exception-temporary-storage/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18786,7 +18933,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -18846,7 +18993,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -18906,7 +19053,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -18976,7 +19123,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -19028,7 +19175,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19036,7 +19183,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19083,7 +19230,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19091,7 +19238,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19138,7 +19285,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19146,7 +19293,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19193,7 +19340,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19201,7 +19348,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19248,7 +19395,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19256,7 +19403,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19303,7 +19450,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19311,7 +19458,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19358,7 +19505,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19366,7 +19513,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19421,7 +19568,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -19481,7 +19628,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -19533,7 +19680,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/acr-parameter-storage/pto-v0-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19541,7 +19688,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19588,7 +19735,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/acr-parameter-storage/pto-v0-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19596,7 +19743,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19651,7 +19798,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -19711,7 +19858,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -19771,7 +19918,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -19831,7 +19978,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -19891,7 +20038,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -19951,7 +20098,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -20011,7 +20158,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -20071,7 +20218,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -20131,7 +20278,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -20191,7 +20338,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -20251,7 +20398,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -20311,7 +20458,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -20371,7 +20518,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -20441,7 +20588,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -20511,7 +20658,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -20581,7 +20728,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -20651,7 +20798,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -20721,7 +20868,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           },
           {
             "path": "tests/asl/state-tests.asl",
@@ -20773,7 +20920,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-identity-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -20781,7 +20928,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -20828,7 +20975,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -20836,7 +20983,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -20883,7 +21030,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -20891,7 +21038,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -20938,7 +21085,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -20946,7 +21093,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -20993,7 +21140,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21001,7 +21148,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21048,7 +21195,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21056,7 +21203,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21103,7 +21250,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21111,7 +21258,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21158,7 +21305,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21166,7 +21313,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21213,7 +21360,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21221,7 +21368,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21268,7 +21415,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21276,7 +21423,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21323,7 +21470,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21331,7 +21478,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21378,7 +21525,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21386,7 +21533,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21433,7 +21580,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21441,7 +21588,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21488,7 +21635,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21496,7 +21643,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21543,7 +21690,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21551,7 +21698,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21598,7 +21745,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21606,7 +21753,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21653,7 +21800,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21661,7 +21808,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21708,7 +21855,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21716,7 +21863,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21763,7 +21910,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e",
+              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21771,7 +21918,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -25525,14 +25672,14 @@
   "summary": {
     "requirement_count": 47,
     "scalar_form_count": 474,
-    "command_form_count": 96,
-    "tile_operation_count": 106,
+    "command_form_count": 99,
+    "tile_operation_count": 109,
     "system_register_count": 72,
     "trap_count": 13,
     "profile_hook_count": 36,
     "state_root_count": 74,
     "state_leaf_count": 229,
-    "traceability_item_count": 918,
+    "traceability_item_count": 924,
     "open_requirement_count": 11,
     "open_requirement_ids": [
       "PTO-REQ-PROFILE-001",
