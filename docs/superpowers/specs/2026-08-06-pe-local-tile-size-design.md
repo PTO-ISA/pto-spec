@@ -1,0 +1,236 @@
+# PTO ISA 0.58 PE-Local Tile Size and Dimension Design
+
+## Status
+
+Approved architecture direction for Issue 48. This design replaces the earlier
+PTO ISA 0.58 tile-size and dimension interpretation in place. It does not create
+a new release number, ABI version suffix, opcode, command form, or bit encoding.
+
+## Objective
+
+PTO ISA 0.58 SHALL define Tile dimensions and Tile allocation size at the
+single-PE level. A block's `PE_MASK` SHALL identify which PE instances execute
+and receive destination storage. Core-level physical allocation SHALL equal the
+single-PE allocation multiplied by the number of selected PEs.
+
+The reissued 0.58 specification SHALL supersede the earlier 0.58 interpretation.
+All 0.58 toolchains and artifacts SHALL be regenerated from the new release
+manifest. No compatibility path for artifacts produced from the superseded
+interpretation is required.
+
+## Unchanged Binary Encoding
+
+The following encoded surfaces SHALL NOT change:
+
+- instruction widths, opcodes, masks, and matches;
+- `B.IOT.PE_MASK[18:15]`;
+- `B.IOT.TSize[11:9]`;
+- `B.IOT.DstTile[8:7]`;
+- `B.IOR.SharedTSize[11:9]` in the GM-to-Shared schema;
+- `B.DIM` field layout and loop-bound selectors;
+- the PTO ISA release string `0.58.0`; and
+- the existing `encoding_abi` identity string.
+
+The change is a replacement of the programming and architectural semantics
+associated with those existing fields. The regenerated release manifest and its
+canonical content hash identify the superseding 0.58 specification tree.
+
+## PE Mask Bit Order
+
+The four mask bits SHALL map to fixed PE identities and SHALL NOT pack selected
+PEs into lower-numbered slots:
+
+| `PE_MASK` bit | PE |
+| --- | --- |
+| `1000` | PE0 |
+| `0100` | PE1 |
+| `0010` | PE2 |
+| `0001` | PE3 |
+
+Multiple mask bits MAY be set. `PE_MASK=0000` SHALL be a strict no-op: it SHALL
+NOT allocate or rename a destination, read a source, access Shared state or
+memory, change descriptor state, advance lifetime state, or raise a fault.
+
+## Per-PE TSize Encoding
+
+`TSize` SHALL express the allocation size of one selected PE:
+
+| `TSize` | Per-PE size |
+| --- | ---: |
+| `000` | implicit or no explicit destination size, only where the operation schema permits it |
+| `001` | 128 B |
+| `010` | 256 B |
+| `011` | 512 B |
+| `100` | 1 KiB |
+| `101` | 2 KiB |
+| `110` | 4 KiB |
+| `111` | 8 KiB |
+
+For a destination-bearing operation with a legal nonzero `TSize`, Core-level
+allocation SHALL be:
+
+```text
+allocated_bytes = popcount(PE_MASK) * per_pe_tsize_bytes
+```
+
+Examples for `TSize=001`:
+
+| `PE_MASK` | Selected PEs | Per-PE allocation | Core allocation |
+| --- | --- | ---: | ---: |
+| `0001` | PE3 | 128 B | 128 B |
+| `0011` | PE2, PE3 | 128 B each | 256 B |
+| `1111` | PE0, PE1, PE2, PE3 | 128 B each | 512 B |
+
+The `TILE_CAPACITY` accounting boundary SHALL count Core-level allocated bytes,
+including the mask multiplier. A destination attempt that would exceed the
+capacity SHALL fail precisely without partial allocation, rename, descriptor,
+payload, or lifetime effects.
+
+## Per-PE Dimensions
+
+Every dimension consumed from `B.DIM` SHALL describe one PE's operand or result
+view. This includes ordinary Tile valid-region dimensions and CUBE `M`, `N`, and
+`K` dimensions.
+
+Distribution metadata SHALL derive a group-level view when one is needed. For a
+full-mask `MShard4` cooperative matrix operation:
+
+```text
+group_M = 4 * pe_M
+group_N = pe_N
+group_K = pe_K
+```
+
+The selected PE identity remains fixed for partial masks; selected fragments are
+not packed. Cooperative TMATMUL requires `PE_MASK=1111`, so its architectural
+group result contains all four M shards. Other distribution kinds SHALL define
+their own group derivation rather than inheriting an unconditional multiply-by-4
+rule.
+
+## Local Tile Allocation and Rename
+
+Local T/U/M/N destinations SHALL be allocated independently for each selected
+PE. The destination descriptor's shape and capacity are per-PE values. Hardware
+rename SHALL resolve Local sources to the correct per-PE physical producer;
+consumers do not use `PE_MASK` as a source-data selector.
+
+The formal one-level direct-operation carrier MAY continue to represent the
+already-resolved current-PE Tile fragment. Bundle allocation state SHALL retain
+the allocation mask needed for Core-level capacity accounting. This abstraction
+MUST NOT describe `capacity_bytes` or `B.DIM` as a four-PE logical aggregate.
+
+## Shared Register Allocation
+
+Each Core retains absolute Shared registers `S0` through `S255`. A Shared
+register allocation SHALL record:
+
+- one per-PE descriptor, including per-PE shape and per-PE capacity;
+- an immutable nonzero `allocation_mask` fixed by the first allocating write;
+- an `initialized_mask` that is a subset of `allocation_mask`; and
+- Core-level allocated bytes equal to
+  `popcount(allocation_mask) * per_pe_capacity_bytes`.
+
+The first allocating write SHALL use its effective `PE_MASK` as the Shared
+register's `allocation_mask`. A subsequent destination write MAY select any
+subset of that allocation mask and SHALL preserve unselected PE state. A write
+whose mask contains a bit outside the recorded allocation mask SHALL be illegal
+for that register. The compiler SHALL allocate a new `Sx` when a larger or
+different PE allocation mask is required.
+
+The per-PE descriptor, including size, shape, dtype, layout, and role, SHALL
+remain compatible for the lifetime of the Shared allocation. A different
+descriptor requires a newly allocated Shared register. A zero-mask operation
+does not establish an allocation.
+
+Reading an unallocated or uninitialized Shared PE lane SHALL retain the approved
+undefined-register behavior: it SHALL NOT trap, allocate storage, initialize the
+lane, or modify the descriptor. Shared destination updates remain atomic
+descriptor-plus-selected-payload operations. The architecture continues to
+provide no order for conflicting concurrent accesses.
+
+## Data Movement
+
+- Local `TLOAD`, `TMOV`, and destination-bearing TLSU operations SHALL use
+  per-PE shape and per-PE `TSize`.
+- GM-to-Shared `SharedTSize` SHALL use the same per-PE size table.
+- `PE_MASK` SHALL determine which fixed PE Shared lanes are allocated or
+  accessed; selected lanes are not packed.
+- `GMOV` SHALL transfer one already-renamed PE-local fragment. Its `TSize`
+  SHALL describe that fragment, not a four-PE logical aggregate.
+- Source-only stores may continue to derive size from their source descriptor,
+  but that descriptor size is per-PE.
+
+## Cooperative Matrix Operations
+
+For cooperative TMATMUL, `B.DIM M/N/K` SHALL be per-PE. Each PE consumes its own
+resolved Local or Shared operand fragments and produces a per-PE destination of
+shape `M x N`. `MShard4` derives the full four-PE result by fixed PE identity,
+not by changing the encoded dimensions or `TSize`.
+
+Shared Right operands SHALL expose one per-PE fragment under the Shared
+allocation mask. The compiler is responsible for allocating and populating the
+required Shared PE lanes. The ISA does not imply that different PE lanes contain
+identical values unless an operation or distribution contract explicitly
+requires that property.
+
+## Versioning and Re-Release
+
+The repository SHALL continue to publish PTO ISA `0.58.0`. It SHALL not add a
+`v2` encoding or programming-ABI suffix. The previous 0.58 Tile-size and
+dimension interpretation is superseded rather than retained as a selectable
+profile.
+
+The regenerated release manifest, source locks, generated projections, and
+release notes SHALL identify the replacement tree. Toolchains SHALL rebuild all
+0.58 objects and images against that tree. The release documentation SHALL warn
+that artifacts produced from the superseded 0.58 interpretation are stale and
+must not be mixed with the reissued toolchain.
+
+## Required Specification Changes
+
+The implementation SHALL update, at minimum:
+
+- a new accepted architecture decision for Issue 48;
+- architecture, programming-model, state/type, and encoding-convention pages;
+- `B.IOT`, `B.IOR`, `B.DIM`, `TLOAD`, `TMOV`, `GMOV`, and all cooperative
+  TMATMUL pages;
+- ASL size decoding, allocation accounting, zero-mask behavior, destination
+  resolution, Shared allocation-mask legality, and relevant model comments;
+- executable tests for every size code, PE-mask population count, fixed bit
+  order, zero-mask no-op, Shared subset update, Shared expansion rejection, and
+  per-PE dimension behavior;
+- catalog semantic summaries, generated HTML/Excel projections, evidence, and
+  release manifest; and
+- Issue 48 with the accepted decision and exact merged commit.
+
+No accepted opcode or command-form count SHALL change solely because of this
+decision.
+
+## Acceptance Criteria
+
+1. Every normative and generated size table maps `001..111` to per-PE
+   `128B..8KB`.
+2. Capacity accounting proves the mask multiplier for one, two, three, and four
+   selected PEs.
+3. `0000` canaries prove the absence of allocation, rename, reads, writes,
+   faults, and lifetime changes.
+4. Shared allocation-mask tests permit subset updates and reject expansion of an
+   existing `Sx`.
+5. Matrix tests prove that encoded `M/N/K` and destination shape are per-PE while
+   full-mask MShard4 derives a four-times-larger group M extent.
+6. Repository/catalog/release checks pass from a clean tree.
+7. The reissued 0.58 release manifest is regenerated from the reviewed exact
+   head, and its generated projections are clean.
+
+## Rejected Alternatives
+
+- Keeping the previous logical-Tile size table while describing dimensions as
+  per-PE leaves allocation and shape at different architectural levels.
+- Adding a new `v2` encoding or release number contradicts the approved in-place
+  0.58 replacement.
+- Allowing an existing Shared register to grow its allocation mask hides a new
+  physical allocation behind a partial update; a new `Sx` is required instead.
+- Using `PE_MASK` to select Local source data conflicts with per-PE hardware
+  rename and is not part of this contract.
+- Updating prose without updating ASL and executable rejection evidence leaves
+  the normative repository internally inconsistent.
