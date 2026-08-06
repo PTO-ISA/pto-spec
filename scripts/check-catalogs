@@ -4808,8 +4808,8 @@ def main() -> int:
         "command form count must be 99",
     )
     require(command["form_constraint_count"] == 40, "command constraint count drift")
-    require(command["operand_field_count"] == 57, "command operand-field count drift")
-    require(command["operand_piece_count"] == 189, "command operand-piece count drift")
+    require(command["operand_field_count"] == 59, "command operand-field count drift")
+    require(command["operand_piece_count"] == 191, "command operand-piece count drift")
     require(command["semantic_handler_count"] == 21, "command handler count drift")
     require(
         Counter(row["semantic_family"] for row in command_forms)
@@ -4818,7 +4818,7 @@ def main() -> int:
     )
     require(
         Counter(row["length_bits"] for row in command_forms)
-        == Counter({16: 10, 32: 67, 48: 13, 64: 9}),
+        == Counter({16: 9, 32: 68, 48: 13, 64: 9}),
         "command length distribution changed",
     )
     command_ids = [row["form_id"] for row in command_forms]
@@ -5191,6 +5191,25 @@ def main() -> int:
             for row in iot_forms
         ),
         "PTO ISA 0.58.0 B.IOT must encode zero for Shared no-op use",
+    )
+
+    shared_io = next(row for row in command_forms if row["mnemonic"] == "B.IOS")
+    require(
+        shared_io["form_id"] == "b_ios_32_4ba5ef98fdaa"
+        and shared_io["semantic_group"] == "Bundle Input & Output"
+        and shared_io["semantic_handler"] == "BindBundleSharedIO"
+        and aggregate_encoding(shared_io) == (0xF00871FF, 0x00001013)
+        and field_shape(shared_io)
+        == {
+            "SharedTID": (8, ((20, 0, 8),)),
+            "PE_MASK": (4, ((15, 0, 4),)),
+            "TSize": (3, ((9, 0, 3),)),
+        },
+        "PTO ISA 0.58.0 B.IOS raw contract drift",
+    )
+    require(
+        all(row["mnemonic"] != "C.B.IOS" for row in command_forms),
+        "retired C.B.IOS must not remain active",
     )
 
     operations = tile["operations"]
