@@ -16,11 +16,12 @@
 
 | 对象 | 架构大小 | 物理 payload |
 | --- | ---: | ---: |
-| 普通 logical Tile | 512 B–32 KB | 四个固定的 128 B–8 KB PE fragment |
-| Local Tile fragment | logical size / 4 | 单 PE 的 TReg payload |
-| Shared register | 512 B–32 KB descriptor capacity | Core-local persistent S0–S255 storage |
+| 普通 Tile | 每 PE 128 B–8 KB | 单 PE 的 TReg payload |
+| Local destination group | `popcount(PE_MASK) * per_pe_size` | 固定 PE identity 的独立 allocation |
+| Shared register | 每 PE 128 B–8 KB descriptor capacity | Core-local persistent S0–S255 storage |
 
-`PE_MASK` 不改变 logical size，也不改变四分之一 fragment 的大小。
+`PE_MASK` 不改变 per-PE size；它只决定 Core allocation 的倍数和本次
+operation 选择的固定 PE identity。
 
 The executable ASL models the full direct `S0`–`S255` bank. All four PEs in one
 core access the same bank; each other core has a private bank.
@@ -54,12 +55,13 @@ SharedTile<TileRightScale<...>>
 ## Shared Architectural and Physical State
 
 C++ source 不直接命名 `Sx`。编译器分配 8-bit absolute Shared index。每个
-register 保存 descriptor、payload 和四位 initialization mask，并跨 block
+register 保存 per-PE descriptor、payload、immutable allocation mask 和四位 initialization mask，并跨 block
 持久存在直到 overwrite 或 core reset。source read 不修改这些状态。
 
-destination 使用 one-step atomic read-modify-write。partial initialized write
-要求 descriptor compatible；partial uninitialized write 建立 descriptor；full
-`1111` write 可整体替换；`0000` 是 no-op。并发 overlap 没有 architecture
+destination 使用 one-step atomic read-modify-write。第一次 nonzero write
+建立 descriptor 与 allocation mask；后续 write 要求 descriptor compatible
+且 mask 是 allocation mask 的 subset，扩展必须使用新的 S register。
+`0000` 是 strict no-op。并发 overlap 没有 architecture
 order，属于 programmer error/undefined behavior，hardware 不要求检测。
 
 ## Partial and Fully Initialized Shared Registers

@@ -674,7 +674,7 @@ def build(snapshot_root: Path) -> dict[str, Any]:
         row for row in rows if row.get("abi_change_acceptance") is not None
     ]
     accepted_abi_break_counts = Counter(row["surface"] for row in accepted_abi_breaks)
-    if accepted_abi_break_counts != Counter({"command": 7, "direct-tile": 68}):
+    if accepted_abi_break_counts != Counter({"command": 8, "direct-tile": 68}):
         raise SystemExit(
             "unexpected accepted ABI divergence counts: "
             f"{dict(sorted(accepted_abi_break_counts.items()))}"
@@ -699,7 +699,7 @@ def prune_existing_to_catalog() -> dict[str, Any]:
     }
     removed_ids = existing_command_ids - accepted_ids
     reassigned_ids = {
-        "c_b_dim_16_14f1b8fba5e6": "c_b_ios_16_14f1b8fba5e6",
+        "c_b_ios_16_14f1b8fba5e6": "b_ios_32_4ba5ef98fdaa",
     }
     allowed_retired_ids = {
         "bstart_acccvt_32_56c3ce3838c5",
@@ -733,15 +733,22 @@ def prune_existing_to_catalog() -> dict[str, Any]:
                 "stable_id": new_id,
                 "mnemonic": command_row["mnemonic"],
                 "semantic_handler": command_row["semantic_handler"],
-                "classification": "comparable-divergence",
+                "classification": "divergence",
+                "encoding_match": False,
+                "abi_change_acceptance": {
+                    "decision": "docs/architecture-decisions/0054-pe-local-tile-size-and-32-bit-shared-io-binding.md",
+                    "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/49",
+                    "kind": "accepted-0.58.0-command-encoding-break",
+                },
                 "pto_disposition": (
-                    "PTO ISA 0.58.0 reassigns the inherited compressed C.B.DIM "
-                    "register encoding to C.B.IOS SharedTID; the independent "
-                    "snapshot retains the historical dimension meaning."
+                    "PTO ISA 0.58.0 replaces the retired 16-bit C.B.IOS binder "
+                    "with a 32-bit B.IOS form carrying SharedTID, per-PE TSize, "
+                    "and PE_MASK; the independent snapshot retains the "
+                    "superseded binder encoding."
                 ),
                 "evidence": sorted(
                     set(source_row["evidence"])
-                    | {"docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md"}
+                    | {"docs/architecture-decisions/0054-pe-local-tile-size-and-32-bit-shared-io-binding.md"}
                 ),
             }
         )
@@ -750,6 +757,8 @@ def prune_existing_to_catalog() -> dict[str, Any]:
         if row["surface"] == "command":
             row["index"] = command_index
             command_index += 1
+        if row["surface"] == "command" and row["stable_id"] == "b_ios_32_4ba5ef98fdaa":
+            row["classification"] = "divergence"
     data["rows"] = rows
     data["scope"]["command_forms"] = len(accepted_ids)
     data["scope"]["total_rows"] = len(rows)

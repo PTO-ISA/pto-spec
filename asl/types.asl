@@ -118,6 +118,8 @@ type BundleTileBinding of record {
 type BundleSharedBinding of record {
     valid: boolean,
     shared_id: bits(8),
+    size_code: integer {0..7},
+    pe_mask: bits(4),
     consumed: boolean
 };
 
@@ -635,6 +637,7 @@ type TileInfo of record {
 // been written. All four PEs in one core address the same 256 records.
 type SharedTileInfo of record {
     descriptor_valid: boolean,
+    allocation_mask: bits(4),
     initialized_mask: bits(4),
     tile: TileInfo
 };

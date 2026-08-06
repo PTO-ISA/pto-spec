@@ -37,15 +37,11 @@ Value 0 means invalid; 1–23 name GGPRs R1–R23. Repeated inputs/outputs are a
 
 ## Shared GM Schema
 
-With a preceding [`C.B.IOS`](./C.B.IOS.md):
-
-| Role | RegSrc0 | RegSrc1 | RegSrc2 | RegDst `[11:7]` |
-| --- | --- | --- | --- | --- |
-| GM→Shared TLOAD | full GM base | row stride bytes or zero | zero | `[11:9]=SharedTSize`, `[8:7]=00` |
-| Shared→GM full TSTORE | full GM base | row stride bytes or zero | zero | `00000` |
-| Shared→GM partition store | this PE's GM base | row stride bytes or zero | zero | `00000` |
-
-`SharedTSize` uses the `B.IOT.TSize` table and cannot be `000` for GM→Shared. Shared stores obtain size from the bound Shared descriptor. This reinterpretation applies only to these Shared TLSU schemas; ordinary TLOAD/TSTORE and matrix FIXP `B.IOR` keep their existing roles.
+With a preceding [`B.IOS`](./B.IOS.md), Shared TLOAD/TSTORE use `RegSrc0` as
+the GM base and require `RegDst=RegSrc1=RegSrc2=0`. `B.IOR` never carries
+Shared size or mask: GM→Shared obtains both from destination `B.IOS`, while
+Shared→GM obtains capacity from the persistent Shared descriptor and mask from
+source `B.IOS`.
 
 ## Matrix PostProcess Scalar Parameters
 

@@ -51,7 +51,12 @@ SharedTile<BaseTile>
 
 `SharedTile` 保留 BaseTile 的 shape/layout/role 描述符，但表示 Core-local Shared 存储。每个 Core 有一组 `S0..S255`，由该 Core 的四个 PE 共享；不同 Core 的 bank 相互独立。C++ 不暴露 Shared architectural ID。编译器分配绝对 S register 并管理其 liveness；PTO-AS、汇编、反汇编和调试界面使用 `S0` 到 `S255`。
 
-每个 S register 持久保存 descriptor、payload 和四位 quarter initialization mask，直到 overwrite 或 Core reset。destination write 是 atomic read-modify-write；partial write 保留未选 quarter 并要求已有 descriptor compatible，`1111` 可替换 descriptor/payload，`0000` 是 no-op。读取 uninitialized state 合法，行为与读取 undefined register 相同且不修改 descriptor。
+每个 S register 持久保存 per-PE descriptor、payload、immutable
+`allocation_mask` 和四位 initialization mask，直到 overwrite 或 Core reset。
+第一次 nonzero destination write 固定 allocation mask；后续只允许 subset
+atomic read-modify-write，扩展必须使用新的 S register。`0000` 是 strict
+no-op。读取 unallocated/uninitialized lane 合法，行为与读取 undefined
+register 相同且不修改 descriptor。
 
 CUBE 中 `Right` 和 `ScaleRight` 可以使用 Shared storage；cooperative TMATMUL 的 `Left`/`ScaleLeft` 也可以 Shared，但只能与 Shared `Right`/`ScaleRight` 成对使用。`Bias`、`Acc` 以及所有 output role 必须为 Local。
 
@@ -78,9 +83,14 @@ mode 必须在编译期给出。公开 API 不新增 `_SHARED` intrinsic family�
 
 普通 `TLOAD/TSTORE` 接收完整 logical `GlobalTensor` 描述符；编译器结合 distribution 与 `thread_id` 推导各 PE fragment 地址。
 
-`TLOAD(shared, gm)` 支持 optional mask-only B.IOT。省略 companion 时 mask 为 `1111`；否则只传输 selected fixed-offset quarter，并以一次 atomic RMW 更新 Shared destination。
+`TLOAD(shared, gm)` 的 destination size 与 mask 直接来自 destination
+`B.IOS`，并以一次 atomic RMW 更新 selected Shared lanes。
 
-`TSTORE(gm, shared)` 同样接受 optional mask-only B.IOT；省略时读取四个 quarter。selected uninitialized bytes 产生 undefined-register value。不同 PE 可提供不同 tile offset，但程序必须保证并发区间不冲突。Shared store 完成只表示请求已接受且源已捕获或 pin 住，并不表示其他 PE 已能观察到 GM 内容。
+`TSTORE(gm, shared)` 的 mask 来自 source `B.IOS`，capacity 来自 persistent
+Shared descriptor。selected uninitialized lane 产生 undefined-register value。
+不同 PE 可提供不同 tile offset，但程序必须保证并发区间不冲突。Shared
+store 完成只表示请求已接受且源已捕获或 pin 住，并不表示其他 PE 已能观察到
+GM 内容。
 
 ## Inter-PE Local Movement
 
@@ -88,7 +98,11 @@ mode 必须在编译期给出。公开 API 不新增 `_SHARED` intrinsic family�
 GMOV(dst, peer_tid, src);
 ```
 
-`GMOV` 在同一 Core 的 PE0–PE3 之间搬运 Local Tile fragment。它是固定 Core4 collective，不提供 `pe_scope/full_scope` 重载；`PE_MASK` 只控制 request/write，不缩小 participant 或 source-ready 集合。`peer_tid` 必须位于 `0..3`，传输按完整逻辑 Tile 的 `TSize` 自动选择固定四分之一 fragment，并保持 bytes、dtype、layout 与 fragment descriptor 不变。
+`GMOV` 在同一 Core 的 PE0–PE3 之间搬运已经 rename-resolved 的 per-PE
+Local Tile。它是固定 Core4 collective，不提供 `pe_scope/full_scope` 重载；
+`PE_MASK` 只控制 request/write，不缩小 participant 或 source-ready 集合。
+`peer_tid` 必须位于 `0..3`，`TSize` 描述该 per-PE fragment，并保持 bytes、
+dtype、layout 与 descriptor 不变。
 
 ## TMATMUL and TGEMV
 
@@ -125,7 +139,7 @@ Linx coupled SYS body 在 v5 中完全开放，并保持 FALL-only。PTO-AS/asse
 
 - Shared A + Local B 非法；cooperative TMATMUL 的 B 必须 Shared。
 - MX 的 data/scale pair 必须同为 Local 或同为 Shared。
-- TGEMV 的任何 SharedTile 或 C.B.IOS 均非法。
+- TGEMV 的任何 SharedTile 或 B.IOS 均非法。
 - C、Bias、D、max output 必须为 Local；cooperative vector parameter 由每 PE 提供相同完整 N-vector，scalar GPR 值也必须相等。
 - nondefault AccPhase、旧 *_FIXP opcode、隐式 ACC form 和 _ACC(d,a,b) shorthand 均产生确定诊断。
 

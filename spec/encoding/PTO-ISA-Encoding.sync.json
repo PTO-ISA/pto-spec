@@ -16,9 +16,9 @@
     "Description",
     "Constraints"
   ],
-  "workbook_sha256": "938c4a75c9363d26b52d9ab8ca70b314219dce28a1ef165e6f2d122fbbf1dba2",
-  "source_fingerprint": "d10527b239e0f6c9a3e5ba3773e9927147b278d139067088cb4d30126f42800f",
-  "projection_fingerprint": "251aab26373305eb4a0d9134b0cebdd81ac333f87132e6c0e2c0f244c87c9192",
+  "workbook_sha256": "d12fa12a41f74f5dd9449f70ffdc9919df4bd99af19f597a0b822b6bf9a2adad",
+  "source_fingerprint": "314ec68382a63545c96e0fb078c717e1b77f357b28fa047bc94348bdb36ed761",
+  "projection_fingerprint": "fead05d4a4a3a3918db14fb7af25784ac9ff974c556286d2600d5a6c7cffff89",
   "rows": {
     "intrinsic.mgather": {
       "opcode": "MGATHER",
@@ -923,7 +923,7 @@
         "Dtype": "AccType S32 or F32; DType is AccType for canonical None and otherwise follows PostProcessConfig",
         "Encoding": "CUBE Mode 0, Function 16;",
         "Description": "TGEMV_ACC、TGEMV_BIAS 和 TGEMV_MX 由各自独立页面描述；本页只描述 base TGEMV 的 A/B -> ACC form。",
-        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\n所有 operand/output 都是单 PE Local Tile；M 固定为 1。\nD 必须是显式 ordinary physical Local destination。\nTGEMV 禁止所有 SharedTile、C.B.IOS 和 core rendezvous；K blocking 通过每 PE 显式 TGEMV_ACC(D,C,A,B) 链完成。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
+        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\n所有 operand/output 都是单 PE Local Tile；M 固定为 1。\nD 必须是显式 ordinary physical Local destination。\nTGEMV 禁止所有 SharedTile、B.IOS 和 core rendezvous；K blocking 通过每 PE 显式 TGEMV_ACC(D,C,A,B) 链完成。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
       },
       "overrides": {
         "Description": "PTO matrix-vector multiplication operation (optional bias), destination-style (DPS) in tile world."
@@ -947,7 +947,7 @@
         "Dtype": "AccType S32 or F32; DType is AccType for canonical None and otherwise follows PostProcessConfig",
         "Encoding": "CUBE Mode 0, Function 18;",
         "Description": "PTO 来源页：../pto/TGEMV_ACC.md PTO 指令名：TGEMV_ACC C++ intrinsic / RecordEvent 签名摘录：",
-        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\n所有 operand/output 都是单 PE Local Tile；M 固定为 1。\nD==C 仅在 D 保持 TileAcc role 且 dtype、shape、layout、allocation 完全相同时合法；实现必须 read-old/rename-new，禁止物理原地覆盖。C 不携带 partial-sum provenance 要求。\nTGEMV 禁止所有 SharedTile、C.B.IOS 和 core rendezvous；K blocking 通过每 PE 显式 TGEMV_ACC(D,C,A,B) 链完成。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
+        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\n所有 operand/output 都是单 PE Local Tile；M 固定为 1。\nD==C 仅在 D 保持 TileAcc role 且 dtype、shape、layout、allocation 完全相同时合法；实现必须 read-old/rename-new，禁止物理原地覆盖。C 不携带 partial-sum provenance 要求。\nTGEMV 禁止所有 SharedTile、B.IOS 和 core rendezvous；K blocking 通过每 PE 显式 TGEMV_ACC(D,C,A,B) 链完成。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
       },
       "overrides": {
         "Description": "PTO matrix-vector multiplication accumulate operation, destination-style (DPS, no bias)."
@@ -972,7 +972,7 @@
         "Dtype": "AccType S32 or F32; DType is AccType for canonical None and otherwise follows PostProcessConfig",
         "Encoding": "CUBE Mode 0, Function 17;",
         "Description": "PTO 来源页：../pto/TGEMV_BIAS.md PTO 指令名：TGEMV_BIAS C++ intrinsic / RecordEvent 签名摘录：",
-        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\n所有 operand/output 都是单 PE Local Tile；M 固定为 1。\nD 必须是显式 ordinary physical Local destination。\nTGEMV 禁止所有 SharedTile、C.B.IOS 和 core rendezvous；K blocking 通过每 PE 显式 TGEMV_ACC(D,C,A,B) 链完成。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
+        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\n所有 operand/output 都是单 PE Local Tile；M 固定为 1。\nD 必须是显式 ordinary physical Local destination。\nTGEMV 禁止所有 SharedTile、B.IOS 和 core rendezvous；K blocking 通过每 PE 显式 TGEMV_ACC(D,C,A,B) 链完成。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
       },
       "overrides": {
         "Description": "GEMV with bias add (tile world, ins/outs)."
@@ -997,7 +997,7 @@
         "Dtype": "AccType S32 or F32; DType is AccType for canonical None and otherwise follows PostProcessConfig",
         "Encoding": "CUBE Mode 0, Function 20;",
         "Description": "PTO 来源页：../pto/TGEMV_MX.md PTO 指令名：TGEMV_MX C++ intrinsic / RecordEvent 签名摘录：",
-        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\n所有 operand/output 都是单 PE Local Tile；M 固定为 1。\nD 必须是显式 ordinary physical Local destination。\nTGEMV 禁止所有 SharedTile、C.B.IOS 和 core rendezvous；K blocking 通过每 PE 显式 TGEMV_ACC(D,C,A,B) 链完成。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
+        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\n所有 operand/output 都是单 PE Local Tile；M 固定为 1。\nD 必须是显式 ordinary physical Local destination。\nTGEMV 禁止所有 SharedTile、B.IOS 和 core rendezvous；K blocking 通过每 PE 显式 TGEMV_ACC(D,C,A,B) 链完成。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
       },
       "overrides": {
         "Description": "Mixed-precision GEMV with scale tiles (tile world, ins/outs)."
@@ -1066,7 +1066,7 @@
         "类型": "Tile Memory Operation\nTile级访存操作",
         "子类型": "规则访存",
         "Opcode": "TLOAD",
-        "BSTART / bundle": "Local form\nBSTART.TLSU TLOAD\nB.DATR/B.DIM\nB.IOT\nB.IOR\nShared form\nBSTART.TLSU TLOAD\nB.DATR/B.DIM\nC.B.IOS\nB.IOR",
+        "BSTART / bundle": "Local form\nBSTART.TLSU TLOAD\nB.DATR/B.DIM\nB.IOT\nB.IOR\nShared form\nBSTART.TLSU TLOAD\nB.DATR/B.DIM\nB.IOS\nB.IOR",
         "Output": "Local tile or SharedTile destination",
         "Input 0": "full logical GlobalTensor/partition-view source",
         "Input 1 / attrs": "base, row stride, pad/layout attributes",
@@ -1115,7 +1115,7 @@
         "类型": "MATRIX Operation\n矩阵乘操作",
         "子类型": "矩阵乘矩阵",
         "Opcode": "TMATMUL",
-        "BSTART / bundle": "BSTART.CUBE TMATMUL AType\nB.DATR BType RMode Sat\nB.FPATR\nB.DIM LB0 M\nB.DIM LB1 N\nB.DIM LB2 K\nC.B.IOS Shared operand binder (optional)\nB.IOT Local sources and Local outputs\nB.IOR scalar PostProcess parameter (optional)",
+        "BSTART / bundle": "BSTART.CUBE TMATMUL AType\nB.DATR BType RMode Sat\nB.FPATR\nB.DIM LB0 M\nB.DIM LB1 N\nB.DIM LB2 K\nB.IOS Shared operand binder (optional)\nB.IOT Local sources and Local outputs\nB.IOR scalar PostProcess parameter (optional)",
         "Output": "D Tile\nRowMaxOut Tile (optional)\nGroupMaxOut Tile (optional)",
         "Input 0": "A Tile",
         "Input 1 / attrs": "B/Right Tile",
@@ -1137,7 +1137,7 @@
         "类型": "MATRIX Operation\n矩阵乘操作",
         "子类型": "矩阵乘矩阵",
         "Opcode": "TMATMUL_ACC",
-        "BSTART / bundle": "BSTART.CUBE TMATMUL.ACC AType\nB.DATR BType RMode Sat\nB.FPATR\nB.DIM LB0 M\nB.DIM LB1 N\nB.DIM LB2 K\nC.B.IOS Shared operand binder (optional)\nB.IOT Local sources and Local outputs\nB.IOR scalar PostProcess parameter (optional)",
+        "BSTART / bundle": "BSTART.CUBE TMATMUL.ACC AType\nB.DATR BType RMode Sat\nB.FPATR\nB.DIM LB0 M\nB.DIM LB1 N\nB.DIM LB2 K\nB.IOS Shared operand binder (optional)\nB.IOT Local sources and Local outputs\nB.IOR scalar PostProcess parameter (optional)",
         "Output": "D Tile\nRowMaxOut Tile (optional)\nGroupMaxOut Tile (optional)",
         "Input 0": "A Tile",
         "Input 1 / attrs": "B/Right Tile",
@@ -1162,7 +1162,7 @@
         "类型": "MATRIX Operation\n矩阵乘操作",
         "子类型": "矩阵乘矩阵",
         "Opcode": "TMATMUL_BIAS",
-        "BSTART / bundle": "BSTART.CUBE TMATMUL.BIAS AType\nB.DATR BType RMode Sat\nB.FPATR\nB.DIM LB0 M\nB.DIM LB1 N\nB.DIM LB2 K\nC.B.IOS Shared operand binder (optional)\nB.IOT Local sources and Local outputs\nB.IOR scalar PostProcess parameter (optional)",
+        "BSTART / bundle": "BSTART.CUBE TMATMUL.BIAS AType\nB.DATR BType RMode Sat\nB.FPATR\nB.DIM LB0 M\nB.DIM LB1 N\nB.DIM LB2 K\nB.IOS Shared operand binder (optional)\nB.IOT Local sources and Local outputs\nB.IOR scalar PostProcess parameter (optional)",
         "Output": "D Tile\nRowMaxOut Tile (optional)\nGroupMaxOut Tile (optional)",
         "Input 0": "A Tile",
         "Input 1 / attrs": "B/Right Tile",
@@ -1187,7 +1187,7 @@
         "类型": "MATRIX Operation\n矩阵乘操作",
         "子类型": "矩阵乘矩阵",
         "Opcode": "TMATMUL_MX",
-        "BSTART / bundle": "BSTART.CUBE TMATMULMX AType\nB.DATR BType RMode Sat\nB.FPATR\nB.DIM LB0 M\nB.DIM LB1 N\nB.DIM LB2 K\nC.B.IOS Shared operand binder (optional)\nB.IOT Local sources and Local outputs\nB.IOR scalar PostProcess parameter (optional)",
+        "BSTART / bundle": "BSTART.CUBE TMATMULMX AType\nB.DATR BType RMode Sat\nB.FPATR\nB.DIM LB0 M\nB.DIM LB1 N\nB.DIM LB2 K\nB.IOS Shared operand binder (optional)\nB.IOT Local sources and Local outputs\nB.IOR scalar PostProcess parameter (optional)",
         "Output": "D Tile\nRowMaxOut Tile (optional)\nGroupMaxOut Tile (optional)",
         "Input 0": "A Tile\nScaleA Tile",
         "Input 1 / attrs": "B/Right Tile\nScaleB/ScaleRight Tile",
@@ -2349,7 +2349,7 @@
         "类型": "Tile Memory Operation\nTile级访存操作",
         "子类型": "规则访存",
         "Opcode": "TSTORE",
-        "BSTART / bundle": "Local form\nBSTART.TLSU TSTORE\nB.DATR/B.DIM\nB.IOT\nB.IOR\nShared full form\nBSTART.TLSU Function 1\nC.B.IOS\nB.IOR\nShared pe_scope form\nBSTART.TLSU Function 14\nC.B.IOS\nB.IOR",
+        "BSTART / bundle": "Local form\nBSTART.TLSU TSTORE\nB.DATR/B.DIM\nB.IOT\nB.IOR\nShared full form\nBSTART.TLSU Function 1\nB.IOS\nB.IOR\nShared pe_scope form\nBSTART.TLSU Function 14\nB.IOS\nB.IOR",
         "Output": "GlobalTensor/partition-view destination",
         "Input 0": "Local tile or SharedTile source",
         "Input 1 / attrs": "base GPR\nrow-stride GPR\nordinary quantized-store scalar (optional)",
@@ -2539,7 +2539,7 @@
         "Dtype": "AccType S32 or F32; DType is AccType for canonical None and otherwise follows PostProcessConfig",
         "Encoding": "CUBE Mode 0, Function 22;",
         "Description": "C 是显式 Local AccType Tile input，并在 K 乘积累加前读入 P；它不是隐式 ACC。 PostProcess 只在完整 K 累加后执行一次。",
-        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\n所有 operand/output 都是单 PE Local Tile；M 固定为 1。\nD==C 仅在 D 保持 TileAcc role 且 dtype、shape、layout、allocation 完全相同时合法；实现必须 read-old/rename-new，禁止物理原地覆盖。C 不携带 partial-sum provenance 要求。\nTGEMV 禁止所有 SharedTile、C.B.IOS 和 core rendezvous；K blocking 通过每 PE 显式 TGEMV_ACC(D,C,A,B) 链完成。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
+        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\n所有 operand/output 都是单 PE Local Tile；M 固定为 1。\nD==C 仅在 D 保持 TileAcc role 且 dtype、shape、layout、allocation 完全相同时合法；实现必须 read-old/rename-new，禁止物理原地覆盖。C 不携带 partial-sum provenance 要求。\nTGEMV 禁止所有 SharedTile、B.IOS 和 core rendezvous；K blocking 通过每 PE 显式 TGEMV_ACC(D,C,A,B) 链完成。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
       },
       "overrides": {},
       "layout_placeholders": {}
@@ -2559,7 +2559,7 @@
         "Dtype": "AccType S32 or F32; DType is AccType for canonical None and otherwise follows PostProcessConfig",
         "Encoding": "CUBE Mode 0, Function 21;",
         "Description": "Bias 是显式 Local Tile input，并在 K 乘积累加前预装入 P。 PostProcess 只在完整 K 累加后执行一次。",
-        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\n所有 operand/output 都是单 PE Local Tile；M 固定为 1。\nD 必须是显式 ordinary physical Local destination。\nTGEMV 禁止所有 SharedTile、C.B.IOS 和 core rendezvous；K blocking 通过每 PE 显式 TGEMV_ACC(D,C,A,B) 链完成。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
+        "Constraints": "AccType 只允许 S32/F32；C（若存在）必须为 M×N ND AccType Local Tile。U32 accumulator 非法。\ncanonical None 为 PreQuant=None、ReLU=None、RMode=NONE、Sat=0；D 保持 AccType 与逻辑 TileAcc role。RowMax/GroupMax 可独立启用且不改变 D role。\n任一 quant、convert 或 ReLU 使 D 成为由 PostProcess 推导 dtype 的 ordinary ND Tile。\nRowMax/GroupMax 在 ReLU、quant、convert 前观察 P。RowMaxIn/Out 为 M×1；GroupMaxOut 为 M×ceil(N/GroupN)。\nverifier 必须按 config 检查精确 source/destination arity，不接受闲置 operand。\nD、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。\n所有 operand/output 都是单 PE Local Tile；M 固定为 1。\nD 必须是显式 ordinary physical Local destination。\nTGEMV 禁止所有 SharedTile、B.IOS 和 core rendezvous；K blocking 通过每 PE 显式 TGEMV_ACC(D,C,A,B) 链完成。\n一个 block 中最后一条 B.IOT 必须设置 last；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。\nnondefault AccPhase 一律拒绝；K blocking 使用显式 _ACC(D,C,...)。"
       },
       "overrides": {},
       "layout_placeholders": {}
@@ -2571,7 +2571,7 @@
         "类型": "MATRIX Operation\n矩阵乘操作",
         "子类型": "矩阵乘矩阵",
         "Opcode": "TMATMUL_MX_ACC",
-        "BSTART / bundle": "BSTART.CUBE TMATMULMX.ACC AType\nB.DATR BType RMode Sat\nB.FPATR\nB.DIM LB0 M\nB.DIM LB1 N\nB.DIM LB2 K\nC.B.IOS Shared operand binder (optional)\nB.IOT Local sources and Local outputs\nB.IOR scalar PostProcess parameter (optional)",
+        "BSTART / bundle": "BSTART.CUBE TMATMULMX.ACC AType\nB.DATR BType RMode Sat\nB.FPATR\nB.DIM LB0 M\nB.DIM LB1 N\nB.DIM LB2 K\nB.IOS Shared operand binder (optional)\nB.IOT Local sources and Local outputs\nB.IOR scalar PostProcess parameter (optional)",
         "Output": "D Tile\nRowMaxOut Tile (optional)\nGroupMaxOut Tile (optional)",
         "Input 0": "A Tile\nScaleA Tile",
         "Input 1 / attrs": "B/Right Tile\nScaleB/ScaleRight Tile",
@@ -2591,7 +2591,7 @@
         "类型": "MATRIX Operation\n矩阵乘操作",
         "子类型": "矩阵乘矩阵",
         "Opcode": "TMATMUL_MX_BIAS",
-        "BSTART / bundle": "BSTART.CUBE TMATMULMX.BIAS AType\nB.DATR BType RMode Sat\nB.FPATR\nB.DIM LB0 M\nB.DIM LB1 N\nB.DIM LB2 K\nC.B.IOS Shared operand binder (optional)\nB.IOT Local sources and Local outputs\nB.IOR scalar PostProcess parameter (optional)",
+        "BSTART / bundle": "BSTART.CUBE TMATMULMX.BIAS AType\nB.DATR BType RMode Sat\nB.FPATR\nB.DIM LB0 M\nB.DIM LB1 N\nB.DIM LB2 K\nB.IOS Shared operand binder (optional)\nB.IOT Local sources and Local outputs\nB.IOR scalar PostProcess parameter (optional)",
         "Output": "D Tile\nRowMaxOut Tile (optional)\nGroupMaxOut Tile (optional)",
         "Input 0": "A Tile\nScaleA Tile",
         "Input 1 / attrs": "B/Right Tile\nScaleB/ScaleRight Tile",
@@ -2637,7 +2637,7 @@
         "Input 1 / attrs": "compile-time SharedMoveMode when Shared participates",
         "Input 2": null,
         "Dtype": "byte-preserving; descriptors must be compatible",
-        "Encoding": "TLSU Function 2, Shared Functions 8–11;",
+        "Encoding": "TLSU Function 2, Shared Functions 9–12;",
         "Description": "Ordinary PTO TMOV(dst,src) remains a Local Tile move/conversion. DavinciOO v5 adds strongly typed Local↔Shared forms under the same intrinsic name; no _SHARED operation is introduced.",
         "Constraints": "Shared→Shared TMOV is absent in v5; copy/transform through Local Tile.\nRuntime mode, owner or size is illegal.\nPE_MASK is a four-bit quarter predicate; multiple bits are allowed and\n  0000 is a no-op.\nAbsolute Shared registers are compiler-managed; C++ cannot specify Sx.\nRecordEvent is reused; there is no SharedEvent, and event completion is not a cross-PE GM fence."
       },

@@ -979,19 +979,18 @@
       "status": "accepted"
     },
     {
-      "asm": "B.IOT mask=PE_MASK, <last> <, ->DstTile<TSize>>",
+      "asm": "B.IOT mask=PE_MASK, <last>, ->DstTile<TSize>",
       "constraints": [
         {
           "field": "PE_MASK",
           "operator": "one-of",
           "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
         },
-        {
-          "field": "TSize",
-          "operator": "one-of",
-          "values": [
-            0,
-            1,
+      {
+        "field": "TSize",
+        "operator": "one-of",
+        "values": [
+          1,
             2,
             3,
             4,
@@ -1076,7 +1075,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleTileIO",
-      "semantic_summary": "Binds v5 PE_MASK, ordered Local tile sources, last-use, and optional TSize/2-bit Local destination metadata; TSize=DstTile=0 is the mask-only Shared TLOAD/TSTORE companion and PE_MASK=0000 is a legal no-op.",
+      "semantic_summary": "Binds a destination-only Local Tile operand with per-PE TSize, PE_MASK, and last-use metadata; PE_MASK=0000 is a strict no-op and there is no mask-only Shared companion form.",
       "status": "accepted"
     },
     {

@@ -21,7 +21,7 @@
   "encoding": {
     "block": "TLSU",
     "function": 2,
-    "shared_functions": [8, 9, 10, 11]
+    "shared_functions": [9, 10, 11, 12]
   },
   "xlsx": {
     "include": true,
@@ -73,25 +73,28 @@ It performs four asynchronous Local fragment moves under the ordinary distribute
 | Broadcast | 11 | Shared→selected Local quarters | Local logical `L = S` |
 | Extract | 12 | Shared→selected Local quarters | Local logical `L = S` |
 
-`L` is `B.IOT.TSize`; `S` is the Shared descriptor size. Insert/Publish require
-nonzero `TSize` even without a Local destination.
+`L` is the Local operand's `B.IOT.TSize`; `S` is `B.IOS.TSize`. For
+Local-to-Shared, the destination size is carried by `B.IOS`; for
+Shared-to-Local, the Local destination capacity is carried by `B.IOT`.
 
 ```asm
 BSTART.TLSU TMOV.L2S.INSERT, FP16
-C.B.IOS     -> S17
-B.IOT       T#1, mask=1100, TSize=4KB, last
+B.IOS       mask=1100, ->S17<4KB>
+B.IOT       T#1, mask=1100, last
 
 BSTART.TLSU TMOV.S2L.BROADCAST, FP16
-C.B.IOS     S17
+B.IOS       S17, mask=0101
 B.IOT       mask=0101, last, ->T<4KB>
 ```
 
 ## Register Semantics
 
-Insert/Publish perform atomic descriptor-plus-payload RMW. A partial first write
-establishes the descriptor; later partial writes require compatibility and
-preserve unselected quarters. Broadcast/Extract read selected fixed-offset
-quarters; uninitialized selected data follows undefined-register semantics.
+Insert/Publish perform atomic descriptor-plus-payload RMW. A first nonzero
+write establishes the descriptor and immutable allocation mask; later writes
+require descriptor compatibility, may select only a subset of that mask, and
+preserve unselected PE regions. Expansion requires a newly allocated `Sx`.
+Broadcast/Extract read selected fixed-offset PE regions; uninitialized selected
+data follows undefined-register semantics.
 
 ## 约束与合法性
 
@@ -106,4 +109,4 @@ quarters; uninitialized selected data follows undefined-register semantics.
 
 The verifier resolves operand storage and mode, derives size/mask relations,
 allocates/binds an absolute Shared register and emits Function 9–12 with
-direction-correct `C.B.IOS+B.IOT`. The binder is consumed once.
+direction-correct `B.IOS+B.IOT`. The binder is consumed once.

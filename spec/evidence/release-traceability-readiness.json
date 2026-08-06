@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "09f73698470cf555d541638f65e42f2f7b5da2ad58c3d8fa28af7152ffb837e3"
+      "sha256": "09705140b5c9734c70b60facdd66ec5d78b465c1f245c41f1e3b9990cd7c50ee"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -19,7 +19,7 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "014501ed69c25cca527a67649c365c2da91859076479d7218111bda97df38f37"
+      "sha256": "5c831b14fb86df38f3fd398948ce2a303d15aac95540ea6e2f05f2d64bb246c4"
     },
     {
       "path": "spec/catalog/tile-operations.json",
@@ -47,39 +47,39 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "3e2cbc5e38cf7ca14d2da8fe1afed0e9830a3be21f697c22313061ad2bbc3a3f"
+      "sha256": "e867709378634b5b8e002419033cb13b21625ff1d357ac077bb0a98cf186c245"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "173c5d906e5289b90062d60ca24c00ff45c24b4d00414125e00b2d38894e1ca0"
+      "sha256": "63fd433bc0a6ae5ca6895a3b0e77a34a6680aeda220e354e6823e12126014401"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "fb2e265ba19fc6c3d64ea88627964401125e75f084f10d5d22be8eaf66040363"
+      "sha256": "f59a76f513aef937c805bf733f64ce85b9e496c0d7015dbf3f33809879fd3e4e"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "50d72566221afd967dc919245a295163d855fe914d662e9150487cf6416d405e"
+      "sha256": "8d27fa022e93214867abab81ccc20f1980388212ceeb967ba6d9c9069b61648d"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "a0d77d43ab4339ac14bc6ccbe79e3a65b256aeb25e57c2da9c95152d6f5c57c1"
+      "sha256": "10382028b3783177c21852a61a3d56ffa14dafe2f766dae55bfb1204ae284922"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "640de88e607e2683fd755288d0d240ba2bdce6ef4519a1396ab702987c08feef"
+      "sha256": "29c298d109d35efa83121a841140e604c09d8c922346f8118398c1f1d04d0569"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "f658fc26ebe480299bcdf5e7c423355f13857ad3cbc99b0bde06438419a6284b"
+      "sha256": "85a70d81584cfda050f2690e079996c2315df40e6f36df149c61134f896019b5"
     },
     {
       "path": "spec/evidence/numeric-subnormal-contract.json",
-      "sha256": "c277afe2b9989f9f3d7961ec61087154cea7a09a31eacd10721a54217e49e426"
+      "sha256": "f2717cb413e884cd49ee658ba0743c70c309f5ea68c55784ef49a3025bbebe1e"
     },
     {
       "path": "spec/evidence/numeric-special-value-contract.json",
-      "sha256": "2eae113adc992a1f4fd923530c09429cd99f6198660d3a910821c1948a7696c8"
+      "sha256": "58ee3a47887b71a49064aeafb4a9caf3e6dd06156c6a2dcd9fc6a6f0cea8938b"
     },
     {
       "path": "spec/evidence/scalar-effect-closure.json",
@@ -87,11 +87,11 @@
     },
     {
       "path": "spec/evidence/system-register-witness-closure.json",
-      "sha256": "6d55b4d61b8282ae875cecdc5f9f8d326d045d1ba84f046792366c1ea1adc247"
+      "sha256": "78108e27df43e7fed91d69e8e1a5402da14dd2a849a8b025ff591e3b183ecb5c"
     },
     {
       "path": "spec/evidence/bundle-command-totality.json",
-      "sha256": "2b613ba8607385bdfff31e98b95d88826d1723b8c85d42b61f6e202bbfe1423e"
+      "sha256": "d22f95d6d341bdc6bf18f2b29c7ff5172cb4a7e6c5abfe199c130c19b4bb8836"
     },
     {
       "path": "spec/evidence/tepl-totality.json",
@@ -115,11 +115,11 @@
     },
     {
       "path": "scripts/generate-system-register-witness-closure",
-      "sha256": "0058084fa62e2bc9292d7e1e798c2a60dd28a99a060be42eabc316dfdcdc49bb"
+      "sha256": "66a54c0b0325c383d868e48691f0f263bcf71767edcd516779d2251cb4fe7dae"
     },
     {
       "path": "tests/asl/main.asl",
-      "sha256": "c89c97fd5c3e94776be38e48ffdb473178bc8842b6cf382b624a976164fd3d09"
+      "sha256": "71fa351e06c5d1168a77a1d414fde9306a460c6ede8772a56fb31f47bad76d7d"
     },
     {
       "path": "tests/asl/scalar-tests.asl",
@@ -127,7 +127,7 @@
     },
     {
       "path": "tests/asl/state-tests.asl",
-      "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+      "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
     },
     {
       "path": "tests/asl/tile-tests.asl",
@@ -135,7 +135,7 @@
     },
     {
       "path": "asl/types.asl",
-      "sha256": "a70daffa65d924e3581ce19a3876a06506c2d1d4c3a06fff9377cb6735532b24"
+      "sha256": "1018ae49c0ef3a3e1bb15f452446f6606f5c825e01e528ea42c6a8a32c031ae9"
     },
     {
       "path": "asl/state.asl",
@@ -143,11 +143,11 @@
     },
     {
       "path": "asl/bundle/state.asl",
-      "sha256": "a84d0145cd372c4ec640ebbe18afb1488098f88870b57a35341d7499b128f42f"
+      "sha256": "770bd387856f052bb45a7869d5e839f00100c222619f66bb9e30d38016987fc2"
     },
     {
       "path": "asl/tile/state.asl",
-      "sha256": "1d8f6a0a65e50eb71cddc3d7f28cf44175e0287b6b055bc6d42866b6ddaf98af"
+      "sha256": "d93eb3df27e4582d0dbc0adbb11faceb5f1f125c66407a3fb7d1ace45560c513"
     },
     {
       "path": "asl/architecture.asl",
@@ -155,7 +155,7 @@
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "8ac6dd8f0d960645d871b37bc8ededd8905944dd36a5d1745af45a5ac85e37d2"
+      "sha256": "5d366d86b293530e876b91ed972dfd0fd10f19b4918b5504bd453c0bee99980c"
     },
     {
       "path": "asl/concurrency.asl",
@@ -171,7 +171,7 @@
     },
     {
       "path": "asl/profiles/pto-v0.asl",
-      "sha256": "769c434c5df39dd6de33b6edb24a45cdc81d1274693f74e595f55055b0b256c9"
+      "sha256": "cffaef654c49cafd02ef73478295de4e070f4ab1aa4c046decb2950a03103808"
     },
     {
       "path": "asl/scalar/addressing.asl",
@@ -243,7 +243,7 @@
     },
     {
       "path": "asl/tile/memory.asl",
-      "sha256": "39d20f62a49f0c33d9990e89bf490ebe151cd5df45ebd2b612544a9a043c4161"
+      "sha256": "c2abd22e62aab2fdb9d93795437da8790a09489d51b89bdfa35edbb4672bd4e5"
     },
     {
       "path": "asl/tile/rearrangement.asl",
@@ -873,7 +873,7 @@
           "docs/davincioo-arch/programming-model.md",
           "docs/davincioo-arch/state-and-data-types.md",
           "docs/davincioo-arch/memory-ordering-and-exceptions.md",
-          "docs/instructions/block/operands/C.B.IOS.md",
+          "docs/instructions/block/operands/B.IOS.md",
           "docs/instructions/tile/TLOAD.md",
           "docs/instructions/tile/TSTORE.md",
           "docs/instructions/tile/TMOV.md"
@@ -14329,9 +14329,9 @@
         "bounded_status": "reference-totality-closed"
       },
       {
-        "id": "c_b_ios_16_14f1b8fba5e6",
-        "mnemonic": "C.B.IOS",
-        "group": "Bundle Shared Operand Binding",
+        "id": "b_ios_32_4ba5ef98fdaa",
+        "mnemonic": "B.IOS",
+        "group": "Bundle Input & Output",
         "handler": "BindBundleSharedIO",
         "requirements": [
           "PTO-REQ-BUNDLE-STATE-001",
@@ -17830,14 +17830,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/base-pointer-storage/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -17881,14 +17881,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/base-pointer-storage/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -17935,7 +17935,7 @@
               "function": "TestInterruptRegisterState",
               "assertion_marker": "SYSREG-EFFECT-WITNESS architectural-time/advances-on-every-execution-attempt",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -17943,11 +17943,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18003,7 +18003,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/scalar-tests.asl",
@@ -18052,14 +18052,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18103,14 +18103,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18154,14 +18154,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/version-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18205,14 +18205,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18256,14 +18256,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/feature-enable-storage/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18307,14 +18307,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18369,7 +18369,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/tile-tests.asl",
@@ -18418,14 +18418,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18469,14 +18469,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/zero-profile-identity/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18523,7 +18523,7 @@
               "function": "TestInterruptRegisterState",
               "assertion_marker": "SYSREG-EFFECT-WITNESS architectural-time/advances-on-every-execution-attempt",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -18531,11 +18531,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18583,7 +18583,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS execution-context-state/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -18591,11 +18591,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18651,7 +18651,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/scalar-tests.asl",
@@ -18703,7 +18703,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS trap-status/reads-and-writes-trap-bank-fields",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -18711,11 +18711,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18763,7 +18763,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS trap-argument/reads-and-writes-trap-bank-argument",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -18771,11 +18771,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18820,14 +18820,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/exception-temporary-storage/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18871,14 +18871,14 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS class/exception-temporary-storage/access",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
             }
           ]
         },
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18925,7 +18925,7 @@
               "function": "TestInterruptRegisterState",
               "assertion_marker": "SYSREG-EFFECT-WITNESS interrupt-configuration/controls-external-and-timer-trap-entry",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -18933,11 +18933,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -18985,7 +18985,7 @@
               "function": "TestInterruptRegisterState",
               "assertion_marker": "SYSREG-EFFECT-WITNESS interrupt-pending/reflects-external-and-timer-pending-sources",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -18993,11 +18993,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -19045,7 +19045,7 @@
               "function": "TestInterruptRegisterState",
               "assertion_marker": "SYSREG-EFFECT-WITNESS top-pending-interrupt/priority-derived-from-pending-bitmap",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -19053,11 +19053,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -19107,7 +19107,7 @@
               "function": "TestInterruptRegisterState",
               "assertion_marker": "SYSREG-EFFECT-WITNESS end-of-interrupt/clears-selected-pending-id",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             },
             {
@@ -19115,7 +19115,7 @@
               "function": "TestInterruptRegisterState",
               "assertion_marker": "SYSREG-EFFECT-WITNESS end-of-interrupt/clears-asynchronous-trap-status",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -19123,11 +19123,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -19175,7 +19175,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19183,7 +19183,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19230,7 +19230,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19238,7 +19238,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19285,7 +19285,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19293,7 +19293,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19340,7 +19340,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19348,7 +19348,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19395,7 +19395,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19403,7 +19403,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19450,7 +19450,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19458,7 +19458,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19505,7 +19505,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/translation-configuration-storage/pto-v0-identity-translation-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19513,7 +19513,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19560,7 +19560,7 @@
               "function": "TestInterruptRegisterState",
               "assertion_marker": "SYSREG-EFFECT-WITNESS timer-time/aliases-architectural-time",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -19568,11 +19568,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -19620,7 +19620,7 @@
               "function": "TestInterruptRegisterState",
               "assertion_marker": "SYSREG-EFFECT-WITNESS timer-compare/refreshes-timer-pending-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -19628,11 +19628,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -19680,7 +19680,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/acr-parameter-storage/pto-v0-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19688,7 +19688,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19735,7 +19735,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/acr-parameter-storage/pto-v0-does-not-consume-value",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -19743,7 +19743,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -19790,7 +19790,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -19798,11 +19798,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -19850,7 +19850,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -19858,11 +19858,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -19910,7 +19910,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -19918,11 +19918,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -19970,7 +19970,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -19978,11 +19978,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20030,7 +20030,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20038,11 +20038,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20090,7 +20090,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20098,11 +20098,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20150,7 +20150,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20158,11 +20158,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20210,7 +20210,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20218,11 +20218,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20270,7 +20270,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20278,11 +20278,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20330,7 +20330,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20338,11 +20338,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20390,7 +20390,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20398,11 +20398,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20450,7 +20450,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20458,11 +20458,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20510,7 +20510,7 @@
               "function": "CheckSynchronousTrapMapping",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-execution-context/save-and-recovery-profile-state",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20518,11 +20518,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": null,
@@ -20572,7 +20572,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-loop-context-storage/trap-save-clears-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             },
             {
@@ -20580,7 +20580,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-loop-context-storage/pto-v0-recovery-does-not-consume-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20588,11 +20588,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -20642,7 +20642,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-loop-context-storage/trap-save-clears-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             },
             {
@@ -20650,7 +20650,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS saved-loop-context-storage/pto-v0-recovery-does-not-consume-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20658,11 +20658,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -20712,7 +20712,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/trap-save-preserves-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             },
             {
@@ -20720,7 +20720,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/pto-v0-recovery-does-not-consume-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20728,11 +20728,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -20782,7 +20782,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/trap-save-preserves-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             },
             {
@@ -20790,7 +20790,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/pto-v0-recovery-does-not-consume-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20798,11 +20798,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -20852,7 +20852,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/trap-save-preserves-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             },
             {
@@ -20860,7 +20860,7 @@
               "function": "TestVisibleTrapContextRegisters",
               "assertion_marker": "SYSREG-EFFECT-WITNESS extended-context-storage/pto-v0-recovery-does-not-consume-value",
               "source": "tests/asl/state-tests.asl",
-              "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+              "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -20868,11 +20868,11 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           },
           {
             "path": "tests/asl/state-tests.asl",
-            "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+            "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -20920,7 +20920,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-identity-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -20928,7 +20928,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -20975,7 +20975,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -20983,7 +20983,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21030,7 +21030,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21038,7 +21038,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21085,7 +21085,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21093,7 +21093,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21140,7 +21140,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21148,7 +21148,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21195,7 +21195,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21203,7 +21203,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21250,7 +21250,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21258,7 +21258,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21305,7 +21305,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21313,7 +21313,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21360,7 +21360,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21368,7 +21368,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21415,7 +21415,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21423,7 +21423,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21470,7 +21470,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21478,7 +21478,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21525,7 +21525,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21533,7 +21533,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21580,7 +21580,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21588,7 +21588,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21635,7 +21635,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21643,7 +21643,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21690,7 +21690,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21698,7 +21698,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21745,7 +21745,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21753,7 +21753,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21800,7 +21800,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21808,7 +21808,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21855,7 +21855,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21863,7 +21863,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21910,7 +21910,7 @@
               "function": "ValidateSystemRegisterResetAndAccess",
               "assertion_marker": "SYSREG-WITNESS effect/debug-control-storage/pto-v0-debug-matching-disabled",
               "source": "generated:build/decoders.asl",
-              "source_sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b",
+              "source_sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493",
               "closure": "static-consumer-exclusion-plus-access-round-trip"
             }
           ]
@@ -21918,7 +21918,7 @@
         "exact_witness_sources": [
           {
             "path": "generated:build/decoders.asl",
-            "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+            "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
           }
         ],
         "consumer_exclusion_guard": "sysreg-consumer-exclusion-pto-v0-storage-only",
@@ -21963,7 +21963,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+          "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22009,7 +22009,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+          "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22057,7 +22057,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+          "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22104,7 +22104,7 @@
             "restart": "saved-context-resume-next-instruction"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+          "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
           "assertion_markers": [
             "TRAP-WITNESS scall/assert-number",
             "TRAP-WITNESS scall/assert-argument",
@@ -22157,7 +22157,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+          "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22203,7 +22203,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+          "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22249,7 +22249,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+          "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22295,7 +22295,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+          "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22341,7 +22341,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+          "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
           "assertion_markers": [
             "TRAP-WITNESS interrupt/assert-number",
             "TRAP-WITNESS interrupt/assert-argument",
@@ -22387,7 +22387,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+          "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22433,7 +22433,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+          "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22479,7 +22479,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+          "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -22525,7 +22525,7 @@
             "restart": "saved-source-context"
           },
           "source": "tests/asl/state-tests.asl",
-          "source_sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53",
+          "source_sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe",
           "assertion_markers": [
             "TRAP-WITNESS envelope/assert-number",
             "TRAP-WITNESS envelope/assert-argument",
@@ -23655,6 +23655,14 @@
           {
             "path": "_BundleSharedBindings[].shared_id",
             "type": "bits(8)"
+          },
+          {
+            "path": "_BundleSharedBindings[].size_code",
+            "type": "integer {0..7}"
+          },
+          {
+            "path": "_BundleSharedBindings[].pe_mask",
+            "type": "bits(4)"
           },
           {
             "path": "_BundleSharedBindings[].consumed",
@@ -25400,6 +25408,14 @@
             "type": "bits(8)"
           },
           {
+            "path": "_TrapContexts[].bundle_shared_bindings[].size_code",
+            "type": "integer {0..7}"
+          },
+          {
+            "path": "_TrapContexts[].bundle_shared_bindings[].pe_mask",
+            "type": "bits(4)"
+          },
+          {
             "path": "_TrapContexts[].bundle_shared_bindings[].consumed",
             "type": "boolean"
           },
@@ -25518,6 +25534,10 @@
             "type": "boolean"
           },
           {
+            "path": "_SharedTiles[].allocation_mask",
+            "type": "bits(4)"
+          },
+          {
             "path": "_SharedTiles[].initialized_mask",
             "type": "bits(4)"
           },
@@ -25587,6 +25607,33 @@
         ],
         "tests": [
           "tests/asl/bundle-tests.asl",
+          "tests/asl/state-tests.asl",
+          "tests/asl/tile-tests.asl"
+        ],
+        "bounded_status": "reference-model-closed"
+      },
+      {
+        "id": "state:_TileAllocationMasks",
+        "root": "_TileAllocationMasks",
+        "type": "array [[PTO_TILE_REGISTER_COUNT]] of bits(4)",
+        "classification": "architectural-state",
+        "leaf_fields": [
+          {
+            "path": "_TileAllocationMasks",
+            "type": "array [[PTO_TILE_REGISTER_COUNT]] of bits(4)"
+          }
+        ],
+        "requirements": [
+          "PTO-REQ-STATE-001",
+          "PTO-REQ-TILE-001",
+          "PTO-REQ-TILE-CAPACITY-001",
+          "PTO-REQ-TILE-DEFINEDNESS-001",
+          "PTO-REQ-TILE-MANAGEMENT-001"
+        ],
+        "model": [
+          "asl/tile/state.asl"
+        ],
+        "tests": [
           "tests/asl/state-tests.asl",
           "tests/asl/tile-tests.asl"
         ],
@@ -25677,9 +25724,9 @@
     "system_register_count": 72,
     "trap_count": 13,
     "profile_hook_count": 36,
-    "state_root_count": 74,
-    "state_leaf_count": 229,
-    "traceability_item_count": 924,
+    "state_root_count": 75,
+    "state_leaf_count": 235,
+    "traceability_item_count": 925,
     "open_requirement_count": 11,
     "open_requirement_ids": [
       "PTO-REQ-PROFILE-001",

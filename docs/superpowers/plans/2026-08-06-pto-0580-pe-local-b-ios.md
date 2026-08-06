@@ -57,7 +57,7 @@
 - Consumes: catalog field names `SharedTID`, `PE_MASK`, and `TSize`.
 - Produces: executable requirements for `TileSizeCodeBytes(1)==128`, `TileSizeCodeBytes(7)==8192`, `B.IOS` decode boundaries, complete binding snapshots, and Shared TLSU/TMOV/CUBE role legality.
 
-- [ ] Add decode vectors for `S0`, `S255`, masks 0/1/15, sizes 0/1/7, every reserved-bit rejection, wrong funct3 rejection, and retired `C.B.IOS` rejection.
+- [ ] Add decode vectors for `S0`, `S255`, masks 0/1/15, sizes 0/1/7, every reserved-bit rejection, wrong funct3 rejection, and retired `C.B.IOS` reinterpretation as the overlapping active `C.B.DIMI` form.
 - [ ] Add state tests proving reset, append, duplicate rejection, fifth-binding rejection, consume, fault preservation, and trap restore for `size_code` and `pe_mask`.
 - [ ] Add TLSU tests proving GM-to-Shared uses `B.IOS` size/mask, Shared-to-GM requires source size zero, Local-to-Shared takes destination size from `B.IOS`, Shared-to-Local takes Local capacity from `B.IOT`, and mask mismatch faults before effects.
 - [ ] Add zero-mask tests proving no descriptor, payload, GM event, allocation, rename, consume, or fault effect.

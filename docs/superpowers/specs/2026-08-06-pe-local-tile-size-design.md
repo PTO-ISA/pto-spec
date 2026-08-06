@@ -38,9 +38,11 @@ canonical content hash identify the superseding 0.58 specification tree.
 ## 32-bit Shared Operand Binder
 
 The active Shared operand binder SHALL be `B.IOS`. The old 16-bit `C.B.IOS`
-form SHALL be removed from the active catalog and SHALL be rejected by the
-reissued 0.58 decoder. `B.IOS` SHALL occupy the same 32-bit Bundle Input &
-Output opcode group as `B.IOR` and `B.IOT`:
+mnemonic and form SHALL be removed from the active catalog and rejected by the
+assembler. Its historical raw bit pattern overlaps the still-active
+`C.B.DIMI` form, so a decoder sees those bits only as `C.B.DIMI`; raw bits do
+not retain the retired mnemonic's provenance. `B.IOS` SHALL occupy the same
+32-bit Bundle Input & Output opcode group as `B.IOR` and `B.IOT`:
 
 ```text
 width       = 32
@@ -244,9 +246,9 @@ must not be mixed with the reissued toolchain.
 
 The implementation SHALL update, at minimum:
 
-- a new accepted architecture decision for Issue 48;
-- a new accepted architecture decision that supersedes the Shared-binder part
-  of ADR 0052 and closes Issue 49;
+- one accepted architecture decision for Issues 48 and 49 that defines the
+  PE-local size/allocation contract and supersedes the Shared-binder part of
+  ADR 0052;
 - architecture, programming-model, state/type, and encoding-convention pages;
 - new `B.IOS` documentation, removal of active `C.B.IOS` documentation, and
   updates to `B.IOT`, `B.IOR`, `B.DIM`, `TLOAD`, `TSTORE`, `TMOV`, `GMOV`, and

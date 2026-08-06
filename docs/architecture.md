@@ -105,10 +105,12 @@ surface.
 - T/U/M/N hands occupy codes 0..15, 16..31, 32..47, and 48..63.
 - Each register has a `TileInfo` record containing allocation, capacity, shape,
   valid region, data type, layout, location intent, and definedness.
-- Architectural CELL size is 128 bytes. B.IOT `TSize` codes 1 through 7 allocate
-  512 bytes, 1 KiB, 2 KiB, 4 KiB, 8 KiB, 16 KiB, or 32 KiB. An active
-  tile cannot exceed the read-only `TILE_CAPACITY` system register, and the sum
-  of active capacities must also stay within it.
+- Architectural CELL size is 128 bytes. `B.IOT.TSize` and `B.IOS.TSize` codes
+  1 through 7 encode 128 bytes, 256 bytes, 512 bytes, 1 KiB, 2 KiB, 4 KiB, or
+  8 KiB per selected PE. Core allocation is
+  `popcount(PE_MASK) * per_PE_size`; an active tile cannot exceed the read-only
+  `TILE_CAPACITY` system register, and the sum of active Core allocations must
+  also stay within it.
 - Descriptor storage is `ceil(rows * columns * element_bits / 8)` bytes and
   must fit in the tile's capacity. FP4, FPL4, S4, and U4 occupy four bits per
   element for capacity accounting; an odd final element rounds up to one byte.
@@ -138,21 +140,24 @@ newly produced destination after commit.
 
 PTO ISA 0.58.0 additionally exposes 256 absolute Core-local Shared registers,
 `S0` through `S255`. Each core owns one bank shared by its four PEs; different
-cores have independent banks. Each register persists until overwritten or core
-reset and contains descriptor state, payload divided into four fixed-offset
-quarters, and a four-bit initialization mask. The compiler allocates S numbers;
-the C++ API does not expose physical Shared-register selection. C.B.IOS binder
+cores have independent banks. Each register persists until core reset and
+contains one per-PE descriptor, payload divided into four fixed-offset PE
+regions, an immutable allocation mask established by the first allocating
+write, and a four-bit initialization mask. The compiler allocates S numbers;
+the C++ API does not expose physical Shared-register selection. B.IOS binder
 state remains architecture-visible and trap-preserved until its companion
 consumes it.
 
 A Shared destination is one atomic descriptor-plus-payload read-modify-write.
-`PE_MASK` selects fixed-offset quarters, permits multiple bits, and treats
-`0000` as a no-op. A partial first write establishes the descriptor; later
-partial writes require descriptor compatibility and preserve unselected
-quarters. A full `1111` write may replace descriptor and payload. Reads never
-modify state, and uninitialized data has undefined-register semantics without a
-trap. The architecture defines no order for conflicting concurrent accesses;
-programs must avoid overlap or synchronize explicitly.
+`PE_MASK` selects fixed-offset PE regions, permits multiple bits, and treats
+`0000` as a strict no-op with no allocation, rename, read, memory access,
+consume, lifetime, or fault effect. A first nonzero destination write
+establishes the descriptor and immutable allocation mask. Later writes may
+select only a subset of that mask, require descriptor compatibility, and
+preserve unselected regions; expanding the mask requires a newly allocated
+`Sx`. Reads never modify state, and uninitialized data has undefined-register
+semantics without a trap. The architecture defines no order for conflicting
+concurrent accesses; programs must avoid overlap or synchronize explicitly.
 
 The ASL payload array is bounded by `PTO_MODEL_TILE_ELEMENTS` for executable
 verification. Descriptor capacity defines architectural legality; the ASL array
@@ -184,7 +189,7 @@ Functions 4–6 accept Shared Right,ScaleRight or the complete ordered
 Left,ScaleLeft,Right,ScaleRight set. `PE_MASK` predicates selected Shared
 quarters; selected uninitialized data has undefined-register semantics.
 TGEMV Functions
-16–18 and 20–22 reject every C.B.IOS binder.
+16–18 and 20–22 reject every B.IOS binder.
 
 B.DATR compare, padding/byte-selection, saturation, canonicalization, DataType,
 rounding, and layout fields are legal only when the selected operation consumes

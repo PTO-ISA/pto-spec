@@ -23,7 +23,7 @@ This page records implementation follow-ups that do not change the frozen public
 | Matrix result | 显式 Local D；无 architectural implicit ACC |
 | PostProcess | 12 个 active Matrix operation 均带 mandatory B.FPATR |
 | Shared TMATMUL | Shared B required for cooperative form；A 可 Local 或 MShard4 Shared |
-| TGEMV | PE-local M=1 only；无 SharedTile/C.B.IOS |
+| TGEMV | PE-local M=1 only；无 SharedTile/B.IOS |
 | FIXP | 六页删除；Function 9–14 reserved/illegal |
 
 ## Remaining Implementation Detail

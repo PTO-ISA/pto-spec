@@ -1,7 +1,25 @@
 // PTO-REQ-TILE-001: 64 flat tile registers and TileInfo legality.
 
 var _Tiles : array [[PTO_TILE_REGISTER_COUNT]] of TileInfo;
+var _TileAllocationMasks : array [[PTO_TILE_REGISTER_COUNT]] of bits(4);
 var _SharedTiles : SharedTileSnapshot;
+
+pure func PEMaskPopulation(pe_mask: bits(4)) => integer {0..4}
+begin
+    var count: integer {0..4} = 0;
+    for lane = 0 to 3 do
+        if pe_mask[lane] == '1' then
+            count = (count + 1) as integer {0..4};
+        end;
+    end;
+    return count;
+end;
+
+pure func TileCoreAllocationBytes(pe_mask: bits(4),
+                                  per_pe_bytes: integer) => integer
+begin
+    return PEMaskPopulation(pe_mask) * per_pe_bytes;
+end;
 
 pure func SharedTileArrayIndex(shared_id: bits(8)) => SharedTileIndex
 begin
@@ -22,7 +40,8 @@ end;
 readonly func SharedTileFullyInitialized(shared_id: bits(8)) => boolean
 begin
     let shared = SharedTileRecord(shared_id);
-    return shared.descriptor_valid && shared.initialized_mask == '1111' &&
+    return shared.descriptor_valid &&
+           shared.initialized_mask == shared.allocation_mask &&
            shared.tile.contents_defined;
 end;
 
@@ -30,6 +49,8 @@ readonly func SharedTileDescriptorLegal(shared_id: bits(8)) => boolean
 begin
     let shared = SharedTileRecord(shared_id);
     return shared.descriptor_valid && shared.tile.allocated &&
+           shared.allocation_mask != Zeros{4} &&
+           (shared.initialized_mask AND NOT shared.allocation_mask) == Zeros{4} &&
            TileCapacityIsLegal(shared.tile.capacity_bytes) &&
            shared.tile.rows > 0 && shared.tile.columns > 0 &&
            shared.tile.valid_rows <= shared.tile.rows &&
@@ -55,10 +76,15 @@ end;
 readonly func SharedTileUpdateCompatible(shared_id: bits(8), tile: TileInfo,
                                           pe_mask: bits(4)) => boolean
 begin
-    if pe_mask == Zeros{4} || pe_mask == '1111' then return TRUE; end;
+    if pe_mask == Zeros{4} then return TRUE; end;
     let old = SharedTileRecord(shared_id);
-    return !old.descriptor_valid ||
-           SharedTileDescriptorsCompatible(old.tile, tile);
+    if old.descriptor_valid then
+        return (pe_mask AND NOT old.allocation_mask) == Zeros{4} &&
+               SharedTileDescriptorsCompatible(old.tile, tile);
+    end;
+    return TileCapacityInUse() + SharedTileCapacityInUse() +
+           TileCoreAllocationBytes(pe_mask, tile.capacity_bytes) <=
+               TileCapacityLimitBytes();
 end;
 
 // Architectural undefined-register behavior is represented deterministically
@@ -93,7 +119,8 @@ begin
     let shared = SharedTileRecord(shared_id);
     assert SharedTileDescriptorLegal(shared_id);
     var tile = shared.tile;
-    tile.contents_defined = pe_mask == '1111';
+    tile.contents_defined =
+        (pe_mask AND shared.initialized_mask) == pe_mask;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     tile.defined_valid_elements = 0;
     for element = 0 to tile.rows * tile.columns - 1 looplimit 4096 do
@@ -104,7 +131,7 @@ begin
             tile.defined_elements[element] = '1';
         end;
     end;
-    if pe_mask == '1111' then
+    if tile.contents_defined then
         tile.defined_valid_elements =
             (tile.valid_rows * tile.valid_columns) as integer {0..4096};
     end;
@@ -126,10 +153,15 @@ begin
         return FALSE;
     end;
     var updated = old;
-    if pe_mask == '1111' || !old.descriptor_valid then
+    if !old.descriptor_valid then
         updated.descriptor_valid = TRUE;
+        updated.allocation_mask = pe_mask;
         updated.tile = tile;
         updated.initialized_mask = pe_mask;
+        updated.tile.contents_defined = TRUE;
+        updated.tile.defined_valid_elements =
+            (updated.tile.valid_rows * updated.tile.valid_columns)
+                as integer {0..4096};
     else
         for element = 0 to tile.rows * tile.columns - 1 looplimit 4096 do
             let region = SharedTileElementRegion(tile,
@@ -145,7 +177,8 @@ begin
         // Once complementary atomic updates have initialized all four
         // quarters, their aggregate descriptor/payload snapshot is defined
         // even though each individual partial source was not a full tile.
-        updated.tile.contents_defined = updated.initialized_mask == '1111';
+        updated.tile.contents_defined =
+            updated.initialized_mask == updated.allocation_mask;
         if updated.tile.contents_defined then
             updated.tile.defined_valid_elements =
                 (updated.tile.valid_rows * updated.tile.valid_columns)
@@ -174,7 +207,9 @@ begin
     var total: integer = 0;
     for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
         if index != excluded && _Tiles[[index]].allocated then
-            total = total + _Tiles[[index]].capacity_bytes;
+            total = total + TileCoreAllocationBytes(
+                _TileAllocationMasks[[index]],
+                _Tiles[[index]].capacity_bytes);
         end;
     end;
     return total;
@@ -185,10 +220,30 @@ begin
     var total: integer = 0;
     for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
         if _Tiles[[index]].allocated then
-            total = total + _Tiles[[index]].capacity_bytes;
+            total = total + TileCoreAllocationBytes(
+                _TileAllocationMasks[[index]],
+                _Tiles[[index]].capacity_bytes);
         end;
     end;
     return total;
+end;
+
+readonly func SharedTileCapacityInUse() => integer
+begin
+    var total: integer = 0;
+    for index = 0 to PTO_SHARED_TILE_COUNT - 1 do
+        if _SharedTiles[[index]].descriptor_valid then
+            total = total + TileCoreAllocationBytes(
+                _SharedTiles[[index]].allocation_mask,
+                _SharedTiles[[index]].tile.capacity_bytes);
+        end;
+    end;
+    return total;
+end;
+
+readonly func CoreTileCapacityInUse() => integer
+begin
+    return TileCapacityInUse() + SharedTileCapacityInUse();
 end;
 
 pure func TileHandOf(index: TileIndex) => TileHand
@@ -218,16 +273,16 @@ begin
 end;
 
 pure func TileSizeCodeBytes(size_code: integer {1..7})
-    => integer {512,1024,2048,4096,8192,16384,32768}
+    => integer {128,256,512,1024,2048,4096,8192}
 begin
     case size_code of
-        when 1 => return 512;
-        when 2 => return 1024;
-        when 3 => return 2048;
-        when 4 => return 4096;
-        when 5 => return 8192;
-        when 6 => return 16384;
-        when 7 => return 32768;
+        when 1 => return 128;
+        when 2 => return 256;
+        when 3 => return 512;
+        when 4 => return 1024;
+        when 5 => return 2048;
+        when 6 => return 4096;
+        when 7 => return 8192;
     end;
 end;
 
@@ -277,20 +332,25 @@ begin
     return TileStorageBytes(rows, columns, data_type) <= capacity_bytes;
 end;
 
-func ConfigureTile(index: TileIndex, capacity_bytes: integer {0..262144},
+func ConfigureTileForMask(index: TileIndex,
+                   capacity_bytes: integer {0..262144},
                    rows: integer {0..65535}, columns: integer {0..65535},
                    valid_rows: integer {0..65535}, valid_columns: integer {0..65535},
-                   data_type: TileDataType, layout: TileLayout, location: TileLocation)
+                   data_type: TileDataType, layout: TileLayout,
+                   location: TileLocation, allocation_mask: bits(4))
 begin
     assert TileCapacityIsLegal(capacity_bytes);
+    assert allocation_mask != Zeros{4};
     assert rows > 0;
     assert columns > 0;
     assert valid_rows <= rows;
     assert valid_columns <= columns;
     assert TileStorageFitsCapacity(rows, columns, data_type, capacity_bytes);
     assert rows * columns <= PTO_MODEL_TILE_ELEMENTS;
-    assert TileCapacityInUseExcept(index) + capacity_bytes <=
+    assert TileCapacityInUseExcept(index) + SharedTileCapacityInUse() +
+        TileCoreAllocationBytes(allocation_mask, capacity_bytes) <=
         TileCapacityLimitBytes();
+    _TileAllocationMasks[[index]] = allocation_mask;
     _Tiles[[index]].allocated = TRUE;
     // Allocation defines TileInfo but not the payload. A producer must write
     // the tile before any generic payload read is legal.
@@ -307,8 +367,20 @@ begin
     _Tiles[[index]].location = location;
 end;
 
+func ConfigureTile(index: TileIndex, capacity_bytes: integer {0..262144},
+                   rows: integer {0..65535}, columns: integer {0..65535},
+                   valid_rows: integer {0..65535}, valid_columns: integer {0..65535},
+                   data_type: TileDataType, layout: TileLayout, location: TileLocation)
+begin
+    // Direct one-level operations model the already-resolved current-PE
+    // fragment and therefore charge one PE of capacity.
+    ConfigureTileForMask(index, capacity_bytes, rows, columns,
+        valid_rows, valid_columns, data_type, layout, location, '0001');
+end;
+
 func ReleaseTile(index: TileIndex)
 begin
+    _TileAllocationMasks[[index]] = Zeros{4};
     _Tiles[[index]].allocated = FALSE;
     _Tiles[[index]].contents_defined = FALSE;
     _Tiles[[index]].defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};

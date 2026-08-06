@@ -103,7 +103,7 @@ B.IOR       s0                       # Scalar operand；由 scalar/GPR 或立即
 - `B.DIM LB0/LB1/LB2` 分别表达 `ValidCol/ValidRow/Col`。二维 `TCMPS` 需要 `LB2`，因为 `Col` 决定 row-major Tile 中下一行的起始 stride。
 - `B.DATR.CMode` 承载 `CmpMode`。Linx `TCMPS` 页的语法和 PTO signature 都包含 `CmpMode`；DavinciOO active profile 将它统一 lowering 到 `B.DATR.CMode`。
 - `CMode` 对 `TCMPS` 是必需语义字段；每条 `TCMPS` lowering 都必须形成显式 `CMode` 编码。`PadValue` 只是同一条 `B.DATR` 中的可选 data attribute。
-- Output size uses `B.IOT.TSize=001..111` for a `512 B..32 KB` logical Tile (`128 B..8 KB` per PE fragment).
+- Output size uses `B.IOT.TSize=001..111` for a `128 B..8 KB` per-PE Tile; Core allocation is `popcount(PE_MASK)` times that size.
 
 ## Header 展开说明
 
@@ -120,7 +120,7 @@ B.IOR       s0                       # Scalar operand；由 scalar/GPR 或立即
 - Source/destination Tile operand 使用 Linx-style 6-bit / 64-entry TReg namespace：`T#1..T#16`、`U#1..U#16`、`M#1..M#16`、`N#1..N#16`。
 - `B.IOT` 中表达的 operand 顺序必须与 intrinsic operand role 保持一致。
 - 一个 block 中最后一条 `B.IOT` 必须设置 `last`；只有一条 `B.IOT` 时也必须设置 `last`。
-- `B.IOT.TSize=001..111` encodes a `512 B..32 KB` logical Tile (`128 B..8 KB` per PE fragment).
+- `B.IOT.TSize=001..111` encodes a `128 B..8 KB` per-PE Tile; Core allocation is `popcount(PE_MASK)` times that size.
 - 二维 `TCMPS` 的 `ValidCol/ValidRow/Col` 均为 16-bit dimension 值，并应满足 `ValidCol <= Col`。
 - PTO `CmpMode` 必须形成确定的 `B.DATR.CMode` 编码；不能只写在高层 intrinsic 参数中而不进入 block header contract。
 - Source/destination 的 dtype、valid region、mask/index 或 scalar contract 必须兼容；不兼容时硬件不保证结果正确性或应触发 profile-defined trap。

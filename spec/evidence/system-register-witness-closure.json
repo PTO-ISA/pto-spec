@@ -4053,7 +4053,7 @@
           ]
         }
       ],
-      "semantic_access_inventory_sha256": "88e63b6ee923b3071dd7ed1faefca5e52980b4259d78b6d6327c66b072c10c16",
+      "semantic_access_inventory_sha256": "0ab010aa709d9816c42bc7384939c292a01892256ec5ce7987b3459121ed3d96",
       "semantic_access_inventory": [
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4068,12 +4068,12 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteBundleSharedCubeOperation",
-          "sha256": "7d3f2383452ece79fb8ff5414581a63b61e6d79502d9ebae5b0f2afce265308d"
+          "sha256": "42f91a33cc59f73ef711151a94322e1d1949c88c9221837fa188aa114479c171"
         },
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteBundleSharedTLSUOperation",
-          "sha256": "91f8084e50c8c9c36c57fbb5ccb6d579fdee481de1c7cdfb6b76985f3d7db9f5"
+          "sha256": "d194d3fd9491658eee59b8803a82e65f3435384e7d612b175e7cea5fb937f9d8"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4083,7 +4083,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
-          "sha256": "e4fa79157fde4b16b845974328d8f052a89c06917ae5332d9a115311c54b90d0"
+          "sha256": "d4a89776d2b1b0c15308572d6fc1710994caffa72b4c0820f47d09b4abf9e6fa"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4093,7 +4093,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteDecodedBundleCommand",
-          "sha256": "e2daf1ee977bde643448d4834730879134cc6bd235bfc8febb584b24a759a565"
+          "sha256": "25b8b284fe85bd7661c198c5eeab074786ffe2dfdac7401d47c5c0af01706d36"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4108,7 +4108,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ResolveBundleTileDestinations",
-          "sha256": "de72ee9b1df272795ee06320b576a3d587f26a0ced7cf881fe0acf2143b73e73"
+          "sha256": "1baa531c975ef837a3893d58bccf4d4136eb6fa192325f9dd8150d52835127bb"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4128,7 +4128,7 @@
         {
           "path": "asl/bundle/state.asl",
           "function": "BindBundleSharedIO",
-          "sha256": "db3f3fcfabd2f5c42c1f2e1533535280e14bd8cd6bbdb5a407bb1cd31d9a0190"
+          "sha256": "afa50c9854a6b5513e73b8ea554dd6b89f5006168b542ded4ea50df70811c3be"
         },
         {
           "path": "asl/bundle/state.asl",
@@ -4208,7 +4208,7 @@
         {
           "path": "asl/profiles/pto-v0.asl",
           "function": "ResetProfileState",
-          "sha256": "c51adf3a6ed92133488a290e3d6a5dafe0235ec351502e214fb0b29ce80e9aca"
+          "sha256": "42eb30ff6ae8df54c667ad6febce48e2080d0bc92240b3ddffc93fb2be2ba919"
         },
         {
           "path": "asl/profiles/pto-v0.asl",
@@ -4668,7 +4668,7 @@
           ]
         }
       ],
-      "activation_inventory_sha256": "4ebca689645495421337b77112bc3a59b34f7485ca537a290f841d42c66b999c",
+      "activation_inventory_sha256": "91a05c8776443e28cb35ad9a3e5edb74cd31cb02791b9323a4ad052a39681b15",
       "activation_inventory": [
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4683,12 +4683,12 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteBundleSharedCubeOperation",
-          "sha256": "7d3f2383452ece79fb8ff5414581a63b61e6d79502d9ebae5b0f2afce265308d"
+          "sha256": "42f91a33cc59f73ef711151a94322e1d1949c88c9221837fa188aa114479c171"
         },
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteBundleSharedTLSUOperation",
-          "sha256": "91f8084e50c8c9c36c57fbb5ccb6d579fdee481de1c7cdfb6b76985f3d7db9f5"
+          "sha256": "d194d3fd9491658eee59b8803a82e65f3435384e7d612b175e7cea5fb937f9d8"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4698,7 +4698,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
-          "sha256": "e4fa79157fde4b16b845974328d8f052a89c06917ae5332d9a115311c54b90d0"
+          "sha256": "d4a89776d2b1b0c15308572d6fc1710994caffa72b4c0820f47d09b4abf9e6fa"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4708,7 +4708,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteDecodedBundleCommand",
-          "sha256": "e2daf1ee977bde643448d4834730879134cc6bd235bfc8febb584b24a759a565"
+          "sha256": "25b8b284fe85bd7661c198c5eeab074786ffe2dfdac7401d47c5c0af01706d36"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4723,7 +4723,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ResolveBundleTileDestinations",
-          "sha256": "de72ee9b1df272795ee06320b576a3d587f26a0ced7cf881fe0acf2143b73e73"
+          "sha256": "1baa531c975ef837a3893d58bccf4d4136eb6fa192325f9dd8150d52835127bb"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4743,7 +4743,7 @@
         {
           "path": "asl/bundle/state.asl",
           "function": "BindBundleSharedIO",
-          "sha256": "db3f3fcfabd2f5c42c1f2e1533535280e14bd8cd6bbdb5a407bb1cd31d9a0190"
+          "sha256": "afa50c9854a6b5513e73b8ea554dd6b89f5006168b542ded4ea50df70811c3be"
         },
         {
           "path": "asl/bundle/state.asl",
@@ -4828,7 +4828,7 @@
         {
           "path": "asl/profiles/pto-v0.asl",
           "function": "ResetProfileState",
-          "sha256": "c51adf3a6ed92133488a290e3d6a5dafe0235ec351502e214fb0b29ce80e9aca"
+          "sha256": "42eb30ff6ae8df54c667ad6febce48e2080d0bc92240b3ddffc93fb2be2ba919"
         },
         {
           "path": "asl/profiles/pto-v0.asl",
@@ -5273,7 +5273,7 @@
         {
           "path": "asl/types.asl",
           "function": "<global>",
-          "sha256": "807a91229febb05fa9a95570422f4ffe8dc598cdb95fbf8d8cc376197dc4089a"
+          "sha256": "e395a7df719b1fe96ddb7be4af9b6ad8d9fe0cce1d9a2c586b6faa58587a31c7"
         }
       ],
       "rule": "Envelope-only fault symbols remain limited to declaration and SetFault mapping. Every normative function that can mutate trap identity, invoke a trap producer, or mention canonical trap numbers 33, 49, or 51 is content-addressed, so direct assignments, helper activation, and indirect SetFault call sites fail closed."
@@ -5338,15 +5338,15 @@
     },
     {
       "path": "generated:build/decoders.asl",
-      "sha256": "34ab8ae261744aa92341cafb21bb68b98403fdb8675e22b0920e66ce1585ad6b"
+      "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
     },
     {
       "path": "tests/asl/main.asl",
-      "sha256": "c89c97fd5c3e94776be38e48ffdb473178bc8842b6cf382b624a976164fd3d09"
+      "sha256": "71fa351e06c5d1168a77a1d414fde9306a460c6ede8772a56fb31f47bad76d7d"
     },
     {
       "path": "tests/asl/shards/core-bundle.asl",
-      "sha256": "5574bae578a63d55489925cc9525e54c2101e8faf4c142deffa52f0788f3905b"
+      "sha256": "a29b8533de24000a161b60f0aa8edd9957d90545072468a35d79a5510a514bdd"
     },
     {
       "path": "tests/asl/scalar-tests.asl",
@@ -5354,7 +5354,7 @@
     },
     {
       "path": "tests/asl/state-tests.asl",
-      "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+      "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
     },
     {
       "path": "tests/asl/tile-tests.asl",
@@ -5362,7 +5362,7 @@
     },
     {
       "path": "asl/types.asl",
-      "sha256": "a70daffa65d924e3581ce19a3876a06506c2d1d4c3a06fff9377cb6735532b24"
+      "sha256": "1018ae49c0ef3a3e1bb15f452446f6606f5c825e01e528ea42c6a8a32c031ae9"
     },
     {
       "path": "asl/state.asl",
@@ -5370,7 +5370,7 @@
     },
     {
       "path": "asl/profiles/pto-v0.asl",
-      "sha256": "769c434c5df39dd6de33b6edb24a45cdc81d1274693f74e595f55055b0b256c9"
+      "sha256": "cffaef654c49cafd02ef73478295de4e070f4ab1aa4c046decb2950a03103808"
     },
     {
       "path": "asl/scalar/system-registers.asl",

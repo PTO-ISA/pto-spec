@@ -110,9 +110,9 @@ qualified executable parity is currently 0/38 and fails closed on structural-
 only, stale, missing, timed-out, nonzero, or unreviewed evidence.
 
 Release traceability is now generated rather than inferred from prose. The
-`spec/evidence/release-traceability-readiness.json` ledger covers 924 exact
+`spec/evidence/release-traceability-readiness.json` ledger covers 925 exact
 units: all 47 requirements, accepted forms and operations, system registers,
-traps, 36 profile hooks, and 74 ASL state roots expanded to 229 leaf fields. Its
+traps, 36 profile hooks, and 75 ASL state roots expanded to 235 leaf fields. Its
 inventory and links are closed, while S6-T1 promotion remains explicitly open
 on S5-T2 and an immutable-commit claim-hygiene review.
 The generated `spec/evidence/release-gate-readiness.json` ledger separately

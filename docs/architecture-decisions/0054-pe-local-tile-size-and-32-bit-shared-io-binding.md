@@ -77,9 +77,14 @@ must define their own derivation.
 
 ## Consequences
 
-- Active `C.B.IOS` is removed and rejected; active `B.IOS` is added, so the
+- The `C.B.IOS` mnemonic and form are removed from the active catalog and
+  rejected by the assembler. Its historical raw bit pattern decodes only as
+  the overlapping active `C.B.DIMI` form; active `B.IOS` is added, so the
   command-form count remains 99.
-- The old reviewed `C.B.DIMI`/`C.B.IOS` overlap exception is removed.
+- The reviewed 573-form binary envelope is rebound to SHA-256 fingerprint
+  `9155a78499c4908e0fdc7ac2a48159eacb5c1dfc78ea724dbedf689369430993`.
+- The old reviewed `C.B.DIMI`/`C.B.IOS` catalog-overlap exception is removed
+  because only `C.B.DIMI` remains active at that bit pattern.
 - `BundleSharedBinding` gains `size_code` and `pe_mask`, including reset,
   consume, trap snapshot, and recovery behavior.
 - GM-to-Shared `TLOAD` size and mask come from `B.IOS`; Shared stores use source
@@ -92,10 +97,16 @@ must define their own derivation.
 
 ## Supersession
 
-ADR 0052 remains historical. This ADR supersedes its aggregate Tile-size table,
-active `C.B.IOS` encoding, `B.IOR` Shared-size carrier, mask-only `B.IOT`
-companion, and Shared binder schema. The retained operation inventory and
-Linx-only reservations in ADR 0052 remain in force.
+ADR 0045's `B.IOT` allocation-size-code paragraph and ADR 0052's aggregate
+Tile-size table remain historical. This ADR supersedes those size encodings,
+plus ADR 0052's active `C.B.IOS` encoding, `B.IOR` Shared-size carrier,
+mask-only `B.IOT` companion, and Shared binder schema. The retained operation
+inventory and Linx-only reservations in ADR 0052 remain in force.
+
+This ADR also supersedes ADR 0052's current Tile/Bundle assertion-inventory
+pin. The direct assertions protecting a valid live `B.IOS` binding and a
+nonzero first-allocation mask raise that fail-closed inventory from 200 to
+202; the scalar/system/concurrency inventory remains 34.
 
 ## Rejected Alternatives
 

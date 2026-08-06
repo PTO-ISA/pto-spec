@@ -62,7 +62,7 @@ template <PostProcessConfig PP = PostProcessConfig::None, typename TileDst, type
 RecordEvent TGEMV_MX_ACC(TileDst &d, TileAccIn &c, TileA &a, TileScaleA &scaleA, TileB &b, TileScaleB &scaleB, PostProcessOperands<PP> &...ppOperands, WaitEvents &...events);
 ```
 
-`TGEMV*` 只定义 PE-local M=1 GEMV。API 不增加 `<pe_scope>`；`PE_MASK=1111` 表示四个 PE 各自执行一个独立 GEMV，不形成 rendezvous、共享 B 或跨 PE reduction。A、B、ScaleA、ScaleB、C/Bias、D 和 auxiliary operand 全部必须为 Local Tile，任何 `SharedTile` 或 `C.B.IOS` 都非法。
+`TGEMV*` 只定义 PE-local M=1 GEMV。API 不增加 `<pe_scope>`；`PE_MASK=1111` 表示四个 PE 各自执行一个独立 GEMV，不形成 rendezvous、共享 B 或跨 PE reduction。A、B、ScaleA、ScaleB、C/Bias、D 和 auxiliary operand 全部必须为 Local Tile，任何 `SharedTile` 或 `B.IOS` 都非法。
 `TileDst` 与 `TileAccIn` 是不同模板类型；不提供 `_ACC(d,a,b)` 三参数简写。
 
 `PostProcessConfig` 完整、静态地描述 PreQuant、ReLU、RowMax、GroupMax、RowMaxInit、MaxAbs、RMode 与 Sat。默认配置为 canonical None，但 lowering 仍发出一个 canonical `B.FPATR`。
@@ -93,7 +93,7 @@ B.IOT       ScaleA, B, mask=PE_MASK
 B.IOT       ScaleB, mask=PE_MASK, last, ->D<TSize>
 ```
 
-- 不生成 `C.B.IOS`；全部 source 由 Local `B.IOT` 绑定。
+- 不生成 `B.IOS`；全部 source 由 Local `B.IOT` 绑定。
 
 ## Header 展开说明
 
@@ -116,7 +116,7 @@ B.IOT       ScaleB, mask=PE_MASK, last, ->D<TSize>
 - D、RowMaxOut、GroupMaxOut 同时 ready，并在 retire/flush 上作为一个原子结果组处理。
 - 所有 operand/output 都是单 PE Local Tile；M 固定为 1。
 - D==C 仅在 D 保持 TileAcc role 且 dtype、shape、layout、allocation 完全相同时合法；实现必须 read-old/rename-new，禁止物理原地覆盖。C 不携带 partial-sum provenance 要求。
-- TGEMV 禁止所有 SharedTile、C.B.IOS 和 core rendezvous；K blocking 通过每 PE 显式 TGEMV_ACC(D,C,A,B) 链完成。
+- TGEMV 禁止所有 SharedTile、B.IOS 和 core rendezvous；K blocking 通过每 PE 显式 TGEMV_ACC(D,C,A,B) 链完成。
 - 一个 block 中最后一条 `B.IOT` 必须设置 `last`；M/N/K、fractal、layout 与 Tile size 必须满足 CUBE profile。
 - nondefault `AccPhase` 一律拒绝；K blocking 使用显式 `_ACC(D,C,...)`。
 

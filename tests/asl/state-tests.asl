@@ -407,11 +407,13 @@ begin
         FALSE);
     SetBundleTileBinding(15, TRUE, 3, 7, '0011', TRUE, FALSE, 63, 0,
         TRUE);
-    BindBundleSharedIO(Zeros{8} + 0x12);
-    BindBundleSharedIO(Zeros{8} + 0x34);
+    BindBundleSharedIO(Zeros{8} + 0x12, 0, '1111');
+    BindBundleSharedIO(Zeros{8} + 0x34, 7, '0011');
     _BundleSharedBindings[[0]].consumed = TRUE;
     assert _BundleSharedBindings[[0]].valid;
     assert _BundleSharedBindings[[0]].shared_id == Zeros{8} + 0x12;
+    assert _BundleSharedBindings[[0]].size_code == 0;
+    assert _BundleSharedBindings[[0]].pe_mask == '1111';
     assert _BundleSharedBindings[[0]].consumed;
     SetBundleControlAttributeState(TRUE, TRUE, TRUE, FALSE, TRUE, FALSE);
     _BundleDataAttributes.data_type = Zeros{5} + 0x11;
@@ -500,6 +502,8 @@ begin
     assert _TrapContexts[[1]].bundle_shared_bindings[[0]].valid;
     assert _TrapContexts[[1]].bundle_shared_bindings[[0]].shared_id ==
         Zeros{8} + 0x12;
+    assert _TrapContexts[[1]].bundle_shared_bindings[[0]].size_code == 0;
+    assert _TrapContexts[[1]].bundle_shared_bindings[[0]].pe_mask == '1111';
     assert _TrapContexts[[1]].bundle_shared_bindings[[0]].consumed;
     assert _TrapContexts[[1]].bundle_control_attributes.trap_enabled;
     assert _TrapContexts[[1]].bundle_control_attributes.atomic;
@@ -581,6 +585,8 @@ begin
     _BundleTileBindings[[0]].last = TRUE;
     _BundleSharedBindings[[0]].valid = FALSE;
     _BundleSharedBindings[[0]].shared_id = Zeros{8};
+    _BundleSharedBindings[[0]].size_code = 3;
+    _BundleSharedBindings[[0]].pe_mask = '0101';
     _BundleSharedBindings[[0]].consumed = FALSE;
     _BundleControlAttributes.trap_enabled = FALSE;
     _BundleControlAttributes.atomic = FALSE;
@@ -650,6 +656,8 @@ begin
     assert _BundleTileBindings[[0]].last;
     assert !_BundleSharedBindings[[0]].valid;
     assert _BundleSharedBindings[[0]].shared_id != Zeros{8} + 0x12;
+    assert _BundleSharedBindings[[0]].size_code != 0;
+    assert _BundleSharedBindings[[0]].pe_mask != '1111';
     assert !_BundleSharedBindings[[0]].consumed;
     assert !_BundleControlAttributes.trap_enabled;
     assert !_BundleControlAttributes.atomic;
@@ -724,6 +732,8 @@ begin
     assert !_BundleTileBindings[[0]].last;
     assert _BundleSharedBindings[[0]].valid;
     assert _BundleSharedBindings[[0]].shared_id == Zeros{8} + 0x12;
+    assert _BundleSharedBindings[[0]].size_code == 0;
+    assert _BundleSharedBindings[[0]].pe_mask == '1111';
     assert _BundleSharedBindings[[0]].consumed;
     assert _BundleControlAttributes.trap_enabled;
     assert _BundleControlAttributes.atomic;
@@ -792,8 +802,8 @@ begin
     assert TileCapacityIsLegal(262144);
     assert !TileCapacityIsLegal(192);
     assert !TileCapacityIsLegal(32);
-    assert TileSizeCodeBytes(1) == 512;
-    assert TileSizeCodeBytes(7) == 32768;
+    assert TileSizeCodeBytes(1) == 128;
+    assert TileSizeCodeBytes(7) == 8192;
     assert !TileSizeCodeIsLegal(0);
     assert !TileSizeCodeIsLegal(8);
 
@@ -888,6 +898,16 @@ end;
 
 func TestTileAllocationState()
 begin
+    ResetProfileState();
+    assert PEMaskPopulation(Zeros{4}) == 0;
+    assert PEMaskPopulation('1000') == 1;
+    assert PEMaskPopulation('0011') == 2;
+    assert PEMaskPopulation('0111') == 3;
+    assert PEMaskPopulation('1111') == 4;
+    assert TileCoreAllocationBytes('0001', 128) == 128;
+    assert TileCoreAllocationBytes('0011', 128) == 256;
+    assert TileCoreAllocationBytes('1111', 128) == 512;
+
     ConfigureTile(5, 256, 1, 1, 1, 1, TileDataType_U64,
         TileLayout_ImplementationDefined, TileLocation_Any);
     assert _Tiles[[5]].allocated;
@@ -902,6 +922,24 @@ begin
     WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 9);
     assert _Tiles[[5]].contents_defined;
     assert ReadTileElement(5, 0, 0) == Zeros{PTO_XLEN} + 9;
+
+    // The first allocating Shared write fixes the allocation mask. Later
+    // writes may update a subset, but expansion requires a new Sx.
+    let shared_first = AtomicUpdateSharedTile(
+        Zeros{8} + 60, _Tiles[[5]], '0011');
+    assert shared_first;
+    assert SharedTileRecord(Zeros{8} + 60).allocation_mask == '0011';
+    assert SharedTileRecord(Zeros{8} + 60).initialized_mask == '0011';
+    let shared_subset = AtomicUpdateSharedTile(
+        Zeros{8} + 60, _Tiles[[5]], '0001');
+    assert shared_subset;
+    assert SharedTileRecord(Zeros{8} + 60).allocation_mask == '0011';
+    let shared_expansion = AtomicUpdateSharedTile(
+        Zeros{8} + 60, _Tiles[[5]], '0100');
+    assert !shared_expansion;
+    assert SharedTileRecord(Zeros{8} + 60).allocation_mask == '0011';
+    assert SharedTileRecord(Zeros{8} + 60).initialized_mask == '0011';
+    assert SharedTileCapacityInUse() == 512;
 end;
 
 // PTO-REQ-INTERRUPT-001: pending, priority, acknowledgement, enable, and timer
