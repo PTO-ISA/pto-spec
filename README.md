@@ -181,15 +181,16 @@ Normative authority and source precedence are defined in
 
 | Surface | Role |
 | --- | --- |
-| [`asl/`](asl/) | Executable architectural state and semantics |
-| [`spec/catalog/`](spec/catalog/) | Accepted scalar forms, system registers, traps, and tile selectors |
+| [`asl/`](asl/) | Golden executable architectural state, instruction metadata, legality, and semantics |
+| [`docs/instructions/`](docs/instructions/) | Mirrored ASL embeds plus supplementary explanation and examples |
+| [`spec/catalog/`](spec/catalog/) | Generated accepted scalar forms, system registers, traps, and tile selectors |
 | [`spec/requirements.json`](spec/requirements.json) | Requirement-to-model-to-test traceability |
 | [`spec/profile-hooks.json`](spec/profile-hooks.json) | Complete `impdef` profile registry |
 | [`spec/evidence/`](spec/evidence/) | Generated closure records and release evidence |
 | [`specification.toml`](specification.toml) | Machine-readable status, profile, architecture, and toolchain metadata |
 
-Human-readable architecture documents supplement those machine-readable
-contracts:
+Human-readable architecture documents supplement the ASL contract. Instruction
+pages embed their normative ASL regions verbatim and are checked for drift:
 
 | Document | Purpose |
 | --- | --- |

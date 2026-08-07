@@ -9,6 +9,15 @@ architecture requirement.
 ## Working rules
 
 - Read and follow `.codex/skills/pto-asl/SKILL.md` for ASL, formal-review, and governance work.
+- Start every instruction lookup in `asl/<surface>/<classification>/<mnemonic>.asl`,
+  then read the mirrored page under `docs/instructions/` for supplementary
+  explanation and examples. Do not infer semantics from generated catalogs,
+  HTML, spreadsheets, or release projections.
+- Treat mnemonic ASL metadata and its `DOC-BEGIN` regions as the golden source.
+  The corresponding Markdown ASL blocks and MkDocs navigation are generated
+  projections and MUST pass `python3 scripts/instruction_docs.py --check`.
+- Keep hand-written explanation only inside the generated page's supplementary
+  region. Never copy normative decode, legality, or operation text into prose.
 - Use ASL1 syntax accepted by the commit pinned in `.aslref-version`.
 - Keep the architecture entry point under `asl/` and place scalar and tile
   instruction-family sources under `asl/scalar/` and `asl/tile/`.

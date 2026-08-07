@@ -5,7 +5,13 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.instruction_docs import check_tree, generate_tree, load_instruction_index
+from scripts.instruction_docs import (
+    check_tree,
+    check_version_neutrality,
+    generate_tree,
+    load_instruction_index,
+    render_nav,
+)
 
 
 def asl_source(
@@ -129,6 +135,93 @@ class InstructionDocsTest(unittest.TestCase):
 
         self.assertIn("## Block composition", rendered)
         self.assertLess(rendered.index("BSTART.TEPL TADD"), rendered.index("BSTOP"))
+
+    def test_generate_tree_preserves_supplementary_markdown(self) -> None:
+        self.write_asl()
+        page = self.root / "docs/instructions/tile/tile-tile-elementwise/arithmetic/TADD.md"
+        page.parent.mkdir(parents=True, exist_ok=True)
+        page.write_text(
+            "# Legacy TADD\n\nThis paragraph explains why TADD exists.\n",
+            encoding="utf-8",
+        )
+
+        generate_tree(self.root)
+        first = page.read_text(encoding="utf-8")
+        generate_tree(self.root)
+        second = page.read_text(encoding="utf-8")
+
+        self.assertIn("This paragraph explains why TADD exists.", first)
+        self.assertIn("<!-- SUPPLEMENTARY-BEGIN -->", first)
+        self.assertEqual(first, second)
+
+    def test_render_nav_is_stable_by_surface_and_classification(self) -> None:
+        self.write_asl()
+        self.write_asl(
+            "scalar/alu/ADD.asl",
+            mnemonic="ADD",
+            surface="scalar",
+            classification=["alu"],
+        )
+        self.write_asl(
+            "block/lifecycle/BSTOP.asl",
+            mnemonic="BSTOP",
+            surface="block",
+            classification=["lifecycle"],
+        )
+
+        nav = render_nav(load_instruction_index(self.root))
+
+        self.assertEqual(
+            nav,
+            "nav:\n"
+            "  - Scalar:\n"
+            "      - ALU:\n"
+            "          - ADD: instructions/scalar/alu/ADD.md\n"
+            "  - Block:\n"
+            "      - Lifecycle:\n"
+            "          - BSTOP: instructions/block/lifecycle/BSTOP.md\n"
+            "  - Tile:\n"
+            "      - Tile Tile Elementwise:\n"
+            "          - Arithmetic:\n"
+            "              - TADD: instructions/tile/tile-tile-elementwise/arithmetic/TADD.md\n",
+        )
+
+    def test_generate_tree_writes_mkdocs_navigation(self) -> None:
+        self.write_asl()
+
+        generate_tree(self.root)
+
+        generated_nav = self.root / "docs/mkdocs/generated-nav.yml"
+        mkdocs_config = self.root / "docs/mkdocs/mkdocs.yml"
+        self.assertEqual(
+            generated_nav.read_text(encoding="utf-8"),
+            render_nav(load_instruction_index(self.root)),
+        )
+        self.assertIn(
+            "instructions/tile/tile-tile-elementwise/arithmetic/TADD.md",
+            mkdocs_config.read_text(encoding="utf-8"),
+        )
+
+    def test_version_neutrality_reports_only_active_normative_surfaces(self) -> None:
+        active_asl = self.root / "asl/tile/state.asl"
+        active_asl.parent.mkdir(parents=True, exist_ok=True)
+        active_asl.write_text("// PTO ISA 0.58 fixes this rule.\n", encoding="utf-8")
+        active_doc = self.root / "docs/instructions/tile/TADD.md"
+        active_doc.parent.mkdir(parents=True, exist_ok=True)
+        active_doc.write_text("PTO ISA 0.58.0\n", encoding="utf-8")
+        historical = self.root / "docs/architecture-decisions/0052.md"
+        historical.parent.mkdir(parents=True, exist_ok=True)
+        historical.write_text("PTO ISA 0.58.0\n", encoding="utf-8")
+
+        errors = check_version_neutrality(self.root)
+
+        self.assertEqual(
+            errors,
+            [
+                "asl/tile/state.asl:1: active normative surface contains release version 0.58",
+                "docs/instructions/tile/TADD.md:1: active normative surface contains release version 0.58.0",
+            ],
+        )
 
 
 if __name__ == "__main__":
