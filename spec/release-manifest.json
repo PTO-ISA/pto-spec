@@ -6,7 +6,7 @@
     },
     {
       "path": "asl/architecture.asl",
-      "sha256": "07fb77ec3824c7ed7ff8e039676609cd444b784baec22816554af027dff28964"
+      "sha256": "40681bb8e654f93bb2f769ef01d59f4b89980290f7a95496e93327bf3e4881d0"
     },
     {
       "path": "asl/block/attributes/B.CATR.asl",
@@ -3160,7 +3160,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "fb592cb65fb992abeed23df685d99dc32461058ed81ab1997b980e2cac894e89",
+  "content_sha256": "e0701b5713392cfa191cf86b68ae9121a814a6ee8dcba8e5cf91f6f2fa2ea997",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",

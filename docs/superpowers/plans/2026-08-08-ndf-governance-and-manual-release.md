@@ -288,6 +288,7 @@ git commit -m "ci: keep pull request validation lightweight"
 **Files:**
 - Create: `.github/workflows/release.yml`
 - Create: `scripts/check-release-workflow`
+- Create: `scripts/release_workflow.py`
 - Create: `tests/scripts/test_release_workflow.py`
 - Modify: `Makefile:208-260`
 
@@ -296,7 +297,7 @@ git commit -m "ci: keep pull request validation lightweight"
 - Produces: manual workflow input `commit` containing exactly 40 lowercase hexadecimal characters.
 - Produces: final check `Release / validate` that depends on repository, strict-model, and every shard job.
 
-- [ ] **Step 1: Write workflow contract tests**
+- [x] **Step 1: Write workflow contract tests**
 
 Implement fixture-based tests for
 `validate_release_workflow(text: str) -> list[str]`. A complete literal workflow
@@ -313,7 +314,7 @@ python3 -m unittest tests.scripts.test_release_workflow -v
 
 Expected: FAIL because the workflow does not exist.
 
-- [ ] **Step 2: Implement local release orchestration**
+- [x] **Step 2: Implement local release orchestration**
 
 Add:
 
@@ -328,7 +329,7 @@ release-prepare:
 
 `release-verify` never creates a tag. `release-prepare` proves regenerated release artifacts leave the candidate tree clean.
 
-- [ ] **Step 3: Implement manual GitHub workflow**
+- [x] **Step 3: Implement manual GitHub workflow**
 
 Use separate jobs:
 
@@ -340,7 +341,7 @@ Use separate jobs:
 
 Do not create the release or tag in this first workflow. A later explicit publication step may consume only a successful exact-head run.
 
-- [ ] **Step 4: Verify and commit**
+- [x] **Step 4: Verify and commit**
 
 Run:
 

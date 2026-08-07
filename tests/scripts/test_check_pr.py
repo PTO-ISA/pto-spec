@@ -35,6 +35,7 @@ class PullRequestCheckTest(unittest.TestCase):
             commands,
             [
                 "./scripts/check-ndf",
+                "./scripts/check-release-workflow",
                 "./scripts/check-repository --structure-only",
                 "./scripts/check-asl-test-shards",
                 "python3 -m unittest discover -s tests/scripts -p test_*.py",

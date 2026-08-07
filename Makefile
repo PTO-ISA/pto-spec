@@ -187,7 +187,7 @@ SPEC := build/pto-spec.asl
 DECODER_SPEC := build/decoders.asl
 TEST_SPEC := build/pto-tests.asl
 
-.PHONY: all setup build release-manifest release-check repo-check pr-check \
+.PHONY: all setup build release-manifest release-check release-prepare release-verify repo-check pr-check \
 	toolchain-check check test test-parallel test-shards \
 	$(ASL_TEST_SHARD_TARGETS) ci clean print-asl-sources \
 	print-asl-tests print-asl-test-shards print-asl-test-shard-names
@@ -231,6 +231,13 @@ repo-check: $(SPEC)
 
 pr-check:
 	./scripts/check-pr
+
+release-verify: pr-check release-check toolchain-check check test-shards
+
+release-prepare:
+	./scripts/generate-release-manifest
+	./scripts/check-release-manifest
+	git diff --exit-code -- spec/release-manifest.json spec/evidence
 
 # Canary checks proving the pinned ASLRef distinguishes valid from invalid ASL1.
 toolchain-check:
