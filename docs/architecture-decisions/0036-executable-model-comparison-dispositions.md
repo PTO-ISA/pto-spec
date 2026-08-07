@@ -68,10 +68,10 @@ The comparison explicitly records these model limits:
   separate PTO MPAR/MSEQ mask domain. PTO's eight 32-bit P registers remain
   PTO-owned; the comparison neither defines their selector encoding nor
   proves equivalent warp-predicate execution.
-- PTO-v0 bundle commit binds only `destination0`, `source0`, and `source1`.
-  The bundle bridge can represent 56 TEPL, 1 TLSU, and 2 CUBE direct operations;
-  other direct operations either use direct tile dispatch or reject at bundle
-  commit before effects.
+- PTO-v0 bundle commit resolves all canonical direct-operation fields from
+  ordered B.IOT/B.IOR bindings, bundle headers, or operation defaults. The
+  bundle bridge can represent 87 TEPL, 10 TLSU, and 12 CUBE direct operations;
+  this does not turn the independent comparison into payload-execution proof.
 - TEPL comparison records 18 comparable selector/pattern rows. The remaining
   selector differences stay explicit row-level divergences, including the
   accepted issue-18/ADR-0045 ABI remaps.

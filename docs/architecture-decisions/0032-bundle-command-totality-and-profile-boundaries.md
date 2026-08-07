@@ -17,12 +17,11 @@ collapsed to the same value, `B.HINT` discarded its fields, `MCOPY` and `MSET`
 silently truncated their length, and several successful commands retired
 without advancing TPC.
 
-The bundle-to-tile bridge also exposes a smaller operand surface than direct
-tile dispatch. It can bind `destination0`, `source0`, and `source1`. Of the 109
-direct tile operations, 59 use only those fields; the other 50 require an
-address, scalar, immediate, additional source, additional destination, or
-operation-specific control. Silently defaulting those operands would create a
-different instruction from the direct operation.
+The original bundle-to-tile bridge exposed a smaller operand surface than
+direct tile dispatch. ADR 0055 supersedes that limitation: a complete bundle
+now resolves ordered tile and GPR bindings, bundle-header operands, and the
+selected operation's architectural defaults before commit. This preserves the
+direct-operation schema without inventing values at execution time.
 
 The generated comparison matrix contains dispositions for all 99 form IDs. The
 content-addressed independent snapshot grades 80 as an executable subset and 16
@@ -84,33 +83,33 @@ encoding rule. A future profile may raise it only with a corresponding
 instruction-wide preflight and evidence update.
 
 `B.DIM`, `B.TEXT`, `B.IOR`, `B.IOT`, `B.CATR`, and `B.DATR` consume every
-decoded field into trap-preserved bundle state. PTO-v0 tile commit consumes
-only B.IOT slot 0 destination/source bindings and the descriptor data type.
-The other stored dimensions, scalar bindings, sizes, reuse flags, control
-attributes, and data attributes have no tile-payload effect in this profile.
-They remain explicit architectural metadata so later profiles cannot assign
-behavior without changing the profile contract and adding evidence.
+decoded field into trap-preserved bundle state. PTO-v0 tile commit resolves
+their schema-contributing values after the full bundle is collected. Missing
+optional operands use the defaults defined by the selected operation; surplus
+or incompatible bindings reject before effects.
 
 ### Bundle-to-tile operand bridge
 
-Commit preflights the selected direct tile operation against the complete
-binding requirements. Operations whose catalog operands are a subset of
-`destination0`, `source0`, and `source1` may execute after a complete binding
-and data-type check. Every other operation rejects with `BUNDLE_CONTROL`
-before a tile payload, definedness, memory, or event effect.
+Commit preflights the selected direct tile operation against its complete
+schema. Ordered B.IOT entries provide all required tile destinations and
+sources, B.IOR provides the operation's consumed GPR inputs, other bundle
+headers provide their named controls, and the operation defines defaults for
+omitted optional operands. All 109 accepted direct tile operations are
+schema-representable. Malformed, missing-required, surplus, or incompatible
+bindings reject before a tile payload, definedness, memory, or event effect.
 
 The checked bridge inventory is:
 
 | Family | Direct operations | Representable | Commit-rejected |
 | --- | ---: | ---: | ---: |
-| TEPL | 87 | 56 | 31 |
-| TLSU | 10 | 1 | 9 |
-| CUBE | 12 | 2 | 10 |
-| **Total** | **109** | **59** | **50** |
+| TEPL | 87 | 87 | 0 |
+| TLSU | 10 | 10 | 0 |
+| CUBE | 12 | 12 | 0 |
+| **Total** | **109** | **109** | **0** |
 
-This is an explicit PTO-v0 limitation, not an implicit placeholder. Extending
-the bridge requires additional architectural binding state plus complete
-fault, alias, and restart evidence.
+This representability statement does not guarantee independent model parity;
+it states only that the PTO bundle schema can construct every canonical direct
+operation without changing that operation's encoding or semantics.
 
 ## Evidence contract
 
@@ -140,7 +139,6 @@ remains open at 0/38.
 - No command length, argument kind, or hint payload is silently discarded.
 - Unsupported frame, context, queue, and cross-block behavior cannot be
   mistaken for implemented architecture.
-- Direct tile semantics remain available even when the narrower bundle bridge
-  rejects an operation at commit.
-- Extending a rejected surface is a versioned profile change with new evidence,
-  not an unreviewed relaxation of this contract.
+- Direct tile and bundle commit use the same canonical operation schemas.
+- Future operands require a catalog/default update and executable evidence;
+  they cannot silently inherit an unrelated header field.

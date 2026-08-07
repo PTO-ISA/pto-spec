@@ -68,7 +68,7 @@ PTO/DavinciOO 语义摘要：将 Tile 寄存器中的数据存储到离散内存
 DavinciOO v5 采用 Linx-style TLSU header-form intrinsic：
 
 ```asm
-MSCATTER <LB0:ValidCol, LB1:ValidRow, LB2:Col, DataType>, SrcTile, IndexTile, [RegSrc0, RegSrc1]
+MSCATTER <LB0:ValidCol, LB1:ValidRow, LB2:Col, DataType>, SrcTile, IndexTile, [RegSrc0]
 ```
 
 参数说明：
@@ -80,7 +80,7 @@ MSCATTER <LB0:ValidCol, LB1:ValidRow, LB2:Col, DataType>, SrcTile, IndexTile, [R
 | `Col` | Tile 总列数，写入 `LB2`；二维 row-major Tile 中也是第二行起始 stride，单位为 element。 |
 | `DataType` | 搬运元素类型，编码在 `BSTART.TLSU`。 |
 | `SrcTile/IndexTile` | PE-local Tile operand，通过 `B.IOT` 绑定；operand role 必须与本页语法顺序一致。 |
-| `RegSrc*` | GM base address、GM stride 或其他 TLSU scalar/GPR operand，通过 `B.IOR` 声明。 |
+| `RegSrc0` | 可选 GM base address，通过 `B.IOR` 声明；缺省为 `zero`。 |
 
 ## DavinciOO Block Intrinsic
 
@@ -92,7 +92,7 @@ B.DIM       rValidCol, 0, ->LB0 # ValidCol；一维 MSCATTER 可只保留这一�
 B.DIM       rValidRow, 0, ->LB1 # ValidRow；二维 MSCATTER 需要
 B.DIM       rCol, 0, ->LB2      # Col / row stride；二维 MSCATTER 需要，用于计算第二行起始位置
 B.IOT       T#10, T#11, mask=1111, last
-B.IOR       a0, a1              # RegSrc0=base address，RegSrc1=GM stride；具体含义由 TLSU opcode profile 定义
+B.IOR       a0                  /* RegSrc0=base address */
 ```
 
 说明：

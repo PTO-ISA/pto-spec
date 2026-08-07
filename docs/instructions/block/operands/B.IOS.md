@@ -24,7 +24,7 @@ operation 的 PE mask。
 
 ```asm
 B.IOS S17, mask=1111
-B.IOS mask=0011, ->S17<001>
+B.IOS mask=0011, ->S17<128B>
 ```
 
 `TSize=000` 是 source form。`TSize=001..111` 是 destination form，并按

@@ -72,7 +72,7 @@ allocation、rename、read/write、lifetime、consume 或 fault effect。
 B.IOT T#1, U#2, mask=1111, last, ->T<1KB>
 
 /* Local-to-Shared：B.IOT 只绑定 Local source */
-B.IOS mask=1100, ->S17<100>
+B.IOS mask=1100, ->S17<1KB>
 B.IOT T#1, mask=1100, last
 
 /* Cooperative Shared-B CUBE */

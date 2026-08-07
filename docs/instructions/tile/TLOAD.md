@@ -68,7 +68,7 @@ B.DIM       rValidCol, 0, ->LB0
 B.DIM       rValidRow, 0, ->LB1
 B.DIM       rCol, 0, ->LB2
 B.IOT       mask=1111, last, ->T<4KB>
-B.IOR       a0, a1, 0
+B.IOR       a0, a1
 ```
 
 ## GM-to-Shared Full Form
@@ -83,11 +83,18 @@ B.DIM       rValidCol, 0, ->LB0
 B.DIM       rValidRow, 0, ->LB1
 B.DIM       rCol, 0, ->LB2
 B.IOS       mask=0101, ->S17<4KB>
-B.IOR       a0, a1, 0, ->0
+B.IOR       a0, a1
 ```
 
-`B.IOR` carries only the ordinary address operands in this schema;
-`B.IOR.RegDst` is zero.
+`B.IOR.RegSrc0` is the base address and `RegSrc1` is row stride in elements.
+This is the existing TLOAD encoding; no field or opcode changes. For row `r`
+and column `c`, the logical GM element is `r * row_stride + c`. Its byte
+address is `base + logical_element * element_size`; packed four-bit types use
+that logical element to select the containing byte and nibble.
+
+B.IOR may be omitted. In that case base defaults to `zero` and row stride
+defaults to resolved `LB2/Col`, preserving dense rows. An encoded `zero` in
+RegSrc1 is a real zero stride and is not replaced by the omission default.
 
 ## Header Expansion
 
@@ -97,7 +104,7 @@ B.IOR       a0, a1, 0, ->0
 | `B.DATR/B.DIM` | pad/layout and ValidCol/ValidRow/Col |
 | `B.IOT` | Local destination, logical TSize and PE mask |
 | `B.IOS` | Shared destination ID, per-PE TSize, and PE mask for GM→Shared form |
-| `B.IOR` | base and row stride; RegDst is zero for Shared form |
+| `B.IOR` | existing base and row-stride fields; omission selects `zero` base and `LB2/Col` stride |
 
 ## 约束与合法性
 
@@ -108,6 +115,8 @@ B.IOR       a0, a1, 0, ->0
   newly allocated `Sx`.
 - The issuer pointer addresses the full object; it is not a per-PE fragment pointer.
 - Shared `TSize` is 128 B–8 KiB per selected PE and cannot be implicit.
+- Row stride is expressed in elements, not bytes, and does not change the
+  encoded TLOAD form.
 - GM alignment, dtype, layout, shape and valid-region constraints remain those of PTO TLOAD and the TLSU target.
 - `RecordEvent` completion controls operation readiness but is not a cross-PE GM visibility fence.
 

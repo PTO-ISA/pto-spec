@@ -68,7 +68,7 @@ PTO/DavinciOO 语义摘要：将离散内存空间中的数据聚集到 Tile 寄
 DavinciOO v5 采用 Linx-style TLSU header-form intrinsic：
 
 ```asm
-MGATHER <LB0:ValidCol, LB1:ValidRow, LB2:Col, DataType, PadValue>, IndexTile, [RegSrc0, RegSrc1], ->DstTile<Size>
+MGATHER <LB0:ValidCol, LB1:ValidRow, LB2:Col, DataType, PadValue>, IndexTile, [RegSrc0], ->DstTile<Size>
 ```
 
 参数说明：
@@ -81,7 +81,7 @@ MGATHER <LB0:ValidCol, LB1:ValidRow, LB2:Col, DataType, PadValue>, IndexTile, [R
 | `DataType` | 搬运元素类型，编码在 `BSTART.TLSU`。 |
 | `PadValue` | destination valid-region 外或 masked-off lane 的填充值策略，由 `B.DATR` 表达；省略 `B.DATR` 时使用默认 `PadValue=Zero`。 |
 | `IndexTile` | PE-local Tile operand，通过 `B.IOT` 绑定；operand role 必须与本页语法顺序一致。 |
-| `RegSrc*` | GM base address、GM stride 或其他 TLSU scalar/GPR operand，通过 `B.IOR` 声明。 |
+| `RegSrc0` | 可选 GM base address，通过 `B.IOR` 声明；缺省为 `zero`。 |
 | `DstTile<Size>` | destination Tile queue 与 allocation size class，由 `B.IOT` 的 `DstTile/TSize` 表达；store/scatter 类无 Tile destination。 |
 
 ## DavinciOO Block Intrinsic
@@ -95,7 +95,7 @@ B.DIM       rValidCol, 0, ->LB0 # ValidCol；一维 MGATHER 可只保留这一�
 B.DIM       rValidRow, 0, ->LB1 # ValidRow；二维 MGATHER 需要
 B.DIM       rCol, 0, ->LB2      # Col / row stride；二维 MGATHER 需要，用于计算第二行起始位置
 B.IOT       T#10, mask=1111, last, ->T<1KB>
-B.IOR       a0, a1              # RegSrc0=base address，RegSrc1=GM stride；具体含义由 TLSU opcode profile 定义
+B.IOR       a0                  /* RegSrc0=base address */
 ```
 
 说明：

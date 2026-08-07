@@ -112,8 +112,8 @@ In PTO ISA 0.58.0, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TLSU and 
 
 | Name | Selector | Handler | Operands | Arguments |
 | --- | --- | --- | --- | --- |
-| TLOAD | function=0 | TLOAD | destination0:destination&lt;br&gt;address:base-address | destination0&lt;br&gt;address |
-| TSTORE | function=1 | TSTORE | address:base-address&lt;br&gt;source0:source | address&lt;br&gt;source0 |
+| TLOAD | function=0 | TLOAD | destination0:destination&lt;br&gt;address:base-address&lt;br&gt;scalar0:row-stride-elements | destination0&lt;br&gt;address&lt;br&gt;scalar0 |
+| TSTORE | function=1 | TSTORE | address:base-address&lt;br&gt;scalar0:row-stride-elements&lt;br&gt;source0:source | address&lt;br&gt;scalar0&lt;br&gt;source0 |
 | TMOV | function=2 | TMOV | destination0:destination&lt;br&gt;source0:source | destination0&lt;br&gt;source0 |
 | TPREFETCH | function=3 | TPREFETCH | address:base-address&lt;br&gt;byte_count:byte-count | address&lt;br&gt;byte_count |
 | MGATHER | function=4 | MGATHER | destination0:destination&lt;br&gt;address:base-address&lt;br&gt;source0:indices | destination0&lt;br&gt;address&lt;br&gt;source0 |

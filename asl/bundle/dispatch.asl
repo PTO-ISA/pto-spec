@@ -358,10 +358,37 @@ begin
     if destination_count != expected_destinations ||
        source_count != expected_sources then return FALSE; end;
     if binding_count > 0 && !last_seen then return FALSE; end;
-    if (TileOperandPresent(operation, TileOperand_address) ||
-        TileOperandPresent(operation, TileOperand_scalar0) ||
-        TileOperandPresent(operation, TileOperand_scalar1)) &&
-       !_BundleScalarBindings[[0]].valid then return FALSE; end;
+    if !BundleOperationScalarBindingSchemaLegal(operation) then return FALSE; end;
+    return TRUE;
+end;
+
+pure func BundleOperationConsumesScalarSource0(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
+begin
+    return TileOperandPresent(operation, TileOperand_address) ||
+           TileOperandPresent(operation, TileOperand_scalar0);
+end;
+
+pure func BundleOperationConsumesScalarSource1(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
+begin
+    return (TileOperandPresent(operation, TileOperand_address) &&
+            (TileOperandPresent(operation, TileOperand_scalar0) ||
+             TileOperandPresent(operation, TileOperand_scalar1))) ||
+           (TileOperandPresent(operation, TileOperand_scalar0) &&
+            TileOperandPresent(operation, TileOperand_scalar1));
+end;
+
+readonly func BundleOperationScalarBindingSchemaLegal(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
+begin
+    if !_BundleScalarBindings[[0]].valid then return TRUE; end;
+    if _BundleScalarBindings[[0]].destination != 0 ||
+       _BundleScalarBindings[[0]].source2 != 0 then return FALSE; end;
+    if !BundleOperationConsumesScalarSource0(operation) &&
+       _BundleScalarBindings[[0]].source0 != 0 then return FALSE; end;
+    if !BundleOperationConsumesScalarSource1(operation) &&
+       _BundleScalarBindings[[0]].source1 != 0 then return FALSE; end;
     return TRUE;
 end;
 
@@ -418,12 +445,36 @@ begin
             end;
         end;
     end;
-    if _BundleScalarBindings[[0]].valid then
-        operands.address = ReadScalarRegisterOperand(
-            _BundleScalarBindings[[0]].source0);
-        operands.scalar0 = operands.address;
-        operands.scalar1 = ReadScalarRegisterOperand(
-            _BundleScalarBindings[[0]].source1);
+    if TileOperandPresent(operation, TileOperand_address) then
+        if _BundleScalarBindings[[0]].valid then
+            operands.address = ReadScalarRegisterOperand(
+                _BundleScalarBindings[[0]].source0);
+        end;
+        if TileOperandPresent(operation, TileOperand_scalar0) then
+            if _BundleScalarBindings[[0]].valid then
+                operands.scalar0 = ReadScalarRegisterOperand(
+                    _BundleScalarBindings[[0]].source1);
+            else
+                // TLOAD/TSTORE retain dense-row behavior when B.IOR is
+                // omitted: the resolved LB2/Col dimension is the row stride.
+                operands.scalar0 = _BundleDimensions[[2]];
+            end;
+        elsif TileOperandPresent(operation, TileOperand_scalar1) &&
+              _BundleScalarBindings[[0]].valid then
+            operands.scalar1 = ReadScalarRegisterOperand(
+                _BundleScalarBindings[[0]].source1);
+        end;
+    else
+        if TileOperandPresent(operation, TileOperand_scalar0) &&
+           _BundleScalarBindings[[0]].valid then
+            operands.scalar0 = ReadScalarRegisterOperand(
+                _BundleScalarBindings[[0]].source0);
+        end;
+        if TileOperandPresent(operation, TileOperand_scalar1) &&
+           _BundleScalarBindings[[0]].valid then
+            operands.scalar1 = ReadScalarRegisterOperand(
+                _BundleScalarBindings[[0]].source1);
+        end;
     end;
     let dimension0 = UInt(_BundleDimensions[[0]]);
     let dimension1 = UInt(_BundleDimensions[[1]]);
@@ -812,12 +863,19 @@ begin
     end;
     let decoded = DecodeTileOperation(TileDecode_CUBE,
         BundleOperationDecodeCode(_BundleOperation));
-    if decoded == PTO_TILE_OPERATION_COUNT ||
-       !BundleSharedCubeSchemaLegal(function, shared_count, local_count) ||
+    if decoded == PTO_TILE_OPERATION_COUNT then
+        SetFault(Fault_IllegalInstruction, ReadTPC());
+        return FALSE;
+    end;
+    let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
+    if !BundleOperationScalarBindingSchemaLegal(operation) then
+        SetFault(Fault_BundleControl, ReadTPC());
+        return FALSE;
+    end;
+    if !BundleSharedCubeSchemaLegal(function, shared_count, local_count) ||
        BundleLocalTileDestinationCount() != 1 ||
        !BundleTileBindingStreamTerminated() ||
-       !SelectedBundleTileDataAttributesLegal(
-           decoded as integer {0..PTO_TILE_OPERATION_COUNT-1}) ||
+       !SelectedBundleTileDataAttributesLegal(operation) ||
        !SelectedBundleTileMasksLegal() ||
        _BundleTileBindings[[0]].pe_mask != '1111' ||
        !BundleSharedCubeDescriptorsReady(shared_count as integer {1..4}) ||
@@ -827,7 +885,6 @@ begin
         end;
         return FALSE;
     end;
-    let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
     let operands = BundleTileInstructionOperands(operation);
     let destination = operands.destination0;
     var left = _Tiles[[0]];
@@ -929,15 +986,6 @@ begin
     return TRUE;
 end;
 
-readonly func BundleSharedScalarSchemaLegal() => boolean
-begin
-    if !_BundleScalarBindings[[0]].valid ||
-       _BundleScalarBindings[[0]].destination != 0 ||
-       _BundleScalarBindings[[0]].source1 != 0 ||
-       _BundleScalarBindings[[0]].source2 != 0 then return FALSE; end;
-    return TRUE;
-end;
-
 readonly func BundleSharedTLSUSelected() => boolean
 begin
     if !_BundleOperation.valid ||
@@ -1004,17 +1052,24 @@ begin
     let shared_size = BundleSharedBindingSize(0);
     let shared_mask = BundleSharedBindingMask(0);
     if shared_mask == Zeros{4} then return TRUE; end;
-    if !SelectedBundleTileDataAttributesLegal(
-        DecodeTileOperation(TileDecode_TLSU,
-            BundleOperationDecodeCode(_BundleOperation)) as
-                integer {0..PTO_TILE_OPERATION_COUNT-1}) then
+    let decoded = DecodeTileOperation(TileDecode_TLSU,
+        BundleOperationDecodeCode(_BundleOperation));
+    if decoded == PTO_TILE_OPERATION_COUNT then
+        SetFault(Fault_IllegalInstruction, ReadTPC());
+        return FALSE;
+    end;
+    let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
+    if !BundleOperationScalarBindingSchemaLegal(operation) then
+        SetFault(Fault_BundleControl, ReadTPC());
+        return FALSE;
+    end;
+    if !SelectedBundleTileDataAttributesLegal(operation) then
         return FALSE;
     end;
     if function == 0 then
         if !BundleSharedBindingIsDestination(0) ||
            !TileSizeCodeIsLegal(shared_size) ||
-           BundleTileBindingCount() != 0 ||
-           !BundleSharedScalarSchemaLegal() then
+           BundleTileBindingCount() != 0 then
             SetFault(Fault_TileLegality, ReadTPC());
             return FALSE;
         end;
@@ -1028,7 +1083,12 @@ begin
             return FALSE;
         end;
         TLOADShared(shared_id,
-            ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source0),
+            if _BundleScalarBindings[[0]].valid then
+                ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source0)
+            else Zeros{PTO_XLEN},
+            if _BundleScalarBindings[[0]].valid then
+                ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source1)
+            else NaturalToWord(columns as integer {0..262144}),
             shared_size as integer {1..7}, valid_rows as integer {1..65535},
             columns as integer {1..65535},
             valid_rows as integer {1..65535},
@@ -1039,13 +1099,17 @@ begin
     elsif function == 1 || function == 14 then
         if BundleSharedBindingIsDestination(0) ||
            BundleTileBindingCount() != 0 ||
-           !BundleSharedScalarSchemaLegal() ||
            !SharedTileDescriptorLegal(shared_id) then
             SetFault(Fault_TileLegality, ReadTPC());
             return FALSE;
         end;
         TSTOREShared(
-            ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source0),
+            if _BundleScalarBindings[[0]].valid then
+                ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source0)
+            else Zeros{PTO_XLEN},
+            if _BundleScalarBindings[[0]].valid then
+                ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source1)
+            else _BundleDimensions[[2]],
             shared_id, shared_mask);
     elsif function == 9 || function == 10 then
         if !BundleSharedTMOVLocalSchemaLegal() then
@@ -1310,6 +1374,10 @@ begin
         when CommandHandler_SetBundleBodyAddress =>
             SetBundleBodyAddress(CommandDecodedBundleTarget(instruction, form));
         when CommandHandler_BindBundleScalarIO =>
+            if _BundleScalarBindings[[0]].valid then
+                SetFault(Fault_BundleControl, ReadTPC());
+                return CommandExecution_Rejected;
+            end;
             SetBundleScalarBinding(0,
                 CommandDecodedReg5(instruction, form, CommandField_RegDst),
                 CommandDecodedReg5(instruction, form, CommandField_RegSrc0),

@@ -5269,15 +5269,15 @@
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "2aeff5d762b067923cee2c5c848213fff70aa1622d70e53fc6818ee08bd8d107"
+      "sha256": "74f4524fe5505335bf5c7855170ebe18aa9e3b85c34068b2ecd15049a3363134"
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "5c831b14fb86df38f3fd398948ce2a303d15aac95540ea6e2f05f2d64bb246c4"
+      "sha256": "ae4b08f8b59118e447e52e2f6f41dd2d9323483c24931479245f1c367ea49b67"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "63fd433bc0a6ae5ca6895a3b0e77a34a6680aeda220e354e6823e12126014401"
+      "sha256": "71b0457aecc8deb0eea7f906097fb94877c8fa21470c0875b1a31f7411c197df"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
@@ -5289,7 +5289,7 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "01e86e84cc2adf06734a1330efd10b3af499c8f7b05ac8c8b5f5d1be4da0a578"
+      "sha256": "122166c233403dc30c49a3a3d274c21f0ce9ea1fddad1f55871659ef25a1f22b"
     },
     {
       "path": "scripts/generate-asl-decoders",
@@ -5301,11 +5301,11 @@
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "5d366d86b293530e876b91ed972dfd0fd10f19b4918b5504bd453c0bee99980c"
+      "sha256": "8a7e2c0bdd4f80f59a3c551d8586059b3b95bf5db6e65ec495736cf2fd2280c8"
     },
     {
       "path": "tests/asl/bundle-tests.asl",
-      "sha256": "ede57c4786901f40450bd966c535d1d6d044fd8db5172c7a04fc42fe5cd76de9"
+      "sha256": "c4a1927b7d853ae5ea5a1bd2edda25774b881a54b4ce07c97840c6cb2e433ad1"
     },
     {
       "path": "tests/asl/cube-totality-tests.asl",

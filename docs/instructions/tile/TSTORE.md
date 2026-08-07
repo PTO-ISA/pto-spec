@@ -17,7 +17,7 @@
   "operands": {
     "output": "GlobalTensor/partition-view destination",
     "input0": "Local tile or SharedTile source",
-    "input1": "base GPR\nrow-stride GPR\nordinary quantized-store scalar (optional)",
+    "input1": "base GPR and row-stride-in-elements GPR (optional; defaults to zero and LB2/Col)",
     "input2": "default full/core or compile-time pe_scope"
   },
   "dtypes": [
@@ -66,7 +66,7 @@ B.DIM       rValidCol, 0, ->LB0
 B.DIM       rValidRow, 0, ->LB1
 B.DIM       rCol, 0, ->LB2
 B.IOT       T#1, mask=1111, last
-B.IOR       a0, a1, 0
+B.IOR       a0, a1
 ```
 
 ## Shared Full/Core Form
@@ -76,7 +76,7 @@ The default Shared overload uses TLSU Function 1 and exactly one issuer. Size co
 ```asm
 BSTART.TLSU TSTORE, FP16
 B.IOS       S17, mask=1111
-B.IOR       a0, a1, 0, ->0
+B.IOR       a0, a1
 ```
 
 ## Shared Partition Form
@@ -88,7 +88,7 @@ no mask-only `B.IOT` companion.
 ```asm
 BSTART.TLSU TSTORE.SPART, FP16
 B.IOS       S17, mask=0101
-B.IOR       a0, a1, 0, ->0
+B.IOR       a0, a1
 ```
 
 ## Completion And Ordering
@@ -99,11 +99,20 @@ Shared store completion means the request has been accepted and the source has b
 
 - Bare Shared TSTORE is full/core and exactly-one issuer; `pe_scope` is the only partition form.
 - Partition pointers are independent per PE and all written byte ranges must be non-overlapping.
-- Full and partition Shared stores use zero `B.IOR.RegDst`; there is no runtime size or owner GPR.
+- Full and partition Shared stores consume `B.IOR.RegSrc0` as base and
+  `RegSrc1` as row stride in elements. These are the existing TSTORE fields;
+  no encoding changes. Omission selects `zero` base and the resolved
+  `LB2/Col` dimension as dense stride. There is no runtime size or owner
+  GPR.
 - Reading an uninitialized selected quarter is legal and produces an
   undefined-register value without modifying the Shared descriptor.
 - Source storage and scope are compile-time. Unsupported combinations are diagnostics, not runtime modes.
 - GM alignment, dtype, layout, shape, atomic and ordinary quantized-store rules remain PTO/target-specific.
+
+For row `r` and column `c`, TSTORE writes logical GM element
+`r * row_stride + c`. Packed four-bit types derive byte and nibble selection
+from that same logical element. An explicitly encoded zero stride remains
+zero; only an omitted B.IOR receives the dense `LB2/Col` default.
 
 ## Lowering 摘要
 

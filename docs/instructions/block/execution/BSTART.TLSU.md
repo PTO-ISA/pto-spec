@@ -35,8 +35,8 @@
 
 | Function | Operation | v5 operand schema |
 | ---: | --- | --- |
-| 0 | `TLOAD`; Shared form is GM2S full | Local: `B.IOT(dst)+B.IOR`; Shared: `B.IOS+B.IOR` |
-| 1 | `TSTORE`; Shared form is S2GM full | Local: `B.IOT(src)+B.IOR`; Shared: `B.IOS+B.IOR` |
+| 0 | `TLOAD`; Shared form is GM2S full | Local: `B.IOT(dst)+B.IOR(base,row_stride)`; Shared: `B.IOS+B.IOR(base,row_stride)` |
+| 1 | `TSTORE`; Shared form is S2GM full | Local: `B.IOT(src)+B.IOR(base,row_stride)`; Shared: `B.IOS+B.IOR(base,row_stride)` |
 | 2 | Local `TMOV` | `B.IOT(src,dst)` |
 | 3 | `TPREFETCH` | existing Local/cache schema |
 | 4 | `MGATHER` | existing Local schema |
@@ -48,8 +48,8 @@
 | 10 | `TMOV.L2S.PUBLISH` | `B.IOS+B.IOT(Local src)` |
 | 11 | `TMOV.S2L.BROADCAST` | `B.IOS+B.IOT(Local dst)` |
 | 12 | `TMOV.S2L.EXTRACT` | `B.IOS+B.IOT(Local dst)` |
-| 13 | `GMOV` | `B.IOT(Local src,dst,PE_MASK,TSize)+B.IOR(peer_tid,0,0)` |
-| 14 | `TSTORE.SPART` | `B.IOS+B.IOR` |
+| 13 | `GMOV` | `B.IOT(Local src,dst,PE_MASK,TSize)+B.IOR(a0)`; B.IOR may be omitted for `zero` |
+| 14 | `TSTORE.SPART` | `B.IOS+B.IOR(base,row_stride)` |
 | 15–31 | reserved | illegal |
 
 Function 9–12 由公开 `SharedMoveMode` 选择。Function 14 只由 Shared source 的 `TSTORE<pe_scope>` 选择；即使 source 已完整定义，full store 与 partition store 仍使用不同 Function。Function 13 是固定 Core4 collective `GMOV`，没有 scope 重载。
@@ -63,6 +63,10 @@ per-PE size 与 `PE_MASK` 编码在 `B.IOS`。Local→Shared 的 destination siz
 `TSize=001..111` 表示每个 selected PE 的 128 B–8 KiB，core allocation 为
 `popcount(PE_MASK)` 倍。`PE_MASK=0000` 是 strict no-op。`GMOV` 也使用该
 per-PE size 规则。
+
+TLOAD/TSTORE 的 B.IOR 编码不变：`RegSrc0` 是 base，`RegSrc1` 是以
+element 为单位的 row stride。B.IOR 缺省时使用 `zero` base 和
+`LB2/Col` 密集 stride；显式 `RegSrc1=zero` 仍是真实的零 stride。
 
 ## DataType
 

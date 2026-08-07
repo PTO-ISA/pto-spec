@@ -21,6 +21,12 @@
 
 Add cases for omitted B.IOR defaults, selector-zero semantics, unused nonzero fields, repeated selectors, a second B.IOR preserving the first binding, selector values 24..31 rejecting before mutation, and zero-mask no effects.
 
+Add direct-memory cases proving that the unchanged TLOAD/TSTORE encoding binds
+`RegSrc0` to base and `RegSrc1` to row stride in elements, that an omitted
+B.IOR defaults the row stride to `LB2/Col`, and that an explicitly encoded zero
+stride remains zero rather than receiving the omission default. Include a
+packed four-bit case so nibble selection follows the strided logical index.
+
 **Step 2: Register the new test in the core bundle shard**
 
 Add the new test function to `tests/asl/shards/core-bundle.asl` so the hosted and local shard paths exercise it.
@@ -45,7 +51,12 @@ Add machine-readable constraints requiring RegDst and RegSrc0..2 to be one of `0
 
 **Step 2: Resolve consumed fields from the operation schema**
 
-Add ASL helpers that derive the current direct-operation scalar source count and validate only schema-consumed fields. Omitted B.IOR is legal and supplies zero defaults; a present unused field must be zero.
+Add ASL helpers that derive the current direct-operation register-input order
+and validate only schema-consumed fields. Omitted B.IOR is legal and supplies
+operation defaults; a present unused field must be zero. TLOAD/TSTORE continue
+to use the existing B.IOR RegSrc0/RegSrc1 encoding, with base in RegSrc0 and
+row stride in RegSrc1. Their omitted stride default is the resolved LB2/Col
+dimension, while an explicitly encoded zero selector reads architectural zero.
 
 **Step 3: Reject a second direct B.IOR without overwrite**
 
@@ -53,7 +64,9 @@ Guard the B.IOR handler before `SetBundleScalarBinding`, raise the appropriate b
 
 **Step 4: Preserve Shared and zero-mask semantics**
 
-Allow omitted Shared B.IOR defaults while retaining the existing strict `PE_MASK=0000` no-effect path.
+Allow omitted Shared B.IOR defaults while retaining the existing strict
+`PE_MASK=0000` no-effect path. Apply the same base/row-stride contract to
+Shared TLOAD/TSTORE without adding or changing an encoded field.
 
 **Step 5: Run the focused shard and confirm GREEN**
 

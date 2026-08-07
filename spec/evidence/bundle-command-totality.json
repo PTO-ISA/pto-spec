@@ -53,9 +53,9 @@
     "retirement_rule": "Every successful non-start/non-stop command advances TPC by its encoded instruction length; start and stop own their control transfer.",
     "argument_rule": "All six B.ARG forms retain distinct three-bit argument-kind state; the dynamic form also records its decoded value.",
     "hint_rule": "B.HINT records the complete encoded payload and advances the hint epoch but has no PTO-v0 scheduling effect.",
-    "metadata_rule": "B.DIM, B.TEXT, B.IOR, B.IOT, B.CATR, and B.DATR consume every decoded field into trap-preserved bundle state. PTO-v0 tile commit consumes only B.IOT slot 0 destination/source bindings and the descriptor data type; all other stored metadata has no payload effect in this profile.",
+    "metadata_rule": "B.DIM, B.TEXT, B.IOR, B.IOT, B.CATR, and B.DATR consume every decoded field into trap-preserved bundle state. After the complete bundle is collected, PTO-v0 resolves the selected direct operation's tile, scalar/address, dimension, data-attribute, and operation-default operands before commit.",
     "memory_rule": "MCOPY and MSET accept lengths 0 through 63 bytes and reject larger XLEN values without truncation or partial effects.",
-    "bridge_rule": "The PTO-v0 bundle bridge binds destination0, source0, and source1 only; operations needing any other operand reject at commit before tile effects."
+    "bridge_rule": "The PTO-v0 bundle bridge resolves every canonical TileInstructionOperands field from ordered B.IOT/B.IOR bindings, bundle headers, or the operation's architectural default. Every accepted direct tile operation is schema-representable; malformed or surplus bindings still reject before tile effects."
   },
   "form_matrix": [
     {
@@ -1793,25 +1793,46 @@
   ],
   "bundle_tile_bridge": {
     "bound_operand_fields": [
+      "address",
+      "axis",
+      "byte_count",
+      "comparison",
       "destination0",
+      "destination1",
+      "diagonal",
+      "flag0",
+      "natural0",
+      "natural1",
+      "numeric_control",
+      "positive0",
+      "positive1",
+      "positive2",
+      "positive3",
+      "scalar0",
+      "scalar1",
+      "selected_byte",
+      "sort_width",
       "source0",
-      "source1"
+      "source1",
+      "source2",
+      "source3",
+      "source4"
     ],
     "counts": {
       "TEPL": {
         "total": 87,
-        "representable": 56,
-        "commit_rejected": 31
+        "representable": 87,
+        "commit_rejected": 0
       },
       "TLSU": {
         "total": 10,
-        "representable": 1,
-        "commit_rejected": 9
+        "representable": 10,
+        "commit_rejected": 0
       },
       "CUBE": {
         "total": 12,
-        "representable": 2,
-        "commit_rejected": 10
+        "representable": 12,
+        "commit_rejected": 0
       }
     },
     "operation_matrix": [
@@ -1981,11 +2002,9 @@
           "source1",
           "comparison"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "comparison"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2105,11 +2124,9 @@
           "source1",
           "source2"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2120,11 +2137,9 @@
           "source0",
           "numeric_control"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "numeric_control"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2136,11 +2151,9 @@
           "source1",
           "source2"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2151,11 +2164,9 @@
           "source0",
           "scalar0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2166,11 +2177,9 @@
           "source0",
           "scalar0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2181,11 +2190,9 @@
           "source0",
           "scalar0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2196,11 +2203,9 @@
           "source0",
           "scalar0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2211,11 +2216,9 @@
           "source0",
           "scalar0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2226,11 +2229,9 @@
           "source0",
           "scalar0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2241,11 +2242,9 @@
           "source0",
           "scalar0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2256,11 +2255,9 @@
           "source0",
           "scalar0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2271,11 +2268,9 @@
           "source0",
           "scalar0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2286,11 +2281,9 @@
           "source0",
           "scalar0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2301,11 +2294,9 @@
           "source0",
           "scalar0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2316,11 +2307,9 @@
           "source0",
           "scalar0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2332,12 +2321,9 @@
           "scalar0",
           "comparison"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "comparison",
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2349,11 +2335,9 @@
           "source1",
           "scalar0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2363,11 +2347,9 @@
           "destination0",
           "scalar0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2731,11 +2713,9 @@
           "source1",
           "axis"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "axis"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2747,12 +2727,9 @@
           "natural0",
           "natural1"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "natural0",
-          "natural1"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2764,12 +2741,9 @@
           "natural0",
           "natural1"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "natural0",
-          "natural1"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2786,17 +2760,9 @@
           "natural1",
           "scalar0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "natural0",
-          "natural1",
-          "positive0",
-          "positive1",
-          "positive2",
-          "positive3",
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2807,11 +2773,9 @@
           "source0",
           "scalar0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2822,12 +2786,9 @@
           "scalar0",
           "flag0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "flag0",
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2838,12 +2799,9 @@
           "flag0",
           "diagonal"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "diagonal",
-          "flag0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2855,11 +2813,9 @@
           "source1",
           "selected_byte"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "selected_byte"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2872,13 +2828,9 @@
           "scalar1",
           "numeric_control"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "numeric_control",
-          "scalar0",
-          "scalar1"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2891,13 +2843,9 @@
           "scalar1",
           "numeric_control"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "numeric_control",
-          "scalar0",
-          "scalar1"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2910,13 +2858,9 @@
           "sort_width",
           "flag0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "destination1",
-          "flag0",
-          "sort_width"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -2928,11 +2872,9 @@
           "source1",
           "flag0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "flag0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TEPL",
@@ -3030,13 +2972,12 @@
         "operation": "TLOAD",
         "operand_fields": [
           "destination0",
-          "address"
+          "address",
+          "scalar0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "address"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TLSU",
@@ -3044,13 +2985,12 @@
         "operation": "TSTORE",
         "operand_fields": [
           "address",
+          "scalar0",
           "source0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "address"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TLSU",
@@ -3072,12 +3012,9 @@
           "address",
           "byte_count"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "address",
-          "byte_count"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TLSU",
@@ -3088,11 +3025,9 @@
           "address",
           "source0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "address"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TLSU",
@@ -3103,11 +3038,9 @@
           "source0",
           "source1"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "address"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TLSU",
@@ -3119,11 +3052,9 @@
           "source0",
           "source1"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "address"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TLSU",
@@ -3135,12 +3066,9 @@
           "source1",
           "source2"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "address",
-          "source2"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TLSU",
@@ -3153,12 +3081,9 @@
           "source1",
           "source2"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "address",
-          "source2"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "TLSU",
@@ -3169,11 +3094,9 @@
           "source0",
           "scalar0"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "scalar0"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "CUBE",
@@ -3198,11 +3121,9 @@
           "source1",
           "source2"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "CUBE",
@@ -3214,11 +3135,9 @@
           "source1",
           "source2"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "CUBE",
@@ -3231,12 +3150,9 @@
           "source2",
           "source3"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2",
-          "source3"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "CUBE",
@@ -3250,13 +3166,9 @@
           "source3",
           "source4"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2",
-          "source3",
-          "source4"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "CUBE",
@@ -3270,13 +3182,9 @@
           "source3",
           "source4"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2",
-          "source3",
-          "source4"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "CUBE",
@@ -3301,11 +3209,9 @@
           "source1",
           "source2"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "CUBE",
@@ -3317,11 +3223,9 @@
           "source1",
           "source2"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "CUBE",
@@ -3334,12 +3238,9 @@
           "source2",
           "source3"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2",
-          "source3"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "CUBE",
@@ -3353,13 +3254,9 @@
           "source3",
           "source4"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2",
-          "source3",
-          "source4"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       },
       {
         "family": "CUBE",
@@ -3373,13 +3270,9 @@
           "source3",
           "source4"
         ],
-        "representable": false,
-        "unsupported_operand_fields": [
-          "source2",
-          "source3",
-          "source4"
-        ],
-        "commit_disposition": "reject-bundle-control-before-tile-effect"
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "commit_disposition": "execute-after-complete-binding"
       }
     ]
   },
@@ -3388,7 +3281,8 @@
     "boundary_test": "tests/asl/bundle-tests.asl:TestBundleCommandTotalityBoundaries",
     "bridge_tests": [
       "tests/asl/bundle-tests.asl:TestBundleTileCommitLifecycle",
-      "tests/asl/bundle-tests.asl:TestBundleTileCommitRollback"
+      "tests/asl/bundle-tests.asl:TestBundleTileCommitRollback",
+      "tests/asl/bundle-tests.asl:TestBundleScalarBindingSchemaDefaults"
     ],
     "canonical_form_case_count": 99
   },
@@ -3397,12 +3291,12 @@
     "aggregate_sha256": "1f8862ef90ee72d0e917398b2d96b2799f541f2e7198c103d9fc47af998a54ec",
     "matched_form_ids": 99,
     "exact_encoding_matches": 89,
-    "accepted_abi_encoding_divergences": 8,
+    "accepted_abi_encoding_divergences": 7,
     "executable_subset": 80,
     "decode_only": 16,
     "missing": 3,
     "authority": "non-normative structural comparison only",
-    "limitation": "The independent snapshot predates eight accepted PTO 0.58.0 command encoding changes and stages bundle payload execution, so it neither matches those masks nor validates PTO tile payload effects; ADR 0045, ADR 0054, the PTO catalogs, and PTO-owned ASL evidence remain authoritative."
+    "limitation": "The independent snapshot predates seven accepted PTO 0.58.0 command encoding changes and the completed direct-operation bundle schema. It stages bundle headers rather than tile payload execution, so the PTO catalogs, ADR 0055, and PTO-owned ASL evidence remain authoritative."
   },
   "requirement_ids": [
     "PTO-REQ-BUNDLE-DISPATCH-001",

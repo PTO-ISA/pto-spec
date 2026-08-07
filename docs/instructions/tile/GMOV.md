@@ -56,12 +56,13 @@ PTO_INST RecordEvent GMOV(TileDst &dst, uint64_t peer_tid, TileSrc &src);
 ```asm
 BSTART.TLSU GMOV, DataType
 B.IOT       SrcTile, mask=PE_MASK, last, ->DstTile<logical-size>
-B.IOR       peer_tid, 0, 0
+B.IOR       a0
 ```
 
 - `BSTART.TLSU Function=13` 选择 `GMOV`。
 - `B.IOT` 编码 source、destination、`PE_MASK` 与完整逻辑 Tile 的 `TSize`。
-- `B.IOR.RegSrc0` 编码 `peer_tid`；`RegSrc1`、`RegSrc2` 必须为零。
+- `B.IOR.RegSrc0` 编码 `peer_tid`；缺省时使用 `zero`。canonical 文本使用
+  ABI GPR 名而不是变量占位符。
 - 每个参与 PE 实际传输该逻辑 Tile 的固定四分之一 fragment。
 
 ## 完成与事件

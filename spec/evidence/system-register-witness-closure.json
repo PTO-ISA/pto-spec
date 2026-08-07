@@ -4053,7 +4053,7 @@
           ]
         }
       ],
-      "semantic_access_inventory_sha256": "0ab010aa709d9816c42bc7384939c292a01892256ec5ce7987b3459121ed3d96",
+      "semantic_access_inventory_sha256": "10404b0f602a128735a3675970434e74de74e80020035bafd0b52eed29be39b4",
       "semantic_access_inventory": [
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4068,12 +4068,12 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteBundleSharedCubeOperation",
-          "sha256": "42f91a33cc59f73ef711151a94322e1d1949c88c9221837fa188aa114479c171"
+          "sha256": "5faa0397ac2d63231fbe97f542de87436faf102badfa792d4f70347a1f8b9e44"
         },
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteBundleSharedTLSUOperation",
-          "sha256": "d194d3fd9491658eee59b8803a82e65f3435384e7d612b175e7cea5fb937f9d8"
+          "sha256": "d92177ad04b48f3c1db32bce60f7ab72c5529b30df6153df638e361e7c814205"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4093,7 +4093,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteDecodedBundleCommand",
-          "sha256": "25b8b284fe85bd7661c198c5eeab074786ffe2dfdac7401d47c5c0af01706d36"
+          "sha256": "f47169a2e1c3190d9570ed8045776426101f7419b43ea4ee4ff976ec085ccafb"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4578,12 +4578,12 @@
         {
           "path": "asl/tile/memory.asl",
           "function": "TLOAD",
-          "sha256": "4b2737edce44cdad77fb81c7f7049ab046143a431d7c29a4165d5bd82b992c3c"
+          "sha256": "b5341a7a636ba15aacee69e6914925656824bc9f5bbe2aed97afa02476d97d2a"
         },
         {
           "path": "asl/tile/memory.asl",
           "function": "TLOADShared",
-          "sha256": "4cd043356278772a064aa51a70e1fefdd792a34308358fa7527e780367ff8aa8"
+          "sha256": "e147840444e0bd0401993ad41d37ae8f8a931841498317c7c01843c63d09c363"
         },
         {
           "path": "asl/tile/memory.asl",
@@ -4598,12 +4598,12 @@
         {
           "path": "asl/tile/memory.asl",
           "function": "TSTORE",
-          "sha256": "0c1affe1a55c458a94e5f4a96969385f857b15eda9ee97b608f982210b0715bd"
+          "sha256": "d5096d774f83230ff9c137138b78eb77124c18a28973524b0dd0312a4a69e6fe"
         },
         {
           "path": "asl/tile/memory.asl",
           "function": "TSTOREShared",
-          "sha256": "7508e9b14609c14de7f7d4c5668f0b5097900f484b357928ab692f1e0b8865f3"
+          "sha256": "c45e2817b1b0388d3101c867086bd65e5e5552736913eba5a06d349d7c82ab2d"
         }
       ],
       "rule": "All fixed and bank-expanded storage-only addresses are enumerated, and every normative function that can reach the extended register backing store or any generic/context address API is content-addressed. A literal full-bank address, computed index, symbolic helper call, or direct backing-store access changes the reviewed inventory and fails closed."
@@ -4668,7 +4668,7 @@
           ]
         }
       ],
-      "activation_inventory_sha256": "91a05c8776443e28cb35ad9a3e5edb74cd31cb02791b9323a4ad052a39681b15",
+      "activation_inventory_sha256": "8a3e5e7155a5bff32ee6d94271888cef80695944228f474ce42361dfd1021927",
       "activation_inventory": [
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4683,12 +4683,12 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteBundleSharedCubeOperation",
-          "sha256": "42f91a33cc59f73ef711151a94322e1d1949c88c9221837fa188aa114479c171"
+          "sha256": "5faa0397ac2d63231fbe97f542de87436faf102badfa792d4f70347a1f8b9e44"
         },
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteBundleSharedTLSUOperation",
-          "sha256": "d194d3fd9491658eee59b8803a82e65f3435384e7d612b175e7cea5fb937f9d8"
+          "sha256": "d92177ad04b48f3c1db32bce60f7ab72c5529b30df6153df638e361e7c814205"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4708,7 +4708,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteDecodedBundleCommand",
-          "sha256": "25b8b284fe85bd7661c198c5eeab074786ffe2dfdac7401d47c5c0af01706d36"
+          "sha256": "f47169a2e1c3190d9570ed8045776426101f7419b43ea4ee4ff976ec085ccafb"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -5243,12 +5243,12 @@
         {
           "path": "asl/tile/memory.asl",
           "function": "TLOAD",
-          "sha256": "4b2737edce44cdad77fb81c7f7049ab046143a431d7c29a4165d5bd82b992c3c"
+          "sha256": "b5341a7a636ba15aacee69e6914925656824bc9f5bbe2aed97afa02476d97d2a"
         },
         {
           "path": "asl/tile/memory.asl",
           "function": "TLOADShared",
-          "sha256": "4cd043356278772a064aa51a70e1fefdd792a34308358fa7527e780367ff8aa8"
+          "sha256": "e147840444e0bd0401993ad41d37ae8f8a931841498317c7c01843c63d09c363"
         },
         {
           "path": "asl/tile/memory.asl",
@@ -5263,12 +5263,12 @@
         {
           "path": "asl/tile/memory.asl",
           "function": "TSTORE",
-          "sha256": "0c1affe1a55c458a94e5f4a96969385f857b15eda9ee97b608f982210b0715bd"
+          "sha256": "d5096d774f83230ff9c137138b78eb77124c18a28973524b0dd0312a4a69e6fe"
         },
         {
           "path": "asl/tile/memory.asl",
           "function": "TSTOREShared",
-          "sha256": "7508e9b14609c14de7f7d4c5668f0b5097900f484b357928ab692f1e0b8865f3"
+          "sha256": "c45e2817b1b0388d3101c867086bd65e5e5552736913eba5a06d349d7c82ab2d"
         },
         {
           "path": "asl/types.asl",
@@ -5338,15 +5338,15 @@
     },
     {
       "path": "generated:build/decoders.asl",
-      "sha256": "e4f4fce154fbbad8e79ddc5f149cee352b23778c46855bc5b85cb6459664e493"
+      "sha256": "a916df64f7e79fdc8ca1c00d6e8a6c6a4802c9ae633b43c00fce01170bb219f9"
     },
     {
       "path": "tests/asl/main.asl",
-      "sha256": "71fa351e06c5d1168a77a1d414fde9306a460c6ede8772a56fb31f47bad76d7d"
+      "sha256": "0a8bc5e516197dda5538938948a722b012aa2ada1761c5ef3cb159a53a8ad575"
     },
     {
       "path": "tests/asl/shards/core-bundle.asl",
-      "sha256": "a29b8533de24000a161b60f0aa8edd9957d90545072468a35d79a5510a514bdd"
+      "sha256": "70b3396d54e0e82eef99b23fe5052c6d2dd56e6f46cdc452f5a7c1a3446ade46"
     },
     {
       "path": "tests/asl/scalar-tests.asl",
@@ -5358,7 +5358,7 @@
     },
     {
       "path": "tests/asl/tile-tests.asl",
-      "sha256": "6f5b7e1df5203a44d64e703c70a2dcef695adc70885f022089027e41993f844b"
+      "sha256": "6cf462cc5fa85c13f5d0ff209601b409263a448413b87b4fcc413e803367c551"
     },
     {
       "path": "asl/types.asl",

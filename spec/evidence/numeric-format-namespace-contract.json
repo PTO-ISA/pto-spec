@@ -1936,7 +1936,7 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "01e86e84cc2adf06734a1330efd10b3af499c8f7b05ac8c8b5f5d1be4da0a578"
+      "sha256": "122166c233403dc30c49a3a3d274c21f0ce9ea1fddad1f55871659ef25a1f22b"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -1944,7 +1944,7 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "5c831b14fb86df38f3fd398948ce2a303d15aac95540ea6e2f05f2d64bb246c4"
+      "sha256": "ae4b08f8b59118e447e52e2f6f41dd2d9323483c24931479245f1c367ea49b67"
     },
     {
       "path": "asl/types.asl",
@@ -1964,11 +1964,11 @@
     },
     {
       "path": "asl/tile/memory.asl",
-      "sha256": "c2abd22e62aab2fdb9d93795437da8790a09489d51b89bdfa35edbb4672bd4e5"
+      "sha256": "2455cf9c15b3fe7515846dcc597c1d0eb3c91fdf0c53d048ae055fbdb20c8dec"
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "5d366d86b293530e876b91ed972dfd0fd10f19b4918b5504bd453c0bee99980c"
+      "sha256": "8a7e2c0bdd4f80f59a3c551d8586059b3b95bf5db6e65ec495736cf2fd2280c8"
     },
     {
       "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",

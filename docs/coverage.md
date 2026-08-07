@@ -185,7 +185,7 @@ numeric hooks, and the later immutable-commit review keep S6-T1 open.
 The generated `spec/evidence/release-gate-readiness.json` ledger closes the
 S6-T2 contract inventory independently of candidate execution. It defines ten
 clone-verifiable release gates, proves the pinned least-privilege hosted
-workflow and exact 34-shard/111-call/105-subprogram topology, and enumerates ten
+workflow and exact 34-shard/113-call/107-subprogram topology, and enumerates ten
 external repository controls plus the PTO architecture and formal-model review
 perspectives. All candidate commit, runtime result, hosted-run, control-snapshot,
 and approval fields remain null. S5-T2 and S6-T1 therefore block candidate

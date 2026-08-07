@@ -46,7 +46,32 @@ EFFECT_BY_HANDLER = {
     "SetBundleHint": "diagnostic-hint-payload",
 }
 
-BRIDGE_FIELDS = {"destination0", "source0", "source1"}
+BRIDGE_FIELDS = {
+    "address",
+    "axis",
+    "byte_count",
+    "comparison",
+    "destination0",
+    "destination1",
+    "diagonal",
+    "flag0",
+    "natural0",
+    "natural1",
+    "numeric_control",
+    "positive0",
+    "positive1",
+    "positive2",
+    "positive3",
+    "scalar0",
+    "scalar1",
+    "selected_byte",
+    "sort_width",
+    "source0",
+    "source1",
+    "source2",
+    "source3",
+    "source4",
+}
 
 
 def load_json(path: Path) -> dict:
@@ -187,9 +212,9 @@ def build_evidence() -> dict:
             "retirement_rule": "Every successful non-start/non-stop command advances TPC by its encoded instruction length; start and stop own their control transfer.",
             "argument_rule": "All six B.ARG forms retain distinct three-bit argument-kind state; the dynamic form also records its decoded value.",
             "hint_rule": "B.HINT records the complete encoded payload and advances the hint epoch but has no PTO-v0 scheduling effect.",
-            "metadata_rule": "B.DIM, B.TEXT, B.IOR, B.IOT, B.CATR, and B.DATR consume every decoded field into trap-preserved bundle state. PTO-v0 tile commit consumes only B.IOT slot 0 destination/source bindings and the descriptor data type; all other stored metadata has no payload effect in this profile.",
+            "metadata_rule": "B.DIM, B.TEXT, B.IOR, B.IOT, B.CATR, and B.DATR consume every decoded field into trap-preserved bundle state. After the complete bundle is collected, PTO-v0 resolves the selected direct operation's tile, scalar/address, dimension, data-attribute, and operation-default operands before commit.",
             "memory_rule": "MCOPY and MSET accept lengths 0 through 63 bytes and reject larger XLEN values without truncation or partial effects.",
-            "bridge_rule": "The PTO-v0 bundle bridge binds destination0, source0, and source1 only; operations needing any other operand reject at commit before tile effects.",
+            "bridge_rule": "The PTO-v0 bundle bridge resolves every canonical TileInstructionOperands field from ordered B.IOT/B.IOR bindings, bundle headers, or the operation's architectural default. Every accepted direct tile operation is schema-representable; malformed or surplus bindings still reject before tile effects.",
         },
         "form_matrix": form_matrix,
         "encoding_variant_matrix": encoding_variant_matrix,
@@ -204,6 +229,7 @@ def build_evidence() -> dict:
             "bridge_tests": [
                 "tests/asl/bundle-tests.asl:TestBundleTileCommitLifecycle",
                 "tests/asl/bundle-tests.asl:TestBundleTileCommitRollback",
+                "tests/asl/bundle-tests.asl:TestBundleScalarBindingSchemaDefaults",
             ],
             "canonical_form_case_count": len(command_rows),
         },
@@ -217,7 +243,7 @@ def build_evidence() -> dict:
             "decode_only": comparison_status_counts["decode-only"],
             "missing": comparison_status_counts["missing"],
             "authority": "non-normative structural comparison only",
-            "limitation": "The independent snapshot predates eight accepted PTO 0.58.0 command encoding changes and stages bundle payload execution, so it neither matches those masks nor validates PTO tile payload effects; ADR 0045, ADR 0054, the PTO catalogs, and PTO-owned ASL evidence remain authoritative.",
+            "limitation": "The independent snapshot predates seven accepted PTO 0.58.0 command encoding changes and the completed direct-operation bundle schema. It stages bundle headers rather than tile payload execution, so the PTO catalogs, ADR 0055, and PTO-owned ASL evidence remain authoritative.",
         },
         "requirement_ids": [
             "PTO-REQ-BUNDLE-DISPATCH-001",

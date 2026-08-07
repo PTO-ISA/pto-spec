@@ -613,12 +613,14 @@ begin
 end;
 
 readonly func TileOperandsLegal_TLOAD(destination: TileIndex,
-                                      base_address: Word) => boolean
+                                      base_address: Word,
+                                      row_stride_elements: Word) => boolean
 begin
     return TileDescriptorLegal(destination);
 end;
 
 readonly func TileOperandsLegal_TSTORE(base_address: Word,
+                                       row_stride_elements: Word,
                                        source: TileIndex) => boolean
 begin
     return TileDescriptorLegal(source);

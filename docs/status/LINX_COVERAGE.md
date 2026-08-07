@@ -38,7 +38,10 @@ Complete HTML 的 Scalar ISA 区保留锁定的 Linx source reference。v5 完�
 
 ## GMOV 覆盖
 
-`GMOV` 使用原 reserved 的 `BSTART.TLSU Function 13`，operand schema 为 `B.IOT(Local src,dst,PE_MASK,TSize)+B.IOR(peer_tid,0,0)`。它是固定 Core4 collective，与 Shared CUBE 一样要求收敛，但不使用 `B.IOS`。
+`GMOV` 使用原 reserved 的 `BSTART.TLSU Function 13`，operand schema 为
+`B.IOT(Local src,dst,PE_MASK,TSize)+B.IOR(a0)`；B.IOR 缺省时 peer 为
+`zero`。它是固定 Core4 collective，与 Shared CUBE 一样要求收敛，但不使用
+`B.IOS`。
 
 ## PTO Mapping Status
 

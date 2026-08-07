@@ -26,13 +26,33 @@ every other schema-contributing header participate. Each header instruction
 MUST define the values used when that instruction or an optional operand is
 omitted.
 
-For the currently executable PTO direct-operation catalog:
+For the currently executable PTO direct-operation catalog, register inputs are
+bound in architectural operand order:
 
-- `address` and `scalar0` consume `B.IOR.RegSrc0`;
-- `scalar1` consumes `B.IOR.RegSrc1`;
+- an operation whose first register input is `address` consumes
+  `B.IOR.RegSrc0` for that address;
+- the operation's next register input consumes `B.IOR.RegSrc1`;
+- an operation with no `address` binds `scalar0` to `RegSrc0` and `scalar1` to
+  `RegSrc1`;
 - no accepted direct operation consumes `RegSrc2` or `RegDst`;
 - later operation families MAY extend this mapping only through an explicit
   catalog/schema change with executable tests.
+
+`TLOAD` and `TSTORE` retain their existing instruction encodings and existing
+`B.IOR` field positions. They consume `RegSrc0` as the base address and
+`RegSrc1` as the row stride in elements. No encoding bit, opcode, selector, or
+instruction length changes. Their two-dimensional element address is:
+
+```text
+base + (row * row_stride_elements + column) * element_size
+```
+
+Packed four-bit element types apply the same logical element index before byte
+and nibble selection. One-dimensional accesses naturally ignore the stride
+because `row` is zero. If B.IOR is omitted, the base defaults to `zero` and the
+row stride defaults to the resolved `LB2/Col` dimension, preserving dense-row
+behavior. If B.IOR is present with `RegSrc1=zero`, zero is the real encoded
+stride and rows alias; it is not replaced by the omission default.
 
 The ASL model MUST derive consumed fields from the resolved operation schema,
 not from whether a selector is zero and not from a fixed encoded source count.
@@ -111,6 +131,9 @@ The change requires fail-closed tests for:
 
 - all 24 absolute selectors and rejection of 24..31;
 - omitted B.IOR defaults;
+- explicit TLOAD/TSTORE row stride without any encoding change;
+- omitted TLOAD/TSTORE stride defaulting to `LB2/Col`, distinct from an
+  explicitly encoded `zero` stride;
 - consumed zero versus unconsumed zero;
 - unconsumed nonzero rejection;
 - second-B.IOR rejection without overwrite;
