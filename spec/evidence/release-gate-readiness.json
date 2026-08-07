@@ -103,7 +103,7 @@
     },
     {
       "path": "scripts/check-repository",
-      "sha256": "391cc8f186321fb53bef36c51dc66171963abd6484529581af11e4ace7387bb1"
+      "sha256": "5d5c8e3f78659494450710ff306338c75a8fbc8b3ab09581cd746ac9d2373f92"
     },
     {
       "path": "scripts/check-toolchain",
