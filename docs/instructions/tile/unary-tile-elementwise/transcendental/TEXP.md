@@ -10,6 +10,12 @@ Execute the TEXP Tile operation contract.
 TEXP <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TEXP | TEPL | 0x012 | 18 | 0 | ExecuteTileUnary |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/unary-tile-elementwise/transcendental/TEXP.asl -->

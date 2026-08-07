@@ -10,6 +10,18 @@ Execute the ACRE scalar instruction contract.
 acre rra_type
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| acre_32_54b80944d32d | L32 | 32 | 0x0100302b / 0xff0fffff | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| acre_32_54b80944d32d | RRA_Type | 4 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":4}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/ACRE.asl -->

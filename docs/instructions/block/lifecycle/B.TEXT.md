@@ -10,6 +10,18 @@ Sets the out-of-line body entry address for a decoupled bundle.
 B.TEXT <label>
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| b_text_32_1ce09f50e5dd | L32 | 32 | 0x00000003 / 0x0000007f | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| b_text_32_1ce09f50e5dd | simm25 | 25 | signed | [{"instruction_lsb":7,"value_lsb":0,"width":25}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/B.TEXT.asl -->

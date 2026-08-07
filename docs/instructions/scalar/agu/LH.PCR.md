@@ -10,6 +10,19 @@ Execute the LH.PCR scalar instruction contract.
 lh.pcr [symbol], ->{t, u, Rd}
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| lh_pcr_32_aabf46d21e49 | L32 | 32 | 0x00001039 / 0x0000707f | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| lh_pcr_32_aabf46d21e49 | RegDst | 5 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":5}] |
+| lh_pcr_32_aabf46d21e49 | simm17 | 17 | signed | [{"instruction_lsb":15,"value_lsb":0,"width":17}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/LH.PCR.asl -->

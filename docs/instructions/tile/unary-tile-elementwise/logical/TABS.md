@@ -10,6 +10,12 @@ Execute the TABS Tile operation contract.
 TABS <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TABS | TEPL | 0x00F | 15 | 0 | ExecuteTileUnary |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/unary-tile-elementwise/logical/TABS.asl -->

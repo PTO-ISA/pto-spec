@@ -10,6 +10,18 @@ Closes the current bundle, initializes the next bundle descriptor, and selects i
 BSTART.TGEMVMX.ACC DataType
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| bstart_tgemvmx_acc_32_368647b04bb0 | L32 | 32 | 0x01631181 / 0x07ffffff | [{"field":"DataType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,24,25,26,27,28]}] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| bstart_tgemvmx_acc_32_368647b04bb0 | DataType | 5 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":5}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.TGEMVMX.ACC.asl -->

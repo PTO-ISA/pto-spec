@@ -10,6 +10,18 @@ Execute the TLB.IV scalar instruction contract.
 tlb.iv SrcL
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| tlb_iv_32_bf0a5d1ea211 | L32 | 32 | 0x0010702b / 0xfff07fff | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| tlb_iv_32_bf0a5d1ea211 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/TLB.IV.asl -->

@@ -10,6 +10,12 @@ Commits the current bundle and transfers to its selected continuation.
 C.BSTOP
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| c_bstop_16_ca4743d8a95e | C16 | 16 | 0x0000 / 0xffff | [] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/C.BSTOP.asl -->

@@ -13,6 +13,24 @@ HL.BSTART.FP CALL, <label>
 HL.BSTART.FP DIRECT, <label>
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| hl_bstart_fp_48_038e2e96cf64 | HL48 | 48 | 0x00003101000e / 0x00007fff000f | [] |
+| hl_bstart_fp_48_43530d2ebfae | HL48 | 48 | 0x00001101000e / 0x00007fff000f | [] |
+| hl_bstart_fp_48_81b457553844 | HL48 | 48 | 0x00004101000e / 0x00007fff000f | [] |
+| hl_bstart_fp_48_eb938e9200eb | HL48 | 48 | 0x00002101000e / 0x00007fff000f | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| hl_bstart_fp_48_038e2e96cf64 | simm | 30 | signed | [{"instruction_lsb":31,"value_lsb":1,"width":17},{"instruction_lsb":4,"value_lsb":18,"width":12}] |
+| hl_bstart_fp_48_43530d2ebfae | simm | 30 | signed | [{"instruction_lsb":31,"value_lsb":1,"width":17},{"instruction_lsb":4,"value_lsb":18,"width":12}] |
+| hl_bstart_fp_48_81b457553844 | simm | 30 | signed | [{"instruction_lsb":31,"value_lsb":1,"width":17},{"instruction_lsb":4,"value_lsb":18,"width":12}] |
+| hl_bstart_fp_48_eb938e9200eb | simm | 30 | signed | [{"instruction_lsb":31,"value_lsb":1,"width":17},{"instruction_lsb":4,"value_lsb":18,"width":12}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/encoding/HL.BSTART.FP.asl -->

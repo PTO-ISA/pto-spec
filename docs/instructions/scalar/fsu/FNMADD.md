@@ -10,6 +10,22 @@ Execute the FNMADD scalar instruction contract.
 fnmadd.{T} SrcL, SrcR, SrcA, ->{t, u, Rd}
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| fnmadd_32_7f45e606d299 | L32 | 32 | 0x0000604b / 0x0000707f | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| fnmadd_32_7f45e606d299 | RegDst | 5 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":5}] |
+| fnmadd_32_7f45e606d299 | SrcA | 5 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":5}] |
+| fnmadd_32_7f45e606d299 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+| fnmadd_32_7f45e606d299 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
+| fnmadd_32_7f45e606d299 | SrcType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FNMADD.asl -->

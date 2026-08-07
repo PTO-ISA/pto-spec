@@ -10,6 +10,21 @@ Execute the SD.OR scalar instruction contract.
 sd.or<.{rl, f, rlf}> [SrcL], SrcR
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| sd_or_32_2a65eedfae0f | L32 | 32 | 0x2000500b / 0xf4007fff | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| sd_or_32_2a65eedfae0f | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+| sd_or_32_2a65eedfae0f | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
+| sd_or_32_2a65eedfae0f | far | 1 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":1}] |
+| sd_or_32_2a65eedfae0f | rl | 1 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":1}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/SD.OR.asl -->

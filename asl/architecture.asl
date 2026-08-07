@@ -30,7 +30,7 @@ constant PTO_BUNDLE_SCALAR_BINDING_COUNT = 32;
 constant PTO_BUNDLE_TILE_BINDING_COUNT = 16;
 constant PTO_TILE_BASE_COUNT = 6;
 
-// ASL arrays require static bounds. This is an executable-model bound, not an
-// architectural maximum tile size. Legality uses descriptor byte capacity.
-config PTO_MODEL_TILE_ELEMENTS : integer {1..4096} = 256;
+// ASL arrays require static bounds. 8 KiB of packed four-bit elements is the
+// largest legal per-PE Tile payload and therefore requires 16,384 slots.
+config PTO_MODEL_TILE_ELEMENTS : integer {1..16384} = 16384;
 config PTO_MODEL_MEMORY_BYTES : integer {256..65536} = 4096;

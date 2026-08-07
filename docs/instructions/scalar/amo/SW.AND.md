@@ -10,6 +10,21 @@ Execute the SW.AND scalar instruction contract.
 sw.and<.{rl, f, rlf}> [SrcL], SrcR
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| sw_and_32_7ef0872d5502 | L32 | 32 | 0x1000300b / 0xf4007fff | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| sw_and_32_7ef0872d5502 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+| sw_and_32_7ef0872d5502 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
+| sw_and_32_7ef0872d5502 | far | 1 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":1}] |
+| sw_and_32_7ef0872d5502 | rl | 1 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":1}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/SW.AND.asl -->

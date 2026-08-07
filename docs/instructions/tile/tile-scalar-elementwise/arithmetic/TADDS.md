@@ -10,6 +10,12 @@ Execute the TADDS Tile operation contract.
 TADDS <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TADDS | TEPL | 0x020 | 0 | 1 | ExecuteTileScalar |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-elementwise/arithmetic/TADDS.asl -->

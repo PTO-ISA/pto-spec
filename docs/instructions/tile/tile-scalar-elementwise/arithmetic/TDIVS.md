@@ -10,6 +10,12 @@ Execute the TDIVS Tile operation contract.
 TDIVS <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TDIVS | TEPL | 0x023 | 3 | 1 | ExecuteTileScalar |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-elementwise/arithmetic/TDIVS.asl -->

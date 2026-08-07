@@ -10,6 +10,21 @@ Execute the SD.SMAX scalar instruction contract.
 sd.smax<.{rl, f, rlf}> [SrcL], SrcR
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| sd_smax_32_e59bf90b50c3 | L32 | 32 | 0x4000500b / 0xf4007fff | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| sd_smax_32_e59bf90b50c3 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+| sd_smax_32_e59bf90b50c3 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
+| sd_smax_32_e59bf90b50c3 | far | 1 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":1}] |
+| sd_smax_32_e59bf90b50c3 | rl | 1 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":1}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/SD.SMAX.asl -->

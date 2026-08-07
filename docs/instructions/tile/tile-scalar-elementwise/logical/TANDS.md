@@ -10,6 +10,12 @@ Execute the TANDS Tile operation contract.
 TANDS <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TANDS | TEPL | 0x026 | 6 | 1 | ExecuteTileScalar |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-elementwise/logical/TANDS.asl -->

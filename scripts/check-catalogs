@@ -8703,14 +8703,16 @@ def main() -> int:
     ).read_text(encoding="utf-8")
     for spelling in (
         "S0..S255",
-        "B.IOS S17, mask=1111",
-        "B.IOS mask=0011, ->S17<128B>",
+        "B.IOS S<SharedTID>, mask=<PE_MASK>",
+        "B.IOS mask=<PE_MASK>, ->S<SharedTID><TSize>",
+        "TSize zero identifies the Shared source form",
         "0x00001013 / 0xf00871ff",
     ):
         require(spelling in shared_binding_doc, f"missing Shared syntax boundary: {spelling}")
     require(
-        "不存在 mask-only Shared companion" in shared_mask_doc
-        and "`0000` 是 strict no-op" in shared_mask_doc,
+        "InstructionContractZeroMaskIsNoOp_B_IOT" in shared_mask_doc
+        and "InstructionContractHasMaskOnlySharedCompanion_B_IOT" in shared_mask_doc
+        and "return FALSE;" in shared_mask_doc,
         "B.IOT Shared-companion removal or zero-mask contract is absent",
     )
     active_shared_docs = (
@@ -8720,9 +8722,9 @@ def main() -> int:
         ROOT / "docs/davincioo-arch/state-and-data-types.md",
         ROOT / "docs/instructions/block/operands/B.IOS.md",
         ROOT / "docs/instructions/block/operands/B.IOT.md",
-        ROOT / "docs/instructions/tile/TLOAD.md",
-        ROOT / "docs/instructions/tile/TSTORE.md",
-        ROOT / "docs/instructions/tile/TMOV.md",
+        ROOT / "docs/instructions/tile/memory/regular/TLOAD.md",
+        ROOT / "docs/instructions/tile/memory/regular/TSTORE.md",
+        ROOT / "docs/instructions/tile/complex-layout/layout/TMOV.md",
     )
     for path in active_shared_docs:
         body = path.read_text(encoding="utf-8")
@@ -9356,7 +9358,7 @@ def main() -> int:
         and release_summary["gate_count"] == 10
         and release_summary["required_approval_count"] == 2
         and release_summary["required_external_control_count"] == 10
-        and release_summary["shard_count"] == 51
+        and release_summary["shard_count"] == 52
         and release_summary["canonical_call_count"] == 113
         and release_summary["reachable_test_subprogram_count"] == 107
         and release_summary["open_prerequisite_targets"] == ["S5-T2", "S6-T1"]

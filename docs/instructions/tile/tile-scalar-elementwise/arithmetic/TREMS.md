@@ -10,6 +10,12 @@ Execute the TREMS Tile operation contract.
 TREMS <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TREMS | TEPL | 0x024 | 4 | 1 | ExecuteTileScalar |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-elementwise/arithmetic/TREMS.asl -->

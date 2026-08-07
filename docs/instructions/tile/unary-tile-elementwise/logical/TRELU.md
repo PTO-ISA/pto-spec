@@ -10,6 +10,12 @@ Execute the TRELU Tile operation contract.
 TRELU <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TRELU | TEPL | 0x017 | 23 | 0 | ExecuteTileUnary |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/unary-tile-elementwise/logical/TRELU.asl -->

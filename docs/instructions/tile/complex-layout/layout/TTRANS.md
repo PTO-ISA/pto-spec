@@ -10,6 +10,12 @@ Execute the TTRANS Tile operation contract.
 TTRANS <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TTRANS | TEPL | 0x06E | 14 | 3 | TTRANS |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/layout/TTRANS.asl -->

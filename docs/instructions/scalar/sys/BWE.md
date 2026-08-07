@@ -10,6 +10,18 @@ Execute the BWE scalar instruction contract.
 bwe SrcL
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| bwe_32_e5a5240bdf9b | L32 | 32 | 0x0010002b / 0xfff07fff | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| bwe_32_e5a5240bdf9b | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/BWE.asl -->

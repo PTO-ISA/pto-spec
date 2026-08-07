@@ -10,6 +10,12 @@ Execute the TCOLEXPANDMUL Tile operation contract.
 TCOLEXPANDMUL <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TCOLEXPANDMUL | TEPL | 0x057 | 23 | 2 | ExecuteTileExpand |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/vector-tile-expansion/column-expansion/TCOLEXPANDMUL.asl -->

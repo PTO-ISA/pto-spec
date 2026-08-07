@@ -10,6 +10,12 @@ Execute the TROWSUM Tile operation contract.
 TROWSUM <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TROWSUM | TEPL | 0x040 | 0 | 2 | ExecuteTileReduction |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduction/row-reduction/TROWSUM.asl -->

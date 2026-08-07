@@ -10,6 +10,12 @@ Execute the MSCATTER_MASK Tile operation contract.
 MSCATTER_MASK <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| MSCATTER_MASK | TLSU |  | 7 |  | MSCATTER_MASK |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory/irregular/MSCATTER_MASK.asl -->

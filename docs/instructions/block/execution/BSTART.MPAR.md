@@ -10,6 +10,18 @@ Closes the current bundle, initializes the next bundle descriptor, and selects i
 BSTART.MPAR <VS8, VS16>
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| bstart_mpar_32_2d163417c615 | L32 | 32 | 0x00001181 / 0xf9ffffff | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| bstart_mpar_32_2d163417c615 | Mode | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.MPAR.asl -->

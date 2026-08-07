@@ -257,7 +257,7 @@ begin
     return _BundleDataAttributes.canonicalize;
 end;
 
-func SetBundleDataAttributeState0580(
+func SetBundleDataAttributeState(
     data_type: bits(5), data_layout: bits(5), pad_value: bits(2),
     conversion_mode: bits(3), rounding_mode: bits(3), saturating: boolean,
     canonicalize: boolean)

@@ -5277,7 +5277,7 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "71b0457aecc8deb0eea7f906097fb94877c8fa21470c0875b1a31f7411c197df"
+      "sha256": "7bd2bfa673c449813d4cf27ae22612d2ca15d20498b6551e514ff4e1d6d40919"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
@@ -5301,15 +5301,15 @@
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "8a7e2c0bdd4f80f59a3c551d8586059b3b95bf5db6e65ec495736cf2fd2280c8"
+      "sha256": "300001357e41aa68f4c2913d7d9591d7959020552e7927af0fa0c1e19bc799c9"
     },
     {
       "path": "tests/asl/bundle-tests.asl",
-      "sha256": "c4a1927b7d853ae5ea5a1bd2edda25774b881a54b4ce07c97840c6cb2e433ad1"
+      "sha256": "a19618ea54775f4e4013cd8f84f51ddde1391222275e718ab491322b37386ed5"
     },
     {
       "path": "tests/asl/cube-totality-tests.asl",
-      "sha256": "11852190191d1f29cef1c372e9f2c5276cb46218fdf4464da36b89770d3800f2"
+      "sha256": "64f0185ecacc2e6963168c289fc4c296d6b92bb40f8b6f99be41cd2ea8b6925c"
     },
     {
       "path": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",

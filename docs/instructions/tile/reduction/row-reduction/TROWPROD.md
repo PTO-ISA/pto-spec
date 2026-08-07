@@ -10,6 +10,12 @@ Execute the TROWPROD Tile operation contract.
 TROWPROD <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TROWPROD | TEPL | 0x043 | 3 | 2 | ExecuteTileReduction |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduction/row-reduction/TROWPROD.asl -->

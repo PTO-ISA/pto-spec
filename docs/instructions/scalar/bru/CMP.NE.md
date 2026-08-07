@@ -10,6 +10,21 @@ Execute the CMP.NE scalar instruction contract.
 cmp.ne SrcL, SrcR<{.sw, .uw}>, ->{t, u, Rd}
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| cmp_ne_32_fc47fbb1a0de | L32 | 32 | 0x00001045 / 0xf800707f | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| cmp_ne_32_fc47fbb1a0de | RegDst | 5 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":5}] |
+| cmp_ne_32_fc47fbb1a0de | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+| cmp_ne_32_fc47fbb1a0de | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
+| cmp_ne_32_fc47fbb1a0de | SrcRType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/CMP.NE.asl -->

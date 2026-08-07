@@ -10,6 +10,12 @@ Execute the TRECIP Tile operation contract.
 TRECIP <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TRECIP | TEPL | 0x014 | 20 | 0 | ExecuteTileUnary |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/unary-tile-elementwise/transcendental/TRECIP.asl -->

@@ -185,6 +185,106 @@ def _extract_supplementary(markdown: str) -> str:
     return supplementary.strip("\n")
 
 
+def _markdown_cell(value: object) -> str:
+    return str(value).replace("|", "\\|").replace("\n", " ")
+
+
+def _encoding_section(record: InstructionRecord) -> list[str]:
+    encoded_rows: list[list[str]] = []
+    tile_rows: list[list[str]] = []
+    field_rows: list[list[str]] = []
+    for catalog_record in record.catalog_records:
+        identity = str(
+            catalog_record.get("form_id", catalog_record.get("name", record.mnemonic))
+        )
+        encodings = catalog_record.get("encoding", [])
+        if encodings:
+            constraints = json.dumps(
+                catalog_record.get("constraints", []),
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+            for encoding in encodings:
+                encoded_rows.append(
+                    [
+                        identity,
+                        str(catalog_record.get("encoding_kind", "")),
+                        str(encoding.get("width_bits", catalog_record.get("length_bits", ""))),
+                        f"{encoding.get('match', '')} / {encoding.get('mask', '')}",
+                        constraints,
+                    ]
+                )
+            for field in catalog_record.get("fields", []):
+                pieces = json.dumps(
+                    field.get("pieces", []),
+                    ensure_ascii=False,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+                field_rows.append(
+                    [
+                        identity,
+                        str(field.get("name", "")),
+                        str(field.get("width", "")),
+                        str(field.get("signedness", "")),
+                        pieces,
+                    ]
+                )
+        else:
+            tile_rows.append(
+                [
+                    identity,
+                    str(catalog_record.get("family", "")),
+                    str(catalog_record.get("selector", "")),
+                    str(catalog_record.get("function", "")),
+                    str(catalog_record.get("mode", "")),
+                    str(catalog_record.get("semantic_handler", "")),
+                ]
+            )
+
+    lines = ["## Encoding", ""]
+    if encoded_rows:
+        lines.extend(
+            [
+                "| Form | Kind | Bits | Match / mask | Constraints |",
+                "| --- | --- | ---: | --- | --- |",
+                *[
+                    "| " + " | ".join(_markdown_cell(cell) for cell in row) + " |"
+                    for row in encoded_rows
+                ],
+                "",
+            ]
+        )
+    if field_rows:
+        lines.extend(
+            [
+                "### Fields",
+                "",
+                "| Form | Field | Bits | Signedness | Pieces |",
+                "| --- | --- | ---: | --- | --- |",
+                *[
+                    "| " + " | ".join(_markdown_cell(cell) for cell in row) + " |"
+                    for row in field_rows
+                ],
+                "",
+            ]
+        )
+    if tile_rows:
+        lines.extend(
+            [
+                "| Operation | Family | Selector | Function | Mode | Handler |",
+                "| --- | --- | --- | ---: | ---: | --- |",
+                *[
+                    "| " + " | ".join(_markdown_cell(cell) for cell in row) + " |"
+                    for row in tile_rows
+                ],
+                "",
+            ]
+        )
+    return lines
+
+
 def render_page(record: InstructionRecord, supplementary: str = "") -> str:
     lines = [
         f"# {record.mnemonic}",
@@ -199,6 +299,7 @@ def render_page(record: InstructionRecord, supplementary: str = "") -> str:
         *record.assembly,
         "```",
         "",
+        *_encoding_section(record),
         "## Decode",
         "",
         *_generated_region(record, "decode"),
@@ -248,7 +349,10 @@ def _display_name(slug: str) -> str:
     return " ".join(part.capitalize() for part in slug.split("-"))
 
 
-def render_nav(records: list[InstructionRecord]) -> str:
+def render_nav(
+    records: list[InstructionRecord],
+    markdown_root: Path = Path("docs"),
+) -> str:
     by_surface: dict[str, dict[tuple[str, ...], list[InstructionRecord]]] = {}
     for record in records:
         by_surface.setdefault(record.surface, {}).setdefault(record.classification, []).append(record)
@@ -265,7 +369,7 @@ def render_nav(records: list[InstructionRecord]) -> str:
                 lines.append(f"{' ' * indent}- {_display_name(part)}:")
                 indent += 4
             for record in sorted(classifications[classification], key=lambda item: item.mnemonic):
-                target = record.markdown_path.relative_to("docs").as_posix()
+                target = record.markdown_path.relative_to(markdown_root).as_posix()
                 lines.append(f"{' ' * indent}- {record.mnemonic}: {target}")
     return "\n".join(lines) + "\n"
 
@@ -273,12 +377,25 @@ def render_nav(records: list[InstructionRecord]) -> str:
 def _render_mkdocs_config(records: list[InstructionRecord]) -> str:
     return (
         "site_name: PTO ISA Reference\n"
-        "docs_dir: ..\n"
+        "docs_dir: ../instructions\n"
         "site_dir: ../../build/mkdocs-site\n"
+        "exclude_docs: |\n"
+        "  README.md\n"
+        "  index.md\n"
+        "  block-command.md\n"
+        "  scalar.md\n"
+        "  scalar-agu.md\n"
+        "  scalar-alu.md\n"
+        "  scalar-amo.md\n"
+        "  scalar-bru.md\n"
+        "  scalar-fsu.md\n"
+        "  scalar-sys.md\n"
+        "  system-registers.md\n"
+        "  tile.md\n"
         "theme:\n"
         "  name: mkdocs\n"
         "strict: true\n"
-        + render_nav(records)
+        + render_nav(records, Path("docs/instructions"))
     )
 
 
@@ -293,7 +410,9 @@ def generate_tree(root: Path = ROOT) -> None:
         path.write_text(render_page(record, supplementary), encoding="utf-8")
     mkdocs_directory = root / "docs/mkdocs"
     mkdocs_directory.mkdir(parents=True, exist_ok=True)
-    (mkdocs_directory / "generated-nav.yml").write_text(render_nav(records), encoding="utf-8")
+    (mkdocs_directory / "generated-nav.yml").write_text(
+        render_nav(records, Path("docs/instructions")), encoding="utf-8"
+    )
     (mkdocs_directory / "mkdocs.yml").write_text(
         _render_mkdocs_config(records), encoding="utf-8"
     )

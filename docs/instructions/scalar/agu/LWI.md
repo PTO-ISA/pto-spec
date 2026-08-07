@@ -10,6 +10,20 @@ Execute the LWI scalar instruction contract.
 lwi [SrcL, simm], ->{t, u, Rd}
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| lwi_32_7085c98058fa | L32 | 32 | 0x00002019 / 0x0000707f | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| lwi_32_7085c98058fa | RegDst | 5 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":5}] |
+| lwi_32_7085c98058fa | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+| lwi_32_7085c98058fa | simm12 | 12 | signed | [{"instruction_lsb":20,"value_lsb":0,"width":12}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/LWI.asl -->

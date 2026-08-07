@@ -10,6 +10,12 @@ Execute the TOR Tile operation contract.
 TOR <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TOR | TEPL | 0x007 | 7 | 0 | ExecuteTileBinary |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-tile-elementwise/logical/TOR.asl -->

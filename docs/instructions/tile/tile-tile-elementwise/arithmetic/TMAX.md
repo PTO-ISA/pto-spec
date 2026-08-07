@@ -10,6 +10,12 @@ Execute the TMAX Tile operation contract.
 TMAX <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TMAX | TEPL | 0x00B | 11 | 0 | ExecuteTileBinary |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-tile-elementwise/arithmetic/TMAX.asl -->

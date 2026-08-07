@@ -8,6 +8,22 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
+type BundleDimensionRole of enumeration {
+    BundleDimension_ValidColumns,
+    BundleDimension_ValidRows,
+    BundleDimension_PhysicalColumns
+};
+
+pure func BundleDimensionIndexOfRole(role: BundleDimensionRole)
+    => BundleDimensionIndex
+begin
+    case role of
+        when BundleDimension_ValidColumns => return 0;
+        when BundleDimension_ValidRows => return 1;
+        when BundleDimension_PhysicalColumns => return 2;
+    end;
+end;
+
 readonly func InstructionContractHandler_B_DIM() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleDimension;

@@ -10,6 +10,23 @@ Execute the HL.LBU.PR scalar instruction contract.
 hl.lbu.pr [SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>], ->Dst0, Dst1
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| hl_lbu_pr_48_bf9a0ea4b0db | HL48 | 48 | 0x00004009002e / 0x0000707f07ff | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| hl_lbu_pr_48_bf9a0ea4b0db | RegDst0 | 5 | encoding-defined | [{"instruction_lsb":23,"value_lsb":0,"width":5}] |
+| hl_lbu_pr_48_bf9a0ea4b0db | RegDst1 | 5 | encoding-defined | [{"instruction_lsb":11,"value_lsb":0,"width":5}] |
+| hl_lbu_pr_48_bf9a0ea4b0db | SrcL | 5 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":5}] |
+| hl_lbu_pr_48_bf9a0ea4b0db | SrcR | 5 | encoding-defined | [{"instruction_lsb":36,"value_lsb":0,"width":5}] |
+| hl_lbu_pr_48_bf9a0ea4b0db | SrcRType | 2 | encoding-defined | [{"instruction_lsb":41,"value_lsb":0,"width":2}] |
+| hl_lbu_pr_48_bf9a0ea4b0db | shamt | 5 | encoding-defined | [{"instruction_lsb":43,"value_lsb":0,"width":5}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.LBU.PR.asl -->

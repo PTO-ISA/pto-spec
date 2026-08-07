@@ -10,6 +10,12 @@ Execute the TCOLMAX Tile operation contract.
 TCOLMAX <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TCOLMAX | TEPL | 0x051 | 17 | 2 | ExecuteTileReduction |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduction/column-reduction/TCOLMAX.asl -->

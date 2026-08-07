@@ -10,6 +10,12 @@ Execute the TSCATTER Tile operation contract.
 TSCATTER <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TSCATTER | TEPL | 0x070 | 16 | 3 | TSCATTER |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/layout/TSCATTER.asl -->

@@ -10,6 +10,20 @@ Execute the SETC.LT scalar instruction contract.
 setc.lt SrcL, SrcR<{.sw, .uw}>
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| setc_lt_32_10de99f3ad6a | L32 | 32 | 0x00004065 / 0xf8007fff | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| setc_lt_32_10de99f3ad6a | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+| setc_lt_32_10de99f3ad6a | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
+| setc_lt_32_10de99f3ad6a | SrcRType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/SETC.LT.asl -->

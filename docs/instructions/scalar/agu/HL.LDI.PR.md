@@ -10,6 +10,21 @@ Execute the HL.LDI.PR scalar instruction contract.
 hl.ldi.pr [SrcL, simm], ->Dst0, Dst1
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| hl_ldi_pr_48_d07cced5a281 | HL48 | 48 | 0x00003019002e / 0x0000707f003f | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| hl_ldi_pr_48_d07cced5a281 | RegDst0 | 5 | encoding-defined | [{"instruction_lsb":23,"value_lsb":0,"width":5}] |
+| hl_ldi_pr_48_d07cced5a281 | RegDst1 | 5 | encoding-defined | [{"instruction_lsb":11,"value_lsb":0,"width":5}] |
+| hl_ldi_pr_48_d07cced5a281 | SrcL | 5 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":5}] |
+| hl_ldi_pr_48_d07cced5a281 | simm17 | 17 | signed | [{"instruction_lsb":36,"value_lsb":0,"width":12},{"instruction_lsb":6,"value_lsb":12,"width":5}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.LDI.PR.asl -->

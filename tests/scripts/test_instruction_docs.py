@@ -157,6 +157,48 @@ class InstructionDocsTest(unittest.TestCase):
         self.assertIn("## Block composition", rendered)
         self.assertLess(rendered.index("BSTART.TEPL TADD"), rendered.index("BSTOP"))
 
+    def test_generate_tree_projects_encoding_and_fields_from_asl_metadata(self) -> None:
+        self.write_asl(
+            "block/operands/B.IOS.asl",
+            mnemonic="B.IOS",
+            surface="block",
+            classification=["operands"],
+            catalog_records=[
+                {
+                    "mnemonic": "B.IOS",
+                    "form_id": "b_ios_32_example",
+                    "encoding_kind": "L32",
+                    "length_bits": 32,
+                    "encoding": [
+                        {
+                            "match": "0x00001013",
+                            "mask": "0xf00871ff",
+                            "width_bits": 32,
+                        }
+                    ],
+                    "constraints": [],
+                    "fields": [
+                        {
+                            "name": "SharedTID",
+                            "width": 8,
+                            "signedness": "encoding-defined",
+                            "pieces": [
+                                {"instruction_lsb": 20, "value_lsb": 0, "width": 8}
+                            ],
+                        }
+                    ],
+                }
+            ],
+        )
+
+        generate_tree(self.root)
+        rendered = (
+            self.root / "docs/instructions/block/operands/B.IOS.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("0x00001013 / 0xf00871ff", rendered)
+        self.assertIn("| b_ios_32_example | SharedTID | 8 |", rendered)
+
     def test_generate_tree_preserves_supplementary_markdown(self) -> None:
         self.write_asl()
         page = self.root / "docs/instructions/tile/tile-tile-elementwise/arithmetic/TADD.md"
@@ -190,21 +232,23 @@ class InstructionDocsTest(unittest.TestCase):
             classification=["lifecycle"],
         )
 
-        nav = render_nav(load_instruction_index(self.root))
+        nav = render_nav(
+            load_instruction_index(self.root), Path("docs/instructions")
+        )
 
         self.assertEqual(
             nav,
             "nav:\n"
             "  - Scalar:\n"
             "      - ALU:\n"
-            "          - ADD: instructions/scalar/alu/ADD.md\n"
+            "          - ADD: scalar/alu/ADD.md\n"
             "  - Block:\n"
             "      - Lifecycle:\n"
-            "          - BSTOP: instructions/block/lifecycle/BSTOP.md\n"
+            "          - BSTOP: block/lifecycle/BSTOP.md\n"
             "  - Tile:\n"
             "      - Tile Tile Elementwise:\n"
             "          - Arithmetic:\n"
-            "              - TADD: instructions/tile/tile-tile-elementwise/arithmetic/TADD.md\n",
+            "              - TADD: tile/tile-tile-elementwise/arithmetic/TADD.md\n",
         )
 
     def test_generate_tree_writes_mkdocs_navigation(self) -> None:
@@ -216,10 +260,12 @@ class InstructionDocsTest(unittest.TestCase):
         mkdocs_config = self.root / "docs/mkdocs/mkdocs.yml"
         self.assertEqual(
             generated_nav.read_text(encoding="utf-8"),
-            render_nav(load_instruction_index(self.root)),
+            render_nav(
+                load_instruction_index(self.root), Path("docs/instructions")
+            ),
         )
         self.assertIn(
-            "instructions/tile/tile-tile-elementwise/arithmetic/TADD.md",
+            "tile/tile-tile-elementwise/arithmetic/TADD.md",
             mkdocs_config.read_text(encoding="utf-8"),
         )
 

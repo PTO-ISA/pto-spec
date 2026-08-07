@@ -10,6 +10,20 @@ Execute the CMP.EQI scalar instruction contract.
 cmp.eqi SrcL, simm, ->{t, u, Rd}
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| cmp_eqi_32_252943516dca | L32 | 32 | 0x00000055 / 0x0000707f | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| cmp_eqi_32_252943516dca | RegDst | 5 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":5}] |
+| cmp_eqi_32_252943516dca | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+| cmp_eqi_32_252943516dca | simm12 | 12 | signed | [{"instruction_lsb":20,"value_lsb":0,"width":12}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/CMP.EQI.asl -->

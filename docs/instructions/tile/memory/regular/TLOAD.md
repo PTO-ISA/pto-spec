@@ -10,6 +10,12 @@ Execute the TLOAD Tile operation contract.
 TLOAD <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TLOAD | TLSU |  | 0 |  | TLOAD |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory/regular/TLOAD.asl -->
@@ -46,6 +52,16 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory/regular/TLOAD.asl -->
 ```asl
+pure func InstructionContractDestinationShapeLegal_TLOAD(
+    size_code: integer {1..7}, columns: integer {0..65535},
+    valid_rows: integer {0..65535},
+    valid_columns: integer {0..65535},
+    data_type: TileDataType) => boolean
+begin
+    return TileDescriptorShapeLegal(TileSizeCodeBytes(size_code), columns,
+        valid_rows, valid_columns, data_type);
+end;
+
 readonly func InstructionContractHandler_TLOAD() => TileSemanticHandler
 begin
     return TileHandler_TLOAD;
@@ -62,5 +78,9 @@ Normative legality is embedded from the ASL source above.
 Supplementary implementation-neutral guidance may be added here.
 
 <!-- SUPPLEMENTARY-BEGIN -->
-
+Both Local (`B.IOT`) and Shared (`B.IOS`) destination forms use LB0 as valid
+columns, LB1 as valid rows, and LB2 as physical Col. The embedded shape helper
+checks the same per-PE TSize/Col/dtype derivation for both forms before memory
+probing. An explicit B.IOR supplies base and row stride; omission uses base zero
+and LB2 as the dense row stride, while an encoded zero stride remains zero.
 <!-- SUPPLEMENTARY-END -->

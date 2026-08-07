@@ -10,6 +10,20 @@ Execute the HL.SETC.GEUI scalar instruction contract.
 hl.setc.geui SrcL, uimm
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| hl_setc_geui_48_2390319baf54 | HL48 | 48 | 0x00007075000e / 0x0000707f000f | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| hl_setc_geui_48_2390319baf54 | SrcL | 5 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":5}] |
+| hl_setc_geui_48_2390319baf54 | shamt | 5 | encoding-defined | [{"instruction_lsb":23,"value_lsb":0,"width":5}] |
+| hl_setc_geui_48_2390319baf54 | uimm24 | 24 | unsigned | [{"instruction_lsb":36,"value_lsb":0,"width":12},{"instruction_lsb":4,"value_lsb":12,"width":12}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/HL.SETC.GEUI.asl -->

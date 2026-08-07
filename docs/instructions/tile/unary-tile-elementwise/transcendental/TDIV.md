@@ -10,6 +10,12 @@ Execute the TDIV Tile operation contract.
 TDIV <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TDIV | TEPL | 0x003 | 3 | 0 | ExecuteTileBinary |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/unary-tile-elementwise/transcendental/TDIV.asl -->

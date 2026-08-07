@@ -10,6 +10,21 @@ Execute the SD.XOR scalar instruction contract.
 sd.xor<.{rl, f, rlf}> [SrcL], SrcR
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| sd_xor_32_7655ceaf9497 | L32 | 32 | 0x3000500b / 0xf4007fff | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| sd_xor_32_7655ceaf9497 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+| sd_xor_32_7655ceaf9497 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
+| sd_xor_32_7655ceaf9497 | far | 1 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":1}] |
+| sd_xor_32_7655ceaf9497 | rl | 1 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":1}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/SD.XOR.asl -->

@@ -10,6 +10,12 @@ Execute the TCOLPROD Tile operation contract.
 TCOLPROD <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TCOLPROD | TEPL | 0x053 | 19 | 2 | ExecuteTileReduction |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduction/column-reduction/TCOLPROD.asl -->

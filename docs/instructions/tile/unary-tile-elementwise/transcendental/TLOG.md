@@ -10,6 +10,12 @@ Execute the TLOG Tile operation contract.
 TLOG <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TLOG | TEPL | 0x013 | 19 | 0 | ExecuteTileUnary |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/unary-tile-elementwise/transcendental/TLOG.asl -->

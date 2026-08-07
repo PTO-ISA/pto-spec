@@ -161,4 +161,3 @@ ASL path, Markdown path, encoding identity, and block-composition profile.
 - One deterministic command regenerates catalogs, Markdown, and MkDocs nav;
   `--check` rejects all drift.
 - Active ASL and normative instruction pages contain no release-version label.
-

@@ -10,6 +10,12 @@ Execute the TFILLPAD Tile operation contract.
 TFILLPAD <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TFILLPAD | TEPL | 0x065 | 5 | 3 | TFILLPAD |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/initialization/TFILLPAD.asl -->

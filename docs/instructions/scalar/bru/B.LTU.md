@@ -10,6 +10,20 @@ Execute the B.LTU scalar instruction contract.
 b.ltu SrcL, SrcR, label
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| b_ltu_32_f1ea7ad44e37 | L32 | 32 | 0x00004027 / 0x0000707f | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| b_ltu_32_f1ea7ad44e37 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+| b_ltu_32_f1ea7ad44e37 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
+| b_ltu_32_f1ea7ad44e37 | simm12 | 12 | signed | [{"instruction_lsb":25,"value_lsb":0,"width":7},{"instruction_lsb":7,"value_lsb":7,"width":5}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/B.LTU.asl -->

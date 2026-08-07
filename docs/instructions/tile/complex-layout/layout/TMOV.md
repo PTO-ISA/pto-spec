@@ -10,6 +10,12 @@ Execute the TMOV Tile operation contract.
 TMOV <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TMOV | TLSU |  | 2 |  | TMOV |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/layout/TMOV.asl -->

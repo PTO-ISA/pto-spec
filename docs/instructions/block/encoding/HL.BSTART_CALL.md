@@ -10,6 +10,19 @@ Closes the current bundle, initializes the next bundle descriptor, and selects i
 HL.BSTART.CALL <br_label>, <rt_label>, ->ra
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| hl_bstart_call_48_3c784c583c90 | HL48 | 48 | 0x501600000011 / 0xf83f0000007f | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| hl_bstart_call_48_3c784c583c90 | simm25 | 25 | signed | [{"instruction_lsb":7,"value_lsb":0,"width":25}] |
+| hl_bstart_call_48_3c784c583c90 | uimm5 | 5 | unsigned | [{"instruction_lsb":38,"value_lsb":0,"width":5}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/encoding/HL.BSTART_CALL.asl -->

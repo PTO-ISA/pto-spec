@@ -10,6 +10,12 @@ Execute the TSELS Tile operation contract.
 TSELS <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TSELS | TEPL | 0x03A | 26 | 1 | ExecuteTileSelectScalar |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-elementwise/logical/TSELS.asl -->

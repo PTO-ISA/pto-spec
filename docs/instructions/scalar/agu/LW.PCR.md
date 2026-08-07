@@ -10,6 +10,19 @@ Execute the LW.PCR scalar instruction contract.
 lw.pcr [symbol], ->{t, u, Rd}
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| lw_pcr_32_d135a1aa4ffb | L32 | 32 | 0x00002039 / 0x0000707f | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| lw_pcr_32_d135a1aa4ffb | RegDst | 5 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":5}] |
+| lw_pcr_32_d135a1aa4ffb | simm17 | 17 | signed | [{"instruction_lsb":15,"value_lsb":0,"width":17}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/LW.PCR.asl -->

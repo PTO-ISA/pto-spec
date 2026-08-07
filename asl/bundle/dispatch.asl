@@ -535,13 +535,14 @@ begin
     return result;
 end;
 
-readonly func BundleDestinationRows(shape_source_valid: boolean,
-                                    shape_source: TileIndex)
-                                    => integer {0..65535}
+readonly func BundleDestinationValidRows(shape_source_valid: boolean,
+                                         shape_source: TileIndex)
+                                         => integer {0..65535}
 begin
-    if UInt(_BundleDimensions[[0]]) >= 1 &&
-       UInt(_BundleDimensions[[0]]) <= 65535 then
-        return UInt(_BundleDimensions[[0]]) as integer {1..65535};
+    let index = BundleDimensionIndexOfRole(BundleDimension_ValidRows);
+    if UInt(_BundleDimensions[[index]]) >= 1 &&
+       UInt(_BundleDimensions[[index]]) <= 65535 then
+        return UInt(_BundleDimensions[[index]]) as integer {1..65535};
     elsif shape_source_valid && TileDescriptorConfigured(shape_source) then
         return _Tiles[[shape_source]].valid_rows;
     else
@@ -549,17 +550,33 @@ begin
     end;
 end;
 
-readonly func BundleDestinationColumns(shape_source_valid: boolean,
-                                       shape_source: TileIndex)
-                                       => integer {0..65535}
+readonly func BundleDestinationValidColumns(shape_source_valid: boolean,
+                                            shape_source: TileIndex)
+                                            => integer {0..65535}
 begin
-    if UInt(_BundleDimensions[[1]]) >= 1 &&
-       UInt(_BundleDimensions[[1]]) <= 65535 then
-        return UInt(_BundleDimensions[[1]]) as integer {1..65535};
+    let index = BundleDimensionIndexOfRole(BundleDimension_ValidColumns);
+    if UInt(_BundleDimensions[[index]]) >= 1 &&
+       UInt(_BundleDimensions[[index]]) <= 65535 then
+        return UInt(_BundleDimensions[[index]]) as integer {1..65535};
     elsif shape_source_valid && TileDescriptorConfigured(shape_source) then
         return _Tiles[[shape_source]].valid_columns;
     else
         return 1;
+    end;
+end;
+
+readonly func BundleDestinationPhysicalColumns(shape_source_valid: boolean,
+                                               shape_source: TileIndex)
+                                               => integer {0..65535}
+begin
+    let index = BundleDimensionIndexOfRole(BundleDimension_PhysicalColumns);
+    if UInt(_BundleDimensions[[index]]) >= 1 &&
+       UInt(_BundleDimensions[[index]]) <= 65535 then
+        return UInt(_BundleDimensions[[index]]) as integer {1..65535};
+    elsif shape_source_valid && TileDescriptorConfigured(shape_source) then
+        return _Tiles[[shape_source]].columns;
+    else
+        return BundleDestinationValidColumns(FALSE, 0);
     end;
 end;
 
@@ -629,17 +646,21 @@ begin
         if _BundleTileBindings[[binding]].valid &&
            _BundleTileBindings[[binding]].destination_valid &&
            !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
-            let rows = BundleDestinationRows(
+            let valid_rows = BundleDestinationValidRows(
                 shape_source_valid, shape_source);
-            let columns = BundleDestinationColumns(
+            let valid_columns = BundleDestinationValidColumns(
+                shape_source_valid, shape_source);
+            let columns = BundleDestinationPhysicalColumns(
                 shape_source_valid, shape_source);
             let destination_type = if destination_ordinal == 0 then
                 selected_type else TileDataType_U32;
-            if rows == 0 || columns == 0 ||
-               rows * columns > PTO_MODEL_TILE_ELEMENTS ||
-               !TileStorageFitsCapacity(rows, columns, destination_type,
-                   BundleTileDestinationSizeBytes(
-                       binding as BundleTileBindingIndex)) then
+            let capacity_bytes = BundleTileDestinationSizeBytes(
+                binding as BundleTileBindingIndex);
+            let rows = DerivedTileRows(capacity_bytes, columns,
+                destination_type);
+            if !TileDescriptorShapeLegal(capacity_bytes, columns,
+                   valid_rows, valid_columns, destination_type) ||
+               rows * columns > PTO_MODEL_TILE_ELEMENTS then
                 SetFault(Fault_TileAllocation, ReadTPC());
                 return FALSE;
             end;
@@ -652,16 +673,19 @@ begin
         if _BundleTileBindings[[binding]].valid &&
            _BundleTileBindings[[binding]].destination_valid &&
            !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
-            let rows = BundleDestinationRows(
+            let valid_rows = BundleDestinationValidRows(
                 shape_source_valid, shape_source);
-            let columns = BundleDestinationColumns(
+            let valid_columns = BundleDestinationValidColumns(
+                shape_source_valid, shape_source);
+            let columns = BundleDestinationPhysicalColumns(
                 shape_source_valid, shape_source);
             let destination_type = if destination_ordinal == 0 then
                 selected_type else TileDataType_U32;
+            let capacity_bytes = BundleTileDestinationSizeBytes(
+                binding as BundleTileBindingIndex);
             ConfigureTileForMask(resolved[[binding]],
-                BundleTileDestinationSizeBytes(
-                    binding as BundleTileBindingIndex),
-                rows, columns, rows, columns, destination_type,
+                capacity_bytes, valid_rows, columns, valid_rows,
+                valid_columns, destination_type,
                 CurrentBundleTileLayout(), TileLocation_Any,
                 _BundleTileBindings[[binding]].pe_mask);
             _BundleTileBindings[[binding]].destination = resolved[[binding]];
@@ -1337,7 +1361,7 @@ begin
                 CommandDecodedBool(instruction, form, CommandField_far),
                 CommandDecodedBool(instruction, form, CommandField_DR));
         when CommandHandler_SetBundleDataAttributes =>
-            SetBundleDataAttributeState0580(
+            SetBundleDataAttributeState(
                 DecodeCommandOperandRaw(instruction, form,
                     CommandField_DataType)[4:0],
                 DecodeCommandOperandRaw(instruction, form,

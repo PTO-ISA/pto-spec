@@ -10,6 +10,21 @@ Execute the SD.U scalar instruction contract.
 sd.u SrcD, [SrcL, SrcR<{.sw,.uw,.neg}>]
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| sd_u_32_1602c58c2031 | L32 | 32 | 0x00007049 / 0x00007fff | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| sd_u_32_1602c58c2031 | SrcD | 5 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":5}] |
+| sd_u_32_1602c58c2031 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+| sd_u_32_1602c58c2031 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
+| sd_u_32_1602c58c2031 | SrcRType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/SD.U.asl -->

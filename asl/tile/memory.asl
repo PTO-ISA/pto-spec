@@ -76,16 +76,25 @@ func TLOADShared(shared_id: bits(8), base_address: Word,
 begin
     if pe_mask == Zeros{4} then return; end;
     let capacity_bytes = TileSizeCodeBytes(size_code);
-    assert valid_rows <= rows && valid_columns <= columns;
-    assert rows * columns <= PTO_MODEL_TILE_ELEMENTS;
-    assert TileStorageFitsCapacity(rows, columns, data_type, capacity_bytes);
+    if rows < valid_rows || rows >
+           DerivedTileRows(capacity_bytes, columns, data_type) ||
+       !TileDescriptorShapeLegal(capacity_bytes, columns, valid_rows,
+           valid_columns, data_type) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return;
+    end;
+    let derived_rows = DerivedTileRows(capacity_bytes, columns, data_type);
+    if derived_rows * columns > PTO_MODEL_TILE_ELEMENTS then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return;
+    end;
     var tile: TileInfo;
     tile.allocated = TRUE;
     tile.contents_defined = FALSE;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     tile.defined_valid_elements = 0;
     tile.capacity_bytes = capacity_bytes;
-    tile.rows = rows;
+    tile.rows = derived_rows;
     tile.columns = columns;
     tile.valid_rows = valid_rows;
     tile.valid_columns = valid_columns;

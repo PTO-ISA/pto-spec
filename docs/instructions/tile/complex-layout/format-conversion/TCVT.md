@@ -10,6 +10,12 @@ Execute the TCVT Tile operation contract.
 TCVT <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TCVT | TEPL | 0x01B | 27 | 0 | TCVT |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/format-conversion/TCVT.asl -->

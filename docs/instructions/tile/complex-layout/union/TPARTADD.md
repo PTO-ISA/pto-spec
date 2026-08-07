@@ -10,6 +10,12 @@ Execute the TPARTADD Tile operation contract.
 TPARTADD <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TPARTADD | TEPL | 0x071 | 17 | 3 | ExecuteTilePartial |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/union/TPARTADD.asl -->

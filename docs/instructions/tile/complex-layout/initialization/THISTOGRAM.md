@@ -10,6 +10,12 @@ Execute the THISTOGRAM Tile operation contract.
 THISTOGRAM <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| THISTOGRAM | TEPL | 0x068 | 8 | 3 | THISTOGRAM |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/initialization/THISTOGRAM.asl -->

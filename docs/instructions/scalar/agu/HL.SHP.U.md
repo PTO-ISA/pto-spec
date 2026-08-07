@@ -10,6 +10,22 @@ Execute the HL.SHP.U scalar instruction contract.
 hl.shp.u SrcD, SrcD1, [SrcL, SrcR<{.sw,.uw,.neg}>]
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| hl_shp_u_48_232b2200b7b9 | HL48 | 48 | 0x00005049001e / 0x00007ffff83f | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| hl_shp_u_48_232b2200b7b9 | SrcD | 5 | encoding-defined | [{"instruction_lsb":43,"value_lsb":0,"width":5}] |
+| hl_shp_u_48_232b2200b7b9 | SrcD1 | 5 | encoding-defined | [{"instruction_lsb":6,"value_lsb":0,"width":5}] |
+| hl_shp_u_48_232b2200b7b9 | SrcL | 5 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":5}] |
+| hl_shp_u_48_232b2200b7b9 | SrcR | 5 | encoding-defined | [{"instruction_lsb":36,"value_lsb":0,"width":5}] |
+| hl_shp_u_48_232b2200b7b9 | SrcRType | 2 | encoding-defined | [{"instruction_lsb":41,"value_lsb":0,"width":2}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.SHP.U.asl -->

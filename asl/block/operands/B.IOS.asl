@@ -6,6 +6,25 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
+pure func InstructionContractSharedIsSource_B_IOS(
+    size_code: integer {0..7}) => boolean
+begin
+    return size_code == 0;
+end;
+
+pure func InstructionContractPerPECapacity_B_IOS(
+    size_code: integer {1..7}) => integer
+begin
+    return TileSizeCodeBytes(size_code);
+end;
+
+pure func InstructionContractCoreCapacity_B_IOS(
+    size_code: integer {1..7}, pe_mask: bits(4)) => integer
+begin
+    return TileCoreAllocationBytes(pe_mask,
+        InstructionContractPerPECapacity_B_IOS(size_code));
+end;
+
 readonly func InstructionContractHandler_B_IOS() => CommandSemanticHandler
 begin
     return CommandHandler_BindBundleSharedIO;

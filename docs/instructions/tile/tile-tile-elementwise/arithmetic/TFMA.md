@@ -10,6 +10,12 @@ Execute the TFMA Tile operation contract.
 TFMA <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TFMA | TEPL | 0x01C | 28 | 0 | TFMA |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-tile-elementwise/arithmetic/TFMA.asl -->

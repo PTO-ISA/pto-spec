@@ -10,6 +10,12 @@ Execute the TIMG2COL Tile operation contract.
 TIMG2COL <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TIMG2COL | TEPL | 0x064 | 4 | 3 | TIMG2COL |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/layout/TIMG2COL.asl -->

@@ -10,6 +10,12 @@ Execute the TXOR Tile operation contract.
 TXOR <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TXOR | TEPL | 0x008 | 8 | 0 | ExecuteTileBinary |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-tile-elementwise/logical/TXOR.asl -->

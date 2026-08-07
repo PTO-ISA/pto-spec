@@ -29,7 +29,7 @@ begin
     TestBundleSharedBindingV6();
     TestBundleSharedTLSUExecution();
     TestBundleSharedCubeExecution();
-    TestBundleDataAttributes0580();
+    TestBundleDataAttributes();
     TestBundleTileAllocationAndLifetime();
     TestBundleTileUndersizedAllocation();
     TestTileRegisterMapping();

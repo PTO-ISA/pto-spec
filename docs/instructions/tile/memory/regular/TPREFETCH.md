@@ -10,6 +10,12 @@ Execute the TPREFETCH Tile operation contract.
 TPREFETCH <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TPREFETCH | TLSU |  | 3 |  | TPREFETCH |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory/regular/TPREFETCH.asl -->

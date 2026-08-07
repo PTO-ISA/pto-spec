@@ -10,6 +10,18 @@ Execute the DC.ZVA scalar instruction contract.
 dc.zva SrcL
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| dc_zva_32_0859a1d7aa5b | L32 | 32 | 0x0070602b / 0xfff07fff | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| dc_zva_32_0859a1d7aa5b | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/DC.ZVA.asl -->

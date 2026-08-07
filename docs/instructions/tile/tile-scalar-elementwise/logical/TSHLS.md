@@ -10,6 +10,12 @@ Execute the TSHLS Tile operation contract.
 TSHLS <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TSHLS | TEPL | 0x029 | 9 | 1 | ExecuteTileScalar |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-elementwise/logical/TSHLS.asl -->

@@ -10,6 +10,12 @@ Execute the TINSERT Tile operation contract.
 TINSERT <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TINSERT | TEPL | 0x063 | 3 | 3 | TINSERT |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/layout/TINSERT.asl -->

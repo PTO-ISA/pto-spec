@@ -10,6 +10,12 @@ Execute the TCMPS Tile operation contract.
 TCMPS <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TCMPS | TEPL | 0x02D | 13 | 1 | ExecuteTileCompareScalar |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-elementwise/logical/TCMPS.asl -->

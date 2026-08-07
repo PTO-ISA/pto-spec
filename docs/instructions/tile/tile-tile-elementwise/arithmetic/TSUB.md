@@ -10,6 +10,12 @@ Execute the TSUB Tile operation contract.
 TSUB <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TSUB | TEPL | 0x001 | 1 | 0 | ExecuteTileBinary |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-tile-elementwise/arithmetic/TSUB.asl -->

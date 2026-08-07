@@ -974,7 +974,7 @@
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "bfbbd1fff4f2e51d18da7925d72bc74dd25511a52ec4c6d7c64b4a6f6408e1bb"
+      "sha256": "1aa42abb178dd13ff5b38da69ed3b218baf0dfa9d9d9577618881c6b761a7815"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
@@ -990,7 +990,7 @@
     },
     {
       "path": "tests/asl/tile-tests.asl",
-      "sha256": "3656cdf42e3d03190d8634765c7bd0a27e37f689f4cbf991757ca4116d90e892"
+      "sha256": "bf82683e74be1d0f80ad48c4d02ca97d932939737e6f18d109d45d8a9764d625"
     },
     {
       "path": "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",

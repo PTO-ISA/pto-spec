@@ -10,6 +10,21 @@ Execute the SW.OR scalar instruction contract.
 sw.or<.{rl, f, rlf}> [SrcL], SrcR
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| sw_or_32_354579538c4e | L32 | 32 | 0x2000300b / 0xf4007fff | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| sw_or_32_354579538c4e | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+| sw_or_32_354579538c4e | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
+| sw_or_32_354579538c4e | far | 1 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":1}] |
+| sw_or_32_354579538c4e | rl | 1 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":1}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/SW.OR.asl -->

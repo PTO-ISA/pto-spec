@@ -112,10 +112,17 @@ surface.
   `popcount(PE_MASK) * per_PE_size`; an active tile cannot exceed the read-only
   `TILE_CAPACITY` system register, and the sum of active Core allocations must
   also stay within it.
-- Descriptor storage is `ceil(rows * columns * element_bits / 8)` bytes and
-  must fit in the tile's capacity. FP4, FPL4, S4, and U4 occupy four bits per
-  element for capacity accounting; an odd final element rounds up to one byte.
-- Allocation has positive shape dimensions and nonzero capacity. Release is a
+- Physical `columns` is nonzero and a power of two. Physical `rows` has no
+  independent encoding and is derived per PE as
+  `rows = (TSize_bytes * 8) / (columns * element_bits)`. The division must be
+  exact. FP4, FPL4, S4, and U4 use four element bits, so the largest legal
+  8 KiB allocation contains 16,384 physical elements.
+- `valid_columns <= columns` and `valid_rows <= rows`. The valid region limits
+  architecturally accessed elements; it does not reduce the allocation charged
+  by TSize. Matrix M, N, and K are each nonzero powers of two. M and N describe
+  the result valid rows and columns; K is obtained from the compatible source
+  descriptors, while result physical Col remains the ordinary LB2 dimension.
+- Allocation has nonzero capacity and a legal derived shape. Release is a
   distinct transition rather than a zero-capacity allocation. Reconfiguration
   replaces the destination's old contribution when checking aggregate
   capacity, and a failed check preserves the old descriptor and payload.

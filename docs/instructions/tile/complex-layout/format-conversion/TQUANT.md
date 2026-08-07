@@ -10,6 +10,12 @@ Execute the TQUANT Tile operation contract.
 TQUANT <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TQUANT | TEPL | 0x06A | 10 | 3 | TQUANT |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/format-conversion/TQUANT.asl -->

@@ -10,6 +10,12 @@ Execute the TCOLEXPANDMAX Tile operation contract.
 TCOLEXPANDMAX <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TCOLEXPANDMAX | TEPL | 0x059 | 25 | 2 | ExecuteTileExpand |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/vector-tile-expansion/column-expansion/TCOLEXPANDMAX.asl -->

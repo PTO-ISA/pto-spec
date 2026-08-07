@@ -16,6 +16,27 @@ BSTART.FP CALL, <label>
 BSTART.FP FALL<, fixup_label>
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| bstart_fp_32_0c671a644214 | L32 | 32 | 0x00007101 / 0xffffffff | [] |
+| bstart_fp_32_24db3966d6ba | L32 | 32 | 0x00006101 / 0xffffffff | [] |
+| bstart_fp_32_58ad7954fb49 | L32 | 32 | 0x00003101 / 0x00007fff | [] |
+| bstart_fp_32_7978795a29a1 | L32 | 32 | 0x00005101 / 0xffffffff | [] |
+| bstart_fp_32_d00a708a81f0 | L32 | 32 | 0x00002101 / 0x00007fff | [] |
+| bstart_fp_32_dd7bc8dd694c | L32 | 32 | 0x00004101 / 0x00007fff | [] |
+| bstart_fp_32_face4f238d84 | L32 | 32 | 0x00001101 / 0x00007fff | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| bstart_fp_32_58ad7954fb49 | simm17 | 17 | signed | [{"instruction_lsb":15,"value_lsb":0,"width":17}] |
+| bstart_fp_32_d00a708a81f0 | simm17 | 17 | signed | [{"instruction_lsb":15,"value_lsb":0,"width":17}] |
+| bstart_fp_32_dd7bc8dd694c | simm17 | 17 | signed | [{"instruction_lsb":15,"value_lsb":0,"width":17}] |
+| bstart_fp_32_face4f238d84 | simm17 | 17 | signed | [{"instruction_lsb":15,"value_lsb":0,"width":17}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.FP.asl -->

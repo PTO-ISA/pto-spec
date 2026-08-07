@@ -10,6 +10,19 @@ Closes the current bundle, initializes the next bundle descriptor, and selects i
 L.BSTART.SYS FALL<, fixup_label>
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| l_bstart_sys_64_919e576c79e4 | L64 | 32 | 0x0000000f / 0x0000007f | [] |
+| l_bstart_sys_64_919e576c79e4 | L64 | 32 | 0x00001011 / 0x00007fff | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| l_bstart_sys_64_919e576c79e4 | simm | 42 | signed | [{"instruction_lsb":7,"value_lsb":0,"width":25},{"instruction_lsb":47,"value_lsb":25,"width":17}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/encoding/L.BSTART.SYS.asl -->

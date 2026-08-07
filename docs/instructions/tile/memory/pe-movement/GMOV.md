@@ -10,6 +10,12 @@ Execute the GMOV Tile operation contract.
 GMOV <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| GMOV | TLSU |  | 13 |  | GMOV |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory/pe-movement/GMOV.asl -->

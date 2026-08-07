@@ -10,6 +10,12 @@ Execute the TDEQUANT Tile operation contract.
 TDEQUANT <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TDEQUANT | TEPL | 0x06B | 11 | 3 | TDEQUANT |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/format-conversion/TDEQUANT.asl -->

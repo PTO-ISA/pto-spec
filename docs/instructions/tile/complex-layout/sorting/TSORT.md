@@ -10,6 +10,12 @@ Execute the TSORT Tile operation contract.
 TSORT <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TSORT | TEPL | 0x06C | 12 | 3 | TSORT |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/sorting/TSORT.asl -->

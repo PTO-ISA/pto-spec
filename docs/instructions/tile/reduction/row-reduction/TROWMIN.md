@@ -10,6 +10,12 @@ Execute the TROWMIN Tile operation contract.
 TROWMIN <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TROWMIN | TEPL | 0x042 | 2 | 2 | ExecuteTileReduction |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduction/row-reduction/TROWMIN.asl -->

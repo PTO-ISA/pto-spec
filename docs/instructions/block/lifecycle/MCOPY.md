@@ -10,6 +10,20 @@ Copies an encoded memory range with instruction-atomic preflight and snapshot se
 MCOPY [RegSrc0, RegSrc1, RegSrc2]
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| mcopy_32_4fc4a803e995 | L32 | 32 | 0x00000031 / 0x06007fff | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| mcopy_32_4fc4a803e995 | RegSrc0 | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+| mcopy_32_4fc4a803e995 | RegSrc1 | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
+| mcopy_32_4fc4a803e995 | RegSrc2 | 5 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":5}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/MCOPY.asl -->

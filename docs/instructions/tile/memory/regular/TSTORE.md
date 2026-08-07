@@ -10,6 +10,12 @@ Execute the TSTORE Tile operation contract.
 TSTORE <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TSTORE | TLSU |  | 1 |  | TSTORE |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory/regular/TSTORE.asl -->

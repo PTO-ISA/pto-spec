@@ -10,6 +10,12 @@ Execute the TPARTMIN Tile operation contract.
 TPARTMIN <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TPARTMIN | TEPL | 0x074 | 20 | 3 | ExecuteTilePartial |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/union/TPARTMIN.asl -->

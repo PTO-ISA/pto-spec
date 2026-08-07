@@ -10,6 +10,12 @@ Execute the TPARTMAX Tile operation contract.
 TPARTMAX <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TPARTMAX | TEPL | 0x073 | 19 | 3 | ExecuteTilePartial |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/union/TPARTMAX.asl -->

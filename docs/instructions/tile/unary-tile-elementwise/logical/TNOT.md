@@ -10,6 +10,12 @@ Execute the TNOT Tile operation contract.
 TNOT <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TNOT | TEPL | 0x010 | 16 | 0 | ExecuteTileUnary |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/unary-tile-elementwise/logical/TNOT.asl -->

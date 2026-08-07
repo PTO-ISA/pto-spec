@@ -71,7 +71,7 @@ EXPECTED_COUNTS = {
     "gate_count": 10,
     "required_approval_count": 2,
     "required_external_control_count": 10,
-    "shard_count": 51,
+    "shard_count": 52,
     "canonical_call_count": 113,
     "reachable_test_subprogram_count": 107,
 }
@@ -120,7 +120,7 @@ GATE_SPECS: tuple[dict[str, Any], ...] = (
         "name": "parallel executable semantics",
         "command": "make test-parallel",
         "evidence": ["Makefile", "scripts/check-asl-test-shards", "tests/asl/main.asl"],
-        "acceptance": "All canonical executable tests pass through the exact 51-shard partition with no missing, duplicate, empty, or unreachable test surface.",
+        "acceptance": "All canonical executable tests pass through the exact 52-shard partition with no missing, duplicate, empty, or unreachable test surface.",
         "long_running": True,
     },
     {
@@ -491,7 +491,7 @@ def build_evidence() -> dict[str, Any]:
         "policy": {
             "authority": "The frozen PTO candidate, clone-verifiable gates, hosted validation, protected-branch state, and recorded architecture/formal approvals must agree before M6 promotion.",
             "no_live_branch_evidence": "A passing run on a moving draft branch is useful feedback but is not architecturally-complete release evidence.",
-            "long_running_policy": "Long runtime gates execute through the checked 51-shard topology and hosted CI; readiness generation validates their exact contract without waiting for them.",
+            "long_running_policy": "Long runtime gates execute through the checked 52-shard topology and hosted CI; readiness generation validates their exact contract without waiting for them.",
             "closure_rule": "S6-T2 closes only after cumulative S0 through S6-T1 closure, one immutable signed candidate, every local and hosted gate passing at that commit, all external controls verified, and both review perspectives accepted.",
         },
         "sources": [{"path": path, "sha256": sha256(path)} for path in SOURCE_PATHS],

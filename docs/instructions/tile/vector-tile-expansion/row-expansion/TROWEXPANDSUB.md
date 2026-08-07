@@ -10,6 +10,12 @@ Execute the TROWEXPANDSUB Tile operation contract.
 TROWEXPANDSUB <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TROWEXPANDSUB | TEPL | 0x046 | 6 | 2 | ExecuteTileExpand |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/vector-tile-expansion/row-expansion/TROWEXPANDSUB.asl -->

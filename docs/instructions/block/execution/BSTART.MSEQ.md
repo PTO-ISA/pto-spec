@@ -10,6 +10,18 @@ Closes the current bundle, initializes the next bundle descriptor, and selects i
 BSTART.MSEQ <VS8, VS16>
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| bstart_mseq_32_39343a456ec5 | L32 | 32 | 0x00009181 / 0xf9ffffff | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| bstart_mseq_32_39343a456ec5 | Mode | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.MSEQ.asl -->

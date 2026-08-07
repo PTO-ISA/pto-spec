@@ -10,6 +10,12 @@ Execute the MGATHER_CAS Tile operation contract.
 MGATHER_CAS <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| MGATHER_CAS | TLSU |  | 8 |  | MGATHER_CAS |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory/irregular/MGATHER_CAS.asl -->

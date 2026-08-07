@@ -10,6 +10,12 @@ Execute the TEXTRACT Tile operation contract.
 TEXTRACT <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TEXTRACT | TEPL | 0x062 | 2 | 3 | TEXTRACT |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/layout/TEXTRACT.asl -->

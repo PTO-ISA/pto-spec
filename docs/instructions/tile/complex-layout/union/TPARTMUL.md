@@ -10,6 +10,12 @@ Execute the TPARTMUL Tile operation contract.
 TPARTMUL <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TPARTMUL | TEPL | 0x072 | 18 | 3 | ExecuteTilePartial |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/union/TPARTMUL.asl -->

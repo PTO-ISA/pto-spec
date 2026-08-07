@@ -10,6 +10,30 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
+pure func InstructionContractZeroMaskIsNoOp_B_IOT(
+    pe_mask: bits(4)) => boolean
+begin
+    return pe_mask == Zeros{4};
+end;
+
+pure func InstructionContractHasMaskOnlySharedCompanion_B_IOT() => boolean
+begin
+    return FALSE;
+end;
+
+pure func InstructionContractPerPECapacity_B_IOT(
+    size_code: integer {1..7}) => integer
+begin
+    return TileSizeCodeBytes(size_code);
+end;
+
+pure func InstructionContractCoreCapacity_B_IOT(
+    size_code: integer {1..7}, pe_mask: bits(4)) => integer
+begin
+    return TileCoreAllocationBytes(pe_mask,
+        InstructionContractPerPECapacity_B_IOT(size_code));
+end;
+
 readonly func InstructionContractHandler_B_IOT() => CommandSemanticHandler
 begin
     return CommandHandler_BindBundleTileIO;

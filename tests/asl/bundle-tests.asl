@@ -1634,7 +1634,7 @@ begin
     assert _LastFault == Fault_TileLegality;
 end;
 
-func TestBundleDataAttributes0580()
+func TestBundleDataAttributes()
 begin
     ResetProfileState();
     assert TileDataLayoutCodeAccepted(Zeros{5});
@@ -1645,7 +1645,7 @@ begin
     assert !TileDataLayoutCodeSupported(Zeros{5} + 1);
 
     ClearFault();
-    SetBundleDataAttributeState0580(Zeros{5} + 24, Zeros{5}, '11',
+    SetBundleDataAttributeState(Zeros{5} + 24, Zeros{5}, '11',
         Zeros{3} + 1, Zeros{3} + 2, TRUE, TRUE);
     assert _LastFault == Fault_None;
     assert CurrentBundleDataTypeCode() == Zeros{5} + 24;
@@ -1661,19 +1661,19 @@ begin
     // Accepted implementation-defined layouts are rejected by generic
     // indexing until the implementation advertises support.
     ClearFault();
-    SetBundleDataAttributeState0580(Zeros{5} + 24, Zeros{5} + 1, '00',
+    SetBundleDataAttributeState(Zeros{5} + 24, Zeros{5} + 1, '00',
         Zeros{3}, Zeros{3}, FALSE, FALSE);
     assert _LastFault == Fault_TileLegality;
     assert CurrentBundleDataTypeCode() == Zeros{5} + 24;
     AdvertiseTileDataLayout(Zeros{5} + 1);
     ClearFault();
-    SetBundleDataAttributeState0580(Zeros{5} + 24, Zeros{5} + 1, '00',
+    SetBundleDataAttributeState(Zeros{5} + 24, Zeros{5} + 1, '00',
         Zeros{3}, Zeros{3}, FALSE, FALSE);
     assert _LastFault == Fault_None;
     assert TileDataLayoutCodeSupported(Zeros{5} + 1);
 
     ClearFault();
-    SetBundleDataAttributeState0580(Zeros{5} + 15, Zeros{5}, '00',
+    SetBundleDataAttributeState(Zeros{5} + 15, Zeros{5}, '00',
         Zeros{3}, Zeros{3}, FALSE, FALSE);
     assert _LastFault == Fault_TileLegality;
 end;
@@ -1768,6 +1768,35 @@ begin
     assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
     assert _Tiles[[16]].allocated;
     assert ReadTileElement(16, 127, 0) == Zeros{PTO_XLEN} + 127;
+    for candidate = 0 to 15 do
+        assert !_Tiles[[candidate]].allocated;
+    end;
+
+    // A non-power-of-two physical Col rejects before Local destination
+    // allocation. LB0/LB1 remain the valid columns/rows; LB2 is physical Col.
+    ResetProfileState();
+    InstallBundleOperationDescriptor(BundleOperationDescriptor {
+        valid = TRUE,
+        form_identity = Zeros{7},
+        operation_class = BundleOperation_TileElement,
+        selector_valid = TRUE,
+        selector = Zeros{10},
+        data_type_valid = TRUE,
+        data_type = Zeros{5} + 24,
+        mode_valid = FALSE,
+        mode = Zeros{2},
+        branch_type_valid = FALSE,
+        branch_type = Zeros{3}
+    });
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 3);
+    AddBundleTileBinding(TRUE, 0, 1, '1111', TRUE, FALSE, 0, 0, TRUE);
+    ClearFault();
+    let non_power_columns_resolved = ResolveBundleTileDestinations();
+    assert !non_power_columns_resolved;
+    assert _LastFault == Fault_TileAllocation;
+    assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
     for candidate = 0 to 15 do
         assert !_Tiles[[candidate]].allocated;
     end;

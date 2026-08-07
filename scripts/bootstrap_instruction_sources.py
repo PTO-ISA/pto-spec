@@ -96,6 +96,13 @@ def _tile_metadata(root: Path, mnemonic: str) -> tuple[tuple[str, ...], tuple[st
         raise ValueError(f"{page}: Tile block contains no BSTART")
     if block_lines[-1] != "BSTOP":
         block_lines.append("BSTOP")
+    if classification[0] == "matrix":
+        block_lines = [
+            line.replace("B.DIM LB0 M", "B.DIM LB0 N")
+            .replace("B.DIM LB1 N", "B.DIM LB1 M")
+            .replace("B.DIM LB2 K", "B.DIM LB2 Col")
+            for line in block_lines
+        ]
     return classification, tuple(block_lines)
 
 
@@ -117,6 +124,75 @@ def _metadata_line(metadata: dict[str, object]) -> str:
     return "// PTO-INSTRUCTION: " + json.dumps(
         metadata, ensure_ascii=False, sort_keys=True, separators=(",", ":")
     )
+
+
+def _block_normative_contract(mnemonic: str) -> str:
+    if mnemonic == "B.DIM":
+        return """type BundleDimensionRole of enumeration {
+    BundleDimension_ValidColumns,
+    BundleDimension_ValidRows,
+    BundleDimension_PhysicalColumns
+};
+
+pure func BundleDimensionIndexOfRole(role: BundleDimensionRole)
+    => BundleDimensionIndex
+begin
+    case role of
+        when BundleDimension_ValidColumns => return 0;
+        when BundleDimension_ValidRows => return 1;
+        when BundleDimension_PhysicalColumns => return 2;
+    end;
+end;
+
+"""
+    if mnemonic == "B.IOT":
+        return """pure func InstructionContractZeroMaskIsNoOp_B_IOT(
+    pe_mask: bits(4)) => boolean
+begin
+    return pe_mask == Zeros{4};
+end;
+
+pure func InstructionContractHasMaskOnlySharedCompanion_B_IOT() => boolean
+begin
+    return FALSE;
+end;
+
+pure func InstructionContractPerPECapacity_B_IOT(
+    size_code: integer {1..7}) => integer
+begin
+    return TileSizeCodeBytes(size_code);
+end;
+
+pure func InstructionContractCoreCapacity_B_IOT(
+    size_code: integer {1..7}, pe_mask: bits(4)) => integer
+begin
+    return TileCoreAllocationBytes(pe_mask,
+        InstructionContractPerPECapacity_B_IOT(size_code));
+end;
+
+"""
+    if mnemonic == "B.IOS":
+        return """pure func InstructionContractSharedIsSource_B_IOS(
+    size_code: integer {0..7}) => boolean
+begin
+    return size_code == 0;
+end;
+
+pure func InstructionContractPerPECapacity_B_IOS(
+    size_code: integer {1..7}) => integer
+begin
+    return TileSizeCodeBytes(size_code);
+end;
+
+pure func InstructionContractCoreCapacity_B_IOS(
+    size_code: integer {1..7}, pe_mask: bits(4)) => integer
+begin
+    return TileCoreAllocationBytes(pe_mask,
+        InstructionContractPerPECapacity_B_IOS(size_code));
+end;
+
+"""
+    return ""
 
 
 def _render_scalar(
@@ -193,6 +269,7 @@ def _render_block(
         + "end;\n"
         + "// DOC-END: decode\n"
         + "// DOC-BEGIN: operation\n"
+        + _block_normative_contract(mnemonic)
         + f"readonly func InstructionContractHandler_{identifier}() => CommandSemanticHandler\n"
         + "begin\n"
         + f"    return CommandHandler_{handler};\n"
@@ -218,6 +295,27 @@ def _render_tile(
         "summary": f"Execute the {mnemonic} Tile operation contract.",
         "surface": "tile",
     }
+    normative_contract = ""
+    if classification[0] == "matrix":
+        normative_contract = (
+            f"readonly func InstructionContractMatrixShapeLegal_{identifier}("
+            "left: TileIndex, right: TileIndex) => boolean\n"
+            "begin\n"
+            "    return TileMatrixShapeLegal(left, right);\n"
+            "end;\n\n"
+        )
+    if mnemonic == "TLOAD":
+        normative_contract += (
+            "pure func InstructionContractDestinationShapeLegal_TLOAD(\n"
+            "    size_code: integer {1..7}, columns: integer {0..65535},\n"
+            "    valid_rows: integer {0..65535},\n"
+            "    valid_columns: integer {0..65535},\n"
+            "    data_type: TileDataType) => boolean\n"
+            "begin\n"
+            "    return TileDescriptorShapeLegal(TileSizeCodeBytes(size_code), columns,\n"
+            "        valid_rows, valid_columns, data_type);\n"
+            "end;\n\n"
+        )
     text = (
         _metadata_line(metadata)
         + "\n// DOC-BEGIN: decode\n"
@@ -227,6 +325,7 @@ def _render_tile(
         + "end;\n"
         + "// DOC-END: decode\n"
         + "// DOC-BEGIN: operation\n"
+        + normative_contract
         + f"readonly func InstructionContractHandler_{identifier}() => TileSemanticHandler\n"
         + "begin\n"
         + f"    return TileHandler_{handler};\n"

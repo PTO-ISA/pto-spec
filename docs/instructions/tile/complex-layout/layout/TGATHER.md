@@ -10,6 +10,12 @@ Execute the TGATHER Tile operation contract.
 TGATHER <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TGATHER | TEPL | 0x06F | 15 | 3 | TGATHER |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/layout/TGATHER.asl -->

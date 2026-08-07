@@ -10,6 +10,12 @@ Execute the TROWMAX Tile operation contract.
 TROWMAX <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TROWMAX | TEPL | 0x041 | 1 | 2 | ExecuteTileReduction |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduction/row-reduction/TROWMAX.asl -->

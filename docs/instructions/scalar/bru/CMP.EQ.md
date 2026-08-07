@@ -10,6 +10,21 @@ Execute the CMP.EQ scalar instruction contract.
 cmp.eq SrcL, SrcR<{.sw, .uw}>, ->{t, u, Rd}
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| cmp_eq_32_6af7c8f41300 | L32 | 32 | 0x00000045 / 0xf800707f | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| cmp_eq_32_6af7c8f41300 | RegDst | 5 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":5}] |
+| cmp_eq_32_6af7c8f41300 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+| cmp_eq_32_6af7c8f41300 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
+| cmp_eq_32_6af7c8f41300 | SrcRType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/CMP.EQ.asl -->

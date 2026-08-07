@@ -10,6 +10,12 @@ Execute the MSCATTER Tile operation contract.
 MSCATTER <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| MSCATTER | TLSU |  | 5 |  | MSCATTER |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory/irregular/MSCATTER.asl -->

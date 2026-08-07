@@ -11,6 +11,20 @@ C.BSTART COND,  label
 C.BSTART DIRECT, label
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| c_bstart_16_c4e238a9227a | C16 | 16 | 0x0004 / 0x000f | [] |
+| c_bstart_16_f833d2a4753c | C16 | 16 | 0x0002 / 0x000f | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| c_bstart_16_c4e238a9227a | simm12 | 12 | signed | [{"instruction_lsb":4,"value_lsb":0,"width":12}] |
+| c_bstart_16_f833d2a4753c | simm12 | 12 | signed | [{"instruction_lsb":4,"value_lsb":0,"width":12}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/encoding/C.BSTART.asl -->

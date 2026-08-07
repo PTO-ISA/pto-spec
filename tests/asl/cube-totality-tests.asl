@@ -1,4 +1,4 @@
-// PTO-REQ-CUBE-001, PTO-REQ-TILE-LEGALITY-001: PTO ISA 0.58.0
+// PTO-REQ-CUBE-001, PTO-REQ-TILE-LEGALITY-001: PTO ISA
 // CUBE totality with explicit destination D and explicit ACC input C.
 
 func ConfigureCubeUnitTile(index: TileIndex, data_type: TileDataType,

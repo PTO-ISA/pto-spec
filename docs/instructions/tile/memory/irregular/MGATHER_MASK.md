@@ -10,6 +10,12 @@ Execute the MGATHER_MASK Tile operation contract.
 MGATHER_MASK <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| MGATHER_MASK | TLSU |  | 6 |  | MGATHER_MASK |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory/irregular/MGATHER_MASK.asl -->

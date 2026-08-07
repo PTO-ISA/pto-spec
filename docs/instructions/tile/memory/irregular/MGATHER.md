@@ -10,6 +10,12 @@ Execute the MGATHER Tile operation contract.
 MGATHER <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| MGATHER | TLSU |  | 4 |  | MGATHER |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory/irregular/MGATHER.asl -->

@@ -10,6 +10,12 @@ Execute the TSQRT Tile operation contract.
 TSQRT <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TSQRT | TEPL | 0x015 | 21 | 0 | ExecuteTileUnary |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/unary-tile-elementwise/transcendental/TSQRT.asl -->

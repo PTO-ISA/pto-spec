@@ -10,6 +10,12 @@ Execute the TCI Tile operation contract.
 TCI <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TCI | TEPL | 0x066 | 6 | 3 | TCI |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/initialization/TCI.asl -->

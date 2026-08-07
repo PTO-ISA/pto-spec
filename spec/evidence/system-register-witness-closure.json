@@ -4053,7 +4053,7 @@
           ]
         }
       ],
-      "semantic_access_inventory_sha256": "10404b0f602a128735a3675970434e74de74e80020035bafd0b52eed29be39b4",
+      "semantic_access_inventory_sha256": "f69a94f8f9b46f76ae8d1d1601017510c4044d7f35814dd473d12e77b5afeeff",
       "semantic_access_inventory": [
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4093,7 +4093,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteDecodedBundleCommand",
-          "sha256": "f47169a2e1c3190d9570ed8045776426101f7419b43ea4ee4ff976ec085ccafb"
+          "sha256": "8d8a1a5b20186ddbc408a7c6a2cab77d963d92e5a5cdfccc5604b3af6f48dfca"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4108,7 +4108,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ResolveBundleTileDestinations",
-          "sha256": "1baa531c975ef837a3893d58bccf4d4136eb6fa192325f9dd8150d52835127bb"
+          "sha256": "f477c07c76d2b59aa942deb30b6acbdee47d647dac1edc68f5d6c024f998dd0f"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4162,8 +4162,13 @@
         },
         {
           "path": "asl/bundle/state.asl",
-          "function": "SetBundleDataAttributeState0580",
-          "sha256": "f652af603ba738a1fde85e60a8b201a5f9777dae6edf84bc2c821785e3ea7fad"
+          "function": "SetBundleDataAttributeState",
+          "sha256": "1bdfc30c890d8a5ea54a4734eb645b275ad7b10584d9502588f69d6b2f8a2bae"
+        },
+        {
+          "path": "asl/bundle/state.asl",
+          "function": "SetBundleDataAttributeState",
+          "sha256": "7c72ffbaf7c973fd267e28b3726be8839a3e0dbcca14e8f7fad7024c207944c7"
         },
         {
           "path": "asl/bundle/state.asl",
@@ -4583,7 +4588,7 @@
         {
           "path": "asl/tile/memory.asl",
           "function": "TLOADShared",
-          "sha256": "e147840444e0bd0401993ad41d37ae8f8a931841498317c7c01843c63d09c363"
+          "sha256": "d9aac3a21269be9001276aed540941acf06bbac99722f4cc04a835a23f13da3a"
         },
         {
           "path": "asl/tile/memory.asl",
@@ -4668,7 +4673,7 @@
           ]
         }
       ],
-      "activation_inventory_sha256": "8a3e5e7155a5bff32ee6d94271888cef80695944228f474ce42361dfd1021927",
+      "activation_inventory_sha256": "dea83626097300f0f2de13a489d56e0d88216b1c4da0c42739df1cac97d91fb0",
       "activation_inventory": [
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4708,7 +4713,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteDecodedBundleCommand",
-          "sha256": "f47169a2e1c3190d9570ed8045776426101f7419b43ea4ee4ff976ec085ccafb"
+          "sha256": "8d8a1a5b20186ddbc408a7c6a2cab77d963d92e5a5cdfccc5604b3af6f48dfca"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4723,7 +4728,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ResolveBundleTileDestinations",
-          "sha256": "1baa531c975ef837a3893d58bccf4d4136eb6fa192325f9dd8150d52835127bb"
+          "sha256": "f477c07c76d2b59aa942deb30b6acbdee47d647dac1edc68f5d6c024f998dd0f"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4772,8 +4777,13 @@
         },
         {
           "path": "asl/bundle/state.asl",
-          "function": "SetBundleDataAttributeState0580",
-          "sha256": "f652af603ba738a1fde85e60a8b201a5f9777dae6edf84bc2c821785e3ea7fad"
+          "function": "SetBundleDataAttributeState",
+          "sha256": "1bdfc30c890d8a5ea54a4734eb645b275ad7b10584d9502588f69d6b2f8a2bae"
+        },
+        {
+          "path": "asl/bundle/state.asl",
+          "function": "SetBundleDataAttributeState",
+          "sha256": "7c72ffbaf7c973fd267e28b3726be8839a3e0dbcca14e8f7fad7024c207944c7"
         },
         {
           "path": "asl/bundle/state.asl",
@@ -5248,7 +5258,7 @@
         {
           "path": "asl/tile/memory.asl",
           "function": "TLOADShared",
-          "sha256": "e147840444e0bd0401993ad41d37ae8f8a931841498317c7c01843c63d09c363"
+          "sha256": "d9aac3a21269be9001276aed540941acf06bbac99722f4cc04a835a23f13da3a"
         },
         {
           "path": "asl/tile/memory.asl",
@@ -5326,7 +5336,7 @@
   "sources": [
     {
       "path": "Makefile",
-      "sha256": "1b5d5ddd5295a155d7389906d005f07d0ee02143e8f7127fa57a49fa06cfe948"
+      "sha256": "a1c9ba81980137c3529affed35cae25912dff6aad41a698d31553b9c6ef7cdea"
     },
     {
       "path": "spec/catalog/system-registers.json",
@@ -5342,11 +5352,11 @@
     },
     {
       "path": "tests/asl/main.asl",
-      "sha256": "0a8bc5e516197dda5538938948a722b012aa2ada1761c5ef3cb159a53a8ad575"
+      "sha256": "854c9f55742766d0693fecd2be11bb891e362484725c72b22f229b2b5b245ccf"
     },
     {
       "path": "tests/asl/shards/core-bundle.asl",
-      "sha256": "70b3396d54e0e82eef99b23fe5052c6d2dd56e6f46cdc452f5a7c1a3446ade46"
+      "sha256": "5c7e20b0e0701e3b5eb7996e59b8bcd478678b3d973443b42210810ce32b10aa"
     },
     {
       "path": "tests/asl/scalar-tests.asl",
@@ -5354,11 +5364,11 @@
     },
     {
       "path": "tests/asl/state-tests.asl",
-      "sha256": "e7b5a11c6941574410d2beaed09ba6ba00ec5fa9b5a623b09483c73691c4e5fe"
+      "sha256": "75fdfeebb5a209c4b5d645b5d3d3c057050d080c745614070fa098abc041f657"
     },
     {
       "path": "tests/asl/tile-tests.asl",
-      "sha256": "3656cdf42e3d03190d8634765c7bd0a27e37f689f4cbf991757ca4116d90e892"
+      "sha256": "bf82683e74be1d0f80ad48c4d02ca97d932939737e6f18d109d45d8a9764d625"
     },
     {
       "path": "asl/types.asl",
@@ -5366,7 +5376,7 @@
     },
     {
       "path": "asl/state.asl",
-      "sha256": "089a8a05c5bfbb1681173459b3ec77a0c852d2073263624eaab52fd1c0c2e406"
+      "sha256": "051436a5ed7be1c4673e6b452422a4a0a73d1fd8dd217575d2e71466074621d3"
     },
     {
       "path": "asl/profiles/pto-v0.asl",

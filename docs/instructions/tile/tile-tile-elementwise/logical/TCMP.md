@@ -10,6 +10,12 @@ Execute the TCMP Tile operation contract.
 TCMP <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TCMP | TEPL | 0x00D | 13 | 0 | ExecuteTileCompare |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-tile-elementwise/logical/TCMP.asl -->

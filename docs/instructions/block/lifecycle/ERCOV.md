@@ -10,6 +10,20 @@ Recovers the encoded execution-context range from memory.
 ERCOV [RegSrc0=BasePtr, RegSrc1=LenBytes, RegSrc2=Kind]
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| ercov_32_dc0be14a2d8b | L32 | 32 | 0x00003031 / 0x06007fff | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| ercov_32_dc0be14a2d8b | RegSrc0 | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+| ercov_32_dc0be14a2d8b | RegSrc1 | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
+| ercov_32_dc0be14a2d8b | RegSrc2 | 5 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":5}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/ERCOV.asl -->

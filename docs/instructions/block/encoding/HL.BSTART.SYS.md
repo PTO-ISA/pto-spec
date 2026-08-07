@@ -10,6 +10,18 @@ Closes the current bundle, initializes the next bundle descriptor, and selects i
 HL.BSTART.SYS FALL<, fixup_label>
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| hl_bstart_sys_48_5bf0381f7bf8 | HL48 | 48 | 0x00001081000e / 0x00007fff000f | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| hl_bstart_sys_48_5bf0381f7bf8 | simm | 30 | signed | [{"instruction_lsb":31,"value_lsb":1,"width":17},{"instruction_lsb":4,"value_lsb":18,"width":12}] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/encoding/HL.BSTART.SYS.asl -->

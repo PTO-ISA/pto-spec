@@ -10,6 +10,12 @@ Execute the TSUBS Tile operation contract.
 TSUBS <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TSUBS | TEPL | 0x021 | 1 | 1 | ExecuteTileScalar |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-elementwise/arithmetic/TSUBS.asl -->

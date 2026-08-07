@@ -6,6 +6,16 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
+pure func InstructionContractDestinationShapeLegal_TLOAD(
+    size_code: integer {1..7}, columns: integer {0..65535},
+    valid_rows: integer {0..65535},
+    valid_columns: integer {0..65535},
+    data_type: TileDataType) => boolean
+begin
+    return TileDescriptorShapeLegal(TileSizeCodeBytes(size_code), columns,
+        valid_rows, valid_columns, data_type);
+end;
+
 readonly func InstructionContractHandler_TLOAD() => TileSemanticHandler
 begin
     return TileHandler_TLOAD;

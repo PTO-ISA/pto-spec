@@ -10,6 +10,12 @@ Execute the TCONCAT Tile operation contract.
 TCONCAT <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TCONCAT | TEPL | 0x060 | 0 | 3 | TCONCAT |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/layout/TCONCAT.asl -->

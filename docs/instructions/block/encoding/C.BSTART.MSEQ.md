@@ -10,6 +10,12 @@ Closes the current bundle, initializes the next bundle descriptor, and selects i
 C.BSTART.MSEQ FALL
 ```
 
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| c_bstart_mseq_16_b5597e0e41c2 | C16 | 16 | 0x48c0 / 0xffff | [] |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/encoding/C.BSTART.MSEQ.asl -->

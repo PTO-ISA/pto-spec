@@ -10,6 +10,12 @@ Execute the TCOLEXPANDDIV Tile operation contract.
 TCOLEXPANDDIV <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TCOLEXPANDDIV | TEPL | 0x058 | 24 | 2 | ExecuteTileExpand |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/vector-tile-expansion/column-expansion/TCOLEXPANDDIV.asl -->

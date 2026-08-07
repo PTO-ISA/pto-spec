@@ -10,6 +10,12 @@ Execute the TGEMV_MX_ACC Tile operation contract.
 TGEMV_MX_ACC <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TGEMV_MX_ACC | CUBE |  | 22 |  | TGEMV_MX_ACC |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/matrix/matrix-vector/TGEMV_MX_ACC.asl -->
@@ -31,9 +37,9 @@ Supplementary operand names and examples may be added here.
 BSTART.CUBE TGEMVMX.ACC AType
 B.DATR BType RMode Sat
 B.FPATR
-B.DIM LB0 M
-B.DIM LB1 N
-B.DIM LB2 K
+B.DIM LB0 N
+B.DIM LB1 M
+B.DIM LB2 Col
 B.IOT Local sources and Local outputs
 B.IOR scalar PostProcess parameter (optional)
 BSTOP
@@ -43,6 +49,11 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/matrix/matrix-vector/TGEMV_MX_ACC.asl -->
 ```asl
+readonly func InstructionContractMatrixShapeLegal_TGEMV_MX_ACC_(left: TileIndex, right: TileIndex) => boolean
+begin
+    return TileMatrixShapeLegal(left, right);
+end;
+
 readonly func InstructionContractHandler_TGEMV_MX_ACC() => TileSemanticHandler
 begin
     return TileHandler_TGEMV_MX_ACC;

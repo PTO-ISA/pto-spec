@@ -17,10 +17,10 @@ CATALOG = ROOT / "spec/catalog/system-registers.json"
 OUTPUT = ROOT / "spec/evidence/system-register-witness-closure.json"
 
 EXPECTED_STORAGE_SEMANTIC_INVENTORY_SHA256 = (
-    "10404b0f602a128735a3675970434e74de74e80020035bafd0b52eed29be39b4"
+    "f69a94f8f9b46f76ae8d1d1601017510c4044d7f35814dd473d12e77b5afeeff"
 )
 EXPECTED_TRAP_ACTIVATION_INVENTORY_SHA256 = (
-    "8a3e5e7155a5bff32ee6d94271888cef80695944228f474ce42361dfd1021927"
+    "dea83626097300f0f2de13a489d56e0d88216b1c4da0c42739df1cac97d91fb0"
 )
 
 STORAGE_BOUNDARY_SYMBOLS = {
@@ -216,9 +216,12 @@ def unit_inventory(
         r"(?<![A-Za-z0-9_])(?:0x[0-9a-fA-F]+|[0-9]+)(?![A-Za-z0-9_])"
     )
     normalized = [normalized_body(unit["body"]) for unit in units]
+    semantic = [
+        normalized_body(without_line_comments(unit["body"])) for unit in units
+    ]
     tainted = {
         index
-        for index, value in enumerate(normalized)
+        for index, value in enumerate(semantic)
         if any(re.search(rf"\b{re.escape(symbol)}\b", value) for symbol in symbols)
         or (
             numbers is not None

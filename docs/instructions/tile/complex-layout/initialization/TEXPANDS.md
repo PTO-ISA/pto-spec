@@ -10,6 +10,12 @@ Execute the TEXPANDS Tile operation contract.
 TEXPANDS <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TEXPANDS | TEPL | 0x03B | 27 | 1 | ExecuteTileFillScalar |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/initialization/TEXPANDS.asl -->

@@ -10,6 +10,12 @@ Execute the TMRGSORT Tile operation contract.
 TMRGSORT <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TMRGSORT | TEPL | 0x06D | 13 | 3 | TMRGSORT |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/sorting/TMRGSORT.asl -->

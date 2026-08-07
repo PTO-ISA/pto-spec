@@ -10,6 +10,12 @@ Execute the TTRI Tile operation contract.
 TTRI <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TTRI | TEPL | 0x067 | 7 | 3 | TTRI |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/initialization/TTRI.asl -->

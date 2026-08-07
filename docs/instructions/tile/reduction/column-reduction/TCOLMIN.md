@@ -10,6 +10,12 @@ Execute the TCOLMIN Tile operation contract.
 TCOLMIN <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TCOLMIN | TEPL | 0x052 | 18 | 2 | ExecuteTileReduction |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduction/column-reduction/TCOLMIN.asl -->

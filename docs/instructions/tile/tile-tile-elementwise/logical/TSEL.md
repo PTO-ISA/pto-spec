@@ -10,6 +10,12 @@ Execute the TSEL Tile operation contract.
 TSEL <bundle operands>
 ```
 
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TSEL | TEPL | 0x01A | 26 | 0 | ExecuteTileSelect |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-tile-elementwise/logical/TSEL.asl -->
