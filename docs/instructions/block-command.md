@@ -8,7 +8,7 @@ Bundle/command forms update the bundle descriptor, bundle arguments, bundle-visi
 
 The `B` prefix in `BSTART`, `BSTOP`, `C.BSTART`, `C.BSTOP`, and `B.*` means bundle. BPC is the bundle-body program counter. `BID` in `CROSS_BID` instead means virtual core-block identifier. These are stable ISA spellings.
 
-The active PTO architecture fixes this 99-form command ABI. `BSTART.TEPL` carries the two-bit Mode and five-bit Function fields; named TLSU and CUBE starts each have one command encoding. `B.IOT`, `B.DATR`, and `B.CATR` define tile lifetime, data attributes, and bundle-control attributes. The removed `B.ARG`, generic `BSTART.CUBE`, and generic `BSTART.FIXP` forms are not accepted. See [ADR 0052](../architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md).
+PTO ISA 0.58.0 freezes this 99-form command ABI. `BSTART.TEPL` carries the two-bit Mode and five-bit Function fields; named TLSU and CUBE starts each have one command encoding. `B.IOT`, `B.DATR`, and `B.CATR` define tile lifetime, data attributes, and bundle-control attributes. The removed `B.ARG`, generic `BSTART.CUBE`, and generic `BSTART.FIXP` forms are not accepted. See [ADR 0052](../architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md).
 
 ## Summary
 
