@@ -784,6 +784,10 @@ begin
     var tlsu_operands = DefaultTileInstructionOperands();
     tlsu_operands.destination0 = 3;
     tlsu_operands.address = Zeros{PTO_XLEN} + 512;
+    // Direct dispatch receives a fully decoded operand record. Supply the
+    // dense two-element row stride explicitly; scalar0=0 is the architectural
+    // encoded-zero stride, not the bundle-schema omitted-field default.
+    tlsu_operands.scalar0 = Zeros{PTO_XLEN} + 2;
     let (tlsu_status, tlsu_value) = ExecuteTileInstruction(
         TileDecode_TLSU, '000000000000', tlsu_operands);
     assert tlsu_status == TileExecution_Executed;

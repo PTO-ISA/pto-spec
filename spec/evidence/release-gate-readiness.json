@@ -143,7 +143,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "497972d0ff726b34420c024cfe57a28519d9aecd8451df444fd8a117580218ce"
+      "sha256": "733be914a93854371078e662492c5d3cd753644f121a12d3f4f14d39d070fba8"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -155,7 +155,7 @@
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "adaadc3763b36b3f661c0f003bd35b3d33779514711987e6c51a5a1b5840efb2"
+      "sha256": "884d537ac9dea0a7270537a93c452901409a1a84a10c15a9a09b32ab5d074be8"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
@@ -163,7 +163,7 @@
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "fc84bb86e71e54d9e1150a26a95976019e0a6fdc8232f446b8bd68078d9c6a49"
+      "sha256": "cb09521bf244a58e15ec61055e9ec256f79f31db29b42c077ef252ab90224648"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
@@ -183,7 +183,7 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "b6fc7d3587274c8f4e6e1c476e815837326956b0f56818a740214df3348fd7f1"
+      "sha256": "1b7d06fc3c026625bae134d97a0d6620b5bd49eece8d54c838090c04ee763a5e"
     },
     {
       "path": "spec/requirements.json",

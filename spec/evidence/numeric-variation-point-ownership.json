@@ -8656,7 +8656,7 @@
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "fc84bb86e71e54d9e1150a26a95976019e0a6fdc8232f446b8bd68078d9c6a49"
+      "sha256": "cb09521bf244a58e15ec61055e9ec256f79f31db29b42c077ef252ab90224648"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
