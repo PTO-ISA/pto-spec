@@ -174,7 +174,7 @@ assembled=$(make --no-print-directory print-asl-sources)
 while IFS= read -r path; do
     [[ -n $path ]] || continue
     [[ -f $path ]] || continue
-    printf '%s\n' "$assembled" | grep -Fxq "$path" ||
+    grep -Fxq -- "$path" <<<"$assembled" ||
         fail "ASL source is absent from ASL_SOURCES and is never type-checked: $path"
 done < <(git ls-files asl | grep -E '\.asl$')
 

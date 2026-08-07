@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "scripts/check-pr"
 WORKFLOW = ROOT / ".github/workflows/asl.yml"
+REPOSITORY_CHECK = ROOT / "scripts/check-repository"
 
 
 class PullRequestCheckTest(unittest.TestCase):
@@ -70,6 +71,12 @@ class PullRequestCheckTest(unittest.TestCase):
             "test-shard-",
         ):
             self.assertNotIn(forbidden, workflow)
+
+    def test_repository_source_membership_avoids_pipefail_broken_pipe(self) -> None:
+        checker = REPOSITORY_CHECK.read_text(encoding="utf-8")
+
+        self.assertNotIn('| grep -Fxq "$path"', checker)
+        self.assertIn('grep -Fxq -- "$path" <<<"$assembled"', checker)
 
 
 if __name__ == "__main__":

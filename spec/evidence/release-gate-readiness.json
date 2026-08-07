@@ -115,7 +115,7 @@
     },
     {
       "path": "scripts/check-repository",
-      "sha256": "a6a3085871a3ed1f00c656d3abe14bdb441f00b79dce91081c5140b443b358f4"
+      "sha256": "577ff899283051895ead4fc06b9e8e5db32d23975bb636bf8333fc51f2e90c2c"
     },
     {
       "path": "scripts/check-toolchain",
