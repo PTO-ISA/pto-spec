@@ -4,6 +4,12 @@ Execute the TGEMV_BIAS Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/matrix/matrix-vector/TGEMV_BIAS.asl -->
 
+## Normative identity {#PTO-INST-TILE-TGEMV-BIAS}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

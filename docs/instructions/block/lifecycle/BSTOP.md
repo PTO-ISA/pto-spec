@@ -4,6 +4,12 @@ Commits the current bundle and transfers to its selected continuation.
 
 <!-- ASL-SOURCE: asl/block/lifecycle/BSTOP.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-BSTOP}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

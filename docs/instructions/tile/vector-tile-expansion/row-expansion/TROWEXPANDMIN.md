@@ -4,6 +4,12 @@ Execute the TROWEXPANDMIN Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/vector-tile-expansion/row-expansion/TROWEXPANDMIN.asl -->
 
+## Normative identity {#PTO-INST-TILE-TROWEXPANDMIN}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

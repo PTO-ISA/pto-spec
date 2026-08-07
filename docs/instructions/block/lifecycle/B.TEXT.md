@@ -4,6 +4,12 @@ Sets the out-of-line body entry address for a decoupled bundle.
 
 <!-- ASL-SOURCE: asl/block/lifecycle/B.TEXT.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-B-TEXT}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

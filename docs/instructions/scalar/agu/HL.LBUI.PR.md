@@ -4,6 +4,12 @@ Execute the HL.LBUI.PR scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/agu/HL.LBUI.PR.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-HL-LBUI-PR}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

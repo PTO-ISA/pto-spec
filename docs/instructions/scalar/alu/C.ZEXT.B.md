@@ -4,6 +4,12 @@ Execute the C.ZEXT.B scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/alu/C.ZEXT.B.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-C-ZEXT-B}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

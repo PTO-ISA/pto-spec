@@ -4,6 +4,12 @@ Execute the HL.SH.PO scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/agu/HL.SH.PO.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-HL-SH-PO}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

@@ -4,6 +4,12 @@ Execute the HL.LDI.UPR scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/agu/HL.LDI.UPR.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-HL-LDI-UPR}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

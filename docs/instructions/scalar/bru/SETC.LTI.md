@@ -4,6 +4,12 @@ Execute the SETC.LTI scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/bru/SETC.LTI.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-SETC-LTI}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

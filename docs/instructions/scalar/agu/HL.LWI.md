@@ -4,6 +4,12 @@ Execute the HL.LWI scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/agu/HL.LWI.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-HL-LWI}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

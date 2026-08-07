@@ -4,6 +4,12 @@ Execute the TCI Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/complex-layout/initialization/TCI.asl -->
 
+## Normative identity {#PTO-INST-TILE-TCI}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

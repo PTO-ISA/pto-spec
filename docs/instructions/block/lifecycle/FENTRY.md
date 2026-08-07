@@ -4,6 +4,12 @@ Atomically validates and creates a frame-template entry state.
 
 <!-- ASL-SOURCE: asl/block/lifecycle/FENTRY.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-FENTRY}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

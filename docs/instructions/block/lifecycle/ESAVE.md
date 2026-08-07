@@ -4,6 +4,12 @@ Saves the encoded execution-context range to memory.
 
 <!-- ASL-SOURCE: asl/block/lifecycle/ESAVE.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-ESAVE}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

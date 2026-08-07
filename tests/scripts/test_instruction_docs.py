@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
 from scripts.instruction_docs import (
+    ROOT,
     check_catalog_projection,
     check_tree,
     check_version_neutrality,
@@ -79,6 +82,16 @@ class InstructionDocsTest(unittest.TestCase):
         self.assertIn("func ExecuteTADD()", records[0].regions["operation"])
         self.assertEqual(records[0].catalog_records[0]["mnemonic"], "TADD")
 
+    def test_direct_script_entrypoint_loads_repository_modules(self) -> None:
+        result = subprocess.run(
+            [sys.executable, "scripts/instruction_docs.py", "--help"],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_check_tree_rejects_missing_markdown_page(self) -> None:
         self.write_asl()
 
@@ -145,6 +158,19 @@ class InstructionDocsTest(unittest.TestCase):
 
         page.write_text(rendered.replace("return TRUE;", "return FALSE;"), encoding="utf-8")
         self.assertIn("stale generated Markdown page for TADD", check_tree(self.root))
+
+    def test_generate_tree_projects_stable_ndf_identity(self) -> None:
+        self.write_asl()
+
+        generate_tree(self.root)
+        page = self.root / "docs/instructions/tile/tile-tile-elementwise/arithmetic/TADD.md"
+        rendered = page.read_text(encoding="utf-8")
+
+        self.assertIn("## Normative identity {#PTO-INST-TILE-TADD}", rendered)
+        self.assertIn(
+            "<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->",
+            rendered,
+        )
 
     def test_generate_tree_emits_complete_tile_block(self) -> None:
         self.write_asl()

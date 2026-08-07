@@ -4,6 +4,12 @@ Execute the TAND Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/tile-tile-elementwise/logical/TAND.asl -->
 
+## Normative identity {#PTO-INST-TILE-TAND}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

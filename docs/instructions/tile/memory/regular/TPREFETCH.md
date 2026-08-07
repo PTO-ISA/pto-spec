@@ -4,6 +4,12 @@ Execute the TPREFETCH Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/memory/regular/TPREFETCH.asl -->
 
+## Normative identity {#PTO-INST-TILE-TPREFETCH}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

@@ -4,6 +4,12 @@ Execute the SETC.GEI scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/bru/SETC.GEI.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-SETC-GEI}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

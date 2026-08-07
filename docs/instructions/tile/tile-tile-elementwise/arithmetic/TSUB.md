@@ -4,6 +4,12 @@ Execute the TSUB Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/tile-tile-elementwise/arithmetic/TSUB.asl -->
 
+## Normative identity {#PTO-INST-TILE-TSUB}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

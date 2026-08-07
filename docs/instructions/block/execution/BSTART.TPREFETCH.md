@@ -4,6 +4,12 @@ Closes the current bundle, initializes the next bundle descriptor, and selects i
 
 <!-- ASL-SOURCE: asl/block/execution/BSTART.TPREFETCH.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-BSTART-TPREFETCH}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

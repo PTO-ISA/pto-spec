@@ -4,6 +4,12 @@ Execute the C.SDI scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/agu/C.SDI.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-C-SDI}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

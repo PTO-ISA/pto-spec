@@ -4,6 +4,12 @@ Binds v5 PE_MASK, ordered Local tile sources, last-use, and optional TSize/2-bit
 
 <!-- ASL-SOURCE: asl/block/operands/B.IOT.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-B-IOT}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

@@ -4,6 +4,12 @@ Recovers the encoded execution-context range from memory.
 
 <!-- ASL-SOURCE: asl/block/lifecycle/ERCOV.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-ERCOV}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

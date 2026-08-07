@@ -4,6 +4,12 @@ Execute the FMADD scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/fsu/FMADD.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-FMADD}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

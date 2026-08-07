@@ -4,6 +4,12 @@ Binds one ordered absolute core-private Shared register S0..S255 with a per-PE s
 
 <!-- ASL-SOURCE: asl/block/operands/B.IOS.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-B-IOS}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

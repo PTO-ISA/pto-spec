@@ -4,6 +4,12 @@ Restores a frame and returns through the retained return-address target.
 
 <!-- ASL-SOURCE: asl/block/lifecycle/FRET.RA.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-FRET-RA}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

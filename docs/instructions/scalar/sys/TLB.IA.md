@@ -4,6 +4,12 @@ Execute the TLB.IA scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/sys/TLB.IA.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-TLB-IA}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

@@ -4,6 +4,12 @@ Execute the DC.IVA scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/sys/DC.IVA.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-DC-IVA}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

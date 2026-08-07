@@ -4,6 +4,12 @@ Execute the TNOT Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/unary-tile-elementwise/logical/TNOT.asl -->
 
+## Normative identity {#PTO-INST-TILE-TNOT}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

@@ -4,6 +4,12 @@ Execute the TSCATTER Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/complex-layout/layout/TSCATTER.asl -->
 
+## Normative identity {#PTO-INST-TILE-TSCATTER}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

@@ -4,6 +4,12 @@ Execute the ADDIW scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/alu/ADDIW.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-ADDIW}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

@@ -4,6 +4,12 @@ Execute the DIV scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/alu/DIV.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-DIV}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

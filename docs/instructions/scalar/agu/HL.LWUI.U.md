@@ -4,6 +4,12 @@ Execute the HL.LWUI.U scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/agu/HL.LWUI.U.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-HL-LWUI-U}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

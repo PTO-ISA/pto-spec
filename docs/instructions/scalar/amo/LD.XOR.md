@@ -4,6 +4,12 @@ Execute the LD.XOR scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/amo/LD.XOR.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-LD-XOR}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

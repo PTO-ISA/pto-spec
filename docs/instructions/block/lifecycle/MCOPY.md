@@ -4,6 +4,12 @@ Copies an encoded memory range with instruction-atomic preflight and snapshot se
 
 <!-- ASL-SOURCE: asl/block/lifecycle/MCOPY.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-MCOPY}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

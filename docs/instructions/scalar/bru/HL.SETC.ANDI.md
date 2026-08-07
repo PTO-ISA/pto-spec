@@ -4,6 +4,12 @@ Execute the HL.SETC.ANDI scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/bru/HL.SETC.ANDI.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-HL-SETC-ANDI}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

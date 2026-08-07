@@ -4,6 +4,12 @@ Execute the SRLW scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/alu/SRLW.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-SRLW}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

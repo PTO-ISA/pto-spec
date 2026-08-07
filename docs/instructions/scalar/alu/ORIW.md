@@ -4,6 +4,12 @@ Execute the ORIW scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/alu/ORIW.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-ORIW}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

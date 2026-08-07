@@ -4,6 +4,12 @@ Pops selected scalar queue values into encoded destinations.
 
 <!-- ASL-SOURCE: asl/block/lifecycle/HL.QPOP.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-HL-QPOP}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

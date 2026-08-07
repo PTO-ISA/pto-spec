@@ -4,6 +4,12 @@ Execute the TADDS Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/tile-scalar-elementwise/arithmetic/TADDS.asl -->
 
+## Normative identity {#PTO-INST-TILE-TADDS}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

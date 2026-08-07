@@ -4,6 +4,12 @@ Binds encoded scalar inputs and outputs to the current bundle interface.
 
 <!-- ASL-SOURCE: asl/block/operands/B.IOR.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-B-IOR}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

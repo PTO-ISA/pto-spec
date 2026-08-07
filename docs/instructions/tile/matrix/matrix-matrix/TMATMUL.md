@@ -4,6 +4,12 @@ Execute the TMATMUL Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/matrix/matrix-matrix/TMATMUL.asl -->
 
+## Normative identity {#PTO-INST-TILE-TMATMUL}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

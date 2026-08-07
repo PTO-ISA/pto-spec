@@ -4,6 +4,12 @@ Execute the TROWMIN Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/reduction/row-reduction/TROWMIN.asl -->
 
+## Normative identity {#PTO-INST-TILE-TROWMIN}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

@@ -4,6 +4,12 @@ Execute the TQUANT Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/complex-layout/format-conversion/TQUANT.asl -->
 
+## Normative identity {#PTO-INST-TILE-TQUANT}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

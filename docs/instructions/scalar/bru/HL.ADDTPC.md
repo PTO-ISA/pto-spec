@@ -4,6 +4,12 @@ Execute the HL.ADDTPC scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/bru/HL.ADDTPC.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-HL-ADDTPC}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

@@ -4,6 +4,12 @@ Latches tile layout, data type, padding, conversion, rounding, and saturation at
 
 <!-- ASL-SOURCE: asl/block/attributes/B.DATR.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-B-DATR}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

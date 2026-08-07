@@ -4,6 +4,12 @@ Execute the SWAPB scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/amo/SWAPB.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-SWAPB}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

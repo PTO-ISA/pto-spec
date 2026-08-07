@@ -4,6 +4,12 @@ Execute the XORW scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/alu/XORW.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-XORW}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

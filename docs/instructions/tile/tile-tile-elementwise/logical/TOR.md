@@ -4,6 +4,12 @@ Execute the TOR Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/tile-tile-elementwise/logical/TOR.asl -->
 
+## Normative identity {#PTO-INST-TILE-TOR}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

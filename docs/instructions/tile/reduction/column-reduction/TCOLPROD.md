@@ -4,6 +4,12 @@ Execute the TCOLPROD Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/reduction/column-reduction/TCOLPROD.asl -->
 
+## Normative identity {#PTO-INST-TILE-TCOLPROD}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

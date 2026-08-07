@@ -4,6 +4,12 @@ Execute the TDIV Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/unary-tile-elementwise/transcendental/TDIV.asl -->
 
+## Normative identity {#PTO-INST-TILE-TDIV}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

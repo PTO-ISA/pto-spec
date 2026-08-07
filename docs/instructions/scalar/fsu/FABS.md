@@ -4,6 +4,12 @@ Execute the FABS scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/fsu/FABS.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-FABS}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

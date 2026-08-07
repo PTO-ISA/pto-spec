@@ -4,6 +4,12 @@ Atomically validates and commits a frame-template exit state.
 
 <!-- ASL-SOURCE: asl/block/lifecycle/FEXIT.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-FEXIT}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

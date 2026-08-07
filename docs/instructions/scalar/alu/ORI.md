@@ -4,6 +4,12 @@ Execute the ORI scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/alu/ORI.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-ORI}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

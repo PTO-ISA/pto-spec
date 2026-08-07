@@ -4,6 +4,12 @@ Execute the MGATHER_CAS Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/memory/irregular/MGATHER_CAS.asl -->
 
+## Normative identity {#PTO-INST-TILE-MGATHER-CAS}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

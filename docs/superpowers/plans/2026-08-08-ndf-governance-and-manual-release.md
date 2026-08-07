@@ -101,7 +101,7 @@ git commit -m "test: isolate and correct TLOAD bundle defaults"
 - Produces: `check_repository(root: Path) -> list[str]`.
 - Produces: `./scripts/check-ndf` with exit 0 only when IDs, metadata, references, and projections are valid.
 
-- [ ] **Step 1: Write parser and repository-check tests first**
+- [x] **Step 1: Write parser and repository-check tests first**
 
 Add literal fixtures proving:
 
@@ -141,7 +141,7 @@ python3 -m unittest tests.scripts.test_ndf -v
 
 Expected: FAIL because `scripts.ndf` does not exist.
 
-- [ ] **Step 2: Implement the NDF parser**
+- [x] **Step 2: Implement the NDF parser**
 
 Recognize exact ASL regions:
 
@@ -154,11 +154,11 @@ Recognize exact ASL regions:
 
 Require IDs matching `PTO-[A-Z0-9]+(?:-[A-Z0-9]+)*`, unique IDs, matched boundaries, one metadata line, nonempty body, and resolvable references. Reject tracked paths containing `legacy`, `archive`, `.bak`, `.old`, `~`, or version-suffixed backup names below active ASL/docs trees.
 
-- [ ] **Step 3: Seed architecture-wide ASL clauses**
+- [x] **Step 3: Seed architecture-wide ASL clauses**
 
 Add NDF regions in `asl/architecture.asl` for the source hierarchy, per-PE tile capacity, and manual release boundary. The clauses point to executable L3 functions rather than restating their algorithms.
 
-- [ ] **Step 4: Project NDF identity into instruction pages**
+- [x] **Step 4: Project NDF identity into instruction pages**
 
 Derive each instruction clause ID from surface and mnemonic, for example `PTO-INST-TILE-TLOAD`, and render this generated heading near the ASL source marker:
 
@@ -169,7 +169,7 @@ Derive each instruction clause ID from surface and mnemonic, for example `PTO-IN
 
 The identity must be deterministic and collision-checked by `instruction_docs.py`.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run:
 

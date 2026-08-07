@@ -4,6 +4,12 @@ Execute the HL.LHU.PCR scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/agu/HL.LHU.PCR.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-HL-LHU-PCR}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

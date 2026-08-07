@@ -4,6 +4,12 @@ Execute the TROWMAX Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/reduction/row-reduction/TROWMAX.asl -->
 
+## Normative identity {#PTO-INST-TILE-TROWMAX}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

@@ -4,6 +4,12 @@ Execute the TGEMV_MX Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/matrix/matrix-vector/TGEMV_MX.asl -->
 
+## Normative identity {#PTO-INST-TILE-TGEMV-MX}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

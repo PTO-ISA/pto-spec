@@ -4,6 +4,12 @@ Writes one of the three bundle-local dimension registers.
 
 <!-- ASL-SOURCE: asl/block/attributes/B.DIM.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-B-DIM}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

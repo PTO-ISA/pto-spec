@@ -4,6 +4,12 @@ Execute the GMOV Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/memory/pe-movement/GMOV.asl -->
 
+## Normative identity {#PTO-INST-TILE-GMOV}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

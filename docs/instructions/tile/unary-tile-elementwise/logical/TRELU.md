@@ -4,6 +4,12 @@ Execute the TRELU Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/unary-tile-elementwise/logical/TRELU.asl -->
 
+## Normative identity {#PTO-INST-TILE-TRELU}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

@@ -4,6 +4,12 @@ Fills an encoded memory range after complete access preflight.
 
 <!-- ASL-SOURCE: asl/block/lifecycle/MSET.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-MSET}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

@@ -4,6 +4,12 @@ Execute the TIMG2COL Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/complex-layout/layout/TIMG2COL.asl -->
 
+## Normative identity {#PTO-INST-TILE-TIMG2COL}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

@@ -4,6 +4,12 @@ Pushes the encoded scalar values to the selected temporary queue.
 
 <!-- ASL-SOURCE: asl/block/lifecycle/HL.QPUSH.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-HL-QPUSH}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

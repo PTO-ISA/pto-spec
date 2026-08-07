@@ -4,6 +4,12 @@ Execute the TCOLEXPANDMIN Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/vector-tile-expansion/column-expansion/TCOLEXPANDMIN.asl -->
 
+## Normative identity {#PTO-INST-TILE-TCOLEXPANDMIN}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

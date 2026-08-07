@@ -4,6 +4,12 @@ Execute the FNMSUB scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/fsu/FNMSUB.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-FNMSUB}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

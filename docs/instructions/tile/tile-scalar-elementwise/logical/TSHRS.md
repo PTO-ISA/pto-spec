@@ -4,6 +4,12 @@ Execute the TSHRS Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/tile-scalar-elementwise/logical/TSHRS.asl -->
 
+## Normative identity {#PTO-INST-TILE-TSHRS}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

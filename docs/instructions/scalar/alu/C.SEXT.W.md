@@ -4,6 +4,12 @@ Execute the C.SEXT.W scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/alu/C.SEXT.W.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-C-SEXT-W}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

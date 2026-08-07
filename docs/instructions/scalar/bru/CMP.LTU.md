@@ -4,6 +4,12 @@ Execute the CMP.LTU scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/bru/CMP.LTU.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-CMP-LTU}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

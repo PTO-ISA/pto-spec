@@ -4,6 +4,12 @@ Moves values between scalar temporary queues according to encoded queue controls
 
 <!-- ASL-SOURCE: asl/block/lifecycle/HL.QMT.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-HL-QMT}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

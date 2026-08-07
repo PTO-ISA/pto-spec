@@ -4,6 +4,12 @@ Execute the HL.CASB scalar instruction contract.
 
 <!-- ASL-SOURCE: asl/scalar/amo/HL.CASB.asl -->
 
+## Normative identity {#PTO-INST-SCALAR-HL-CASB}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

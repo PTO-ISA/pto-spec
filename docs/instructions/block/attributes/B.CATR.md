@@ -4,6 +4,12 @@ Latches bundle control, trap, atomic, ordering, and address-class attributes.
 
 <!-- ASL-SOURCE: asl/block/attributes/B.CATR.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-B-CATR}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

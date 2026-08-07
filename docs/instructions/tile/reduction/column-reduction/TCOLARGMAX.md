@@ -4,6 +4,12 @@ Execute the TCOLARGMAX Tile operation contract.
 
 <!-- ASL-SOURCE: asl/tile/reduction/column-reduction/TCOLARGMAX.asl -->
 
+## Normative identity {#PTO-INST-TILE-TCOLARGMAX}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm

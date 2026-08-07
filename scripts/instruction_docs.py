@@ -10,8 +10,13 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.ndf import instruction_clause_id
+
+
 METADATA_PREFIX = "// PTO-INSTRUCTION: "
 REGION_BEGIN = re.compile(r"^// DOC-BEGIN: ([a-z][a-z0-9-]*)$")
 REGION_END = re.compile(r"^// DOC-END: ([a-z][a-z0-9-]*)$")
@@ -48,6 +53,10 @@ class InstructionRecord:
     catalog_indices: tuple[int, ...]
     source_path: Path
     regions: dict[str, str]
+
+    @property
+    def ndf_id(self) -> str:
+        return instruction_clause_id(self.surface, self.mnemonic)
 
     @property
     def relative_instruction_path(self) -> Path:
@@ -147,6 +156,7 @@ def _load_record(root: Path, path: Path) -> InstructionRecord | None:
 def load_instruction_index(root: Path = ROOT) -> list[InstructionRecord]:
     records: list[InstructionRecord] = []
     by_mnemonic: dict[str, Path] = {}
+    by_ndf_id: dict[str, Path] = {}
     for path in sorted((root / "asl").rglob("*.asl")):
         record = _load_record(root, path)
         if record is None:
@@ -157,6 +167,12 @@ def load_instruction_index(root: Path = ROOT) -> list[InstructionRecord]:
                 f"{by_mnemonic[record.mnemonic]} and {record.source_path}"
             )
         by_mnemonic[record.mnemonic] = record.source_path
+        if record.ndf_id in by_ndf_id:
+            raise ValueError(
+                f"duplicate instruction NDF identity {record.ndf_id}: "
+                f"{by_ndf_id[record.ndf_id]} and {record.source_path}"
+            )
+        by_ndf_id[record.ndf_id] = record.source_path
         records.append(record)
     return sorted(records, key=lambda record: (record.surface, record.classification, record.mnemonic))
 
@@ -292,6 +308,12 @@ def render_page(record: InstructionRecord, supplementary: str = "") -> str:
         record.summary,
         "",
         f"<!-- ASL-SOURCE: {record.source_path.as_posix()} -->",
+        "",
+        f"## Normative identity {{#{record.ndf_id}}}",
+        "",
+        f"<!-- ndf: kind=executable level=L3 layer={record.surface} status=accepted -->",
+        "",
+        "The current instruction contract is owned by the ASL source linked above.",
         "",
         "## Assembly",
         "",

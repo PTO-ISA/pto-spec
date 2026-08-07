@@ -4,6 +4,12 @@ Transfers the named context value to a target virtual core block.
 
 <!-- ASL-SOURCE: asl/block/encoding/XB.asl -->
 
+## Normative identity {#PTO-INST-BLOCK-XB}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
 ## Assembly
 
 ```asm
