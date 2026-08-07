@@ -832,11 +832,27 @@ func TestTileCapacityLegality()
 begin
     ResetProfileState();
     _SystemRegisters.tile_capacity = Zeros{PTO_XLEN} + 768;
+    assert TileSizeCodeBytes(1) == 128;
+    assert TileSizeCodeBytes(2) == 256;
+    assert TileSizeCodeBytes(3) == 512;
+    assert TileSizeCodeBytes(4) == 1024;
+    assert TileSizeCodeBytes(5) == 2048;
+    assert TileSizeCodeBytes(6) == 4096;
+    assert TileSizeCodeBytes(7) == 8192;
     assert !TileCapacityIsLegal(0);
     assert !TileCapacityIsLegal(255);
     assert TileCapacityIsLegal(256);
     assert !TileStorageFitsCapacity(33, 1, TileDataType_U64, 256);
     assert TileStorageFitsCapacity(32, 1, TileDataType_U64, 256);
+    // Capacity covers the complete allocated shape. A smaller valid region
+    // limits observable elements but cannot make a larger shape fit.
+    assert !TileStorageFitsCapacity(64, 1, TileDataType_U64, 256);
+    assert TileStorageFitsCapacity(64, 1, TileDataType_U64, 512);
+    ConfigureTile(19, 512, 64, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    assert _Tiles[[19]].capacity_bytes == 512;
+    assert _Tiles[[19]].rows == 64 && _Tiles[[19]].valid_rows == 1;
+    ReleaseTile(19);
 
     ConfigureTile(20, 256, 32, 1, 32, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
@@ -1164,7 +1180,7 @@ begin
     // or changing any Shared descriptor or payload state.
     ResetMemoryExecution();
     ClearFault();
-    TLOADShared(Zeros{8} + 255, Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 63, 1,
+    TLOADShared(Zeros{8} + 255, Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 63, 3,
         1, 63, 1, 63, TileDataType_U64, TileLayout_RowMajor, '0001');
     assert _LastFault == Fault_TileLegality;
     assert _MemoryEventCount == 0;
@@ -1172,13 +1188,21 @@ begin
     assert SharedTileRecord(Zeros{8} + 255).tile.payload[[0]] ==
         Zeros{PTO_XLEN} + 0xaa;
 
-    // A full write replaces both descriptor and payload atomically.
+    // The first nonzero write fixes the allocation mask. Even a full-mask
+    // write cannot expand an existing S register; it must allocate a new Sx.
     ClearFault();
-    let full_update = AtomicUpdateSharedTile(
+    let expanded_update = AtomicUpdateSharedTile(
         Zeros{8} + 255, incompatible, '1111');
+    assert !expanded_update;
+    assert SharedTileRecord(Zeros{8} + 255).tile.columns == 64;
+    assert SharedTileRecord(Zeros{8} + 255).allocation_mask == '0101';
+
+    let full_update = AtomicUpdateSharedTile(
+        Zeros{8} + 253, incompatible, '1111');
     assert full_update;
-    assert SharedTileRecord(Zeros{8} + 255).tile.columns == 63;
-    assert SharedTileRecord(Zeros{8} + 255).initialized_mask == '1111';
+    assert SharedTileRecord(Zeros{8} + 253).tile.columns == 63;
+    assert SharedTileRecord(Zeros{8} + 253).allocation_mask == '1111';
+    assert SharedTileRecord(Zeros{8} + 253).initialized_mask == '1111';
 
     // Undefined reads do not allocate, initialize, or raise a fault.
     ClearFault();
@@ -1186,20 +1210,22 @@ begin
     assert _LastFault == Fault_None;
     assert !SharedTileRecord(Zeros{8}).descriptor_valid;
 
-    // Complementary partial publications converge to one fully initialized
-    // Shared value even though neither source snapshot is itself a full tile.
+    // The first publication fixes both the allocation mask and the initialized
+    // subset. A complementary mask is expansion, not completion, and rejects.
     var partial_snapshot = _Tiles[[0]];
     partial_snapshot.contents_defined = FALSE;
     partial_snapshot.defined_valid_elements = 0;
     let first_partial = AtomicUpdateSharedTile(
         Zeros{8} + 254, partial_snapshot, '0101');
     assert first_partial;
+    assert SharedTileRecord(Zeros{8} + 254).allocation_mask == '0101';
     assert SharedTileRecord(Zeros{8} + 254).initialized_mask == '0101';
-    assert !SharedTileFullyInitialized(Zeros{8} + 254);
+    assert SharedTileFullyInitialized(Zeros{8} + 254);
     let second_partial = AtomicUpdateSharedTile(
         Zeros{8} + 254, partial_snapshot, '1010');
-    assert second_partial;
-    assert SharedTileRecord(Zeros{8} + 254).initialized_mask == '1111';
+    assert !second_partial;
+    assert SharedTileRecord(Zeros{8} + 254).allocation_mask == '0101';
+    assert SharedTileRecord(Zeros{8} + 254).initialized_mask == '0101';
     assert SharedTileFullyInitialized(Zeros{8} + 254);
 end;
 
