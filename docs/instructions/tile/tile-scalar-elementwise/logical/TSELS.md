@@ -1,0 +1,61 @@
+# TSELS
+
+Execute the TSELS Tile operation contract.
+
+<!-- ASL-SOURCE: asl/tile/tile-scalar-elementwise/logical/TSELS.asl -->
+
+## Assembly
+
+```asm
+TSELS <bundle operands>
+```
+
+## Decode
+
+<!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-elementwise/logical/TSELS.asl -->
+```asl
+readonly func InstructionContractOperation_TSELS() => TileOperation
+begin
+    return TileOperation_TSELS;
+end;
+```
+<!-- GENERATED-ASL-END: decode -->
+
+## Assembler symbols
+
+Supplementary operand names and examples may be added here.
+
+## Block composition
+
+```asm
+BSTART.TEPL TSELS, DataType
+B.DATR (optional)
+B.DIM LB0
+B.DIM (LB1/LB2 for 2D)
+B.IOT
+B.IOR
+BSTOP
+```
+
+## Operation
+
+<!-- GENERATED-ASL-BEGIN: operation source=asl/tile/tile-scalar-elementwise/logical/TSELS.asl -->
+```asl
+readonly func InstructionContractHandler_TSELS() => TileSemanticHandler
+begin
+    return TileHandler_ExecuteTileSelectScalar;
+end;
+```
+<!-- GENERATED-ASL-END: operation -->
+
+## Legality and exceptions
+
+Normative legality is embedded from the ASL source above.
+
+## Operational information
+
+Supplementary implementation-neutral guidance may be added here.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+
+<!-- SUPPLEMENTARY-END -->

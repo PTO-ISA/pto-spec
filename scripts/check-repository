@@ -223,5 +223,6 @@ python3 scripts/check-catalogs
 ./scripts/generate-release-traceability-readiness --check
 ./scripts/generate-release-gate-readiness --check
 python3 scripts/generate-instruction-reference --check
+python3 scripts/instruction_docs.py --check
 ./scripts/check-release-manifest
 python3 scripts/check-publication-hygiene

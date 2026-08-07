@@ -32,6 +32,10 @@ SUPPLEMENTARY_END = "<!-- SUPPLEMENTARY-END -->"
 VERSION_PATTERN = re.compile(r"\b0\.58(?:\.0)?\b")
 
 
+def mnemonic_file_name(mnemonic: str) -> str:
+    return re.sub(r"[^A-Za-z0-9._-]+", "_", mnemonic).strip("_")
+
+
 @dataclass(frozen=True)
 class InstructionRecord:
     mnemonic: str
@@ -40,12 +44,14 @@ class InstructionRecord:
     summary: str
     assembly: tuple[str, ...]
     block: tuple[str, ...]
+    catalog_records: tuple[dict[str, object], ...]
+    catalog_indices: tuple[int, ...]
     source_path: Path
     regions: dict[str, str]
 
     @property
     def relative_instruction_path(self) -> Path:
-        return Path(self.surface, *self.classification, f"{self.mnemonic}.md")
+        return Path(self.surface, *self.classification, f"{mnemonic_file_name(self.mnemonic)}.md")
 
     @property
     def markdown_path(self) -> Path:
@@ -91,7 +97,16 @@ def _load_record(root: Path, path: Path) -> InstructionRecord | None:
     except json.JSONDecodeError as error:
         raise ValueError(f"{path}: invalid PTO-INSTRUCTION metadata: {error}") from error
 
-    required = {"mnemonic", "surface", "classification", "summary", "assembly", "block"}
+    required = {
+        "mnemonic",
+        "surface",
+        "classification",
+        "summary",
+        "assembly",
+        "block",
+        "catalog_records",
+        "catalog_indices",
+    }
     missing = sorted(required - metadata.keys())
     if missing:
         raise ValueError(f"{path}: missing instruction metadata fields: {', '.join(missing)}")
@@ -107,6 +122,14 @@ def _load_record(root: Path, path: Path) -> InstructionRecord | None:
     for required_region in ("decode", "operation"):
         if required_region not in regions:
             raise ValueError(f"{path}: missing documentation region {required_region}")
+    catalog_records = tuple(metadata["catalog_records"])
+    catalog_indices = tuple(metadata["catalog_indices"])
+    if not catalog_records:
+        raise ValueError(f"{path}: instruction has no catalog records")
+    if len(catalog_records) != len(catalog_indices):
+        raise ValueError(f"{path}: catalog_records and catalog_indices lengths differ")
+    if any(record.get("mnemonic", record.get("name")) != metadata["mnemonic"] for record in catalog_records):
+        raise ValueError(f"{path}: catalog record identity differs from mnemonic")
     return InstructionRecord(
         mnemonic=metadata["mnemonic"],
         surface=surface,
@@ -114,6 +137,8 @@ def _load_record(root: Path, path: Path) -> InstructionRecord | None:
         summary=metadata["summary"],
         assembly=tuple(metadata["assembly"]),
         block=tuple(metadata["block"]),
+        catalog_records=catalog_records,
+        catalog_indices=catalog_indices,
         source_path=path.relative_to(root),
         regions=regions,
     )
@@ -298,7 +323,11 @@ def check_tree(root: Path = ROOT) -> list[str]:
 
     for record in records:
         asl_relative = record.source_path.relative_to("asl")
-        expected_asl = Path(record.surface, *record.classification, f"{record.mnemonic}.asl")
+        expected_asl = Path(
+            record.surface,
+            *record.classification,
+            f"{mnemonic_file_name(record.mnemonic)}.asl",
+        )
         if asl_relative != expected_asl:
             errors.append(
                 f"{record.mnemonic} metadata classification "
@@ -345,6 +374,36 @@ def check_version_neutrality(root: Path = ROOT) -> list[str]:
     return errors
 
 
+def check_catalog_projection(root: Path = ROOT) -> list[str]:
+    errors: list[str] = []
+    records = load_instruction_index(root)
+    catalog_specs = {
+        "scalar": ("scalar-forms.json", "forms"),
+        "block": ("command-forms.json", "forms"),
+        "tile": ("tile-operations.json", "operations"),
+    }
+    for surface, (file_name, member) in catalog_specs.items():
+        indexed: list[tuple[int, dict[str, object]]] = []
+        for record in records:
+            if record.surface != surface:
+                continue
+            indexed.extend(zip(record.catalog_indices, record.catalog_records, strict=True))
+        indices = [index for index, _ in indexed]
+        if len(indices) != len(set(indices)):
+            errors.append(f"{surface} mnemonic ASL records contain duplicate catalog indices")
+            continue
+        projected = [item for _, item in sorted(indexed, key=lambda pair: pair[0])]
+        catalog_path = root / "spec/catalog" / file_name
+        if not catalog_path.exists():
+            if projected:
+                errors.append(f"missing {surface} catalog {catalog_path.relative_to(root).as_posix()}")
+            continue
+        catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
+        if catalog.get(member, []) != projected:
+            errors.append(f"{surface} catalog projection differs from mnemonic ASL records")
+    return errors
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("command", nargs="?", choices=("generate",), default=None)
@@ -353,7 +412,11 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "generate":
         generate_tree(ROOT)
     if args.check or args.command is None:
-        errors = check_tree(ROOT)
+        errors = (
+            check_tree(ROOT)
+            + check_catalog_projection(ROOT)
+            + check_version_neutrality(ROOT)
+        )
         if errors:
             print("\n".join(errors), file=sys.stderr)
             return 1

@@ -1,0 +1,49 @@
+# HL.SWIP
+
+Execute the HL.SWIP scalar instruction contract.
+
+<!-- ASL-SOURCE: asl/scalar/agu/HL.SWIP.asl -->
+
+## Assembly
+
+```asm
+hl.swip SrcD, SrcD1, [SrcR, simm]
+```
+
+## Decode
+
+<!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.SWIP.asl -->
+```asl
+readonly func InstructionContractOperation_HL_SWIP() => ScalarOperation
+begin
+    return ScalarOperation_HL_SWIP;
+end;
+```
+<!-- GENERATED-ASL-END: decode -->
+
+## Assembler symbols
+
+Supplementary operand names and examples may be added here.
+
+## Operation
+
+<!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/agu/HL.SWIP.asl -->
+```asl
+readonly func InstructionContractHandler_HL_SWIP() => ScalarSemanticHandler
+begin
+    return ScalarHandler_ExecuteScalarStorePair;
+end;
+```
+<!-- GENERATED-ASL-END: operation -->
+
+## Legality and exceptions
+
+Normative legality is embedded from the ASL source above.
+
+## Operational information
+
+Supplementary implementation-neutral guidance may be added here.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+
+<!-- SUPPLEMENTARY-END -->

@@ -6,6 +6,7 @@ import unittest
 from pathlib import Path
 
 from scripts.instruction_docs import (
+    check_catalog_projection,
     check_tree,
     check_version_neutrality,
     generate_tree,
@@ -19,6 +20,7 @@ def asl_source(
     mnemonic: str = "TADD",
     surface: str = "tile",
     classification: list[str] | None = None,
+    catalog_records: list[dict[str, object]] | None = None,
 ) -> str:
     metadata = {
         "mnemonic": mnemonic,
@@ -27,6 +29,9 @@ def asl_source(
         "summary": "Add corresponding tile elements.",
         "assembly": ["TADD <shape>, Src0, Src1, ->Dst"],
         "block": ["BSTART.TEPL TADD", "B.DIM ...", "B.IOT ...", "BSTOP"],
+        "catalog_records": catalog_records
+        or [{"mnemonic": mnemonic, "semantic_handler": "ExecuteTileBinary"}],
+        "catalog_indices": list(range(len(catalog_records or [{}]))),
     }
     encoded = json.dumps(metadata, ensure_ascii=False, sort_keys=True)
     return (
@@ -72,6 +77,7 @@ class InstructionDocsTest(unittest.TestCase):
         self.assertEqual([record.mnemonic for record in records], ["TADD"])
         self.assertEqual(records[0].classification, ("tile-tile-elementwise", "arithmetic"))
         self.assertIn("func ExecuteTADD()", records[0].regions["operation"])
+        self.assertEqual(records[0].catalog_records[0]["mnemonic"], "TADD")
 
     def test_check_tree_rejects_missing_markdown_page(self) -> None:
         self.write_asl()
@@ -104,6 +110,21 @@ class InstructionDocsTest(unittest.TestCase):
             "TADD metadata classification tile-tile-elementwise/arithmetic does not match ASL path tile/matrix/TADD.asl",
             errors,
         )
+
+    def test_space_in_mnemonic_uses_safe_mirrored_filename(self) -> None:
+        self.write_asl(
+            "block/execution/BSTART_CALL.asl",
+            mnemonic="BSTART CALL",
+            surface="block",
+            classification=["execution"],
+        )
+
+        generate_tree(self.root)
+
+        self.assertTrue(
+            (self.root / "docs/instructions/block/execution/BSTART_CALL.md").exists()
+        )
+        self.assertEqual(check_tree(self.root), [])
 
     def test_load_instruction_index_rejects_duplicate_mnemonic(self) -> None:
         self.write_asl()
@@ -221,6 +242,54 @@ class InstructionDocsTest(unittest.TestCase):
                 "asl/tile/state.asl:1: active normative surface contains release version 0.58",
                 "docs/instructions/tile/TADD.md:1: active normative surface contains release version 0.58.0",
             ],
+        )
+
+    def test_catalog_projection_requires_exact_asl_records(self) -> None:
+        scalar_record = {
+            "form_id": "add-form",
+            "mnemonic": "ADD",
+            "semantic_handler": "ScalarBinary",
+        }
+        self.write_asl(
+            "scalar/alu/ADD.asl",
+            mnemonic="ADD",
+            surface="scalar",
+            classification=["alu"],
+            catalog_records=[scalar_record],
+        )
+        catalog_path = self.root / "spec/catalog/scalar-forms.json"
+        catalog_path.parent.mkdir(parents=True, exist_ok=True)
+        catalog_path.write_text(
+            json.dumps({"forms": [scalar_record]}, sort_keys=True), encoding="utf-8"
+        )
+        for name, member in (
+            ("command-forms.json", "forms"),
+            ("tile-operations.json", "operations"),
+        ):
+            (catalog_path.parent / name).write_text(
+                json.dumps({member: []}, sort_keys=True), encoding="utf-8"
+            )
+
+        self.assertEqual(check_catalog_projection(self.root), [])
+
+        catalog_path.write_text(
+            json.dumps(
+                {
+                    "forms": [
+                        {
+                            "form_id": "add-form",
+                            "mnemonic": "ADD",
+                            "semantic_handler": "WrongHandler",
+                        }
+                    ]
+                },
+                sort_keys=True,
+            ),
+            encoding="utf-8",
+        )
+        self.assertEqual(
+            check_catalog_projection(self.root),
+            ["scalar catalog projection differs from mnemonic ASL records"],
         )
 
 

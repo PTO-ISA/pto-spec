@@ -30,8 +30,14 @@ ASL_SOURCES_BEFORE_DECODER := \
 	asl/tile/cube.asl \
 	asl/tile/legality.asl
 
+ASL_MNEMONIC_SOURCES := $(sort $(wildcard \
+	asl/scalar/*/*.asl \
+	asl/block/*/*.asl \
+	asl/tile/*/*/*.asl))
+
 ASL_SOURCES_AFTER_DECODER := \
 	asl/profiles/pto-v0.asl \
+	$(ASL_MNEMONIC_SOURCES) \
 	asl/bundle/dispatch.asl \
 	asl/scalar/dispatch.asl \
 	asl/dispatch.asl

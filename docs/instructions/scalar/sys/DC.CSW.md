@@ -1,0 +1,49 @@
+# DC.CSW
+
+Execute the DC.CSW scalar instruction contract.
+
+<!-- ASL-SOURCE: asl/scalar/sys/DC.CSW.asl -->
+
+## Assembly
+
+```asm
+dc.csw SrcL
+```
+
+## Decode
+
+<!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/DC.CSW.asl -->
+```asl
+readonly func InstructionContractOperation_DC_CSW() => ScalarOperation
+begin
+    return ScalarOperation_DC_CSW;
+end;
+```
+<!-- GENERATED-ASL-END: decode -->
+
+## Assembler symbols
+
+Supplementary operand names and examples may be added here.
+
+## Operation
+
+<!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/DC.CSW.asl -->
+```asl
+readonly func InstructionContractHandler_DC_CSW() => ScalarSemanticHandler
+begin
+    return ScalarHandler_ExecuteMaintenance;
+end;
+```
+<!-- GENERATED-ASL-END: operation -->
+
+## Legality and exceptions
+
+Normative legality is embedded from the ASL source above.
+
+## Operational information
+
+Supplementary implementation-neutral guidance may be added here.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+
+<!-- SUPPLEMENTARY-END -->

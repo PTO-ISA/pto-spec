@@ -1,0 +1,13 @@
+// PTO-INSTRUCTION: {"assembly":["shi.u SrcL, [SrcR, simm]"],"block":[],"catalog_indices":[428],"catalog_records":[{"asm":"shi.u SrcL, [SrcR, simm]","constraints":[],"encoding":[{"index":0,"mask":"0x0000707f","match":"0x00005059","width_bits":32}],"encoding_kind":"L32","fields":[{"name":"SrcL","pieces":[{"instruction_lsb":15,"value_lsb":0,"width":5}],"signedness":"encoding-defined","width":5},{"name":"SrcR","pieces":[{"instruction_lsb":20,"value_lsb":0,"width":5}],"signedness":"encoding-defined","width":5},{"name":"simm12","pieces":[{"instruction_lsb":25,"value_lsb":0,"width":7},{"instruction_lsb":7,"value_lsb":7,"width":5}],"signedness":"signed","width":12}],"form_id":"shi_u_32_caaf3ed72a8f","length_bits":32,"mnemonic":"SHI.U","semantic_family":"AGU","semantic_group":"STA/BASE_IMM","semantic_handler":"ExecuteScalarStore","status":"accepted"}],"classification":["agu"],"mnemonic":"SHI.U","summary":"Execute the SHI.U scalar instruction contract.","surface":"scalar"}
+// DOC-BEGIN: decode
+readonly func InstructionContractOperation_SHI_U() => ScalarOperation
+begin
+    return ScalarOperation_SHI_U;
+end;
+// DOC-END: decode
+// DOC-BEGIN: operation
+readonly func InstructionContractHandler_SHI_U() => ScalarSemanticHandler
+begin
+    return ScalarHandler_ExecuteScalarStore;
+end;
+// DOC-END: operation

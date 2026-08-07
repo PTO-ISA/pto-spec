@@ -1,10 +1,11 @@
 # PTO architecture boundary
 
 PTO is a 64-bit scalar, bundle/command, and tile instruction set. The ASL files
-and machine-readable catalogs in this repository are the normative definition of
-the architecture. They define accepted encodings, architectural state, legality,
-faults, completion, ordering, and named conformance profiles. PTO ISA 0.58.0
-release identity and profile identity are separate machine-readable fields.
+in this repository are the golden definition of the architecture. They define
+accepted encodings, architectural state, legality, faults, completion, ordering,
+and named conformance profiles. Machine-readable catalogs and instruction pages
+are checked projections of those ASL contracts. Release identity and profile
+identity are separate machine-readable fields.
 
 PTO does not define vector instructions. Encodings and bundle forms that exist
 only to host vector execution are outside the accepted PTO ISA surface. The six
@@ -55,7 +56,7 @@ address, or state-transition rule.
   30 pushes U and selector 31 pushes T. A push shifts older entries toward
   `#4` and discards the previous `#4`.
 - P0..P7 are 32-bit per-warp predicate registers. P0 is hardwired all-ones;
-  P1..P7 reset to zero and are independently trap-preserved. PTO ISA 0.58.0
+  P1..P7 reset to zero and are independently trap-preserved. PTO
   has no instruction producer, consumer, or selector for this register file.
 - A separate 64-bit execution mask belongs only to active MPAR and MSEQ
   bodies. Machine-body entry initializes it to all ones, and B.Z/B.NZ consume
@@ -64,7 +65,7 @@ address, or state-transition rule.
 - The public PTO v0.6 micro-instruction layer's `!pto.mask<G>` values are a
   separate source-language surface with 64-, 128-, or 256-bit logical widths
   and public `pto.p*`/`pto.v*` producers and consumers. They are outside the
-  active 0.58.0 release line and have no accepted mapping to P0-P7, the
+  active scalar ISA and have no accepted mapping to P0-P7, the
   MPAR/MSEQ mask, or a physical predicate register. See ADR 0051.
 - Access-control state is ACR0..ACR15. PTO v0 resets to ACR0; the exact reset
   and access policy are defined by `docs/profile-contracts.md`.
@@ -93,7 +94,7 @@ executes exactly one selected direct tile operation when present, and then
 commits the transfer. Failed descriptor, binding, type, or tile-legality checks
 preserve tile destinations and save the live bundle state in the trap context.
 The exact selector, DataType, BrType, direct B.IOT boundary, and unsupported
-families are defined by ADR 0022. ADR 0045 additionally fixes the 0.58.0
+families are defined by ADR 0022. ADR 0045 additionally fixes the active
 Mode/Function encoding, B.IOT allocation and lifetime fields, B.DATR data
 attributes, and B.CATR ordering attributes. Vector-only bundle and queue forms
 are rejected by the PTO catalog because PTO has no vector instruction execution
@@ -132,13 +133,13 @@ surface.
 - Source operands are snapshotted before destination writes, defining
   read-before-write behavior for permitted aliases.
 
-B.IOT has no source-reuse bits in PTO ISA 0.58.0. Sources are released only
+B.IOT has no source-reuse bits. Sources are released only
 after successful bundle completion; rejection, fault, retry, and squash
 preserve sources and pre-attempt destination state. A source that aliases an
 explicit destination is read before the destination write and remains the
 newly produced destination after commit.
 
-PTO ISA 0.58.0 additionally exposes 256 absolute Core-local Shared registers,
+PTO additionally exposes 256 absolute Core-local Shared registers,
 `S0` through `S255`. Each core owns one bank shared by its four PEs; different
 cores have independent banks. Each register persists until core reset and
 contains one per-PE descriptor, payload divided into four fixed-offset PE
@@ -224,7 +225,7 @@ are checked for their internal zero-bit constraints before classification.
 These pure helpers do not change the active `pto-v0` raw-carrier semantics and
 do not decide operation-specific propagation, flags, or other result rules.
 ADR 0049 and `spec/evidence/numeric-subnormal-contract.json` separately fix
-PD-04 for `pto-hardware-numeric-0.58.0-ieee-v1`: each of the eleven formats
+PD-04 for the named hardware numeric profile: each of the eleven formats
 that defines subnormals preserves exact input values, uses gradual underflow
 for results, and detects tininess after rounding. The profile exposes no FTZ
 or DAZ state and no operation-local override; a configuration requesting one
@@ -262,7 +263,7 @@ until an accepted PTO record selects a portable rule, named target profile,
 visible selector, or unsupported tuple. No backend or independent-model
 fallback supplies a missing rule.
 
-The named `pto-hardware-numeric-0.58.0-ieee-v1` contract fixes the 0.58.0
+The named hardware numeric contract fixes the active
 low-precision formats, packed-lane order, canonical NaNs, signed zero, invalid
 integer results, RHB ties, matrix operand classes, physical ACC classes, and MX
 scale layout. This is a contract definition, not an implementation-conformance

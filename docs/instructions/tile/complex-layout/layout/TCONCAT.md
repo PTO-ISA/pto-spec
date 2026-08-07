@@ -1,0 +1,60 @@
+# TCONCAT
+
+Execute the TCONCAT Tile operation contract.
+
+<!-- ASL-SOURCE: asl/tile/complex-layout/layout/TCONCAT.asl -->
+
+## Assembly
+
+```asm
+TCONCAT <bundle operands>
+```
+
+## Decode
+
+<!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/layout/TCONCAT.asl -->
+```asl
+readonly func InstructionContractOperation_TCONCAT() => TileOperation
+begin
+    return TileOperation_TCONCAT;
+end;
+```
+<!-- GENERATED-ASL-END: decode -->
+
+## Assembler symbols
+
+Supplementary operand names and examples may be added here.
+
+## Block composition
+
+```asm
+BSTART.TEPL TCONCAT, DataType
+B.DATR (optional)
+B.DIM LB0
+B.DIM (LB1/LB2 for 2D)
+B.IOT
+BSTOP
+```
+
+## Operation
+
+<!-- GENERATED-ASL-BEGIN: operation source=asl/tile/complex-layout/layout/TCONCAT.asl -->
+```asl
+readonly func InstructionContractHandler_TCONCAT() => TileSemanticHandler
+begin
+    return TileHandler_TCONCAT;
+end;
+```
+<!-- GENERATED-ASL-END: operation -->
+
+## Legality and exceptions
+
+Normative legality is embedded from the ASL source above.
+
+## Operational information
+
+Supplementary implementation-neutral guidance may be added here.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+
+<!-- SUPPLEMENTARY-END -->
