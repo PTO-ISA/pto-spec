@@ -12,7 +12,7 @@ import subprocess
 ROOT = Path(__file__).resolve().parent.parent
 EXPECTED_FORM_COUNT = 573
 EXPECTED_FINGERPRINT = (
-    "9155a78499c4908e0fdc7ac2a48159eacb5c1dfc78ea724dbedf689369430993"
+    "5f2855a4a9d8fe8fc2908a3940b9d9153f7232222fdd486a675217106142b4a3"
 )
 EXPECTED_RELEASE = "0.58.0"
 EXPECTED_ENCODING_ABI = "pto-isa-0.58.0-mode-function-v1"

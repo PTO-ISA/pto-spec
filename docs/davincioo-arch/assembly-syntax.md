@@ -23,7 +23,10 @@ B.DIM       rN, 0, ->LB1
 B.IOT       T#1, T#3, mask=1111, last, ->T<4KB>
 ```
 
-Canonical 顺序为：`BSTART`、可选 `B.DATR/B.DIM`、可选的一次性 `B.IOS` prefix、`B.IOT/B.IOR` operand，以及可选 `B.IOD`。每个 opcode 的必需集合以对应指令页为准。
+Canonical 顺序为：`BSTART`、可选 `B.DATR/B.DIM`、可选的一次性 `B.IOS`
+prefix、`B.IOT/B.IOR` operand，以及可选 `B.IOD`。B.IOR 最多出现一次；
+其 canonical arity 在收集完整 bundle 后由所有 schema-contributing header
+共同决定。
 
 ## Local Tile Operands
 
@@ -44,7 +47,7 @@ rendezvous。
 
 B.IOS 使用 absolute `S0..S255`，是一次性 Shared operand binder。source
 写作 `B.IOS S17, mask=1111`，destination 写作
-`B.IOS mask=0011, ->S17<001>`。cooperative TMATMUL 由后续
+`B.IOS mask=0011, ->S17<128B>`。cooperative TMATMUL 由后续
 cooperative CUBE 按固定 role 顺序消费 Shared binder；Shared TLOAD、TSTORE
 和 TMOV 由选中的 TLSU operation 消费：
 
@@ -70,28 +73,29 @@ B.IOS S19, mask=1111
 ```asm
 /* exactly-one GM -> Shared full load */
 BSTART.TLSU TLOAD, FP16
-B.IOS       mask=0101, ->S17<100>
-B.IOR       a0, 0, 0, ->0
+B.IOS       mask=0101, ->S17<1KB>
+B.IOR       a0, a1
 
 /* exactly-one Shared -> GM full store */
 BSTART.TLSU TSTORE, FP16
 B.IOS       S17, mask=0101
-B.IOR       a0, 0, 0, ->0
+B.IOR       a0, a1
 
 /* per-PE Shared partition store */
 BSTART.TLSU TSTORE.SPART, FP16
 B.IOS       S17, mask=0101
-B.IOR       a0, 0, 0, ->0
+B.IOR       a0, a1
 ```
 
-`B.IOR` 只提供 base scalar operand；Shared size/mask 不再借用 `RegDst`
-或 mask-only `B.IOT`。
+`B.IOR.RegSrc0` 是 base，`RegSrc1` 是以 element 为单位的 row
+stride；这两个字段与原 TLOAD/TSTORE 编码相同。Shared size/mask 不再
+借用 `RegDst` 或 mask-only `B.IOT`。
 
 ## Shared TMOV Forms
 
 ```asm
 BSTART.TLSU TMOV.L2S.INSERT, FP16
-B.IOS       mask=1100, ->S17<100>
+B.IOS       mask=1100, ->S17<1KB>
 B.IOT       T#1, mask=1100, last
 
 BSTART.TLSU TMOV.S2L.BROADCAST, FP16
@@ -115,4 +119,10 @@ BSTOP
 
 ## Header Elision and Comments
 
-所选 opcode 不消费的 header 可以省略；必需的 dimension、attribute 与 operand 不得省略。规范性汇编示例使用 `/* ... */` 注释；仅在不表示真实 assembler 语法的说明性文本中使用 `#`。
+每个 schema-contributing header 定义自己的 default contribution。所选
+operation 不消费的 header 可以省略；必需的 dimension 与 attribute 仍以对应
+指令页为准。B.IOR 可以省略，被消费的 register operand 默认使用
+`zero`，除非所选 operation 定义其他缺省值；TLOAD/TSTORE 的 row
+stride 缺省为 `LB2/Col`。编码值零是 `zero` selector，不是 absence marker。规范性汇编示例
+使用 `/* ... */` 注释；仅在不表示真实 assembler 语法的说明性文本中使用
+`#`。

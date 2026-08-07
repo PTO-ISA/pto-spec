@@ -1,71 +1,72 @@
----
-{
-  "schema_version": 1,
-  "id": "header.header-b.catr",
-  "kind": "header",
-  "title": "B.CATR",
-  "status": "active",
-  "visibility": "public",
-  "profile": "pto-isa-0.58.0",
-  "family": "Dimensions & Attributes",
-  "sources": {
-    "davincioo": "header/B.CATR.md"
-  }
-}
----
 # B.CATR
 
-## 说明
+Latches bundle control, trap, atomic, ordering, and address-class attributes.
 
-**块控制属性（Block Control Attribute）**
+<!-- ASL-SOURCE: asl/block/attributes/B.CATR.asl -->
 
-`B.CATR` 用于描述块指令的执行属性。如果一个块不具有本指令定义的任何属性，则可以选择不添加该指令。这种情况下块按照默认属性执行。
+## Normative identity {#PTO-INST-BLOCK-B-CATR}
 
-## 汇编语法
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
+## Assembly
 
 ```asm
 B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}
 ```
 
-## 汇编符号
+## Encoding
 
-- **trap**：块提交陷出标记, 表示当前块指令在提交后，产生一个陷出。
-- **atomic**：原子块标记，指示当前块为原子块。
-- **aq**：块指令之间的访存屏障标记，表示后序块指令访存不能先于当前块。
-- **rl**：块指令之间的访存屏障标记，表示前序块指令访存不能后于当前块。
-- **far**：发送当前块至多核远端执行。
-- **dr**：表示数据块块体[分组模式](../../blockIntro/mem_block/dimmode.md)中降维模式的标记。缺省时默认为多维模式。
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| b_catr_32_e90bd52fa480 | L32 | 32 | 0x00000023 / 0xfbf07fff | [] |
 
-## 编码格式
+### Fields
 
-> 原 Linx 图片引用已省略；编码图用本页 bit-level 表格表达。
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| b_catr_32_e90bd52fa480 | DR | 1 | encoding-defined | [{"instruction_lsb":26,"value_lsb":0,"width":1}] |
+| b_catr_32_e90bd52fa480 | trap | 1 | encoding-defined | [{"instruction_lsb":19,"value_lsb":0,"width":1}] |
+| b_catr_32_e90bd52fa480 | far | 1 | encoding-defined | [{"instruction_lsb":18,"value_lsb":0,"width":1}] |
+| b_catr_32_e90bd52fa480 | atom | 1 | encoding-defined | [{"instruction_lsb":17,"value_lsb":0,"width":1}] |
+| b_catr_32_e90bd52fa480 | aq | 1 | encoding-defined | [{"instruction_lsb":16,"value_lsb":0,"width":1}] |
+| b_catr_32_e90bd52fa480 | rl | 1 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":1}] |
 
-动态参数如下：
+## Decode
 
-- **T**：块提交陷出标记位，拥有trap属性则编码为1，否则编码为0。
-- **atom**：原子块标记位，当前块为原子块则编码为1，否则编码为0。
-- **aq**：块指令之间的访存屏障标记位，拥有该属性则编码为1，否则编码为0。
-- **rl**：块指令之间的访存屏障标记位，拥有该属性则编码为1，否则编码为0。
-- **far**：far属性标记位，拥有该属性则编码为1，否则编码为0。
-- **DR**：采用降维模式时编码为1；否则编码为0。
+<!-- GENERATED-ASL-BEGIN: decode source=asl/block/attributes/B.CATR.asl -->
+```asl
+readonly func InstructionContractMatches_B_CATR(operation: CommandOperation) => boolean
+begin
+    return (operation == CommandOperation_b_catr_32_e90bd52fa480);
+end;
+```
+<!-- GENERATED-ASL-END: decode -->
 
-## Bit-level Encoding
+## Assembler symbols
 
-### `B.CATR` bit-level encoding
+Supplementary operand names and examples may be added here.
 
-| Bits | Field | Width | Fixed value |
-| --- | --- | ---: | --- |
-| `[31:27]` | `0` | 5 | `0` |
-| `[26]` | `DR` | 1 | `` |
-| `[25]` | `0` | 1 | `0` |
-| `[24:20]` | `0` | 5 | `0` |
-| `[19]` | `T` | 1 | `` |
-| `[18]` | `far` | 1 | `` |
-| `[17]` | `atom` | 1 | `` |
-| `[16]` | `aq` | 1 | `` |
-| `[15]` | `rl` | 1 | `` |
-| `[14:12]` | `Func` | 3 | `0` |
-| `[11:7]` | `0` | 5 | `0` |
-| `[6:4]` | `Opc1` | 3 | `2` |
-| `[3:1]` | `Opcode` | 3 | `1` |
-| `[0]` | `W` | 1 | `1` |
+## Operation
+
+<!-- GENERATED-ASL-BEGIN: operation source=asl/block/attributes/B.CATR.asl -->
+```asl
+readonly func InstructionContractHandler_B_CATR() => CommandSemanticHandler
+begin
+    return CommandHandler_SetBundleControlAttributes;
+end;
+```
+<!-- GENERATED-ASL-END: operation -->
+
+## Legality and exceptions
+
+Normative legality is embedded from the ASL source above.
+
+## Operational information
+
+Supplementary implementation-neutral guidance may be added here.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+
+<!-- SUPPLEMENTARY-END -->

@@ -1,94 +1,71 @@
----
-{
-  "schema_version": 1,
-  "id": "header.header-c.bstart",
-  "kind": "header",
-  "title": "C.BSTART",
-  "status": "active",
-  "visibility": "public",
-  "profile": "pto-isa-0.58.0",
-  "family": "Encoding Forms",
-  "sources": {
-    "davincioo": "header/C.BSTART.md"
-  }
-}
----
 # C.BSTART
 
-16位长度的C.BSTART指令在支持压缩扩展的处理器中允许使用，可以有效降低块指令间近距离跳转以及非偏移类跳转场景下的代码字长。
+Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.
 
-有三种C.BSTART指令提供给用户选择：
+<!-- ASL-SOURCE: asl/block/encoding/C.BSTART.asl -->
 
-- 第一种可以用于不同类型的块，但是只支持非偏移类跳转。
-- 第二种仅用于标量块且跳转方式只能是DIRECT或CALL类型的。
-- 第三种仅用于标量块且跳转方式只能是COND类型的。
+## Normative identity {#PTO-INST-BLOCK-C-BSTART}
 
-## 汇编语法
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
 
-```asm
-    C.BSTART<.BlockType> BrType
-    C.BSTART<.STD> {direct, call}, label
-    C.BSTART<.STD> cond, label
-```
+The current instruction contract is owned by the ASL source linked above.
 
-其中：
-
-- **BlockType**：该参数代表块类型，如果是标量块，则可缺省`.STD`标识。
-- **BrType**：该参数代表块指令的跳转方式，根据块类型不同可选类型也不同，具体见下表。
-- **label**：该参数代表跳转目标位置的标签，其相对于本指令的偏移距离除以2后编码于simm12字段。
-
-| BlockType | 支持的BrType |
-|------------|-------------|
-| 标量块（.STD）  | fall, ind, icall, ret |
-| 系统块（.SYS）  | fall, ind, icall, ret |
-| 浮点块（.FP）   | fall, ind, icall, ret |
-| 并行块（.PAR）  | fall  |
-
-## 编码格式
-
-第一种C.BSTART编码:
-
-> 原 Linx 图片引用已省略；编码图用本页 bit-level 表格表达。
-
-- **BlockType 域**
-
-BlockType 用于指示执行该块指令的引擎类型，具体编码如下：
-
-| BlockType | 块类型              | 汇编标识  |
-|-----------|---------------------|-----------|
-| 0         | Standard Block       | .STD      |
-| 1         | System Block         | .SYS      |
-| 2         | Floating-point Block | .FP       |
-| 3         | Parallel Block       | .PAR     |
-| 4-15      | RESERVE              | RESERVE   |
-
-- **BrType 域**
-
-BrType 描述了当前块的跳转方式，决定了如何从当前块跳转到下一个块。具体编码如下：
-
-| BrType | 跳转类型          | 解释                          |
-|--------|-------------------|-------------------------------|
-| 0      | invalid            | 无效                         |
-| 1      | **fall**           | 顺延(Fall Through)           |
-| 2,3,4  | invalid            | 无效                         |
-| 5      | **ind**            | 间接跳转(Indirect)           |
-| 6      | **icall**          | 间接调用(Indirect Call)      |
-| 7      | **ret**            | 返回(Return)                 |
-
-第二种C.BSTART编码:
-
-> 原 Linx 图片引用已省略；编码图用本页 bit-level 表格表达。
-
-第三种C.BSTART编码:
-
-> 原 Linx 图片引用已省略；编码图用本页 bit-level 表格表达。
-
-## 汇编示例
+## Assembly
 
 ```asm
-    C.BSTART.STD direct, 0x00ff
-    C.BSTART.STD call, 0x01ef
-    C.BSTART.SYS ind
-    C.BSTART.SYS icall
-    C.BSTART.FP  ret
+C.BSTART COND,  label
+C.BSTART DIRECT, label
 ```
+
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| c_bstart_16_c4e238a9227a | C16 | 16 | 0x0004 / 0x000f | [] |
+| c_bstart_16_f833d2a4753c | C16 | 16 | 0x0002 / 0x000f | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| c_bstart_16_c4e238a9227a | simm12 | 12 | signed | [{"instruction_lsb":4,"value_lsb":0,"width":12}] |
+| c_bstart_16_f833d2a4753c | simm12 | 12 | signed | [{"instruction_lsb":4,"value_lsb":0,"width":12}] |
+
+## Decode
+
+<!-- GENERATED-ASL-BEGIN: decode source=asl/block/encoding/C.BSTART.asl -->
+```asl
+readonly func InstructionContractMatches_C_BSTART(operation: CommandOperation) => boolean
+begin
+    return (operation == CommandOperation_c_bstart_16_c4e238a9227a) ||
+           (operation == CommandOperation_c_bstart_16_f833d2a4753c);
+end;
+```
+<!-- GENERATED-ASL-END: decode -->
+
+## Assembler symbols
+
+Supplementary operand names and examples may be added here.
+
+## Operation
+
+<!-- GENERATED-ASL-BEGIN: operation source=asl/block/encoding/C.BSTART.asl -->
+```asl
+readonly func InstructionContractHandler_C_BSTART() => CommandSemanticHandler
+begin
+    return CommandHandler_ExecuteBundleStart;
+end;
+```
+<!-- GENERATED-ASL-END: operation -->
+
+## Legality and exceptions
+
+Normative legality is embedded from the ASL source above.
+
+## Operational information
+
+Supplementary implementation-neutral guidance may be added here.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+
+<!-- SUPPLEMENTARY-END -->

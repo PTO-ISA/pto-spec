@@ -1,30 +1,29 @@
-## Change class
+## Change contract
 
-- [ ] Repository or documentation maintenance only
-- [ ] ASLRef/toolchain pin update
-- [ ] Normative architecture model change
-- [ ] Non-normative refactor
+- Linked NDF architecture issue: <!-- issue URL, or N/A for non-normative maintenance -->
+- Baseline commit: <!-- full 40-character SHA -->
+- Changed NDF clause IDs: <!-- PTO-* IDs, or N/A -->
+- Normative ASL owner files: <!-- asl/... paths, or N/A -->
 
-## Requirement traceability
+## Normative delta
 
-List stable PTO requirement IDs and source links, or write `N/A - non-normative`.
+Describe architecture-visible behavior, defaults, intentionally unspecified
+behavior, compatibility, and toolchain impact. Do not restate executable ASL in
+prose.
 
-## Architecture impact
+## Projections and focused evidence
 
-Describe visible state, legality, results, ordering, faults, profile scope, and intentionally unspecified behavior.
-Write `None` for non-normative changes.
-
-## Evidence
-
-- [ ] `make ci`
+- [ ] Generated instruction pages and navigation were regenerated from ASL.
+- [ ] Focused positive, boundary, negative, and state-transition tests cover the delta.
+- [ ] Catalog, requirement, profile, and evidence projections were updated when owned by this change.
+- [ ] No legacy, archive, backup, or second normative explanation was added.
+- [ ] `make pr-check`
 - [ ] `git diff --check`
-- [ ] Positive and boundary tests, when semantics change
-- [ ] Negative-legality and state-transition tests, when applicable
-- [ ] New tests listed in `ASL_TESTS`
-- [ ] `spec/requirements.json` updated when normative claims change
-- [ ] No generated files committed
-- [ ] No validation check or canary was weakened to make this change pass
 
-## Review risks
+## Release boundary
 
-List known gaps, assumptions, ASLRef limitations, and follow-up architecture decisions.
+- [ ] I understand that PR validation is intentionally lightweight.
+- [ ] Full ASLRef verification, every ASL shard, and reproducible release evidence are deferred to the manually dispatched exact-head release workflow.
+- [ ] Release verification is required for this change, or the reason it is not required is stated below.
+
+Release impact and known gaps:

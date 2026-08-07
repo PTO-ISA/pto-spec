@@ -1,0 +1,69 @@
+# B.LTU
+
+Execute the B.LTU scalar instruction contract.
+
+<!-- ASL-SOURCE: asl/scalar/bru/B.LTU.asl -->
+
+## Normative identity {#PTO-INST-SCALAR-B-LTU}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
+## Assembly
+
+```asm
+b.ltu SrcL, SrcR, label
+```
+
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| b_ltu_32_f1ea7ad44e37 | L32 | 32 | 0x00004027 / 0x0000707f | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| b_ltu_32_f1ea7ad44e37 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+| b_ltu_32_f1ea7ad44e37 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
+| b_ltu_32_f1ea7ad44e37 | simm12 | 12 | signed | [{"instruction_lsb":25,"value_lsb":0,"width":7},{"instruction_lsb":7,"value_lsb":7,"width":5}] |
+
+## Decode
+
+<!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/B.LTU.asl -->
+```asl
+readonly func InstructionContractOperation_B_LTU() => ScalarOperation
+begin
+    return ScalarOperation_B_LTU;
+end;
+```
+<!-- GENERATED-ASL-END: decode -->
+
+## Assembler symbols
+
+Supplementary operand names and examples may be added here.
+
+## Operation
+
+<!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/bru/B.LTU.asl -->
+```asl
+readonly func InstructionContractHandler_B_LTU() => ScalarSemanticHandler
+begin
+    return ScalarHandler_BranchRelative;
+end;
+```
+<!-- GENERATED-ASL-END: operation -->
+
+## Legality and exceptions
+
+Normative legality is embedded from the ASL source above.
+
+## Operational information
+
+Supplementary implementation-neutral guidance may be added here.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+
+<!-- SUPPLEMENTARY-END -->

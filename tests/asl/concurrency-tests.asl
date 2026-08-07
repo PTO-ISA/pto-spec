@@ -319,7 +319,7 @@ begin
     WriteTileElement(42, 0, 0, Zeros{PTO_XLEN});
 
     StartMemoryEventCapture(3);
-    TLOAD(40, source_address);
+    TLOAD(40, source_address, Zeros{PTO_XLEN} + 1);
     assert _MemoryEventCount == 1;
     assert _MemoryEvents[[0]].kind == MemoryEvent_Load;
     assert _MemoryEvents[[0]].agent == 3;
@@ -327,7 +327,7 @@ begin
     StopMemoryEventCapture();
 
     StartMemoryEventCapture(3);
-    TSTORE(destination_address, 41);
+    TSTORE(destination_address, Zeros{PTO_XLEN} + 1, 41);
     assert _MemoryEventCount == 1;
     assert _MemoryEvents[[0]].kind == MemoryEvent_Store;
     assert _MemoryEvents[[0]].address == destination_address;
@@ -351,7 +351,7 @@ begin
     StartMemoryEventCapture(2);
     - = AddInitialWriteEvent(source_address, 8, Zeros{PTO_XLEN} + 7);
     Store(source_address, 8, Zeros{PTO_XLEN} + 8);
-    TLOAD(40, source_address);
+    TLOAD(40, source_address, Zeros{PTO_XLEN} + 1);
     assert _MemoryEventCount == 3;
     assert _MemoryEvents[[1]].kind == MemoryEvent_Store;
     assert _MemoryEvents[[2]].kind == MemoryEvent_Load;
@@ -414,7 +414,7 @@ begin
     - = AddInitialWriteEvent(Zeros{PTO_XLEN} + 320, 8,
         Zeros{PTO_XLEN} + 0x55);
     SetBundleControlAttributeState(FALSE, FALSE, TRUE, FALSE, FALSE, FALSE);
-    TLOAD(4, Zeros{PTO_XLEN} + 320);
+    TLOAD(4, Zeros{PTO_XLEN} + 320, Zeros{PTO_XLEN} + 1);
     assert _MemoryEventCount == 2;
     assert _MemoryEvents[[1]].kind == MemoryEvent_Load;
     assert _MemoryEvents[[1]].order == MemoryOrder_Acquire;
@@ -424,7 +424,7 @@ begin
     - = AddInitialWriteEvent(Zeros{PTO_XLEN} + 328, 8,
         Zeros{PTO_XLEN});
     SetBundleControlAttributeState(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE);
-    TSTORE(Zeros{PTO_XLEN} + 328, 4);
+    TSTORE(Zeros{PTO_XLEN} + 328, Zeros{PTO_XLEN} + 1, 4);
     assert _MemoryEventCount == 2;
     assert _MemoryEvents[[1]].kind == MemoryEvent_Store;
     assert _MemoryEvents[[1]].order == MemoryOrder_Release;
@@ -456,7 +456,7 @@ begin
 
     ClearFault();
     StartMemoryEventCapture(0);
-    TLOAD(4, Zeros{PTO_XLEN} + 4096);
+    TLOAD(4, Zeros{PTO_XLEN} + 4096, Zeros{PTO_XLEN} + 1);
     assert _LastFault == Fault_DataPage;
     assert _MemoryEventCount == 0;
     StopMemoryEventCapture();

@@ -799,7 +799,8 @@ begin
     assert !TileCapacityIsLegal(0);
     assert TileCapacityIsLegal(128);
     assert TileCapacityIsLegal(256);
-    assert TileCapacityIsLegal(262144);
+    assert !TileCapacityIsLegal(262144);
+    assert TileCapacityIsLegal(8192);
     assert !TileCapacityIsLegal(192);
     assert !TileCapacityIsLegal(32);
     assert TileSizeCodeBytes(1) == 128;

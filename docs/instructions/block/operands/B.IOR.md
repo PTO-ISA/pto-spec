@@ -1,48 +1,70 @@
----
-{
-  "schema_version": 1,
-  "id": "header.header-b.ior",
-  "kind": "header",
-  "title": "B.IOR",
-  "status": "active",
-  "visibility": "public",
-  "profile": "pto-isa-0.58.0",
-  "family": "Operand Bindings",
-  "sources": { "davincioo": "header/B.IOR.md" }
-}
----
 # B.IOR
 
-## Purpose And Encoding
+Binds encoded scalar inputs and outputs to the current bundle interface.
 
-`B.IOR` declares up to three GGPR inputs and one GGPR output for header-form blocks.
+<!-- ASL-SOURCE: asl/block/operands/B.IOR.asl -->
+
+## Normative identity {#PTO-INST-BLOCK-B-IOR}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
+## Assembly
 
 ```asm
-B.IOR RegSrc0, RegSrc1, RegSrc2, ->RegDst
+B.IOR [RegSrc0, RegSrc1, RegSrc2],[RegDst]
 ```
 
-| Bits | Field | Width | Fixed value |
-| --- | --- | ---: | --- |
-| `[31:27]` | `RegSrc2` | 5 | |
-| `[26:25]` | zero | 2 | `0` |
-| `[24:20]` | `RegSrc1` | 5 | |
-| `[19:15]` | `RegSrc0` | 5 | |
-| `[14:12]` | `Func` | 3 | `0` |
-| `[11:7]` | `RegDst` | 5 | |
-| `[6:4]` | `Opc1` | 3 | `1` |
-| `[3:1]` | `Opcode` | 3 | `1` |
-| `[0]` | `W` | 1 | `1` |
+## Encoding
 
-Value 0 means invalid; 1–23 name GGPRs R1–R23. Repeated inputs/outputs are assembler errors. A decoupled body may access only declared registers. A coupled SYS body accesses GGPR directly under the SYS ABI and does not use `B.IOR` as a formal declaration.
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| b_ior_32_c3ea71404eb3 | L32 | 32 | 0x00000013 / 0x0600707f | [{"field":"RegDst","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]},{"field":"RegSrc0","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]},{"field":"RegSrc1","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]},{"field":"RegSrc2","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]}] |
 
-## Shared GM Schema
+### Fields
 
-With a preceding [`B.IOS`](./B.IOS.md), Shared TLOAD/TSTORE use `RegSrc0` as
-the GM base and require `RegDst=RegSrc1=RegSrc2=0`. `B.IOR` never carries
-Shared size or mask: GM→Shared obtains both from destination `B.IOS`, while
-Shared→GM obtains capacity from the persistent Shared descriptor and mask from
-source `B.IOS`.
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| b_ior_32_c3ea71404eb3 | RegDst | 5 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":5}] |
+| b_ior_32_c3ea71404eb3 | RegSrc0 | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+| b_ior_32_c3ea71404eb3 | RegSrc1 | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
+| b_ior_32_c3ea71404eb3 | RegSrc2 | 5 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":5}] |
 
-## Matrix PostProcess Scalar Parameters
+## Decode
 
-B.IOR 按 PostProcessConfig 绑定 scalar quant 或 scalar ReLU 参数。canonical None 不发 Matrix scalar B.IOR。cooperative TMATMUL 要求四 PE 对应 GPR 值相等；无需硬件运行时比较或 trap。
+<!-- GENERATED-ASL-BEGIN: decode source=asl/block/operands/B.IOR.asl -->
+```asl
+readonly func InstructionContractMatches_B_IOR(operation: CommandOperation) => boolean
+begin
+    return (operation == CommandOperation_b_ior_32_c3ea71404eb3);
+end;
+```
+<!-- GENERATED-ASL-END: decode -->
+
+## Assembler symbols
+
+Supplementary operand names and examples may be added here.
+
+## Operation
+
+<!-- GENERATED-ASL-BEGIN: operation source=asl/block/operands/B.IOR.asl -->
+```asl
+readonly func InstructionContractHandler_B_IOR() => CommandSemanticHandler
+begin
+    return CommandHandler_BindBundleScalarIO;
+end;
+```
+<!-- GENERATED-ASL-END: operation -->
+
+## Legality and exceptions
+
+Normative legality is embedded from the ASL source above.
+
+## Operational information
+
+Supplementary implementation-neutral guidance may be added here.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+
+<!-- SUPPLEMENTARY-END -->

@@ -30,8 +30,14 @@ ASL_SOURCES_BEFORE_DECODER := \
 	asl/tile/cube.asl \
 	asl/tile/legality.asl
 
+ASL_MNEMONIC_SOURCES := $(sort $(wildcard \
+	asl/scalar/*/*.asl \
+	asl/block/*/*.asl \
+	asl/tile/*/*/*.asl))
+
 ASL_SOURCES_AFTER_DECODER := \
 	asl/profiles/pto-v0.asl \
+	$(ASL_MNEMONIC_SOURCES) \
 	asl/bundle/dispatch.asl \
 	asl/scalar/dispatch.asl \
 	asl/dispatch.asl
@@ -82,14 +88,33 @@ ASL_TEST_SHARD_MAINS := \
 	tests/asl/shards/tlsu-totality.asl \
 	tests/asl/shards/cube-totality.asl \
 	tests/asl/shards/core-bundle.asl \
+	tests/asl/shards/bundle-scalar-defaults.asl \
+	tests/asl/shards/bundle-tile-allocation.asl \
 	tests/asl/shards/scalar-base.asl \
 	tests/asl/shards/scalar-agu-effects.asl \
 	tests/asl/shards/scalar-alu-bru.asl \
 	tests/asl/shards/scalar-amo.asl \
 	tests/asl/shards/scalar-fsu.asl \
 	tests/asl/shards/scalar-sys.asl \
-	tests/asl/shards/tile-ops.asl \
-	tests/asl/shards/tile-lifecycle.asl \
+	tests/asl/shards/tepl-elementwise.asl \
+	tests/asl/shards/tload-tstore.asl \
+	tests/asl/shards/tmatmul-tgemv.asl \
+	tests/asl/shards/cube-numeric-contract.asl \
+	tests/asl/shards/cube-accumulator-classes.asl \
+	tests/asl/shards/tepl-reduction.asl \
+	tests/asl/shards/tepl-expansion.asl \
+	tests/asl/shards/tepl-generation.asl \
+	tests/asl/shards/tepl-rearrangement.asl \
+	tests/asl/shards/tepl-complex.asl \
+	tests/asl/shards/tepl-conversion.asl \
+	tests/asl/shards/tile-handler-closure.asl \
+	tests/asl/shards/mgather-mscatter-cube-extensions.asl \
+	tests/asl/shards/tile-dispatch.asl \
+	tests/asl/shards/tile-capacity.asl \
+	tests/asl/shards/tile-definedness.asl \
+	tests/asl/shards/shared-tload-atomic.asl \
+	tests/asl/shards/tile-legality.asl \
+	tests/asl/shards/mgather-mscatter-restart.asl \
 	tests/asl/shards/concurrency-profile.asl
 
 ASL_TEST_SHARD_NAMES := $(patsubst tests/asl/shards/%.asl,%,$(ASL_TEST_SHARD_MAINS))
@@ -103,6 +128,8 @@ ASL_TEST_LIB_core-bundle := \
 	tests/asl/state-tests.asl \
 	tests/asl/bundle-tests.asl \
 	tests/asl/dispatch-tests.asl
+ASL_TEST_LIB_bundle-scalar-defaults := tests/asl/bundle-tests.asl
+ASL_TEST_LIB_bundle-tile-allocation := tests/asl/bundle-tests.asl
 ASL_TEST_LIB_scalar-base := tests/asl/scalar-tests.asl
 ASL_TEST_LIB_scalar-agu-effects := tests/asl/scalar-tests.asl
 ASL_TEST_LIB_scalar-agu-totality := tests/asl/scalar-tests.asl
@@ -130,8 +157,25 @@ ASL_TEST_LIB_scalar-sys-traps := tests/asl/scalar-tests.asl
 ASL_TEST_LIB_scalar-sys-requests := tests/asl/scalar-tests.asl
 ASL_TEST_LIB_scalar-sys-maintenance-selectors := tests/asl/scalar-tests.asl
 ASL_TEST_LIB_scalar-sys-maintenance-legality := tests/asl/scalar-tests.asl
-ASL_TEST_LIB_tile-ops := tests/asl/tile-tests.asl
-ASL_TEST_LIB_tile-lifecycle := tests/asl/tile-tests.asl
+ASL_TEST_LIB_tepl-elementwise := tests/asl/tile-tests.asl
+ASL_TEST_LIB_tload-tstore := tests/asl/tile-tests.asl
+ASL_TEST_LIB_tmatmul-tgemv := tests/asl/tile-tests.asl
+ASL_TEST_LIB_cube-numeric-contract := tests/asl/tile-tests.asl
+ASL_TEST_LIB_cube-accumulator-classes := tests/asl/tile-tests.asl
+ASL_TEST_LIB_tepl-reduction := tests/asl/tile-tests.asl
+ASL_TEST_LIB_tepl-expansion := tests/asl/tile-tests.asl
+ASL_TEST_LIB_tepl-generation := tests/asl/tile-tests.asl
+ASL_TEST_LIB_tepl-rearrangement := tests/asl/tile-tests.asl
+ASL_TEST_LIB_tepl-complex := tests/asl/tile-tests.asl
+ASL_TEST_LIB_tepl-conversion := tests/asl/tile-tests.asl
+ASL_TEST_LIB_tile-handler-closure := tests/asl/tile-tests.asl
+ASL_TEST_LIB_mgather-mscatter-cube-extensions := tests/asl/tile-tests.asl
+ASL_TEST_LIB_tile-dispatch := tests/asl/tile-tests.asl
+ASL_TEST_LIB_tile-capacity := tests/asl/tile-tests.asl
+ASL_TEST_LIB_tile-definedness := tests/asl/tile-tests.asl
+ASL_TEST_LIB_shared-tload-atomic := tests/asl/tile-tests.asl
+ASL_TEST_LIB_tile-legality := tests/asl/tile-tests.asl
+ASL_TEST_LIB_mgather-mscatter-restart := tests/asl/tile-tests.asl
 ASL_TEST_LIB_tepl-totality := tests/asl/tepl-totality-tests.asl
 ASL_TEST_LIB_tlsu-totality := tests/asl/tlsu-totality-tests.asl
 ASL_TEST_LIB_cube-totality := tests/asl/cube-totality-tests.asl
@@ -143,10 +187,10 @@ SPEC := build/pto-spec.asl
 DECODER_SPEC := build/decoders.asl
 TEST_SPEC := build/pto-tests.asl
 
-.PHONY: all setup build release-manifest release-check repo-check \
+.PHONY: all setup build release-manifest release-check release-prepare release-verify repo-check pr-check \
 	toolchain-check check test test-parallel test-shards \
 	$(ASL_TEST_SHARD_TARGETS) ci clean print-asl-sources \
-	print-asl-tests print-asl-test-shards
+	print-asl-tests print-asl-test-shards print-asl-test-shard-names
 
 all: ci
 
@@ -185,6 +229,16 @@ repo-check: $(SPEC)
 	./scripts/check-asl-test-shards
 	./scripts/check-binary-closure
 
+pr-check:
+	./scripts/check-pr
+
+release-verify: pr-check release-check toolchain-check check test-shards
+
+release-prepare:
+	./scripts/generate-release-manifest
+	./scripts/check-release-manifest
+	git diff --exit-code -- spec/release-manifest.json spec/evidence
+
 # Canary checks proving the pinned ASLRef distinguishes valid from invalid ASL1.
 toolchain-check:
 	ASLREF="$(ASLREF)" ./scripts/check-toolchain
@@ -203,7 +257,7 @@ test-shards: $(ASL_TEST_SHARD_TARGETS)
 test-parallel: $(ASL_TEST_SHARD_SPECS)
 	$(MAKE) --no-print-directory -j$(ASL_TEST_JOBS) test-shards
 
-ci: repo-check toolchain-check check test-parallel
+ci: pr-check
 
 print-asl-sources:
 	@printf '%s\n' $(ASL_SOURCES)
@@ -213,6 +267,9 @@ print-asl-tests:
 
 print-asl-test-shards:
 	@printf '%s\n' $(ASL_TEST_SHARD_MAINS)
+
+print-asl-test-shard-names:
+	@printf '%s\n' $(ASL_TEST_SHARD_NAMES)
 
 clean:
 	rm -rf build

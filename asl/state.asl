@@ -304,7 +304,7 @@ end;
 pure func PredicateRegisterHasInstructionConsumer(index: PredicateIndex)
         => boolean
 begin
-    // PTO 0.58.0 has no warp-vector execution surface. Machine-body B.Z and
+    // PTO has no warp-vector execution surface. Machine-body B.Z and
     // B.NZ consume the distinct execution mask, not P0..P7.
     return FALSE;
 end;

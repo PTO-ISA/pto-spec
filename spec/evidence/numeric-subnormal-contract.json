@@ -2554,11 +2554,11 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "63fd433bc0a6ae5ca6895a3b0e77a34a6680aeda220e354e6823e12126014401"
+      "sha256": "7bd2bfa673c449813d4cf27ae22612d2ca15d20498b6551e514ff4e1d6d40919"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "01e86e84cc2adf06734a1330efd10b3af499c8f7b05ac8c8b5f5d1be4da0a578"
+      "sha256": "122166c233403dc30c49a3a3d274c21f0ce9ea1fddad1f55871659ef25a1f22b"
     },
     {
       "path": "asl/types.asl",
@@ -2566,7 +2566,7 @@
     },
     {
       "path": "asl/numeric/formats.asl",
-      "sha256": "d2f16eef9b310107df3090613e76d6f05693a0cc39a1c69c8c241f33cc5bb2f4"
+      "sha256": "ace17d58294c3d41fc0d80c594f7a7eef7683f504df91dbafb19021036993bd4"
     },
     {
       "path": "tests/asl/profile-tests.asl",

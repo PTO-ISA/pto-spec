@@ -23,7 +23,7 @@
 3. [状态与类型](davincioo-arch/state-and-data-types.md)定义 Local/Shared storage、distribution、persistent register state 与 TileAcc。
 4. [内存与异常](davincioo-arch/memory-ordering-and-exceptions.md)定义数据搬运、完成、顺序与非法程序行为。
 5. [汇编语法](davincioo-arch/assembly-syntax.md)和 [Encoding](davincioo-arch/encoding-conventions.md)定义编码与语法。
-6. 正式指令按 [Scalar ISA](instructions/scalar/README.md)、[Block ISA](instructions/block/overview/block-header-model.md) 和 [Tile ISA](instructions/README.md) 三类发布；Tile ISA 当前包含 109 条 operation。
+6. 正式指令按 [Scalar ISA](instructions/scalar.md)、[Block ISA](instructions/block-command.md) 和 [Tile ISA](instructions/tile.md) 三类发布；Tile ISA 当前包含 109 条 operation。
 
 ## 架构边界
 
@@ -76,8 +76,8 @@ node scripts/intrinsic-docs/sync_intrinsic_xlsx.mjs audit
 <!-- BEGIN GENERATED: instruction-index -->
 ## 正式指令目录
 
-- [Scalar ISA](instructions/scalar/README.md)
-- [Block ISA](instructions/block/overview/block-header-model.md)
+- [Scalar ISA](instructions/scalar.md)
+- [Block ISA](instructions/block-command.md)
 - [109 条 Tile ISA operation](instructions/README.md)
 - [覆盖率与迁移状态](status/README.md)
 - Complete HTML 入口：`docs/DavinciOO_PTO_Intrinsic_Complete.html`

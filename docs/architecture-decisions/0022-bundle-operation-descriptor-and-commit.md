@@ -54,10 +54,10 @@ priority order as execution.
   sequentially to the following header command. BPC records the selected
   bundle target.
 - BSTOP and the next BSTART are commit boundaries. A tile-operation descriptor
-  must have a final B.IOT binding that supplies every required operand. The
-  bound allocated tile types must match the start DataType. PTO v0 currently
-  supports the B.IOT slot-zero shape: destination0, source0, and source1.
-  Operations requiring other operands are explicitly rejected at commit.
+  must have a terminated B.IOT stream that supplies every required tile
+  operand. The bound allocated tile types must match the start DataType.
+  ADR 0055 supersedes the earlier slot-zero limitation: ordered B.IOT entries
+  may supply the complete direct-operation tile schema.
 - A legal commit invokes exactly one direct tile semantic operation without a
   second architectural-time increment. The enclosing command remains the one
   decoded execution attempt.

@@ -23,11 +23,13 @@ begin
     TestBundleTileCommitLifecycle();
     TestBundleTileCommitRollback();
     TestBundleTileBindingV5Schemas();
+    TestBundleScalarBindingSchemaDefaults();
+    TestBundleTLOADTSTORERowStride();
     TestBundleSharedBindingV5();
     TestBundleSharedBindingV6();
     TestBundleSharedTLSUExecution();
     TestBundleSharedCubeExecution();
-    TestBundleDataAttributes0580();
+    TestBundleDataAttributes();
     TestBundleTileAllocationAndLifetime();
     TestBundleTileUndersizedAllocation();
     TestTileRegisterMapping();

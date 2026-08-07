@@ -5,11 +5,10 @@ begin
     let tile = _Tiles[[index]];
     return tile.allocated &&
            TileCapacityIsLegal(tile.capacity_bytes) &&
-           tile.rows > 0 && tile.columns > 0 &&
+           TileShapeMatchesCapacity(tile.capacity_bytes, tile.rows,
+               tile.columns, tile.data_type) &&
            tile.valid_rows <= tile.rows &&
            tile.valid_columns <= tile.columns &&
-           TileStorageFitsCapacity(tile.rows, tile.columns,
-               tile.data_type, tile.capacity_bytes) &&
            tile.rows * tile.columns <= PTO_MODEL_TILE_ELEMENTS;
 end;
 
@@ -613,12 +612,14 @@ begin
 end;
 
 readonly func TileOperandsLegal_TLOAD(destination: TileIndex,
-                                      base_address: Word) => boolean
+                                      base_address: Word,
+                                      row_stride_elements: Word) => boolean
 begin
     return TileDescriptorLegal(destination);
 end;
 
 readonly func TileOperandsLegal_TSTORE(base_address: Word,
+                                       row_stride_elements: Word,
                                        source: TileIndex) => boolean
 begin
     return TileDescriptorLegal(source);
@@ -674,6 +675,10 @@ begin
     return BundleTileOperationSelected() &&
            TileSourceContentsDefined(left) &&
            TileSourceContentsDefined(right) &&
+           IsNonzeroPowerOfTwo(_Tiles[[left]].valid_rows) &&
+           IsNonzeroPowerOfTwo(_Tiles[[left]].valid_columns) &&
+           IsNonzeroPowerOfTwo(_Tiles[[right]].valid_rows) &&
+           IsNonzeroPowerOfTwo(_Tiles[[right]].valid_columns) &&
            _Tiles[[left]].valid_columns == _Tiles[[right]].valid_rows &&
            _Tiles[[left]].valid_rows * _Tiles[[right]].valid_columns <=
                PTO_MODEL_TILE_ELEMENTS;
@@ -683,11 +688,10 @@ readonly func TileInfoDescriptorLegal(tile: TileInfo) => boolean
 begin
     return tile.allocated && tile.contents_defined &&
            TileCapacityIsLegal(tile.capacity_bytes) &&
-           tile.rows > 0 && tile.columns > 0 &&
+           TileShapeMatchesCapacity(tile.capacity_bytes, tile.rows,
+               tile.columns, tile.data_type) &&
            tile.valid_rows <= tile.rows &&
            tile.valid_columns <= tile.columns &&
-           TileStorageFitsCapacity(tile.rows, tile.columns,
-               tile.data_type, tile.capacity_bytes) &&
            tile.rows * tile.columns <= PTO_MODEL_TILE_ELEMENTS &&
            TileGenericIndexingPermitted(tile);
 end;
@@ -697,6 +701,10 @@ readonly func TileMatrixInfoShapeLegal(left: TileInfo,
 begin
     return BundleTileOperationSelected() &&
            TileInfoDescriptorLegal(left) && TileInfoDescriptorLegal(right) &&
+           IsNonzeroPowerOfTwo(left.valid_rows) &&
+           IsNonzeroPowerOfTwo(left.valid_columns) &&
+           IsNonzeroPowerOfTwo(right.valid_rows) &&
+           IsNonzeroPowerOfTwo(right.valid_columns) &&
            left.valid_columns == right.valid_rows &&
            left.valid_rows * right.valid_columns <= PTO_MODEL_TILE_ELEMENTS;
 end;

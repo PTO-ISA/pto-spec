@@ -6,7 +6,7 @@ This page is generated from the canonical PTO catalogs under `spec/catalog/`.
 
 Direct tile operations are selected by the tile operation catalog and execute against explicit tile, scalar, memory, and descriptor operands. The selector catalog is normative for operation identity, operand roles, semantic handler, and argument order.
 
-In PTO ISA 0.58.0, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TLSU and CUBE operations bind directly to their corresponding `BSTART.*` command forms. CUBE operations carry an explicit Local destination D; ACC variants also carry an explicit Local input C, with `D == C` defined as read-old/write-new. Accepted `B.IOT` forms encode `PE_MASK`, `TSize`, and a 2-bit destination Tile field without reuse bits. `B.DATR` fields apply only to the operation sets recorded in the catalog. See [ADR 0052](../architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md).
+In the active PTO ISA, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TLSU and CUBE operations bind directly to their corresponding `BSTART.*` command forms. CUBE operations carry an explicit Local destination D; ACC variants also carry an explicit Local input C, with `D == C` defined as read-old/write-new. Accepted `B.IOT` forms encode `PE_MASK`, `TSize`, and a 2-bit destination Tile field without reuse bits. `B.DATR` fields apply only to the operation sets recorded in the catalog. See [ADR 0052](../architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md).
 
 ## Families
 
@@ -112,8 +112,8 @@ In PTO ISA 0.58.0, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TLSU and 
 
 | Name | Selector | Handler | Operands | Arguments |
 | --- | --- | --- | --- | --- |
-| TLOAD | function=0 | TLOAD | destination0:destination&lt;br&gt;address:base-address | destination0&lt;br&gt;address |
-| TSTORE | function=1 | TSTORE | address:base-address&lt;br&gt;source0:source | address&lt;br&gt;source0 |
+| TLOAD | function=0 | TLOAD | destination0:destination&lt;br&gt;address:base-address&lt;br&gt;scalar0:row-stride-elements | destination0&lt;br&gt;address&lt;br&gt;scalar0 |
+| TSTORE | function=1 | TSTORE | address:base-address&lt;br&gt;scalar0:row-stride-elements&lt;br&gt;source0:source | address&lt;br&gt;scalar0&lt;br&gt;source0 |
 | TMOV | function=2 | TMOV | destination0:destination&lt;br&gt;source0:source | destination0&lt;br&gt;source0 |
 | TPREFETCH | function=3 | TPREFETCH | address:base-address&lt;br&gt;byte_count:byte-count | address&lt;br&gt;byte_count |
 | MGATHER | function=4 | MGATHER | destination0:destination&lt;br&gt;address:base-address&lt;br&gt;source0:indices | destination0&lt;br&gt;address&lt;br&gt;source0 |

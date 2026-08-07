@@ -1,81 +1,128 @@
----
-{
-  "schema_version": 1,
-  "id": "header.header-b.iot",
-  "kind": "header",
-  "title": "B.IOT",
-  "status": "active",
-  "visibility": "public",
-  "profile": "pto-isa-0.58.0",
-  "family": "Operand Bindings",
-  "sources": { "davincioo": "header/B.IOT.md" }
-}
----
 # B.IOT
 
-## 用途
+Binds v5 PE_MASK, ordered Local tile sources, last-use, and optional TSize/2-bit Local destination metadata; reuse bits do not exist.
 
-`B.IOT` 只绑定 Local Tile source/destination。它编码 per-PE destination
-`TSize`、本次 operation 的 `PE_MASK` 与 source last-use；Shared metadata
-全部由 [`B.IOS`](./B.IOS.md) 表达。
+<!-- ASL-SOURCE: asl/block/operands/B.IOT.asl -->
 
-## 汇编语法
+## Normative identity {#PTO-INST-BLOCK-B-IOT}
 
-```asm
-B.IOT SrcTile0, SrcTile1, mask=PE_MASK <,last>, ->DstTile<SIZE>
-B.IOT SrcTile0, mask=PE_MASK <,last>
-B.IOT mask=PE_MASK, last, ->DstTile<SIZE>
-```
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
 
-Local-to-Shared TMOV 使用第二种 source-only form，Shared destination 的
-size/mask 来自 `B.IOS`。`B.IOT` 不存在 mask-only Shared companion，也不在
-source-only form 中携带 Shared size。v5 不存在 `.reuse` modifier。
+The current instruction contract is owned by the ASL source linked above.
 
-## v5 Bit-level 编码
-
-| Bits | Field | Width | Fixed value |
-| --- | --- | ---: | --- |
-| `[31:26]` | `SrcTile1` | 6 | |
-| `[25:20]` | `SrcTile0` | 6 | |
-| `[19]` | `last` | 1 | |
-| `[18:15]` | `PE_MASK` | 4 | |
-| `[14:12]` | `Func` | 3 | |
-| `[11:9]` | `TSize` | 3 | |
-| `[8:7]` | `DstTile` | 2 | |
-| `[6:0]` | opcode group | 7 | `0x13` |
-
-## TSize 与 PE_MASK
-
-Destination `TSize=001..111` 表示每个 selected PE 的 128 B、256 B、
-512 B、1 KiB、2 KiB、4 KiB、8 KiB。Core allocation 为
-`popcount(PE_MASK) * per_pe_size`。source-only form 使用 `TSize=000`，size
-来自已经 rename-resolved 的 source descriptor。
-
-Mask bit 固定为 `1000=PE0`、`0100=PE1`、`0010=PE2`、`0001=PE3`。多位
-可以同时为 1，selected PE 不 pack。`0000` 是 strict no-op，不产生任何
-allocation、rename、read/write、lifetime、consume 或 fault effect。
-
-## 合法性
-
-- 最后一条 `B.IOT` 必须设置 `last`。
-- Destination form 必须使用 nonzero `TSize`；source-only form 为 `TSize=000`。
-- Mixed Local/Shared operation 的 `B.IOT.PE_MASK` 必须与 `B.IOS.PE_MASK` 相同。
-- D 和 auxiliary output 必须是 Local TReg destination。
-- config 未启用的 Tile parameter/output 不得出现。
-- TGEMV 的所有 operand 都必须留在 Local `B.IOT` stream。
-- Cooperative TMATMUL 不得重复编码已由 `B.IOS` 提供的 source。
-
-## 示例
+## Assembly
 
 ```asm
-/* 每个 selected PE 分配 1 KiB；Core 总量为 popcount(mask) * 1 KiB */
-B.IOT T#1, U#2, mask=1111, last, ->T<1KB>
-
-/* Local-to-Shared：B.IOT 只绑定 Local source */
-B.IOS mask=1100, ->S17<100>
-B.IOT T#1, mask=1100, last
-
-/* Cooperative Shared-B CUBE */
-B.IOS S17, mask=1111
-B.IOT T#1, mask=1111, last, ->T<1KB>
+B.IOT SrcTile0, mask=PE_MASK, <last>, ->DstTile<TSize>
+B.IOT SrcTile0, SrcTile1, mask=PE_MASK, <last>
+B.IOT SrcTile0, SrcTile1, mask=PE_MASK, <last>, ->DstTile<TSize>
+B.IOT SrcTile0, mask=PE_MASK, <last>
+B.IOT mask=PE_MASK, <last>, ->DstTile<TSize>
 ```
+
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| b_iot_32_10db6db84f5d | L32 | 32 | 0x00005013 / 0xfc00707f | [{"field":"PE_MASK","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]},{"field":"TSize","operator":"one-of","values":[1,2,3,4,5,6,7]},{"field":"DstTile","operator":"one-of","values":[0,1,2,3]}] |
+| b_iot_32_2c07e7177fad | L32 | 32 | 0x00004013 / 0x00007e7f | [{"field":"PE_MASK","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]}] |
+| b_iot_32_8b8bce6bffe8 | L32 | 32 | 0x00004013 / 0x0000707f | [{"field":"PE_MASK","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]},{"field":"TSize","operator":"one-of","values":[1,2,3,4,5,6,7]},{"field":"DstTile","operator":"one-of","values":[0,1,2,3]}] |
+| b_iot_32_c11eb189dd83 | L32 | 32 | 0x00005013 / 0xfc007e7f | [{"field":"PE_MASK","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]}] |
+| b_iot_32_efa0fe3fe49a | L32 | 32 | 0x00006013 / 0xfff0707f | [{"field":"PE_MASK","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]},{"field":"TSize","operator":"one-of","values":[1,2,3,4,5,6,7]},{"field":"DstTile","operator":"one-of","values":[0,1,2,3]}] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| b_iot_32_10db6db84f5d | SrcTile0 | 6 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":6}] |
+| b_iot_32_10db6db84f5d | L | 1 | encoding-defined | [{"instruction_lsb":19,"value_lsb":0,"width":1}] |
+| b_iot_32_10db6db84f5d | PE_MASK | 4 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":4}] |
+| b_iot_32_10db6db84f5d | TSize | 3 | encoding-defined | [{"instruction_lsb":9,"value_lsb":0,"width":3}] |
+| b_iot_32_10db6db84f5d | DstTile | 2 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":2}] |
+| b_iot_32_2c07e7177fad | SrcTile1 | 6 | encoding-defined | [{"instruction_lsb":26,"value_lsb":0,"width":6}] |
+| b_iot_32_2c07e7177fad | SrcTile0 | 6 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":6}] |
+| b_iot_32_2c07e7177fad | L | 1 | encoding-defined | [{"instruction_lsb":19,"value_lsb":0,"width":1}] |
+| b_iot_32_2c07e7177fad | PE_MASK | 4 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":4}] |
+| b_iot_32_8b8bce6bffe8 | SrcTile1 | 6 | encoding-defined | [{"instruction_lsb":26,"value_lsb":0,"width":6}] |
+| b_iot_32_8b8bce6bffe8 | SrcTile0 | 6 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":6}] |
+| b_iot_32_8b8bce6bffe8 | L | 1 | encoding-defined | [{"instruction_lsb":19,"value_lsb":0,"width":1}] |
+| b_iot_32_8b8bce6bffe8 | PE_MASK | 4 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":4}] |
+| b_iot_32_8b8bce6bffe8 | TSize | 3 | encoding-defined | [{"instruction_lsb":9,"value_lsb":0,"width":3}] |
+| b_iot_32_8b8bce6bffe8 | DstTile | 2 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":2}] |
+| b_iot_32_c11eb189dd83 | SrcTile0 | 6 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":6}] |
+| b_iot_32_c11eb189dd83 | L | 1 | encoding-defined | [{"instruction_lsb":19,"value_lsb":0,"width":1}] |
+| b_iot_32_c11eb189dd83 | PE_MASK | 4 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":4}] |
+| b_iot_32_efa0fe3fe49a | L | 1 | encoding-defined | [{"instruction_lsb":19,"value_lsb":0,"width":1}] |
+| b_iot_32_efa0fe3fe49a | PE_MASK | 4 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":4}] |
+| b_iot_32_efa0fe3fe49a | TSize | 3 | encoding-defined | [{"instruction_lsb":9,"value_lsb":0,"width":3}] |
+| b_iot_32_efa0fe3fe49a | DstTile | 2 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":2}] |
+
+## Decode
+
+<!-- GENERATED-ASL-BEGIN: decode source=asl/block/operands/B.IOT.asl -->
+```asl
+readonly func InstructionContractMatches_B_IOT(operation: CommandOperation) => boolean
+begin
+    return (operation == CommandOperation_b_iot_32_10db6db84f5d) ||
+           (operation == CommandOperation_b_iot_32_2c07e7177fad) ||
+           (operation == CommandOperation_b_iot_32_8b8bce6bffe8) ||
+           (operation == CommandOperation_b_iot_32_c11eb189dd83) ||
+           (operation == CommandOperation_b_iot_32_efa0fe3fe49a);
+end;
+```
+<!-- GENERATED-ASL-END: decode -->
+
+## Assembler symbols
+
+Supplementary operand names and examples may be added here.
+
+## Operation
+
+<!-- GENERATED-ASL-BEGIN: operation source=asl/block/operands/B.IOT.asl -->
+```asl
+pure func InstructionContractZeroMaskIsNoOp_B_IOT(
+    pe_mask: bits(4)) => boolean
+begin
+    return pe_mask == Zeros{4};
+end;
+
+pure func InstructionContractHasMaskOnlySharedCompanion_B_IOT() => boolean
+begin
+    return FALSE;
+end;
+
+pure func InstructionContractPerPECapacity_B_IOT(
+    size_code: integer {1..7}) => integer
+begin
+    return TileSizeCodeBytes(size_code);
+end;
+
+pure func InstructionContractCoreCapacity_B_IOT(
+    size_code: integer {1..7}, pe_mask: bits(4)) => integer
+begin
+    return TileCoreAllocationBytes(pe_mask,
+        InstructionContractPerPECapacity_B_IOT(size_code));
+end;
+
+readonly func InstructionContractHandler_B_IOT() => CommandSemanticHandler
+begin
+    return CommandHandler_BindBundleTileIO;
+end;
+```
+<!-- GENERATED-ASL-END: operation -->
+
+## Legality and exceptions
+
+Normative legality is embedded from the ASL source above.
+
+## Operational information
+
+Supplementary implementation-neutral guidance may be added here.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+Destination TSize is a per-selected-PE capacity. Core allocation is the
+embedded `InstructionContractCoreCapacity_B_IOT` result, namely
+`popcount(PE_MASK)` equal per-PE allocations. PE_MASK does not partition one
+Tile payload. Physical rows are derived from this per-PE capacity, data type,
+and the power-of-two physical Col supplied by the block schema.
+<!-- SUPPLEMENTARY-END -->

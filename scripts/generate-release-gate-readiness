@@ -19,6 +19,7 @@ SOURCE_PATHS = (
     ".aslref-version",
     ".github/CODEOWNERS",
     ".github/workflows/asl.yml",
+    ".github/workflows/release.yml",
     "CONTRIBUTING.md",
     "GOVERNANCE.md",
     "Makefile",
@@ -39,6 +40,8 @@ SOURCE_PATHS = (
     "scripts/check-binary-closure",
     "scripts/check-catalogs",
     "scripts/check-publication-hygiene",
+    "scripts/check-pr",
+    "scripts/check-release-workflow",
     "scripts/check-repository",
     "scripts/check-toolchain",
     "scripts/generate-numeric-format-namespace-contract",
@@ -71,9 +74,9 @@ EXPECTED_COUNTS = {
     "gate_count": 10,
     "required_approval_count": 2,
     "required_external_control_count": 10,
-    "shard_count": 34,
-    "canonical_call_count": 111,
-    "reachable_test_subprogram_count": 105,
+    "shard_count": 53,
+    "canonical_call_count": 113,
+    "reachable_test_subprogram_count": 107,
 }
 
 GATE_SPECS: tuple[dict[str, Any], ...] = (
@@ -117,18 +120,18 @@ GATE_SPECS: tuple[dict[str, Any], ...] = (
     },
     {
         "id": "RG-05",
-        "name": "parallel executable semantics",
-        "command": "make test-parallel",
+        "name": "complete executable semantics",
+        "command": "make test-shards",
         "evidence": ["Makefile", "scripts/check-asl-test-shards", "tests/asl/main.asl"],
-        "acceptance": "All canonical executable tests pass through the exact 34-shard partition with no missing, duplicate, empty, or unreachable test surface.",
+        "acceptance": "All canonical executable tests pass through the exact 53-shard partition with no missing, duplicate, empty, or unreachable test surface.",
         "long_running": True,
     },
     {
         "id": "RG-06",
         "name": "aggregate release gate",
-        "command": "make ci",
+        "command": "make release-verify",
         "evidence": ["Makefile"],
-        "acceptance": "Repository, pinned toolchain, strict type-check, and parallel runtime gates pass together after clean regeneration.",
+        "acceptance": "The lightweight repository contract, release identity, pinned toolchain, strict type-check, and all runtime shards pass together at one exact candidate.",
         "long_running": True,
     },
     {
@@ -178,7 +181,7 @@ EXTERNAL_CONTROLS: tuple[dict[str, str], ...] = (
     {
         "id": "EC-02",
         "name": "required hosted check",
-        "required_state": "strict validate check is required before main updates",
+        "required_state": "PR / validate is required before main updates; release publication separately requires exact-head Release / validate",
     },
     {
         "id": "EC-03",
@@ -268,16 +271,29 @@ def validate_makefile() -> None:
         "toolchain-check",
         "check",
         "test-parallel",
+        "test-shards",
+        "pr-check",
+        "release-prepare",
+        "release-verify",
         "ci",
         "print-asl-sources",
         "print-asl-tests",
         "print-asl-test-shards",
+        "print-asl-test-shard-names",
     }
     defined_targets = set(re.findall(r"^([A-Za-z][A-Za-z0-9_-]*):", body, re.MULTILINE))
     require(required_targets <= defined_targets, "Makefile release target drift")
+    require("ci: pr-check" in body, "make ci must remain the lightweight PR alias")
     require(
-        "ci: repo-check toolchain-check check test-parallel" in body,
-        "make ci no longer composes the four required gates",
+        "release-verify: pr-check release-check toolchain-check check test-shards" in body,
+        "make release-verify no longer composes every strict release gate",
+    )
+    require(
+        "release-prepare:" in body
+        and "./scripts/generate-release-manifest" in body
+        and "./scripts/check-release-manifest" in body
+        and "git diff --exit-code -- spec/release-manifest.json spec/evidence" in body,
+        "make release-prepare no longer proves reproducible release evidence",
     )
     require("ASL_TEST_JOBS ?= 4" in body, "parallel default job count drift")
     require(
@@ -287,51 +303,40 @@ def validate_makefile() -> None:
 
 
 def validate_workflow() -> dict[str, Any]:
-    body = (ROOT / ".github/workflows/asl.yml").read_text(encoding="utf-8")
-    required_fragments = (
-        "name: ASL",
-        "branches: [main]",
-        "pull_request:",
-        "contents: read",
-        "cancel-in-progress: true",
-        "validate:",
-        "name: validate",
-        "runs-on: ubuntu-latest",
-        "timeout-minutes: 360",
-        "run: make repo-check",
-        'ocaml-compiler: "5.2.1"',
-        "run: make setup",
-        "run: make ci",
+    body = (ROOT / ".github/workflows/release.yml").read_text(encoding="utf-8")
+    result = subprocess.run(
+        [str(ROOT / "scripts/check-release-workflow")],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
     )
-    require(
-        all(fragment in body for fragment in required_fragments),
-        "hosted workflow policy drift",
-    )
-    expected_order = [
-        "- name: Check out repository",
-        "- name: Validate repository invariants",
-        "- name: Set up OCaml and opam",
-        "- name: Install ASLRef build dependencies",
-        "- name: Validate normative PTO ASL model",
-    ]
-    positions = [body.index(fragment) for fragment in expected_order]
-    require(positions == sorted(positions), "hosted workflow step order drift")
-    actions = [
+    require(result.returncode == 0, result.stderr.strip() or "release workflow policy drift")
+    action_uses = [
         {"action": action, "commit": commit}
         for action, commit in re.findall(r"uses:\s+([^@\s]+)@([0-9A-Za-z._-]+)", body)
     ]
-    require(len(actions) == 2, "hosted workflow action inventory drift")
+    actions = list({(row["action"], row["commit"]): row for row in action_uses}.values())
     require(
-        all(re.fullmatch(r"[0-9a-f]{40}", row["commit"]) for row in actions),
+        {row["action"] for row in actions}
+        == {"actions/checkout", "ocaml/setup-ocaml", "actions/upload-artifact"},
+        "release workflow action inventory drift",
+    )
+    require(
+        all(re.fullmatch(r"[0-9a-f]{40}", row["commit"]) for row in action_uses),
         "every hosted action must use a full commit pin",
     )
     return {
-        "workflow": ".github/workflows/asl.yml",
-        "workflow_name": "ASL",
-        "required_check": "validate",
+        "workflow": ".github/workflows/release.yml",
+        "workflow_name": "Release verification",
+        "trigger": "workflow_dispatch with exact commit input",
+        "required_check": "Release / validate",
         "permissions": {"contents": "read"},
-        "concurrency_cancel_in_progress": True,
+        "concurrency_cancel_in_progress": False,
         "timeout_minutes": 360,
+        "matrix_fail_fast": False,
+        "matrix_max_parallel": 8,
+        "protected_aggregator_needs": ["plan", "strict-model", "asl-shard", "release-evidence"],
         "actions": actions,
         "contract_status": "closed",
     }
@@ -484,7 +489,7 @@ def build_evidence() -> dict[str, Any]:
         "policy": {
             "authority": "The frozen PTO candidate, clone-verifiable gates, hosted validation, protected-branch state, and recorded architecture/formal approvals must agree before M6 promotion.",
             "no_live_branch_evidence": "A passing run on a moving draft branch is useful feedback but is not architecturally-complete release evidence.",
-            "long_running_policy": "Long runtime gates execute through the checked 34-shard topology and hosted CI; readiness generation validates their exact contract without waiting for them.",
+            "long_running_policy": "Long runtime gates execute only through the manually dispatched exact-head 53-shard release topology; readiness generation validates the contract without waiting for it.",
             "closure_rule": "S6-T2 closes only after cumulative S0 through S6-T1 closure, one immutable signed candidate, every local and hosted gate passing at that commit, all external controls verified, and both review perspectives accepted.",
         },
         "sources": [{"path": path, "sha256": sha256(path)} for path in SOURCE_PATHS],
@@ -498,7 +503,7 @@ def build_evidence() -> dict[str, Any]:
             {
                 "id": "S6-T2-B",
                 "status": "closed",
-                "target": "prove hosted workflow pinning and exact parallel test topology",
+                "target": "prove manual exact-head workflow pinning and exact shard topology",
                 "blocked_by": [],
             },
             {
@@ -542,9 +547,9 @@ def build_evidence() -> dict[str, Any]:
                 "classification": "release-governance",
                 "statement": "No frozen candidate has complete clean-tree local and hosted gate results.",
                 "acceptance_evidence": [
-                    "clean make ci",
+                    "clean make release-verify and make release-prepare",
                     "git diff --check",
-                    "passing hosted validate at the same candidate commit",
+                    "passing Release / validate at the same candidate commit",
                 ],
             },
             {

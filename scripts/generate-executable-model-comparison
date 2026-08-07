@@ -619,7 +619,7 @@ def build(snapshot_root: Path) -> dict[str, Any]:
         "model_limits": [
             {
                 "id": "accepted-0.58.0-abi-break",
-                "disposition": "The immutable independent snapshot predates the accepted command-encoding and compact TEPL-selector ABI. The retained matrix preserves 7 command encoding divergences and 67 direct-tile selector divergences instead of relabeling them as exact matches.",
+                "disposition": "The immutable independent snapshot predates the accepted command-encoding, compact TEPL-selector ABI, and completed TLOAD/TSTORE operand schema. The retained matrix preserves 7 command encoding divergences and 68 direct-tile ABI divergences instead of relabeling them as exact matches.",
             },
             {
                 "id": "reg5-flat-model-mismatch",
@@ -631,7 +631,7 @@ def build(snapshot_root: Path) -> dict[str, Any]:
             },
             {
                 "id": "bundle-bridge-operand-boundary",
-                "disposition": "PTO-v0 bundle commit exposes destination0/source0/source1 only, making 63 TEPL, 1 TLSU, and 5 CUBE direct operations representable through the bundle bridge; the remaining direct operations execute only through direct tile dispatch or reject at bundle commit before effects.",
+                "disposition": "PTO-v0 bundle commit resolves the complete direct-operation schema from ordered B.IOT/B.IOR bindings, bundle headers, and operation defaults. All 109 direct tile operations are schema-representable; malformed or surplus bindings still reject before tile effects.",
             },
             {
                 "id": "tepl-selector-boundary",
@@ -674,7 +674,7 @@ def build(snapshot_root: Path) -> dict[str, Any]:
         row for row in rows if row.get("abi_change_acceptance") is not None
     ]
     accepted_abi_break_counts = Counter(row["surface"] for row in accepted_abi_breaks)
-    if accepted_abi_break_counts != Counter({"command": 8, "direct-tile": 68}):
+    if accepted_abi_break_counts != Counter({"command": 7, "direct-tile": 68}):
         raise SystemExit(
             "unexpected accepted ABI divergence counts: "
             f"{dict(sorted(accepted_abi_break_counts.items()))}"

@@ -1,0 +1,147 @@
+name: Release verification
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: Exact reviewed commit to verify (40 lowercase hexadecimal characters)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-verification-${{ inputs.commit }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    name: exact-head repository plan
+    runs-on: ubuntu-latest
+    outputs:
+      shards: ${{ steps.shards.outputs.matrix }}
+    steps:
+      - name: Validate exact commit input
+        shell: bash
+        env:
+          COMMIT: ${{ inputs.commit }}
+        run: |
+          [[ "$COMMIT" =~ ^[0-9a-f]{40}$ ]]
+
+      - name: Check out exact commit
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: ${{ inputs.commit }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Prove exact head and lightweight contract
+        shell: bash
+        env:
+          COMMIT: ${{ inputs.commit }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$COMMIT"
+          make pr-check
+
+      - name: Export exact ASL shard matrix
+        id: shards
+        shell: bash
+        run: |
+          matrix="$(make --no-print-directory print-asl-test-shard-names | python3 -c 'import json, sys; print(json.dumps([line.strip() for line in sys.stdin if line.strip()]))')"
+          test "$matrix" != "[]"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+  strict-model:
+    name: strict normative model
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Check out exact commit
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: ${{ inputs.commit }}
+          persist-credentials: false
+
+      - name: Set up pinned OCaml
+        uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0 # v3
+        with:
+          ocaml-compiler: "5.2.1"
+
+      - name: Install pinned ASLRef dependencies
+        run: make setup
+
+      - name: Validate toolchain canaries and normative model
+        run: make toolchain-check check
+
+  asl-shard:
+    name: ASL / ${{ matrix.shard }}
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+    steps:
+      - name: Check out exact commit
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: ${{ inputs.commit }}
+          persist-credentials: false
+
+      - name: Set up pinned OCaml
+        uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0 # v3
+        with:
+          ocaml-compiler: "5.2.1"
+
+      - name: Install pinned ASLRef dependencies
+        run: make setup
+
+      - name: Validate exact shard
+        run: make "test-shard-${{ matrix.shard }}"
+
+  release-evidence:
+    name: reproducible release evidence
+    needs: [plan, strict-model, asl-shard]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out exact commit
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: ${{ inputs.commit }}
+          persist-credentials: false
+
+      - name: Reproduce committed release evidence
+        run: make release-prepare
+
+      - name: Upload release evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: pto-release-evidence-${{ inputs.commit }}
+          path: |
+            spec/release-manifest.json
+            spec/evidence/*.json
+          if-no-files-found: error
+          retention-days: 90
+
+  validate:
+    name: Release / validate
+    if: always()
+    needs: [plan, strict-model, asl-shard, release-evidence]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every exact-head release gate
+        shell: bash
+        env:
+          PLAN_RESULT: ${{ needs.plan.result }}
+          STRICT_MODEL_RESULT: ${{ needs.strict-model.result }}
+          ASL_SHARD_RESULT: ${{ needs.asl-shard.result }}
+          RELEASE_EVIDENCE_RESULT: ${{ needs.release-evidence.result }}
+        run: |
+          test "$PLAN_RESULT" = success
+          test "$STRICT_MODEL_RESULT" = success
+          test "$ASL_SHARD_RESULT" = success
+          test "$RELEASE_EVIDENCE_RESULT" = success

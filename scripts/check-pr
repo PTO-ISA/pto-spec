@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+cd "$repo_root"
+
+commands=(
+    "./scripts/check-ndf"
+    "./scripts/check-release-workflow"
+    "./scripts/check-repository --structure-only"
+    "./scripts/check-asl-test-shards"
+    "python3 -m unittest discover -s tests/scripts -p test_*.py"
+    "python3 scripts/instruction_docs.py --check"
+    "python3 scripts/check-publication-hygiene"
+    "git diff --check"
+)
+
+if [[ ${1:-} == --list ]]; then
+    printf '%s\n' "${commands[@]}"
+    exit 0
+fi
+
+if [[ $# -ne 0 ]]; then
+    echo "usage: $0 [--list]" >&2
+    exit 2
+fi
+
+for command in "${commands[@]}"; do
+    printf '+ %s\n' "$command"
+    bash -c "$command"
+done

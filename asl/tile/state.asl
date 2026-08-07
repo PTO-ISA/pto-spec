@@ -52,11 +52,11 @@ begin
            shared.allocation_mask != Zeros{4} &&
            (shared.initialized_mask AND NOT shared.allocation_mask) == Zeros{4} &&
            TileCapacityIsLegal(shared.tile.capacity_bytes) &&
-           shared.tile.rows > 0 && shared.tile.columns > 0 &&
+           TileShapeMatchesCapacity(shared.tile.capacity_bytes,
+               shared.tile.rows, shared.tile.columns,
+               shared.tile.data_type) &&
            shared.tile.valid_rows <= shared.tile.rows &&
            shared.tile.valid_columns <= shared.tile.columns &&
-           TileStorageFitsCapacity(shared.tile.rows, shared.tile.columns,
-               shared.tile.data_type, shared.tile.capacity_bytes) &&
            shared.tile.rows * shared.tile.columns <= PTO_MODEL_TILE_ELEMENTS &&
            TileGenericIndexingPermitted(shared.tile);
 end;
@@ -77,6 +77,14 @@ readonly func SharedTileUpdateCompatible(shared_id: bits(8), tile: TileInfo,
                                           pe_mask: bits(4)) => boolean
 begin
     if pe_mask == Zeros{4} then return TRUE; end;
+    if !TileCapacityIsLegal(tile.capacity_bytes) ||
+       !TileShapeMatchesCapacity(tile.capacity_bytes, tile.rows,
+                                 tile.columns, tile.data_type) ||
+       tile.valid_rows > tile.rows ||
+       tile.valid_columns > tile.columns ||
+       tile.rows * tile.columns > PTO_MODEL_TILE_ELEMENTS then
+        return FALSE;
+    end;
     let old = SharedTileRecord(shared_id);
     if old.descriptor_valid then
         return (pe_mask AND NOT old.allocation_mask) == Zeros{4} &&
@@ -264,6 +272,7 @@ readonly func TileCapacityIsLegal(capacity_bytes: integer {0..262144}) => boolea
 begin
     return capacity_bytes >= PTO_TILE_CELL_BYTES &&
            capacity_bytes MOD PTO_TILE_CELL_BYTES == 0 &&
+           capacity_bytes <= PTO_TILE_MAX_ALLOCATION_BYTES &&
            capacity_bytes <= TileCapacityLimitBytes();
 end;
 
@@ -305,6 +314,57 @@ begin
     end;
 end;
 
+// Architectural Tile dimensions use exact powers of two. This bounded form
+// covers every 16-bit dimension value without relying on implementation
+// integer bitwise operators.
+pure func IsNonzeroPowerOfTwo(value: integer {0..65535}) => boolean
+begin
+    if value == 0 then return FALSE; end;
+    var candidate: integer = 1;
+    for exponent = 0 to 15 do
+        if value == candidate then return TRUE; end;
+        candidate = candidate * 2;
+    end;
+    return FALSE;
+end;
+
+// TSize is a per-PE byte capacity. Physical rows are descriptor state derived
+// exactly from that capacity, the physical column count, and the element type.
+// Zero means that no legal 16-bit row count exists for the supplied shape.
+pure func DerivedTileRows(capacity_bytes: integer {0..262144},
+                          columns: integer {0..65535},
+                          data_type: TileDataType) => integer {0..65535}
+begin
+    if capacity_bytes == 0 || !IsNonzeroPowerOfTwo(columns) then
+        return 0;
+    end;
+    let capacity_bits: integer = capacity_bytes * 8;
+    let row_bits: integer = columns * TileElementBits(data_type);
+    if row_bits == 0 || capacity_bits MOD row_bits != 0 then return 0; end;
+    let rows: integer = capacity_bits DIVRM row_bits;
+    if rows == 0 || rows > 65535 then return 0; end;
+    return rows as integer {0..65535};
+end;
+
+pure func TileShapeMatchesCapacity(capacity_bytes: integer {0..262144},
+                                   rows: integer {0..65535},
+                                   columns: integer {0..65535},
+                                   data_type: TileDataType) => boolean
+begin
+    let derived_rows = DerivedTileRows(capacity_bytes, columns, data_type);
+    return derived_rows != 0 && rows == derived_rows;
+end;
+
+pure func TileDescriptorShapeLegal(capacity_bytes: integer {0..262144},
+                                   columns: integer {0..65535},
+                                   valid_rows: integer {0..65535},
+                                   valid_columns: integer {0..65535},
+                                   data_type: TileDataType) => boolean
+begin
+    let rows = DerivedTileRows(capacity_bytes, columns, data_type);
+    return rows != 0 && valid_rows <= rows && valid_columns <= columns;
+end;
+
 pure func TileDataTypeIsFourBit(data_type: TileDataType) => boolean
 begin
     return data_type == TileDataType_E2M1X2 ||
@@ -342,11 +402,12 @@ begin
     assert TileCapacityIsLegal(capacity_bytes);
     assert allocation_mask != Zeros{4};
     assert rows > 0;
-    assert columns > 0;
     assert valid_rows <= rows;
-    assert valid_columns <= columns;
-    assert TileStorageFitsCapacity(rows, columns, data_type, capacity_bytes);
-    assert rows * columns <= PTO_MODEL_TILE_ELEMENTS;
+    assert TileDescriptorShapeLegal(capacity_bytes, columns, valid_rows,
+        valid_columns, data_type);
+    let derived_rows = DerivedTileRows(capacity_bytes, columns, data_type);
+    assert rows <= derived_rows;
+    assert derived_rows * columns <= PTO_MODEL_TILE_ELEMENTS;
     assert TileCapacityInUseExcept(index) + SharedTileCapacityInUse() +
         TileCoreAllocationBytes(allocation_mask, capacity_bytes) <=
         TileCapacityLimitBytes();
@@ -358,7 +419,7 @@ begin
     _Tiles[[index]].defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     _Tiles[[index]].defined_valid_elements = 0;
     _Tiles[[index]].capacity_bytes = capacity_bytes;
-    _Tiles[[index]].rows = rows;
+    _Tiles[[index]].rows = derived_rows;
     _Tiles[[index]].columns = columns;
     _Tiles[[index]].valid_rows = valid_rows;
     _Tiles[[index]].valid_columns = valid_columns;

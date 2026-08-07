@@ -66,6 +66,7 @@ begin
 end;
 
 func TLOADShared(shared_id: bits(8), base_address: Word,
+                 row_stride_elements: Word,
                  size_code: integer {1..7},
                  rows: integer {1..65535}, columns: integer {1..65535},
                  valid_rows: integer {1..65535},
@@ -75,16 +76,25 @@ func TLOADShared(shared_id: bits(8), base_address: Word,
 begin
     if pe_mask == Zeros{4} then return; end;
     let capacity_bytes = TileSizeCodeBytes(size_code);
-    assert valid_rows <= rows && valid_columns <= columns;
-    assert rows * columns <= PTO_MODEL_TILE_ELEMENTS;
-    assert TileStorageFitsCapacity(rows, columns, data_type, capacity_bytes);
+    if rows < valid_rows || rows >
+           DerivedTileRows(capacity_bytes, columns, data_type) ||
+       !TileDescriptorShapeLegal(capacity_bytes, columns, valid_rows,
+           valid_columns, data_type) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return;
+    end;
+    let derived_rows = DerivedTileRows(capacity_bytes, columns, data_type);
+    if derived_rows * columns > PTO_MODEL_TILE_ELEMENTS then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return;
+    end;
     var tile: TileInfo;
     tile.allocated = TRUE;
     tile.contents_defined = FALSE;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     tile.defined_valid_elements = 0;
     tile.capacity_bytes = capacity_bytes;
-    tile.rows = rows;
+    tile.rows = derived_rows;
     tile.columns = columns;
     tile.valid_rows = valid_rows;
     tile.valid_columns = valid_columns;
@@ -102,8 +112,11 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             let region = SharedTileElementRegion(tile, element);
             if pe_mask[region] == '1' then
-                let address = TileMemoryElementAddress(base_address, element,
-                    tile.data_type);
+                let memory_index = TileMemoryStridedIndex(
+                    row as integer {0..65535},
+                    column as integer {0..65535}, row_stride_elements);
+                let address = TileMemoryIndexedAddress(
+                    base_address, memory_index, tile.data_type);
                 let probe = ProbeTileMemoryAccess(address, tile.data_type, FALSE);
                 if RaiseDataAccessFault(probe, address) then return; end;
                 translated_addresses[[element]] = probe.translated_address;
@@ -116,8 +129,11 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             let region = SharedTileElementRegion(tile, element);
             if pe_mask[region] == '1' then
-                let high_nibble = TileMemoryElementHighNibble(element,
-                    tile.data_type);
+                let memory_index = TileMemoryStridedIndex(
+                    row as integer {0..65535},
+                    column as integer {0..65535}, row_stride_elements);
+                let high_nibble = TileMemoryIndexedHighNibble(
+                    memory_index, tile.data_type);
                 let raw = LoadTranslatedUnsigned(translated_addresses[[element]],
                     TileMemoryElementBytes(tile.data_type));
                 RecordLoadEvent(translated_addresses[[element]],
@@ -138,7 +154,8 @@ begin
     assert updated;
 end;
 
-func TSTOREShared(base_address: Word, shared_id: bits(8),
+func TSTOREShared(base_address: Word, row_stride_elements: Word,
+                  shared_id: bits(8),
                   pe_mask: bits(4))
 begin
     if pe_mask == Zeros{4} then return; end;
@@ -154,14 +171,17 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             let selected = pe_mask[SharedTileElementRegion(tile, element)] == '1';
             if selected then
-                let address = TileMemoryElementAddress(base_address, element,
-                    tile.data_type);
+                let memory_index = TileMemoryStridedIndex(
+                    row as integer {0..65535},
+                    column as integer {0..65535}, row_stride_elements);
+                let address = TileMemoryIndexedAddress(
+                    base_address, memory_index, tile.data_type);
                 let probe = ProbeTileMemoryAccess(address, tile.data_type, TRUE);
                 if RaiseDataAccessFault(probe, address) then return; end;
                 original_addresses[[element]] = address;
                 translated_addresses[[element]] = probe.translated_address;
-                high_nibbles[element] = if TileMemoryElementHighNibble(
-                    element, tile.data_type) then '1' else '0';
+                high_nibbles[element] = if TileMemoryIndexedHighNibble(
+                    memory_index, tile.data_type) then '1' else '0';
             end;
         end;
     end;
@@ -259,6 +279,15 @@ begin
     return TileDataTypeIsFourBit(data_type) && index_value[0] == '1';
 end;
 
+readonly func TileMemoryStridedIndex(row: integer {0..65535},
+                                     column: integer {0..65535},
+                                     row_stride_elements: Word) => Word
+begin
+    return MultiplyWord(NaturalToWord(row as integer {0..262144}),
+                        row_stride_elements) +
+           NaturalToWord(column as integer {0..262144});
+end;
+
 readonly func LoadTileMemoryElement(translated_address: Word,
                                     data_type: TileDataType,
                                     high_nibble: boolean) => Word
@@ -306,7 +335,8 @@ begin
     return ProbeDataAccess(address, element_bytes, element_bytes, write);
 end;
 
-func TLOAD(destination: TileIndex, base_address: Word)
+func TLOAD(destination: TileIndex, base_address: Word,
+           row_stride_elements: Word)
 begin
     let tile = _Tiles[[destination]];
     assert tile.allocated;
@@ -317,7 +347,10 @@ begin
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
             let element = TileLinearIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let address = TileMemoryElementAddress(base_address, element,
+            let memory_index = TileMemoryStridedIndex(
+                row as integer {0..65535}, column as integer {0..65535},
+                row_stride_elements);
+            let address = TileMemoryIndexedAddress(base_address, memory_index,
                 tile.data_type);
             let probe = ProbeTileMemoryAccess(address, tile.data_type, FALSE);
             if RaiseDataAccessFault(probe, address) then return; end;
@@ -328,7 +361,10 @@ begin
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
             let element = TileLinearIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let high_nibble = TileMemoryElementHighNibble(element,
+            let memory_index = TileMemoryStridedIndex(
+                row as integer {0..65535}, column as integer {0..65535},
+                row_stride_elements);
+            let high_nibble = TileMemoryIndexedHighNibble(memory_index,
                 tile.data_type);
             let raw = LoadTranslatedUnsigned(translated_addresses[[element]],
                 TileMemoryElementBytes(tile.data_type));
@@ -343,7 +379,7 @@ begin
     MarkTileValidRegionDefined(destination);
 end;
 
-func TSTORE(base_address: Word, source: TileIndex)
+func TSTORE(base_address: Word, row_stride_elements: Word, source: TileIndex)
 begin
     let tile = _Tiles[[source]];
     assert tile.allocated && tile.contents_defined;
@@ -355,15 +391,17 @@ begin
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
             let element = TileLinearIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let address = TileMemoryElementAddress(base_address, element,
+            let memory_index = TileMemoryStridedIndex(
+                row as integer {0..65535}, column as integer {0..65535},
+                row_stride_elements);
+            let address = TileMemoryIndexedAddress(base_address, memory_index,
                 tile.data_type);
             let probe = ProbeTileMemoryAccess(address, tile.data_type, TRUE);
             if RaiseDataAccessFault(probe, address) then return; end;
             original_addresses[[element]] = address;
             translated_addresses[[element]] = probe.translated_address;
-            high_nibbles[element] =
-                if TileMemoryElementHighNibble(element, tile.data_type) then
-                    '1' else '0';
+            high_nibbles[element] = if TileMemoryIndexedHighNibble(
+                memory_index, tile.data_type) then '1' else '0';
         end;
     end;
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do

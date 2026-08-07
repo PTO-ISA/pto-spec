@@ -1,0 +1,71 @@
+# ADDW
+
+Execute the ADDW scalar instruction contract.
+
+<!-- ASL-SOURCE: asl/scalar/alu/ADDW.asl -->
+
+## Normative identity {#PTO-INST-SCALAR-ADDW}
+
+<!-- ndf: kind=executable level=L3 layer=scalar status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
+## Assembly
+
+```asm
+addw SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>, ->{t, u, Rd}
+```
+
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| addw_32_a27109fe30fc | L32 | 32 | 0x00000025 / 0x0000707f | [] |
+
+### Fields
+
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| addw_32_a27109fe30fc | RegDst | 5 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":5}] |
+| addw_32_a27109fe30fc | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
+| addw_32_a27109fe30fc | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
+| addw_32_a27109fe30fc | SrcRType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
+| addw_32_a27109fe30fc | shamt | 5 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":5}] |
+
+## Decode
+
+<!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/ADDW.asl -->
+```asl
+readonly func InstructionContractOperation_ADDW() => ScalarOperation
+begin
+    return ScalarOperation_ADDW;
+end;
+```
+<!-- GENERATED-ASL-END: decode -->
+
+## Assembler symbols
+
+Supplementary operand names and examples may be added here.
+
+## Operation
+
+<!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/ADDW.asl -->
+```asl
+readonly func InstructionContractHandler_ADDW() => ScalarSemanticHandler
+begin
+    return ScalarHandler_ScalarBinaryW;
+end;
+```
+<!-- GENERATED-ASL-END: operation -->
+
+## Legality and exceptions
+
+Normative legality is embedded from the ASL source above.
+
+## Operational information
+
+Supplementary implementation-neutral guidance may be added here.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+
+<!-- SUPPLEMENTARY-END -->

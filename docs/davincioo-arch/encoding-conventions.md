@@ -79,8 +79,11 @@ Function 0–8 保留 TLOAD/TSTORE/TMOV/PREFETCH/GATHER/SCATTER、masked 与 CAS
 
 ## B.IOR for Shared GM
 
-Shared GM schema 中 `B.IOR.RegDst=RegSrc1=RegSrc2=0`，`RegSrc0` 是 base。
-Shared size/mask 完全来自 `B.IOS` 或 persistent descriptor。
+Shared GM schema 消费 `B.IOR.RegSrc0` 作为 base，消费 `RegSrc1` 作为
+以 element 为单位的 row stride；它们保持原 TLOAD/TSTORE 编码位置。B.IOR
+缺省时 base 为 `zero`，stride 为 `LB2/Col` 或 persistent Shared descriptor
+的 column count。若 B.IOR 已编码，`RegDst=RegSrc2=0`。Shared size/mask
+完全来自 `B.IOS` 或 persistent descriptor。
 
 ## CUBE Shared Schema
 

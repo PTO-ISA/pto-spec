@@ -72,10 +72,37 @@ begin
     WriteTileElement(3, 0, 1, Zeros{PTO_XLEN} + 102);
     WriteTileElement(3, 1, 0, Zeros{PTO_XLEN} + 103);
     WriteTileElement(3, 1, 1, Zeros{PTO_XLEN} + 104);
-    TSTORE(Zeros{PTO_XLEN} + 64, 3);
-    TLOAD(4, Zeros{PTO_XLEN} + 64);
+    TSTORE(Zeros{PTO_XLEN} + 64, Zeros{PTO_XLEN} + 2, 3);
+    TLOAD(4, Zeros{PTO_XLEN} + 64, Zeros{PTO_XLEN} + 2);
     assert ReadTileElement(4, 0, 0) == Zeros{PTO_XLEN} + 101;
     assert ReadTileElement(4, 1, 1) == Zeros{PTO_XLEN} + 104;
+
+    // PTO-REQ-TLSU-STRIDE-001: TLOAD/TSTORE keep the existing base/stride
+    // B.IOR shape. The stride is in elements and is independent of LB2.
+    ConfigureTwoByTwo(20);
+    Store(Zeros{PTO_XLEN} + 512, 8, Zeros{PTO_XLEN} + 201);
+    Store(Zeros{PTO_XLEN} + 520, 8, Zeros{PTO_XLEN} + 202);
+    Store(Zeros{PTO_XLEN} + 544, 8, Zeros{PTO_XLEN} + 203);
+    Store(Zeros{PTO_XLEN} + 552, 8, Zeros{PTO_XLEN} + 204);
+    TLOAD(20, Zeros{PTO_XLEN} + 512, Zeros{PTO_XLEN} + 4);
+    assert ReadTileElement(20, 0, 0) == Zeros{PTO_XLEN} + 201;
+    assert ReadTileElement(20, 0, 1) == Zeros{PTO_XLEN} + 202;
+    assert ReadTileElement(20, 1, 0) == Zeros{PTO_XLEN} + 203;
+    assert ReadTileElement(20, 1, 1) == Zeros{PTO_XLEN} + 204;
+
+    WriteTileElement(20, 0, 0, Zeros{PTO_XLEN} + 211);
+    WriteTileElement(20, 0, 1, Zeros{PTO_XLEN} + 212);
+    WriteTileElement(20, 1, 0, Zeros{PTO_XLEN} + 213);
+    WriteTileElement(20, 1, 1, Zeros{PTO_XLEN} + 214);
+    TSTORE(Zeros{PTO_XLEN} + 640, Zeros{PTO_XLEN} + 3, 20);
+    let stored00 = LoadUnsigned(Zeros{PTO_XLEN} + 640, 8);
+    let stored01 = LoadUnsigned(Zeros{PTO_XLEN} + 648, 8);
+    let stored10 = LoadUnsigned(Zeros{PTO_XLEN} + 664, 8);
+    let stored11 = LoadUnsigned(Zeros{PTO_XLEN} + 672, 8);
+    assert stored00 == Zeros{PTO_XLEN} + 211;
+    assert stored01 == Zeros{PTO_XLEN} + 212;
+    assert stored10 == Zeros{PTO_XLEN} + 213;
+    assert stored11 == Zeros{PTO_XLEN} + 214;
 
     let before_first = ReadTileElement(4, 0, 0);
     let before_last = ReadTileElement(4, 1, 1);
@@ -138,6 +165,29 @@ begin
     TMATMUL_ACC(7, 7, 5, 6);
     assert ReadTileElement(7, 0, 0) == Zeros{PTO_XLEN} + 39;
 
+    // Matrix M, N, and K are logical dimensions and must each be a nonzero
+    // power of two even when the enclosing physical descriptors are legal.
+    var non_power_m = _Tiles[[5]];
+    non_power_m.valid_rows = 3;
+    assert !TileMatrixInfoShapeLegal(non_power_m, _Tiles[[6]]);
+    var zero_m = _Tiles[[5]];
+    zero_m.valid_rows = 0;
+    assert !TileMatrixInfoShapeLegal(zero_m, _Tiles[[6]]);
+
+    var non_power_k_left = _Tiles[[5]];
+    non_power_k_left.rows = 8;
+    non_power_k_left.columns = 4;
+    non_power_k_left.valid_columns = 3;
+    var non_power_k_right = _Tiles[[6]];
+    non_power_k_right.valid_rows = 3;
+    assert !TileMatrixInfoShapeLegal(non_power_k_left, non_power_k_right);
+
+    var non_power_n = _Tiles[[6]];
+    non_power_n.rows = 8;
+    non_power_n.columns = 4;
+    non_power_n.valid_columns = 3;
+    assert !TileMatrixInfoShapeLegal(_Tiles[[5]], non_power_n);
+
     ConfigureTile(27, 256, 2, 1, 2, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigureTile(28, 256, 2, 1, 2, 1, TileDataType_U64,
@@ -155,33 +205,31 @@ end;
 func TestMatrixNumericContractLegality()
 begin
     SelectTestCUBEDataType('00001');
-    ConfigureTile(40, 256, 1, 33, 1, 33, TileDataType_E4M3,
+    ConfigureTile(40, 256, 1, 64, 1, 32, TileDataType_E4M3,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(41, 256, 33, 1, 33, 1, TileDataType_E5M2,
+    ConfigureTile(41, 256, 32, 1, 32, 1, TileDataType_E5M2,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(42, 256, 1, 2, 1, 2, TileDataType_E8M0,
+    ConfigureTile(42, 256, 1, 1, 1, 1, TileDataType_E8M0,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(43, 256, 2, 1, 2, 1, TileDataType_E8M0,
+    ConfigureTile(43, 256, 1, 1, 1, 1, TileDataType_E8M0,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigureTile(44, 256, 1, 1, 1, 1, TileDataType_FP32,
         TileLayout_RowMajor, TileLocation_Any);
-    for inner = 0 to 32 do
+    for inner = 0 to 31 do
         WriteTileElement(40, 0, inner as integer {0..65535},
             Zeros{PTO_XLEN} + 1);
         WriteTileElement(41, inner as integer {0..65535}, 0,
             Zeros{PTO_XLEN} + 1);
     end;
     WriteTileElement(42, 0, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(42, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(43, 0, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(43, 1, 0, Zeros{PTO_XLEN} + 4);
     WriteTileElement(44, 0, 0, Zeros{PTO_XLEN} + 2);
 
     assert TileOperandsLegal_TMATMUL_MX(44, 40, 42, 41, 43);
     TMATMUL_MX(44, 40, 42, 41, 43);
-    assert ReadTileElement(44, 0, 0) == Zeros{PTO_XLEN} + 40;
+    assert ReadTileElement(44, 0, 0) == Zeros{PTO_XLEN} + 32;
     TMATMUL_MX_ACC(44, 44, 40, 42, 41, 43);
-    assert ReadTileElement(44, 0, 0) == Zeros{PTO_XLEN} + 80;
+    assert ReadTileElement(44, 0, 0) == Zeros{PTO_XLEN} + 64;
 
     ConfigureTile(42, 256, 1, 1, 1, 1, TileDataType_E8M0,
         TileLayout_RowMajor, TileLocation_Any);
@@ -292,7 +340,7 @@ begin
     assert ReadTileElement(14, 0, 1) == Zeros{PTO_XLEN};
     assert ReadTileElement(14, 1, 1) == Zeros{PTO_XLEN} + 1;
 
-    ConfigureTile(15, 256, 3, 3, 3, 3, TileDataType_U64,
+    ConfigureTile(15, 256, 3, 4, 3, 3, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     TFILLPAD(15, 14, Zeros{PTO_XLEN} + 9);
     assert ReadTileElement(15, 0, 0) == Zeros{PTO_XLEN} + 1;
@@ -329,25 +377,25 @@ begin
     assert ReadTileElement(20, 0, 0) == Zeros{PTO_XLEN} + 40;
     assert ReadTileElement(20, 0, 1) == Zeros{PTO_XLEN} + 10;
 
-    ConfigureTile(43, 256, 3, 3, 3, 3, TileDataType_U64,
+    ConfigureTile(43, 256, 3, 4, 3, 3, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigureTile(44, 256, 4, 4, 4, 4, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     TCI(43, Zeros{PTO_XLEN} + 1, FALSE);
     TIMG2COL(44, 43, 2, 2, 1, 1, 0, 0, Zeros{PTO_XLEN});
     assert ReadTileElement(44, 0, 0) == Zeros{PTO_XLEN} + 1;
-    assert ReadTileElement(44, 0, 3) == Zeros{PTO_XLEN} + 5;
-    assert ReadTileElement(44, 3, 0) == Zeros{PTO_XLEN} + 5;
-    assert ReadTileElement(44, 3, 3) == Zeros{PTO_XLEN} + 9;
+    assert ReadTileElement(44, 0, 3) == Zeros{PTO_XLEN} + 6;
+    assert ReadTileElement(44, 3, 0) == Zeros{PTO_XLEN} + 6;
+    assert ReadTileElement(44, 3, 3) == Zeros{PTO_XLEN} + 11;
 end;
 
 func TestTileComplex()
 begin
-    ConfigureTile(29, 256, 1, 3, 1, 3, TileDataType_U64,
+    ConfigureTile(29, 256, 1, 4, 1, 3, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(30, 256, 1, 3, 1, 2, TileDataType_U64,
+    ConfigureTile(30, 256, 1, 4, 1, 2, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(31, 256, 1, 3, 1, 3, TileDataType_U64,
+    ConfigureTile(31, 256, 1, 4, 1, 3, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(29, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(29, 0, 1, Zeros{PTO_XLEN} + 4);
@@ -359,13 +407,13 @@ begin
     assert ReadTileElement(31, 0, 1) == Zeros{PTO_XLEN} + 7;
     assert ReadTileElement(31, 0, 2) == Zeros{PTO_XLEN} + 6;
 
-    ConfigureTile(45, 256, 1, 3, 1, 3, TileDataType_U64,
+    ConfigureTile(45, 256, 1, 4, 1, 3, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(46, 256, 1, 3, 1, 3, TileDataType_U64,
+    ConfigureTile(46, 256, 1, 4, 1, 3, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(47, 256, 1, 3, 1, 3, TileDataType_U64,
+    ConfigureTile(47, 256, 1, 4, 1, 3, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(48, 256, 1, 3, 1, 2, TileDataType_U64,
+    ConfigureTile(48, 256, 1, 4, 1, 2, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     TCI(47, Zeros{PTO_XLEN} + 10, FALSE);
     TCI(48, Zeros{PTO_XLEN} + 20, FALSE);
@@ -626,11 +674,11 @@ begin
     WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} - 5);
     WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 6);
 
-    ConfigureTile(55, 256, 1, 3, 1, 3, TileDataType_U64,
+    ConfigureTile(55, 256, 1, 4, 1, 3, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(56, 256, 1, 3, 1, 3, TileDataType_U64,
+    ConfigureTile(56, 256, 1, 4, 1, 3, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(57, 256, 1, 3, 1, 3, TileDataType_U64,
+    ConfigureTile(57, 256, 1, 4, 1, 3, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     ExecuteTileFillScalar(55, Zeros{PTO_XLEN} + 0xaa);
     WriteTileElement(56, 0, 0, Zeros{PTO_XLEN});
@@ -658,9 +706,9 @@ begin
     assert masked_scatter_middle == Zeros{PTO_XLEN};
     assert masked_scatter_last == Zeros{PTO_XLEN} + 33;
 
-    ConfigureTile(58, 256, 1, 3, 1, 3, TileDataType_U64,
+    ConfigureTile(58, 256, 1, 4, 1, 3, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(59, 256, 1, 3, 1, 3, TileDataType_U64,
+    ConfigureTile(59, 256, 1, 4, 1, 3, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(58, 0, 0, Zeros{PTO_XLEN} + 11);
     WriteTileElement(58, 0, 1, Zeros{PTO_XLEN} + 99);
@@ -757,6 +805,10 @@ begin
     var tlsu_operands = DefaultTileInstructionOperands();
     tlsu_operands.destination0 = 3;
     tlsu_operands.address = Zeros{PTO_XLEN} + 512;
+    // Direct dispatch receives a fully decoded operand record. Supply the
+    // dense two-element row stride explicitly; scalar0=0 is the architectural
+    // encoded-zero stride, not the bundle-schema omitted-field default.
+    tlsu_operands.scalar0 = Zeros{PTO_XLEN} + 2;
     let (tlsu_status, tlsu_value) = ExecuteTileInstruction(
         TileDecode_TLSU, '000000000000', tlsu_operands);
     assert tlsu_status == TileExecution_Executed;
@@ -800,16 +852,62 @@ begin
 end;
 
 // PTO-REQ-TILE-CAPACITY-001: the descriptor model checks packed storage and
-// aggregate capacity even though v0.58 has no architectural TALLOC operation.
+// aggregate capacity even though there is no architectural TALLOC operation.
 func TestTileCapacityLegality()
 begin
     ResetProfileState();
     _SystemRegisters.tile_capacity = Zeros{PTO_XLEN} + 768;
+    assert IsNonzeroPowerOfTwo(1);
+    assert IsNonzeroPowerOfTwo(2);
+    assert IsNonzeroPowerOfTwo(4);
+    assert IsNonzeroPowerOfTwo(8);
+    assert IsNonzeroPowerOfTwo(16);
+    assert !IsNonzeroPowerOfTwo(0);
+    assert !IsNonzeroPowerOfTwo(3);
+    assert !IsNonzeroPowerOfTwo(6);
+    assert !IsNonzeroPowerOfTwo(12);
+
+    assert DerivedTileRows(128, 1, TileDataType_U64) == 16;
+    assert DerivedTileRows(128, 2, TileDataType_U64) == 8;
+    assert DerivedTileRows(128, 4, TileDataType_U64) == 4;
+    assert DerivedTileRows(128, 8, TileDataType_U64) == 2;
+    assert DerivedTileRows(128, 16, TileDataType_U64) == 1;
+    assert DerivedTileRows(128, 32, TileDataType_U64) == 0;
+    assert DerivedTileRows(128, 1, TileDataType_U4X2) == 256;
+    assert DerivedTileRows(256, 1, TileDataType_U64) == 32;
+    assert DerivedTileRows(512, 1, TileDataType_U64) == 64;
+    assert DerivedTileRows(1024, 1, TileDataType_U64) == 128;
+    assert DerivedTileRows(2048, 1, TileDataType_U64) == 256;
+    assert DerivedTileRows(4096, 1, TileDataType_U64) == 512;
+    assert DerivedTileRows(8192, 1, TileDataType_U64) == 1024;
+    assert DerivedTileRows(8192, 1, TileDataType_U4X2) == 16384;
+    assert TileShapeMatchesCapacity(128, 16, 1, TileDataType_U64);
+    assert TileShapeMatchesCapacity(8192, 16384, 1,
+                                    TileDataType_U4X2);
+    assert !TileShapeMatchesCapacity(128, 15, 1, TileDataType_U64);
+    assert !TileShapeMatchesCapacity(128, 16, 3, TileDataType_U64);
+
+    assert TileSizeCodeBytes(1) == 128;
+    assert TileSizeCodeBytes(2) == 256;
+    assert TileSizeCodeBytes(3) == 512;
+    assert TileSizeCodeBytes(4) == 1024;
+    assert TileSizeCodeBytes(5) == 2048;
+    assert TileSizeCodeBytes(6) == 4096;
+    assert TileSizeCodeBytes(7) == 8192;
     assert !TileCapacityIsLegal(0);
     assert !TileCapacityIsLegal(255);
     assert TileCapacityIsLegal(256);
     assert !TileStorageFitsCapacity(33, 1, TileDataType_U64, 256);
     assert TileStorageFitsCapacity(32, 1, TileDataType_U64, 256);
+    // Capacity covers the complete allocated shape. A smaller valid region
+    // limits observable elements but cannot make a larger shape fit.
+    assert !TileStorageFitsCapacity(64, 1, TileDataType_U64, 256);
+    assert TileStorageFitsCapacity(64, 1, TileDataType_U64, 512);
+    ConfigureTile(19, 512, 64, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    assert _Tiles[[19]].capacity_bytes == 512;
+    assert _Tiles[[19]].rows == 64 && _Tiles[[19]].valid_rows == 1;
+    ReleaseTile(19);
 
     ConfigureTile(20, 256, 32, 1, 32, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
@@ -943,7 +1041,7 @@ begin
     ConfigureTwoByTwo(10);
     ConfigureTwoByTwo(11);
     ConfigureTwoByTwo(12);
-    ConfigureTile(13, 256, 2, 3, 2, 3, TileDataType_U64,
+    ConfigureTile(13, 256, 2, 4, 2, 3, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     ExecuteTileFillScalar(10, Zeros{PTO_XLEN} + 1);
     ExecuteTileFillScalar(11, Zeros{PTO_XLEN} + 1);
@@ -967,9 +1065,9 @@ end;
 // element preserves the complete destination; corrected reissue restarts at 0.
 func TestTileMemoryCompletionAndRestart()
 begin
-    ConfigureTile(14, 256, 1, 3, 1, 3, TileDataType_U64,
+    ConfigureTile(14, 256, 1, 4, 1, 3, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(15, 256, 1, 3, 1, 3, TileDataType_U64,
+    ConfigureTile(15, 256, 1, 4, 1, 3, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     Store(Zeros{PTO_XLEN} + 1024, 8, Zeros{PTO_XLEN} + 0x11);
     Store(Zeros{PTO_XLEN} + 1032, 8, Zeros{PTO_XLEN} + 0x22);
@@ -1027,9 +1125,9 @@ begin
     assert ReadTileElement(14, 0, 1) == Zeros{PTO_XLEN} + 0x22;
     assert ReadTileElement(14, 0, 2) == Zeros{PTO_XLEN} + 0x33;
 
-    ConfigureTile(16, 256, 1, 3, 1, 3, TileDataType_U64,
+    ConfigureTile(16, 256, 1, 4, 1, 3, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(17, 256, 1, 3, 1, 3, TileDataType_U64,
+    ConfigureTile(17, 256, 1, 4, 1, 3, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(16, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(16, 0, 1, Zeros{PTO_XLEN} + 2);
@@ -1137,7 +1235,7 @@ begin
     // or changing any Shared descriptor or payload state.
     ResetMemoryExecution();
     ClearFault();
-    TLOADShared(Zeros{8} + 255, Zeros{PTO_XLEN}, 1,
+    TLOADShared(Zeros{8} + 255, Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 63, 3,
         1, 63, 1, 63, TileDataType_U64, TileLayout_RowMajor, '0001');
     assert _LastFault == Fault_TileLegality;
     assert _MemoryEventCount == 0;
@@ -1145,13 +1243,21 @@ begin
     assert SharedTileRecord(Zeros{8} + 255).tile.payload[[0]] ==
         Zeros{PTO_XLEN} + 0xaa;
 
-    // A full write replaces both descriptor and payload atomically.
+    // The first nonzero write fixes the allocation mask. Even a full-mask
+    // write cannot expand an existing S register; it must allocate a new Sx.
     ClearFault();
-    let full_update = AtomicUpdateSharedTile(
+    let expanded_update = AtomicUpdateSharedTile(
         Zeros{8} + 255, incompatible, '1111');
+    assert !expanded_update;
+    assert SharedTileRecord(Zeros{8} + 255).tile.columns == 64;
+    assert SharedTileRecord(Zeros{8} + 255).allocation_mask == '0101';
+
+    let full_update = AtomicUpdateSharedTile(
+        Zeros{8} + 253, replacement, '1111');
     assert full_update;
-    assert SharedTileRecord(Zeros{8} + 255).tile.columns == 63;
-    assert SharedTileRecord(Zeros{8} + 255).initialized_mask == '1111';
+    assert SharedTileRecord(Zeros{8} + 253).tile.columns == 64;
+    assert SharedTileRecord(Zeros{8} + 253).allocation_mask == '1111';
+    assert SharedTileRecord(Zeros{8} + 253).initialized_mask == '1111';
 
     // Undefined reads do not allocate, initialize, or raise a fault.
     ClearFault();
@@ -1159,20 +1265,22 @@ begin
     assert _LastFault == Fault_None;
     assert !SharedTileRecord(Zeros{8}).descriptor_valid;
 
-    // Complementary partial publications converge to one fully initialized
-    // Shared value even though neither source snapshot is itself a full tile.
+    // The first publication fixes both the allocation mask and the initialized
+    // subset. A complementary mask is expansion, not completion, and rejects.
     var partial_snapshot = _Tiles[[0]];
     partial_snapshot.contents_defined = FALSE;
     partial_snapshot.defined_valid_elements = 0;
     let first_partial = AtomicUpdateSharedTile(
         Zeros{8} + 254, partial_snapshot, '0101');
     assert first_partial;
+    assert SharedTileRecord(Zeros{8} + 254).allocation_mask == '0101';
     assert SharedTileRecord(Zeros{8} + 254).initialized_mask == '0101';
-    assert !SharedTileFullyInitialized(Zeros{8} + 254);
+    assert SharedTileFullyInitialized(Zeros{8} + 254);
     let second_partial = AtomicUpdateSharedTile(
         Zeros{8} + 254, partial_snapshot, '1010');
-    assert second_partial;
-    assert SharedTileRecord(Zeros{8} + 254).initialized_mask == '1111';
+    assert !second_partial;
+    assert SharedTileRecord(Zeros{8} + 254).allocation_mask == '0101';
+    assert SharedTileRecord(Zeros{8} + 254).initialized_mask == '0101';
     assert SharedTileFullyInitialized(Zeros{8} + 254);
 end;
 

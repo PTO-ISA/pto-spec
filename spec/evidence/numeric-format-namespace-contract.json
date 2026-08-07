@@ -1936,7 +1936,7 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "01e86e84cc2adf06734a1330efd10b3af499c8f7b05ac8c8b5f5d1be4da0a578"
+      "sha256": "122166c233403dc30c49a3a3d274c21f0ce9ea1fddad1f55871659ef25a1f22b"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -1944,7 +1944,7 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "5c831b14fb86df38f3fd398948ce2a303d15aac95540ea6e2f05f2d64bb246c4"
+      "sha256": "ae4b08f8b59118e447e52e2f6f41dd2d9323483c24931479245f1c367ea49b67"
     },
     {
       "path": "asl/types.asl",
@@ -1952,23 +1952,23 @@
     },
     {
       "path": "asl/numeric/formats.asl",
-      "sha256": "d2f16eef9b310107df3090613e76d6f05693a0cc39a1c69c8c241f33cc5bb2f4"
+      "sha256": "ace17d58294c3d41fc0d80c594f7a7eef7683f504df91dbafb19021036993bd4"
     },
     {
       "path": "asl/scalar/floating.asl",
-      "sha256": "ef1eee6e90063dd0ea41c48bd1792f060a19467aa303112caea3877fb46d38ba"
+      "sha256": "b4c7865f739fdf069091dbdcb3f5b42444c39063ff8be4fe319e001fb0d52cf0"
     },
     {
       "path": "asl/tile/state.asl",
-      "sha256": "d93eb3df27e4582d0dbc0adbb11faceb5f1f125c66407a3fb7d1ace45560c513"
+      "sha256": "bf27bb66162d48a4e4f6052086c99765e0ee96340ecb18c48e1427fd4d4d92a7"
     },
     {
       "path": "asl/tile/memory.asl",
-      "sha256": "c2abd22e62aab2fdb9d93795437da8790a09489d51b89bdfa35edbb4672bd4e5"
+      "sha256": "e2c8f240345bdbffd55de5f56d3f3e5602d720039ddeea8d20c815f35a9721e7"
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "5d366d86b293530e876b91ed972dfd0fd10f19b4918b5504bd453c0bee99980c"
+      "sha256": "300001357e41aa68f4c2913d7d9591d7959020552e7927af0fa0c1e19bc799c9"
     },
     {
       "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",

@@ -93,7 +93,7 @@ def direct_tile_comparison_rows(comparison: dict[str, Any]) -> list[dict[str, An
         )
         require(
             row["classification"] == "non-comparable"
-            and row["bundle_bridge_representable"] is False,
+            and row["bundle_bridge_representable"] is True,
             f"independent structural-only boundary drift for {key}",
         )
     return rows

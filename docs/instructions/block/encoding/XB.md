@@ -1,64 +1,68 @@
----
-{
-  "schema_version": 1,
-  "id": "header.header-xb",
-  "kind": "header",
-  "title": "XB",
-  "status": "active",
-  "visibility": "public",
-  "profile": "pto-isa-0.58.0",
-  "family": "Encoding Forms",
-  "sources": {
-    "davincioo": "header/XB.md"
-  }
-}
----
 # XB
 
-`XB`指令用于系统调用块中发起调用请求，支持动态调用已注册的块体，确保模块化的安全调用结构。除此之外，XB指令还可以定义调用的目标特权级和功能参数。
+Transfers the named context value to a target virtual core block.
 
-## 汇编格式
+<!-- ASL-SOURCE: asl/block/encoding/XB.asl -->
+
+## Normative identity {#PTO-INST-BLOCK-XB}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
+## Assembly
 
 ```asm
-   XB {acr-id}, {c-id}
+XB ACR-ID, C-ID
 ```
-两个参数用于定义跨模块调用的目标：
 
-- **acr-id**参数指定目标特权级和所属的ACR模块，使用规则如下：
-   - **当前处于ACR0**：目标ACR只能为ACR0。
-   - **当前处于ACR1**：目标ACR可以为ACR0或ACR1。
-   - **当前处于ACR2**：目标ACR可以为ACR0、ACR1或ACR2。
-- **c-id**：索引块体的功能ID（有效范围0-127），在`CAC_TABLE`中查找目标块体信息。
+## Encoding
 
-## 编码格式
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| xb_32_40ad190a0a7f | L32 | 32 | 0x00006f81 / 0x00007fff | [] |
 
-> 原 Linx 图片引用已省略；编码图用本页 bit-level 表格表达。
+### Fields
 
-- ACR-ID编码{acr-id}，编码对于不同当前ACR的含义不同：
-   * 当前为ACR0
-      - 目标特权级为ACR0，则ACR-ID字段编码为0
-      - 其他编码无效
-   * 当前为ACR1
-      - 目标特权级为ACR0，则ACR-ID字段编码为0
-      - 目标特权级为ACR1，则ACR-ID字段编码为1
-      - 其他编码无效
-   * 当前为ACR2
-      - 目标特权级为ACR0，则ACR-ID字段编码为0
-      - 目标特权级为ACR1，则ACR-ID字段编码为1
-      - 目标特权级为ACR2，则ACR-ID字段编码为2
-      - 其他编码无效
-- CROSS-BID 编码{c-id}。
+| Form | Field | Bits | Signedness | Pieces |
+| --- | --- | ---: | --- | --- |
+| xb_32_40ad190a0a7f | ACR-ID | 10 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":10}] |
+| xb_32_40ad190a0a7f | CROSS-BID | 7 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":7}] |
 
-## Bit-level Encoding
+## Decode
 
-### `XB` bit-level encoding
+<!-- GENERATED-ASL-BEGIN: decode source=asl/block/encoding/XB.asl -->
+```asl
+readonly func InstructionContractMatches_XB(operation: CommandOperation) => boolean
+begin
+    return (operation == CommandOperation_xb_32_40ad190a0a7f);
+end;
+```
+<!-- GENERATED-ASL-END: decode -->
 
-| Bits | Field | Width | Fixed value |
-| --- | --- | ---: | --- |
-| `[31:25]` | `CROSS-BID` | 7 | `` |
-| `[24:15]` | `ACR-ID` | 10 | `` |
-| `[14:12]` | `Func` | 3 | `6` |
-| `[11:7]` | `31` | 5 | `31` |
-| `[6:4]` | `Opc1` | 3 | `0` |
-| `[3:1]` | `Opcode` | 3 | `0` |
-| `[0]` | `W` | 1 | `1` |
+## Assembler symbols
+
+Supplementary operand names and examples may be added here.
+
+## Operation
+
+<!-- GENERATED-ASL-BEGIN: operation source=asl/block/encoding/XB.asl -->
+```asl
+readonly func InstructionContractHandler_XB() => CommandSemanticHandler
+begin
+    return CommandHandler_ExecuteCrossBlockTransfer;
+end;
+```
+<!-- GENERATED-ASL-END: operation -->
+
+## Legality and exceptions
+
+Normative legality is embedded from the ASL source above.
+
+## Operational information
+
+Supplementary implementation-neutral guidance may be added here.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+
+<!-- SUPPLEMENTARY-END -->

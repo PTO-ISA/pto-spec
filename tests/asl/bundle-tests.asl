@@ -529,28 +529,6 @@ begin
     assert _LastFault == Fault_BundleControl;
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 99;
 
-    // A complete B.IOT cannot silently default an operand that the selected
-    // direct tile operation requires but the PTO-v0 bundle bridge cannot bind.
-    ResetProfileState();
-    BundleTestConfigureTile(2, TileDataType_U64);
-    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 99);
-    StartMemoryEventCapture(0);
-    WriteTPC(Zeros{PTO_XLEN} + 0x280);
-    var tload_start_instruction: bits(64) = Zeros{64} + 0x00011181;
-    tload_start_instruction[31:27] = Zeros{5} + 24;
-    let tload_start = ExecuteCommandInstruction(tload_start_instruction, 32);
-    let tload_binding = ExecuteCommandInstruction(BundleTestTileBinding(
-        '10', Zeros{6}, Zeros{6}, TRUE), 32);
-    let tload_stop = ExecuteCommandInstruction(Zeros{64} + 1, 32);
-    assert tload_start == CommandExecution_Executed;
-    assert tload_binding == CommandExecution_Executed;
-    assert tload_stop == CommandExecution_Rejected;
-    assert _LastFault == Fault_BundleControl;
-    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 99;
-    assert _MemoryEventCount == 0;
-    StopMemoryEventCapture();
-    assert _TrapContexts[[0]].bundle_operation.valid;
-
     // A faulting next start is validated before it can commit the live bundle.
     ResetProfileState();
     BundleTestConfigureTile(0, TileDataType_U64);
@@ -649,6 +627,364 @@ begin
     assert partial_gmov == CommandExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
     assert !_BundleTileBindings[[0]].valid;
+end;
+
+// PTO-REQ-BUNDLE-IOR-DEFAULTS-001: direct-operation scalar bindings are
+// resolved from the completed operation schema. Encoded selectors are absolute
+// GPRs, omission supplies zero defaults, aliases are legal, and a second B.IOR
+// never overwrites the first binding.
+func TestBundleScalarBindingSchemaDefaults()
+begin
+    // Every encoded B.IOR field rejects selectors outside the 24 architectural
+    // GPRs before changing bundle state.
+    for selector = 24 to 31 do
+        ResetProfileState();
+        let invalid_destination = ExecuteCommandInstruction(
+            BundleTestScalarBinding(
+                Zeros{5} + selector, Zeros{5}, Zeros{5}, Zeros{5}), 32);
+        assert invalid_destination == CommandExecution_Rejected;
+        assert !_BundleScalarBindings[[0]].valid;
+
+        ResetProfileState();
+        let invalid_source0 = ExecuteCommandInstruction(
+            BundleTestScalarBinding(
+                Zeros{5}, Zeros{5} + selector, Zeros{5}, Zeros{5}), 32);
+        assert invalid_source0 == CommandExecution_Rejected;
+        assert !_BundleScalarBindings[[0]].valid;
+
+        ResetProfileState();
+        let invalid_source1 = ExecuteCommandInstruction(
+            BundleTestScalarBinding(
+                Zeros{5}, Zeros{5}, Zeros{5} + selector, Zeros{5}), 32);
+        assert invalid_source1 == CommandExecution_Rejected;
+        assert !_BundleScalarBindings[[0]].valid;
+
+        ResetProfileState();
+        let invalid_source2 = ExecuteCommandInstruction(
+            BundleTestScalarBinding(
+                Zeros{5}, Zeros{5}, Zeros{5}, Zeros{5} + selector), 32);
+        assert invalid_source2 == CommandExecution_Rejected;
+        assert !_BundleScalarBindings[[0]].valid;
+    end;
+
+    ResetProfileState();
+    let first = ExecuteCommandInstruction(
+        BundleTestScalarBinding(
+            Zeros{5}, Zeros{5} + 2, Zeros{5}, Zeros{5}), 32);
+    let second = ExecuteCommandInstruction(
+        BundleTestScalarBinding(
+            Zeros{5}, Zeros{5} + 3, Zeros{5}, Zeros{5}), 32);
+    assert first == CommandExecution_Executed;
+    assert second == CommandExecution_Rejected;
+    assert _LastFault == Fault_BundleControl;
+    assert _BundleScalarBindings[[0]].valid;
+    assert _BundleScalarBindings[[0]].source0 == 2;
+
+    let tadds_operation = DecodeTileOperation(TileDecode_TEPL, Zeros{12} + 0x20)
+        as integer {0..PTO_TILE_OPERATION_COUNT-1};
+
+    // A one-scalar operation is complete when B.IOR is absent; scalar0 then
+    // remains the architectural zero default.
+    ResetProfileState();
+    let omitted_start = ExecuteCommandInstruction(
+        BundleTestTEPLStart(Zeros{10} + 0x20, Zeros{5} + 24), 32);
+    AddBundleTileBinding(TRUE, 0, 1, '1111', TRUE, FALSE, 0, 0, TRUE);
+    assert omitted_start == CommandExecution_Executed;
+    assert !_BundleScalarBindings[[0]].valid;
+    assert BundleOperationBindingsComplete(tadds_operation);
+    let omitted_operands = BundleTileInstructionOperands(tadds_operation);
+    assert omitted_operands.scalar0 == Zeros{PTO_XLEN};
+
+    // An encoded zero is a real R0 selector. Fields outside the resolved
+    // one-source schema must remain zero.
+    ResetProfileState();
+    let zero_start = ExecuteCommandInstruction(
+        BundleTestTEPLStart(Zeros{10} + 0x20, Zeros{5} + 24), 32);
+    AddBundleTileBinding(TRUE, 0, 1, '1111', TRUE, FALSE, 0, 0, TRUE);
+    let zero_binding = ExecuteCommandInstruction(
+        BundleTestScalarBinding(Zeros{5}, Zeros{5}, Zeros{5}, Zeros{5}), 32);
+    assert zero_start == CommandExecution_Executed;
+    assert zero_binding == CommandExecution_Executed;
+    assert BundleOperationBindingsComplete(tadds_operation);
+
+    ResetProfileState();
+    let extra_start = ExecuteCommandInstruction(
+        BundleTestTEPLStart(Zeros{10} + 0x20, Zeros{5} + 24), 32);
+    AddBundleTileBinding(TRUE, 0, 1, '1111', TRUE, FALSE, 0, 0, TRUE);
+    let extra_binding = ExecuteCommandInstruction(
+        BundleTestScalarBinding(
+            Zeros{5}, Zeros{5} + 2, Zeros{5} + 3, Zeros{5} + 4), 32);
+    assert extra_start == CommandExecution_Executed;
+    assert extra_binding == CommandExecution_Executed;
+    assert !BundleOperationBindingsComplete(tadds_operation);
+
+    // TQUANT consumes two scalar sources. Reusing one architectural GPR for
+    // both inputs is legal.
+    ResetProfileState();
+    let quant_start = ExecuteCommandInstruction(
+        BundleTestTEPLStart(Zeros{10} + 0x6a, Zeros{5} + 24), 32);
+    AddBundleTileBinding(TRUE, 0, 1, '1111', TRUE, FALSE, 0, 0, TRUE);
+    let quant_binding = ExecuteCommandInstruction(
+        BundleTestScalarBinding(
+            Zeros{5}, Zeros{5} + 5, Zeros{5} + 5, Zeros{5}), 32);
+    let quant_operation = DecodeTileOperation(
+        TileDecode_TEPL, Zeros{12} + 0x6a)
+        as integer {0..PTO_TILE_OPERATION_COUNT-1};
+    assert quant_start == CommandExecution_Executed;
+    assert quant_binding == CommandExecution_Executed;
+    assert BundleOperationBindingsComplete(quant_operation);
+
+    let tload_operation = DecodeTileOperation(
+        TileDecode_TLSU, Zeros{12})
+        as integer {0..PTO_TILE_OPERATION_COUNT-1};
+
+    // TLOAD retains the existing B.IOR encoding: RegSrc0 is base and RegSrc1
+    // is row stride in elements. Omission uses zero base and dense LB2 stride.
+    ResetProfileState();
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 7);
+    let omitted_tload_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart(Zeros{5}, Zeros{5} + 24), 32);
+    AddBundleTileBinding(TRUE, 0, 1, '1111', FALSE, FALSE, 0, 0, TRUE);
+    assert omitted_tload_start == CommandExecution_Executed;
+    assert BundleOperationBindingsComplete(tload_operation);
+    let omitted_tload_operands = BundleTileInstructionOperands(tload_operation);
+    assert omitted_tload_operands.address == Zeros{PTO_XLEN};
+    assert omitted_tload_operands.scalar0 == Zeros{PTO_XLEN} + 7;
+
+    // An encoded zero selector is a real zero stride, not the omission
+    // default. A nonzero RegSrc1 reads the selected absolute GPR.
+    ResetProfileState();
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 7);
+    let zero_stride_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart(Zeros{5}, Zeros{5} + 24), 32);
+    AddBundleTileBinding(TRUE, 0, 1, '1111', FALSE, FALSE, 0, 0, TRUE);
+    let zero_stride_binding = ExecuteCommandInstruction(
+        BundleTestScalarBinding(
+            Zeros{5}, Zeros{5}, Zeros{5}, Zeros{5}), 32);
+    assert zero_stride_start == CommandExecution_Executed;
+    assert zero_stride_binding == CommandExecution_Executed;
+    assert BundleOperationBindingsComplete(tload_operation);
+    let zero_stride_operands = BundleTileInstructionOperands(tload_operation);
+    assert zero_stride_operands.scalar0 == Zeros{PTO_XLEN};
+
+    ResetProfileState();
+    WriteGPR(2, Zeros{PTO_XLEN} + 11);
+    WriteGPR(3, Zeros{PTO_XLEN} + 13);
+    let explicit_stride_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart(Zeros{5}, Zeros{5} + 24), 32);
+    AddBundleTileBinding(TRUE, 0, 1, '1111', FALSE, FALSE, 0, 0, TRUE);
+    let explicit_stride_binding = ExecuteCommandInstruction(
+        BundleTestScalarBinding(
+            Zeros{5}, Zeros{5} + 2, Zeros{5} + 3, Zeros{5}), 32);
+    assert explicit_stride_start == CommandExecution_Executed;
+    assert explicit_stride_binding == CommandExecution_Executed;
+    assert BundleOperationBindingsComplete(tload_operation);
+    let explicit_stride_operands =
+        BundleTileInstructionOperands(tload_operation);
+    assert explicit_stride_operands.address == Zeros{PTO_XLEN} + 11;
+    assert explicit_stride_operands.scalar0 == Zeros{PTO_XLEN} + 13;
+end;
+
+// PTO-REQ-BUNDLE-IOR-DEFAULTS-001: unchanged TLOAD/TSTORE encodings consume
+// B.IOR RegSrc0 as base and RegSrc1 as row stride in elements. Omission uses
+// zero/LB2 defaults, while an encoded zero stride remains zero.
+func TestBundleTLOADTSTORERowStride()
+begin
+    // Complete local TLOAD bundles prove that the resolved B.IOR values drive
+    // memory addressing, not merely the intermediate operand record.
+    ResetProfileState();
+    _Memory[[0x100]] = Zeros{8} + 1;
+    _Memory[[0x108]] = Zeros{8} + 2;
+    _Memory[[0x118]] = Zeros{8} + 3;
+    _Memory[[0x120]] = Zeros{8} + 4;
+    WriteGPR(2, Zeros{PTO_XLEN} + 0x100);
+    WriteGPR(3, Zeros{PTO_XLEN} + 3);
+    let complete_load_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('00000', Zeros{5} + 24), 32);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
+    let complete_load_destination = ExecuteCommandInstruction(
+        BundleTestTileDestinationV5('001', '00', '1111', TRUE), 32);
+    let complete_load_binding = ExecuteCommandInstruction(
+        BundleTestScalarBinding(
+            Zeros{5}, Zeros{5} + 2, Zeros{5} + 3, Zeros{5}), 32);
+    assert complete_load_start == CommandExecution_Executed;
+    assert complete_load_destination == CommandExecution_Executed;
+    assert complete_load_binding == CommandExecution_Executed;
+    let complete_load = ExecuteBundleTileOperation();
+    assert complete_load;
+    let loaded_tile = _BundleTileBindings[[0]].destination;
+    assert ReadTileElement(loaded_tile, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(loaded_tile, 0, 1) == Zeros{PTO_XLEN} + 2;
+    assert ReadTileElement(loaded_tile, 1, 0) == Zeros{PTO_XLEN} + 3;
+    assert ReadTileElement(loaded_tile, 1, 1) == Zeros{PTO_XLEN} + 4;
+
+    // Omitted B.IOR uses zero base and LB2 as dense row stride.
+    ResetProfileState();
+    _Memory[[0]] = Zeros{8} + 5;
+    _Memory[[8]] = Zeros{8} + 6;
+    _Memory[[32]] = Zeros{8} + 7;
+    _Memory[[40]] = Zeros{8} + 8;
+    let omitted_load_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('00000', Zeros{5} + 24), 32);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 4);
+    let omitted_load_destination = ExecuteCommandInstruction(
+        BundleTestTileDestinationV5('001', '00', '1111', TRUE), 32);
+    assert omitted_load_start == CommandExecution_Executed;
+    assert omitted_load_destination == CommandExecution_Executed;
+    let omitted_load = ExecuteBundleTileOperation();
+    assert omitted_load;
+    let omitted_loaded_tile = _BundleTileBindings[[0]].destination;
+    assert ReadTileElement(omitted_loaded_tile, 0, 0) == Zeros{PTO_XLEN} + 5;
+    assert ReadTileElement(omitted_loaded_tile, 0, 1) == Zeros{PTO_XLEN} + 6;
+    assert ReadTileElement(omitted_loaded_tile, 1, 0) == Zeros{PTO_XLEN} + 7;
+    assert ReadTileElement(omitted_loaded_tile, 1, 1) == Zeros{PTO_XLEN} + 8;
+
+    // An encoded zero stride aliases rows and is not replaced by LB2.
+    ResetProfileState();
+    _Memory[[0]] = Zeros{8} + 9;
+    _Memory[[8]] = Zeros{8} + 10;
+    let aliased_load_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('00000', Zeros{5} + 24), 32);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 4);
+    let aliased_load_destination = ExecuteCommandInstruction(
+        BundleTestTileDestinationV5('001', '00', '1111', TRUE), 32);
+    let aliased_load_binding = ExecuteCommandInstruction(
+        BundleTestScalarBinding(Zeros{5}, Zeros{5}, Zeros{5}, Zeros{5}), 32);
+    assert aliased_load_start == CommandExecution_Executed;
+    assert aliased_load_destination == CommandExecution_Executed;
+    assert aliased_load_binding == CommandExecution_Executed;
+    let aliased_load = ExecuteBundleTileOperation();
+    assert aliased_load;
+    let aliased_loaded_tile = _BundleTileBindings[[0]].destination;
+    assert ReadTileElement(aliased_loaded_tile, 0, 0) == Zeros{PTO_XLEN} + 9;
+    assert ReadTileElement(aliased_loaded_tile, 0, 1) == Zeros{PTO_XLEN} + 10;
+    assert ReadTileElement(aliased_loaded_tile, 1, 0) == Zeros{PTO_XLEN} + 9;
+    assert ReadTileElement(aliased_loaded_tile, 1, 1) == Zeros{PTO_XLEN} + 10;
+
+    // Complete TSTORE bundles use the same unchanged RegSrc0/RegSrc1 fields.
+    ResetProfileState();
+    ConfigureTile(0, 128, 2, 2, 2, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 11);
+    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 12);
+    WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 13);
+    WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 14);
+    WriteGPR(2, Zeros{PTO_XLEN} + 0x200);
+    WriteGPR(3, Zeros{PTO_XLEN} + 3);
+    let complete_store_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('00001', Zeros{5} + 24), 32);
+    let complete_store_source = ExecuteCommandInstruction(
+        BundleTestTileBindingV5('000', '00', '1111', Zeros{6}, TRUE), 32);
+    let complete_store_binding = ExecuteCommandInstruction(
+        BundleTestScalarBinding(
+            Zeros{5}, Zeros{5} + 2, Zeros{5} + 3, Zeros{5}), 32);
+    assert complete_store_start == CommandExecution_Executed;
+    assert complete_store_source == CommandExecution_Executed;
+    assert complete_store_binding == CommandExecution_Executed;
+    let complete_store = ExecuteBundleTileOperation();
+    assert complete_store;
+    assert _Memory[[0x200]] == Zeros{8} + 11;
+    assert _Memory[[0x208]] == Zeros{8} + 12;
+    assert _Memory[[0x218]] == Zeros{8} + 13;
+    assert _Memory[[0x220]] == Zeros{8} + 14;
+
+    // Omitted TSTORE B.IOR also takes LB2, even when it differs from the
+    // source tile descriptor's two columns.
+    ResetProfileState();
+    ConfigureTile(0, 128, 2, 2, 2, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 15);
+    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 16);
+    WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 17);
+    WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 18);
+    let omitted_store_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('00001', Zeros{5} + 24), 32);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 3);
+    let omitted_store_source = ExecuteCommandInstruction(
+        BundleTestTileBindingV5('000', '00', '1111', Zeros{6}, TRUE), 32);
+    assert omitted_store_start == CommandExecution_Executed;
+    assert omitted_store_source == CommandExecution_Executed;
+    let omitted_store = ExecuteBundleTileOperation();
+    assert omitted_store;
+    assert _Memory[[0]] == Zeros{8} + 15;
+    assert _Memory[[8]] == Zeros{8} + 16;
+    assert _Memory[[24]] == Zeros{8} + 17;
+    assert _Memory[[32]] == Zeros{8} + 18;
+
+    // Encoded zero-stride TSTORE overwrites the first row in program order.
+    ResetProfileState();
+    ConfigureTile(0, 128, 2, 2, 2, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 19);
+    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 20);
+    WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 21);
+    WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 22);
+    let aliased_store_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('00001', Zeros{5} + 24), 32);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 4);
+    let aliased_store_source = ExecuteCommandInstruction(
+        BundleTestTileBindingV5('000', '00', '1111', Zeros{6}, TRUE), 32);
+    let aliased_store_binding = ExecuteCommandInstruction(
+        BundleTestScalarBinding(Zeros{5}, Zeros{5}, Zeros{5}, Zeros{5}), 32);
+    assert aliased_store_start == CommandExecution_Executed;
+    assert aliased_store_source == CommandExecution_Executed;
+    assert aliased_store_binding == CommandExecution_Executed;
+    let aliased_store = ExecuteBundleTileOperation();
+    assert aliased_store;
+    assert _Memory[[0]] == Zeros{8} + 21;
+    assert _Memory[[8]] == Zeros{8} + 22;
+
+    // Packed four-bit bundles apply row stride to the logical element index
+    // before selecting the containing byte and nibble, for both directions.
+    ResetProfileState();
+    _Memory[[0x300]] = Zeros{8} + 0x21;
+    _Memory[[0x302]] = Zeros{8} + 0x43;
+    WriteGPR(2, Zeros{PTO_XLEN} + 0x300);
+    WriteGPR(3, Zeros{PTO_XLEN} + 4);
+    let packed_load_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('00000', Zeros{5} + 28), 32);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
+    let packed_load_destination = ExecuteCommandInstruction(
+        BundleTestTileDestinationV5('001', '00', '1111', TRUE), 32);
+    let packed_load_binding = ExecuteCommandInstruction(
+        BundleTestScalarBinding(
+            Zeros{5}, Zeros{5} + 2, Zeros{5} + 3, Zeros{5}), 32);
+    assert packed_load_start == CommandExecution_Executed;
+    assert packed_load_destination == CommandExecution_Executed;
+    assert packed_load_binding == CommandExecution_Executed;
+    let packed_load = ExecuteBundleTileOperation();
+    assert packed_load;
+    let packed_tile = _BundleTileBindings[[0]].destination;
+    assert ReadTileElement(packed_tile, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(packed_tile, 0, 1) == Zeros{PTO_XLEN} + 2;
+    assert ReadTileElement(packed_tile, 1, 0) == Zeros{PTO_XLEN} + 3;
+    assert ReadTileElement(packed_tile, 1, 1) == Zeros{PTO_XLEN} + 4;
+
+    ResetBundleControlState();
+    WriteGPR(2, Zeros{PTO_XLEN} + 0x320);
+    let packed_store_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('00001', Zeros{5} + 28), 32);
+    let packed_store_source = ExecuteCommandInstruction(
+        BundleTestTileBindingV5(
+            '000', '00', '1111', Zeros{6} + packed_tile, TRUE), 32);
+    let packed_store_binding = ExecuteCommandInstruction(
+        BundleTestScalarBinding(
+            Zeros{5}, Zeros{5} + 2, Zeros{5} + 3, Zeros{5}), 32);
+    assert packed_store_start == CommandExecution_Executed;
+    assert packed_store_source == CommandExecution_Executed;
+    assert packed_store_binding == CommandExecution_Executed;
+    let packed_store = ExecuteBundleTileOperation();
+    assert packed_store;
+    assert _Memory[[0x320]] == Zeros{8} + 0x21;
+    assert _Memory[[0x322]] == Zeros{8} + 0x43;
 end;
 
 func TestBundleSharedBindingV5()
@@ -781,6 +1117,30 @@ begin
     assert store_completed;
     assert _Memory[[8]] == Zeros{8} + 0x2a;
 
+    // Shared TSTORE uses omitted B.IOR's LB2/Col default, not the persistent
+    // Shared descriptor's column count.
+    ResetProfileState();
+    ConfigureTile(0, 128, 2, 2, 2, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 4);
+    InstallSharedTile(Zeros{8} + 18, _Tiles[[0]], '1111');
+    let lb2_store_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('00001', Zeros{5} + 24), 32);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 3);
+    let lb2_store_shared = ExecuteCommandInstruction(
+        BundleTestSharedBinding(Zeros{8} + 18), 32);
+    assert lb2_store_start == CommandExecution_Executed;
+    assert lb2_store_shared == CommandExecution_Executed;
+    let lb2_store_completed = ExecuteBundleTileOperation();
+    assert lb2_store_completed;
+    assert _Memory[[0]] == Zeros{8} + 1;
+    assert _Memory[[8]] == Zeros{8} + 2;
+    assert _Memory[[24]] == Zeros{8} + 3;
+    assert _Memory[[32]] == Zeros{8} + 4;
+
     // B.IOS mask 0000 is a true no-op that performs no memory access, does not
     // initialize the Shared destination, and does not need a B.IOT companion.
     ResetProfileState();
@@ -792,19 +1152,43 @@ begin
     SetBundleDimension(2, Zeros{PTO_XLEN} + 1);
     let zero_load_shared = ExecuteCommandInstruction(
         BundleTestSharedBindingV6(Zeros{8} + 255, '001', Zeros{4}), 32);
-    let zero_load_address = ExecuteCommandInstruction(
-        BundleTestScalarBinding('00000', '00010', '00000', '00000'), 32);
+    let zero_load_unused_ior = ExecuteCommandInstruction(
+        BundleTestScalarBinding(Zeros{5}, Zeros{5} + 2, Zeros{5}, Zeros{5}), 32);
     assert zero_load_start == CommandExecution_Executed;
     assert zero_load_shared == CommandExecution_Executed;
-    assert zero_load_address == CommandExecution_Executed;
+    assert zero_load_unused_ior == CommandExecution_Executed;
     let zero_load_completed = ExecuteBundleTileOperation();
     assert zero_load_completed;
     assert _LastFault == Fault_None;
     assert !_BundleSharedBindings[[0]].consumed;
     assert !SharedTileRecord(Zeros{8} + 255).descriptor_valid;
 
-    // Publish creates a fully initialized register; both Shared-to-Local forms
-    // preserve descriptor size and apply PE_MASK as a quarter predicate.
+    // Nonzero fields in an otherwise unused B.IOR reject a Shared TMOV before
+    // either the Shared destination or Local source lifetime changes.
+    ResetProfileState();
+    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 11);
+    let invalid_publish_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
+    let invalid_publish_shared = ExecuteCommandInstruction(
+        BundleTestSharedBindingV6(Zeros{8} + 18, '001', '1111'), 32);
+    let invalid_publish_local = ExecuteCommandInstruction(
+        BundleTestTileBindingV5('000', '00', '1111', Zeros{6}, TRUE), 32);
+    let invalid_publish_ior = ExecuteCommandInstruction(
+        BundleTestScalarBinding(Zeros{5}, Zeros{5} + 2, Zeros{5}, Zeros{5}), 32);
+    assert invalid_publish_start == CommandExecution_Executed;
+    assert invalid_publish_shared == CommandExecution_Executed;
+    assert invalid_publish_local == CommandExecution_Executed;
+    assert invalid_publish_ior == CommandExecution_Executed;
+    let invalid_publish_completed = ExecuteBundleTileOperation();
+    assert !invalid_publish_completed;
+    assert _LastFault == Fault_BundleControl;
+    assert !SharedTileRecord(Zeros{8} + 18).descriptor_valid;
+    assert _Tiles[[0]].allocated;
+
+    // Publish creates a fully initialized register; an explicitly encoded
+    // all-zero B.IOR is legal and equivalent to omission for this schema.
     ResetProfileState();
     ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
@@ -815,9 +1199,12 @@ begin
         BundleTestSharedBindingV6(Zeros{8} + 19, '001', '1111'), 32);
     let publish_local = ExecuteCommandInstruction(
         BundleTestTileBindingV5('000', '00', '1111', Zeros{6}, TRUE), 32);
+    let publish_zero_ior = ExecuteCommandInstruction(
+        BundleTestScalarBinding(Zeros{5}, Zeros{5}, Zeros{5}, Zeros{5}), 32);
     assert publish_start == CommandExecution_Executed;
     assert publish_shared == CommandExecution_Executed;
     assert publish_local == CommandExecution_Executed;
+    assert publish_zero_ior == CommandExecution_Executed;
     let publish_completed = ExecuteBundleTileOperation();
     assert publish_completed;
     assert SharedTileFullyInitialized(Zeros{8} + 19);
@@ -1042,12 +1429,42 @@ begin
         BundleTestSharedBindingV6(Zeros{8} + 31, '000', Zeros{4}), 32);
     let zero_local = ExecuteCommandInstruction(
         BundleTestTileBindingV5('001', '00', Zeros{4}, Zeros{6}, TRUE), 32);
+    let zero_unused_ior = ExecuteCommandInstruction(
+        BundleTestScalarBinding(Zeros{5}, Zeros{5} + 2, Zeros{5}, Zeros{5}), 32);
     assert zero_start == CommandExecution_Executed;
     assert zero_shared == CommandExecution_Executed;
     assert zero_local == CommandExecution_Executed;
+    assert zero_unused_ior == CommandExecution_Executed;
     let zero_completed = ExecuteBundleTileOperation();
     assert zero_completed;
     assert _LastFault == Fault_None;
+    assert !_BundleSharedBindings[[0]].consumed;
+    assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
+
+    // A participating Shared CUBE operation rejects a nonzero unused B.IOR
+    // before consuming the Shared source or allocating the destination.
+    ResetProfileState();
+    ConfigureTile(0, 512, 1, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 6);
+    var invalid_right = _Tiles[[0]];
+    invalid_right.payload[[0]] = Zeros{PTO_XLEN} + 7;
+    InstallSharedTile(Zeros{8} + 30, invalid_right, '1111');
+    let invalid_start = ExecuteCommandInstruction(
+        BundleTestCUBEStart('00000', Zeros{5} + 24), 32);
+    let invalid_bind_right = ExecuteCommandInstruction(
+        BundleTestSharedBinding(Zeros{8} + 30), 32);
+    let invalid_local_a_and_d = ExecuteCommandInstruction(
+        BundleTestTileBindingV5('001', '00', '1111', Zeros{6}, TRUE), 32);
+    let invalid_ior = ExecuteCommandInstruction(
+        BundleTestScalarBinding(Zeros{5}, Zeros{5} + 2, Zeros{5}, Zeros{5}), 32);
+    assert invalid_start == CommandExecution_Executed;
+    assert invalid_bind_right == CommandExecution_Executed;
+    assert invalid_local_a_and_d == CommandExecution_Executed;
+    assert invalid_ior == CommandExecution_Executed;
+    let invalid_completed = ExecuteBundleTileOperation();
+    assert !invalid_completed;
+    assert _LastFault == Fault_BundleControl;
     assert !_BundleSharedBindings[[0]].consumed;
     assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
 
@@ -1064,9 +1481,12 @@ begin
         BundleTestSharedBinding(Zeros{8} + 31), 32);
     let local_a_and_d = ExecuteCommandInstruction(
         BundleTestTileBindingV5('001', '00', '1111', Zeros{6}, TRUE), 32);
+    let zero_ior = ExecuteCommandInstruction(
+        BundleTestScalarBinding(Zeros{5}, Zeros{5}, Zeros{5}, Zeros{5}), 32);
     assert start == CommandExecution_Executed;
     assert bind_right == CommandExecution_Executed;
     assert local_a_and_d == CommandExecution_Executed;
+    assert zero_ior == CommandExecution_Executed;
     let cooperative_completed = ExecuteBundleTileOperation();
     assert cooperative_completed;
     assert _BundleSharedBindings[[0]].consumed;
@@ -1214,7 +1634,7 @@ begin
     assert _LastFault == Fault_TileLegality;
 end;
 
-func TestBundleDataAttributes0580()
+func TestBundleDataAttributes()
 begin
     ResetProfileState();
     assert TileDataLayoutCodeAccepted(Zeros{5});
@@ -1225,7 +1645,7 @@ begin
     assert !TileDataLayoutCodeSupported(Zeros{5} + 1);
 
     ClearFault();
-    SetBundleDataAttributeState0580(Zeros{5} + 24, Zeros{5}, '11',
+    SetBundleDataAttributeState(Zeros{5} + 24, Zeros{5}, '11',
         Zeros{3} + 1, Zeros{3} + 2, TRUE, TRUE);
     assert _LastFault == Fault_None;
     assert CurrentBundleDataTypeCode() == Zeros{5} + 24;
@@ -1241,19 +1661,19 @@ begin
     // Accepted implementation-defined layouts are rejected by generic
     // indexing until the implementation advertises support.
     ClearFault();
-    SetBundleDataAttributeState0580(Zeros{5} + 24, Zeros{5} + 1, '00',
+    SetBundleDataAttributeState(Zeros{5} + 24, Zeros{5} + 1, '00',
         Zeros{3}, Zeros{3}, FALSE, FALSE);
     assert _LastFault == Fault_TileLegality;
     assert CurrentBundleDataTypeCode() == Zeros{5} + 24;
     AdvertiseTileDataLayout(Zeros{5} + 1);
     ClearFault();
-    SetBundleDataAttributeState0580(Zeros{5} + 24, Zeros{5} + 1, '00',
+    SetBundleDataAttributeState(Zeros{5} + 24, Zeros{5} + 1, '00',
         Zeros{3}, Zeros{3}, FALSE, FALSE);
     assert _LastFault == Fault_None;
     assert TileDataLayoutCodeSupported(Zeros{5} + 1);
 
     ClearFault();
-    SetBundleDataAttributeState0580(Zeros{5} + 15, Zeros{5}, '00',
+    SetBundleDataAttributeState(Zeros{5} + 15, Zeros{5}, '00',
         Zeros{3}, Zeros{3}, FALSE, FALSE);
     assert _LastFault == Fault_TileLegality;
 end;
@@ -1348,6 +1768,35 @@ begin
     assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
     assert _Tiles[[16]].allocated;
     assert ReadTileElement(16, 127, 0) == Zeros{PTO_XLEN} + 127;
+    for candidate = 0 to 15 do
+        assert !_Tiles[[candidate]].allocated;
+    end;
+
+    // A non-power-of-two physical Col rejects before Local destination
+    // allocation. LB0/LB1 remain the valid columns/rows; LB2 is physical Col.
+    ResetProfileState();
+    InstallBundleOperationDescriptor(BundleOperationDescriptor {
+        valid = TRUE,
+        form_identity = Zeros{7},
+        operation_class = BundleOperation_TileElement,
+        selector_valid = TRUE,
+        selector = Zeros{10},
+        data_type_valid = TRUE,
+        data_type = Zeros{5} + 24,
+        mode_valid = FALSE,
+        mode = Zeros{2},
+        branch_type_valid = FALSE,
+        branch_type = Zeros{3}
+    });
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 3);
+    AddBundleTileBinding(TRUE, 0, 1, '1111', TRUE, FALSE, 0, 0, TRUE);
+    ClearFault();
+    let non_power_columns_resolved = ResolveBundleTileDestinations();
+    assert !non_power_columns_resolved;
+    assert _LastFault == Fault_TileAllocation;
+    assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
     for candidate = 0 to 15 do
         assert !_Tiles[[candidate]].allocated;
     end;

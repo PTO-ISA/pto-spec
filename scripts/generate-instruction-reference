@@ -398,7 +398,7 @@ def render_command(command: dict) -> str:
             "bundle-body program counter. `BID` in `CROSS_BID` instead means virtual core-block identifier. "
             "These are stable ISA spellings.",
             "",
-            f"PTO ISA 0.58.0 freezes this {len(forms)}-form command ABI. `BSTART.TEPL` carries the two-bit Mode and "
+            f"The active PTO ISA freezes this {len(forms)}-form command ABI. `BSTART.TEPL` carries the two-bit Mode and "
             "five-bit Function fields; named TLSU and CUBE starts each have one command encoding. `B.IOT`, "
             "`B.DATR`, and `B.CATR` define tile lifetime, data attributes, and bundle-control attributes. "
             "The removed `B.ARG`, generic `BSTART.CUBE`, and generic `BSTART.FIXP` forms are not accepted. "
@@ -489,7 +489,7 @@ def render_tile(tile: dict) -> str:
             "tile, scalar, memory, and descriptor operands. The selector catalog is normative for operation "
             "identity, operand roles, semantic handler, and argument order.",
             "",
-            "In PTO ISA 0.58.0, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TLSU and CUBE operations "
+            "In the active PTO ISA, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TLSU and CUBE operations "
             "bind directly to their corresponding `BSTART.*` command forms. CUBE operations carry an explicit Local "
             "destination D; ACC variants also carry an explicit Local input C, with `D == C` defined as read-old/write-new. "
             "Accepted `B.IOT` forms encode `PE_MASK`, `TSize`, and a 2-bit destination Tile field without reuse bits. `B.DATR` fields "

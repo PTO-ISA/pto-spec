@@ -530,9 +530,9 @@
         "docs/davincioo-arch/state-and-data-types.md",
         "docs/davincioo-arch/memory-ordering-and-exceptions.md",
         "docs/instructions/block/operands/B.IOS.md",
-        "docs/instructions/tile/TLOAD.md",
-        "docs/instructions/tile/TSTORE.md",
-        "docs/instructions/tile/TMOV.md"
+        "docs/instructions/tile/memory/regular/TLOAD.md",
+        "docs/instructions/tile/memory/regular/TSTORE.md",
+        "docs/instructions/tile/complex-layout/layout/TMOV.md"
       ],
       "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
       "status": "implemented-pto-isa-0580-shared-model",
@@ -927,6 +927,8 @@
         "docs/architecture-decisions/0022-bundle-operation-descriptor-and-commit.md",
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
+        "docs/architecture-decisions/0055-complete-bundle-bior-schema-and-defaults.md",
+        "docs/instructions/block/operands/B.IOR.md",
         "spec/evidence/numeric-profile-applicability-closure.json",
         "spec/evidence/bundle-command-totality.json"
       ],

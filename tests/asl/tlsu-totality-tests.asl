@@ -7,6 +7,12 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
 end;
 
+func ConfigurePackedTlsuTileTwoByTwo(index: TileIndex)
+begin
+    ConfigureTile(index, 256, 2, 2, 2, 2, TileDataType_U4X2,
+        TileLayout_RowMajor, TileLocation_Any);
+end;
+
 func ConfigurePackedTlsuTileType(index: TileIndex,
                                 columns: integer {1..16},
                                 data_type: TileDataType)
@@ -32,7 +38,7 @@ begin
     Store(Zeros{PTO_XLEN} + 0x100, 1, Zeros{PTO_XLEN} + 0xba);
     Store(Zeros{PTO_XLEN} + 0x101, 1, Zeros{PTO_XLEN} + 0xc5);
     StartMemoryEventCapture(0);
-    TLOAD(0, Zeros{PTO_XLEN} + 0x100);
+    TLOAD(0, Zeros{PTO_XLEN} + 0x100, Zeros{PTO_XLEN} + 3);
     assert _MemoryEventCount == 3;
     assert _MemoryEvents[[0]].kind == MemoryEvent_Load;
     assert _MemoryEvents[[0]].address == Zeros{PTO_XLEN} + 0x100;
@@ -51,7 +57,7 @@ begin
     Store(Zeros{PTO_XLEN} + 0x110, 1, Zeros{PTO_XLEN} + 0x90);
     Store(Zeros{PTO_XLEN} + 0x111, 1, Zeros{PTO_XLEN} + 0xe0);
     StartMemoryEventCapture(0);
-    TSTORE(Zeros{PTO_XLEN} + 0x110, 1);
+    TSTORE(Zeros{PTO_XLEN} + 0x110, Zeros{PTO_XLEN} + 3, 1);
     assert _MemoryEventCount == 3;
     assert _MemoryEvents[[0]].kind == MemoryEvent_Store;
     assert _MemoryEvents[[0]].address == Zeros{PTO_XLEN} + 0x110;
@@ -65,6 +71,30 @@ begin
     let packed_store_byte1 = LoadUnsigned(Zeros{PTO_XLEN} + 0x111, 1);
     assert packed_store_byte0 == Zeros{PTO_XLEN} + 0x21;
     assert packed_store_byte1 == Zeros{PTO_XLEN} + 0xe3;
+
+    // Packed addressing applies row stride to the logical nibble index before
+    // choosing its containing byte and low/high nibble.
+    ConfigurePackedTlsuTileTwoByTwo(39);
+    Store(Zeros{PTO_XLEN} + 0x130, 1, Zeros{PTO_XLEN} + 0x21);
+    Store(Zeros{PTO_XLEN} + 0x131, 1, Zeros{PTO_XLEN} + 0xee);
+    Store(Zeros{PTO_XLEN} + 0x132, 1, Zeros{PTO_XLEN} + 0x43);
+    TLOAD(39, Zeros{PTO_XLEN} + 0x130, Zeros{PTO_XLEN} + 4);
+    assert ReadTileElement(39, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(39, 0, 1) == Zeros{PTO_XLEN} + 2;
+    assert ReadTileElement(39, 1, 0) == Zeros{PTO_XLEN} + 3;
+    assert ReadTileElement(39, 1, 1) == Zeros{PTO_XLEN} + 4;
+
+    WriteTileElement(39, 0, 0, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(39, 0, 1, Zeros{PTO_XLEN} + 6);
+    WriteTileElement(39, 1, 0, Zeros{PTO_XLEN} + 7);
+    WriteTileElement(39, 1, 1, Zeros{PTO_XLEN} + 8);
+    TSTORE(Zeros{PTO_XLEN} + 0x140, Zeros{PTO_XLEN} + 4, 39);
+    let packed_strided_row0 = LoadUnsigned(
+        Zeros{PTO_XLEN} + 0x140, 1);
+    let packed_strided_row1 = LoadUnsigned(
+        Zeros{PTO_XLEN} + 0x142, 1);
+    assert packed_strided_row0 == Zeros{PTO_XLEN} + 0x65;
+    assert packed_strided_row1 == Zeros{PTO_XLEN} + 0x87;
 
     TMOV(2, 1);
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 1;
@@ -102,13 +132,13 @@ begin
         let tile = (33 + tile_offset) as TileIndex;
         let address = Zeros{PTO_XLEN} + 0x340 + tile_offset;
         Store(address, 1, Zeros{PTO_XLEN} + 0xaf);
-        TLOAD(tile, address);
+        TLOAD(tile, address, Zeros{PTO_XLEN} + 2);
         assert ReadTileElement(tile, 0, 0) == Zeros{PTO_XLEN} + 0xf;
         assert ReadTileElement(tile, 0, 1) == Zeros{PTO_XLEN} + 0xa;
 
         WriteTileElement(tile, 0, 0, Zeros{PTO_XLEN} + tile_offset + 1);
         WriteTileElement(tile, 0, 1, Zeros{PTO_XLEN} + tile_offset + 5);
-        TSTORE(address, tile);
+        TSTORE(address, Zeros{PTO_XLEN} + 2, tile);
         let stored = LoadUnsigned(address, 1);
         assert stored == Zeros{PTO_XLEN} +
             (tile_offset + 5) * 16 + tile_offset + 1;
@@ -189,7 +219,7 @@ begin
 
     ClearFault();
     StartMemoryEventCapture(2);
-    TLOAD(13, Zeros{PTO_XLEN} + 4096);
+    TLOAD(13, Zeros{PTO_XLEN} + 4096, Zeros{PTO_XLEN} + 5);
     assert _LastFault == Fault_DataPage;
     assert _MemoryEventCount == 0;
     StopMemoryEventCapture();
@@ -197,7 +227,7 @@ begin
 
     ClearFault();
     StartMemoryEventCapture(2);
-    TLOAD(13, Zeros{PTO_XLEN} + 4095);
+    TLOAD(13, Zeros{PTO_XLEN} + 4095, Zeros{PTO_XLEN} + 5);
     assert _LastFault == Fault_DataPage;
     assert _MemoryEventCount == 0;
     StopMemoryEventCapture();
@@ -207,7 +237,7 @@ begin
     Store(Zeros{PTO_XLEN} + 4095, 1, Zeros{PTO_XLEN} + 0xbb);
     ClearFault();
     StartMemoryEventCapture(2);
-    TLOAD(13, Zeros{PTO_XLEN} + 4094);
+    TLOAD(13, Zeros{PTO_XLEN} + 4094, Zeros{PTO_XLEN} + 5);
     assert _LastFault == Fault_DataPage;
     assert _MemoryEventCount == 0;
     StopMemoryEventCapture();
@@ -217,7 +247,7 @@ begin
     Store(Zeros{PTO_XLEN} + 0x1d1, 1, Zeros{PTO_XLEN} + 0x43);
     Store(Zeros{PTO_XLEN} + 0x1d2, 1, Zeros{PTO_XLEN} + 0x05);
     ClearFault();
-    TLOAD(13, Zeros{PTO_XLEN} + 0x1d0);
+    TLOAD(13, Zeros{PTO_XLEN} + 0x1d0, Zeros{PTO_XLEN} + 5);
     assert _LastFault == Fault_None;
     assert ReadTileElement(13, 0, 0) == Zeros{PTO_XLEN} + 1;
     assert ReadTileElement(13, 0, 1) == Zeros{PTO_XLEN} + 2;
@@ -234,7 +264,7 @@ begin
     Store(Zeros{PTO_XLEN} + 4095, 1, Zeros{PTO_XLEN} + 0xbb);
     ClearFault();
     StartMemoryEventCapture(2);
-    TSTORE(Zeros{PTO_XLEN} + 4094, 13);
+    TSTORE(Zeros{PTO_XLEN} + 4094, Zeros{PTO_XLEN} + 5, 13);
     assert _LastFault == Fault_DataPage;
     assert _MemoryEventCount == 0;
     StopMemoryEventCapture();
@@ -279,7 +309,7 @@ begin
             else Zeros{PTO_XLEN} + 4094;
         ClearFault();
         StartMemoryEventCapture(0);
-        TSTORE(start_address, 26);
+        TSTORE(start_address, Zeros{PTO_XLEN} + 5, 26);
         assert _LastFault == Fault_DataPage;
         assert _MemoryEventCount == 0;
         StopMemoryEventCapture();

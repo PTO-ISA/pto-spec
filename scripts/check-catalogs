@@ -21,7 +21,32 @@ REVIEWED_NONCOMPARABLE_PROJECTION_SHA256 = (
     "c448126ddb8d356d761ce213763d51f95b310626edde9e553ca2e3876c139245"
 )
 
-BUNDLE_BRIDGE_FIELDS = {"destination0", "source0", "source1"}
+BUNDLE_BRIDGE_FIELDS = {
+    "address",
+    "axis",
+    "byte_count",
+    "comparison",
+    "destination0",
+    "destination1",
+    "diagonal",
+    "flag0",
+    "natural0",
+    "natural1",
+    "numeric_control",
+    "positive0",
+    "positive1",
+    "positive2",
+    "positive3",
+    "scalar0",
+    "scalar1",
+    "selected_byte",
+    "sort_width",
+    "source0",
+    "source1",
+    "source2",
+    "source3",
+    "source4",
+}
 BUNDLE_BRIDGE_FAMILIES = ("TEPL", "TLSU", "CUBE")
 
 
@@ -1153,12 +1178,12 @@ def validate_bundle_tile_bridge(evidence: dict, operations: list[dict]) -> None:
     require(
         expected["counts"]
         == {
-            "TEPL": {"total": 87, "representable": 56, "commit_rejected": 31},
-            "TLSU": {"total": 10, "representable": 1, "commit_rejected": 9},
-            "CUBE": {"total": 12, "representable": 2, "commit_rejected": 10},
+            "TEPL": {"total": 87, "representable": 87, "commit_rejected": 0},
+            "TLSU": {"total": 10, "representable": 10, "commit_rejected": 0},
+            "CUBE": {"total": 12, "representable": 12, "commit_rejected": 0},
         }
-        and sum(row["representable"] for row in expected["counts"].values()) == 59
-        and sum(row["commit_rejected"] for row in expected["counts"].values()) == 50,
+        and sum(row["representable"] for row in expected["counts"].values()) == 109
+        and sum(row["commit_rejected"] for row in expected["counts"].values()) == 0,
         "derived bundle-to-tile bridge partition drift",
     )
     require(
@@ -4288,7 +4313,7 @@ def main() -> int:
             and row["selector_match"] is True
             and row["stable_id"] == f"cube:{row['selector']}:{row['mnemonic']}"
             and row["classification"] == "non-comparable"
-            and row["bundle_bridge_representable"] is False
+            and row["bundle_bridge_representable"] is True
             for row in independent_applicability_source_rows
         )
         and numeric_profile_applicability_closure["executable_evidence"]
@@ -4807,7 +4832,7 @@ def main() -> int:
         command["form_count"] == len(command_forms) == 99,
         "command form count must be 99",
     )
-    require(command["form_constraint_count"] == 40, "command constraint count drift")
+    require(command["form_constraint_count"] == 44, "command constraint count drift")
     require(command["operand_field_count"] == 59, "command operand-field count drift")
     require(command["operand_piece_count"] == 191, "command operand-piece count drift")
     require(command["semantic_handler_count"] == 21, "command handler count drift")
@@ -5267,29 +5292,24 @@ def main() -> int:
 
     wrong_aggregate = copy.deepcopy(bundle_command_totality)
     wrong_aggregate["bundle_tile_bridge"]["counts"]["TEPL"].update(
-        {"representable": 57, "commit_rejected": 30}
-    )
-    wrong_aggregate["bundle_tile_bridge"]["counts"]["CUBE"].update(
-        {"representable": 3, "commit_rejected": 9}
+        {"representable": 86, "commit_rejected": 1}
     )
 
-    paired_row_swap = copy.deepcopy(bundle_command_totality)
-    paired_tepl_rows = paired_row_swap["bundle_tile_bridge"]["operation_matrix"]
+    wrong_row = copy.deepcopy(bundle_command_totality)
+    tepl_rows = wrong_row["bundle_tile_bridge"]["operation_matrix"]
     representable_tepl = next(
         row
-        for row in paired_tepl_rows
+        for row in tepl_rows
         if row["family"] == "TEPL" and row["representable"]
     )
-    rejected_tepl = next(
-        row
-        for row in paired_tepl_rows
-        if row["family"] == "TEPL" and not row["representable"]
-    )
     representable_tepl["representable"] = False
-    rejected_tepl["representable"] = True
+    representable_tepl["unsupported_operand_fields"] = ["source0"]
+    representable_tepl["commit_disposition"] = (
+        "reject-bundle-control-before-tile-effect"
+    )
     require(
         bundle_tile_bridge_canary_rejects(wrong_aggregate, operations)
-        and bundle_tile_bridge_canary_rejects(paired_row_swap, operations),
+        and bundle_tile_bridge_canary_rejects(wrong_row, operations),
         "bundle-to-tile bridge aggregate or row-membership canary failed open",
     )
     require(
@@ -5705,15 +5725,15 @@ def main() -> int:
         in adr_0032_flat
         and f"The {executed_form_count} executed forms use {len(executed_handlers)} handlers;"
         in adr_0032_flat
-        and f"Of the 109 direct tile operations, {representable_total} use only those fields; the other {rejected_total} require"
+        and f"All {representable_total} accepted direct tile operations are schema-representable."
+        in adr_0032_flat
+        and f"| **Total** | **109** | **{representable_total}** | **{rejected_total}** |"
         in adr_0032_flat
         and all(
             f"| {family} | {counts['total']} | {counts['representable']} | {counts['commit_rejected']} |"
             in adr_0032_flat
             for family, counts in bridge_counts.items()
         )
-        and f"| **Total** | **109** | **{representable_total}** | **{rejected_total}** |"
-        in adr_0032_flat
         and "S5-T3 disposition closure is closed, while independent executable parity remains open at 0/38."
         in adr_0032_flat
         and f"The bundle bridge can represent {bridge_counts['TEPL']['representable']} TEPL, {bridge_counts['TLSU']['representable']} TLSU, and {bridge_counts['CUBE']['representable']} CUBE direct operations;"
@@ -5739,7 +5759,7 @@ def main() -> int:
         == sum(
             row["abi_change_acceptance"] is not None for row in command_comparison_rows
         )
-        == 8
+        == 7
         and bundle_command_totality["independent_comparison"]["executable_subset"]
         == command_status_counts["executable-subset"]
         == 80
@@ -8683,14 +8703,16 @@ def main() -> int:
     ).read_text(encoding="utf-8")
     for spelling in (
         "S0..S255",
-        "B.IOS S17, mask=1111",
-        "B.IOS mask=0011, ->S17<001>",
+        "B.IOS S<SharedTID>, mask=<PE_MASK>",
+        "B.IOS mask=<PE_MASK>, ->S<SharedTID><TSize>",
+        "TSize zero identifies the Shared source form",
         "0x00001013 / 0xf00871ff",
     ):
         require(spelling in shared_binding_doc, f"missing Shared syntax boundary: {spelling}")
     require(
-        "不存在 mask-only Shared companion" in shared_mask_doc
-        and "`0000` 是 strict no-op" in shared_mask_doc,
+        "InstructionContractZeroMaskIsNoOp_B_IOT" in shared_mask_doc
+        and "InstructionContractHasMaskOnlySharedCompanion_B_IOT" in shared_mask_doc
+        and "return FALSE;" in shared_mask_doc,
         "B.IOT Shared-companion removal or zero-mask contract is absent",
     )
     active_shared_docs = (
@@ -8700,9 +8722,9 @@ def main() -> int:
         ROOT / "docs/davincioo-arch/state-and-data-types.md",
         ROOT / "docs/instructions/block/operands/B.IOS.md",
         ROOT / "docs/instructions/block/operands/B.IOT.md",
-        ROOT / "docs/instructions/tile/TLOAD.md",
-        ROOT / "docs/instructions/tile/TSTORE.md",
-        ROOT / "docs/instructions/tile/TMOV.md",
+        ROOT / "docs/instructions/tile/memory/regular/TLOAD.md",
+        ROOT / "docs/instructions/tile/memory/regular/TSTORE.md",
+        ROOT / "docs/instructions/tile/complex-layout/layout/TMOV.md",
     )
     for path in active_shared_docs:
         body = path.read_text(encoding="utf-8")
@@ -9336,9 +9358,9 @@ def main() -> int:
         and release_summary["gate_count"] == 10
         and release_summary["required_approval_count"] == 2
         and release_summary["required_external_control_count"] == 10
-        and release_summary["shard_count"] == 34
-        and release_summary["canonical_call_count"] == 111
-        and release_summary["reachable_test_subprogram_count"] == 105
+        and release_summary["shard_count"] == 52
+        and release_summary["canonical_call_count"] == 113
+        and release_summary["reachable_test_subprogram_count"] == 107
         and release_summary["open_prerequisite_targets"] == ["S5-T2", "S6-T1"]
         and release_summary["closed_gate_contract_count"] == 10
         and release_summary["candidate_gate_result_count"] == 0

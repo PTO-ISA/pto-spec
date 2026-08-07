@@ -20,7 +20,7 @@
 
 ## Execution Hierarchy
 
-四个 PE 执行同一份 SPMD 程序映像，各自拥有独立 PC、ROB 状态和固定为 0–3 的 `thread_id`。该值由 DavinciOO v5 只读 [PEID SSR](../instructions/scalar/register/ssr/PEID.md)（SSR ID `0x0802`）提供，`get_thread_id()` 固定降低为 `SSRGET PEID`，不新增 opcode。普通区域允许分歧；collective operation 只有在四个 PE 以相同动态顺序到达同一静态操作时才合法。
+四个 PE 执行同一份 SPMD 程序映像，各自拥有独立 PC、ROB 状态和固定为 0–3 的 `thread_id`。该值由 DavinciOO v5 只读 [PEID SSR](../instructions/system-registers.md)（SSR ID `0x0802`）提供，`get_thread_id()` 固定降低为 `SSRGET PEID`，不新增 opcode。普通区域允许分歧；collective operation 只有在四个 PE 以相同动态顺序到达同一静态操作时才合法。
 
 ## Architectural Objects
 

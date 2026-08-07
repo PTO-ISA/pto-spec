@@ -5,7 +5,7 @@
   "policy": {
     "authority": "The frozen PTO candidate, clone-verifiable gates, hosted validation, protected-branch state, and recorded architecture/formal approvals must agree before M6 promotion.",
     "no_live_branch_evidence": "A passing run on a moving draft branch is useful feedback but is not architecturally-complete release evidence.",
-    "long_running_policy": "Long runtime gates execute through the checked 34-shard topology and hosted CI; readiness generation validates their exact contract without waiting for them.",
+    "long_running_policy": "Long runtime gates execute only through the manually dispatched exact-head 53-shard release topology; readiness generation validates the contract without waiting for it.",
     "closure_rule": "S6-T2 closes only after cumulative S0 through S6-T1 closure, one immutable signed candidate, every local and hosted gate passing at that commit, all external controls verified, and both review perspectives accepted."
   },
   "sources": [
@@ -19,23 +19,27 @@
     },
     {
       "path": ".github/workflows/asl.yml",
-      "sha256": "9ffa40fd1b7071071418b3408a6ad6b0bd7561af9171bb136a75a711ae4548ed"
+      "sha256": "491df8e5bffdd0518026d9eb018cd49e1d12a6301e539756f2e0d685283f7e11"
+    },
+    {
+      "path": ".github/workflows/release.yml",
+      "sha256": "0bb96bb7b44eab4176081a523f8aa0cc85909d90fadbcc66563ce9cee48a1bcd"
     },
     {
       "path": "CONTRIBUTING.md",
-      "sha256": "c6f9e1e0c53aceb3c068d478067c021e897ebde23a63acaaccbdd668bd0bdd77"
+      "sha256": "1aef7301df0ca3c10cb87e72f5fe944bb30c1b54eca2d6f0a730ab2e42c32b7b"
     },
     {
       "path": "GOVERNANCE.md",
-      "sha256": "177df7d10c7d85e221f76c399879a06415b82a45918e1a8a0533b2eb665b8aef"
+      "sha256": "594446047feab5ed74a73fdb1de1952f7b366ab16ce3464416c5238dccee30d9"
     },
     {
       "path": "Makefile",
-      "sha256": "facb53ac81dd78a74ca8bc4a4e487bafbdeff22247ea4c3c5107f52cf032c22d"
+      "sha256": "1039bfb26f147d0fdff9d0eed8dad1d43083d04367b2fcc380634eeb869cd5c9"
     },
     {
       "path": "docs/review-checklist.md",
-      "sha256": "0768e306a54a5512018450567bddead28d5cf140956589340b249bd4accdf08a"
+      "sha256": "04d560a8df75b4a8b5dcff7bb24485d65c2fa245418fcaff5a27776ebc3096c8"
     },
     {
       "path": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
@@ -91,19 +95,27 @@
     },
     {
       "path": "scripts/check-binary-closure",
-      "sha256": "4d87041c91fe2dbfb99b19e4d83fef13fb56c5c0237ca984900bea4875e265be"
+      "sha256": "74d100b85647bd4614c12bb3e30010bb6c38e79e3fcfa6bad8c5c4a89771d3e3"
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "8d057079fc0da738173d815ae6644b02b03c3548e62147b50484758c55dce1f9"
+      "sha256": "e42af1ea137964098ba4549881321f570a19f435be9255ea5b05a915881dc1d2"
     },
     {
       "path": "scripts/check-publication-hygiene",
-      "sha256": "9248b71e1f424cad3c516ca94502f75c03228b5d77e73441c88d106daf2b9e0e"
+      "sha256": "de876297b329c9ef0a2261bf75ea1ef99a13428f30a57b8e94958d2de65a4ee0"
+    },
+    {
+      "path": "scripts/check-pr",
+      "sha256": "855b9913f03135a0378550e2babde2689cd91b3c9c4e3dfe4e70a7a5d6384dc6"
+    },
+    {
+      "path": "scripts/check-release-workflow",
+      "sha256": "f8c4a8fcd7157701fcd7f647ea358202979d963384d973ef98395112c3c33858"
     },
     {
       "path": "scripts/check-repository",
-      "sha256": "aa571ab17038cdd6150e7b48040cfd80b256df96e8baf171d03a1dc29b56b383"
+      "sha256": "577ff899283051895ead4fc06b9e8e5db32d23975bb636bf8333fc51f2e90c2c"
     },
     {
       "path": "scripts/check-toolchain",
@@ -115,7 +127,7 @@
     },
     {
       "path": "scripts/generate-numeric-profile-applicability-closure",
-      "sha256": "73cb0712a12fbd6aa35ce58e6347f1eab4fe6bca8f97f4854186caa607ed1608"
+      "sha256": "f088221b1d18baf52f8d46506d624818d187ed7aa8b145299d44dcd090e06a69"
     },
     {
       "path": "scripts/generate-numeric-subnormal-contract",
@@ -143,51 +155,51 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "e867709378634b5b8e002419033cb13b21625ff1d357ac077bb0a98cf186c245"
+      "sha256": "9bc944c7b93ac3c204dbed0e65da3c2cde58066d2532dccff8fde0cf3808da0d"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "63fd433bc0a6ae5ca6895a3b0e77a34a6680aeda220e354e6823e12126014401"
+      "sha256": "7bd2bfa673c449813d4cf27ae22612d2ca15d20498b6551e514ff4e1d6d40919"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "f59a76f513aef937c805bf733f64ce85b9e496c0d7015dbf3f33809879fd3e4e"
+      "sha256": "680ed47e4f8c3ac54e74dc6636766d74274dda04620309a8c24640252840052f"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "8d27fa022e93214867abab81ccc20f1980388212ceeb967ba6d9c9069b61648d"
+      "sha256": "e916627b5c079ba2b51f340c6d36131b3e72f7149a5cfc935fe56f24d05873a0"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "10382028b3783177c21852a61a3d56ffa14dafe2f766dae55bfb1204ae284922"
+      "sha256": "1aa42abb178dd13ff5b38da69ed3b218baf0dfa9d9d9577618881c6b761a7815"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "29c298d109d35efa83121a841140e604c09d8c922346f8118398c1f1d04d0569"
+      "sha256": "42069cad118dfe62cc4f8adda9586c7e42b49ce7426bd7d7cc206c1cb5498a73"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "85a70d81584cfda050f2690e079996c2315df40e6f36df149c61134f896019b5"
+      "sha256": "afb027f5159b80f6059104d6255ca77a372d8938655016fd184faffdbdc971a7"
     },
     {
       "path": "spec/evidence/numeric-subnormal-contract.json",
-      "sha256": "f2717cb413e884cd49ee658ba0743c70c309f5ea68c55784ef49a3025bbebe1e"
+      "sha256": "ff55aa842587df3ab7f47a5e68e1cd7b39e0cf3258a7f7151af3929d13d1b03b"
     },
     {
       "path": "spec/evidence/numeric-special-value-contract.json",
-      "sha256": "58ee3a47887b71a49064aeafb4a9caf3e6dd06156c6a2dcd9fc6a6f0cea8938b"
+      "sha256": "d07e0619baba2de401b8abad93909922b3619e16fec234935be116c69d54987b"
     },
     {
       "path": "spec/evidence/scalar-numeric-flag-contract.json",
-      "sha256": "9510a40d6186ff556df705565590db7811ccad463ec47559bdcf630b1bfea47c"
+      "sha256": "020b91438aa9028b062af269d54d8cf0515af24c14665fa87e4b40c15db172b3"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "6ba2e27a857912e67e7fedb3fa52521356270f47c3be763cd5cb6a56b17c2d14"
+      "sha256": "720751f836ec8d6cc11118bd696aaf96b1420190c1b3759174bbd121800afa51"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "09705140b5c9734c70b60facdd66ec5d78b465c1f245c41f1e3b9990cd7c50ee"
+      "sha256": "a7f5a21b8b0c88697e9ab055790b17a2acfd7354ca2862015fd71d63f1beee68"
     },
     {
       "path": "spec/catalog/numeric-profile-applicability.json",
@@ -212,7 +224,7 @@
     {
       "id": "S6-T2-B",
       "status": "closed",
-      "target": "prove hosted workflow pinning and exact parallel test topology",
+      "target": "prove manual exact-head workflow pinning and exact shard topology",
       "blocked_by": []
     },
     {
@@ -268,9 +280,9 @@
       "classification": "release-governance",
       "statement": "No frozen candidate has complete clean-tree local and hosted gate results.",
       "acceptance_evidence": [
-        "clean make ci",
+        "clean make release-verify and make release-prepare",
         "git diff --check",
-        "passing hosted validate at the same candidate commit"
+        "passing Release / validate at the same candidate commit"
       ]
     },
     {
@@ -355,14 +367,23 @@
     "candidate_freeze_status": "blocked"
   },
   "workflow_contract": {
-    "workflow": ".github/workflows/asl.yml",
-    "workflow_name": "ASL",
-    "required_check": "validate",
+    "workflow": ".github/workflows/release.yml",
+    "workflow_name": "Release verification",
+    "trigger": "workflow_dispatch with exact commit input",
+    "required_check": "Release / validate",
     "permissions": {
       "contents": "read"
     },
-    "concurrency_cancel_in_progress": true,
+    "concurrency_cancel_in_progress": false,
     "timeout_minutes": 360,
+    "matrix_fail_fast": false,
+    "matrix_max_parallel": 8,
+    "protected_aggregator_needs": [
+      "plan",
+      "strict-model",
+      "asl-shard",
+      "release-evidence"
+    ],
     "actions": [
       {
         "action": "actions/checkout",
@@ -371,6 +392,10 @@
       {
         "action": "ocaml/setup-ocaml",
         "commit": "15d660006c1d3110d77c34b7faa3bddefe8b82f0"
+      },
+      {
+        "action": "actions/upload-artifact",
+        "commit": "ea165f8d65b6e75b540449e92b4886f43607fa02"
       }
     ],
     "contract_status": "closed"
@@ -402,19 +427,38 @@
       "tests/asl/shards/tlsu-totality.asl",
       "tests/asl/shards/cube-totality.asl",
       "tests/asl/shards/core-bundle.asl",
+      "tests/asl/shards/bundle-scalar-defaults.asl",
+      "tests/asl/shards/bundle-tile-allocation.asl",
       "tests/asl/shards/scalar-base.asl",
       "tests/asl/shards/scalar-agu-effects.asl",
       "tests/asl/shards/scalar-alu-bru.asl",
       "tests/asl/shards/scalar-amo.asl",
       "tests/asl/shards/scalar-fsu.asl",
       "tests/asl/shards/scalar-sys.asl",
-      "tests/asl/shards/tile-ops.asl",
-      "tests/asl/shards/tile-lifecycle.asl",
+      "tests/asl/shards/tepl-elementwise.asl",
+      "tests/asl/shards/tload-tstore.asl",
+      "tests/asl/shards/tmatmul-tgemv.asl",
+      "tests/asl/shards/cube-numeric-contract.asl",
+      "tests/asl/shards/cube-accumulator-classes.asl",
+      "tests/asl/shards/tepl-reduction.asl",
+      "tests/asl/shards/tepl-expansion.asl",
+      "tests/asl/shards/tepl-generation.asl",
+      "tests/asl/shards/tepl-rearrangement.asl",
+      "tests/asl/shards/tepl-complex.asl",
+      "tests/asl/shards/tepl-conversion.asl",
+      "tests/asl/shards/tile-handler-closure.asl",
+      "tests/asl/shards/mgather-mscatter-cube-extensions.asl",
+      "tests/asl/shards/tile-dispatch.asl",
+      "tests/asl/shards/tile-capacity.asl",
+      "tests/asl/shards/tile-definedness.asl",
+      "tests/asl/shards/shared-tload-atomic.asl",
+      "tests/asl/shards/tile-legality.asl",
+      "tests/asl/shards/mgather-mscatter-restart.asl",
       "tests/asl/shards/concurrency-profile.asl"
     ],
-    "shard_count": 34,
-    "canonical_call_count": 111,
-    "reachable_test_subprogram_count": 105,
+    "shard_count": 53,
+    "canonical_call_count": 113,
+    "reachable_test_subprogram_count": 107,
     "default_parallel_jobs": 4,
     "partition_status": "closed",
     "candidate_runtime_result": null
@@ -485,14 +529,14 @@
     },
     {
       "id": "RG-05",
-      "name": "parallel executable semantics",
-      "command": "make test-parallel",
+      "name": "complete executable semantics",
+      "command": "make test-shards",
       "evidence": [
         "Makefile",
         "scripts/check-asl-test-shards",
         "tests/asl/main.asl"
       ],
-      "acceptance": "All canonical executable tests pass through the exact 34-shard partition with no missing, duplicate, empty, or unreachable test surface.",
+      "acceptance": "All canonical executable tests pass through the exact 53-shard partition with no missing, duplicate, empty, or unreachable test surface.",
       "long_running": true,
       "contract_status": "closed",
       "candidate_commit": null,
@@ -502,11 +546,11 @@
     {
       "id": "RG-06",
       "name": "aggregate release gate",
-      "command": "make ci",
+      "command": "make release-verify",
       "evidence": [
         "Makefile"
       ],
-      "acceptance": "Repository, pinned toolchain, strict type-check, and parallel runtime gates pass together after clean regeneration.",
+      "acceptance": "The lightweight repository contract, release identity, pinned toolchain, strict type-check, and all runtime shards pass together at one exact candidate.",
       "long_running": true,
       "contract_status": "closed",
       "candidate_commit": null,
@@ -589,7 +633,7 @@
     {
       "id": "EC-02",
       "name": "required hosted check",
-      "required_state": "strict validate check is required before main updates",
+      "required_state": "PR / validate is required before main updates; release publication separately requires exact-head Release / validate",
       "verification_method": "GitHub repository and branch-protection API snapshot at the immutable candidate commit",
       "observed_at": null,
       "observed_state": null,
@@ -716,9 +760,9 @@
     "gate_count": 10,
     "required_approval_count": 2,
     "required_external_control_count": 10,
-    "shard_count": 34,
-    "canonical_call_count": 111,
-    "reachable_test_subprogram_count": 105,
+    "shard_count": 53,
+    "canonical_call_count": 113,
+    "reachable_test_subprogram_count": 107,
     "open_prerequisite_targets": [
       "S5-T2",
       "S6-T1"
