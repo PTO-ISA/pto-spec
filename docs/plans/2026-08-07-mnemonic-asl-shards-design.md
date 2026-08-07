@@ -40,16 +40,19 @@ changed.
 
 ## Test source layout
 
-- `tests/asl/support/` contains reusable fixtures only.
-- `tests/asl/mnemonics/` contains instruction-focused executable evidence.
+- `tests/asl/shards/` contains instruction-focused runtime entrypoints such as
+  `tload-tstore.asl`, plus explicitly named cross-cutting entrypoints such as
+  `tile-capacity.asl` and `tile-definedness.asl`.
+- Existing test libraries remain shared source libraries so helpers and
+  fixtures are not duplicated. A shard main imports only the libraries needed
+  by its calls and invokes one focused test contract.
 - Cross-instruction lifecycle, dispatch, capacity, and closure evidence uses a
   descriptive contract filename and remains visibly separate from mnemonic
   evidence.
-- A shard main imports only the libraries required by its calls.
 - The canonical main remains the whole-suite execution contract.
 
-The existing shard checker remains fail-closed and is extended to expose the
-checked shard inventory as machine-readable JSON for GitHub Actions. It still
+The existing shard checker remains fail-closed, while the Makefile exposes its
+checked shard-name inventory for GitHub Actions matrix construction. It still
 proves that every canonical call occurs exactly once, rejects orphan/empty
 shards, and proves every declared `Test*`/`Validate*` subprogram is reachable.
 

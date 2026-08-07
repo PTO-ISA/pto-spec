@@ -5,7 +5,7 @@
   "policy": {
     "authority": "The frozen PTO candidate, clone-verifiable gates, hosted validation, protected-branch state, and recorded architecture/formal approvals must agree before M6 promotion.",
     "no_live_branch_evidence": "A passing run on a moving draft branch is useful feedback but is not architecturally-complete release evidence.",
-    "long_running_policy": "Long runtime gates execute through the checked 34-shard topology and hosted CI; readiness generation validates their exact contract without waiting for them.",
+    "long_running_policy": "Long runtime gates execute through the checked 51-shard topology and hosted CI; readiness generation validates their exact contract without waiting for them.",
     "closure_rule": "S6-T2 closes only after cumulative S0 through S6-T1 closure, one immutable signed candidate, every local and hosted gate passing at that commit, all external controls verified, and both review perspectives accepted."
   },
   "sources": [
@@ -19,7 +19,7 @@
     },
     {
       "path": ".github/workflows/asl.yml",
-      "sha256": "9ffa40fd1b7071071418b3408a6ad6b0bd7561af9171bb136a75a711ae4548ed"
+      "sha256": "398f12718edaf66797447001f44f195a8107a10b530ea6e46a4bb8b6f51985af"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -31,7 +31,7 @@
     },
     {
       "path": "Makefile",
-      "sha256": "facb53ac81dd78a74ca8bc4a4e487bafbdeff22247ea4c3c5107f52cf032c22d"
+      "sha256": "1b5d5ddd5295a155d7389906d005f07d0ee02143e8f7127fa57a49fa06cfe948"
     },
     {
       "path": "docs/review-checklist.md",
@@ -95,7 +95,7 @@
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "1fdb9d53fb02818380bd2d979032d3f235e42ec8da5ded8f9f151ff7e3e1287e"
+      "sha256": "acd194464ae08336560cc1344a40e18805336d41d37bee5d89d21d0168a45e6e"
     },
     {
       "path": "scripts/check-publication-hygiene",
@@ -143,7 +143,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "320dbfdf9d352d4c12ff52e9a695b8faa479719b63ac4cb535e44a3808bddb04"
+      "sha256": "497972d0ff726b34420c024cfe57a28519d9aecd8451df444fd8a117580218ce"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -155,7 +155,7 @@
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "172b925b91aa25ce8a2244d41ad6278a16bc813fe2686264093ccc42c0df58e7"
+      "sha256": "adaadc3763b36b3f661c0f003bd35b3d33779514711987e6c51a5a1b5840efb2"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
@@ -163,7 +163,7 @@
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "fe6f94d558d2704886fb115b880fb24c52506b04b490804c4d864d0f3a6bba0f"
+      "sha256": "fc84bb86e71e54d9e1150a26a95976019e0a6fdc8232f446b8bd68078d9c6a49"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
@@ -183,7 +183,7 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "175da2bb9952f41bc423aebe701ca99a6f0456c9897383f981eec57c642da53c"
+      "sha256": "b6fc7d3587274c8f4e6e1c476e815837326956b0f56818a740214df3348fd7f1"
     },
     {
       "path": "spec/requirements.json",
@@ -363,6 +363,13 @@
     },
     "concurrency_cancel_in_progress": true,
     "timeout_minutes": 360,
+    "matrix_fail_fast": true,
+    "matrix_max_parallel": 8,
+    "protected_aggregator_needs": [
+      "plan",
+      "strict-model",
+      "asl-shard"
+    ],
     "actions": [
       {
         "action": "actions/checkout",
@@ -408,11 +415,28 @@
       "tests/asl/shards/scalar-amo.asl",
       "tests/asl/shards/scalar-fsu.asl",
       "tests/asl/shards/scalar-sys.asl",
-      "tests/asl/shards/tile-ops.asl",
-      "tests/asl/shards/tile-lifecycle.asl",
+      "tests/asl/shards/tepl-elementwise.asl",
+      "tests/asl/shards/tload-tstore.asl",
+      "tests/asl/shards/tmatmul-tgemv.asl",
+      "tests/asl/shards/cube-numeric-contract.asl",
+      "tests/asl/shards/cube-accumulator-classes.asl",
+      "tests/asl/shards/tepl-reduction.asl",
+      "tests/asl/shards/tepl-expansion.asl",
+      "tests/asl/shards/tepl-generation.asl",
+      "tests/asl/shards/tepl-rearrangement.asl",
+      "tests/asl/shards/tepl-complex.asl",
+      "tests/asl/shards/tepl-conversion.asl",
+      "tests/asl/shards/tile-handler-closure.asl",
+      "tests/asl/shards/mgather-mscatter-cube-extensions.asl",
+      "tests/asl/shards/tile-dispatch.asl",
+      "tests/asl/shards/tile-capacity.asl",
+      "tests/asl/shards/tile-definedness.asl",
+      "tests/asl/shards/shared-tload-atomic.asl",
+      "tests/asl/shards/tile-legality.asl",
+      "tests/asl/shards/mgather-mscatter-restart.asl",
       "tests/asl/shards/concurrency-profile.asl"
     ],
-    "shard_count": 34,
+    "shard_count": 51,
     "canonical_call_count": 113,
     "reachable_test_subprogram_count": 107,
     "default_parallel_jobs": 4,
@@ -492,7 +516,7 @@
         "scripts/check-asl-test-shards",
         "tests/asl/main.asl"
       ],
-      "acceptance": "All canonical executable tests pass through the exact 34-shard partition with no missing, duplicate, empty, or unreachable test surface.",
+      "acceptance": "All canonical executable tests pass through the exact 51-shard partition with no missing, duplicate, empty, or unreachable test surface.",
       "long_running": true,
       "contract_status": "closed",
       "candidate_commit": null,
@@ -716,7 +740,7 @@
     "gate_count": 10,
     "required_approval_count": 2,
     "required_external_control_count": 10,
-    "shard_count": 34,
+    "shard_count": 51,
     "canonical_call_count": 113,
     "reachable_test_subprogram_count": 107,
     "open_prerequisite_targets": [

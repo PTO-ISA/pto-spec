@@ -47,7 +47,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "320dbfdf9d352d4c12ff52e9a695b8faa479719b63ac4cb535e44a3808bddb04"
+      "sha256": "497972d0ff726b34420c024cfe57a28519d9aecd8451df444fd8a117580218ce"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -59,7 +59,7 @@
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "172b925b91aa25ce8a2244d41ad6278a16bc813fe2686264093ccc42c0df58e7"
+      "sha256": "adaadc3763b36b3f661c0f003bd35b3d33779514711987e6c51a5a1b5840efb2"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
@@ -67,7 +67,7 @@
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "fe6f94d558d2704886fb115b880fb24c52506b04b490804c4d864d0f3a6bba0f"
+      "sha256": "fc84bb86e71e54d9e1150a26a95976019e0a6fdc8232f446b8bd68078d9c6a49"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
@@ -87,7 +87,7 @@
     },
     {
       "path": "spec/evidence/system-register-witness-closure.json",
-      "sha256": "08b63d2a038cd0315de331e8d16359929ac9b9cc02c2adf881a6cf08786f50ee"
+      "sha256": "4a150dda07ed2a065b0efd5327933b9e219d4788d037a9e2ada162d310165954"
     },
     {
       "path": "spec/evidence/bundle-command-totality.json",
@@ -131,7 +131,7 @@
     },
     {
       "path": "tests/asl/tile-tests.asl",
-      "sha256": "6cf462cc5fa85c13f5d0ff209601b409263a448413b87b4fcc413e803367c551"
+      "sha256": "32f74294d3be503796efd192f81367caa4b77a6ca6b7f65ed6f7ac770b8ee0bc"
     },
     {
       "path": "asl/types.asl",
@@ -18363,7 +18363,7 @@
               "function": "TestTileCapacityLegality",
               "assertion_marker": "SYSREG-EFFECT-WITNESS tile-capacity-profile-limit/limits-per-tile-and-aggregate-allocation",
               "source": "tests/asl/tile-tests.asl",
-              "source_sha256": "6cf462cc5fa85c13f5d0ff209601b409263a448413b87b4fcc413e803367c551",
+              "source_sha256": "32f74294d3be503796efd192f81367caa4b77a6ca6b7f65ed6f7ac770b8ee0bc",
               "closure": "direct-effect-assertion"
             }
           ]
@@ -18375,7 +18375,7 @@
           },
           {
             "path": "tests/asl/tile-tests.asl",
-            "sha256": "6cf462cc5fa85c13f5d0ff209601b409263a448413b87b4fcc413e803367c551"
+            "sha256": "32f74294d3be503796efd192f81367caa4b77a6ca6b7f65ed6f7ac770b8ee0bc"
           }
         ],
         "consumer_exclusion_guard": null,

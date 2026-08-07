@@ -13,11 +13,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validate:
-    name: validate
+  plan:
+    name: repository invariants
     runs-on: ubuntu-latest
-    # Thirty-four strict shards partition the large totality matrices.
-    timeout-minutes: 360
+    outputs:
+      shards: ${{ steps.shards.outputs.matrix }}
     steps:
       - name: Check out repository
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
@@ -29,6 +29,23 @@ jobs:
       - name: Validate repository invariants
         run: make repo-check
 
+      - name: Export exact ASL shard matrix
+        id: shards
+        shell: bash
+        run: |
+          matrix="$(make --no-print-directory print-asl-test-shard-names | python3 -c 'import json, sys; print(json.dumps([line.strip() for line in sys.stdin if line.strip()]))')"
+          test "$matrix" != "[]"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+  strict-model:
+    name: strict normative model
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
       - name: Set up OCaml and opam
         uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0 # v3
         with:
@@ -37,5 +54,46 @@ jobs:
       - name: Install ASLRef build dependencies
         run: make setup
 
-      - name: Validate normative PTO ASL model
-        run: make ci
+      - name: Validate pinned ASLRef canaries and normative model
+        run: make toolchain-check check
+
+  asl-shard:
+    name: ASL / ${{ matrix.shard }}
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: true
+      max-parallel: 8
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      - name: Set up OCaml and opam
+        uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0 # v3
+        with:
+          ocaml-compiler: "5.2.1"
+
+      - name: Install ASLRef build dependencies
+        run: make setup
+
+      - name: Validate ${{ matrix.shard }}
+        run: make "test-shard-${{ matrix.shard }}"
+
+  validate:
+    name: validate
+    if: always()
+    needs: [plan, strict-model, asl-shard]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every strict ASL gate
+        env:
+          PLAN_RESULT: ${{ needs.plan.result }}
+          STRICT_MODEL_RESULT: ${{ needs.strict-model.result }}
+          ASL_SHARD_RESULT: ${{ needs.asl-shard.result }}
+        run: |
+          test "$PLAN_RESULT" = success
+          test "$STRICT_MODEL_RESULT" = success
+          test "$ASL_SHARD_RESULT" = success

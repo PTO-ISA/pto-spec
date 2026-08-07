@@ -338,15 +338,15 @@
     },
     {
       "path": "docs/coverage.md",
-      "sha256": "9ff35a483b3c9e78fb3045e7bdeea1483306467afd93fe1c36144641f77cf0b3"
+      "sha256": "60b451f35cd84c8d625ec986eb83558801769d80d3d348153a828ee68ad6e250"
     },
     {
       "path": "docs/maturity-bringup-plan.md",
-      "sha256": "5a2ef3c04d0ffc253222d300a5f41563aba9cdaba5e4e4159ff2511d8aa52bca"
+      "sha256": "d56c8e96e60a7df2893b3a7c517ca5ab1696fcd48b951a8869e799859430fd55"
     },
     {
       "path": "docs/maturity-stage-targets.md",
-      "sha256": "bfdcfe4f0c09036bd6b971d13409777599c1964e6d80c67818e96df34a767c40"
+      "sha256": "042c69658a77c64a87a0f32bdb50cb77cd19b0899f838cd4f46ed9d4b6213e44"
     },
     {
       "path": "docs/memory-model.md",
@@ -442,7 +442,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "320dbfdf9d352d4c12ff52e9a695b8faa479719b63ac4cb535e44a3808bddb04"
+      "sha256": "497972d0ff726b34420c024cfe57a28519d9aecd8451df444fd8a117580218ce"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
@@ -458,11 +458,11 @@
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "172b925b91aa25ce8a2244d41ad6278a16bc813fe2686264093ccc42c0df58e7"
+      "sha256": "adaadc3763b36b3f661c0f003bd35b3d33779514711987e6c51a5a1b5840efb2"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "fe6f94d558d2704886fb115b880fb24c52506b04b490804c4d864d0f3a6bba0f"
+      "sha256": "fc84bb86e71e54d9e1150a26a95976019e0a6fdc8232f446b8bd68078d9c6a49"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
@@ -474,11 +474,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "6e5880cd1f9d6efd0437ccb43796140ae5df57455caa99ab4b233060f2a424eb"
+      "sha256": "bba014e253d48110e7558a1f0efb786979eb2d8c09e0eb5d83345e1836e18ffd"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "175da2bb9952f41bc423aebe701ca99a6f0456c9897383f981eec57c642da53c"
+      "sha256": "b6fc7d3587274c8f4e6e1c476e815837326956b0f56818a740214df3348fd7f1"
     },
     {
       "path": "spec/evidence/scalar-agu-totality.json",
@@ -514,7 +514,7 @@
     },
     {
       "path": "spec/evidence/system-register-witness-closure.json",
-      "sha256": "08b63d2a038cd0315de331e8d16359929ac9b9cc02c2adf881a6cf08786f50ee"
+      "sha256": "4a150dda07ed2a065b0efd5327933b9e219d4788d037a9e2ada162d310165954"
     },
     {
       "path": "spec/evidence/tepl-totality.json",
@@ -564,7 +564,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "de606bb4a2fe12fb218939961dbe0d4850bd4a25b9d1667ad856dc2c517cc2f0",
+  "content_sha256": "44693d59d6a9a44d977f1eec064545759206d286a85a4cfeef38cae3a07ad3ce",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",

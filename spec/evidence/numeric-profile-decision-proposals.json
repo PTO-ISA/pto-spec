@@ -135,7 +135,7 @@
   },
   "public_integer_conversion": {
     "path": "spec/evidence/public-integer-conversion-contract.json",
-    "sha256": "fe6f94d558d2704886fb115b880fb24c52506b04b490804c4d864d0f3a6bba0f",
+    "sha256": "fc84bb86e71e54d9e1150a26a95976019e0a6fdc8232f446b8bd68078d9c6a49",
     "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
     "acceptance_record": "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
     "public_integer_type_count": 8,
@@ -173,7 +173,7 @@
   },
   "variation_point_contract": {
     "path": "spec/evidence/numeric-variation-point-ownership.json",
-    "sha256": "172b925b91aa25ce8a2244d41ad6278a16bc813fe2686264093ccc42c0df58e7",
+    "sha256": "adaadc3763b36b3f661c0f003bd35b3d33779514711987e6c51a5a1b5840efb2",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
     "acceptance_record": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
     "variation_point_count": 89,
