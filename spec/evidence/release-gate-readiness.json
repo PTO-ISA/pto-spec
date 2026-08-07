@@ -99,7 +99,7 @@
     },
     {
       "path": "scripts/check-publication-hygiene",
-      "sha256": "9248b71e1f424cad3c516ca94502f75c03228b5d77e73441c88d106daf2b9e0e"
+      "sha256": "a6a999cdd60d22360572e6961a4dd4d80e874f1759d08c35a5eeea4636f5035e"
     },
     {
       "path": "scripts/check-repository",
