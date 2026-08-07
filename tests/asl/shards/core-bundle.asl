@@ -23,7 +23,6 @@ begin
     TestBundleTileCommitLifecycle();
     TestBundleTileCommitRollback();
     TestBundleTileBindingV5Schemas();
-    TestBundleScalarBindingSchemaDefaults();
     TestBundleTLOADTSTORERowStride();
     TestBundleSharedBindingV5();
     TestBundleSharedBindingV6();

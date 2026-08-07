@@ -744,7 +744,7 @@ begin
     SetBundleDimension(2, Zeros{PTO_XLEN} + 7);
     let omitted_tload_start = ExecuteCommandInstruction(
         BundleTestTLSUStart(Zeros{5}, Zeros{5} + 24), 32);
-    AddBundleTileBinding(TRUE, 0, 1, '1111', TRUE, FALSE, 0, 0, TRUE);
+    AddBundleTileBinding(TRUE, 0, 1, '1111', FALSE, FALSE, 0, 0, TRUE);
     assert omitted_tload_start == CommandExecution_Executed;
     assert BundleOperationBindingsComplete(tload_operation);
     let omitted_tload_operands = BundleTileInstructionOperands(tload_operation);
@@ -757,7 +757,7 @@ begin
     SetBundleDimension(2, Zeros{PTO_XLEN} + 7);
     let zero_stride_start = ExecuteCommandInstruction(
         BundleTestTLSUStart(Zeros{5}, Zeros{5} + 24), 32);
-    AddBundleTileBinding(TRUE, 0, 1, '1111', TRUE, FALSE, 0, 0, TRUE);
+    AddBundleTileBinding(TRUE, 0, 1, '1111', FALSE, FALSE, 0, 0, TRUE);
     let zero_stride_binding = ExecuteCommandInstruction(
         BundleTestScalarBinding(
             Zeros{5}, Zeros{5}, Zeros{5}, Zeros{5}), 32);
@@ -772,7 +772,7 @@ begin
     WriteGPR(3, Zeros{PTO_XLEN} + 13);
     let explicit_stride_start = ExecuteCommandInstruction(
         BundleTestTLSUStart(Zeros{5}, Zeros{5} + 24), 32);
-    AddBundleTileBinding(TRUE, 0, 1, '1111', TRUE, FALSE, 0, 0, TRUE);
+    AddBundleTileBinding(TRUE, 0, 1, '1111', FALSE, FALSE, 0, 0, TRUE);
     let explicit_stride_binding = ExecuteCommandInstruction(
         BundleTestScalarBinding(
             Zeros{5}, Zeros{5} + 2, Zeros{5} + 3, Zeros{5}), 32);

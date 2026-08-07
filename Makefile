@@ -88,6 +88,7 @@ ASL_TEST_SHARD_MAINS := \
 	tests/asl/shards/tlsu-totality.asl \
 	tests/asl/shards/cube-totality.asl \
 	tests/asl/shards/core-bundle.asl \
+	tests/asl/shards/bundle-scalar-defaults.asl \
 	tests/asl/shards/bundle-tile-allocation.asl \
 	tests/asl/shards/scalar-base.asl \
 	tests/asl/shards/scalar-agu-effects.asl \
@@ -127,6 +128,7 @@ ASL_TEST_LIB_core-bundle := \
 	tests/asl/state-tests.asl \
 	tests/asl/bundle-tests.asl \
 	tests/asl/dispatch-tests.asl
+ASL_TEST_LIB_bundle-scalar-defaults := tests/asl/bundle-tests.asl
 ASL_TEST_LIB_bundle-tile-allocation := tests/asl/bundle-tests.asl
 ASL_TEST_LIB_scalar-base := tests/asl/scalar-tests.asl
 ASL_TEST_LIB_scalar-agu-effects := tests/asl/scalar-tests.asl

@@ -32,7 +32,7 @@
 - Consumes: `BundleOperationBindingsComplete(operation)` and `AddBundleTileBinding(...)`.
 - Produces: `make test-shard-bundle-scalar-defaults` and a 53-shard matrix.
 
-- [ ] **Step 1: Preserve the exact failing reproduction**
+- [x] **Step 1: Preserve the exact failing reproduction**
 
 Record that hosted run `31189236482` failed at the omitted TLOAD assertion because the fixture called:
 
@@ -42,7 +42,7 @@ AddBundleTileBinding(TRUE, 0, 1, '1111', TRUE, FALSE, 0, 0, TRUE);
 
 The fifth argument incorrectly declares a tile source for TLOAD.
 
-- [ ] **Step 2: Create a dedicated shard**
+- [x] **Step 2: Create a dedicated shard**
 
 ```asl
 func main() => integer
@@ -55,7 +55,7 @@ end;
 
 Add the shard and its `tests/asl/bundle-tests.asl` library to the Make matrix, then remove the function call from `core-bundle.asl`.
 
-- [ ] **Step 3: Implement the minimal fixture correction**
+- [x] **Step 3: Implement the minimal fixture correction**
 
 For the omitted, encoded-zero, and explicit-stride TLOAD cases, set both tile source-valid arguments to `FALSE`:
 
@@ -65,7 +65,7 @@ AddBundleTileBinding(TRUE, 0, 1, '1111', FALSE, FALSE, 0, 0, TRUE);
 
 Do not change the TLOAD catalog, encoding, scalar defaults, or execution logic.
 
-- [ ] **Step 4: Verify the split and focused target**
+- [x] **Step 4: Verify the split and focused target**
 
 Run:
 
@@ -77,7 +77,7 @@ git diff --check
 
 Expected: 53 shards partition all canonical calls; assembly and diff checks pass. The full dynamic target remains a release-lane check if local strict typecheck exceeds the interactive validation window.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add Makefile tests/asl/bundle-tests.asl tests/asl/shards/core-bundle.asl tests/asl/shards/bundle-scalar-defaults.asl
