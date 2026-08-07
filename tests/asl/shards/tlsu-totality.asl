@@ -1,6 +1,6 @@
 func main() => integer
 begin
     ResetProfileState();
-    TestTmaTotality();
+    TestTlsuTotality();
     return 0;
 end;

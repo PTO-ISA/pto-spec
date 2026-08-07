@@ -107,7 +107,7 @@ begin
     TestDecodedTileLegalityFaults();
     TestTileMemoryCompletionAndRestart();
     TestTeplTotality();
-    TestTmaTotality();
+    TestTlsuTotality();
     TestCubeTotality();
     TestTSOConcurrency();
     TestConcreteProfile();
