@@ -188,6 +188,15 @@ git diff --cached --check
 
 for script in scripts/*; do
     [[ -f $script ]] || continue
+
+    # Package initializers are importable Python library files, not command
+    # entry points. Validate their syntax without requiring an executable bit
+    # or a shebang.
+    if [[ $(basename "$script") == __init__.py ]]; then
+        python3 -c 'import ast, pathlib, sys; ast.parse(pathlib.Path(sys.argv[1]).read_text())' "$script"
+        continue
+    fi
+
     [[ -x $script ]] || fail "script is not executable: $script"
 
     case $(head -n 1 "$script") in
