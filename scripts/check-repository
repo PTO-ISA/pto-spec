@@ -4,6 +4,15 @@ set -euo pipefail
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 cd "$repo_root"
 
+mode=${1:-full}
+case $mode in
+    full | --structure-only) ;;
+    *)
+        echo "usage: $0 [--structure-only]" >&2
+        exit 2
+        ;;
+esac
+
 fail() {
     echo "error: $*" >&2
     exit 1
@@ -211,6 +220,14 @@ for script in scripts/*; do
             ;;
     esac
 done
+
+if [[ $mode == --structure-only ]]; then
+    ./scripts/check-ndf
+    ./scripts/check-asl-test-shards
+    python3 scripts/instruction_docs.py --check
+    echo "repository structure checks passed"
+    exit 0
+fi
 
 python3 scripts/check-catalogs
 ./scripts/check-assertion-boundaries

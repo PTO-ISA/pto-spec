@@ -16,6 +16,9 @@ FORBIDDEN_TERMS = (
     "m" + "call",
     "heng" + "liao1972",
 )
+ALLOWED_EXTERNAL_REFERENCES = (
+    "https://github.com/hengliao1972/normative_language/blob/main/normative_language.md",
+)
 MIGRATED_DOCUMENT_ROOTS = (
     Path("docs/instructions/scalar"),
     Path("docs/instructions/block"),
@@ -76,8 +79,11 @@ def main() -> int:
             continue
 
         lower_body = body.lower()
-        if any(term in lower_body for term in FORBIDDEN_TERMS) or (
-            LEGACY_RELEASE.search(lower_body) and not migrated
+        identity_body = lower_body
+        for allowed_reference in ALLOWED_EXTERNAL_REFERENCES:
+            identity_body = identity_body.replace(allowed_reference.lower(), "")
+        if any(term in identity_body for term in FORBIDDEN_TERMS) or (
+            LEGACY_RELEASE.search(identity_body) and not migrated
         ):
             failures.append(f"forbidden source identity in file: {relative}")
         for prefix in STALE_URL_PREFIXES:

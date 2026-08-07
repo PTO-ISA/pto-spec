@@ -199,7 +199,7 @@ git commit -m "feat: enforce ASL-backed NDF clauses"
 - Produces: `make pr-check`.
 - Produces: one GitHub required check named `PR / validate`.
 
-- [ ] **Step 1: Add a subprocess contract test**
+- [x] **Step 1: Add a subprocess contract test**
 
 Test the observable Make command plan:
 
@@ -224,13 +224,13 @@ python3 -m unittest tests.scripts.test_check_pr -v
 
 Expected: FAIL before the script exists.
 
-- [ ] **Step 2: Implement `scripts/check-pr`**
+- [x] **Step 2: Implement `scripts/check-pr`**
 
 Use fail-fast Bash to run:
 
 ```bash
 ./scripts/check-ndf
-./scripts/check-repository
+./scripts/check-repository --structure-only
 ./scripts/check-asl-test-shards
 python3 -m unittest discover -s tests/scripts -p 'test_*.py'
 python3 scripts/instruction_docs.py --check
@@ -238,9 +238,11 @@ python3 scripts/check-publication-hygiene
 git diff --check
 ```
 
-`check-repository` is invoked directly so the PR lane does not inherit the `$(SPEC)` Make prerequisite or execute ASLRef.
+`check-repository --structure-only` is invoked directly so the PR lane validates
+tracked repository structure without inheriting the `$(SPEC)` Make prerequisite
+or any strict-model checks that execute ASLRef.
 
-- [ ] **Step 3: Add Make targets**
+- [x] **Step 3: Add Make targets**
 
 ```make
 pr-check:
@@ -249,7 +251,7 @@ pr-check:
 
 Keep existing compatibility targets, but make `ci` an alias for `pr-check` so ordinary contributors do not accidentally start a release verification.
 
-- [ ] **Step 4: Replace the PR workflow**
+- [x] **Step 4: Replace the PR workflow**
 
 Make `.github/workflows/asl.yml` run on `pull_request` and pushes to `main`, with one Ubuntu job:
 
@@ -264,7 +266,7 @@ jobs:
 
 Retain read-only permissions and concurrency cancellation. Do not add OCaml setup or ASL matrix jobs.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run:
 
