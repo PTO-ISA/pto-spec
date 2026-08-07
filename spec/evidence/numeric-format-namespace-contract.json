@@ -1936,7 +1936,7 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "ef5b0ef5155618bccaf46376f9cdbcab5c1883cb931f4f08e8957f8cacafa943"
+      "sha256": "01e86e84cc2adf06734a1330efd10b3af499c8f7b05ac8c8b5f5d1be4da0a578"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -1944,11 +1944,11 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "014501ed69c25cca527a67649c365c2da91859076479d7218111bda97df38f37"
+      "sha256": "5c831b14fb86df38f3fd398948ce2a303d15aac95540ea6e2f05f2d64bb246c4"
     },
     {
       "path": "asl/types.asl",
-      "sha256": "a70daffa65d924e3581ce19a3876a06506c2d1d4c3a06fff9377cb6735532b24"
+      "sha256": "1018ae49c0ef3a3e1bb15f452446f6606f5c825e01e528ea42c6a8a32c031ae9"
     },
     {
       "path": "asl/numeric/formats.asl",
@@ -1960,15 +1960,15 @@
     },
     {
       "path": "asl/tile/state.asl",
-      "sha256": "1d8f6a0a65e50eb71cddc3d7f28cf44175e0287b6b055bc6d42866b6ddaf98af"
+      "sha256": "d93eb3df27e4582d0dbc0adbb11faceb5f1f125c66407a3fb7d1ace45560c513"
     },
     {
       "path": "asl/tile/memory.asl",
-      "sha256": "39d20f62a49f0c33d9990e89bf490ebe151cd5df45ebd2b612544a9a043c4161"
+      "sha256": "c2abd22e62aab2fdb9d93795437da8790a09489d51b89bdfa35edbb4672bd4e5"
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "8ac6dd8f0d960645d871b37bc8ededd8905944dd36a5d1745af45a5ac85e37d2"
+      "sha256": "5d366d86b293530e876b91ed972dfd0fd10f19b4918b5504bd453c0bee99980c"
     },
     {
       "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",

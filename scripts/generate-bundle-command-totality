@@ -217,7 +217,7 @@ def build_evidence() -> dict:
             "decode_only": comparison_status_counts["decode-only"],
             "missing": comparison_status_counts["missing"],
             "authority": "non-normative structural comparison only",
-            "limitation": "The independent snapshot predates seven accepted PTO 0.58.0 command encoding changes and stages bundle payload execution, so it neither matches those masks nor validates PTO tile payload effects; ADR 0045, the PTO catalogs, and PTO-owned ASL evidence remain authoritative.",
+            "limitation": "The independent snapshot predates eight accepted PTO 0.58.0 command encoding changes and stages bundle payload execution, so it neither matches those masks nor validates PTO tile payload effects; ADR 0045, ADR 0054, the PTO catalogs, and PTO-owned ASL evidence remain authoritative.",
         },
         "requirement_ids": [
             "PTO-REQ-BUNDLE-DISPATCH-001",

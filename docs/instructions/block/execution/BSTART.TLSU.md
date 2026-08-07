@@ -15,7 +15,7 @@
 
 ## 用途
 
-`BSTART.TLSU` 选择数据搬运 Function 与主 dtype。普通 Local operand 使用 `B.IOT`；Shared form 使用一次性 `C.B.IOS`，随后紧跟表中规定的 companion header。
+`BSTART.TLSU` 选择数据搬运 Function 与主 dtype。普通 Local operand 使用 `B.IOT`；Shared form 使用一次性 `B.IOS`，随后紧跟表中规定的 companion header。
 
 ## 编码
 
@@ -35,8 +35,8 @@
 
 | Function | Operation | v5 operand schema |
 | ---: | --- | --- |
-| 0 | `TLOAD`; Shared form is GM2S full | Local: `B.IOT(dst)+B.IOR`; Shared: `C.B.IOS+B.IOR` |
-| 1 | `TSTORE`; Shared form is S2GM full | Local: `B.IOT(src)+B.IOR`; Shared: `C.B.IOS+B.IOR` |
+| 0 | `TLOAD`; Shared form is GM2S full | Local: `B.IOT(dst)+B.IOR`; Shared: `B.IOS+B.IOR` |
+| 1 | `TSTORE`; Shared form is S2GM full | Local: `B.IOT(src)+B.IOR`; Shared: `B.IOS+B.IOR` |
 | 2 | Local `TMOV` | `B.IOT(src,dst)` |
 | 3 | `TPREFETCH` | existing Local/cache schema |
 | 4 | `MGATHER` | existing Local schema |
@@ -44,19 +44,25 @@
 | 6 | `MGATHER.MASK` | existing Local masked-gather schema |
 | 7 | `MSCATTER.MASK` | existing Local masked-scatter schema |
 | 8 | `MGATHER.CAS` | existing Local atomic gather-CAS schema |
-| 9 | `TMOV.L2S.INSERT` | `C.B.IOS+B.IOT(Local src)` |
-| 10 | `TMOV.L2S.PUBLISH` | `C.B.IOS+B.IOT(Local src)` |
-| 11 | `TMOV.S2L.BROADCAST` | `C.B.IOS+B.IOT(Local dst)` |
-| 12 | `TMOV.S2L.EXTRACT` | `C.B.IOS+B.IOT(Local dst)` |
+| 9 | `TMOV.L2S.INSERT` | `B.IOS+B.IOT(Local src)` |
+| 10 | `TMOV.L2S.PUBLISH` | `B.IOS+B.IOT(Local src)` |
+| 11 | `TMOV.S2L.BROADCAST` | `B.IOS+B.IOT(Local dst)` |
+| 12 | `TMOV.S2L.EXTRACT` | `B.IOS+B.IOT(Local dst)` |
 | 13 | `GMOV` | `B.IOT(Local src,dst,PE_MASK,TSize)+B.IOR(peer_tid,0,0)` |
-| 14 | `TSTORE.SPART` | `C.B.IOS+B.IOR` |
+| 14 | `TSTORE.SPART` | `B.IOS+B.IOR` |
 | 15–31 | reserved | illegal |
 
 Function 9–12 由公开 `SharedMoveMode` 选择。Function 14 只由 Shared source 的 `TSTORE<pe_scope>` 选择；即使 source 已完整定义，full store 与 partition store 仍使用不同 Function。Function 13 是固定 Core4 collective `GMOV`，没有 scope 重载。
 
 ## Size 与 Mask
 
-GM→Shared size 编码在 `B.IOR.SharedTSize`。Local↔Shared size 编码在非零 `B.IOT.TSize`；Broadcast 可按规定的 size relation 使用更大的 Local logical size。`PE_MASK` 不改变 group participant 或 source-ready 要求。`GMOV` 的 `TSize` 表示完整逻辑 Tile，每个 PE 传输固定四分之一 fragment。
+Local operand 的 per-PE size 编码在 `B.IOT.TSize`；Shared operand 的
+per-PE size 与 `PE_MASK` 编码在 `B.IOS`。Local→Shared 的 destination size
+来自 `B.IOS`，Shared→Local 的 Local destination capacity 来自 `B.IOT`。
+`B.IOR` 不承载 Shared size，且不存在 mask-only `B.IOT` companion。
+`TSize=001..111` 表示每个 selected PE 的 128 B–8 KiB，core allocation 为
+`popcount(PE_MASK)` 倍。`PE_MASK=0000` 是 strict no-op。`GMOV` 也使用该
+per-PE size 规则。
 
 ## DataType
 

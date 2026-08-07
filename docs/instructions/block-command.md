@@ -15,8 +15,8 @@ PTO ISA 0.58.0 freezes this 99-form command ABI. `BSTART.TEPL` carries the two-b
 | Metric | Value |
 | --- | --- |
 | Accepted forms | 99 |
-| Operand fields | 57 |
-| Operand pieces | 189 |
+| Operand fields | 59 |
+| Operand pieces | 191 |
 | Semantic handlers | 21 |
 
 ## Groups
@@ -29,12 +29,11 @@ PTO ISA 0.58.0 freezes this 99-form command ABI. `BSTART.TEPL` carries the two-b
 | Bundle Data Attribute | 1 |
 | Bundle Control Attribute | 1 |
 | Bundle Offset | 1 |
-| Bundle Input &amp; Output | 6 |
+| Bundle Input &amp; Output | 7 |
 | Bundle Hint | 2 |
 | BSTART | 20 |
 | C.BSTART | 5 |
 | Bundle Split | 55 |
-| Bundle Shared Operand Binding | 1 |
 
 ## Handler coverage
 
@@ -108,11 +107,12 @@ PTO ISA 0.58.0 freezes this 99-form command ABI. `BSTART.TEPL` carries the two-b
 | Mnemonic | Assembly | Length | Kind | Handler | Summary | Encoding | Fields | Constraints |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | B.IOR | B.IOR [RegSrc0, RegSrc1, RegSrc2],[RegDst] | 32 | L32 | BindBundleScalarIO | Binds encoded scalar inputs and outputs to the current bundle interface. | 0:32b mask=0x0600707f match=0x00000013 | RegDst[5] encoding-defined (i7:5→v0)&lt;br&gt;RegSrc0[5] encoding-defined (i15:5→v0)&lt;br&gt;RegSrc1[5] encoding-defined (i20:5→v0)&lt;br&gt;RegSrc2[5] encoding-defined (i27:5→v0) | none |
+| B.IOS | B.IOS S&lt;SharedTID&gt;, mask=&lt;PE_MASK&gt; \| B.IOS mask=&lt;PE_MASK&gt;, -&gt;S&lt;SharedTID&gt;&lt;TSize&gt; | 32 | L32 | BindBundleSharedIO | Binds one ordered absolute core-private Shared register S0..S255 with a per-PE source/destination size code and four-PE participation mask. | 0:32b mask=0xf00871ff match=0x00001013 | SharedTID[8] encoding-defined (i20:8→v0)&lt;br&gt;PE_MASK[4] encoding-defined (i15:4→v0)&lt;br&gt;TSize[3] encoding-defined (i9:3→v0) | none |
 | B.IOT | B.IOT SrcTile0, SrcTile1, mask=PE_MASK, &lt;last&gt; | 32 | L32 | BindBundleTileIO | Binds v5 PE_MASK, ordered Local tile sources, last-use, and optional TSize/2-bit Local destination metadata; reuse bits do not exist. | 0:32b mask=0x00007e7f match=0x00004013 | SrcTile1[6] encoding-defined (i26:6→v0)&lt;br&gt;SrcTile0[6] encoding-defined (i20:6→v0)&lt;br&gt;L[1] encoding-defined (i19:1→v0)&lt;br&gt;PE_MASK[4] encoding-defined (i15:4→v0) | PE_MASK one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15} |
 | B.IOT | B.IOT SrcTile0, SrcTile1, mask=PE_MASK, &lt;last&gt;, -&gt;DstTile&lt;TSize&gt; | 32 | L32 | BindBundleTileIO | Binds v5 PE_MASK, ordered Local tile sources, last-use, and optional TSize/2-bit Local destination metadata; reuse bits do not exist. | 0:32b mask=0x0000707f match=0x00004013 | SrcTile1[6] encoding-defined (i26:6→v0)&lt;br&gt;SrcTile0[6] encoding-defined (i20:6→v0)&lt;br&gt;L[1] encoding-defined (i19:1→v0)&lt;br&gt;PE_MASK[4] encoding-defined (i15:4→v0)&lt;br&gt;TSize[3] encoding-defined (i9:3→v0)&lt;br&gt;DstTile[2] encoding-defined (i7:2→v0) | PE_MASK one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}&lt;br&gt;TSize one-of {1, 2, 3, 4, 5, 6, 7}&lt;br&gt;DstTile one-of {0, 1, 2, 3} |
 | B.IOT | B.IOT SrcTile0, mask=PE_MASK, &lt;last&gt; | 32 | L32 | BindBundleTileIO | Binds v5 PE_MASK, ordered Local tile sources, last-use, and optional TSize/2-bit Local destination metadata; reuse bits do not exist. | 0:32b mask=0xfc007e7f match=0x00005013 | SrcTile0[6] encoding-defined (i20:6→v0)&lt;br&gt;L[1] encoding-defined (i19:1→v0)&lt;br&gt;PE_MASK[4] encoding-defined (i15:4→v0) | PE_MASK one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15} |
 | B.IOT | B.IOT SrcTile0, mask=PE_MASK, &lt;last&gt;, -&gt;DstTile&lt;TSize&gt; | 32 | L32 | BindBundleTileIO | Binds v5 PE_MASK, ordered Local tile sources, last-use, and optional TSize/2-bit Local destination metadata; reuse bits do not exist. | 0:32b mask=0xfc00707f match=0x00005013 | SrcTile0[6] encoding-defined (i20:6→v0)&lt;br&gt;L[1] encoding-defined (i19:1→v0)&lt;br&gt;PE_MASK[4] encoding-defined (i15:4→v0)&lt;br&gt;TSize[3] encoding-defined (i9:3→v0)&lt;br&gt;DstTile[2] encoding-defined (i7:2→v0) | PE_MASK one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}&lt;br&gt;TSize one-of {1, 2, 3, 4, 5, 6, 7}&lt;br&gt;DstTile one-of {0, 1, 2, 3} |
-| B.IOT | B.IOT mask=PE_MASK, &lt;last&gt; &lt;, -&gt;DstTile&lt;TSize&gt;&gt; | 32 | L32 | BindBundleTileIO | Binds v5 PE_MASK, ordered Local tile sources, last-use, and optional TSize/2-bit Local destination metadata; TSize=DstTile=0 is the mask-only Shared TLOAD/TSTORE companion and PE_MASK=0000 is a legal no-op. | 0:32b mask=0xfff0707f match=0x00006013 | L[1] encoding-defined (i19:1→v0)&lt;br&gt;PE_MASK[4] encoding-defined (i15:4→v0)&lt;br&gt;TSize[3] encoding-defined (i9:3→v0)&lt;br&gt;DstTile[2] encoding-defined (i7:2→v0) | PE_MASK one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}&lt;br&gt;TSize one-of {0, 1, 2, 3, 4, 5, 6, 7}&lt;br&gt;DstTile one-of {0, 1, 2, 3} |
+| B.IOT | B.IOT mask=PE_MASK, &lt;last&gt;, -&gt;DstTile&lt;TSize&gt; | 32 | L32 | BindBundleTileIO | Binds a destination-only Local Tile operand with per-PE TSize, PE_MASK, and last-use metadata; PE_MASK=0000 is a strict no-op and there is no mask-only Shared companion form. | 0:32b mask=0xfff0707f match=0x00006013 | L[1] encoding-defined (i19:1→v0)&lt;br&gt;PE_MASK[4] encoding-defined (i15:4→v0)&lt;br&gt;TSize[3] encoding-defined (i9:3→v0)&lt;br&gt;DstTile[2] encoding-defined (i7:2→v0) | PE_MASK one-of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}&lt;br&gt;TSize one-of {1, 2, 3, 4, 5, 6, 7}&lt;br&gt;DstTile one-of {0, 1, 2, 3} |
 
 ## Bundle Hint
 
@@ -215,9 +215,3 @@ PTO ISA 0.58.0 freezes this 99-form command ABI. `BSTART.TEPL` carries the two-b
 | MCOPY | MCOPY [RegSrc0, RegSrc1, RegSrc2] | 32 | L32 | ExecuteMemoryCopy | Copies an encoded memory range with instruction-atomic preflight and snapshot semantics. | 0:32b mask=0x06007fff match=0x00000031 | RegSrc0[5] encoding-defined (i15:5→v0)&lt;br&gt;RegSrc1[5] encoding-defined (i20:5→v0)&lt;br&gt;RegSrc2[5] encoding-defined (i27:5→v0) | none |
 | MSET | MSET [RegSrc0, RegSrc1, RegSrc2] | 32 | L32 | ExecuteMemorySet | Fills an encoded memory range after complete access preflight. | 0:32b mask=0x06007fff match=0x00001031 | RegSrc0[5] encoding-defined (i15:5→v0)&lt;br&gt;RegSrc1[5] encoding-defined (i20:5→v0)&lt;br&gt;RegSrc2[5] encoding-defined (i27:5→v0) | none |
 | XB | XB ACR-ID, C-ID | 32 | L32 | ExecuteCrossBlockTransfer | Transfers the named context value to a target virtual core block. | 0:32b mask=0x00007fff match=0x00006f81 | ACR-ID[10] encoding-defined (i15:10→v0)&lt;br&gt;CROSS-BID[7] encoding-defined (i25:7→v0) | none |
-
-## Bundle Shared Operand Binding
-
-| Mnemonic | Assembly | Length | Kind | Handler | Summary | Encoding | Fields | Constraints |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| C.B.IOS | C.B.IOS S&lt;SharedTID&gt; \| C.B.IOS -&gt; S&lt;SharedTID&gt; | 16 | C16 | BindBundleSharedIO | Binds one absolute core-private Shared register S0..S255; source or destination role is derived from the surrounding BSTART schema and the binder is consumed once. | 0:16b mask=0xc03f match=0xc03c | SharedTID[8] encoding-defined (i6:8→v0) | none |

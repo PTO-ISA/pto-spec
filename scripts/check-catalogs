@@ -4808,8 +4808,8 @@ def main() -> int:
         "command form count must be 99",
     )
     require(command["form_constraint_count"] == 40, "command constraint count drift")
-    require(command["operand_field_count"] == 57, "command operand-field count drift")
-    require(command["operand_piece_count"] == 189, "command operand-piece count drift")
+    require(command["operand_field_count"] == 59, "command operand-field count drift")
+    require(command["operand_piece_count"] == 191, "command operand-piece count drift")
     require(command["semantic_handler_count"] == 21, "command handler count drift")
     require(
         Counter(row["semantic_family"] for row in command_forms)
@@ -4818,7 +4818,7 @@ def main() -> int:
     )
     require(
         Counter(row["length_bits"] for row in command_forms)
-        == Counter({16: 10, 32: 67, 48: 13, 64: 9}),
+        == Counter({16: 9, 32: 68, 48: 13, 64: 9}),
         "command length distribution changed",
     )
     command_ids = [row["form_id"] for row in command_forms]
@@ -5191,6 +5191,46 @@ def main() -> int:
             for row in iot_forms
         ),
         "PTO ISA 0.58.0 B.IOT must encode zero for Shared no-op use",
+    )
+    destination_iot_forms = [
+        row for row in iot_forms if any(field["name"] == "DstTile" for field in row["fields"])
+    ]
+    require(
+        len(destination_iot_forms) == 3
+        and all(
+            {
+                "field": "TSize",
+                "operator": "one-of",
+                "values": list(range(1, 8)),
+            }
+            in row["constraints"]
+            for row in destination_iot_forms
+        )
+        and all(
+            not any(field["name"] == "TSize" for field in row["fields"])
+            for row in iot_forms
+            if not any(field["name"] == "DstTile" for field in row["fields"])
+        ),
+        "PTO ISA 0.58.0 B.IOT destinations require nonzero per-PE TSize",
+    )
+
+    shared_io = next(row for row in command_forms if row["mnemonic"] == "B.IOS")
+    require(
+        shared_io["form_id"] == "b_ios_32_4ba5ef98fdaa"
+        and shared_io["semantic_group"] == "Bundle Input & Output"
+        and shared_io["semantic_handler"] == "BindBundleSharedIO"
+        and aggregate_encoding(shared_io) == (0xF00871FF, 0x00001013)
+        and field_shape(shared_io)
+        == {
+            "SharedTID": (8, ((20, 0, 8),)),
+            "PE_MASK": (4, ((15, 0, 4),)),
+            "TSize": (3, ((9, 0, 3),)),
+        },
+        "PTO ISA 0.58.0 B.IOS raw contract drift",
+    )
+    require(
+        all(row["mnemonic"] != "C.B.IOS" for row in command_forms),
+        "retired C.B.IOS must not remain active",
     )
 
     operations = tile["operations"]
@@ -5699,7 +5739,7 @@ def main() -> int:
         == sum(
             row["abi_change_acceptance"] is not None for row in command_comparison_rows
         )
-        == 7
+        == 8
         and bundle_command_totality["independent_comparison"]["executable_subset"]
         == command_status_counts["executable-subset"]
         == 80
@@ -8636,29 +8676,29 @@ def main() -> int:
     readme_body = (ROOT / "README.md").read_text(encoding="utf-8")
     coverage_body = (ROOT / "docs" / "coverage.md").read_text(encoding="utf-8")
     shared_binding_doc = (
-        ROOT / "docs/instructions/block/operands/C.B.IOS.md"
+        ROOT / "docs/instructions/block/operands/B.IOS.md"
     ).read_text(encoding="utf-8")
     shared_mask_doc = (
         ROOT / "docs/instructions/block/operands/B.IOT.md"
     ).read_text(encoding="utf-8")
     for spelling in (
-        "C.B.IOS S0",
-        "C.B.IOS S255",
-        "C.B.IOS -> S0",
-        "C.B.IOS -> S255",
+        "S0..S255",
+        "B.IOS S17, mask=1111",
+        "B.IOS mask=0011, ->S17<001>",
+        "0x00001013 / 0xf00871ff",
     ):
         require(spelling in shared_binding_doc, f"missing Shared syntax boundary: {spelling}")
     require(
-        "B.IOT mask=PE_MASK, last" in shared_mask_doc
-        and "mask=0000" in shared_mask_doc,
-        "Shared mask-only B.IOT syntax or zero-mask contract is absent",
+        "不存在 mask-only Shared companion" in shared_mask_doc
+        and "`0000` 是 strict no-op" in shared_mask_doc,
+        "B.IOT Shared-companion removal or zero-mask contract is absent",
     )
     active_shared_docs = (
         ROOT / "docs/architecture.md",
         ROOT / "docs/davincioo-arch/programming-model.md",
         ROOT / "docs/davincioo-arch/assembly-syntax.md",
         ROOT / "docs/davincioo-arch/state-and-data-types.md",
-        ROOT / "docs/instructions/block/operands/C.B.IOS.md",
+        ROOT / "docs/instructions/block/operands/B.IOS.md",
         ROOT / "docs/instructions/block/operands/B.IOT.md",
         ROOT / "docs/instructions/tile/TLOAD.md",
         ROOT / "docs/instructions/tile/TSTORE.md",
@@ -9120,7 +9160,7 @@ def main() -> int:
         "system_registers": 72,
         "traps": 13,
         "profile_hooks": 36,
-        "state_roots": 74,
+        "state_roots": 75,
     }
     require(
         set(release_traceability["inventories"]) == set(release_inventory_counts)
@@ -9232,8 +9272,8 @@ def main() -> int:
         len(release_item_ids)
         == len(set(release_item_ids))
         == release_traceability["summary"]["traceability_item_count"]
-        == 924
-        and release_traceability["summary"]["state_leaf_count"] == 229
+        == 925
+        and release_traceability["summary"]["state_leaf_count"] == 235
         and release_traceability["summary"]["open_requirement_count"] == 11
         and release_traceability["summary"]["open_profile_hook_count"] == 28
         and release_traceability["summary"]["closed_prerequisite_targets"] == 28
@@ -9297,8 +9337,8 @@ def main() -> int:
         and release_summary["required_approval_count"] == 2
         and release_summary["required_external_control_count"] == 10
         and release_summary["shard_count"] == 34
-        and release_summary["canonical_call_count"] == 110
-        and release_summary["reachable_test_subprogram_count"] == 104
+        and release_summary["canonical_call_count"] == 111
+        and release_summary["reachable_test_subprogram_count"] == 105
         and release_summary["open_prerequisite_targets"] == ["S5-T2", "S6-T1"]
         and release_summary["closed_gate_contract_count"] == 10
         and release_summary["candidate_gate_result_count"] == 0

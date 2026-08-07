@@ -777,7 +777,7 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "014501ed69c25cca527a67649c365c2da91859076479d7218111bda97df38f37"
+      "sha256": "5c831b14fb86df38f3fd398948ce2a303d15aac95540ea6e2f05f2d64bb246c4"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
@@ -801,11 +801,11 @@
     },
     {
       "path": "asl/bundle/state.asl",
-      "sha256": "a84d0145cd372c4ec640ebbe18afb1488098f88870b57a35341d7499b128f42f"
+      "sha256": "770bd387856f052bb45a7869d5e839f00100c222619f66bb9e30d38016987fc2"
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "8ac6dd8f0d960645d871b37bc8ededd8905944dd36a5d1745af45a5ac85e37d2"
+      "sha256": "5d366d86b293530e876b91ed972dfd0fd10f19b4918b5504bd453c0bee99980c"
     },
     {
       "path": "asl/tile/conversion.asl",

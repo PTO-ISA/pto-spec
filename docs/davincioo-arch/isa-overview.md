@@ -27,7 +27,7 @@
 | 对象 | 范围 | 说明 |
 | --- | --- | --- |
 | Local TReg | 单 PE | 普通 Tile payload；Matrix 的 C、D、Bias 与 auxiliary 均映射到此 |
-| Logical Tile | 单 Core 编程模型 | 512 B–32 KB 对象，按 distribution 映射到四个 fragment |
+| Logical Tile | 单 PE 编程模型 | 128 B–8 KB descriptor/payload；group view 由 distribution 派生 |
 | SharedTile | 单 Core | 带版本的 Core-local Shared storage；只供 cooperative TMATMUL 的 A/B side |
 | Logical TileAcc role | PTO C++/SSA | AccType partial-sum 角色；backend 仍使用 ordinary physical Local TReg |
 | GM | 系统内存 | 显式 TLOAD/TSTORE source 或 destination |
@@ -36,13 +36,17 @@ DavinciOO v5 不定义 architectural implicit ACC singleton。
 
 ## Logical Tile Model
 
-logical Tile 的大小为 512 B–32 KB，始终包含四个等大的 128 B–8 KB Local fragment。`PE_MASK` 选择哪些 PE payload 参与 Local instruction；它不改变 logical size，也不隐含 rendezvous。Storage class 与 distribution 是两个独立维度：`Shared` 不是 distribution，`Replicated4` 也不是 distribution 类型。
+Tile size 与 `B.DIM` 都按单 PE 表达。`TSize=001..111` 对应每 PE
+128 B–8 KB；Core allocation 是 `popcount(PE_MASK)` 倍。`PE_MASK` 使用固定
+PE identity、不会 pack selected PE，也不隐含 rendezvous。Storage class 与
+distribution 是两个独立维度：`Shared` 不是 distribution，`Replicated4`
+也不是 distribution 类型。
 
 ## Execution Scope
 
 - 普通 Local intrinsic 由 PE_MASK 选择独立 PE；1111 不隐含 barrier。
 - cooperative TMATMUL 由 Shared B operand 选择，固定 PE0–PE3 且 PE_MASK=1111；A 可为 Local 或 MShard4 Shared。
-- TGEMV 始终为 PE-local M=1 GEMV，不支持 Shared operand、C.B.IOS 或 core rendezvous。
+- TGEMV 始终为 PE-local M=1 GEMV，不支持 Shared operand、B.IOS 或 core rendezvous。
 - TSTORE<pe_scope> 与 SYNCALL<core_scope> 仍是显式改变语义的独立接口。
 
 ## Data Movement
@@ -77,4 +81,4 @@ Shared register RAW wait 只建立该 register 的 producer-to-consumer ready �
 
 ## Architecture Boundary
 
-v5 重新定义了 v4 的 `B.IOT` 字段和旧 compressed `C.B.DIM RegSrc` pattern，因此 decode 前必须先确定 profile：v4 保留 `.reuse`、`imm4` 与 `C.B.DIM RegSrc`；v5 使用 `PE_MASK`、`TSize`、压缩后的 `DstTile` 与 `C.B.IOS`。禁止跨 profile 重解释 binary。
+v5 重新定义了 v4 的 `B.IOT` 字段和旧 compressed `C.B.DIM RegSrc` pattern，因此 decode 前必须先确定 profile：v4 保留 `.reuse`、`imm4` 与 `C.B.DIM RegSrc`；v5 使用 `PE_MASK`、`TSize`、压缩后的 `DstTile` 与 `B.IOS`。禁止跨 profile 重解释 binary。

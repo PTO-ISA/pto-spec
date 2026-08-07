@@ -13,7 +13,7 @@
   },
   "opcode": "TSTORE",
   "family": "memory-tlsu",
-  "bundle": "Local form\nBSTART.TLSU TSTORE\nB.DATR/B.DIM\nB.IOT\nB.IOR\nShared full form\nBSTART.TLSU Function 1\nC.B.IOS\nB.IOR\nShared pe_scope form\nBSTART.TLSU Function 14\nC.B.IOS\nB.IOR",
+  "bundle": "Local form\nBSTART.TLSU TSTORE\nB.DATR/B.DIM\nB.IOT\nB.IOR\nShared full form\nBSTART.TLSU Function 1\nB.IOS\nB.IOR\nShared pe_scope form\nBSTART.TLSU Function 14\nB.IOS\nB.IOR",
   "operands": {
     "output": "GlobalTensor/partition-view destination",
     "input0": "Local tile or SharedTile source",
@@ -75,22 +75,20 @@ The default Shared overload uses TLSU Function 1 and exactly one issuer. Size co
 
 ```asm
 BSTART.TLSU TSTORE, FP16
-C.B.IOS     S17
-B.IOT       mask=0101, last   /* optional */
-B.IOR       a0, a1, 0
+B.IOS       S17, mask=1111
+B.IOR       a0, a1, 0, ->0
 ```
 
 ## Shared Partition Form
 
-`TSTORE<pe_scope>` uses Function 14. The optional mask-only B.IOT chooses fixed
-offset quarters; multiple bits are permitted and `0000` is a no-op. When B.IOT
-is absent the effective mask is `1111`.
+`TSTORE<pe_scope>` uses Function 14. Source `B.IOS.PE_MASK` chooses fixed-offset
+PE regions; multiple bits are permitted and `0000` is a strict no-op. There is
+no mask-only `B.IOT` companion.
 
 ```asm
 BSTART.TLSU TSTORE.SPART, FP16
-C.B.IOS     S17
-B.IOT       mask=0101, last
-B.IOR       a0, a1, 0
+B.IOS       S17, mask=0101
+B.IOR       a0, a1, 0, ->0
 ```
 
 ## Completion And Ordering
@@ -109,6 +107,6 @@ Shared store completion means the request has been accepted and the source has b
 
 ## Lowering 摘要
 
-Local form emits `B.IOT+B.IOR`. Shared form emits source `C.B.IOS`, optional
-mask-only `B.IOT`, and `B.IOR`. Programs must prevent overlapping concurrent
+Local form emits `B.IOT+B.IOR`. Shared form emits source `B.IOS+B.IOR`.
+Programs must prevent overlapping concurrent
 stores; the architecture provides no conflict detector or total order.

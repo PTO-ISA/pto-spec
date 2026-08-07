@@ -84,6 +84,8 @@ begin
     for index = 0 to 3 do
         _BundleSharedBindings[[index]].valid = FALSE;
         _BundleSharedBindings[[index]].shared_id = Zeros{8};
+        _BundleSharedBindings[[index]].size_code = 0;
+        _BundleSharedBindings[[index]].pe_mask = Zeros{4};
         _BundleSharedBindings[[index]].consumed = FALSE;
     end;
     _BundleControlAttributes.trap_enabled = FALSE;
@@ -312,6 +314,8 @@ begin
     for index = 0 to 3 do
         _BundleSharedBindings[[index]].valid = FALSE;
         _BundleSharedBindings[[index]].shared_id = Zeros{8};
+        _BundleSharedBindings[[index]].size_code = 0;
+        _BundleSharedBindings[[index]].pe_mask = Zeros{4};
         _BundleSharedBindings[[index]].consumed = FALSE;
     end;
     _BundleControlAttributes.trap_enabled = FALSE;
@@ -334,7 +338,8 @@ begin
     _BundleDimensions[[index]] = value;
 end;
 
-func BindBundleSharedIO(shared_id: bits(8))
+func BindBundleSharedIO(shared_id: bits(8), size_code: integer {0..7},
+                        pe_mask: bits(4))
 begin
     for index = 0 to 3 do
         if _BundleSharedBindings[[index]].valid &&
@@ -348,6 +353,8 @@ begin
         if !_BundleSharedBindings[[index]].valid then
             _BundleSharedBindings[[index]].valid = TRUE;
             _BundleSharedBindings[[index]].shared_id = shared_id;
+            _BundleSharedBindings[[index]].size_code = size_code;
+            _BundleSharedBindings[[index]].pe_mask = pe_mask;
             _BundleSharedBindings[[index]].consumed = FALSE;
             return;
         end;
@@ -371,6 +378,27 @@ begin
     assert _BundleSharedBindings[[ordinal]].valid &&
            !_BundleSharedBindings[[ordinal]].consumed;
     return _BundleSharedBindings[[ordinal]].shared_id;
+end;
+
+readonly func BundleSharedBindingSize(ordinal: integer {0..3})
+        => integer {0..7}
+begin
+    assert _BundleSharedBindings[[ordinal]].valid &&
+           !_BundleSharedBindings[[ordinal]].consumed;
+    return _BundleSharedBindings[[ordinal]].size_code;
+end;
+
+readonly func BundleSharedBindingMask(ordinal: integer {0..3}) => bits(4)
+begin
+    assert _BundleSharedBindings[[ordinal]].valid &&
+           !_BundleSharedBindings[[ordinal]].consumed;
+    return _BundleSharedBindings[[ordinal]].pe_mask;
+end;
+
+readonly func BundleSharedBindingIsDestination(
+    ordinal: integer {0..3}) => boolean
+begin
+    return BundleSharedBindingSize(ordinal) != 0;
 end;
 
 func ConsumeBundleSharedBindings(count: integer {1..4})
@@ -506,7 +534,7 @@ end;
 
 readonly func BundleTileDestinationSizeBytes(
     binding: BundleTileBindingIndex)
-    => integer {0,512,1024,2048,4096,8192,16384,32768}
+    => integer {0,128,256,512,1024,2048,4096,8192}
 begin
     if !_BundleTileBindings[[binding]].destination_valid then return 0; end;
     assert BundleTileDestinationSizeLegal(binding);

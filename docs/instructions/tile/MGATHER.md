@@ -105,7 +105,7 @@ B.IOR       a0, a1              # RegSrc0=base address，RegSrc1=GM stride；具
 - Tile operand binding 使用 `B.IOT`；GPR/address/stride operand 使用 `B.IOR`。
 - `B.DIM LB0/LB1/LB2` 分别表达 `ValidCol/ValidRow/Col`。二维 `MGATHER` 需要 `LB2`，因为 `Col` 决定 row-major Tile 中下一行的起始 stride。
 - `B.DATR` 只在需要非默认 data attribute 时发出；默认填零时可以省略。
-- Output size uses `B.IOT.TSize=001..111` for a `512 B..32 KB` logical Tile (`128 B..8 KB` per PE fragment).
+- Output size uses `B.IOT.TSize=001..111` for a `128 B..8 KB` per-PE Tile; Core allocation is `popcount(PE_MASK)` times that size.
 
 ## Header 展开说明
 
@@ -122,7 +122,7 @@ B.IOR       a0, a1              # RegSrc0=base address，RegSrc1=GM stride；具
 - Tile operand 使用 Linx-style 6-bit / 64-entry TReg namespace：`T#1..T#16`、`U#1..U#16`、`M#1..M#16`、`N#1..N#16`。
 - `B.IOT` 中表达的 operand 顺序必须与 `MGATHER` operand role 保持一致。
 - 一个 block 中最后一条 `B.IOT` 必须设置 `last`；只有一条 `B.IOT` 时也必须设置 `last`。
-- `B.IOT.TSize=001..111` encodes a `512 B..32 KB` logical Tile (`128 B..8 KB` per PE fragment).
+- `B.IOT.TSize=001..111` encodes a `128 B..8 KB` per-PE Tile; Core allocation is `popcount(PE_MASK)` times that size.
 - 二维 `MGATHER` 的 `ValidCol/ValidRow/Col` 均为 16-bit dimension 值，并应满足 `ValidCol <= Col`。
 - GM address、GM stride、alignment、dtype、mask/index 和 access size 约束由 PTO/Linx 来源页和当前 TLSU target profile 共同约束。
 - 本指令不隐含 cross-PE visibility 或 group-level barrier。

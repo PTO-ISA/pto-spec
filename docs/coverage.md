@@ -12,7 +12,7 @@ direct tile. PTO does not include vector instruction execution.
 | Bundle/command forms | 99 | Stage 4 command totality closed | generated exact-form priority witnesses, all-start descriptor assertions, exact 89-executed/10-rejected dispositions, full-width memory-command bounds, explicit metadata-only effects, transactional commit, and checked bundle-to-tile representability | target-specific behavior for profile-rejected frame, queue, context-memory, and cross-core-block commands requires a new profile contract |
 | Scalar semantics | AGU, ALU, AMO, BRU, FSU, SYS | all six scalar families have Stage 4 reference-totality closure; Stage 3 ordering closed | AGU address, update, prefetch-model, pair, event, fault, restart, and Reg5 evidence; ALU fixed-width and Reg5 evidence; AMO width, modifier, value, Reg5 alias, fault/restart, reservation, and DMA evidence; BRU condition, target, predicate, bundle, and fault evidence; FSU exhaustive carrier/type/rounding/flag/Reg5 evidence; SYS all-address transfer, Reg5 alias, fence-mask, request, recovery, privilege, and maintenance evidence | target numeric conformance |
 | System registers and traps | 72 register definitions, including 18 EBARG snapshot registers; 13 trap identities | Stage 2 register and trap targets closed | checked reset/read/write/side-effect/profile classes, generated all-bank reset and access witnesses, authoritative EBARG recovery, per-trap entry/routing/recovery tests, per-leaf TrapContext save/preserve/recover/invalidate evidence with an explicit EBARG/EBSTATE serialization boundary, and coherent interrupt/pending/timer/EOI behavior | active translation or debug-trigger profiles require new trigger, precedence, and conformance contracts |
-| Tile registers | 64 `TileInfo` records; 128-byte CELL and B.IOT size codes 3..9 | capacity, definedness, and explicit handoff invariants closed; Stage 2 tile-state target closed | hand mapping, 128-byte minimum, every B.IOT size code, maximum/aggregate capacity, packed sub-byte storage, no-effect rejection, per-element and reduction incomplete-source rejection, reconfiguration reset, layout, aliasing, push/full-slot, pop/empty-slot, source lifetime, double-free, and multi-slot tests | instruction-family numeric and memory-order refinements are tracked in Stages 3–5 |
+| Tile registers | 64 local `TileInfo` records plus 256 core-private Shared records; B.IOT/B.IOS size codes 1..7 encode 128 B..8 KiB per selected PE | capacity, definedness, per-PE allocation masks, and explicit handoff invariants closed; Stage 2 tile-state target closed | direct one-PE and bundle popcount allocation, 128-byte minimum, every size code, immutable Shared allocation masks, subset updates, expansion rejection, zero-mask no-op, maximum/aggregate capacity, packed sub-byte storage, no-effect rejection, per-element and reduction incomplete-source rejection, reconfiguration reset, layout, aliasing, push/full-slot, pop/empty-slot, source lifetime, double-free, and multi-slot tests | instruction-family numeric and memory-order refinements are tracked in Stages 3–5 |
 | TEPL | 87 operations | Stage 4 raw-carrier reference totality closed; Stage 5 conformance open | all-87 decoded deterministic state transitions, all-41 reserved selectors, 25 carrier types, layout rejection, multi-destination alias rejection, preserved regions, invalid indices/offsets, duplicate scatter, stable merge, and histogram corners | target floating, quantized, rounding, saturation, and exceptional-value conformance |
 | TLSU | 10 operations | Stage 4 reference totality closed; Stage 3 ordering closed | all-ten decoded effects, packed four-bit accesses, duplicate-lane ordering, masks, CAS, production events, restart, and first/middle/last preflight faults | target numeric conformance remains a Stage 5 obligation where profile hooks apply |
 | CUBE | 12 operations with explicit Local D and explicit Local C on `.ACC` variants | Stage 4 raw-carrier reference totality closed; explicit accumulation contract defined; Stage 5 conformance open | all-12 decoded results, all-25 type identities, mixed layouts/locations, source aliases, D == C read-old/write-new behavior, trap preservation, and composite preflight | named hardware accumulation, rounding, saturation, exceptional-value, and numeric conformance |
@@ -173,10 +173,10 @@ S5-T2, and M4 remain unchanged.
 
 Release traceability is independently fail-closed. The generated
 `spec/evidence/release-traceability-readiness.json` ledger assigns requirement,
-model, executable witness, and bounded status links to 924 exact units. It
+model, executable witness, and bounded status links to 925 exact units. It
 covers all 474 scalar forms, 99 command forms, 109 direct tile operations, 72
-system registers, 13 traps, 36 profile hooks, 47 requirements, and 74 top-level
-ASL state roots expanded to 229 leaf fields. State rows distinguish direct
+system registers, 13 traps, 36 profile hooks, 47 requirements, and 75 top-level
+ASL state roots expanded to 235 leaf fields. State rows distinguish direct
 architectural state, bounded storage and ordering abstractions,
 architectural-effect abstractions, and verification-only instrumentation. The
 inventory and link package is closed; 11 S5-T2-dependent requirements, 28
@@ -185,7 +185,7 @@ numeric hooks, and the later immutable-commit review keep S6-T1 open.
 The generated `spec/evidence/release-gate-readiness.json` ledger closes the
 S6-T2 contract inventory independently of candidate execution. It defines ten
 clone-verifiable release gates, proves the pinned least-privilege hosted
-workflow and exact 34-shard/110-call/104-subprogram topology, and enumerates ten
+workflow and exact 34-shard/111-call/105-subprogram topology, and enumerates ten
 external repository controls plus the PTO architecture and formal-model review
 perspectives. All candidate commit, runtime result, hosted-run, control-snapshot,
 and approval fields remain null. S5-T2 and S6-T1 therefore block candidate

@@ -8644,23 +8644,23 @@
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "f658fc26ebe480299bcdf5e7c423355f13857ad3cbc99b0bde06438419a6284b"
+      "sha256": "85a70d81584cfda050f2690e079996c2315df40e6f36df149c61134f896019b5"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "173c5d906e5289b90062d60ca24c00ff45c24b4d00414125e00b2d38894e1ca0"
+      "sha256": "63fd433bc0a6ae5ca6895a3b0e77a34a6680aeda220e354e6823e12126014401"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "a0d77d43ab4339ac14bc6ccbe79e3a65b256aeb25e57c2da9c95152d6f5c57c1"
+      "sha256": "10382028b3783177c21852a61a3d56ffa14dafe2f766dae55bfb1204ae284922"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "640de88e607e2683fd755288d0d240ba2bdce6ef4519a1396ab702987c08feef"
+      "sha256": "29c298d109d35efa83121a841140e604c09d8c922346f8118398c1f1d04d0569"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "fb2e265ba19fc6c3d64ea88627964401125e75f084f10d5d22be8eaf66040363"
+      "sha256": "f59a76f513aef937c805bf733f64ce85b9e496c0d7015dbf3f33809879fd3e4e"
     },
     {
       "path": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",

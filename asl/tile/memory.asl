@@ -16,7 +16,7 @@ begin
 end;
 
 func SharedTileFromLocal(source: TileIndex,
-                         capacity_bytes: integer {512,1024,2048,4096,8192,16384,32768})
+                         capacity_bytes: integer {128,256,512,1024,2048,4096,8192})
                          => TileInfo
 begin
     let source_tile = _Tiles[[source]];

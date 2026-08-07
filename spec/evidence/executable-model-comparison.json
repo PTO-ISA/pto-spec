@@ -10938,30 +10938,6 @@
     },
     {
       "abi_change_acceptance": null,
-      "classification": "divergence",
-      "encoding_match": false,
-      "evidence": [
-        "spec/catalog/command-forms.json",
-        "spec/evidence/bundle-command-totality.json",
-        "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
-      ],
-      "independent_status": "missing",
-      "index": 58,
-      "mnemonic": "C.B.IOS",
-      "pto_command_disposition": "executed",
-      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
-      "requirements": [
-        "PTO-REQ-BUNDLE-DISPATCH-001",
-        "PTO-REQ-BUNDLE-OPERATION-001",
-        "PTO-REQ-BUNDLE-STATE-001"
-      ],
-      "semantic_handler": "BindBundleSharedIO",
-      "stable_id": "c_b_ios_16_14f1b8fba5e6",
-      "surface": "command"
-    },
-    {
-      "abi_change_acceptance": null,
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
@@ -10971,7 +10947,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 59,
+      "index": 58,
       "mnemonic": "C.B.DIMI",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10995,7 +10971,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 60,
+      "index": 59,
       "mnemonic": "C.BSTART",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11019,7 +10995,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 61,
+      "index": 60,
       "mnemonic": "C.BSTART",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11043,7 +11019,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 62,
+      "index": 61,
       "mnemonic": "C.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11067,7 +11043,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 63,
+      "index": 62,
       "mnemonic": "C.BSTART.MPAR",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11091,7 +11067,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 64,
+      "index": 63,
       "mnemonic": "C.BSTART.MSEQ",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11115,7 +11091,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 65,
+      "index": 64,
       "mnemonic": "C.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11139,7 +11115,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 66,
+      "index": 65,
       "mnemonic": "C.BSTART.SYS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11163,7 +11139,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 67,
+      "index": 66,
       "mnemonic": "C.BSTOP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11187,7 +11163,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 68,
+      "index": 67,
       "mnemonic": "ERCOV",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11211,7 +11187,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 69,
+      "index": 68,
       "mnemonic": "ESAVE",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11235,7 +11211,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 70,
+      "index": 69,
       "mnemonic": "FENTRY",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11259,7 +11235,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 71,
+      "index": 70,
       "mnemonic": "FEXIT",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11283,7 +11259,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 72,
+      "index": 71,
       "mnemonic": "FRET.RA",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11307,7 +11283,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 73,
+      "index": 72,
       "mnemonic": "FRET.STK",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11331,7 +11307,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 74,
+      "index": 73,
       "mnemonic": "HL.BSTART CALL",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11355,7 +11331,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 75,
+      "index": 74,
       "mnemonic": "HL.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11379,7 +11355,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 76,
+      "index": 75,
       "mnemonic": "HL.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11403,7 +11379,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 77,
+      "index": 76,
       "mnemonic": "HL.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11427,7 +11403,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 78,
+      "index": 77,
       "mnemonic": "HL.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11451,7 +11427,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 79,
+      "index": 78,
       "mnemonic": "HL.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11475,7 +11451,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "missing",
-      "index": 80,
+      "index": 79,
       "mnemonic": "HL.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
@@ -11499,7 +11475,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 81,
+      "index": 80,
       "mnemonic": "HL.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11523,7 +11499,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 82,
+      "index": 81,
       "mnemonic": "HL.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11547,7 +11523,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 83,
+      "index": 82,
       "mnemonic": "HL.BSTART.SYS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11571,7 +11547,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 84,
+      "index": 83,
       "mnemonic": "HL.QMT",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11595,7 +11571,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 85,
+      "index": 84,
       "mnemonic": "HL.QPOP",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11619,7 +11595,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 86,
+      "index": 85,
       "mnemonic": "HL.QPUSH",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11643,7 +11619,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 87,
+      "index": 86,
       "mnemonic": "L.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11667,7 +11643,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 88,
+      "index": 87,
       "mnemonic": "L.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11691,7 +11667,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 89,
+      "index": 88,
       "mnemonic": "L.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11715,7 +11691,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 90,
+      "index": 89,
       "mnemonic": "L.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11739,7 +11715,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 91,
+      "index": 90,
       "mnemonic": "L.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11763,7 +11739,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 92,
+      "index": 91,
       "mnemonic": "L.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11787,7 +11763,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 93,
+      "index": 92,
       "mnemonic": "L.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11811,7 +11787,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 94,
+      "index": 93,
       "mnemonic": "L.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11835,7 +11811,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 95,
+      "index": 94,
       "mnemonic": "L.BSTART.SYS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11859,7 +11835,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 96,
+      "index": 95,
       "mnemonic": "MCOPY",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11883,7 +11859,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 97,
+      "index": 96,
       "mnemonic": "MSET",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11907,7 +11883,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 98,
+      "index": 97,
       "mnemonic": "XB",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -14807,6 +14783,35 @@
       "selector_match": true,
       "stable_id": "cube:0x016:TGEMV_MX_ACC",
       "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": {
+        "decision": "docs/architecture-decisions/0054-pe-local-tile-size-and-32-bit-shared-io-binding.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/49",
+        "kind": "accepted-0.58.0-command-encoding-break"
+      },
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/architecture-decisions/0054-pe-local-tile-size-and-32-bit-shared-io-binding.md",
+        "spec/catalog/command-forms.json",
+        "spec/evidence/bundle-command-totality.json",
+        "tests/asl/bundle-tests.asl"
+      ],
+      "independent_status": "missing",
+      "index": 98,
+      "mnemonic": "B.IOS",
+      "pto_command_disposition": "executed",
+      "pto_disposition": "PTO ISA 0.58.0 replaces the retired 16-bit C.B.IOS binder with a 32-bit B.IOS form carrying SharedTID, per-PE TSize, and PE_MASK; the independent snapshot retains the superseded binder encoding.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "BindBundleSharedIO",
+      "stable_id": "b_ios_32_4ba5ef98fdaa",
+      "surface": "command"
     }
   ],
   "schema": "pto.executable-model-comparison.v1",

@@ -72,8 +72,8 @@ EXPECTED_COUNTS = {
     "required_approval_count": 2,
     "required_external_control_count": 10,
     "shard_count": 34,
-    "canonical_call_count": 110,
-    "reachable_test_subprogram_count": 104,
+    "canonical_call_count": 111,
+    "reachable_test_subprogram_count": 105,
 }
 
 GATE_SPECS: tuple[dict[str, Any], ...] = (
@@ -418,7 +418,7 @@ def build_evidence() -> dict[str, Any]:
     traceability = load("spec/evidence/release-traceability-readiness.json")
     require(
         traceability["status"] == "inventory-and-links-closed-promotion-open"
-        and traceability["summary"]["traceability_item_count"] == 924
+        and traceability["summary"]["traceability_item_count"] == 925
         and traceability["summary"]["release_traceability_status"] == "open:S6-T1",
         "S6-T1 readiness contract drift",
     )

@@ -19,8 +19,8 @@
 | Surface | Linx/v4 baseline | DavinciOO v5 treatment |
 | --- | --- | --- |
 | `B.IOT` | `imm4`, reuse bits, 3-bit DstTile | Profile-isolated `PE_MASK`, `TSize`, 2-bit DstTile; no reuse |
-| `C.B.DIM RegSrc` | Compressed runtime dimension | Reinterpreted as `C.B.IOS`; runtime dimension uses `B.DIM` |
-| `BSTART.TLSU` | Functions 8–31 reserved | Functions 8–12 分配给 Shared movement/partition store；Function 13 分配给 `GMOV` |
+| `C.B.DIM RegSrc` | Compressed runtime dimension | Runtime dimension uses `B.DIM`; the overlapping 16-bit Shared binder is retired and replaced by 32-bit `B.IOS` |
+| `BSTART.TLSU` | Functions 8–31 reserved | Functions 9–12 分配给 Shared movement，Function 13 分配给 `GMOV`，Function 14 分配给 Shared partition store |
 | `BSTART.CUBE` | Existing TMATMUL/TGEMV functions | Numbers retained; Shared binder changes operand schema |
 | `FENCE.D` | PE-local fence mode `00000` | Core PE4 mode `00001` added as `FENCE.D.CORE4` |
 
@@ -30,7 +30,7 @@ DavinciOO v5 保留 12 个 base/BIAS/ACC、MX/non-MX TMATMUL/TGEMV operation，�
 
 ## TLSU Coverage
 
-TLOAD/TSTORE/TMOV retain PTO-visible names. GM↔Shared uses functions 0/1 with `C.B.IOS+B.IOR`; Local↔Shared uses functions 8–11; partition store uses function 12. Gather/scatter/prefetch do not target Shared storage in v5.
+TLOAD/TSTORE/TMOV retain PTO-visible names. GM↔Shared uses functions 0/1 with `B.IOS+B.IOR`; Local↔Shared uses functions 9–12; partition store uses function 14. Gather/scatter/prefetch do not target Shared storage in v5.
 
 ## Scalar 与 SYS 覆盖
 
@@ -38,7 +38,7 @@ Complete HTML 的 Scalar ISA 区保留锁定的 Linx source reference。v5 完�
 
 ## GMOV 覆盖
 
-`GMOV` 使用原 reserved 的 `BSTART.TLSU Function 13`，operand schema 为 `B.IOT(Local src,dst,PE_MASK,TSize)+B.IOR(peer_tid,0,0)`。它是固定 Core4 collective，与 Shared CUBE 一样要求收敛，但不使用 `C.B.IOS`。
+`GMOV` 使用原 reserved 的 `BSTART.TLSU Function 13`，operand schema 为 `B.IOT(Local src,dst,PE_MASK,TSize)+B.IOR(peer_tid,0,0)`。它是固定 Core4 collective，与 Shared CUBE 一样要求收敛，但不使用 `B.IOS`。
 
 ## PTO Mapping Status
 

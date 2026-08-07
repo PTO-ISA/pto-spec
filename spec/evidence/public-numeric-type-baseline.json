@@ -530,11 +530,11 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "173c5d906e5289b90062d60ca24c00ff45c24b4d00414125e00b2d38894e1ca0"
+      "sha256": "63fd433bc0a6ae5ca6895a3b0e77a34a6680aeda220e354e6823e12126014401"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "ef5b0ef5155618bccaf46376f9cdbcab5c1883cb931f4f08e8957f8cacafa943"
+      "sha256": "01e86e84cc2adf06734a1330efd10b3af499c8f7b05ac8c8b5f5d1be4da0a578"
     },
     {
       "path": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",

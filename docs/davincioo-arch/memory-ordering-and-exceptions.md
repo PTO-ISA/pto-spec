@@ -18,7 +18,7 @@
 | --- | --- | --- | --- |
 | GM | Local Tile | `TLOAD` | Distributed logical Tile；编译器推导 fragment 地址 |
 | Local Tile | GM | `TSTORE` | Distributed logical Tile |
-| GM | SharedTile | `TLOAD` overload | Exactly-one issuer；full load；自动按 512 B stripe 拆分 |
+| GM | SharedTile | `TLOAD` overload | Exactly-one issuer；`B.IOS` 选择 PE；每个 selected PE 使用 128 B–8 KiB per-PE size |
 | SharedTile | GM | `TSTORE` | Exactly-one issuer；full/core store |
 | SharedTile | GM | `TSTORE<pe_scope>` | Defined-mask partition；各 PE 指针独立且不重叠 |
 | Local Tile | SharedTile | `TMOV<Insert/Publish>` | 静态 producer mask 或 single owner |

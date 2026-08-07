@@ -91,11 +91,11 @@
     },
     {
       "path": "scripts/check-binary-closure",
-      "sha256": "0c0e15c3634e75602a359af6d2d00e22c8722353b457c07641817c327b118189"
+      "sha256": "4d87041c91fe2dbfb99b19e4d83fef13fb56c5c0237ca984900bea4875e265be"
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "d08ed1d59f0b1c1f55e0e6ccf1e61661aa7c90f338f0fcccc38533c41e510bc3"
+      "sha256": "8d057079fc0da738173d815ae6644b02b03c3548e62147b50484758c55dce1f9"
     },
     {
       "path": "scripts/check-publication-hygiene",
@@ -143,51 +143,51 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "3e2cbc5e38cf7ca14d2da8fe1afed0e9830a3be21f697c22313061ad2bbc3a3f"
+      "sha256": "e867709378634b5b8e002419033cb13b21625ff1d357ac077bb0a98cf186c245"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "173c5d906e5289b90062d60ca24c00ff45c24b4d00414125e00b2d38894e1ca0"
+      "sha256": "63fd433bc0a6ae5ca6895a3b0e77a34a6680aeda220e354e6823e12126014401"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "fb2e265ba19fc6c3d64ea88627964401125e75f084f10d5d22be8eaf66040363"
+      "sha256": "f59a76f513aef937c805bf733f64ce85b9e496c0d7015dbf3f33809879fd3e4e"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "50d72566221afd967dc919245a295163d855fe914d662e9150487cf6416d405e"
+      "sha256": "8d27fa022e93214867abab81ccc20f1980388212ceeb967ba6d9c9069b61648d"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "a0d77d43ab4339ac14bc6ccbe79e3a65b256aeb25e57c2da9c95152d6f5c57c1"
+      "sha256": "10382028b3783177c21852a61a3d56ffa14dafe2f766dae55bfb1204ae284922"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "640de88e607e2683fd755288d0d240ba2bdce6ef4519a1396ab702987c08feef"
+      "sha256": "29c298d109d35efa83121a841140e604c09d8c922346f8118398c1f1d04d0569"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "f658fc26ebe480299bcdf5e7c423355f13857ad3cbc99b0bde06438419a6284b"
+      "sha256": "85a70d81584cfda050f2690e079996c2315df40e6f36df149c61134f896019b5"
     },
     {
       "path": "spec/evidence/numeric-subnormal-contract.json",
-      "sha256": "c277afe2b9989f9f3d7961ec61087154cea7a09a31eacd10721a54217e49e426"
+      "sha256": "f2717cb413e884cd49ee658ba0743c70c309f5ea68c55784ef49a3025bbebe1e"
     },
     {
       "path": "spec/evidence/numeric-special-value-contract.json",
-      "sha256": "2eae113adc992a1f4fd923530c09429cd99f6198660d3a910821c1948a7696c8"
+      "sha256": "58ee3a47887b71a49064aeafb4a9caf3e6dd06156c6a2dcd9fc6a6f0cea8938b"
     },
     {
       "path": "spec/evidence/scalar-numeric-flag-contract.json",
-      "sha256": "9807c6b17f640083b84e09a3c4eab88b6306ead30f449cd439c5841fadd6f6b8"
+      "sha256": "9510a40d6186ff556df705565590db7811ccad463ec47559bdcf630b1bfea47c"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "34ffb0adecad8b0d0e7cba9b667ebca395c5d65fa90d6960bf88204ee97cf656"
+      "sha256": "6ba2e27a857912e67e7fedb3fa52521356270f47c3be763cd5cb6a56b17c2d14"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "09f73698470cf555d541638f65e42f2f7b5da2ad58c3d8fa28af7152ffb837e3"
+      "sha256": "09705140b5c9734c70b60facdd66ec5d78b465c1f245c41f1e3b9990cd7c50ee"
     },
     {
       "path": "spec/catalog/numeric-profile-applicability.json",
@@ -413,8 +413,8 @@
       "tests/asl/shards/concurrency-profile.asl"
     ],
     "shard_count": 34,
-    "canonical_call_count": 110,
-    "reachable_test_subprogram_count": 104,
+    "canonical_call_count": 111,
+    "reachable_test_subprogram_count": 105,
     "default_parallel_jobs": 4,
     "partition_status": "closed",
     "candidate_runtime_result": null
@@ -717,8 +717,8 @@
     "required_approval_count": 2,
     "required_external_control_count": 10,
     "shard_count": 34,
-    "canonical_call_count": 110,
-    "reachable_test_subprogram_count": 104,
+    "canonical_call_count": 111,
+    "reachable_test_subprogram_count": 105,
     "open_prerequisite_targets": [
       "S5-T2",
       "S6-T1"

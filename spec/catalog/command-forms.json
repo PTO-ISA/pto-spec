@@ -979,19 +979,18 @@
       "status": "accepted"
     },
     {
-      "asm": "B.IOT mask=PE_MASK, <last> <, ->DstTile<TSize>>",
+      "asm": "B.IOT mask=PE_MASK, <last>, ->DstTile<TSize>",
       "constraints": [
         {
           "field": "PE_MASK",
           "operator": "one-of",
           "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
         },
-        {
-          "field": "TSize",
-          "operator": "one-of",
-          "values": [
-            0,
-            1,
+      {
+        "field": "TSize",
+        "operator": "one-of",
+        "values": [
+          1,
             2,
             3,
             4,
@@ -1076,7 +1075,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleTileIO",
-      "semantic_summary": "Binds v5 PE_MASK, ordered Local tile sources, last-use, and optional TSize/2-bit Local destination metadata; TSize=DstTile=0 is the mask-only Shared TLOAD/TSTORE companion and PE_MASK=0000 is a legal no-op.",
+      "semantic_summary": "Binds a destination-only Local Tile operand with per-PE TSize, PE_MASK, and last-use metadata; PE_MASK=0000 is a strict no-op and there is no mask-only Shared companion form.",
       "status": "accepted"
     },
     {
@@ -3331,38 +3330,62 @@
       "status": "accepted"
     },
     {
-      "asm": "C.B.IOS S<SharedTID> | C.B.IOS -> S<SharedTID>",
+      "asm": "B.IOS S<SharedTID>, mask=<PE_MASK> | B.IOS mask=<PE_MASK>, ->S<SharedTID><TSize>",
       "constraints": [],
       "encoding": [
         {
           "index": 0,
-          "mask": "0xc03f",
-          "match": "0xc03c",
-          "width_bits": 16
+          "mask": "0xf00871ff",
+          "match": "0x00001013",
+          "width_bits": 32
         }
       ],
-      "encoding_kind": "C16",
+      "encoding_kind": "L32",
       "fields": [
         {
           "name": "SharedTID",
           "pieces": [
             {
-              "instruction_lsb": 6,
+              "instruction_lsb": 20,
               "value_lsb": 0,
               "width": 8
             }
           ],
           "signedness": "encoding-defined",
           "width": 8
+        },
+        {
+          "name": "PE_MASK",
+          "pieces": [
+            {
+              "instruction_lsb": 15,
+              "value_lsb": 0,
+              "width": 4
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 4
+        },
+        {
+          "name": "TSize",
+          "pieces": [
+            {
+              "instruction_lsb": 9,
+              "value_lsb": 0,
+              "width": 3
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 3
         }
       ],
-      "form_id": "c_b_ios_16_14f1b8fba5e6",
-      "length_bits": 16,
-      "mnemonic": "C.B.IOS",
+      "form_id": "b_ios_32_4ba5ef98fdaa",
+      "length_bits": 32,
+      "mnemonic": "B.IOS",
       "semantic_family": "CMD",
-      "semantic_group": "Bundle Shared Operand Binding",
+      "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleSharedIO",
-      "semantic_summary": "Binds one absolute core-private Shared register S0..S255; source or destination role is derived from the surrounding BSTART schema and the binder is consumed once.",
+      "semantic_summary": "Binds one ordered absolute core-private Shared register S0..S255 with a per-PE source/destination size code and four-PE participation mask.",
       "status": "accepted"
     },
     {
@@ -5317,8 +5340,8 @@
     }
   ],
   "isa": "PTO Instruction Set Architecture",
-  "operand_field_count": 57,
-  "operand_piece_count": 189,
+  "operand_field_count": 59,
+  "operand_piece_count": 191,
   "reviewed_encoding_overlaps": [
     {
       "broad_form_id": "b_iot_32_10db6db84f5d",
@@ -5329,11 +5352,6 @@
       "broad_form_id": "b_iot_32_8b8bce6bffe8",
       "narrow_form_id": "b_iot_32_2c07e7177fad",
       "reason": "source-only form fixes TSize to zero; destination form requires TSize 1..7 and a 2-bit DstTile"
-    },
-    {
-      "broad_form_id": "c_b_dimi_16_3f1b113c76ce",
-      "narrow_form_id": "c_b_ios_16_14f1b8fba5e6",
-      "reason": "C.B.IOS occupies the v5 compressed register-dimension encoding slot reassigned from C.B.DIM"
     },
     {
       "broad_form_id": "c_bstart_std_16_8b40f078c14a",

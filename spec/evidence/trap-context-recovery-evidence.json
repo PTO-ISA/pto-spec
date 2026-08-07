@@ -17,7 +17,7 @@
   "classification_counts": {
     "validity-control": 1,
     "portable-first-layer-visible": 14,
-    "internal-ebstate-only": 53
+    "internal-ebstate-only": 55
   },
   "leaf_fields": [
     {
@@ -619,6 +619,30 @@
       "recover_assertion": "assert _BundleSharedBindings[[0]].shared_id == Zeros{8} + 0x12;",
       "invalidate_assertion": null,
       "mutate_assertion": "assert _BundleSharedBindings[[0]].shared_id != Zeros{8} + 0x12;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_shared_bindings[].size_code",
+      "classification": "internal-ebstate-only",
+      "phase_policy": "save-clobber-recover",
+      "saved_lvalue": "_TrapContexts[[1]].bundle_shared_bindings[[0]].size_code",
+      "live_lvalue": "_BundleSharedBindings[[0]].size_code",
+      "save_assertion": "assert _TrapContexts[[1]].bundle_shared_bindings[[0]].size_code == 0;",
+      "mutate_statement": "_BundleSharedBindings[[0]].size_code = 3;",
+      "recover_assertion": "assert _BundleSharedBindings[[0]].size_code == 0;",
+      "invalidate_assertion": null,
+      "mutate_assertion": "assert _BundleSharedBindings[[0]].size_code != 0;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_shared_bindings[].pe_mask",
+      "classification": "internal-ebstate-only",
+      "phase_policy": "save-clobber-recover",
+      "saved_lvalue": "_TrapContexts[[1]].bundle_shared_bindings[[0]].pe_mask",
+      "live_lvalue": "_BundleSharedBindings[[0]].pe_mask",
+      "save_assertion": "assert _TrapContexts[[1]].bundle_shared_bindings[[0]].pe_mask == '1111';",
+      "mutate_statement": "_BundleSharedBindings[[0]].pe_mask = '0101';",
+      "recover_assertion": "assert _BundleSharedBindings[[0]].pe_mask == '1111';",
+      "invalidate_assertion": null,
+      "mutate_assertion": "assert _BundleSharedBindings[[0]].pe_mask != '1111';"
     },
     {
       "path": "_TrapContexts[].bundle_shared_bindings[].consumed",

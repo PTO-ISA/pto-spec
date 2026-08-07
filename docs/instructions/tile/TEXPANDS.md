@@ -104,7 +104,7 @@ B.IOR       s0                       # Scalar operand；由 scalar/GPR 或立即
 - `TEXPANDS` 没有 Tile source operand；Tile output binding 使用无输入形式的 `B.IOT`，并设置 `last`。
 - `B.DIM LB0/LB1/LB2` 分别表达 `ValidCol/ValidRow/Col`。二维 `TEXPANDS` 需要 `LB2`，因为 `Col` 决定 row-major Tile 中下一行的起始 stride。
 - `B.DATR` 只在需要非默认 data attribute 时发出；默认填零时可以省略。
-- Output size uses `B.IOT.TSize=001..111` for a `512 B..32 KB` logical Tile (`128 B..8 KB` per PE fragment).
+- Output size uses `B.IOT.TSize=001..111` for a `128 B..8 KB` per-PE Tile; Core allocation is `popcount(PE_MASK)` times that size.
 
 ## Header 展开说明
 
@@ -121,7 +121,7 @@ B.IOR       s0                       # Scalar operand；由 scalar/GPR 或立即
 - Destination Tile operand 使用 Linx-style 6-bit / 64-entry TReg namespace 的 output queue：`T/U/M/N`。
 - `B.IOT` 不声明 Tile source，只声明 destination Tile operand 和 output size class。
 - 一个 block 中最后一条 `B.IOT` 必须设置 `last`；只有一条 `B.IOT` 时也必须设置 `last`。
-- `B.IOT.TSize=001..111` encodes a `512 B..32 KB` logical Tile (`128 B..8 KB` per PE fragment).
+- `B.IOT.TSize=001..111` encodes a `128 B..8 KB` per-PE Tile; Core allocation is `popcount(PE_MASK)` times that size.
 - 二维 `TEXPANDS` 的 `ValidCol/ValidRow/Col` 均为 16-bit dimension 值，并应满足 `ValidCol <= Col`。
 - Destination 的 dtype、valid region 与 scalar contract 必须兼容；不兼容时硬件不保证结果正确性或应触发 profile-defined trap。
 - Source OOB 行为本轮不定义；PTO source OOB 中文/英文页差异后续在统一遗留项中收口。

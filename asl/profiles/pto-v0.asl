@@ -30,6 +30,7 @@ begin
             as SystemRegisterFileIndex]] = Zeros{PTO_XLEN} + 3;
     end;
     for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
+        _TileAllocationMasks[[index]] = Zeros{4};
         _Tiles[[index]].allocated = FALSE;
         _Tiles[[index]].contents_defined = FALSE;
         _Tiles[[index]].defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
@@ -45,6 +46,7 @@ begin
     end;
     for index = 0 to PTO_SHARED_TILE_COUNT - 1 do
         _SharedTiles[[index]].descriptor_valid = FALSE;
+        _SharedTiles[[index]].allocation_mask = Zeros{4};
         _SharedTiles[[index]].initialized_mask = Zeros{4};
         _SharedTiles[[index]].tile.allocated = FALSE;
         _SharedTiles[[index]].tile.contents_defined = FALSE;

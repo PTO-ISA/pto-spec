@@ -19,6 +19,13 @@ Current documentation version.
 
 Changes from PTO ISA 0.57.1:
 
+- Reissue 0.58.0 in place with new content hashes; objects and toolchains built
+  against the superseded 0.58 tree are incompatible and must be rebuilt.
+- Define `B.IOT.TSize` and `B.IOS.TSize` as 128 B–8 KiB per selected PE, with
+  Core allocation equal to `popcount(PE_MASK) * per_PE_size`.
+- Replace the retired 16-bit `C.B.IOS` with 32-bit `B.IOS`, carrying absolute
+  `S0..S255`, source/destination role, per-PE size, and PE mask in the Bundle
+  Input & Output encoding group.
 - Align the published Tile catalog with the 109-operation DavinciOO architecture set.
 - Add `GMOV` and `TFMA`, retain `THISTOGRAM`, and publish Shared `TMOV` variants.
 - Correct the canonical `TSEL`/`TSELS` encoding assignment and publish the accepted encodings for the newly added operations.

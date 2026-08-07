@@ -1040,14 +1040,18 @@
     },
     {
       "form_index": 58,
-      "form_id": "c_b_ios_16_14f1b8fba5e6",
-      "mnemonic": "C.B.IOS",
+      "form_id": "b_ios_32_4ba5ef98fdaa",
+      "mnemonic": "B.IOS",
       "semantic_handler": "BindBundleSharedIO",
       "decoded_fields": [
-        "SharedTID"
+        "SharedTID",
+        "PE_MASK",
+        "TSize"
       ],
       "consumed_fields": [
-        "SharedTID"
+        "SharedTID",
+        "PE_MASK",
+        "TSize"
       ],
       "disposition": "executed",
       "effect_class": "bundle-shared-binding",
@@ -3393,12 +3397,12 @@
     "aggregate_sha256": "1f8862ef90ee72d0e917398b2d96b2799f541f2e7198c103d9fc47af998a54ec",
     "matched_form_ids": 99,
     "exact_encoding_matches": 89,
-    "accepted_abi_encoding_divergences": 7,
+    "accepted_abi_encoding_divergences": 8,
     "executable_subset": 80,
     "decode_only": 16,
     "missing": 3,
     "authority": "non-normative structural comparison only",
-    "limitation": "The independent snapshot predates seven accepted PTO 0.58.0 command encoding changes and stages bundle payload execution, so it neither matches those masks nor validates PTO tile payload effects; ADR 0045, the PTO catalogs, and PTO-owned ASL evidence remain authoritative."
+    "limitation": "The independent snapshot predates eight accepted PTO 0.58.0 command encoding changes and stages bundle payload execution, so it neither matches those masks nor validates PTO tile payload effects; ADR 0045, ADR 0054, the PTO catalogs, and PTO-owned ASL evidence remain authoritative."
   },
   "requirement_ids": [
     "PTO-REQ-BUNDLE-DISPATCH-001",
