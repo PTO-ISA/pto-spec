@@ -1,6 +1,8 @@
 site_name: PTO ISA Reference
+site_description: Generated projection of the normative PTO ASL instruction sources
 docs_dir: ../instructions
 site_dir: ../../build/mkdocs-site
+use_directory_urls: false
 exclude_docs: |
   README.md
   index.md

@@ -13,6 +13,9 @@ architecture requirement.
   then read the mirrored page under `docs/instructions/` for supplementary
   explanation and examples. Do not infer semantics from generated catalogs,
   HTML, spreadsheets, or release projections.
+- For architecture-wide rules, locate the stable NDF `PTO-*` clause in ASL.
+  Continue through generated instruction pages, decision/open metadata, and
+  release evidence in that order; never create a second normative explanation.
 - Treat mnemonic ASL metadata and its `DOC-BEGIN` regions as the golden source.
   The corresponding Markdown ASL blocks and MkDocs navigation are generated
   projections and MUST pass `python3 scripts/instruction_docs.py --check`.
@@ -32,18 +35,28 @@ architecture requirement.
   decoder-witness, and semantic-handler coverage for every accepted operation.
 - Do not encode A2/A3, A5, or CPU implementation behavior as portable PTO semantics without a named target profile.
 - Keep toolchain, governance, normative semantics, and mechanical refactors in separate changes.
+- Start normative work from a linked NDF architecture issue naming the baseline
+  commit, changed clause IDs, defaults, unspecified behavior, compatibility,
+  open questions, focused evidence, and release impact.
 
 ## Verification
 
 ```bash
-make repo-check              # no opam switch required
-make setup                   # once, to build the pinned ASLRef
-make ci
+make pr-check                # lightweight PR lane; no opam or ASLRef
 git diff --check
+```
+
+Only the manual exact-head release lane runs the full model:
+
+```bash
+make setup
+make release-verify
+make release-prepare
 ```
 
 Generated `build/` and `.cache/` files must remain untracked.
 
-Do not weaken a check to make a change pass. Catalog witnesses and
+Do not treat a pending, skipped, failed, stale, or different-commit release run
+as success. Do not weaken a check to make a change pass. Catalog witnesses and
 `tests/canary/` prove that validation can reject invalid inputs; a failing
 fixture is evidence, not an obstacle.

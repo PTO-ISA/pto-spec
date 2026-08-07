@@ -1,33 +1,68 @@
-name: Formal model change
-description: Propose a normative PTO architecture modeling change.
-title: "[model]: "
+name: NDF architecture change
+description: Propose one traceable normative PTO architecture delta before implementation.
+title: "[ndf]: "
 labels: [formal-model]
 body:
-  - type: textarea
-    id: requirements
+  - type: input
+    id: baseline
     attributes:
-      label: Normative requirements
-      description: Provide stable requirement IDs and source links.
+      label: Baseline commit
+      description: Full 40-character commit SHA against which the delta is defined.
+      placeholder: 0123456789abcdef0123456789abcdef01234567
     validations:
       required: true
   - type: textarea
-    id: behavior
+    id: clauses
     attributes:
-      label: Architecture-visible behavior
-      description: Define inputs, outputs, state, legality, ordering, faults, and profile scope.
+      label: Affected NDF clause IDs
+      description: List existing stable PTO-* IDs and proposed new IDs. Use N/A only for repository maintenance.
+      placeholder: |
+        - PTO-TILE-CAPACITY-PER-PE
+        - PTO-INST-TILE-TLOAD
     validations:
       required: true
   - type: textarea
-    id: ambiguity
+    id: delta
     attributes:
-      label: Open decisions and ambiguities
-      description: Identify any behavior that must not be guessed during implementation.
+      label: Normative delta
+      description: State the current behavior, proposed behavior, legality, effects, ordering, and faults without duplicating an ASL algorithm.
+    validations:
+      required: true
+  - type: textarea
+    id: defaults
+    attributes:
+      label: Defaults and intentionally unspecified behavior
+      description: Define every omitted-field default and every behavior the architecture intentionally leaves unspecified.
+    validations:
+      required: true
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility and toolchain impact
+      description: Describe encoding, assembly, ABI, compiler, assembler, disassembler, emulator, RTL, and dependent-repository impact.
+    validations:
+      required: true
+  - type: textarea
+    id: questions
+    attributes:
+      label: Open questions
+      description: List decisions that must be resolved before ASL is changed. Write None when the delta is complete.
     validations:
       required: true
   - type: textarea
     id: evidence
     attributes:
-      label: Proposed verification evidence
-      description: List positive, boundary, negative, state-transition, and differential tests.
+      label: Verification evidence
+      description: List focused positive, boundary, negative, state-transition, and projection-drift tests.
+    validations:
+      required: true
+  - type: dropdown
+    id: release
+    attributes:
+      label: Release impact
+      description: State whether a fresh exact-head manual release verification is required.
+      options:
+        - Required - normative or release-evidence change
+        - Not required - non-normative repository maintenance
     validations:
       required: true

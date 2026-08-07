@@ -5,7 +5,7 @@
   "policy": {
     "authority": "The frozen PTO candidate, clone-verifiable gates, hosted validation, protected-branch state, and recorded architecture/formal approvals must agree before M6 promotion.",
     "no_live_branch_evidence": "A passing run on a moving draft branch is useful feedback but is not architecturally-complete release evidence.",
-    "long_running_policy": "Long runtime gates execute through the checked 52-shard topology and hosted CI; readiness generation validates their exact contract without waiting for them.",
+    "long_running_policy": "Long runtime gates execute only through the manually dispatched exact-head 53-shard release topology; readiness generation validates the contract without waiting for it.",
     "closure_rule": "S6-T2 closes only after cumulative S0 through S6-T1 closure, one immutable signed candidate, every local and hosted gate passing at that commit, all external controls verified, and both review perspectives accepted."
   },
   "sources": [
@@ -19,23 +19,27 @@
     },
     {
       "path": ".github/workflows/asl.yml",
-      "sha256": "398f12718edaf66797447001f44f195a8107a10b530ea6e46a4bb8b6f51985af"
+      "sha256": "491df8e5bffdd0518026d9eb018cd49e1d12a6301e539756f2e0d685283f7e11"
+    },
+    {
+      "path": ".github/workflows/release.yml",
+      "sha256": "0bb96bb7b44eab4176081a523f8aa0cc85909d90fadbcc66563ce9cee48a1bcd"
     },
     {
       "path": "CONTRIBUTING.md",
-      "sha256": "c6f9e1e0c53aceb3c068d478067c021e897ebde23a63acaaccbdd668bd0bdd77"
+      "sha256": "1aef7301df0ca3c10cb87e72f5fe944bb30c1b54eca2d6f0a730ab2e42c32b7b"
     },
     {
       "path": "GOVERNANCE.md",
-      "sha256": "177df7d10c7d85e221f76c399879a06415b82a45918e1a8a0533b2eb665b8aef"
+      "sha256": "594446047feab5ed74a73fdb1de1952f7b366ab16ce3464416c5238dccee30d9"
     },
     {
       "path": "Makefile",
-      "sha256": "a1c9ba81980137c3529affed35cae25912dff6aad41a698d31553b9c6ef7cdea"
+      "sha256": "1039bfb26f147d0fdff9d0eed8dad1d43083d04367b2fcc380634eeb869cd5c9"
     },
     {
       "path": "docs/review-checklist.md",
-      "sha256": "0768e306a54a5512018450567bddead28d5cf140956589340b249bd4accdf08a"
+      "sha256": "04d560a8df75b4a8b5dcff7bb24485d65c2fa245418fcaff5a27776ebc3096c8"
     },
     {
       "path": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
@@ -99,11 +103,19 @@
     },
     {
       "path": "scripts/check-publication-hygiene",
-      "sha256": "a6a999cdd60d22360572e6961a4dd4d80e874f1759d08c35a5eeea4636f5035e"
+      "sha256": "de876297b329c9ef0a2261bf75ea1ef99a13428f30a57b8e94958d2de65a4ee0"
+    },
+    {
+      "path": "scripts/check-pr",
+      "sha256": "855b9913f03135a0378550e2babde2689cd91b3c9c4e3dfe4e70a7a5d6384dc6"
+    },
+    {
+      "path": "scripts/check-release-workflow",
+      "sha256": "f8c4a8fcd7157701fcd7f647ea358202979d963384d973ef98395112c3c33858"
     },
     {
       "path": "scripts/check-repository",
-      "sha256": "5d5c8e3f78659494450710ff306338c75a8fbc8b3ab09581cd746ac9d2373f92"
+      "sha256": "a6a3085871a3ed1f00c656d3abe14bdb441f00b79dce91081c5140b443b358f4"
     },
     {
       "path": "scripts/check-toolchain",
@@ -212,7 +224,7 @@
     {
       "id": "S6-T2-B",
       "status": "closed",
-      "target": "prove hosted workflow pinning and exact parallel test topology",
+      "target": "prove manual exact-head workflow pinning and exact shard topology",
       "blocked_by": []
     },
     {
@@ -268,9 +280,9 @@
       "classification": "release-governance",
       "statement": "No frozen candidate has complete clean-tree local and hosted gate results.",
       "acceptance_evidence": [
-        "clean make ci",
+        "clean make release-verify and make release-prepare",
         "git diff --check",
-        "passing hosted validate at the same candidate commit"
+        "passing Release / validate at the same candidate commit"
       ]
     },
     {
@@ -355,20 +367,22 @@
     "candidate_freeze_status": "blocked"
   },
   "workflow_contract": {
-    "workflow": ".github/workflows/asl.yml",
-    "workflow_name": "ASL",
-    "required_check": "validate",
+    "workflow": ".github/workflows/release.yml",
+    "workflow_name": "Release verification",
+    "trigger": "workflow_dispatch with exact commit input",
+    "required_check": "Release / validate",
     "permissions": {
       "contents": "read"
     },
-    "concurrency_cancel_in_progress": true,
+    "concurrency_cancel_in_progress": false,
     "timeout_minutes": 360,
-    "matrix_fail_fast": true,
+    "matrix_fail_fast": false,
     "matrix_max_parallel": 8,
     "protected_aggregator_needs": [
       "plan",
       "strict-model",
-      "asl-shard"
+      "asl-shard",
+      "release-evidence"
     ],
     "actions": [
       {
@@ -378,6 +392,10 @@
       {
         "action": "ocaml/setup-ocaml",
         "commit": "15d660006c1d3110d77c34b7faa3bddefe8b82f0"
+      },
+      {
+        "action": "actions/upload-artifact",
+        "commit": "ea165f8d65b6e75b540449e92b4886f43607fa02"
       }
     ],
     "contract_status": "closed"
@@ -409,6 +427,7 @@
       "tests/asl/shards/tlsu-totality.asl",
       "tests/asl/shards/cube-totality.asl",
       "tests/asl/shards/core-bundle.asl",
+      "tests/asl/shards/bundle-scalar-defaults.asl",
       "tests/asl/shards/bundle-tile-allocation.asl",
       "tests/asl/shards/scalar-base.asl",
       "tests/asl/shards/scalar-agu-effects.asl",
@@ -437,7 +456,7 @@
       "tests/asl/shards/mgather-mscatter-restart.asl",
       "tests/asl/shards/concurrency-profile.asl"
     ],
-    "shard_count": 52,
+    "shard_count": 53,
     "canonical_call_count": 113,
     "reachable_test_subprogram_count": 107,
     "default_parallel_jobs": 4,
@@ -510,14 +529,14 @@
     },
     {
       "id": "RG-05",
-      "name": "parallel executable semantics",
-      "command": "make test-parallel",
+      "name": "complete executable semantics",
+      "command": "make test-shards",
       "evidence": [
         "Makefile",
         "scripts/check-asl-test-shards",
         "tests/asl/main.asl"
       ],
-      "acceptance": "All canonical executable tests pass through the exact 52-shard partition with no missing, duplicate, empty, or unreachable test surface.",
+      "acceptance": "All canonical executable tests pass through the exact 53-shard partition with no missing, duplicate, empty, or unreachable test surface.",
       "long_running": true,
       "contract_status": "closed",
       "candidate_commit": null,
@@ -527,11 +546,11 @@
     {
       "id": "RG-06",
       "name": "aggregate release gate",
-      "command": "make ci",
+      "command": "make release-verify",
       "evidence": [
         "Makefile"
       ],
-      "acceptance": "Repository, pinned toolchain, strict type-check, and parallel runtime gates pass together after clean regeneration.",
+      "acceptance": "The lightweight repository contract, release identity, pinned toolchain, strict type-check, and all runtime shards pass together at one exact candidate.",
       "long_running": true,
       "contract_status": "closed",
       "candidate_commit": null,
@@ -614,7 +633,7 @@
     {
       "id": "EC-02",
       "name": "required hosted check",
-      "required_state": "strict validate check is required before main updates",
+      "required_state": "PR / validate is required before main updates; release publication separately requires exact-head Release / validate",
       "verification_method": "GitHub repository and branch-protection API snapshot at the immutable candidate commit",
       "observed_at": null,
       "observed_state": null,
@@ -741,7 +760,7 @@
     "gate_count": 10,
     "required_approval_count": 2,
     "required_external_control_count": 10,
-    "shard_count": 52,
+    "shard_count": 53,
     "canonical_call_count": 113,
     "reachable_test_subprogram_count": 107,
     "open_prerequisite_targets": [

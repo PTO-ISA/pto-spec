@@ -2934,15 +2934,15 @@
     },
     {
       "path": "docs/coverage.md",
-      "sha256": "31ec1cd90e945fc0d9da6b41d307ec0e45db6dc00021a9d609531d1fd9d64777"
+      "sha256": "3eebe593478a851bc4bcf50eee4cb336c53a927ce4ac09a30ffd71bc7e3908be"
     },
     {
       "path": "docs/maturity-bringup-plan.md",
-      "sha256": "db28c7c5cb39ec7851772dc27fee28df94ba5161adf7ca32ccd8a5d3be2f319f"
+      "sha256": "87732ddb8b0e73a44029bf91853a71cb91f575f05d49ef171e5393f01c332165"
     },
     {
       "path": "docs/maturity-stage-targets.md",
-      "sha256": "20061ab7a0ed7dfd53e65b2726df372e40899a320fdc98a86f06f2c634519577"
+      "sha256": "6a10864ce71c53c72b0922228343cbe10f42eaccb9dc869665e938c6846a4583"
     },
     {
       "path": "docs/memory-model.md",
@@ -2954,7 +2954,7 @@
     },
     {
       "path": "docs/normative-sources.md",
-      "sha256": "078fe80b03bf99ba8edc9581f9e300a2256daa1564e10110f0c79434c51b1ab5"
+      "sha256": "fdc51c69a4c0b5ec2bc7f68daca2eb2d63bdc8bf189cb4a67742cb26fa982862"
     },
     {
       "path": "docs/numeric-profile-decision-register.md",
@@ -2966,7 +2966,7 @@
     },
     {
       "path": "docs/review-checklist.md",
-      "sha256": "0768e306a54a5512018450567bddead28d5cf140956589340b249bd4accdf08a"
+      "sha256": "04d560a8df75b4a8b5dcff7bb24485d65c2fa245418fcaff5a27776ebc3096c8"
     },
     {
       "path": "spec/catalog/command-forms.json",
@@ -3070,7 +3070,7 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "4a9f73f3db4a30ae8133a55241f4620485a85fe6832ec69132c2d9b68ecd66be"
+      "sha256": "34e54b5e95fbd530ca14cd4a871bd1d669a3596c3e2453f0956b6c3aca8e94c5"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
@@ -3160,7 +3160,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "e0701b5713392cfa191cf86b68ae9121a814a6ee8dcba8e5cf91f6f2fa2ea997",
+  "content_sha256": "e541a25339d98b734c9ba6f0d91273e6160d35a567aa1166e2a2a1d860e287fa",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",

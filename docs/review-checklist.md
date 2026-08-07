@@ -53,9 +53,11 @@
 - Local and hosted results name the same signed candidate commit; passing CI on
   an earlier or moving branch head is not release evidence.
 - The candidate records a GitHub protection/repository snapshot covering the
-  required `validate` check, administrator enforcement, signatures, linear
+  required `PR / validate` check, administrator enforcement, signatures, linear
   history, conversation resolution, force-push/deletion protection, merge
   authority/method, and web signoff.
 - Mnemonic spelling alone imports no semantics. Every retained rule must be
   stated in PTO ASL, catalog metadata, an accepted ADR, and executable tests.
 - Toolchain updates are isolated from normative changes, and any canary fixture they change is explained.
+- Publication additionally requires a successful manual `Release / validate`
+  run naming the same exact candidate commit.

@@ -375,15 +375,15 @@ git commit -m "ci: add exact-head manual release verification"
 - Consumes: `make pr-check`, `make release-verify`, and stable NDF IDs.
 - Produces: NDF architecture issue and PR review contracts with no reference to the old required hosted ASL gate.
 
-- [ ] **Step 1: Replace the architecture issue template**
+- [x] **Step 1: Replace the architecture issue template**
 
 Require baseline commit, affected clause IDs, normative delta, defaults and unspecified behavior, compatibility/toolchain impact, open questions, verification evidence, and release impact. Rename the visible template to `NDF architecture change` while preserving the file path to avoid a second obsolete template.
 
-- [ ] **Step 2: Replace the PR checklist**
+- [x] **Step 2: Replace the PR checklist**
 
 Require linked issue, changed clause IDs, source owner, regenerated projections, focused tests, `make pr-check`, and explicit declaration that full ASL verification is deferred to manual release.
 
-- [ ] **Step 3: Update repository guidance**
+- [x] **Step 3: Update repository guidance**
 
 Document the two lanes and source lookup order:
 
@@ -393,11 +393,11 @@ ASL owner -> generated instruction page -> decision/open metadata -> release evi
 
 Remove statements that every PR must pass the full hosted `validate` ASL matrix.
 
-- [ ] **Step 4: Delete legacy content and repair links**
+- [x] **Step 4: Delete legacy content and repair links**
 
 Delete `docs/legacy/` entirely. Regenerate MkDocs navigation and use publication/link checks to find any remaining references. Do not relocate the old prose elsewhere.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run:
 

@@ -321,11 +321,11 @@ ISA registers. The ledger is evidence and claim-hygiene control; it does not
 outrank the ASL, catalogs, or accepted architecture decisions.
 
 `release-gate-readiness.json` is the generated input to S6-T2. It freezes the
-clone-verifiable release commands, hosted workflow policy, parallel test
+clone-verifiable release commands, manual exact-head workflow policy, shard test
 topology, external protected-branch obligations, and the two required review
 perspectives separately from their future candidate-specific results. A green
 run on a moving draft branch is not release evidence. Candidate commit,
-clean-tree reproduction, hosted validation, branch-control snapshot, and
+clean-tree reproduction, exact-head release validation, branch-control snapshot, and
 review fields remain empty until Stage 5 and S6-T1 close and one immutable
 signed candidate can be reviewed.
 

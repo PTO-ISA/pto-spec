@@ -1,43 +1,58 @@
 # Contributing
 
-`pto-spec` is the normative PTO architecture repository. Normative PTO semantics require an approved
-architecture change proposal before code is added.
+`pto-spec` is an evolving normative architecture repository. ASL is the only
+current normative source; generated instruction pages are review projections,
+not an independent specification.
 
-## Before opening a pull request
+## Architecture change flow
 
-1. Open a formal-model issue for normative types, state, legality, instruction behavior, ordering, or faults.
-2. Cite stable public PTO requirement IDs and source links.
-3. Separate ASLRef pin updates, governance changes, normative semantics, and mechanical refactors.
-4. Follow the repo-local `$pto-asl` skill under `.codex/skills/pto-asl/` when using Codex.
-5. Run `make repo-check` for fast feedback without an opam switch.
-6. Run `make setup` once, then `make ci` and `git diff --check`.
+1. Open an **NDF architecture change** issue against a full baseline commit.
+2. Name every affected stable `PTO-*` clause ID and resolve open questions before implementation.
+3. Change the owning ASL clause or mnemonic file first.
+4. Regenerate instruction pages, navigation, catalogs, traceability, and evidence owned by that ASL change.
+5. Add focused positive, boundary, negative, and state-transition tests.
+6. Run `make pr-check` and open a small, reviewable pull request linked to the issue.
 
-## Pull requests
+Use the NDF clause form and levels defined by the
+[Normative Design Framework](https://github.com/hengliao1972/normative_language/blob/main/normative_language.md).
+Do not create a parallel prose definition. The lookup order is:
 
-Keep changes small and reviewable. Complete the pull request template, disclose known gaps, and do not commit generated
-`build/` or `.cache/` content. Normative changes must update
-`spec/requirements.json`, add tests under `tests/asl/`, and list those tests in
-`ASL_TESTS` so they execute.
+```text
+ASL owner -> generated instruction page -> decision/open metadata -> release evidence
+```
 
-Do not relax a check to make a change pass. The canaries and generated
-witnesses exist to make invalid inputs fail; if one starts failing, explain the
-contract change rather than adjusting the check around it.
+Defaults, intentionally unspecified behavior, encoding/assembly impact, and
+dependent-toolchain impact must be explicit in the issue and represented in
+the ASL owner where architectural.
 
-For an accepted scalar form, update its exact mask/match, operand pieces,
-signedness, constraints, and semantic family together. For a tile operation,
-update its selector, handler mapping, evidence disposition, and tests together.
-Do not hand-edit `build/decoders.asl`; it is reproduced from the canonical
-catalogs during every build.
+## Pull request lane
 
-Public source reconciliation changes must update the audited commit, content
-hashes, per-row disposition, ADR or rationale, and generated ledger together.
+`make pr-check` is intentionally lightweight. It checks NDF structure,
+repository and shard topology, generators, documentation drift, script tests,
+publication hygiene, and whitespace. It does not install opam, run ASLRef, or
+claim release readiness.
 
-Commit messages should explain intent and record important constraints, rejected alternatives, verification, and known
-gaps. Use native Git trailers when those details are useful.
+Keep toolchain changes, governance changes, normative semantics, and mechanical
+refactors separate. Do not weaken a canary or validator to make a change pass.
+
+## Release lane
+
+After normative changes are merged, dispatch the `Release verification`
+workflow with the exact 40-character `main` commit SHA. The release lane runs
+the pinned ASLRef toolchain canaries, strict model, all ASL shards, and
+reproducible release evidence. Locally, the equivalent sequential command is:
+
+```bash
+make setup
+make release-verify
+make release-prepare
+```
+
+A pending, skipped, failed, stale, or different-commit run is not release
+evidence. Verification does not itself create a tag or GitHub release.
 
 ## Licensing
 
 Contributions are accepted under the BSD 3-Clause License in `LICENSE`. Do not
 copy third-party specification prose, source, or diagrams unless their license
-is compatible and attribution is recorded in `NOTICE`. Non-public comparison
-material must never be copied, named, or linked from this repository.
+is compatible and attribution is recorded in `NOTICE`.

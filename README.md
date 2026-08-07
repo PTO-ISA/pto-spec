@@ -1,6 +1,6 @@
 # PTO ISA Formal Specification
 
-[![ASL validation](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml/badge.svg)](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml)
+[![PR validation](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml/badge.svg)](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml)
 
 `pto-spec` is the normative ASL1 definition of the PTO Instruction Set
 Architecture. It specifies a 64-bit scalar ISA, bundle/command forms, direct
@@ -179,6 +179,10 @@ register addresses, or execution behavior.
 Normative authority and source precedence are defined in
 [Normative sources](docs/normative-sources.md). The primary review surfaces are:
 
+```text
+ASL owner -> generated instruction page -> decision/open metadata -> release evidence
+```
+
 | Surface | Role |
 | --- | --- |
 | [`asl/`](asl/) | Golden executable architectural state, instruction metadata, legality, and semantics |
@@ -210,39 +214,31 @@ Accepted architecture decisions are retained under
 
 ## Validation
 
-Prerequisites are Git, GNU Make, Python 3.11+, OCaml, and an initialized opam
-switch. Install ASLRef build dependencies once, then run the complete gate:
+Ordinary pull requests run a lightweight, opam-free contract:
+
+```bash
+make pr-check
+```
+
+This checks NDF structure, repository and 53-shard topology, generated
+instruction pages, script tests, publication hygiene, and whitespace. It does
+not run ASLRef and does not claim release readiness.
+
+Full verification is a separate manual exact-head release lane. Dispatch the
+`Release verification` workflow with the full 40-character merged commit SHA,
+or run its sequential local equivalent with Git, GNU Make, Python 3.11+, OCaml,
+and opam available:
 
 ```bash
 make setup
-make ci
+make release-verify
+make release-prepare
 ```
 
-`make ci` runs:
-
-| Target | Checks | Needs ASLRef |
-| --- | --- | --- |
-| `repo-check` | Repository structure, catalogs, generated evidence, traceability, and publication hygiene | No |
-| `toolchain-check` | Pinned ASLRef accept/reject/execute canaries | Yes |
-| `check` | Strict type-checking of the assembled specification | Yes |
-| `test-parallel` | Thirty-four focused shards covering every canonical executable architecture and boundary test exactly once | Yes |
-
-`make ci` uses four concurrent ASLRef jobs by default. Set
-`ASL_TEST_JOBS=<n>` to match the available CPU and memory. The canonical
-single-process regression remains available as `make test`; the shard checker
-proves that the parallel mains contain every canonical test call exactly once
-and that every declared test subprogram remains reachable.
-
-The `scripts/aslref` wrapper fetches the exact audited ASLRef commit in
-`.aslref-version` and builds it under the ignored `.cache/` directory. To use a
-local ASLRef binary for iteration:
-
-```bash
-make ci ASLREF=/path/to/aslref
-```
-
-A substituted binary is not evidence about the audited toolchain pin. Hosted
-validation always uses the pinned source wrapper.
+The release lane runs the pinned ASLRef canaries, strict assembled model, all
+ASL shards, and reproducible release evidence. It records results but does not
+create a tag or GitHub release. A pending, skipped, failed, stale, or
+different-commit result is not success.
 
 ## Repository layout
 
@@ -266,8 +262,8 @@ Generated assemblies remain ignored under `build/`.
 
 ## Contributing and license
 
-Normative changes require stable requirement IDs, executable evidence, and both
-architecture and formal-model review. See [Governance](GOVERNANCE.md) and
+Normative changes require a linked NDF architecture issue, stable clause IDs,
+focused executable evidence, and exact-head release verification. See [Governance](GOVERNANCE.md) and
 [Contributing](CONTRIBUTING.md).
 
 The repository uses the [BSD 3-Clause License](LICENSE). External evidence and

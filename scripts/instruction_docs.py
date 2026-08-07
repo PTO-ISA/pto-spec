@@ -399,8 +399,10 @@ def render_nav(
 def _render_mkdocs_config(records: list[InstructionRecord]) -> str:
     return (
         "site_name: PTO ISA Reference\n"
+        "site_description: Generated projection of the normative PTO ASL instruction sources\n"
         "docs_dir: ../instructions\n"
         "site_dir: ../../build/mkdocs-site\n"
+        "use_directory_urls: false\n"
         "exclude_docs: |\n"
         "  README.md\n"
         "  index.md\n"
