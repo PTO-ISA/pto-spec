@@ -20,6 +20,7 @@ MIGRATED_DOCUMENT_ROOTS = (
     Path("docs/instructions/scalar"),
     Path("docs/instructions/block"),
     Path("docs/instructions/tile"),
+    Path("docs/legacy/imported-instruction-reference"),
     Path("docs/status"),
 )
 LEGACY_RELEASE = re.compile(r"(?<![0-9.])v?0\.57(?!\.1(?:\b|[^0-9]))")
