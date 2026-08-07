@@ -119,11 +119,11 @@ traps, 36 profile hooks, and 74 ASL state roots expanded to 229 leaf fields. Its
 inventory and links are closed, while S6-T1 promotion remains explicitly open
 on S5-T2 and an immutable-commit claim-hygiene review.
 The generated `spec/evidence/release-gate-readiness.json` ledger separately
-closes the S6-T2 gate contract and hosted/parallel topology without treating a
-live draft-branch run as release proof. Ten candidate gates, ten external
-controls, and two review perspectives remain fail-closed until one signed,
-immutable post-S5-T2 candidate supplies matching local, hosted, protection, and
-approval evidence.
+closes the S6-T2 manual-gate contract and exact 34-shard/110-call/104-subprogram
+topology without treating a development run as release proof. Ten candidate
+gates and nine retained external controls remain fail-closed until one signed,
+immutable post-S5-T2 candidate supplies matching manual release-validation and
+repository-control evidence.
 
 ## Architecture scope
 
@@ -204,22 +204,24 @@ contracts:
 | [Maturity evaluation and staged targets](docs/maturity-stage-targets.md) | Reviewer-oriented entry gates, measurable targets, exit evidence, and promotion order |
 | [Numeric profile decision register](docs/numeric-profile-decision-register.md) | Open S5-T2-A format, rounding, exception, reduction, quantization, and matrix decisions |
 | [Modeling conventions](docs/modeling-conventions.md) | ASL organization and normative modeling rules |
-| [Formal review checklist](docs/review-checklist.md) | Required evidence for normative review |
+| [Formal review checklist](docs/review-checklist.md) | Optional guidance for inspecting normative changes and release evidence |
 
 Accepted architecture decisions are retained under
 [`docs/architecture-decisions/`](docs/architecture-decisions/).
 
-## Validation
+## Release validation
 
 Prerequisites are Git, GNU Make, Python 3.11+, OCaml, and an initialized opam
-switch. Install ASLRef build dependencies once, then run the complete gate:
+switch. Pull requests have no required checks or approvals. Before publishing a
+release, run the complete pinned ASLRef gate manually:
 
 ```bash
-make setup
-make ci
+make release-validate
 ```
 
-`make ci` runs:
+`make release-validate` cleans generated output, prepares ASLRef, runs
+`make ci`, and checks diff hygiene. The lower-level targets remain available
+for voluntary development and troubleshooting:
 
 | Target | Checks | Needs ASLRef |
 | --- | --- | --- |
@@ -242,8 +244,9 @@ local ASLRef binary for iteration:
 make ci ASLREF=/path/to/aslref
 ```
 
-A substituted binary is not evidence about the audited toolchain pin. Hosted
-validation always uses the pinned source wrapper.
+A substituted binary is not evidence about the audited toolchain pin. Release
+validation uses the pinned source wrapper unless the release record explicitly
+documents an alternate diagnostic run.
 
 ## Repository layout
 

@@ -3,10 +3,10 @@
   "target": "S6-T2",
   "status": "gate-contract-closed-promotion-open",
   "policy": {
-    "authority": "The frozen PTO candidate, clone-verifiable gates, hosted validation, protected-branch state, and recorded architecture/formal approvals must agree before M6 promotion.",
-    "no_live_branch_evidence": "A passing run on a moving draft branch is useful feedback but is not architecturally-complete release evidence.",
-    "long_running_policy": "Long runtime gates execute through the checked 34-shard topology and hosted CI; readiness generation validates their exact contract without waiting for them.",
-    "closure_rule": "S6-T2 closes only after cumulative S0 through S6-T1 closure, one immutable signed candidate, every local and hosted gate passing at that commit, all external controls verified, and both review perspectives accepted."
+    "authority": "The frozen PTO candidate, manual release validation, and retained repository controls must agree before M6 promotion.",
+    "no_live_branch_evidence": "A development check on a moving draft branch is useful feedback but is not architecturally-complete release evidence.",
+    "long_running_policy": "Long runtime gates execute manually through the checked 34-shard topology; readiness generation validates their exact contract without waiting for them.",
+    "closure_rule": "S6-T2 closes only after cumulative S0 through S6-T1 closure, one immutable signed candidate, a passing manual release gate at that commit, and all retained external controls verified."
   },
   "sources": [
     {
@@ -14,28 +14,20 @@
       "sha256": "943437e8563813c276417b022296f0c51b34fadbb8da49ca70dbac7f6589db63"
     },
     {
-      "path": ".github/CODEOWNERS",
-      "sha256": "1b9b6b4cd65e1059af92044f2276b722f71b12badbc2498e1984e8891f6fcaf5"
-    },
-    {
-      "path": ".github/workflows/asl.yml",
-      "sha256": "9ffa40fd1b7071071418b3408a6ad6b0bd7561af9171bb136a75a711ae4548ed"
-    },
-    {
       "path": "CONTRIBUTING.md",
-      "sha256": "c6f9e1e0c53aceb3c068d478067c021e897ebde23a63acaaccbdd668bd0bdd77"
+      "sha256": "f8cc1feeab919985d6235665a67e0e43b7e5011de4a7cd115154a3a820e00447"
     },
     {
       "path": "GOVERNANCE.md",
-      "sha256": "177df7d10c7d85e221f76c399879a06415b82a45918e1a8a0533b2eb665b8aef"
+      "sha256": "2f5fd56e07e8a68c9971aab83417d8797fddd4f5a9621955d0b999eab9403ca0"
     },
     {
       "path": "Makefile",
-      "sha256": "6566203ed52be769bc793e587d2689b0fc7dadf481c935369049c69194cf328f"
+      "sha256": "1f8282e0de7c515795134c795769625c71e0f2193d8231e5586b28b3a20f1d55"
     },
     {
       "path": "docs/review-checklist.md",
-      "sha256": "0768e306a54a5512018450567bddead28d5cf140956589340b249bd4accdf08a"
+      "sha256": "3db50440d37250d0a40fa6cc13589acd4b3608b995a0bc3e367e6221f2e88e16"
     },
     {
       "path": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
@@ -95,7 +87,7 @@
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "340dc6f8f8588df41470a80f4414c749163b7a753f26ca6ac67ffffd3fcab341"
+      "sha256": "32aa4b6001d5f340b8c8a580f2e811739952f011d5b15e8708a802449fe2b0ab"
     },
     {
       "path": "scripts/check-publication-hygiene",
@@ -103,7 +95,7 @@
     },
     {
       "path": "scripts/check-repository",
-      "sha256": "c1f3a3d8d6caa5152b59d11278ece2f928bab8fb13aed5fe9b0fbe9ad747ce04"
+      "sha256": "ac13d0231c144e213d7b8b5808b9a6caab5ac4d7ff691df3c57b425700ec920c"
     },
     {
       "path": "scripts/check-toolchain",
@@ -138,8 +130,12 @@
       "sha256": "d7254b93cc7cac8f0a2274ca0e264a17f1f5be6bbee3d7d147d89bd50e5afb5e"
     },
     {
+      "path": "scripts/validate-release",
+      "sha256": "b3f78d7d4451c1b04c0a8b614b2fccfe0cb4491e08c62a05c134abcb21b069a3"
+    },
+    {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "6f8d5b0a7143a01f76c2b2ef0694caaa48a3277d2cd01b7e3f401e67b9283ecf"
+      "sha256": "d034a2ab15753dcc1c9de3e516d6575d6c14b4aec74e5ff432473745165c0574"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
@@ -199,7 +195,7 @@
     },
     {
       "path": "specification.toml",
-      "sha256": "e4d705a505aa3bbf5ece693d9d06df205506965da63eadc88d53ab3880d40aa5"
+      "sha256": "0bb3fcd235e43616e99b6642932541b591f4d507011a0cd8066201e186b6605f"
     }
   ],
   "sub_stages": [
@@ -212,7 +208,7 @@
     {
       "id": "S6-T2-B",
       "status": "closed",
-      "target": "prove hosted workflow pinning and exact parallel test topology",
+      "target": "prove the manual release entry point and exact parallel test topology",
       "blocked_by": []
     },
     {
@@ -227,7 +223,7 @@
     {
       "id": "S6-T2-D",
       "status": "waiting-on-prerequisite",
-      "target": "reproduce every local and hosted gate at the candidate commit",
+      "target": "run the complete manual release gate at the candidate commit",
       "blocked_by": [
         "S6-T2-C"
       ]
@@ -235,7 +231,7 @@
     {
       "id": "S6-T2-E",
       "status": "waiting-on-prerequisite",
-      "target": "verify protected-branch controls and obtain both independent approvals",
+      "target": "verify retained protected-branch and repository controls",
       "blocked_by": [
         "S6-T2-C",
         "S6-T2-D"
@@ -266,21 +262,17 @@
     {
       "id": "S6-T2-G2",
       "classification": "release-governance",
-      "statement": "No frozen candidate has complete clean-tree local and hosted gate results.",
+      "statement": "No frozen candidate has a complete clean-tree manual release-validation result.",
       "acceptance_evidence": [
-        "clean make ci",
-        "git diff --check",
-        "passing hosted validate at the same candidate commit"
+        "passing make release-validate at the candidate commit"
       ]
     },
     {
       "id": "S6-T2-G3",
       "classification": "release-governance",
-      "statement": "Candidate-specific protected-branch evidence and PTO architecture/formal-model approvals are unrecorded.",
+      "statement": "Candidate-specific retained branch and repository control evidence is unrecorded.",
       "acceptance_evidence": [
-        "content-addressed GitHub control snapshot",
-        "accepted PTO architecture review",
-        "accepted formal-model review"
+        "content-addressed GitHub control snapshot"
       ]
     }
   ],
@@ -354,24 +346,16 @@
     "traceability_status": "inventory-and-links-closed-promotion-open",
     "candidate_freeze_status": "blocked"
   },
-  "workflow_contract": {
-    "workflow": ".github/workflows/asl.yml",
-    "workflow_name": "ASL",
-    "required_check": "validate",
-    "permissions": {
-      "contents": "read"
-    },
-    "concurrency_cancel_in_progress": true,
-    "timeout_minutes": 360,
-    "actions": [
-      {
-        "action": "actions/checkout",
-        "commit": "d23441a48e516b6c34aea4fa41551a30e30af803"
-      },
-      {
-        "action": "ocaml/setup-ocaml",
-        "commit": "15d660006c1d3110d77c34b7faa3bddefe8b82f0"
-      }
+  "manual_release_contract": {
+    "script": "scripts/validate-release",
+    "make_target": "release-validate",
+    "invocation": "make release-validate",
+    "execution_mode": "manual-release-only",
+    "commands": [
+      "make clean",
+      "make setup",
+      "make ci",
+      "git diff --check"
     ],
     "contract_status": "closed"
   },
@@ -399,7 +383,7 @@
       "tests/asl/shards/scalar-sys-maintenance-selectors.asl",
       "tests/asl/shards/scalar-sys-maintenance-legality.asl",
       "tests/asl/shards/tepl-totality.asl",
-      "tests/asl/shards/tma-totality.asl",
+      "tests/asl/shards/tlsu-totality.asl",
       "tests/asl/shards/cube-totality.asl",
       "tests/asl/shards/core-bundle.asl",
       "tests/asl/shards/scalar-base.asl",
@@ -414,7 +398,7 @@
     ],
     "shard_count": 34,
     "canonical_call_count": 110,
-    "reachable_test_subprogram_count": 105,
+    "reachable_test_subprogram_count": 104,
     "default_parallel_jobs": 4,
     "partition_status": "closed",
     "candidate_runtime_result": null
@@ -501,12 +485,13 @@
     },
     {
       "id": "RG-06",
-      "name": "aggregate release gate",
-      "command": "make ci",
+      "name": "manual aggregate release gate",
+      "command": "make release-validate",
       "evidence": [
-        "Makefile"
+        "Makefile",
+        "scripts/validate-release"
       ],
-      "acceptance": "Repository, pinned toolchain, strict type-check, and parallel runtime gates pass together after clean regeneration.",
+      "acceptance": "The release manager prepares the pinned toolchain and runs repository, canary, strict type-check, parallel runtime, and diff-hygiene gates through one manual command.",
       "long_running": true,
       "contract_status": "closed",
       "candidate_commit": null,
@@ -588,16 +573,6 @@
     },
     {
       "id": "EC-02",
-      "name": "required hosted check",
-      "required_state": "strict validate check is required before main updates",
-      "verification_method": "GitHub repository and branch-protection API snapshot at the immutable candidate commit",
-      "observed_at": null,
-      "observed_state": null,
-      "evidence_url": null,
-      "verification_status": "candidate-snapshot-required"
-    },
-    {
-      "id": "EC-03",
       "name": "signed commits",
       "required_state": "main requires signed commits",
       "verification_method": "GitHub repository and branch-protection API snapshot at the immutable candidate commit",
@@ -607,7 +582,7 @@
       "verification_status": "candidate-snapshot-required"
     },
     {
-      "id": "EC-04",
+      "id": "EC-03",
       "name": "linear history",
       "required_state": "main requires linear history",
       "verification_method": "GitHub repository and branch-protection API snapshot at the immutable candidate commit",
@@ -617,7 +592,7 @@
       "verification_status": "candidate-snapshot-required"
     },
     {
-      "id": "EC-05",
+      "id": "EC-04",
       "name": "conversation resolution",
       "required_state": "all pull-request conversations must be resolved",
       "verification_method": "GitHub repository and branch-protection API snapshot at the immutable candidate commit",
@@ -627,7 +602,7 @@
       "verification_status": "candidate-snapshot-required"
     },
     {
-      "id": "EC-06",
+      "id": "EC-05",
       "name": "force-push protection",
       "required_state": "force pushes to main are disabled",
       "verification_method": "GitHub repository and branch-protection API snapshot at the immutable candidate commit",
@@ -637,7 +612,7 @@
       "verification_status": "candidate-snapshot-required"
     },
     {
-      "id": "EC-07",
+      "id": "EC-06",
       "name": "deletion protection",
       "required_state": "main deletion is disabled",
       "verification_method": "GitHub repository and branch-protection API snapshot at the immutable candidate commit",
@@ -647,7 +622,7 @@
       "verification_status": "candidate-snapshot-required"
     },
     {
-      "id": "EC-08",
+      "id": "EC-07",
       "name": "merge authority",
       "required_state": "only repository administrators may update or merge main",
       "verification_method": "GitHub repository and branch-protection API snapshot at the immutable candidate commit",
@@ -657,7 +632,7 @@
       "verification_status": "candidate-snapshot-required"
     },
     {
-      "id": "EC-09",
+      "id": "EC-08",
       "name": "merge method",
       "required_state": "squash merge is enabled and merge-commit/rebase merge are disabled",
       "verification_method": "GitHub repository and branch-protection API snapshot at the immutable candidate commit",
@@ -667,7 +642,7 @@
       "verification_status": "candidate-snapshot-required"
     },
     {
-      "id": "EC-10",
+      "id": "EC-09",
       "name": "web signoff",
       "required_state": "web commit signoff is required",
       "verification_method": "GitHub repository and branch-protection API snapshot at the immutable candidate commit",
@@ -677,48 +652,23 @@
       "verification_status": "candidate-snapshot-required"
     }
   ],
-  "approvals": [
-    {
-      "id": "AP-ARCH",
-      "perspective": "PTO architecture",
-      "scope": "totality, determinism, visible state, faults, aliasing, boundaries, ordering, portability, and profile claims",
-      "reviewer_identity": null,
-      "reviewed_commit": null,
-      "review_date": null,
-      "disposition": null,
-      "evidence_url": null,
-      "status": "candidate-review-required"
-    },
-    {
-      "id": "AP-FORMAL",
-      "perspective": "formal model",
-      "scope": "ASL type soundness, decode closure, semantic reachability, executable evidence, toolchain pin, and claim hygiene",
-      "reviewer_identity": null,
-      "reviewed_commit": null,
-      "review_date": null,
-      "disposition": null,
-      "evidence_url": null,
-      "status": "candidate-review-required"
-    }
-  ],
+  "approvals": [],
   "candidate": {
     "commit": null,
     "source_tree_sha256": null,
     "signed_commit_evidence": null,
     "clean_tree_evidence": null,
-    "hosted_run_id": null,
-    "hosted_run_url": null,
-    "hosted_conclusion": null,
+    "release_validation_evidence": null,
     "promotion_commit": null
   },
   "summary": {
     "closed_target_count": 28,
     "gate_count": 10,
-    "required_approval_count": 2,
-    "required_external_control_count": 10,
+    "required_approval_count": 0,
+    "required_external_control_count": 9,
     "shard_count": 34,
     "canonical_call_count": 110,
-    "reachable_test_subprogram_count": 105,
+    "reachable_test_subprogram_count": 104,
     "open_prerequisite_targets": [
       "S5-T2",
       "S6-T1"

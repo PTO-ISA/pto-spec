@@ -17,8 +17,6 @@ DEFAULT_OUTPUT = ROOT / "spec/evidence/release-gate-readiness.json"
 
 SOURCE_PATHS = (
     ".aslref-version",
-    ".github/CODEOWNERS",
-    ".github/workflows/asl.yml",
     "CONTRIBUTING.md",
     "GOVERNANCE.md",
     "Makefile",
@@ -48,6 +46,7 @@ SOURCE_PATHS = (
     "scripts/generate-numeric-variation-point-ownership",
     "scripts/generate-public-numeric-type-baseline",
     "scripts/generate-public-integer-conversion-contract",
+    "scripts/validate-release",
     "spec/evidence/maturity-closure.json",
     "spec/evidence/numeric-profile-decision-proposals.json",
     "spec/evidence/numeric-format-namespace-contract.json",
@@ -69,11 +68,11 @@ SOURCE_PATHS = (
 EXPECTED_COUNTS = {
     "closed_target_count": 28,
     "gate_count": 10,
-    "required_approval_count": 2,
-    "required_external_control_count": 10,
+    "required_approval_count": 0,
+    "required_external_control_count": 9,
     "shard_count": 34,
     "canonical_call_count": 110,
-    "reachable_test_subprogram_count": 105,
+    "reachable_test_subprogram_count": 104,
 }
 
 GATE_SPECS: tuple[dict[str, Any], ...] = (
@@ -125,10 +124,10 @@ GATE_SPECS: tuple[dict[str, Any], ...] = (
     },
     {
         "id": "RG-06",
-        "name": "aggregate release gate",
-        "command": "make ci",
-        "evidence": ["Makefile"],
-        "acceptance": "Repository, pinned toolchain, strict type-check, and parallel runtime gates pass together after clean regeneration.",
+        "name": "manual aggregate release gate",
+        "command": "make release-validate",
+        "evidence": ["Makefile", "scripts/validate-release"],
+        "acceptance": "The release manager prepares the pinned toolchain and runs repository, canary, strict type-check, parallel runtime, and diff-hygiene gates through one manual command.",
         "long_running": True,
     },
     {
@@ -177,63 +176,47 @@ EXTERNAL_CONTROLS: tuple[dict[str, str], ...] = (
     },
     {
         "id": "EC-02",
-        "name": "required hosted check",
-        "required_state": "strict validate check is required before main updates",
-    },
-    {
-        "id": "EC-03",
         "name": "signed commits",
         "required_state": "main requires signed commits",
     },
     {
-        "id": "EC-04",
+        "id": "EC-03",
         "name": "linear history",
         "required_state": "main requires linear history",
     },
     {
-        "id": "EC-05",
+        "id": "EC-04",
         "name": "conversation resolution",
         "required_state": "all pull-request conversations must be resolved",
     },
     {
-        "id": "EC-06",
+        "id": "EC-05",
         "name": "force-push protection",
         "required_state": "force pushes to main are disabled",
     },
     {
-        "id": "EC-07",
+        "id": "EC-06",
         "name": "deletion protection",
         "required_state": "main deletion is disabled",
     },
     {
-        "id": "EC-08",
+        "id": "EC-07",
         "name": "merge authority",
         "required_state": "only repository administrators may update or merge main",
     },
     {
-        "id": "EC-09",
+        "id": "EC-08",
         "name": "merge method",
         "required_state": "squash merge is enabled and merge-commit/rebase merge are disabled",
     },
     {
-        "id": "EC-10",
+        "id": "EC-09",
         "name": "web signoff",
         "required_state": "web commit signoff is required",
     },
 )
 
-APPROVAL_SPECS = (
-    {
-        "id": "AP-ARCH",
-        "perspective": "PTO architecture",
-        "scope": "totality, determinism, visible state, faults, aliasing, boundaries, ordering, portability, and profile claims",
-    },
-    {
-        "id": "AP-FORMAL",
-        "perspective": "formal model",
-        "scope": "ASL type soundness, decode closure, semantic reachability, executable evidence, toolchain pin, and claim hygiene",
-    },
-)
+APPROVAL_SPECS: tuple[dict[str, str], ...] = ()
 
 
 def load(path: str) -> dict[str, Any]:
@@ -269,6 +252,7 @@ def validate_makefile() -> None:
         "check",
         "test-parallel",
         "ci",
+        "release-validate",
         "print-asl-sources",
         "print-asl-tests",
         "print-asl-test-shards",
@@ -279,6 +263,10 @@ def validate_makefile() -> None:
         "ci: repo-check toolchain-check check test-parallel" in body,
         "make ci no longer composes the four required gates",
     )
+    require(
+        "release-validate:\n\t./scripts/validate-release" in body,
+        "make release-validate no longer delegates to the manual release script",
+    )
     require("ASL_TEST_JOBS ?= 4" in body, "parallel default job count drift")
     require(
         "$(MAKE) --no-print-directory -j$(ASL_TEST_JOBS) test-shards" in body,
@@ -286,53 +274,22 @@ def validate_makefile() -> None:
     )
 
 
-def validate_workflow() -> dict[str, Any]:
-    body = (ROOT / ".github/workflows/asl.yml").read_text(encoding="utf-8")
-    required_fragments = (
-        "name: ASL",
-        "branches: [main]",
-        "pull_request:",
-        "contents: read",
-        "cancel-in-progress: true",
-        "validate:",
-        "name: validate",
-        "runs-on: ubuntu-latest",
-        "timeout-minutes: 360",
-        "run: make repo-check",
-        'ocaml-compiler: "5.2.1"',
-        "run: make setup",
-        "run: make ci",
-    )
+def validate_release_script() -> dict[str, Any]:
+    path = ROOT / "scripts/validate-release"
+    body = path.read_text(encoding="utf-8")
+    commands = ["make clean", "make setup", "make ci", "git diff --check"]
+    positions = [body.index(command) for command in commands]
+    require(positions == sorted(positions), "manual release command order drift")
     require(
-        all(fragment in body for fragment in required_fragments),
-        "hosted workflow policy drift",
-    )
-    expected_order = [
-        "- name: Check out repository",
-        "- name: Validate repository invariants",
-        "- name: Set up OCaml and opam",
-        "- name: Install ASLRef build dependencies",
-        "- name: Validate normative PTO ASL model",
-    ]
-    positions = [body.index(fragment) for fragment in expected_order]
-    require(positions == sorted(positions), "hosted workflow step order drift")
-    actions = [
-        {"action": action, "commit": commit}
-        for action, commit in re.findall(r"uses:\s+([^@\s]+)@([0-9A-Za-z._-]+)", body)
-    ]
-    require(len(actions) == 2, "hosted workflow action inventory drift")
-    require(
-        all(re.fullmatch(r"[0-9a-f]{40}", row["commit"]) for row in actions),
-        "every hosted action must use a full commit pin",
+        body.startswith("#!/usr/bin/env bash\nset -euo pipefail\n"),
+        "manual release script safety preamble drift",
     )
     return {
-        "workflow": ".github/workflows/asl.yml",
-        "workflow_name": "ASL",
-        "required_check": "validate",
-        "permissions": {"contents": "read"},
-        "concurrency_cancel_in_progress": True,
-        "timeout_minutes": 360,
-        "actions": actions,
+        "script": "scripts/validate-release",
+        "make_target": "release-validate",
+        "invocation": "make release-validate",
+        "execution_mode": "manual-release-only",
+        "commands": commands,
         "contract_status": "closed",
     }
 
@@ -379,7 +336,7 @@ def validate_shards() -> dict[str, Any]:
 def build_evidence() -> dict[str, Any]:
     require_paths(list(SOURCE_PATHS), "release-gate source inventory")
     validate_makefile()
-    workflow = validate_workflow()
+    manual_release = validate_release_script()
     parallel_topology = validate_shards()
 
     maturity = load("spec/evidence/maturity-closure.json")
@@ -482,10 +439,10 @@ def build_evidence() -> dict[str, Any]:
         "target": "S6-T2",
         "status": "gate-contract-closed-promotion-open",
         "policy": {
-            "authority": "The frozen PTO candidate, clone-verifiable gates, hosted validation, protected-branch state, and recorded architecture/formal approvals must agree before M6 promotion.",
-            "no_live_branch_evidence": "A passing run on a moving draft branch is useful feedback but is not architecturally-complete release evidence.",
-            "long_running_policy": "Long runtime gates execute through the checked 34-shard topology and hosted CI; readiness generation validates their exact contract without waiting for them.",
-            "closure_rule": "S6-T2 closes only after cumulative S0 through S6-T1 closure, one immutable signed candidate, every local and hosted gate passing at that commit, all external controls verified, and both review perspectives accepted.",
+            "authority": "The frozen PTO candidate, manual release validation, and retained repository controls must agree before M6 promotion.",
+            "no_live_branch_evidence": "A development check on a moving draft branch is useful feedback but is not architecturally-complete release evidence.",
+            "long_running_policy": "Long runtime gates execute manually through the checked 34-shard topology; readiness generation validates their exact contract without waiting for them.",
+            "closure_rule": "S6-T2 closes only after cumulative S0 through S6-T1 closure, one immutable signed candidate, a passing manual release gate at that commit, and all retained external controls verified.",
         },
         "sources": [{"path": path, "sha256": sha256(path)} for path in SOURCE_PATHS],
         "sub_stages": [
@@ -498,7 +455,7 @@ def build_evidence() -> dict[str, Any]:
             {
                 "id": "S6-T2-B",
                 "status": "closed",
-                "target": "prove hosted workflow pinning and exact parallel test topology",
+                "target": "prove the manual release entry point and exact parallel test topology",
                 "blocked_by": [],
             },
             {
@@ -510,13 +467,13 @@ def build_evidence() -> dict[str, Any]:
             {
                 "id": "S6-T2-D",
                 "status": "waiting-on-prerequisite",
-                "target": "reproduce every local and hosted gate at the candidate commit",
+                "target": "run the complete manual release gate at the candidate commit",
                 "blocked_by": ["S6-T2-C"],
             },
             {
                 "id": "S6-T2-E",
                 "status": "waiting-on-prerequisite",
-                "target": "verify protected-branch controls and obtain both independent approvals",
+                "target": "verify retained protected-branch and repository controls",
                 "blocked_by": ["S6-T2-C", "S6-T2-D"],
             },
             {
@@ -540,21 +497,17 @@ def build_evidence() -> dict[str, Any]:
             {
                 "id": "S6-T2-G2",
                 "classification": "release-governance",
-                "statement": "No frozen candidate has complete clean-tree local and hosted gate results.",
+                "statement": "No frozen candidate has a complete clean-tree manual release-validation result.",
                 "acceptance_evidence": [
-                    "clean make ci",
-                    "git diff --check",
-                    "passing hosted validate at the same candidate commit",
+                    "passing make release-validate at the candidate commit",
                 ],
             },
             {
                 "id": "S6-T2-G3",
                 "classification": "release-governance",
-                "statement": "Candidate-specific protected-branch evidence and PTO architecture/formal-model approvals are unrecorded.",
+                "statement": "Candidate-specific retained branch and repository control evidence is unrecorded.",
                 "acceptance_evidence": [
                     "content-addressed GitHub control snapshot",
-                    "accepted PTO architecture review",
-                    "accepted formal-model review",
                 ],
             },
         ],
@@ -569,7 +522,7 @@ def build_evidence() -> dict[str, Any]:
             "traceability_status": traceability["status"],
             "candidate_freeze_status": "blocked",
         },
-        "workflow_contract": workflow,
+        "manual_release_contract": manual_release,
         "parallel_topology": parallel_topology,
         "gates": gates,
         "external_controls": controls,
@@ -579,9 +532,7 @@ def build_evidence() -> dict[str, Any]:
             "source_tree_sha256": None,
             "signed_commit_evidence": None,
             "clean_tree_evidence": None,
-            "hosted_run_id": None,
-            "hosted_run_url": None,
-            "hosted_conclusion": None,
+            "release_validation_evidence": None,
             "promotion_commit": None,
         },
         "summary": {

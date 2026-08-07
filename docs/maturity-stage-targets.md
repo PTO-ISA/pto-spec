@@ -84,7 +84,7 @@ later sections define their complete evidence packages.
 | ---: | --- | --- | --- | --- |
 | 1 | `S5-T2` | PTO numeric conformance maintainers | Accept the profile rules, qualify independent oracles, execute complete vectors, and adjudicate every result across 18 domains, 28 hooks, and 104 operations. | Ten of 12 numeric decisions and all 18 domain result rules are not yet accepted; independent oracle, vector, result, and review evidence is incomplete. |
 | 2 | `S6-T1` | PTO release maintainers | Close the 11 Stage-5-dependent requirements and 28 numeric hooks, then review the 918-unit traceability ledger at one immutable commit. | Depends on `S5-T2`; immutable-commit claim-hygiene review is absent. |
-| 3 | `S6-T2` | PTO release maintainers | Freeze one signed candidate and reproduce all local, hosted, repository-control, and review gates against it. | Depends on `S5-T2` and `S6-T1`; candidate results and approvals are absent. |
+| 3 | `S6-T2` | PTO release maintainers | Freeze one signed candidate, run the manual release gate, and snapshot the retained repository controls. | Depends on `S5-T2` and `S6-T1`; candidate validation and control evidence are absent. |
 
 ## Stage evaluation contract
 
@@ -101,7 +101,7 @@ necessary, but it cannot substitute for a missing stage-specific artifact.
 | 3 — ordering (`S3-T1`–`S3-T2`) | Stage 2 fault/restart rules stable. | Connect every production memory effect to PTO-TSO and close atomic, reservation, gather-CAS, prefetch, and mixed-size corners. | Event extraction and allowed/forbidden litmus evidence agree with the normative ordering model. | Closed |
 | 4 — reference semantics (`S4-T1`–`S4-T10`) | Stages 0–3 closed. | Make AGU, ALU, AMO, BRU, FSU, SYS, bundle, TEPL, TMA, and CUBE total under `pto-v0`. | Every family has checked legality, operand, value/effect, alias, boundary, fault, restart, and pre-effect-rejection evidence. | Closed |
 | 5 — conformance (`S5-T1`–`S5-T3`) | M4 regression floor remains green. | Independently validate all 18 numeric domains, 28 hooks, and 104 operations, while retaining the closed 676-row executable-model comparison: 557 exact encoding matches, 84 classified divergences, 32 non-comparable rows, and three intentional extensions. | All 12 numeric decisions and 18 domain rules are accepted; six oracles, complete vectors/results, zero unclassified mismatches, and two reviews are recorded. | In progress: `S5-T2` open |
-| 6 — release (`S6-T1`–`S6-T2`) | Stage 5 closed. | Close cumulative traceability and reproduce every release gate at one signed immutable candidate. | Eleven dependent requirements and 28 hooks close; all 918 trace units, ten gates, ten controls, hosted validation, and both approvals name the same commit. | Open |
+| 6 — release (`S6-T1`–`S6-T2`) | Stage 5 closed. | Close cumulative traceability and reproduce every release gate at one signed immutable candidate. | Eleven dependent requirements and 28 hooks close; all 918 trace units, ten gates, manual release validation, and nine retained controls name the same commit. | Open |
 
 ## Remaining bring-up sequence
 
@@ -114,7 +114,7 @@ parallel, but a later row cannot waive an earlier promotion gate.
 | 2 | `S5-T2` | Name the PTO target numeric profile and an independent, versioned oracle; cover normal, boundary, exceptional, rounding, saturation, and accumulation cases for every applicable numeric-contract row. | Differential report has no unclassified mismatch and does not treat the `pto-v0` raw-carrier model as hardware arithmetic. | Numeric conformance half of M5 |
 | 3 | `S5-T3` | Closed: the complete stable-ID comparison is regenerated from a clean content-addressed executable-model snapshot; all 676 dispositions remain classified with 557 exact encoding matches, 84 divergences (74 accepted ABI remaps and 10 intentional rejected-command differences), 32 non-comparable rows, and three intentional extensions. | Parser, executable backend, generated-status, coverage, architecture-contract, and documentation gates all pass. The separate per-row oracle ledger preserves independent executable parity at 0/32. | Independent-disposition half of M5; executable parity remains explicit evidence work |
 | 4 | `S6-T1` | Generated inventory and links closed: 918 exact units cover requirements, accepted forms and operations, registers, traps, profile hooks, and 74 state roots/229 leaves. Promotion remains open. | S5-T2 closes the 11 dependent requirements and 28 hooks; then one immutable-commit claim-hygiene review fills every review identity and disposition. | Release review may start |
-| 5 | `S6-T2` | Gate contract/topology closed: ten release gates, ten external controls, two reviews, and the pinned 34-shard hosted path are exact. Candidate evidence remains open. | After S5-T2/S6-T1, freeze one signed commit; pass every local/hosted gate; snapshot GitHub controls; record both approvals. | M6 architecturally-complete candidate |
+| 5 | `S6-T2` | Gate contract/topology closed: ten release gates, nine retained external controls, and the manual 34-shard path are exact. Candidate evidence remains open. | After S5-T2/S6-T1, freeze one signed commit; pass `make release-validate`; snapshot retained GitHub controls. | M6 architecturally-complete candidate |
 
 Promotion rules are exact: M5 requires all three Stage 5 targets to be closed;
 M6 requires every Stage 0–5 target plus both Stage 6 targets to be closed or
@@ -337,7 +337,7 @@ documented as intentions.
 | Target | Current status | Closure target |
 | --- | --- | --- |
 | `S6-T1` | Open | Prove requirements-to-model-to-test traceability with no unsupported completeness claim. |
-| `S6-T2` | Open | Gate contract and hosted/parallel topology are closed; immutable candidate execution, protected-branch evidence, and architecture/formal approvals remain open. |
+| `S6-T2` | Open | Gate contract and manual/parallel topology are closed; immutable candidate validation and retained protected-branch evidence remain open. |
 
 ### S6-T1 release-traceability bring-up plan
 
@@ -360,11 +360,11 @@ configuration from being confused with a passing release candidate.
 
 | Sub-stage | Current state | Clear target | Required exit evidence |
 | --- | --- | --- | --- |
-| `S6-T2-A` — gate inventory | Closed | Freeze all candidate, hosted, external-control, and review obligations. | Ten gates, ten controls, and two review perspectives are unique, complete, and path-valid. |
-| `S6-T2-B` — execution topology | Closed | Prove the hosted workflow and parallel suite are bounded and exact. | Full action pins, contents-read permission, required `validate`, cancel-in-progress, 360-minute timeout, and 34 shards covering 109 calls/104 subprograms. |
+| `S6-T2-A` — gate inventory | Closed | Freeze all candidate, manual-validation, and retained external-control obligations. | Ten gates and nine controls are unique, complete, and path-valid. |
+| `S6-T2-B` — execution topology | Closed | Prove the manual release entry point and parallel suite are bounded and exact. | `make release-validate` invokes the pinned toolchain and exact 34-shard/110-call/104-subprogram topology. |
 | `S6-T2-C` — candidate freeze | Blocked by S5-T2/S6-T1 | Name one signed immutable candidate. | Closed cumulative prerequisites, candidate commit/tree identity, clean-tree and signature evidence. |
-| `S6-T2-D` — candidate reproduction | Waiting on C | Execute every gate without moving the candidate. | Ten local results and passing hosted `validate` all name the candidate commit. |
-| `S6-T2-E` — controls and approvals | Waiting on C–D | Prove repository controls and both review perspectives. | Content-addressed GitHub API snapshot plus accepted architecture and formal-model dispositions. |
+| `S6-T2-D` — candidate reproduction | Waiting on C | Execute the complete release gate without moving the candidate. | A passing `make release-validate` result names the candidate commit. |
+| `S6-T2-E` — retained controls | Waiting on C–D | Prove the retained repository controls. | Content-addressed GitHub API snapshot for the nine retained controls. |
 | `S6-T2-F` — promotion | Waiting on C–E | Publish an M6 candidate without hidden exceptions. | All release surfaces and promotion metadata agree at the accepted commit. |
 
 ## Closure rule

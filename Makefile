@@ -143,7 +143,7 @@ SPEC := build/pto-spec.asl
 DECODER_SPEC := build/decoders.asl
 TEST_SPEC := build/pto-tests.asl
 
-.PHONY: all setup build release-manifest release-check repo-check \
+.PHONY: all setup build release-manifest release-check release-validate repo-check \
 	toolchain-check check test test-parallel test-shards \
 	$(ASL_TEST_SHARD_TARGETS) ci clean print-asl-sources \
 	print-asl-tests print-asl-test-shards
@@ -174,6 +174,9 @@ release-manifest:
 release-check:
 	./scripts/check-release-manifest
 	./scripts/check-binary-closure
+
+release-validate:
+	./scripts/validate-release
 
 .SECONDEXPANSION:
 build/pto-tests-%.asl: $(SPEC) $$(ASL_TEST_LIB_$$*) tests/asl/shards/%.asl \

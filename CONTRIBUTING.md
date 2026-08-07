@@ -1,16 +1,15 @@
 # Contributing
 
-`pto-spec` is the normative PTO architecture repository. Normative PTO semantics require an approved
-architecture change proposal before code is added.
+`pto-spec` is the normative PTO architecture repository. Normative PTO semantics
+require a documented architecture requirement before code is added.
 
 ## Before opening a pull request
 
-1. Open a formal-model issue for normative types, state, legality, instruction behavior, ordering, or faults.
+1. Document the architecture requirement for normative types, state, legality, instruction behavior, ordering, or faults.
 2. Cite stable public PTO requirement IDs and source links.
 3. Separate ASLRef pin updates, governance changes, normative semantics, and mechanical refactors.
 4. Follow the repo-local `$pto-asl` skill under `.codex/skills/pto-asl/` when using Codex.
-5. Run `make repo-check` for fast feedback without an opam switch.
-6. Run `make setup` once, then `make ci` and `git diff --check`.
+5. Optionally run `make repo-check` or other focused targets for development feedback.
 
 ## Pull requests
 
@@ -19,7 +18,11 @@ Keep changes small and reviewable. Complete the pull request template, disclose 
 `spec/requirements.json`, add tests under `tests/asl/`, and list those tests in
 `ASL_TESTS` so they execute.
 
-Do not relax a check to make a change pass. The canaries and generated
+Pull requests have no required validation checks or approvals, including for
+normative changes. Release managers run `make release-validate` before
+publishing a release; that command performs the complete pinned ASLRef gate.
+
+Do not relax a release check to make a release pass. The canaries and generated
 witnesses exist to make invalid inputs fail; if one starts failing, explain the
 contract change rather than adjusting the check around it.
 

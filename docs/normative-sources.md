@@ -99,8 +99,8 @@ boundaries; they do not prove hardware, RTL, emulator, or model parity.
 `spec/release-manifest.json` is a generated content-addressed projection of the
 normative inputs. A draft manifest documents identity and reproducibility; it is
 not Stage 6 release evidence. Candidate status requires regeneration from one
-signed immutable commit, hosted validation of that same commit, repository
-control evidence, and both required review perspectives.
+signed immutable commit, a passing manual `make release-validate` result at
+that commit, and retained repository-control evidence.
 
 ## Instruction reference
 
@@ -321,13 +321,12 @@ ISA registers. The ledger is evidence and claim-hygiene control; it does not
 outrank the ASL, catalogs, or accepted architecture decisions.
 
 `release-gate-readiness.json` is the generated input to S6-T2. It freezes the
-clone-verifiable release commands, hosted workflow policy, parallel test
-topology, external protected-branch obligations, and the two required review
-perspectives separately from their future candidate-specific results. A green
-run on a moving draft branch is not release evidence. Candidate commit,
-clean-tree reproduction, hosted validation, branch-control snapshot, and
-review fields remain empty until Stage 5 and S6-T1 close and one immutable
-signed candidate can be reviewed.
+manual release command, parallel test topology, and retained external
+protected-branch obligations separately from their future candidate-specific
+results. A development check on a moving draft branch is not release evidence.
+Candidate commit, clean-tree manual validation, and branch-control snapshot
+fields remain empty until Stage 5 and S6-T1 close and one immutable signed
+candidate can be validated.
 
 Where evidence and PTO-owned semantics disagree, the PTO ASL and catalogs
 prevail after a reviewed architecture decision.

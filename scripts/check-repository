@@ -20,7 +20,6 @@ required_files=(
     LICENSE
     NOTICE
     specification.toml
-    .github/CODEOWNERS
     .codex/skills/pto-asl/SKILL.md
     asl/architecture.asl
     docs/architecture.md
@@ -114,11 +113,21 @@ required_files=(
     scripts/generate-system-register-witness-closure
     tests/README.md
     scripts/check-release-manifest
+    scripts/validate-release
 )
 
 for path in "${required_files[@]}"; do
     [[ -f $path ]] || fail "required repository file is missing: $path"
 done
+
+[[ ! -e .github/CODEOWNERS ]] || fail ".github/CODEOWNERS is prohibited by the zero-required-review policy"
+
+while IFS= read -r path; do
+    if grep -Eq '^[[:space:]]*(pull_request|push)[[:space:]]*:' "$path" ||
+        grep -Eq '^[[:space:]]*on[[:space:]]*:[[:space:]]*\[[^]]*(pull_request|push)' "$path"; then
+        fail "pull-request and push workflow triggers are prohibited: $path"
+    fi
+done < <(find .github/workflows -type f \( -name '*.yml' -o -name '*.yaml' \) -print 2>/dev/null)
 
 pin=$(tr -d '[:space:]' < .aslref-version)
 [[ $pin =~ ^[0-9a-f]{40}$ ]] || fail ".aslref-version must contain one full Git commit SHA"

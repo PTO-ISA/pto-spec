@@ -9276,7 +9276,7 @@ def main() -> int:
             "sub_stages",
             "summary",
             "target",
-            "workflow_contract",
+            "manual_release_contract",
         }
         and release_gate["schema_version"] == 1
         and release_gate["target"] == "S6-T2"
@@ -9285,13 +9285,30 @@ def main() -> int:
     )
     release_summary = release_gate["summary"]
     require(
+        release_gate["manual_release_contract"]
+        == {
+            "script": "scripts/validate-release",
+            "make_target": "release-validate",
+            "invocation": "make release-validate",
+            "execution_mode": "manual-release-only",
+            "commands": [
+                "make clean",
+                "make setup",
+                "make ci",
+                "git diff --check",
+            ],
+            "contract_status": "closed",
+        },
+        "manual release-validation contract drift",
+    )
+    require(
         release_summary["closed_target_count"] == 28
         and release_summary["gate_count"] == 10
-        and release_summary["required_approval_count"] == 2
-        and release_summary["required_external_control_count"] == 10
+        and release_summary["required_approval_count"] == 0
+        and release_summary["required_external_control_count"] == 9
         and release_summary["shard_count"] == 34
         and release_summary["canonical_call_count"] == 110
-        and release_summary["reachable_test_subprogram_count"] == 105
+        and release_summary["reachable_test_subprogram_count"] == 104
         and release_summary["open_prerequisite_targets"] == ["S5-T2", "S6-T1"]
         and release_summary["closed_gate_contract_count"] == 10
         and release_summary["candidate_gate_result_count"] == 0
@@ -9319,19 +9336,13 @@ def main() -> int:
         len(release_gate["gates"]) == 10
         and all(row["contract_status"] == "closed" for row in release_gate["gates"])
         and all(row["candidate_result"] is None for row in release_gate["gates"])
-        and len(release_gate["external_controls"]) == 10
+        and len(release_gate["external_controls"]) == 9
         and all(
             row["verification_status"] == "candidate-snapshot-required"
             and row["observed_state"] is None
             for row in release_gate["external_controls"]
         )
-        and len(release_gate["approvals"]) == 2
-        and all(
-            row["status"] == "candidate-review-required"
-            and row["reviewer_identity"] is None
-            and row["disposition"] is None
-            for row in release_gate["approvals"]
-        )
+        and release_gate["approvals"] == []
         and all(value is None for value in release_gate["candidate"].values()),
         "release-gate candidate evidence is missing or prematurely populated",
     )

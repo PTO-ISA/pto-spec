@@ -86,18 +86,19 @@ Do not invent missing semantics. Stop at a documented requirement gap and open o
 - Treat private or incompatibly licensed implementations as read-only comparison evidence. Record anonymized names,
   hashes, and dispositions; never copy or expose their identities, repository paths, prose, code, or diagrams.
 
-## Repository quality gate
+## Release quality gate
 
-For every change:
+Pull requests have no required checks or approvals. Before publishing a
+release, run:
 
 ```bash
-make clean
-make ci
-git diff --check
+make release-validate
 ```
 
-`make ci` runs `repo-check`, `toolchain-check`, `check`, and `test`.
-`repo-check` needs no opam switch, so use it for fast iteration:
+`make release-validate` cleans generated output, prepares the pinned ASLRef,
+runs `make ci`, and checks diff hygiene. `make ci` runs `repo-check`,
+`toolchain-check`, `check`, and `test-parallel`. `repo-check` needs no opam switch and
+remains available for optional fast iteration:
 
 ```bash
 make repo-check
@@ -113,7 +114,7 @@ heavy totality matrices first, and use a bounded job count. The shard checker mu
 body, prove every canonical call appears exactly once, reject orphan or empty shard files, and prove every declared
 `Test*` or `Validate*` subprogram remains reachable. A call-looking line in dead helper code is not execution evidence.
 
-Before committing, confirm:
+Before publishing a release, confirm:
 
 - ASLRef strict type-checking succeeds.
 - Toolchain canaries pass for accepted, rejected, and failing ASL inputs.
@@ -145,5 +146,6 @@ Lead with correctness findings. Cite exact files and lines. Separate:
 - missing architecture decisions;
 - non-normative repository-maintenance observations.
 
-Do not approve a normative change based only on successful parsing or execution; require traceability and semantic
-coverage evidence.
+When a formal review is requested, do not assess a normative change based only
+on successful parsing or execution; inspect traceability and semantic coverage
+evidence as well.

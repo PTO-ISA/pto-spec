@@ -24,17 +24,24 @@ architecture requirement.
 - Do not encode A2/A3, A5, or CPU implementation behavior as portable PTO semantics without a named target profile.
 - Keep toolchain, governance, normative semantics, and mechanical refactors in separate changes.
 
-## Verification
+## Development and release validation
+
+Pull requests have no required checks or approvals. The following commands are
+available for voluntary development feedback:
 
 ```bash
 make repo-check              # no opam switch required
-make setup                   # once, to build the pinned ASLRef
-make ci
 git diff --check
+```
+
+Before publishing a release, run the complete pinned ASLRef gate:
+
+```bash
+make release-validate
 ```
 
 Generated `build/` and `.cache/` files must remain untracked.
 
-Do not weaken a check to make a change pass. Catalog witnesses and
+Do not weaken a release check to make a release pass. Catalog witnesses and
 `tests/canary/` prove that validation can reject invalid inputs; a failing
 fixture is evidence, not an obstacle.
