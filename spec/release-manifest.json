@@ -3197,7 +3197,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/instructions/block-command.md",
-      "sha256": "02e95dc4711c78ef021425bdceae07e13700097c073f5d7bd9c8cc954cc1b12d"
+      "sha256": "585d0263586fc4b8e94dd674337aceeab5c2c111fd5d631e0c3f53e2d11e06a8"
     },
     {
       "kind": "generated-documentation",
@@ -3247,7 +3247,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/instructions/tile.md",
-      "sha256": "d7aff24e3bcd00c7c2ae37c007b1304bdfbbd61fcffd8f42ccf6a7a041ff1eba"
+      "sha256": "05c331aa547344b95ecaa3d7c44f452d9fab1e0fa2e0e42ae73ab070a5196910"
     },
     {
       "kind": "generated-evidence",
