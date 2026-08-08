@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+"""Print one deterministic page of the exact-head ASL test matrix."""
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.asl_tests import matrix_main  # noqa: E402
+
+
+if __name__ == "__main__":
+    raise SystemExit(matrix_main())

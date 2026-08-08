@@ -1063,7 +1063,7 @@ git commit -m "docs: mirror the four ASL surfaces"
   - `validate_test_coverage(points: Sequence[AslTestPoint], units: Sequence[AslUnit], requirements: Mapping[str, bool]) -> list[str]`, where each boolean states whether the NDF requirement is executable.
   - `matrix(points: Sequence[AslTestPoint]) -> list[dict[str, object]]`
 
-- [ ] **Step 1: Write fail-closed metadata and coverage tests**
+- [x] **Step 1: Write fail-closed metadata and coverage tests**
 
 Cover duplicate IDs, path mismatch, absent source, absent requirement, unsupported kind, zero/multiple `main()` declarations, cross-test function dependencies, missing unit coverage, missing executable requirement coverage, deterministic hashes, and exact JSON matrix fields.
 
@@ -1074,7 +1074,7 @@ self.assertEqual(
 )
 ```
 
-- [ ] **Step 2: Run the focused test and observe the missing module failure**
+- [x] **Step 2: Run the focused test and observe the missing module failure**
 
 Run:
 
@@ -1084,7 +1084,7 @@ python3 -m unittest tests.scripts.test_asl_tests -v
 
 Expected: FAIL because `scripts.asl_tests` does not exist.
 
-- [ ] **Step 3: Implement metadata parsing and validation**
+- [x] **Step 3: Implement metadata parsing and validation**
 
 Use exact supported kinds:
 
@@ -1097,7 +1097,7 @@ SUPPORTED_KINDS = frozenset({
 
 Require exactly one line beginning `// PTO-TEST: ` and parse `main` with the repository ASL declaration parser, not a raw substring count.
 
-- [ ] **Step 4: Implement individual execution**
+- [x] **Step 4: Implement individual execution**
 
 `scripts/run-asl-test --id PTO-AVS-...` MUST:
 
@@ -1108,11 +1108,11 @@ Require exactly one line beginning `// PTO-TEST: ` and parse `main` with the rep
 5. write `build/asl-test-results/<ID>/result.json` and `aslref.log`;
 6. return nonzero for lookup, assembly, timeout, or execution failure.
 
-- [ ] **Step 5: Implement exact matrix output**
+- [x] **Step 5: Implement exact matrix output**
 
 `scripts/print-asl-test-matrix --page-size 200 --page 0` MUST emit one compact JSON object with `include` entries sorted by test ID and no omitted IDs. Page metadata includes `page`, `page_count`, `test_count`, and exact commit SHA.
 
-- [ ] **Step 6: Run the tooling tests**
+- [x] **Step 6: Run the tooling tests**
 
 Run:
 
@@ -1123,7 +1123,7 @@ python3 -m unittest tests.scripts.test_asl_tests -v
 
 Expected: all tests pass and the valid fixture emits a stable matrix.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add scripts/asl_tests.py scripts/check-asl-tests scripts/run-asl-test scripts/print-asl-test-matrix tests/scripts/test_asl_tests.py tests/fixtures/asl-tests
