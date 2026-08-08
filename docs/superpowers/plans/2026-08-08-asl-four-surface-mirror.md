@@ -291,7 +291,7 @@ git commit -m "feat: validate ASL unit layout"
 - Consumes: repository-relative documentation paths and parsed NDF references.
 - Produces: `is_allowed_legacy_path(path: pathlib.PurePosixPath) -> bool`, true only below `docs/status/legacy/`.
 
-- [ ] **Step 1: Add narrow archive tests**
+- [x] **Step 1: Add narrow archive tests**
 
 Add tests asserting:
 
@@ -307,7 +307,7 @@ def test_normative_reference_into_status_legacy_is_rejected(self):
     self.assertIn("normative reference targets non-normative legacy material", errors)
 ```
 
-- [ ] **Step 2: Run the focused test and observe the missing API failure**
+- [x] **Step 2: Run the focused test and observe the missing API failure**
 
 Run:
 
@@ -317,7 +317,7 @@ python3 -m unittest tests.scripts.test_ndf -v
 
 Expected: FAIL because `is_allowed_legacy_path` is not defined.
 
-- [ ] **Step 3: Implement the narrow exception and archive notice**
+- [x] **Step 3: Implement the narrow exception and archive notice**
 
 Use:
 
@@ -330,7 +330,7 @@ def is_allowed_legacy_path(path: PurePosixPath) -> bool:
 
 The archive README MUST state that every descendant is historical, non-normative, excluded from active navigation, excluded from NDF requirement resolution, and retained only for Git-facing discovery.
 
-- [ ] **Step 4: Run NDF and publication checks**
+- [x] **Step 4: Run NDF and publication checks**
 
 Run:
 
@@ -342,7 +342,7 @@ python3 -m unittest tests.scripts.test_ndf -v
 
 Expected: all commands exit 0.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add scripts/ndf.py tests/scripts/test_ndf.py docs/status/legacy/README.md
