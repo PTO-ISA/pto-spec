@@ -83,6 +83,7 @@ required_files=(
     scripts/run-asl-test
     scripts/run-asl-release-suite
     scripts/check-release-manifest
+    scripts/check-script-entrypoints
 )
 
 for path in "${required_files[@]}"; do
@@ -155,31 +156,7 @@ git diff --check "$empty_tree" HEAD
 git diff --check
 git diff --cached --check
 
-for script in scripts/*; do
-    [[ -f $script ]] || continue
-
-    # Package initializers are importable Python library files, not command
-    # entry points. Validate their syntax without requiring an executable bit
-    # or a shebang.
-    if [[ $(basename "$script") == __init__.py ]]; then
-        python3 -c 'import ast, pathlib, sys; ast.parse(pathlib.Path(sys.argv[1]).read_text())' "$script"
-        continue
-    fi
-
-    [[ -x $script ]] || fail "script is not executable: $script"
-
-    case $(head -n 1 "$script") in
-        '#!/usr/bin/env bash')
-            bash -n "$script"
-            ;;
-        '#!/usr/bin/env python3')
-            python3 -c 'import ast, pathlib, sys; ast.parse(pathlib.Path(sys.argv[1]).read_text())' "$script"
-            ;;
-        *)
-            fail "script has an unsupported interpreter: $script"
-            ;;
-    esac
-done
+./scripts/check-script-entrypoints
 
 ./scripts/check-asl-layout
 ./scripts/check-ndf

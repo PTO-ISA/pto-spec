@@ -32,6 +32,7 @@ SOURCE_PATHS = (
     "scripts/check-release-manifest",
     "scripts/check-release-workflow",
     "scripts/check-repository",
+    "scripts/check-script-entrypoints",
     "scripts/check-toolchain",
     "scripts/instruction_docs.py",
     "scripts/print-asl-test-matrix",

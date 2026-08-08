@@ -12,6 +12,17 @@ REPOSITORY_CHECK = ROOT / "scripts/check-repository"
 
 
 class PullRequestCheckTest(unittest.TestCase):
+    def test_repository_checker_accepts_non_executable_python_modules(self) -> None:
+        result = subprocess.run(
+            [str(REPOSITORY_CHECK), "--structure-only"],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_publication_hygiene_accepts_the_approved_ndf_reference(self) -> None:
         result = subprocess.run(
             ["python3", "scripts/check-publication-hygiene"],
