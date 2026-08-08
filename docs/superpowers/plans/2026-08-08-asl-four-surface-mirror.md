@@ -1264,7 +1264,7 @@ git commit -m "test: split ASL verification into mirrored AVS points"
 - Consumes: `check-asl-layout`, projection `--check` modes, `check-asl-tests`, `print-asl-test-matrix`, and `run-asl-test`.
 - Produces: lightweight `make pr-check`, local `make release-check RELEASE_COMMIT=<sha>`, and manual exact-head paged GitHub Actions matrices.
 
-- [ ] **Step 1: Write workflow-contract tests**
+- [x] **Step 1: Write workflow-contract tests**
 
 Assert that PR CI contains no ASLRef install/run command and invokes these gates:
 
@@ -1279,7 +1279,7 @@ check-publication-hygiene
 
 Assert that release CI obtains every matrix entry from `print-asl-test-matrix`, invokes `run-asl-test --id`, uploads per-ID results, checks the exact commit, and aggregates all pages fail-closed.
 
-- [ ] **Step 2: Run workflow tests and observe old shard assumptions failing**
+- [x] **Step 2: Run workflow tests and observe old shard assumptions failing**
 
 Run:
 
@@ -1289,7 +1289,7 @@ python3 -m unittest tests.scripts.test_release_workflow -v
 
 Expected: FAIL because release still reads hand-maintained shard names.
 
-- [ ] **Step 3: Replace Makefile shard lists**
+- [x] **Step 3: Replace Makefile shard lists**
 
 Define:
 
@@ -1322,15 +1322,15 @@ release-check: pr-check toolchain-check check
 
 `pr-check` MUST not depend on `assemble-asl`, ASLRef, or any `run-asl-test` target.
 
-- [ ] **Step 4: Build the release paging jobs**
+- [x] **Step 4: Build the release paging jobs**
 
 The planning job checks out the requested exact SHA, runs lightweight checks, validates pinned ASLRef, writes `build/asl-test-matrix.json`, and emits page numbers. Each page job regenerates its page, verifies commit/hash equality with the plan artifact, and runs every included ID as its own matrix entry with bounded concurrency.
 
-- [ ] **Step 5: Add fail-closed aggregation**
+- [x] **Step 5: Add fail-closed aggregation**
 
 Aggregation MUST compare planned IDs with uploaded result IDs and hashes using set equality, reject missing/duplicate/unplanned results, require every status to equal `pass`, regenerate coverage, catalogs, decoder, docs, evidence, and manifest, then require a clean exact-head tree.
 
-- [ ] **Step 6: Implement the local release-suite runner**
+- [x] **Step 6: Implement the local release-suite runner**
 
 `scripts/run-asl-release-suite --commit <sha>` MUST reject a SHA different from `git rev-parse HEAD`, discover the full matrix, execute each ID through `scripts/run-asl-test`, aggregate the same result schema as hosted CI, write `build/asl-test-coverage.json`, write `spec/evidence/asl-test-matrix.sha256`, regenerate the release manifest, and return nonzero for any missing, duplicate, unplanned, failed, or hash-mismatched result.
 
@@ -1344,7 +1344,7 @@ python3 -m unittest tests.scripts.test_run_asl_release_suite -v
 
 Expected: PASS.
 
-- [ ] **Step 7: Remove old shard code and run lightweight gates**
+- [x] **Step 7: Remove old shard code and run lightweight gates**
 
 Run:
 
@@ -1356,7 +1356,7 @@ git diff --check
 
 Expected: all commands exit 0 and `rg 'ASL_TEST_SHARD|test-shard-|check-asl-test-shards' Makefile .github scripts tests/scripts` returns no active infrastructure references.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add Makefile .github scripts tests/scripts/test_release_workflow.py tests/scripts/test_run_asl_release_suite.py

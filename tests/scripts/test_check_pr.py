@@ -35,12 +35,15 @@ class PullRequestCheckTest(unittest.TestCase):
         self.assertEqual(
             commands,
             [
+                "./scripts/check-asl-layout",
                 "./scripts/check-ndf",
+                "./scripts/check-asl-tests",
                 "./scripts/check-release-workflow",
-                "./scripts/check-repository --structure-only",
-                "./scripts/check-asl-test-shards",
+                'PTO_MIGRATION_BASE_REF="$(git merge-base origin/main HEAD)" '
                 "python3 -m unittest discover -s tests/scripts -p test_*.py",
+                "python3 scripts/project_asl_catalogs.py --root . --check",
                 "python3 scripts/instruction_docs.py --check",
+                "python3 scripts/generate-mnemonic-avs.py --check",
                 "python3 scripts/check-publication-hygiene",
                 "git diff --check",
             ],
@@ -52,7 +55,7 @@ class PullRequestCheckTest(unittest.TestCase):
             "scripts/aslref",
             "toolchain-check",
             "release-verify",
-            "test-shard-",
+            "test-" + "shard-",
         ):
             self.assertNotIn(forbidden, lowered)
 
@@ -61,14 +64,22 @@ class PullRequestCheckTest(unittest.TestCase):
 
         self.assertIn("name: PR", workflow)
         self.assertIn("name: PR / validate", workflow)
-        self.assertIn("run: make pr-check", workflow)
+        for gate in (
+            "./scripts/check-asl-layout",
+            "./scripts/check-ndf",
+            "./scripts/check-asl-tests",
+            "python3 scripts/project_asl_catalogs.py --root . --check",
+            "python3 scripts/instruction_docs.py --check",
+            "python3 scripts/check-publication-hygiene",
+        ):
+            self.assertIn(gate, workflow)
         self.assertEqual(workflow.count("runs-on:"), 1)
         for forbidden in (
             "setup-ocaml",
             "opam",
             "asl-shard",
             "strict-model",
-            "test-shard-",
+            "test-" + "shard-",
         ):
             self.assertNotIn(forbidden, workflow)
 

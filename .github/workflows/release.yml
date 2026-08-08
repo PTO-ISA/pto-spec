@@ -15,12 +15,15 @@ concurrency:
   group: release-verification-${{ inputs.commit }}
   cancel-in-progress: false
 
+env:
+  ASL_TEST_PAGE_SIZE: "100"
+
 jobs:
   plan:
-    name: exact-head repository plan
+    name: exact-head release plan
     runs-on: ubuntu-latest
     outputs:
-      shards: ${{ steps.shards.outputs.matrix }}
+      pages: ${{ steps.matrix.outputs.pages }}
     steps:
       - name: Validate exact commit input
         shell: bash
@@ -33,7 +36,7 @@ jobs:
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           ref: ${{ inputs.commit }}
-          fetch-depth: 1
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Prove exact head and lightweight contract
@@ -44,13 +47,31 @@ jobs:
           test "$(git rev-parse HEAD)" = "$COMMIT"
           make pr-check
 
-      - name: Export exact ASL shard matrix
-        id: shards
+      - name: Export exact ASL test pages
+        id: matrix
         shell: bash
         run: |
-          matrix="$(make --no-print-directory print-asl-test-shard-names | python3 -c 'import json, sys; print(json.dumps([line.strip() for line in sys.stdin if line.strip()]))')"
-          test "$matrix" != "[]"
-          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          mkdir -p build/planned-asl-test-pages
+          ./scripts/print-asl-test-matrix \
+            --page-size "$ASL_TEST_PAGE_SIZE" --page 0 \
+            > build/planned-asl-test-pages/page-0.json
+          page_count="$(python3 -c 'import json; print(json.load(open("build/planned-asl-test-pages/page-0.json"))["page_count"])')"
+          for ((page = 1; page < page_count; page++)); do
+            ./scripts/print-asl-test-matrix \
+              --page-size "$ASL_TEST_PAGE_SIZE" --page "$page" \
+              > "build/planned-asl-test-pages/page-$page.json"
+          done
+          pages="$(python3 -c 'import json,sys; print(json.dumps(list(range(int(sys.argv[1]))), separators=(",", ":")))' "$page_count")"
+          test "$pages" != "[]"
+          echo "pages=$pages" >> "$GITHUB_OUTPUT"
+
+      - name: Upload exact ASL test plan
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: planned-asl-test-pages
+          path: build/planned-asl-test-pages
+          if-no-files-found: error
+          retention-days: 90
 
   strict-model:
     name: strict normative model
@@ -75,8 +96,8 @@ jobs:
       - name: Validate toolchain canaries and normative model
         run: make toolchain-check check
 
-  asl-shard:
-    name: ASL / ${{ matrix.shard }}
+  asl-page:
+    name: ASL page ${{ matrix.page }}
     needs: plan
     runs-on: ubuntu-latest
     timeout-minutes: 360
@@ -84,13 +105,19 @@ jobs:
       fail-fast: false
       max-parallel: 8
       matrix:
-        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+        page: ${{ fromJSON(needs.plan.outputs.pages) }}
     steps:
       - name: Check out exact commit
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           ref: ${{ inputs.commit }}
           persist-credentials: false
+
+      - name: Download exact ASL test plan
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          name: planned-asl-test-pages
+          path: build/planned-asl-test-pages
 
       - name: Set up pinned OCaml
         uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0 # v3
@@ -100,12 +127,32 @@ jobs:
       - name: Install pinned ASLRef dependencies
         run: make setup
 
-      - name: Validate exact shard
-        run: make "test-shard-${{ matrix.shard }}"
+      - name: Verify and execute every independent ID on this page
+        shell: bash
+        env:
+          COMMIT: ${{ inputs.commit }}
+          PAGE: ${{ matrix.page }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$COMMIT"
+          ./scripts/print-asl-test-matrix \
+            --page-size "$ASL_TEST_PAGE_SIZE" --page "$PAGE" \
+            > build/actual-page.json
+          cmp "build/planned-asl-test-pages/page-$PAGE.json" build/actual-page.json
+          python3 -c 'import json; [print(row["id"]) for row in json.load(open("build/actual-page.json"))["include"]]' \
+            | xargs -P 8 -n 1 ./scripts/run-asl-test --id
+
+      - name: Upload per-ID ASL results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: asl-test-results-${{ matrix.page }}
+          path: build/asl-test-results
+          if-no-files-found: error
+          retention-days: 90
 
   release-evidence:
-    name: reproducible release evidence
-    needs: [plan, strict-model, asl-shard]
+    name: fail-closed release evidence
+    needs: [plan, strict-model, asl-page]
     runs-on: ubuntu-latest
     steps:
       - name: Check out exact commit
@@ -114,23 +161,48 @@ jobs:
           ref: ${{ inputs.commit }}
           persist-credentials: false
 
-      - name: Reproduce committed release evidence
-        run: make release-prepare
+      - name: Download exact ASL test plan
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          name: planned-asl-test-pages
+          path: build/planned-asl-test-pages
+
+      - name: Download every per-ID result
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          pattern: asl-test-results-*
+          path: build/asl-test-results
+          merge-multiple: true
+
+      - name: Aggregate exact set equality and regenerate release evidence
+        shell: bash
+        env:
+          COMMIT: ${{ inputs.commit }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$COMMIT"
+          ./scripts/run-asl-release-suite \
+            --commit "$COMMIT" \
+            --aggregate-only \
+            --matrix-pages build/planned-asl-test-pages \
+            --results build/asl-test-results
+          make release-prepare
+          git diff --exit-code
 
       - name: Upload release evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: pto-release-evidence-${{ inputs.commit }}
           path: |
+            build/asl-test-coverage.json
+            spec/evidence/asl-test-matrix.sha256
             spec/release-manifest.json
-            spec/evidence/*.json
           if-no-files-found: error
           retention-days: 90
 
   validate:
     name: Release / validate
     if: always()
-    needs: [plan, strict-model, asl-shard, release-evidence]
+    needs: [plan, strict-model, asl-page, release-evidence]
     runs-on: ubuntu-latest
     steps:
       - name: Require every exact-head release gate
@@ -138,10 +210,10 @@ jobs:
         env:
           PLAN_RESULT: ${{ needs.plan.result }}
           STRICT_MODEL_RESULT: ${{ needs.strict-model.result }}
-          ASL_SHARD_RESULT: ${{ needs.asl-shard.result }}
+          ASL_PAGE_RESULT: ${{ needs.asl-page.result }}
           RELEASE_EVIDENCE_RESULT: ${{ needs.release-evidence.result }}
         run: |
           test "$PLAN_RESULT" = success
           test "$STRICT_MODEL_RESULT" = success
-          test "$ASL_SHARD_RESULT" = success
+          test "$ASL_PAGE_RESULT" = success
           test "$RELEASE_EVIDENCE_RESULT" = success

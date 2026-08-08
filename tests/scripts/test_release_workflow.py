@@ -2,117 +2,175 @@ from __future__ import annotations
 
 import unittest
 
-from scripts.release_workflow import validate_release_workflow
+from scripts.release_workflow import validate_pr_workflow, validate_release_workflow
 
 
-VALID_WORKFLOW = r"""
+VALID_PR_WORKFLOW = r"""
+name: PR
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  validate:
+    name: PR / validate
+    steps:
+      - run: |
+          ./scripts/check-asl-layout
+          ./scripts/check-ndf
+          ./scripts/check-asl-tests
+          python3 scripts/project_asl_catalogs.py --root . --check
+          python3 scripts/instruction_docs.py --check
+          python3 scripts/check-publication-hygiene
+"""
+
+
+VALID_RELEASE_WORKFLOW = r"""
 name: Release verification
-
 on:
   workflow_dispatch:
     inputs:
       commit:
         required: true
         type: string
-
 permissions:
   contents: read
-
 jobs:
   plan:
     outputs:
-      shards: ${{ steps.shards.outputs.matrix }}
+      pages: ${{ steps.matrix.outputs.pages }}
     steps:
-      - name: Validate exact commit
-        env:
+      - env:
           COMMIT: ${{ inputs.commit }}
         run: '[[ "$COMMIT" =~ ^[0-9a-f]{40}$ ]]'
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           ref: ${{ inputs.commit }}
-      - run: |
+      - id: matrix
+        run: |
           test "$(git rev-parse HEAD)" = "$COMMIT"
           make pr-check
-      - id: shards
-        run: make print-asl-test-shard-names && echo "matrix=[]" >> "$GITHUB_OUTPUT"
+          ./scripts/print-asl-test-matrix --page-size 100 --page 0
+          echo 'pages=[0]' >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: planned-asl-test-pages
   strict-model:
     needs: plan
     steps:
       - uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0
       - run: make setup
       - run: make toolchain-check check
-  asl-shard:
+  asl-page:
     needs: plan
     strategy:
       fail-fast: false
       matrix:
-        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+        page: ${{ fromJSON(needs.plan.outputs.pages) }}
     steps:
-      - run: make "test-shard-${{ matrix.shard }}"
-  release-evidence:
-    needs: [plan, strict-model, asl-shard]
-    steps:
-      - run: make release-prepare
+      - uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e
+        with:
+          name: planned-asl-test-pages
+      - run: |
+          ./scripts/print-asl-test-matrix --page-size 100 --page "${{ matrix.page }}"
+          cmp "build/planned-asl-test-pages/page-${{ matrix.page }}.json" "build/actual-page.json"
+          xargs -P 8 -n 1 ./scripts/run-asl-test --id
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: asl-test-results-${{ matrix.page }}
+          path: build/asl-test-results/*/result.json
+  release-evidence:
+    needs: [plan, strict-model, asl-page]
+    steps:
+      - uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e
+        with:
+          pattern: asl-test-results-*
+          merge-multiple: true
+      - run: |
+          ./scripts/run-asl-release-suite --commit "$COMMIT" --aggregate-only --matrix-pages build/planned-asl-test-pages --results build/asl-test-results
+          git diff --exit-code
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-evidence
   validate:
     name: Release / validate
     if: always()
-    needs: [plan, strict-model, asl-shard, release-evidence]
+    needs: [plan, strict-model, asl-page, release-evidence]
     steps:
       - env:
           PLAN_RESULT: ${{ needs.plan.result }}
           STRICT_MODEL_RESULT: ${{ needs.strict-model.result }}
-          ASL_SHARD_RESULT: ${{ needs.asl-shard.result }}
+          ASL_PAGE_RESULT: ${{ needs.asl-page.result }}
           RELEASE_EVIDENCE_RESULT: ${{ needs.release-evidence.result }}
         run: |
           test "$PLAN_RESULT" = success
           test "$STRICT_MODEL_RESULT" = success
-          test "$ASL_SHARD_RESULT" = success
+          test "$ASL_PAGE_RESULT" = success
           test "$RELEASE_EVIDENCE_RESULT" = success
 """
+
+
+class PullRequestWorkflowContractTest(unittest.TestCase):
+    def test_complete_lightweight_workflow_is_accepted(self) -> None:
+        self.assertEqual(validate_pr_workflow(VALID_PR_WORKFLOW), [])
+
+    def test_pr_workflow_rejects_aslref(self) -> None:
+        errors = validate_pr_workflow(VALID_PR_WORKFLOW + "\n# make setup-aslref\n")
+        self.assertTrue(any("ASLRef" in error for error in errors))
+
+    def test_pr_workflow_requires_every_lightweight_gate(self) -> None:
+        workflow = VALID_PR_WORKFLOW.replace("          ./scripts/check-ndf\n", "")
+        errors = validate_pr_workflow(workflow)
+        self.assertTrue(any("check-ndf" in error for error in errors))
 
 
 class ReleaseWorkflowContractTest(unittest.TestCase):
     def assert_rejected(self, workflow: str, expected: str) -> None:
         errors = validate_release_workflow(workflow)
         self.assertTrue(errors)
-        self.assertTrue(
-            any(expected in error for error in errors),
-            f"expected {expected!r} in {errors!r}",
-        )
+        self.assertTrue(any(expected in error for error in errors), errors)
 
     def test_complete_manual_workflow_is_accepted(self) -> None:
-        self.assertEqual(validate_release_workflow(VALID_WORKFLOW), [])
+        self.assertEqual(validate_release_workflow(VALID_RELEASE_WORKFLOW), [])
 
     def test_exact_sha_validation_is_required(self) -> None:
         self.assert_rejected(
-            VALID_WORKFLOW.replace('[[ "$COMMIT" =~ ^[0-9a-f]{40}$ ]]', "test -n \"$COMMIT\""),
+            VALID_RELEASE_WORKFLOW.replace(
+                '[[ "$COMMIT" =~ ^[0-9a-f]{40}$ ]]', 'test -n "$COMMIT"'
+            ),
             "40 lowercase hexadecimal",
         )
 
-    def test_final_gate_must_depend_on_strict_model(self) -> None:
+    def test_repository_derived_pages_are_required(self) -> None:
         self.assert_rejected(
-            VALID_WORKFLOW.replace(
-                "needs: [plan, strict-model, asl-shard, release-evidence]",
-                "needs: [plan, asl-shard, release-evidence]",
-                1,
-            ),
-            "strict-model dependency",
+            VALID_RELEASE_WORKFLOW.replace("./scripts/print-asl-test-matrix", "printf"),
+            "print-asl-test-matrix",
         )
 
-    def test_shard_matrix_is_required(self) -> None:
+    def test_exact_page_comparison_is_required(self) -> None:
         self.assert_rejected(
-            VALID_WORKFLOW.replace("shard: ${{ fromJSON(needs.plan.outputs.shards) }}", "shard: core"),
-            "exact shard matrix",
+            VALID_RELEASE_WORKFLOW.replace("          cmp ", "          true # cmp "),
+            "compare",
         )
 
-    def test_explicit_success_comparison_is_required(self) -> None:
+    def test_independent_runner_is_required(self) -> None:
         self.assert_rejected(
-            VALID_WORKFLOW.replace(
-                'test "$STRICT_MODEL_RESULT" = success',
-                'test -n "$STRICT_MODEL_RESULT"',
+            VALID_RELEASE_WORKFLOW.replace("./scripts/run-asl-test --id", "true"),
+            "run-asl-test --id",
+        )
+
+    def test_fail_closed_aggregation_is_required(self) -> None:
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace(" --aggregate-only", ""),
+            "aggregate-only",
+        )
+
+    def test_final_gate_must_require_every_job_success(self) -> None:
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace(
+                'test "$ASL_PAGE_RESULT" = success', 'test -n "$ASL_PAGE_RESULT"'
             ),
-            "STRICT_MODEL_RESULT",
+            "ASL_PAGE_RESULT",
         )
 
 

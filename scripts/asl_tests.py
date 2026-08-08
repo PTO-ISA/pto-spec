@@ -348,10 +348,10 @@ def execute_test_point(
 
     build = root / "build"
     result_dir = build / "asl-test-results" / point.test_id
-    order_path = build / "asl-source-order.txt"
-    decoder_path = build / "decoders.asl"
-    model_path = build / "pto-spec.asl"
-    test_path = build / "asl-test-results" / point.test_id / "test.asl"
+    order_path = result_dir / "asl-source-order.txt"
+    decoder_path = result_dir / "decoders.asl"
+    model_path = result_dir / "pto-spec.asl"
+    test_path = result_dir / "test.asl"
     build.mkdir(parents=True, exist_ok=True)
     result_dir.mkdir(parents=True, exist_ok=True)
     started = time.monotonic()

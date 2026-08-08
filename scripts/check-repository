@@ -231,7 +231,7 @@ fi
 
 if [[ $structure_only == true ]]; then
     ./scripts/check-ndf
-    ./scripts/check-asl-test-shards
+    ./scripts/check-asl-tests
     python3 scripts/instruction_docs.py --check
     echo "repository structure checks passed"
     exit 0

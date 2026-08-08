@@ -9179,8 +9179,8 @@ def main() -> int:
         in closure_requirement["model"]
         and "spec/evidence/release-gate-readiness.json" in closure_requirement["model"]
         and "scripts/generate-release-gate-readiness" in closure_requirement["model"]
-        and "scripts/check-asl-test-shards" in closure_requirement["model"]
-        and "scripts/check-asl-test-shards" in closure_requirement["tests"]
+        and "scripts/check-asl-tests" in closure_requirement["model"]
+        and "scripts/run-asl-release-suite" in closure_requirement["tests"]
         and "scripts/check-catalogs" in closure_requirement["tests"],
         "maturity closure ledger lacks requirement traceability",
     )
