@@ -227,6 +227,21 @@ def topological_order(
     return tuple(ordered)
 
 
+def generate_source_order(root: Path) -> tuple[str, ...]:
+    """Return deterministic ASL source paths with one decoder marker."""
+
+    asl_root = root / "asl"
+    units = load_units(asl_root)
+    errors = validate_layout(asl_root, units)
+    if errors:
+        raise ValueError("\n".join(errors))
+    by_id = {unit.unit_id: unit.source_path.as_posix() for unit in units}
+    return tuple(
+        "@generated-decoder@" if node == SYNTHETIC_DECODER_NODE else by_id[node]
+        for node in topological_order(units)
+    )
+
+
 @dataclass(frozen=True)
 class _AslSymbol:
     name: str

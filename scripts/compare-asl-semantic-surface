@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.asl_units import APPROVED_SURFACES, compare_ref_to_tree
+from scripts.asl_units import APPROVED_SURFACES, compare_ref_to_tree  # noqa: E402
 
 
 def main() -> int:

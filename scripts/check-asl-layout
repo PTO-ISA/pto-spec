@@ -11,7 +11,12 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.asl_units import APPROVED_SURFACES, load_units, validate_layout, validate_surface
+from scripts.asl_units import (  # noqa: E402
+    APPROVED_SURFACES,
+    load_units,
+    validate_layout,
+    validate_surface,
+)
 
 
 def main() -> int:
