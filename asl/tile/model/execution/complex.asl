@@ -1,3 +1,4 @@
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-COMPLEX","surface":"tile","classification":["model","execution","complex"],"depends_on":["PTO-TILE-MODEL-EXECUTION-REARRANGEMENT"]}
 // PTO-REQ-TEPL-COMPLEX-001: partial, ordering, and histogram operations.
 
 pure func TilePartialValue(op: TilePartialOperation, left: Word, right: Word) => Word

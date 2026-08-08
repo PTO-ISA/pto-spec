@@ -1,3 +1,4 @@
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-REDUCTION","surface":"tile","classification":["model","execution","reduction"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE"]}
 // PTO-REQ-TEPL-REDUCE-001: row/column reductions and index reductions.
 
 pure func ReductionInitial(op: TileReductionOperation, first: Word) => Word

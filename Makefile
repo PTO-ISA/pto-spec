@@ -1,122 +1,8 @@
 ASLREF ?= ./scripts/aslref
 
-# Checked-in specification sources, in dependency order around the generated
-# decoder declarations.
-ASL_SOURCES_BEFORE_DECODER := \
-	asl/arch/overview/architecture.asl \
-	asl/arch/programming-model/core-pe-topology.asl \
-	asl/arch/features/tile-allocation.asl \
-	asl/arch/data-types/integer.asl \
-	asl/arch/data-types/fault.asl \
-	asl/block/model/state/types.asl \
-	asl/arch/data-types/memory-model.asl \
-	asl/arch/data-types/memory-operations.asl \
-	asl/arch/data-types/system-registers.asl \
-	asl/arch/data-types/floating-point.asl \
-	asl/arch/data-types/rounding.asl \
-	asl/arch/data-types/numeric-classification.asl \
-	asl/arch/features/mx-formats.asl \
-	asl/arch/data-types/tile-data-types.asl \
-	asl/arch/data-types/packed.asl \
-	asl/arch/overview/instruction-classification.asl \
-	asl/scalar/model/types/operations.asl \
-	asl/tile/model/state/types.asl \
-	asl/arch/data-types/trap-context.asl \
-	asl/arch/system-registers/addressing.asl \
-	asl/arch/programming-model/execution-context.asl \
-	asl/arch/system-registers/access-control.asl \
-	asl/arch/system-registers/context.asl \
-	asl/arch/system-registers/timer.asl \
-	asl/arch/system-registers/interrupt.asl \
-	asl/arch/programming-model/scalar-registers.asl \
-	asl/arch/state/program-counter.asl \
-	asl/arch/state/execution-mask.asl \
-	asl/arch/programming-model/predicate-registers.asl \
-	asl/arch/features/predication.asl \
-	asl/arch/programming-model/tile-registers.asl \
-	asl/arch/programming-model/shared-tile-registers.asl \
-	asl/arch/features/shared-tile-state.asl \
-	asl/arch/state/tile-descriptor.asl \
-	asl/arch/state/definedness.asl \
-	asl/arch/state/trap-context.asl \
-	asl/arch/memory-model/fault-precision.asl \
-	asl/arch/memory-model/address-space.asl \
-	asl/block/model/state/control-state.asl \
-	asl/block/model/state/descriptor-state.asl \
-	asl/block/model/state/binding-state.asl \
-	asl/block/model/lifecycle/reset.asl \
-	asl/block/model/schema/dimensions.asl \
-	asl/block/model/operands/shared-bindings.asl \
-	asl/block/model/operands/scalar-bindings.asl \
-	asl/block/model/operands/tile-bindings.asl \
-	asl/block/model/schema/header.asl \
-	asl/block/model/schema/attributes.asl \
-	asl/block/model/lifecycle/begin.asl \
-	asl/block/model/lifecycle/enter-stop.asl \
-	asl/block/model/lifecycle/lifetime.asl \
-	asl/block/model/commit/effects.asl \
-	asl/tile/state.asl \
-	asl/scalar/model/types/operands.asl \
-	asl/scalar/model/alu/semantics.asl \
-	asl/scalar/model/bru/semantics.asl \
-	asl/scalar/model/agu/memory.asl \
-	asl/arch/memory-model/memory-events.asl \
-	asl/arch/memory-model/atomicity.asl \
-	asl/arch/memory-model/ordering.asl \
-	asl/scalar/model/agu/addressing.asl \
-	asl/scalar/model/amo/semantics.asl \
-	asl/scalar/model/sys/semantics.asl \
-	asl/scalar/model/sys/registers.asl \
-	asl/arch/system-registers/maintenance.asl \
-	asl/scalar/model/fsu/arithmetic.asl \
-	asl/scalar/model/fsu/profile.asl \
-	asl/tile/elementwise.asl \
-	asl/tile/reduction.asl \
-	asl/tile/expansion.asl \
-	asl/tile/generation.asl \
-	asl/tile/conversion.asl \
-	asl/tile/rearrangement.asl \
-	asl/tile/complex.asl \
-	asl/tile/memory.asl \
-	asl/tile/cube.asl \
-	asl/tile/legality.asl
-
-ASL_MNEMONIC_SOURCES := $(sort $(wildcard \
-	asl/scalar/*/*.asl \
-	asl/block/*/*.asl \
-	asl/tile/*/*/*.asl))
-
-ASL_SOURCES_AFTER_DECODER := \
-	asl/arch/profile/reset.asl \
-	asl/arch/profile/applicability.asl \
-	asl/arch/profile/reference-profile.asl \
-	asl/block/model/schema/profile-encoding.asl \
-	$(ASL_MNEMONIC_SOURCES) \
-	asl/block/model/dispatch/decode.asl \
-	asl/block/model/dispatch/descriptor-legality.asl \
-	asl/block/model/dispatch/scalar-schema.asl \
-	asl/block/model/dispatch/tile-schema.asl \
-	asl/block/model/dispatch/numeric-control.asl \
-	asl/block/model/dispatch/destination-shape.asl \
-	asl/block/model/faults/rollback.asl \
-	asl/block/model/dispatch/shared-cube.asl \
-	asl/block/model/dispatch/shared-tlsu.asl \
-	asl/block/model/dispatch/tile-execution.asl \
-	asl/block/model/commit/validation.asl \
-	asl/block/model/dispatch/start.asl \
-	asl/block/model/dispatch/commands.asl \
-	asl/block/model/dispatch/top-level.asl \
-	asl/scalar/model/dispatch/decode.asl \
-	asl/scalar/model/dispatch/alu.asl \
-	asl/scalar/model/dispatch/bru.asl \
-	asl/scalar/model/dispatch/sys.asl \
-	asl/scalar/model/dispatch/amo.asl \
-	asl/scalar/model/dispatch/agu.asl \
-	asl/scalar/model/dispatch/fsu.asl \
-	asl/scalar/model/dispatch/top-level.asl \
-	asl/arch/dispatch/top-level.asl
-
-ASL_SOURCES := $(ASL_SOURCES_BEFORE_DECODER) $(ASL_SOURCES_AFTER_DECODER)
+# ASL source order is generated from unit metadata and its dependency graph.
+ASL_SOURCE_ORDER := build/asl-source-order.txt
+ASL_UNIT_SOURCES := $(shell find asl -type f -name '*.asl' | sort)
 
 # Executable semantic test library, assembled after the specification.
 ASL_TEST_LIB := \
@@ -280,8 +166,12 @@ $(DECODER_SPEC): scripts/generate-asl-decoders spec/catalog/scalar-forms.json \
 	@mkdir -p build
 	@./scripts/generate-asl-decoders > $@
 
-$(SPEC): $(ASL_SOURCES) $(DECODER_SPEC) scripts/assemble-asl Makefile
-	./scripts/assemble-asl $@ $(ASL_SOURCES_BEFORE_DECODER) $(DECODER_SPEC) $(ASL_SOURCES_AFTER_DECODER)
+$(ASL_SOURCE_ORDER): $(ASL_UNIT_SOURCES) scripts/generate-asl-source-order scripts/asl_units.py
+	@mkdir -p build
+	./scripts/generate-asl-source-order --root . --output $@
+
+$(SPEC): $(ASL_SOURCE_ORDER) $(DECODER_SPEC) scripts/assemble-asl Makefile
+	./scripts/assemble-asl --order $(ASL_SOURCE_ORDER) --decoder $(DECODER_SPEC) --output $@
 
 $(TEST_SPEC): $(SPEC) $(ASL_TESTS) scripts/assemble-asl Makefile
 	./scripts/assemble-asl $@ $(SPEC) $(ASL_TESTS)
@@ -334,7 +224,7 @@ test-parallel: $(ASL_TEST_SHARD_SPECS)
 ci: pr-check
 
 print-asl-sources:
-	@printf '%s\n' $(ASL_SOURCES)
+	@cat $(ASL_SOURCE_ORDER)
 
 print-asl-tests:
 	@printf '%s\n' $(ASL_TESTS)

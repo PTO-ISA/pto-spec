@@ -1,3 +1,4 @@
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-NUMERIC-FORMATS","surface":"tile","classification":["model","numeric","formats"],"depends_on":["PTO-TILE-MODEL-EXECUTION-GENERATION","PTO-ARCH-DATA-TYPES-NUMERIC-CLASSIFICATION"]}
 // PTO-REQ-TEPL-CONVERT-001: conversion, quantization, and dequantization.
 
 pure func NormalizeTileInteger(value: Word, data_type: TileDataType) => Word

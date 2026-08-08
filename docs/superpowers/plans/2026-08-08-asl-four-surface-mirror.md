@@ -754,11 +754,11 @@ git commit -m "refactor: split scalar ASL execution classes"
 - Consumes: architecture tile data types, allocation, memory model, and block tile-binding contracts.
 - Produces: focused `PTO-TILE-*` model units and one mnemonic source for every PTO tile operation.
 
-- [ ] **Step 1: Write tile preservation and taxonomy tests**
+- [x] **Step 1: Write tile preservation and taxonomy tests**
 
 The test MUST compare old/new symbols, normalized instruction records, and the checked PTO taxonomy source. It MUST reject a mnemonic stored outside its catalog classification.
 
-- [ ] **Step 2: Run the focused test and observe the expected aggregate-file failure**
+- [x] **Step 2: Run the focused test and observe the expected aggregate-file failure**
 
 Run:
 
@@ -768,7 +768,7 @@ PTO_MIGRATION_BASE_REF="$(git merge-base origin/main HEAD)" python3 -m unittest 
 
 Expected: FAIL because one or more tile common files exceed 500 lines and tile metadata lacks stable unit fields.
 
-- [ ] **Step 3: Split tile state and shape/capacity units**
+- [x] **Step 3: Split tile state and shape/capacity units**
 
 Create:
 
@@ -786,7 +786,7 @@ asl/tile/model/capacity/shared.asl
 
 Keep `rows`, `columns`, `valid_rows`, `valid_columns`, `TSize`, dtype, and PE-mask contracts in their owning units without duplicating formulas.
 
-- [ ] **Step 4: Split legality by independent constraint domain**
+- [x] **Step 4: Split legality by independent constraint domain**
 
 Create:
 
@@ -801,7 +801,7 @@ asl/tile/model/legality/pe-mask.asl
 
 Each exported legality predicate MUST have one owning file and all callers MUST depend on that unit ID.
 
-- [ ] **Step 5: Split memory and numeric behavior**
+- [x] **Step 5: Split memory and numeric behavior**
 
 Create:
 
@@ -819,11 +819,11 @@ asl/tile/model/numeric/exceptions.asl
 
 Preserve TLOAD/TSTORE stride encoding and omitted/default/encoded-zero distinctions exactly.
 
-- [ ] **Step 6: Split dispatch and move mnemonic files to PTO taxonomy paths**
+- [x] **Step 6: Split dispatch and move mnemonic files to PTO taxonomy paths**
 
 Create one dispatcher per tile class plus `asl/tile/model/dispatch/top-level.asl`. Use `git mv` for mnemonic files and retain their encoding/operation metadata unchanged except for unit fields.
 
-- [ ] **Step 7: Prove assembled-tree and focused behavior equivalence**
+- [x] **Step 7: Prove assembled-tree and focused behavior equivalence**
 
 Run:
 
@@ -840,7 +840,7 @@ Expected: all commands exit 0; every ASL file is at most 500 lines.
 Catalog/evidence projection and ASLRef runtime checks remain deferred to Tasks 9
 and 14 respectively.
 
-- [ ] **Step 8: Cut the assembler over to generated source order**
+- [x] **Step 8: Cut the assembler over to generated source order**
 
 Remove `ASL_SOURCES_BEFORE_DECODER`, `ASL_MNEMONIC_SOURCES`, and `ASL_SOURCES_AFTER_DECODER`. Add:
 
@@ -857,7 +857,7 @@ $(SPEC): $(ASL_SOURCE_ORDER) $(DECODER_SPEC) scripts/assemble-asl
 
 Extend `scripts/assemble-asl` with the exact `--order`, `--decoder`, and `--output` options. It MUST splice the decoder at `@generated-decoder@` and reject an absent/duplicate marker or absent/duplicate source path.
 
-- [ ] **Step 9: Prove migration equivalence and commit**
+- [x] **Step 9: Prove migration equivalence and commit**
 
 Compare normalized named symbols and bodies directly with the Git baseline:
 

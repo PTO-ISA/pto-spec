@@ -1,3 +1,4 @@
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-REARRANGEMENT","surface":"tile","classification":["model","execution","rearrangement"],"depends_on":["PTO-TILE-MODEL-NUMERIC-EXCEPTIONS"]}
 // PTO-REQ-TEPL-REARRANGE-001: direct tile layout and indexing operations.
 
 func TEXTRACT(destination: TileIndex, source: TileIndex,

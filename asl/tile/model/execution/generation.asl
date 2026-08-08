@@ -1,3 +1,4 @@
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-GENERATION","surface":"tile","classification":["model","execution","generation"],"depends_on":["PTO-TILE-MODEL-EXECUTION-EXPANSION"]}
 // PTO-REQ-TEPL-GENERATE-001: generated sequences, masks, and padding.
 
 func TCI(destination: TileIndex, start: Word, descending: boolean)

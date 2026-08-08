@@ -1,24 +1,90 @@
 #!/usr/bin/env bash
 # Concatenate ordered ASL sources into the single file ASLRef consumes.
-#
-# ASLRef accepts one primary ASL input, so checked-in sources stay split for
-# reviewability and are assembled here in the order the Makefile declares.
 set -euo pipefail
 
-if [[ $# -lt 1 ]]; then
-    echo "usage: assemble-asl OUTPUT [SOURCE...]" >&2
-    exit 2
+assemble() {
+    local output=$1
+    shift
+    mkdir -p "$(dirname "$output")"
+    {
+        printf '// Generated from the ordered PTO ASL sources. Do not edit.\n'
+        for source in "$@"; do
+            printf '\n// Source: %s\n' "$source"
+            cat "$source"
+        done
+    } > "$output"
+}
+
+if [[ ${1:-} != --order ]]; then
+    if [[ $# -lt 1 ]]; then
+        echo "usage: assemble-asl OUTPUT [SOURCE...]" >&2
+        echo "   or: assemble-asl --order ORDER --decoder DECODER --output OUTPUT" >&2
+        exit 2
+    fi
+    output=$1
+    shift
+    assemble "$output" "$@"
+    exit 0
 fi
 
-output=$1
-shift
+order=
+decoder=
+output=
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --order|--decoder|--output)
+            option=$1
+            [[ $# -ge 2 ]] || { echo "error: missing value for $option" >&2; exit 2; }
+            case "$option" in
+                --order) order=$2 ;;
+                --decoder) decoder=$2 ;;
+                --output) output=$2 ;;
+            esac
+            shift 2
+            ;;
+        *)
+            echo "error: unknown ordered-assembly argument: $1" >&2
+            exit 2
+            ;;
+    esac
+done
 
-mkdir -p "$(dirname "$output")"
+[[ -n $order && -n $decoder && -n $output ]] || {
+    echo "usage: assemble-asl --order ORDER --decoder DECODER --output OUTPUT" >&2
+    exit 2
+}
+[[ -f $order ]] || { echo "error: missing ASL source order: $order" >&2; exit 1; }
+[[ -f $decoder ]] || { echo "error: missing generated decoder: $decoder" >&2; exit 1; }
 
-{
-    printf '// Generated from the ordered PTO ASL sources. Do not edit.\n'
-    for source in "$@"; do
-        printf '\n// Source: %s\n' "$source"
-        cat "$source"
+sources=()
+marker_count=0
+seen_sources=()
+seen_count=0
+while IFS= read -r source || [[ -n $source ]]; do
+    [[ -n $source ]] || { echo "error: empty source-order entry" >&2; exit 1; }
+    if [[ $source == @generated-decoder@ ]]; then
+        ((marker_count += 1))
+        sources+=("$decoder")
+        continue
+    fi
+    [[ -f $source ]] || { echo "error: missing ordered ASL source: $source" >&2; exit 1; }
+    seen_index=0
+    while [[ $seen_index -lt $seen_count ]]; do
+        seen_source=${seen_sources[$seen_index]}
+        [[ $seen_source != "$source" ]] || {
+            echo "error: duplicate ordered ASL source: $source" >&2
+            exit 1
+        }
+        ((seen_index += 1))
     done
-} > "$output"
+    seen_sources+=("$source")
+    ((seen_count += 1))
+    sources+=("$source")
+done < "$order"
+
+[[ $marker_count -eq 1 ]] || {
+    echo "error: expected exactly one @generated-decoder@ marker, found $marker_count" >&2
+    exit 1
+}
+
+assemble "$output" "${sources[@]}"

@@ -1,3 +1,4 @@
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-EXPANSION","surface":"tile","classification":["model","execution","expansion"],"depends_on":["PTO-TILE-MODEL-EXECUTION-REDUCTION"]}
 // PTO-REQ-TEPL-EXPAND-001: row/column broadcast operations.
 
 impdef func TileExpDifference(left: Word, right: Word) => Word
