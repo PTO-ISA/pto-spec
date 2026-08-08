@@ -76,7 +76,7 @@ jobs:
           ./scripts/print-asl-test-matrix --page-size 100 --page "${{ matrix.page }}"
           cmp "build/planned-asl-test-pages/page-${{ matrix.page }}.json" "build/actual-page.json"
           printf '%s\\n' fixture \
-            | xargs -P 8 -n 1 ./scripts/run-asl-test --id
+            | xargs -P 4 -n 1 ./scripts/run-asl-test --id
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: asl-test-results-${{ matrix.page }}
@@ -190,35 +190,41 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
                     "prepare pinned ASLRef",
                 )
 
-    def test_asl_pages_must_keep_eight_way_test_parallelism(self) -> None:
+    def test_asl_pages_must_keep_four_way_memory_safe_parallelism(self) -> None:
         self.assert_rejected(
-            VALID_RELEASE_WORKFLOW.replace("xargs -P 8", "xargs -P 1"),
-            "eight-way parallelism",
+            VALID_RELEASE_WORKFLOW.replace("xargs -P 4", "xargs -P 1"),
+            "four-way memory-safe parallelism",
+        )
+
+    def test_asl_pages_reject_memory_unsafe_eight_way_parallelism(self) -> None:
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace("xargs -P 4", "xargs -P 8"),
+            "four-way memory-safe parallelism",
         )
 
     def test_parallel_pipeline_rejects_decoys_and_best_effort_execution(self) -> None:
-        required = "            | xargs -P 8 -n 1 ./scripts/run-asl-test --id\n"
+        required = "            | xargs -P 4 -n 1 ./scripts/run-asl-test --id\n"
         for replacement in (
-            "          # | xargs -P 8 -n 1 ./scripts/run-asl-test --id\n"
+            "          # | xargs -P 4 -n 1 ./scripts/run-asl-test --id\n"
             "            | xargs -P 1 -n 1 ./scripts/run-asl-test --id\n",
-            "          echo '| xargs -P 8 -n 1 ./scripts/run-asl-test --id'\n"
+            "          echo '| xargs -P 4 -n 1 ./scripts/run-asl-test --id'\n"
             "            | xargs -P 1 -n 1 ./scripts/run-asl-test --id\n",
-            "            | xargs -P 8 -n 1 ./scripts/run-asl-test --id || true\n",
+            "            | xargs -P 4 -n 1 ./scripts/run-asl-test --id || true\n",
         ):
             with self.subTest(replacement=replacement):
                 self.assert_rejected(
                     VALID_RELEASE_WORKFLOW.replace(required, replacement),
-                    "eight-way parallelism",
+                    "four-way memory-safe parallelism",
                 )
 
-    def test_skipped_p8_pipeline_cannot_hide_real_serial_execution(self) -> None:
+    def test_skipped_p4_pipeline_cannot_hide_real_serial_execution(self) -> None:
         required = (
             "          printf '%s\\\\n' fixture \\\n"
-            "            | xargs -P 8 -n 1 ./scripts/run-asl-test --id\n"
+            "            | xargs -P 4 -n 1 ./scripts/run-asl-test --id\n"
         )
         replacement = (
             "          false && printf '%s\\\\n' fixture \\\n"
-            "            | xargs -P 8 -n 1 ./scripts/run-asl-test --id\n"
+            "            | xargs -P 4 -n 1 ./scripts/run-asl-test --id\n"
             "          printf '%s\\\\n' fixture \\\n"
             "            | xargs -P 1 -n 1 ./scripts/run-asl-test --id\n"
         )

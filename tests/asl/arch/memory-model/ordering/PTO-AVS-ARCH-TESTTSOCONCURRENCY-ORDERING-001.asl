@@ -269,7 +269,9 @@ begin
     StopMemoryEventCapture();
     Store(source, 4, Zeros{PTO_XLEN} + 0x11);
     Store(source + 4, 4, Zeros{PTO_XLEN} + 0x22);
-    WriteGPR(2, source);
+    // Pair-load execution below selects PE0, so initialize PE0's private GPR
+    // explicitly instead of inheriting the preceding reservation test's PE1.
+    WritePEGPR(0, 2, source);
     StartMemoryEventCapture(0);
     ExecuteScalarLoadPair(3, 4, 2, Zeros{PTO_XLEN}, 4, FALSE);
     assert _MemoryEventCount == 2;

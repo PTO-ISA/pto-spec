@@ -8167,7 +8167,7 @@
     "tests/asl/arch/memory-model/global-memory-access/PTO-AVS-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS-STATIC-INVARIANT-001.asl": "814f766e9627d3fdde57428d9a7442e4092c0cec5e438e19007e8e4f9e13023e",
     "tests/asl/arch/memory-model/memory-events/PTO-AVS-ARCH-MEMORY-MODEL-MEMORY-EVENTS-STATIC-INVARIANT-001.asl": "4ceafdfab2e18005544b360c45bf31ae23643e0cf85398c6d8c113cfdef49d06",
     "tests/asl/arch/memory-model/ordering/PTO-AVS-ARCH-MEMORY-MODEL-ORDERING-STATIC-INVARIANT-001.asl": "a65cc958edde0394e6153c0951f7ba55aeb1343d1fed978cb3ecd94d77543356",
-    "tests/asl/arch/memory-model/ordering/PTO-AVS-ARCH-TESTTSOCONCURRENCY-ORDERING-001.asl": "4e7fa5a61de4275cc835ff5f37e46dda7e9c698c7aa430ad67886d34f474b121",
+    "tests/asl/arch/memory-model/ordering/PTO-AVS-ARCH-TESTTSOCONCURRENCY-ORDERING-001.asl": "ccbe83bbbaba26d27a2ac843d7aaedb40fa3e358115295390a68b62f72d7d6ad",
     "tests/asl/arch/overview/architecture/PTO-AVS-ARCH-OVERVIEW-ARCHITECTURE-STATIC-INVARIANT-001.asl": "b25406b39deb3a43560e5d0699a182dbe9852ef806a3c54a78d8ef0960cf2509",
     "tests/asl/arch/overview/encoding-ownership/PTO-AVS-ARCH-ENCODING-OWNERSHIP-VECTOR-ROOT-001.asl": "59621ca7d88f1ddc647b41fd61bcb459c009c748b1c35deb7639598cb96236a1",
     "tests/asl/arch/overview/encoding-ownership/PTO-AVS-ARCH-OVERVIEW-ENCODING-OWNERSHIP-STATIC-INVARIANT-001.asl": "6a9e21676e97a62c312e02fd80cf44614d39877c642f8618654d5215503d1565",
@@ -9556,7 +9556,7 @@
       "kind": "ordering",
       "path": "tests/asl/arch/memory-model/ordering/PTO-AVS-ARCH-TESTTSOCONCURRENCY-ORDERING-001.asl",
       "requirements": [],
-      "sha256": "4e7fa5a61de4275cc835ff5f37e46dda7e9c698c7aa430ad67886d34f474b121",
+      "sha256": "ccbe83bbbaba26d27a2ac843d7aaedb40fa3e358115295390a68b62f72d7d6ad",
       "source": "asl/arch/memory-model/ordering.asl"
     },
     {

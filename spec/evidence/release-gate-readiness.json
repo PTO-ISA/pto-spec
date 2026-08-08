@@ -41,6 +41,9 @@
     {
       "command": "make release-check RELEASE_COMMIT=<exact-head>",
       "evidence": [
+        ".github/workflows/release.yml",
+        "scripts/check-release-workflow",
+        "scripts/release_workflow.py",
         "scripts/run-asl-release-suite",
         "scripts/run-asl-test"
       ],
@@ -86,7 +89,7 @@
   "sources": {
     ".aslref-version": "943437e8563813c276417b022296f0c51b34fadbb8da49ca70dbac7f6589db63",
     ".github/workflows/asl.yml": "2654e2d9230986e4e7094f022c04707c9058e9c27b28a7ea7a4d59f5a7002e7d",
-    ".github/workflows/release.yml": "06b72b2ebf7c43f386d4e1187406efe5a66ec04a556b981d7d5f7684af3d65ac",
+    ".github/workflows/release.yml": "6751b472d3417de920e1bdd9c9e7d02d32d8f3c691a3a61f8fb146e78f541669",
     "CONTRIBUTING.md": "1aef7301df0ca3c10cb87e72f5fe944bb30c1b54eca2d6f0a730ab2e42c32b7b",
     "GOVERNANCE.md": "f4081bfbdc1ae3ea7d22dce98c3960ba0290ce282a88f89cb471c4d255cad409",
     "Makefile": "3651e5447f901925f709e4b40a2761464a1b7db28b489ca1eaf7eb564b6a5dd5",
@@ -109,10 +112,11 @@
     "scripts/prepare-aslref": "0aceca8980869c80e3d8b7751bd7fcdc61d1920f027bfd760e1a7b5e3f8f85c6",
     "scripts/print-asl-test-matrix": "2582db3a6ed8c414c3865e8cca11eb50499e611b07017c93529cf014da504b79",
     "scripts/project_asl_catalogs.py": "8ce781bc8867095945c887ecbb3637480d2f8985ef7e646fcbeec8f8aa000507",
+    "scripts/release_workflow.py": "44f41764b7802b8027d8c827916489386a7e8b3d9b84be199759c4099f3b8e83",
     "scripts/run-asl-release-suite": "56cbd340490c0d4d94990cff0f4607a3c3a53fccee818775b38a37a43a7ff654",
     "scripts/run-asl-test": "152bc50910a4927ff9b78b805fac286d1948be8cbaf5751325a65e8316bf7851",
     "scripts/setup-aslref": "0cbe5e413f53d6d1cce1d2f604a65fd5e7e77cc5eec9c449978f4a5e136d64da",
-    "spec/evidence/release-traceability-readiness.json": "927454e721cee4086e68382130af01f500db40b958be4c05b8e21934aef11b58",
+    "spec/evidence/release-traceability-readiness.json": "3b8e30bf0619daa6359a48d4616266ca7324b87816904a8de62a89bb30042d5e",
     "spec/release-inputs.json": "d90cc3c8a8c7855572f57fcf4dbbe371471a95c61ee4ac7fb1896deda59ca984"
   },
   "summary": {

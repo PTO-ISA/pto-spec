@@ -157,12 +157,14 @@ def validate_release_workflow(workflow: str) -> list[str]:
             "ASL pages must contain exactly one xargs invocation and one run-asl-test invocation"
         )
     if not re.search(
-        r"^[ \t]*\|[ \t]+xargs[ \t]+-P[ \t]+8[ \t]+-n[ \t]+1[ \t]+"
+        r"^[ \t]*\|[ \t]+xargs[ \t]+-P[ \t]+4[ \t]+-n[ \t]+1[ \t]+"
         r"\./scripts/run-asl-test[ \t]+--id[ \t]*$",
         page,
         re.MULTILINE,
     ):
-        errors.append("ASL pages must execute independent points with eight-way parallelism")
+        errors.append(
+            "ASL pages must execute independent points with four-way memory-safe parallelism"
+        )
     if "asl-test-results" not in page or not re.search(
         r"actions/upload-artifact@[0-9a-f]{40}", page
     ):
