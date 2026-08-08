@@ -1147,7 +1147,7 @@ git commit -m "feat: add independent ASL test points"
 - Consumes: mnemonic metadata, canonical catalog records, unit dependencies, and current test assertions.
 - Produces: one generated canonical decode/static-invariant test per mnemonic plus focused manual behavior tests for every active unit and executable NDF requirement.
 
-- [ ] **Step 1: Write mnemonic AVS generation tests**
+- [x] **Step 1: Write mnemonic AVS generation tests**
 
 For scalar, block, and tile fixtures, assert stable IDs, one `main()`, mirrored paths, canonical decode/operation checks, and byte-identical regeneration:
 
@@ -1157,7 +1157,7 @@ self.assertEqual(document.count("integer main("), 1)
 self.assertIn('"source":"asl/scalar/alu/ADD.asl"', document)
 ```
 
-- [ ] **Step 2: Run the focused test and observe the missing generator failure**
+- [x] **Step 2: Run the focused test and observe the missing generator failure**
 
 Run:
 
@@ -1167,7 +1167,7 @@ python3 -m unittest tests.scripts.test_generate_mnemonic_avs -v
 
 Expected: FAIL because the generator is absent.
 
-- [ ] **Step 3: Implement deterministic mnemonic smoke tests**
+- [x] **Step 3: Implement deterministic mnemonic smoke tests**
 
 Generate one checked-in test per mnemonic:
 
@@ -1177,7 +1177,7 @@ Generate one checked-in test per mnemonic:
 
 Generated IDs use `PTO-AVS-<SURFACE>-<SANITIZED-MNEMONIC>-<KIND>-001`; sanitization replaces punctuation with single hyphens and uppercases ASCII.
 
-- [ ] **Step 4: Generate mnemonic tests and verify them independently**
+- [x] **Step 4: Generate mnemonic tests and verify them independently**
 
 Run:
 
@@ -1189,23 +1189,23 @@ python3 scripts/generate-mnemonic-avs.py --check
 
 Expected: generation is stable; the coverage checker now reports only non-mnemonic units or executable semantic requirements that lack focused behavior tests.
 
-- [ ] **Step 5: Migrate architecture behavior tests by primary owner**
+- [x] **Step 5: Migrate architecture behavior tests by primary owner**
 
 Create one-file tests below each owning architecture unit for reset, registers, predicates, PC/trap context, system registers, memory events, ordering, atomicity, numeric classification, tile allocation, shared state, and reference profile behavior. Copy the existing assertions and their smallest test-local helpers; do not call another test file.
 
-- [ ] **Step 6: Migrate block behavior tests by primary owner**
+- [x] **Step 6: Migrate block behavior tests by primary owner**
 
 Split lifecycle, schema/defaults, B.IOR, B.IOS, B.IOT, descriptor, commit, rollback, zero-mask, shared allocation, and command-totality assertions into mirrored one-main files. Cross-unit tests declare `related_sources` but reside under one primary source.
 
-- [ ] **Step 7: Migrate scalar behavior tests by mnemonic/model owner**
+- [x] **Step 7: Migrate scalar behavior tests by mnemonic/model owner**
 
 Split class decode, execution, selector-boundary, duplicate operand, absent/default, fault, AMO atomicity, AGU address, FSU numeric, and SYS state-transition assertions into independent files.
 
-- [ ] **Step 8: Migrate tile behavior tests by mnemonic/model owner**
+- [x] **Step 8: Migrate tile behavior tests by mnemonic/model owner**
 
 Split shape/capacity/valid-region, dtype/layout, matrix power-of-two, TLSU stride/default/encoded-zero, U4X2 indexing, TEPL, gather/scatter, atomic, shared/local, and totality assertions into independent files.
 
-- [ ] **Step 9: Prove assertion and requirement closure before deletion**
+- [x] **Step 9: Prove assertion and requirement closure before deletion**
 
 Add a migration test that inventories old named test functions from the baseline commit and maps each to one new `PTO-TEST` ID. Run:
 
@@ -1217,11 +1217,15 @@ python3 scripts/print-asl-test-matrix --page-size 10000 --page 0 > build/asl-tes
 
 Expected: zero unmapped old test functions, zero uncovered units, zero uncovered executable requirements, and a matrix entry for every discovered file.
 
-- [ ] **Step 10: Remove aggregate test infrastructure and reject its return**
+- [x] **Step 10: Remove aggregate test infrastructure and reject its return**
 
 Delete `tests/asl/main.asl`, `tests/asl/shards/`, and monolithic libraries. Add canaries to `test_asl_tests.py` that reject those paths and reject any test file outside the mirrored source directory.
 
 - [ ] **Step 11: Run a bounded independent smoke set**
+
+Deferred to Task 14 together with the long pinned-ASLRef release validation;
+Tasks 11–13 exercise the runner and exact matrix without treating a mocked or
+skipped ASLRef invocation as semantic success.
 
 Run one test ID from each surface:
 
@@ -1234,7 +1238,7 @@ Run one test ID from each surface:
 
 Expected: all four return 0 and create separate result directories.
 
-- [ ] **Step 12: Commit**
+- [x] **Step 12: Commit**
 
 ```bash
 git add scripts/generate-mnemonic-avs.py tests/asl tests/scripts/test_generate_mnemonic_avs.py tests/scripts/test_asl_tests.py asl

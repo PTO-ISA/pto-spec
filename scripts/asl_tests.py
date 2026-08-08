@@ -477,13 +477,16 @@ def check_main(argv: Sequence[str] | None = None) -> int:
         print(f"error: {error}", file=sys.stderr)
     if errors:
         return 1
-    print(
-        json.dumps(
-            {"include": matrix(points), "test_count": len(points)},
-            separators=(",", ":"),
-            sort_keys=True,
+    if arguments.fixtures_only is not None:
+        print(
+            json.dumps(
+                {"include": matrix(points), "test_count": len(points)},
+                separators=(",", ":"),
+                sort_keys=True,
+            )
         )
-    )
+    else:
+        print(f"ASL test closure passed: {len(points)} independent points")
     return 0
 
 
