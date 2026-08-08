@@ -103,7 +103,7 @@ Core tooling responsibilities:
 - Consumes: current ASL model and the existing `make test-shard-*` targets.
 - Produces: an independently recorded fixture baseline on which every structural move is based; runtime proof is deferred to the final exact-head release gate.
 
-- [ ] **Step 1: Record the exact pending diff and assert no production ASL changed**
+- [x] **Step 1: Record the exact pending diff and assert no production ASL changed**
 
 Run:
 
@@ -114,7 +114,7 @@ git diff --quiet -- asl scripts spec docs .github Makefile
 
 Expected: the first command shows only fixture size/shape/order corrections; the second exits 0.
 
-- [ ] **Step 2: Confirm each correction is exercised by a final-release test point**
+- [x] **Step 2: Confirm each correction is exercised by a final-release test point**
 
 Run:
 
@@ -125,7 +125,7 @@ rg -n 'ConfigureTeplTile|ConfigureTlsu|B\.IOT|SetBundleDimension|TLOAD|TSTORE' \
 
 Expected: every changed fixture is part of an existing named test that Task 12 will migrate into an independently executable final-release test point.
 
-- [ ] **Step 3: Run the lightweight repository gate**
+- [x] **Step 3: Run the lightweight repository gate**
 
 Run:
 
@@ -138,7 +138,7 @@ Expected: both commands exit 0.
 
 Do not run ASLRef shards in this task. Task 14 runs the complete exact-head release suite after the structural migration and projection cutover are finished.
 
-- [ ] **Step 4: Commit only the fixture corrections**
+- [x] **Step 4: Commit only the fixture corrections**
 
 ```bash
 git add tests/asl/bundle-tests.asl tests/asl/tepl-totality-tests.asl tests/asl/tlsu-totality-tests.asl
