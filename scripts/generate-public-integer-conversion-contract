@@ -6,16 +6,22 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.evidence_sources import source_rows  # noqa: E402
+
 DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
 TYPE_BASELINE = ROOT / "spec/evidence/public-numeric-type-baseline.json"
 NUMERIC_CONTRACTS = ROOT / "spec/evidence/numeric-contracts.json"
 EXECUTABLE_COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
-ASL_MODEL = ROOT / "asl/tile/conversion.asl"
+ASL_MODEL = ROOT / "asl/tile/model/numeric/formats.asl"
 ASL_TESTS = ROOT / "tests/asl/tile-tests.asl"
 OUTPUT = ROOT / "spec/evidence/public-integer-conversion-contract.json"
 ACCEPTANCE_RECORD = (
@@ -69,8 +75,13 @@ def generate() -> dict[str, Any]:
         "independent comparison status drift",
     )
 
-    public_source = next(row for row in inputs["sources"] if row["id"] == "public-type-system")
-    require(public_source["layer"] == "public-contract", "type system is not public authority")
+    public_source = next(
+        row for row in inputs["sources"] if row["id"] == "public-type-system"
+    )
+    require(
+        public_source["layer"] == "public-contract",
+        "type system is not public authority",
+    )
 
     integer_types = [row for row in types["public_types"] if row["class"] == "integer"]
     require(len(integer_types) == 8, "public integer type inventory drift")
@@ -199,12 +210,27 @@ def generate() -> dict[str, Any]:
             ],
         },
         "open_residuals": [
-            {"id": "PD-07-R1", "rule": "decide same-width integer signedness conversions"},
-            {"id": "PD-07-R2", "rule": "complete floating and float/integer conversion results"},
-            {"id": "PD-07-R3", "rule": "complete every operation/type/profile support tuple"},
-            {"id": "PD-07-R4", "rule": "define overflow, saturation, indefinite, NaN, and infinity results"},
+            {
+                "id": "PD-07-R1",
+                "rule": "decide same-width integer signedness conversions",
+            },
+            {
+                "id": "PD-07-R2",
+                "rule": "complete floating and float/integer conversion results",
+            },
+            {
+                "id": "PD-07-R3",
+                "rule": "complete every operation/type/profile support tuple",
+            },
+            {
+                "id": "PD-07-R4",
+                "rule": "define overflow, saturation, indefinite, NaN, and infinity results",
+            },
             {"id": "PD-07-R5", "rule": "define rounding and numeric-flag results"},
-            {"id": "PD-07-R6", "rule": "publish independent target-conformance vectors"},
+            {
+                "id": "PD-07-R6",
+                "rule": "publish independent target-conformance vectors",
+            },
         ],
         "tests": [
             {
@@ -218,7 +244,7 @@ def generate() -> dict[str, Any]:
             source("spec/evidence/public-numeric-type-baseline.json"),
             source("spec/evidence/numeric-contracts.json"),
             source("spec/evidence/executable-model-comparison.json"),
-            source("asl/tile/conversion.asl"),
+            *source_rows(ROOT, "asl/tile/model/numeric/formats.asl"),
             source("tests/asl/tile-tests.asl"),
             source(ACCEPTANCE_RECORD),
         ],

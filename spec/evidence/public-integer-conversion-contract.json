@@ -974,19 +974,19 @@
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "1aa42abb178dd13ff5b38da69ed3b218baf0dfa9d9d9577618881c6b761a7815"
+      "sha256": "3ccb4df27bee9624be5c991dc580fddd6d3aa6ddd9e1f1e1f8a7bb953229eeae"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "9637ce69b1b2f12d76e65c73fb7536fe66c22a1dde19c11b7827c4f5b60cc24b"
+      "sha256": "0eae4a99230713271bdcff56dd02d6011988a32edd2971160748f40f174fad7c"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
       "sha256": "122166c233403dc30c49a3a3d274c21f0ce9ea1fddad1f55871659ef25a1f22b"
     },
     {
-      "path": "asl/tile/conversion.asl",
-      "sha256": "943e415907740524a864bcca1ffda627fbaa22ad9612814530dfe896fdc359cd"
+      "path": "asl/tile/model/numeric/formats.asl",
+      "sha256": "7b35e8353c621a7448facada22a4175acc30e14377fdc2a7cb9c130ab1323d56"
     },
     {
       "path": "tests/asl/tile-tests.asl",

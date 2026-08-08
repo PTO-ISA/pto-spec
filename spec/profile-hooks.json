@@ -2,13 +2,17 @@
   "active_profile": {
     "conformance_tests": "tests/asl/profile-tests.asl",
     "id": "pto-v0",
-    "implementation": "asl/profiles/pto-v0.asl",
+    "implementations": [
+      "asl/arch/profile/applicability.asl",
+      "asl/arch/profile/reference-profile.asl",
+      "asl/arch/profile/reset.asl"
+    ],
     "status": "concrete-reference-profile"
   },
   "hooks": [
     {
       "domain": "architecture-reset",
-      "model": "asl/state.asl",
+      "model": "asl/arch/system-registers/addressing.asl",
       "name": "ResetProfileState",
       "portable_default": "Clear the 24 absolute scalar registers, temporary queues, P1 through P7, the stored machine execution mask, and bounded memory; retain hardwired all-ones P0; invalidate every TileInfo; set VERSION to 1 and TILE_CAPACITY to 256 KiB; reset time to zero; and enter ACR0.",
       "profile_obligations": [
@@ -24,7 +28,7 @@
     },
     {
       "domain": "access-control-ring",
-      "model": "asl/scalar/system-registers.asl",
+      "model": "asl/scalar/model/sys/registers.asl",
       "name": "SystemRegisterAccessPermitted",
       "portable_default": "Permit base system registers at every ACR and require ACR0 for context, translation, and debug families.",
       "profile_obligations": [
@@ -40,7 +44,7 @@
     },
     {
       "domain": "system-time",
-      "model": "asl/scalar/system.asl",
+      "model": "asl/scalar/model/sys/semantics.asl",
       "name": "ReadMonotonicTime",
       "portable_default": "Return the architectural cycle counter.",
       "profile_obligations": [
@@ -57,7 +61,7 @@
     },
     {
       "domain": "scalar-floating-mathematical",
-      "model": "asl/scalar/floating.asl",
+      "model": "asl/scalar/model/fsu/arithmetic.asl",
       "name": "FloatingExponential",
       "portable_default": "Evaluate the fixed 18-term PTO v0 Taylor reference algorithm.",
       "profile_obligations": [
@@ -74,7 +78,7 @@
     },
     {
       "domain": "scalar-floating-mathematical",
-      "model": "asl/scalar/floating.asl",
+      "model": "asl/scalar/model/fsu/arithmetic.asl",
       "name": "FloatingRoundNearest",
       "portable_default": "Round to nearest with halfway cases selecting the even integer.",
       "profile_obligations": [
@@ -91,7 +95,7 @@
     },
     {
       "domain": "scalar-floating-encoding",
-      "model": "asl/scalar/floating.asl",
+      "model": "asl/scalar/model/fsu/profile.asl",
       "name": "ScalarFPBinaryProfile",
       "portable_default": "Apply deterministic modular carrier ADD, SUB, MUL, or DIV; zero DIV returns all ones and DZ. Scalar dispatch owns MIN/MAX NaN and signed-zero behavior.",
       "profile_obligations": [
@@ -109,7 +113,7 @@
     },
     {
       "domain": "scalar-floating-encoding",
-      "model": "asl/scalar/floating.asl",
+      "model": "asl/scalar/model/fsu/profile.asl",
       "name": "ScalarFPUnaryProfile",
       "portable_default": "Apply deterministic carrier ABS, identity SQRT, increment EXP, or unsigned reciprocal; zero reciprocal returns all ones and DZ.",
       "profile_obligations": [
@@ -127,7 +131,7 @@
     },
     {
       "domain": "scalar-floating-encoding",
-      "model": "asl/scalar/floating.asl",
+      "model": "asl/scalar/model/fsu/profile.asl",
       "name": "ScalarFPFusedProfile",
       "portable_default": "Apply one modular word-width multiply followed by the selected signed addend transform.",
       "profile_obligations": [
@@ -145,7 +149,7 @@
     },
     {
       "domain": "scalar-floating-encoding",
-      "model": "asl/scalar/floating.asl",
+      "model": "asl/scalar/model/fsu/profile.asl",
       "name": "ScalarFPToIntegerProfile",
       "portable_default": "Return the source payload before normative destination-width normalization and no new flags.",
       "profile_obligations": [
@@ -162,7 +166,7 @@
     },
     {
       "domain": "scalar-floating-encoding",
-      "model": "asl/scalar/floating.asl",
+      "model": "asl/scalar/model/fsu/profile.asl",
       "name": "ScalarFPConvertProfile",
       "portable_default": "Return the source payload before normative floating destination-width normalization and no new flags.",
       "profile_obligations": [
@@ -179,7 +183,7 @@
     },
     {
       "domain": "scalar-floating-encoding",
-      "model": "asl/scalar/floating.asl",
+      "model": "asl/scalar/model/fsu/profile.asl",
       "name": "ScalarIntegerToFPProfile",
       "portable_default": "Return the normalized integer source payload before normative floating destination-width normalization and no new flags.",
       "profile_obligations": [
@@ -196,7 +200,7 @@
     },
     {
       "domain": "tile-floating",
-      "model": "asl/tile/elementwise.asl",
+      "model": "asl/tile/model/execution/elementwise.asl",
       "name": "TileSquareRoot",
       "portable_default": "Return the raw input payload.",
       "profile_obligations": [
@@ -213,7 +217,7 @@
     },
     {
       "domain": "tile-floating",
-      "model": "asl/tile/elementwise.asl",
+      "model": "asl/tile/model/execution/elementwise.asl",
       "name": "TileLogarithm",
       "portable_default": "Return the raw input payload.",
       "profile_obligations": [
@@ -230,7 +234,7 @@
     },
     {
       "domain": "tile-floating",
-      "model": "asl/tile/elementwise.asl",
+      "model": "asl/tile/model/execution/elementwise.asl",
       "name": "TileReciprocal",
       "portable_default": "Apply unsigned bitvector reciprocal and reject zero.",
       "profile_obligations": [
@@ -247,7 +251,7 @@
     },
     {
       "domain": "tile-floating",
-      "model": "asl/tile/elementwise.asl",
+      "model": "asl/tile/model/execution/elementwise.asl",
       "name": "TileExponential",
       "portable_default": "Increment the raw input payload by one modulo XLEN.",
       "profile_obligations": [
@@ -264,7 +268,7 @@
     },
     {
       "domain": "tile-floating",
-      "model": "asl/tile/expansion.asl",
+      "model": "asl/tile/model/execution/expansion.asl",
       "name": "TileExpDifference",
       "portable_default": "Subtract the raw right payload from the raw left payload.",
       "profile_obligations": [
@@ -281,7 +285,7 @@
     },
     {
       "domain": "tile-conversion",
-      "model": "asl/tile/conversion.asl",
+      "model": "asl/tile/model/numeric/formats.asl",
       "name": "TileProfileConvert",
       "portable_default": "Preserve the raw payload for conversions involving a floating type.",
       "profile_obligations": [
@@ -298,7 +302,7 @@
     },
     {
       "domain": "tile-conversion",
-      "model": "asl/tile/conversion.asl",
+      "model": "asl/tile/model/numeric/formats.asl",
       "name": "TileProfileQuantize",
       "portable_default": "Apply unsigned bitvector division by scale, add zero point, and normalize to the destination integer width.",
       "profile_obligations": [
@@ -315,7 +319,7 @@
     },
     {
       "domain": "tile-conversion",
-      "model": "asl/tile/conversion.asl",
+      "model": "asl/tile/model/numeric/formats.asl",
       "name": "TileProfileDequantize",
       "portable_default": "Subtract the zero point and multiply by scale as raw bitvectors.",
       "profile_obligations": [
@@ -332,7 +336,7 @@
     },
     {
       "domain": "trap-context",
-      "model": "asl/state.asl",
+      "model": "asl/arch/state/trap-context.asl",
       "name": "SaveTrapContext",
       "portable_default": "Save TPC, BPC, bundle-control state, and trap argument state for a target access-control ring.",
       "profile_obligations": [
@@ -350,7 +354,7 @@
     },
     {
       "domain": "trap-context",
-      "model": "asl/state.asl",
+      "model": "asl/arch/state/trap-context.asl",
       "name": "RecoverTrapContext",
       "portable_default": "Restore TPC, BPC, bundle-control state, and trap argument state for a target access-control ring when a saved context is valid.",
       "profile_obligations": [
@@ -368,7 +372,7 @@
     },
     {
       "domain": "memory-address",
-      "model": "asl/scalar/atomic.asl",
+      "model": "asl/scalar/model/amo/semantics.asl",
       "name": "AtomicAddress",
       "portable_default": "Preserve the decoded address for both address-class hint values.",
       "profile_obligations": [
@@ -385,7 +389,7 @@
     },
     {
       "domain": "memory-translation",
-      "model": "asl/scalar/memory.asl",
+      "model": "asl/scalar/model/agu/memory.asl",
       "name": "TranslateDataAddress",
       "portable_default": "Use identity translation for scalar data accesses.",
       "profile_obligations": [
@@ -405,7 +409,7 @@
     },
     {
       "domain": "memory-permission",
-      "model": "asl/scalar/memory.asl",
+      "model": "asl/scalar/model/agu/memory.asl",
       "name": "DataAccessPermitted",
       "portable_default": "Permit ACR0 and ACR1 access to all bounded memory and restrict ACR2 through ACR15 to bytes 0 through 3071.",
       "profile_obligations": [
@@ -425,7 +429,7 @@
     },
     {
       "domain": "tile-elementwise",
-      "model": "asl/tile/elementwise.asl",
+      "model": "asl/tile/model/execution/elementwise.asl",
       "name": "TileProfileBinary",
       "portable_default": "Apply the operation with deterministic raw bitvector arithmetic.",
       "profile_obligations": [
@@ -442,7 +446,7 @@
     },
     {
       "domain": "tile-elementwise",
-      "model": "asl/tile/elementwise.asl",
+      "model": "asl/tile/model/execution/elementwise.asl",
       "name": "TileProfileUnary",
       "portable_default": "Apply the operation with deterministic raw bitvector behavior.",
       "profile_obligations": [
@@ -459,7 +463,7 @@
     },
     {
       "domain": "tile-comparison",
-      "model": "asl/tile/elementwise.asl",
+      "model": "asl/tile/model/execution/elementwise.asl",
       "name": "TileProfileCompare",
       "portable_default": "Compare raw payloads with deterministic signed or equality relations.",
       "profile_obligations": [
@@ -476,7 +480,7 @@
     },
     {
       "domain": "tile-reduction",
-      "model": "asl/tile/reduction.asl",
+      "model": "asl/tile/model/execution/reduction.asl",
       "name": "TileProfileReductionInitial",
       "portable_default": "Initialize reduction accumulators from the first raw payload.",
       "profile_obligations": [
@@ -493,7 +497,7 @@
     },
     {
       "domain": "tile-reduction",
-      "model": "asl/tile/reduction.asl",
+      "model": "asl/tile/model/execution/reduction.asl",
       "name": "TileProfileReductionStep",
       "portable_default": "Apply raw bitvector sum, product, minimum, maximum, or argument selection.",
       "profile_obligations": [
@@ -510,7 +514,7 @@
     },
     {
       "domain": "tile-expansion",
-      "model": "asl/tile/expansion.asl",
+      "model": "asl/tile/model/execution/expansion.asl",
       "name": "TileProfileExpand",
       "portable_default": "Apply the selected expansion operation with raw bitvector arithmetic.",
       "profile_obligations": [
@@ -527,7 +531,7 @@
     },
     {
       "domain": "tile-partial",
-      "model": "asl/tile/complex.asl",
+      "model": "asl/tile/model/execution/complex.asl",
       "name": "TileProfilePartialValue",
       "portable_default": "Apply partial arithmetic with deterministic raw bitvector operations.",
       "profile_obligations": [
@@ -544,7 +548,7 @@
     },
     {
       "domain": "tile-ordering",
-      "model": "asl/tile/complex.asl",
+      "model": "asl/tile/model/execution/complex.asl",
       "name": "TileProfileOrderLeft",
       "portable_default": "Order raw payloads as signed words and prefer the left operand on ties.",
       "profile_obligations": [
@@ -561,7 +565,7 @@
     },
     {
       "domain": "tile-ordering",
-      "model": "asl/tile/complex.asl",
+      "model": "asl/tile/model/execution/complex.asl",
       "name": "TileProfileValueIsNaN",
       "portable_default": "Classify no raw carrier as NaN in the deterministic PTO v0 reference profile.",
       "profile_obligations": [
@@ -577,7 +581,7 @@
     },
     {
       "domain": "tile-matrix",
-      "model": "asl/tile/cube.asl",
+      "model": "asl/tile/model/execution/cube.asl",
       "name": "TileProfileMatrixAccumulate",
       "portable_default": "Multiply raw payloads and accumulate at architectural word width.",
       "profile_obligations": [
@@ -594,7 +598,7 @@
     },
     {
       "domain": "tile-matrix",
-      "model": "asl/tile/cube.asl",
+      "model": "asl/tile/model/execution/cube.asl",
       "name": "TileProfileMatrixBias",
       "portable_default": "Add bias and destination raw payloads at architectural word width.",
       "profile_obligations": [
@@ -611,7 +615,7 @@
     },
     {
       "domain": "tile-matrix",
-      "model": "asl/tile/cube.asl",
+      "model": "asl/tile/model/execution/cube.asl",
       "name": "TileProfileMatrixScaledAccumulate",
       "portable_default": "Scale the left and right raw operands at word width, multiply the scaled operands, and add the term to the unscaled prior accumulator.",
       "profile_obligations": [

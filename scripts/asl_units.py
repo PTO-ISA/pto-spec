@@ -6,7 +6,7 @@ from __future__ import annotations
 import json
 import re
 import subprocess
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable, Sequence
 
@@ -28,6 +28,7 @@ class AslUnit:
     source_path: Path
     mnemonic: str | None
     line_count: int
+    metadata: dict[str, object] = field(default_factory=dict, compare=False)
 
 
 def _metadata_record(path: Path, text: str) -> tuple[dict[str, object], str]:
@@ -37,7 +38,9 @@ def _metadata_record(path: Path, text: str) -> tuple[dict[str, object], str]:
             if line.startswith(prefix):
                 records.append((prefix, line[len(prefix) :]))
     if len(records) != 1:
-        raise ValueError(f"{path}: expected exactly one PTO metadata record, found {len(records)}")
+        raise ValueError(
+            f"{path}: expected exactly one PTO metadata record, found {len(records)}"
+        )
     prefix, payload = records[0]
     try:
         metadata = json.loads(payload)
@@ -51,14 +54,22 @@ def _metadata_record(path: Path, text: str) -> tuple[dict[str, object], str]:
 def _string_field(metadata: dict[str, object], name: str, path: Path) -> str:
     value = metadata.get(name)
     if not isinstance(value, str) or not value:
-        raise ValueError(f"{path}: PTO metadata field {name} must be a non-empty string")
+        raise ValueError(
+            f"{path}: PTO metadata field {name} must be a non-empty string"
+        )
     return value
 
 
-def _string_tuple_field(metadata: dict[str, object], name: str, path: Path) -> tuple[str, ...]:
+def _string_tuple_field(
+    metadata: dict[str, object], name: str, path: Path
+) -> tuple[str, ...]:
     value = metadata.get(name)
-    if not isinstance(value, list) or any(not isinstance(item, str) or not item for item in value):
-        raise ValueError(f"{path}: PTO metadata field {name} must be an array of non-empty strings")
+    if not isinstance(value, list) or any(
+        not isinstance(item, str) or not item for item in value
+    ):
+        raise ValueError(
+            f"{path}: PTO metadata field {name} must be an array of non-empty strings"
+        )
     return tuple(value)
 
 
@@ -87,6 +98,7 @@ def load_units(root: Path, *, source_prefix: Path = Path("asl")) -> tuple[AslUni
                 source_path=source_path,
                 mnemonic=mnemonic,
                 line_count=len(text.splitlines()),
+                metadata=metadata,
             )
         )
     return tuple(sorted(units, key=lambda unit: unit.source_path.as_posix()))
@@ -114,7 +126,9 @@ def _validate_units(
         if unit.surface not in APPROVED_SURFACES:
             errors.append(f"{unit.source_path}: unknown ASL surface {unit.surface}")
         path_parts = unit.source_path.parts
-        path_surface = path_parts[1] if len(path_parts) > 1 and path_parts[0] == "asl" else ""
+        path_surface = (
+            path_parts[1] if len(path_parts) > 1 and path_parts[0] == "asl" else ""
+        )
         if path_surface != unit.surface:
             errors.append(
                 f"{unit.source_path}: surface does not match path: metadata {unit.surface}, path {path_surface}"
@@ -146,7 +160,9 @@ def _validate_units(
         for unit in units:
             for dependency in unit.depends_on:
                 if dependency not in known:
-                    errors.append(f"{unit.source_path}: unknown ASL dependency {dependency}")
+                    errors.append(
+                        f"{unit.source_path}: unknown ASL dependency {dependency}"
+                    )
         if not errors:
             try:
                 topological_order(units)
@@ -182,7 +198,9 @@ def validate_surface(root: Path, surface: str, units: Sequence[AslUnit]) -> list
     errors.extend(_validate_units(units, require_complete_dependencies=False))
     for unit in units:
         if unit.surface != surface:
-            errors.append(f"{unit.source_path}: unit is outside selected surface {surface}")
+            errors.append(
+                f"{unit.source_path}: unit is outside selected surface {surface}"
+            )
     return errors
 
 
@@ -203,7 +221,9 @@ def topological_order(
     for unit in units:
         for dependency in unit.depends_on:
             if dependency not in nodes:
-                raise ValueError(f"unknown ASL dependency {dependency} for {unit.unit_id}")
+                raise ValueError(
+                    f"unknown ASL dependency {dependency} for {unit.unit_id}"
+                )
         dependencies[unit.unit_id].update(unit.depends_on)
 
     def key(node: str) -> tuple[int, str]:
@@ -215,7 +235,11 @@ def topological_order(
     remaining = set(nodes)
     while remaining:
         ready = sorted(
-            (node for node in remaining if not dependencies[node].intersection(remaining)),
+            (
+                node
+                for node in remaining
+                if not dependencies[node].intersection(remaining)
+            ),
             key=key,
         )
         if not ready:
@@ -304,7 +328,10 @@ def _symbols_from_text(text: str) -> list[_AslSymbol]:
             if index < len(lines):
                 index += 1
                 while index < len(lines):
-                    if not lines[index][:1].isspace() and lines[index].strip() == "end;":
+                    if (
+                        not lines[index][:1].isspace()
+                        and lines[index].strip() == "end;"
+                    ):
                         index += 1
                         break
                     index += 1
@@ -318,7 +345,11 @@ def _symbols_from_text(text: str) -> list[_AslSymbol]:
                     break
             block = lines[start:index]
             first = _normalize_asl(block[:1])
-            signature = re.sub(r"\s*=.*", "", first) if line.startswith(("constant ", "var ")) else first
+            signature = (
+                re.sub(r"\s*=.*", "", first)
+                if line.startswith(("constant ", "var "))
+                else first
+            )
             body = _normalize_asl(block)
         symbols.append(_AslSymbol(name=name, kind=kind, signature=signature, body=body))
     return symbols
@@ -402,7 +433,9 @@ def compare_ref_to_tree(
     unknown = selected - set(APPROVED_SURFACES)
     if unknown:
         return [f"unknown ASL surface: {name}" for name in sorted(unknown)]
-    baseline, errors = _collect_symbols(_git_asl_files(repo, before_ref), selected, legacy=True)
+    baseline, errors = _collect_symbols(
+        _git_asl_files(repo, before_ref), selected, legacy=True
+    )
     current_files = [
         (Path("asl") / path.relative_to(after_root), path.read_text(encoding="utf-8"))
         for path in sorted(after_root.rglob("*.asl"))
@@ -419,10 +452,16 @@ def compare_ref_to_tree(
         before_group = baseline_groups.get(key, [])
         after_group = current_groups.get(key, [])
         if not after_group:
-            errors.extend(f"missing ASL symbol: {_symbol_label(symbol)}" for symbol in before_group)
+            errors.extend(
+                f"missing ASL symbol: {_symbol_label(symbol)}"
+                for symbol in before_group
+            )
             continue
         if not before_group:
-            errors.extend(f"unexpected ASL symbol: {_symbol_label(symbol)}" for symbol in after_group)
+            errors.extend(
+                f"unexpected ASL symbol: {_symbol_label(symbol)}"
+                for symbol in after_group
+            )
             continue
         if len(before_group) == len(after_group) == 1:
             before = before_group[0]
@@ -440,6 +479,9 @@ def compare_ref_to_tree(
             errors.append(f"changed ASL symbol signature: {label}")
             continue
         for signature in sorted(before_by_signature):
-            if before_by_signature[signature].body != after_by_signature[signature].body:
+            if (
+                before_by_signature[signature].body
+                != after_by_signature[signature].body
+            ):
                 errors.append(f"changed ASL symbol body: {label}")
     return errors

@@ -35,7 +35,7 @@
     },
     {
       "path": "Makefile",
-      "sha256": "1039bfb26f147d0fdff9d0eed8dad1d43083d04367b2fcc380634eeb869cd5c9"
+      "sha256": "19f77fde38a6a066712b04480f920392d829034f2dc84fa61d86a3a9720d6548"
     },
     {
       "path": "docs/review-checklist.md",
@@ -99,7 +99,7 @@
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "e42af1ea137964098ba4549881321f570a19f435be9255ea5b05a915881dc1d2"
+      "sha256": "f904a98e8ee9424eb3cc015ac645561a94a5ca45c7b4e2018764ed0c5b0a8970"
     },
     {
       "path": "scripts/check-publication-hygiene",
@@ -115,7 +115,7 @@
     },
     {
       "path": "scripts/check-repository",
-      "sha256": "577ff899283051895ead4fc06b9e8e5db32d23975bb636bf8333fc51f2e90c2c"
+      "sha256": "9611c3c4d43658368863f11ca9b6478ef8f7d08e7879dd459f859a8c06298739"
     },
     {
       "path": "scripts/check-toolchain",
@@ -123,19 +123,19 @@
     },
     {
       "path": "scripts/generate-numeric-format-namespace-contract",
-      "sha256": "d22901d7bce98e84e2ae6c5a12f332dd43cc39a57454553726310f6c67f7f907"
+      "sha256": "7cb98629e48f03c19d604cb8dd18b6cf12b27bf0ce20451ccebc1dcb0f2f824b"
     },
     {
       "path": "scripts/generate-numeric-profile-applicability-closure",
-      "sha256": "f088221b1d18baf52f8d46506d624818d187ed7aa8b145299d44dcd090e06a69"
+      "sha256": "3049389c8a376ed4f6f5091d94007c4918e86218d76008436e6005b1e096c324"
     },
     {
       "path": "scripts/generate-numeric-subnormal-contract",
-      "sha256": "db3c00aa8d549247d6e6f392f7486bd03fabcc01ce81d7af0eb8ba49525c7b55"
+      "sha256": "ac064406629cdab3354dd96e2f9cfc10d278951659c4322729a046c929df77eb"
     },
     {
       "path": "scripts/generate-numeric-special-value-contract",
-      "sha256": "6879b1a1278c26f909919c7ce1f76fa2610417396c251aa7752739bbdec534c6"
+      "sha256": "ad73123e46274baa7adab2404ad1bc1b20b80c0985608f4153be4df8c2d2601c"
     },
     {
       "path": "scripts/generate-numeric-variation-point-ownership",
@@ -147,59 +147,59 @@
     },
     {
       "path": "scripts/generate-public-integer-conversion-contract",
-      "sha256": "d7254b93cc7cac8f0a2274ca0e264a17f1f5be6bbee3d7d147d89bd50e5afb5e"
+      "sha256": "7feb1bb3774362895488d3ef2436535d10f3bfbb4f341b64ee5d3bfeb401a5bc"
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "98d4add660f2dcc375c1bc6165665412e2342c14cd60724e3f4ea4e560c757a0"
+      "sha256": "2f14c4f4604ddd176bcbe05ca1627c3408213906239e373ee39130f9364b0552"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "9bc944c7b93ac3c204dbed0e65da3c2cde58066d2532dccff8fde0cf3808da0d"
+      "sha256": "d8faabff717a7a1b69eb3402c42508f169febd4679974cfe97f9ee00015d77da"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "7bd2bfa673c449813d4cf27ae22612d2ca15d20498b6551e514ff4e1d6d40919"
+      "sha256": "9bda0a01a215736ad63041e73582f722489930b240bc7451a49a07a9cf2f1190"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "680ed47e4f8c3ac54e74dc6636766d74274dda04620309a8c24640252840052f"
+      "sha256": "2569188dfac852ec9eda16707caf34d303ba4f3ffe9da38ac57b04e85dde7b55"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "e916627b5c079ba2b51f340c6d36131b3e72f7149a5cfc935fe56f24d05873a0"
+      "sha256": "caf847ccd4bb6d24a68c99bf5f62e3e64a5591c7ca209c8bc89e6b3837550380"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "1aa42abb178dd13ff5b38da69ed3b218baf0dfa9d9d9577618881c6b761a7815"
+      "sha256": "3ccb4df27bee9624be5c991dc580fddd6d3aa6ddd9e1f1e1f8a7bb953229eeae"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "42069cad118dfe62cc4f8adda9586c7e42b49ce7426bd7d7cc206c1cb5498a73"
+      "sha256": "4175dc5123c46a7b3fbdcb3f3df2faa80b8e2cfc4cc0ec19b314bb868c3fc1a0"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "afb027f5159b80f6059104d6255ca77a372d8938655016fd184faffdbdc971a7"
+      "sha256": "66607c582e26456cfb0e4d4576537d781d24e048fc26e5c4a4a22724a49c14fb"
     },
     {
       "path": "spec/evidence/numeric-subnormal-contract.json",
-      "sha256": "ff55aa842587df3ab7f47a5e68e1cd7b39e0cf3258a7f7151af3929d13d1b03b"
+      "sha256": "009e4b55a38f66590e0aaaaa002a9ea7954ceacf98f76c6c0400e96416230e3b"
     },
     {
       "path": "spec/evidence/numeric-special-value-contract.json",
-      "sha256": "d07e0619baba2de401b8abad93909922b3619e16fec234935be116c69d54987b"
+      "sha256": "7165b59d47b7e6b816519230720fa4019cc8fc2ef15c5b9547a275c1550f2f93"
     },
     {
       "path": "spec/evidence/scalar-numeric-flag-contract.json",
-      "sha256": "020b91438aa9028b062af269d54d8cf0515af24c14665fa87e4b40c15db172b3"
+      "sha256": "1efc1d1d918ce94c520625ef387c9e2411fade09259e6b19e48d3bcf76a6caa1"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "720751f836ec8d6cc11118bd696aaf96b1420190c1b3759174bbd121800afa51"
+      "sha256": "72ea6df86a6c60fa1325d363d839bae6b9ffde0db53d2cd0cb9271a9671de6b9"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "a7f5a21b8b0c88697e9ab055790b17a2acfd7354ca2862015fd71d63f1beee68"
+      "sha256": "a39c97f0216dbc3b82f395d73c2987a859601ad3820fb194b169bc2766ed4fe6"
     },
     {
       "path": "spec/catalog/numeric-profile-applicability.json",
@@ -211,7 +211,7 @@
     },
     {
       "path": "specification.toml",
-      "sha256": "9b723251ab19b24783fbfbcf48780c833fc907013f1a457a00c59dc272c80047"
+      "sha256": "02933ca511b1ee61ba772034793983491365f55d9a9c28e84a95fd9cd0dc62cc"
     }
   ],
   "sub_stages": [

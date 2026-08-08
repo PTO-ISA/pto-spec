@@ -6,11 +6,18 @@ from __future__ import annotations
 import json
 import math
 import re
+import sys
 from collections import Counter
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.asl_units import load_units  # noqa: E402
+from scripts.project_asl_catalogs import project_catalogs  # noqa: E402
+
 EXECUTABLE_SCALAR_FAMILIES = {"AGU", "ALU", "AMO", "BRU", "FSU", "SYS"}
 CANONICAL_EXECUTION_FAULTS = {
     "ACRC": "Fault_ServiceRequest",
@@ -6396,9 +6403,7 @@ def encoded_form_witness(row: dict) -> int:
                     field for field in row["fields"] if field["name"] == field_name
                 )
                 replacement = (constraint["value"] + 1) % (1 << field["width"])
-                instruction = encode_field(
-                    row, field_name, instruction, replacement
-                )
+                instruction = encode_field(row, field_name, instruction, replacement)
         elif operator == "one-of":
             allowed = constraint["values"]
             if decode_field(row, field_name, instruction) not in allowed:
@@ -6409,7 +6414,10 @@ def encoded_form_witness(row: dict) -> int:
 
 
 def encoding_alternatives(row: dict) -> list[list[dict]]:
-    return [row["encoding"], *[variant["encoding"] for variant in row.get("encoding_variants", [])]]
+    return [
+        row["encoding"],
+        *[variant["encoding"] for variant in row.get("encoding_variants", [])],
+    ]
 
 
 def catalog_decode_order(rows: list[dict]) -> list[tuple[int, dict]]:
@@ -6763,10 +6771,7 @@ def emit_encoded_catalog(
                     f"{decoded} == {bit_literal(value, width)}"
                     for value in constraint["values"]
                 )
-                print(
-                    f"    if form == {index} && !({allowed}) "
-                    "then return FALSE; end;"
-                )
+                print(f"    if form == {index} && !({allowed}) then return FALSE; end;")
             else:
                 raise ValueError(f"unsupported {prefix} constraint: {constraint!r}")
     print("    return TRUE;")
@@ -6802,13 +6807,20 @@ def emit_encoded_catalog(
 
 
 def main() -> None:
-    scalar_catalog = load("spec/catalog/scalar-forms.json")
+    projected_catalogs = project_catalogs(load_units(ROOT / "asl"))
+    scalar_catalog = json.loads(
+        projected_catalogs[Path("spec/catalog/scalar-forms.json")]
+    )
     scalar = scalar_catalog["forms"]
     for index, row in enumerate(scalar):
         row["_form_index"] = index
     family_constraints = scalar_catalog["family_constraints"]
-    command = load("spec/catalog/command-forms.json")["forms"]
-    tile_catalog = load("spec/catalog/tile-operations.json")
+    command = json.loads(projected_catalogs[Path("spec/catalog/command-forms.json")])[
+        "forms"
+    ]
+    tile_catalog = json.loads(
+        projected_catalogs[Path("spec/catalog/tile-operations.json")]
+    )
     tile = tile_catalog["operations"]
     numeric_applicability = load("spec/catalog/numeric-profile-applicability.json")
     numeric_applicability_rules = numeric_applicability["rules"]
@@ -7324,9 +7336,7 @@ def main() -> None:
                 "TEPL"
                 if mnemonic == "BSTART.TEPL"
                 else next(
-                    row["family"]
-                    for row in tile
-                    if row["command_mnemonic"] == mnemonic
+                    row["family"] for row in tile if row["command_mnemonic"] == mnemonic
                 )
             ),
         )
@@ -8218,9 +8228,7 @@ def main() -> None:
                     "Zeros{PTO_XLEN} + 0x104, TRUE);"
                 )
                 print("    EnterBundleBody();")
-                print(
-                    f"    WriteExecutionMask({bit_literal(body_predicate, 64)});"
-                )
+                print(f"    WriteExecutionMask({bit_literal(body_predicate, 64)});")
                 print(
                     f"    let scalar_bru_bundle_predicate_status_"
                     f"{effect_index}_{bundle_scenario_index} = "
@@ -11385,9 +11393,7 @@ def main() -> None:
     print("    form: integer {0..PTO_COMMAND_FORM_COUNT-1}) => TileDecodeFamily")
     print("begin")
     for command_index, _, family in tile_command_rows:
-        print(
-            f"    if form == {command_index} then return TileDecode_{family}; end;"
-        )
+        print(f"    if form == {command_index} then return TileDecode_{family}; end;")
     print("    unreachable;")
     print("end;")
     print()
@@ -11411,7 +11417,8 @@ def main() -> None:
             print("    end;")
         else:
             operation = next(
-                row for row in tile
+                row
+                for row in tile
                 if row["command_mnemonic"] == command_row["mnemonic"]
             )
             print(

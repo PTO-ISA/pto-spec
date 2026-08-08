@@ -159,10 +159,10 @@ setup:
 
 build: $(SPEC)
 
-$(DECODER_SPEC): scripts/generate-asl-decoders spec/catalog/scalar-forms.json \
-		spec/catalog/command-forms.json \
+$(DECODER_SPEC): $(ASL_UNIT_SOURCES) scripts/generate-asl-decoders \
+		scripts/project_asl_catalogs.py scripts/asl_units.py \
 		spec/catalog/numeric-profile-applicability.json \
-		spec/catalog/system-registers.json spec/catalog/tile-operations.json
+		spec/catalog/system-registers.json
 	@mkdir -p build
 	@./scripts/generate-asl-decoders > $@
 

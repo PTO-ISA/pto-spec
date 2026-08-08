@@ -15,7 +15,11 @@ formal_model_issue = "https://github.com/PTO-ISA/pto-spec/issues/18"
 
 [profile]
 id = "pto-v0"
-implementation = "asl/profiles/pto-v0.asl"
+implementations = [
+  "asl/arch/profile/applicability.asl",
+  "asl/arch/profile/reference-profile.asl",
+  "asl/arch/profile/reset.asl",
+]
 conformance_tests = "tests/asl/profile-tests.asl"
 numeric_model = "deterministic-raw-carrier-reference"
 memory_model = "identity-translation-with-acr2-protected-region"
@@ -37,7 +41,13 @@ hierarchical_calls = false
 
 [memory_order]
 id = "PTO-TSO"
-model = "asl/concurrency.asl"
+models = [
+  "asl/arch/memory-model/address-space.asl",
+  "asl/arch/memory-model/atomicity.asl",
+  "asl/arch/memory-model/fault-precision.asl",
+  "asl/arch/memory-model/memory-events.asl",
+  "asl/arch/memory-model/ordering.asl",
+]
 comparison_source = "https://github.com/herd/herdtools7/blob/0b6e09066d4186c8a26e02e3bb884bd664d5eb34/herd/libdir/x86tso.cat"
 event_bound = 16
 agent_bound = 4

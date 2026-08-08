@@ -16,15 +16,35 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.asl_units import load_units  # noqa: E402
+from scripts.project_asl_catalogs import CATALOG_PATHS, project_catalogs  # noqa: E402
 
 
 def read_asl_units(*patterns: str) -> str:
     """Read the current ASL owners selected by repository-relative glob patterns."""
 
-    paths = sorted({path for pattern in patterns for path in ROOT.glob(pattern) if path.is_file()})
+    paths = sorted(
+        {path for pattern in patterns for path in ROOT.glob(pattern) if path.is_file()}
+    )
     if not paths:
         raise RuntimeError(f"no ASL units matched: {', '.join(patterns)}")
     return "\n".join(path.read_text(encoding="utf-8") for path in paths)
+
+
+def expand_source_paths(*patterns: str) -> list[str]:
+    paths: list[str] = []
+    for pattern in patterns:
+        matches = sorted(ROOT.glob(pattern))
+        require(bool(matches), f"source pattern has no matches: {pattern}")
+        paths.extend(
+            path.relative_to(ROOT).as_posix() for path in matches if path.is_file()
+        )
+    require(len(paths) == len(set(paths)), "duplicate expanded source path")
+    return paths
+
 
 REVIEWED_NONCOMPARABLE_PROJECTION_SHA256 = (
     "c448126ddb8d356d761ce213763d51f95b310626edde9e553ca2e3876c139245"
@@ -1108,7 +1128,10 @@ def aggregate_encoding(row: dict) -> tuple[int, int]:
 
 
 def encoding_alternatives(row: dict) -> list[list[dict]]:
-    return [row["encoding"], *[variant["encoding"] for variant in row.get("encoding_variants", [])]]
+    return [
+        row["encoding"],
+        *[variant["encoding"] for variant in row.get("encoding_variants", [])],
+    ]
 
 
 def aggregate_encoding_parts(parts: list[dict]) -> tuple[int, int]:
@@ -1210,13 +1233,17 @@ def bundle_tile_bridge_canary_rejects(evidence: dict, operations: list[dict]) ->
 
 
 def main() -> int:
-    scalar = load("spec/catalog/scalar-forms.json")
-    command = load("spec/catalog/command-forms.json")
-    linx_vector_reservations = load(
-        "spec/catalog/linx-vector-reservations.json"
-    )
+    projected_catalogs = project_catalogs(load_units(ROOT / "asl"))
+    for catalog_path in CATALOG_PATHS:
+        require(
+            (ROOT / catalog_path).read_bytes() == projected_catalogs[catalog_path],
+            f"ASL catalog projection drift: {catalog_path}",
+        )
+    scalar = json.loads(projected_catalogs[Path("spec/catalog/scalar-forms.json")])
+    command = json.loads(projected_catalogs[Path("spec/catalog/command-forms.json")])
+    linx_vector_reservations = load("spec/catalog/linx-vector-reservations.json")
     system_registers = load("spec/catalog/system-registers.json")
-    tile = load("spec/catalog/tile-operations.json")
+    tile = json.loads(projected_catalogs[Path("spec/catalog/tile-operations.json")])
     numeric_profile_identities = load("spec/catalog/numeric-profile-identities.json")
     numeric_profile_applicability = load(
         "spec/catalog/numeric-profile-applicability.json"
@@ -1409,8 +1436,7 @@ def main() -> int:
             for field in row["fields"]
         )
         require(
-            actual_field_shapes
-            == expected_linx_vector_field_shapes[row["mnemonic"]],
+            actual_field_shapes == expected_linx_vector_field_shapes[row["mnemonic"]],
             f"Linx vector reservation field placement drift for {row['mnemonic']}",
         )
         field_names: set[str] = set()
@@ -1529,7 +1555,11 @@ def main() -> int:
         specification["profile"]
         == {
             "id": "pto-v0",
-            "implementation": "asl/profiles/pto-v0.asl",
+            "implementations": [
+                "asl/arch/profile/applicability.asl",
+                "asl/arch/profile/reference-profile.asl",
+                "asl/arch/profile/reset.asl",
+            ],
             "conformance_tests": "tests/asl/profile-tests.asl",
             "numeric_model": "deterministic-raw-carrier-reference",
             "memory_model": "identity-translation-with-acr2-protected-region",
@@ -1553,7 +1583,13 @@ def main() -> int:
         specification["memory_order"]
         == {
             "id": "PTO-TSO",
-            "model": "asl/concurrency.asl",
+            "models": [
+                "asl/arch/memory-model/address-space.asl",
+                "asl/arch/memory-model/atomicity.asl",
+                "asl/arch/memory-model/fault-precision.asl",
+                "asl/arch/memory-model/memory-events.asl",
+                "asl/arch/memory-model/ordering.asl",
+            ],
             "comparison_source": "https://github.com/herd/herdtools7/blob/0b6e09066d4186c8a26e02e3bb884bd664d5eb34/herd/libdir/x86tso.cat",
             "event_bound": 16,
             "agent_bound": 4,
@@ -1997,9 +2033,7 @@ def main() -> int:
         ],
         "scalar AMO totality requirement traceability drift",
     )
-    memory_model_body = (ROOT / "asl" / "scalar" / "memory.asl").read_text(
-        encoding="utf-8"
-    )
+    memory_model_body = read_asl_units("asl/scalar/model/agu/memory.asl")
     pto_v0_profile_body = read_asl_units(
         "asl/arch/profile/*.asl",
         "asl/arch/system-registers/context.asl",
@@ -2829,9 +2863,9 @@ def main() -> int:
         "spec/catalog/scalar-forms.json",
         "spec/catalog/system-registers.json",
         "spec/evidence/numeric-contracts.json",
-        "asl/scalar/floating.asl",
-        "asl/scalar/dispatch.asl",
-        "asl/profiles/pto-v0.asl",
+        *expand_source_paths("asl/scalar/model/fsu/*.asl"),
+        *expand_source_paths("asl/scalar/model/dispatch/*.asl"),
+        *expand_source_paths("asl/arch/profile/*.asl"),
         "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
     ]
     require(
@@ -3008,12 +3042,12 @@ def main() -> int:
         "spec/catalog/numeric-profile-identities.json",
         "spec/evidence/numeric-profile-decision-inputs.json",
         "spec/evidence/scalar-fsu-totality.json",
-        "asl/scalar/floating.asl",
-        "asl/scalar/dispatch.asl",
-        "asl/bundle/state.asl",
-        "asl/bundle/dispatch.asl",
-        "asl/tile/conversion.asl",
-        "asl/tile/cube.asl",
+        *expand_source_paths("asl/scalar/model/fsu/*.asl"),
+        *expand_source_paths("asl/scalar/model/dispatch/*.asl"),
+        *expand_source_paths("asl/block/model/state/*.asl"),
+        *expand_source_paths("asl/block/model/dispatch/*.asl"),
+        *expand_source_paths("asl/tile/model/numeric/*.asl"),
+        "asl/tile/model/execution/cube.asl",
         "spec/catalog/tile-operations.json",
         "spec/hardware-conformance-profile.json",
         "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
@@ -3231,12 +3265,12 @@ def main() -> int:
         "spec/evidence/executable-model-comparison.json",
         "spec/hardware-conformance-profile.json",
         "spec/catalog/command-forms.json",
-        "asl/types.asl",
-        "asl/numeric/formats.asl",
-        "asl/scalar/floating.asl",
-        "asl/tile/state.asl",
-        "asl/tile/memory.asl",
-        "asl/bundle/dispatch.asl",
+        *expand_source_paths("asl/arch/data-types/*.asl"),
+        "asl/tile/model/numeric/formats.asl",
+        *expand_source_paths("asl/scalar/model/fsu/*.asl"),
+        *expand_source_paths("asl/tile/model/state/*.asl"),
+        *expand_source_paths("asl/tile/model/memory/*.asl"),
+        *expand_source_paths("asl/block/model/dispatch/*.asl"),
         "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
         "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
         "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
@@ -4138,8 +4172,8 @@ def main() -> int:
             "spec/evidence/public-source-reconciliation.json",
             "spec/evidence/executable-model-comparison.json",
             "scripts/generate-asl-decoders",
-            "asl/types.asl",
-            "asl/bundle/dispatch.asl",
+            *expand_source_paths("asl/arch/data-types/*.asl"),
+            *expand_source_paths("asl/block/model/dispatch/*.asl"),
             "tests/asl/bundle-tests.asl",
             "tests/asl/cube-totality-tests.asl",
             "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
@@ -4289,11 +4323,11 @@ def main() -> int:
         "guard_generator": "scripts/generate-asl-decoders",
         "guard_symbol": "TileOperationRejectedByAcceptedApplicabilityRules",
         "rule_set_type": {
-            "path": "asl/types.asl",
+            "path": "asl/arch/data-types/rounding.asl",
             "symbol": "NumericApplicabilityRuleSet",
         },
         "bundle_guard": {
-            "path": "asl/bundle/dispatch.asl",
+            "path": "asl/block/model/dispatch/descriptor-legality.asl",
             "symbol": "BundleOperationDescriptorRejectedByAcceptedApplicabilityRules",
         },
         "direct_test": {
@@ -4844,9 +4878,9 @@ def main() -> int:
         "command form count must be 99",
     )
     require(command["form_constraint_count"] == 44, "command constraint count drift")
-    require(command["operand_field_count"] == 59, "command operand-field count drift")
-    require(command["operand_piece_count"] == 191, "command operand-piece count drift")
-    require(command["semantic_handler_count"] == 21, "command handler count drift")
+    require(command["operand_field_count"] == 57, "command operand-field count drift")
+    require(command["operand_piece_count"] == 190, "command operand-piece count drift")
+    require(command["semantic_handler_count"] == 22, "command handler count drift")
     require(
         Counter(row["semantic_family"] for row in command_forms)
         == Counter({"CMD": 74, "BBD": 25}),
@@ -5229,7 +5263,9 @@ def main() -> int:
         "PTO ISA 0.58.0 B.IOT must encode zero for Shared no-op use",
     )
     destination_iot_forms = [
-        row for row in iot_forms if any(field["name"] == "DstTile" for field in row["fields"])
+        row
+        for row in iot_forms
+        if any(field["name"] == "DstTile" for field in row["fields"])
     ]
     require(
         len(destination_iot_forms) == 3
@@ -5309,9 +5345,7 @@ def main() -> int:
     wrong_row = copy.deepcopy(bundle_command_totality)
     tepl_rows = wrong_row["bundle_tile_bridge"]["operation_matrix"]
     representable_tepl = next(
-        row
-        for row in tepl_rows
-        if row["family"] == "TEPL" and row["representable"]
+        row for row in tepl_rows if row["family"] == "TEPL" and row["representable"]
     )
     representable_tepl["representable"] = False
     representable_tepl["unsupported_operand_fields"] = ["source0"]
@@ -5356,7 +5390,9 @@ def main() -> int:
         and tlsu_totality["status"] == "closed"
         and tlsu_totality["covered_selectors"] == expected_tlsu_selectors
         and tlsu_totality["decoded_selector_case_count"] == len(tlsu_rows) == 10
-        and tlsu_totality["scenario_count"] == len(tlsu_totality["test_scenarios"]) == 10,
+        and tlsu_totality["scenario_count"]
+        == len(tlsu_totality["test_scenarios"])
+        == 10,
         "TLSU totality inventory or scenario evidence drift",
     )
     require(
@@ -6751,25 +6787,27 @@ def main() -> int:
         and "MemoryRelationAcyclic(FALSE)" in concurrency_body,
         "PTO-TSO validity or acyclicity gate drift",
     )
+    raw_memory_owners = {
+        ROOT / "asl" / "arch" / "memory-model" / "address-space.asl",
+        ROOT / "asl" / "scalar" / "model" / "agu" / "memory.asl",
+    }
     for path in (ROOT / "asl").rglob("*.asl"):
-        if path == ROOT / "asl" / "state.asl" or path == (
-            ROOT / "asl" / "scalar" / "memory.asl"
-        ):
+        if path in raw_memory_owners:
             continue
         body = path.read_text(encoding="utf-8")
         require(
             re.search(r"\b(?:ReadMemoryByte|WriteMemoryByte)\s*\(", body) is None,
             f"normative memory access bypasses the profile probe boundary: {path.relative_to(ROOT)}",
         )
-    for relative in (
-        "asl/scalar/addressing.asl",
-        "asl/scalar/dispatch.asl",
-        "asl/tile/memory.asl",
+    for patterns in (
+        ("asl/scalar/model/agu/addressing.asl",),
+        ("asl/scalar/model/dispatch/*.asl",),
+        ("asl/tile/model/memory/*.asl",),
     ):
-        body = (ROOT / relative).read_text(encoding="utf-8")
+        body = read_asl_units(*patterns)
         require(
             "ProbeDataAccess(" in body,
-            f"multi-access completion path lacks profile preflight: {relative}",
+            f"multi-access completion path lacks profile preflight: {patterns}",
         )
     for handler, names in TILE_SEMANTIC_GROUPS.items():
         require(
@@ -7462,10 +7500,8 @@ def main() -> int:
             re.search(rf"\b{function_name}\s*\(\s*\)\s*;", main_test_body) is not None,
             f"decoded scalar SYS closure witness is not executable: {function_name}",
         )
-    system_register_body = (ROOT / "asl/scalar/system-registers.asl").read_text(
-        encoding="utf-8"
-    )
-    system_body = (ROOT / "asl/scalar/system.asl").read_text(encoding="utf-8")
+    system_register_body = read_asl_units("asl/scalar/model/sys/registers.asl")
+    system_body = read_asl_units("asl/scalar/model/sys/semantics.asl")
     require(
         "SystemRegisterAccessPermitted(address, FALSE, CurrentACR())"
         in system_register_body
@@ -7641,12 +7677,8 @@ def main() -> int:
         in (ROOT / "tests" / "asl" / "main.asl").read_text(encoding="utf-8"),
         "SYS effect witnesses are not executed by the ASL suite",
     )
-    scalar_effect_dispatch_body = (ROOT / "asl" / "scalar" / "dispatch.asl").read_text(
-        encoding="utf-8"
-    )
-    scalar_floating_body = (ROOT / "asl" / "scalar" / "floating.asl").read_text(
-        encoding="utf-8"
-    )
+    scalar_effect_dispatch_body = read_asl_units("asl/scalar/model/dispatch/*.asl")
+    scalar_floating_body = read_asl_units("asl/scalar/model/fsu/*.asl")
     scalar_types_body = read_asl_units(
         "asl/arch/data-types/*.asl",
         "asl/block/model/state/types.asl",
@@ -7726,9 +7758,7 @@ def main() -> int:
             f"missing per-form semantic handler {row['semantic_handler']} for {row['form_id']}",
         )
 
-    dispatch_body = (ROOT / "asl" / "scalar" / "dispatch.asl").read_text(
-        encoding="utf-8"
-    )
+    dispatch_body = read_asl_units("asl/scalar/model/dispatch/*.asl")
     require(
         re.search(r"\bfunc\s+ExecuteScalarInstruction\b", dispatch_body) is not None,
         "missing public scalar execution entry point",
@@ -7747,9 +7777,7 @@ def main() -> int:
         in generated_tile_dispatch,
         "reserved scalar encoding lacks generated rejection evidence",
     )
-    scalar_operands_body = (ROOT / "asl" / "scalar" / "operands.asl").read_text(
-        encoding="utf-8"
-    )
+    scalar_operands_body = read_asl_units("asl/scalar/model/types/operands.asl")
     require(
         re.search(r"\bassert\b", re.sub(r"//.*", "", scalar_operands_body)) is None,
         "Reg5 operand legality must not use ASL assertions",
@@ -7802,9 +7830,7 @@ def main() -> int:
         "asl/block/model/faults/rollback.asl",
     )
     unified_dispatch_body = read_asl_units("asl/arch/dispatch/top-level.asl")
-    execution_system_body = (ROOT / "asl" / "scalar" / "system.asl").read_text(
-        encoding="utf-8"
-    )
+    execution_system_body = read_asl_units("asl/scalar/model/sys/semantics.asl")
     attempt_entry = "BeginArchitecturalInstructionAttempt();"
     require(
         execution_system_body.count("func BeginArchitecturalInstructionAttempt()") == 1
@@ -8218,8 +8244,7 @@ def main() -> int:
         and predicate_boundary["active_release"] == "PTO ISA 0.58.0"
         and predicate_boundary["current_public_source_release"]
         == "PTO ISA v0.6 micro-instruction surface"
-        and predicate_boundary["disposition"]
-        == "outside-active-0.58.0-release-line"
+        and predicate_boundary["disposition"] == "outside-active-0.58.0-release-line"
         and predicate_boundary["accepted_mapping"] is None
         and "No public v0.6 typed mask is mapped" in predicate_boundary["mapping_rule"],
         "predicate release-line boundary drift",
@@ -8715,12 +8740,12 @@ def main() -> int:
     )
     readme_body = (ROOT / "README.md").read_text(encoding="utf-8")
     coverage_body = (ROOT / "docs" / "coverage.md").read_text(encoding="utf-8")
-    shared_binding_doc = (
-        ROOT / "docs/instructions/block/operands/B.IOS.md"
-    ).read_text(encoding="utf-8")
-    shared_mask_doc = (
-        ROOT / "docs/instructions/block/operands/B.IOT.md"
-    ).read_text(encoding="utf-8")
+    shared_binding_doc = (ROOT / "docs/instructions/block/operands/B.IOS.md").read_text(
+        encoding="utf-8"
+    )
+    shared_mask_doc = (ROOT / "docs/instructions/block/operands/B.IOT.md").read_text(
+        encoding="utf-8"
+    )
     for spelling in (
         "S0..S255",
         "B.IOS S<SharedTID>, mask=<PE_MASK>",
@@ -8728,7 +8753,10 @@ def main() -> int:
         "TSize zero identifies the Shared source form",
         "0x00001013 / 0xf00871ff",
     ):
-        require(spelling in shared_binding_doc, f"missing Shared syntax boundary: {spelling}")
+        require(
+            spelling in shared_binding_doc,
+            f"missing Shared syntax boundary: {spelling}",
+        )
     require(
         "InstructionContractZeroMaskIsNoOp_B_IOT" in shared_mask_doc
         and "InstructionContractHasMaskOnlySharedCompanion_B_IOT" in shared_mask_doc
@@ -9378,7 +9406,7 @@ def main() -> int:
         and release_summary["gate_count"] == 10
         and release_summary["required_approval_count"] == 2
         and release_summary["required_external_control_count"] == 10
-        and release_summary["shard_count"] == 52
+        and release_summary["shard_count"] == 53
         and release_summary["canonical_call_count"] == 113
         and release_summary["reachable_test_subprogram_count"] == 107
         and release_summary["open_prerequisite_targets"] == ["S5-T2", "S6-T1"]
@@ -9495,19 +9523,24 @@ def main() -> int:
         == {
             "conformance_tests": "tests/asl/profile-tests.asl",
             "id": "pto-v0",
-            "implementation": "asl/profiles/pto-v0.asl",
+            "implementations": [
+                "asl/arch/profile/applicability.asl",
+                "asl/arch/profile/reference-profile.asl",
+                "asl/arch/profile/reset.asl",
+            ],
             "status": "concrete-reference-profile",
         },
         "active profile identity drift",
     )
-    profile_implementation_path = ROOT / active_profile["implementation"]
     profile_test_path = ROOT / active_profile["conformance_tests"]
     require(
-        profile_implementation_path.exists(), "missing active profile implementation"
+        all((ROOT / path).is_file() for path in active_profile["implementations"]),
+        "missing active profile implementation",
     )
     require(profile_test_path.exists(), "missing active profile conformance tests")
-    profile_implementation_body = profile_implementation_path.read_text(
-        encoding="utf-8"
+    profile_implementation_body = "\n".join(
+        (ROOT / path).read_text(encoding="utf-8")
+        for path in active_profile["implementations"]
     )
     profile_test_body = profile_test_path.read_text(encoding="utf-8")
     profile_hooks = profile_catalog["hooks"]
@@ -11528,15 +11561,14 @@ def main() -> int:
         "asl/arch/programming-model/*.asl",
         "asl/arch/state/*.asl",
         "asl/arch/system-registers/*.asl",
+        "asl/arch/memory-model/fault-precision.asl",
         "asl/block/model/state/*.asl",
     )
     state_test_source = (ROOT / "tests" / "asl" / "state-tests.asl").read_text(
         encoding="utf-8"
     )
-    system_body = (ROOT / "asl" / "scalar" / "system.asl").read_text(encoding="utf-8")
-    system_register_body = (ROOT / "asl" / "scalar" / "system-registers.asl").read_text(
-        encoding="utf-8"
-    )
+    system_body = read_asl_units("asl/scalar/model/sys/semantics.asl")
+    system_register_body = read_asl_units("asl/scalar/model/sys/registers.asl")
     main_test_body = (ROOT / "tests" / "asl" / "main.asl").read_text(encoding="utf-8")
     require(
         all(name in types_body for name in ("AccessControlRing", "InterruptID"))
@@ -11646,7 +11678,9 @@ def main() -> int:
     require(
         "type InterruptID of integer {0..63};" in types_body
         and interrupt_requirement is not None
-        and "asl/types.asl" in interrupt_requirement["model"]
+        and "asl/arch/data-types/integer.asl" in interrupt_requirement["model"]
+        and "asl/arch/memory-model/fault-precision.asl"
+        in interrupt_requirement["model"]
         and "assert" not in raise_interrupt_body
         and "SetFault(" not in raise_interrupt_body
         and raise_interrupt_body.index("SetInterruptPending(ring, interrupt_id);")
@@ -11938,7 +11972,11 @@ def main() -> int:
     for path in (ROOT / "asl").rglob("*.asl"):
         body = path.read_text(encoding="utf-8")
         used_ids.update(re.findall(r"PTO-REQ-[A-Z]+(?:-[A-Z]+)*-[0-9]{3}", body))
-        active = body.upper()
+        active = "\n".join(
+            line
+            for line in body.upper().splitlines()
+            if not line.startswith(("// PTO-UNIT: ", "// PTO-INSTRUCTION: "))
+        )
         for forbidden in nested_names:
             require(
                 re.search(

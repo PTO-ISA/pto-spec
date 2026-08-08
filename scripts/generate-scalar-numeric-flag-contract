@@ -6,11 +6,17 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.evidence_sources import source_rows  # noqa: E402
+
 SCALAR_CATALOG = ROOT / "spec/catalog/scalar-forms.json"
 NUMERIC_CONTRACTS = ROOT / "spec/evidence/numeric-contracts.json"
 OUTPUT = ROOT / "spec/evidence/scalar-numeric-flag-contract.json"
@@ -180,9 +186,9 @@ def generate() -> dict[str, Any]:
             source("spec/catalog/scalar-forms.json"),
             source("spec/catalog/system-registers.json"),
             source("spec/evidence/numeric-contracts.json"),
-            source("asl/scalar/floating.asl"),
-            source("asl/scalar/dispatch.asl"),
-            source("asl/profiles/pto-v0.asl"),
+            *source_rows(ROOT, "asl/scalar/model/fsu/*.asl"),
+            *source_rows(ROOT, "asl/scalar/model/dispatch/*.asl"),
+            *source_rows(ROOT, "asl/arch/profile/*.asl"),
             source(
                 "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md"
             ),

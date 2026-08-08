@@ -46,10 +46,6 @@ SOURCE_PATHS = (
     "tests/asl/scalar-tests.asl",
     "tests/asl/state-tests.asl",
     "tests/asl/tile-tests.asl",
-    "asl/types.asl",
-    "asl/state.asl",
-    "asl/bundle/state.asl",
-    "asl/tile/state.asl",
 )
 
 EXPECTED_COUNTS = {
@@ -73,9 +69,9 @@ SCALAR_TRACE = {
             "PTO-REQ-SCALAR-EFFECT-CLOSURE-001",
         ],
         "model": [
-            "asl/scalar/addressing.asl",
-            "asl/scalar/memory.asl",
-            "asl/scalar/dispatch.asl",
+            "asl/scalar/model/agu/addressing.asl",
+            "asl/scalar/model/agu/memory.asl",
+            "asl/scalar/model/dispatch/agu.asl",
             "spec/evidence/scalar-agu-totality.json",
         ],
     },
@@ -87,8 +83,8 @@ SCALAR_TRACE = {
             "PTO-REQ-SCALAR-EFFECT-CLOSURE-001",
         ],
         "model": [
-            "asl/scalar/integer.asl",
-            "asl/scalar/dispatch.asl",
+            "asl/scalar/model/alu/semantics.asl",
+            "asl/scalar/model/dispatch/alu.asl",
             "spec/evidence/scalar-alu-totality.json",
         ],
     },
@@ -101,8 +97,8 @@ SCALAR_TRACE = {
             "PTO-REQ-SCALAR-EFFECT-CLOSURE-001",
         ],
         "model": [
-            "asl/scalar/atomic.asl",
-            "asl/scalar/dispatch.asl",
+            "asl/scalar/model/amo/semantics.asl",
+            "asl/scalar/model/dispatch/amo.asl",
             "spec/evidence/scalar-amo-totality.json",
         ],
     },
@@ -114,8 +110,8 @@ SCALAR_TRACE = {
             "PTO-REQ-SCALAR-EFFECT-CLOSURE-001",
         ],
         "model": [
-            "asl/scalar/control.asl",
-            "asl/scalar/dispatch.asl",
+            "asl/scalar/model/bru/semantics.asl",
+            "asl/scalar/model/dispatch/bru.asl",
             "spec/evidence/scalar-bru-totality.json",
         ],
     },
@@ -128,8 +124,9 @@ SCALAR_TRACE = {
             "PTO-REQ-SCALAR-EFFECT-CLOSURE-001",
         ],
         "model": [
-            "asl/scalar/floating.asl",
-            "asl/scalar/dispatch.asl",
+            "asl/scalar/model/fsu/arithmetic.asl",
+            "asl/scalar/model/fsu/profile.asl",
+            "asl/scalar/model/dispatch/fsu.asl",
             "spec/evidence/scalar-fsu-totality.json",
             "spec/evidence/scalar-numeric-flag-contract.json",
             "spec/evidence/numeric-rounding-selector-contract.json",
@@ -146,9 +143,9 @@ SCALAR_TRACE = {
             "PTO-REQ-SCALAR-EFFECT-CLOSURE-001",
         ],
         "model": [
-            "asl/scalar/system.asl",
-            "asl/scalar/system-registers.asl",
-            "asl/scalar/dispatch.asl",
+            "asl/scalar/model/sys/semantics.asl",
+            "asl/scalar/model/sys/registers.asl",
+            "asl/scalar/model/dispatch/sys.asl",
             "spec/evidence/scalar-sys-totality.json",
         ],
     },
@@ -161,7 +158,10 @@ TILE_TRACE = {
             "PTO-REQ-TILE-LEGALITY-001",
         ],
         "model": [
-            "asl/tile/legality.asl",
+            *[
+                path.relative_to(ROOT).as_posix()
+                for path in sorted(ROOT.glob("asl/tile/model/legality/*.asl"))
+            ],
             "spec/evidence/tepl-totality.json",
         ],
         "tests": ["tests/asl/tepl-totality-tests.asl", "tests/asl/tile-tests.asl"],
@@ -176,8 +176,14 @@ TILE_TRACE = {
             "PTO-REQ-SHARED-TILE-001",
         ],
         "model": [
-            "asl/tile/memory.asl",
-            "asl/tile/legality.asl",
+            *[
+                path.relative_to(ROOT).as_posix()
+                for path in sorted(ROOT.glob("asl/tile/model/memory/*.asl"))
+            ],
+            *[
+                path.relative_to(ROOT).as_posix()
+                for path in sorted(ROOT.glob("asl/tile/model/legality/*.asl"))
+            ],
             "spec/evidence/tlsu-totality.json",
         ],
         "tests": [
@@ -195,8 +201,11 @@ TILE_TRACE = {
             "PTO-REQ-SHARED-TILE-001",
         ],
         "model": [
-            "asl/tile/cube.asl",
-            "asl/tile/legality.asl",
+            "asl/tile/model/execution/cube.asl",
+            *[
+                path.relative_to(ROOT).as_posix()
+                for path in sorted(ROOT.glob("asl/tile/model/legality/*.asl"))
+            ],
             "spec/evidence/cube-totality.json",
         ],
         "tests": ["tests/asl/cube-totality-tests.asl", "tests/asl/tile-tests.asl"],
@@ -219,27 +228,27 @@ TEPL_HANDLER_TRACE = {
             "TFMA",
         },
         "requirement": "PTO-REQ-TEPL-001",
-        "model": "asl/tile/elementwise.asl",
+        "model": "asl/tile/model/execution/elementwise.asl",
     },
     "reduction": {
         "handlers": {"ExecuteTileReduction"},
         "requirement": "PTO-REQ-TEPL-REDUCE-001",
-        "model": "asl/tile/reduction.asl",
+        "model": "asl/tile/model/execution/reduction.asl",
     },
     "expansion": {
         "handlers": {"ExecuteTileExpand"},
         "requirement": "PTO-REQ-TEPL-EXPAND-001",
-        "model": "asl/tile/expansion.asl",
+        "model": "asl/tile/model/execution/expansion.asl",
     },
     "generation": {
         "handlers": {"TCI", "TTRI", "TFILLPAD"},
         "requirement": "PTO-REQ-TEPL-GENERATE-001",
-        "model": "asl/tile/generation.asl",
+        "model": "asl/tile/model/execution/generation.asl",
     },
     "conversion": {
         "handlers": {"TCVT", "TQUANT", "TDEQUANT"},
         "requirement": "PTO-REQ-TEPL-CONVERT-001",
-        "model": "asl/tile/conversion.asl",
+        "model": "asl/tile/model/numeric/formats.asl",
     },
     "rearrangement": {
         "handlers": {
@@ -256,7 +265,7 @@ TEPL_HANDLER_TRACE = {
             "TRESHAPE",
         },
         "requirement": "PTO-REQ-TEPL-REARRANGE-001",
-        "model": "asl/tile/rearrangement.asl",
+        "model": "asl/tile/model/execution/rearrangement.asl",
     },
     "complex": {
         "handlers": {
@@ -267,12 +276,12 @@ TEPL_HANDLER_TRACE = {
             "ExecuteTilePartialArg",
         },
         "requirement": "PTO-REQ-TEPL-COMPLEX-001",
-        "model": "asl/tile/complex.asl",
+        "model": "asl/tile/model/execution/complex.asl",
     },
     "management": {
         "handlers": {"TPUSH", "TPOP", "TALLOC", "TFREE"},
         "requirement": "PTO-REQ-TILE-MANAGEMENT-001",
-        "model": "asl/tile/state.asl",
+        "model": "asl/tile/model/state/allocation.asl",
     },
 }
 
@@ -450,11 +459,11 @@ def state_leaf_fields(
 
 def state_requirements(name: str, model: str) -> list[str]:
     requirements = {"PTO-REQ-STATE-001"}
-    if model == "asl/bundle/state.asl":
+    if model.startswith("asl/block/model/state/"):
         requirements.update(
             {"PTO-REQ-BUNDLE-STATE-001", "PTO-REQ-BUNDLE-OPERATION-001"}
         )
-    if model == "asl/tile/state.asl":
+    if model.startswith("asl/tile/model/state/"):
         requirements.update(
             {
                 "PTO-REQ-TILE-001",
@@ -520,9 +529,9 @@ def state_requirements(name: str, model: str) -> list[str]:
 
 def state_tests(name: str, model: str) -> list[str]:
     tests = {"tests/asl/state-tests.asl"}
-    if model == "asl/bundle/state.asl":
+    if model.startswith("asl/block/model/state/"):
         tests.add("tests/asl/bundle-tests.asl")
-    if model == "asl/tile/state.asl":
+    if model.startswith("asl/tile/model/state/"):
         tests.add("tests/asl/tile-tests.asl")
     if name == "_SharedTiles":
         tests.add("tests/asl/bundle-tests.asl")
@@ -708,8 +717,8 @@ def build_evidence() -> dict[str, Any]:
     ]
     command_model = [
         "spec/catalog/command-forms.json",
-        "asl/bundle/dispatch.asl",
-        "asl/bundle/state.asl",
+        "asl/block/model/dispatch/top-level.asl",
+        "asl/block/model/state/descriptor-state.asl",
         "spec/evidence/bundle-command-totality.json",
     ]
     command_tests = ["tests/asl/bundle-tests.asl", "tests/asl/main.asl"]
@@ -828,10 +837,7 @@ def build_evidence() -> dict[str, Any]:
         witness_ids = [
             witness["reset_witness"]["witness_id"],
             witness["access_witness"]["witness_id"],
-            *[
-                effect["witness_id"]
-                for effect in witness["side_effect_witnesses"]
-            ],
+            *[effect["witness_id"] for effect in witness["side_effect_witnesses"]],
         ]
         system_rows.append(
             {
@@ -859,7 +865,9 @@ def build_evidence() -> dict[str, Any]:
                     for path in exact_witness_sources
                 ],
                 "consumer_exclusion_guard": (
-                    system_witnesses["consumer_exclusion"]["storage_only_registers"]["guard_id"]
+                    system_witnesses["consumer_exclusion"]["storage_only_registers"][
+                        "guard_id"
+                    ]
                     if behavior["profile_status"] == "pto-v0-storage-only"
                     else None
                 ),
@@ -867,8 +875,8 @@ def build_evidence() -> dict[str, Any]:
                 "model": [
                     "spec/catalog/system-registers.json",
                     "spec/evidence/system-register-witness-closure.json",
-                    "asl/scalar/system-registers.asl",
-                    "asl/state.asl",
+                    "asl/scalar/model/sys/registers.asl",
+                    "asl/arch/system-registers/addressing.asl",
                 ],
                 "tests": [
                     "scripts/generate-asl-decoders",
@@ -909,7 +917,9 @@ def build_evidence() -> dict[str, Any]:
                     ],
                 },
                 "consumer_exclusion_guard": (
-                    system_witnesses["consumer_exclusion"]["envelope_only_traps"]["guard_id"]
+                    system_witnesses["consumer_exclusion"]["envelope_only_traps"][
+                        "guard_id"
+                    ]
                     if row["pto_v0_status"] == "envelope-only-no-trigger"
                     else None
                 ),
@@ -917,8 +927,8 @@ def build_evidence() -> dict[str, Any]:
                 "model": [
                     "spec/catalog/system-registers.json",
                     "spec/evidence/system-register-witness-closure.json",
-                    "asl/state.asl",
-                    "asl/profiles/pto-v0.asl",
+                    "asl/arch/state/trap-context.asl",
+                    "asl/arch/profile/reference-profile.asl",
                 ],
                 "tests": ["tests/asl/state-tests.asl", "tests/asl/main.asl"],
                 "bounded_status": "reference-disposition-closed",

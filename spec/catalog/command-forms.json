@@ -535,22 +535,122 @@
         {
           "field": "RegDst",
           "operator": "one-of",
-          "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
         },
         {
           "field": "RegSrc0",
           "operator": "one-of",
-          "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
         },
         {
           "field": "RegSrc1",
           "operator": "one-of",
-          "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
         },
         {
           "field": "RegSrc2",
           "operator": "one-of",
-          "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
         }
       ],
       "encoding": [
@@ -627,7 +727,24 @@
         {
           "field": "PE_MASK",
           "operator": "one-of",
-          "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
         },
         {
           "field": "TSize",
@@ -739,7 +856,24 @@
         {
           "field": "PE_MASK",
           "operator": "one-of",
-          "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
         }
       ],
       "encoding": [
@@ -816,7 +950,24 @@
         {
           "field": "PE_MASK",
           "operator": "one-of",
-          "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
         },
         {
           "field": "TSize",
@@ -940,7 +1091,24 @@
         {
           "field": "PE_MASK",
           "operator": "one-of",
-          "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
         }
       ],
       "encoding": [
@@ -1005,13 +1173,30 @@
         {
           "field": "PE_MASK",
           "operator": "one-of",
-          "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
         },
-      {
-        "field": "TSize",
-        "operator": "one-of",
-        "values": [
-          1,
+        {
+          "field": "TSize",
+          "operator": "one-of",
+          "values": [
+            1,
             2,
             3,
             4,
@@ -1531,8 +1716,31 @@
           "field": "DataType",
           "operator": "one-of",
           "values": [
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-            16, 17, 18, 19, 20, 24, 25, 26, 27, 28
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
           ]
         }
       ],
@@ -1575,8 +1783,31 @@
           "field": "DataType",
           "operator": "one-of",
           "values": [
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-            16, 17, 18, 19, 20, 24, 25, 26, 27, 28
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
           ]
         }
       ],
@@ -1619,8 +1850,31 @@
           "field": "DataType",
           "operator": "one-of",
           "values": [
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-            16, 17, 18, 19, 20, 24, 25, 26, 27, 28
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
           ]
         }
       ],
@@ -3039,10 +3293,9 @@
           "width_bits": 32
         }
       ],
+      "encoding_kind": "L32",
       "encoding_variants": [
         {
-          "name": "TMOV.L2S.INSERT",
-          "function": 9,
           "encoding": [
             {
               "index": 0,
@@ -3050,11 +3303,11 @@
               "match": "0x00911181",
               "width_bits": 32
             }
-          ]
+          ],
+          "function": 9,
+          "name": "TMOV.L2S.INSERT"
         },
         {
-          "name": "TMOV.L2S.PUBLISH",
-          "function": 10,
           "encoding": [
             {
               "index": 0,
@@ -3062,11 +3315,11 @@
               "match": "0x00a11181",
               "width_bits": 32
             }
-          ]
+          ],
+          "function": 10,
+          "name": "TMOV.L2S.PUBLISH"
         },
         {
-          "name": "TMOV.S2L.BROADCAST",
-          "function": 11,
           "encoding": [
             {
               "index": 0,
@@ -3074,11 +3327,11 @@
               "match": "0x00b11181",
               "width_bits": 32
             }
-          ]
+          ],
+          "function": 11,
+          "name": "TMOV.S2L.BROADCAST"
         },
         {
-          "name": "TMOV.S2L.EXTRACT",
-          "function": 12,
           "encoding": [
             {
               "index": 0,
@@ -3086,10 +3339,11 @@
               "match": "0x00c11181",
               "width_bits": 32
             }
-          ]
+          ],
+          "function": 12,
+          "name": "TMOV.S2L.EXTRACT"
         }
       ],
-      "encoding_kind": "L32",
       "fields": [
         {
           "name": "DataType",
@@ -3290,10 +3544,9 @@
           "width_bits": 32
         }
       ],
+      "encoding_kind": "L32",
       "encoding_variants": [
         {
-          "name": "TSTORE.SPART",
-          "function": 14,
           "encoding": [
             {
               "index": 0,
@@ -3301,10 +3554,11 @@
               "match": "0x00e11181",
               "width_bits": 32
             }
-          ]
+          ],
+          "function": 14,
+          "name": "TSTORE.SPART"
         }
       ],
-      "encoding_kind": "L32",
       "fields": [
         {
           "name": "DataType",
@@ -5361,8 +5615,8 @@
     }
   ],
   "isa": "PTO Instruction Set Architecture",
-  "operand_field_count": 59,
-  "operand_piece_count": 191,
+  "operand_field_count": 57,
+  "operand_piece_count": 190,
   "reviewed_encoding_overlaps": [
     {
       "broad_form_id": "b_iot_32_10db6db84f5d",
@@ -5381,6 +5635,6 @@
     }
   ],
   "schema_version": 2,
-  "semantic_handler_count": 21,
+  "semantic_handler_count": 22,
   "surface": "command-and-boundary"
 }

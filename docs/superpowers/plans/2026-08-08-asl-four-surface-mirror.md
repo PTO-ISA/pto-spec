@@ -891,7 +891,7 @@ git commit -m "refactor: split tile ASL model"
   - `project_catalogs(units: Sequence[AslUnit]) -> dict[pathlib.Path, bytes]`
   - deterministic scalar forms, command forms, tile-operation catalogs, and decoder declarations.
 
-- [ ] **Step 1: Write round-trip and conflict tests**
+- [x] **Step 1: Write round-trip and conflict tests**
 
 Cover byte-identical projection, duplicate catalog slot rejection, missing slot rejection, conflicting record rejection, and deterministic JSON formatting.
 
@@ -900,7 +900,7 @@ projected = project_catalogs(load_units(repo / "asl"))
 self.assertEqual(projected[Path("spec/catalog/scalar-forms.json")], committed_bytes)
 ```
 
-- [ ] **Step 2: Run the focused test and observe the missing projector failure**
+- [x] **Step 2: Run the focused test and observe the missing projector failure**
 
 Run:
 
@@ -910,7 +910,7 @@ python3 -m unittest tests.scripts.test_asl_catalog_projection -v
 
 Expected: FAIL because `project_asl_catalogs.py` does not exist.
 
-- [ ] **Step 3: Implement projection and `--check`**
+- [x] **Step 3: Implement projection and `--check`**
 
 The CLI MUST accept:
 
@@ -922,11 +922,11 @@ The CLI MUST accept:
 
 Records are sorted by `catalog_indices`; JSON uses UTF-8, two-space indentation, sorted object keys only where the current artifact contract requires it, and one final newline. Conflicting ownership is a hard error.
 
-- [ ] **Step 4: Make decoder generation consume in-memory projected records**
+- [x] **Step 4: Make decoder generation consume in-memory projected records**
 
 Decoder generators MUST import `project_catalogs()` or the parsed instruction records directly. They MUST NOT read catalog JSON as an architecture authority.
 
-- [ ] **Step 5: Regenerate and prove exactness**
+- [x] **Step 5: Regenerate and prove exactness**
 
 Run:
 
@@ -940,7 +940,7 @@ python3 -m unittest tests.scripts.test_asl_catalog_projection -v
 
 Expected: all commands exit 0 and `git diff` shows no semantic catalog delta.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add scripts spec tests/scripts/test_asl_catalog_projection.py

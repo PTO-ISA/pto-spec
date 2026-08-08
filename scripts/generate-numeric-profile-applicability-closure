@@ -6,11 +6,17 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.evidence_sources import source_rows  # noqa: E402
+
 CATALOG = ROOT / "spec/catalog/numeric-profile-applicability.json"
 PROFILE_IDENTITIES = ROOT / "spec/catalog/numeric-profile-identities.json"
 TILE_OPERATIONS = ROOT / "spec/catalog/tile-operations.json"
@@ -116,9 +122,7 @@ def generate() -> dict[str, Any]:
         len(command_forms["forms"]) == 99,
         "accepted command-form count drift",
     )
-    command_by_mnemonic = {
-        row["mnemonic"]: row for row in command_forms["forms"]
-    }
+    command_by_mnemonic = {row["mnemonic"]: row for row in command_forms["forms"]}
 
     operation_by_key = {operation_key(row): row for row in operations["operations"]}
     rules = catalog["rules"]
@@ -232,8 +236,7 @@ def generate() -> dict[str, Any]:
             None,
         )
         require(
-            accepted_codes
-            == [row["bundle_code"] for row in tile_type_rows],
+            accepted_codes == [row["bundle_code"] for row in tile_type_rows],
             f"bundle DataType namespace drift for {key}",
         )
         for tile_type_row in tile_type_rows:
@@ -314,11 +317,11 @@ def generate() -> dict[str, Any]:
             "guard_generator": "scripts/generate-asl-decoders",
             "guard_symbol": "TileOperationRejectedByAcceptedApplicabilityRules",
             "rule_set_type": {
-                "path": "asl/types.asl",
+                "path": "asl/arch/data-types/rounding.asl",
                 "symbol": "NumericApplicabilityRuleSet",
             },
             "bundle_guard": {
-                "path": "asl/bundle/dispatch.asl",
+                "path": "asl/block/model/dispatch/descriptor-legality.asl",
                 "symbol": "BundleOperationDescriptorRejectedByAcceptedApplicabilityRules",
             },
             "direct_test": {
@@ -344,8 +347,8 @@ def generate() -> dict[str, Any]:
             source("spec/evidence/public-source-reconciliation.json"),
             source("spec/evidence/executable-model-comparison.json"),
             source("scripts/generate-asl-decoders"),
-            source("asl/types.asl"),
-            source("asl/bundle/dispatch.asl"),
+            *source_rows(ROOT, "asl/arch/data-types/*.asl"),
+            *source_rows(ROOT, "asl/block/model/dispatch/*.asl"),
             source("tests/asl/bundle-tests.asl"),
             source("tests/asl/cube-totality-tests.asl"),
             source(ACCEPTANCE_RECORD),
