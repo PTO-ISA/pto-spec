@@ -1,6 +1,8 @@
 # PTO ASL Four-Surface Mirror Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task in the current session. Do not dispatch implementation or review subagents for this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Execution mode:** Inline execution was selected by the architecture owner on 2026-08-08. The active session owns implementation, verification, review checkpoints, commits, and final release validation directly.
 
 **Goal:** Make the checked-in ASL tree the sole active PTO architecture source, organized as `arch`, `block`, `scalar`, and `tile`, with exactly mirrored documentation, independent AVS test points, lightweight PR checks, and exact-head manual release verification.
 
