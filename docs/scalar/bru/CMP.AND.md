@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/bru/CMP.AND.asl`
 
-Execute the CMP.AND scalar instruction contract.
+CMP.AND - Combine scalar comparison results with the encoded logical operation.
 
 ## Normative identity {#PTO-INST-SCALAR-CMP-AND}
 
@@ -32,6 +32,15 @@ cmp.and SrcL, SrcR<.sw, .uw, .not>, ->{t, u, Rd}
 | cmp_and_32_036813a12ae8 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | cmp_and_32_036813a12ae8 | SrcRType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+| SrcRType | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/CMP.AND.asl -->
@@ -42,10 +51,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -60,11 +65,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `CMP.AND - Combine scalar comparison results with the encoded logical operation.`
+- **Semantic handler:** `ExecuteCompareLogical`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

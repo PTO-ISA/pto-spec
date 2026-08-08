@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/bru/B.EQ.asl`
 
-Execute the B.EQ scalar instruction contract.
+B.EQ - Conditionally branch to the PC-relative target after comparing scalar operands.
 
 ## Normative identity {#PTO-INST-SCALAR-B-EQ}
 
@@ -31,6 +31,14 @@ b.eq SrcL, SrcR, label
 | b_eq_32_41f00e5abd89 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | b_eq_32_41f00e5abd89 | simm12 | 12 | signed | [{"instruction_lsb":25,"value_lsb":0,"width":7},{"instruction_lsb":7,"value_lsb":7,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+| simm12 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/B.EQ.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -59,11 +63,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `B.EQ - Conditionally branch to the PC-relative target after comparing scalar operands.`
+- **Semantic handler:** `BranchRelative`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

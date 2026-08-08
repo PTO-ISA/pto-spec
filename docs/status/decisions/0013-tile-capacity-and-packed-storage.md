@@ -3,11 +3,11 @@
 ## Status
 
 Accepted, with the minimum-allocation clause superseded by
-[ADR 0045](0045-pto-isa-release-tile-contract.md).
+[ADR 0054](0054-pe-local-tile-size-and-32-bit-shared-io-binding.md).
 
-ADR 0045 fixes the PTO ISA 0.57.1 architectural CELL at 128 bytes and makes
-`B.IOT` size code 3 the minimum active allocation. The capacity-accounting,
-packed-storage, precision, and rollback decisions below remain current.
+ADR 0054 defines the current per-PE TSize map: codes 1 through 7 represent
+128 bytes through 8 KiB. The capacity-accounting, packed-storage, precision,
+and rollback decisions below remain current.
 
 ## Context
 

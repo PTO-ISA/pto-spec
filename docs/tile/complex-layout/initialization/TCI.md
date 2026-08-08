@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/complex-layout/initialization/TCI.asl`
 
-Execute the TCI Tile operation contract.
+Initialize destination elements as an ascending or descending counter sequence.
 
 ## Normative identity {#PTO-INST-TILE-TCI}
 
@@ -23,6 +23,14 @@ TCI <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TCI | TEPL | 0x066 | 6 | 3 | TCI |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| scalar0 | start |
+| flag0 | descending |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/initialization/TCI.asl -->
@@ -33,10 +41,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -63,11 +67,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TCI`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TCI`
+- **Effect contract:** `TCI`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:scalar0:start", "operand:flag0:descending"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

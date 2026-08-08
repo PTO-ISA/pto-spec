@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/REMW.asl`
 
-Execute the REMW scalar instruction contract.
+REMW - Compute signed 32-bit remainder and sign-extend it.
 
 ## Normative identity {#PTO-INST-SCALAR-REMW}
 
@@ -31,6 +31,14 @@ remw SrcL, SrcR, ->{t, u, Rd}
 | remw_32_22659af46ec0 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | remw_32_22659af46ec0 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/REMW.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -59,11 +63,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `REMW - Compute signed 32-bit remainder and sign-extend it.`
+- **Semantic handler:** `ScalarRemainderSignedW`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

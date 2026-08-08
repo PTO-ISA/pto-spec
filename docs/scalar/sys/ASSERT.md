@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/sys/ASSERT.asl`
 
-Execute the ASSERT scalar instruction contract.
+ASSERT - Raise the architecture assertion trap when its condition fails.
 
 ## Normative identity {#PTO-INST-SCALAR-ASSERT}
 
@@ -29,6 +29,12 @@ assert SrcL
 | --- | --- | ---: | --- | --- |
 | assert_32_f05d67874ae5 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcL | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/ASSERT.asl -->
@@ -39,10 +45,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -57,11 +59,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `ASSERT - Raise the architecture assertion trap when its condition fails.`
+- **Semantic handler:** `ArchitectureAssert`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

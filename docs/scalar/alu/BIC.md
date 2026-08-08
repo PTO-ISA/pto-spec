@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/BIC.asl`
 
-Execute the BIC scalar instruction contract.
+BIC - Modify the selected scalar bitfield.
 
 ## Normative identity {#PTO-INST-SCALAR-BIC}
 
@@ -32,6 +32,15 @@ bic SrcL, M, N, ->{t, u, Rd}
 | bic_32_3a10830a3a93 | imml | 6 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":6}] |
 | bic_32_3a10830a3a93 | imms | 6 | encoding-defined | [{"instruction_lsb":26,"value_lsb":0,"width":6}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| imml | encoded operand or control |
+| imms | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/BIC.asl -->
@@ -42,10 +51,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -60,11 +65,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `BIC - Modify the selected scalar bitfield.`
+- **Semantic handler:** `ModifyBitfield`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

@@ -21,6 +21,8 @@ type HalfWord of bits(32);
 type Byte of bits(8);
 type PredicateWord of bits(PTO_PREDICATE_WIDTH);
 type GPRIndex of integer {0..PTO_ABSOLUTE_GPR_COUNT-1};
+type PERegisterFile of array [[PTO_ABSOLUTE_GPR_COUNT]] of Word;
+type CorePEWords of array [[PTO_MODEL_MEMORY_AGENTS]] of Word;
 type Reg5Selector of integer {0..31};
 type TileIndex of integer {0..PTO_TILE_REGISTER_COUNT-1};
 type SharedTileIndex of integer {0..PTO_SHARED_TILE_COUNT-1};

@@ -81,6 +81,13 @@ class AslUnitsTest(unittest.TestCase):
         self.assertEqual(unit.mnemonic, "ADD")
         self.assertEqual(unit.classification, ("alu",))
 
+    def test_load_units_rejects_non_ascii_source_text(self) -> None:
+        path = self.write_unit()
+        path.write_text(unit_source(body="// non-ASCII dash: —\n"), encoding="utf-8")
+
+        with self.assertRaisesRegex(ValueError, "ASL source must be ASCII"):
+            load_units(self.root)
+
     def test_validate_layout_rejects_fifth_root(self) -> None:
         self.write_unit()
         (self.root / "numeric").mkdir()

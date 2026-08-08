@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/sys/LSRGET.asl`
 
-Execute the LSRGET scalar instruction contract.
+LSRGET - Read the addressed system register.
 
 ## Normative identity {#PTO-INST-SCALAR-LSRGET}
 
@@ -30,6 +30,13 @@ lsrget LSR_ID, ->{t, u, Rd}
 | lsrget_32_448b17d7c20a | LSR_ID | 12 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":12}] |
 | lsrget_32_448b17d7c20a | RegDst | 5 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| LSR_ID | encoded operand or control |
+| RegDst | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/LSRGET.asl -->
@@ -40,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -58,11 +61,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `LSRGET - Read the addressed system register.`
+- **Semantic handler:** `ExecuteSystemRegisterGet`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

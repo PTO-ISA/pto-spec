@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/sys/BWE.asl`
 
-Execute the BWE scalar instruction contract.
+BWE - Issue this mnemonic's architecture control request.
 
 ## Normative identity {#PTO-INST-SCALAR-BWE}
 
@@ -29,6 +29,12 @@ bwe SrcL
 | --- | --- | ---: | --- | --- |
 | bwe_32_e5a5240bdf9b | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcL | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/BWE.asl -->
@@ -39,10 +45,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -57,11 +59,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `BWE - Issue this mnemonic's architecture control request.`
+- **Semantic handler:** `ExecuteControlRequest`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

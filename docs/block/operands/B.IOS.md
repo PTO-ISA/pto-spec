@@ -31,6 +31,14 @@ B.IOS S<SharedTID>, mask=<PE_MASK> | B.IOS mask=<PE_MASK>, ->S<SharedTID><TSize>
 | b_ios_32_4ba5ef98fdaa | PE_MASK | 4 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":4}] |
 | b_ios_32_4ba5ef98fdaa | TSize | 3 | encoding-defined | [{"instruction_lsb":9,"value_lsb":0,"width":3}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SharedTID | encoded operand or control |
+| PE_MASK | encoded operand or control |
+| TSize | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/operands/B.IOS.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -78,11 +82,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `Binds one ordered absolute core-private Shared register S0..S255 with a per-PE source/destination size code and four-PE participation mask.`
+- **Semantic handler:** `BindBundleSharedIO`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 TSize zero identifies the Shared source form. A Shared destination uses TSize

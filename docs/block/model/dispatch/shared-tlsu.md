@@ -11,7 +11,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/shared-tlsu.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","surface":"block","classification":["model","dispatch","shared-tlsu"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","surface":"block","classification":["model","dispatch","shared-tlsu"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE","PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS"]}
 readonly func BundleSharedTLSUSelected() => boolean
 begin
     if !_BundleOperation.valid ||
@@ -108,13 +108,22 @@ begin
             SetFault(Fault_TileLegality, ReadTPC());
             return FALSE;
         end;
-        TLOADShared(shared_id,
-            if _BundleScalarBindings[[0]].valid then
-                ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source0)
-            else Zeros{PTO_XLEN},
-            if _BundleScalarBindings[[0]].valid then
-                ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source1)
-            else NaturalToWord(columns as integer {0..262144}),
+        var load_base_addresses: CorePEWords;
+        var load_row_strides: CorePEWords;
+        for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+            let agent = pe as MemoryAgentId;
+            load_base_addresses[[agent]] =
+                if _BundleScalarBindings[[0]].valid then
+                    ReadPEAbsoluteGPROperand(agent,
+                        _BundleScalarBindings[[0]].source0)
+                else Zeros{PTO_XLEN};
+            load_row_strides[[agent]] =
+                if _BundleScalarBindings[[0]].valid then
+                    ReadPEAbsoluteGPROperand(agent,
+                        _BundleScalarBindings[[0]].source1)
+                else NaturalToWord(columns as integer {0..262144});
+        end;
+        TLOADShared(shared_id, load_base_addresses, load_row_strides,
             shared_size as integer {1..7}, valid_rows as integer {1..65535},
             columns as integer {1..65535},
             valid_rows as integer {1..65535},
@@ -123,20 +132,30 @@ begin
                 CurrentBundleTileOperationDataTypeCode())),
             CurrentBundleTileLayout(), shared_mask);
     elsif function == 1 || function == 14 then
-        if BundleSharedBindingIsDestination(0) ||
+        if !SharedStorePEMaskLegal(function, shared_mask) ||
+           BundleSharedBindingIsDestination(0) ||
            BundleTileBindingCount() != 0 ||
            !SharedTileDescriptorLegal(shared_id) then
             SetFault(Fault_TileLegality, ReadTPC());
             return FALSE;
         end;
-        TSTOREShared(
-            if _BundleScalarBindings[[0]].valid then
-                ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source0)
-            else Zeros{PTO_XLEN},
-            if _BundleScalarBindings[[0]].valid then
-                ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source1)
-            else _BundleDimensions[[2]],
-            shared_id, shared_mask);
+        var store_base_addresses: CorePEWords;
+        var store_row_strides: CorePEWords;
+        for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+            let agent = pe as MemoryAgentId;
+            store_base_addresses[[agent]] =
+                if _BundleScalarBindings[[0]].valid then
+                    ReadPEAbsoluteGPROperand(agent,
+                        _BundleScalarBindings[[0]].source0)
+                else Zeros{PTO_XLEN};
+            store_row_strides[[agent]] =
+                if _BundleScalarBindings[[0]].valid then
+                    ReadPEAbsoluteGPROperand(agent,
+                        _BundleScalarBindings[[0]].source1)
+                else _BundleDimensions[[2]];
+        end;
+        TSTOREShared(store_base_addresses, store_row_strides, shared_id,
+            shared_mask);
     elsif function == 9 || function == 10 then
         if !BundleSharedTMOVLocalSchemaLegal() then
             SetFault(Fault_TileLegality, ReadTPC());

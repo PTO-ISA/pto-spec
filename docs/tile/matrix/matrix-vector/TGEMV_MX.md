@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/matrix/matrix-vector/TGEMV_MX.asl`
 
-Execute the TGEMV_MX Tile operation contract.
+Multiply the matrix by the vector using row and column scale Tiles.
 
 ## Normative identity {#PTO-INST-TILE-TGEMV-MX}
 
@@ -23,6 +23,16 @@ TGEMV_MX <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TGEMV_MX | CUBE |  | 20 |  | TGEMV_MX |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | matrix |
+| source1 | row-scale |
+| source2 | vector |
+| source3 | column-scale |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/matrix/matrix-vector/TGEMV_MX.asl -->
@@ -33,10 +43,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -70,11 +76,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TGEMV_MX`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TGEMV_MX`
+- **Effect contract:** `TGEMV_MX`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:matrix", "operand:source1:row-scale", "operand:source2:vector", "operand:source3:column-scale"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

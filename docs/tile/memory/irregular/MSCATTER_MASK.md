@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory/irregular/MSCATTER_MASK.asl`
 
-Execute the MSCATTER_MASK Tile operation contract.
+Scatter masked source elements to GM addresses selected by Tile indices.
 
 ## Normative identity {#PTO-INST-TILE-MSCATTER-MASK}
 
@@ -23,6 +23,15 @@ MSCATTER_MASK <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | MSCATTER_MASK | TLSU |  | 7 |  | MSCATTER_MASK |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| address | base-address |
+| source0 | source |
+| source1 | indices |
+| source2 | mask |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory/irregular/MSCATTER_MASK.asl -->
@@ -33,10 +42,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -60,11 +65,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_MSCATTER_MASK`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["Layout"], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `MSCATTER_MASK`
+- **Effect contract:** `MSCATTER_MASK`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:address:base-address", "operand:source0:source", "operand:source1:indices", "operand:source2:mask"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

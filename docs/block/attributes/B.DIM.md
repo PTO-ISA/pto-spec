@@ -38,6 +38,13 @@ B.DIM RegSrc, uimm, ->LB1
 | b_dim_32_4191099a5f4d | RegSrc | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | b_dim_32_4191099a5f4d | uimm17 | 17 | unsigned | [{"instruction_lsb":20,"value_lsb":0,"width":12},{"instruction_lsb":7,"value_lsb":12,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegSrc | encoded operand or control |
+| uimm17 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/attributes/B.DIM.asl -->
@@ -50,10 +57,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -84,11 +87,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `Writes one of the three bundle-local dimension registers.`
+- **Semantic handler:** `SetBundleDimension`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 `LB0` carries valid columns, `LB1` carries valid rows, and `LB2` carries the

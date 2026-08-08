@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/complex-layout/layout/TIMG2COL.asl`
 
-Execute the TIMG2COL Tile operation contract.
+Transform an image Tile into kernel-column layout using kernel, stride, padding, and fill operands.
 
 ## Normative identity {#PTO-INST-TILE-TIMG2COL}
 
@@ -23,6 +23,20 @@ TIMG2COL <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TIMG2COL | TEPL | 0x064 | 4 | 3 | TIMG2COL |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source |
+| positive0 | kernel-rows |
+| positive1 | kernel-columns |
+| positive2 | stride-rows |
+| positive3 | stride-columns |
+| natural0 | pad-rows |
+| natural1 | pad-columns |
+| scalar0 | padding |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/layout/TIMG2COL.asl -->
@@ -33,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -63,11 +73,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TIMG2COL`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["Layout"], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TIMG2COL`
+- **Effect contract:** `TIMG2COL`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source", "operand:positive0:kernel-rows", "operand:positive1:kernel-columns", "operand:positive2:stride-rows", "operand:positive3:stride-columns", "operand:natural0:pad-rows", "operand:natural1:pad-columns", "operand:scalar0:padding"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

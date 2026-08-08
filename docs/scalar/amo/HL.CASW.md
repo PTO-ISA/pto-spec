@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/amo/HL.CASW.asl`
 
-Execute the HL.CASW scalar instruction contract.
+HL.CASW - Atomically compare the scalar memory value and conditionally store the replacement.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-CASW}
 
@@ -35,6 +35,18 @@ hl.casw<.{aq, rl, f, aqrl, aqf, rlf, aqrlf}> [SrcL], SrcR, SrcD, ->{t, u, Rd}
 | hl_casw_48_a89b3d58d8f0 | far | 1 | encoding-defined | [{"instruction_lsb":43,"value_lsb":0,"width":1}] |
 | hl_casw_48_a89b3d58d8f0 | rl | 1 | encoding-defined | [{"instruction_lsb":41,"value_lsb":0,"width":1}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcD | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+| aq | encoded operand or control |
+| far | encoded operand or control |
+| rl | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/HL.CASW.asl -->
@@ -45,10 +57,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -63,11 +71,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.CASW - Atomically compare the scalar memory value and conditionally store the replacement.`
+- **Semantic handler:** `CompareAndSwap`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

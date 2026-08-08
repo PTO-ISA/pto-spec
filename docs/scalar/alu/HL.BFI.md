@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/HL.BFI.asl`
 
-Execute the HL.BFI scalar instruction contract.
+HL.BFI - Insert one scalar bitfield into another.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-BFI}
 
@@ -33,6 +33,16 @@ hl.bfi SrcL, SrcR, M, N, ->{t, u, Rd}
 | hl_bfi_48_8adfd476aacc | immr | 6 | encoding-defined | [{"instruction_lsb":4,"value_lsb":0,"width":6}] |
 | hl_bfi_48_8adfd476aacc | imms | 6 | encoding-defined | [{"instruction_lsb":10,"value_lsb":0,"width":6}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+| immr | encoded operand or control |
+| imms | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.BFI.asl -->
@@ -43,10 +53,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -61,11 +67,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.BFI - Insert one scalar bitfield into another.`
+- **Semantic handler:** `InsertBitfield`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

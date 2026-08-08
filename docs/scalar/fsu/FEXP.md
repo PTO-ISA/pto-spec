@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/fsu/FEXP.asl`
 
-Execute the FEXP scalar instruction contract.
+FEXP - Compute this mnemonic's unary floating-point operation.
 
 ## Normative identity {#PTO-INST-SCALAR-FEXP}
 
@@ -31,6 +31,14 @@ fexp.{T} SrcL, ->{t, u, Rd}
 | fexp_32_592ef5288c7d | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | fexp_32_592ef5288c7d | SrcType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcType | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FEXP.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -59,11 +63,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `FEXP - Compute this mnemonic's unary floating-point operation.`
+- **Semantic handler:** `FloatingUnary`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

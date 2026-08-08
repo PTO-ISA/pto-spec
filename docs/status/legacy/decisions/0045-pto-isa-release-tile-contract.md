@@ -1,5 +1,7 @@
 # ADR 0045: Define the PTO ISA 0.57.1 tile and bundle contract
 
+> Historical, non-normative material. This page is excluded from the active PTO architecture and release closure.
+
 - Status: accepted
 - Decision date: 2026-07-30
 - Approval: [formal-model issue 18](https://github.com/PTO-ISA/pto-spec/issues/18)

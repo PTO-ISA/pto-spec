@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/complex-layout/layout/TINSERT.asl`
 
-Execute the TINSERT Tile operation contract.
+Insert the source Tile into the destination region at the encoded row and column offsets.
 
 ## Normative identity {#PTO-INST-TILE-TINSERT}
 
@@ -23,6 +23,15 @@ TINSERT <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TINSERT | TEPL | 0x063 | 3 | 3 | TINSERT |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source |
+| natural0 | row-offset |
+| natural1 | column-offset |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/layout/TINSERT.asl -->
@@ -33,10 +42,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -63,11 +68,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TINSERT`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["Layout"], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TINSERT`
+- **Effect contract:** `TINSERT`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source", "operand:natural0:row-offset", "operand:natural1:column-offset"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

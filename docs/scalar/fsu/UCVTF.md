@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/fsu/UCVTF.asl`
 
-Execute the UCVTF scalar instruction contract.
+UCVTF - Convert between the encoded scalar numeric formats.
 
 ## Normative identity {#PTO-INST-SCALAR-UCVTF}
 
@@ -32,6 +32,15 @@ ucvtf.{srcT2dstT} SrcL, ->{t, u, Rd}
 | ucvtf_32_987f4e019c32 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | ucvtf_32_987f4e019c32 | SrcType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| DstType | encoded operand or control |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcType | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/UCVTF.asl -->
@@ -42,10 +51,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -60,11 +65,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `UCVTF - Convert between the encoded scalar numeric formats.`
+- **Semantic handler:** `ConvertFloatingEncoding`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

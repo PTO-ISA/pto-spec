@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/sys/FENCE.D.asl`
 
-Execute the FENCE.D scalar instruction contract.
+FENCE.D - Order the selected predecessor and successor data-access classes.
 
 ## Normative identity {#PTO-INST-SCALAR-FENCE-D}
 
@@ -30,6 +30,13 @@ fence.d pred_imm, succ_imm
 | fence_d_32_f4783f17d84d | PRED_IMM | 4 | encoding-defined | [{"instruction_lsb":24,"value_lsb":0,"width":4}] |
 | fence_d_32_f4783f17d84d | SUCC_IMM | 4 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":4}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| PRED_IMM | encoded operand or control |
+| SUCC_IMM | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/FENCE.D.asl -->
@@ -40,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -58,11 +61,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `FENCE.D - Order the selected predecessor and successor data-access classes.`
+- **Semantic handler:** `FenceData`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

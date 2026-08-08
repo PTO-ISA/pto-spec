@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/HL.SUBIW.asl`
 
-Execute the HL.SUBIW scalar instruction contract.
+HL.SUBIW - Compute this mnemonic's 32-bit binary operation and sign-extend the result.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-SUBIW}
 
@@ -31,6 +31,14 @@ hl.subiw SrcL, uimm, ->{t, u, Rd}
 | hl_subiw_48_adc7b127a2f8 | SrcL | 5 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":5}] |
 | hl_subiw_48_adc7b127a2f8 | uimm24 | 24 | unsigned | [{"instruction_lsb":36,"value_lsb":0,"width":12},{"instruction_lsb":4,"value_lsb":12,"width":12}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| uimm24 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.SUBIW.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -59,11 +63,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.SUBIW - Compute this mnemonic's 32-bit binary operation and sign-extend the result.`
+- **Semantic handler:** `ScalarBinaryW`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

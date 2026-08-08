@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/complex-layout/format-conversion/TCVT.asl`
 
-Execute the TCVT Tile operation contract.
+Convert source elements to the destination data type under rounding and saturation controls.
 
 ## Normative identity {#PTO-INST-TILE-TCVT}
 
@@ -23,6 +23,14 @@ TCVT <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TCVT | TEPL | 0x01B | 27 | 0 | TCVT |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source |
+| numeric_control | rounding-and-saturation |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/format-conversion/TCVT.asl -->
@@ -33,10 +41,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -62,11 +66,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TCVT`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["Sat", "Canonicalize", "DataType", "RMode", "Layout"], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TCVT`
+- **Effect contract:** `TCVT`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source", "operand:numeric_control:rounding-and-saturation"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

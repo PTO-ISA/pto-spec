@@ -26,6 +26,16 @@ begin
     end;
 end;
 
+// B.IOR uses only absolute GPR selectors.  Shared operations apply one encoded
+// selector to each PE's private register file rather than sharing a value
+// resolved by the PE that happened to dispatch the block.
+readonly func ReadPEAbsoluteGPROperand(pe: MemoryAgentId,
+                                      selector: Reg5Selector) => Word
+begin
+    assert selector < PTO_ABSOLUTE_GPR_COUNT;
+    return ReadPEGPR(pe, selector as GPRIndex);
+end;
+
 func WriteScalarDestination(selector: Reg5Selector, value: Word)
 begin
     if selector < PTO_ABSOLUTE_GPR_COUNT then

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/bru/C.SETC.NE.asl`
 
-Execute the C.SETC.NE scalar instruction contract.
+C.SETC.NE - Compare scalar operands and update the bundle commit condition.
 
 ## Normative identity {#PTO-INST-SCALAR-C-SETC-NE}
 
@@ -30,6 +30,13 @@ c.setc.ne srcL, srcR
 | c_setc_ne_16_e9092e487e98 | SrcL | 5 | encoding-defined | [{"instruction_lsb":6,"value_lsb":0,"width":5}] |
 | c_setc_ne_16_e9092e487e98 | SrcR | 5 | encoding-defined | [{"instruction_lsb":11,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/C.SETC.NE.asl -->
@@ -40,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -58,11 +61,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `C.SETC.NE - Compare scalar operands and update the bundle commit condition.`
+- **Semantic handler:** `ExecuteSetCommit`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

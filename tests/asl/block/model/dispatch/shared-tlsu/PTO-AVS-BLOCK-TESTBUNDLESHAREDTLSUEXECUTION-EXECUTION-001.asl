@@ -291,7 +291,7 @@ begin
     ResetBundleControlState();
     ClearFault();
     let partial_store_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('00001', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('01110', Zeros{5} + 24), 32);
     let partial_store_shared = ExecuteCommandInstruction(
         BundleTestSharedBindingV6(Zeros{8} + 23, '000', '0011'), 32);
     let partial_store_address = ExecuteCommandInstruction(

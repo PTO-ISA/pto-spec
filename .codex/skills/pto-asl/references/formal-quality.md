@@ -55,9 +55,10 @@ Require the relevant subset of:
 Successful ASLRef execution proves consistency with the written model, not correctness of the model against the PTO
 architecture. Traceability and review supply that second proof obligation.
 
-For PTO instruction-set changes, `scripts/check-catalogs` is the minimum closure gate. It must prove scalar-form counts,
-tile-family counts, decode witnesses, exact tile handler coverage, traceability paths, and the one-level boundary before
-the ASLRef test result is considered meaningful.
+For PTO instruction-set changes, `make pr-check` is the minimum review gate. It proves ASL layout, NDF structure,
+generated catalog and documentation freshness, independent test-point topology, and publication hygiene. Release
+readiness additionally requires `make repo-check` plus the manual exact-head `make release-verify` lane; an ASLRef result
+from a different commit, a stale artifact, or a partial test set is not evidence.
 
 ## Change isolation
 

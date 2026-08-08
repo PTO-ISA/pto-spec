@@ -12,14 +12,18 @@ code, or diagrams.
 - The reader guide is orientation material, not the language authority.
 - The commit in `.aslref-version` is the audited executable baseline.
 
-## Public PTO contract
+## Normative PTO contract
 
-- Public architecture manuals and instruction-family pages define intended PTO
-  behavior.
-- `spec/catalog/` is authoritative for accepted forms, fields, constraints,
-  registers, traps, selectors, and reserved values once reconciled.
-- `spec/requirements.json` and the ASL model must trace every accepted surface
-  to executable evidence.
+- `asl/{arch,block,scalar,tile}/` is the sole normative source. Each mnemonic
+  file owns its metadata, legality, operation semantics, and embedded
+  documentation regions.
+- `docs/{arch,block,scalar,tile}/`, `spec/catalog/`, decoder witnesses, and
+  release evidence are generated or checked projections of ASL. They are never
+  an independent source of semantics.
+- `spec/requirements.json` traces every accepted surface to its ASL owner and
+  independently executable evidence.
+- `docs/status/legacy/` is historical, non-normative, excluded from agent
+  routing, and never a source for current behavior.
 
 ## Migration evidence
 

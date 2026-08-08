@@ -12,6 +12,7 @@ from scripts.instruction_docs import (
     check_catalog_projection,
     check_legacy_banners,
     check_navigation,
+    check_navigation_projection,
     check_normative_legacy_links,
     check_tree,
     check_version_neutrality,
@@ -250,6 +251,49 @@ class InstructionDocsTest(unittest.TestCase):
         self.assertIn("0x00001013 / 0xf00871ff", rendered)
         self.assertIn("| b_ios_32_example | SharedTID | 8 |", rendered)
 
+    def test_generate_tree_projects_complete_catalog_contract_without_placeholders(self) -> None:
+        self.write_asl(
+            "tile/memory/regular/TLOAD.asl",
+            mnemonic="TLOAD",
+            surface="tile",
+            classification=["memory", "regular"],
+            catalog_records=[
+                {
+                    "name": "TLOAD",
+                    "family": "TLSU",
+                    "function": 0,
+                    "semantic_handler": "TLOAD",
+                    "semantic_summary": "Load the selected GM rectangle into a Tile destination.",
+                    "operands": [
+                        {"field": "destination0", "role": "destination"},
+                        {"field": "address", "role": "base-address"},
+                        {"field": "scalar0", "role": "row-stride-elements"},
+                    ],
+                    "state_effects": ["destination0 payload and definedness"],
+                    "legality_handler": "TileOperandsLegal_TLOAD",
+                    "effect_contract": "TLOAD",
+                    "fault_contract": "ExecuteTileInstruction",
+                    "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+                    "datr_contract": {
+                        "allowed_nonzero_fields": ["Layout"],
+                        "pad_union": "must-zero",
+                    },
+                }
+            ],
+        )
+
+        generate_tree(self.root)
+        rendered = (
+            self.root / "docs/tile/memory/regular/TLOAD.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("## Operands and results", rendered)
+        self.assertIn("| address | base-address |", rendered)
+        self.assertIn("`TileOperandsLegal_TLOAD`", rendered)
+        self.assertIn("`CompleteBundleAtWithAcceptedApplicabilityRules`", rendered)
+        self.assertIn("destination0 payload and definedness", rendered)
+        self.assertNotIn("may be added here", rendered)
+
     def test_generate_tree_preserves_supplementary_markdown(self) -> None:
         self.write_asl()
         page = self.root / "docs/tile/tile-tile-elementwise/arithmetic/TADD.md"
@@ -316,6 +360,22 @@ class InstructionDocsTest(unittest.TestCase):
             mkdocs_config.read_text(encoding="utf-8"),
         )
         self.assertEqual(check_navigation(self.root), [])
+        self.assertEqual(check_navigation_projection(self.root), [])
+
+    def test_navigation_projection_rejects_stale_generated_files(self) -> None:
+        self.write_asl()
+        generate_tree(self.root)
+        generated_nav = self.root / "docs/mkdocs/generated-nav.yml"
+        generated_nav.write_text(
+            generated_nav.read_text(encoding="utf-8")
+            + "  - Retired: status/decisions/0045-retired.md\n",
+            encoding="utf-8",
+        )
+
+        self.assertEqual(
+            check_navigation_projection(self.root),
+            ["stale generated MkDocs navigation: docs/mkdocs/generated-nav.yml"],
+        )
 
     def test_version_neutrality_reports_only_active_normative_surfaces(self) -> None:
         active_asl = self.root / "asl/tile/state.asl"

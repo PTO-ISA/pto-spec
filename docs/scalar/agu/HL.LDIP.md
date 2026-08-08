@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/agu/HL.LDIP.asl`
 
-Execute the HL.LDIP scalar instruction contract.
+HL.LDIP - Load a scalar register pair using this mnemonic's address-update form.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-LDIP}
 
@@ -32,6 +32,15 @@ hl.ldip [SrcL, simm], ->Dst0, Dst1
 | hl_ldip_48_60afa6423d39 | SrcL | 5 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":5}] |
 | hl_ldip_48_60afa6423d39 | simm17 | 17 | signed | [{"instruction_lsb":36,"value_lsb":0,"width":12},{"instruction_lsb":6,"value_lsb":12,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst0 | encoded operand or control |
+| RegDst1 | encoded operand or control |
+| SrcL | encoded operand or control |
+| simm17 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.LDIP.asl -->
@@ -42,10 +51,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -60,11 +65,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.LDIP - Load a scalar register pair using this mnemonic's address-update form.`
+- **Semantic handler:** `ExecuteScalarLoadPair`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

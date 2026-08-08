@@ -58,6 +58,17 @@ B.IOT mask=PE_MASK, <last>, ->DstTile<TSize>
 | b_iot_32_efa0fe3fe49a | TSize | 3 | encoding-defined | [{"instruction_lsb":9,"value_lsb":0,"width":3}] |
 | b_iot_32_efa0fe3fe49a | DstTile | 2 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":2}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcTile0 | encoded operand or control |
+| L | encoded operand or control |
+| PE_MASK | encoded operand or control |
+| TSize | encoded operand or control |
+| DstTile | encoded operand or control |
+| SrcTile1 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/operands/B.IOT.asl -->
@@ -72,10 +83,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -114,11 +121,14 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Constraints:** `[{"field": "PE_MASK", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]}, {"field": "TSize", "operator": "one-of", "values": [1, 2, 3, 4, 5, 6, 7]}, {"field": "DstTile", "operator": "one-of", "values": [0, 1, 2, 3]}]`
+- **Constraints:** `[{"field": "PE_MASK", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]}]`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `Binds v5 PE_MASK, ordered Local tile sources, last-use, and optional TSize/2-bit Local destination metadata; reuse bits do not exist.`
+- **Semantic handler:** `BindBundleTileIO`
+- **Semantic summary:** `Binds a destination-only Local Tile operand with per-PE TSize, PE_MASK, and last-use metadata; PE_MASK=0000 is a strict no-op and there is no mask-only Shared companion form.`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 Destination TSize is a per-selected-PE capacity. Core allocation is the

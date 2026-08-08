@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/bru/JR.asl`
 
-Execute the JR scalar instruction contract.
+JR - Jump to the scalar-register target.
 
 ## Normative identity {#PTO-INST-SCALAR-JR}
 
@@ -31,6 +31,14 @@ jr SrcL, label
 | jr_32_c4128e843b05 | SrcZero | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | jr_32_c4128e843b05 | simm12 | 12 | signed | [{"instruction_lsb":25,"value_lsb":0,"width":7},{"instruction_lsb":7,"value_lsb":7,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcL | encoded operand or control |
+| SrcZero | encoded operand or control |
+| simm12 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/JR.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -59,11 +63,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `JR - Jump to the scalar-register target.`
+- **Semantic handler:** `JumpRegister`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import tomllib
 from pathlib import Path
 from typing import Sequence
 
@@ -20,6 +21,7 @@ CATALOG_PATHS = (
     Path("spec/catalog/scalar-forms.json"),
     Path("spec/catalog/command-forms.json"),
     Path("spec/catalog/tile-operations.json"),
+    Path("spec/catalog/linx-vector-reservations.json"),
 )
 
 SURFACE_CATALOG = {
@@ -27,6 +29,10 @@ SURFACE_CATALOG = {
     "block": "command-forms",
     "tile": "tile-operations",
 }
+
+PROJECTION_CATALOGS = frozenset(
+    (*SURFACE_CATALOG.values(), "linx-vector-reservations")
+)
 
 
 def _render(value: dict[str, object]) -> bytes:
@@ -44,14 +50,14 @@ def _projection_envelopes(units: Sequence[AslUnit]) -> dict[str, dict[str, objec
                 f"{unit.source_path}: catalog_projection must be an object"
             )
         catalog = projection.get("catalog")
-        if not isinstance(catalog, str) or catalog not in SURFACE_CATALOG.values():
+        if not isinstance(catalog, str) or catalog not in PROJECTION_CATALOGS:
             raise ValueError(
                 f"{unit.source_path}: invalid projected catalog name {catalog!r}"
             )
         if catalog in envelopes:
             raise ValueError(f"duplicate catalog projection envelope: {catalog}")
         envelopes[catalog] = projection
-    missing = sorted(set(SURFACE_CATALOG.values()) - set(envelopes))
+    missing = sorted(PROJECTION_CATALOGS - set(envelopes))
     if missing:
         raise ValueError(f"missing catalog projection envelope: {', '.join(missing)}")
     return envelopes
@@ -146,7 +152,9 @@ def _handler_count(forms: list[dict[str, object]]) -> int:
     return len({form["semantic_handler"] for form in forms})
 
 
-def project_catalogs(units: Sequence[AslUnit]) -> dict[Path, bytes]:
+def project_catalogs(
+    units: Sequence[AslUnit], release: str | None = None
+) -> dict[Path, bytes]:
     """Return deterministic catalog projections keyed by repository-relative path."""
 
     envelopes = _projection_envelopes(units)
@@ -205,10 +213,30 @@ def project_catalogs(units: Sequence[AslUnit]) -> dict[Path, bytes]:
         "rejected_names": tile_envelope["rejected_names"],
     }
 
+    reservation_envelope = envelopes["linx-vector-reservations"]
+    reservations = reservation_envelope["reservations"]
+    if not isinstance(reservations, list) or any(
+        not isinstance(reservation, dict) for reservation in reservations
+    ):
+        raise ValueError("linx-vector-reservations reservations must be objects")
+    if release is None:
+        specification = tomllib.loads(
+            (ROOT / "specification.toml").read_text(encoding="utf-8")
+        )
+        release = specification["release"]["architecture_version"]
+    vector_reservations = {
+        "isa": reservation_envelope["isa"],
+        "release": release,
+        "reservation_count": len(reservations),
+        "reservations": reservations,
+        "schema_version": reservation_envelope["schema_version"],
+    }
+
     return {
         CATALOG_PATHS[0]: _render(scalar),
         CATALOG_PATHS[1]: _render(command),
         CATALOG_PATHS[2]: _render(tile),
+        CATALOG_PATHS[3]: _render(vector_reservations),
     }
 
 
@@ -220,7 +248,17 @@ def main(argv: list[str] | None = None) -> int:
     mode.add_argument("--check", action="store_true")
     arguments = parser.parse_args(argv)
     try:
-        projected = project_catalogs(load_units(arguments.root / "asl"))
+        specification_path = arguments.root / "specification.toml"
+        release = None
+        if specification_path.exists():
+            specification = tomllib.loads(
+                specification_path.read_text(encoding="utf-8")
+            )
+            release = specification["release"]["architecture_version"]
+        projected = project_catalogs(
+            load_units(arguments.root / "asl"),
+            release,
+        )
     except (OSError, ValueError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 1

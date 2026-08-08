@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/complex-layout/layout/TTRANS.asl`
 
-Execute the TTRANS Tile operation contract.
+Transpose the source Tile into the destination.
 
 ## Normative identity {#PTO-INST-TILE-TTRANS}
 
@@ -23,6 +23,13 @@ TTRANS <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TTRANS | TEPL | 0x06E | 14 | 3 | TTRANS |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/layout/TTRANS.asl -->
@@ -33,10 +40,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -62,11 +65,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TTRANS`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["Layout"], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TTRANS`
+- **Effect contract:** `TTRANS`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

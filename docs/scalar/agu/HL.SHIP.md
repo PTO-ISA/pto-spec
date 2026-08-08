@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/agu/HL.SHIP.asl`
 
-Execute the HL.SHIP scalar instruction contract.
+HL.SHIP - Store a scalar register pair using this mnemonic's address-update form.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-SHIP}
 
@@ -32,6 +32,15 @@ hl.ship SrcD, SrcD1, [SrcR, simm]
 | hl_ship_48_156afe74f95b | SrcR | 5 | encoding-defined | [{"instruction_lsb":36,"value_lsb":0,"width":5}] |
 | hl_ship_48_156afe74f95b | simm17 | 17 | signed | [{"instruction_lsb":41,"value_lsb":0,"width":7},{"instruction_lsb":23,"value_lsb":7,"width":5},{"instruction_lsb":11,"value_lsb":12,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcD | encoded operand or control |
+| SrcD1 | encoded operand or control |
+| SrcR | encoded operand or control |
+| simm17 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.SHIP.asl -->
@@ -42,10 +51,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -60,11 +65,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.SHIP - Store a scalar register pair using this mnemonic's address-update form.`
+- **Semantic handler:** `ExecuteScalarStorePair`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

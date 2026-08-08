@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/bru/CMP.NEI.asl`
 
-Execute the CMP.NEI scalar instruction contract.
+CMP.NEI - Compare scalar operands and write the encoded boolean result.
 
 ## Normative identity {#PTO-INST-SCALAR-CMP-NEI}
 
@@ -31,6 +31,14 @@ cmp.nei SrcL, simm, ->{t, u, Rd}
 | cmp_nei_32_00abf831b572 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | cmp_nei_32_00abf831b572 | simm12 | 12 | signed | [{"instruction_lsb":20,"value_lsb":0,"width":12}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| simm12 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/CMP.NEI.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -59,11 +63,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `CMP.NEI - Compare scalar operands and write the encoded boolean result.`
+- **Semantic handler:** `ExecuteCompare`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/CSEL.asl`
 
-Execute the CSEL scalar instruction contract.
+CSEL - Select one of two scalar inputs under the encoded condition.
 
 ## Normative identity {#PTO-INST-SCALAR-CSEL}
 
@@ -33,6 +33,16 @@ csel SrcP, SrcL, SrcR<.neg>, ->{t, u, Rd}
 | csel_32_ba77cbad3c99 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | csel_32_ba77cbad3c99 | SrcRType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcP | encoded operand or control |
+| SrcR | encoded operand or control |
+| SrcRType | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/CSEL.asl -->
@@ -43,10 +53,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -61,11 +67,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `CSEL - Select one of two scalar inputs under the encoded condition.`
+- **Semantic handler:** `ScalarConditionalSelect`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

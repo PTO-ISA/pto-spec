@@ -30,6 +30,13 @@ XB ACR-ID, C-ID
 | xb_32_40ad190a0a7f | ACR-ID | 10 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":10}] |
 | xb_32_40ad190a0a7f | CROSS-BID | 7 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":7}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| ACR-ID | encoded operand or control |
+| CROSS-BID | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/encoding/XB.asl -->
@@ -40,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -58,11 +61,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `Transfers the named context value to a target virtual core block.`
+- **Semantic handler:** `ExecuteCrossBlockTransfer`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

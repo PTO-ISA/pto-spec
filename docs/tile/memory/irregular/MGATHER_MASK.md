@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory/irregular/MGATHER_MASK.asl`
 
-Execute the MGATHER_MASK Tile operation contract.
+Gather masked GM elements at Tile-provided indices into the destination.
 
 ## Normative identity {#PTO-INST-TILE-MGATHER-MASK}
 
@@ -23,6 +23,15 @@ MGATHER_MASK <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | MGATHER_MASK | TLSU |  | 6 |  | MGATHER_MASK |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| address | base-address |
+| source0 | indices |
+| source1 | mask |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory/irregular/MGATHER_MASK.asl -->
@@ -33,10 +42,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -61,11 +66,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_MGATHER_MASK`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["PadValueOrByteId", "Layout"], "pad_union": "pad-value"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `MGATHER_MASK`
+- **Effect contract:** `MGATHER_MASK`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:address:base-address", "operand:source0:indices", "operand:source1:mask"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

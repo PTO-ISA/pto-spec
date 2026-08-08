@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/sys/EBREAK.asl`
 
-Execute the EBREAK scalar instruction contract.
+EBREAK - Raise the software breakpoint exception.
 
 ## Normative identity {#PTO-INST-SCALAR-EBREAK}
 
@@ -29,6 +29,12 @@ ebreak imm
 | --- | --- | ---: | --- | --- |
 | ebreak_32_4f122d1e6be3 | imm4 | 4 | encoding-defined | [{"instruction_lsb":24,"value_lsb":0,"width":4}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| imm4 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/EBREAK.asl -->
@@ -39,10 +45,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -57,11 +59,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `EBREAK - Raise the software breakpoint exception.`
+- **Semantic handler:** `SoftwareBreakpoint`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

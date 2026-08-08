@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/complex-layout/layout/TEXTRACT.asl`
 
-Execute the TEXTRACT Tile operation contract.
+Extract a rectangular source region at the encoded row and column offsets.
 
 ## Normative identity {#PTO-INST-TILE-TEXTRACT}
 
@@ -23,6 +23,15 @@ TEXTRACT <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TEXTRACT | TEPL | 0x062 | 2 | 3 | TEXTRACT |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source |
+| natural0 | row-offset |
+| natural1 | column-offset |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/layout/TEXTRACT.asl -->
@@ -33,10 +42,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -63,11 +68,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TEXTRACT`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["Layout"], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TEXTRACT`
+- **Effect contract:** `TEXTRACT`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source", "operand:natural0:row-offset", "operand:natural1:column-offset"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

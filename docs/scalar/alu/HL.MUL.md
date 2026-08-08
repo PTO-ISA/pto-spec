@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/HL.MUL.asl`
 
-Execute the HL.MUL scalar instruction contract.
+HL.MUL - Compute the full-width scalar product as a result pair.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-MUL}
 
@@ -32,6 +32,15 @@ hl.mul SrcL, SrcR, ->Dst0, Dst1
 | hl_mul_48_0d059ff178fb | SrcL | 5 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":5}] |
 | hl_mul_48_0d059ff178fb | SrcR | 5 | encoding-defined | [{"instruction_lsb":36,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst0 | encoded operand or control |
+| RegDst1 | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.MUL.asl -->
@@ -42,10 +51,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -60,11 +65,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.MUL - Compute the full-width scalar product as a result pair.`
+- **Semantic handler:** `ExecuteScalarMultiplyPair`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

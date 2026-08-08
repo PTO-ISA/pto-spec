@@ -30,6 +30,13 @@ C.B.DIMI imm, ->{LB0, LB1, LB2}
 | c_b_dimi_16_3f1b113c76ce | LoopNest | 2 | encoding-defined | [{"instruction_lsb":14,"value_lsb":0,"width":2}] |
 | c_b_dimi_16_3f1b113c76ce | imm8 | 8 | encoding-defined | [{"instruction_lsb":6,"value_lsb":0,"width":8}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| LoopNest | encoded operand or control |
+| imm8 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/attributes/C.B.DIMI.asl -->
@@ -40,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -58,11 +61,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Constraints:** `[{"field": "LoopNest", "operator": "not-equal", "value": 3}]`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `Writes one of the three bundle-local dimension registers.`
+- **Semantic handler:** `SetBundleDimension`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

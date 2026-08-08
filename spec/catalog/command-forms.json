@@ -530,7 +530,7 @@
       "status": "accepted"
     },
     {
-      "asm": "B.IOR [RegSrc0, RegSrc1, RegSrc2],[RegDst]",
+      "asm": "B.IOR [<gpr>[, <gpr>[, <gpr>]]][, -><gpr>]",
       "constraints": [
         {
           "field": "RegDst",
@@ -718,7 +718,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleScalarIO",
-      "semantic_summary": "Binds encoded scalar inputs and outputs to the current bundle interface.",
+      "semantic_summary": "Bind up to three absolute GPR inputs and one absolute GPR output; TLOAD/TSTORE use source zero as GM base and source one as logical row stride.",
       "status": "accepted"
     },
     {
@@ -1433,7 +1433,7 @@
       "semantic_family": "BBD",
       "semantic_group": "BSTART",
       "semantic_handler": "ExecuteBundleStart",
-      "semantic_summary": "Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.",
+      "semantic_summary": "Atomically closes the current bundle, computes the call target from the signed displacement and the return address from the independent unsigned displacement, writes ra, and transfers control to the call bundle.",
       "status": "accepted"
     },
     {
@@ -4374,7 +4374,7 @@
       "semantic_family": "BBD",
       "semantic_group": "BSTART",
       "semantic_handler": "ExecuteBundleStart",
-      "semantic_summary": "Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.",
+      "semantic_summary": "Atomically closes the current bundle, computes the call target from the signed displacement and the return address from the independent unsigned displacement, writes ra, and transfers control to the call bundle.",
       "status": "accepted"
     },
     {

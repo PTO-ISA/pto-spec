@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/complex-layout/sorting/TSORT.asl`
 
-Execute the TSORT Tile operation contract.
+Sort source groups, returning ordered values and original U32 indices.
 
 ## Normative identity {#PTO-INST-TILE-TSORT}
 
@@ -23,6 +23,16 @@ TSORT <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TSORT | TEPL | 0x06C | 12 | 3 | TSORT |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| destination1 | original-indices-u32 |
+| source0 | source |
+| sort_width | sort-width |
+| flag0 | descending |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/sorting/TSORT.asl -->
@@ -33,10 +43,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -60,11 +66,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TSORT`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TSORT`
+- **Effect contract:** `TSORT`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:destination1:original-indices-u32", "operand:source0:source", "operand:sort_width:sort-width", "operand:flag0:descending"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

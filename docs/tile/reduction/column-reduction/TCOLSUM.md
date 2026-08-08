@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/reduction/column-reduction/TCOLSUM.asl`
 
-Execute the TCOLSUM Tile operation contract.
+Reduce each source col to its sum.
 
 ## Normative identity {#PTO-INST-TILE-TCOLSUM}
 
@@ -23,6 +23,13 @@ TCOLSUM <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TCOLSUM | TEPL | 0x050 | 16 | 2 | ExecuteTileReduction |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduction/column-reduction/TCOLSUM.asl -->
@@ -33,10 +40,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -62,11 +65,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_ExecuteTileReduction`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `ExecuteTileReduction`
+- **Effect contract:** `ExecuteTileReduction`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

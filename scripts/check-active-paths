@@ -23,6 +23,29 @@ OBSOLETE_PATHS = (
     Path("tests/asl/shards"),
 )
 MARKDOWN_ROOTS = frozenset({"arch", "block", "scalar", "tile", "status"})
+AGENT_ENTRYPOINTS = (
+    Path("AGENTS.md"),
+    Path(".codex/skills/pto-asl/SKILL.md"),
+    Path(".codex/skills/pto-asl/agents/openai.yaml"),
+    Path(".codex/skills/pto-asl/references/formal-quality.md"),
+    Path(".codex/skills/pto-asl/references/source-map.md"),
+)
+SUPERSEDED_AGENT_ROUTES = (
+    "docs/status/legacy/",
+    "scripts/check-catalogs",
+    "ASL_TESTS",
+    "make ci",
+)
+ALLOWED_NEGATIVE_LEGACY_LINES = {
+    (
+        Path("AGENTS.md"),
+        "- Never use `docs/status/legacy/` as an architecture, implementation, review,",
+    ),
+    (
+        Path(".codex/skills/pto-asl/references/source-map.md"),
+        "- `docs/status/legacy/` is historical, non-normative, excluded from agent",
+    ),
+}
 
 
 def _at_or_below(path: Path, owner: Path) -> bool:
@@ -77,6 +100,24 @@ def validate(root: Path, tracked: tuple[Path, ...]) -> list[str]:
                 "active Markdown is outside the ASL mirror or docs/status "
                 f"ownership: {path}"
             )
+    for relative in AGENT_ENTRYPOINTS:
+        path = root / relative
+        if not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8")
+        for route in SUPERSEDED_AGENT_ROUTES:
+            for line in text.splitlines():
+                if route not in line:
+                    continue
+                if route == "docs/status/legacy/" and (
+                    relative,
+                    line.strip(),
+                ) in ALLOWED_NEGATIVE_LEGACY_LINES:
+                    continue
+                errors.append(
+                    "agent entrypoint routes to superseded contract: "
+                    f"{relative}: {route}"
+                )
     return sorted(set(errors))
 
 

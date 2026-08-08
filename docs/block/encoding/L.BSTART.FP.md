@@ -42,6 +42,12 @@ L.BSTART.FP FALL<, fixup_label>
 | l_bstart_fp_64_2067ad6667ed | simm | 42 | signed | [{"instruction_lsb":7,"value_lsb":0,"width":25},{"instruction_lsb":47,"value_lsb":25,"width":17}] |
 | l_bstart_fp_64_8115c042ef26 | simm | 42 | signed | [{"instruction_lsb":7,"value_lsb":0,"width":25},{"instruction_lsb":47,"value_lsb":25,"width":17}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| simm | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/encoding/L.BSTART.FP.asl -->
@@ -56,10 +62,6 @@ end;
 ```
 <!-- GENERATED-ASL-END: decode -->
 
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
-
 ## Operation
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/encoding/L.BSTART.FP.asl -->
@@ -73,11 +75,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.`
+- **Semantic handler:** `ExecuteBundleStart`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

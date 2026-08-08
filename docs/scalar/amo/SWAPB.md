@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/amo/SWAPB.asl`
 
-Execute the SWAPB scalar instruction contract.
+SWAPB - Atomically read, apply this mnemonic's named operation, and write the scalar memory location.
 
 ## Normative identity {#PTO-INST-SCALAR-SWAPB}
 
@@ -34,6 +34,17 @@ swapb<.{aq, rl, f, aqrl, aqf, rlf, aqrlf}> [SrcL], SrcR, {->t, ->u, ->Rd}
 | swapb_32_80733f03b77f | far | 1 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":1}] |
 | swapb_32_80733f03b77f | rl | 1 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":1}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+| aq | encoded operand or control |
+| far | encoded operand or control |
+| rl | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/SWAPB.asl -->
@@ -44,10 +55,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -62,11 +69,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `SWAPB - Atomically read, apply this mnemonic's named operation, and write the scalar memory location.`
+- **Semantic handler:** `AtomicReadModifyWrite`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

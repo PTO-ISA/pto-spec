@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/agu/HL.PRF.asl`
 
-Execute the HL.PRF scalar instruction contract.
+HL.PRF - Issue a scalar prefetch using this mnemonic's addressing form.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-PRF}
 
@@ -33,6 +33,16 @@ hl.prf{.l1,.l2,.l3} [SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>]
 | hl_prf_48_39641863bb21 | model | 5 | encoding-defined | [{"instruction_lsb":11,"value_lsb":0,"width":5}] |
 | hl_prf_48_39641863bb21 | shamt | 5 | encoding-defined | [{"instruction_lsb":43,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+| SrcRType | encoded operand or control |
+| model | encoded operand or control |
+| shamt | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.PRF.asl -->
@@ -43,10 +53,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -61,11 +67,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.PRF - Issue a scalar prefetch using this mnemonic's addressing form.`
+- **Semantic handler:** `ScalarPrefetch`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory/irregular/MGATHER_CAS.asl`
 
-Execute the MGATHER_CAS Tile operation contract.
+Atomically compare and conditionally replace GM elements at Tile-provided indices.
 
 ## Normative identity {#PTO-INST-TILE-MGATHER-CAS}
 
@@ -23,6 +23,16 @@ MGATHER_CAS <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | MGATHER_CAS | TLSU |  | 8 |  | MGATHER_CAS |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| address | base-address |
+| source0 | indices |
+| source1 | expected |
+| source2 | replacement |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory/irregular/MGATHER_CAS.asl -->
@@ -33,10 +43,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -60,11 +66,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_MGATHER_CAS`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["Layout"], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `MGATHER_CAS`
+- **Effect contract:** `MGATHER_CAS`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:address:base-address", "operand:source0:indices", "operand:source1:expected", "operand:source2:replacement"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

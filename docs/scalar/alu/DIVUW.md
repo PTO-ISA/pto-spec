@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/DIVUW.asl`
 
-Execute the DIVUW scalar instruction contract.
+DIVUW - Compute unsigned 32-bit quotient and sign-extend it.
 
 ## Normative identity {#PTO-INST-SCALAR-DIVUW}
 
@@ -31,6 +31,14 @@ divuw SrcL, SrcR, ->{t, u, Rd}
 | divuw_32_9c9470ef8982 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | divuw_32_9c9470ef8982 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/DIVUW.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -59,11 +63,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `DIVUW - Compute unsigned 32-bit quotient and sign-extend it.`
+- **Semantic handler:** `ScalarDivideUnsignedW`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

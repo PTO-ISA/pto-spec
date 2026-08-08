@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/HL.REMW.asl`
 
-Execute the HL.REMW scalar instruction contract.
+HL.REMW - Compute 32-bit quotient and remainder as a sign-extended result pair.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-REMW}
 
@@ -32,6 +32,15 @@ hl.remw SrcL, SrcR, ->Dst0, Dst1
 | hl_remw_48_3acb485d39a7 | SrcL | 5 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":5}] |
 | hl_remw_48_3acb485d39a7 | SrcR | 5 | encoding-defined | [{"instruction_lsb":36,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst0 | encoded operand or control |
+| RegDst1 | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.REMW.asl -->
@@ -42,10 +51,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -60,11 +65,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.REMW - Compute 32-bit quotient and remainder as a sign-extended result pair.`
+- **Semantic handler:** `ExecuteScalarDividePairW`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

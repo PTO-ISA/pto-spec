@@ -64,6 +64,71 @@ class ActivePathCheckTest(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("outside the ASL mirror", result.stderr)
 
+    def test_agent_entrypoint_rejects_superseded_normative_routes(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / ".codex/skills/pto-asl").mkdir(parents=True)
+            (root / "AGENTS.md").write_text(
+                "Start from docs/status/legacy/root/coverage.md.\n",
+                encoding="utf-8",
+            )
+            (root / ".codex/skills/pto-asl/SKILL.md").write_text(
+                "Run scripts/check-catalogs and list tests in ASL_TESTS.\n",
+                encoding="utf-8",
+            )
+
+            result = self.run_checker(
+                root,
+                ["AGENTS.md", ".codex/skills/pto-asl/SKILL.md"],
+            )
+
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("agent entrypoint routes to superseded contract", result.stderr)
+
+    def test_agent_entrypoint_does_not_treat_non_normative_as_safe_routing(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "AGENTS.md").write_text(
+                "Although non-normative, read docs/status/legacy/root/coverage.md.\n",
+                encoding="utf-8",
+            )
+
+            result = self.run_checker(root, ["AGENTS.md"])
+
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("agent entrypoint routes to superseded contract", result.stderr)
+
+    def test_agent_entrypoint_does_not_accept_excluded_substring_bypass(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "AGENTS.md").write_text(
+                "Not excluded; read docs/status/legacy/root/coverage.md.\n",
+                encoding="utf-8",
+            )
+
+            result = self.run_checker(root, ["AGENTS.md"])
+
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("agent entrypoint routes to superseded contract", result.stderr)
+
+    def test_agent_openai_yaml_rejects_superseded_route(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / ".codex/skills/pto-asl/agents/openai.yaml"
+            path.parent.mkdir(parents=True)
+            path.write_text(
+                'interface:\n  default_prompt: "Read docs/status/legacy/root.md"\n',
+                encoding="utf-8",
+            )
+
+            result = self.run_checker(
+                root,
+                [".codex/skills/pto-asl/agents/openai.yaml"],
+            )
+
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("agent entrypoint routes to superseded contract", result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

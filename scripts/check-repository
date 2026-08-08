@@ -53,8 +53,8 @@ required_files=(
     docs/status/decisions/0042-numeric-variation-point-ownership.md
     docs/status/decisions/0043-public-numeric-type-identity-and-availability.md
     docs/status/decisions/0044-public-integer-conversion-result-subset.md
-    docs/status/decisions/0045-pto-isa-release-tile-contract.md
     docs/status/decisions/0052-pto-isa-0580-davincioo-catalog.md
+    docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md
     docs/status/decisions/0046-separate-execution-mask-and-warp-predicates.md
     spec/release-inputs.json
     spec/catalog/scalar-forms.json

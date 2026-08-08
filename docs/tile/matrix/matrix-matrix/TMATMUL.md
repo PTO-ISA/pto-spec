@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/matrix/matrix-matrix/TMATMUL.asl`
 
-Execute the TMATMUL Tile operation contract.
+Multiply the left and right matrices into the destination.
 
 ## Normative identity {#PTO-INST-TILE-TMATMUL}
 
@@ -23,6 +23,14 @@ TMATMUL <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TMATMUL | CUBE |  | 0 |  | TMATMUL |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | left |
+| source1 | right |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/matrix/matrix-matrix/TMATMUL.asl -->
@@ -33,10 +41,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -71,11 +75,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TMATMUL`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TMATMUL`
+- **Effect contract:** `TMATMUL`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:left", "operand:source1:right"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 The block uses `LB0=N`, `LB1=M`, and `LB2=Col`, where Col is the physical

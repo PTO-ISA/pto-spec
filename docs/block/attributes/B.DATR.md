@@ -35,6 +35,18 @@ B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize}
 | b_datr_32_c161a042ff38 | RMode | 3 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":3}] |
 | b_datr_32_c161a042ff38 | Layout | 5 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| CMode | encoded operand or control |
+| PadValueOrByteId | encoded operand or control |
+| Sat | encoded operand or control |
+| Canonicalize | encoded operand or control |
+| DataType | encoded operand or control |
+| RMode | encoded operand or control |
+| Layout | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/attributes/B.DATR.asl -->
@@ -45,10 +57,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -63,11 +71,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Constraints:** `[{"field": "CMode", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5]}, {"field": "DataType", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28]}, {"field": "Layout", "operator": "one-of", "values": [0, 1, 3, 4, 6, 8, 9, 17, 18, 20, 27, 28, 30]}]`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `Latches tile layout, data type, padding, conversion, rounding, and saturation attributes.`
+- **Semantic handler:** `SetBundleDataAttributes`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

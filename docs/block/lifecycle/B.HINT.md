@@ -35,6 +35,16 @@ B.HINT TRACE.{begin, end}
 | b_hint_32_69d942ff1583 | temp | 2 | encoding-defined | [{"instruction_lsb":17,"value_lsb":0,"width":2}] |
 | b_hint_32_f7d01d734925 | B/E | 1 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":1}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| L/UL | encoded operand or control |
+| V | encoded operand or control |
+| prefetch_size | encoded operand or control |
+| temp | encoded operand or control |
+| B/E | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/B.HINT.asl -->
@@ -46,10 +56,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -64,11 +70,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `Records non-functional branch, temperature, prefetch-size, or trace guidance.`
+- **Semantic handler:** `SetBundleHint`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

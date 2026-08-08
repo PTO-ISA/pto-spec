@@ -27,6 +27,31 @@ class AslCatalogProjectionTest(unittest.TestCase):
             with self.subTest(path=path):
                 self.assertEqual(projected[path], (REPO / path).read_bytes())
 
+    def test_linx_extension_reservations_are_owned_by_arch_asl(self) -> None:
+        owners = [
+            unit
+            for unit in self.units
+            if unit.metadata.get("catalog_projection", {}).get("catalog")
+            == "linx-vector-reservations"
+        ]
+
+        self.assertEqual(len(owners), 1)
+        reservations = owners[0].metadata["catalog_projection"]["reservations"]
+        self.assertEqual(
+            {item["mnemonic"] for item in reservations},
+            {
+                "BSTART.VPAR",
+                "BSTART.VSEQ",
+                "C.BSTART.VPAR",
+                "C.BSTART.VSEQ",
+                "V.*",
+            },
+        )
+        vector_root = next(item for item in reservations if item["mnemonic"] == "V.*")
+        self.assertEqual(vector_root["length_bits"], 64)
+        self.assertEqual(vector_root["encoding"][0]["mask"], "0x0000007f")
+        self.assertEqual(vector_root["encoding"][0]["match"], "0x0000007f")
+
     def test_projection_is_deterministic_under_input_reordering(self) -> None:
         self.assertEqual(
             project_catalogs(self.units), project_catalogs(tuple(reversed(self.units)))

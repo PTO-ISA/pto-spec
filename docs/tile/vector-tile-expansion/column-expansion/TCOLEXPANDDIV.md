@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/vector-tile-expansion/column-expansion/TCOLEXPANDDIV.asl`
 
-Execute the TCOLEXPANDDIV Tile operation contract.
+Apply division while expanding the bound col vector across the source Tile.
 
 ## Normative identity {#PTO-INST-TILE-TCOLEXPANDDIV}
 
@@ -23,6 +23,14 @@ TCOLEXPANDDIV <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TCOLEXPANDDIV | TEPL | 0x058 | 24 | 2 | ExecuteTileExpand |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source |
+| source1 | broadcast-source |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/vector-tile-expansion/column-expansion/TCOLEXPANDDIV.asl -->
@@ -33,10 +41,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -62,11 +66,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_ExecuteTileExpand`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `ExecuteTileExpand`
+- **Effect contract:** `ExecuteTileExpand`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source", "operand:source1:broadcast-source"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/tile-tile-elementwise/arithmetic/TMAX.asl`
 
-Execute the TMAX Tile operation contract.
+Apply elementwise maximum selection to the two source Tiles.
 
 ## Normative identity {#PTO-INST-TILE-TMAX}
 
@@ -23,6 +23,14 @@ TMAX <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TMAX | TEPL | 0x00B | 11 | 0 | ExecuteTileBinary |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source-left |
+| source1 | source-right |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-tile-elementwise/arithmetic/TMAX.asl -->
@@ -33,10 +41,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -62,11 +66,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_ExecuteTileBinary`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `ExecuteTileBinary`
+- **Effect contract:** `ExecuteTileBinary`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source-left", "operand:source1:source-right"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 
