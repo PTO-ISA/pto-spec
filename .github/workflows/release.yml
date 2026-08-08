@@ -139,7 +139,7 @@ jobs:
             > build/actual-page.json
           cmp "build/planned-asl-test-pages/page-$PAGE.json" build/actual-page.json
           python3 -c 'import json; [print(row["id"]) for row in json.load(open("build/actual-page.json"))["include"]]' \
-            | xargs -P 8 -n 1 ./scripts/run-asl-test --id
+            | xargs -P 4 -n 1 ./scripts/run-asl-test --id
 
       - name: Upload per-ID ASL results
         if: always()

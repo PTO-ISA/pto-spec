@@ -40,6 +40,7 @@ SOURCE_PATHS = (
     "scripts/print-asl-test-matrix",
     "scripts/prepare-aslref",
     "scripts/project_asl_catalogs.py",
+    "scripts/release_workflow.py",
     "scripts/run-asl-release-suite",
     "scripts/run-asl-test",
     "scripts/setup-aslref",
@@ -79,7 +80,13 @@ GATES = (
         "id": "RG-05",
         "name": "independent exact-head AVS matrix",
         "command": "make release-check RELEASE_COMMIT=<exact-head>",
-        "evidence": ["scripts/run-asl-release-suite", "scripts/run-asl-test"],
+        "evidence": [
+            ".github/workflows/release.yml",
+            "scripts/check-release-workflow",
+            "scripts/release_workflow.py",
+            "scripts/run-asl-release-suite",
+            "scripts/run-asl-test",
+        ],
     },
     {
         "id": "RG-06",
