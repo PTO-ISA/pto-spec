@@ -26,7 +26,7 @@
 - Manual release validation MUST bind to one exact commit and execute every discovered test ID fail-closed.
 - Pure moves and model splits MUST preserve behavior; architecture changes discovered during migration require a separate NDF semantic delta.
 - No new runtime dependency is permitted; discovery, projection, and validation tooling uses the Python 3 standard library.
-- The existing uncommitted release fixture corrections MUST be verified and committed independently before structural migration.
+- The existing uncommitted release fixture corrections MUST be inspected, pass lightweight checks, and be committed independently before structural migration; their ASL runtime shards are verified with the complete exact-head suite in Task 14.
 
 ---
 
@@ -92,7 +92,7 @@ Core tooling responsibilities:
 
 ---
 
-### Task 1: Close and Commit the Existing Release Fixture Corrections
+### Task 1: Record and Commit the Existing Release Fixture Corrections
 
 **Files:**
 - Modify: `tests/asl/bundle-tests.asl`
@@ -101,7 +101,7 @@ Core tooling responsibilities:
 
 **Interfaces:**
 - Consumes: current ASL model and the existing `make test-shard-*` targets.
-- Produces: a behavior-preserving fixture baseline on which every structural move is based.
+- Produces: an independently recorded fixture baseline on which every structural move is based; runtime proof is deferred to the final exact-head release gate.
 
 - [ ] **Step 1: Record the exact pending diff and assert no production ASL changed**
 
@@ -114,18 +114,16 @@ git diff --quiet -- asl scripts spec docs .github Makefile
 
 Expected: the first command shows only fixture size/shape/order corrections; the second exits 0.
 
-- [ ] **Step 2: Run the four focused shards**
+- [ ] **Step 2: Confirm each correction is exercised by a final-release test point**
 
 Run:
 
 ```bash
-make test-shard-tlsu-totality
-make test-shard-tepl-totality
-make test-shard-bundle-scalar-defaults
-make test-shard-core-bundle
+rg -n 'ConfigureTeplTile|ConfigureTlsu|B\.IOT|SetBundleDimension|TLOAD|TSTORE' \
+  tests/asl/bundle-tests.asl tests/asl/tepl-totality-tests.asl tests/asl/tlsu-totality-tests.asl
 ```
 
-Expected: all four targets exit 0 and print their passing ASL test summaries.
+Expected: every changed fixture is part of an existing named test that Task 12 will migrate into an independently executable final-release test point.
 
 - [ ] **Step 3: Run the lightweight repository gate**
 
@@ -137,6 +135,8 @@ git diff --check
 ```
 
 Expected: both commands exit 0.
+
+Do not run ASLRef shards in this task. Task 14 runs the complete exact-head release suite after the structural migration and projection cutover are finished.
 
 - [ ] **Step 4: Commit only the fixture corrections**
 
