@@ -137,6 +137,27 @@ class AslSourceOrderTest(unittest.TestCase):
         )
         self.assertEqual(stale.returncode, 1)
 
+    def test_print_target_generates_missing_source_order(self) -> None:
+        repository = Path(__file__).resolve().parents[2]
+        output = self.root / "generated-source-order.txt"
+
+        result = subprocess.run(
+            [
+                "make",
+                "--no-print-directory",
+                f"ASL_SOURCE_ORDER={output}",
+                "print-asl-sources",
+            ],
+            cwd=repository,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue(output.is_file())
+        self.assertTrue(result.stdout.endswith(output.read_text(encoding="utf-8")))
+
 
 if __name__ == "__main__":
     unittest.main()

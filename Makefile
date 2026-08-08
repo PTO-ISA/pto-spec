@@ -96,7 +96,7 @@ test: test-parallel
 
 ci: pr-check
 
-print-asl-sources:
+print-asl-sources: $(ASL_SOURCE_ORDER)
 	@cat $(ASL_SOURCE_ORDER)
 
 print-asl-tests:
