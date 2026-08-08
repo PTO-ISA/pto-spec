@@ -28,4 +28,3 @@ begin
        _BundleScalarBindings[[0]].source1 != 0 then return FALSE; end;
     return TRUE;
 end;
-

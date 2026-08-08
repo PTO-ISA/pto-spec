@@ -1,5 +1,7 @@
 # NDF Governance and Manual Release Implementation Plan
 
+> Historical, non-normative material. This page is excluded from the active PTO architecture and release closure.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Make PTO architecture PRs use a fast structural gate while preserving complete, fail-closed ASL verification and coverage in an exact-head manually dispatched release workflow.

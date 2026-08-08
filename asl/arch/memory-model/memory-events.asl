@@ -184,4 +184,3 @@ begin
         fence_successor = successor
     });
 end;
-

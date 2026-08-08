@@ -231,4 +231,3 @@ begin
         source_tile.defined_valid_elements;
     _Tiles[[destination]].contents_defined = source_tile.contents_defined;
 end;
-

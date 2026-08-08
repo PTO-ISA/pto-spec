@@ -187,7 +187,8 @@ ASL owner -> generated instruction page -> decision/open metadata -> release evi
 | [`asl/`](asl/) | Golden executable architectural state, instruction metadata, legality, and semantics |
 | [`docs/arch/`](docs/arch/), [`docs/block/`](docs/block/), [`docs/scalar/`](docs/scalar/), [`docs/tile/`](docs/tile/) | Exact ASL mirror with supplementary explanation and examples |
 | [`spec/catalog/`](spec/catalog/) | Generated accepted scalar forms, system registers, traps, and tile selectors |
-| [`spec/requirements.json`](spec/requirements.json) | Requirement-to-model-to-test traceability |
+| [`spec/evidence/release-traceability-readiness.json`](spec/evidence/release-traceability-readiness.json) | Generated ASL-to-page-to-AVS requirement traceability |
+| [`spec/release-inputs.json`](spec/release-inputs.json) | Explicit canonical release-evidence registry |
 | [`spec/profile-hooks.json`](spec/profile-hooks.json) | Complete `impdef` profile registry |
 | [`spec/evidence/`](spec/evidence/) | Generated closure records and release evidence |
 | [`specification.toml`](specification.toml) | Machine-readable status, profile, architecture, and toolchain metadata |

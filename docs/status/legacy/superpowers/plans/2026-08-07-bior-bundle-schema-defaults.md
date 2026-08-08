@@ -1,5 +1,7 @@
 # B.IOR Bundle Schema Defaults Implementation Plan
 
+> Historical, non-normative material. This page is excluded from the active PTO architecture and release closure.
+
 > **For Codex:** REQUIRED SUB-SKILL: Use executing-plans to implement this plan task-by-task.
 
 **Goal:** Make PTO v0.58 resolve B.IOR operands from the complete bundle schema, allow omission with architectural defaults, constrain encoded selectors to the 24 absolute GPRs, and synchronize the resulting common ISA contract into LinxISA while preserving its separate decoupled-body rules.

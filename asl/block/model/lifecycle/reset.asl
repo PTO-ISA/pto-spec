@@ -115,4 +115,3 @@ begin
     _LastCrossBlockID = Zeros{7};
     _LastBundleHintPayload = Zeros{PTO_XLEN};
 end;
-

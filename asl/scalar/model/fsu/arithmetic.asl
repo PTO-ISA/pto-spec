@@ -158,4 +158,3 @@ begin
         destination_type, source_type, value);
     return converted;
 end;
-

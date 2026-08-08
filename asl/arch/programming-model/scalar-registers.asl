@@ -14,4 +14,3 @@ begin
         _GPR[[index]] = value;
     end;
 end;
-

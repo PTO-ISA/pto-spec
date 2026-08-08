@@ -40,4 +40,3 @@ type MemoryEvent of record {
 
 type MemoryRelationMatrix of array [[PTO_MODEL_MEMORY_EVENTS]]
     of bits(PTO_MODEL_MEMORY_EVENTS);
-

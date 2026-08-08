@@ -37,4 +37,3 @@ begin
     _BundleScalarBindings[[index]].source2 = source2;
     _BundleScalarBindings[[index]].source_count = source_count;
 end;
-

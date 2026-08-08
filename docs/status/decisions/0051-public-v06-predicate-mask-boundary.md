@@ -1,5 +1,7 @@
 # ADR 0051: Reconcile the public v0.6 typed-mask surface without changing PTO ISA 0.57.1
 
+> Historical-evidence note: verification paths named below record the evidence used when this ADR was accepted; deleted aggregate checks are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
+
 - Status: accepted
 - Decision date: 2026-08-01
 - Requirements: PTO-REQ-PREDICATE-001, PTO-REQ-CLOSURE-001,

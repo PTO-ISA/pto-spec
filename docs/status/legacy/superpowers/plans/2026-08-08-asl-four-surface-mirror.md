@@ -1,5 +1,7 @@
 # PTO ASL Four-Surface Mirror Implementation Plan
 
+> Historical, non-normative material. This page is excluded from the active PTO architecture and release closure.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task in the current session. Do not dispatch implementation or review subagents for this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Execution mode:** Inline execution was selected by the architecture owner on 2026-08-08. The active session owns implementation, verification, review checkpoints, commits, and final release validation directly.
@@ -1378,7 +1380,7 @@ git commit -m "ci: discover independent ASL release tests"
 - Consumes: the complete four-surface model, mirrored docs, independent AVS matrix, and release workflow from Tasks 1–13.
 - Produces: a clean exact-head tree eligible for a manual release run.
 
-- [ ] **Step 1: Add final obsolete-path canaries**
+- [x] **Step 1: Add final obsolete-path canaries**
 
 The repository checker MUST reject:
 
@@ -1398,7 +1400,7 @@ tests/asl/shards
 
 It MUST also reject active Markdown outside the exact mirror or `docs/status/` ownership model.
 
-- [ ] **Step 2: Regenerate every projection**
+- [x] **Step 2: Regenerate every projection**
 
 Run:
 
@@ -1412,7 +1414,7 @@ python3 scripts/print-asl-test-matrix --page-size 10000 --page 0 > build/asl-tes
 
 Expected: all generators exit 0.
 
-- [ ] **Step 3: Run all lightweight checks twice**
+- [x] **Step 3: Run all lightweight checks twice**
 
 Run:
 

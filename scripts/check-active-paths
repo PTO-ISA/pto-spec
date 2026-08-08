@@ -1,0 +1,98 @@
+#!/usr/bin/env python3
+"""Reject obsolete, unowned, or symlinked active specification paths."""
+
+from __future__ import annotations
+
+import argparse
+import subprocess
+import sys
+from pathlib import Path
+
+
+OBSOLETE_PATHS = (
+    Path("asl/bundle"),
+    Path("asl/numeric"),
+    Path("asl/profiles"),
+    Path("asl/architecture.asl"),
+    Path("asl/types.asl"),
+    Path("asl/state.asl"),
+    Path("asl/concurrency.asl"),
+    Path("asl/dispatch.asl"),
+    Path("docs/instructions"),
+    Path("tests/asl/main.asl"),
+    Path("tests/asl/shards"),
+)
+MARKDOWN_ROOTS = frozenset({"arch", "block", "scalar", "tile", "status"})
+
+
+def _at_or_below(path: Path, owner: Path) -> bool:
+    return path == owner or owner in path.parents
+
+
+def _owned_markdown(path: Path) -> bool:
+    return (
+        len(path.parts) >= 3
+        and path.parts[0] == "docs"
+        and path.parts[1] in MARKDOWN_ROOTS
+    )
+
+
+def _tracked_paths(root: Path, tracked_list: Path | None) -> tuple[Path, ...]:
+    if tracked_list is not None:
+        values = tracked_list.read_text(encoding="utf-8").splitlines()
+    else:
+        values = subprocess.run(
+            ["git", "ls-files", "-z"],
+            cwd=root,
+            check=True,
+            capture_output=True,
+        ).stdout.decode().split("\0")
+    return tuple(Path(value) for value in values if value)
+
+
+def validate(root: Path, tracked: tuple[Path, ...]) -> list[str]:
+    errors: list[str] = []
+    for obsolete in OBSOLETE_PATHS:
+        absolute = root / obsolete
+        if absolute.exists() or absolute.is_symlink():
+            errors.append(f"obsolete active path must not return: {obsolete}")
+        for path in tracked:
+            if _at_or_below(path, obsolete):
+                errors.append(f"obsolete tracked path must not return: {path}")
+
+    docs = root / "docs"
+    if docs.exists():
+        for absolute in sorted(docs.rglob("*")):
+            relative = absolute.relative_to(root)
+            if absolute.is_symlink() and relative.suffix == ".md":
+                errors.append(f"active Markdown symlink is forbidden: {relative}")
+            if relative.suffix == ".md" and not _owned_markdown(relative):
+                errors.append(
+                    "active Markdown is outside the ASL mirror or docs/status "
+                    f"ownership: {relative}"
+                )
+    for path in tracked:
+        if path.suffix == ".md" and path.parts[:1] == ("docs",) and not _owned_markdown(path):
+            errors.append(
+                "active Markdown is outside the ASL mirror or docs/status "
+                f"ownership: {path}"
+            )
+    return sorted(set(errors))
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--root", type=Path, default=Path.cwd())
+    parser.add_argument("--tracked-list", type=Path)
+    arguments = parser.parse_args()
+    root = arguments.root.resolve()
+    errors = validate(root, _tracked_paths(root, arguments.tracked_list))
+    if errors:
+        print("\n".join(f"error: {error}" for error in errors), file=sys.stderr)
+        return 1
+    print("active path closure passed")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

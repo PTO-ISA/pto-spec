@@ -23,4 +23,3 @@ begin
     _CurrentACR = 0;
     _SystemRegisters.cycle = Zeros{PTO_XLEN};
 end;
-

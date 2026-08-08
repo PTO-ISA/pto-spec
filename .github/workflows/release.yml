@@ -193,6 +193,7 @@ jobs:
         with:
           name: pto-release-evidence-${{ inputs.commit }}
           path: |
+            build/asl-test-matrix.json
             build/asl-test-coverage.json
             spec/evidence/asl-test-matrix.sha256
             spec/release-manifest.json

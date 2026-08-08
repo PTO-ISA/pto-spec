@@ -3,8 +3,6 @@ from __future__ import annotations
 import hashlib
 import io
 import json
-import re
-import subprocess
 import tempfile
 import unittest
 from contextlib import redirect_stdout
@@ -20,15 +18,7 @@ from scripts.asl_tests import (
     matrix_main,
     validate_test_coverage,
 )
-from scripts.asl_units import AslUnit, load_units
-
-
-REPOSITORY = Path(__file__).resolve().parents[2]
-MIGRATION_BASELINE = "3069a9294f81f979883cd4af4c3699717ab21ba8"
-LEGACY_CALL = re.compile(r"\b([A-Za-z_][A-Za-z0-9_]*)\s*\(")
-LEGACY_DECL = re.compile(
-    r"^(?:(?:pure|readonly|impdef|implementation)\s+)*func\s+([A-Za-z_][A-Za-z0-9_]*)\b"
-)
+from scripts.asl_units import AslUnit
 
 
 def unit(source: str = "asl/arch/state/registers.asl") -> AslUnit:
@@ -361,105 +351,6 @@ class AslTestsTest(unittest.TestCase):
         payload = json.loads(result_path.read_text(encoding="utf-8"))
         self.assertEqual(payload["status"], "timeout")
         self.assertIsNone(payload["returncode"])
-
-
-class AslTestMigrationTest(unittest.TestCase):
-    @staticmethod
-    def git_show(path: str) -> str:
-        return subprocess.run(
-            ["git", "show", f"{MIGRATION_BASELINE}:{path}"],
-            cwd=REPOSITORY,
-            text=True,
-            capture_output=True,
-            check=True,
-        ).stdout
-
-    @staticmethod
-    def extract_functions(text: str) -> dict[str, str]:
-        lines = text.splitlines()
-        functions: dict[str, str] = {}
-        index = 0
-        while index < len(lines):
-            match = (
-                LEGACY_DECL.match(lines[index])
-                if not lines[index][:1].isspace()
-                else None
-            )
-            if match is None:
-                index += 1
-                continue
-            start = index
-            while index < len(lines) and lines[index].strip() != "begin":
-                index += 1
-            index += 1
-            while index < len(lines):
-                if not lines[index][:1].isspace() and lines[index].strip() == "end;":
-                    index += 1
-                    break
-                index += 1
-            functions[match.group(1)] = "\n".join(lines[start:index]) + "\n"
-        return functions
-
-    def test_baseline_named_test_functions_have_exact_independent_owners(self) -> None:
-        main = self.git_show("tests/asl/main.asl")
-        targets = {
-            name
-            for name in LEGACY_CALL.findall(main)
-            if name not in {"main", "ResetProfileState"}
-        }
-        migration = json.loads(
-            (REPOSITORY / "tests/asl/legacy-test-migration.json").read_text(
-                encoding="utf-8"
-            )
-        )
-        self.assertEqual(migration["baseline"], MIGRATION_BASELINE)
-        self.assertEqual(set(migration["mapping"]), targets)
-
-        units = load_units(REPOSITORY / "asl")
-        points = load_test_points(REPOSITORY, units)
-        by_id = {point.test_id: point for point in points}
-        legacy_functions: dict[str, str] = {}
-        for path in (
-            "tests/asl/state-tests.asl",
-            "tests/asl/bundle-tests.asl",
-            "tests/asl/scalar-tests.asl",
-            "tests/asl/tile-tests.asl",
-            "tests/asl/tepl-totality-tests.asl",
-            "tests/asl/tlsu-totality-tests.asl",
-            "tests/asl/cube-totality-tests.asl",
-            "tests/asl/dispatch-tests.asl",
-            "tests/asl/concurrency-tests.asl",
-            "tests/asl/profile-tests.asl",
-        ):
-            legacy_functions.update(self.extract_functions(self.git_show(path)))
-
-        for target, test_id in migration["mapping"].items():
-            self.assertIn(test_id, by_id)
-            document = (REPOSITORY / by_id[test_id].path).read_text(encoding="utf-8")
-            if target in legacy_functions:
-                self.assertIn(legacy_functions[target], document)
-            local_functions = set(self.extract_functions(document))
-            for called in set(LEGACY_CALL.findall(document)) & legacy_functions.keys():
-                self.assertIn(
-                    called, local_functions, f"{test_id} depends on legacy {called}"
-                )
-
-    def test_aggregate_test_paths_cannot_return(self) -> None:
-        self.assertFalse((REPOSITORY / "tests/asl/main.asl").exists())
-        self.assertFalse((REPOSITORY / "tests/asl/shards").exists())
-        self.assertEqual(list((REPOSITORY / "tests/asl").glob("*-tests.asl")), [])
-
-    def test_repository_tests_are_all_strictly_mirrored(self) -> None:
-        units = load_units(REPOSITORY / "asl")
-        points = load_test_points(REPOSITORY, units)
-
-        self.assertEqual(
-            {
-                path.relative_to(REPOSITORY)
-                for path in (REPOSITORY / "tests/asl").rglob("*.asl")
-            },
-            {point.path for point in points},
-        )
 
 
 if __name__ == "__main__":

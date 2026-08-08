@@ -62,4 +62,3 @@ begin
     _Tiles[[index]].layout = TileLayout_RowMajor;
     _Tiles[[index]].location = TileLocation_Any;
 end;
-

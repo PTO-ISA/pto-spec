@@ -187,4 +187,3 @@ begin
     if !BundleOperationScalarBindingSchemaLegal(operation) then return FALSE; end;
     return TRUE;
 end;
-

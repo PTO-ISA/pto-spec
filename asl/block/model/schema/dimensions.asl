@@ -3,4 +3,3 @@ func SetBundleDimension(index: BundleDimensionIndex, value: Word)
 begin
     _BundleDimensions[[index]] = value;
 end;
-

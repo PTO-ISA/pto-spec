@@ -1,5 +1,7 @@
 # ADR 0048: Numeric format value classification
 
+> Historical-evidence note: test paths named below record the evidence used when this ADR was accepted; they are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
+
 ## Status
 
 Accepted as the `PD-02-SC2` and `PD-05-SC1` format-classification checkpoint.

@@ -28,4 +28,3 @@ begin
     return CompleteBundleAtWithAcceptedApplicabilityRules(
         NumericApplicabilityRules_None, continuation);
 end;
-

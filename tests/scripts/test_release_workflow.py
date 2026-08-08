@@ -92,6 +92,9 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: release-evidence
+          path: |
+            build/asl-test-matrix.json
+            spec/evidence/asl-test-matrix.sha256
   validate:
     name: Release / validate
     if: always()
@@ -163,6 +166,14 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
         self.assert_rejected(
             VALID_RELEASE_WORKFLOW.replace(" --aggregate-only", ""),
             "aggregate-only",
+        )
+
+    def test_uploaded_evidence_must_include_matrix_and_checksum(self) -> None:
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace(
+                "            build/asl-test-matrix.json\n", ""
+            ),
+            "matrix and its checksum",
         )
 
     def test_final_gate_must_require_every_job_success(self) -> None:

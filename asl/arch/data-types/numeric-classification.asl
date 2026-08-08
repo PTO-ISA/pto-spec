@@ -62,4 +62,3 @@ begin
     return value_class == NumericValue_PositiveSubnormal ||
            value_class == NumericValue_NegativeSubnormal;
 end;
-

@@ -60,4 +60,3 @@ begin
            UInt(control[13:11]) <= 6 &&
            (control[6] == '0' || control[5] == '1');
 end;
-

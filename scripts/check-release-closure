@@ -1,0 +1,144 @@
+#!/usr/bin/env python3
+"""Validate explicit release provenance and reject legacy or missing owners."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+from pathlib import Path
+from typing import Iterator
+
+
+PATH_VALUE = re.compile(r"^(?:asl|docs|tests|scripts|spec|\.github)/[A-Za-z0-9_.@/+-]+$")
+OBSOLETE_TEST = re.compile(
+    r"tests/asl/(?:main\.asl|shards(?:/|$)|[A-Za-z0-9_-]+-tests\.asl)"
+)
+
+
+def _strings(value: object) -> Iterator[str]:
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, list):
+        for item in value:
+            yield from _strings(item)
+    elif isinstance(value, dict):
+        for item in value.values():
+            yield from _strings(item)
+
+
+def validate(root: Path) -> list[str]:
+    errors: list[str] = []
+    registry_path = root / "spec/release-inputs.json"
+    try:
+        registry = json.loads(registry_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        return [f"invalid release input registry: {error}"]
+    if registry.get("schema") != "pto.release-inputs.v1":
+        errors.append("release input registry has the wrong schema")
+    rows = registry.get("evidence")
+    if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+        return sorted(
+            set([*errors, "release input registry evidence must be an array of objects"])
+        )
+
+    registered: dict[str, str] = {}
+    for row in rows:
+        path = row.get("path")
+        generator = row.get("generator")
+        role = row.get("role")
+        if (
+            not isinstance(path, str)
+            or not isinstance(generator, str)
+            or role not in {"canonical-input", "owned-output"}
+        ):
+            errors.append("release input registry row has invalid fields")
+            continue
+        if path in registered:
+            errors.append(f"duplicate registered release evidence: {path}")
+        registered[path] = role
+        for label, relative in (("evidence", path), ("generator", generator)):
+            absolute = root / relative
+            if not absolute.is_file() or absolute.is_symlink():
+                errors.append(
+                    f"registered release {label} is missing or symlinked: {relative}"
+                )
+        evidence_path = root / path
+        if not evidence_path.is_file():
+            continue
+        try:
+            evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as error:
+            errors.append(f"registered release evidence is invalid JSON: {path}: {error}")
+            continue
+        for value in _strings(evidence):
+            if "docs/status/legacy/" in value:
+                errors.append(
+                    f"registered release evidence references legacy material: {path}"
+                )
+            if OBSOLETE_TEST.search(value):
+                errors.append(
+                    f"registered release evidence references obsolete tests: {path}"
+                )
+            if PATH_VALUE.fullmatch(value) and not (root / value).is_file():
+                errors.append(
+                    f"registered release evidence references missing active path: {value}"
+                )
+
+    manifest_path = root / "spec/release-manifest.json"
+    if manifest_path.is_file():
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            canonical = {
+                row["path"]
+                for row in manifest.get("canonical_inputs", [])
+                if isinstance(row, dict) and isinstance(row.get("path"), str)
+            }
+            owned = {
+                row["path"]
+                for row in manifest.get("owned_artifacts", [])
+                if isinstance(row, dict) and isinstance(row.get("path"), str)
+            }
+            manifest_evidence = {
+                path for path in canonical | owned if path.startswith("spec/evidence/")
+            }
+            if manifest_evidence != set(registered):
+                errors.append(
+                    "release manifest evidence set does not equal the explicit registry"
+                )
+            for relative in canonical:
+                absolute = root / relative
+                if not absolute.is_file():
+                    errors.append(
+                        f"release manifest references missing canonical input: {relative}"
+                    )
+                    continue
+                text = absolute.read_text(encoding="utf-8", errors="replace")
+                if "docs/status/legacy/" in text:
+                    errors.append(
+                        f"canonical release input references legacy material: {relative}"
+                    )
+                if OBSOLETE_TEST.search(text):
+                    errors.append(
+                        f"canonical release input references obsolete tests: {relative}"
+                    )
+        except (json.JSONDecodeError, KeyError, TypeError) as error:
+            errors.append(f"invalid release manifest: {error}")
+    return sorted(set(errors))
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--root", type=Path, default=Path.cwd())
+    arguments = parser.parse_args()
+    errors = validate(arguments.root.resolve())
+    if errors:
+        print("\n".join(f"error: {error}" for error in errors), file=sys.stderr)
+        return 1
+    print("release closure passed")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

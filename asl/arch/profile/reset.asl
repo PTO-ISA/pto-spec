@@ -121,4 +121,3 @@ begin
     _CurrentACR = 0;
     ClearFault();
 end;
-

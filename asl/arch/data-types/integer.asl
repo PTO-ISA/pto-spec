@@ -24,4 +24,3 @@ type SystemRegisterAddress of bits(24);
 type SystemRegisterFileIndex of integer {0..65535};
 type TrapNumber of bits(6);
 type InterruptID of integer {0..63};
-

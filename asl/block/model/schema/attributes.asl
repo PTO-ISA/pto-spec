@@ -23,4 +23,3 @@ begin
     _BundleDataAttributes.saturating = saturating;
     _BundleDataAttributes.canonicalize = FALSE;
 end;
-

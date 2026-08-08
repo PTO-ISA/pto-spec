@@ -65,4 +65,3 @@ begin
     return ExecuteBundleTileOperationWithAcceptedApplicabilityRules(
         NumericApplicabilityRules_None);
 end;
-

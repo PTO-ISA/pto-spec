@@ -1,5 +1,7 @@
 # ADR 0039: Numeric rounding selector ownership
 
+> Historical-evidence note: test paths named below record the evidence used when this ADR was accepted; they are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
+
 ## Status
 
 Accepted structural checkpoint; semantic-selection and domain-rule portions

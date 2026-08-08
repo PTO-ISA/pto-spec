@@ -1,5 +1,7 @@
 # ASL-Golden Instruction Reference Implementation Plan
 
+> Historical, non-normative material. This page is excluded from the active PTO architecture and release closure.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Make mnemonic ASL files the normative instruction source and deterministically generate drift-free Markdown and MkDocs reference surfaces while enforcing power-of-two shape and derived-row legality.

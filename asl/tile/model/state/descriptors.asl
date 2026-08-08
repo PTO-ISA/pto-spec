@@ -58,4 +58,3 @@ begin
              TileDataType_FP64 => return 64;
     end;
 end;
-

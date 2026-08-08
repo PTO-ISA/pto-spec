@@ -39,4 +39,3 @@ begin
     let derived_rows = DerivedTileRows(capacity_bytes, columns, data_type);
     return derived_rows != 0 && rows == derived_rows;
 end;
-

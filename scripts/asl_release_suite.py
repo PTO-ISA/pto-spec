@@ -22,10 +22,15 @@ Result = Mapping[str, object]
 Runner = Callable[[list[str], Path], int]
 
 
-def require_exact_head(requested: str, actual: str) -> None:
+def require_exact_head(requested: str, actual: str, status: str) -> None:
     if requested != actual:
         raise ValueError(
             f"requested release commit {requested} is not exact HEAD {actual}"
+        )
+    if status:
+        raise ValueError(
+            "exact-head release verification requires a clean committed tree:\n"
+            f"{status.rstrip()}"
         )
 
 
@@ -189,9 +194,15 @@ def load_results(directory: Path) -> list[dict[str, object]]:
     return values
 
 
-def _matrix_digest(entries: Sequence[MatrixEntry]) -> str:
-    encoded = json.dumps(list(entries), separators=(",", ":"), sort_keys=True).encode()
-    return hashlib.sha256(encoded).hexdigest()
+def _matrix_document(commit: str, entries: Sequence[MatrixEntry]) -> bytes:
+    document = {
+        "commit": commit,
+        "page": 0,
+        "page_count": 1,
+        "test_count": len(entries),
+        "include": list(entries),
+    }
+    return (json.dumps(document, separators=(",", ":"), sort_keys=True) + "\n").encode()
 
 
 def _write_evidence(
@@ -201,12 +212,18 @@ def _write_evidence(
 ) -> None:
     build = root / "build"
     build.mkdir(parents=True, exist_ok=True)
+    matrix_bytes = _matrix_document(str(coverage["commit"]), entries)
+    matrix_path = build / "asl-test-matrix.json"
+    matrix_path.write_bytes(matrix_bytes)
     (build / "asl-test-coverage.json").write_text(
         json.dumps(coverage, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
     evidence = root / "spec/evidence/asl-test-matrix.sha256"
     evidence.parent.mkdir(parents=True, exist_ok=True)
-    evidence.write_text(_matrix_digest(entries) + "\n", encoding="utf-8")
+    evidence.write_text(
+        f"{hashlib.sha256(matrix_bytes).hexdigest()}  build/asl-test-matrix.json\n",
+        encoding="utf-8",
+    )
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -229,7 +246,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             capture_output=True,
             check=True,
         ).stdout.strip()
-        require_exact_head(arguments.commit, actual)
+        status = subprocess.run(
+            ["git", "status", "--porcelain=v1", "--untracked-files=all"],
+            cwd=root,
+            text=True,
+            capture_output=True,
+            check=True,
+        ).stdout
+        require_exact_head(arguments.commit, actual, status)
         if arguments.aggregate_only:
             if arguments.matrix_pages is None or arguments.results is None:
                 raise ValueError(

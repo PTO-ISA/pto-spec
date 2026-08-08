@@ -4,4 +4,3 @@
 var _Tiles : array [[PTO_TILE_REGISTER_COUNT]] of TileInfo;
 var _TileAllocationMasks : array [[PTO_TILE_REGISTER_COUNT]] of bits(4);
 var _SharedTiles : SharedTileSnapshot;
-

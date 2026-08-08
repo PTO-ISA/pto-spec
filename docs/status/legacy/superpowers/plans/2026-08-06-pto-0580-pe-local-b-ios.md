@@ -1,5 +1,7 @@
 # PTO ISA 0.58 PE-Local Tile and B.IOS Implementation Plan
 
+> Historical, non-normative material. This page is excluded from the active PTO architecture and release closure.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Reissue PTO ISA 0.58 with PE-local Tile sizes and dimensions and replace active `C.B.IOS` with an unambiguous 32-bit `B.IOS` Shared operand binder.

@@ -113,4 +113,3 @@ begin
     _ACRTrapCause[[ring]] = value[24 +: 24];
     _ACRTrapNumber[[ring]] = value[0 +: 6];
 end;
-

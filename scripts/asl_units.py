@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import json
 import re
-import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable, Sequence
@@ -189,12 +188,21 @@ def validate_layout(root: Path, units: Sequence[AslUnit]) -> list[str]:
 
 
 def validate_surface(root: Path, surface: str, units: Sequence[AslUnit]) -> list[str]:
-    """Validate one migrated surface while sibling roots remain transitional."""
+    """Validate one selected surface without relaxing the four-root contract."""
 
     if surface not in APPROVED_SURFACES:
         return [f"unknown ASL surface: {surface}"]
     path = root / surface
     errors = [] if path.is_dir() else [f"missing ASL root directory: {surface}"]
+    entries = {entry.name: entry for entry in root.iterdir()} if root.is_dir() else {}
+    for expected in APPROVED_SURFACES:
+        entry = entries.get(expected)
+        if entry is None:
+            errors.append(f"missing ASL root directory: {expected}")
+        elif not entry.is_dir():
+            errors.append(f"ASL root entry is not a directory: {expected}")
+    for name in sorted(set(entries) - set(APPROVED_SURFACES)):
+        errors.append(f"unexpected ASL root entry: {name}")
     errors.extend(_validate_units(units, require_complete_dependencies=False))
     for unit in units:
         if unit.surface != surface:
@@ -353,135 +361,3 @@ def _symbols_from_text(text: str) -> list[_AslSymbol]:
             body = _normalize_asl(block)
         symbols.append(_AslSymbol(name=name, kind=kind, signature=signature, body=body))
     return symbols
-
-
-def _legacy_surface(path: Path) -> str | None:
-    parts = path.parts
-    if len(parts) < 2 or parts[0] != "asl":
-        return None
-    first = parts[1]
-    if first in {"bundle", "block"}:
-        return "block"
-    if first in {"scalar", "tile"}:
-        return first
-    if first in {"numeric", "profiles"} or len(parts) == 2:
-        return "arch"
-    return None
-
-
-def _current_surface(path: Path) -> str | None:
-    parts = path.parts
-    if len(parts) >= 3 and parts[0] == "asl" and parts[1] in APPROVED_SURFACES:
-        return parts[1]
-    return _legacy_surface(path)
-
-
-def _symbol_label(symbol: _AslSymbol) -> str:
-    if symbol.kind in {"implementation", "impdef"}:
-        return f"{symbol.name} [{symbol.kind}]"
-    return symbol.name
-
-
-def _collect_symbols(
-    files: Iterable[tuple[Path, str]], surfaces: set[str], *, legacy: bool
-) -> tuple[dict[tuple[str, str, str], _AslSymbol], list[str]]:
-    symbols: dict[tuple[str, str, str], _AslSymbol] = {}
-    errors: list[str] = []
-    for path, text in files:
-        surface = _legacy_surface(path) if legacy else _current_surface(path)
-        if surface not in surfaces:
-            continue
-        for symbol in _symbols_from_text(text):
-            key = (symbol.kind, symbol.name, symbol.signature)
-            if key in symbols:
-                side = "baseline" if legacy else "current"
-                errors.append(f"duplicate {side} ASL symbol {_symbol_label(symbol)}")
-                continue
-            symbols[key] = symbol
-    return symbols, errors
-
-
-def _git_asl_files(repo: Path, ref: str) -> list[tuple[Path, str]]:
-    result = subprocess.run(
-        ["git", "ls-tree", "-r", "--name-only", ref, "--", "asl"],
-        cwd=repo,
-        text=True,
-        capture_output=True,
-        check=True,
-    )
-    files: list[tuple[Path, str]] = []
-    for raw_path in result.stdout.splitlines():
-        path = Path(raw_path)
-        if path.suffix != ".asl":
-            continue
-        text = subprocess.check_output(
-            ["git", "show", f"{ref}:{path.as_posix()}"], cwd=repo, text=True
-        )
-        files.append((path, text))
-    return files
-
-
-def compare_ref_to_tree(
-    repo: Path,
-    before_ref: str,
-    after_root: Path,
-    surfaces: tuple[str, ...],
-) -> list[str]:
-    """Compare named ASL signatures and bodies at a Git ref with a migrated tree."""
-
-    selected = set(surfaces)
-    unknown = selected - set(APPROVED_SURFACES)
-    if unknown:
-        return [f"unknown ASL surface: {name}" for name in sorted(unknown)]
-    baseline, errors = _collect_symbols(
-        _git_asl_files(repo, before_ref), selected, legacy=True
-    )
-    current_files = [
-        (Path("asl") / path.relative_to(after_root), path.read_text(encoding="utf-8"))
-        for path in sorted(after_root.rglob("*.asl"))
-    ]
-    current, current_errors = _collect_symbols(current_files, selected, legacy=False)
-    errors.extend(current_errors)
-    baseline_groups: dict[tuple[str, str], list[_AslSymbol]] = {}
-    current_groups: dict[tuple[str, str], list[_AslSymbol]] = {}
-    for symbol in baseline.values():
-        baseline_groups.setdefault((symbol.kind, symbol.name), []).append(symbol)
-    for symbol in current.values():
-        current_groups.setdefault((symbol.kind, symbol.name), []).append(symbol)
-    for key in sorted(set(baseline_groups) | set(current_groups)):
-        before_group = baseline_groups.get(key, [])
-        after_group = current_groups.get(key, [])
-        if not after_group:
-            errors.extend(
-                f"missing ASL symbol: {_symbol_label(symbol)}"
-                for symbol in before_group
-            )
-            continue
-        if not before_group:
-            errors.extend(
-                f"unexpected ASL symbol: {_symbol_label(symbol)}"
-                for symbol in after_group
-            )
-            continue
-        if len(before_group) == len(after_group) == 1:
-            before = before_group[0]
-            after = after_group[0]
-            label = _symbol_label(before)
-            if before.signature != after.signature:
-                errors.append(f"changed ASL symbol signature: {label}")
-            elif before.body != after.body:
-                errors.append(f"changed ASL symbol body: {label}")
-            continue
-        before_by_signature = {symbol.signature: symbol for symbol in before_group}
-        after_by_signature = {symbol.signature: symbol for symbol in after_group}
-        label = _symbol_label(before_group[0])
-        if set(before_by_signature) != set(after_by_signature):
-            errors.append(f"changed ASL symbol signature: {label}")
-            continue
-        for signature in sorted(before_by_signature):
-            if (
-                before_by_signature[signature].body
-                != after_by_signature[signature].body
-            ):
-                errors.append(f"changed ASL symbol body: {label}")
-    return errors

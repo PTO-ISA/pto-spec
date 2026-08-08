@@ -64,4 +64,3 @@ begin
     ExecuteDecodedBundleStartWithAcceptedApplicabilityRules(
         NumericApplicabilityRules_None, instruction, form, length_bits);
 end;
-

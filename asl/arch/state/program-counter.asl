@@ -28,4 +28,3 @@ func WriteBPC(value: Word)
 begin
     _BPC = value;
 end;
-

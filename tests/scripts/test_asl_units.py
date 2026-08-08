@@ -202,14 +202,16 @@ class AslUnitsTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "ASL dependency cycle"):
             topological_order((first, second), synthetic_nodes=())
 
-    def test_validate_surface_ignores_unmigrated_sibling_roots(self) -> None:
+    def test_validate_surface_rejects_obsolete_sibling_roots(self) -> None:
         self.write_unit()
         (self.root / "bundle").mkdir()
         (self.root / "types.asl").write_text("constant OLD = 1;\n", encoding="utf-8")
 
         units = load_units(self.root / "arch", source_prefix=Path("asl/arch"))
 
-        self.assertEqual(validate_surface(self.root, "arch", units), [])
+        errors = validate_surface(self.root, "arch", units)
+        self.assertIn("unexpected ASL root entry: bundle", errors)
+        self.assertIn("unexpected ASL root entry: types.asl", errors)
 
     def test_direct_checker_entrypoint_loads_repository_modules(self) -> None:
         result = subprocess.run(

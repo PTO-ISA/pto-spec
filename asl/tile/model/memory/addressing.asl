@@ -46,4 +46,3 @@ readonly func TileMemoryIndexedHighNibble(index_value: Word,
 begin
     return TileDataTypeIsFourBit(data_type) && index_value[0] == '1';
 end;
-

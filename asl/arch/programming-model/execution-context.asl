@@ -68,4 +68,3 @@ begin
         _UQueue[[0]] = value;
     end;
 end;
-

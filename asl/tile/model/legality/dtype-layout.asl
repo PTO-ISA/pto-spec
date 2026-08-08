@@ -34,4 +34,3 @@ begin
     return TileLogicalShapeMatch(left, right) &&
            _Tiles[[left]].data_type == _Tiles[[right]].data_type;
 end;
-

@@ -7,4 +7,3 @@ begin
     // debug register families are ACR0-only in the PTO v0 profile.
     return UInt(address[11:0]) < 0x0f00 || ring == 0;
 end;
-

@@ -62,4 +62,3 @@ begin
     _ACRTrapAsynchronous[[ring]] = FALSE;
     _ACRTrapArgumentValid[[ring]] = FALSE;
 end;
-

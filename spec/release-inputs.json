@@ -1,0 +1,30 @@
+{
+  "evidence": [
+    {
+      "generator": "scripts/generate-release-manifest",
+      "path": "spec/evidence/pto-isa-0580-abi-vectors.json",
+      "role": "owned-output"
+    },
+    {
+      "generator": "scripts/generate-release-manifest",
+      "path": "spec/evidence/pto-isa-0580-encoding-totality.json",
+      "role": "owned-output"
+    },
+    {
+      "generator": "scripts/generate-release-manifest",
+      "path": "spec/evidence/pto-isa-0580-hardware-numeric-vectors.json",
+      "role": "owned-output"
+    },
+    {
+      "generator": "scripts/generate-release-gate-readiness",
+      "path": "spec/evidence/release-gate-readiness.json",
+      "role": "canonical-input"
+    },
+    {
+      "generator": "scripts/generate-release-traceability-readiness",
+      "path": "spec/evidence/release-traceability-readiness.json",
+      "role": "canonical-input"
+    }
+  ],
+  "schema": "pto.release-inputs.v1"
+}

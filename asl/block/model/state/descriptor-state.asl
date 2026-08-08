@@ -55,4 +55,3 @@ begin
     _BundleDataAttributes.saturating = FALSE;
     _BundleDataAttributes.canonicalize = FALSE;
 end;
-

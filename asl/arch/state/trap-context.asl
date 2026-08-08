@@ -82,4 +82,3 @@ impdef func RecoverTrapContext(target: AccessControlRing) => boolean
 begin
     return RecoverPortableTrapContext(target);
 end;
-

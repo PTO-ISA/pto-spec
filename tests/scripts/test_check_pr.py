@@ -39,7 +39,6 @@ class PullRequestCheckTest(unittest.TestCase):
                 "./scripts/check-ndf",
                 "./scripts/check-asl-tests",
                 "./scripts/check-release-workflow",
-                'PTO_MIGRATION_BASE_REF="$(git merge-base origin/main HEAD)" '
                 "python3 -m unittest discover -s tests/scripts -p test_*.py",
                 "python3 scripts/project_asl_catalogs.py --root . --check",
                 "python3 scripts/instruction_docs.py --check",
@@ -88,6 +87,30 @@ class PullRequestCheckTest(unittest.TestCase):
 
         self.assertNotIn('| grep -Fxq "$path"', checker)
         self.assertIn('grep -Fxq -- "$path" <<<"$assembled"', checker)
+
+    def test_repository_checker_rejects_every_obsolete_active_tree(self) -> None:
+        checker = REPOSITORY_CHECK.read_text(encoding="utf-8")
+        active_checker = (ROOT / "scripts/check-active-paths").read_text(
+            encoding="utf-8"
+        )
+        for relative in (
+            "asl/bundle",
+            "asl/numeric",
+            "asl/profiles",
+            "asl/architecture.asl",
+            "asl/types.asl",
+            "asl/state.asl",
+            "asl/concurrency.asl",
+            "asl/dispatch.asl",
+            "docs/instructions",
+            "tests/asl/main.asl",
+            "tests/asl/shards",
+        ):
+            self.assertFalse((ROOT / relative).exists(), relative)
+            self.assertIn(relative, active_checker)
+        self.assertIn("active Markdown is outside the ASL mirror", active_checker)
+        self.assertIn("./scripts/check-active-paths", checker)
+        self.assertNotIn("--four-surface", checker)
 
 
 if __name__ == "__main__":

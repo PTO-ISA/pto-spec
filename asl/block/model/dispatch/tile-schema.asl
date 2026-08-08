@@ -227,4 +227,3 @@ begin
     end;
     return BundleTileBindingCount() > 0 && last_count == 1;
 end;
-

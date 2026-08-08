@@ -35,4 +35,3 @@ pure func TileStorageFitsCapacity(rows: integer {0..65535},
 begin
     return TileStorageBytes(rows, columns, data_type) <= capacity_bytes;
 end;
-

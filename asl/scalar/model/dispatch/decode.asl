@@ -157,4 +157,3 @@ readonly func ReadDecodedScalarRegister(instruction: bits(48),
 begin
     return ReadScalarRegisterOperand(ScalarDecodedSelector(instruction, form, field));
 end;
-

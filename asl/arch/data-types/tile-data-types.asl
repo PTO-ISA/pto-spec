@@ -69,4 +69,3 @@ type TileLocation of enumeration {
     TileLocation_Memory,
     TileLocation_Any
 };
-

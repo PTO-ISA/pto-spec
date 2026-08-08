@@ -19,4 +19,3 @@ begin
     // B.NZ consume the distinct execution mask, not P0..P7.
     return FALSE;
 end;
-

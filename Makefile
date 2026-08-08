@@ -7,7 +7,7 @@ ASL_UNIT_SOURCES := $(shell find asl -type f -name '*.asl' | sort)
 SPEC := build/pto-spec.asl
 DECODER_SPEC := build/decoders.asl
 
-.PHONY: all setup build clean release-manifest release-check release-prepare \
+.PHONY: all setup build clean release-manifest release-evidence-check release-check release-prepare \
 	release-verify repo-check pr-check toolchain-check check test test-parallel ci \
 	check-asl-layout check-ndf check-asl-tests check-projections \
 	check-publication-hygiene print-asl-sources print-asl-tests
@@ -52,8 +52,7 @@ check-publication-hygiene:
 
 pr-check: check-asl-layout check-ndf check-asl-tests check-projections check-publication-hygiene
 	./scripts/check-release-workflow
-	PTO_MIGRATION_BASE_REF="$$(git merge-base origin/main HEAD)" \
-		python3 -m unittest discover -s tests/scripts -p 'test_*.py'
+	python3 -m unittest discover -s tests/scripts -p 'test_*.py'
 	git diff --check
 
 repo-check: $(SPEC)
@@ -63,7 +62,14 @@ repo-check: $(SPEC)
 release-manifest:
 	./scripts/generate-release-manifest
 
-release-prepare:
+release-evidence-check:
+	./scripts/generate-release-traceability-readiness --check
+	./scripts/generate-release-gate-readiness --check
+	./scripts/check-release-closure
+	./scripts/check-binary-closure
+	./scripts/check-release-manifest
+
+release-prepare: release-evidence-check
 	./scripts/generate-release-manifest
 	./scripts/check-release-manifest
 	git diff --exit-code -- spec/release-manifest.json spec/evidence
@@ -75,7 +81,7 @@ toolchain-check:
 check: $(SPEC)
 	$(ASLREF) --type-check-strict --no-exec $(SPEC)
 
-release-check: pr-check toolchain-check check
+release-check: pr-check release-evidence-check toolchain-check check
 	@test -n "$(RELEASE_COMMIT)" || \
 		{ echo 'RELEASE_COMMIT=<exact 40-hex HEAD> is required' >&2; exit 2; }
 	./scripts/run-asl-release-suite --commit "$(RELEASE_COMMIT)"

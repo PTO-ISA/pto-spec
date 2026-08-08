@@ -16,4 +16,3 @@ readonly func CoreTileCapacityInUse() => integer
 begin
     return TileCapacityInUse() + SharedTileCapacityInUse();
 end;
-

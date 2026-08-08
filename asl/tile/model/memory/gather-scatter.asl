@@ -246,4 +246,3 @@ begin
     CommitScatterLanes(source_tile, source_payload, lane_order, lane_count,
         original_addresses, translated_addresses, high_nibbles);
 end;
-

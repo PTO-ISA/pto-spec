@@ -16,4 +16,3 @@ begin
         ClearInterruptPending(ring, interrupt_id);
     end;
 end;
-

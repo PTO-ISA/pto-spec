@@ -24,8 +24,8 @@ architecture requirement.
 - Use ASL1 syntax accepted by the commit pinned in `.aslref-version`.
 - Keep the architecture entry point under `asl/` and place scalar and tile
   instruction-family sources under `asl/scalar/` and `asl/tile/`.
-- Keep `specification.toml`, `spec/requirements.json`, canonical catalogs, evidence manifests,
-  coverage, and traceability consistent with every normative change.
+- Keep `specification.toml`, canonical catalogs, `spec/release-inputs.json`, evidence manifests,
+  coverage, and generated release traceability consistent with every normative change.
 - Preserve the one-level architecture: never add nested instruction bodies,
   body-local register files, implicit body queues, or body replay state.
 - Do not guess missing preconditions or fault behavior; record an architecture decision gap.

@@ -16,4 +16,3 @@ type FaultCode of enumeration {
     Fault_BundleControl,
     Fault_ServiceRequest
 };
-

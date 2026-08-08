@@ -1,5 +1,7 @@
 # ASL Four-Surface Mirror and Independent AVS Design
 
+> Historical, non-normative material. This page is excluded from the active PTO architecture and release closure.
+
 ## Status
 
 Approved by the architecture owner on 2026-08-08.

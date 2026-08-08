@@ -180,4 +180,3 @@ begin
     let updated = AtomicUpdateSharedTile(shared_id, tile, pe_mask);
     assert updated;
 end;
-

@@ -62,4 +62,3 @@ readonly func TileOperandsLegal_TPREFETCH(
 begin
     return TRUE;
 end;
-

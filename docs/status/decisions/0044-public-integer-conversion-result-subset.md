@@ -1,5 +1,7 @@
 # ADR 0044: Public integer conversion result subset
 
+> Historical-evidence note: verification paths named below record the evidence used when this ADR was accepted; deleted aggregate checks are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
+
 ## Status
 
 Accepted executable subset; same-width signedness changes, profile support,

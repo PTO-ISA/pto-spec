@@ -1,5 +1,7 @@
 # PTO and Linx ISA v0.58 Coordinated Upgrade Design
 
+> Historical, non-normative material. This page is excluded from the active PTO architecture and release closure.
+
 ## Objective
 
 Promote PTO ISA and LinxISA to the same hard-break v0.58 contract. PTO

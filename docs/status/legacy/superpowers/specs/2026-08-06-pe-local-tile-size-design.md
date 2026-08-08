@@ -1,5 +1,7 @@
 # PTO ISA 0.58 PE-Local Tile Size and Dimension Design
 
+> Historical, non-normative material. This page is excluded from the active PTO architecture and release closure.
+
 ## Status
 
 Approved architecture direction for Issues 48 and 49. This design replaces the

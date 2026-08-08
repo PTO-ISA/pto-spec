@@ -30,4 +30,3 @@ type FloatingFusedOperation of enumeration {
     FloatingFused_NMADD,
     FloatingFused_NMSUB
 };
-

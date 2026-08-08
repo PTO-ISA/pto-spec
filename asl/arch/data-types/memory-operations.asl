@@ -16,4 +16,3 @@ type AtomicOperation of enumeration {
     Atomic_UMIN,
     Atomic_UMAX
 };
-

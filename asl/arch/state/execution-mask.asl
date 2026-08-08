@@ -8,4 +8,3 @@ func WriteExecutionMask(value: Word)
 begin
     _ExecutionMask = value;
 end;
-

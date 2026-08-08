@@ -1,5 +1,7 @@
 # ADR-0030: Scalar AMO totality, reservations, and restart
 
+> Historical-evidence note: test paths named below record the evidence used when this ADR was accepted; they are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
+
 - Status: Accepted
 - Date: 2026-07-30
 - Requirements: PTO-REQ-SCALAR-AMO-001, PTO-REQ-SCALAR-OPERAND-001,

@@ -7,4 +7,3 @@ begin
                         row_stride_elements) +
            NaturalToWord(column as integer {0..262144});
 end;
-

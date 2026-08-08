@@ -151,6 +151,13 @@ def validate_release_workflow(workflow: str) -> list[str]:
         errors.append(
             "release-evidence must upload evidence with a commit-pinned action"
         )
+    if (
+        "build/asl-test-matrix.json" not in evidence
+        or "spec/evidence/asl-test-matrix.sha256" not in evidence
+    ):
+        errors.append(
+            "release-evidence must upload the exact matrix and its checksum"
+        )
 
     validate = _job_block(workflow, "validate")
     if "name: Release / validate" not in validate or "if: always()" not in validate:

@@ -5,13 +5,11 @@ repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 cd "$repo_root"
 
 structure_only=false
-four_surface=false
 for argument in "$@"; do
     case $argument in
         --structure-only) structure_only=true ;;
-        --four-surface) four_surface=true ;;
         *)
-            echo "usage: $0 [--structure-only] [--four-surface]" >&2
+            echo "usage: $0 [--structure-only]" >&2
             exit 2
             ;;
     esac
@@ -21,6 +19,8 @@ fail() {
     echo "error: $*" >&2
     exit 1
 }
+
+./scripts/check-active-paths
 
 required_files=(
     .aslref-version
@@ -35,8 +35,11 @@ required_files=(
     specification.toml
     .github/CODEOWNERS
     .codex/skills/pto-asl/SKILL.md
-    asl/architecture.asl
-    docs/status/legacy/root/architecture.md
+    asl/arch/overview/architecture.asl
+    asl/block/lifecycle/BSTART.asl
+    asl/scalar/alu/ADD.asl
+    asl/tile/memory/regular/TLOAD.asl
+    docs/mkdocs/mkdocs.yml
     docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md
     docs/status/decisions/0038-scalar-numeric-flag-state-and-ownership.md
     docs/status/decisions/0039-numeric-rounding-selector-ownership.md
@@ -53,17 +56,7 @@ required_files=(
     docs/status/decisions/0045-pto-isa-release-tile-contract.md
     docs/status/decisions/0052-pto-isa-0580-davincioo-catalog.md
     docs/status/decisions/0046-separate-execution-mask-and-warp-predicates.md
-    docs/status/legacy/root/coverage.md
-    docs/status/legacy/root/memory-model.md
-    docs/status/legacy/root/modeling-conventions.md
-    docs/status/legacy/root/maturity-bringup-plan.md
-    docs/status/legacy/root/maturity-stage-targets.md
-    docs/status/legacy/root/numeric-profile-decision-register.md
-    docs/status/legacy/root/normative-sources.md
-    docs/status/legacy/root/profile-contracts.md
-    docs/status/legacy/root/review-checklist.md
-    docs/instructions/index.md
-    spec/requirements.json
+    spec/release-inputs.json
     spec/catalog/scalar-forms.json
     spec/catalog/command-forms.json
     spec/catalog/numeric-profile-identities.json
@@ -75,57 +68,20 @@ required_files=(
     spec/evidence/pto-isa-0580-abi-vectors.json
     spec/evidence/pto-isa-0580-encoding-totality.json
     spec/evidence/pto-isa-0580-hardware-numeric-vectors.json
-    spec/evidence/public-source-reconciliation.json
-    spec/evidence/maturity-closure.json
     spec/evidence/release-gate-readiness.json
     spec/evidence/release-traceability-readiness.json
-    spec/evidence/numeric-conformance-readiness.json
-    spec/evidence/numeric-contracts.json
-    spec/evidence/numeric-profile-decision-inputs.json
-    spec/evidence/numeric-profile-decision-proposals.json
-    spec/evidence/public-numeric-type-baseline.json
-    spec/evidence/public-integer-conversion-contract.json
-    spec/evidence/numeric-format-namespace-contract.json
-    spec/evidence/numeric-profile-applicability-closure.json
-    spec/evidence/numeric-variation-point-ownership.json
-    spec/evidence/numeric-rounding-selector-contract.json
-    spec/evidence/numeric-subnormal-contract.json
-    spec/evidence/numeric-special-value-contract.json
-    spec/evidence/bundle-command-totality.json
-    spec/evidence/cube-totality.json
-    spec/evidence/executable-model-comparison.json
-    spec/evidence/noncomparable-oracle-coverage.json
-    spec/evidence/scalar-agu-totality.json
-    spec/evidence/scalar-alu-totality.json
-    spec/evidence/scalar-bru-totality.json
-    spec/evidence/scalar-fsu-totality.json
-    spec/evidence/scalar-numeric-flag-contract.json
-    spec/evidence/scalar-effect-closure.json
-    spec/evidence/tepl-totality.json
-    spec/evidence/tlsu-totality.json
-    scripts/check-assertion-boundaries
-    scripts/generate-bundle-command-totality
-    scripts/generate-executable-model-comparison
-    scripts/generate-noncomparable-oracle-coverage
-    scripts/generate-instruction-reference
-    scripts/generate-numeric-conformance-readiness
-    scripts/generate-numeric-profile-decision-inputs
-    scripts/generate-numeric-profile-decision-proposals
-    scripts/generate-public-numeric-type-baseline
-    scripts/generate-public-integer-conversion-contract
-    scripts/generate-numeric-format-namespace-contract
-    scripts/generate-numeric-profile-applicability-closure
-    scripts/generate-numeric-variation-point-ownership
-    scripts/generate-numeric-rounding-selector-contract
-    scripts/generate-numeric-subnormal-contract
-    scripts/generate-numeric-special-value-contract
-    scripts/generate-public-source-reconciliation
     scripts/generate-release-gate-readiness
     scripts/generate-release-manifest
     scripts/generate-release-traceability-readiness
-    scripts/generate-scalar-numeric-flag-contract
-    scripts/generate-system-register-witness-closure
     tests/README.md
+    scripts/check-asl-layout
+    scripts/check-active-paths
+    scripts/check-asl-tests
+    scripts/check-ndf
+    scripts/check-release-closure
+    scripts/print-asl-test-matrix
+    scripts/run-asl-test
+    scripts/run-asl-release-suite
     scripts/check-release-manifest
 )
 
@@ -225,38 +181,22 @@ for script in scripts/*; do
     esac
 done
 
-if [[ $four_surface == true ]]; then
-    ./scripts/check-asl-layout
-fi
+./scripts/check-asl-layout
+./scripts/check-ndf
+./scripts/check-asl-tests
+python3 scripts/project_asl_catalogs.py --root . --check
+python3 scripts/instruction_docs.py --check
+python3 scripts/generate-mnemonic-avs.py --check
+python3 scripts/check-publication-hygiene
 
 if [[ $structure_only == true ]]; then
-    ./scripts/check-ndf
-    ./scripts/check-asl-tests
-    python3 scripts/instruction_docs.py --check
     echo "repository structure checks passed"
     exit 0
 fi
 
-python3 scripts/check-catalogs
-./scripts/check-assertion-boundaries
-./scripts/generate-bundle-command-totality --check
-./scripts/generate-noncomparable-oracle-coverage --check
-./scripts/generate-numeric-conformance-readiness --check
-./scripts/generate-numeric-profile-decision-inputs --check
-./scripts/generate-scalar-numeric-flag-contract --check
-./scripts/generate-system-register-witness-closure --check
-./scripts/generate-numeric-rounding-selector-contract --check
-./scripts/generate-numeric-subnormal-contract --check
-./scripts/generate-numeric-special-value-contract --check
-./scripts/generate-numeric-format-namespace-contract --check
-./scripts/generate-public-numeric-type-baseline --check
-./scripts/generate-public-integer-conversion-contract --check
-./scripts/generate-numeric-profile-applicability-closure --check
-./scripts/generate-numeric-variation-point-ownership --check
-./scripts/generate-numeric-profile-decision-proposals --check
 ./scripts/generate-release-traceability-readiness --check
 ./scripts/generate-release-gate-readiness --check
-python3 scripts/generate-instruction-reference --check
-python3 scripts/instruction_docs.py --check
+./scripts/check-release-closure
+./scripts/check-binary-closure
 ./scripts/check-release-manifest
-python3 scripts/check-publication-hygiene
+echo "repository checks passed"

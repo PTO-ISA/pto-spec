@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import tempfile
 import unittest
 from pathlib import Path
 
 from scripts.asl_release_suite import (
+    _write_evidence,
     aggregate_results,
     execute_matrix,
     require_exact_head,
@@ -42,7 +44,13 @@ def result(
 class ReleaseSuiteAggregationTest(unittest.TestCase):
     def test_exact_head_mismatch_is_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "exact HEAD"):
-            require_exact_head("a" * 40, "b" * 40)
+            require_exact_head("a" * 40, "b" * 40, "")
+
+    def test_exact_head_rejects_tracked_staged_and_untracked_dirt(self) -> None:
+        for status in (" M tracked.asl\n", "M  staged.asl\n", "?? untracked.asl\n"):
+            with self.subTest(status=status):
+                with self.assertRaisesRegex(ValueError, "clean committed tree"):
+                    require_exact_head("a" * 40, "a" * 40, status)
 
     def test_one_complete_pass_is_accepted(self) -> None:
         coverage = aggregate_results("c" * 40, MATRIX, [result()])
@@ -92,6 +100,33 @@ class ReleaseSuiteAggregationTest(unittest.TestCase):
 
             results = execute_matrix(root, MATRIX, jobs=1, runner=fake_runner)
             self.assertEqual(results, [result()])
+
+    def test_release_evidence_hashes_the_exact_monolithic_matrix_document(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            coverage = aggregate_results("c" * 40, MATRIX, [result()])
+
+            _write_evidence(root, MATRIX, coverage)
+
+            matrix_path = root / "build/asl-test-matrix.json"
+            matrix_bytes = matrix_path.read_bytes()
+            self.assertEqual(
+                json.loads(matrix_bytes),
+                {
+                    "commit": "c" * 40,
+                    "page": 0,
+                    "page_count": 1,
+                    "test_count": 1,
+                    "include": MATRIX,
+                },
+            )
+            self.assertEqual(
+                (root / "spec/evidence/asl-test-matrix.sha256").read_text(
+                    encoding="utf-8"
+                ),
+                f"{hashlib.sha256(matrix_bytes).hexdigest()}  "
+                "build/asl-test-matrix.json\n",
+            )
 
 
 if __name__ == "__main__":

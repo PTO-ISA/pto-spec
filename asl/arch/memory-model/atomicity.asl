@@ -84,4 +84,3 @@ begin
     assert read < _MemoryEventCount && source < _MemoryEventCount;
     _MemoryEvents[[read]].read_from = source;
 end;
-

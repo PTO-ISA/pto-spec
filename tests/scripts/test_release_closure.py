@@ -1,0 +1,126 @@
+from __future__ import annotations
+
+import json
+import subprocess
+import tempfile
+import unittest
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[2]
+CHECKER = ROOT / "scripts/check-release-closure"
+REGISTRY = ROOT / "spec/release-inputs.json"
+MAKEFILE = ROOT / "Makefile"
+
+
+class ReleaseClosureTest(unittest.TestCase):
+    def test_release_targets_require_fresh_canonical_evidence(self) -> None:
+        makefile = MAKEFILE.read_text(encoding="utf-8")
+        self.assertIn(
+            "release-evidence-check:\n"
+            "\t./scripts/generate-release-traceability-readiness --check\n"
+            "\t./scripts/generate-release-gate-readiness --check\n"
+            "\t./scripts/check-release-closure\n"
+            "\t./scripts/check-binary-closure\n"
+            "\t./scripts/check-release-manifest\n",
+            makefile,
+        )
+        self.assertIn("release-prepare: release-evidence-check", makefile)
+        self.assertIn(
+            "release-check: pr-check release-evidence-check toolchain-check check",
+            makefile,
+        )
+
+    def test_canonical_generators_reject_stale_artifacts(self) -> None:
+        for generator in (
+            ROOT / "scripts/generate-release-traceability-readiness",
+            ROOT / "scripts/generate-release-gate-readiness",
+        ):
+            with self.subTest(generator=generator.name):
+                with tempfile.TemporaryDirectory() as directory:
+                    stale = Path(directory) / "stale.json"
+                    stale.write_text("{}\n", encoding="utf-8")
+                    result = subprocess.run(
+                        [str(generator), "--check", "--output", str(stale)],
+                        cwd=ROOT,
+                        text=True,
+                        capture_output=True,
+                        check=False,
+                    )
+                    self.assertNotEqual(result.returncode, 0)
+                    self.assertIn("stale generated artifact", result.stderr)
+
+    def test_obsolete_independent_owners_are_retired(self) -> None:
+        self.assertFalse((ROOT / "scripts/check-catalogs").exists())
+        self.assertFalse((ROOT / "spec/requirements.json").exists())
+
+    def test_explicit_registry_owns_every_canonical_evidence_file(self) -> None:
+        registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
+        self.assertEqual(registry["schema"], "pto.release-inputs.v1")
+        paths = [row["path"] for row in registry["evidence"]]
+        self.assertEqual(len(paths), len(set(paths)))
+        self.assertEqual(
+            set(paths),
+            {
+                "spec/evidence/pto-isa-0580-abi-vectors.json",
+                "spec/evidence/pto-isa-0580-encoding-totality.json",
+                "spec/evidence/pto-isa-0580-hardware-numeric-vectors.json",
+                "spec/evidence/release-gate-readiness.json",
+                "spec/evidence/release-traceability-readiness.json",
+            },
+        )
+        for row in registry["evidence"]:
+            self.assertTrue((ROOT / row["path"]).is_file())
+            self.assertTrue((ROOT / row["generator"]).is_file())
+
+    def test_repository_release_closure_is_current_and_legacy_free(self) -> None:
+        result = subprocess.run(
+            [str(CHECKER)], cwd=ROOT, text=True, capture_output=True, check=False
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_checker_rejects_legacy_and_missing_paths_in_registered_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "spec/evidence").mkdir(parents=True)
+            (root / "scripts").mkdir()
+            (root / "scripts/generator").write_text("#!/bin/true\n", encoding="utf-8")
+            (root / "spec/evidence/bad.json").write_text(
+                json.dumps(
+                    {
+                        "legacy": "docs/status/legacy/root/architecture.md",
+                        "missing": "tests/asl/missing.asl",
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (root / "spec/release-inputs.json").write_text(
+                json.dumps(
+                    {
+                        "schema": "pto.release-inputs.v1",
+                        "evidence": [
+                            {
+                                "path": "spec/evidence/bad.json",
+                                "generator": "scripts/generator",
+                                "role": "canonical-input",
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            result = subprocess.run(
+                [str(CHECKER), "--root", str(root)],
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("legacy", result.stderr)
+            self.assertIn("missing active path", result.stderr)
+
+
+if __name__ == "__main__":
+    unittest.main()

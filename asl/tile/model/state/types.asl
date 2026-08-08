@@ -169,4 +169,3 @@ type SharedTileInfo of record {
 
 type SharedTileSnapshot of array [[PTO_SHARED_TILE_COUNT]]
     of SharedTileInfo;
-

@@ -23,4 +23,3 @@ readonly func TileSourceContentsDefined(index: TileIndex) => boolean
 begin
     return TileDescriptorLegal(index) && _Tiles[[index]].contents_defined;
 end;
-

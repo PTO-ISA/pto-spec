@@ -111,4 +111,3 @@ type BundleScalarBindingSnapshot of array [[PTO_BUNDLE_SCALAR_BINDING_COUNT]]
 type BundleTileBindingSnapshot of array [[PTO_BUNDLE_TILE_BINDING_COUNT]]
     of BundleTileBinding;
 type BundleSharedBindingSnapshot of array [[4]] of BundleSharedBinding;
-

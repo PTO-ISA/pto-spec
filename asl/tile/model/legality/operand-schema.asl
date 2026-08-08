@@ -323,4 +323,3 @@ begin
            _Tiles[[destination]].valid_rows == patch_count &&
            _Tiles[[destination]].valid_columns == patch_elements;
 end;
-

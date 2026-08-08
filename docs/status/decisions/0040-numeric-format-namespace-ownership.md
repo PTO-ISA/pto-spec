@@ -1,5 +1,7 @@
 # ADR 0040: Numeric format namespace ownership
 
+> Historical-evidence note: test paths named below record the evidence used when this ADR was accepted; they are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
+
 ## Status
 
 Accepted structural checkpoint; bit-exact formats, target availability, and

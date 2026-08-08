@@ -9,7 +9,7 @@ commands=(
     "./scripts/check-ndf"
     "./scripts/check-asl-tests"
     "./scripts/check-release-workflow"
-    "PTO_MIGRATION_BASE_REF=\"\$(git merge-base origin/main HEAD)\" python3 -m unittest discover -s tests/scripts -p test_*.py"
+    "python3 -m unittest discover -s tests/scripts -p test_*.py"
     "python3 scripts/project_asl_catalogs.py --root . --check"
     "python3 scripts/instruction_docs.py --check"
     "python3 scripts/generate-mnemonic-avs.py --check"

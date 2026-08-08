@@ -38,7 +38,7 @@ success. The verification workflow does not create a tag or release.
 | Instruction pages embed the owning ASL without drift | `scripts/instruction_docs.py --check` |
 | PR checks remain lightweight and the release workflow remains exact-head and fail-closed | `scripts/check-pr` and `scripts/check-release-workflow` |
 | The pinned ASLRef accepts valid and rejects invalid ASL1 | `scripts/check-toolchain` in the release lane |
-| Catalogs, decoder reachability, profiles, feature evidence, and public-source dispositions agree | `scripts/check-catalogs` in the release lane |
+| Canonical release evidence is explicitly registered, current, legacy-free, and manifest-complete | `scripts/check-release-closure` in both repository and release lanes |
 | Prohibited identities, stale URLs, and broken local documentation links stay unpublished | `scripts/check-publication-hygiene` |
 | Review routing for normative, toolchain, and governance paths | `.github/CODEOWNERS` |
 | Required checks, signed commits, linear history, resolved conversations, and protected `main` | GitHub repository settings |

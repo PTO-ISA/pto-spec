@@ -15,4 +15,3 @@ pure func TileCoreAllocationBytes(pe_mask: bits(4),
 begin
     return PEMaskPopulation(pe_mask) * per_pe_bytes;
 end;
-

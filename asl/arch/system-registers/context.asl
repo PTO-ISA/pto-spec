@@ -26,4 +26,3 @@ begin
     _ExtendedSystemRegisters[[PTOv0ContextRegisterIndex(ring, low_index)]] =
         value;
 end;
-

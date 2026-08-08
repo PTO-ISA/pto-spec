@@ -4,7 +4,7 @@ short_name = "PTO ISA"
 language = "ASL1"
 status = "draft"
 normative = true
-entry_point = "asl/architecture.asl"
+source_roots = ["asl/arch", "asl/block", "asl/scalar", "asl/tile"]
 formal_model_issue = "https://github.com/PTO-ISA/pto-spec/issues/4"
 
 [release]
@@ -20,7 +20,7 @@ implementations = [
   "asl/arch/profile/reference-profile.asl",
   "asl/arch/profile/reset.asl",
 ]
-conformance_tests = "tests/asl/profile-tests.asl"
+conformance_test_root = "tests/asl"
 numeric_model = "deterministic-raw-carrier-reference"
 memory_model = "identity-translation-with-acr2-protected-region"
 reset_model = "explicit-reference-reset"

@@ -48,4 +48,3 @@ begin
     else return vector_base;
     end;
 end;
-

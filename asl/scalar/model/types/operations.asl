@@ -38,4 +38,3 @@ type ScalarCondition of enumeration {
     ScalarCondition_Z,
     ScalarCondition_NZ
 };
-

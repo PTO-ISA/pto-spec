@@ -1,5 +1,7 @@
 # ASL-Golden Instruction Reference Design
 
+> Historical, non-normative material. This page is excluded from the active PTO architecture and release closure.
+
 ## Purpose
 
 PTO instruction semantics, legality, decode behavior, and architectural effects

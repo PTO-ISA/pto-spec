@@ -114,4 +114,3 @@ begin
            _Tiles[[source_left]].data_type == _Tiles[[source_right]].data_type &&
            _Tiles[[destination]].data_type == _Tiles[[source_left]].data_type;
 end;
-

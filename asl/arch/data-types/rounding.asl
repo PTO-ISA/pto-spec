@@ -34,4 +34,3 @@ type NumericApplicabilityRuleSet of enumeration {
     NumericApplicabilityRules_None,
     NumericApplicabilityRules_A2A3MxRejection
 };
-
