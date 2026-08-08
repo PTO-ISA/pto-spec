@@ -167,7 +167,7 @@ git commit -m "test: correct release shard fixtures"
   - `topological_order(units: Sequence[AslUnit], synthetic_nodes: tuple[str, ...] = ("generated:decoders",)) -> tuple[str, ...]`
   - `compare_ref_to_tree(repo: pathlib.Path, before_ref: str, after_root: pathlib.Path, surfaces: tuple[str, ...]) -> list[str]`
 
-- [ ] **Step 1: Write parser and validation tests**
+- [x] **Step 1: Write parser and validation tests**
 
 Add tests that construct temporary four-surface trees and assert:
 
@@ -196,7 +196,7 @@ def test_topological_order_rejects_cycle(self):
         topological_order(self.units)
 ```
 
-- [ ] **Step 2: Run the tests and observe the missing module failure**
+- [x] **Step 2: Run the tests and observe the missing module failure**
 
 Run:
 
@@ -206,7 +206,7 @@ python3 -m unittest tests.scripts.test_asl_units -v
 
 Expected: FAIL because `scripts.asl_units` does not exist.
 
-- [ ] **Step 3: Implement the unit model and CLI**
+- [x] **Step 3: Implement the unit model and CLI**
 
 Use these exact record rules in `scripts/asl_units.py`:
 
@@ -228,7 +228,7 @@ MAX_HANDWRITTEN_LINES = 500
 
 `load_units()` MUST scan `root.rglob("*.asl")`, require exactly one metadata record per file, derive the expected surface/classification from the relative parent path, and sort by POSIX path. `validate_layout()` MUST report all errors in one run. `validate_surface()` MUST enforce metadata, path, dependency, and line-limit rules for one migrated surface while ignoring unmigrated sibling roots. `check-asl-layout` MUST print each error to stderr and return 1 when any error exists; `--surface <name>` selects `validate_surface()`, while no option selects strict whole-tree validation.
 
-- [ ] **Step 4: Prove the checker catches all structural canaries**
+- [x] **Step 4: Prove the checker catches all structural canaries**
 
 Run:
 
@@ -238,7 +238,7 @@ python3 -m unittest tests.scripts.test_asl_units -v
 
 Expected: PASS for duplicate IDs, missing dependencies, cycles, root-entry, path mismatch, missing metadata, duplicate metadata, and 501-line canaries.
 
-- [ ] **Step 5: Implement Git-backed semantic-surface comparison**
+- [x] **Step 5: Implement Git-backed semantic-surface comparison**
 
 `scripts/compare-asl-semantic-surface` MUST read the before tree with `git ls-tree` and `git show`, parse named ASL constants/types/globals/functions/procedures, strip comments and metadata, normalize whitespace, and compare each symbol signature and body hash with the current tree. It accepts:
 
@@ -258,7 +258,7 @@ python3 -m unittest tests.scripts.test_compare_asl_semantic_surface -v
 
 Expected: PASS.
 
-- [ ] **Step 6: Add an opt-in repository check without breaking the old tree**
+- [x] **Step 6: Add an opt-in repository check without breaking the old tree**
 
 Add `--four-surface` to `scripts/check-repository`; when present it invokes `scripts/check-asl-layout`. Do not add it to `make pr-check` until Task 13.
 
@@ -271,7 +271,7 @@ python3 -m unittest tests.scripts.test_asl_units -v
 
 Expected: both commands exit 0 on the transitional tree.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add scripts/asl_units.py scripts/check-asl-layout scripts/compare-asl-semantic-surface scripts/check-repository tests/scripts/test_asl_units.py tests/scripts/test_compare_asl_semantic_surface.py
