@@ -61,8 +61,12 @@ opam exec -- dune build --root=/path/to/herdtools7 asllib/aslref.exe
 ```
 
 Do not wrap every long-running ASLRef shard in `dune exec`. Dune retains the source workspace lock until the child exits,
-so multiple shards that appear parallel will serialize on the shared build tree. The repository `scripts/aslref` wrapper
-implements the build-once/direct-execution rule and remains the canonical entry point for local and CI validation.
+so multiple shards that appear parallel will serialize on the shared build tree. Run `make setup` before scheduling
+shards. Its `scripts/prepare-aslref` step is the sole owner of fetching, checking out, and building the exact pinned
+checkout. The repository `scripts/aslref` wrapper remains the canonical entry point for local and CI validation, but it
+is deliberately read-only: it verifies the prepared checkout origin, commit, and executable, then runs it. If preparation
+is missing or stale, the launcher fails closed and instructs the caller to run `make setup`; it must not mutate a shared
+cache from a parallel shard.
 
 ASLRef parses and types every declaration assembled into a shard, including test functions that its `main()` never
 calls. A parallel shard should therefore include the complete normative specification but only the test-library sources

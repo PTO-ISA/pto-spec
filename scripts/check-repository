@@ -80,6 +80,7 @@ required_files=(
     scripts/check-ndf
     scripts/check-release-closure
     scripts/print-asl-test-matrix
+    scripts/prepare-aslref
     scripts/run-asl-test
     scripts/run-asl-release-suite
     scripts/check-release-manifest

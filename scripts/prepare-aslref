@@ -17,33 +17,28 @@ if ! command -v opam >/dev/null 2>&1; then
 fi
 
 if [[ ! -d "$aslref_root/.git" ]]; then
-    echo "error: pinned ASLRef is not prepared; run 'make setup' before executing tests" >&2
-    exit 1
-fi
-
-if [[ $(git -C "$aslref_root" remote get-url origin) != "$upstream" ]]; then
+    mkdir -p "$aslref_root"
+    git -C "$aslref_root" init --quiet
+    git -C "$aslref_root" remote add origin "$upstream"
+elif [[ $(git -C "$aslref_root" remote get-url origin) != "$upstream" ]]; then
     echo "error: cached ASLRef origin is not $upstream" >&2
     exit 1
 fi
 
 current=$(git -C "$aslref_root" rev-parse HEAD 2>/dev/null || true)
 if [[ $current != "$pin" ]]; then
-    echo "error: pinned ASLRef is not prepared at $pin; run 'make setup' before executing tests" >&2
-    exit 1
+    git -C "$aslref_root" fetch --quiet --depth 1 origin "$pin"
+    git -C "$aslref_root" checkout --quiet --detach "$pin"
 fi
 
 if [[ -n $(git -C "$aslref_root" status --porcelain=v1 --untracked-files=all) ]]; then
-    echo "error: pinned ASLRef checkout is not clean; run 'make setup' after repairing the cache" >&2
+    echo "error: cached ASLRef checkout is not clean; repair it before running 'make setup'" >&2
     exit 1
 fi
 
 aslref_binary="$aslref_root/_build/default/asllib/aslref.exe"
-if [[ ! -x $aslref_binary ]]; then
-    echo "error: pinned ASLRef binary is not prepared; run 'make setup' before executing tests" >&2
-    exit 1
-fi
+opam exec -- dune build --root="$aslref_root" asllib/aslref.exe
 
-# Execute the pinned binary directly once built. `dune exec` holds one workspace
-# lock for the lifetime of ASLRef, which serializes otherwise independent test
-# shards and defeats `make test-parallel`.
-exec "$aslref_binary" "$@"
+test "$(git -C "$aslref_root" rev-parse HEAD)" = "$pin"
+test -z "$(git -C "$aslref_root" status --porcelain=v1 --untracked-files=all)"
+test -x "$aslref_binary"
