@@ -1,3 +1,4 @@
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-AGU-ADDRESSING","surface":"scalar","classification":["model","agu","addressing"],"depends_on":["PTO-SCALAR-MODEL-AGU-MEMORY"]}
 // PTO-REQ-SCALAR-ADDRESS-001, PTO-REQ-MEMORY-COMPLETION-001: scalar addressing,
 // pair preflight, and fault-suppressed register writeback.
 

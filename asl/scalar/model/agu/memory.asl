@@ -1,3 +1,4 @@
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-AGU-MEMORY","surface":"scalar","classification":["model","agu","memory"],"depends_on":["PTO-SCALAR-MODEL-BRU-SEMANTICS","PTO-ARCH-MEMORY-MODEL-ORDERING"]}
 // PTO-REQ-MEMORY-001, PTO-REQ-MEMORY-COMPLETION-001,
 // PTO-REQ-MEMORY-TSO-001: profile-backed, little-endian memory with precise
 // instruction-wide completion and PTO-TSO event extraction.

@@ -1,3 +1,4 @@
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-ALU-SEMANTICS","surface":"scalar","classification":["model","alu","semantics"],"depends_on":["PTO-SCALAR-MODEL-TYPES-OPERANDS"]}
 // PTO-REQ-SCALAR-ALU-001: PTO integer, logic, and shift value rules.
 
 pure func MultiplyWord(left: Word, right: Word) => Word

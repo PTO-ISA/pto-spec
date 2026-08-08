@@ -1,3 +1,4 @@
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-BRU-SEMANTICS","surface":"scalar","classification":["model","bru","semantics"],"depends_on":["PTO-SCALAR-MODEL-ALU-SEMANTICS"]}
 // PTO-REQ-SCALAR-CONTROL-001: direct scalar comparison and control transfer.
 
 pure func ConditionHolds(condition: ScalarCondition, left: Word, right: Word) => boolean

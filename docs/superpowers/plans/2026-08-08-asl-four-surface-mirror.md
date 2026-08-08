@@ -673,11 +673,11 @@ git commit -m "refactor: merge bundle ASL into block"
 - Consumes: architecture state/data types and block scalar-binding contracts.
 - Produces: scalar model units under `asl/scalar/model/types/` and `asl/scalar/model/dispatch/`.
 
-- [ ] **Step 1: Write scalar symbol, encoding, and mnemonic ownership tests**
+- [x] **Step 1: Write scalar symbol, encoding, and mnemonic ownership tests**
 
 Assert that old and new scalar function signatures and `PTO-INSTRUCTION` records are equal after removing only the newly added unit fields.
 
-- [ ] **Step 2: Run the focused test and observe the expected aggregate-file failure**
+- [x] **Step 2: Run the focused test and observe the expected aggregate-file failure**
 
 Run:
 
@@ -687,7 +687,7 @@ PTO_MIGRATION_BASE_REF="$(git merge-base origin/main HEAD)" python3 -m unittest 
 
 Expected: FAIL because `asl/scalar/dispatch.asl` still owns every class.
 
-- [ ] **Step 3: Split scalar types and dispatch**
+- [x] **Step 3: Split scalar types and dispatch**
 
 Create:
 
@@ -707,11 +707,11 @@ asl/scalar/model/dispatch/top-level.asl
 Move function bodies unchanged by the existing class boundaries. The top-level dispatcher MUST select one class dispatcher and remain below 120 lines.
 Update the transitional explicit Makefile source list to preserve the old declaration order across the split class files.
 
-- [ ] **Step 4: Extend mnemonic metadata without changing catalog payloads**
+- [x] **Step 4: Extend mnemonic metadata without changing catalog payloads**
 
 For every scalar mnemonic, add stable unit fields while keeping `catalog_records`, `catalog_indices`, encoding values, constraints, and documentation regions byte-equivalent after JSON normalization.
 
-- [ ] **Step 5: Verify scalar preservation**
+- [x] **Step 5: Verify scalar preservation**
 
 Run:
 
@@ -729,7 +729,7 @@ Expected: every command exits 0.
 Catalog/evidence projection and ASLRef runtime checks remain deferred to Tasks 9
 and 14 respectively.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add asl/scalar Makefile tests/scripts/test_scalar_migration.py

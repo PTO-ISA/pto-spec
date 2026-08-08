@@ -1,3 +1,4 @@
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-AMO-SEMANTICS","surface":"scalar","classification":["model","amo","semantics"],"depends_on":["PTO-SCALAR-MODEL-AGU-ADDRESSING","PTO-ARCH-MEMORY-MODEL-ATOMICITY"]}
 // PTO-REQ-SCALAR-AMO-001, PTO-REQ-MEMORY-TSO-001: LR/SC, CAS, and atomic
 // read-modify-write operations represented as indivisible TSO events.
 

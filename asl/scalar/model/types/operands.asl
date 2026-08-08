@@ -1,3 +1,4 @@
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-TYPES-OPERANDS","surface":"scalar","classification":["model","types","operands"],"depends_on":["PTO-SCALAR-MODEL-TYPES-OPERATIONS","PTO-ARCH-PROGRAMMING-MODEL-SCALAR-REGISTERS"]}
 // PTO-REQ-SCALAR-OPERAND-001: one-level Reg5 source and destination behavior.
 
 // Reg5 codes 0..23 select absolute GPRs. Codes 24..27 select T#1..T#4

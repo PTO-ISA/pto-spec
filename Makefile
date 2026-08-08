@@ -56,19 +56,20 @@ ASL_SOURCES_BEFORE_DECODER := \
 	asl/block/model/lifecycle/lifetime.asl \
 	asl/block/model/commit/effects.asl \
 	asl/tile/state.asl \
-	asl/scalar/operands.asl \
-	asl/scalar/integer.asl \
-	asl/scalar/control.asl \
-	asl/scalar/memory.asl \
+	asl/scalar/model/types/operands.asl \
+	asl/scalar/model/alu/semantics.asl \
+	asl/scalar/model/bru/semantics.asl \
+	asl/scalar/model/agu/memory.asl \
 	asl/arch/memory-model/memory-events.asl \
 	asl/arch/memory-model/atomicity.asl \
 	asl/arch/memory-model/ordering.asl \
-	asl/scalar/addressing.asl \
-	asl/scalar/atomic.asl \
-	asl/scalar/system.asl \
-	asl/scalar/system-registers.asl \
+	asl/scalar/model/agu/addressing.asl \
+	asl/scalar/model/amo/semantics.asl \
+	asl/scalar/model/sys/semantics.asl \
+	asl/scalar/model/sys/registers.asl \
 	asl/arch/system-registers/maintenance.asl \
-	asl/scalar/floating.asl \
+	asl/scalar/model/fsu/arithmetic.asl \
+	asl/scalar/model/fsu/profile.asl \
 	asl/tile/elementwise.asl \
 	asl/tile/reduction.asl \
 	asl/tile/expansion.asl \
@@ -105,7 +106,14 @@ ASL_SOURCES_AFTER_DECODER := \
 	asl/block/model/dispatch/start.asl \
 	asl/block/model/dispatch/commands.asl \
 	asl/block/model/dispatch/top-level.asl \
-	asl/scalar/dispatch.asl \
+	asl/scalar/model/dispatch/decode.asl \
+	asl/scalar/model/dispatch/alu.asl \
+	asl/scalar/model/dispatch/bru.asl \
+	asl/scalar/model/dispatch/sys.asl \
+	asl/scalar/model/dispatch/amo.asl \
+	asl/scalar/model/dispatch/agu.asl \
+	asl/scalar/model/dispatch/fsu.asl \
+	asl/scalar/model/dispatch/top-level.asl \
 	asl/arch/dispatch/top-level.asl
 
 ASL_SOURCES := $(ASL_SOURCES_BEFORE_DECODER) $(ASL_SOURCES_AFTER_DECODER)
