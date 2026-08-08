@@ -298,6 +298,11 @@ behavior belongs to the normative ASL model rather than a giant test library.
 Cross-unit tests choose one primary owner and MAY declare `related_sources`.
 The test path MUST still mirror the primary source.
 
+Every active ASL unit MUST own at least one independent test point. Every
+executable NDF requirement MUST be referenced by at least one test point. A
+single test MAY cover more than one requirement, but its metadata and assertions
+MUST make every covered requirement explicit.
+
 The supported initial test kinds are:
 
 - `decode-positive`;
@@ -312,7 +317,7 @@ The supported initial test kinds are:
 
 The test index checker MUST reject duplicate IDs, path mismatches, absent source
 units, absent requirement IDs, multiple entry points, unreachable test files,
-and uncovered executable requirements.
+ASL units with no test point, and uncovered executable requirements.
 
 `tests/asl/main.asl`, `tests/asl/shards/`, monolithic test libraries, and
 hand-maintained shard lists are removed after migration.
@@ -389,6 +394,7 @@ semantic delta with focused tests and review.
 - Active docs and ASL paths match exactly.
 - Tests mirror ASL classification paths and each test file owns one stable ID
   and one entry point.
+- Every active ASL unit owns at least one independent test point.
 - Every test ID can run independently.
 - Every executable NDF requirement has release verification coverage.
 - PR validation remains lightweight and does not install ASLRef.
