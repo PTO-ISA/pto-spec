@@ -4,7 +4,7 @@
   "decision_id": "PD-02",
   "checkpoint_id": "PD-02-SC2",
   "status": "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
-  "acceptance_record": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
+  "acceptance_record": "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
   "policy": {
     "authority": "Only the pinned public PTO contract defines public type identities and target availability.",
     "support_not_semantics": "Availability is a type-support fact, not an operation/type legality or numeric-result rule.",
@@ -526,18 +526,18 @@
   "sources": [
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "94d48007a9082fae64a0ec0a089f3ab146afe5f8a3b3b4a859ccfaa41519ef03"
+      "sha256": "ec9e3f2ef160cf84391c1ff38201098642e60b1c3449df2746dd9ab738605c96"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "9bda0a01a215736ad63041e73582f722489930b240bc7451a49a07a9cf2f1190"
+      "sha256": "75f6b9d725c47ff06026b4ba7dde7be0e5d1892f2e9b955223602fb2bae402fe"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "122166c233403dc30c49a3a3d274c21f0ce9ea1fddad1f55871659ef25a1f22b"
+      "sha256": "10e8bcfed47aee24719038ec07ecefe75aeaf342a0765cb15308da584242e1b8"
     },
     {
-      "path": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
+      "path": "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
       "sha256": "fde24632cca5661ea86892802f8a8703ce0a0034cb8d84680f71e73eac73fffc"
     }
   ],

@@ -68,7 +68,7 @@
     "asl/tile/model/legality/operand-schema.asl",
     "asl/tile/model/legality/pe-mask.asl",
     "tests/asl/cube-totality-tests.asl",
-    "docs/architecture-decisions/0034-cube-raw-carrier-totality.md"
+    "docs/status/decisions/0034-cube-raw-carrier-totality.md"
   ],
   "requirement_ids": [
     "PTO-REQ-CUBE-001",

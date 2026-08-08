@@ -59,7 +59,7 @@ class BootstrapInstructionSourcesTest(unittest.TestCase):
             (self.root / "spec/catalog" / name).write_text(
                 json.dumps(value), encoding="utf-8"
             )
-        tile_page = self.root / "docs/instructions/tile/TADD.md"
+        tile_page = self.root / "docs/tile/TADD.md"
         tile_page.parent.mkdir(parents=True)
         tile_page.write_text(
             "---\n"

@@ -4,7 +4,7 @@
   "decision_id": "PD-05",
   "checkpoint_id": "PD-05-SC2",
   "status": "named-hardware-special-value-checkpoint-accepted-pd05-open",
-  "acceptance_record": "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
+  "acceptance_record": "docs/status/decisions/0050-hardware-special-value-checkpoint.md",
   "profile_id": "pto-hardware-numeric-0.58.0-ieee-v1",
   "policy": {
     "produced_nan": "canonical-destination-format-nan",
@@ -581,7 +581,7 @@
   },
   "sources": [
     {
-      "path": "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
+      "path": "docs/status/decisions/0050-hardware-special-value-checkpoint.md",
       "sha256": "8743491d4ca91d06e7514082d0b878f18087ec9f70e010765153dd52cbd719b9"
     },
     {
@@ -590,7 +590,7 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "9bda0a01a215736ad63041e73582f722489930b240bc7451a49a07a9cf2f1190"
+      "sha256": "75f6b9d725c47ff06026b4ba7dde7be0e5d1892f2e9b955223602fb2bae402fe"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
@@ -602,7 +602,7 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "122166c233403dc30c49a3a3d274c21f0ce9ea1fddad1f55871659ef25a1f22b"
+      "sha256": "10e8bcfed47aee24719038ec07ecefe75aeaf342a0765cb15308da584242e1b8"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",

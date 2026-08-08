@@ -14,10 +14,9 @@ raw-carrier reference profile. Accepted catalogs, decoded execution paths,
 architectural state/fault envelopes, ordering, and scalar, bundle, TEPL, TLSU,
 and CUBE reference semantics are cumulatively closed through Stage 4. The
 independent executable-model comparison is also closed under `S5-T3`; target
-numeric conformance and release closure remain staged work. See the
-[maturity bring-up plan](docs/maturity-bringup-plan.md),
-[maturity evaluation and staged targets](docs/maturity-stage-targets.md), and
-[formal model coverage](docs/coverage.md).
+numeric conformance and release closure remain staged work. Current generated
+status is recorded under [`spec/evidence/`](spec/evidence/) and open design
+questions under [`docs/status/open/`](docs/status/open/).
 
 The Stage 5 numeric ownership inventory is already closed: 19 scalar forms and
 85 direct-tile operations are assigned to all 30 numeric profile hooks in
@@ -176,8 +175,8 @@ register addresses, or execution behavior.
 
 ## Normative contract
 
-Normative authority and source precedence are defined in
-[Normative sources](docs/normative-sources.md). The primary review surfaces are:
+Normative authority and source precedence are defined in [AGENTS.md](AGENTS.md).
+The primary review surfaces are:
 
 ```text
 ASL owner -> generated instruction page -> decision/open metadata -> release evidence
@@ -186,7 +185,7 @@ ASL owner -> generated instruction page -> decision/open metadata -> release evi
 | Surface | Role |
 | --- | --- |
 | [`asl/`](asl/) | Golden executable architectural state, instruction metadata, legality, and semantics |
-| [`docs/instructions/`](docs/instructions/) | Mirrored ASL embeds plus supplementary explanation and examples |
+| [`docs/arch/`](docs/arch/), [`docs/block/`](docs/block/), [`docs/scalar/`](docs/scalar/), [`docs/tile/`](docs/tile/) | Exact ASL mirror with supplementary explanation and examples |
 | [`spec/catalog/`](spec/catalog/) | Generated accepted scalar forms, system registers, traps, and tile selectors |
 | [`spec/requirements.json`](spec/requirements.json) | Requirement-to-model-to-test traceability |
 | [`spec/profile-hooks.json`](spec/profile-hooks.json) | Complete `impdef` profile registry |
@@ -198,19 +197,16 @@ pages embed their normative ASL regions verbatim and are checked for drift:
 
 | Document | Purpose |
 | --- | --- |
-| [Instruction reference](docs/instructions/index.md) | Generated catalog reference for scalar forms, bundle/command forms, direct tile operations, and system registers |
-| [Architecture boundary](docs/architecture.md) | State, execution, legality, faults, and excluded implementation detail |
-| [PTO ISA 0.58.0 decision](docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md) | 109-operation DavinciOO catalog, Mode/Function encoding, documentation, ASL, HTML, and Excel closure |
-| [Memory model](docs/memory-model.md) | PTO-TSO events, relations, axioms, and executable evidence |
-| [Profile contracts](docs/profile-contracts.md) | `pto-v0` behavior and alternate-profile obligations |
-| [Maturity bring-up plan](docs/maturity-bringup-plan.md) | Staged targets and exit gates from executable draft to architectural completeness |
-| [Maturity evaluation and staged targets](docs/maturity-stage-targets.md) | Reviewer-oriented entry gates, measurable targets, exit evidence, and promotion order |
-| [Numeric profile decision register](docs/numeric-profile-decision-register.md) | Open S5-T2-A format, rounding, exception, reduction, quantization, and matrix decisions |
-| [Modeling conventions](docs/modeling-conventions.md) | ASL organization and normative modeling rules |
-| [Formal review checklist](docs/review-checklist.md) | Required evidence for normative review |
+| [Architecture reference](docs/arch/overview/architecture.md) | Generated architecture overview owned by ASL |
+| [Block reference](docs/block/) | BSTART, BSTOP, B.* instructions, and block model units |
+| [Scalar reference](docs/scalar/) | Scalar instruction and scalar model units |
+| [Tile reference](docs/tile/) | PTO-classified tile instructions and tile model units |
+| [PTO ISA 0.58.0 decision](docs/status/decisions/0052-pto-isa-0580-davincioo-catalog.md) | 109-operation DavinciOO catalog, Mode/Function encoding, documentation, ASL, HTML, and Excel closure |
+| [Memory model](docs/arch/memory-model/) | Generated PTO memory-event, ordering, atomicity, and precision contracts |
+| [Profiles](docs/arch/profile/) | Generated profile applicability, reset, and reference-profile contracts |
 
 Accepted architecture decisions are retained under
-[`docs/architecture-decisions/`](docs/architecture-decisions/).
+[`docs/status/decisions/`](docs/status/decisions/).
 
 ## Validation
 

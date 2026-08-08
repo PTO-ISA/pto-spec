@@ -2721,251 +2721,251 @@
       "sha256": "1018ae49c0ef3a3e1bb15f452446f6606f5c825e01e528ea42c6a8a32c031ae9"
     },
     {
-      "path": "docs/architecture-decisions/0001-pto-architecture-scope.md",
+      "path": "docs/status/decisions/0001-pto-architecture-scope.md",
       "sha256": "19ea4e5bcb4cb10f31b9e5698670455dd0bf02ff5cac962808bcaffc2aa27b85"
     },
     {
-      "path": "docs/architecture-decisions/0003-pto-owned-system-register-names.md",
+      "path": "docs/status/decisions/0003-pto-owned-system-register-names.md",
       "sha256": "3cf6f664f696fd967bd89f391f83d3e12055c1fa050f28d6ec2ea381fdc0e0ee"
     },
     {
-      "path": "docs/architecture-decisions/0005-pto-v0-concrete-reference-profile.md",
+      "path": "docs/status/decisions/0005-pto-v0-concrete-reference-profile.md",
       "sha256": "3355afdfeb955f1e7f061e2d2224500774ed9fe572d6df2056d02de28209bd70"
     },
     {
-      "path": "docs/architecture-decisions/0006-pto-total-store-order.md",
+      "path": "docs/status/decisions/0006-pto-total-store-order.md",
       "sha256": "e20cf0096f723924bd86925d182f9e2c664beb2975fbfe5415fd6c82fa0ddcc7"
     },
     {
-      "path": "docs/architecture-decisions/0008-architectural-state-contract.md",
+      "path": "docs/status/decisions/0008-architectural-state-contract.md",
       "sha256": "1efa583eafb67d75b8ece2b239d1ebc6e2d0d3ec1212aff0550127f62725f8ff"
     },
     {
-      "path": "docs/architecture-decisions/0009-scalar-tpc-and-execution-status.md",
+      "path": "docs/status/decisions/0009-scalar-tpc-and-execution-status.md",
       "sha256": "a48b0d7377fd8350328b3e9bc9c32fc2bd03925c7fdb26bf8780799cd59f86fa"
     },
     {
-      "path": "docs/architecture-decisions/0010-acr-routing-and-context-reset.md",
+      "path": "docs/status/decisions/0010-acr-routing-and-context-reset.md",
       "sha256": "d20adcc83932072b3bf6035531f6edb699a3ee43fdb6c941fe673666970e36e5"
     },
     {
-      "path": "docs/architecture-decisions/0011-visible-ebarg-snapshot.md",
+      "path": "docs/status/decisions/0011-visible-ebarg-snapshot.md",
       "sha256": "bbb45e71ec0d927c71546286a949aac99291bafd4b1dc7000818a651af0ba965"
     },
     {
-      "path": "docs/architecture-decisions/0012-acrc-service-request.md",
+      "path": "docs/status/decisions/0012-acrc-service-request.md",
       "sha256": "848159e5d547c96f6bf54ad1a19d4f9e2f4f016afd69a7138928da469ea01bb7"
     },
     {
-      "path": "docs/architecture-decisions/0013-tile-capacity-and-packed-storage.md",
+      "path": "docs/status/decisions/0013-tile-capacity-and-packed-storage.md",
       "sha256": "10ed1439d46f03c658b3d2dad07bee27a66daa022fb17696e07e333633337627"
     },
     {
-      "path": "docs/architecture-decisions/0014-element-level-tile-definedness.md",
+      "path": "docs/status/decisions/0014-element-level-tile-definedness.md",
       "sha256": "c084a48cafa91c5b75131cb1a4b0a8e8cb2d1d538ac5c1217874f2f258281e91"
     },
     {
-      "path": "docs/architecture-decisions/0015-explicit-tile-handoff-slots.md",
+      "path": "docs/status/decisions/0015-explicit-tile-handoff-slots.md",
       "sha256": "54a801cef8927a2bc2f498815bc35819b4bfac5a475412d9687dacc286a42c48"
     },
     {
-      "path": "docs/architecture-decisions/0016-interrupt-pending-and-timer-state.md",
+      "path": "docs/status/decisions/0016-interrupt-pending-and-timer-state.md",
       "sha256": "121ed46a955dd55e5bf562137ff3551e9815836e224a618b16f431c646daddc5"
     },
     {
-      "path": "docs/architecture-decisions/0017-system-register-behavior-classes.md",
+      "path": "docs/status/decisions/0017-system-register-behavior-classes.md",
       "sha256": "b8aa878662534900d5b38aa28a21481cef3be72ea3659978fd616e10fa64cc76"
     },
     {
-      "path": "docs/architecture-decisions/0018-pto-v0-trap-disposition.md",
+      "path": "docs/status/decisions/0018-pto-v0-trap-disposition.md",
       "sha256": "1bffdf4092a8d839d50efb049f207dad30d446f65deb435ef087b729063e4258"
     },
     {
-      "path": "docs/architecture-decisions/0019-predicate-register-contract.md",
+      "path": "docs/status/decisions/0019-predicate-register-contract.md",
       "sha256": "2053dc202b7c19141a0844c1a0293a2d430d2684cff43f0a76c9b54f69fc5061"
     },
     {
-      "path": "docs/architecture-decisions/0020-production-memory-events-and-atomic-corners.md",
+      "path": "docs/status/decisions/0020-production-memory-events-and-atomic-corners.md",
       "sha256": "e59fc071cff61b7f54ed77ff1685d29fd40f678a9f8ef4194fbea260f3dd3e4b"
     },
     {
-      "path": "docs/architecture-decisions/0021-scalar-pc-relative-and-return-address.md",
+      "path": "docs/status/decisions/0021-scalar-pc-relative-and-return-address.md",
       "sha256": "6d540d5f29d63234115dc8dd6deddb1a5a14edbd0bffb5af92e8e50ce382b9f6"
     },
     {
-      "path": "docs/architecture-decisions/0022-bundle-operation-descriptor-and-commit.md",
+      "path": "docs/status/decisions/0022-bundle-operation-descriptor-and-commit.md",
       "sha256": "53d596a15542d160f46ffaa5b0692a69b83321617b5ed0f5613af11e8b086702"
     },
     {
-      "path": "docs/architecture-decisions/0023-uniform-instruction-attempt-status.md",
+      "path": "docs/status/decisions/0023-uniform-instruction-attempt-status.md",
       "sha256": "c85f755be20df7b9a7e73fd909275b543ef3fe7c22b83aaf16daa81f54adfb2c"
     },
     {
-      "path": "docs/architecture-decisions/0024-pc-relative-and-unscaled-agu-addressing.md",
+      "path": "docs/status/decisions/0024-pc-relative-and-unscaled-agu-addressing.md",
       "sha256": "3fbf85c0880778fee43eab16f1d8ed042cf765f5f8b37f7f2c9977c2d76fcfb7"
     },
     {
-      "path": "docs/architecture-decisions/0025-scalar-bitfield-and-reverse-bounds.md",
+      "path": "docs/status/decisions/0025-scalar-bitfield-and-reverse-bounds.md",
       "sha256": "2b0b11a8d0cd04379bf06a3c29436a4ee225692530be535a6a1edb8bce5f6056"
     },
     {
-      "path": "docs/architecture-decisions/0026-scalar-alu-totality-and-alias-order.md",
+      "path": "docs/status/decisions/0026-scalar-alu-totality-and-alias-order.md",
       "sha256": "4ff2e9b361766652f1c457cba2645db7787f925518ee14ab21174e1bdb4578b9"
     },
     {
-      "path": "docs/architecture-decisions/0027-scalar-bru-totality-and-target-legality.md",
+      "path": "docs/status/decisions/0027-scalar-bru-totality-and-target-legality.md",
       "sha256": "db27d9eb8bed982d949c5902636c9b3c4e954093ec5e4eadbb79f1f8e9b26772"
     },
     {
-      "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
+      "path": "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
       "sha256": "07c51707a4f02fa6a451f92ab267b31fe4f0398d3def26f12b461f79d734d6a7"
     },
     {
-      "path": "docs/architecture-decisions/0029-scalar-agu-totality-and-restart.md",
+      "path": "docs/status/decisions/0029-scalar-agu-totality-and-restart.md",
       "sha256": "a178848e13ec32030c801c144163d31316858e881d3af58880b659826e8640b4"
     },
     {
-      "path": "docs/architecture-decisions/0030-scalar-amo-totality-and-reservation.md",
+      "path": "docs/status/decisions/0030-scalar-amo-totality-and-reservation.md",
       "sha256": "dfdcfbe9c724896cafd0aeaa416fe1cb22c12102e3e7b4e5a67c3a4b2942fae7"
     },
     {
-      "path": "docs/architecture-decisions/0031-scalar-sys-totality-and-profile-boundaries.md",
+      "path": "docs/status/decisions/0031-scalar-sys-totality-and-profile-boundaries.md",
       "sha256": "803470e7ba2f1f563160520ac781c56efc6cd9e1a74a86db8e9e9de3ed7b9ed3"
     },
     {
-      "path": "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+      "path": "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
       "sha256": "2f399ead0a262c8635204e541e57275da871436525df6853077dfba2f24713b7"
     },
     {
-      "path": "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
+      "path": "docs/status/decisions/0033-tma-four-bit-memory-packing.md",
       "sha256": "9ef2dcf86fec5b1f39cf85faf82357e077aa9f9c17d1774a2f854d81c50cbced"
     },
     {
-      "path": "docs/architecture-decisions/0034-cube-raw-carrier-totality.md",
+      "path": "docs/status/decisions/0034-cube-raw-carrier-totality.md",
       "sha256": "bdc6dd46e5d16cdd5ffc14ced4ab973fde5bd28f540df56f01cf444225d5c269"
     },
     {
-      "path": "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
+      "path": "docs/status/decisions/0035-tepl-raw-carrier-totality.md",
       "sha256": "4fdbbbc9eb79cf23c0d63f4d933041897aeb423516a8fa1a0ece1a53e4419db8"
     },
     {
-      "path": "docs/architecture-decisions/0036-executable-model-comparison-dispositions.md",
+      "path": "docs/status/decisions/0036-executable-model-comparison-dispositions.md",
       "sha256": "102584212e6e762628a362025dd9aa8716d1d841b539ce2b331e996f29b68572"
     },
     {
-      "path": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+      "path": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
       "sha256": "e4b8ec913ebe63322fca7985e2421b7e8cb894c06ed73c652a6179d63121c63b"
     },
     {
-      "path": "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
+      "path": "docs/status/decisions/0038-scalar-numeric-flag-state-and-ownership.md",
       "sha256": "adf0e2b0462c70c882e1eeb6052e4c6a72b1965e82059783ade0b799b560218e"
     },
     {
-      "path": "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
+      "path": "docs/status/decisions/0039-numeric-rounding-selector-ownership.md",
       "sha256": "0d079aca9461b4b0f8d6084bffbd36ddea7ecb1aebfda0c176ec3095f14fa29b"
     },
     {
-      "path": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+      "path": "docs/status/decisions/0040-numeric-format-namespace-ownership.md",
       "sha256": "6cfc10adb5c9aebe612c248c6c8498d81976971b920638b661539f8751ec9fc5"
     },
     {
-      "path": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
+      "path": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md",
       "sha256": "5eb62cb56c0af0cc7c4485c018683f0799b1d7fa7bcd262d46002b190cf33262"
     },
     {
-      "path": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
+      "path": "docs/status/decisions/0042-numeric-variation-point-ownership.md",
       "sha256": "16b791c480f47bb72c7fa02081303c61c1c75486b793712977f831e14e47ae48"
     },
     {
-      "path": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
+      "path": "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
       "sha256": "fde24632cca5661ea86892802f8a8703ce0a0034cb8d84680f71e73eac73fffc"
     },
     {
-      "path": "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
+      "path": "docs/status/decisions/0044-public-integer-conversion-result-subset.md",
       "sha256": "fe98df65bb6c86efc9206b0e50ff65f23494f79c6bf2a0389adb7288bc2cf42d"
     },
     {
-      "path": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+      "path": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
       "sha256": "51c25ba3368636261b55c6e910358d33957a5cb8253c298711e6b79355549f4e"
     },
     {
-      "path": "docs/architecture-decisions/0046-separate-execution-mask-and-warp-predicates.md",
+      "path": "docs/status/decisions/0046-separate-execution-mask-and-warp-predicates.md",
       "sha256": "4403e4d1cae95eaffeaa9f62be49c3bb3294b9d18fa7aa94e02854bca1d5e774"
     },
     {
-      "path": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "path": "docs/status/decisions/0047-numeric-rounding-semantics.md",
       "sha256": "6595060f3b01749643d01677014308fc89aa02b23670fdef79d82e582f9232f2"
     },
     {
-      "path": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
+      "path": "docs/status/decisions/0048-numeric-format-value-classification.md",
       "sha256": "cca6076b80003179731fe8f843ae230b835b5f0e581024f8e5b4509cd0f33f7e"
     },
     {
-      "path": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
+      "path": "docs/status/decisions/0049-hardware-subnormal-policy.md",
       "sha256": "9065787b60ef2a323515c1deb82331bfde059d8be4455c3c3ffa0d0f50f4311a"
     },
     {
-      "path": "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
+      "path": "docs/status/decisions/0050-hardware-special-value-checkpoint.md",
       "sha256": "8743491d4ca91d06e7514082d0b878f18087ec9f70e010765153dd52cbd719b9"
     },
     {
-      "path": "docs/architecture-decisions/0051-public-v06-predicate-mask-boundary.md",
+      "path": "docs/status/decisions/0051-public-v06-predicate-mask-boundary.md",
       "sha256": "bc1b3489de8f07c0cf9474638ecafd9c214c7f84210f2c12b3cb8b090e49cc3a"
     },
     {
-      "path": "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
+      "path": "docs/status/decisions/0052-pto-isa-0580-davincioo-catalog.md",
       "sha256": "9f238cda8c94a3dd5e654f5627090b9f5ae69435ed63b0066cf1aa938d757e29"
     },
     {
-      "path": "docs/architecture-decisions/0053-pto-isa-0580-tile-operation-cleanup.md",
+      "path": "docs/status/decisions/0053-pto-isa-0580-tile-operation-cleanup.md",
       "sha256": "3310fdd8f2ca7fa145625d5b95a9d6cd1f72029782141e419ca8bdcfc0fc1e27"
     },
     {
-      "path": "docs/architecture-decisions/0054-pe-local-tile-size-and-32-bit-shared-io-binding.md",
+      "path": "docs/status/decisions/0054-pe-local-tile-size-and-32-bit-shared-io-binding.md",
       "sha256": "ac75f4d00b196c8f862308c0e99572b4bd69309b1712b863f42776e19feac7fa"
     },
     {
-      "path": "docs/architecture-decisions/0055-complete-bundle-bior-schema-and-defaults.md",
+      "path": "docs/status/decisions/0055-complete-bundle-bior-schema-and-defaults.md",
       "sha256": "7c9b5a74625ffdb87436602eecf653c31987f1563ba5d1291bcd614b7c86823e"
     },
     {
-      "path": "docs/architecture.md",
+      "path": "docs/status/legacy/root/architecture.md",
       "sha256": "b32fe513dd4a9049411143c43f9ccacabb7ce1f8ce7d8df7c73a868f5f065588"
     },
     {
-      "path": "docs/coverage.md",
+      "path": "docs/status/legacy/root/coverage.md",
       "sha256": "3eebe593478a851bc4bcf50eee4cb336c53a927ce4ac09a30ffd71bc7e3908be"
     },
     {
-      "path": "docs/maturity-bringup-plan.md",
+      "path": "docs/status/legacy/root/maturity-bringup-plan.md",
       "sha256": "87732ddb8b0e73a44029bf91853a71cb91f575f05d49ef171e5393f01c332165"
     },
     {
-      "path": "docs/maturity-stage-targets.md",
+      "path": "docs/status/legacy/root/maturity-stage-targets.md",
       "sha256": "6a10864ce71c53c72b0922228343cbe10f42eaccb9dc869665e938c6846a4583"
     },
     {
-      "path": "docs/memory-model.md",
+      "path": "docs/status/legacy/root/memory-model.md",
       "sha256": "6bdcbe43be2a58ad3a4c3b7287c6b909d227cd8d850fe297595d602473de4951"
     },
     {
-      "path": "docs/modeling-conventions.md",
+      "path": "docs/status/legacy/root/modeling-conventions.md",
       "sha256": "d0eedfbedf34481efa09fb3294657dfa8b6a58295ddfd2e947ce71f4fbc5cae8"
     },
     {
-      "path": "docs/normative-sources.md",
+      "path": "docs/status/legacy/root/normative-sources.md",
       "sha256": "fdc51c69a4c0b5ec2bc7f68daca2eb2d63bdc8bf189cb4a67742cb26fa982862"
     },
     {
-      "path": "docs/numeric-profile-decision-register.md",
+      "path": "docs/status/legacy/root/numeric-profile-decision-register.md",
       "sha256": "cee369800a5fd9351f66c4cd58965881eabbcb8103861d11cfbca38b02f115eb"
     },
     {
-      "path": "docs/profile-contracts.md",
+      "path": "docs/status/legacy/root/profile-contracts.md",
       "sha256": "c195756cebe61ac384e9d05a2da66dda1f1224dd7719b7fc505888c645f7a772"
     },
     {
-      "path": "docs/review-checklist.md",
+      "path": "docs/status/legacy/root/review-checklist.md",
       "sha256": "04d560a8df75b4a8b5dcff7bb24485d65c2fa245418fcaff5a27776ebc3096c8"
     },
     {

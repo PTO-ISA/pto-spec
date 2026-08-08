@@ -12,12 +12,11 @@ Build an executable PTO architecture contract without mixing portable semantics 
 Before editing, read:
 
 - `AGENTS.md`
-- `docs/architecture.md`
-- `docs/modeling-conventions.md`
+- the owning source below `asl/{arch,block,scalar,tile}/`
+- its exact mirror below `docs/{arch,block,scalar,tile}/`
 - `GOVERNANCE.md`
 - `CONTRIBUTING.md`
-- `docs/normative-sources.md`
-- `docs/coverage.md`
+- `docs/status/decisions/` and `docs/status/open/` when the change has linked status metadata
 - `spec/requirements.json`
 
 For ASLRef setup, versioning, or language behavior, read [references/aslref.md](references/aslref.md). For any normative

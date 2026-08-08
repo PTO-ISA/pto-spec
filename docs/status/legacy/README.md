@@ -1,5 +1,7 @@
 # Historical PTO Material
 
+> Historical, non-normative material. This page is excluded from the active PTO architecture and release closure.
+
 Everything below this directory is historical and non-normative. It is
 retained only so repository users can discover superseded context alongside
 Git history.

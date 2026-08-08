@@ -33,12 +33,7 @@ LAYERS = {
     "concurrency",
 }
 STATUSES = {"open", "accepted"}
-ACTIVE_MARKDOWN = {
-    Path("docs/architecture.md"),
-    Path("docs/memory-model.md"),
-    Path("docs/modeling-conventions.md"),
-    Path("docs/profile-contracts.md"),
-}
+ACTIVE_MARKDOWN: frozenset[Path] = frozenset()
 BACKUP_SUFFIXES = (".bak", ".old", ".orig", ".save", ".tmp", "~")
 STATUS_LEGACY_PREFIX = Path("docs/status/legacy")
 STATUS_LEGACY_REFERENCE = "docs/status/legacy/"

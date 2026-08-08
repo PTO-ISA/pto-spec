@@ -48,7 +48,7 @@ if (!errors.length) {
 
   const indexHtml = fs.readFileSync(path.join(siteRoot, "index.html"), "utf8");
   for (const label of ["Home", "Architecture Reference", "Scalar ISA", "Block ISA", "Tile ISA", "Support Status"]) {
-    if (!indexHtml.includes(label)) errors.push(`docs/html/index.html: missing navigation label ${label}`);
+    if (!indexHtml.includes(label)) errors.push(`docs/status/legacy/html/index.html: missing navigation label ${label}`);
   }
   const landingHtml = fs.readFileSync(landingPath, "utf8");
   if (!landingHtml.includes("url=html/index.html")) errors.push("Complete HTML landing page must redirect to html/index.html");

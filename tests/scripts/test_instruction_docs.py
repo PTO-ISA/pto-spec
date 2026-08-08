@@ -10,10 +10,16 @@ from pathlib import Path
 from scripts.instruction_docs import (
     ROOT,
     check_catalog_projection,
+    check_legacy_banners,
+    check_navigation,
+    check_normative_legacy_links,
     check_tree,
     check_version_neutrality,
+    doc_path_for,
     generate_tree,
+    load_doc_index,
     load_instruction_index,
+    render_unit_page,
     render_nav,
 )
 
@@ -26,9 +32,11 @@ def asl_source(
     catalog_records: list[dict[str, object]] | None = None,
 ) -> str:
     metadata = {
+        "id": f"PTO-INST-{surface.upper()}-{mnemonic.replace('.', '-').replace(' ', '-').upper()}",
         "mnemonic": mnemonic,
         "surface": surface,
         "classification": classification or ["tile-tile-elementwise", "arithmetic"],
+        "depends_on": [],
         "summary": "Add corresponding tile elements.",
         "assembly": ["TADD <shape>, Src0, Src1, ->Dst"],
         "block": ["BSTART.TEPL TADD", "B.DIM ...", "B.IOT ...", "BSTOP"],
@@ -52,6 +60,23 @@ def asl_source(
         "end;\n"
         "// DOC-END: operation\n"
     )
+
+
+def unit_source(
+    *,
+    unit_id: str = "PTO-ARCH-STATE-PROGRAM-COUNTER",
+    surface: str = "arch",
+    classification: list[str] | None = None,
+    body: str = "readonly func ReadPC() => bits(64)\nbegin\n    return Zeros{64};\nend;\n",
+) -> str:
+    metadata = {
+        "id": unit_id,
+        "surface": surface,
+        "classification": classification or ["state", "program-counter"],
+        "depends_on": [],
+    }
+    encoded = json.dumps(metadata, ensure_ascii=False, sort_keys=True)
+    return f"// PTO-UNIT: {encoded}\n{body}"
 
 
 class InstructionDocsTest(unittest.TestCase):
@@ -98,19 +123,19 @@ class InstructionDocsTest(unittest.TestCase):
         errors = check_tree(self.root)
 
         self.assertIn(
-            "missing Markdown page for TADD: docs/instructions/tile/tile-tile-elementwise/arithmetic/TADD.md",
+            "missing Markdown page for TADD: docs/tile/tile-tile-elementwise/arithmetic/TADD.md",
             errors,
         )
 
     def test_check_tree_rejects_page_without_asl(self) -> None:
-        page = self.root / "docs/instructions/tile/tile-tile-elementwise/arithmetic/TADD.md"
+        page = self.root / "docs/tile/tile-tile-elementwise/arithmetic/TADD.md"
         page.parent.mkdir(parents=True, exist_ok=True)
         page.write_text("# TADD\n", encoding="utf-8")
 
         errors = check_tree(self.root)
 
         self.assertIn(
-            "missing ASL source for docs/instructions/tile/tile-tile-elementwise/arithmetic/TADD.md",
+            "missing ASL source for docs/tile/tile-tile-elementwise/arithmetic/TADD.md",
             errors,
         )
 
@@ -135,7 +160,7 @@ class InstructionDocsTest(unittest.TestCase):
         generate_tree(self.root)
 
         self.assertTrue(
-            (self.root / "docs/instructions/block/execution/BSTART_CALL.md").exists()
+            (self.root / "docs/block/execution/BSTART_CALL.md").exists()
         )
         self.assertEqual(check_tree(self.root), [])
 
@@ -150,7 +175,7 @@ class InstructionDocsTest(unittest.TestCase):
         source = self.write_asl()
 
         generate_tree(self.root)
-        page = self.root / "docs/instructions/tile/tile-tile-elementwise/arithmetic/TADD.md"
+        page = self.root / "docs/tile/tile-tile-elementwise/arithmetic/TADD.md"
         rendered = page.read_text(encoding="utf-8")
         self.assertIn(f"source={source.relative_to(self.root)}", rendered)
         self.assertIn("func ExecuteTADD()", rendered)
@@ -163,7 +188,7 @@ class InstructionDocsTest(unittest.TestCase):
         self.write_asl()
 
         generate_tree(self.root)
-        page = self.root / "docs/instructions/tile/tile-tile-elementwise/arithmetic/TADD.md"
+        page = self.root / "docs/tile/tile-tile-elementwise/arithmetic/TADD.md"
         rendered = page.read_text(encoding="utf-8")
 
         self.assertIn("## Normative identity {#PTO-INST-TILE-TADD}", rendered)
@@ -177,7 +202,7 @@ class InstructionDocsTest(unittest.TestCase):
 
         generate_tree(self.root)
         rendered = (
-            self.root / "docs/instructions/tile/tile-tile-elementwise/arithmetic/TADD.md"
+            self.root / "docs/tile/tile-tile-elementwise/arithmetic/TADD.md"
         ).read_text(encoding="utf-8")
 
         self.assertIn("## Block composition", rendered)
@@ -219,7 +244,7 @@ class InstructionDocsTest(unittest.TestCase):
 
         generate_tree(self.root)
         rendered = (
-            self.root / "docs/instructions/block/operands/B.IOS.md"
+            self.root / "docs/block/operands/B.IOS.md"
         ).read_text(encoding="utf-8")
 
         self.assertIn("0x00001013 / 0xf00871ff", rendered)
@@ -227,7 +252,7 @@ class InstructionDocsTest(unittest.TestCase):
 
     def test_generate_tree_preserves_supplementary_markdown(self) -> None:
         self.write_asl()
-        page = self.root / "docs/instructions/tile/tile-tile-elementwise/arithmetic/TADD.md"
+        page = self.root / "docs/tile/tile-tile-elementwise/arithmetic/TADD.md"
         page.parent.mkdir(parents=True, exist_ok=True)
         page.write_text(
             "# Legacy TADD\n\nThis paragraph explains why TADD exists.\n",
@@ -258,19 +283,17 @@ class InstructionDocsTest(unittest.TestCase):
             classification=["lifecycle"],
         )
 
-        nav = render_nav(
-            load_instruction_index(self.root), Path("docs/instructions")
-        )
+        nav = render_nav(load_instruction_index(self.root), Path("docs"))
 
         self.assertEqual(
             nav,
             "nav:\n"
-            "  - Scalar:\n"
-            "      - ALU:\n"
-            "          - ADD: scalar/alu/ADD.md\n"
             "  - Block:\n"
             "      - Lifecycle:\n"
             "          - BSTOP: block/lifecycle/BSTOP.md\n"
+            "  - Scalar:\n"
+            "      - ALU:\n"
+            "          - ADD: scalar/alu/ADD.md\n"
             "  - Tile:\n"
             "      - Tile Tile Elementwise:\n"
             "          - Arithmetic:\n"
@@ -286,23 +309,22 @@ class InstructionDocsTest(unittest.TestCase):
         mkdocs_config = self.root / "docs/mkdocs/mkdocs.yml"
         self.assertEqual(
             generated_nav.read_text(encoding="utf-8"),
-            render_nav(
-                load_instruction_index(self.root), Path("docs/instructions")
-            ),
+            render_nav(load_doc_index(self.root), Path("docs"), self.root),
         )
         self.assertIn(
             "tile/tile-tile-elementwise/arithmetic/TADD.md",
             mkdocs_config.read_text(encoding="utf-8"),
         )
+        self.assertEqual(check_navigation(self.root), [])
 
     def test_version_neutrality_reports_only_active_normative_surfaces(self) -> None:
         active_asl = self.root / "asl/tile/state.asl"
         active_asl.parent.mkdir(parents=True, exist_ok=True)
         active_asl.write_text("// PTO ISA 0.58 fixes this rule.\n", encoding="utf-8")
-        active_doc = self.root / "docs/instructions/tile/TADD.md"
+        active_doc = self.root / "docs/tile/TADD.md"
         active_doc.parent.mkdir(parents=True, exist_ok=True)
         active_doc.write_text("PTO ISA 0.58.0\n", encoding="utf-8")
-        historical = self.root / "docs/architecture-decisions/0052.md"
+        historical = self.root / "docs/status/decisions/0052.md"
         historical.parent.mkdir(parents=True, exist_ok=True)
         historical.write_text("PTO ISA 0.58.0\n", encoding="utf-8")
 
@@ -312,7 +334,7 @@ class InstructionDocsTest(unittest.TestCase):
             errors,
             [
                 "asl/tile/state.asl:1: active normative surface contains release version 0.58",
-                "docs/instructions/tile/TADD.md:1: active normative surface contains release version 0.58.0",
+                "docs/tile/TADD.md:1: active normative surface contains release version 0.58.0",
             ],
         )
 
@@ -363,6 +385,160 @@ class InstructionDocsTest(unittest.TestCase):
             check_catalog_projection(self.root),
             ["scalar catalog projection differs from mnemonic ASL records"],
         )
+
+
+class FourSurfaceDocsTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory()
+        self.root = Path(self.temporary.name)
+
+    def tearDown(self) -> None:
+        self.temporary.cleanup()
+
+    def write_unit(self, relative: str, body: str) -> Path:
+        path = self.root / "asl" / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(body, encoding="utf-8")
+        return path
+
+    def test_doc_path_exactly_mirrors_asl_source(self) -> None:
+        self.assertEqual(
+            doc_path_for(Path("asl/arch/state/program-counter.asl")),
+            Path("docs/arch/state/program-counter.md"),
+        )
+        self.assertEqual(
+            doc_path_for(Path("asl/block/operands/B.IOR.asl")),
+            Path("docs/block/operands/B.IOR.md"),
+        )
+
+    def test_generate_tree_covers_instruction_and_concept_units_exactly(self) -> None:
+        self.write_unit(
+            "arch/state/program-counter.asl",
+            unit_source(),
+        )
+        self.write_unit(
+            "block/operands/B.IOR.asl",
+            asl_source(
+                mnemonic="B.IOR",
+                surface="block",
+                classification=["operands"],
+            ),
+        )
+
+        generate_tree(self.root)
+
+        discovered = {
+            path.relative_to(self.root)
+            for surface in ("arch", "block", "scalar", "tile")
+            for path in (self.root / "docs" / surface).rglob("*.md")
+            if (self.root / "docs" / surface).exists()
+        }
+        self.assertEqual(
+            discovered,
+            {
+                Path("docs/arch/state/program-counter.md"),
+                Path("docs/block/operands/B.IOR.md"),
+            },
+        )
+        self.assertEqual(check_tree(self.root), [])
+
+    def test_concept_page_embeds_exact_source_and_declares_owner(self) -> None:
+        source = self.write_unit(
+            "arch/state/program-counter.asl",
+            unit_source(),
+        )
+        unit = load_doc_index(self.root)[0]
+
+        rendered = render_unit_page(
+            unit,
+            source.read_text(encoding="utf-8"),
+        )
+
+        self.assertTrue(
+            rendered.startswith(
+                "<!-- GENERATED FROM: asl/arch/state/program-counter.asl -->\n"
+                "# Program Counter\n\n"
+                "**Normative ASL source:** `asl/arch/state/program-counter.asl`"
+            )
+        )
+        self.assertIn("readonly func ReadPC()", rendered)
+        self.assertNotIn("<!-- ndf:", rendered)
+
+    def test_check_tree_rejects_source_declaration_mismatch(self) -> None:
+        self.write_unit("arch/state/program-counter.asl", unit_source())
+        generate_tree(self.root)
+        page = self.root / "docs/arch/state/program-counter.md"
+        page.write_text(
+            page.read_text(encoding="utf-8").replace(
+                "asl/arch/state/program-counter.asl",
+                "asl/arch/state/wrong.asl",
+                1,
+            ),
+            encoding="utf-8",
+        )
+
+        self.assertIn(
+            "stale generated Markdown page for PTO-ARCH-STATE-PROGRAM-COUNTER",
+            check_tree(self.root),
+        )
+
+    def test_check_tree_rejects_orphan_active_page(self) -> None:
+        page = self.root / "docs/arch/state/orphan.md"
+        page.parent.mkdir(parents=True, exist_ok=True)
+        page.write_text("# Orphan\n", encoding="utf-8")
+
+        self.assertIn(
+            "missing ASL source for docs/arch/state/orphan.md",
+            check_tree(self.root),
+        )
+
+    def test_navigation_rejects_legacy_entry(self) -> None:
+        config = self.root / "docs/mkdocs/mkdocs.yml"
+        config.parent.mkdir(parents=True, exist_ok=True)
+        config.write_text(
+            "nav:\n  - Old: status/legacy/old.md\n",
+            encoding="utf-8",
+        )
+
+        self.assertEqual(
+            check_navigation(self.root),
+            ["MkDocs navigation includes non-normative legacy material"],
+        )
+
+    def test_normative_asl_rejects_legacy_link(self) -> None:
+        self.write_unit(
+            "arch/state/program-counter.asl",
+            unit_source(body="// See docs/status/legacy/old.md\n"),
+        )
+
+        self.assertEqual(
+            check_normative_legacy_links(self.root),
+            [
+                "asl/arch/state/program-counter.asl: normative reference targets "
+                "non-normative legacy material"
+            ],
+        )
+
+    def test_generate_tree_adds_non_normative_legacy_banner(self) -> None:
+        legacy = self.root / "docs/status/legacy/old.md"
+        legacy.parent.mkdir(parents=True, exist_ok=True)
+        legacy.write_text("# Old Design\n\nHistorical text.\n", encoding="utf-8")
+
+        self.assertEqual(
+            check_legacy_banners(self.root),
+            ["docs/status/legacy/old.md: missing non-normative legacy banner"],
+        )
+
+        generate_tree(self.root)
+
+        self.assertTrue(
+            legacy.read_text(encoding="utf-8").startswith(
+                "# Old Design\n\n"
+                "> Historical, non-normative material. This page is excluded "
+                "from the active PTO architecture and release closure.\n"
+            )
+        )
+        self.assertEqual(check_legacy_banners(self.root), [])
 
 
 if __name__ == "__main__":

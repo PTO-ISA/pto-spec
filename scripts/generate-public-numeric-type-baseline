@@ -16,7 +16,7 @@ FORMAT_NAMESPACE = ROOT / "spec/evidence/numeric-format-namespace-contract.json"
 EXECUTABLE_COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
 OUTPUT = ROOT / "spec/evidence/public-numeric-type-baseline.json"
 ACCEPTANCE_RECORD = (
-    "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md"
+    "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md"
 )
 
 PUBLIC_TYPES = (

@@ -27,7 +27,7 @@ RECONCILIATION = ROOT / "spec/evidence/public-source-reconciliation.json"
 EXECUTABLE_COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
 OUTPUT = ROOT / "spec/evidence/numeric-profile-applicability-closure.json"
 
-ACCEPTANCE_RECORD = "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+ACCEPTANCE_RECORD = "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
 EXPECTED_PROFILE = "pto-a2a3-numeric-v1"
 EXPECTED_FUNCTIONS = {
     "tile:CUBE:TMATMUL_MX": 4,

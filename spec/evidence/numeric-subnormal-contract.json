@@ -3,7 +3,7 @@
   "target": "S5-T2-A2:PD-04",
   "decision_id": "PD-04",
   "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
-  "acceptance_record": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
+  "acceptance_record": "docs/status/decisions/0049-hardware-subnormal-policy.md",
   "profile_id": "pto-hardware-numeric-0.58.0-ieee-v1",
   "policy": {
     "input_subnormals": "preserve-exact-source-value",
@@ -2546,7 +2546,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "94d48007a9082fae64a0ec0a089f3ab146afe5f8a3b3b4a859ccfaa41519ef03"
+      "sha256": "ec9e3f2ef160cf84391c1ff38201098642e60b1c3449df2746dd9ab738605c96"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
@@ -2554,11 +2554,11 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "9bda0a01a215736ad63041e73582f722489930b240bc7451a49a07a9cf2f1190"
+      "sha256": "75f6b9d725c47ff06026b4ba7dde7be0e5d1892f2e9b955223602fb2bae402fe"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "122166c233403dc30c49a3a3d274c21f0ce9ea1fddad1f55871659ef25a1f22b"
+      "sha256": "10e8bcfed47aee24719038ec07ecefe75aeaf342a0765cb15308da584242e1b8"
     },
     {
       "path": "asl/arch/data-types/fault.asl",
@@ -2613,7 +2613,7 @@
       "sha256": "47248debd7876d0117b0738a44d226e4352806581d574895a7f10a8cb8949f89"
     },
     {
-      "path": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
+      "path": "docs/status/decisions/0049-hardware-subnormal-policy.md",
       "sha256": "9065787b60ef2a323515c1deb82331bfde059d8be4455c3c3ffa0d0f50f4311a"
     }
   ],

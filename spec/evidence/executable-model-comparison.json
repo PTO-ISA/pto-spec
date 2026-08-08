@@ -9518,7 +9518,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
@@ -9528,7 +9528,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 0,
@@ -9546,7 +9546,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
@@ -9556,7 +9556,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 1,
@@ -9580,7 +9580,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 2,
@@ -9604,7 +9604,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 3,
@@ -9628,7 +9628,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 4,
@@ -9652,7 +9652,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 5,
@@ -9676,7 +9676,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 6,
@@ -9700,7 +9700,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 7,
@@ -9718,7 +9718,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
@@ -9728,7 +9728,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 8,
@@ -9746,7 +9746,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
@@ -9756,7 +9756,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 9,
@@ -9780,7 +9780,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 10,
@@ -9798,7 +9798,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
@@ -9808,7 +9808,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 11,
@@ -9826,7 +9826,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
@@ -9836,7 +9836,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 12,
@@ -9860,7 +9860,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 13,
@@ -9884,7 +9884,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 14,
@@ -9908,7 +9908,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 15,
@@ -9932,7 +9932,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 16,
@@ -9956,7 +9956,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 17,
@@ -9980,7 +9980,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 18,
@@ -10004,7 +10004,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 19,
@@ -10028,7 +10028,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 20,
@@ -10052,7 +10052,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 21,
@@ -10076,7 +10076,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 22,
@@ -10100,7 +10100,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 23,
@@ -10124,7 +10124,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
       "index": 24,
@@ -10148,7 +10148,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
       "index": 25,
@@ -10172,7 +10172,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
       "index": 26,
@@ -10196,7 +10196,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
       "index": 27,
@@ -10220,7 +10220,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 28,
@@ -10244,7 +10244,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
       "index": 29,
@@ -10268,7 +10268,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 30,
@@ -10292,7 +10292,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 31,
@@ -10316,7 +10316,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 32,
@@ -10340,7 +10340,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 33,
@@ -10364,7 +10364,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 34,
@@ -10388,7 +10388,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 35,
@@ -10412,7 +10412,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 36,
@@ -10436,7 +10436,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 37,
@@ -10460,7 +10460,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 38,
@@ -10478,7 +10478,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
@@ -10488,7 +10488,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 39,
@@ -10512,7 +10512,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
       "index": 40,
@@ -10536,7 +10536,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
       "index": 41,
@@ -10560,7 +10560,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
       "index": 42,
@@ -10584,7 +10584,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
       "index": 43,
@@ -10608,7 +10608,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
       "index": 44,
@@ -10632,7 +10632,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
       "index": 45,
@@ -10656,7 +10656,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 46,
@@ -10680,7 +10680,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 47,
@@ -10704,7 +10704,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 48,
@@ -10728,7 +10728,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
       "index": 49,
@@ -10752,7 +10752,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
       "index": 50,
@@ -10776,7 +10776,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
       "index": 51,
@@ -10800,7 +10800,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
       "index": 52,
@@ -10824,7 +10824,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 53,
@@ -10848,7 +10848,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "missing",
       "index": 54,
@@ -10872,7 +10872,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "decode-only",
       "index": 55,
@@ -10896,7 +10896,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 56,
@@ -10920,7 +10920,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 57,
@@ -10944,7 +10944,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "missing",
       "index": 58,
@@ -10968,7 +10968,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 59,
@@ -10992,7 +10992,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 60,
@@ -11016,7 +11016,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 61,
@@ -11040,7 +11040,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 62,
@@ -11064,7 +11064,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 63,
@@ -11088,7 +11088,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 64,
@@ -11112,7 +11112,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 65,
@@ -11136,7 +11136,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 66,
@@ -11160,7 +11160,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 67,
@@ -11184,7 +11184,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 68,
@@ -11208,7 +11208,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 69,
@@ -11232,7 +11232,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 70,
@@ -11256,7 +11256,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 71,
@@ -11280,7 +11280,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 72,
@@ -11304,7 +11304,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 73,
@@ -11328,7 +11328,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 74,
@@ -11352,7 +11352,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 75,
@@ -11376,7 +11376,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 76,
@@ -11400,7 +11400,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 77,
@@ -11424,7 +11424,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 78,
@@ -11448,7 +11448,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 79,
@@ -11472,7 +11472,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "missing",
       "index": 80,
@@ -11496,7 +11496,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 81,
@@ -11520,7 +11520,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 82,
@@ -11544,7 +11544,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 83,
@@ -11568,7 +11568,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 84,
@@ -11592,7 +11592,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 85,
@@ -11616,7 +11616,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 86,
@@ -11640,7 +11640,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 87,
@@ -11664,7 +11664,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 88,
@@ -11688,7 +11688,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 89,
@@ -11712,7 +11712,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 90,
@@ -11736,7 +11736,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 91,
@@ -11760,7 +11760,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 92,
@@ -11784,7 +11784,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 93,
@@ -11808,7 +11808,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 94,
@@ -11832,7 +11832,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 95,
@@ -11856,7 +11856,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 96,
@@ -11880,7 +11880,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 97,
@@ -11904,7 +11904,7 @@
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
       "index": 98,
@@ -11927,7 +11927,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11951,7 +11951,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11975,7 +11975,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11999,7 +11999,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12018,7 +12018,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12027,7 +12027,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12051,7 +12051,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12075,7 +12075,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12099,7 +12099,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12123,7 +12123,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12147,7 +12147,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12166,7 +12166,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12175,7 +12175,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12194,7 +12194,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12203,7 +12203,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12222,7 +12222,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12231,7 +12231,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12250,7 +12250,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12259,7 +12259,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12278,7 +12278,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12287,7 +12287,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12306,7 +12306,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12315,7 +12315,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12334,7 +12334,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12343,7 +12343,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12362,7 +12362,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12371,7 +12371,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12390,7 +12390,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12399,7 +12399,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12418,7 +12418,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12427,7 +12427,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12446,7 +12446,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12455,7 +12455,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12474,7 +12474,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12483,7 +12483,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12502,7 +12502,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12511,7 +12511,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12530,7 +12530,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12539,7 +12539,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12563,7 +12563,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "missing",
@@ -12587,7 +12587,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12611,7 +12611,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12635,7 +12635,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12659,7 +12659,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12678,7 +12678,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12687,7 +12687,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12711,7 +12711,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12735,7 +12735,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12759,7 +12759,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12783,7 +12783,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12807,7 +12807,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12826,7 +12826,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12835,7 +12835,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12854,7 +12854,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12863,7 +12863,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12882,7 +12882,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12891,7 +12891,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12910,7 +12910,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12919,7 +12919,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12938,7 +12938,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12947,7 +12947,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12966,7 +12966,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -12975,7 +12975,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12994,7 +12994,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13003,7 +13003,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13022,7 +13022,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13031,7 +13031,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13050,7 +13050,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13059,7 +13059,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13078,7 +13078,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13087,7 +13087,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13106,7 +13106,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13115,7 +13115,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13134,7 +13134,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13143,7 +13143,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13162,7 +13162,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13171,7 +13171,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13190,7 +13190,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13199,7 +13199,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13218,7 +13218,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13227,7 +13227,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13246,7 +13246,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13255,7 +13255,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13274,7 +13274,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13283,7 +13283,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13302,7 +13302,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13311,7 +13311,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13330,7 +13330,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13339,7 +13339,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13358,7 +13358,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13367,7 +13367,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13386,7 +13386,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13395,7 +13395,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13414,7 +13414,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13423,7 +13423,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13442,7 +13442,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13451,7 +13451,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13470,7 +13470,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13479,7 +13479,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13498,7 +13498,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13507,7 +13507,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13526,7 +13526,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13535,7 +13535,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13554,7 +13554,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13563,7 +13563,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13582,7 +13582,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13591,7 +13591,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13610,7 +13610,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13619,7 +13619,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13638,7 +13638,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13647,7 +13647,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13666,7 +13666,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13675,7 +13675,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13694,7 +13694,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13703,7 +13703,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13722,7 +13722,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13731,7 +13731,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13750,7 +13750,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13759,7 +13759,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13778,7 +13778,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13787,7 +13787,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13806,7 +13806,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13815,7 +13815,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13834,7 +13834,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13843,7 +13843,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13862,7 +13862,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13871,7 +13871,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13890,7 +13890,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13899,7 +13899,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13918,7 +13918,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13927,7 +13927,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13946,7 +13946,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13955,7 +13955,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13974,7 +13974,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -13983,7 +13983,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -14002,7 +14002,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -14011,7 +14011,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -14030,7 +14030,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -14039,7 +14039,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -14058,7 +14058,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -14067,7 +14067,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -14086,7 +14086,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -14095,7 +14095,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -14114,7 +14114,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -14123,7 +14123,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -14142,7 +14142,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -14151,7 +14151,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -14170,7 +14170,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -14179,7 +14179,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -14198,7 +14198,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -14207,7 +14207,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -14226,7 +14226,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -14235,7 +14235,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -14254,7 +14254,7 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
+        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
@@ -14263,7 +14263,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+        "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -14287,7 +14287,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -14311,7 +14311,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -14335,7 +14335,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -14359,7 +14359,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -14383,7 +14383,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -14407,7 +14407,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -14431,7 +14431,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -14455,7 +14455,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -14479,7 +14479,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -14503,7 +14503,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "missing",
@@ -14527,7 +14527,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/cube-totality.json",
-        "docs/architecture-decisions/0034-cube-raw-carrier-totality.md"
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -14551,7 +14551,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/cube-totality.json",
-        "docs/architecture-decisions/0034-cube-raw-carrier-totality.md"
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -14575,7 +14575,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/cube-totality.json",
-        "docs/architecture-decisions/0034-cube-raw-carrier-totality.md"
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -14599,7 +14599,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/cube-totality.json",
-        "docs/architecture-decisions/0034-cube-raw-carrier-totality.md"
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -14623,7 +14623,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/cube-totality.json",
-        "docs/architecture-decisions/0034-cube-raw-carrier-totality.md"
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -14647,7 +14647,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/cube-totality.json",
-        "docs/architecture-decisions/0034-cube-raw-carrier-totality.md"
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -14671,7 +14671,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/cube-totality.json",
-        "docs/architecture-decisions/0034-cube-raw-carrier-totality.md"
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -14695,7 +14695,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/cube-totality.json",
-        "docs/architecture-decisions/0034-cube-raw-carrier-totality.md"
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -14719,7 +14719,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/cube-totality.json",
-        "docs/architecture-decisions/0034-cube-raw-carrier-totality.md"
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -14743,7 +14743,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/cube-totality.json",
-        "docs/architecture-decisions/0034-cube-raw-carrier-totality.md"
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -14767,7 +14767,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/cube-totality.json",
-        "docs/architecture-decisions/0034-cube-raw-carrier-totality.md"
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -14791,7 +14791,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/cube-totality.json",
-        "docs/architecture-decisions/0034-cube-raw-carrier-totality.md"
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",

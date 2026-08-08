@@ -360,7 +360,7 @@
       ],
       "status": "accepted",
       "selected_disposition": "portable-normative-rule",
-      "decision_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md"
+      "decision_record": "docs/status/decisions/0047-numeric-rounding-semantics.md"
     },
     {
       "id": "PD-04",
@@ -401,7 +401,7 @@
       ],
       "status": "accepted",
       "selected_disposition": "named-target-profile-rule",
-      "decision_record": "docs/architecture-decisions/0049-hardware-subnormal-policy.md"
+      "decision_record": "docs/status/decisions/0049-hardware-subnormal-policy.md"
     },
     {
       "id": "PD-05",

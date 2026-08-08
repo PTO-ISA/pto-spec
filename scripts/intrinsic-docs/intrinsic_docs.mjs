@@ -484,7 +484,7 @@ function generatedUnmappedSummary(docs) {
 function ensureMaintenanceSection(body) {
   let output = body.replace(
     /- 全量 HTML 文档入口见 \[DavinciOO_PTO_Intrinsic_Complete\.html\]\(DavinciOO_PTO_Intrinsic_Complete\.html\)。?\n?/,
-    "- Complete HTML 入口见 `docs/DavinciOO_PTO_Intrinsic_Complete.html`；当前 encoding workbook 位于 `spec/encoding/PTO-ISA-Encoding.xlsx`。\n",
+    "- Complete HTML 入口见 `docs/status/legacy/DavinciOO_PTO_Intrinsic_Complete.html`；当前 encoding workbook 位于 `spec/encoding/PTO-ISA-Encoding.xlsx`。\n",
   );
   if (/^## (?:Maintenance Workflow|维护流程)$/m.test(output)) return output;
   const section = `## 维护流程\n\n- Markdown frontmatter 与固定正文段落是结构化事实和语义的权威源。\n- 运行 \`node --test scripts/intrinsic-docs/test_intrinsic_docs.mjs\` 检查文档工具链。\n- 运行 \`python3 scripts/check-publication-hygiene\` 和 \`python3 scripts/check-repository\` 检查链接、投影和仓库闭包。\n- 使用 \`sync_intrinsic_xlsx.mjs\` 增量同步 Excel；sidecar 会保护人工修改。\n- 使用 \`build_intrinsic_html.mjs\` 生成并验证 Complete HTML 候选站点。\n\n`;

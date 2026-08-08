@@ -36,32 +36,32 @@ required_files=(
     .github/CODEOWNERS
     .codex/skills/pto-asl/SKILL.md
     asl/architecture.asl
-    docs/architecture.md
-    docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md
-    docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md
-    docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md
-    docs/architecture-decisions/0047-numeric-rounding-semantics.md
-    docs/architecture-decisions/0040-numeric-format-namespace-ownership.md
-    docs/architecture-decisions/0048-numeric-format-value-classification.md
-    docs/architecture-decisions/0049-hardware-subnormal-policy.md
-    docs/architecture-decisions/0050-hardware-special-value-checkpoint.md
-    docs/architecture-decisions/0051-public-v06-predicate-mask-boundary.md
-    docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md
-    docs/architecture-decisions/0042-numeric-variation-point-ownership.md
-    docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md
-    docs/architecture-decisions/0044-public-integer-conversion-result-subset.md
-    docs/architecture-decisions/0045-pto-isa-release-tile-contract.md
-    docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md
-    docs/architecture-decisions/0046-separate-execution-mask-and-warp-predicates.md
-    docs/coverage.md
-    docs/memory-model.md
-    docs/modeling-conventions.md
-    docs/maturity-bringup-plan.md
-    docs/maturity-stage-targets.md
-    docs/numeric-profile-decision-register.md
-    docs/normative-sources.md
-    docs/profile-contracts.md
-    docs/review-checklist.md
+    docs/status/legacy/root/architecture.md
+    docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md
+    docs/status/decisions/0038-scalar-numeric-flag-state-and-ownership.md
+    docs/status/decisions/0039-numeric-rounding-selector-ownership.md
+    docs/status/decisions/0047-numeric-rounding-semantics.md
+    docs/status/decisions/0040-numeric-format-namespace-ownership.md
+    docs/status/decisions/0048-numeric-format-value-classification.md
+    docs/status/decisions/0049-hardware-subnormal-policy.md
+    docs/status/decisions/0050-hardware-special-value-checkpoint.md
+    docs/status/decisions/0051-public-v06-predicate-mask-boundary.md
+    docs/status/decisions/0041-a2a3-mx-profile-applicability.md
+    docs/status/decisions/0042-numeric-variation-point-ownership.md
+    docs/status/decisions/0043-public-numeric-type-identity-and-availability.md
+    docs/status/decisions/0044-public-integer-conversion-result-subset.md
+    docs/status/decisions/0045-pto-isa-release-tile-contract.md
+    docs/status/decisions/0052-pto-isa-0580-davincioo-catalog.md
+    docs/status/decisions/0046-separate-execution-mask-and-warp-predicates.md
+    docs/status/legacy/root/coverage.md
+    docs/status/legacy/root/memory-model.md
+    docs/status/legacy/root/modeling-conventions.md
+    docs/status/legacy/root/maturity-bringup-plan.md
+    docs/status/legacy/root/maturity-stage-targets.md
+    docs/status/legacy/root/numeric-profile-decision-register.md
+    docs/status/legacy/root/normative-sources.md
+    docs/status/legacy/root/profile-contracts.md
+    docs/status/legacy/root/review-checklist.md
     docs/instructions/index.md
     spec/requirements.json
     spec/catalog/scalar-forms.json

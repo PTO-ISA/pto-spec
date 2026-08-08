@@ -11,7 +11,7 @@
   "sources": [
     {
       "path": "spec/requirements.json",
-      "sha256": "a39c97f0216dbc3b82f395d73c2987a859601ad3820fb194b169bc2766ed4fe6"
+      "sha256": "b5404cf13e32ceb8fc6823a1eab35b45f1f29ff9eafc3185750a082773ac5afd"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -31,11 +31,11 @@
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
-      "sha256": "f2bf1bcfa9e6ce1006132ac6d9aec4a8c698990a20eeb7736d361d62ed6477ed"
+      "sha256": "05752d689ec6b73fe008804fdea50a94eed2048c6b7d19f065b722e80a8767ef"
     },
     {
       "path": "spec/catalog/numeric-profile-applicability.json",
-      "sha256": "567127cf30879734e81a7664ff2db9e25b3c2a8539444c65fbcff25fcb284902"
+      "sha256": "9a2d9cd56cf69ab33af53591cf8b6f32851ed21467173fe72a70360d3c37bb91"
     },
     {
       "path": "spec/profile-hooks.json",
@@ -43,43 +43,43 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "2f14c4f4604ddd176bcbe05ca1627c3408213906239e373ee39130f9364b0552"
+      "sha256": "f940108b2bb9da6443cca9fb2c2aab4007e25568af99f73effc719dd16df3146"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "d8faabff717a7a1b69eb3402c42508f169febd4679974cfe97f9ee00015d77da"
+      "sha256": "385fc7d1239291de56e115bb613761719ebdc15e648c974fff39c5961dd9514a"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "9bda0a01a215736ad63041e73582f722489930b240bc7451a49a07a9cf2f1190"
+      "sha256": "75f6b9d725c47ff06026b4ba7dde7be0e5d1892f2e9b955223602fb2bae402fe"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "2569188dfac852ec9eda16707caf34d303ba4f3ffe9da38ac57b04e85dde7b55"
+      "sha256": "0b5307ba9a432795bd65d8a488c96987e5bfba1939bf3fbd87c3571f8edba5e2"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "caf847ccd4bb6d24a68c99bf5f62e3e64a5591c7ca209c8bc89e6b3837550380"
+      "sha256": "9dadea667e55f8d6d8cbbe9282ef29606e569729905dba468dd980ab5e909a1b"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "3ccb4df27bee9624be5c991dc580fddd6d3aa6ddd9e1f1e1f8a7bb953229eeae"
+      "sha256": "53988ce1878c3bf6c72193d154da8c7d9dd3971c6dc5bb0337e9af9a51cca2f0"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "4175dc5123c46a7b3fbdcb3f3df2faa80b8e2cfc4cc0ec19b314bb868c3fc1a0"
+      "sha256": "12df76e7e8f967af157afe8a0fdfc2d371888488456ac63da3ad00cfe35733a1"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "66607c582e26456cfb0e4d4576537d781d24e048fc26e5c4a4a22724a49c14fb"
+      "sha256": "53d21024ac42c6e0998e3bf4058b3940e3f6bda0ba19f18455b8db39f6a90d89"
     },
     {
       "path": "spec/evidence/numeric-subnormal-contract.json",
-      "sha256": "009e4b55a38f66590e0aaaaa002a9ea7954ceacf98f76c6c0400e96416230e3b"
+      "sha256": "2f15d81f0bb4fd36a0d32136bd96fa14432cf179bedde211e5b4f9a22443d5c1"
     },
     {
       "path": "spec/evidence/numeric-special-value-contract.json",
-      "sha256": "7165b59d47b7e6b816519230720fa4019cc8fc2ef15c5b9547a275c1550f2f93"
+      "sha256": "1cf3bdf7eadc7e5e726ec365755cd01de51ff105ec055ac6c5b63f5735a2a898"
     },
     {
       "path": "spec/evidence/scalar-effect-closure.json",
@@ -95,15 +95,15 @@
     },
     {
       "path": "spec/evidence/tepl-totality.json",
-      "sha256": "56ca4ca9a1ce23966086e2c482ed633828405cbc086d98e5c145266b46915ee4"
+      "sha256": "15606fb1d1574d56774d65621cb6905132cacdc3c68a8123dc248ee0cbbadd8c"
     },
     {
       "path": "spec/evidence/tlsu-totality.json",
-      "sha256": "a59b4deeca7271e3c9af707acc4aae5f797a836fcba34e14d82b39f45bc6cd0b"
+      "sha256": "6e4fc52b8cce087f565d8cfe2247a0a675ffad991d526dac801fbbeeded45ccf"
     },
     {
       "path": "spec/evidence/cube-totality.json",
-      "sha256": "005436c4c166cbc17d5993118262def68ea6c9084f77530a10fff7f3082d331c"
+      "sha256": "6b09e3ad3cd54ac3c18e0ecda119c50509e16e36a1dacc40028629f904d19cbd"
     },
     {
       "path": "spec/evidence/noncomparable-oracle-coverage.json",
@@ -3342,7 +3342,7 @@
       {
         "id": "PTO-REQ-STATE-001",
         "status": "implemented-portable-model",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/legacy/root/architecture.md",
         "model": [
           "asl/arch/data-types/fault.asl",
           "asl/arch/data-types/floating-point.asl",
@@ -3385,7 +3385,7 @@
           "asl/tile/model/capacity/local.asl",
           "asl/tile/model/capacity/shared.asl",
           "asl/tile/model/definedness/elements.asl",
-          "docs/architecture-decisions/0008-architectural-state-contract.md"
+          "docs/status/decisions/0008-architectural-state-contract.md"
         ],
         "tests": [
           "tests/asl/state-tests.asl"
@@ -3395,7 +3395,7 @@
       {
         "id": "PTO-REQ-PREDICATE-001",
         "status": "implemented-by-pto-v0-profile-public-v06-boundary-reconciled",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0051-public-v06-predicate-mask-boundary.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/decisions/0051-public-v06-predicate-mask-boundary.md",
         "model": [
           "asl/arch/data-types/fault.asl",
           "asl/arch/data-types/floating-point.asl",
@@ -3436,9 +3436,9 @@
           "asl/arch/profile/applicability.asl",
           "asl/arch/profile/reference-profile.asl",
           "asl/arch/profile/reset.asl",
-          "docs/architecture-decisions/0019-predicate-register-contract.md",
-          "docs/architecture-decisions/0046-separate-execution-mask-and-warp-predicates.md",
-          "docs/architecture-decisions/0051-public-v06-predicate-mask-boundary.md",
+          "docs/status/decisions/0019-predicate-register-contract.md",
+          "docs/status/decisions/0046-separate-execution-mask-and-warp-predicates.md",
+          "docs/status/decisions/0051-public-v06-predicate-mask-boundary.md",
           "scripts/generate-public-source-reconciliation",
           "spec/evidence/public-source-reconciliation.json",
           "spec/profile-hooks.json"
@@ -3455,20 +3455,20 @@
       {
         "id": "PTO-REQ-PROFILE-001",
         "status": "pto-v0-reference-implemented-target-conformance-open:S5-T2",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/profile-contracts.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/legacy/root/profile-contracts.md",
         "model": [
-          "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
-          "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
-          "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
-          "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
-          "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
-          "docs/architecture-decisions/0048-numeric-format-value-classification.md",
-          "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
-          "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
-          "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
-          "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
-          "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
-          "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
+          "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+          "docs/status/decisions/0038-scalar-numeric-flag-state-and-ownership.md",
+          "docs/status/decisions/0039-numeric-rounding-selector-ownership.md",
+          "docs/status/decisions/0047-numeric-rounding-semantics.md",
+          "docs/status/decisions/0040-numeric-format-namespace-ownership.md",
+          "docs/status/decisions/0048-numeric-format-value-classification.md",
+          "docs/status/decisions/0049-hardware-subnormal-policy.md",
+          "docs/status/decisions/0050-hardware-special-value-checkpoint.md",
+          "docs/status/decisions/0041-a2a3-mx-profile-applicability.md",
+          "docs/status/decisions/0042-numeric-variation-point-ownership.md",
+          "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
+          "docs/status/decisions/0044-public-integer-conversion-result-subset.md",
           "asl/arch/profile/applicability.asl",
           "asl/arch/profile/reference-profile.asl",
           "asl/arch/profile/reset.asl",
@@ -3506,10 +3506,10 @@
           "asl/scalar/model/types/operations.asl",
           "asl/tile/model/state/types.asl",
           "asl/tile/model/numeric/formats.asl",
-          "docs/architecture-decisions/0005-pto-v0-concrete-reference-profile.md",
-          "docs/architecture-decisions/0011-visible-ebarg-snapshot.md",
-          "docs/architecture-decisions/0034-cube-raw-carrier-totality.md",
-          "docs/numeric-profile-decision-register.md",
+          "docs/status/decisions/0005-pto-v0-concrete-reference-profile.md",
+          "docs/status/decisions/0011-visible-ebarg-snapshot.md",
+          "docs/status/decisions/0034-cube-raw-carrier-totality.md",
+          "docs/status/legacy/root/numeric-profile-decision-register.md",
           "spec/evidence/cube-totality.json",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
@@ -3551,7 +3551,7 @@
       {
         "id": "PTO-REQ-FAULT-001",
         "status": "implemented-by-pto-v0-profile",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/legacy/root/architecture.md",
         "model": [
           "asl/arch/data-types/fault.asl",
           "asl/arch/data-types/floating-point.asl",
@@ -3593,8 +3593,8 @@
           "asl/tile/model/legality/memory-schema.asl",
           "asl/tile/model/legality/operand-schema.asl",
           "asl/tile/model/legality/pe-mask.asl",
-          "docs/architecture-decisions/0010-acr-routing-and-context-reset.md",
-          "docs/architecture-decisions/0018-pto-v0-trap-disposition.md",
+          "docs/status/decisions/0010-acr-routing-and-context-reset.md",
+          "docs/status/decisions/0018-pto-v0-trap-disposition.md",
           "spec/catalog/system-registers.json",
           "spec/evidence/trap-context-recovery-evidence.json",
           "spec/profile-hooks.json"
@@ -3611,7 +3611,7 @@
       {
         "id": "PTO-REQ-INTERRUPT-001",
         "status": "implemented-by-pto-v0-profile",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0016-interrupt-pending-and-timer-state.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/decisions/0016-interrupt-pending-and-timer-state.md",
         "model": [
           "asl/arch/data-types/fault.asl",
           "asl/arch/data-types/floating-point.asl",
@@ -3651,7 +3651,7 @@
           "asl/arch/profile/reference-profile.asl",
           "asl/arch/profile/reset.asl",
           "spec/profile-hooks.json",
-          "docs/architecture-decisions/0016-interrupt-pending-and-timer-state.md"
+          "docs/status/decisions/0016-interrupt-pending-and-timer-state.md"
         ],
         "tests": [
           "tests/asl/state-tests.asl",
@@ -3665,8 +3665,8 @@
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
         "model": [
           "asl/scalar/model/alu/semantics.asl",
-          "docs/architecture-decisions/0025-scalar-bitfield-and-reverse-bounds.md",
-          "docs/architecture-decisions/0026-scalar-alu-totality-and-alias-order.md",
+          "docs/status/decisions/0025-scalar-bitfield-and-reverse-bounds.md",
+          "docs/status/decisions/0026-scalar-alu-totality-and-alias-order.md",
           "spec/evidence/scalar-alu-totality.json"
         ],
         "tests": [
@@ -3677,7 +3677,7 @@
       {
         "id": "PTO-REQ-SCALAR-EFFECT-CLOSURE-001",
         "status": "decoded-effect-closure-474-of-474",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/maturity-bringup-plan.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/legacy/root/maturity-bringup-plan.md",
         "model": [
           "asl/scalar/model/dispatch/agu.asl",
           "asl/scalar/model/dispatch/alu.asl",
@@ -3692,7 +3692,7 @@
           "spec/catalog/scalar-forms.json",
           "spec/evidence/executable-model-comparison.json",
           "spec/evidence/scalar-effect-closure.json",
-          "docs/maturity-bringup-plan.md"
+          "docs/status/legacy/root/maturity-bringup-plan.md"
         ],
         "tests": [
           "scripts/check-catalogs",
@@ -3726,7 +3726,7 @@
       {
         "id": "PTO-REQ-SCALAR-EXECUTION-001",
         "status": "implemented",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0009-scalar-tpc-and-execution-status.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/decisions/0009-scalar-tpc-and-execution-status.md",
         "model": [
           "asl/scalar/model/dispatch/agu.asl",
           "asl/scalar/model/dispatch/alu.asl",
@@ -3736,12 +3736,12 @@
           "asl/scalar/model/dispatch/fsu.asl",
           "asl/scalar/model/dispatch/sys.asl",
           "asl/scalar/model/dispatch/top-level.asl",
-          "docs/architecture.md",
-          "docs/architecture-decisions/0009-scalar-tpc-and-execution-status.md",
-          "docs/architecture-decisions/0027-scalar-bru-totality-and-target-legality.md",
-          "docs/architecture-decisions/0029-scalar-agu-totality-and-restart.md",
-          "docs/architecture-decisions/0030-scalar-amo-totality-and-reservation.md",
-          "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
+          "docs/status/legacy/root/architecture.md",
+          "docs/status/decisions/0009-scalar-tpc-and-execution-status.md",
+          "docs/status/decisions/0027-scalar-bru-totality-and-target-legality.md",
+          "docs/status/decisions/0029-scalar-agu-totality-and-restart.md",
+          "docs/status/decisions/0030-scalar-amo-totality-and-reservation.md",
+          "docs/status/decisions/0033-tma-four-bit-memory-packing.md",
           "spec/evidence/scalar-agu-totality.json",
           "spec/evidence/scalar-amo-totality.json",
           "spec/evidence/scalar-bru-totality.json"
@@ -3759,8 +3759,8 @@
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
         "model": [
           "asl/scalar/model/bru/semantics.asl",
-          "docs/architecture-decisions/0021-scalar-pc-relative-and-return-address.md",
-          "docs/architecture-decisions/0027-scalar-bru-totality-and-target-legality.md",
+          "docs/status/decisions/0021-scalar-pc-relative-and-return-address.md",
+          "docs/status/decisions/0027-scalar-bru-totality-and-target-legality.md",
           "spec/evidence/scalar-bru-totality.json"
         ],
         "tests": [
@@ -3771,15 +3771,15 @@
       {
         "id": "PTO-REQ-SCALAR-OPERAND-001",
         "status": "operand-contract-reference-totality-closed",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/legacy/root/architecture.md",
         "model": [
           "asl/scalar/model/types/operands.asl",
-          "docs/architecture-decisions/0008-architectural-state-contract.md",
-          "docs/architecture-decisions/0026-scalar-alu-totality-and-alias-order.md",
-          "docs/architecture-decisions/0027-scalar-bru-totality-and-target-legality.md",
-          "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
-          "docs/architecture-decisions/0029-scalar-agu-totality-and-restart.md",
-          "docs/architecture-decisions/0030-scalar-amo-totality-and-reservation.md",
+          "docs/status/decisions/0008-architectural-state-contract.md",
+          "docs/status/decisions/0026-scalar-alu-totality-and-alias-order.md",
+          "docs/status/decisions/0027-scalar-bru-totality-and-target-legality.md",
+          "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
+          "docs/status/decisions/0029-scalar-agu-totality-and-restart.md",
+          "docs/status/decisions/0030-scalar-amo-totality-and-reservation.md",
           "spec/evidence/scalar-agu-totality.json",
           "spec/evidence/scalar-alu-totality.json",
           "spec/evidence/scalar-amo-totality.json",
@@ -3806,7 +3806,7 @@
           "asl/scalar/model/dispatch/fsu.asl",
           "asl/scalar/model/dispatch/sys.asl",
           "asl/scalar/model/dispatch/top-level.asl",
-          "docs/architecture-decisions/0029-scalar-agu-totality-and-restart.md",
+          "docs/status/decisions/0029-scalar-agu-totality-and-restart.md",
           "spec/evidence/scalar-agu-totality.json",
           "scripts/generate-asl-decoders"
         ],
@@ -3820,7 +3820,7 @@
       {
         "id": "PTO-REQ-SCALAR-CONSTRAINT-001",
         "status": "implemented-form-constraints",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/legacy/root/architecture.md",
         "model": [
           "asl/scalar/model/dispatch/agu.asl",
           "asl/scalar/model/dispatch/alu.asl",
@@ -3832,7 +3832,7 @@
           "asl/scalar/model/dispatch/top-level.asl",
           "scripts/generate-asl-decoders",
           "spec/catalog/scalar-forms.json",
-          "docs/normative-sources.md"
+          "docs/status/legacy/root/normative-sources.md"
         ],
         "tests": [
           "scripts/check-catalogs",
@@ -3854,7 +3854,7 @@
           "asl/scalar/model/dispatch/fsu.asl",
           "asl/scalar/model/dispatch/sys.asl",
           "asl/scalar/model/dispatch/top-level.asl",
-          "docs/architecture-decisions/0030-scalar-amo-totality-and-reservation.md",
+          "docs/status/decisions/0030-scalar-amo-totality-and-reservation.md",
           "spec/evidence/scalar-amo-totality.json",
           "scripts/generate-asl-decoders",
           "spec/profile-hooks.json"
@@ -3882,8 +3882,8 @@
           "asl/scalar/model/dispatch/fsu.asl",
           "asl/scalar/model/dispatch/sys.asl",
           "asl/scalar/model/dispatch/top-level.asl",
-          "docs/architecture-decisions/0012-acrc-service-request.md",
-          "docs/architecture-decisions/0031-scalar-sys-totality-and-profile-boundaries.md",
+          "docs/status/decisions/0012-acrc-service-request.md",
+          "docs/status/decisions/0031-scalar-sys-totality-and-profile-boundaries.md",
           "spec/evidence/scalar-sys-totality.json",
           "spec/profile-hooks.json"
         ],
@@ -3898,7 +3898,7 @@
       {
         "id": "PTO-REQ-ACRC-001",
         "status": "reference-totality-closed:S4-T6",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0012-acrc-service-request.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/decisions/0012-acrc-service-request.md",
         "model": [
           "asl/arch/programming-model/core-pe-topology.asl",
           "asl/arch/programming-model/execution-context.asl",
@@ -3926,8 +3926,8 @@
           "asl/scalar/model/dispatch/fsu.asl",
           "asl/scalar/model/dispatch/sys.asl",
           "asl/scalar/model/dispatch/top-level.asl",
-          "docs/architecture-decisions/0012-acrc-service-request.md",
-          "docs/architecture-decisions/0031-scalar-sys-totality-and-profile-boundaries.md",
+          "docs/status/decisions/0012-acrc-service-request.md",
+          "docs/status/decisions/0031-scalar-sys-totality-and-profile-boundaries.md",
           "spec/evidence/scalar-sys-totality.json",
           "spec/evidence/trap-context-recovery-evidence.json"
         ],
@@ -3949,10 +3949,10 @@
           "spec/profile-hooks.json",
           "scripts/generate-asl-decoders",
           "scripts/generate-system-register-witness-closure",
-          "docs/architecture-decisions/0003-pto-owned-system-register-names.md",
-          "docs/architecture-decisions/0011-visible-ebarg-snapshot.md",
-          "docs/architecture-decisions/0017-system-register-behavior-classes.md",
-          "docs/architecture-decisions/0031-scalar-sys-totality-and-profile-boundaries.md",
+          "docs/status/decisions/0003-pto-owned-system-register-names.md",
+          "docs/status/decisions/0011-visible-ebarg-snapshot.md",
+          "docs/status/decisions/0017-system-register-behavior-classes.md",
+          "docs/status/decisions/0031-scalar-sys-totality-and-profile-boundaries.md",
           "spec/evidence/scalar-sys-totality.json",
           "spec/evidence/system-register-witness-closure.json"
         ],
@@ -3971,16 +3971,16 @@
         "status": "raw-carrier-reference-totality-closed:S4-T5-conformance-open:S5-T2",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/scalar-forms.json",
         "model": [
-          "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
-          "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
-          "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
-          "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
-          "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
-          "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
-          "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
-          "docs/architecture-decisions/0048-numeric-format-value-classification.md",
-          "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
-          "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
+          "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+          "docs/status/decisions/0042-numeric-variation-point-ownership.md",
+          "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
+          "docs/status/decisions/0038-scalar-numeric-flag-state-and-ownership.md",
+          "docs/status/decisions/0039-numeric-rounding-selector-ownership.md",
+          "docs/status/decisions/0047-numeric-rounding-semantics.md",
+          "docs/status/decisions/0040-numeric-format-namespace-ownership.md",
+          "docs/status/decisions/0048-numeric-format-value-classification.md",
+          "docs/status/decisions/0049-hardware-subnormal-policy.md",
+          "docs/status/decisions/0050-hardware-special-value-checkpoint.md",
           "asl/arch/data-types/numeric-classification.asl",
           "asl/arch/data-types/floating-point.asl",
           "asl/arch/data-types/packed.asl",
@@ -3997,7 +3997,7 @@
           "asl/scalar/model/dispatch/fsu.asl",
           "asl/scalar/model/dispatch/sys.asl",
           "asl/scalar/model/dispatch/top-level.asl",
-          "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
+          "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
@@ -4033,7 +4033,7 @@
       {
         "id": "PTO-REQ-MEMORY-001",
         "status": "pto-v0-reference-totality-closed:S4-T9",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/legacy/root/architecture.md",
         "model": [
           "asl/scalar/model/agu/memory.asl",
           "asl/scalar/model/dispatch/agu.asl",
@@ -4044,9 +4044,9 @@
           "asl/scalar/model/dispatch/fsu.asl",
           "asl/scalar/model/dispatch/sys.asl",
           "asl/scalar/model/dispatch/top-level.asl",
-          "docs/architecture-decisions/0029-scalar-agu-totality-and-restart.md",
-          "docs/architecture-decisions/0030-scalar-amo-totality-and-reservation.md",
-          "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
+          "docs/status/decisions/0029-scalar-agu-totality-and-restart.md",
+          "docs/status/decisions/0030-scalar-amo-totality-and-reservation.md",
+          "docs/status/decisions/0033-tma-four-bit-memory-packing.md",
           "spec/evidence/scalar-agu-totality.json",
           "spec/evidence/scalar-amo-totality.json",
           "spec/evidence/tlsu-totality.json",
@@ -4063,7 +4063,7 @@
       {
         "id": "PTO-REQ-MEMORY-COMPLETION-001",
         "status": "reference-totality-closed:S4-T9",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/legacy/root/architecture.md",
         "model": [
           "asl/scalar/model/agu/addressing.asl",
           "asl/scalar/model/dispatch/agu.asl",
@@ -4082,9 +4082,9 @@
           "asl/tile/model/memory/restart.asl",
           "asl/tile/model/memory/shared-movement.asl",
           "asl/tile/model/memory/stride.asl",
-          "docs/architecture-decisions/0029-scalar-agu-totality-and-restart.md",
-          "docs/architecture-decisions/0030-scalar-amo-totality-and-reservation.md",
-          "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
+          "docs/status/decisions/0029-scalar-agu-totality-and-restart.md",
+          "docs/status/decisions/0030-scalar-amo-totality-and-reservation.md",
+          "docs/status/decisions/0033-tma-four-bit-memory-packing.md",
           "spec/evidence/scalar-agu-totality.json",
           "spec/evidence/scalar-amo-totality.json",
           "spec/evidence/tlsu-totality.json",
@@ -4102,7 +4102,7 @@
       {
         "id": "PTO-REQ-MEMORY-TSO-001",
         "status": "implemented-production-connected-pto-tso-model",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/memory-model.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/legacy/root/memory-model.md",
         "model": [
           "asl/arch/memory-model/address-space.asl",
           "asl/arch/memory-model/atomicity.asl",
@@ -4151,12 +4151,12 @@
           "asl/scalar/model/types/operands.asl",
           "asl/scalar/model/types/operations.asl",
           "asl/tile/model/state/types.asl",
-          "docs/architecture-decisions/0006-pto-total-store-order.md",
-          "docs/architecture-decisions/0030-scalar-amo-totality-and-reservation.md",
-          "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
+          "docs/status/decisions/0006-pto-total-store-order.md",
+          "docs/status/decisions/0030-scalar-amo-totality-and-reservation.md",
+          "docs/status/decisions/0033-tma-four-bit-memory-packing.md",
           "spec/evidence/scalar-amo-totality.json",
           "spec/evidence/tlsu-totality.json",
-          "docs/memory-model.md"
+          "docs/status/legacy/root/memory-model.md"
         ],
         "tests": [
           "scripts/check-catalogs",
@@ -4169,7 +4169,7 @@
       {
         "id": "PTO-REQ-TILE-001",
         "status": "implemented-portable-model",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/legacy/root/architecture.md",
         "model": [
           "asl/arch/data-types/fault.asl",
           "asl/arch/data-types/floating-point.asl",
@@ -4205,7 +4205,7 @@
       {
         "id": "PTO-REQ-TILE-CAPACITY-001",
         "status": "implemented",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0013-tile-capacity-and-packed-storage.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/decisions/0013-tile-capacity-and-packed-storage.md",
         "model": [
           "asl/tile/model/state/allocation.asl",
           "asl/tile/model/state/descriptors.asl",
@@ -4232,7 +4232,7 @@
           "asl/tile/model/memory/restart.asl",
           "asl/tile/model/memory/shared-movement.asl",
           "asl/tile/model/memory/stride.asl",
-          "docs/architecture-decisions/0013-tile-capacity-and-packed-storage.md"
+          "docs/status/decisions/0013-tile-capacity-and-packed-storage.md"
         ],
         "tests": [
           "tests/asl/state-tests.asl",
@@ -4243,7 +4243,7 @@
       {
         "id": "PTO-REQ-SHARED-TILE-001",
         "status": "implemented-pto-isa-0580-shared-model",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/decisions/0052-pto-isa-0580-davincioo-catalog.md",
         "model": [
           "asl/arch/data-types/fault.asl",
           "asl/arch/data-types/floating-point.asl",
@@ -4303,14 +4303,14 @@
           "asl/block/model/commit/effects.asl",
           "asl/block/model/commit/validation.asl",
           "asl/block/model/faults/rollback.asl",
-          "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
-          "docs/davincioo-arch/programming-model.md",
-          "docs/davincioo-arch/state-and-data-types.md",
-          "docs/davincioo-arch/memory-ordering-and-exceptions.md",
-          "docs/instructions/block/operands/B.IOS.md",
-          "docs/instructions/tile/memory/regular/TLOAD.md",
-          "docs/instructions/tile/memory/regular/TSTORE.md",
-          "docs/instructions/tile/complex-layout/layout/TMOV.md"
+          "docs/status/decisions/0052-pto-isa-0580-davincioo-catalog.md",
+          "docs/status/legacy/davincioo-arch/programming-model.md",
+          "docs/status/legacy/davincioo-arch/state-and-data-types.md",
+          "docs/status/legacy/davincioo-arch/memory-ordering-and-exceptions.md",
+          "docs/block/operands/B.IOS.md",
+          "docs/tile/memory/regular/TLOAD.md",
+          "docs/tile/memory/regular/TSTORE.md",
+          "docs/tile/complex-layout/layout/TMOV.md"
         ],
         "tests": [
           "scripts/check-catalogs",
@@ -4323,7 +4323,7 @@
       {
         "id": "PTO-REQ-TILE-DEFINEDNESS-001",
         "status": "implemented",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0014-element-level-tile-definedness.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/decisions/0014-element-level-tile-definedness.md",
         "model": [
           "asl/arch/data-types/fault.asl",
           "asl/arch/data-types/floating-point.asl",
@@ -4357,7 +4357,7 @@
           "asl/tile/model/legality/memory-schema.asl",
           "asl/tile/model/legality/operand-schema.asl",
           "asl/tile/model/legality/pe-mask.asl",
-          "docs/architecture-decisions/0014-element-level-tile-definedness.md"
+          "docs/status/decisions/0014-element-level-tile-definedness.md"
         ],
         "tests": [
           "tests/asl/state-tests.asl",
@@ -4368,7 +4368,7 @@
       {
         "id": "PTO-REQ-TILE-MANAGEMENT-001",
         "status": "implemented",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0015-explicit-tile-handoff-slots.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/decisions/0015-explicit-tile-handoff-slots.md",
         "model": [
           "asl/tile/model/memory/addressing.asl",
           "asl/tile/model/memory/atomics.asl",
@@ -4385,7 +4385,7 @@
           "asl/tile/model/legality/memory-schema.asl",
           "asl/tile/model/legality/operand-schema.asl",
           "asl/tile/model/legality/pe-mask.asl",
-          "docs/architecture-decisions/0015-explicit-tile-handoff-slots.md"
+          "docs/status/decisions/0015-explicit-tile-handoff-slots.md"
         ],
         "tests": [
           "tests/asl/tile-tests.asl"
@@ -4425,7 +4425,7 @@
       {
         "id": "PTO-REQ-TILE-LEGALITY-001",
         "status": "dispatch-legality-and-family-totality-closed:S4-T8",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/legacy/root/architecture.md",
         "model": [
           "asl/scalar/model/dispatch/agu.asl",
           "asl/scalar/model/dispatch/alu.asl",
@@ -4445,9 +4445,9 @@
           "asl/tile/model/legality/operand-schema.asl",
           "asl/tile/model/legality/pe-mask.asl",
           "scripts/generate-asl-decoders",
-          "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
-          "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
-          "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
+          "docs/status/decisions/0035-tepl-raw-carrier-totality.md",
+          "docs/status/decisions/0040-numeric-format-namespace-ownership.md",
+          "docs/status/decisions/0041-a2a3-mx-profile-applicability.md",
           "scripts/generate-numeric-format-namespace-contract",
           "scripts/generate-numeric-profile-applicability-closure",
           "spec/evidence/numeric-format-namespace-contract.json",
@@ -4468,13 +4468,13 @@
         "status": "raw-carrier-reference-totality-closed:S4-T8-conformance-open:S5-T2",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
-          "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
-          "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
-          "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
-          "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
-          "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
+          "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+          "docs/status/decisions/0042-numeric-variation-point-ownership.md",
+          "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
+          "docs/status/decisions/0049-hardware-subnormal-policy.md",
+          "docs/status/decisions/0050-hardware-special-value-checkpoint.md",
           "asl/tile/model/execution/elementwise.asl",
-          "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
+          "docs/status/decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
@@ -4505,12 +4505,12 @@
         "status": "raw-carrier-reference-totality-closed:S4-T8-conformance-open:S5-T2",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
-          "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
-          "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
-          "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
-          "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
+          "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+          "docs/status/decisions/0042-numeric-variation-point-ownership.md",
+          "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
+          "docs/status/decisions/0049-hardware-subnormal-policy.md",
           "asl/tile/model/execution/reduction.asl",
-          "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
+          "docs/status/decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
@@ -4539,12 +4539,12 @@
         "status": "raw-carrier-reference-totality-closed:S4-T8-conformance-open:S5-T2",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
-          "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
-          "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
-          "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
-          "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
+          "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+          "docs/status/decisions/0042-numeric-variation-point-ownership.md",
+          "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
+          "docs/status/decisions/0049-hardware-subnormal-policy.md",
           "asl/tile/model/execution/expansion.asl",
-          "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
+          "docs/status/decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
@@ -4574,7 +4574,7 @@
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
           "asl/tile/model/execution/generation.asl",
-          "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
+          "docs/status/decisions/0035-tepl-raw-carrier-totality.md",
           "spec/evidence/tepl-totality.json"
         ],
         "tests": [
@@ -4588,13 +4588,13 @@
         "status": "raw-carrier-reference-totality-closed:S4-T8-conformance-open:S5-T2",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
-          "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
-          "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
-          "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
-          "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
-          "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
+          "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+          "docs/status/decisions/0042-numeric-variation-point-ownership.md",
+          "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
+          "docs/status/decisions/0044-public-integer-conversion-result-subset.md",
+          "docs/status/decisions/0049-hardware-subnormal-policy.md",
           "asl/tile/model/numeric/formats.asl",
-          "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
+          "docs/status/decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
@@ -4626,7 +4626,7 @@
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
           "asl/tile/model/execution/rearrangement.asl",
-          "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
+          "docs/status/decisions/0035-tepl-raw-carrier-totality.md",
           "spec/evidence/tepl-totality.json"
         ],
         "tests": [
@@ -4640,11 +4640,11 @@
         "status": "raw-carrier-reference-totality-closed:S4-T8-conformance-open:S5-T2",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
-          "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
-          "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
-          "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
+          "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+          "docs/status/decisions/0042-numeric-variation-point-ownership.md",
+          "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
           "asl/tile/model/execution/complex.asl",
-          "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
+          "docs/status/decisions/0035-tepl-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
@@ -4679,8 +4679,8 @@
           "asl/tile/model/memory/shared-movement.asl",
           "asl/tile/model/memory/stride.asl",
           "asl/scalar/model/agu/memory.asl",
-          "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
-          "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+          "docs/status/decisions/0033-tma-four-bit-memory-packing.md",
+          "docs/status/decisions/0040-numeric-format-namespace-ownership.md",
           "scripts/generate-numeric-format-namespace-contract",
           "spec/evidence/numeric-format-namespace-contract.json",
           "spec/evidence/tlsu-totality.json",
@@ -4697,12 +4697,12 @@
         "status": "raw-carrier-reference-totality-closed:S4-T10-conformance-open:S5-T2",
         "source": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/catalog/tile-operations.json",
         "model": [
-          "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
-          "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
-          "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
-          "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
-          "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
-          "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
+          "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+          "docs/status/decisions/0040-numeric-format-namespace-ownership.md",
+          "docs/status/decisions/0041-a2a3-mx-profile-applicability.md",
+          "docs/status/decisions/0042-numeric-variation-point-ownership.md",
+          "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
+          "docs/status/decisions/0049-hardware-subnormal-policy.md",
           "asl/tile/model/execution/cube.asl",
           "asl/tile/model/legality/allocation-capacity.asl",
           "asl/tile/model/legality/descriptor-shape.asl",
@@ -4712,7 +4712,7 @@
           "asl/tile/model/legality/memory-schema.asl",
           "asl/tile/model/legality/operand-schema.asl",
           "asl/tile/model/legality/pe-mask.asl",
-          "docs/architecture-decisions/0034-cube-raw-carrier-totality.md",
+          "docs/status/decisions/0034-cube-raw-carrier-totality.md",
           "scripts/generate-numeric-conformance-readiness",
           "scripts/generate-numeric-profile-decision-inputs",
           "scripts/generate-numeric-profile-decision-proposals",
@@ -4744,7 +4744,7 @@
       {
         "id": "PTO-REQ-BUNDLE-STATE-001",
         "status": "command-totality-closed:S4-T7",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/legacy/root/architecture.md",
         "model": [
           "asl/block/model/state/binding-state.asl",
           "asl/block/model/state/control-state.asl",
@@ -4781,11 +4781,11 @@
           "asl/scalar/model/types/operands.asl",
           "asl/scalar/model/types/operations.asl",
           "asl/tile/model/state/types.asl",
-          "docs/architecture-decisions/0027-scalar-bru-totality-and-target-legality.md",
-          "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md",
-          "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
-          "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
-          "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+          "docs/status/decisions/0027-scalar-bru-totality-and-target-legality.md",
+          "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+          "docs/status/decisions/0039-numeric-rounding-selector-ownership.md",
+          "docs/status/decisions/0047-numeric-rounding-semantics.md",
+          "docs/status/decisions/0040-numeric-format-namespace-ownership.md",
           "scripts/generate-numeric-format-namespace-contract",
           "spec/evidence/bundle-command-totality.json",
           "spec/evidence/numeric-format-namespace-contract.json",
@@ -4821,7 +4821,7 @@
           "asl/block/model/faults/rollback.asl",
           "scripts/generate-asl-decoders",
           "scripts/generate-bundle-command-totality",
-          "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+          "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
           "spec/evidence/bundle-command-totality.json",
           "spec/catalog/command-forms.json"
         ],
@@ -4835,7 +4835,7 @@
       {
         "id": "PTO-REQ-BUNDLE-OPERATION-001",
         "status": "direct-launch-and-bridge-totality-closed:S4-T7",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0022-bundle-operation-descriptor-and-commit.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/decisions/0022-bundle-operation-descriptor-and-commit.md",
         "model": [
           "asl/arch/data-types/fault.asl",
           "asl/arch/data-types/floating-point.asl",
@@ -4895,11 +4895,11 @@
           "spec/catalog/command-forms.json",
           "spec/catalog/numeric-profile-applicability.json",
           "spec/catalog/tile-operations.json",
-          "docs/architecture-decisions/0022-bundle-operation-descriptor-and-commit.md",
-          "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md",
-          "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
-          "docs/architecture-decisions/0055-complete-bundle-bior-schema-and-defaults.md",
-          "docs/instructions/block/operands/B.IOR.md",
+          "docs/status/decisions/0022-bundle-operation-descriptor-and-commit.md",
+          "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+          "docs/status/decisions/0041-a2a3-mx-profile-applicability.md",
+          "docs/status/decisions/0055-complete-bundle-bior-schema-and-defaults.md",
+          "docs/block/operands/B.IOR.md",
           "spec/evidence/numeric-profile-applicability-closure.json",
           "spec/evidence/bundle-command-totality.json"
         ],
@@ -4949,7 +4949,7 @@
       {
         "id": "PTO-REQ-EXECUTION-STATUS-001",
         "status": "implemented",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0023-uniform-instruction-attempt-status.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/decisions/0023-uniform-instruction-attempt-status.md",
         "model": [
           "asl/arch/programming-model/core-pe-topology.asl",
           "asl/arch/programming-model/execution-context.asl",
@@ -4994,7 +4994,7 @@
           "asl/block/model/faults/rollback.asl",
           "asl/arch/dispatch/top-level.asl",
           "scripts/generate-asl-decoders",
-          "docs/architecture-decisions/0023-uniform-instruction-attempt-status.md"
+          "docs/status/decisions/0023-uniform-instruction-attempt-status.md"
         ],
         "tests": [
           "scripts/check-catalogs",
@@ -5025,11 +5025,11 @@
       {
         "id": "PTO-REQ-RELEASE-ISA-001",
         "status": "accepted-implementation-in-progress",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/decisions/0052-pto-isa-0580-davincioo-catalog.md",
         "model": [
-          "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-          "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
-          "docs/architecture-decisions/0051-public-v06-predicate-mask-boundary.md",
+          "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
+          "docs/status/decisions/0052-pto-isa-0580-davincioo-catalog.md",
+          "docs/status/decisions/0051-public-v06-predicate-mask-boundary.md",
           "specification.toml",
           "spec/release-manifest.json",
           "spec/catalog/command-forms.json",
@@ -5134,18 +5134,18 @@
           "asl/scalar/model/types/operands.asl",
           "asl/scalar/model/types/operations.asl",
           "asl/tile/model/numeric/formats.asl",
-          "docs/architecture-decisions/0048-numeric-format-value-classification.md",
-          "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
-          "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
+          "docs/status/decisions/0048-numeric-format-value-classification.md",
+          "docs/status/decisions/0049-hardware-subnormal-policy.md",
+          "docs/status/decisions/0050-hardware-special-value-checkpoint.md",
           "scripts/generate-numeric-subnormal-contract",
           "scripts/generate-numeric-special-value-contract",
           "spec/evidence/numeric-subnormal-contract.json",
           "spec/evidence/numeric-special-value-contract.json",
           "spec/profile-hooks.json",
-          "docs/profile-contracts.md",
-          "docs/coverage.md",
-          "docs/normative-sources.md",
-          "docs/numeric-profile-decision-register.md",
+          "docs/status/legacy/root/profile-contracts.md",
+          "docs/status/legacy/root/coverage.md",
+          "docs/status/legacy/root/normative-sources.md",
+          "docs/status/legacy/root/numeric-profile-decision-register.md",
           "spec/evidence/numeric-contracts.json",
           "spec/evidence/numeric-conformance-readiness.json",
           "spec/release-manifest.json"
@@ -5160,32 +5160,32 @@
       {
         "id": "PTO-REQ-CLOSURE-001",
         "status": "m4-reference-closed-s5-conformance-in-progress-s6-release-open",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/normative-sources.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/legacy/root/normative-sources.md",
         "model": [
-          "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
-          "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
-          "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
-          "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
-          "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
-          "docs/architecture-decisions/0048-numeric-format-value-classification.md",
-          "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
-          "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
+          "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+          "docs/status/decisions/0038-scalar-numeric-flag-state-and-ownership.md",
+          "docs/status/decisions/0039-numeric-rounding-selector-ownership.md",
+          "docs/status/decisions/0047-numeric-rounding-semantics.md",
+          "docs/status/decisions/0040-numeric-format-namespace-ownership.md",
+          "docs/status/decisions/0048-numeric-format-value-classification.md",
+          "docs/status/decisions/0049-hardware-subnormal-policy.md",
+          "docs/status/decisions/0050-hardware-special-value-checkpoint.md",
           "asl/arch/data-types/numeric-classification.asl",
           "asl/arch/data-types/floating-point.asl",
           "asl/arch/data-types/packed.asl",
           "asl/arch/data-types/rounding.asl",
           "asl/arch/data-types/tile-data-types.asl",
           "asl/tile/model/numeric/formats.asl",
-          "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
-          "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
-          "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
-          "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
-          "docs/architecture-decisions/0051-public-v06-predicate-mask-boundary.md",
-          "docs/normative-sources.md",
-          "docs/coverage.md",
-          "docs/maturity-bringup-plan.md",
-          "docs/numeric-profile-decision-register.md",
-          "docs/architecture-decisions/0036-executable-model-comparison-dispositions.md",
+          "docs/status/decisions/0041-a2a3-mx-profile-applicability.md",
+          "docs/status/decisions/0042-numeric-variation-point-ownership.md",
+          "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
+          "docs/status/decisions/0044-public-integer-conversion-result-subset.md",
+          "docs/status/decisions/0051-public-v06-predicate-mask-boundary.md",
+          "docs/status/legacy/root/normative-sources.md",
+          "docs/status/legacy/root/coverage.md",
+          "docs/status/legacy/root/maturity-bringup-plan.md",
+          "docs/status/legacy/root/numeric-profile-decision-register.md",
+          "docs/status/decisions/0036-executable-model-comparison-dispositions.md",
           "scripts/check-asl-test-shards",
           "scripts/check-binary-closure",
           "scripts/check-catalogs",
@@ -5246,9 +5246,9 @@
       {
         "id": "PTO-REQ-HIERARCHY-001",
         "status": "implemented",
-        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/architecture-decisions/0001-pto-architecture-scope.md",
+        "source": "https://github.com/PTO-ISA/pto-spec/blob/main/docs/status/decisions/0001-pto-architecture-scope.md",
         "model": [
-          "docs/architecture-decisions/0001-pto-architecture-scope.md"
+          "docs/status/decisions/0001-pto-architecture-scope.md"
         ],
         "tests": [
           "scripts/check-catalogs",

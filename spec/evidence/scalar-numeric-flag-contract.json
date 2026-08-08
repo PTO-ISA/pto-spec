@@ -3,7 +3,7 @@
   "target": "S5-T2-A2:PD-06",
   "decision_id": "PD-06",
   "status": "state-owner-matrix-closed-profile-production-open",
-  "acceptance_record": "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
+  "acceptance_record": "docs/status/decisions/0038-scalar-numeric-flag-state-and-ownership.md",
   "architecture_contract": {
     "storage": {
       "system_register": "CORE_STATE",
@@ -583,7 +583,7 @@
       "sha256": "7828cea919d7585796c97b4493aa48603e2119ab1053982ce31fb6fa8338aec5"
     },
     {
-      "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
+      "path": "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
       "sha256": "07c51707a4f02fa6a451f92ab267b31fe4f0398d3def26f12b461f79d734d6a7"
     }
   ],

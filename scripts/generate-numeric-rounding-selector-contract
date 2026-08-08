@@ -22,7 +22,7 @@ COMMAND_CATALOG = ROOT / "spec/catalog/command-forms.json"
 DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
 IDENTITY_CATALOG = ROOT / "spec/catalog/numeric-profile-identities.json"
 OUTPUT = ROOT / "spec/evidence/numeric-rounding-selector-contract.json"
-ACCEPTANCE_RECORD = "docs/architecture-decisions/0047-numeric-rounding-semantics.md"
+ACCEPTANCE_RECORD = "docs/status/decisions/0047-numeric-rounding-semantics.md"
 
 ACTIVE_ROUNDING = (
     (0, "assigned", "RNE", "nearest-ties-even"),
@@ -350,10 +350,10 @@ def generate() -> dict[str, Any]:
             source("spec/catalog/tile-operations.json"),
             source("spec/hardware-conformance-profile.json"),
             source(
-                "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md"
+                "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md"
             ),
             source(
-                "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+                "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
             ),
             source(ACCEPTANCE_RECORD),
         ],

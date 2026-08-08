@@ -3,7 +3,7 @@
   "target": "S5-T2-A2:PD-03",
   "decision_id": "PD-03",
   "status": "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open",
-  "acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+  "acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
   "policy": {
     "namespace_separation": "Scalar FRM, scalar fixed conversion overrides, bundle RMode, public API modes, matrix controls, and stochastic controls are distinct selector namespaces unless an accepted rule maps them.",
     "no_backend_inheritance": "Backend CAST, ROUND, PART, and stochastic-control values are evidence only and cannot create portable PTO encodings.",
@@ -781,11 +781,11 @@
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
-      "sha256": "f2bf1bcfa9e6ce1006132ac6d9aec4a8c698990a20eeb7736d361d62ed6477ed"
+      "sha256": "05752d689ec6b73fe008804fdea50a94eed2048c6b7d19f065b722e80a8767ef"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "94d48007a9082fae64a0ec0a089f3ab146afe5f8a3b3b4a859ccfaa41519ef03"
+      "sha256": "ec9e3f2ef160cf84391c1ff38201098642e60b1c3449df2746dd9ab738605c96"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
@@ -920,15 +920,15 @@
       "sha256": "c4076cf8ac6ebd0c6db8a070b7c290b9928ed7f98c089538ee53ed4644e1531a"
     },
     {
-      "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
+      "path": "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
       "sha256": "07c51707a4f02fa6a451f92ab267b31fe4f0398d3def26f12b461f79d734d6a7"
     },
     {
-      "path": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
-      "sha256": "e4b8ec913ebe63322fca7985e2421b7e8cb894c06ed73c652a6179d63121c63b"
+      "path": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+      "sha256": "2d571c4df9bae68cb34824db62f2944145c96f61ea113ec15b3475e60b6610b6"
     },
     {
-      "path": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "path": "docs/status/decisions/0047-numeric-rounding-semantics.md",
       "sha256": "6595060f3b01749643d01677014308fc89aa02b23670fdef79d82e582f9232f2"
     }
   ],

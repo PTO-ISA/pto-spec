@@ -20,10 +20,11 @@ ALLOWED_EXTERNAL_REFERENCES = (
     "https://github.com/hengliao1972/normative_language/blob/main/normative_language.md",
 )
 MIGRATED_DOCUMENT_ROOTS = (
-    Path("docs/instructions/scalar"),
-    Path("docs/instructions/block"),
-    Path("docs/instructions/tile"),
-    Path("docs/status"),
+    Path("docs/arch"),
+    Path("docs/block"),
+    Path("docs/scalar"),
+    Path("docs/tile"),
+    Path("docs/status/legacy"),
 )
 LEGACY_RELEASE = re.compile(r"(?<![0-9.])v?0\.57(?!\.1(?:\b|[^0-9]))")
 STALE_URL_PREFIXES = (

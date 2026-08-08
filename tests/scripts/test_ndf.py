@@ -91,17 +91,14 @@ class NdfTest(unittest.TestCase):
             check_repository(self.root),
         )
 
-    def test_rejects_normative_clause_outside_asl(self) -> None:
+    def test_legacy_markdown_ndf_marker_is_non_normative(self) -> None:
         self.write(
-            "docs/architecture.md",
+            "docs/status/legacy/root/architecture.md",
             "## Contract {#PTO-TILE-CAPACITY}\n"
             "<!-- ndf: kind=contract level=L1 layer=tile status=accepted -->\n",
         )
 
-        self.assertIn(
-            "docs/architecture.md: active NDF clause must be owned by ASL",
-            check_repository(self.root),
-        )
+        self.assertEqual(check_repository(self.root), [])
 
     def test_rejects_legacy_archive_and_backup_paths(self) -> None:
         self.write("docs/legacy/old.md", "old\n")

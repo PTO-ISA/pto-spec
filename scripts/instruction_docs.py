@@ -14,13 +14,14 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.ndf import instruction_clause_id
+from scripts.asl_units import AslUnit, load_units  # noqa: E402
+from scripts.ndf import instruction_clause_id  # noqa: E402
 
 
 METADATA_PREFIX = "// PTO-INSTRUCTION: "
 REGION_BEGIN = re.compile(r"^// DOC-BEGIN: ([a-z][a-z0-9-]*)$")
 REGION_END = re.compile(r"^// DOC-END: ([a-z][a-z0-9-]*)$")
-SURFACES = {"scalar", "block", "tile"}
+SURFACES = {"arch", "scalar", "block", "tile"}
 TILE_CLASSIFICATIONS = {
     "tile-tile-elementwise",
     "unary-tile-elementwise",
@@ -31,10 +32,26 @@ TILE_CLASSIFICATIONS = {
     "memory",
     "complex-layout",
 }
-SURFACE_ORDER = ("scalar", "block", "tile")
+SURFACE_ORDER = ("arch", "block", "scalar", "tile")
 SUPPLEMENTARY_BEGIN = "<!-- SUPPLEMENTARY-BEGIN -->"
 SUPPLEMENTARY_END = "<!-- SUPPLEMENTARY-END -->"
+LEGACY_BANNER = (
+    "> Historical, non-normative material. This page is excluded from the active "
+    "PTO architecture and release closure."
+)
 VERSION_PATTERN = re.compile(r"\b0\.58(?:\.0)?\b")
+
+
+def doc_path_for(source_path: Path) -> Path:
+    """Return the exact active Markdown mirror for one ASL source path."""
+
+    if len(source_path.parts) < 3 or source_path.parts[0] != "asl":
+        raise ValueError(f"ASL source path is outside the four-surface tree: {source_path}")
+    if source_path.suffix != ".asl":
+        raise ValueError(f"ASL source path does not name an .asl file: {source_path}")
+    if source_path.parts[1] not in SURFACES:
+        raise ValueError(f"unknown ASL surface in source path: {source_path}")
+    return Path("docs", *source_path.parts[1:]).with_suffix(".md")
 
 
 def mnemonic_file_name(mnemonic: str) -> str:
@@ -60,11 +77,41 @@ class InstructionRecord:
 
     @property
     def relative_instruction_path(self) -> Path:
-        return Path(self.surface, *self.classification, f"{mnemonic_file_name(self.mnemonic)}.md")
+        return self.markdown_path.relative_to("docs")
 
     @property
     def markdown_path(self) -> Path:
-        return Path("docs/instructions") / self.relative_instruction_path
+        return doc_path_for(self.source_path)
+
+
+@dataclass(frozen=True)
+class DocRecord:
+    unit: AslUnit
+    instruction: InstructionRecord | None
+
+    @property
+    def unit_id(self) -> str:
+        return self.unit.unit_id
+
+    @property
+    def surface(self) -> str:
+        return self.unit.surface
+
+    @property
+    def classification(self) -> tuple[str, ...]:
+        return self.unit.classification
+
+    @property
+    def mnemonic(self) -> str | None:
+        return self.unit.mnemonic
+
+    @property
+    def source_path(self) -> Path:
+        return self.unit.source_path
+
+    @property
+    def markdown_path(self) -> Path:
+        return doc_path_for(self.source_path)
 
 
 def _parse_regions(path: Path, lines: list[str]) -> dict[str, str]:
@@ -175,6 +222,24 @@ def load_instruction_index(root: Path = ROOT) -> list[InstructionRecord]:
         by_ndf_id[record.ndf_id] = record.source_path
         records.append(record)
     return sorted(records, key=lambda record: (record.surface, record.classification, record.mnemonic))
+
+
+def load_doc_index(root: Path = ROOT) -> list[DocRecord]:
+    """Load every ASL unit and bind mnemonic units to instruction metadata."""
+
+    units = load_units(root / "asl")
+    instructions = {
+        record.source_path: record for record in load_instruction_index(root)
+    }
+    records: list[DocRecord] = []
+    for unit in units:
+        instruction = instructions.get(unit.source_path)
+        if (unit.mnemonic is None) != (instruction is None):
+            raise ValueError(
+                f"{unit.source_path}: ASL unit and instruction metadata disagree"
+            )
+        records.append(DocRecord(unit=unit, instruction=instruction))
+    return records
 
 
 def _generated_region(record: InstructionRecord, name: str) -> list[str]:
@@ -303,11 +368,12 @@ def _encoding_section(record: InstructionRecord) -> list[str]:
 
 def render_page(record: InstructionRecord, supplementary: str = "") -> str:
     lines = [
+        f"<!-- GENERATED FROM: {record.source_path.as_posix()} -->",
         f"# {record.mnemonic}",
         "",
-        record.summary,
+        f"**Normative ASL source:** `{record.source_path.as_posix()}`",
         "",
-        f"<!-- ASL-SOURCE: {record.source_path.as_posix()} -->",
+        record.summary,
         "",
         f"## Normative identity {{#{record.ndf_id}}}",
         "",
@@ -365,6 +431,59 @@ def render_page(record: InstructionRecord, supplementary: str = "") -> str:
     return "\n".join(lines)
 
 
+def _unit_title(record: DocRecord) -> str:
+    if record.mnemonic is not None:
+        return record.mnemonic
+    words = record.source_path.stem.replace("_", "-").split("-")
+    acronyms = {
+        "acr": "ACR",
+        "asl": "ASL",
+        "dtype": "Data Type",
+        "gpr": "GPR",
+        "ndf": "NDF",
+        "pe": "PE",
+        "pto": "PTO",
+        "tso": "TSO",
+    }
+    return " ".join(acronyms.get(word.lower(), word.capitalize()) for word in words)
+
+
+def render_unit_page(
+    record: DocRecord,
+    source_text: str,
+    supplementary: str = "",
+) -> str:
+    """Render one active page from its sole normative ASL owner."""
+
+    if record.instruction is not None:
+        return render_page(record.instruction, supplementary)
+    source = record.source_path.as_posix()
+    lines = [
+        f"<!-- GENERATED FROM: {source} -->",
+        f"# {_unit_title(record)}",
+        "",
+        f"**Normative ASL source:** `{source}`",
+        "",
+        "This page is a generated reference view of the normative ASL unit.",
+        "",
+        f"## ASL unit identity {{#{record.unit_id}}}",
+        "",
+        "## Normative ASL",
+        "",
+        f"<!-- GENERATED-ASL-BEGIN: unit source={source} -->",
+        "```asl",
+        source_text.rstrip(),
+        "```",
+        "<!-- GENERATED-ASL-END: unit -->",
+        "",
+        SUPPLEMENTARY_BEGIN,
+        supplementary.rstrip(),
+        SUPPLEMENTARY_END,
+        "",
+    ]
+    return "\n".join(lines)
+
+
 def _display_name(slug: str) -> str:
     if slug in {"agu", "alu", "amo", "bru", "fsu", "sys"}:
         return slug.upper()
@@ -372,12 +491,20 @@ def _display_name(slug: str) -> str:
 
 
 def render_nav(
-    records: list[InstructionRecord],
+    records: list[InstructionRecord | DocRecord],
     markdown_root: Path = Path("docs"),
+    root: Path | None = None,
 ) -> str:
-    by_surface: dict[str, dict[tuple[str, ...], list[InstructionRecord]]] = {}
+    by_surface: dict[
+        str, dict[tuple[str, ...], list[InstructionRecord | DocRecord]]
+    ] = {}
     for record in records:
-        by_surface.setdefault(record.surface, {}).setdefault(record.classification, []).append(record)
+        group = (
+            record.classification
+            if isinstance(record, InstructionRecord) or record.mnemonic is not None
+            else record.classification[:-1]
+        )
+        by_surface.setdefault(record.surface, {}).setdefault(group, []).append(record)
 
     lines = ["nav:"]
     for surface in SURFACE_ORDER:
@@ -390,106 +517,180 @@ def render_nav(
             for part in classification:
                 lines.append(f"{' ' * indent}- {_display_name(part)}:")
                 indent += 4
-            for record in sorted(classifications[classification], key=lambda item: item.mnemonic):
+            for record in sorted(
+                classifications[classification],
+                key=lambda item: item.markdown_path.as_posix(),
+            ):
                 target = record.markdown_path.relative_to(markdown_root).as_posix()
-                lines.append(f"{' ' * indent}- {record.mnemonic}: {target}")
+                title = (
+                    record.mnemonic
+                    if record.mnemonic is not None
+                    else _unit_title(record)
+                )
+                lines.append(f"{' ' * indent}- {title}: {target}")
+    if root is not None:
+        status_groups: list[tuple[str, list[Path]]] = []
+        for name in ("decisions", "open"):
+            directory = root / "docs/status" / name
+            pages = sorted(directory.rglob("*.md")) if directory.exists() else []
+            if pages:
+                status_groups.append((name, pages))
+        if status_groups:
+            lines.append("  - Status:")
+            for name, pages in status_groups:
+                lines.append(f"      - {_display_name(name)}:")
+                for path in pages:
+                    relative = path.relative_to(root / "docs").as_posix()
+                    title_match = re.search(
+                        r"^#\s+(.+)$",
+                        path.read_text(encoding="utf-8"),
+                        re.MULTILINE,
+                    )
+                    title = title_match.group(1).strip() if title_match else path.stem
+                    yaml_title = json.dumps(title, ensure_ascii=False)
+                    lines.append(f"          - {yaml_title}: {relative}")
     return "\n".join(lines) + "\n"
 
 
-def _render_mkdocs_config(records: list[InstructionRecord]) -> str:
+def _render_mkdocs_config(records: list[DocRecord], root: Path) -> str:
     return (
         "site_name: PTO ISA Reference\n"
         "site_description: Generated projection of the normative PTO ASL instruction sources\n"
-        "docs_dir: ../instructions\n"
+        "docs_dir: ..\n"
         "site_dir: ../../build/mkdocs-site\n"
         "use_directory_urls: false\n"
         "exclude_docs: |\n"
-        "  README.md\n"
-        "  index.md\n"
-        "  block-command.md\n"
-        "  scalar.md\n"
-        "  scalar-agu.md\n"
-        "  scalar-alu.md\n"
-        "  scalar-amo.md\n"
-        "  scalar-bru.md\n"
-        "  scalar-fsu.md\n"
-        "  scalar-sys.md\n"
-        "  system-registers.md\n"
-        "  tile.md\n"
+        "  status/legacy/**\n"
+        "  mkdocs/**\n"
+        "  superpowers/**\n"
         "theme:\n"
         "  name: mkdocs\n"
         "strict: true\n"
-        + render_nav(records, Path("docs/instructions"))
+        + render_nav(records, Path("docs"), root)
     )
 
 
+def _render_legacy_page(markdown: str, path: Path) -> str:
+    lines = markdown.splitlines()
+    try:
+        title_index = next(
+            index for index, line in enumerate(lines) if line.startswith("# ")
+        )
+    except StopIteration as error:
+        raise ValueError(f"{path}: legacy Markdown page has no level-one title") from error
+    remainder = lines[title_index + 1 :]
+    while remainder and not remainder[0].strip():
+        remainder.pop(0)
+    if remainder and remainder[0] == LEGACY_BANNER:
+        remainder.pop(0)
+        while remainder and not remainder[0].strip():
+            remainder.pop(0)
+    rendered = [*lines[: title_index + 1], "", LEGACY_BANNER]
+    if remainder:
+        rendered.extend(["", *remainder])
+    return "\n".join(rendered).rstrip() + "\n"
+
+
+def _write_legacy_banners(root: Path) -> None:
+    directory = root / "docs/status/legacy"
+    for path in sorted(directory.rglob("*.md")) if directory.exists() else []:
+        path.write_text(
+            _render_legacy_page(path.read_text(encoding="utf-8"), path),
+            encoding="utf-8",
+        )
+
+
+def check_legacy_banners(root: Path = ROOT) -> list[str]:
+    errors: list[str] = []
+    directory = root / "docs/status/legacy"
+    for path in sorted(directory.rglob("*.md")) if directory.exists() else []:
+        relative = path.relative_to(root).as_posix()
+        current = path.read_text(encoding="utf-8")
+        try:
+            expected = _render_legacy_page(current, path)
+        except ValueError as error:
+            errors.append(str(error))
+        else:
+            if current != expected:
+                errors.append(f"{relative}: missing non-normative legacy banner")
+    return errors
+
+
 def generate_tree(root: Path = ROOT) -> None:
-    records = load_instruction_index(root)
+    _write_legacy_banners(root)
+    records = load_doc_index(root)
     for record in records:
         path = root / record.markdown_path
         path.parent.mkdir(parents=True, exist_ok=True)
         supplementary = ""
         if path.exists():
             supplementary = _extract_supplementary(path.read_text(encoding="utf-8"))
-        path.write_text(render_page(record, supplementary), encoding="utf-8")
+        source_text = (root / record.source_path).read_text(encoding="utf-8")
+        path.write_text(
+            render_unit_page(record, source_text, supplementary),
+            encoding="utf-8",
+        )
     mkdocs_directory = root / "docs/mkdocs"
     mkdocs_directory.mkdir(parents=True, exist_ok=True)
     (mkdocs_directory / "generated-nav.yml").write_text(
-        render_nav(records, Path("docs/instructions")), encoding="utf-8"
+        render_nav(records, Path("docs"), root), encoding="utf-8"
     )
     (mkdocs_directory / "mkdocs.yml").write_text(
-        _render_mkdocs_config(records), encoding="utf-8"
+        _render_mkdocs_config(records, root), encoding="utf-8"
     )
 
 
-def _instruction_markdown_files(root: Path) -> set[Path]:
-    base = root / "docs/instructions"
+def _active_markdown_files(root: Path) -> set[Path]:
     files: set[Path] = set()
-    if not base.exists():
-        return files
     for surface in sorted(SURFACES):
-        directory = base / surface
+        directory = root / "docs" / surface
         if not directory.exists():
             continue
         for path in directory.rglob("*.md"):
-            if path.name == "README.md" or "support" in path.relative_to(directory).parts:
-                continue
             files.add(path.relative_to(root))
     return files
 
 
 def check_tree(root: Path = ROOT) -> list[str]:
     errors: list[str] = []
-    records = load_instruction_index(root)
+    records = load_doc_index(root)
     expected_pages = {record.markdown_path: record for record in records}
-    actual_pages = _instruction_markdown_files(root)
+    actual_pages = _active_markdown_files(root)
 
     for record in records:
-        asl_relative = record.source_path.relative_to("asl")
-        expected_asl = Path(
-            record.surface,
-            *record.classification,
-            f"{mnemonic_file_name(record.mnemonic)}.asl",
-        )
-        if asl_relative != expected_asl:
-            errors.append(
-                f"{record.mnemonic} metadata classification "
-                f"{'/'.join(record.classification)} does not match ASL path {asl_relative.as_posix()}"
+        if record.instruction is not None:
+            instruction = record.instruction
+            asl_relative = record.source_path.relative_to("asl")
+            expected_asl = Path(
+                record.surface,
+                *record.classification,
+                f"{mnemonic_file_name(instruction.mnemonic)}.asl",
             )
+            if asl_relative != expected_asl:
+                errors.append(
+                    f"{instruction.mnemonic} metadata classification "
+                    f"{'/'.join(record.classification)} does not match ASL path "
+                    f"{asl_relative.as_posix()}"
+                )
         page_path = root / record.markdown_path
+        identity = record.mnemonic or record.unit_id
         if not page_path.exists():
             errors.append(
-                f"missing Markdown page for {record.mnemonic}: {record.markdown_path.as_posix()}"
+                f"missing Markdown page for {identity}: {record.markdown_path.as_posix()}"
             )
         else:
             current = page_path.read_text(encoding="utf-8")
             try:
-                expected = render_page(record, _extract_supplementary(current))
+                expected = render_unit_page(
+                    record,
+                    (root / record.source_path).read_text(encoding="utf-8"),
+                    _extract_supplementary(current),
+                )
             except ValueError as error:
-                errors.append(f"invalid Markdown regions for {record.mnemonic}: {error}")
+                errors.append(f"invalid Markdown regions for {identity}: {error}")
             else:
                 if current != expected:
-                    errors.append(f"stale generated Markdown page for {record.mnemonic}")
+                    errors.append(f"stale generated Markdown page for {identity}")
 
     for path in sorted(actual_pages - set(expected_pages)):
         errors.append(f"missing ASL source for {path.as_posix()}")
@@ -499,12 +700,10 @@ def check_tree(root: Path = ROOT) -> list[str]:
 def check_version_neutrality(root: Path = ROOT) -> list[str]:
     errors: list[str] = []
     active_files = list((root / "asl").rglob("*.asl"))
-    instruction_root = root / "docs/instructions"
-    if instruction_root.exists():
-        active_files.extend(instruction_root.rglob("*.md"))
-    architecture = root / "docs/architecture.md"
-    if architecture.exists():
-        active_files.append(architecture)
+    for surface in sorted(SURFACES):
+        surface_root = root / "docs" / surface
+        if surface_root.exists():
+            active_files.extend(surface_root.rglob("*.md"))
     for path in sorted(active_files):
         for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
             match = VERSION_PATTERN.search(line)
@@ -514,6 +713,37 @@ def check_version_neutrality(root: Path = ROOT) -> list[str]:
                     f"{relative}:{line_number}: active normative surface contains release version "
                     f"{match.group(0)}"
                 )
+    return errors
+
+
+def check_navigation(root: Path = ROOT) -> list[str]:
+    config = root / "docs/mkdocs/mkdocs.yml"
+    if not config.exists():
+        return ["missing MkDocs configuration: docs/mkdocs/mkdocs.yml"]
+    lines = config.read_text(encoding="utf-8").splitlines()
+    try:
+        nav_start = lines.index("nav:")
+    except ValueError:
+        return ["MkDocs configuration is missing navigation"]
+    navigation = "\n".join(lines[nav_start + 1 :])
+    if re.search(r"(?:^|[\s:])status/legacy/", navigation):
+        return ["MkDocs navigation includes non-normative legacy material"]
+    return []
+
+
+def check_normative_legacy_links(root: Path = ROOT) -> list[str]:
+    errors: list[str] = []
+    active_files = list((root / "asl").rglob("*.asl"))
+    for surface in sorted(SURFACES):
+        directory = root / "docs" / surface
+        if directory.exists():
+            active_files.extend(directory.rglob("*.md"))
+    for path in sorted(active_files):
+        if "docs/status/legacy/" in path.read_text(encoding="utf-8"):
+            errors.append(
+                f"{path.relative_to(root).as_posix()}: normative reference targets "
+                "non-normative legacy material"
+            )
     return errors
 
 
@@ -550,20 +780,29 @@ def check_catalog_projection(root: Path = ROOT) -> list[str]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("command", nargs="?", choices=("generate",), default=None)
+    parser.add_argument("--write", action="store_true")
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args(argv)
-    if args.command == "generate":
+    if args.command == "generate" or args.write:
         generate_tree(ROOT)
     if args.check or args.command is None:
         errors = (
             check_tree(ROOT)
             + check_catalog_projection(ROOT)
             + check_version_neutrality(ROOT)
+            + check_navigation(ROOT)
+            + check_normative_legacy_links(ROOT)
+            + check_legacy_banners(ROOT)
         )
         if errors:
             print("\n".join(errors), file=sys.stderr)
             return 1
-        print(f"instruction docs passed: {len(load_instruction_index(ROOT))} mnemonic records")
+        records = load_doc_index(ROOT)
+        print(
+            "instruction docs passed: "
+            f"{len(records)} ASL units, "
+            f"{sum(record.mnemonic is not None for record in records)} mnemonic records"
+        )
     return 0
 
 

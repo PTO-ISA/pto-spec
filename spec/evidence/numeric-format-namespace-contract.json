@@ -4,8 +4,8 @@
   "decision_id": "PD-02",
   "checkpoint_id": "PD-02-SC1",
   "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
-  "acceptance_record": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
-  "classification_acceptance_record": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
+  "acceptance_record": "docs/status/decisions/0040-numeric-format-namespace-ownership.md",
+  "classification_acceptance_record": "docs/status/decisions/0048-numeric-format-value-classification.md",
   "classification_checkpoint_id": "PD-02-SC2:PD-05-SC1",
   "policy": {
     "namespace_locality": "Scalar source, scalar floating destination, scalar integer destination, TLSU/TALLOC, and bundle DataType codes are distinct namespaces. Equal integers do not imply equal types across namespaces.",
@@ -1924,7 +1924,7 @@
   "sources": [
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "94d48007a9082fae64a0ec0a089f3ab146afe5f8a3b3b4a859ccfaa41519ef03"
+      "sha256": "ec9e3f2ef160cf84391c1ff38201098642e60b1c3449df2746dd9ab738605c96"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
@@ -1932,11 +1932,11 @@
     },
     {
       "path": "spec/evidence/tlsu-totality.json",
-      "sha256": "a59b4deeca7271e3c9af707acc4aae5f797a836fcba34e14d82b39f45bc6cd0b"
+      "sha256": "6e4fc52b8cce087f565d8cfe2247a0a675ffad991d526dac801fbbeeded45ccf"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "122166c233403dc30c49a3a3d274c21f0ce9ea1fddad1f55871659ef25a1f22b"
+      "sha256": "10e8bcfed47aee24719038ec07ecefe75aeaf342a0765cb15308da584242e1b8"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -2099,19 +2099,19 @@
       "sha256": "1f154fe66c4d09c8981a7166c18b8f2cd1313c258e9630c418d0d9e0922f0043"
     },
     {
-      "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
+      "path": "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
       "sha256": "07c51707a4f02fa6a451f92ab267b31fe4f0398d3def26f12b461f79d734d6a7"
     },
     {
-      "path": "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
+      "path": "docs/status/decisions/0033-tma-four-bit-memory-packing.md",
       "sha256": "9ef2dcf86fec5b1f39cf85faf82357e077aa9f9c17d1774a2f854d81c50cbced"
     },
     {
-      "path": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
-      "sha256": "e4b8ec913ebe63322fca7985e2421b7e8cb894c06ed73c652a6179d63121c63b"
+      "path": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+      "sha256": "2d571c4df9bae68cb34824db62f2944145c96f61ea113ec15b3475e60b6610b6"
     },
     {
-      "path": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
+      "path": "docs/status/decisions/0048-numeric-format-value-classification.md",
       "sha256": "cca6076b80003179731fe8f843ae230b835b5f0e581024f8e5b4509cd0f33f7e"
     }
   ],

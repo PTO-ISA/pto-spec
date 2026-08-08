@@ -39,8 +39,8 @@
     "asl/tile/model/state/shared-registers.asl",
     "asl/tile/model/state/types.asl",
     "tests/asl/tlsu-totality-tests.asl",
-    "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
-    "docs/architecture-decisions/0053-pto-isa-0580-tile-operation-cleanup.md"
+    "docs/status/decisions/0033-tma-four-bit-memory-packing.md",
+    "docs/status/decisions/0053-pto-isa-0580-tile-operation-cleanup.md"
   ],
   "validation": [
     {

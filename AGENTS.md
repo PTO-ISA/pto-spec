@@ -10,7 +10,7 @@ architecture requirement.
 
 - Read and follow `.codex/skills/pto-asl/SKILL.md` for ASL, formal-review, and governance work.
 - Start every instruction lookup in `asl/<surface>/<classification>/<mnemonic>.asl`,
-  then read the mirrored page under `docs/instructions/` for supplementary
+  then read the exact mirrored page under `docs/<surface>/<classification>/` for supplementary
   explanation and examples. Do not infer semantics from generated catalogs,
   HTML, spreadsheets, or release projections.
 - For architecture-wide rules, locate the stable NDF `PTO-*` clause in ASL.

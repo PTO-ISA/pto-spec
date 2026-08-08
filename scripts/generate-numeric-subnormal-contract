@@ -23,7 +23,7 @@ FORMAT_CONTRACT = ROOT / "spec/evidence/numeric-format-namespace-contract.json"
 COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
 HARDWARE_PROFILE = ROOT / "spec/hardware-conformance-profile.json"
 OUTPUT = ROOT / "spec/evidence/numeric-subnormal-contract.json"
-ACCEPTANCE_RECORD = "docs/architecture-decisions/0049-hardware-subnormal-policy.md"
+ACCEPTANCE_RECORD = "docs/status/decisions/0049-hardware-subnormal-policy.md"
 PROFILE_ID = "pto-hardware-numeric-0.58.0-ieee-v1"
 
 

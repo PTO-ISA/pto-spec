@@ -1,0 +1,136 @@
+<!-- GENERATED FROM: asl/block/model/lifecycle/reset.asl -->
+# Reset
+
+**Normative ASL source:** `asl/block/model/lifecycle/reset.asl`
+
+This page is a generated reference view of the normative ASL unit.
+
+## ASL unit identity {#PTO-BLOCK-MODEL-LIFECYCLE-RESET}
+
+## Normative ASL
+
+<!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/lifecycle/reset.asl -->
+```asl
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-LIFECYCLE-RESET","surface":"block","classification":["model","lifecycle","reset"],"depends_on":["PTO-BLOCK-MODEL-STATE-BINDING-STATE"]}
+func ResetBundleControlState()
+begin
+    _BundleActive = FALSE;
+    _BundleBodyActive = FALSE;
+    _BundleKind = BundleKind_Standard;
+    _BundleTransfer = BundleTransfer_Fallthrough;
+    _BundleCondition = TRUE;
+    _BundleTarget = Zeros{PTO_XLEN};
+    _BundleFallthrough = Zeros{PTO_XLEN};
+    _BundleReturnTarget = Zeros{PTO_XLEN};
+    _BundleBodyAddress = Zeros{PTO_XLEN};
+    _BundleArgument = Zeros{PTO_XLEN};
+    _BundleArgumentKind = Zeros{3};
+    _BundleOperation.valid = FALSE;
+    _BundleOperation.form_identity = Zeros{7};
+    _BundleOperation.operation_class = BundleOperation_Control;
+    _BundleOperation.selector_valid = FALSE;
+    _BundleOperation.selector = Zeros{10};
+    _BundleOperation.data_type_valid = FALSE;
+    _BundleOperation.data_type = Zeros{5};
+    _BundleOperation.mode_valid = FALSE;
+    _BundleOperation.mode = Zeros{2};
+    _BundleOperation.branch_type_valid = FALSE;
+    _BundleOperation.branch_type = Zeros{3};
+    for index = 0 to PTO_BUNDLE_DIMENSION_COUNT - 1 do
+        _BundleDimensions[[index]] = Zeros{PTO_XLEN};
+    end;
+    for index = 0 to PTO_BUNDLE_SCALAR_BINDING_COUNT - 1 do
+        _BundleScalarBindings[[index]].valid = FALSE;
+        _BundleScalarBindings[[index]].destination = 0;
+        _BundleScalarBindings[[index]].source0 = 0;
+        _BundleScalarBindings[[index]].source1 = 0;
+        _BundleScalarBindings[[index]].source2 = 0;
+        _BundleScalarBindings[[index]].source_count = 0;
+    end;
+    for index = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        _BundleTileBindings[[index]].valid = FALSE;
+        _BundleTileBindings[[index]].destination_valid = FALSE;
+        _BundleTileBindings[[index]].destination = 0;
+        _BundleTileBindings[[index]].destination_hand = Zeros{2};
+        _BundleTileBindings[[index]].destination_allocated_by_bundle = FALSE;
+        _BundleTileBindings[[index]].destination_size = 0;
+        _BundleTileBindings[[index]].pe_mask = Zeros{4};
+        _BundleTileBindings[[index]].source0_valid = FALSE;
+        _BundleTileBindings[[index]].source1_valid = FALSE;
+        _BundleTileBindings[[index]].source0 = 0;
+        _BundleTileBindings[[index]].source1 = 0;
+        _BundleTileBindings[[index]].last = FALSE;
+    end;
+    for index = 0 to 3 do
+        _BundleSharedBindings[[index]].valid = FALSE;
+        _BundleSharedBindings[[index]].shared_id = Zeros{8};
+        _BundleSharedBindings[[index]].size_code = 0;
+        _BundleSharedBindings[[index]].pe_mask = Zeros{4};
+        _BundleSharedBindings[[index]].consumed = FALSE;
+    end;
+    _BundleControlAttributes.trap_enabled = FALSE;
+    _BundleControlAttributes.atomic = FALSE;
+    _BundleControlAttributes.acquire = FALSE;
+    _BundleControlAttributes.release = FALSE;
+    _BundleControlAttributes.far = FALSE;
+    _BundleControlAttributes.direct_register = FALSE;
+    _BundleDataAttributes.data_type = Zeros{5};
+    _BundleDataAttributes.data_layout = Zeros{5};
+    _BundleDataAttributes.pad_value = Zeros{2};
+    _BundleDataAttributes.conversion_mode = Zeros{3};
+    _BundleDataAttributes.rounding_mode = Zeros{3};
+    _BundleDataAttributes.saturating = FALSE;
+    _BundleDataAttributes.canonicalize = FALSE;
+    _TileDataLayoutCapabilities = Zeros{32};
+    _TileDataLayoutCapabilities[0] = '1';
+    for ring = 0 to PTO_ACR_COUNT - 1 do
+        _TrapContexts[[ring]].valid = FALSE;
+        _TrapContexts[[ring]].source_acr = 0;
+        _TrapContexts[[ring]].tpc = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].bpc = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].core_state = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].bundle_argument = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].commit_argument = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].bundle_active = FALSE;
+        _TrapContexts[[ring]].bundle_body_active = FALSE;
+        _TrapContexts[[ring]].bundle_kind = BundleKind_Standard;
+        _TrapContexts[[ring]].bundle_transfer = BundleTransfer_Fallthrough;
+        _TrapContexts[[ring]].bundle_condition = TRUE;
+        _TrapContexts[[ring]].bundle_target = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].bundle_fallthrough = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].bundle_return_target = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].return_address = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].bundle_argument_kind = Zeros{3};
+        _TrapContexts[[ring]].bundle_body_address = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].bundle_operation = _BundleOperation;
+        _TrapContexts[[ring]].bundle_dimensions = _BundleDimensions;
+        _TrapContexts[[ring]].bundle_scalar_bindings = _BundleScalarBindings;
+        _TrapContexts[[ring]].bundle_tile_bindings = _BundleTileBindings;
+        _TrapContexts[[ring]].bundle_shared_bindings = _BundleSharedBindings;
+        _TrapContexts[[ring]].bundle_control_attributes =
+            _BundleControlAttributes;
+        _TrapContexts[[ring]].bundle_data_attributes = _BundleDataAttributes;
+        _TrapContexts[[ring]].t_queue = _TQueue;
+        _TrapContexts[[ring]].u_queue = _UQueue;
+        _TrapContexts[[ring]].execution_mask = _ExecutionMask;
+        _TrapContexts[[ring]].predicates = _PredicateRegisters;
+    end;
+    _FrameDepth = 0;
+    _LastFrameBegin = 0;
+    _LastFrameEnd = 0;
+    _LastFrameSize = Zeros{PTO_XLEN};
+    _LastQueueLeft = Zeros{PTO_XLEN};
+    _LastQueueRight = Zeros{PTO_XLEN};
+    _LastQueueFlags = Zeros{4};
+    _LastMemoryCommandAddress = Zeros{PTO_XLEN};
+    _LastMemoryCommandSize = Zeros{PTO_XLEN};
+    _LastCrossBlockACR = Zeros{10};
+    _LastCrossBlockID = Zeros{7};
+    _LastBundleHintPayload = Zeros{PTO_XLEN};
+end;
+```
+<!-- GENERATED-ASL-END: unit -->
+
+<!-- SUPPLEMENTARY-BEGIN -->
+
+<!-- SUPPLEMENTARY-END -->

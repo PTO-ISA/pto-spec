@@ -26,10 +26,10 @@ EXECUTABLE_COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
 HARDWARE_PROFILE = ROOT / "spec/hardware-conformance-profile.json"
 OUTPUT = ROOT / "spec/evidence/numeric-format-namespace-contract.json"
 ACCEPTANCE_RECORD = (
-    "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md"
+    "docs/status/decisions/0040-numeric-format-namespace-ownership.md"
 )
 CLASSIFICATION_ACCEPTANCE_RECORD = (
-    "docs/architecture-decisions/0048-numeric-format-value-classification.md"
+    "docs/status/decisions/0048-numeric-format-value-classification.md"
 )
 
 NAN_CAPABLE_TYPES = {
@@ -462,14 +462,14 @@ def generate() -> dict[str, Any]:
             *source_rows(ROOT, "asl/tile/model/memory/*.asl"),
             *source_rows(ROOT, "asl/block/model/dispatch/*.asl"),
             source(
-                "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md"
+                "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md"
             ),
-            source("docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"),
+            source("docs/status/decisions/0033-tma-four-bit-memory-packing.md"),
             source(
-                "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+                "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
             ),
             source(
-                "docs/architecture-decisions/0048-numeric-format-value-classification.md"
+                "docs/status/decisions/0048-numeric-format-value-classification.md"
             ),
         ],
         "summary": {

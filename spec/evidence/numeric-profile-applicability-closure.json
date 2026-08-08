@@ -3,7 +3,7 @@
   "artifact_id": "numeric-profile-applicability-closure",
   "target": "S5-T2-A3:PD-01",
   "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
-  "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
+  "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md",
   "policy": {
     "support_boundary": "Applicability rules decide whether a profile supports an operation/type tuple. They do not define numeric result semantics.",
     "rejection_boundary": "The six A2/A3 MX CUBE rules reject with IllegalInstruction before operand legality, handler dispatch, or operation effects.",
@@ -41,7 +41,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -66,7 +66,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -91,7 +91,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -116,7 +116,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -141,7 +141,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -166,7 +166,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
     }
   ],
   "expanded_tuples": [
@@ -5136,7 +5136,7 @@
       "selection": "Requires a complete A2A3 operation/type legality matrix and one accepted result rule for every supported tuple.",
       "relation_to_pto_v0": "Future alternative target profile distinct from pto-v0; pto-v0 raw-carrier results are not inherited as hardware arithmetic.",
       "rule_status": "decision-required",
-      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
       "source_ids": [
         "public-portability-rules",
         "public-target-profiles",
@@ -5261,11 +5261,11 @@
   "source_hashes": [
     {
       "path": "spec/catalog/numeric-profile-applicability.json",
-      "sha256": "567127cf30879734e81a7664ff2db9e25b3c2a8539444c65fbcff25fcb284902"
+      "sha256": "9a2d9cd56cf69ab33af53591cf8b6f32851ed21467173fe72a70360d3c37bb91"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
-      "sha256": "f2bf1bcfa9e6ce1006132ac6d9aec4a8c698990a20eeb7736d361d62ed6477ed"
+      "sha256": "05752d689ec6b73fe008804fdea50a94eed2048c6b7d19f065b722e80a8767ef"
     },
     {
       "path": "spec/catalog/tile-operations.json",
@@ -5277,11 +5277,11 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "9bda0a01a215736ad63041e73582f722489930b240bc7451a49a07a9cf2f1190"
+      "sha256": "75f6b9d725c47ff06026b4ba7dde7be0e5d1892f2e9b955223602fb2bae402fe"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "94d48007a9082fae64a0ec0a089f3ab146afe5f8a3b3b4a859ccfaa41519ef03"
+      "sha256": "ec9e3f2ef160cf84391c1ff38201098642e60b1c3449df2746dd9ab738605c96"
     },
     {
       "path": "spec/evidence/public-source-reconciliation.json",
@@ -5289,7 +5289,7 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "122166c233403dc30c49a3a3d274c21f0ce9ea1fddad1f55871659ef25a1f22b"
+      "sha256": "10e8bcfed47aee24719038ec07ecefe75aeaf342a0765cb15308da584242e1b8"
     },
     {
       "path": "scripts/generate-asl-decoders",
@@ -5396,7 +5396,7 @@
       "sha256": "64f0185ecacc2e6963168c289fc4c296d6b92bb40f8b6f99be41cd2ea8b6925c"
     },
     {
-      "path": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
+      "path": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md",
       "sha256": "5eb62cb56c0af0cc7c4485c018683f0799b1d7fa7bcd262d46002b190cf33262"
     }
   ],

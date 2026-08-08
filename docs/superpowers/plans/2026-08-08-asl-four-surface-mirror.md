@@ -968,7 +968,7 @@ git commit -m "feat: project catalogs from ASL units"
 - Consumes: every `AslUnit`, its NDF clauses, and ASL documentation regions.
 - Produces: `render_unit_page(unit: AslUnit, source_text: str) -> str` and a deterministic navigation tree matching ASL order.
 
-- [ ] **Step 1: Write mirror and stale-content tests**
+- [x] **Step 1: Write mirror and stale-content tests**
 
 Add assertions for:
 
@@ -980,7 +980,7 @@ self.assertEqual(set(discovered_doc_paths), set(expected_doc_paths))
 
 Also test source-path declaration mismatch, orphan page, missing page, stale embedded region, legacy nav entry, and normative legacy link rejection.
 
-- [ ] **Step 2: Run the focused test and observe old-path failures**
+- [x] **Step 2: Run the focused test and observe old-path failures**
 
 Run:
 
@@ -990,7 +990,7 @@ python3 -m unittest tests.scripts.test_instruction_docs -v
 
 Expected: FAIL because pages are still rooted at `docs/instructions/` and non-mnemonic units lack generated pages.
 
-- [ ] **Step 3: Extend the generator to every ASL unit**
+- [x] **Step 3: Extend the generator to every ASL unit**
 
 Each generated page MUST begin with:
 
@@ -1003,7 +1003,7 @@ Each generated page MUST begin with:
 
 The generator MUST preserve marked supplementary prose regions and replace only generated ASL/NDF regions. Mnemonic pages retain syntax, encoding, legality, operation, effects, faults, and examples derived from their owning ASL.
 
-- [ ] **Step 4: Move decisions, open questions, and historical material**
+- [x] **Step 4: Move decisions, open questions, and historical material**
 
 Use `git mv` for decisions and open questions, preserving their stable NDF IDs and updating checked references. Add the non-normative banner immediately below the title of every legacy Markdown page:
 
@@ -1011,7 +1011,7 @@ Use `git mv` for decisions and open questions, preserving their stable NDF IDs a
 > Historical, non-normative material. This page is excluded from the active PTO architecture and release closure.
 ```
 
-- [ ] **Step 5: Generate pages and navigation**
+- [x] **Step 5: Generate pages and navigation**
 
 Run:
 
@@ -1023,7 +1023,7 @@ mkdocs build --config-file docs/mkdocs/mkdocs.yml --site-dir build/mkdocs-site -
 
 Expected: all commands exit 0; generated navigation contains only `arch`, `block`, `scalar`, `tile`, and active status pages.
 
-- [ ] **Step 6: Run documentation closure**
+- [x] **Step 6: Run documentation closure**
 
 Run:
 
@@ -1036,7 +1036,7 @@ python3 -m unittest tests.scripts.test_instruction_docs -v
 
 Expected: every active ASL source has exactly one mirrored page and no orphan active page exists.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add scripts/instruction_docs.py tests/scripts/test_instruction_docs.py docs

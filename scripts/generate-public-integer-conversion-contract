@@ -25,7 +25,7 @@ ASL_MODEL = ROOT / "asl/tile/model/numeric/formats.asl"
 ASL_TESTS = ROOT / "tests/asl/tile-tests.asl"
 OUTPUT = ROOT / "spec/evidence/public-integer-conversion-contract.json"
 ACCEPTANCE_RECORD = (
-    "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md"
+    "docs/status/decisions/0044-public-integer-conversion-result-subset.md"
 )
 
 
