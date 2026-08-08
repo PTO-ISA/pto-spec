@@ -107,7 +107,7 @@
     "scripts/project_asl_catalogs.py": "8ce781bc8867095945c887ecbb3637480d2f8985ef7e646fcbeec8f8aa000507",
     "scripts/run-asl-release-suite": "56cbd340490c0d4d94990cff0f4607a3c3a53fccee818775b38a37a43a7ff654",
     "scripts/run-asl-test": "152bc50910a4927ff9b78b805fac286d1948be8cbaf5751325a65e8316bf7851",
-    "spec/evidence/release-traceability-readiness.json": "5a1dfd37aa6c1665a21e5574d7dd2ab17dfbce014d4625430b118b3da0625b75",
+    "spec/evidence/release-traceability-readiness.json": "927454e721cee4086e68382130af01f500db40b958be4c05b8e21934aef11b58",
     "spec/release-inputs.json": "d90cc3c8a8c7855572f57fcf4dbbe371471a95c61ee4ac7fb1896deda59ca984"
   },
   "summary": {

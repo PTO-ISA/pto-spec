@@ -114,6 +114,22 @@ class CommonV058ContractTest(unittest.TestCase):
             ):
                 self.assertIn(required, summary, (mnemonic, summary))
 
+    def test_dma_description_matches_the_normative_64_byte_copy(self) -> None:
+        records = {
+            record.mnemonic: record for record in load_instruction_index(ROOT)
+        }
+        summary = records["DMA"].summary
+
+        for required in (
+            "64-byte",
+            "validates both ranges before effects",
+            "snapshots the source",
+            "overlap has memmove semantics",
+            "fault leaves memory unchanged",
+        ):
+            self.assertIn(required, summary)
+        self.assertNotIn("64-bit", summary)
+
 
 if __name__ == "__main__":
     unittest.main()

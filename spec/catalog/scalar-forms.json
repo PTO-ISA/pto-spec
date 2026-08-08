@@ -4811,7 +4811,7 @@
       "semantic_group": "AMO",
       "semantic_handler": "ExecuteScalarDMACopy64",
       "status": "accepted",
-      "semantic_summary": "DMA - Copy the scalar-described 64-bit DMA region."
+      "semantic_summary": "Copies exactly one 64-byte region from the SrcL address to the SrcR address; validates both ranges before effects, snapshots the source so overlap has memmove semantics, and guarantees that a fault leaves memory unchanged."
     },
     {
       "asm": "div SrcL, SrcR, ->{t, u, Rd}",

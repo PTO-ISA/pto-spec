@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/amo/DMA.asl`
 
-DMA - Copy the scalar-described 64-bit DMA region.
+Copies exactly one 64-byte region from the SrcL address to the SrcR address; validates both ranges before effects, snapshots the source so overlap has memmove semantics, and guarantees that a fault leaves memory unchanged.
 
 ## Normative identity {#PTO-INST-SCALAR-DMA}
 
@@ -65,7 +65,7 @@ end;
 
 ## Operational information
 
-- **Semantic summary:** `DMA - Copy the scalar-described 64-bit DMA region.`
+- **Semantic summary:** `Copies exactly one 64-byte region from the SrcL address to the SrcR address; validates both ranges before effects, snapshots the source so overlap has memmove semantics, and guarantees that a fault leaves memory unchanged.`
 - **Semantic handler:** `ExecuteScalarDMACopy64`
 
 <!-- SUPPLEMENTARY-BEGIN -->
