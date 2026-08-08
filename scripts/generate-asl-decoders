@@ -2581,6 +2581,7 @@ def emit_scalar_amo_decoded_success(
 
     print(f"    // AMO-S4 {marker}")
     print("    StopMemoryEventCapture();")
+    print(f"    SelectMemoryEventAgent({case_index % 4});")
 
     print("    ResetMemoryExecution();")
     print("    SetCurrentACR(0);")
@@ -2793,6 +2794,7 @@ def emit_scalar_amo_dma_success(
             pre_u[selector - 28] = value
     print(f"    // AMO-S4 {marker}")
     print("    StopMemoryEventCapture();")
+    print(f"    SelectMemoryEventAgent({case_index % 4});")
     print("    ResetMemoryExecution();")
     print("    SetCurrentACR(0);")
     print("    ClearFault();")
@@ -2928,6 +2930,7 @@ def emit_scalar_amo_fault_or_restart(
     target_ring = 1 if source_acr >= 2 else source_acr
     print(f"    // AMO-S4 {marker}")
     print("    StopMemoryEventCapture();")
+    print(f"    SelectMemoryEventAgent({case_index % 4});")
     print("    ResetMemoryExecution();")
     print("    SetCurrentACR(0);")
     print("    ClearFault();")
@@ -3101,6 +3104,7 @@ def emit_scalar_amo_sc_miss_no_probe(
     instruction = scalar_amo_instruction(row, family_constraints)
     print(f"    // AMO-S4 {marker}")
     print("    StopMemoryEventCapture();")
+    print(f"    SelectMemoryEventAgent({case_index % 4});")
     print("    ResetMemoryExecution();")
     print("    SetCurrentACR(0);")
     print("    ClearFault();")
@@ -3240,6 +3244,7 @@ def emit_scalar_amo_dma_fault_or_restart(
     instruction = scalar_amo_instruction(row, family_constraints)
     print(f"    // AMO-S4 {marker}")
     print("    StopMemoryEventCapture();")
+    print(f"    SelectMemoryEventAgent({case_index % 4});")
     print("    ResetMemoryExecution();")
     print("    SetCurrentACR(0);")
     print("    ClearFault();")
@@ -5942,13 +5947,14 @@ def emit_scalar_agu_restart_case(
 
 
 def emit_agu_common_setup(
-    witness: dict, effect_index: int, *, destination_sentinel: int
+    witness: dict, effect_index: int, *, agent: int, destination_sentinel: int
 ) -> None:
     metadata = witness["metadata"]
     print("    SetCurrentACR(0);")
     print("    ClearFault();")
     print("    _TrapContexts[[0]].valid = FALSE;")
     print("    StopMemoryEventCapture();")
+    print(f"    SelectMemoryEventAgent({agent});")
     print("    ResetMemoryExecution();")
     print("    _SystemRegisters.cycle = Zeros{PTO_XLEN};")
     print(f"    WriteTPC(Zeros{{PTO_XLEN}} + 0x{witness['tpc']:x});")
@@ -6025,7 +6031,10 @@ def emit_scalar_agu_success(
         f"    // {row['form_id']}: {row['mnemonic']} [{scalar_agu_effect_class(row)}]"
     )
     emit_agu_common_setup(
-        witness, effect_index, destination_sentinel=destination_sentinel
+        witness,
+        effect_index,
+        agent=effect_index % 4,
+        destination_sentinel=destination_sentinel,
     )
     print(
         f"    assert {bit_literal(witness['base'], 64)} + {bit_literal(witness['offset'] & MASK64, 64)} == "
@@ -6177,7 +6186,10 @@ def emit_scalar_agu_fault(
     destination_sentinel = 0x5555555555555555
     print(f"    // {row['form_id']}: {row['mnemonic']} fault/no-partial-effect")
     emit_agu_common_setup(
-        witness, effect_index, destination_sentinel=destination_sentinel
+        witness,
+        effect_index,
+        agent=(effect_index + 1) % 4,
+        destination_sentinel=destination_sentinel,
     )
     if action == "StorePair":
         print(
@@ -8176,6 +8188,7 @@ def main() -> None:
             source_address = 0x300
             destination_address = 0x320
             print("    StopMemoryEventCapture();")
+            print("    SelectMemoryEventAgent(3);")
             print("    SetCurrentACR(0);")
             print("    ClearFault();")
             print("    _SystemRegisters.cycle = Zeros{PTO_XLEN};")
@@ -8291,6 +8304,7 @@ def main() -> None:
         )
         expected_write = desired if class_id == "scalar-amo-cas" else rmw_result
         print("    StopMemoryEventCapture();")
+        print(f"    SelectMemoryEventAgent({effect_index % 4});")
         print("    SetCurrentACR(0);")
         print("    ClearFault();")
         print("    _SystemRegisters.cycle = Zeros{PTO_XLEN};")
@@ -8419,6 +8433,7 @@ def main() -> None:
             print("    ClearFault();")
             print("    _SystemRegisters.cycle = Zeros{PTO_XLEN};")
             print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+            print("    SelectMemoryEventAgent(1);")
             print("    _ReservationValid = FALSE;")
             print("    WriteGPR(2, Ones{PTO_XLEN});")
             print(f"    WriteGPR(3, {bit_literal(amo_source_sentinel, 64)});")
@@ -8443,6 +8458,7 @@ def main() -> None:
             print("    ClearFault();")
             print("    _SystemRegisters.cycle = Zeros{PTO_XLEN};")
             print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+            print("    SelectMemoryEventAgent(2);")
             print(f"    WriteGPR(1, Zeros{{PTO_XLEN}} + 0x{address:x});")
             print(f"    WriteGPR(2, {bit_literal((old_unsigned + 1) & MASK64, 64)});")
             print(f"    WriteGPR(3, {bit_literal(amo_source_sentinel, 64)});")
