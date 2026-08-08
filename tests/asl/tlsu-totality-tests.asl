@@ -3,7 +3,9 @@
 
 func ConfigurePackedTlsuTile(index: TileIndex, columns: integer {1..16})
 begin
-    ConfigureTile(index, 256, 1, columns, 1, columns, TileDataType_U4X2,
+    // Keep packed data and U64 index tiles on the same legal physical shape:
+    // 16 rows x 16 power-of-two columns. Only the valid-column extent varies.
+    ConfigureTile(index, 128, 1, 16, 1, columns, TileDataType_U4X2,
         TileLayout_RowMajor, TileLocation_Any);
 end;
 
@@ -18,13 +20,13 @@ func ConfigurePackedTlsuTileType(index: TileIndex,
                                 data_type: TileDataType)
 begin
     assert TileDataTypeIsFourBit(data_type);
-    ConfigureTile(index, 256, 1, columns, 1, columns, data_type,
+    ConfigureTile(index, 128, 1, 16, 1, columns, data_type,
         TileLayout_RowMajor, TileLocation_Any);
 end;
 
 func ConfigureIndexTlsuTile(index: TileIndex, columns: integer {1..16})
 begin
-    ConfigureTile(index, 256, 1, columns, 1, columns, TileDataType_U64,
+    ConfigureTile(index, 2048, 1, 16, 1, columns, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
 end;
 

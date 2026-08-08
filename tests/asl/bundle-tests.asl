@@ -82,7 +82,9 @@ pure func BundleTestTileBinding(destination: bits(2), source0: bits(6),
                                source1: bits(6), last: boolean) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00004013;
-    instruction[11:9] = '001';
+    // Generic bundle fixtures use 256-byte source descriptors, so the
+    // destination B.IOT must select the matching per-PE capacity.
+    instruction[11:9] = '010';
     instruction[8:7] = destination;
     instruction[18:15] = Zeros{4} + 3;
     instruction[25:20] = source0;
@@ -741,9 +743,9 @@ begin
     // TLOAD retains the existing B.IOR encoding: RegSrc0 is base and RegSrc1
     // is row stride in elements. Omission uses zero base and dense LB2 stride.
     ResetProfileState();
-    SetBundleDimension(2, Zeros{PTO_XLEN} + 7);
     let omitted_tload_start = ExecuteCommandInstruction(
         BundleTestTLSUStart(Zeros{5}, Zeros{5} + 24), 32);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 7);
     AddBundleTileBinding(TRUE, 0, 1, '1111', FALSE, FALSE, 0, 0, TRUE);
     assert omitted_tload_start == CommandExecution_Executed;
     assert BundleOperationBindingsComplete(tload_operation);
@@ -754,9 +756,9 @@ begin
     // An encoded zero selector is a real zero stride, not the omission
     // default. A nonzero RegSrc1 reads the selected absolute GPR.
     ResetProfileState();
-    SetBundleDimension(2, Zeros{PTO_XLEN} + 7);
     let zero_stride_start = ExecuteCommandInstruction(
         BundleTestTLSUStart(Zeros{5}, Zeros{5} + 24), 32);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 7);
     AddBundleTileBinding(TRUE, 0, 1, '1111', FALSE, FALSE, 0, 0, TRUE);
     let zero_stride_binding = ExecuteCommandInstruction(
         BundleTestScalarBinding(

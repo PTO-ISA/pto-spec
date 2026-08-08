@@ -4,7 +4,20 @@
 func ConfigureTeplTile(index: TileIndex, rows: integer {1..256},
                        columns: integer {1..256}, data_type: TileDataType)
 begin
-    ConfigureTile(index, 2048, rows, columns, rows, columns, data_type,
+    // Ordinary totality cases share a compact 4 x 32 physical shape. The
+    // histogram destination alone needs 256 physical columns. Capacity scales
+    // with element width so mixed-type operations retain matching descriptors.
+    let physical_columns: integer {1..256} = if columns > 32 then 256 else 32;
+    var capacity_bytes: integer {0..262144} = if columns > 32 then 8192 else 1024;
+    if data_type == TileDataType_U32 then
+        capacity_bytes = if columns > 32 then 4096 else 512;
+    elsif data_type == TileDataType_U8 then
+        capacity_bytes = if columns > 32 then 1024 else 128;
+    else
+        assert data_type == TileDataType_U64;
+    end;
+    ConfigureTile(index, capacity_bytes, rows, physical_columns, rows, columns,
+        data_type,
         TileLayout_RowMajor, TileLocation_Any);
 end;
 
