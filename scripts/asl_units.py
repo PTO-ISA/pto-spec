@@ -342,7 +342,7 @@ def _current_surface(path: Path) -> str | None:
     parts = path.parts
     if len(parts) >= 3 and parts[0] == "asl" and parts[1] in APPROVED_SURFACES:
         return parts[1]
-    return None
+    return _legacy_surface(path)
 
 
 def _symbol_label(symbol: _AslSymbol) -> str:
@@ -353,15 +353,15 @@ def _symbol_label(symbol: _AslSymbol) -> str:
 
 def _collect_symbols(
     files: Iterable[tuple[Path, str]], surfaces: set[str], *, legacy: bool
-) -> tuple[dict[tuple[str, str], _AslSymbol], list[str]]:
-    symbols: dict[tuple[str, str], _AslSymbol] = {}
+) -> tuple[dict[tuple[str, str, str], _AslSymbol], list[str]]:
+    symbols: dict[tuple[str, str, str], _AslSymbol] = {}
     errors: list[str] = []
     for path, text in files:
         surface = _legacy_surface(path) if legacy else _current_surface(path)
         if surface not in surfaces:
             continue
         for symbol in _symbols_from_text(text):
-            key = (symbol.kind, symbol.name)
+            key = (symbol.kind, symbol.name, symbol.signature)
             if key in symbols:
                 side = "baseline" if legacy else "current"
                 errors.append(f"duplicate {side} ASL symbol {_symbol_label(symbol)}")
@@ -409,16 +409,37 @@ def compare_ref_to_tree(
     ]
     current, current_errors = _collect_symbols(current_files, selected, legacy=False)
     errors.extend(current_errors)
-    for key in sorted(set(baseline) - set(current)):
-        errors.append(f"missing ASL symbol: {_symbol_label(baseline[key])}")
-    for key in sorted(set(current) - set(baseline)):
-        errors.append(f"unexpected ASL symbol: {_symbol_label(current[key])}")
-    for key in sorted(set(baseline).intersection(current)):
-        before = baseline[key]
-        after = current[key]
-        label = _symbol_label(before)
-        if before.signature != after.signature:
+    baseline_groups: dict[tuple[str, str], list[_AslSymbol]] = {}
+    current_groups: dict[tuple[str, str], list[_AslSymbol]] = {}
+    for symbol in baseline.values():
+        baseline_groups.setdefault((symbol.kind, symbol.name), []).append(symbol)
+    for symbol in current.values():
+        current_groups.setdefault((symbol.kind, symbol.name), []).append(symbol)
+    for key in sorted(set(baseline_groups) | set(current_groups)):
+        before_group = baseline_groups.get(key, [])
+        after_group = current_groups.get(key, [])
+        if not after_group:
+            errors.extend(f"missing ASL symbol: {_symbol_label(symbol)}" for symbol in before_group)
+            continue
+        if not before_group:
+            errors.extend(f"unexpected ASL symbol: {_symbol_label(symbol)}" for symbol in after_group)
+            continue
+        if len(before_group) == len(after_group) == 1:
+            before = before_group[0]
+            after = after_group[0]
+            label = _symbol_label(before)
+            if before.signature != after.signature:
+                errors.append(f"changed ASL symbol signature: {label}")
+            elif before.body != after.body:
+                errors.append(f"changed ASL symbol body: {label}")
+            continue
+        before_by_signature = {symbol.signature: symbol for symbol in before_group}
+        after_by_signature = {symbol.signature: symbol for symbol in after_group}
+        label = _symbol_label(before_group[0])
+        if set(before_by_signature) != set(after_by_signature):
             errors.append(f"changed ASL symbol signature: {label}")
-        elif before.body != after.body:
-            errors.append(f"changed ASL symbol body: {label}")
+            continue
+        for signature in sorted(before_by_signature):
+            if before_by_signature[signature].body != after_by_signature[signature].body:
+                errors.append(f"changed ASL symbol body: {label}")
     return errors

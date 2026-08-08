@@ -432,7 +432,7 @@ git commit -m "feat: derive deterministic ASL source order"
 - Consumes: stable unit metadata and dependency ordering from Tasks 2 and 4.
 - Produces: architecture-wide declarations and functions below `asl/arch/`, with no `asl/numeric/`, `asl/profiles/`, or architecture root files.
 
-- [ ] **Step 1: Capture a declaration and function inventory**
+- [x] **Step 1: Capture a declaration and function inventory**
 
 Add a test that reads `PTO_MIGRATION_BASE_REF` (set to `git merge-base origin/main HEAD`) and parses the pre-migration baseline with `git show "$PTO_MIGRATION_BASE_REF:<path>"`. Compare named declarations with the migrated tree. The expected inventory MUST include every type, global variable, function, procedure, and constant from the seven old source files.
 
@@ -441,7 +441,7 @@ self.assertEqual(old_symbols, new_symbols)
 self.assertEqual(old_function_signatures, new_function_signatures)
 ```
 
-- [ ] **Step 2: Run the inventory test before moves**
+- [x] **Step 2: Run the inventory test before moves**
 
 Run:
 
@@ -451,7 +451,7 @@ PTO_MIGRATION_BASE_REF="$(git merge-base origin/main HEAD)" python3 -m unittest 
 
 Expected: FAIL because `asl/arch/` is incomplete.
 
-- [ ] **Step 3: Split base and state ownership with `git mv` plus extraction commits**
+- [x] **Step 3: Split base and state ownership with `git mv` plus extraction commits**
 
 Use these boundaries:
 
@@ -475,10 +475,16 @@ asl/arch/state/tile-descriptor.asl                  descriptor base types
 asl/arch/state/definedness.asl                      undefined-value contracts
 ```
 
+To preserve declaration-before-state assembly while keeping each unit cohesive,
+the migration also creates `asl/arch/data-types/{fault,memory-model,memory-operations,system-registers,trap-context}.asl`,
+`asl/block/model/state/types.asl`, `asl/scalar/model/types/operations.asl`, and
+`asl/tile/model/state/types.asl`. Stateful behavior remains in the owning
+architecture unit and these type units remain part of the same semantic-preservation inventory.
+
 Every file receives one `PTO-UNIT` record whose classification matches its path. Dependencies MUST refer to unit IDs, not file paths.
 Update the transitional explicit Makefile source list to the moved paths so `make build` remains usable during migration.
 
-- [ ] **Step 4: Split system-register and memory-model ownership**
+- [x] **Step 4: Split system-register and memory-model ownership**
 
 Use these boundaries:
 
@@ -498,7 +504,7 @@ asl/arch/memory-model/fault-precision.asl
 
 Move `MemoryEventIs*`, event creation, captured read-from, ordering, and recording functions to the matching memory-model unit without changing their bodies.
 
-- [ ] **Step 5: Split profile and feature ownership**
+- [x] **Step 5: Split profile and feature ownership**
 
 Move reset/time/numeric/trap profile functions under:
 
@@ -514,7 +520,7 @@ asl/arch/features/shared-tile-state.asl
 
 Move block-specific profile encoding maps to `asl/block/model/schema/profile-encoding.asl` and declare its architecture dependencies explicitly.
 
-- [ ] **Step 6: Verify symbol preservation, layout, and line limits**
+- [x] **Step 6: Verify symbol preservation, layout, and line limits**
 
 Run:
 
@@ -530,7 +536,7 @@ git diff --check
 
 Expected: the symbol/signature inventory is identical, every new unit is at most 500 lines, and assembly succeeds.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add asl/arch asl/block/model/schema/profile-encoding.asl Makefile tests/scripts/test_arch_migration.py

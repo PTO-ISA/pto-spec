@@ -34,6 +34,9 @@ class CompareAslSemanticSurfaceTest(unittest.TestCase):
             "end;\n",
             encoding="utf-8",
         )
+        transitional = self.root / "asl/bundle/state.asl"
+        transitional.parent.mkdir(parents=True)
+        transitional.write_text("constant PTO_BUNDLE_STATE = 1;\n", encoding="utf-8")
         subprocess.run(["git", "add", "asl"], cwd=self.root, check=True)
         subprocess.run(["git", "commit", "-qm", "baseline"], cwd=self.root, check=True)
         self.baseline = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=self.root, text=True).strip()
@@ -120,6 +123,41 @@ class CompareAslSemanticSurfaceTest(unittest.TestCase):
         )
 
         self.assertIn("changed ASL symbol body: ProfileHook [implementation]", self.compare())
+
+    def test_transitional_legacy_surface_is_compared_until_its_migration_task(self) -> None:
+        self.assertEqual(
+            compare_ref_to_tree(self.root, self.baseline, self.root / "asl", ("arch", "block")),
+            [],
+        )
+
+    def test_distinct_overload_signatures_are_preserved(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.email", "test@example.com"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.name", "Test"], cwd=root, check=True)
+            legacy = root / "asl/architecture.asl"
+            legacy.parent.mkdir(parents=True)
+            body = (
+                "pure func Select(value: integer) => integer\n"
+                "begin\n"
+                "    return value;\n"
+                "end;\n"
+                "pure func Select(value: bits(8)) => integer\n"
+                "begin\n"
+                "    return UInt(value);\n"
+                "end;\n"
+            )
+            legacy.write_text(body, encoding="utf-8")
+            subprocess.run(["git", "add", "asl"], cwd=root, check=True)
+            subprocess.run(["git", "commit", "-qm", "baseline"], cwd=root, check=True)
+            baseline = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
+            legacy.unlink()
+            migrated = root / "asl/arch/overview/architecture.asl"
+            migrated.parent.mkdir(parents=True)
+            migrated.write_text(body, encoding="utf-8")
+
+            self.assertEqual(compare_ref_to_tree(root, baseline, root / "asl", ("arch",)), [])
 
 
 if __name__ == "__main__":

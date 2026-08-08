@@ -1,30 +1,4 @@
-// PTO-REQ-PROFILE-001, PTO-REQ-HARDWARE-NUMERIC-001:
-// bit-exact value classification for every TileDataType.
-
-pure func NumericValueClassIsNaN(value_class: NumericValueClass) => boolean
-begin
-    return value_class == NumericValue_QuietNaN ||
-           value_class == NumericValue_SignalingNaN;
-end;
-
-pure func NumericValueClassIsInfinity(value_class: NumericValueClass) => boolean
-begin
-    return value_class == NumericValue_PositiveInfinity ||
-           value_class == NumericValue_NegativeInfinity;
-end;
-
-pure func NumericValueClassIsZero(value_class: NumericValueClass) => boolean
-begin
-    return value_class == NumericValue_PositiveZero ||
-           value_class == NumericValue_NegativeZero;
-end;
-
-pure func NumericValueClassIsSubnormal(value_class: NumericValueClass) => boolean
-begin
-    return value_class == NumericValue_PositiveSubnormal ||
-           value_class == NumericValue_NegativeSubnormal;
-end;
-
+// PTO-UNIT: {"id":"PTO-ARCH-FEATURES-MX-FORMATS","surface":"arch","classification":["features","mx-formats"],"depends_on":["PTO-ARCH-DATA-TYPES-NUMERIC-CLASSIFICATION"]}
 pure func HardwareNumericTypeHasSubnormals(data_type: TileDataType) => boolean
 begin
     case data_type of

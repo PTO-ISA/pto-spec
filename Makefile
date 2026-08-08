@@ -3,21 +3,58 @@ ASLREF ?= ./scripts/aslref
 # Checked-in specification sources, in dependency order around the generated
 # decoder declarations.
 ASL_SOURCES_BEFORE_DECODER := \
-	asl/architecture.asl \
-	asl/types.asl \
-	asl/numeric/formats.asl \
-	asl/state.asl \
+	asl/arch/overview/architecture.asl \
+	asl/arch/programming-model/core-pe-topology.asl \
+	asl/arch/features/tile-allocation.asl \
+	asl/arch/data-types/integer.asl \
+	asl/arch/data-types/fault.asl \
+	asl/block/model/state/types.asl \
+	asl/arch/data-types/memory-model.asl \
+	asl/arch/data-types/memory-operations.asl \
+	asl/arch/data-types/system-registers.asl \
+	asl/arch/data-types/floating-point.asl \
+	asl/arch/data-types/rounding.asl \
+	asl/arch/data-types/numeric-classification.asl \
+	asl/arch/features/mx-formats.asl \
+	asl/arch/data-types/tile-data-types.asl \
+	asl/arch/data-types/packed.asl \
+	asl/arch/overview/instruction-classification.asl \
+	asl/scalar/model/types/operations.asl \
+	asl/tile/model/state/types.asl \
+	asl/arch/data-types/trap-context.asl \
+	asl/arch/system-registers/addressing.asl \
+	asl/arch/programming-model/execution-context.asl \
+	asl/arch/system-registers/access-control.asl \
+	asl/arch/system-registers/context.asl \
+	asl/arch/system-registers/timer.asl \
+	asl/arch/system-registers/interrupt.asl \
+	asl/arch/programming-model/scalar-registers.asl \
+	asl/arch/state/program-counter.asl \
+	asl/arch/state/execution-mask.asl \
+	asl/arch/programming-model/predicate-registers.asl \
+	asl/arch/features/predication.asl \
+	asl/arch/programming-model/tile-registers.asl \
+	asl/arch/programming-model/shared-tile-registers.asl \
+	asl/arch/features/shared-tile-state.asl \
+	asl/arch/state/tile-descriptor.asl \
+	asl/arch/state/definedness.asl \
+	asl/arch/state/trap-context.asl \
+	asl/arch/memory-model/fault-precision.asl \
+	asl/arch/memory-model/address-space.asl \
 	asl/bundle/state.asl \
 	asl/tile/state.asl \
 	asl/scalar/operands.asl \
 	asl/scalar/integer.asl \
 	asl/scalar/control.asl \
 	asl/scalar/memory.asl \
-	asl/concurrency.asl \
+	asl/arch/memory-model/memory-events.asl \
+	asl/arch/memory-model/atomicity.asl \
+	asl/arch/memory-model/ordering.asl \
 	asl/scalar/addressing.asl \
 	asl/scalar/atomic.asl \
 	asl/scalar/system.asl \
 	asl/scalar/system-registers.asl \
+	asl/arch/system-registers/maintenance.asl \
 	asl/scalar/floating.asl \
 	asl/tile/elementwise.asl \
 	asl/tile/reduction.asl \
@@ -36,11 +73,14 @@ ASL_MNEMONIC_SOURCES := $(sort $(wildcard \
 	asl/tile/*/*/*.asl))
 
 ASL_SOURCES_AFTER_DECODER := \
-	asl/profiles/pto-v0.asl \
+	asl/arch/profile/reset.asl \
+	asl/arch/profile/applicability.asl \
+	asl/arch/profile/reference-profile.asl \
+	asl/block/model/schema/profile-encoding.asl \
 	$(ASL_MNEMONIC_SOURCES) \
 	asl/bundle/dispatch.asl \
 	asl/scalar/dispatch.asl \
-	asl/dispatch.asl
+	asl/arch/dispatch/top-level.asl
 
 ASL_SOURCES := $(ASL_SOURCES_BEFORE_DECODER) $(ASL_SOURCES_AFTER_DECODER)
 
