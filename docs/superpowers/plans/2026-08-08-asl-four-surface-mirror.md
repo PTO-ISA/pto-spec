@@ -432,7 +432,7 @@ git commit -m "feat: derive deterministic ASL source order"
 
 - [ ] **Step 1: Capture a declaration and function inventory**
 
-Add a test that parses the pre-migration baseline from `git show HEAD^:<path>` and compares named declarations with the migrated tree. The expected inventory MUST include every type, global variable, function, procedure, and constant from the seven old source files.
+Add a test that reads `PTO_MIGRATION_BASE_REF` (set to `git merge-base origin/main HEAD`) and parses the pre-migration baseline with `git show "$PTO_MIGRATION_BASE_REF:<path>"`. Compare named declarations with the migrated tree. The expected inventory MUST include every type, global variable, function, procedure, and constant from the seven old source files.
 
 ```python
 self.assertEqual(old_symbols, new_symbols)
@@ -444,7 +444,7 @@ self.assertEqual(old_function_signatures, new_function_signatures)
 Run:
 
 ```bash
-python3 -m unittest tests.scripts.test_arch_migration -v
+PTO_MIGRATION_BASE_REF="$(git merge-base origin/main HEAD)" python3 -m unittest tests.scripts.test_arch_migration -v
 ```
 
 Expected: FAIL because `asl/arch/` is incomplete.
@@ -517,7 +517,7 @@ Move block-specific profile encoding maps to `asl/block/model/schema/profile-enc
 Run:
 
 ```bash
-python3 -m unittest tests.scripts.test_arch_migration -v
+PTO_MIGRATION_BASE_REF="$(git merge-base origin/main HEAD)" python3 -m unittest tests.scripts.test_arch_migration -v
 ./scripts/check-asl-layout --surface arch
 baseline_ref="$(git merge-base origin/main HEAD)"
 ./scripts/compare-asl-semantic-surface --before-ref "$baseline_ref" --after-root asl --surface arch
@@ -567,7 +567,7 @@ Also assert one mnemonic per file and that the metadata mnemonic equals the file
 Run:
 
 ```bash
-python3 -m unittest tests.scripts.test_block_migration -v
+PTO_MIGRATION_BASE_REF="$(git merge-base origin/main HEAD)" python3 -m unittest tests.scripts.test_block_migration -v
 ```
 
 Expected: FAIL while `asl/bundle/` remains.
@@ -628,7 +628,7 @@ Use `git mv` for each mnemonic source. Preserve the existing `PTO-INSTRUCTION` J
 Run:
 
 ```bash
-python3 -m unittest tests.scripts.test_block_migration -v
+PTO_MIGRATION_BASE_REF="$(git merge-base origin/main HEAD)" python3 -m unittest tests.scripts.test_block_migration -v
 ./scripts/check-asl-layout --surface block
 baseline_ref="$(git merge-base origin/main HEAD)"
 ./scripts/compare-asl-semantic-surface --before-ref "$baseline_ref" --after-root asl --surface block
@@ -670,7 +670,7 @@ Assert that old and new scalar function signatures and `PTO-INSTRUCTION` records
 Run:
 
 ```bash
-python3 -m unittest tests.scripts.test_scalar_migration -v
+PTO_MIGRATION_BASE_REF="$(git merge-base origin/main HEAD)" python3 -m unittest tests.scripts.test_scalar_migration -v
 ```
 
 Expected: FAIL because `asl/scalar/dispatch.asl` still owns every class.
@@ -704,7 +704,7 @@ For every scalar mnemonic, add stable unit fields while keeping `catalog_records
 Run:
 
 ```bash
-python3 -m unittest tests.scripts.test_scalar_migration -v
+PTO_MIGRATION_BASE_REF="$(git merge-base origin/main HEAD)" python3 -m unittest tests.scripts.test_scalar_migration -v
 ./scripts/check-asl-layout --surface scalar
 baseline_ref="$(git merge-base origin/main HEAD)"
 ./scripts/compare-asl-semantic-surface --before-ref "$baseline_ref" --after-root asl --surface scalar
@@ -749,7 +749,7 @@ The test MUST compare old/new symbols, normalized instruction records, and the c
 Run:
 
 ```bash
-python3 -m unittest tests.scripts.test_tile_migration -v
+PTO_MIGRATION_BASE_REF="$(git merge-base origin/main HEAD)" python3 -m unittest tests.scripts.test_tile_migration -v
 ```
 
 Expected: FAIL because one or more tile common files exceed 500 lines and tile metadata lacks stable unit fields.
@@ -814,7 +814,7 @@ Create one dispatcher per tile class plus `asl/tile/model/dispatch/top-level.asl
 Run:
 
 ```bash
-python3 -m unittest tests.scripts.test_tile_migration -v
+PTO_MIGRATION_BASE_REF="$(git merge-base origin/main HEAD)" python3 -m unittest tests.scripts.test_tile_migration -v
 ./scripts/check-asl-layout
 ./scripts/check-catalogs
 ./scripts/generate-asl-source-order --root . --output build/asl-source-order.txt
