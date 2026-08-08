@@ -98,6 +98,22 @@ class CommonV058ContractTest(unittest.TestCase):
 
         self.assertEqual(missing, [])
 
+    def test_fused_bstart_call_descriptions_capture_atomic_call_contract(self) -> None:
+        records = {
+            record.mnemonic: record for record in load_instruction_index(ROOT)
+        }
+
+        for mnemonic in ("BSTART CALL", "HL.BSTART CALL"):
+            summary = records[mnemonic].summary
+            for required in (
+                "Atomically",
+                "call target",
+                "return address",
+                "independent unsigned displacement",
+                "writes ra",
+            ):
+                self.assertIn(required, summary, (mnemonic, summary))
+
 
 if __name__ == "__main__":
     unittest.main()

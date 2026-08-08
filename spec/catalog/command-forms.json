@@ -1433,7 +1433,7 @@
       "semantic_family": "BBD",
       "semantic_group": "BSTART",
       "semantic_handler": "ExecuteBundleStart",
-      "semantic_summary": "Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.",
+      "semantic_summary": "Atomically closes the current bundle, computes the call target from the signed displacement and the return address from the independent unsigned displacement, writes ra, and transfers control to the call bundle.",
       "status": "accepted"
     },
     {
@@ -4374,7 +4374,7 @@
       "semantic_family": "BBD",
       "semantic_group": "BSTART",
       "semantic_handler": "ExecuteBundleStart",
-      "semantic_summary": "Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.",
+      "semantic_summary": "Atomically closes the current bundle, computes the call target from the signed displacement and the return address from the independent unsigned displacement, writes ra, and transfers control to the call bundle.",
       "status": "accepted"
     },
     {

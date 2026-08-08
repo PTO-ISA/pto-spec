@@ -238,7 +238,7 @@
     },
     {
       "path": "asl/block/encoding/HL.BSTART_CALL.asl",
-      "sha256": "74ec10889034e748890cfad2638ba1429e67b891f46a14629ce63520f5d95fa6"
+      "sha256": "a48f7e089ec81595239167567f0c2a8cfde4179999ff545690b82cba8c3c574b"
     },
     {
       "path": "asl/block/encoding/L.BSTART.FP.asl",
@@ -370,7 +370,7 @@
     },
     {
       "path": "asl/block/execution/BSTART_CALL.asl",
-      "sha256": "9ecad17083c31055171da4bbbd97f9db9411483841b60fc649b1224a5d3ed6a3"
+      "sha256": "2cdf6c566cbf68774f9e96ce105a627486d0afcc5d46b0b788f9ab24e5f41d9d"
     },
     {
       "path": "asl/block/lifecycle/B.HINT.asl",
@@ -3154,7 +3154,7 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "f9f18f56781bc9dd98642d11925b25a9213f272ea6d6637bde215b0101332681"
+      "sha256": "79ddfab5fc798d42e8280a5591dac33ef1ccdd42dce3ed9fa96d596f63963cc6"
     },
     {
       "path": "spec/catalog/linx-vector-reservations.json",
@@ -3182,11 +3182,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "00ed7289db2f97d36d1b662388435949ce5bb7122c919bf80a8b67f861c67aff"
+      "sha256": "dd65fa17aa4a165cb63af80b658404c86b56cc30972bc4ad87c32d8c78b2b645"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "b6da68f6a4a394c89946ab1b65ba8df407d65c7a85789fa15186874bf4aadbf6"
+      "sha256": "5a1dfd37aa6c1665a21e5574d7dd2ab17dfbce014d4625430b118b3da0625b75"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3220,7 +3220,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "06a934737058ed43cdcf474d3adf14e27dfe93199ebccab2f9505021901b4100",
+  "content_sha256": "a18771c892536c144953372871238f807125ad067e9e89cf6101a07ee14a7df4",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3547,7 +3547,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/encoding/HL.BSTART_CALL.md",
-      "sha256": "c535b807f8a8c4c01dc8588cc33b7dba561fda5ad49479b0c21dadbcd6f8c060"
+      "sha256": "b72bb32ac509ef06e4fa2060369c315224d8ce2ed7049ad9001ab1c20d153189"
     },
     {
       "kind": "generated-documentation",
@@ -3712,7 +3712,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART_CALL.md",
-      "sha256": "c7f11c1031f320d8d8cfc61b09fbfc1c48131b4b203b56de48b8c58da1d9d7ed"
+      "sha256": "7766899583538abc8b07065e250d2f659bb191c2b3c4907aedecb04e053a65f2"
     },
     {
       "kind": "generated-documentation",

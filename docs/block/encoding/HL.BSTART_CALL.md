@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/encoding/HL.BSTART_CALL.asl`
 
-Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.
+Atomically closes the current bundle, computes the call target from the signed displacement and the return address from the independent unsigned displacement, writes ra, and transfers control to the call bundle.
 
 ## Normative identity {#PTO-INST-BLOCK-HL-BSTART-CALL}
 
@@ -65,7 +65,7 @@ end;
 
 ## Operational information
 
-- **Semantic summary:** `Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.`
+- **Semantic summary:** `Atomically closes the current bundle, computes the call target from the signed displacement and the return address from the independent unsigned displacement, writes ra, and transfers control to the call bundle.`
 - **Semantic handler:** `ExecuteBundleStart`
 
 <!-- SUPPLEMENTARY-BEGIN -->
