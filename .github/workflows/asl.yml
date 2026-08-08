@@ -19,6 +19,19 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          fetch-depth: 0
 
-      - name: Validate lightweight repository contract
-        run: make pr-check
+      - name: Validate lightweight source, mirror, and documentation contracts
+        run: |
+          ./scripts/check-asl-layout
+          ./scripts/check-ndf
+          ./scripts/check-asl-tests
+          python3 scripts/project_asl_catalogs.py --root . --check
+          python3 scripts/instruction_docs.py --check
+          python3 scripts/generate-mnemonic-avs.py --check
+          python3 scripts/check-publication-hygiene
+          ./scripts/check-release-workflow
+          ./scripts/check-repository --structure-only
+          python3 -m unittest discover -s tests/scripts -p 'test_*.py'
+          git diff --check

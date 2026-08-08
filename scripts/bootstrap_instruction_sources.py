@@ -62,7 +62,10 @@ def _read_frontmatter(path: Path) -> dict[str, object]:
 
 
 def _tile_metadata(root: Path, mnemonic: str) -> tuple[tuple[str, ...], tuple[str, ...]]:
-    page = root / "docs/instructions/tile" / f"{mnemonic}.md"
+    matches = sorted((root / "docs/tile").rglob(f"{mnemonic}.md"))
+    if len(matches) != 1:
+        raise ValueError(f"expected one mirrored page for {mnemonic}, found {len(matches)}")
+    page = matches[0]
     metadata = _read_frontmatter(page)
     xlsx = metadata["xlsx"]
     category_label = xlsx["category"].splitlines()[0]

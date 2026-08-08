@@ -4,7 +4,7 @@
   "target": "S5-T2-A4:PD-12",
   "decision_id": "PD-12",
   "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
-  "acceptance_record": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
+  "acceptance_record": "docs/status/decisions/0042-numeric-variation-point-ownership.md",
   "policy": {
     "applies_to": "Named target-conformance profiles; pto-v0 remains a deterministic raw-carrier reference and is not a target result fallback.",
     "authority": "Every open numeric dimension remains owned by pto-numeric-v1 until an accepted PTO decision delegates the exact variation point.",
@@ -246,7 +246,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "pd03-rounding/cube-matrix",
-      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -469,7 +469,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "pd03-rounding/scalar-binary",
-      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -830,7 +830,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "pd03-rounding/scalar-fp-convert",
-      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -1065,7 +1065,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "pd03-rounding/scalar-fp-to-integer",
-      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -1384,7 +1384,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "pd03-rounding/scalar-fused",
-      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -1813,7 +1813,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "pd03-rounding/scalar-integer-to-fp",
-      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -1995,7 +1995,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "pd03-rounding/scalar-unary",
-      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -2398,7 +2398,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "pd03-rounding/tile-binary",
-      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -3007,7 +3007,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "pd03-rounding/tile-convert",
-      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -3360,7 +3360,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "pd03-rounding/tile-dequantize",
-      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -3635,7 +3635,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "pd03-rounding/tile-expand",
-      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -3983,7 +3983,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "pd03-rounding/tile-fused",
-      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -4588,7 +4588,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "pd03-rounding/tile-partial",
-      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -4934,7 +4934,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "pd03-rounding/tile-quantize",
-      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -5270,7 +5270,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "pd03-rounding/tile-reduction",
-      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -5561,7 +5561,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "pd03-rounding/tile-unary",
-      "result_acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -8628,42 +8628,42 @@
   "sources": [
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "9637ce69b1b2f12d76e65c73fb7536fe66c22a1dde19c11b7827c4f5b60cc24b"
+      "sha256": "0eae4a99230713271bdcff56dd02d6011988a32edd2971160748f40f174fad7c"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "94d48007a9082fae64a0ec0a089f3ab146afe5f8a3b3b4a859ccfaa41519ef03"
+      "sha256": "ec9e3f2ef160cf84391c1ff38201098642e60b1c3449df2746dd9ab738605c96"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
-      "sha256": "f2bf1bcfa9e6ce1006132ac6d9aec4a8c698990a20eeb7736d361d62ed6477ed"
+      "sha256": "05752d689ec6b73fe008804fdea50a94eed2048c6b7d19f065b722e80a8767ef"
     },
     {
       "path": "spec/profile-hooks.json",
-      "sha256": "ca2ac0b5f26a015203d1053f642fa3ad96fc8dbcd5d29fe236ecc3a8f8f38dd8"
+      "sha256": "3ccd3be455ff1b241fc2c7e748087376bf03a9c33f4ede5d044ef7dca17e7fc2"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "afb027f5159b80f6059104d6255ca77a372d8938655016fd184faffdbdc971a7"
+      "sha256": "53d21024ac42c6e0998e3bf4058b3940e3f6bda0ba19f18455b8db39f6a90d89"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "7bd2bfa673c449813d4cf27ae22612d2ca15d20498b6551e514ff4e1d6d40919"
+      "sha256": "75f6b9d725c47ff06026b4ba7dde7be0e5d1892f2e9b955223602fb2bae402fe"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "1aa42abb178dd13ff5b38da69ed3b218baf0dfa9d9d9577618881c6b761a7815"
+      "sha256": "53988ce1878c3bf6c72193d154da8c7d9dd3971c6dc5bb0337e9af9a51cca2f0"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "42069cad118dfe62cc4f8adda9586c7e42b49ce7426bd7d7cc206c1cb5498a73"
+      "sha256": "12df76e7e8f967af157afe8a0fdfc2d371888488456ac63da3ad00cfe35733a1"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "680ed47e4f8c3ac54e74dc6636766d74274dda04620309a8c24640252840052f"
+      "sha256": "0b5307ba9a432795bd65d8a488c96987e5bfba1939bf3fbd87c3571f8edba5e2"
     },
     {
-      "path": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
+      "path": "docs/status/decisions/0042-numeric-variation-point-ownership.md",
       "sha256": "16b791c480f47bb72c7fa02081303c61c1c75486b793712977f831e14e47ae48"
     }
   ],

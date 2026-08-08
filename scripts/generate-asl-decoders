@@ -6,11 +6,26 @@ from __future__ import annotations
 import json
 import math
 import re
+import sys
 from collections import Counter
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.asl_units import load_units  # noqa: E402
+from scripts.encoding_witness import (  # noqa: E402
+    catalog_decode_order,
+    decode_field,
+    encode_field,
+    encoded_catalog_witnesses,
+    encoded_form_witness,
+    encoding_alternatives,
+)
+from scripts.project_asl_catalogs import project_catalogs  # noqa: E402
+
 EXECUTABLE_SCALAR_FAMILIES = {"AGU", "ALU", "AMO", "BRU", "FSU", "SYS"}
 CANONICAL_EXECUTION_FAULTS = {
     "ACRC": "Fault_ServiceRequest",
@@ -234,29 +249,6 @@ def system_register_reset_expression(behavior: dict) -> str:
     if reset == "external-and-timer-enabled":
         return "Zeros{PTO_XLEN} + 3"
     raise ValueError(f"unsupported system-register reset: {reset}")
-
-
-def decode_field(row: dict, field_name: str, instruction: int) -> int:
-    field = next(field for field in row["fields"] if field["name"] == field_name)
-    value = 0
-    for piece in field["pieces"]:
-        piece_mask = (1 << piece["width"]) - 1
-        value |= ((instruction >> piece["instruction_lsb"]) & piece_mask) << piece[
-            "value_lsb"
-        ]
-    return value
-
-
-def encode_field(row: dict, field_name: str, instruction: int, value: int) -> int:
-    field = next(field for field in row["fields"] if field["name"] == field_name)
-    if not 0 <= value < 1 << field["width"]:
-        raise ValueError(f"field value exceeds {field_name} in {row['form_id']}")
-    for piece in field["pieces"]:
-        piece_mask = (1 << piece["width"]) - 1
-        instruction &= ~(piece_mask << piece["instruction_lsb"])
-        piece_value = (value >> piece["value_lsb"]) & piece_mask
-        instruction |= piece_value << piece["instruction_lsb"]
-    return instruction
 
 
 def family_constraint_applies(row: dict, constraint: dict) -> bool:
@@ -6383,112 +6375,6 @@ def emit_enum(type_name: str, members: list[str], columns: int = 3) -> None:
     print("};")
 
 
-def encoded_form_witness(row: dict) -> int:
-    instruction = 0
-    for part in row["encoding"]:
-        instruction |= int(part["match"], 16) << (part["index"] * 32)
-    for constraint in row["constraints"]:
-        operator = constraint["operator"]
-        field_name = constraint["field"]
-        if operator == "not-equal":
-            if decode_field(row, field_name, instruction) == constraint["value"]:
-                field = next(
-                    field for field in row["fields"] if field["name"] == field_name
-                )
-                replacement = (constraint["value"] + 1) % (1 << field["width"])
-                instruction = encode_field(
-                    row, field_name, instruction, replacement
-                )
-        elif operator == "one-of":
-            allowed = constraint["values"]
-            if decode_field(row, field_name, instruction) not in allowed:
-                instruction = encode_field(row, field_name, instruction, allowed[0])
-        else:
-            raise ValueError(f"unsupported encoded-form constraint: {constraint!r}")
-    return instruction
-
-
-def encoding_alternatives(row: dict) -> list[list[dict]]:
-    return [row["encoding"], *[variant["encoding"] for variant in row.get("encoding_variants", [])]]
-
-
-def catalog_decode_order(rows: list[dict]) -> list[tuple[int, dict]]:
-    return sorted(
-        enumerate(rows),
-        key=lambda pair: (
-            -sum(bin(int(part["mask"], 16)).count("1") for part in pair[1]["encoding"]),
-            pair[1]["form_id"],
-        ),
-    )
-
-
-def form_encoding_matches(row: dict, instruction: int) -> bool:
-    for encoding in encoding_alternatives(row):
-        for part in encoding:
-            low = part["index"] * 32
-            width = part["width_bits"]
-            word = (instruction >> low) & ((1 << width) - 1)
-            mask = int(part["mask"], 16)
-            if word & mask != int(part["match"], 16):
-                break
-        else:
-            return True
-    return False
-
-
-def form_constraints_hold(row: dict, instruction: int) -> bool:
-    for constraint in row["constraints"]:
-        value = decode_field(row, constraint["field"], instruction)
-        if constraint["operator"] == "not-equal":
-            if value == constraint["value"]:
-                return False
-        elif constraint["operator"] == "one-of":
-            if value not in constraint["values"]:
-                return False
-        else:
-            raise ValueError(f"unsupported encoded-form constraint: {constraint!r}")
-    return True
-
-
-def encoded_catalog_witnesses(rows: list[dict]) -> list[int]:
-    """Find legal witnesses that select each row under the emitted priority decoder."""
-    ordered = catalog_decode_order(rows)
-    witnesses: list[int] = []
-    for target, row in enumerate(rows):
-        base = encoded_form_witness(row)
-        candidates = [base]
-        for attempt in range(1, 65536):
-            candidate = base
-            state = ((target + 1) << 32) ^ attempt ^ 0x9E3779B97F4A7C15
-            for field in row["fields"]:
-                state = (state * 6364136223846793005 + 1442695040888963407) & (
-                    (1 << 64) - 1
-                )
-                value = (state >> 17) & ((1 << field["width"]) - 1)
-                candidate = encode_field(row, field["name"], candidate, value)
-            candidates.append(candidate)
-        for candidate in candidates:
-            if not form_constraints_hold(row, candidate):
-                continue
-            decoded = next(
-                (
-                    index
-                    for index, candidate_row in ordered
-                    if candidate_row["length_bits"] == row["length_bits"]
-                    and form_encoding_matches(candidate_row, candidate)
-                ),
-                len(rows),
-            )
-            if decoded == target:
-                witnesses.append(candidate)
-                break
-        else:
-            raise ValueError(
-                f"command form has no legal priority-decode witness: {row['form_id']}"
-            )
-    return witnesses
-
-
 def emit_encoded_catalog(
     prefix: str,
     rows: list[dict],
@@ -6763,10 +6649,7 @@ def emit_encoded_catalog(
                     f"{decoded} == {bit_literal(value, width)}"
                     for value in constraint["values"]
                 )
-                print(
-                    f"    if form == {index} && !({allowed}) "
-                    "then return FALSE; end;"
-                )
+                print(f"    if form == {index} && !({allowed}) then return FALSE; end;")
             else:
                 raise ValueError(f"unsupported {prefix} constraint: {constraint!r}")
     print("    return TRUE;")
@@ -6802,13 +6685,20 @@ def emit_encoded_catalog(
 
 
 def main() -> None:
-    scalar_catalog = load("spec/catalog/scalar-forms.json")
+    projected_catalogs = project_catalogs(load_units(ROOT / "asl"))
+    scalar_catalog = json.loads(
+        projected_catalogs[Path("spec/catalog/scalar-forms.json")]
+    )
     scalar = scalar_catalog["forms"]
     for index, row in enumerate(scalar):
         row["_form_index"] = index
     family_constraints = scalar_catalog["family_constraints"]
-    command = load("spec/catalog/command-forms.json")["forms"]
-    tile_catalog = load("spec/catalog/tile-operations.json")
+    command = json.loads(projected_catalogs[Path("spec/catalog/command-forms.json")])[
+        "forms"
+    ]
+    tile_catalog = json.loads(
+        projected_catalogs[Path("spec/catalog/tile-operations.json")]
+    )
     tile = tile_catalog["operations"]
     numeric_applicability = load("spec/catalog/numeric-profile-applicability.json")
     numeric_applicability_rules = numeric_applicability["rules"]
@@ -7324,9 +7214,7 @@ def main() -> None:
                 "TEPL"
                 if mnemonic == "BSTART.TEPL"
                 else next(
-                    row["family"]
-                    for row in tile
-                    if row["command_mnemonic"] == mnemonic
+                    row["family"] for row in tile if row["command_mnemonic"] == mnemonic
                 )
             ),
         )
@@ -8218,9 +8106,7 @@ def main() -> None:
                     "Zeros{PTO_XLEN} + 0x104, TRUE);"
                 )
                 print("    EnterBundleBody();")
-                print(
-                    f"    WriteExecutionMask({bit_literal(body_predicate, 64)});"
-                )
+                print(f"    WriteExecutionMask({bit_literal(body_predicate, 64)});")
                 print(
                     f"    let scalar_bru_bundle_predicate_status_"
                     f"{effect_index}_{bundle_scenario_index} = "
@@ -11385,9 +11271,7 @@ def main() -> None:
     print("    form: integer {0..PTO_COMMAND_FORM_COUNT-1}) => TileDecodeFamily")
     print("begin")
     for command_index, _, family in tile_command_rows:
-        print(
-            f"    if form == {command_index} then return TileDecode_{family}; end;"
-        )
+        print(f"    if form == {command_index} then return TileDecode_{family}; end;")
     print("    unreachable;")
     print("end;")
     print()
@@ -11411,7 +11295,8 @@ def main() -> None:
             print("    end;")
         else:
             operation = next(
-                row for row in tile
+                row
+                for row in tile
                 if row["command_mnemonic"] == command_row["mnemonic"]
             )
             print(

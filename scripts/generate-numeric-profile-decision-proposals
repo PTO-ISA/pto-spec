@@ -216,7 +216,7 @@ def generate() -> dict[str, Any]:
         and subnormal_contract["status"]
         == "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open"
         and subnormal_contract["acceptance_record"]
-        == "docs/architecture-decisions/0049-hardware-subnormal-policy.md"
+        == "docs/status/decisions/0049-hardware-subnormal-policy.md"
         and subnormal_contract["summary"]
         == {
             "subnormal_capable_type_count": 11,
@@ -243,7 +243,7 @@ def generate() -> dict[str, Any]:
         and special_value_contract["status"]
         == "named-hardware-special-value-checkpoint-accepted-pd05-open"
         and special_value_contract["acceptance_record"]
-        == "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md"
+        == "docs/status/decisions/0050-hardware-special-value-checkpoint.md"
         and special_value_contract["summary"]
         == {
             "format_count": 25,
@@ -546,7 +546,7 @@ def generate() -> dict[str, Any]:
             "path": "spec/catalog/numeric-profile-identities.json",
             "sha256": hashlib.sha256(IDENTITY_CATALOG.read_bytes()).hexdigest(),
             "status": identity_catalog["status"],
-            "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+            "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
         },
         "scalar_flag_contract": {
             "path": "spec/evidence/scalar-numeric-flag-contract.json",
@@ -618,7 +618,7 @@ def generate() -> dict[str, Any]:
                 PROFILE_APPLICABILITY_CONTRACT.read_bytes()
             ).hexdigest(),
             "status": profile_applicability_contract["status"],
-            "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
+            "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md",
             **profile_applicability_contract["summary"],
         },
         "variation_point_contract": {
@@ -641,31 +641,31 @@ def generate() -> dict[str, Any]:
                 "id": "PF-01",
                 "rule": "PTO specifications are authoritative and backend behavior is evidence only",
                 "status": "accepted",
-                "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+                "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
             },
             {
                 "id": "PF-02",
                 "rule": "support restriction is distinct from result semantics",
                 "status": "accepted",
-                "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+                "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
             },
             {
                 "id": "PF-03",
                 "rule": "delegated numeric variation is named, visible, and bounded",
                 "status": "accepted",
-                "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+                "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
             },
             {
                 "id": "PF-04",
                 "rule": "unknown or missing numeric selections reject before effects",
                 "status": "accepted",
-                "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+                "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
             },
             {
                 "id": "PF-05",
                 "rule": "CPU observation is neither architecture nor an independent oracle",
                 "status": "accepted",
-                "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+                "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
             },
         ],
         "profile_proposals": profile_proposals,

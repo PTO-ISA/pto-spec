@@ -1,25 +1,185 @@
 site_name: PTO ISA Reference
 site_description: Generated projection of the normative PTO ASL instruction sources
-docs_dir: ../instructions
+docs_dir: ..
 site_dir: ../../build/mkdocs-site
 use_directory_urls: false
 exclude_docs: |
-  README.md
-  index.md
-  block-command.md
-  scalar.md
-  scalar-agu.md
-  scalar-alu.md
-  scalar-amo.md
-  scalar-bru.md
-  scalar-fsu.md
-  scalar-sys.md
-  system-registers.md
-  tile.md
+  status/legacy/**
+  mkdocs/**
+  superpowers/**
 theme:
   name: mkdocs
 strict: true
 nav:
+  - Arch:
+      - Data Types:
+          - Fault: arch/data-types/fault.md
+          - Floating Point: arch/data-types/floating-point.md
+          - Integer: arch/data-types/integer.md
+          - Memory Model: arch/data-types/memory-model.md
+          - Memory Operations: arch/data-types/memory-operations.md
+          - Numeric Classification: arch/data-types/numeric-classification.md
+          - Packed: arch/data-types/packed.md
+          - Rounding: arch/data-types/rounding.md
+          - System Registers: arch/data-types/system-registers.md
+          - Tile Data Types: arch/data-types/tile-data-types.md
+          - Trap Context: arch/data-types/trap-context.md
+      - Dispatch:
+          - Top Level: arch/dispatch/top-level.md
+      - Features:
+          - Mx Formats: arch/features/mx-formats.md
+          - Predication: arch/features/predication.md
+          - Shared Tile State: arch/features/shared-tile-state.md
+          - Tile Allocation: arch/features/tile-allocation.md
+      - Memory Model:
+          - Address Space: arch/memory-model/address-space.md
+          - Atomicity: arch/memory-model/atomicity.md
+          - Fault Precision: arch/memory-model/fault-precision.md
+          - Memory Events: arch/memory-model/memory-events.md
+          - Ordering: arch/memory-model/ordering.md
+      - Overview:
+          - Architecture: arch/overview/architecture.md
+          - Instruction Classification: arch/overview/instruction-classification.md
+      - Profile:
+          - Applicability: arch/profile/applicability.md
+          - Reference Profile: arch/profile/reference-profile.md
+          - Reset: arch/profile/reset.md
+      - Programming Model:
+          - Core PE Topology: arch/programming-model/core-pe-topology.md
+          - Execution Context: arch/programming-model/execution-context.md
+          - Predicate Registers: arch/programming-model/predicate-registers.md
+          - Scalar Registers: arch/programming-model/scalar-registers.md
+          - Shared Tile Registers: arch/programming-model/shared-tile-registers.md
+          - Tile Registers: arch/programming-model/tile-registers.md
+      - State:
+          - Definedness: arch/state/definedness.md
+          - Execution Mask: arch/state/execution-mask.md
+          - Program Counter: arch/state/program-counter.md
+          - Tile Descriptor: arch/state/tile-descriptor.md
+          - Trap Context: arch/state/trap-context.md
+      - System Registers:
+          - Access Control: arch/system-registers/access-control.md
+          - Addressing: arch/system-registers/addressing.md
+          - Context: arch/system-registers/context.md
+          - Interrupt: arch/system-registers/interrupt.md
+          - Maintenance: arch/system-registers/maintenance.md
+          - Timer: arch/system-registers/timer.md
+  - Block:
+      - Attributes:
+          - B.CATR: block/attributes/B.CATR.md
+          - B.DATR: block/attributes/B.DATR.md
+          - B.DIM: block/attributes/B.DIM.md
+          - C.B.DIMI: block/attributes/C.B.DIMI.md
+      - Encoding:
+          - C.BSTART.FP: block/encoding/C.BSTART.FP.md
+          - C.BSTART.MPAR: block/encoding/C.BSTART.MPAR.md
+          - C.BSTART.MSEQ: block/encoding/C.BSTART.MSEQ.md
+          - C.BSTART.STD: block/encoding/C.BSTART.STD.md
+          - C.BSTART.SYS: block/encoding/C.BSTART.SYS.md
+          - C.BSTART: block/encoding/C.BSTART.md
+          - HL.BSTART.FP: block/encoding/HL.BSTART.FP.md
+          - HL.BSTART.STD: block/encoding/HL.BSTART.STD.md
+          - HL.BSTART.SYS: block/encoding/HL.BSTART.SYS.md
+          - HL.BSTART CALL: block/encoding/HL.BSTART_CALL.md
+          - L.BSTART.FP: block/encoding/L.BSTART.FP.md
+          - L.BSTART.STD: block/encoding/L.BSTART.STD.md
+          - L.BSTART.SYS: block/encoding/L.BSTART.SYS.md
+          - XB: block/encoding/XB.md
+      - Execution:
+          - BSTART.FP: block/execution/BSTART.FP.md
+          - BSTART.GMOV: block/execution/BSTART.GMOV.md
+          - BSTART.MGATHER.CAS: block/execution/BSTART.MGATHER.CAS.md
+          - BSTART.MGATHER.MASK: block/execution/BSTART.MGATHER.MASK.md
+          - BSTART.MGATHER: block/execution/BSTART.MGATHER.md
+          - BSTART.MPAR: block/execution/BSTART.MPAR.md
+          - BSTART.MSCATTER.MASK: block/execution/BSTART.MSCATTER.MASK.md
+          - BSTART.MSCATTER: block/execution/BSTART.MSCATTER.md
+          - BSTART.MSEQ: block/execution/BSTART.MSEQ.md
+          - BSTART.STD: block/execution/BSTART.STD.md
+          - BSTART.SYS: block/execution/BSTART.SYS.md
+          - BSTART.TEPL: block/execution/BSTART.TEPL.md
+          - BSTART.TGEMV.ACC: block/execution/BSTART.TGEMV.ACC.md
+          - BSTART.TGEMV.BIAS: block/execution/BSTART.TGEMV.BIAS.md
+          - BSTART.TGEMV: block/execution/BSTART.TGEMV.md
+          - BSTART.TGEMVMX.ACC: block/execution/BSTART.TGEMVMX.ACC.md
+          - BSTART.TGEMVMX.BIAS: block/execution/BSTART.TGEMVMX.BIAS.md
+          - BSTART.TGEMVMX: block/execution/BSTART.TGEMVMX.md
+          - BSTART.TLOAD: block/execution/BSTART.TLOAD.md
+          - BSTART.TMATMUL.ACC: block/execution/BSTART.TMATMUL.ACC.md
+          - BSTART.TMATMUL.BIAS: block/execution/BSTART.TMATMUL.BIAS.md
+          - BSTART.TMATMUL: block/execution/BSTART.TMATMUL.md
+          - BSTART.TMATMULMX.ACC: block/execution/BSTART.TMATMULMX.ACC.md
+          - BSTART.TMATMULMX.BIAS: block/execution/BSTART.TMATMULMX.BIAS.md
+          - BSTART.TMATMULMX: block/execution/BSTART.TMATMULMX.md
+          - BSTART.TMOV: block/execution/BSTART.TMOV.md
+          - BSTART.TPREFETCH: block/execution/BSTART.TPREFETCH.md
+          - BSTART.TSTORE: block/execution/BSTART.TSTORE.md
+          - BSTART CALL: block/execution/BSTART_CALL.md
+      - Lifecycle:
+          - B.HINT: block/lifecycle/B.HINT.md
+          - B.TEXT: block/lifecycle/B.TEXT.md
+          - BSTART: block/lifecycle/BSTART.md
+          - BSTOP: block/lifecycle/BSTOP.md
+          - C.BSTOP: block/lifecycle/C.BSTOP.md
+          - ERCOV: block/lifecycle/ERCOV.md
+          - ESAVE: block/lifecycle/ESAVE.md
+          - FENTRY: block/lifecycle/FENTRY.md
+          - FEXIT: block/lifecycle/FEXIT.md
+          - FRET.RA: block/lifecycle/FRET.RA.md
+          - FRET.STK: block/lifecycle/FRET.STK.md
+          - HL.QMT: block/lifecycle/HL.QMT.md
+          - HL.QPOP: block/lifecycle/HL.QPOP.md
+          - HL.QPUSH: block/lifecycle/HL.QPUSH.md
+          - MCOPY: block/lifecycle/MCOPY.md
+          - MSET: block/lifecycle/MSET.md
+      - Model:
+          - Commit:
+              - Effects: block/model/commit/effects.md
+              - Validation: block/model/commit/validation.md
+      - Model:
+          - Dispatch:
+              - Commands: block/model/dispatch/commands.md
+              - Decode: block/model/dispatch/decode.md
+              - Descriptor Legality: block/model/dispatch/descriptor-legality.md
+              - Destination Shape: block/model/dispatch/destination-shape.md
+              - Numeric Control: block/model/dispatch/numeric-control.md
+              - Scalar Schema: block/model/dispatch/scalar-schema.md
+              - Shared Cube: block/model/dispatch/shared-cube.md
+              - Shared Tlsu: block/model/dispatch/shared-tlsu.md
+              - Start: block/model/dispatch/start.md
+              - Tile Execution: block/model/dispatch/tile-execution.md
+              - Tile Schema: block/model/dispatch/tile-schema.md
+              - Top Level: block/model/dispatch/top-level.md
+      - Model:
+          - Faults:
+              - Rollback: block/model/faults/rollback.md
+      - Model:
+          - Lifecycle:
+              - Begin: block/model/lifecycle/begin.md
+              - Enter Stop: block/model/lifecycle/enter-stop.md
+              - Lifetime: block/model/lifecycle/lifetime.md
+              - Reset: block/model/lifecycle/reset.md
+      - Model:
+          - Operands:
+              - Scalar Bindings: block/model/operands/scalar-bindings.md
+              - Shared Bindings: block/model/operands/shared-bindings.md
+              - Tile Bindings: block/model/operands/tile-bindings.md
+      - Model:
+          - Schema:
+              - Attributes: block/model/schema/attributes.md
+              - Dimensions: block/model/schema/dimensions.md
+              - Header: block/model/schema/header.md
+              - Profile Encoding: block/model/schema/profile-encoding.md
+      - Model:
+          - State:
+              - Binding State: block/model/state/binding-state.md
+              - Control State: block/model/state/control-state.md
+              - Descriptor State: block/model/state/descriptor-state.md
+              - Types: block/model/state/types.md
+      - Operands:
+          - B.IOR: block/operands/B.IOR.md
+          - B.IOS: block/operands/B.IOS.md
+          - B.IOT: block/operands/B.IOT.md
   - Scalar:
       - AGU:
           - C.LDI: scalar/agu/C.LDI.md
@@ -29,89 +189,89 @@ nav:
           - HL.LB.PCR: scalar/agu/HL.LB.PCR.md
           - HL.LB.PO: scalar/agu/HL.LB.PO.md
           - HL.LB.PR: scalar/agu/HL.LB.PR.md
-          - HL.LBI: scalar/agu/HL.LBI.md
           - HL.LBI.PO: scalar/agu/HL.LBI.PO.md
           - HL.LBI.PR: scalar/agu/HL.LBI.PR.md
+          - HL.LBI: scalar/agu/HL.LBI.md
           - HL.LBIP: scalar/agu/HL.LBIP.md
           - HL.LBP: scalar/agu/HL.LBP.md
           - HL.LBU.PCR: scalar/agu/HL.LBU.PCR.md
           - HL.LBU.PO: scalar/agu/HL.LBU.PO.md
           - HL.LBU.PR: scalar/agu/HL.LBU.PR.md
-          - HL.LBUI: scalar/agu/HL.LBUI.md
           - HL.LBUI.PO: scalar/agu/HL.LBUI.PO.md
           - HL.LBUI.PR: scalar/agu/HL.LBUI.PR.md
+          - HL.LBUI: scalar/agu/HL.LBUI.md
           - HL.LBUIP: scalar/agu/HL.LBUIP.md
           - HL.LBUP: scalar/agu/HL.LBUP.md
           - HL.LD.PCR: scalar/agu/HL.LD.PCR.md
           - HL.LD.PO: scalar/agu/HL.LD.PO.md
           - HL.LD.PR: scalar/agu/HL.LD.PR.md
-          - HL.LDI: scalar/agu/HL.LDI.md
           - HL.LDI.PO: scalar/agu/HL.LDI.PO.md
           - HL.LDI.PR: scalar/agu/HL.LDI.PR.md
           - HL.LDI.U: scalar/agu/HL.LDI.U.md
           - HL.LDI.UPO: scalar/agu/HL.LDI.UPO.md
           - HL.LDI.UPR: scalar/agu/HL.LDI.UPR.md
-          - HL.LDIP: scalar/agu/HL.LDIP.md
+          - HL.LDI: scalar/agu/HL.LDI.md
           - HL.LDIP.U: scalar/agu/HL.LDIP.U.md
+          - HL.LDIP: scalar/agu/HL.LDIP.md
           - HL.LDP: scalar/agu/HL.LDP.md
           - HL.LH.PCR: scalar/agu/HL.LH.PCR.md
           - HL.LH.PO: scalar/agu/HL.LH.PO.md
           - HL.LH.PR: scalar/agu/HL.LH.PR.md
-          - HL.LHI: scalar/agu/HL.LHI.md
           - HL.LHI.PO: scalar/agu/HL.LHI.PO.md
           - HL.LHI.PR: scalar/agu/HL.LHI.PR.md
           - HL.LHI.U: scalar/agu/HL.LHI.U.md
           - HL.LHI.UPO: scalar/agu/HL.LHI.UPO.md
           - HL.LHI.UPR: scalar/agu/HL.LHI.UPR.md
-          - HL.LHIP: scalar/agu/HL.LHIP.md
+          - HL.LHI: scalar/agu/HL.LHI.md
           - HL.LHIP.U: scalar/agu/HL.LHIP.U.md
+          - HL.LHIP: scalar/agu/HL.LHIP.md
           - HL.LHP: scalar/agu/HL.LHP.md
           - HL.LHU.PCR: scalar/agu/HL.LHU.PCR.md
           - HL.LHU.PO: scalar/agu/HL.LHU.PO.md
           - HL.LHU.PR: scalar/agu/HL.LHU.PR.md
-          - HL.LHUI: scalar/agu/HL.LHUI.md
           - HL.LHUI.PO: scalar/agu/HL.LHUI.PO.md
           - HL.LHUI.PR: scalar/agu/HL.LHUI.PR.md
           - HL.LHUI.U: scalar/agu/HL.LHUI.U.md
           - HL.LHUI.UPO: scalar/agu/HL.LHUI.UPO.md
           - HL.LHUI.UPR: scalar/agu/HL.LHUI.UPR.md
-          - HL.LHUIP: scalar/agu/HL.LHUIP.md
+          - HL.LHUI: scalar/agu/HL.LHUI.md
           - HL.LHUIP.U: scalar/agu/HL.LHUIP.U.md
+          - HL.LHUIP: scalar/agu/HL.LHUIP.md
           - HL.LHUP: scalar/agu/HL.LHUP.md
           - HL.LW.PCR: scalar/agu/HL.LW.PCR.md
           - HL.LW.PO: scalar/agu/HL.LW.PO.md
           - HL.LW.PR: scalar/agu/HL.LW.PR.md
-          - HL.LWI: scalar/agu/HL.LWI.md
           - HL.LWI.PO: scalar/agu/HL.LWI.PO.md
           - HL.LWI.PR: scalar/agu/HL.LWI.PR.md
           - HL.LWI.U: scalar/agu/HL.LWI.U.md
           - HL.LWI.UPO: scalar/agu/HL.LWI.UPO.md
           - HL.LWI.UPR: scalar/agu/HL.LWI.UPR.md
-          - HL.LWIP: scalar/agu/HL.LWIP.md
+          - HL.LWI: scalar/agu/HL.LWI.md
           - HL.LWIP.U: scalar/agu/HL.LWIP.U.md
+          - HL.LWIP: scalar/agu/HL.LWIP.md
           - HL.LWP: scalar/agu/HL.LWP.md
           - HL.LWU.PCR: scalar/agu/HL.LWU.PCR.md
           - HL.LWU.PO: scalar/agu/HL.LWU.PO.md
           - HL.LWU.PR: scalar/agu/HL.LWU.PR.md
-          - HL.LWUI: scalar/agu/HL.LWUI.md
           - HL.LWUI.PO: scalar/agu/HL.LWUI.PO.md
           - HL.LWUI.PR: scalar/agu/HL.LWUI.PR.md
           - HL.LWUI.U: scalar/agu/HL.LWUI.U.md
           - HL.LWUI.UPO: scalar/agu/HL.LWUI.UPO.md
           - HL.LWUI.UPR: scalar/agu/HL.LWUI.UPR.md
-          - HL.LWUIP: scalar/agu/HL.LWUIP.md
+          - HL.LWUI: scalar/agu/HL.LWUI.md
           - HL.LWUIP.U: scalar/agu/HL.LWUIP.U.md
+          - HL.LWUIP: scalar/agu/HL.LWUIP.md
           - HL.LWUP: scalar/agu/HL.LWUP.md
-          - HL.PRF: scalar/agu/HL.PRF.md
           - HL.PRF.A: scalar/agu/HL.PRF.A.md
+          - HL.PRF: scalar/agu/HL.PRF.md
           - HL.PRFI.U: scalar/agu/HL.PRFI.U.md
           - HL.PRFI.UA: scalar/agu/HL.PRFI.UA.md
           - HL.SB.PCR: scalar/agu/HL.SB.PCR.md
           - HL.SB.PO: scalar/agu/HL.SB.PO.md
           - HL.SB.PR: scalar/agu/HL.SB.PR.md
-          - HL.SBI: scalar/agu/HL.SBI.md
           - HL.SBI.PO: scalar/agu/HL.SBI.PO.md
           - HL.SBI.PR: scalar/agu/HL.SBI.PR.md
+          - HL.SBI: scalar/agu/HL.SBI.md
           - HL.SBIP: scalar/agu/HL.SBIP.md
           - HL.SBP: scalar/agu/HL.SBP.md
           - HL.SD.PCR: scalar/agu/HL.SD.PCR.md
@@ -119,92 +279,92 @@ nav:
           - HL.SD.PR: scalar/agu/HL.SD.PR.md
           - HL.SD.UPO: scalar/agu/HL.SD.UPO.md
           - HL.SD.UPR: scalar/agu/HL.SD.UPR.md
-          - HL.SDI: scalar/agu/HL.SDI.md
           - HL.SDI.PO: scalar/agu/HL.SDI.PO.md
           - HL.SDI.PR: scalar/agu/HL.SDI.PR.md
           - HL.SDI.U: scalar/agu/HL.SDI.U.md
           - HL.SDI.UPO: scalar/agu/HL.SDI.UPO.md
           - HL.SDI.UPR: scalar/agu/HL.SDI.UPR.md
-          - HL.SDIP: scalar/agu/HL.SDIP.md
+          - HL.SDI: scalar/agu/HL.SDI.md
           - HL.SDIP.U: scalar/agu/HL.SDIP.U.md
-          - HL.SDP: scalar/agu/HL.SDP.md
+          - HL.SDIP: scalar/agu/HL.SDIP.md
           - HL.SDP.U: scalar/agu/HL.SDP.U.md
+          - HL.SDP: scalar/agu/HL.SDP.md
           - HL.SH.PCR: scalar/agu/HL.SH.PCR.md
           - HL.SH.PO: scalar/agu/HL.SH.PO.md
           - HL.SH.PR: scalar/agu/HL.SH.PR.md
           - HL.SH.UPO: scalar/agu/HL.SH.UPO.md
           - HL.SH.UPR: scalar/agu/HL.SH.UPR.md
-          - HL.SHI: scalar/agu/HL.SHI.md
           - HL.SHI.PO: scalar/agu/HL.SHI.PO.md
           - HL.SHI.PR: scalar/agu/HL.SHI.PR.md
           - HL.SHI.U: scalar/agu/HL.SHI.U.md
           - HL.SHI.UPO: scalar/agu/HL.SHI.UPO.md
           - HL.SHI.UPR: scalar/agu/HL.SHI.UPR.md
-          - HL.SHIP: scalar/agu/HL.SHIP.md
+          - HL.SHI: scalar/agu/HL.SHI.md
           - HL.SHIP.U: scalar/agu/HL.SHIP.U.md
-          - HL.SHP: scalar/agu/HL.SHP.md
+          - HL.SHIP: scalar/agu/HL.SHIP.md
           - HL.SHP.U: scalar/agu/HL.SHP.U.md
+          - HL.SHP: scalar/agu/HL.SHP.md
           - HL.SW.PCR: scalar/agu/HL.SW.PCR.md
           - HL.SW.PO: scalar/agu/HL.SW.PO.md
           - HL.SW.PR: scalar/agu/HL.SW.PR.md
           - HL.SW.UPO: scalar/agu/HL.SW.UPO.md
           - HL.SW.UPR: scalar/agu/HL.SW.UPR.md
-          - HL.SWI: scalar/agu/HL.SWI.md
           - HL.SWI.PO: scalar/agu/HL.SWI.PO.md
           - HL.SWI.PR: scalar/agu/HL.SWI.PR.md
           - HL.SWI.U: scalar/agu/HL.SWI.U.md
           - HL.SWI.UPO: scalar/agu/HL.SWI.UPO.md
           - HL.SWI.UPR: scalar/agu/HL.SWI.UPR.md
-          - HL.SWIP: scalar/agu/HL.SWIP.md
+          - HL.SWI: scalar/agu/HL.SWI.md
           - HL.SWIP.U: scalar/agu/HL.SWIP.U.md
-          - HL.SWP: scalar/agu/HL.SWP.md
+          - HL.SWIP: scalar/agu/HL.SWIP.md
           - HL.SWP.U: scalar/agu/HL.SWP.U.md
-          - LB: scalar/agu/LB.md
+          - HL.SWP: scalar/agu/HL.SWP.md
           - LB.PCR: scalar/agu/LB.PCR.md
+          - LB: scalar/agu/LB.md
           - LBI: scalar/agu/LBI.md
-          - LBU: scalar/agu/LBU.md
           - LBU.PCR: scalar/agu/LBU.PCR.md
+          - LBU: scalar/agu/LBU.md
           - LBUI: scalar/agu/LBUI.md
-          - LD: scalar/agu/LD.md
           - LD.PCR: scalar/agu/LD.PCR.md
-          - LDI: scalar/agu/LDI.md
+          - LD: scalar/agu/LD.md
           - LDI.U: scalar/agu/LDI.U.md
-          - LH: scalar/agu/LH.md
+          - LDI: scalar/agu/LDI.md
           - LH.PCR: scalar/agu/LH.PCR.md
-          - LHI: scalar/agu/LHI.md
+          - LH: scalar/agu/LH.md
           - LHI.U: scalar/agu/LHI.U.md
-          - LHU: scalar/agu/LHU.md
+          - LHI: scalar/agu/LHI.md
           - LHU.PCR: scalar/agu/LHU.PCR.md
-          - LHUI: scalar/agu/LHUI.md
+          - LHU: scalar/agu/LHU.md
           - LHUI.U: scalar/agu/LHUI.U.md
-          - LW: scalar/agu/LW.md
+          - LHUI: scalar/agu/LHUI.md
           - LW.PCR: scalar/agu/LW.PCR.md
-          - LWI: scalar/agu/LWI.md
+          - LW: scalar/agu/LW.md
           - LWI.U: scalar/agu/LWI.U.md
-          - LWU: scalar/agu/LWU.md
+          - LWI: scalar/agu/LWI.md
           - LWU.PCR: scalar/agu/LWU.PCR.md
-          - LWUI: scalar/agu/LWUI.md
+          - LWU: scalar/agu/LWU.md
           - LWUI.U: scalar/agu/LWUI.U.md
+          - LWUI: scalar/agu/LWUI.md
           - PRF: scalar/agu/PRF.md
           - PRFI.U: scalar/agu/PRFI.U.md
-          - SB: scalar/agu/SB.md
           - SB.PCR: scalar/agu/SB.PCR.md
+          - SB: scalar/agu/SB.md
           - SBI: scalar/agu/SBI.md
-          - SD: scalar/agu/SD.md
           - SD.PCR: scalar/agu/SD.PCR.md
           - SD.U: scalar/agu/SD.U.md
-          - SDI: scalar/agu/SDI.md
+          - SD: scalar/agu/SD.md
           - SDI.U: scalar/agu/SDI.U.md
-          - SH: scalar/agu/SH.md
+          - SDI: scalar/agu/SDI.md
           - SH.PCR: scalar/agu/SH.PCR.md
           - SH.U: scalar/agu/SH.U.md
-          - SHI: scalar/agu/SHI.md
+          - SH: scalar/agu/SH.md
           - SHI.U: scalar/agu/SHI.U.md
-          - SW: scalar/agu/SW.md
+          - SHI: scalar/agu/SHI.md
           - SW.PCR: scalar/agu/SW.PCR.md
           - SW.U: scalar/agu/SW.U.md
-          - SWI: scalar/agu/SWI.md
+          - SW: scalar/agu/SW.md
           - SWI.U: scalar/agu/SWI.U.md
+          - SWI: scalar/agu/SWI.md
       - ALU:
           - ADD: scalar/alu/ADD.md
           - ADDI: scalar/alu/ADDI.md
@@ -465,6 +625,41 @@ nav:
           - FSUB: scalar/fsu/FSUB.md
           - SCVTF: scalar/fsu/SCVTF.md
           - UCVTF: scalar/fsu/UCVTF.md
+      - Model:
+          - AGU:
+              - Addressing: scalar/model/agu/addressing.md
+              - Memory: scalar/model/agu/memory.md
+      - Model:
+          - ALU:
+              - Semantics: scalar/model/alu/semantics.md
+      - Model:
+          - AMO:
+              - Semantics: scalar/model/amo/semantics.md
+      - Model:
+          - BRU:
+              - Semantics: scalar/model/bru/semantics.md
+      - Model:
+          - Dispatch:
+              - Agu: scalar/model/dispatch/agu.md
+              - Alu: scalar/model/dispatch/alu.md
+              - Amo: scalar/model/dispatch/amo.md
+              - Bru: scalar/model/dispatch/bru.md
+              - Decode: scalar/model/dispatch/decode.md
+              - Fsu: scalar/model/dispatch/fsu.md
+              - Sys: scalar/model/dispatch/sys.md
+              - Top Level: scalar/model/dispatch/top-level.md
+      - Model:
+          - FSU:
+              - Arithmetic: scalar/model/fsu/arithmetic.md
+              - Profile: scalar/model/fsu/profile.md
+      - Model:
+          - SYS:
+              - Registers: scalar/model/sys/registers.md
+              - Semantics: scalar/model/sys/semantics.md
+      - Model:
+          - Types:
+              - Operands: scalar/model/types/operands.md
+              - Operations: scalar/model/types/operations.md
       - SYS:
           - ACRC: scalar/sys/ACRC.md
           - ACRE: scalar/sys/ACRE.md
@@ -501,78 +696,6 @@ nav:
           - TLB.IALL: scalar/sys/TLB.IALL.md
           - TLB.IAV: scalar/sys/TLB.IAV.md
           - TLB.IV: scalar/sys/TLB.IV.md
-  - Block:
-      - Attributes:
-          - B.CATR: block/attributes/B.CATR.md
-          - B.DATR: block/attributes/B.DATR.md
-          - B.DIM: block/attributes/B.DIM.md
-          - C.B.DIMI: block/attributes/C.B.DIMI.md
-      - Encoding:
-          - C.BSTART: block/encoding/C.BSTART.md
-          - C.BSTART.FP: block/encoding/C.BSTART.FP.md
-          - C.BSTART.MPAR: block/encoding/C.BSTART.MPAR.md
-          - C.BSTART.MSEQ: block/encoding/C.BSTART.MSEQ.md
-          - C.BSTART.STD: block/encoding/C.BSTART.STD.md
-          - C.BSTART.SYS: block/encoding/C.BSTART.SYS.md
-          - HL.BSTART CALL: block/encoding/HL.BSTART_CALL.md
-          - HL.BSTART.FP: block/encoding/HL.BSTART.FP.md
-          - HL.BSTART.STD: block/encoding/HL.BSTART.STD.md
-          - HL.BSTART.SYS: block/encoding/HL.BSTART.SYS.md
-          - L.BSTART.FP: block/encoding/L.BSTART.FP.md
-          - L.BSTART.STD: block/encoding/L.BSTART.STD.md
-          - L.BSTART.SYS: block/encoding/L.BSTART.SYS.md
-          - XB: block/encoding/XB.md
-      - Execution:
-          - BSTART CALL: block/execution/BSTART_CALL.md
-          - BSTART.FP: block/execution/BSTART.FP.md
-          - BSTART.GMOV: block/execution/BSTART.GMOV.md
-          - BSTART.MGATHER: block/execution/BSTART.MGATHER.md
-          - BSTART.MGATHER.CAS: block/execution/BSTART.MGATHER.CAS.md
-          - BSTART.MGATHER.MASK: block/execution/BSTART.MGATHER.MASK.md
-          - BSTART.MPAR: block/execution/BSTART.MPAR.md
-          - BSTART.MSCATTER: block/execution/BSTART.MSCATTER.md
-          - BSTART.MSCATTER.MASK: block/execution/BSTART.MSCATTER.MASK.md
-          - BSTART.MSEQ: block/execution/BSTART.MSEQ.md
-          - BSTART.STD: block/execution/BSTART.STD.md
-          - BSTART.SYS: block/execution/BSTART.SYS.md
-          - BSTART.TEPL: block/execution/BSTART.TEPL.md
-          - BSTART.TGEMV: block/execution/BSTART.TGEMV.md
-          - BSTART.TGEMV.ACC: block/execution/BSTART.TGEMV.ACC.md
-          - BSTART.TGEMV.BIAS: block/execution/BSTART.TGEMV.BIAS.md
-          - BSTART.TGEMVMX: block/execution/BSTART.TGEMVMX.md
-          - BSTART.TGEMVMX.ACC: block/execution/BSTART.TGEMVMX.ACC.md
-          - BSTART.TGEMVMX.BIAS: block/execution/BSTART.TGEMVMX.BIAS.md
-          - BSTART.TLOAD: block/execution/BSTART.TLOAD.md
-          - BSTART.TMATMUL: block/execution/BSTART.TMATMUL.md
-          - BSTART.TMATMUL.ACC: block/execution/BSTART.TMATMUL.ACC.md
-          - BSTART.TMATMUL.BIAS: block/execution/BSTART.TMATMUL.BIAS.md
-          - BSTART.TMATMULMX: block/execution/BSTART.TMATMULMX.md
-          - BSTART.TMATMULMX.ACC: block/execution/BSTART.TMATMULMX.ACC.md
-          - BSTART.TMATMULMX.BIAS: block/execution/BSTART.TMATMULMX.BIAS.md
-          - BSTART.TMOV: block/execution/BSTART.TMOV.md
-          - BSTART.TPREFETCH: block/execution/BSTART.TPREFETCH.md
-          - BSTART.TSTORE: block/execution/BSTART.TSTORE.md
-      - Lifecycle:
-          - B.HINT: block/lifecycle/B.HINT.md
-          - B.TEXT: block/lifecycle/B.TEXT.md
-          - BSTART: block/lifecycle/BSTART.md
-          - BSTOP: block/lifecycle/BSTOP.md
-          - C.BSTOP: block/lifecycle/C.BSTOP.md
-          - ERCOV: block/lifecycle/ERCOV.md
-          - ESAVE: block/lifecycle/ESAVE.md
-          - FENTRY: block/lifecycle/FENTRY.md
-          - FEXIT: block/lifecycle/FEXIT.md
-          - FRET.RA: block/lifecycle/FRET.RA.md
-          - FRET.STK: block/lifecycle/FRET.STK.md
-          - HL.QMT: block/lifecycle/HL.QMT.md
-          - HL.QPOP: block/lifecycle/HL.QPOP.md
-          - HL.QPUSH: block/lifecycle/HL.QPUSH.md
-          - MCOPY: block/lifecycle/MCOPY.md
-          - MSET: block/lifecycle/MSET.md
-      - Operands:
-          - B.IOR: block/operands/B.IOR.md
-          - B.IOS: block/operands/B.IOS.md
-          - B.IOT: block/operands/B.IOT.md
   - Tile:
       - Complex Layout:
           - Format Conversion:
@@ -637,6 +760,68 @@ nav:
               - TLOAD: tile/memory/regular/TLOAD.md
               - TPREFETCH: tile/memory/regular/TPREFETCH.md
               - TSTORE: tile/memory/regular/TSTORE.md
+      - Model:
+          - Capacity:
+              - Local: tile/model/capacity/local.md
+              - Shared: tile/model/capacity/shared.md
+      - Model:
+          - Definedness:
+              - Elements: tile/model/definedness/elements.md
+      - Model:
+          - Dispatch:
+              - Complex Layout: tile/model/dispatch/complex-layout.md
+              - Matrix: tile/model/dispatch/matrix.md
+              - Memory: tile/model/dispatch/memory.md
+              - Reduction: tile/model/dispatch/reduction.md
+              - Tile Scalar Elementwise: tile/model/dispatch/tile-scalar-elementwise.md
+              - Tile Tile Elementwise: tile/model/dispatch/tile-tile-elementwise.md
+              - Top Level: tile/model/dispatch/top-level.md
+              - Unary Tile Elementwise: tile/model/dispatch/unary-tile-elementwise.md
+              - Vector Tile Expansion: tile/model/dispatch/vector-tile-expansion.md
+      - Model:
+          - Execution:
+              - Complex: tile/model/execution/complex.md
+              - Cube: tile/model/execution/cube.md
+              - Elementwise: tile/model/execution/elementwise.md
+              - Expansion: tile/model/execution/expansion.md
+              - Generation: tile/model/execution/generation.md
+              - Rearrangement: tile/model/execution/rearrangement.md
+              - Reduction: tile/model/execution/reduction.md
+      - Model:
+          - Legality:
+              - Allocation Capacity: tile/model/legality/allocation-capacity.md
+              - Descriptor Shape: tile/model/legality/descriptor-shape.md
+              - Data Type Layout: tile/model/legality/dtype-layout.md
+              - Indexed Layout: tile/model/legality/indexed-layout.md
+              - Matrix Shape: tile/model/legality/matrix-shape.md
+              - Memory Schema: tile/model/legality/memory-schema.md
+              - Operand Schema: tile/model/legality/operand-schema.md
+              - PE Mask: tile/model/legality/pe-mask.md
+      - Model:
+          - Memory:
+              - Addressing: tile/model/memory/addressing.md
+              - Atomics: tile/model/memory/atomics.md
+              - Gather Scatter: tile/model/memory/gather-scatter.md
+              - Load Store: tile/model/memory/load-store.md
+              - Restart: tile/model/memory/restart.md
+              - Shared Movement: tile/model/memory/shared-movement.md
+              - Stride: tile/model/memory/stride.md
+      - Model:
+          - Numeric:
+              - Exceptions: tile/model/numeric/exceptions.md
+              - Formats: tile/model/numeric/formats.md
+              - Rounding: tile/model/numeric/rounding.md
+      - Model:
+          - Shape:
+              - Rows Columns: tile/model/shape/rows-columns.md
+              - Valid Region: tile/model/shape/valid-region.md
+      - Model:
+          - State:
+              - Allocation: tile/model/state/allocation.md
+              - Descriptors: tile/model/state/descriptors.md
+              - Local Registers: tile/model/state/local-registers.md
+              - Shared Registers: tile/model/state/shared-registers.md
+              - Types: tile/model/state/types.md
       - Reduction:
           - Column Reduction:
               - TCOLARGMAX: tile/reduction/column-reduction/TCOLARGMAX.md
@@ -723,3 +908,59 @@ nav:
               - TROWEXPANDMIN: tile/vector-tile-expansion/row-expansion/TROWEXPANDMIN.md
               - TROWEXPANDMUL: tile/vector-tile-expansion/row-expansion/TROWEXPANDMUL.md
               - TROWEXPANDSUB: tile/vector-tile-expansion/row-expansion/TROWEXPANDSUB.md
+  - Status:
+      - Decisions:
+          - "ADR-0001: Define PTO as a scalar, bundle/command, and tile ISA": status/decisions/0001-pto-architecture-scope.md
+          - "ADR-0003: Use PTO-owned system-register names": status/decisions/0003-pto-owned-system-register-names.md
+          - "ADR-0005: PTO v0 concrete reference profile": status/decisions/0005-pto-v0-concrete-reference-profile.md
+          - "ADR-0006: PTO total store order candidate model": status/decisions/0006-pto-total-store-order.md
+          - "ADR-0008: Define the PTO architectural state contract": status/decisions/0008-architectural-state-contract.md
+          - "ADR 0009: scalar TPC and execution status": status/decisions/0009-scalar-tpc-and-execution-status.md
+          - "ADR 0010: PTO v0 ACR routing and context reset": status/decisions/0010-acr-routing-and-context-reset.md
+          - "ADR 0011: Make EBARG the visible PTO v0 trap snapshot": status/decisions/0011-visible-ebarg-snapshot.md
+          - "ADR 0012: Define PTO v0 ACRC service requests": status/decisions/0012-acrc-service-request.md
+          - "ADR 0013: Define tile capacity and packed storage": status/decisions/0013-tile-capacity-and-packed-storage.md
+          - "ADR 0014: Track tile definedness per element": status/decisions/0014-element-level-tile-definedness.md
+          - "ADR 0015: Define explicit tile handoff slots": status/decisions/0015-explicit-tile-handoff-slots.md
+          - "ADR 0016: Define interrupt pending and timer state": status/decisions/0016-interrupt-pending-and-timer-state.md
+          - "ADR 0017: Classify every visible system register behavior": status/decisions/0017-system-register-behavior-classes.md
+          - "ADR 0018: Define the PTO v0 disposition of every trap identity": status/decisions/0018-pto-v0-trap-disposition.md
+          - "ADR 0019: Define the PTO predicate-register contract": status/decisions/0019-predicate-register-contract.md
+          - "ADR-0020: Production memory events and atomic corners": status/decisions/0020-production-memory-events-and-atomic-corners.md
+          - "ADR-0021: Scalar PC-relative and return-address state": status/decisions/0021-scalar-pc-relative-and-return-address.md
+          - "ADR 0022: Bundle operation descriptor and transactional commit": status/decisions/0022-bundle-operation-descriptor-and-commit.md
+          - "ADR 0023: Uniform instruction-attempt status and fault isolation": status/decisions/0023-uniform-instruction-attempt-status.md
+          - "ADR 0024: PC-relative and unscaled AGU addressing": status/decisions/0024-pc-relative-and-unscaled-agu-addressing.md
+          - "ADR 0025: Scalar bitfield and byte-reversal bounds": status/decisions/0025-scalar-bitfield-and-reverse-bounds.md
+          - "ADR 0026: Scalar ALU totality and alias order": status/decisions/0026-scalar-alu-totality-and-alias-order.md
+          - "ADR 0027: Scalar BRU totality and target legality": status/decisions/0027-scalar-bru-totality-and-target-legality.md
+          - "ADR 0028: Scalar FSU totality and numeric-profile boundary": status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md
+          - "ADR 0029: Scalar AGU totality, aliases, and restart": status/decisions/0029-scalar-agu-totality-and-restart.md
+          - "ADR-0030: Scalar AMO totality, reservations, and restart": status/decisions/0030-scalar-amo-totality-and-reservation.md
+          - "ADR-0031: Scalar SYS totality and PTO-v0 profile boundaries": status/decisions/0031-scalar-sys-totality-and-profile-boundaries.md
+          - "ADR-0032: Bundle-command totality and PTO-v0 profile boundaries": status/decisions/0032-bundle-command-totality-and-profile-boundaries.md
+          - "ADR-0033: TMA four-bit memory packing and totality": status/decisions/0033-tma-four-bit-memory-packing.md
+          - "ADR-0034: CUBE raw-carrier totality and composite preflight": status/decisions/0034-cube-raw-carrier-totality.md
+          - "ADR 0035: TEPL raw-carrier totality and profile boundary": status/decisions/0035-tepl-raw-carrier-totality.md
+          - "ADR 0036: Executable-model comparison dispositions": status/decisions/0036-executable-model-comparison-dispositions.md
+          - "ADR 0037: Numeric profile identity and bounded variation framework": status/decisions/0037-numeric-profile-identity-and-variation-framework.md
+          - "ADR 0038: Scalar numeric flag state and producer ownership": status/decisions/0038-scalar-numeric-flag-state-and-ownership.md
+          - "ADR 0039: Numeric rounding selector ownership": status/decisions/0039-numeric-rounding-selector-ownership.md
+          - "ADR 0040: Numeric format namespace ownership": status/decisions/0040-numeric-format-namespace-ownership.md
+          - "ADR 0041: A2/A3 MX CUBE profile applicability": status/decisions/0041-a2a3-mx-profile-applicability.md
+          - "ADR 0042: Numeric variation-point ownership": status/decisions/0042-numeric-variation-point-ownership.md
+          - "ADR 0043: Public numeric type identity and target availability": status/decisions/0043-public-numeric-type-identity-and-availability.md
+          - "ADR 0044: Public integer conversion result subset": status/decisions/0044-public-integer-conversion-result-subset.md
+          - "ADR 0045: Define the PTO ISA 0.57.1 tile and bundle contract": status/decisions/0045-pto-isa-release-tile-contract.md
+          - "ADR 0046: Separate the kernel execution mask and warp predicates": status/decisions/0046-separate-execution-mask-and-warp-predicates.md
+          - "ADR 0047: Numeric rounding semantics": status/decisions/0047-numeric-rounding-semantics.md
+          - "ADR 0048: Numeric format value classification": status/decisions/0048-numeric-format-value-classification.md
+          - "ADR 0049: Hardware numeric subnormal policy": status/decisions/0049-hardware-subnormal-policy.md
+          - "ADR 0050: Hardware special-value result checkpoint": status/decisions/0050-hardware-special-value-checkpoint.md
+          - "ADR 0051: Reconcile the public v0.6 typed-mask surface without changing PTO ISA 0.57.1": status/decisions/0051-public-v06-predicate-mask-boundary.md
+          - "ADR 0052: PTO ISA 0.58.0 DavinciOO catalog": status/decisions/0052-pto-isa-0580-davincioo-catalog.md
+          - "ADR 0053: PTO ISA 0.58.0 Tile Operation Cleanup": status/decisions/0053-pto-isa-0580-tile-operation-cleanup.md
+          - "ADR 0054: PE-Local Tile Size and 32-bit Shared I/O Binding": status/decisions/0054-pe-local-tile-size-and-32-bit-shared-io-binding.md
+          - "ADR 0055: Complete-Bundle B.IOR Schema and Defaults": status/decisions/0055-complete-bundle-bior-schema-and-defaults.md
+      - Open:
+          - "Open architecture questions": status/open/index.md

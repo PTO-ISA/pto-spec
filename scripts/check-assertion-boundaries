@@ -179,7 +179,7 @@ all_asl_files = tuple(
 tile_assertion_files = tuple(
     path
     for path in all_asl_files
-    if path.startswith("asl/tile/") or path.startswith("asl/bundle/")
+    if path.startswith("asl/tile/") or path.startswith("asl/block/")
 )
 scalar_assertion_files = tuple(
     path for path in all_asl_files if path not in tile_assertion_files
@@ -192,7 +192,12 @@ if scalar_count != 34:
 if tile_count != 198:
     fail(f"tile/bundle assertion inventory drifted: {tile_count} != 198")
 
-concurrency_source = source("asl/concurrency.asl")
+concurrency_paths = (
+    "asl/arch/memory-model/memory-events.asl",
+    "asl/arch/memory-model/atomicity.asl",
+)
+concurrency_source = "\n".join(source(path) for path in concurrency_paths)
+concurrency_label = ", ".join(concurrency_paths)
 for function, label, guard_pattern, effect_pattern in (
     (
         "AddMemoryEvent",
@@ -213,7 +218,7 @@ for function, label, guard_pattern, effect_pattern in (
         r"_MemoryEvents\[\[read\]\]\.read_from\s*=\s*source\s*;",
     ),
 ):
-    body = named_function_body(concurrency_source, "asl/concurrency.asl", function)
+    body = named_function_body(concurrency_source, concurrency_label, function)
     if not directly_dominates(body, guard_pattern, effect_pattern):
         fail(
             f"{label} must be a direct function-scope assertion before "

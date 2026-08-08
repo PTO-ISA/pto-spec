@@ -4,19 +4,23 @@ set -euo pipefail
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 cd "$repo_root"
 
-mode=${1:-full}
-case $mode in
-    full | --structure-only) ;;
-    *)
-        echo "usage: $0 [--structure-only]" >&2
-        exit 2
-        ;;
-esac
+structure_only=false
+for argument in "$@"; do
+    case $argument in
+        --structure-only) structure_only=true ;;
+        *)
+            echo "usage: $0 [--structure-only]" >&2
+            exit 2
+            ;;
+    esac
+done
 
 fail() {
     echo "error: $*" >&2
     exit 1
 }
+
+./scripts/check-active-paths
 
 required_files=(
     .aslref-version
@@ -31,35 +35,28 @@ required_files=(
     specification.toml
     .github/CODEOWNERS
     .codex/skills/pto-asl/SKILL.md
-    asl/architecture.asl
-    docs/architecture.md
-    docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md
-    docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md
-    docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md
-    docs/architecture-decisions/0047-numeric-rounding-semantics.md
-    docs/architecture-decisions/0040-numeric-format-namespace-ownership.md
-    docs/architecture-decisions/0048-numeric-format-value-classification.md
-    docs/architecture-decisions/0049-hardware-subnormal-policy.md
-    docs/architecture-decisions/0050-hardware-special-value-checkpoint.md
-    docs/architecture-decisions/0051-public-v06-predicate-mask-boundary.md
-    docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md
-    docs/architecture-decisions/0042-numeric-variation-point-ownership.md
-    docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md
-    docs/architecture-decisions/0044-public-integer-conversion-result-subset.md
-    docs/architecture-decisions/0045-pto-isa-release-tile-contract.md
-    docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md
-    docs/architecture-decisions/0046-separate-execution-mask-and-warp-predicates.md
-    docs/coverage.md
-    docs/memory-model.md
-    docs/modeling-conventions.md
-    docs/maturity-bringup-plan.md
-    docs/maturity-stage-targets.md
-    docs/numeric-profile-decision-register.md
-    docs/normative-sources.md
-    docs/profile-contracts.md
-    docs/review-checklist.md
-    docs/instructions/index.md
-    spec/requirements.json
+    asl/arch/overview/architecture.asl
+    asl/block/lifecycle/BSTART.asl
+    asl/scalar/alu/ADD.asl
+    asl/tile/memory/regular/TLOAD.asl
+    docs/mkdocs/mkdocs.yml
+    docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md
+    docs/status/decisions/0038-scalar-numeric-flag-state-and-ownership.md
+    docs/status/decisions/0039-numeric-rounding-selector-ownership.md
+    docs/status/decisions/0047-numeric-rounding-semantics.md
+    docs/status/decisions/0040-numeric-format-namespace-ownership.md
+    docs/status/decisions/0048-numeric-format-value-classification.md
+    docs/status/decisions/0049-hardware-subnormal-policy.md
+    docs/status/decisions/0050-hardware-special-value-checkpoint.md
+    docs/status/decisions/0051-public-v06-predicate-mask-boundary.md
+    docs/status/decisions/0041-a2a3-mx-profile-applicability.md
+    docs/status/decisions/0042-numeric-variation-point-ownership.md
+    docs/status/decisions/0043-public-numeric-type-identity-and-availability.md
+    docs/status/decisions/0044-public-integer-conversion-result-subset.md
+    docs/status/decisions/0045-pto-isa-release-tile-contract.md
+    docs/status/decisions/0052-pto-isa-0580-davincioo-catalog.md
+    docs/status/decisions/0046-separate-execution-mask-and-warp-predicates.md
+    spec/release-inputs.json
     spec/catalog/scalar-forms.json
     spec/catalog/command-forms.json
     spec/catalog/numeric-profile-identities.json
@@ -71,58 +68,23 @@ required_files=(
     spec/evidence/pto-isa-0580-abi-vectors.json
     spec/evidence/pto-isa-0580-encoding-totality.json
     spec/evidence/pto-isa-0580-hardware-numeric-vectors.json
-    spec/evidence/public-source-reconciliation.json
-    spec/evidence/maturity-closure.json
     spec/evidence/release-gate-readiness.json
     spec/evidence/release-traceability-readiness.json
-    spec/evidence/numeric-conformance-readiness.json
-    spec/evidence/numeric-contracts.json
-    spec/evidence/numeric-profile-decision-inputs.json
-    spec/evidence/numeric-profile-decision-proposals.json
-    spec/evidence/public-numeric-type-baseline.json
-    spec/evidence/public-integer-conversion-contract.json
-    spec/evidence/numeric-format-namespace-contract.json
-    spec/evidence/numeric-profile-applicability-closure.json
-    spec/evidence/numeric-variation-point-ownership.json
-    spec/evidence/numeric-rounding-selector-contract.json
-    spec/evidence/numeric-subnormal-contract.json
-    spec/evidence/numeric-special-value-contract.json
-    spec/evidence/bundle-command-totality.json
-    spec/evidence/cube-totality.json
-    spec/evidence/executable-model-comparison.json
-    spec/evidence/noncomparable-oracle-coverage.json
-    spec/evidence/scalar-agu-totality.json
-    spec/evidence/scalar-alu-totality.json
-    spec/evidence/scalar-bru-totality.json
-    spec/evidence/scalar-fsu-totality.json
-    spec/evidence/scalar-numeric-flag-contract.json
-    spec/evidence/scalar-effect-closure.json
-    spec/evidence/tepl-totality.json
-    spec/evidence/tlsu-totality.json
-    scripts/check-assertion-boundaries
-    scripts/generate-bundle-command-totality
-    scripts/generate-executable-model-comparison
-    scripts/generate-noncomparable-oracle-coverage
-    scripts/generate-instruction-reference
-    scripts/generate-numeric-conformance-readiness
-    scripts/generate-numeric-profile-decision-inputs
-    scripts/generate-numeric-profile-decision-proposals
-    scripts/generate-public-numeric-type-baseline
-    scripts/generate-public-integer-conversion-contract
-    scripts/generate-numeric-format-namespace-contract
-    scripts/generate-numeric-profile-applicability-closure
-    scripts/generate-numeric-variation-point-ownership
-    scripts/generate-numeric-rounding-selector-contract
-    scripts/generate-numeric-subnormal-contract
-    scripts/generate-numeric-special-value-contract
-    scripts/generate-public-source-reconciliation
     scripts/generate-release-gate-readiness
     scripts/generate-release-manifest
     scripts/generate-release-traceability-readiness
-    scripts/generate-scalar-numeric-flag-contract
-    scripts/generate-system-register-witness-closure
     tests/README.md
+    scripts/check-asl-layout
+    scripts/check-active-paths
+    scripts/check-asl-tests
+    scripts/check-ndf
+    scripts/check-release-closure
+    scripts/print-asl-test-matrix
+    scripts/run-asl-test
+    scripts/run-asl-release-suite
     scripts/check-release-manifest
+    scripts/check-script-entrypoints
+    scripts/encoding_witness.py
 )
 
 for path in "${required_files[@]}"; do
@@ -195,60 +157,24 @@ git diff --check "$empty_tree" HEAD
 git diff --check
 git diff --cached --check
 
-for script in scripts/*; do
-    [[ -f $script ]] || continue
+./scripts/check-script-entrypoints
 
-    # Package initializers are importable Python library files, not command
-    # entry points. Validate their syntax without requiring an executable bit
-    # or a shebang.
-    if [[ $(basename "$script") == __init__.py ]]; then
-        python3 -c 'import ast, pathlib, sys; ast.parse(pathlib.Path(sys.argv[1]).read_text())' "$script"
-        continue
-    fi
+./scripts/check-asl-layout
+./scripts/check-ndf
+./scripts/check-asl-tests
+python3 scripts/project_asl_catalogs.py --root . --check
+python3 scripts/instruction_docs.py --check
+python3 scripts/generate-mnemonic-avs.py --check
+python3 scripts/check-publication-hygiene
 
-    [[ -x $script ]] || fail "script is not executable: $script"
-
-    case $(head -n 1 "$script") in
-        '#!/usr/bin/env bash')
-            bash -n "$script"
-            ;;
-        '#!/usr/bin/env python3')
-            python3 -c 'import ast, pathlib, sys; ast.parse(pathlib.Path(sys.argv[1]).read_text())' "$script"
-            ;;
-        *)
-            fail "script has an unsupported interpreter: $script"
-            ;;
-    esac
-done
-
-if [[ $mode == --structure-only ]]; then
-    ./scripts/check-ndf
-    ./scripts/check-asl-test-shards
-    python3 scripts/instruction_docs.py --check
+if [[ $structure_only == true ]]; then
     echo "repository structure checks passed"
     exit 0
 fi
 
-python3 scripts/check-catalogs
-./scripts/check-assertion-boundaries
-./scripts/generate-bundle-command-totality --check
-./scripts/generate-noncomparable-oracle-coverage --check
-./scripts/generate-numeric-conformance-readiness --check
-./scripts/generate-numeric-profile-decision-inputs --check
-./scripts/generate-scalar-numeric-flag-contract --check
-./scripts/generate-system-register-witness-closure --check
-./scripts/generate-numeric-rounding-selector-contract --check
-./scripts/generate-numeric-subnormal-contract --check
-./scripts/generate-numeric-special-value-contract --check
-./scripts/generate-numeric-format-namespace-contract --check
-./scripts/generate-public-numeric-type-baseline --check
-./scripts/generate-public-integer-conversion-contract --check
-./scripts/generate-numeric-profile-applicability-closure --check
-./scripts/generate-numeric-variation-point-ownership --check
-./scripts/generate-numeric-profile-decision-proposals --check
 ./scripts/generate-release-traceability-readiness --check
 ./scripts/generate-release-gate-readiness --check
-python3 scripts/generate-instruction-reference --check
-python3 scripts/instruction_docs.py --check
+./scripts/check-release-closure
+./scripts/check-binary-closure
 ./scripts/check-release-manifest
-python3 scripts/check-publication-hygiene
+echo "repository checks passed"

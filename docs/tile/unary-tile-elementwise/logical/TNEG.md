@@ -1,0 +1,73 @@
+<!-- GENERATED FROM: asl/tile/unary-tile-elementwise/logical/TNEG.asl -->
+# TNEG
+
+**Normative ASL source:** `asl/tile/unary-tile-elementwise/logical/TNEG.asl`
+
+Execute the TNEG Tile operation contract.
+
+## Normative identity {#PTO-INST-TILE-TNEG}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
+## Assembly
+
+```asm
+TNEG <bundle operands>
+```
+
+## Encoding
+
+| Operation | Family | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TNEG | TEPL | 0x011 | 17 | 0 | ExecuteTileUnary |
+
+## Decode
+
+<!-- GENERATED-ASL-BEGIN: decode source=asl/tile/unary-tile-elementwise/logical/TNEG.asl -->
+```asl
+readonly func InstructionContractOperation_TNEG() => TileOperation
+begin
+    return TileOperation_TNEG;
+end;
+```
+<!-- GENERATED-ASL-END: decode -->
+
+## Assembler symbols
+
+Supplementary operand names and examples may be added here.
+
+## Block composition
+
+```asm
+BSTART.TEPL TNEG, DataType
+B.DATR (optional)
+B.DIM LB0
+B.DIM (LB1/LB2 for 2D)
+B.IOT
+BSTOP
+```
+
+## Operation
+
+<!-- GENERATED-ASL-BEGIN: operation source=asl/tile/unary-tile-elementwise/logical/TNEG.asl -->
+```asl
+readonly func InstructionContractHandler_TNEG() => TileSemanticHandler
+begin
+    return TileHandler_ExecuteTileUnary;
+end;
+```
+<!-- GENERATED-ASL-END: operation -->
+
+## Legality and exceptions
+
+Normative legality is embedded from the ASL source above.
+
+## Operational information
+
+Supplementary implementation-neutral guidance may be added here.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+
+<!-- SUPPLEMENTARY-END -->

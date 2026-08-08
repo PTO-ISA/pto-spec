@@ -156,7 +156,7 @@
       "TestTeplMergeDuplicateOrdering"
     ],
     "test_file": "tests/asl/tepl-totality-tests.asl",
-    "adr": "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
+    "adr": "docs/status/decisions/0035-tepl-raw-carrier-totality.md",
     "full_reserved_selector_test": "scripts/generate-asl-decoders:ValidateCanonicalRejectedTileSelectors"
   },
   "known_open_items": [

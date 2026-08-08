@@ -4,21 +4,21 @@
   "status": "proposal-complete-two-decisions-accepted",
   "input": {
     "path": "spec/evidence/numeric-profile-decision-inputs.json",
-    "sha256": "94d48007a9082fae64a0ec0a089f3ab146afe5f8a3b3b4a859ccfaa41519ef03",
+    "sha256": "ec9e3f2ef160cf84391c1ff38201098642e60b1c3449df2746dd9ab738605c96",
     "public_repository": "https://github.com/hw-native-sys/pto-isa",
     "public_commit": "712cbe9f23df5d5362be5e8327599f4285317473"
   },
   "identity_catalog": {
     "path": "spec/catalog/numeric-profile-identities.json",
-    "sha256": "f2bf1bcfa9e6ce1006132ac6d9aec4a8c698990a20eeb7736d361d62ed6477ed",
+    "sha256": "05752d689ec6b73fe008804fdea50a94eed2048c6b7d19f065b722e80a8767ef",
     "status": "identity-framework-closed-rules-open",
-    "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+    "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
   },
   "scalar_flag_contract": {
     "path": "spec/evidence/scalar-numeric-flag-contract.json",
-    "sha256": "020b91438aa9028b062af269d54d8cf0515af24c14665fa87e4b40c15db172b3",
+    "sha256": "d1d3e5d3f56bc6450c7f4bfc12b25d902f49923a73d45741ea848873f55df1e5",
     "status": "state-owner-matrix-closed-profile-production-open",
-    "acceptance_record": "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
+    "acceptance_record": "docs/status/decisions/0038-scalar-numeric-flag-state-and-ownership.md",
     "producer_owner_closed_form_count": 30,
     "architecture_condition_closed_form_count": 11,
     "profile_condition_open_form_count": 19,
@@ -26,9 +26,9 @@
   },
   "rounding_selector_contract": {
     "path": "spec/evidence/numeric-rounding-selector-contract.json",
-    "sha256": "afb027f5159b80f6059104d6255ca77a372d8938655016fd184faffdbdc971a7",
+    "sha256": "53d21024ac42c6e0998e3bf4058b3940e3f6bda0ba19f18455b8db39f6a90d89",
     "status": "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open",
-    "acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+    "acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
     "scalar_active_selector_count": 8,
     "scalar_fixed_override_count": 5,
     "bundle_rmode_selector_count": 8,
@@ -41,9 +41,9 @@
   },
   "subnormal_contract": {
     "path": "spec/evidence/numeric-subnormal-contract.json",
-    "sha256": "ff55aa842587df3ab7f47a5e68e1cd7b39e0cf3258a7f7151af3929d13d1b03b",
+    "sha256": "2f15d81f0bb4fd36a0d32136bd96fa14432cf179bedde211e5b4f9a22443d5c1",
     "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
-    "acceptance_record": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
+    "acceptance_record": "docs/status/decisions/0049-hardware-subnormal-policy.md",
     "subnormal_capable_type_count": 11,
     "boundary_vector_count": 55,
     "configuration_vector_count": 8,
@@ -61,9 +61,9 @@
   },
   "special_value_contract": {
     "path": "spec/evidence/numeric-special-value-contract.json",
-    "sha256": "d07e0619baba2de401b8abad93909922b3619e16fec234935be116c69d54987b",
+    "sha256": "1cf3bdf7eadc7e5e726ec365755cd01de51ff105ec055ac6c5b63f5735a2a898",
     "status": "named-hardware-special-value-checkpoint-accepted-pd05-open",
-    "acceptance_record": "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
+    "acceptance_record": "docs/status/decisions/0050-hardware-special-value-checkpoint.md",
     "format_count": 25,
     "nan_capable_type_count": 10,
     "signaling_nan_capable_type_count": 7,
@@ -80,11 +80,11 @@
   },
   "format_namespace_contract": {
     "path": "spec/evidence/numeric-format-namespace-contract.json",
-    "sha256": "7bd2bfa673c449813d4cf27ae22612d2ca15d20498b6551e514ff4e1d6d40919",
+    "sha256": "75f6b9d725c47ff06026b4ba7dde7be0e5d1892f2e9b955223602fb2bae402fe",
     "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
-    "acceptance_record": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
+    "acceptance_record": "docs/status/decisions/0040-numeric-format-namespace-ownership.md",
     "classification_checkpoint_id": "PD-02-SC2:PD-05-SC1",
-    "classification_acceptance_record": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
+    "classification_acceptance_record": "docs/status/decisions/0048-numeric-format-value-classification.md",
     "tile_data_type_count": 25,
     "tile_storage_width_counts": {
       "4": 5,
@@ -116,9 +116,9 @@
   },
   "public_type_baseline": {
     "path": "spec/evidence/public-numeric-type-baseline.json",
-    "sha256": "1aa42abb178dd13ff5b38da69ed3b218baf0dfa9d9d9577618881c6b761a7815",
+    "sha256": "53988ce1878c3bf6c72193d154da8c7d9dd3971c6dc5bb0337e9af9a51cca2f0",
     "status": "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
-    "acceptance_record": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
+    "acceptance_record": "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
     "public_type_count": 16,
     "public_floating_type_count": 8,
     "public_integer_type_count": 8,
@@ -135,9 +135,9 @@
   },
   "public_integer_conversion": {
     "path": "spec/evidence/public-integer-conversion-contract.json",
-    "sha256": "42069cad118dfe62cc4f8adda9586c7e42b49ce7426bd7d7cc206c1cb5498a73",
+    "sha256": "12df76e7e8f967af157afe8a0fdfc2d371888488456ac63da3ad00cfe35733a1",
     "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
-    "acceptance_record": "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
+    "acceptance_record": "docs/status/decisions/0044-public-integer-conversion-result-subset.md",
     "public_integer_type_count": 8,
     "candidate_ordered_pair_count": 64,
     "same_width_pair_count": 16,
@@ -155,9 +155,9 @@
   },
   "profile_applicability_contract": {
     "path": "spec/evidence/numeric-profile-applicability-closure.json",
-    "sha256": "680ed47e4f8c3ac54e74dc6636766d74274dda04620309a8c24640252840052f",
+    "sha256": "0b5307ba9a432795bd65d8a488c96987e5bfba1939bf3fbd87c3571f8edba5e2",
     "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
-    "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
+    "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md",
     "rule_count": 6,
     "operation_count": 6,
     "selector_count": 6,
@@ -173,9 +173,9 @@
   },
   "variation_point_contract": {
     "path": "spec/evidence/numeric-variation-point-ownership.json",
-    "sha256": "e916627b5c079ba2b51f340c6d36131b3e72f7149a5cfc935fe56f24d05873a0",
+    "sha256": "9dadea667e55f8d6d8cbbe9282ef29606e569729905dba468dd980ab5e909a1b",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
-    "acceptance_record": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
+    "acceptance_record": "docs/status/decisions/0042-numeric-variation-point-ownership.md",
     "variation_point_count": 89,
     "unique_dimension_count": 39,
     "domain_count": 18,
@@ -207,31 +207,31 @@
       "id": "PF-01",
       "rule": "PTO specifications are authoritative and backend behavior is evidence only",
       "status": "accepted",
-      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
     },
     {
       "id": "PF-02",
       "rule": "support restriction is distinct from result semantics",
       "status": "accepted",
-      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
     },
     {
       "id": "PF-03",
       "rule": "delegated numeric variation is named, visible, and bounded",
       "status": "accepted",
-      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
     },
     {
       "id": "PF-04",
       "rule": "unknown or missing numeric selections reject before effects",
       "status": "accepted",
-      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
     },
     {
       "id": "PF-05",
       "rule": "CPU observation is neither architecture nor an independent oracle",
       "status": "accepted",
-      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
     }
   ],
   "profile_proposals": [
@@ -249,7 +249,7 @@
         "public-target-profiles"
       ],
       "status": "identity-accepted-rules-open",
-      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
     },
     {
       "partition_id": "cpu-observation",
@@ -265,7 +265,7 @@
         "public-target-profiles"
       ],
       "status": "identity-accepted-rules-open",
-      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
     },
     {
       "partition_id": "a2a3-target",
@@ -282,7 +282,7 @@
         "public-type-system"
       ],
       "status": "identity-accepted-rules-open",
-      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
     },
     {
       "partition_id": "a5-target",
@@ -299,7 +299,7 @@
         "public-type-system"
       ],
       "status": "identity-accepted-rules-open",
-      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
     }
   ],
   "profile_hooks": [
@@ -474,7 +474,7 @@
       ],
       "status": "accepted",
       "accepted": true,
-      "acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md"
+      "acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md"
     },
     {
       "id": "PD-04",
@@ -514,7 +514,7 @@
       ],
       "status": "accepted",
       "accepted": true,
-      "acceptance_record": "docs/architecture-decisions/0049-hardware-subnormal-policy.md"
+      "acceptance_record": "docs/status/decisions/0049-hardware-subnormal-policy.md"
     },
     {
       "id": "PD-05",

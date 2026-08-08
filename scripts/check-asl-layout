@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+"""Validate PTO's strict or transitional ASL surface layout."""
+
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.asl_units import (  # noqa: E402
+    APPROVED_SURFACES,
+    load_units,
+    validate_layout,
+    validate_surface,
+)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--root", type=Path, default=ROOT)
+    parser.add_argument("--surface", choices=APPROVED_SURFACES)
+    arguments = parser.parse_args()
+    asl_root = arguments.root / "asl"
+    try:
+        if arguments.surface is None:
+            units = load_units(asl_root)
+            errors = validate_layout(asl_root, units)
+        else:
+            surface_root = asl_root / arguments.surface
+            units = load_units(
+                surface_root,
+                source_prefix=Path("asl") / arguments.surface,
+            )
+            errors = validate_surface(asl_root, arguments.surface, units)
+    except (OSError, ValueError) as error:
+        errors = [str(error)]
+    for error in errors:
+        print(f"error: {error}", file=sys.stderr)
+    if errors:
+        return 1
+    print(f"ASL layout passed: {len(units)} units")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -41,7 +41,7 @@ const testDoc = (opcode, include = true, status = "mapped") => `---
   "profile": "pto-isa-0.58.0",
   "opcode": "${opcode}",
   "family": "element-wise",
-  "sources": { "davincioo": "docs/instructions/tile/TEST_SYNC.md" },
+  "sources": { "davincioo": "docs/tile/TEST_SYNC.md" },
   "bundle": "BSTART.TEPL ${opcode}, DataType + B.DIM LB0 + B.IOT",
   "operands": { "output": "dst tile", "input0": "src tile", "input1": null, "input2": null },
   "dtypes": ["F16"],

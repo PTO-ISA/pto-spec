@@ -6,18 +6,24 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.evidence_sources import source_rows  # noqa: E402
+
 DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
 NUMERIC_CONTRACTS = ROOT / "spec/evidence/numeric-contracts.json"
 FORMAT_CONTRACT = ROOT / "spec/evidence/numeric-format-namespace-contract.json"
 COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
 HARDWARE_PROFILE = ROOT / "spec/hardware-conformance-profile.json"
 OUTPUT = ROOT / "spec/evidence/numeric-subnormal-contract.json"
-ACCEPTANCE_RECORD = "docs/architecture-decisions/0049-hardware-subnormal-policy.md"
+ACCEPTANCE_RECORD = "docs/status/decisions/0049-hardware-subnormal-policy.md"
 PROFILE_ID = "pto-hardware-numeric-0.58.0-ieee-v1"
 
 
@@ -271,8 +277,8 @@ def generate() -> dict[str, Any]:
             source("spec/evidence/numeric-contracts.json"),
             source("spec/evidence/numeric-format-namespace-contract.json"),
             source("spec/evidence/executable-model-comparison.json"),
-            source("asl/types.asl"),
-            source("asl/numeric/formats.asl"),
+            *source_rows(ROOT, "asl/arch/data-types/*.asl"),
+            *source_rows(ROOT, "asl/tile/model/numeric/formats.asl"),
             source("tests/asl/profile-tests.asl"),
             source(ACCEPTANCE_RECORD),
         ],

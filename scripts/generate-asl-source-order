@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+"""Generate or check the deterministic PTO ASL source order."""
+
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.asl_units import generate_source_order  # noqa: E402
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--root", type=Path, default=ROOT)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--check", action="store_true")
+    arguments = parser.parse_args()
+    try:
+        rendered = "\n".join(generate_source_order(arguments.root)) + "\n"
+    except (OSError, ValueError) as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 1
+    if arguments.check:
+        if not arguments.output.exists():
+            print(f"error: missing generated ASL source order: {arguments.output}", file=sys.stderr)
+            return 1
+        if arguments.output.read_text(encoding="utf-8") != rendered:
+            print(f"error: stale generated ASL source order: {arguments.output}", file=sys.stderr)
+            return 1
+        print(f"ASL source order is current: {arguments.output}")
+        return 0
+    arguments.output.parent.mkdir(parents=True, exist_ok=True)
+    arguments.output.write_text(rendered, encoding="utf-8")
+    print(f"wrote {arguments.output}: {len(rendered.splitlines())} entries")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

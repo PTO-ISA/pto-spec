@@ -26,7 +26,7 @@ APPLICABILITY_CONTRACT = (
     ROOT / "spec/evidence/numeric-profile-applicability-closure.json"
 )
 ACCEPTANCE_RECORD = (
-    "docs/architecture-decisions/0042-numeric-variation-point-ownership.md"
+    "docs/status/decisions/0042-numeric-variation-point-ownership.md"
 )
 OUTPUT = ROOT / "spec/evidence/numeric-variation-point-ownership.json"
 

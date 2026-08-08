@@ -4053,560 +4053,560 @@
           ]
         }
       ],
-      "semantic_access_inventory_sha256": "f69a94f8f9b46f76ae8d1d1601017510c4044d7f35814dd473d12e77b5afeeff",
+      "semantic_access_inventory_sha256": "4b4a06569ba70ff00244a575c9919a1ed94fd118c90eaa408291962274ebae62",
       "semantic_access_inventory": [
         {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "CompleteBundleAt",
-          "sha256": "2d9ab7e3ca36839201dc1ee56fd7e16aee3246385437064782d64658a59236a2"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "CompleteBundleAtWithAcceptedApplicabilityRules",
-          "sha256": "b486c01ab99ee599bc468c7ede238e2d3e57d6b5a6035f05ac24ce99d211ca79"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteBundleSharedCubeOperation",
-          "sha256": "5faa0397ac2d63231fbe97f542de87436faf102badfa792d4f70347a1f8b9e44"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteBundleSharedTLSUOperation",
-          "sha256": "d92177ad04b48f3c1db32bce60f7ab72c5529b30df6153df638e361e7c814205"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteBundleTileOperation",
-          "sha256": "f6b0abcc2e260c399c98fd1ee51fe319daee03856e612afd8730f940bf0b354a"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
-          "sha256": "d4a89776d2b1b0c15308572d6fc1710994caffa72b4c0820f47d09b4abf9e6fa"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteCommandInstruction",
-          "sha256": "a5d44408c3627cda7b37b5cd4d88ff4fae392c3e7ad266eba416c9893d41e1f9"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteDecodedBundleCommand",
-          "sha256": "8d8a1a5b20186ddbc408a7c6a2cab77d963d92e5a5cdfccc5604b3af6f48dfca"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteDecodedBundleStart",
-          "sha256": "f7c23c373935469cacf95ed9d5eaa5ac91f101fc1d30ae271eb392de2cd13a22"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteDecodedBundleStartWithAcceptedApplicabilityRules",
-          "sha256": "620cdaf89014d9ecf4b3fdea405e573e467022b1619e529722a20897812b9b19"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "ResolveBundleTileDestinations",
-          "sha256": "f477c07c76d2b59aa942deb30b6acbdee47d647dac1edc68f5d6c024f998dd0f"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "SelectedBundleTileDataAttributesLegal",
-          "sha256": "78cc3e4f1110ce46bdbe1bce189ca8d9db49e7debae05779dafba0722c866e48"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "AddBundleTileBinding",
-          "sha256": "6f9ecb1ae7ff4900bac4b8753f5ef9e394a89f3bcccd3ecdf8443acdcad71f73"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "BeginBundle",
-          "sha256": "ec64de6d7be178acde69e71a303624de131065e779202f013457bbc13e9df3f4"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "BindBundleSharedIO",
-          "sha256": "afa50c9854a6b5513e73b8ea554dd6b89f5006168b542ded4ea50df70811c3be"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "EnterBundleBody",
-          "sha256": "8c9893b6e079a690e4bb12368b39502d7404bc2be7fdaafa924c58eca81c2f61"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "ExecuteBoundedMemoryCopy",
-          "sha256": "d5b7865ce113f67ff68c9a164d212dbb728854f0bb969d2f5ad225caa6d8fce1"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "ExecuteBoundedMemorySet",
-          "sha256": "cf863eed28eabaf5016ba32135e0c59e09280882e80a42cd292dbc47291aeda2"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "RecoverExecutionContextState",
-          "sha256": "55ea231b2ee730499a05a5968cf4228f2ae6dce3abeb5a37f98533bff08da00e"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "SaveExecutionContextState",
-          "sha256": "6dfde9018aa636e1d57f6d4dd74de886af024ea4661b2108369cc227b6e59177"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "SetBundleBodyAddress",
-          "sha256": "09ec612ed6e9d6a4f5db0b22d5886be3cffe245259400a8c87b252dabbdef5fe"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "SetBundleDataAttributeState",
-          "sha256": "1bdfc30c890d8a5ea54a4734eb645b275ad7b10584d9502588f69d6b2f8a2bae"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "SetBundleDataAttributeState",
-          "sha256": "7c72ffbaf7c973fd267e28b3726be8839a3e0dbcca14e8f7fad7024c207944c7"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "SetBundleTileBinding",
-          "sha256": "0e098463a702a24e8ad725f04736378b87ae3cfe58eab1252c79e36c86030369"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "StopBundle",
-          "sha256": "1a30fcd8d371010bf213c10f23db7f5a2aa279438384c395a98cddacaed71689"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "StopBundleAt",
-          "sha256": "8ac981602a9d41d666ed238660127dbe9f84f9d2c6f6ec0cdfc1ec55fabdfcd3"
-        },
-        {
-          "path": "asl/dispatch.asl",
+          "path": "asl/arch/dispatch/top-level.asl",
           "function": "ExecutePTOInstruction",
           "sha256": "500a2c78b5ecdd500455ce399c10d130baa7373c87d01b81822e5a25e57469e8"
         },
         {
-          "path": "asl/profiles/pto-v0.asl",
-          "function": "PTOv0ContextRegisterIndex",
-          "sha256": "76c8c2ea817318a6e0fb4ba4b924888ba10e057cf04648b06ef4ba798d3a09cf"
-        },
-        {
-          "path": "asl/profiles/pto-v0.asl",
-          "function": "PTOv0ReadContextRegister",
-          "sha256": "c7ea8f8f5b5cd970ad6b1ac73f9cf9562c0bea16176046842751dcc640accbd0"
-        },
-        {
-          "path": "asl/profiles/pto-v0.asl",
-          "function": "PTOv0WriteContextRegister",
-          "sha256": "cccb9edc348a019df72f7b14aa5d90c4f2c9b639a133eef525462d04948ee69d"
-        },
-        {
-          "path": "asl/profiles/pto-v0.asl",
-          "function": "RecoverTrapContext",
-          "sha256": "9de8669242cfcaede80e6a3795275db99600f90fd8dd2d96952ada1f2ad0c19e"
-        },
-        {
-          "path": "asl/profiles/pto-v0.asl",
-          "function": "ResetProfileState",
-          "sha256": "42eb30ff6ae8df54c667ad6febce48e2080d0bc92240b3ddffc93fb2be2ba919"
-        },
-        {
-          "path": "asl/profiles/pto-v0.asl",
-          "function": "SaveTrapContext",
-          "sha256": "f1e7f6c36ff2bd5afabe9a8b09d69d143942f3ae2891b77f8ca7e4ce8c83ffd3"
-        },
-        {
-          "path": "asl/scalar/addressing.asl",
-          "function": "ExecuteScalarLoad",
-          "sha256": "59c43e2df1c881e1de6a14df57af39fa20e267e6c09d09076ae33719ddcec2f0"
-        },
-        {
-          "path": "asl/scalar/addressing.asl",
-          "function": "ExecuteScalarLoadPair",
-          "sha256": "d4cb9da00f3ce27aed6bd127f6461e3085fde6dd32d5e0b07afb7a323a5f59c5"
-        },
-        {
-          "path": "asl/scalar/addressing.asl",
-          "function": "ExecuteScalarStore",
-          "sha256": "de325f31a60c6db8d4e08ef73b9bacca093a55245d40200c43d5671a66a4b4eb"
-        },
-        {
-          "path": "asl/scalar/addressing.asl",
-          "function": "ExecuteScalarStorePair",
-          "sha256": "415560c429f4f4cf490ba965c53cf7cfac21cf32b0b3c004bb9ddffbbbfd1d70"
-        },
-        {
-          "path": "asl/scalar/atomic.asl",
-          "function": "AtomicReadModifyWrite",
-          "sha256": "785b767664d005938013be45af8ea61e4265ec0ea5adf96301ce5251f0bd4c88"
-        },
-        {
-          "path": "asl/scalar/atomic.asl",
-          "function": "CompareAndSwap",
-          "sha256": "f8999ee8d5c9d4343bfb7a2214391c875d04482ca58177ccaff15f65e6052a20"
-        },
-        {
-          "path": "asl/scalar/atomic.asl",
-          "function": "ExecuteScalarDMACopy64",
-          "sha256": "9e2bd69f86a3577cc06e21915c65e12242fc553a9da2392c19030237255b6bcb"
-        },
-        {
-          "path": "asl/scalar/atomic.asl",
-          "function": "LoadReserved",
-          "sha256": "9b5ba1c8f575925925e6e07a5ba38d539fd6b5a7f65ac533842aeac939d19b04"
-        },
-        {
-          "path": "asl/scalar/atomic.asl",
-          "function": "StoreConditional",
-          "sha256": "ba0dcfa57e506885cd16623b38ad7410b9fbc7ef3d7469129481842104fc9ee3"
-        },
-        {
-          "path": "asl/scalar/control.asl",
-          "function": "JumpRegister",
-          "sha256": "e6b749dc00f533d015de2d9873d44b88a1e15acc953000cc325cd0dd0b303b05"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedAGUForm",
-          "sha256": "75b7e873a9f68e86a2ab6617bea41950a81d4b928f162b8487206be9c636ef88"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedAGULoad",
-          "sha256": "6d24310f803c129b064f1ae121b17b59203e937632fd08aa46baebd906e9a335"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedAGULoadPair",
-          "sha256": "dafbdb3408ae4121136caaa24e8976c8a26557f9e15b8e2e463bb39e62c6cd65"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedAGUStore",
-          "sha256": "c48608a81741c4fc1c17bff8f1358ce637865190959458a4a2a1a871b117464e"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedAGUStorePair",
-          "sha256": "d26a1200e9d61d4b1e02909b5b6948803de91bb62f1084c68778b5e8bfe5dfad"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedAMOForm",
-          "sha256": "2877641feb2e58e8e6576395526869e41e6ebc468806e48a68fbce9929bbcc89"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedAtomicReadModifyWrite",
-          "sha256": "bf1fefee4d5f1c2cbe3fb58b017f74578916c9d2136edd8ce5149db5ed3c6b7f"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedBRUForm",
-          "sha256": "ac5f421ea086b768a1c9578f972f8ca102449bba22dbf76ddaa062547bb76ccf"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedCompareAndSwap",
-          "sha256": "adfa3d36bcab1b56b16e5257c82bdfe9776d08d3b0d25918216526d4021144db"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedFPBinary",
-          "sha256": "889828f4aa836701ecbdb27b5e2aec5660833de0a9fab95f0562d71a339e4296"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedFPCompare",
-          "sha256": "43ea750810cd9f9aee3beb11de92cf10ca7bf969c769c1e5b0664453f0cb83fa"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedFPConvert",
-          "sha256": "f08620a707ac86c547dfd4259e8355f6f6234654f11b75d737f7e6d5e0ab1810"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedFPFused",
-          "sha256": "a7a9f34f354902b018e4e4a38c1111a0c31deacb90107167f99c7566a318c473"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedFPUnary",
-          "sha256": "5683f38dcbfc5f937fb2883f316895452c4347798a3828ac051951f95eff27a6"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedFSUForm",
-          "sha256": "a1886b7a0e2b760c84111dfd7153666d42cb0ff1d2108a450cb8143e212446af"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedLoadReserved",
-          "sha256": "aee28d46bc51db6d47af8b9cd30f5fd9496e404429ef9007ab801c8c2ab4090a"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedSYSForm",
-          "sha256": "461e1c8e8465b3260768ea17885195aa1d1f0756d06e4c647f5a9ddcc45ef51b"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedStoreConditional",
-          "sha256": "90a1940f8433d203e30165aae40a6f61e819b824302a98ca197df421dfeb1a63"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteScalarInstruction",
-          "sha256": "0f0f5d1c82244283ee4313faf6b461637c4e85994ddf1662469dca1021999381"
-        },
-        {
-          "path": "asl/scalar/memory.asl",
-          "function": "LoadSigned",
-          "sha256": "14bc1cc31af83baa0bbcdcf38f7bc283d7f4a6ff23e50171aee339faf083d038"
-        },
-        {
-          "path": "asl/scalar/memory.asl",
-          "function": "LoadUnsigned",
-          "sha256": "91a9f8886081c9e3f48a62e2a4dd85e0e4a56c0ae319f209ecb2fe14b9102b24"
-        },
-        {
-          "path": "asl/scalar/memory.asl",
-          "function": "LoadWithOrder",
-          "sha256": "73f1e8d205efd46cd67b9fd278eb560b656419ed2db28c4201fa48d50b62e77e"
-        },
-        {
-          "path": "asl/scalar/memory.asl",
-          "function": "RaiseDataAccessFault",
-          "sha256": "f75ef36d753933d675c1e51544087d1e852318389a3f3de29ff8e48bb1acf3fa"
-        },
-        {
-          "path": "asl/scalar/memory.asl",
-          "function": "Store",
-          "sha256": "14dcfb8f58db11da32b74405c426c2a290f7697f21d1dca59f2d65243ccacea1"
-        },
-        {
-          "path": "asl/scalar/memory.asl",
-          "function": "StoreWithOrder",
-          "sha256": "57d742741be89db281e8db30530d494eff3e0a0f5908859e0edcfc3b2d2a8e4d"
-        },
-        {
-          "path": "asl/scalar/system-registers.asl",
-          "function": "ExecuteCompressedSystemRegisterGet",
-          "sha256": "48bbe6f58d845a5a7142ccdaabb1dc45aac775947f099c1cc2f70adaf5a7aa8d"
-        },
-        {
-          "path": "asl/scalar/system-registers.asl",
-          "function": "ExecuteSystemRegisterGet",
-          "sha256": "e547826210fc3e49823a1f8a0a917759120994371ee67de9276679f63821d3ee"
-        },
-        {
-          "path": "asl/scalar/system-registers.asl",
-          "function": "ExecuteSystemRegisterSet",
-          "sha256": "011e8cb5ce3f777b1d65c08ce93e0e3aeab0dbc63dec1f84786ddc88ffb6afd1"
-        },
-        {
-          "path": "asl/scalar/system-registers.asl",
-          "function": "ExecuteSystemRegisterSwap",
-          "sha256": "392497011d4a93c1ea6a9f83c91decb98d2b10b4eb2f8d49eb2ec64770441e11"
-        },
-        {
-          "path": "asl/scalar/system-registers.asl",
-          "function": "ReadSystemRegisterAddress",
-          "sha256": "fad040a55ae92cee032c8634a6d01336a34c2bfcbd28ddb584dfe9648d105802"
-        },
-        {
-          "path": "asl/scalar/system-registers.asl",
-          "function": "SwapSystemRegisterAddress",
-          "sha256": "e659c294dae27ee92f247ba65ffd76393faec5d68492e5adc98a65c20770bd7d"
-        },
-        {
-          "path": "asl/scalar/system-registers.asl",
-          "function": "SystemRegisterFileIndexOf",
-          "sha256": "2e19cc341745718d1bddca7ef6d29b86db5285969eb7ef291ec206db43e2d5af"
-        },
-        {
-          "path": "asl/scalar/system-registers.asl",
-          "function": "WriteSystemRegisterAddress",
-          "sha256": "77433290a7e7c8a772984a3a4bd4cf3fff6d6e4e7d35283e4a63a3d86d99ff95"
-        },
-        {
-          "path": "asl/scalar/system.asl",
-          "function": "ArchitectureAssert",
-          "sha256": "0c9bbe8976c517f6bbf8876fc918a27e82a35033e969db55c73d26096fa8210b"
-        },
-        {
-          "path": "asl/scalar/system.asl",
-          "function": "ArchitectureCloseRequest",
-          "sha256": "5b306fc3aa3cd1713b8f878a58f4c01542d50ea5bb5b2675489113c81f96f2a8"
-        },
-        {
-          "path": "asl/scalar/system.asl",
-          "function": "ArchitectureEnterRequest",
-          "sha256": "72ecb0047a93174568142f944f9a9941e169761a3b52478bb839644c207ffb25"
-        },
-        {
-          "path": "asl/scalar/system.asl",
-          "function": "ExecuteMaintenance",
-          "sha256": "ac6eaf5d4bab27c6f62c582963e2864701728cd17c2af25d2567791aabc3f99e"
-        },
-        {
-          "path": "asl/scalar/system.asl",
-          "function": "SoftwareBreakpoint",
-          "sha256": "afce6d25090af4249bbe570f9d3fd919f21c9fa38dd8686b7b6efcf07a440430"
-        },
-        {
-          "path": "asl/scalar/system.asl",
-          "function": "SwapSystemRegister",
-          "sha256": "895bb6cad47bf93ea3e1e56e5fc091337cae7aa11b826ff91291cb969965864e"
-        },
-        {
-          "path": "asl/scalar/system.asl",
-          "function": "WriteSystemRegister",
-          "sha256": "5e4dbd0e8b7cab685746dc7da84b020e38611df777cc1cef8967a3a2e65f10d6"
-        },
-        {
-          "path": "asl/state.asl",
-          "function": "<global>",
-          "sha256": "ca4edc7e6429923f1d93772c13a1324732b013cfbf8ae703dc7169e7b99e6b73"
-        },
-        {
-          "path": "asl/state.asl",
-          "function": "ClearInterruptPending",
-          "sha256": "aa6c29ee11c614c6357172845dec36fc82676451efd4cd5a418f0f83b8f689a5"
-        },
-        {
-          "path": "asl/state.asl",
-          "function": "ContextRegisterIndex",
-          "sha256": "63a9940197b5a729779e685ca032cfa38041d38ba1ca417bf3cdaa1d8f8fd12d"
-        },
-        {
-          "path": "asl/state.asl",
-          "function": "EndOfInterrupt",
-          "sha256": "4a9aa3be12b7550350a79a904b53773cb766ee6243258f5c3fc1443cb0995f84"
-        },
-        {
-          "path": "asl/state.asl",
-          "function": "InterruptEnabled",
-          "sha256": "73a41f9e5dfca1e6e77d1da3e274dd8674d8057eec14e1aec33a8f9bd3585e8a"
-        },
-        {
-          "path": "asl/state.asl",
+          "path": "asl/arch/memory-model/fault-precision.asl",
           "function": "RaiseInterrupt",
           "sha256": "e96b47ea66c6cff501671d1fee63c48e652543c6a29160610516ccb982bcb2a1"
         },
         {
-          "path": "asl/state.asl",
+          "path": "asl/arch/memory-model/fault-precision.asl",
           "function": "RaiseServiceRequest",
           "sha256": "13f559d98d47f1001dba6332d5c81d2b873cf61cef4bf42db291cf9be0d69850"
         },
         {
-          "path": "asl/state.asl",
-          "function": "ReadInterruptPending",
-          "sha256": "12eb6f75a8e1c78e785e35d02a2ab6ac5d3b21f5f5dbe6ed6644d9261a9d31af"
-        },
-        {
-          "path": "asl/state.asl",
-          "function": "ReadTopPendingInterrupt",
-          "sha256": "a387f49ee139979d74a2a5c2373c1af016d70dac7c8ae8e6d68f437707885758"
-        },
-        {
-          "path": "asl/state.asl",
-          "function": "RecoverTrapContext",
-          "sha256": "628e4809773a899534e950050efdb451d89fedb58230c432eb021b154b4624cb"
-        },
-        {
-          "path": "asl/state.asl",
-          "function": "RefreshTimerPending",
-          "sha256": "7977d44b28928a919ab7433005d60546b3a03bf5089d3d6b98e6b76f3f7151f1"
-        },
-        {
-          "path": "asl/state.asl",
-          "function": "RefreshTopPendingInterrupt",
-          "sha256": "7775262ee68ba43cdf990e653146f63b40e8d845b00c0121d034b8969f5ee440"
-        },
-        {
-          "path": "asl/state.asl",
-          "function": "ResetProfileState",
-          "sha256": "e4bc497088914a3831b9284630feb2ddf0cc09220ecfeae16106ed6c8aa8c0f8"
-        },
-        {
-          "path": "asl/state.asl",
-          "function": "SaveTrapContext",
-          "sha256": "dbb4d7ac893bbb5636c563aa967f72f8b6bfcee436fdf93033c4732cf4ca8e9f"
-        },
-        {
-          "path": "asl/state.asl",
+          "path": "asl/arch/memory-model/fault-precision.asl",
           "function": "SetFault",
           "sha256": "18b7369da0cc39c8597976ccd6f91215fb1ea28f1712db695dccad63dce964f9"
         },
         {
-          "path": "asl/state.asl",
-          "function": "SetInterruptPending",
-          "sha256": "4d1affaf175c311c2ff28356541806e89f2886bba9e43b97984d3f06182d63d1"
+          "path": "asl/arch/profile/reference-profile.asl",
+          "function": "RecoverTrapContext",
+          "sha256": "9de8669242cfcaede80e6a3795275db99600f90fd8dd2d96952ada1f2ad0c19e"
         },
         {
-          "path": "asl/state.asl",
+          "path": "asl/arch/profile/reference-profile.asl",
+          "function": "SaveTrapContext",
+          "sha256": "f1e7f6c36ff2bd5afabe9a8b09d69d143942f3ae2891b77f8ca7e4ce8c83ffd3"
+        },
+        {
+          "path": "asl/arch/profile/reset.asl",
+          "function": "ResetProfileState",
+          "sha256": "42eb30ff6ae8df54c667ad6febce48e2080d0bc92240b3ddffc93fb2be2ba919"
+        },
+        {
+          "path": "asl/arch/programming-model/execution-context.asl",
+          "function": "<global>",
+          "sha256": "2184c6c4a6dc10b4d107b5820a83b167153f59e8fe4e9c89fb27bd6c3f79194b"
+        },
+        {
+          "path": "asl/arch/state/trap-context.asl",
+          "function": "RecoverTrapContext",
+          "sha256": "628e4809773a899534e950050efdb451d89fedb58230c432eb021b154b4624cb"
+        },
+        {
+          "path": "asl/arch/state/trap-context.asl",
+          "function": "SaveTrapContext",
+          "sha256": "dbb4d7ac893bbb5636c563aa967f72f8b6bfcee436fdf93033c4732cf4ca8e9f"
+        },
+        {
+          "path": "asl/arch/system-registers/access-control.asl",
           "function": "TrapVectorEntry",
           "sha256": "7968803846729643153f567e3942c7ff3f0c868500e7f9da44f6ca077aca1855"
         },
         {
-          "path": "asl/tile/memory.asl",
-          "function": "MGATHER",
-          "sha256": "0d6d9d3d6649c3a5f0762752512847f8d4bd59ff91250748c4eec056c37ecf43"
+          "path": "asl/arch/system-registers/addressing.asl",
+          "function": "ResetProfileState",
+          "sha256": "e4bc497088914a3831b9284630feb2ddf0cc09220ecfeae16106ed6c8aa8c0f8"
         },
         {
-          "path": "asl/tile/memory.asl",
+          "path": "asl/arch/system-registers/context.asl",
+          "function": "ContextRegisterIndex",
+          "sha256": "63a9940197b5a729779e685ca032cfa38041d38ba1ca417bf3cdaa1d8f8fd12d"
+        },
+        {
+          "path": "asl/arch/system-registers/context.asl",
+          "function": "PTOv0ContextRegisterIndex",
+          "sha256": "76c8c2ea817318a6e0fb4ba4b924888ba10e057cf04648b06ef4ba798d3a09cf"
+        },
+        {
+          "path": "asl/arch/system-registers/context.asl",
+          "function": "PTOv0ReadContextRegister",
+          "sha256": "c7ea8f8f5b5cd970ad6b1ac73f9cf9562c0bea16176046842751dcc640accbd0"
+        },
+        {
+          "path": "asl/arch/system-registers/context.asl",
+          "function": "PTOv0WriteContextRegister",
+          "sha256": "cccb9edc348a019df72f7b14aa5d90c4f2c9b639a133eef525462d04948ee69d"
+        },
+        {
+          "path": "asl/arch/system-registers/interrupt.asl",
+          "function": "ClearInterruptPending",
+          "sha256": "aa6c29ee11c614c6357172845dec36fc82676451efd4cd5a418f0f83b8f689a5"
+        },
+        {
+          "path": "asl/arch/system-registers/interrupt.asl",
+          "function": "EndOfInterrupt",
+          "sha256": "4a9aa3be12b7550350a79a904b53773cb766ee6243258f5c3fc1443cb0995f84"
+        },
+        {
+          "path": "asl/arch/system-registers/interrupt.asl",
+          "function": "InterruptEnabled",
+          "sha256": "73a41f9e5dfca1e6e77d1da3e274dd8674d8057eec14e1aec33a8f9bd3585e8a"
+        },
+        {
+          "path": "asl/arch/system-registers/interrupt.asl",
+          "function": "ReadInterruptPending",
+          "sha256": "12eb6f75a8e1c78e785e35d02a2ab6ac5d3b21f5f5dbe6ed6644d9261a9d31af"
+        },
+        {
+          "path": "asl/arch/system-registers/interrupt.asl",
+          "function": "ReadTopPendingInterrupt",
+          "sha256": "a387f49ee139979d74a2a5c2373c1af016d70dac7c8ae8e6d68f437707885758"
+        },
+        {
+          "path": "asl/arch/system-registers/interrupt.asl",
+          "function": "RefreshTopPendingInterrupt",
+          "sha256": "7775262ee68ba43cdf990e653146f63b40e8d845b00c0121d034b8969f5ee440"
+        },
+        {
+          "path": "asl/arch/system-registers/interrupt.asl",
+          "function": "SetInterruptPending",
+          "sha256": "4d1affaf175c311c2ff28356541806e89f2886bba9e43b97984d3f06182d63d1"
+        },
+        {
+          "path": "asl/arch/system-registers/timer.asl",
+          "function": "RefreshTimerPending",
+          "sha256": "7977d44b28928a919ab7433005d60546b3a03bf5089d3d6b98e6b76f3f7151f1"
+        },
+        {
+          "path": "asl/block/model/commit/effects.asl",
+          "function": "ExecuteBoundedMemoryCopy",
+          "sha256": "d5b7865ce113f67ff68c9a164d212dbb728854f0bb969d2f5ad225caa6d8fce1"
+        },
+        {
+          "path": "asl/block/model/commit/effects.asl",
+          "function": "ExecuteBoundedMemorySet",
+          "sha256": "cf863eed28eabaf5016ba32135e0c59e09280882e80a42cd292dbc47291aeda2"
+        },
+        {
+          "path": "asl/block/model/commit/validation.asl",
+          "function": "CompleteBundleAt",
+          "sha256": "2d9ab7e3ca36839201dc1ee56fd7e16aee3246385437064782d64658a59236a2"
+        },
+        {
+          "path": "asl/block/model/commit/validation.asl",
+          "function": "CompleteBundleAtWithAcceptedApplicabilityRules",
+          "sha256": "b486c01ab99ee599bc468c7ede238e2d3e57d6b5a6035f05ac24ce99d211ca79"
+        },
+        {
+          "path": "asl/block/model/dispatch/commands.asl",
+          "function": "ExecuteDecodedBundleCommand",
+          "sha256": "8d8a1a5b20186ddbc408a7c6a2cab77d963d92e5a5cdfccc5604b3af6f48dfca"
+        },
+        {
+          "path": "asl/block/model/dispatch/destination-shape.asl",
+          "function": "ResolveBundleTileDestinations",
+          "sha256": "f477c07c76d2b59aa942deb30b6acbdee47d647dac1edc68f5d6c024f998dd0f"
+        },
+        {
+          "path": "asl/block/model/dispatch/shared-cube.asl",
+          "function": "ExecuteBundleSharedCubeOperation",
+          "sha256": "5faa0397ac2d63231fbe97f542de87436faf102badfa792d4f70347a1f8b9e44"
+        },
+        {
+          "path": "asl/block/model/dispatch/shared-tlsu.asl",
+          "function": "ExecuteBundleSharedTLSUOperation",
+          "sha256": "d92177ad04b48f3c1db32bce60f7ab72c5529b30df6153df638e361e7c814205"
+        },
+        {
+          "path": "asl/block/model/dispatch/start.asl",
+          "function": "ExecuteDecodedBundleStart",
+          "sha256": "f7c23c373935469cacf95ed9d5eaa5ac91f101fc1d30ae271eb392de2cd13a22"
+        },
+        {
+          "path": "asl/block/model/dispatch/start.asl",
+          "function": "ExecuteDecodedBundleStartWithAcceptedApplicabilityRules",
+          "sha256": "620cdaf89014d9ecf4b3fdea405e573e467022b1619e529722a20897812b9b19"
+        },
+        {
+          "path": "asl/block/model/dispatch/tile-execution.asl",
+          "function": "ExecuteBundleTileOperation",
+          "sha256": "f6b0abcc2e260c399c98fd1ee51fe319daee03856e612afd8730f940bf0b354a"
+        },
+        {
+          "path": "asl/block/model/dispatch/tile-execution.asl",
+          "function": "ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
+          "sha256": "d4a89776d2b1b0c15308572d6fc1710994caffa72b4c0820f47d09b4abf9e6fa"
+        },
+        {
+          "path": "asl/block/model/dispatch/tile-schema.asl",
+          "function": "SelectedBundleTileDataAttributesLegal",
+          "sha256": "78cc3e4f1110ce46bdbe1bce189ca8d9db49e7debae05779dafba0722c866e48"
+        },
+        {
+          "path": "asl/block/model/dispatch/top-level.asl",
+          "function": "ExecuteCommandInstruction",
+          "sha256": "a5d44408c3627cda7b37b5cd4d88ff4fae392c3e7ad266eba416c9893d41e1f9"
+        },
+        {
+          "path": "asl/block/model/lifecycle/begin.asl",
+          "function": "BeginBundle",
+          "sha256": "ec64de6d7be178acde69e71a303624de131065e779202f013457bbc13e9df3f4"
+        },
+        {
+          "path": "asl/block/model/lifecycle/enter-stop.asl",
+          "function": "EnterBundleBody",
+          "sha256": "8c9893b6e079a690e4bb12368b39502d7404bc2be7fdaafa924c58eca81c2f61"
+        },
+        {
+          "path": "asl/block/model/lifecycle/enter-stop.asl",
+          "function": "StopBundle",
+          "sha256": "1a30fcd8d371010bf213c10f23db7f5a2aa279438384c395a98cddacaed71689"
+        },
+        {
+          "path": "asl/block/model/lifecycle/enter-stop.asl",
+          "function": "StopBundleAt",
+          "sha256": "8ac981602a9d41d666ed238660127dbe9f84f9d2c6f6ec0cdfc1ec55fabdfcd3"
+        },
+        {
+          "path": "asl/block/model/lifecycle/lifetime.asl",
+          "function": "RecoverExecutionContextState",
+          "sha256": "55ea231b2ee730499a05a5968cf4228f2ae6dce3abeb5a37f98533bff08da00e"
+        },
+        {
+          "path": "asl/block/model/lifecycle/lifetime.asl",
+          "function": "SaveExecutionContextState",
+          "sha256": "6dfde9018aa636e1d57f6d4dd74de886af024ea4661b2108369cc227b6e59177"
+        },
+        {
+          "path": "asl/block/model/operands/scalar-bindings.asl",
+          "function": "SetBundleBodyAddress",
+          "sha256": "09ec612ed6e9d6a4f5db0b22d5886be3cffe245259400a8c87b252dabbdef5fe"
+        },
+        {
+          "path": "asl/block/model/operands/shared-bindings.asl",
+          "function": "BindBundleSharedIO",
+          "sha256": "afa50c9854a6b5513e73b8ea554dd6b89f5006168b542ded4ea50df70811c3be"
+        },
+        {
+          "path": "asl/block/model/operands/tile-bindings.asl",
+          "function": "AddBundleTileBinding",
+          "sha256": "6f9ecb1ae7ff4900bac4b8753f5ef9e394a89f3bcccd3ecdf8443acdcad71f73"
+        },
+        {
+          "path": "asl/block/model/operands/tile-bindings.asl",
+          "function": "SetBundleTileBinding",
+          "sha256": "0e098463a702a24e8ad725f04736378b87ae3cfe58eab1252c79e36c86030369"
+        },
+        {
+          "path": "asl/block/model/schema/attributes.asl",
+          "function": "SetBundleDataAttributeState",
+          "sha256": "7c72ffbaf7c973fd267e28b3726be8839a3e0dbcca14e8f7fad7024c207944c7"
+        },
+        {
+          "path": "asl/block/model/state/control-state.asl",
+          "function": "SetBundleDataAttributeState",
+          "sha256": "1bdfc30c890d8a5ea54a4734eb645b275ad7b10584d9502588f69d6b2f8a2bae"
+        },
+        {
+          "path": "asl/scalar/model/agu/addressing.asl",
+          "function": "ExecuteScalarLoad",
+          "sha256": "59c43e2df1c881e1de6a14df57af39fa20e267e6c09d09076ae33719ddcec2f0"
+        },
+        {
+          "path": "asl/scalar/model/agu/addressing.asl",
+          "function": "ExecuteScalarLoadPair",
+          "sha256": "d4cb9da00f3ce27aed6bd127f6461e3085fde6dd32d5e0b07afb7a323a5f59c5"
+        },
+        {
+          "path": "asl/scalar/model/agu/addressing.asl",
+          "function": "ExecuteScalarStore",
+          "sha256": "de325f31a60c6db8d4e08ef73b9bacca093a55245d40200c43d5671a66a4b4eb"
+        },
+        {
+          "path": "asl/scalar/model/agu/addressing.asl",
+          "function": "ExecuteScalarStorePair",
+          "sha256": "415560c429f4f4cf490ba965c53cf7cfac21cf32b0b3c004bb9ddffbbbfd1d70"
+        },
+        {
+          "path": "asl/scalar/model/agu/memory.asl",
+          "function": "LoadSigned",
+          "sha256": "14bc1cc31af83baa0bbcdcf38f7bc283d7f4a6ff23e50171aee339faf083d038"
+        },
+        {
+          "path": "asl/scalar/model/agu/memory.asl",
+          "function": "LoadUnsigned",
+          "sha256": "91a9f8886081c9e3f48a62e2a4dd85e0e4a56c0ae319f209ecb2fe14b9102b24"
+        },
+        {
+          "path": "asl/scalar/model/agu/memory.asl",
+          "function": "LoadWithOrder",
+          "sha256": "73f1e8d205efd46cd67b9fd278eb560b656419ed2db28c4201fa48d50b62e77e"
+        },
+        {
+          "path": "asl/scalar/model/agu/memory.asl",
+          "function": "RaiseDataAccessFault",
+          "sha256": "f75ef36d753933d675c1e51544087d1e852318389a3f3de29ff8e48bb1acf3fa"
+        },
+        {
+          "path": "asl/scalar/model/agu/memory.asl",
+          "function": "Store",
+          "sha256": "14dcfb8f58db11da32b74405c426c2a290f7697f21d1dca59f2d65243ccacea1"
+        },
+        {
+          "path": "asl/scalar/model/agu/memory.asl",
+          "function": "StoreWithOrder",
+          "sha256": "57d742741be89db281e8db30530d494eff3e0a0f5908859e0edcfc3b2d2a8e4d"
+        },
+        {
+          "path": "asl/scalar/model/amo/semantics.asl",
+          "function": "AtomicReadModifyWrite",
+          "sha256": "785b767664d005938013be45af8ea61e4265ec0ea5adf96301ce5251f0bd4c88"
+        },
+        {
+          "path": "asl/scalar/model/amo/semantics.asl",
+          "function": "CompareAndSwap",
+          "sha256": "f8999ee8d5c9d4343bfb7a2214391c875d04482ca58177ccaff15f65e6052a20"
+        },
+        {
+          "path": "asl/scalar/model/amo/semantics.asl",
+          "function": "ExecuteScalarDMACopy64",
+          "sha256": "9e2bd69f86a3577cc06e21915c65e12242fc553a9da2392c19030237255b6bcb"
+        },
+        {
+          "path": "asl/scalar/model/amo/semantics.asl",
+          "function": "LoadReserved",
+          "sha256": "9b5ba1c8f575925925e6e07a5ba38d539fd6b5a7f65ac533842aeac939d19b04"
+        },
+        {
+          "path": "asl/scalar/model/amo/semantics.asl",
+          "function": "StoreConditional",
+          "sha256": "ba0dcfa57e506885cd16623b38ad7410b9fbc7ef3d7469129481842104fc9ee3"
+        },
+        {
+          "path": "asl/scalar/model/bru/semantics.asl",
+          "function": "JumpRegister",
+          "sha256": "e6b749dc00f533d015de2d9873d44b88a1e15acc953000cc325cd0dd0b303b05"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/agu.asl",
+          "function": "ExecuteDecodedAGUForm",
+          "sha256": "75b7e873a9f68e86a2ab6617bea41950a81d4b928f162b8487206be9c636ef88"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/agu.asl",
+          "function": "ExecuteDecodedAGULoad",
+          "sha256": "6d24310f803c129b064f1ae121b17b59203e937632fd08aa46baebd906e9a335"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/agu.asl",
+          "function": "ExecuteDecodedAGULoadPair",
+          "sha256": "dafbdb3408ae4121136caaa24e8976c8a26557f9e15b8e2e463bb39e62c6cd65"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/agu.asl",
+          "function": "ExecuteDecodedAGUStore",
+          "sha256": "c48608a81741c4fc1c17bff8f1358ce637865190959458a4a2a1a871b117464e"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/agu.asl",
+          "function": "ExecuteDecodedAGUStorePair",
+          "sha256": "d26a1200e9d61d4b1e02909b5b6948803de91bb62f1084c68778b5e8bfe5dfad"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/amo.asl",
+          "function": "ExecuteDecodedAMOForm",
+          "sha256": "2877641feb2e58e8e6576395526869e41e6ebc468806e48a68fbce9929bbcc89"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/amo.asl",
+          "function": "ExecuteDecodedAtomicReadModifyWrite",
+          "sha256": "bf1fefee4d5f1c2cbe3fb58b017f74578916c9d2136edd8ce5149db5ed3c6b7f"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/amo.asl",
+          "function": "ExecuteDecodedCompareAndSwap",
+          "sha256": "adfa3d36bcab1b56b16e5257c82bdfe9776d08d3b0d25918216526d4021144db"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/amo.asl",
+          "function": "ExecuteDecodedLoadReserved",
+          "sha256": "aee28d46bc51db6d47af8b9cd30f5fd9496e404429ef9007ab801c8c2ab4090a"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/amo.asl",
+          "function": "ExecuteDecodedStoreConditional",
+          "sha256": "90a1940f8433d203e30165aae40a6f61e819b824302a98ca197df421dfeb1a63"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/bru.asl",
+          "function": "ExecuteDecodedBRUForm",
+          "sha256": "ac5f421ea086b768a1c9578f972f8ca102449bba22dbf76ddaa062547bb76ccf"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/fsu.asl",
+          "function": "ExecuteDecodedFPBinary",
+          "sha256": "889828f4aa836701ecbdb27b5e2aec5660833de0a9fab95f0562d71a339e4296"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/fsu.asl",
+          "function": "ExecuteDecodedFPCompare",
+          "sha256": "43ea750810cd9f9aee3beb11de92cf10ca7bf969c769c1e5b0664453f0cb83fa"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/fsu.asl",
+          "function": "ExecuteDecodedFPConvert",
+          "sha256": "f08620a707ac86c547dfd4259e8355f6f6234654f11b75d737f7e6d5e0ab1810"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/fsu.asl",
+          "function": "ExecuteDecodedFPFused",
+          "sha256": "a7a9f34f354902b018e4e4a38c1111a0c31deacb90107167f99c7566a318c473"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/fsu.asl",
+          "function": "ExecuteDecodedFPUnary",
+          "sha256": "5683f38dcbfc5f937fb2883f316895452c4347798a3828ac051951f95eff27a6"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/fsu.asl",
+          "function": "ExecuteDecodedFSUForm",
+          "sha256": "a1886b7a0e2b760c84111dfd7153666d42cb0ff1d2108a450cb8143e212446af"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/sys.asl",
+          "function": "ExecuteDecodedSYSForm",
+          "sha256": "461e1c8e8465b3260768ea17885195aa1d1f0756d06e4c647f5a9ddcc45ef51b"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/top-level.asl",
+          "function": "ExecuteScalarInstruction",
+          "sha256": "0f0f5d1c82244283ee4313faf6b461637c4e85994ddf1662469dca1021999381"
+        },
+        {
+          "path": "asl/scalar/model/sys/registers.asl",
+          "function": "ExecuteCompressedSystemRegisterGet",
+          "sha256": "48bbe6f58d845a5a7142ccdaabb1dc45aac775947f099c1cc2f70adaf5a7aa8d"
+        },
+        {
+          "path": "asl/scalar/model/sys/registers.asl",
+          "function": "ExecuteSystemRegisterGet",
+          "sha256": "e547826210fc3e49823a1f8a0a917759120994371ee67de9276679f63821d3ee"
+        },
+        {
+          "path": "asl/scalar/model/sys/registers.asl",
+          "function": "ExecuteSystemRegisterSet",
+          "sha256": "011e8cb5ce3f777b1d65c08ce93e0e3aeab0dbc63dec1f84786ddc88ffb6afd1"
+        },
+        {
+          "path": "asl/scalar/model/sys/registers.asl",
+          "function": "ExecuteSystemRegisterSwap",
+          "sha256": "392497011d4a93c1ea6a9f83c91decb98d2b10b4eb2f8d49eb2ec64770441e11"
+        },
+        {
+          "path": "asl/scalar/model/sys/registers.asl",
+          "function": "ReadSystemRegisterAddress",
+          "sha256": "fad040a55ae92cee032c8634a6d01336a34c2bfcbd28ddb584dfe9648d105802"
+        },
+        {
+          "path": "asl/scalar/model/sys/registers.asl",
+          "function": "SwapSystemRegisterAddress",
+          "sha256": "e659c294dae27ee92f247ba65ffd76393faec5d68492e5adc98a65c20770bd7d"
+        },
+        {
+          "path": "asl/scalar/model/sys/registers.asl",
+          "function": "SystemRegisterFileIndexOf",
+          "sha256": "2e19cc341745718d1bddca7ef6d29b86db5285969eb7ef291ec206db43e2d5af"
+        },
+        {
+          "path": "asl/scalar/model/sys/registers.asl",
+          "function": "WriteSystemRegisterAddress",
+          "sha256": "77433290a7e7c8a772984a3a4bd4cf3fff6d6e4e7d35283e4a63a3d86d99ff95"
+        },
+        {
+          "path": "asl/scalar/model/sys/semantics.asl",
+          "function": "ArchitectureAssert",
+          "sha256": "0c9bbe8976c517f6bbf8876fc918a27e82a35033e969db55c73d26096fa8210b"
+        },
+        {
+          "path": "asl/scalar/model/sys/semantics.asl",
+          "function": "ArchitectureCloseRequest",
+          "sha256": "5b306fc3aa3cd1713b8f878a58f4c01542d50ea5bb5b2675489113c81f96f2a8"
+        },
+        {
+          "path": "asl/scalar/model/sys/semantics.asl",
+          "function": "ArchitectureEnterRequest",
+          "sha256": "72ecb0047a93174568142f944f9a9941e169761a3b52478bb839644c207ffb25"
+        },
+        {
+          "path": "asl/scalar/model/sys/semantics.asl",
+          "function": "ExecuteMaintenance",
+          "sha256": "ac6eaf5d4bab27c6f62c582963e2864701728cd17c2af25d2567791aabc3f99e"
+        },
+        {
+          "path": "asl/scalar/model/sys/semantics.asl",
+          "function": "SoftwareBreakpoint",
+          "sha256": "afce6d25090af4249bbe570f9d3fd919f21c9fa38dd8686b7b6efcf07a440430"
+        },
+        {
+          "path": "asl/scalar/model/sys/semantics.asl",
+          "function": "SwapSystemRegister",
+          "sha256": "895bb6cad47bf93ea3e1e56e5fc091337cae7aa11b826ff91291cb969965864e"
+        },
+        {
+          "path": "asl/scalar/model/sys/semantics.asl",
+          "function": "WriteSystemRegister",
+          "sha256": "5e4dbd0e8b7cab685746dc7da84b020e38611df777cc1cef8967a3a2e65f10d6"
+        },
+        {
+          "path": "asl/tile/model/memory/atomics.asl",
           "function": "MGATHER_CAS",
           "sha256": "5a361d60fdc59c9da23a22c73ec991b98accce33ea18cba4b5189bb348147465"
         },
         {
-          "path": "asl/tile/memory.asl",
+          "path": "asl/tile/model/memory/gather-scatter.asl",
+          "function": "MGATHER",
+          "sha256": "0d6d9d3d6649c3a5f0762752512847f8d4bd59ff91250748c4eec056c37ecf43"
+        },
+        {
+          "path": "asl/tile/model/memory/gather-scatter.asl",
           "function": "MGATHER_MASK",
           "sha256": "e511048a8c37f36fa70c4b9dfa98f980df9a6c4a9d4d9f74a3c97f37a774d39b"
         },
         {
-          "path": "asl/tile/memory.asl",
+          "path": "asl/tile/model/memory/gather-scatter.asl",
           "function": "MSCATTER",
           "sha256": "bc58ad8d1d9fbe166bd3d195036bb19a3c30c819222b28d6eb6226bc51ea7e1e"
         },
         {
-          "path": "asl/tile/memory.asl",
+          "path": "asl/tile/model/memory/gather-scatter.asl",
           "function": "MSCATTER_MASK",
           "sha256": "44d77354cc0231cfb1813c721e4ea17b5738d15f150d866aaa64b04d8deaf0f0"
         },
         {
-          "path": "asl/tile/memory.asl",
-          "function": "TLOAD",
-          "sha256": "b5341a7a636ba15aacee69e6914925656824bc9f5bbe2aed97afa02476d97d2a"
-        },
-        {
-          "path": "asl/tile/memory.asl",
-          "function": "TLOADShared",
-          "sha256": "d9aac3a21269be9001276aed540941acf06bbac99722f4cc04a835a23f13da3a"
-        },
-        {
-          "path": "asl/tile/memory.asl",
-          "function": "TMOVLocalToShared",
-          "sha256": "cd5a6b0a470abf1d7f4090cacf1876ee90c615e539623db509ffa248ea361603"
-        },
-        {
-          "path": "asl/tile/memory.asl",
+          "path": "asl/tile/model/memory/gather-scatter.asl",
           "function": "TPREFETCH",
           "sha256": "5fc4d81154b4b47e9383da5172bf6b4707f573827ab7c376433a20140ee71885"
         },
         {
-          "path": "asl/tile/memory.asl",
+          "path": "asl/tile/model/memory/load-store.asl",
+          "function": "TLOAD",
+          "sha256": "b5341a7a636ba15aacee69e6914925656824bc9f5bbe2aed97afa02476d97d2a"
+        },
+        {
+          "path": "asl/tile/model/memory/load-store.asl",
           "function": "TSTORE",
           "sha256": "d5096d774f83230ff9c137138b78eb77124c18a28973524b0dd0312a4a69e6fe"
         },
         {
-          "path": "asl/tile/memory.asl",
+          "path": "asl/tile/model/memory/shared-movement.asl",
+          "function": "TLOADShared",
+          "sha256": "d9aac3a21269be9001276aed540941acf06bbac99722f4cc04a835a23f13da3a"
+        },
+        {
+          "path": "asl/tile/model/memory/shared-movement.asl",
+          "function": "TMOVLocalToShared",
+          "sha256": "cd5a6b0a470abf1d7f4090cacf1876ee90c615e539623db509ffa248ea361603"
+        },
+        {
+          "path": "asl/tile/model/memory/shared-movement.asl",
           "function": "TSTOREShared",
           "sha256": "c45e2817b1b0388d3101c867086bd65e5e5552736913eba5a06d349d7c82ab2d"
         }
@@ -4625,14 +4625,14 @@
           "status": "envelope-only-no-trigger",
           "allowed_normative_occurrences": [
             {
-              "path": "asl/state.asl",
-              "line": 414,
-              "text": "when Fault_InstructionPage => _ACRTrapNumber[[ring]] = Zeros{6} + 33;"
+              "path": "asl/arch/data-types/fault.asl",
+              "line": 7,
+              "text": "Fault_InstructionPage,"
             },
             {
-              "path": "asl/types.asl",
-              "line": 32,
-              "text": "Fault_InstructionPage,"
+              "path": "asl/arch/memory-model/fault-precision.asl",
+              "line": 20,
+              "text": "when Fault_InstructionPage => _ACRTrapNumber[[ring]] = Zeros{6} + 33;"
             }
           ]
         },
@@ -4643,14 +4643,14 @@
           "status": "envelope-only-no-trigger",
           "allowed_normative_occurrences": [
             {
-              "path": "asl/state.asl",
-              "line": 417,
-              "text": "when Fault_HardwareBreakpoint => _ACRTrapNumber[[ring]] = Zeros{6} + 49;"
+              "path": "asl/arch/data-types/fault.asl",
+              "line": 11,
+              "text": "Fault_HardwareBreakpoint,"
             },
             {
-              "path": "asl/types.asl",
-              "line": 36,
-              "text": "Fault_HardwareBreakpoint,"
+              "path": "asl/arch/memory-model/fault-precision.asl",
+              "line": 23,
+              "text": "when Fault_HardwareBreakpoint => _ACRTrapNumber[[ring]] = Zeros{6} + 49;"
             }
           ]
         },
@@ -4661,629 +4661,629 @@
           "status": "envelope-only-no-trigger",
           "allowed_normative_occurrences": [
             {
-              "path": "asl/state.asl",
-              "line": 419,
-              "text": "when Fault_HardwareWatchpoint => _ACRTrapNumber[[ring]] = Zeros{6} + 51;"
+              "path": "asl/arch/data-types/fault.asl",
+              "line": 12,
+              "text": "Fault_HardwareWatchpoint,"
             },
             {
-              "path": "asl/types.asl",
-              "line": 37,
-              "text": "Fault_HardwareWatchpoint,"
+              "path": "asl/arch/memory-model/fault-precision.asl",
+              "line": 25,
+              "text": "when Fault_HardwareWatchpoint => _ACRTrapNumber[[ring]] = Zeros{6} + 51;"
             }
           ]
         }
       ],
-      "activation_inventory_sha256": "dea83626097300f0f2de13a489d56e0d88216b1c4da0c42739df1cac97d91fb0",
+      "activation_inventory_sha256": "fa211845e0f2393acb85ff5af71717d274961ec43de6dfb8fae21ae17fd55b2c",
       "activation_inventory": [
         {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "CompleteBundleAt",
-          "sha256": "2d9ab7e3ca36839201dc1ee56fd7e16aee3246385437064782d64658a59236a2"
+          "path": "asl/arch/data-types/fault.asl",
+          "function": "<global>",
+          "sha256": "1a64d61832f60a377db47e367119a2516384cc41a02b6b6b81bcf55b62d13a29"
         },
         {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "CompleteBundleAtWithAcceptedApplicabilityRules",
-          "sha256": "b486c01ab99ee599bc468c7ede238e2d3e57d6b5a6035f05ac24ce99d211ca79"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteBundleSharedCubeOperation",
-          "sha256": "5faa0397ac2d63231fbe97f542de87436faf102badfa792d4f70347a1f8b9e44"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteBundleSharedTLSUOperation",
-          "sha256": "d92177ad04b48f3c1db32bce60f7ab72c5529b30df6153df638e361e7c814205"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteBundleTileOperation",
-          "sha256": "f6b0abcc2e260c399c98fd1ee51fe319daee03856e612afd8730f940bf0b354a"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
-          "sha256": "d4a89776d2b1b0c15308572d6fc1710994caffa72b4c0820f47d09b4abf9e6fa"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteCommandInstruction",
-          "sha256": "a5d44408c3627cda7b37b5cd4d88ff4fae392c3e7ad266eba416c9893d41e1f9"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteDecodedBundleCommand",
-          "sha256": "8d8a1a5b20186ddbc408a7c6a2cab77d963d92e5a5cdfccc5604b3af6f48dfca"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteDecodedBundleStart",
-          "sha256": "f7c23c373935469cacf95ed9d5eaa5ac91f101fc1d30ae271eb392de2cd13a22"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteDecodedBundleStartWithAcceptedApplicabilityRules",
-          "sha256": "620cdaf89014d9ecf4b3fdea405e573e467022b1619e529722a20897812b9b19"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "ResolveBundleTileDestinations",
-          "sha256": "f477c07c76d2b59aa942deb30b6acbdee47d647dac1edc68f5d6c024f998dd0f"
-        },
-        {
-          "path": "asl/bundle/dispatch.asl",
-          "function": "SelectedBundleTileDataAttributesLegal",
-          "sha256": "78cc3e4f1110ce46bdbe1bce189ca8d9db49e7debae05779dafba0722c866e48"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "AddBundleTileBinding",
-          "sha256": "6f9ecb1ae7ff4900bac4b8753f5ef9e394a89f3bcccd3ecdf8443acdcad71f73"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "BeginBundle",
-          "sha256": "ec64de6d7be178acde69e71a303624de131065e779202f013457bbc13e9df3f4"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "BindBundleSharedIO",
-          "sha256": "afa50c9854a6b5513e73b8ea554dd6b89f5006168b542ded4ea50df70811c3be"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "EnterBundleBody",
-          "sha256": "8c9893b6e079a690e4bb12368b39502d7404bc2be7fdaafa924c58eca81c2f61"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "ExecuteBoundedMemoryCopy",
-          "sha256": "d5b7865ce113f67ff68c9a164d212dbb728854f0bb969d2f5ad225caa6d8fce1"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "ExecuteBoundedMemorySet",
-          "sha256": "cf863eed28eabaf5016ba32135e0c59e09280882e80a42cd292dbc47291aeda2"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "RecoverExecutionContextState",
-          "sha256": "55ea231b2ee730499a05a5968cf4228f2ae6dce3abeb5a37f98533bff08da00e"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "SetBundleBodyAddress",
-          "sha256": "09ec612ed6e9d6a4f5db0b22d5886be3cffe245259400a8c87b252dabbdef5fe"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "SetBundleDataAttributeState",
-          "sha256": "1bdfc30c890d8a5ea54a4734eb645b275ad7b10584d9502588f69d6b2f8a2bae"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "SetBundleDataAttributeState",
-          "sha256": "7c72ffbaf7c973fd267e28b3726be8839a3e0dbcca14e8f7fad7024c207944c7"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "SetBundleTileBinding",
-          "sha256": "0e098463a702a24e8ad725f04736378b87ae3cfe58eab1252c79e36c86030369"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "StopBundle",
-          "sha256": "1a30fcd8d371010bf213c10f23db7f5a2aa279438384c395a98cddacaed71689"
-        },
-        {
-          "path": "asl/bundle/state.asl",
-          "function": "StopBundleAt",
-          "sha256": "8ac981602a9d41d666ed238660127dbe9f84f9d2c6f6ec0cdfc1ec55fabdfcd3"
-        },
-        {
-          "path": "asl/dispatch.asl",
+          "path": "asl/arch/dispatch/top-level.asl",
           "function": "ExecutePTOInstruction",
           "sha256": "500a2c78b5ecdd500455ce399c10d130baa7373c87d01b81822e5a25e57469e8"
         },
         {
-          "path": "asl/numeric/formats.asl",
+          "path": "asl/arch/features/mx-formats.asl",
           "function": "ClassifyBinary64",
           "sha256": "eea260b2a30780bc249592313bb123abde916470e9578d27516233faac2748e6"
         },
         {
-          "path": "asl/numeric/formats.asl",
+          "path": "asl/arch/features/mx-formats.asl",
           "function": "HardwareNumericComparisonSpecial",
           "sha256": "89e03f94f2b181ce0fdc370681a0f2347a3abef6e3b00c40072f8f336d01a52b"
         },
         {
-          "path": "asl/numeric/formats.asl",
+          "path": "asl/arch/features/mx-formats.asl",
           "function": "HardwareNumericMinMaxSpecial",
           "sha256": "cf8d5fb9a5f09883cdf467b4c0600084525b7314d064855b83a462da2e8d6a0d"
         },
         {
-          "path": "asl/numeric/formats.asl",
+          "path": "asl/arch/features/mx-formats.asl",
           "function": "TileNumericValueClass",
           "sha256": "74c0d297e745e1191617f8b8c2ea96b97ded667a2c6fcba8e8da56af893f3a18"
         },
         {
-          "path": "asl/profiles/pto-v0.asl",
-          "function": "PTOv0EBARGControlLegal",
-          "sha256": "5423a862f8f2072ee7f24bd33f5a0cc37a99838f3f07a041ff2230cbcb305eca"
-        },
-        {
-          "path": "asl/profiles/pto-v0.asl",
-          "function": "RecoverTrapContext",
-          "sha256": "9de8669242cfcaede80e6a3795275db99600f90fd8dd2d96952ada1f2ad0c19e"
-        },
-        {
-          "path": "asl/profiles/pto-v0.asl",
-          "function": "ResetProfileState",
-          "sha256": "42eb30ff6ae8df54c667ad6febce48e2080d0bc92240b3ddffc93fb2be2ba919"
-        },
-        {
-          "path": "asl/profiles/pto-v0.asl",
-          "function": "ScalarFPBinaryProfile",
-          "sha256": "3f821da8f129d7149227db2750d6f254b0d6ce2b2577ebd74b992f2feb1c36bd"
-        },
-        {
-          "path": "asl/profiles/pto-v0.asl",
-          "function": "ScalarFPUnaryProfile",
-          "sha256": "3381591e7f6b24af8c8e6c6e69ae4ea6b869c3ab295910b61742357ea97f0b56"
-        },
-        {
-          "path": "asl/scalar/addressing.asl",
-          "function": "ExecuteScalarLoad",
-          "sha256": "59c43e2df1c881e1de6a14df57af39fa20e267e6c09d09076ae33719ddcec2f0"
-        },
-        {
-          "path": "asl/scalar/addressing.asl",
-          "function": "ExecuteScalarLoadPair",
-          "sha256": "d4cb9da00f3ce27aed6bd127f6461e3085fde6dd32d5e0b07afb7a323a5f59c5"
-        },
-        {
-          "path": "asl/scalar/addressing.asl",
-          "function": "ExecuteScalarStore",
-          "sha256": "de325f31a60c6db8d4e08ef73b9bacca093a55245d40200c43d5671a66a4b4eb"
-        },
-        {
-          "path": "asl/scalar/addressing.asl",
-          "function": "ExecuteScalarStorePair",
-          "sha256": "415560c429f4f4cf490ba965c53cf7cfac21cf32b0b3c004bb9ddffbbbfd1d70"
-        },
-        {
-          "path": "asl/scalar/atomic.asl",
-          "function": "AtomicReadModifyWrite",
-          "sha256": "785b767664d005938013be45af8ea61e4265ec0ea5adf96301ce5251f0bd4c88"
-        },
-        {
-          "path": "asl/scalar/atomic.asl",
-          "function": "CompareAndSwap",
-          "sha256": "f8999ee8d5c9d4343bfb7a2214391c875d04482ca58177ccaff15f65e6052a20"
-        },
-        {
-          "path": "asl/scalar/atomic.asl",
-          "function": "ExecuteScalarDMACopy64",
-          "sha256": "9e2bd69f86a3577cc06e21915c65e12242fc553a9da2392c19030237255b6bcb"
-        },
-        {
-          "path": "asl/scalar/atomic.asl",
-          "function": "LoadReserved",
-          "sha256": "9b5ba1c8f575925925e6e07a5ba38d539fd6b5a7f65ac533842aeac939d19b04"
-        },
-        {
-          "path": "asl/scalar/atomic.asl",
-          "function": "StoreConditional",
-          "sha256": "ba0dcfa57e506885cd16623b38ad7410b9fbc7ef3d7469129481842104fc9ee3"
-        },
-        {
-          "path": "asl/scalar/control.asl",
-          "function": "JumpRegister",
-          "sha256": "e6b749dc00f533d015de2d9873d44b88a1e15acc953000cc325cd0dd0b303b05"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedAGUForm",
-          "sha256": "75b7e873a9f68e86a2ab6617bea41950a81d4b928f162b8487206be9c636ef88"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedAGULoad",
-          "sha256": "6d24310f803c129b064f1ae121b17b59203e937632fd08aa46baebd906e9a335"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedAGULoadPair",
-          "sha256": "dafbdb3408ae4121136caaa24e8976c8a26557f9e15b8e2e463bb39e62c6cd65"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedAGUStore",
-          "sha256": "c48608a81741c4fc1c17bff8f1358ce637865190959458a4a2a1a871b117464e"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedAGUStorePair",
-          "sha256": "d26a1200e9d61d4b1e02909b5b6948803de91bb62f1084c68778b5e8bfe5dfad"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedAMOForm",
-          "sha256": "2877641feb2e58e8e6576395526869e41e6ebc468806e48a68fbce9929bbcc89"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedAtomicReadModifyWrite",
-          "sha256": "bf1fefee4d5f1c2cbe3fb58b017f74578916c9d2136edd8ce5149db5ed3c6b7f"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedBRUForm",
-          "sha256": "ac5f421ea086b768a1c9578f972f8ca102449bba22dbf76ddaa062547bb76ccf"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedCompareAndSwap",
-          "sha256": "adfa3d36bcab1b56b16e5257c82bdfe9776d08d3b0d25918216526d4021144db"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedFPBinary",
-          "sha256": "889828f4aa836701ecbdb27b5e2aec5660833de0a9fab95f0562d71a339e4296"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedFPCompare",
-          "sha256": "43ea750810cd9f9aee3beb11de92cf10ca7bf969c769c1e5b0664453f0cb83fa"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedFPConvert",
-          "sha256": "f08620a707ac86c547dfd4259e8355f6f6234654f11b75d737f7e6d5e0ab1810"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedFPFused",
-          "sha256": "a7a9f34f354902b018e4e4a38c1111a0c31deacb90107167f99c7566a318c473"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedFPUnary",
-          "sha256": "5683f38dcbfc5f937fb2883f316895452c4347798a3828ac051951f95eff27a6"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedFSUForm",
-          "sha256": "a1886b7a0e2b760c84111dfd7153666d42cb0ff1d2108a450cb8143e212446af"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedLoadReserved",
-          "sha256": "aee28d46bc51db6d47af8b9cd30f5fd9496e404429ef9007ab801c8c2ab4090a"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedSYSForm",
-          "sha256": "461e1c8e8465b3260768ea17885195aa1d1f0756d06e4c647f5a9ddcc45ef51b"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteDecodedStoreConditional",
-          "sha256": "90a1940f8433d203e30165aae40a6f61e819b824302a98ca197df421dfeb1a63"
-        },
-        {
-          "path": "asl/scalar/dispatch.asl",
-          "function": "ExecuteScalarInstruction",
-          "sha256": "0f0f5d1c82244283ee4313faf6b461637c4e85994ddf1662469dca1021999381"
-        },
-        {
-          "path": "asl/scalar/floating.asl",
-          "function": "ScalarFP32IsNaN",
-          "sha256": "14053f2f03842ae852650eae3e9ea729d877e01999041d67d58cfbb3a279fdd4"
-        },
-        {
-          "path": "asl/scalar/floating.asl",
-          "function": "ScalarFP32IsSignalingNaN",
-          "sha256": "0a320865dcc042fb4055a9cdbeaa3a37e664f3987cb9a4586206a03398d0add9"
-        },
-        {
-          "path": "asl/scalar/floating.asl",
-          "function": "ScalarFP32IsZero",
-          "sha256": "1dab3b6399a5fc2788c71d0ac1fc5b044b79fd69bcd8c1a3031a61a8c5dcb20c"
-        },
-        {
-          "path": "asl/scalar/floating.asl",
-          "function": "ScalarFP64IsNaN",
-          "sha256": "003406cb631cedb8286a50ce89e27b8beadff67dc76721c4fac35a64a707bf9f"
-        },
-        {
-          "path": "asl/scalar/floating.asl",
-          "function": "ScalarFP64IsSignalingNaN",
-          "sha256": "b3f956b8b22dba3dc96987830667787149c9976876c971ae0962ef3983e3dcea"
-        },
-        {
-          "path": "asl/scalar/floating.asl",
-          "function": "ScalarFP64IsZero",
-          "sha256": "8c160be3ccb509f06317268f58f3c5450ecd8d4785d685517c34bb38e1168472"
-        },
-        {
-          "path": "asl/scalar/floating.asl",
-          "function": "ScalarFPBinaryProfile",
-          "sha256": "50309707f61c013aadd42e6b94b11c3425570dd60b36f1e30d99d657649222cf"
-        },
-        {
-          "path": "asl/scalar/floating.asl",
-          "function": "ScalarFPCarrierIsZero",
-          "sha256": "37607aa56cf54434013c759ab27813d6fd92373d9ad3b885d396f51f7aad8e1c"
-        },
-        {
-          "path": "asl/scalar/floating.asl",
-          "function": "ScalarFPEncodingCompare",
-          "sha256": "333bab2b318cbe2d7aff17b26ff9b6c9a1811b9f40006cd1c8391f022e335d2c"
-        },
-        {
-          "path": "asl/scalar/floating.asl",
-          "function": "ScalarFPEncodingEqual",
-          "sha256": "597ae7a644ca41bdd7dfd0c177cf0a31d8d649041e3f445e86c83a560e8110be"
-        },
-        {
-          "path": "asl/scalar/floating.asl",
-          "function": "ScalarFPEncodingLess",
-          "sha256": "638dadc112a7e0b873d7196835968d954eb6284885b22706b80a064931077946"
-        },
-        {
-          "path": "asl/scalar/floating.asl",
-          "function": "ScalarFPIsNaN",
-          "sha256": "fd42c33ddf29a0dde8fe86cde731ec5eaf6b3ff0c93baf522d517186197dfac2"
-        },
-        {
-          "path": "asl/scalar/floating.asl",
-          "function": "ScalarFPIsSignalingNaN",
-          "sha256": "ef876d19369fd68388e1491e24a83fb6adbef6b210ffbd575cf9808270490441"
-        },
-        {
-          "path": "asl/scalar/floating.asl",
-          "function": "ScalarFPMinMax",
-          "sha256": "ebe9e351b590c5eba0f5e7fd32cda564ba2e72489e1c3e75206581464272adf4"
-        },
-        {
-          "path": "asl/scalar/floating.asl",
-          "function": "ScalarFPUnaryProfile",
-          "sha256": "9cff9c3cf91f14b6e9e5211b15615c5faf4a62758aba2c280f800591378e360a"
-        },
-        {
-          "path": "asl/scalar/memory.asl",
-          "function": "LoadSigned",
-          "sha256": "14bc1cc31af83baa0bbcdcf38f7bc283d7f4a6ff23e50171aee339faf083d038"
-        },
-        {
-          "path": "asl/scalar/memory.asl",
-          "function": "LoadUnsigned",
-          "sha256": "91a9f8886081c9e3f48a62e2a4dd85e0e4a56c0ae319f209ecb2fe14b9102b24"
-        },
-        {
-          "path": "asl/scalar/memory.asl",
-          "function": "LoadWithOrder",
-          "sha256": "73f1e8d205efd46cd67b9fd278eb560b656419ed2db28c4201fa48d50b62e77e"
-        },
-        {
-          "path": "asl/scalar/memory.asl",
-          "function": "RaiseDataAccessFault",
-          "sha256": "f75ef36d753933d675c1e51544087d1e852318389a3f3de29ff8e48bb1acf3fa"
-        },
-        {
-          "path": "asl/scalar/memory.asl",
-          "function": "Store",
-          "sha256": "14dcfb8f58db11da32b74405c426c2a290f7697f21d1dca59f2d65243ccacea1"
-        },
-        {
-          "path": "asl/scalar/memory.asl",
-          "function": "StoreWithOrder",
-          "sha256": "57d742741be89db281e8db30530d494eff3e0a0f5908859e0edcfc3b2d2a8e4d"
-        },
-        {
-          "path": "asl/scalar/system-registers.asl",
-          "function": "BaseSystemRegisterOfAddress",
-          "sha256": "6788aedc4f5dac851aedcfd5429df1b0ccb74f6089e26937f120f606222d4575"
-        },
-        {
-          "path": "asl/scalar/system-registers.asl",
-          "function": "ExecuteCompressedSystemRegisterGet",
-          "sha256": "48bbe6f58d845a5a7142ccdaabb1dc45aac775947f099c1cc2f70adaf5a7aa8d"
-        },
-        {
-          "path": "asl/scalar/system-registers.asl",
-          "function": "ExecuteSystemRegisterGet",
-          "sha256": "e547826210fc3e49823a1f8a0a917759120994371ee67de9276679f63821d3ee"
-        },
-        {
-          "path": "asl/scalar/system-registers.asl",
-          "function": "ExecuteSystemRegisterSet",
-          "sha256": "011e8cb5ce3f777b1d65c08ce93e0e3aeab0dbc63dec1f84786ddc88ffb6afd1"
-        },
-        {
-          "path": "asl/scalar/system-registers.asl",
-          "function": "ExecuteSystemRegisterSwap",
-          "sha256": "392497011d4a93c1ea6a9f83c91decb98d2b10b4eb2f8d49eb2ec64770441e11"
-        },
-        {
-          "path": "asl/scalar/system-registers.asl",
-          "function": "IsBaseSystemRegisterAddress",
-          "sha256": "e296332730b59b093bbd73fcbe0dfed892a9072815e34e8471d5c16b55f0a811"
-        },
-        {
-          "path": "asl/scalar/system-registers.asl",
-          "function": "ReadSystemRegisterAddress",
-          "sha256": "fad040a55ae92cee032c8634a6d01336a34c2bfcbd28ddb584dfe9648d105802"
-        },
-        {
-          "path": "asl/scalar/system-registers.asl",
-          "function": "SwapSystemRegisterAddress",
-          "sha256": "e659c294dae27ee92f247ba65ffd76393faec5d68492e5adc98a65c20770bd7d"
-        },
-        {
-          "path": "asl/scalar/system-registers.asl",
-          "function": "WriteSystemRegisterAddress",
-          "sha256": "77433290a7e7c8a772984a3a4bd4cf3fff6d6e4e7d35283e4a63a3d86d99ff95"
-        },
-        {
-          "path": "asl/scalar/system.asl",
-          "function": "ArchitectureAssert",
-          "sha256": "0c9bbe8976c517f6bbf8876fc918a27e82a35033e969db55c73d26096fa8210b"
-        },
-        {
-          "path": "asl/scalar/system.asl",
-          "function": "ArchitectureCloseRequest",
-          "sha256": "5b306fc3aa3cd1713b8f878a58f4c01542d50ea5bb5b2675489113c81f96f2a8"
-        },
-        {
-          "path": "asl/scalar/system.asl",
-          "function": "ArchitectureEnterRequest",
-          "sha256": "72ecb0047a93174568142f944f9a9941e169761a3b52478bb839644c207ffb25"
-        },
-        {
-          "path": "asl/scalar/system.asl",
-          "function": "ExecuteMaintenance",
-          "sha256": "ac6eaf5d4bab27c6f62c582963e2864701728cd17c2af25d2567791aabc3f99e"
-        },
-        {
-          "path": "asl/scalar/system.asl",
-          "function": "SoftwareBreakpoint",
-          "sha256": "afce6d25090af4249bbe570f9d3fd919f21c9fa38dd8686b7b6efcf07a440430"
-        },
-        {
-          "path": "asl/scalar/system.asl",
-          "function": "SwapSystemRegister",
-          "sha256": "895bb6cad47bf93ea3e1e56e5fc091337cae7aa11b826ff91291cb969965864e"
-        },
-        {
-          "path": "asl/scalar/system.asl",
-          "function": "WriteSystemRegister",
-          "sha256": "5e4dbd0e8b7cab685746dc7da84b020e38611df777cc1cef8967a3a2e65f10d6"
-        },
-        {
-          "path": "asl/state.asl",
-          "function": "<global>",
-          "sha256": "ca4edc7e6429923f1d93772c13a1324732b013cfbf8ae703dc7169e7b99e6b73"
-        },
-        {
-          "path": "asl/state.asl",
+          "path": "asl/arch/memory-model/fault-precision.asl",
           "function": "ClearFault",
           "sha256": "26c53727c2ef6402e4544bdc085b885c4133fc00d3df9b428fbec803aa5f84e0"
         },
         {
-          "path": "asl/state.asl",
+          "path": "asl/arch/memory-model/fault-precision.asl",
           "function": "PackTrapStatus",
           "sha256": "2593460b2ebf26547dc1f512e3bf3bc214cdb72fca0ff0fe7f85799ea4e2bb14"
         },
         {
-          "path": "asl/state.asl",
+          "path": "asl/arch/memory-model/fault-precision.asl",
           "function": "RaiseInterrupt",
           "sha256": "e96b47ea66c6cff501671d1fee63c48e652543c6a29160610516ccb982bcb2a1"
         },
         {
-          "path": "asl/state.asl",
+          "path": "asl/arch/memory-model/fault-precision.asl",
           "function": "RaiseServiceRequest",
           "sha256": "13f559d98d47f1001dba6332d5c81d2b873cf61cef4bf42db291cf9be0d69850"
         },
         {
-          "path": "asl/state.asl",
-          "function": "RecoverTrapContext",
-          "sha256": "628e4809773a899534e950050efdb451d89fedb58230c432eb021b154b4624cb"
-        },
-        {
-          "path": "asl/state.asl",
-          "function": "ResetProfileState",
-          "sha256": "e4bc497088914a3831b9284630feb2ddf0cc09220ecfeae16106ed6c8aa8c0f8"
-        },
-        {
-          "path": "asl/state.asl",
+          "path": "asl/arch/memory-model/fault-precision.asl",
           "function": "SetFault",
           "sha256": "18b7369da0cc39c8597976ccd6f91215fb1ea28f1712db695dccad63dce964f9"
         },
         {
-          "path": "asl/state.asl",
+          "path": "asl/arch/memory-model/fault-precision.asl",
           "function": "UnpackTrapStatus",
           "sha256": "4fa6186f4b40e30ed2d0afa4e957ba5e91817abb60248ddddd8ca52c93264eee"
         },
         {
-          "path": "asl/tile/memory.asl",
-          "function": "MGATHER",
-          "sha256": "0d6d9d3d6649c3a5f0762752512847f8d4bd59ff91250748c4eec056c37ecf43"
+          "path": "asl/arch/profile/reference-profile.asl",
+          "function": "RecoverTrapContext",
+          "sha256": "9de8669242cfcaede80e6a3795275db99600f90fd8dd2d96952ada1f2ad0c19e"
         },
         {
-          "path": "asl/tile/memory.asl",
+          "path": "asl/arch/profile/reference-profile.asl",
+          "function": "ScalarFPBinaryProfile",
+          "sha256": "3f821da8f129d7149227db2750d6f254b0d6ce2b2577ebd74b992f2feb1c36bd"
+        },
+        {
+          "path": "asl/arch/profile/reference-profile.asl",
+          "function": "ScalarFPUnaryProfile",
+          "sha256": "3381591e7f6b24af8c8e6c6e69ae4ea6b869c3ab295910b61742357ea97f0b56"
+        },
+        {
+          "path": "asl/arch/profile/reset.asl",
+          "function": "ResetProfileState",
+          "sha256": "42eb30ff6ae8df54c667ad6febce48e2080d0bc92240b3ddffc93fb2be2ba919"
+        },
+        {
+          "path": "asl/arch/programming-model/execution-context.asl",
+          "function": "<global>",
+          "sha256": "2184c6c4a6dc10b4d107b5820a83b167153f59e8fe4e9c89fb27bd6c3f79194b"
+        },
+        {
+          "path": "asl/arch/state/trap-context.asl",
+          "function": "RecoverTrapContext",
+          "sha256": "628e4809773a899534e950050efdb451d89fedb58230c432eb021b154b4624cb"
+        },
+        {
+          "path": "asl/arch/system-registers/addressing.asl",
+          "function": "ResetProfileState",
+          "sha256": "e4bc497088914a3831b9284630feb2ddf0cc09220ecfeae16106ed6c8aa8c0f8"
+        },
+        {
+          "path": "asl/block/model/commit/effects.asl",
+          "function": "ExecuteBoundedMemoryCopy",
+          "sha256": "d5b7865ce113f67ff68c9a164d212dbb728854f0bb969d2f5ad225caa6d8fce1"
+        },
+        {
+          "path": "asl/block/model/commit/effects.asl",
+          "function": "ExecuteBoundedMemorySet",
+          "sha256": "cf863eed28eabaf5016ba32135e0c59e09280882e80a42cd292dbc47291aeda2"
+        },
+        {
+          "path": "asl/block/model/commit/validation.asl",
+          "function": "CompleteBundleAt",
+          "sha256": "2d9ab7e3ca36839201dc1ee56fd7e16aee3246385437064782d64658a59236a2"
+        },
+        {
+          "path": "asl/block/model/commit/validation.asl",
+          "function": "CompleteBundleAtWithAcceptedApplicabilityRules",
+          "sha256": "b486c01ab99ee599bc468c7ede238e2d3e57d6b5a6035f05ac24ce99d211ca79"
+        },
+        {
+          "path": "asl/block/model/dispatch/commands.asl",
+          "function": "ExecuteDecodedBundleCommand",
+          "sha256": "8d8a1a5b20186ddbc408a7c6a2cab77d963d92e5a5cdfccc5604b3af6f48dfca"
+        },
+        {
+          "path": "asl/block/model/dispatch/destination-shape.asl",
+          "function": "ResolveBundleTileDestinations",
+          "sha256": "f477c07c76d2b59aa942deb30b6acbdee47d647dac1edc68f5d6c024f998dd0f"
+        },
+        {
+          "path": "asl/block/model/dispatch/shared-cube.asl",
+          "function": "ExecuteBundleSharedCubeOperation",
+          "sha256": "5faa0397ac2d63231fbe97f542de87436faf102badfa792d4f70347a1f8b9e44"
+        },
+        {
+          "path": "asl/block/model/dispatch/shared-tlsu.asl",
+          "function": "ExecuteBundleSharedTLSUOperation",
+          "sha256": "d92177ad04b48f3c1db32bce60f7ab72c5529b30df6153df638e361e7c814205"
+        },
+        {
+          "path": "asl/block/model/dispatch/start.asl",
+          "function": "ExecuteDecodedBundleStart",
+          "sha256": "f7c23c373935469cacf95ed9d5eaa5ac91f101fc1d30ae271eb392de2cd13a22"
+        },
+        {
+          "path": "asl/block/model/dispatch/start.asl",
+          "function": "ExecuteDecodedBundleStartWithAcceptedApplicabilityRules",
+          "sha256": "620cdaf89014d9ecf4b3fdea405e573e467022b1619e529722a20897812b9b19"
+        },
+        {
+          "path": "asl/block/model/dispatch/tile-execution.asl",
+          "function": "ExecuteBundleTileOperation",
+          "sha256": "f6b0abcc2e260c399c98fd1ee51fe319daee03856e612afd8730f940bf0b354a"
+        },
+        {
+          "path": "asl/block/model/dispatch/tile-execution.asl",
+          "function": "ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
+          "sha256": "d4a89776d2b1b0c15308572d6fc1710994caffa72b4c0820f47d09b4abf9e6fa"
+        },
+        {
+          "path": "asl/block/model/dispatch/tile-schema.asl",
+          "function": "SelectedBundleTileDataAttributesLegal",
+          "sha256": "78cc3e4f1110ce46bdbe1bce189ca8d9db49e7debae05779dafba0722c866e48"
+        },
+        {
+          "path": "asl/block/model/dispatch/top-level.asl",
+          "function": "ExecuteCommandInstruction",
+          "sha256": "a5d44408c3627cda7b37b5cd4d88ff4fae392c3e7ad266eba416c9893d41e1f9"
+        },
+        {
+          "path": "asl/block/model/lifecycle/begin.asl",
+          "function": "BeginBundle",
+          "sha256": "ec64de6d7be178acde69e71a303624de131065e779202f013457bbc13e9df3f4"
+        },
+        {
+          "path": "asl/block/model/lifecycle/enter-stop.asl",
+          "function": "EnterBundleBody",
+          "sha256": "8c9893b6e079a690e4bb12368b39502d7404bc2be7fdaafa924c58eca81c2f61"
+        },
+        {
+          "path": "asl/block/model/lifecycle/enter-stop.asl",
+          "function": "StopBundle",
+          "sha256": "1a30fcd8d371010bf213c10f23db7f5a2aa279438384c395a98cddacaed71689"
+        },
+        {
+          "path": "asl/block/model/lifecycle/enter-stop.asl",
+          "function": "StopBundleAt",
+          "sha256": "8ac981602a9d41d666ed238660127dbe9f84f9d2c6f6ec0cdfc1ec55fabdfcd3"
+        },
+        {
+          "path": "asl/block/model/lifecycle/lifetime.asl",
+          "function": "RecoverExecutionContextState",
+          "sha256": "55ea231b2ee730499a05a5968cf4228f2ae6dce3abeb5a37f98533bff08da00e"
+        },
+        {
+          "path": "asl/block/model/operands/scalar-bindings.asl",
+          "function": "SetBundleBodyAddress",
+          "sha256": "09ec612ed6e9d6a4f5db0b22d5886be3cffe245259400a8c87b252dabbdef5fe"
+        },
+        {
+          "path": "asl/block/model/operands/shared-bindings.asl",
+          "function": "BindBundleSharedIO",
+          "sha256": "afa50c9854a6b5513e73b8ea554dd6b89f5006168b542ded4ea50df70811c3be"
+        },
+        {
+          "path": "asl/block/model/operands/tile-bindings.asl",
+          "function": "AddBundleTileBinding",
+          "sha256": "6f9ecb1ae7ff4900bac4b8753f5ef9e394a89f3bcccd3ecdf8443acdcad71f73"
+        },
+        {
+          "path": "asl/block/model/operands/tile-bindings.asl",
+          "function": "SetBundleTileBinding",
+          "sha256": "0e098463a702a24e8ad725f04736378b87ae3cfe58eab1252c79e36c86030369"
+        },
+        {
+          "path": "asl/block/model/schema/attributes.asl",
+          "function": "SetBundleDataAttributeState",
+          "sha256": "7c72ffbaf7c973fd267e28b3726be8839a3e0dbcca14e8f7fad7024c207944c7"
+        },
+        {
+          "path": "asl/block/model/schema/profile-encoding.asl",
+          "function": "PTOv0EBARGControlLegal",
+          "sha256": "5423a862f8f2072ee7f24bd33f5a0cc37a99838f3f07a041ff2230cbcb305eca"
+        },
+        {
+          "path": "asl/block/model/state/control-state.asl",
+          "function": "SetBundleDataAttributeState",
+          "sha256": "1bdfc30c890d8a5ea54a4734eb645b275ad7b10584d9502588f69d6b2f8a2bae"
+        },
+        {
+          "path": "asl/scalar/model/agu/addressing.asl",
+          "function": "ExecuteScalarLoad",
+          "sha256": "59c43e2df1c881e1de6a14df57af39fa20e267e6c09d09076ae33719ddcec2f0"
+        },
+        {
+          "path": "asl/scalar/model/agu/addressing.asl",
+          "function": "ExecuteScalarLoadPair",
+          "sha256": "d4cb9da00f3ce27aed6bd127f6461e3085fde6dd32d5e0b07afb7a323a5f59c5"
+        },
+        {
+          "path": "asl/scalar/model/agu/addressing.asl",
+          "function": "ExecuteScalarStore",
+          "sha256": "de325f31a60c6db8d4e08ef73b9bacca093a55245d40200c43d5671a66a4b4eb"
+        },
+        {
+          "path": "asl/scalar/model/agu/addressing.asl",
+          "function": "ExecuteScalarStorePair",
+          "sha256": "415560c429f4f4cf490ba965c53cf7cfac21cf32b0b3c004bb9ddffbbbfd1d70"
+        },
+        {
+          "path": "asl/scalar/model/agu/memory.asl",
+          "function": "LoadSigned",
+          "sha256": "14bc1cc31af83baa0bbcdcf38f7bc283d7f4a6ff23e50171aee339faf083d038"
+        },
+        {
+          "path": "asl/scalar/model/agu/memory.asl",
+          "function": "LoadUnsigned",
+          "sha256": "91a9f8886081c9e3f48a62e2a4dd85e0e4a56c0ae319f209ecb2fe14b9102b24"
+        },
+        {
+          "path": "asl/scalar/model/agu/memory.asl",
+          "function": "LoadWithOrder",
+          "sha256": "73f1e8d205efd46cd67b9fd278eb560b656419ed2db28c4201fa48d50b62e77e"
+        },
+        {
+          "path": "asl/scalar/model/agu/memory.asl",
+          "function": "RaiseDataAccessFault",
+          "sha256": "f75ef36d753933d675c1e51544087d1e852318389a3f3de29ff8e48bb1acf3fa"
+        },
+        {
+          "path": "asl/scalar/model/agu/memory.asl",
+          "function": "Store",
+          "sha256": "14dcfb8f58db11da32b74405c426c2a290f7697f21d1dca59f2d65243ccacea1"
+        },
+        {
+          "path": "asl/scalar/model/agu/memory.asl",
+          "function": "StoreWithOrder",
+          "sha256": "57d742741be89db281e8db30530d494eff3e0a0f5908859e0edcfc3b2d2a8e4d"
+        },
+        {
+          "path": "asl/scalar/model/amo/semantics.asl",
+          "function": "AtomicReadModifyWrite",
+          "sha256": "785b767664d005938013be45af8ea61e4265ec0ea5adf96301ce5251f0bd4c88"
+        },
+        {
+          "path": "asl/scalar/model/amo/semantics.asl",
+          "function": "CompareAndSwap",
+          "sha256": "f8999ee8d5c9d4343bfb7a2214391c875d04482ca58177ccaff15f65e6052a20"
+        },
+        {
+          "path": "asl/scalar/model/amo/semantics.asl",
+          "function": "ExecuteScalarDMACopy64",
+          "sha256": "9e2bd69f86a3577cc06e21915c65e12242fc553a9da2392c19030237255b6bcb"
+        },
+        {
+          "path": "asl/scalar/model/amo/semantics.asl",
+          "function": "LoadReserved",
+          "sha256": "9b5ba1c8f575925925e6e07a5ba38d539fd6b5a7f65ac533842aeac939d19b04"
+        },
+        {
+          "path": "asl/scalar/model/amo/semantics.asl",
+          "function": "StoreConditional",
+          "sha256": "ba0dcfa57e506885cd16623b38ad7410b9fbc7ef3d7469129481842104fc9ee3"
+        },
+        {
+          "path": "asl/scalar/model/bru/semantics.asl",
+          "function": "JumpRegister",
+          "sha256": "e6b749dc00f533d015de2d9873d44b88a1e15acc953000cc325cd0dd0b303b05"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/agu.asl",
+          "function": "ExecuteDecodedAGUForm",
+          "sha256": "75b7e873a9f68e86a2ab6617bea41950a81d4b928f162b8487206be9c636ef88"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/agu.asl",
+          "function": "ExecuteDecodedAGULoad",
+          "sha256": "6d24310f803c129b064f1ae121b17b59203e937632fd08aa46baebd906e9a335"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/agu.asl",
+          "function": "ExecuteDecodedAGULoadPair",
+          "sha256": "dafbdb3408ae4121136caaa24e8976c8a26557f9e15b8e2e463bb39e62c6cd65"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/agu.asl",
+          "function": "ExecuteDecodedAGUStore",
+          "sha256": "c48608a81741c4fc1c17bff8f1358ce637865190959458a4a2a1a871b117464e"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/agu.asl",
+          "function": "ExecuteDecodedAGUStorePair",
+          "sha256": "d26a1200e9d61d4b1e02909b5b6948803de91bb62f1084c68778b5e8bfe5dfad"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/amo.asl",
+          "function": "ExecuteDecodedAMOForm",
+          "sha256": "2877641feb2e58e8e6576395526869e41e6ebc468806e48a68fbce9929bbcc89"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/amo.asl",
+          "function": "ExecuteDecodedAtomicReadModifyWrite",
+          "sha256": "bf1fefee4d5f1c2cbe3fb58b017f74578916c9d2136edd8ce5149db5ed3c6b7f"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/amo.asl",
+          "function": "ExecuteDecodedCompareAndSwap",
+          "sha256": "adfa3d36bcab1b56b16e5257c82bdfe9776d08d3b0d25918216526d4021144db"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/amo.asl",
+          "function": "ExecuteDecodedLoadReserved",
+          "sha256": "aee28d46bc51db6d47af8b9cd30f5fd9496e404429ef9007ab801c8c2ab4090a"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/amo.asl",
+          "function": "ExecuteDecodedStoreConditional",
+          "sha256": "90a1940f8433d203e30165aae40a6f61e819b824302a98ca197df421dfeb1a63"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/bru.asl",
+          "function": "ExecuteDecodedBRUForm",
+          "sha256": "ac5f421ea086b768a1c9578f972f8ca102449bba22dbf76ddaa062547bb76ccf"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/fsu.asl",
+          "function": "ExecuteDecodedFPBinary",
+          "sha256": "889828f4aa836701ecbdb27b5e2aec5660833de0a9fab95f0562d71a339e4296"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/fsu.asl",
+          "function": "ExecuteDecodedFPCompare",
+          "sha256": "43ea750810cd9f9aee3beb11de92cf10ca7bf969c769c1e5b0664453f0cb83fa"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/fsu.asl",
+          "function": "ExecuteDecodedFPConvert",
+          "sha256": "f08620a707ac86c547dfd4259e8355f6f6234654f11b75d737f7e6d5e0ab1810"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/fsu.asl",
+          "function": "ExecuteDecodedFPFused",
+          "sha256": "a7a9f34f354902b018e4e4a38c1111a0c31deacb90107167f99c7566a318c473"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/fsu.asl",
+          "function": "ExecuteDecodedFPUnary",
+          "sha256": "5683f38dcbfc5f937fb2883f316895452c4347798a3828ac051951f95eff27a6"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/fsu.asl",
+          "function": "ExecuteDecodedFSUForm",
+          "sha256": "a1886b7a0e2b760c84111dfd7153666d42cb0ff1d2108a450cb8143e212446af"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/sys.asl",
+          "function": "ExecuteDecodedSYSForm",
+          "sha256": "461e1c8e8465b3260768ea17885195aa1d1f0756d06e4c647f5a9ddcc45ef51b"
+        },
+        {
+          "path": "asl/scalar/model/dispatch/top-level.asl",
+          "function": "ExecuteScalarInstruction",
+          "sha256": "0f0f5d1c82244283ee4313faf6b461637c4e85994ddf1662469dca1021999381"
+        },
+        {
+          "path": "asl/scalar/model/fsu/profile.asl",
+          "function": "ScalarFP32IsNaN",
+          "sha256": "14053f2f03842ae852650eae3e9ea729d877e01999041d67d58cfbb3a279fdd4"
+        },
+        {
+          "path": "asl/scalar/model/fsu/profile.asl",
+          "function": "ScalarFP32IsSignalingNaN",
+          "sha256": "0a320865dcc042fb4055a9cdbeaa3a37e664f3987cb9a4586206a03398d0add9"
+        },
+        {
+          "path": "asl/scalar/model/fsu/profile.asl",
+          "function": "ScalarFP32IsZero",
+          "sha256": "1dab3b6399a5fc2788c71d0ac1fc5b044b79fd69bcd8c1a3031a61a8c5dcb20c"
+        },
+        {
+          "path": "asl/scalar/model/fsu/profile.asl",
+          "function": "ScalarFP64IsNaN",
+          "sha256": "003406cb631cedb8286a50ce89e27b8beadff67dc76721c4fac35a64a707bf9f"
+        },
+        {
+          "path": "asl/scalar/model/fsu/profile.asl",
+          "function": "ScalarFP64IsSignalingNaN",
+          "sha256": "b3f956b8b22dba3dc96987830667787149c9976876c971ae0962ef3983e3dcea"
+        },
+        {
+          "path": "asl/scalar/model/fsu/profile.asl",
+          "function": "ScalarFP64IsZero",
+          "sha256": "8c160be3ccb509f06317268f58f3c5450ecd8d4785d685517c34bb38e1168472"
+        },
+        {
+          "path": "asl/scalar/model/fsu/profile.asl",
+          "function": "ScalarFPBinaryProfile",
+          "sha256": "50309707f61c013aadd42e6b94b11c3425570dd60b36f1e30d99d657649222cf"
+        },
+        {
+          "path": "asl/scalar/model/fsu/profile.asl",
+          "function": "ScalarFPCarrierIsZero",
+          "sha256": "37607aa56cf54434013c759ab27813d6fd92373d9ad3b885d396f51f7aad8e1c"
+        },
+        {
+          "path": "asl/scalar/model/fsu/profile.asl",
+          "function": "ScalarFPEncodingCompare",
+          "sha256": "333bab2b318cbe2d7aff17b26ff9b6c9a1811b9f40006cd1c8391f022e335d2c"
+        },
+        {
+          "path": "asl/scalar/model/fsu/profile.asl",
+          "function": "ScalarFPEncodingEqual",
+          "sha256": "597ae7a644ca41bdd7dfd0c177cf0a31d8d649041e3f445e86c83a560e8110be"
+        },
+        {
+          "path": "asl/scalar/model/fsu/profile.asl",
+          "function": "ScalarFPEncodingLess",
+          "sha256": "638dadc112a7e0b873d7196835968d954eb6284885b22706b80a064931077946"
+        },
+        {
+          "path": "asl/scalar/model/fsu/profile.asl",
+          "function": "ScalarFPIsNaN",
+          "sha256": "fd42c33ddf29a0dde8fe86cde731ec5eaf6b3ff0c93baf522d517186197dfac2"
+        },
+        {
+          "path": "asl/scalar/model/fsu/profile.asl",
+          "function": "ScalarFPIsSignalingNaN",
+          "sha256": "ef876d19369fd68388e1491e24a83fb6adbef6b210ffbd575cf9808270490441"
+        },
+        {
+          "path": "asl/scalar/model/fsu/profile.asl",
+          "function": "ScalarFPMinMax",
+          "sha256": "ebe9e351b590c5eba0f5e7fd32cda564ba2e72489e1c3e75206581464272adf4"
+        },
+        {
+          "path": "asl/scalar/model/fsu/profile.asl",
+          "function": "ScalarFPUnaryProfile",
+          "sha256": "9cff9c3cf91f14b6e9e5211b15615c5faf4a62758aba2c280f800591378e360a"
+        },
+        {
+          "path": "asl/scalar/model/sys/registers.asl",
+          "function": "BaseSystemRegisterOfAddress",
+          "sha256": "6788aedc4f5dac851aedcfd5429df1b0ccb74f6089e26937f120f606222d4575"
+        },
+        {
+          "path": "asl/scalar/model/sys/registers.asl",
+          "function": "ExecuteCompressedSystemRegisterGet",
+          "sha256": "48bbe6f58d845a5a7142ccdaabb1dc45aac775947f099c1cc2f70adaf5a7aa8d"
+        },
+        {
+          "path": "asl/scalar/model/sys/registers.asl",
+          "function": "ExecuteSystemRegisterGet",
+          "sha256": "e547826210fc3e49823a1f8a0a917759120994371ee67de9276679f63821d3ee"
+        },
+        {
+          "path": "asl/scalar/model/sys/registers.asl",
+          "function": "ExecuteSystemRegisterSet",
+          "sha256": "011e8cb5ce3f777b1d65c08ce93e0e3aeab0dbc63dec1f84786ddc88ffb6afd1"
+        },
+        {
+          "path": "asl/scalar/model/sys/registers.asl",
+          "function": "ExecuteSystemRegisterSwap",
+          "sha256": "392497011d4a93c1ea6a9f83c91decb98d2b10b4eb2f8d49eb2ec64770441e11"
+        },
+        {
+          "path": "asl/scalar/model/sys/registers.asl",
+          "function": "IsBaseSystemRegisterAddress",
+          "sha256": "e296332730b59b093bbd73fcbe0dfed892a9072815e34e8471d5c16b55f0a811"
+        },
+        {
+          "path": "asl/scalar/model/sys/registers.asl",
+          "function": "ReadSystemRegisterAddress",
+          "sha256": "fad040a55ae92cee032c8634a6d01336a34c2bfcbd28ddb584dfe9648d105802"
+        },
+        {
+          "path": "asl/scalar/model/sys/registers.asl",
+          "function": "SwapSystemRegisterAddress",
+          "sha256": "e659c294dae27ee92f247ba65ffd76393faec5d68492e5adc98a65c20770bd7d"
+        },
+        {
+          "path": "asl/scalar/model/sys/registers.asl",
+          "function": "WriteSystemRegisterAddress",
+          "sha256": "77433290a7e7c8a772984a3a4bd4cf3fff6d6e4e7d35283e4a63a3d86d99ff95"
+        },
+        {
+          "path": "asl/scalar/model/sys/semantics.asl",
+          "function": "ArchitectureAssert",
+          "sha256": "0c9bbe8976c517f6bbf8876fc918a27e82a35033e969db55c73d26096fa8210b"
+        },
+        {
+          "path": "asl/scalar/model/sys/semantics.asl",
+          "function": "ArchitectureCloseRequest",
+          "sha256": "5b306fc3aa3cd1713b8f878a58f4c01542d50ea5bb5b2675489113c81f96f2a8"
+        },
+        {
+          "path": "asl/scalar/model/sys/semantics.asl",
+          "function": "ArchitectureEnterRequest",
+          "sha256": "72ecb0047a93174568142f944f9a9941e169761a3b52478bb839644c207ffb25"
+        },
+        {
+          "path": "asl/scalar/model/sys/semantics.asl",
+          "function": "ExecuteMaintenance",
+          "sha256": "ac6eaf5d4bab27c6f62c582963e2864701728cd17c2af25d2567791aabc3f99e"
+        },
+        {
+          "path": "asl/scalar/model/sys/semantics.asl",
+          "function": "SoftwareBreakpoint",
+          "sha256": "afce6d25090af4249bbe570f9d3fd919f21c9fa38dd8686b7b6efcf07a440430"
+        },
+        {
+          "path": "asl/scalar/model/sys/semantics.asl",
+          "function": "SwapSystemRegister",
+          "sha256": "895bb6cad47bf93ea3e1e56e5fc091337cae7aa11b826ff91291cb969965864e"
+        },
+        {
+          "path": "asl/scalar/model/sys/semantics.asl",
+          "function": "WriteSystemRegister",
+          "sha256": "5e4dbd0e8b7cab685746dc7da84b020e38611df777cc1cef8967a3a2e65f10d6"
+        },
+        {
+          "path": "asl/tile/model/memory/atomics.asl",
           "function": "MGATHER_CAS",
           "sha256": "5a361d60fdc59c9da23a22c73ec991b98accce33ea18cba4b5189bb348147465"
         },
         {
-          "path": "asl/tile/memory.asl",
+          "path": "asl/tile/model/memory/gather-scatter.asl",
+          "function": "MGATHER",
+          "sha256": "0d6d9d3d6649c3a5f0762752512847f8d4bd59ff91250748c4eec056c37ecf43"
+        },
+        {
+          "path": "asl/tile/model/memory/gather-scatter.asl",
           "function": "MGATHER_MASK",
           "sha256": "e511048a8c37f36fa70c4b9dfa98f980df9a6c4a9d4d9f74a3c97f37a774d39b"
         },
         {
-          "path": "asl/tile/memory.asl",
+          "path": "asl/tile/model/memory/gather-scatter.asl",
           "function": "MSCATTER",
           "sha256": "bc58ad8d1d9fbe166bd3d195036bb19a3c30c819222b28d6eb6226bc51ea7e1e"
         },
         {
-          "path": "asl/tile/memory.asl",
+          "path": "asl/tile/model/memory/gather-scatter.asl",
           "function": "MSCATTER_MASK",
           "sha256": "44d77354cc0231cfb1813c721e4ea17b5738d15f150d866aaa64b04d8deaf0f0"
         },
         {
-          "path": "asl/tile/memory.asl",
-          "function": "TLOAD",
-          "sha256": "b5341a7a636ba15aacee69e6914925656824bc9f5bbe2aed97afa02476d97d2a"
-        },
-        {
-          "path": "asl/tile/memory.asl",
-          "function": "TLOADShared",
-          "sha256": "d9aac3a21269be9001276aed540941acf06bbac99722f4cc04a835a23f13da3a"
-        },
-        {
-          "path": "asl/tile/memory.asl",
-          "function": "TMOVLocalToShared",
-          "sha256": "cd5a6b0a470abf1d7f4090cacf1876ee90c615e539623db509ffa248ea361603"
-        },
-        {
-          "path": "asl/tile/memory.asl",
+          "path": "asl/tile/model/memory/gather-scatter.asl",
           "function": "TPREFETCH",
           "sha256": "5fc4d81154b4b47e9383da5172bf6b4707f573827ab7c376433a20140ee71885"
         },
         {
-          "path": "asl/tile/memory.asl",
+          "path": "asl/tile/model/memory/load-store.asl",
+          "function": "TLOAD",
+          "sha256": "b5341a7a636ba15aacee69e6914925656824bc9f5bbe2aed97afa02476d97d2a"
+        },
+        {
+          "path": "asl/tile/model/memory/load-store.asl",
           "function": "TSTORE",
           "sha256": "d5096d774f83230ff9c137138b78eb77124c18a28973524b0dd0312a4a69e6fe"
         },
         {
-          "path": "asl/tile/memory.asl",
-          "function": "TSTOREShared",
-          "sha256": "c45e2817b1b0388d3101c867086bd65e5e5552736913eba5a06d349d7c82ab2d"
+          "path": "asl/tile/model/memory/shared-movement.asl",
+          "function": "TLOADShared",
+          "sha256": "d9aac3a21269be9001276aed540941acf06bbac99722f4cc04a835a23f13da3a"
         },
         {
-          "path": "asl/types.asl",
-          "function": "<global>",
-          "sha256": "e395a7df719b1fe96ddb7be4af9b6ad8d9fe0cce1d9a2c586b6faa58587a31c7"
+          "path": "asl/tile/model/memory/shared-movement.asl",
+          "function": "TMOVLocalToShared",
+          "sha256": "cd5a6b0a470abf1d7f4090cacf1876ee90c615e539623db509ffa248ea361603"
+        },
+        {
+          "path": "asl/tile/model/memory/shared-movement.asl",
+          "function": "TSTOREShared",
+          "sha256": "c45e2817b1b0388d3101c867086bd65e5e5552736913eba5a06d349d7c82ab2d"
         }
       ],
       "rule": "Envelope-only fault symbols remain limited to declaration and SetFault mapping. Every normative function that can mutate trap identity, invoke a trap producer, or mention canonical trap numbers 33, 49, or 51 is content-addressed, so direct assignments, helper activation, and indirect SetFault call sites fail closed."
@@ -5336,7 +5336,7 @@
   "sources": [
     {
       "path": "Makefile",
-      "sha256": "a1c9ba81980137c3529affed35cae25912dff6aad41a698d31553b9c6ef7cdea"
+      "sha256": "19f77fde38a6a066712b04480f920392d829034f2dc84fa61d86a3a9720d6548"
     },
     {
       "path": "spec/catalog/system-registers.json",
@@ -5344,7 +5344,7 @@
     },
     {
       "path": "scripts/generate-asl-decoders",
-      "sha256": "a3c7c74a4bad788f40ec894741986349c2fb41de08cd5be0cdc82ba008913097"
+      "sha256": "224b9a18137be2748d050bcd196d5e6c87c7264b400c3a4bb26fbc6a88697bb5"
     },
     {
       "path": "generated:build/decoders.asl",
@@ -5356,7 +5356,7 @@
     },
     {
       "path": "tests/asl/shards/core-bundle.asl",
-      "sha256": "5c7e20b0e0701e3b5eb7996e59b8bcd478678b3d973443b42210810ce32b10aa"
+      "sha256": "cca3b0cb97e9c88e92a3e942528a351ac932626d4c46d9b75ab21f66535466d0"
     },
     {
       "path": "tests/asl/scalar-tests.asl",
@@ -5371,20 +5371,132 @@
       "sha256": "bf82683e74be1d0f80ad48c4d02ca97d932939737e6f18d109d45d8a9764d625"
     },
     {
-      "path": "asl/types.asl",
-      "sha256": "1018ae49c0ef3a3e1bb15f452446f6606f5c825e01e528ea42c6a8a32c031ae9"
+      "path": "asl/arch/data-types/fault.asl",
+      "sha256": "e3a280e7acf0e582d6f777dee4c5295747a518a505d93e1e3118661f0b561d92"
     },
     {
-      "path": "asl/state.asl",
-      "sha256": "051436a5ed7be1c4673e6b452422a4a0a73d1fd8dd217575d2e71466074621d3"
+      "path": "asl/arch/data-types/floating-point.asl",
+      "sha256": "9232fffb96d16c57168252188147ad98d4be027780b5cacd926acbd3915e4dc2"
     },
     {
-      "path": "asl/profiles/pto-v0.asl",
-      "sha256": "cffaef654c49cafd02ef73478295de4e070f4ab1aa4c046decb2950a03103808"
+      "path": "asl/arch/data-types/integer.asl",
+      "sha256": "ee412e917aca73b90cf0729bb05b6ee8eba9d636dd87bd01c3d49481fbb6de39"
     },
     {
-      "path": "asl/scalar/system-registers.asl",
-      "sha256": "bcbe71ae0d697a487789a625eec3684ef4de9d13758ee0d75833523659331f22"
+      "path": "asl/arch/data-types/memory-model.asl",
+      "sha256": "4012f50d5019f5692d8eb2f31ff0ce58f133a3763163e47cf760bed6a2ebbf67"
+    },
+    {
+      "path": "asl/arch/data-types/memory-operations.asl",
+      "sha256": "5213fbde30b1e6cc67f9676e0f0e478a21a04e89853c73e7a2bac7723901d07a"
+    },
+    {
+      "path": "asl/arch/data-types/numeric-classification.asl",
+      "sha256": "0c592e04bf159e15822c47f085dac61066c78a20a33c887665ae46f3053a5a7a"
+    },
+    {
+      "path": "asl/arch/data-types/packed.asl",
+      "sha256": "4ec9fb1eb2d1b14dcba562a5dc1462724c407fa67e5887ac99eb919887777d42"
+    },
+    {
+      "path": "asl/arch/data-types/rounding.asl",
+      "sha256": "6763b6bc65185550a466412faac96fc23438e6f97b85f1b2b84f951f47e407ee"
+    },
+    {
+      "path": "asl/arch/data-types/system-registers.asl",
+      "sha256": "db06b148c04403903c1973f696eb2c23ce49f2c29279d6b2412a083d4ed7d02e"
+    },
+    {
+      "path": "asl/arch/data-types/tile-data-types.asl",
+      "sha256": "40afc7c9304a83307fe7abfcca2a0f9cc82998872b2349250132b81f51f564cc"
+    },
+    {
+      "path": "asl/arch/data-types/trap-context.asl",
+      "sha256": "b7183d7eb28289b128c842e2f806c5cf4ff95151e24e64799d689f6410faaafd"
+    },
+    {
+      "path": "asl/arch/programming-model/core-pe-topology.asl",
+      "sha256": "c853880ad3f2ae01d392a8c05f267d59c5f18f6097047c7e7ef493a384dc3aa1"
+    },
+    {
+      "path": "asl/arch/programming-model/execution-context.asl",
+      "sha256": "194201d793d088d71f35c24f5dd55a4ac5690611590675fac63a92b3651c23b5"
+    },
+    {
+      "path": "asl/arch/programming-model/predicate-registers.asl",
+      "sha256": "bafebd4a517aeb823c6d3ea13b27bc641d2c7112f37d0e90992010cad28abf32"
+    },
+    {
+      "path": "asl/arch/programming-model/scalar-registers.asl",
+      "sha256": "817ffd11125744b74151581b2b9473c119360552a7edcbc119cbfbbe7a503b8d"
+    },
+    {
+      "path": "asl/arch/programming-model/shared-tile-registers.asl",
+      "sha256": "b2802d0449740f79b0bf311ad5c70b1daed25eb232db303a0701d49704aa0e32"
+    },
+    {
+      "path": "asl/arch/programming-model/tile-registers.asl",
+      "sha256": "59452d3b3b708dc43f6ec4f930b1c7153d6d5247a93119669527bd29b26ec99e"
+    },
+    {
+      "path": "asl/arch/state/definedness.asl",
+      "sha256": "f68778534d67e736f701f8e24e03f27a018f3eabcec1421a6b33856030874ad1"
+    },
+    {
+      "path": "asl/arch/state/execution-mask.asl",
+      "sha256": "51a254d35125aee7bd16b280372c08ff4efa6c4346cff788e7fa5885f080d818"
+    },
+    {
+      "path": "asl/arch/state/program-counter.asl",
+      "sha256": "b44e6dc2c3fe1a2adad5c54b0ef03e8c66284f50fd7b928728f12425a1229fdd"
+    },
+    {
+      "path": "asl/arch/state/tile-descriptor.asl",
+      "sha256": "52604c09f7171f5f530755929970b499296d3ce84a5ee337d7bc8c63eb8d7913"
+    },
+    {
+      "path": "asl/arch/state/trap-context.asl",
+      "sha256": "47735dfa7d6e8cfc37541862c366fc4f943d96bd8c53cf167c18258736cc3b20"
+    },
+    {
+      "path": "asl/arch/system-registers/access-control.asl",
+      "sha256": "5568aafbebbb95f836a3d16248aac97d3adda0c6c703cab299326af42ededcfc"
+    },
+    {
+      "path": "asl/arch/system-registers/addressing.asl",
+      "sha256": "72be30cd3a00417169e72f6c192e134f0d182d338af1531a96ab0ca27236588f"
+    },
+    {
+      "path": "asl/arch/system-registers/context.asl",
+      "sha256": "fce36d38b7ace9dfb7d4ca29f1d23c1d5592e36ae2fc9f37916220d558826ec8"
+    },
+    {
+      "path": "asl/arch/system-registers/interrupt.asl",
+      "sha256": "e6345438abc05f0679006408fcd31cffbede314d8c112f37d4b4dbb88ce71c17"
+    },
+    {
+      "path": "asl/arch/system-registers/maintenance.asl",
+      "sha256": "c69cc578f4021c416643dd2b5f608855ef9bfe89d7c280a574dff09783b9b5af"
+    },
+    {
+      "path": "asl/arch/system-registers/timer.asl",
+      "sha256": "edcc66926cf5335ae695691a7da437335341d7736c07b38b48e2905e9172d83b"
+    },
+    {
+      "path": "asl/arch/profile/applicability.asl",
+      "sha256": "7d4eb33f24fe8d7a80ff480d367d07969dd915ef9a6d44d886db0730bcf848ca"
+    },
+    {
+      "path": "asl/arch/profile/reference-profile.asl",
+      "sha256": "36571f279ea941f313648e70ee09181160782c69dffac8ad8e432cce27a05614"
+    },
+    {
+      "path": "asl/arch/profile/reset.asl",
+      "sha256": "7828cea919d7585796c97b4493aa48603e2119ab1053982ce31fb6fa8338aec5"
+    },
+    {
+      "path": "asl/scalar/model/sys/registers.asl",
+      "sha256": "0f438c08bfd24a5457089bfd524a7844531dc66c3c3bf9ade8f950ed7b31f03d"
     }
   ],
   "summary": {

@@ -322,7 +322,7 @@
     {
       "name": "FloatingExponential",
       "role": "numeric-library-helper-no-decoded-operation",
-      "model": "asl/scalar/floating.asl",
+      "model": "asl/scalar/model/fsu/arithmetic.asl",
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": []
@@ -330,7 +330,7 @@
     {
       "name": "FloatingRoundNearest",
       "role": "numeric-library-helper-no-decoded-operation",
-      "model": "asl/scalar/floating.asl",
+      "model": "asl/scalar/model/fsu/arithmetic.asl",
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": []
@@ -338,7 +338,7 @@
     {
       "name": "ScalarFPBinaryProfile",
       "role": "portable-profile-boundary",
-      "model": "asl/scalar/floating.asl",
+      "model": "asl/scalar/model/fsu/profile.asl",
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -351,7 +351,7 @@
     {
       "name": "ScalarFPConvertProfile",
       "role": "portable-profile-boundary",
-      "model": "asl/scalar/floating.asl",
+      "model": "asl/scalar/model/fsu/profile.asl",
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -361,7 +361,7 @@
     {
       "name": "ScalarFPFusedProfile",
       "role": "portable-profile-boundary",
-      "model": "asl/scalar/floating.asl",
+      "model": "asl/scalar/model/fsu/profile.asl",
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -374,7 +374,7 @@
     {
       "name": "ScalarFPToIntegerProfile",
       "role": "portable-profile-boundary",
-      "model": "asl/scalar/floating.asl",
+      "model": "asl/scalar/model/fsu/profile.asl",
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -388,7 +388,7 @@
     {
       "name": "ScalarFPUnaryProfile",
       "role": "portable-profile-boundary",
-      "model": "asl/scalar/floating.asl",
+      "model": "asl/scalar/model/fsu/profile.asl",
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -400,7 +400,7 @@
     {
       "name": "ScalarIntegerToFPProfile",
       "role": "portable-profile-boundary",
-      "model": "asl/scalar/floating.asl",
+      "model": "asl/scalar/model/fsu/profile.asl",
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -411,7 +411,7 @@
     {
       "name": "TileExpDifference",
       "role": "pto-v0-reference-helper",
-      "model": "asl/tile/expansion.asl",
+      "model": "asl/tile/model/execution/expansion.asl",
       "requirement": "PTO-REQ-TEPL-EXPAND-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -422,7 +422,7 @@
     {
       "name": "TileExponential",
       "role": "pto-v0-reference-helper",
-      "model": "asl/tile/elementwise.asl",
+      "model": "asl/tile/model/execution/elementwise.asl",
       "requirement": "PTO-REQ-TEPL-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -432,7 +432,7 @@
     {
       "name": "TileLogarithm",
       "role": "pto-v0-reference-helper",
-      "model": "asl/tile/elementwise.asl",
+      "model": "asl/tile/model/execution/elementwise.asl",
       "requirement": "PTO-REQ-TEPL-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -442,7 +442,7 @@
     {
       "name": "TileProfileBinary",
       "role": "portable-profile-boundary",
-      "model": "asl/tile/elementwise.asl",
+      "model": "asl/tile/model/execution/elementwise.asl",
       "requirement": "PTO-REQ-TEPL-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -475,7 +475,7 @@
     {
       "name": "TileProfileCompare",
       "role": "portable-profile-boundary",
-      "model": "asl/tile/elementwise.asl",
+      "model": "asl/tile/model/execution/elementwise.asl",
       "requirement": "PTO-REQ-TEPL-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -486,7 +486,7 @@
     {
       "name": "TileProfileConvert",
       "role": "portable-profile-boundary",
-      "model": "asl/tile/conversion.asl",
+      "model": "asl/tile/model/numeric/formats.asl",
       "requirement": "PTO-REQ-TEPL-CONVERT-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -496,7 +496,7 @@
     {
       "name": "TileProfileDequantize",
       "role": "portable-profile-boundary",
-      "model": "asl/tile/conversion.asl",
+      "model": "asl/tile/model/numeric/formats.asl",
       "requirement": "PTO-REQ-TEPL-CONVERT-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -506,7 +506,7 @@
     {
       "name": "TileProfileExpand",
       "role": "portable-profile-boundary",
-      "model": "asl/tile/expansion.asl",
+      "model": "asl/tile/model/execution/expansion.asl",
       "requirement": "PTO-REQ-TEPL-EXPAND-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -531,7 +531,7 @@
     {
       "name": "TileProfileMatrixAccumulate",
       "role": "portable-profile-boundary",
-      "model": "asl/tile/cube.asl",
+      "model": "asl/tile/model/execution/cube.asl",
       "requirement": "PTO-REQ-CUBE-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -553,7 +553,7 @@
     {
       "name": "TileProfileMatrixBias",
       "role": "portable-profile-boundary",
-      "model": "asl/tile/cube.asl",
+      "model": "asl/tile/model/execution/cube.asl",
       "requirement": "PTO-REQ-CUBE-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -566,7 +566,7 @@
     {
       "name": "TileProfileMatrixScaledAccumulate",
       "role": "portable-profile-boundary",
-      "model": "asl/tile/cube.asl",
+      "model": "asl/tile/model/execution/cube.asl",
       "requirement": "PTO-REQ-CUBE-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -581,7 +581,7 @@
     {
       "name": "TileProfileOrderLeft",
       "role": "portable-profile-boundary",
-      "model": "asl/tile/complex.asl",
+      "model": "asl/tile/model/execution/complex.asl",
       "requirement": "PTO-REQ-TEPL-COMPLEX-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -592,7 +592,7 @@
     {
       "name": "TileProfileValueIsNaN",
       "role": "portable-profile-boundary",
-      "model": "asl/tile/complex.asl",
+      "model": "asl/tile/model/execution/complex.asl",
       "requirement": "PTO-REQ-TEPL-COMPLEX-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -603,7 +603,7 @@
     {
       "name": "TileProfilePartialValue",
       "role": "portable-profile-boundary",
-      "model": "asl/tile/complex.asl",
+      "model": "asl/tile/model/execution/complex.asl",
       "requirement": "PTO-REQ-TEPL-COMPLEX-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -616,7 +616,7 @@
     {
       "name": "TileProfileQuantize",
       "role": "portable-profile-boundary",
-      "model": "asl/tile/conversion.asl",
+      "model": "asl/tile/model/numeric/formats.asl",
       "requirement": "PTO-REQ-TEPL-CONVERT-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -626,7 +626,7 @@
     {
       "name": "TileProfileReductionInitial",
       "role": "portable-profile-boundary",
-      "model": "asl/tile/reduction.asl",
+      "model": "asl/tile/model/execution/reduction.asl",
       "requirement": "PTO-REQ-TEPL-REDUCE-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -647,7 +647,7 @@
     {
       "name": "TileProfileReductionStep",
       "role": "portable-profile-boundary",
-      "model": "asl/tile/reduction.asl",
+      "model": "asl/tile/model/execution/reduction.asl",
       "requirement": "PTO-REQ-TEPL-REDUCE-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -668,7 +668,7 @@
     {
       "name": "TileProfileUnary",
       "role": "portable-profile-boundary",
-      "model": "asl/tile/elementwise.asl",
+      "model": "asl/tile/model/execution/elementwise.asl",
       "requirement": "PTO-REQ-TEPL-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -686,7 +686,7 @@
     {
       "name": "TileReciprocal",
       "role": "pto-v0-reference-helper",
-      "model": "asl/tile/elementwise.asl",
+      "model": "asl/tile/model/execution/elementwise.asl",
       "requirement": "PTO-REQ-TEPL-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -697,7 +697,7 @@
     {
       "name": "TileSquareRoot",
       "role": "pto-v0-reference-helper",
-      "model": "asl/tile/elementwise.asl",
+      "model": "asl/tile/model/execution/elementwise.asl",
       "requirement": "PTO-REQ-TEPL-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [

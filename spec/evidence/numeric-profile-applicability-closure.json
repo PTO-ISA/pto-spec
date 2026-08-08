@@ -3,7 +3,7 @@
   "artifact_id": "numeric-profile-applicability-closure",
   "target": "S5-T2-A3:PD-01",
   "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
-  "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
+  "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md",
   "policy": {
     "support_boundary": "Applicability rules decide whether a profile supports an operation/type tuple. They do not define numeric result semantics.",
     "rejection_boundary": "The six A2/A3 MX CUBE rules reject with IllegalInstruction before operand legality, handler dispatch, or operation effects.",
@@ -41,7 +41,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -66,7 +66,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -91,7 +91,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -116,7 +116,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -141,7 +141,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -166,7 +166,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
     }
   ],
   "expanded_tuples": [
@@ -5136,7 +5136,7 @@
       "selection": "Requires a complete A2A3 operation/type legality matrix and one accepted result rule for every supported tuple.",
       "relation_to_pto_v0": "Future alternative target profile distinct from pto-v0; pto-v0 raw-carrier results are not inherited as hardware arithmetic.",
       "rule_status": "decision-required",
-      "acceptance_record": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
+      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
       "source_ids": [
         "public-portability-rules",
         "public-target-profiles",
@@ -5238,11 +5238,11 @@
     "guard_generator": "scripts/generate-asl-decoders",
     "guard_symbol": "TileOperationRejectedByAcceptedApplicabilityRules",
     "rule_set_type": {
-      "path": "asl/types.asl",
+      "path": "asl/arch/data-types/rounding.asl",
       "symbol": "NumericApplicabilityRuleSet"
     },
     "bundle_guard": {
-      "path": "asl/bundle/dispatch.asl",
+      "path": "asl/block/model/dispatch/descriptor-legality.asl",
       "symbol": "BundleOperationDescriptorRejectedByAcceptedApplicabilityRules"
     },
     "direct_test": {
@@ -5261,27 +5261,27 @@
   "source_hashes": [
     {
       "path": "spec/catalog/numeric-profile-applicability.json",
-      "sha256": "567127cf30879734e81a7664ff2db9e25b3c2a8539444c65fbcff25fcb284902"
+      "sha256": "9a2d9cd56cf69ab33af53591cf8b6f32851ed21467173fe72a70360d3c37bb91"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
-      "sha256": "f2bf1bcfa9e6ce1006132ac6d9aec4a8c698990a20eeb7736d361d62ed6477ed"
+      "sha256": "05752d689ec6b73fe008804fdea50a94eed2048c6b7d19f065b722e80a8767ef"
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "74f4524fe5505335bf5c7855170ebe18aa9e3b85c34068b2ecd15049a3363134"
+      "sha256": "e1c60c6acab2beffca2cc8ff9c24392ace035f01df19dca482a93876866908c8"
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "ae4b08f8b59118e447e52e2f6f41dd2d9323483c24931479245f1c367ea49b67"
+      "sha256": "572ffe3fefce946057590312872387272b414414030bba6e7e6c0cc6cecb820a"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "7bd2bfa673c449813d4cf27ae22612d2ca15d20498b6551e514ff4e1d6d40919"
+      "sha256": "75f6b9d725c47ff06026b4ba7dde7be0e5d1892f2e9b955223602fb2bae402fe"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "94d48007a9082fae64a0ec0a089f3ab146afe5f8a3b3b4a859ccfaa41519ef03"
+      "sha256": "ec9e3f2ef160cf84391c1ff38201098642e60b1c3449df2746dd9ab738605c96"
     },
     {
       "path": "spec/evidence/public-source-reconciliation.json",
@@ -5289,30 +5289,114 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "122166c233403dc30c49a3a3d274c21f0ce9ea1fddad1f55871659ef25a1f22b"
+      "sha256": "10e8bcfed47aee24719038ec07ecefe75aeaf342a0765cb15308da584242e1b8"
     },
     {
       "path": "scripts/generate-asl-decoders",
-      "sha256": "a3c7c74a4bad788f40ec894741986349c2fb41de08cd5be0cdc82ba008913097"
+      "sha256": "224b9a18137be2748d050bcd196d5e6c87c7264b400c3a4bb26fbc6a88697bb5"
     },
     {
-      "path": "asl/types.asl",
-      "sha256": "1018ae49c0ef3a3e1bb15f452446f6606f5c825e01e528ea42c6a8a32c031ae9"
+      "path": "asl/arch/data-types/fault.asl",
+      "sha256": "e3a280e7acf0e582d6f777dee4c5295747a518a505d93e1e3118661f0b561d92"
     },
     {
-      "path": "asl/bundle/dispatch.asl",
-      "sha256": "300001357e41aa68f4c2913d7d9591d7959020552e7927af0fa0c1e19bc799c9"
+      "path": "asl/arch/data-types/floating-point.asl",
+      "sha256": "9232fffb96d16c57168252188147ad98d4be027780b5cacd926acbd3915e4dc2"
+    },
+    {
+      "path": "asl/arch/data-types/integer.asl",
+      "sha256": "ee412e917aca73b90cf0729bb05b6ee8eba9d636dd87bd01c3d49481fbb6de39"
+    },
+    {
+      "path": "asl/arch/data-types/memory-model.asl",
+      "sha256": "4012f50d5019f5692d8eb2f31ff0ce58f133a3763163e47cf760bed6a2ebbf67"
+    },
+    {
+      "path": "asl/arch/data-types/memory-operations.asl",
+      "sha256": "5213fbde30b1e6cc67f9676e0f0e478a21a04e89853c73e7a2bac7723901d07a"
+    },
+    {
+      "path": "asl/arch/data-types/numeric-classification.asl",
+      "sha256": "0c592e04bf159e15822c47f085dac61066c78a20a33c887665ae46f3053a5a7a"
+    },
+    {
+      "path": "asl/arch/data-types/packed.asl",
+      "sha256": "4ec9fb1eb2d1b14dcba562a5dc1462724c407fa67e5887ac99eb919887777d42"
+    },
+    {
+      "path": "asl/arch/data-types/rounding.asl",
+      "sha256": "6763b6bc65185550a466412faac96fc23438e6f97b85f1b2b84f951f47e407ee"
+    },
+    {
+      "path": "asl/arch/data-types/system-registers.asl",
+      "sha256": "db06b148c04403903c1973f696eb2c23ce49f2c29279d6b2412a083d4ed7d02e"
+    },
+    {
+      "path": "asl/arch/data-types/tile-data-types.asl",
+      "sha256": "40afc7c9304a83307fe7abfcca2a0f9cc82998872b2349250132b81f51f564cc"
+    },
+    {
+      "path": "asl/arch/data-types/trap-context.asl",
+      "sha256": "b7183d7eb28289b128c842e2f806c5cf4ff95151e24e64799d689f6410faaafd"
+    },
+    {
+      "path": "asl/block/model/dispatch/commands.asl",
+      "sha256": "32ec82f164b68e70527b7699ffabd4a6441f4601eca6c738247436177cfac034"
+    },
+    {
+      "path": "asl/block/model/dispatch/decode.asl",
+      "sha256": "bc8ac47d3ff1a6008b8041ec2f030933a2e35ee3143d7d029f2daa38cb22b555"
+    },
+    {
+      "path": "asl/block/model/dispatch/descriptor-legality.asl",
+      "sha256": "1f8af32320adbca3ab304f23f49ff0c7956960b51071c9d7a79fb6d1874c6575"
+    },
+    {
+      "path": "asl/block/model/dispatch/destination-shape.asl",
+      "sha256": "776b2d3438434ffd48f48fba2eec4aa8cd22ea5745712300db6a5d8e816d494d"
+    },
+    {
+      "path": "asl/block/model/dispatch/numeric-control.asl",
+      "sha256": "9daca978ecd21d83f7be11e4532c4eaa3db5cdbf5562833e7dfd93fcb29c3e33"
+    },
+    {
+      "path": "asl/block/model/dispatch/scalar-schema.asl",
+      "sha256": "59e466c059b1d7aac880ba3bede340d9deed8ffa87356b1c1a8ce05f09a4e6b4"
+    },
+    {
+      "path": "asl/block/model/dispatch/shared-cube.asl",
+      "sha256": "a6994836c697d0216b916751ee044ce27dede62e31af002ed7510b213409da33"
+    },
+    {
+      "path": "asl/block/model/dispatch/shared-tlsu.asl",
+      "sha256": "976bf66d12eca3a672dceb8cc139f91fe0a39d361b0f41fd1d9bb230de5ecb88"
+    },
+    {
+      "path": "asl/block/model/dispatch/start.asl",
+      "sha256": "81a6f6b2d119419f9ba89e51607bce4206104ffcb85cb77e08a4e4a241eea14d"
+    },
+    {
+      "path": "asl/block/model/dispatch/tile-execution.asl",
+      "sha256": "ec6512a4206c948b8163657d814054c4f90d1622b96870489c6c1ca99fba3645"
+    },
+    {
+      "path": "asl/block/model/dispatch/tile-schema.asl",
+      "sha256": "dcaef41e2839b30122b7a9a725da3689595e8e87808e80e5a128935c4d51b890"
+    },
+    {
+      "path": "asl/block/model/dispatch/top-level.asl",
+      "sha256": "1f154fe66c4d09c8981a7166c18b8f2cd1313c258e9630c418d0d9e0922f0043"
     },
     {
       "path": "tests/asl/bundle-tests.asl",
-      "sha256": "a19618ea54775f4e4013cd8f84f51ddde1391222275e718ab491322b37386ed5"
+      "sha256": "818a99cde7fa3ee4a9ab098abe5feb46522aa1c14ba11bb0473db7ce9c59ab39"
     },
     {
       "path": "tests/asl/cube-totality-tests.asl",
       "sha256": "64f0185ecacc2e6963168c289fc4c296d6b92bb40f8b6f99be41cd2ea8b6925c"
     },
     {
-      "path": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
+      "path": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md",
       "sha256": "5eb62cb56c0af0cc7c4485c018683f0799b1d7fa7bcd262d46002b190cf33262"
     }
   ],

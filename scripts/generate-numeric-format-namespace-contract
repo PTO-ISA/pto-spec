@@ -6,12 +6,18 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from collections import Counter
 from pathlib import Path
 from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.evidence_sources import source_rows  # noqa: E402
+
 DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
 SCALAR_FSU_TOTALITY = ROOT / "spec/evidence/scalar-fsu-totality.json"
 TLSU_TOTALITY = ROOT / "spec/evidence/tlsu-totality.json"
@@ -20,29 +26,70 @@ EXECUTABLE_COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
 HARDWARE_PROFILE = ROOT / "spec/hardware-conformance-profile.json"
 OUTPUT = ROOT / "spec/evidence/numeric-format-namespace-contract.json"
 ACCEPTANCE_RECORD = (
-    "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md"
+    "docs/status/decisions/0040-numeric-format-namespace-ownership.md"
 )
 CLASSIFICATION_ACCEPTANCE_RECORD = (
-    "docs/architecture-decisions/0048-numeric-format-value-classification.md"
+    "docs/status/decisions/0048-numeric-format-value-classification.md"
 )
 
 NAN_CAPABLE_TYPES = {
-    "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "HiF8", "E4M3",
-    "E5M2", "E8M0",
+    "FP64",
+    "FP32",
+    "TF32",
+    "HF32",
+    "FP16",
+    "BF16",
+    "HiF8",
+    "E4M3",
+    "E5M2",
+    "E8M0",
 }
 INFINITY_CAPABLE_TYPES = {
-    "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "HiF8", "E5M2",
+    "FP64",
+    "FP32",
+    "TF32",
+    "HF32",
+    "FP16",
+    "BF16",
+    "HiF8",
+    "E5M2",
 }
 SUBNORMAL_CAPABLE_TYPES = {
-    "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "HiF8", "E4M3",
-    "E5M2", "E3M2", "E2M3",
+    "FP64",
+    "FP32",
+    "TF32",
+    "HF32",
+    "FP16",
+    "BF16",
+    "HiF8",
+    "E4M3",
+    "E5M2",
+    "E3M2",
+    "E2M3",
 }
 SIGNED_ZERO_TYPES = {
-    "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "E4M3", "E5M2",
-    "E3M2", "E2M3", "E2M1X2", "E1M2X2", "HiF4X2",
+    "FP64",
+    "FP32",
+    "TF32",
+    "HF32",
+    "FP16",
+    "BF16",
+    "E4M3",
+    "E5M2",
+    "E3M2",
+    "E2M3",
+    "E2M1X2",
+    "E1M2X2",
+    "HiF4X2",
 }
 SIGNALING_NAN_TYPES = {
-    "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "E5M2",
+    "FP64",
+    "FP32",
+    "TF32",
+    "HF32",
+    "FP16",
+    "BF16",
+    "E5M2",
 }
 INTERNAL_ENCODING_CONSTRAINTS = {
     "TF32": "bits[12:0] are zero",
@@ -63,10 +110,28 @@ TILE_DATA_TYPES = (
     ("E5M2", 8, "floating-raw-carrier", 8, "format-contract-defined-conformance-open"),
     ("E3M2", 8, "floating-raw-carrier", 9, "format-contract-defined-conformance-open"),
     ("E2M3", 8, "floating-raw-carrier", 10, "format-contract-defined-conformance-open"),
-    ("E2M1X2", 4, "packed-floating-raw-carrier", 11, "format-contract-defined-conformance-open"),
-    ("E1M2X2", 4, "packed-floating-raw-carrier", 12, "format-contract-defined-conformance-open"),
+    (
+        "E2M1X2",
+        4,
+        "packed-floating-raw-carrier",
+        11,
+        "format-contract-defined-conformance-open",
+    ),
+    (
+        "E1M2X2",
+        4,
+        "packed-floating-raw-carrier",
+        12,
+        "format-contract-defined-conformance-open",
+    ),
     ("E8M0", 8, "scale-raw-carrier", 13, "format-contract-defined-conformance-open"),
-    ("HiF4X2", 4, "packed-floating-raw-carrier", 14, "format-contract-defined-conformance-open"),
+    (
+        "HiF4X2",
+        4,
+        "packed-floating-raw-carrier",
+        14,
+        "format-contract-defined-conformance-open",
+    ),
     ("S64", 64, "signed-integer", 16, "width-and-signedness-closed"),
     ("S32", 32, "signed-integer", 17, "width-and-signedness-closed"),
     ("S16", 16, "signed-integer", 18, "width-and-signedness-closed"),
@@ -150,12 +215,8 @@ def generate() -> dict[str, Any]:
         for name, bits, raw_class, code, status in TILE_DATA_TYPES
     ]
 
-    tma_mapping = {
-        code: name for name, _, _, code, _ in TILE_DATA_TYPES
-    }
-    bundle_mapping = {
-        code: name for name, _, _, code, _ in TILE_DATA_TYPES
-    }
+    tma_mapping = {code: name for name, _, _, code, _ in TILE_DATA_TYPES}
+    bundle_mapping = {code: name for name, _, _, code, _ in TILE_DATA_TYPES}
     require(len(tma_mapping) == 25, "TLSU/TALLOC mapping count drift")
     require(len(bundle_mapping) == 25, "bundle mapping count drift")
     hardware_types = {
@@ -394,21 +455,21 @@ def generate() -> dict[str, Any]:
             source("spec/evidence/executable-model-comparison.json"),
             source("spec/hardware-conformance-profile.json"),
             source("spec/catalog/command-forms.json"),
-            source("asl/types.asl"),
-            source("asl/numeric/formats.asl"),
-            source("asl/scalar/floating.asl"),
-            source("asl/tile/state.asl"),
-            source("asl/tile/memory.asl"),
-            source("asl/bundle/dispatch.asl"),
+            *source_rows(ROOT, "asl/arch/data-types/*.asl"),
+            *source_rows(ROOT, "asl/tile/model/numeric/formats.asl"),
+            *source_rows(ROOT, "asl/scalar/model/fsu/*.asl"),
+            *source_rows(ROOT, "asl/tile/model/state/*.asl"),
+            *source_rows(ROOT, "asl/tile/model/memory/*.asl"),
+            *source_rows(ROOT, "asl/block/model/dispatch/*.asl"),
             source(
-                "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md"
+                "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md"
             ),
-            source("docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"),
+            source("docs/status/decisions/0033-tma-four-bit-memory-packing.md"),
             source(
-                "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+                "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
             ),
             source(
-                "docs/architecture-decisions/0048-numeric-format-value-classification.md"
+                "docs/status/decisions/0048-numeric-format-value-classification.md"
             ),
         ],
         "summary": {

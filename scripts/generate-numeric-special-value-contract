@@ -6,11 +6,17 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.evidence_sources import source_rows  # noqa: E402
+
 HARDWARE_PROFILE = ROOT / "spec/hardware-conformance-profile.json"
 FORMAT_CONTRACT = ROOT / "spec/evidence/numeric-format-namespace-contract.json"
 NUMERIC_CONTRACTS = ROOT / "spec/evidence/numeric-contracts.json"
@@ -18,7 +24,7 @@ SCALAR_FORMS = ROOT / "spec/catalog/scalar-forms.json"
 COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
 OUTPUT = ROOT / "spec/evidence/numeric-special-value-contract.json"
 ACCEPTANCE_RECORD = (
-    "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md"
+    "docs/status/decisions/0050-hardware-special-value-checkpoint.md"
 )
 PROFILE_ID = "pto-hardware-numeric-0.58.0-ieee-v1"
 
@@ -259,15 +265,17 @@ def generate() -> dict[str, Any]:
             ],
         },
         "sources": [
-            source("docs/architecture-decisions/0050-hardware-special-value-checkpoint.md"),
+            source(
+                "docs/status/decisions/0050-hardware-special-value-checkpoint.md"
+            ),
             source("spec/hardware-conformance-profile.json"),
             source("spec/evidence/numeric-format-namespace-contract.json"),
             source("spec/evidence/numeric-contracts.json"),
             source("spec/catalog/scalar-forms.json"),
             source("spec/evidence/executable-model-comparison.json"),
-            source("asl/numeric/formats.asl"),
-            source("asl/scalar/floating.asl"),
-            source("asl/scalar/dispatch.asl"),
+            *source_rows(ROOT, "asl/tile/model/numeric/formats.asl"),
+            *source_rows(ROOT, "asl/scalar/model/fsu/*.asl"),
+            *source_rows(ROOT, "asl/scalar/model/dispatch/*.asl"),
             source("tests/asl/profile-tests.asl"),
         ],
         "summary": {

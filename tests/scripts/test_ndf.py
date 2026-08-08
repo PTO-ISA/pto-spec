@@ -4,7 +4,12 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.ndf import check_repository, instruction_clause_id, parse_ndf_regions
+from scripts.ndf import (
+    check_repository,
+    instruction_clause_id,
+    is_allowed_legacy_path,
+    parse_ndf_regions,
+)
 
 
 VALID_CLAUSE = """// NDF-BEGIN: PTO-TILE-CAPACITY
@@ -86,17 +91,14 @@ class NdfTest(unittest.TestCase):
             check_repository(self.root),
         )
 
-    def test_rejects_normative_clause_outside_asl(self) -> None:
+    def test_legacy_markdown_ndf_marker_is_non_normative(self) -> None:
         self.write(
-            "docs/architecture.md",
+            "docs/status/legacy/root/architecture.md",
             "## Contract {#PTO-TILE-CAPACITY}\n"
             "<!-- ndf: kind=contract level=L1 layer=tile status=accepted -->\n",
         )
 
-        self.assertIn(
-            "docs/architecture.md: active NDF clause must be owned by ASL",
-            check_repository(self.root),
-        )
+        self.assertEqual(check_repository(self.root), [])
 
     def test_rejects_legacy_archive_and_backup_paths(self) -> None:
         self.write("docs/legacy/old.md", "old\n")
@@ -107,6 +109,30 @@ class NdfTest(unittest.TestCase):
         self.assertIn("forbidden legacy specification path: docs/legacy/old.md", errors)
         self.assertIn("forbidden legacy specification path: docs/archive/old.md", errors)
         self.assertIn("forbidden backup specification path: asl/tile/state.asl.bak", errors)
+
+    def test_status_legacy_is_allowed_as_nonnormative_storage(self) -> None:
+        self.write("docs/status/legacy/old.md", "# Historical\n")
+
+        self.assertTrue(is_allowed_legacy_path(Path("docs/status/legacy/old.md")))
+        self.assertEqual(check_repository(self.root), [])
+
+    def test_other_legacy_tree_is_not_allowed(self) -> None:
+        self.assertFalse(is_allowed_legacy_path(Path("docs/legacy/old.md")))
+
+    def test_normative_asl_reference_into_status_legacy_is_rejected(self) -> None:
+        self.write(
+            "asl/architecture.asl",
+            VALID_CLAUSE.replace(
+                "selected PE.",
+                "selected PE; see docs/status/legacy/old.md.",
+            ),
+        )
+        self.write("docs/status/legacy/old.md", "# Historical\n")
+
+        self.assertIn(
+            "asl/architecture.asl: normative reference targets non-normative legacy material",
+            check_repository(self.root),
+        )
 
     def test_accepts_asl_owned_clause(self) -> None:
         self.write("asl/architecture.asl", VALID_CLAUSE)

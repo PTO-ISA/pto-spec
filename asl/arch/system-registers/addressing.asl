@@ -1,0 +1,25 @@
+// PTO-UNIT: {"id":"PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING","surface":"arch","classification":["system-registers","addressing"],"depends_on":["PTO-ARCH-DATA-TYPES-TRAP-CONTEXT"]}
+type BaseSystemRegisterState of record {
+    thread_ptr: Word,
+    global_ptr: Word,
+    core_state: Word,
+    core_id: Word,
+    thread_id: Word,
+    vendor: Word,
+    version: Word,
+    core_feature: Word,
+    core_feature_enable: Word,
+    tile_capacity: Word,
+    blocknum: Word,
+    blockid: Word,
+    cycle: Word
+};
+
+var _SystemRegisters : BaseSystemRegisterState;
+
+impdef func ResetProfileState()
+begin
+    // Overridden by the active concrete profile.
+    _CurrentACR = 0;
+    _SystemRegisters.cycle = Zeros{PTO_XLEN};
+end;

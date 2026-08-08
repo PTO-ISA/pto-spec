@@ -26,11 +26,21 @@
     "13": "GMOV"
   },
   "evidence_files": [
-    "asl/tile/memory.asl",
-    "asl/tile/state.asl",
+    "asl/tile/model/memory/addressing.asl",
+    "asl/tile/model/memory/atomics.asl",
+    "asl/tile/model/memory/gather-scatter.asl",
+    "asl/tile/model/memory/load-store.asl",
+    "asl/tile/model/memory/restart.asl",
+    "asl/tile/model/memory/shared-movement.asl",
+    "asl/tile/model/memory/stride.asl",
+    "asl/tile/model/state/allocation.asl",
+    "asl/tile/model/state/descriptors.asl",
+    "asl/tile/model/state/local-registers.asl",
+    "asl/tile/model/state/shared-registers.asl",
+    "asl/tile/model/state/types.asl",
     "tests/asl/tlsu-totality-tests.asl",
-    "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
-    "docs/architecture-decisions/0053-pto-isa-0580-tile-operation-cleanup.md"
+    "docs/status/decisions/0033-tma-four-bit-memory-packing.md",
+    "docs/status/decisions/0053-pto-isa-0580-tile-operation-cleanup.md"
   ],
   "validation": [
     {

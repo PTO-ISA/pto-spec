@@ -35,7 +35,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -60,7 +60,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -85,7 +85,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -110,7 +110,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -135,7 +135,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -160,7 +160,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
     }
   ],
   "open_parent_decisions": [

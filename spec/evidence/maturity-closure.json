@@ -22,7 +22,7 @@
       "title": "Freeze the accepted architecture inventories"
     },
     {
-      "evidence": ["spec/evidence/maturity-closure.json", "scripts/check-catalogs", "docs/maturity-bringup-plan.md"],
+      "evidence": ["spec/evidence/maturity-closure.json", "scripts/check-catalogs", "docs/status/legacy/root/maturity-bringup-plan.md"],
       "gaps": [],
       "id": "S0-T2",
       "owner": "PTO architecture and formal-model maintainers",
@@ -32,7 +32,7 @@
       "title": "Classify and own every known maturity gap"
     },
     {
-      "evidence": ["README.md", "docs/coverage.md", "docs/maturity-bringup-plan.md", "specification.toml", "spec/requirements.json", "scripts/check-catalogs"],
+      "evidence": ["README.md", "docs/status/legacy/root/coverage.md", "docs/status/legacy/root/maturity-bringup-plan.md", "specification.toml", "spec/requirements.json", "scripts/check-catalogs"],
       "gaps": [],
       "id": "S0-T3",
       "owner": "PTO architecture and formal-model maintainers",
@@ -42,7 +42,7 @@
       "title": "Reconcile all published maturity claims"
     },
     {
-      "evidence": ["docs/architecture-decisions/0022-bundle-operation-descriptor-and-commit.md", "scripts/generate-asl-decoders", "tests/asl/bundle-tests.asl"],
+      "evidence": ["docs/status/decisions/0022-bundle-operation-descriptor-and-commit.md", "scripts/generate-asl-decoders", "tests/asl/bundle-tests.asl"],
       "gaps": [],
       "id": "S1-T1",
       "owner": "PTO bundle architecture maintainers",
@@ -52,7 +52,7 @@
       "title": "Bind every bundle start to an operation-bearing descriptor"
     },
     {
-      "evidence": ["docs/architecture-decisions/0022-bundle-operation-descriptor-and-commit.md", "tests/asl/bundle-tests.asl", "tests/asl/dispatch-tests.asl"],
+      "evidence": ["docs/status/decisions/0022-bundle-operation-descriptor-and-commit.md", "tests/asl/bundle-tests.asl", "tests/asl/dispatch-tests.asl"],
       "gaps": [],
       "id": "S1-T2",
       "owner": "PTO bundle architecture maintainers",
@@ -72,7 +72,7 @@
       "title": "Close decoded effects for all 474 scalar forms"
     },
     {
-      "evidence": ["docs/architecture-decisions/0023-uniform-instruction-attempt-status.md", "tests/asl/dispatch-tests.asl", "scripts/generate-asl-decoders"],
+      "evidence": ["docs/status/decisions/0023-uniform-instruction-attempt-status.md", "tests/asl/dispatch-tests.asl", "scripts/generate-asl-decoders"],
       "gaps": [],
       "id": "S1-T4",
       "owner": "PTO architecture and formal-model maintainers",
@@ -92,7 +92,7 @@
       "title": "Bind all 109 direct tile selectors and operands"
     },
     {
-      "evidence": ["spec/catalog/system-registers.json", "docs/architecture-decisions/0017-system-register-behavior-classes.md", "tests/asl/state-tests.asl", "scripts/generate-asl-decoders"],
+      "evidence": ["spec/catalog/system-registers.json", "docs/status/decisions/0017-system-register-behavior-classes.md", "tests/asl/state-tests.asl", "scripts/generate-asl-decoders"],
       "gaps": [],
       "id": "S2-T1",
       "owner": "PTO system architecture maintainers",
@@ -102,7 +102,7 @@
       "title": "Close the 72-register visible state inventory"
     },
     {
-      "evidence": ["docs/architecture-decisions/0010-acr-routing-and-context-reset.md", "tests/asl/state-tests.asl", "tests/asl/profile-tests.asl"],
+      "evidence": ["docs/status/decisions/0010-acr-routing-and-context-reset.md", "tests/asl/state-tests.asl", "tests/asl/profile-tests.asl"],
       "gaps": [],
       "id": "S2-T2",
       "owner": "PTO system architecture maintainers",
@@ -112,7 +112,7 @@
       "title": "Define reset for all architectural state"
     },
     {
-      "evidence": ["docs/architecture-decisions/0018-pto-v0-trap-disposition.md", "spec/catalog/system-registers.json", "tests/asl/state-tests.asl"],
+      "evidence": ["docs/status/decisions/0018-pto-v0-trap-disposition.md", "spec/catalog/system-registers.json", "tests/asl/state-tests.asl"],
       "gaps": [],
       "id": "S2-T3",
       "owner": "PTO system architecture maintainers",
@@ -122,7 +122,7 @@
       "title": "Close all trap entry, routing, recovery, and no-trigger envelopes"
     },
     {
-      "evidence": ["docs/architecture-decisions/0046-separate-execution-mask-and-warp-predicates.md", "tests/asl/state-tests.asl", "tests/asl/bundle-tests.asl", "tests/asl/scalar-tests.asl", "tests/asl/profile-tests.asl"],
+      "evidence": ["docs/status/decisions/0046-separate-execution-mask-and-warp-predicates.md", "tests/asl/state-tests.asl", "tests/asl/bundle-tests.asl", "tests/asl/scalar-tests.asl", "tests/asl/profile-tests.asl"],
       "gaps": [],
       "id": "S2-T4",
       "owner": "PTO scalar architecture maintainers",
@@ -132,7 +132,7 @@
       "title": "Separate kernel execution-mask and warp-predicate state"
     },
     {
-      "evidence": ["docs/architecture-decisions/0013-tile-capacity-and-packed-storage.md", "tests/asl/state-tests.asl", "tests/asl/tile-tests.asl"],
+      "evidence": ["docs/status/decisions/0013-tile-capacity-and-packed-storage.md", "tests/asl/state-tests.asl", "tests/asl/tile-tests.asl"],
       "gaps": [],
       "id": "S2-T5",
       "owner": "PTO tile architecture maintainers",
@@ -142,7 +142,7 @@
       "title": "Close tile capacity and packed-storage legality"
     },
     {
-      "evidence": ["docs/architecture-decisions/0014-element-level-tile-definedness.md", "docs/architecture-decisions/0015-explicit-tile-handoff-slots.md", "tests/asl/tile-tests.asl"],
+      "evidence": ["docs/status/decisions/0014-element-level-tile-definedness.md", "docs/status/decisions/0015-explicit-tile-handoff-slots.md", "tests/asl/tile-tests.asl"],
       "gaps": [],
       "id": "S2-T6",
       "owner": "PTO tile architecture maintainers",
@@ -152,7 +152,7 @@
       "title": "Close tile definedness, layouts, aliases, and explicit handoff"
     },
     {
-      "evidence": ["docs/architecture-decisions/0020-production-memory-events-and-atomic-corners.md", "asl/concurrency.asl", "tests/asl/concurrency-tests.asl"],
+      "evidence": ["docs/status/decisions/0020-production-memory-events-and-atomic-corners.md", "asl/arch/memory-model/address-space.asl", "asl/arch/memory-model/atomicity.asl", "asl/arch/memory-model/fault-precision.asl", "asl/arch/memory-model/memory-events.asl", "asl/arch/memory-model/ordering.asl", "tests/asl/concurrency-tests.asl"],
       "gaps": [],
       "id": "S3-T1",
       "owner": "PTO memory-model maintainers",
@@ -162,7 +162,7 @@
       "title": "Connect production memory effects to PTO-TSO events"
     },
     {
-      "evidence": ["docs/architecture-decisions/0020-production-memory-events-and-atomic-corners.md", "tests/asl/concurrency-tests.asl", "tests/asl/scalar-tests.asl", "tests/asl/tile-tests.asl"],
+      "evidence": ["docs/status/decisions/0020-production-memory-events-and-atomic-corners.md", "tests/asl/concurrency-tests.asl", "tests/asl/scalar-tests.asl", "tests/asl/tile-tests.asl"],
       "gaps": [],
       "id": "S3-T2",
       "owner": "PTO memory-model maintainers",
@@ -172,7 +172,7 @@
       "title": "Close ordering, reservation, prefetch, gather-CAS, and mixed-size decisions"
     },
     {
-      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/scalar-agu-totality.json", "scripts/generate-asl-decoders", "tests/asl/main.asl", "tests/asl/scalar-tests.asl", "docs/architecture-decisions/0024-pc-relative-and-unscaled-agu-addressing.md", "docs/architecture-decisions/0029-scalar-agu-totality-and-restart.md"],
+      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/scalar-agu-totality.json", "scripts/generate-asl-decoders", "tests/asl/main.asl", "tests/asl/scalar-tests.asl", "docs/status/decisions/0024-pc-relative-and-unscaled-agu-addressing.md", "docs/status/decisions/0029-scalar-agu-totality-and-restart.md"],
       "gaps": [],
       "id": "S4-T1",
       "owner": "PTO scalar memory architecture maintainers",
@@ -182,7 +182,7 @@
       "title": "Close AGU reference semantics"
     },
     {
-      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/scalar-alu-totality.json", "scripts/generate-asl-decoders", "tests/asl/scalar-tests.asl", "docs/architecture-decisions/0025-scalar-bitfield-and-reverse-bounds.md", "docs/architecture-decisions/0026-scalar-alu-totality-and-alias-order.md"],
+      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/scalar-alu-totality.json", "scripts/generate-asl-decoders", "tests/asl/scalar-tests.asl", "docs/status/decisions/0025-scalar-bitfield-and-reverse-bounds.md", "docs/status/decisions/0026-scalar-alu-totality-and-alias-order.md"],
       "gaps": [],
       "id": "S4-T2",
       "owner": "PTO scalar arithmetic architecture maintainers",
@@ -192,7 +192,7 @@
       "title": "Close ALU reference semantics"
     },
     {
-      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/scalar-amo-totality.json", "scripts/generate-asl-decoders", "tests/asl/main.asl", "tests/asl/scalar-tests.asl", "tests/asl/concurrency-tests.asl", "docs/architecture-decisions/0020-production-memory-events-and-atomic-corners.md", "docs/architecture-decisions/0030-scalar-amo-totality-and-reservation.md"],
+      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/scalar-amo-totality.json", "scripts/generate-asl-decoders", "tests/asl/main.asl", "tests/asl/scalar-tests.asl", "tests/asl/concurrency-tests.asl", "docs/status/decisions/0020-production-memory-events-and-atomic-corners.md", "docs/status/decisions/0030-scalar-amo-totality-and-reservation.md"],
       "gaps": [],
       "id": "S4-T3",
       "owner": "PTO scalar atomic and memory-model maintainers",
@@ -202,7 +202,7 @@
       "title": "Close AMO reference semantics"
     },
     {
-      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/scalar-bru-totality.json", "scripts/generate-asl-decoders", "tests/asl/scalar-tests.asl", "tests/asl/bundle-tests.asl", "docs/architecture-decisions/0021-scalar-pc-relative-and-return-address.md", "docs/architecture-decisions/0027-scalar-bru-totality-and-target-legality.md"],
+      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/scalar-bru-totality.json", "scripts/generate-asl-decoders", "tests/asl/scalar-tests.asl", "tests/asl/bundle-tests.asl", "docs/status/decisions/0021-scalar-pc-relative-and-return-address.md", "docs/status/decisions/0027-scalar-bru-totality-and-target-legality.md"],
       "gaps": [],
       "id": "S4-T4",
       "owner": "PTO scalar control architecture maintainers",
@@ -212,7 +212,7 @@
       "title": "Close BRU reference semantics"
     },
     {
-      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/scalar-fsu-totality.json", "scripts/generate-asl-decoders", "tests/asl/main.asl", "spec/profile-hooks.json", "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md"],
+      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/scalar-fsu-totality.json", "scripts/generate-asl-decoders", "tests/asl/main.asl", "spec/profile-hooks.json", "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md"],
       "gaps": [],
       "id": "S4-T5",
       "owner": "PTO scalar numeric architecture maintainers",
@@ -222,7 +222,7 @@
       "title": "Close FSU reference semantics and its profile boundary"
     },
     {
-      "evidence": ["spec/catalog/system-registers.json", "spec/evidence/scalar-effect-closure.json", "spec/evidence/scalar-sys-totality.json", "scripts/generate-asl-decoders", "tests/asl/main.asl", "tests/asl/state-tests.asl", "tests/asl/scalar-tests.asl", "docs/architecture-decisions/0012-acrc-service-request.md", "docs/architecture-decisions/0017-system-register-behavior-classes.md", "docs/architecture-decisions/0018-pto-v0-trap-disposition.md", "docs/architecture-decisions/0031-scalar-sys-totality-and-profile-boundaries.md"],
+      "evidence": ["spec/catalog/system-registers.json", "spec/evidence/scalar-effect-closure.json", "spec/evidence/scalar-sys-totality.json", "scripts/generate-asl-decoders", "tests/asl/main.asl", "tests/asl/state-tests.asl", "tests/asl/scalar-tests.asl", "docs/status/decisions/0012-acrc-service-request.md", "docs/status/decisions/0017-system-register-behavior-classes.md", "docs/status/decisions/0018-pto-v0-trap-disposition.md", "docs/status/decisions/0031-scalar-sys-totality-and-profile-boundaries.md"],
       "gaps": [],
       "id": "S4-T6",
       "owner": "PTO system and privilege architecture maintainers",
@@ -232,7 +232,7 @@
       "title": "Close SYS and system-register instruction semantics"
     },
     {
-      "evidence": ["spec/catalog/command-forms.json", "scripts/generate-asl-decoders", "scripts/generate-bundle-command-totality", "spec/evidence/bundle-command-totality.json", "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md", "tests/asl/bundle-tests.asl"],
+      "evidence": ["spec/catalog/command-forms.json", "scripts/generate-asl-decoders", "scripts/generate-bundle-command-totality", "spec/evidence/bundle-command-totality.json", "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md", "tests/asl/bundle-tests.asl"],
       "gaps": [],
       "id": "S4-T7",
       "owner": "PTO bundle architecture maintainers",
@@ -242,7 +242,7 @@
       "title": "Close all bundle-command semantics"
     },
     {
-      "evidence": ["spec/catalog/tile-operations.json", "spec/evidence/tepl-totality.json", "scripts/generate-asl-decoders", "tests/asl/tile-tests.asl", "tests/asl/tepl-totality-tests.asl", "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"],
+      "evidence": ["spec/catalog/tile-operations.json", "spec/evidence/tepl-totality.json", "scripts/generate-asl-decoders", "tests/asl/tile-tests.asl", "tests/asl/tepl-totality-tests.asl", "docs/status/decisions/0035-tepl-raw-carrier-totality.md"],
       "gaps": [],
       "id": "S4-T8",
       "owner": "PTO tile element architecture maintainers",
@@ -252,7 +252,7 @@
       "title": "Close TEPL reference semantics"
     },
     {
-      "evidence": ["spec/catalog/tile-operations.json", "asl/tile/memory.asl", "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md", "spec/evidence/tlsu-totality.json", "tests/asl/tile-tests.asl", "tests/asl/tlsu-totality-tests.asl", "tests/asl/concurrency-tests.asl"],
+      "evidence": ["spec/catalog/tile-operations.json", "asl/tile/model/memory/addressing.asl", "asl/tile/model/memory/atomics.asl", "asl/tile/model/memory/gather-scatter.asl", "asl/tile/model/memory/load-store.asl", "asl/tile/model/memory/restart.asl", "asl/tile/model/memory/shared-movement.asl", "asl/tile/model/memory/stride.asl", "docs/status/decisions/0033-tma-four-bit-memory-packing.md", "spec/evidence/tlsu-totality.json", "tests/asl/tile-tests.asl", "tests/asl/tlsu-totality-tests.asl", "tests/asl/concurrency-tests.asl"],
       "gaps": [],
       "id": "S4-T9",
       "owner": "PTO tile memory and memory-model maintainers",
@@ -262,7 +262,7 @@
       "title": "Close TLSU reference semantics"
     },
     {
-      "evidence": ["spec/catalog/tile-operations.json", "asl/tile/cube.asl", "asl/tile/legality.asl", "docs/architecture-decisions/0034-cube-raw-carrier-totality.md", "spec/evidence/cube-totality.json", "tests/asl/cube-totality-tests.asl", "tests/asl/tile-tests.asl"],
+      "evidence": ["spec/catalog/tile-operations.json", "asl/tile/model/execution/cube.asl", "asl/tile/model/legality/allocation-capacity.asl", "asl/tile/model/legality/descriptor-shape.asl", "asl/tile/model/legality/dtype-layout.asl", "asl/tile/model/legality/indexed-layout.asl", "asl/tile/model/legality/matrix-shape.asl", "asl/tile/model/legality/memory-schema.asl", "asl/tile/model/legality/operand-schema.asl", "asl/tile/model/legality/pe-mask.asl", "docs/status/decisions/0034-cube-raw-carrier-totality.md", "spec/evidence/cube-totality.json", "tests/asl/cube-totality-tests.asl", "tests/asl/tile-tests.asl"],
       "gaps": [],
       "id": "S4-T10",
       "owner": "PTO matrix architecture maintainers",
@@ -272,7 +272,7 @@
       "title": "Close CUBE reference semantics"
     },
     {
-      "evidence": ["spec/evidence/numeric-contracts.json", "spec/profile-hooks.json", "docs/profile-contracts.md", "scripts/check-catalogs"],
+      "evidence": ["spec/evidence/numeric-contracts.json", "spec/profile-hooks.json", "docs/status/legacy/root/profile-contracts.md", "scripts/check-catalogs"],
       "gaps": [],
       "id": "S5-T1",
       "owner": "PTO numeric architecture maintainers",
@@ -282,7 +282,7 @@
       "title": "Own every target-dependent numeric contract"
     },
     {
-      "evidence": ["spec/evidence/numeric-contracts.json", "spec/evidence/numeric-conformance-readiness.json", "scripts/generate-numeric-conformance-readiness", "spec/evidence/numeric-profile-decision-inputs.json", "scripts/generate-numeric-profile-decision-inputs", "spec/evidence/numeric-profile-decision-proposals.json", "scripts/generate-numeric-profile-decision-proposals", "spec/catalog/numeric-profile-identities.json", "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md", "spec/evidence/scalar-numeric-flag-contract.json", "scripts/generate-scalar-numeric-flag-contract", "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md", "spec/evidence/numeric-rounding-selector-contract.json", "scripts/generate-numeric-rounding-selector-contract", "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md", "docs/architecture-decisions/0047-numeric-rounding-semantics.md", "spec/evidence/numeric-format-namespace-contract.json", "scripts/generate-numeric-format-namespace-contract", "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md", "docs/architecture-decisions/0048-numeric-format-value-classification.md", "asl/numeric/formats.asl", "spec/evidence/numeric-special-value-contract.json", "scripts/generate-numeric-special-value-contract", "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md", "spec/catalog/numeric-profile-applicability.json", "spec/evidence/numeric-profile-applicability-closure.json", "scripts/generate-numeric-profile-applicability-closure", "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md", "spec/evidence/numeric-variation-point-ownership.json", "scripts/generate-numeric-variation-point-ownership", "docs/architecture-decisions/0042-numeric-variation-point-ownership.md", "spec/evidence/public-numeric-type-baseline.json", "scripts/generate-public-numeric-type-baseline", "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md", "spec/evidence/public-integer-conversion-contract.json", "scripts/generate-public-integer-conversion-contract", "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md", "spec/profile-hooks.json", "tests/asl/profile-tests.asl", "tests/asl/scalar-tests.asl", "tests/asl/tile-tests.asl", "docs/maturity-stage-targets.md"],
+      "evidence": ["spec/evidence/numeric-contracts.json", "spec/evidence/numeric-conformance-readiness.json", "scripts/generate-numeric-conformance-readiness", "spec/evidence/numeric-profile-decision-inputs.json", "scripts/generate-numeric-profile-decision-inputs", "spec/evidence/numeric-profile-decision-proposals.json", "scripts/generate-numeric-profile-decision-proposals", "spec/catalog/numeric-profile-identities.json", "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md", "spec/evidence/scalar-numeric-flag-contract.json", "scripts/generate-scalar-numeric-flag-contract", "docs/status/decisions/0038-scalar-numeric-flag-state-and-ownership.md", "spec/evidence/numeric-rounding-selector-contract.json", "scripts/generate-numeric-rounding-selector-contract", "docs/status/decisions/0039-numeric-rounding-selector-ownership.md", "docs/status/decisions/0047-numeric-rounding-semantics.md", "spec/evidence/numeric-format-namespace-contract.json", "scripts/generate-numeric-format-namespace-contract", "docs/status/decisions/0040-numeric-format-namespace-ownership.md", "docs/status/decisions/0048-numeric-format-value-classification.md", "asl/tile/model/numeric/formats.asl", "spec/evidence/numeric-special-value-contract.json", "scripts/generate-numeric-special-value-contract", "docs/status/decisions/0050-hardware-special-value-checkpoint.md", "spec/catalog/numeric-profile-applicability.json", "spec/evidence/numeric-profile-applicability-closure.json", "scripts/generate-numeric-profile-applicability-closure", "docs/status/decisions/0041-a2a3-mx-profile-applicability.md", "spec/evidence/numeric-variation-point-ownership.json", "scripts/generate-numeric-variation-point-ownership", "docs/status/decisions/0042-numeric-variation-point-ownership.md", "spec/evidence/public-numeric-type-baseline.json", "scripts/generate-public-numeric-type-baseline", "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md", "spec/evidence/public-integer-conversion-contract.json", "scripts/generate-public-integer-conversion-contract", "docs/status/decisions/0044-public-integer-conversion-result-subset.md", "spec/profile-hooks.json", "tests/asl/profile-tests.asl", "tests/asl/scalar-tests.asl", "tests/asl/tile-tests.asl", "docs/status/legacy/root/maturity-stage-targets.md"],
       "gaps": [
         {"acceptance_evidence": ["accepted decision records for the remaining 10 questions in spec/evidence/numeric-profile-decision-inputs.json", "accepted review dispositions and selected rules for all 18 domains proposed by spec/evidence/numeric-profile-decision-proposals.json", "selected routes and bounded result contracts for the remaining 73 rows in spec/evidence/numeric-variation-point-ownership.json", "complete profile support/result matrices covering formats, exceptional values, arithmetic conformance for the accepted subnormal rule, flags, saturation results, accuracy, accumulation precision, quantization, and every remaining bounded variation point", "the eleven-format input-preservation, gradual-underflow, after-rounding-tininess, and fail-closed configuration rule accepted by ADR 0049 and spec/evidence/numeric-subnormal-contract.json, followed by Stage 5 arithmetic vectors and generic PD-12 profile selection", "the canonical produced-NaN, comparison NaN and signed-zero, and min/max NaN and signed-zero rules accepted for 8 operations and 154 conditional operation/type tuples by ADR 0050 and spec/evidence/numeric-special-value-contract.json, followed by the remaining PD-05 infinity, conversion, reduction, quantization, matrix, and flag/status rules", "the five numeric code namespaces, all 25 raw-carrier widths, reserved-code rejection, packed four-bit order, 25 value classes, four internal encoding constraints, and ten canonical NaNs accepted by ADRs 0040 and 0048 and spec/evidence/numeric-format-namespace-contract.json; the 16 public type identities, 16 accepted catalog bindings, and target availability baseline accepted by ADR 0043 and spec/evidence/public-numeric-type-baseline.json; followed by operation-specific exceptional results and the complete operation/type/profile legality matrix", "the 48 unequal-width public integer TCVT result tuples and three portable extension/truncation rules accepted by ADR 0044 and spec/evidence/public-integer-conversion-contract.json; followed by the explicit PD-07 residuals and complete profile-support matrix", "the A2/A3 MX unsupported-in-profile matrix accepted by ADR 0041 and spec/evidence/numeric-profile-applicability-closure.json, followed by every remaining profile support/result tuple", "exact flag-production conditions and independent vectors for the 19 profile-owned scalar forms in spec/evidence/scalar-numeric-flag-contract.json"], "classification": "profile-decision", "id": "S5-T2-G1", "statement": "The identity framework, scalar flag lifecycle and producer ownership, numeric namespace/carrier ownership, all 25 value classes and ten canonical NaNs, public type identities and target-availability baseline, the A2/A3 MX negative-applicability slice, ownership inventory for all 89 variation points, 48 unequal-width public integer TCVT result tuples with three portable result rules, PD-03 rounding semantics, the named hardware-profile PD-04 subnormal policy, and the bounded PD-05 special-value checkpoint for 8 operations and 154 conditional operation/type tuples are accepted. Two of 12 complete decisions and 16 of 89 variation routes are now closed. Ten decisions, 20 complete domain rules, 81 variation routes and result bounds, remaining operation-specific exceptional behavior and conversion residuals, the operation/type support matrix, arithmetic conformance vectors for the accepted subnormal rule, generic PD-12 hardware-profile selection, and 19 profile-owned scalar flag conditions remain open."},
         {"acceptance_evidence": ["independent oracle identity and immutable version or digest for every numeric lane", "reproducible invocation, supported-domain statement, limitations, and hardware-capture rule where software arithmetic is insufficient"], "classification": "evidence-gap", "id": "S5-T2-G2", "statement": "No independent, versioned numeric oracle is qualified for the six conformance lanes."},
@@ -299,7 +299,7 @@
       "title": "Close independent numeric conformance"
     },
     {
-      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/public-source-reconciliation.json", "spec/evidence/executable-model-comparison.json", "scripts/generate-executable-model-comparison", "spec/evidence/noncomparable-oracle-coverage.json", "scripts/generate-noncomparable-oracle-coverage", "docs/architecture-decisions/0036-executable-model-comparison-dispositions.md"],
+      "evidence": ["spec/evidence/scalar-effect-closure.json", "spec/evidence/public-source-reconciliation.json", "spec/evidence/executable-model-comparison.json", "scripts/generate-executable-model-comparison", "spec/evidence/noncomparable-oracle-coverage.json", "scripts/generate-noncomparable-oracle-coverage", "docs/status/decisions/0036-executable-model-comparison-dispositions.md"],
       "gaps": [],
       "id": "S5-T3",
       "owner": "PTO architecture and formal-model maintainers",
@@ -309,13 +309,13 @@
       "title": "Close executable-ISA semantic comparison dispositions"
     },
     {
-      "evidence": ["spec/requirements.json", "spec/evidence/maturity-closure.json", "spec/evidence/release-traceability-readiness.json", "scripts/generate-release-traceability-readiness", "docs/review-checklist.md"],
+      "evidence": ["spec/requirements.json", "spec/evidence/maturity-closure.json", "spec/evidence/release-traceability-readiness.json", "scripts/generate-release-traceability-readiness", "docs/status/legacy/root/review-checklist.md"],
       "gaps": [
         {"acceptance_evidence": ["closed S5-T2 conformance package and closed dependent requirement statuses"], "classification": "release-governance", "id": "S6-T1-G1", "statement": "S5-T2 target numeric conformance is open, so cumulative release traceability cannot close."},
         {"acceptance_evidence": ["reviewer identity, immutable commit, review date, and accepted disposition"], "classification": "release-governance", "id": "S6-T1-G2", "statement": "Independent claim-hygiene review is intentionally unassigned until cumulative requirement closure."}
       ],
       "id": "S6-T1",
-      "tracking": ["https://github.com/PTO-ISA/pto-spec/issues/4", "docs/review-checklist.md"],
+      "tracking": ["https://github.com/PTO-ISA/pto-spec/issues/4", "docs/status/legacy/root/review-checklist.md"],
       "owner": "PTO release maintainers",
       "requirements": ["PTO-REQ-CLOSURE-001"],
       "stage": 6,
@@ -323,7 +323,7 @@
       "title": "Close release traceability and claim hygiene"
     },
     {
-      "evidence": ["Makefile", "scripts/check-asl-test-shards", "scripts/check-repository", "spec/evidence/release-gate-readiness.json", "scripts/generate-release-gate-readiness", "docs/review-checklist.md", "GOVERNANCE.md"],
+      "evidence": ["Makefile", "scripts/check-asl-test-shards", "scripts/check-repository", "spec/evidence/release-gate-readiness.json", "scripts/generate-release-gate-readiness", "docs/status/legacy/root/review-checklist.md", "GOVERNANCE.md"],
       "gaps": [
         {"acceptance_evidence": ["closed S5-T2", "closed S6-T1", "signed immutable candidate commit"], "classification": "release-governance", "id": "S6-T2-G1", "statement": "S5-T2 and S6-T1 are open, so no immutable architecturally-complete candidate may be frozen."},
         {"acceptance_evidence": ["clean make ci", "git diff --check", "passing hosted validate at the same candidate commit"], "classification": "release-governance", "id": "S6-T2-G2", "statement": "No frozen candidate has complete clean-tree local and hosted gate results."},

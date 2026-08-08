@@ -12,6 +12,17 @@ REPOSITORY_CHECK = ROOT / "scripts/check-repository"
 
 
 class PullRequestCheckTest(unittest.TestCase):
+    def test_repository_checker_accepts_non_executable_python_modules(self) -> None:
+        result = subprocess.run(
+            [str(REPOSITORY_CHECK), "--structure-only"],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_publication_hygiene_accepts_the_approved_ndf_reference(self) -> None:
         result = subprocess.run(
             ["python3", "scripts/check-publication-hygiene"],
@@ -35,12 +46,14 @@ class PullRequestCheckTest(unittest.TestCase):
         self.assertEqual(
             commands,
             [
+                "./scripts/check-asl-layout",
                 "./scripts/check-ndf",
+                "./scripts/check-asl-tests",
                 "./scripts/check-release-workflow",
-                "./scripts/check-repository --structure-only",
-                "./scripts/check-asl-test-shards",
                 "python3 -m unittest discover -s tests/scripts -p test_*.py",
+                "python3 scripts/project_asl_catalogs.py --root . --check",
                 "python3 scripts/instruction_docs.py --check",
+                "python3 scripts/generate-mnemonic-avs.py --check",
                 "python3 scripts/check-publication-hygiene",
                 "git diff --check",
             ],
@@ -52,7 +65,7 @@ class PullRequestCheckTest(unittest.TestCase):
             "scripts/aslref",
             "toolchain-check",
             "release-verify",
-            "test-shard-",
+            "test-" + "shard-",
         ):
             self.assertNotIn(forbidden, lowered)
 
@@ -61,14 +74,22 @@ class PullRequestCheckTest(unittest.TestCase):
 
         self.assertIn("name: PR", workflow)
         self.assertIn("name: PR / validate", workflow)
-        self.assertIn("run: make pr-check", workflow)
+        for gate in (
+            "./scripts/check-asl-layout",
+            "./scripts/check-ndf",
+            "./scripts/check-asl-tests",
+            "python3 scripts/project_asl_catalogs.py --root . --check",
+            "python3 scripts/instruction_docs.py --check",
+            "python3 scripts/check-publication-hygiene",
+        ):
+            self.assertIn(gate, workflow)
         self.assertEqual(workflow.count("runs-on:"), 1)
         for forbidden in (
             "setup-ocaml",
             "opam",
             "asl-shard",
             "strict-model",
-            "test-shard-",
+            "test-" + "shard-",
         ):
             self.assertNotIn(forbidden, workflow)
 
@@ -77,6 +98,30 @@ class PullRequestCheckTest(unittest.TestCase):
 
         self.assertNotIn('| grep -Fxq "$path"', checker)
         self.assertIn('grep -Fxq -- "$path" <<<"$assembled"', checker)
+
+    def test_repository_checker_rejects_every_obsolete_active_tree(self) -> None:
+        checker = REPOSITORY_CHECK.read_text(encoding="utf-8")
+        active_checker = (ROOT / "scripts/check-active-paths").read_text(
+            encoding="utf-8"
+        )
+        for relative in (
+            "asl/bundle",
+            "asl/numeric",
+            "asl/profiles",
+            "asl/architecture.asl",
+            "asl/types.asl",
+            "asl/state.asl",
+            "asl/concurrency.asl",
+            "asl/dispatch.asl",
+            "docs/instructions",
+            "tests/asl/main.asl",
+            "tests/asl/shards",
+        ):
+            self.assertFalse((ROOT / relative).exists(), relative)
+            self.assertIn(relative, active_checker)
+        self.assertIn("active Markdown is outside the ASL mirror", active_checker)
+        self.assertIn("./scripts/check-active-paths", checker)
+        self.assertNotIn("--four-surface", checker)
 
 
 if __name__ == "__main__":

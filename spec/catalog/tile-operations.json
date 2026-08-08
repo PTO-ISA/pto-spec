@@ -3914,16 +3914,36 @@
       "selector": "0x068",
       "semantic_handler": "THISTOGRAM",
       "operands": [
-        {"field": "destination0", "role": "destination"},
-        {"field": "source0", "role": "source"},
-        {"field": "source1", "role": "indices"},
-        {"field": "selected_byte", "role": "selected-byte"}
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "indices"
+        },
+        {
+          "field": "selected_byte",
+          "role": "selected-byte"
+        }
       ],
       "arguments": [
-        {"operand": "destination0"},
-        {"operand": "source0"},
-        {"operand": "source1"},
-        {"operand": "selected_byte"}
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "selected_byte"
+        }
       ],
       "mode": 3,
       "function": 8,
@@ -3939,7 +3959,10 @@
         "operand:selected_byte:selected-byte"
       ],
       "datr_contract": {
-        "allowed_nonzero_fields": ["PadValueOrByteId", "DataType"],
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "DataType"
+        ],
         "pad_union": "histogram-byte-id"
       }
     },
@@ -4844,17 +4867,39 @@
       "name": "MGATHER_MASK",
       "semantic_handler": "MGATHER_MASK",
       "operands": [
-        {"field": "destination0", "role": "destination"},
-        {"field": "address", "role": "base-address"},
-        {"field": "source0", "role": "indices"},
-        {"field": "source1", "role": "mask"}
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "mask"
+        }
       ],
       "arguments": [
-        {"operand": "destination0"},
-        {"operand": "address"},
-        {"operand": "source0"},
-        {"operand": "source1"},
-        {"runtime": "CurrentBundlePadValue"}
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "runtime": "CurrentBundlePadValue"
+        }
       ],
       "contract_status": "reviewed-complete",
       "legality_handler": "TileOperandsLegal_MGATHER_MASK",
@@ -4868,7 +4913,10 @@
         "operand:source1:mask"
       ],
       "datr_contract": {
-        "allowed_nonzero_fields": ["PadValueOrByteId", "Layout"],
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
         "pad_union": "pad-value"
       }
     },
@@ -4880,16 +4928,36 @@
       "name": "MSCATTER_MASK",
       "semantic_handler": "MSCATTER_MASK",
       "operands": [
-        {"field": "address", "role": "base-address"},
-        {"field": "source0", "role": "source"},
-        {"field": "source1", "role": "indices"},
-        {"field": "source2", "role": "mask"}
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "indices"
+        },
+        {
+          "field": "source2",
+          "role": "mask"
+        }
       ],
       "arguments": [
-        {"operand": "address"},
-        {"operand": "source0"},
-        {"operand": "source1"},
-        {"operand": "source2"}
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        }
       ],
       "contract_status": "reviewed-complete",
       "legality_handler": "TileOperandsLegal_MSCATTER_MASK",
@@ -4903,7 +4971,9 @@
         "operand:source2:mask"
       ],
       "datr_contract": {
-        "allowed_nonzero_fields": ["Layout"],
+        "allowed_nonzero_fields": [
+          "Layout"
+        ],
         "pad_union": "must-zero"
       }
     },
@@ -4915,18 +4985,43 @@
       "name": "MGATHER_CAS",
       "semantic_handler": "MGATHER_CAS",
       "operands": [
-        {"field": "destination0", "role": "destination"},
-        {"field": "address", "role": "base-address"},
-        {"field": "source0", "role": "indices"},
-        {"field": "source1", "role": "expected"},
-        {"field": "source2", "role": "replacement"}
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "expected"
+        },
+        {
+          "field": "source2",
+          "role": "replacement"
+        }
       ],
       "arguments": [
-        {"operand": "destination0"},
-        {"operand": "address"},
-        {"operand": "source0"},
-        {"operand": "source1"},
-        {"operand": "source2"}
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        }
       ],
       "contract_status": "reviewed-complete",
       "legality_handler": "TileOperandsLegal_MGATHER_CAS",
@@ -4941,7 +5036,9 @@
         "operand:source2:replacement"
       ],
       "datr_contract": {
-        "allowed_nonzero_fields": ["Layout"],
+        "allowed_nonzero_fields": [
+          "Layout"
+        ],
         "pad_union": "must-zero"
       }
     },

@@ -1,0 +1,189 @@
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","surface":"block","classification":["model","dispatch","descriptor-legality"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DECODE"]}
+pure func BundleBranchTypeLegal(branch_type: bits(3)) => boolean
+begin
+    return branch_type == '001' || branch_type == '101' ||
+           branch_type == '110' || branch_type == '111';
+end;
+
+pure func BundleTransferOfBranchType(branch_type: bits(3)) => BundleTransfer
+begin
+    case branch_type of
+        when '001' => return BundleTransfer_Fallthrough;
+        when '101' => return BundleTransfer_Indirect;
+        when '110' => return BundleTransfer_IndirectCall;
+        when '111' => return BundleTransfer_Return;
+        otherwise => unreachable;
+    end;
+end;
+
+pure func BundleDataTypeSupported(data_type: bits(5)) => boolean
+begin
+    let code = UInt(data_type);
+    return code <= 14 || (16 <= code && code <= 20) ||
+           (24 <= code && code <= 28);
+end;
+
+pure func BundleTileDataType(data_type: bits(5)) => TileDataType
+begin
+    case data_type of
+        when '00000' => return TileDataType_FP64;
+        when '00001' => return TileDataType_FP32;
+        when '00010' => return TileDataType_TF32;
+        when '00011' => return TileDataType_HF32;
+        when '00100' => return TileDataType_FP16;
+        when '00101' => return TileDataType_BF16;
+        when '00110' => return TileDataType_HiF8;
+        when '00111' => return TileDataType_E4M3;
+        when '01000' => return TileDataType_E5M2;
+        when '01001' => return TileDataType_E3M2;
+        when '01010' => return TileDataType_E2M3;
+        when '01011' => return TileDataType_E2M1X2;
+        when '01100' => return TileDataType_E1M2X2;
+        when '01101' => return TileDataType_E8M0;
+        when '01110' => return TileDataType_HiF4X2;
+        when '10000' => return TileDataType_S64;
+        when '10001' => return TileDataType_S32;
+        when '10010' => return TileDataType_S16;
+        when '10011' => return TileDataType_S8;
+        when '10100' => return TileDataType_S4X2;
+        when '11000' => return TileDataType_U64;
+        when '11001' => return TileDataType_U32;
+        when '11010' => return TileDataType_U16;
+        when '11011' => return TileDataType_U8;
+        when '11100' => return TileDataType_U4X2;
+        otherwise => unreachable;
+    end;
+end;
+
+pure func BundleTileDecodeFamily(operation_class: BundleOperationClass)
+        => TileDecodeFamily
+begin
+    case operation_class of
+        when BundleOperation_TileElement => return TileDecode_TEPL;
+        when BundleOperation_TileMemory => return TileDecode_TLSU;
+        when BundleOperation_TileMatrix => return TileDecode_CUBE;
+        otherwise => unreachable;
+    end;
+end;
+
+pure func BundleSelectorCode(descriptor: BundleOperationDescriptor) => bits(12)
+begin
+    var code = Zeros{12};
+    if descriptor.mode_valid then
+        code[6:5] = descriptor.mode;
+        code[4:0] = descriptor.selector[4:0];
+    else
+        code[9:0] = descriptor.selector;
+    end;
+    return code;
+end;
+
+pure func BundleOperationDecodeCode(
+    descriptor: BundleOperationDescriptor) => bits(12)
+begin
+    let code = BundleSelectorCode(descriptor);
+    if descriptor.operation_class == BundleOperation_TileMemory &&
+       !descriptor.mode_valid then
+        if descriptor.selector[4:0] == '01001' ||
+           descriptor.selector[4:0] == '01010' ||
+           descriptor.selector[4:0] == '01011' ||
+           descriptor.selector[4:0] == '01100' then
+            return Zeros{12} + 2;
+        elsif descriptor.selector[4:0] == '01110' then
+            return Zeros{12} + 1;
+        end;
+    end;
+    return code;
+end;
+
+pure func BundleOperationDescriptorLegal(
+    descriptor: BundleOperationDescriptor) => boolean
+begin
+    if descriptor.branch_type_valid &&
+       !BundleBranchTypeLegal(descriptor.branch_type) then
+        return FALSE;
+    end;
+    case descriptor.operation_class of
+        when BundleOperation_TileElement,
+             BundleOperation_TileMemory,
+             BundleOperation_TileMatrix =>
+            if !descriptor.selector_valid || !descriptor.data_type_valid ||
+               !BundleDataTypeSupported(descriptor.data_type) then
+                return FALSE;
+            end;
+            let operation = DecodeTileOperation(
+                BundleTileDecodeFamily(descriptor.operation_class),
+                BundleOperationDecodeCode(descriptor));
+            return operation != PTO_TILE_OPERATION_COUNT;
+        when BundleOperation_FixedPoint =>
+            // PTO v0 has no direct FIXP selector family. The accepted spelling
+            // remains decodable but cannot install an executable descriptor.
+            return FALSE;
+        otherwise => return TRUE;
+    end;
+end;
+
+pure func BundleOperationDescriptorRejectedByAcceptedApplicabilityRules(
+    rules: NumericApplicabilityRuleSet,
+    descriptor: BundleOperationDescriptor) => boolean
+begin
+    case descriptor.operation_class of
+        when BundleOperation_TileElement,
+             BundleOperation_TileMemory,
+             BundleOperation_TileMatrix =>
+            if !descriptor.selector_valid then return FALSE; end;
+            let decoded = DecodeTileOperation(
+                BundleTileDecodeFamily(descriptor.operation_class),
+                BundleOperationDecodeCode(descriptor));
+            if decoded == PTO_TILE_OPERATION_COUNT then return FALSE; end;
+            let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
+            return TileOperationRejectedByAcceptedApplicabilityRules(
+                rules, operation);
+        otherwise => return FALSE;
+    end;
+end;
+
+readonly func BundleOperationBindingsComplete(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
+begin
+    var destination_count: integer = 0;
+    var source_count: integer = 0;
+    var binding_count: integer = 0;
+    var last_seen = FALSE;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            binding_count = binding_count + 1;
+            if _BundleTileBindings[[binding]].destination_valid then
+                destination_count = destination_count + 1;
+            end;
+            if _BundleTileBindings[[binding]].source0_valid then
+                source_count = source_count + 1;
+            end;
+            if _BundleTileBindings[[binding]].source1_valid then
+                source_count = source_count + 1;
+            end;
+            if _BundleTileBindings[[binding]].last then last_seen = TRUE; end;
+        end;
+    end;
+    let expected_destinations =
+        (if TileOperandPresent(operation, TileOperand_destination0)
+         then 1 else 0) +
+        (if TileOperandPresent(operation, TileOperand_destination1)
+         then 1 else 0);
+    let expected_sources =
+        (if TileOperandPresent(operation, TileOperand_source0)
+         then 1 else 0) +
+        (if TileOperandPresent(operation, TileOperand_source1)
+         then 1 else 0) +
+        (if TileOperandPresent(operation, TileOperand_source2)
+         then 1 else 0) +
+        (if TileOperandPresent(operation, TileOperand_source3)
+         then 1 else 0) +
+        (if TileOperandPresent(operation, TileOperand_source4)
+         then 1 else 0);
+    if destination_count != expected_destinations ||
+       source_count != expected_sources then return FALSE; end;
+    if binding_count > 0 && !last_seen then return FALSE; end;
+    if !BundleOperationScalarBindingSchemaLegal(operation) then return FALSE; end;
+    return TRUE;
+end;

@@ -58,10 +58,17 @@
   "preflight_test": "tests/asl/cube-totality-tests.asl:TestCubeCompositePreflight",
   "numeric_conformance_target": "S5-T2",
   "evidence_files": [
-    "asl/tile/cube.asl",
-    "asl/tile/legality.asl",
+    "asl/tile/model/execution/cube.asl",
+    "asl/tile/model/legality/allocation-capacity.asl",
+    "asl/tile/model/legality/descriptor-shape.asl",
+    "asl/tile/model/legality/dtype-layout.asl",
+    "asl/tile/model/legality/indexed-layout.asl",
+    "asl/tile/model/legality/matrix-shape.asl",
+    "asl/tile/model/legality/memory-schema.asl",
+    "asl/tile/model/legality/operand-schema.asl",
+    "asl/tile/model/legality/pe-mask.asl",
     "tests/asl/cube-totality-tests.asl",
-    "docs/architecture-decisions/0034-cube-raw-carrier-totality.md"
+    "docs/status/decisions/0034-cube-raw-carrier-totality.md"
   ],
   "requirement_ids": [
     "PTO-REQ-CUBE-001",

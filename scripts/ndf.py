@@ -33,13 +33,10 @@ LAYERS = {
     "concurrency",
 }
 STATUSES = {"open", "accepted"}
-ACTIVE_MARKDOWN = {
-    Path("docs/architecture.md"),
-    Path("docs/memory-model.md"),
-    Path("docs/modeling-conventions.md"),
-    Path("docs/profile-contracts.md"),
-}
+ACTIVE_MARKDOWN: frozenset[Path] = frozenset()
 BACKUP_SUFFIXES = (".bak", ".old", ".orig", ".save", ".tmp", "~")
+STATUS_LEGACY_PREFIX = Path("docs/status/legacy")
+STATUS_LEGACY_REFERENCE = "docs/status/legacy/"
 
 
 @dataclass(frozen=True)
@@ -59,6 +56,12 @@ class NdfValidationError(ValueError):
     def __init__(self, errors: list[str]):
         super().__init__("\n".join(errors))
         self.errors = tuple(errors)
+
+
+def is_allowed_legacy_path(path: Path) -> bool:
+    """Return whether *path* is inside the sole permitted historical tree."""
+
+    return path == STATUS_LEGACY_PREFIX or STATUS_LEGACY_PREFIX in path.parents
 
 
 def instruction_clause_id(surface: str, mnemonic: str) -> str:
@@ -207,7 +210,8 @@ def check_repository(root: Path) -> list[str]:
     for path in files:
         relative = path.relative_to(root)
         lower_parts = tuple(part.lower() for part in relative.parts)
-        if "legacy" in lower_parts or "archive" in lower_parts:
+        allowed_legacy = is_allowed_legacy_path(relative)
+        if ("legacy" in lower_parts or "archive" in lower_parts) and not allowed_legacy:
             errors.append(f"forbidden legacy specification path: {relative.as_posix()}")
         if relative.as_posix().startswith(("asl/", "docs/")) and path.name.lower().endswith(
             BACKUP_SUFFIXES
@@ -219,6 +223,13 @@ def check_repository(root: Path) -> list[str]:
                 errors.append(
                     f"{relative.as_posix()}: active NDF clause must be owned by ASL"
                 )
+        if (
+            (relative.as_posix().startswith("asl/") and relative.suffix == ".asl")
+            or relative in ACTIVE_MARKDOWN
+        ) and STATUS_LEGACY_REFERENCE in path.read_text(encoding="utf-8"):
+            errors.append(
+                f"{relative.as_posix()}: normative reference targets non-normative legacy material"
+            )
 
     clauses: list[NdfClause] = []
     asl_root = root / "asl"

@@ -1,627 +1,174 @@
 #!/usr/bin/env python3
-"""Generate the fail-closed S6-T2 architecturally-complete gate ledger."""
+"""Project the manual release gate from current exact-head contracts."""
 
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
-import re
-import subprocess
+import math
+import sys
 from pathlib import Path
-from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = ROOT / "spec/evidence/release-gate-readiness.json"
-
+PAGE_SIZE = 100
 SOURCE_PATHS = (
     ".aslref-version",
-    ".github/CODEOWNERS",
     ".github/workflows/asl.yml",
     ".github/workflows/release.yml",
     "CONTRIBUTING.md",
     "GOVERNANCE.md",
     "Makefile",
-    "docs/review-checklist.md",
-    "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
-    "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
-    "docs/architecture-decisions/0039-numeric-rounding-selector-ownership.md",
-    "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
-    "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
-    "docs/architecture-decisions/0048-numeric-format-value-classification.md",
-    "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
-    "docs/architecture-decisions/0050-hardware-special-value-checkpoint.md",
-    "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
-    "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",
-    "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",
-    "docs/architecture-decisions/0044-public-integer-conversion-result-subset.md",
-    "scripts/check-asl-test-shards",
+    "scripts/asl_release_suite.py",
+    "scripts/check-active-paths",
+    "scripts/check-asl-layout",
+    "scripts/check-asl-tests",
     "scripts/check-binary-closure",
-    "scripts/check-catalogs",
-    "scripts/check-publication-hygiene",
+    "scripts/check-ndf",
     "scripts/check-pr",
+    "scripts/check-release-closure",
+    "scripts/check-release-manifest",
     "scripts/check-release-workflow",
     "scripts/check-repository",
+    "scripts/check-script-entrypoints",
     "scripts/check-toolchain",
-    "scripts/generate-numeric-format-namespace-contract",
-    "scripts/generate-numeric-profile-applicability-closure",
-    "scripts/generate-numeric-subnormal-contract",
-    "scripts/generate-numeric-special-value-contract",
-    "scripts/generate-numeric-variation-point-ownership",
-    "scripts/generate-public-numeric-type-baseline",
-    "scripts/generate-public-integer-conversion-contract",
-    "spec/evidence/maturity-closure.json",
-    "spec/evidence/numeric-profile-decision-proposals.json",
-    "spec/evidence/numeric-format-namespace-contract.json",
-    "spec/evidence/numeric-profile-applicability-closure.json",
-    "spec/evidence/numeric-variation-point-ownership.json",
-    "spec/evidence/public-numeric-type-baseline.json",
-    "spec/evidence/public-integer-conversion-contract.json",
-    "spec/evidence/numeric-rounding-selector-contract.json",
-    "spec/evidence/numeric-subnormal-contract.json",
-    "spec/evidence/numeric-special-value-contract.json",
-    "spec/evidence/scalar-numeric-flag-contract.json",
+    "scripts/encoding_witness.py",
+    "scripts/instruction_docs.py",
+    "scripts/print-asl-test-matrix",
+    "scripts/project_asl_catalogs.py",
+    "scripts/run-asl-release-suite",
+    "scripts/run-asl-test",
     "spec/evidence/release-traceability-readiness.json",
-    "spec/requirements.json",
-    "spec/catalog/numeric-profile-applicability.json",
-    "spec/catalog/numeric-profile-identities.json",
-    "specification.toml",
+    "spec/release-inputs.json",
 )
-
-EXPECTED_COUNTS = {
-    "closed_target_count": 28,
-    "gate_count": 10,
-    "required_approval_count": 2,
-    "required_external_control_count": 10,
-    "shard_count": 53,
-    "canonical_call_count": 113,
-    "reachable_test_subprogram_count": 107,
-}
-
-GATE_SPECS: tuple[dict[str, Any], ...] = (
+GATES = (
     {
         "id": "RG-01",
-        "name": "clean regeneration",
-        "command": "make clean",
-        "evidence": ["Makefile"],
-        "acceptance": "Remove generated build state before candidate reproduction.",
-        "long_running": False,
+        "name": "lightweight pull-request contract",
+        "command": "make pr-check",
+        "evidence": ["Makefile", ".github/workflows/asl.yml"],
     },
     {
         "id": "RG-02",
-        "name": "repository invariants",
+        "name": "active four-surface repository closure",
         "command": "make repo-check",
-        "evidence": [
-            "Makefile",
-            "scripts/check-repository",
-            "scripts/check-catalogs",
-            "scripts/check-asl-test-shards",
-            "scripts/check-binary-closure",
-        ],
-        "acceptance": "Repository, catalog, evidence, publication, shard, and binary closure checks pass from the frozen candidate.",
-        "long_running": False,
+        "evidence": ["scripts/check-repository", "scripts/check-active-paths"],
     },
     {
         "id": "RG-03",
         "name": "pinned ASLRef canaries",
         "command": "make toolchain-check",
-        "evidence": [".aslref-version", "Makefile", "scripts/check-toolchain"],
-        "acceptance": "The pinned parser, type checker, and interpreter accept and reject all audited canaries as expected.",
-        "long_running": False,
+        "evidence": [".aslref-version", "scripts/check-toolchain"],
     },
     {
         "id": "RG-04",
         "name": "strict normative type check",
         "command": "make check",
         "evidence": ["Makefile", "scripts/aslref"],
-        "acceptance": "The complete assembled normative PTO ASL model passes strict type checking at the audited pin.",
-        "long_running": False,
     },
     {
         "id": "RG-05",
-        "name": "complete executable semantics",
-        "command": "make test-shards",
-        "evidence": ["Makefile", "scripts/check-asl-test-shards", "tests/asl/main.asl"],
-        "acceptance": "All canonical executable tests pass through the exact 53-shard partition with no missing, duplicate, empty, or unreachable test surface.",
-        "long_running": True,
+        "name": "independent exact-head AVS matrix",
+        "command": "make release-check RELEASE_COMMIT=<exact-head>",
+        "evidence": ["scripts/run-asl-release-suite", "scripts/run-asl-test"],
     },
     {
         "id": "RG-06",
-        "name": "aggregate release gate",
-        "command": "make release-verify",
-        "evidence": ["Makefile"],
-        "acceptance": "The lightweight repository contract, release identity, pinned toolchain, strict type-check, and all runtime shards pass together at one exact candidate.",
-        "long_running": True,
+        "name": "fail-closed release provenance",
+        "command": "scripts/check-release-closure",
+        "evidence": ["spec/release-inputs.json", "scripts/check-release-closure"],
     },
     {
         "id": "RG-07",
-        "name": "diff hygiene",
-        "command": "git diff --check",
-        "evidence": ["CONTRIBUTING.md", "docs/review-checklist.md"],
-        "acceptance": "The frozen candidate has no whitespace errors in tracked, staged, or worktree differences.",
-        "long_running": False,
+        "name": "binary encoding closure",
+        "command": "scripts/check-binary-closure",
+        "evidence": ["scripts/check-binary-closure"],
     },
     {
         "id": "RG-08",
-        "name": "publication hygiene",
-        "command": "scripts/check-publication-hygiene",
-        "evidence": ["scripts/check-publication-hygiene", "docs/normative-sources.md"],
-        "acceptance": "Published files contain no prohibited identities, stale links, or broken local documentation references.",
-        "long_running": False,
+        "name": "release manifest reproducibility",
+        "command": "scripts/check-release-manifest",
+        "evidence": ["scripts/check-release-manifest", "spec/release-manifest.json"],
     },
     {
         "id": "RG-09",
-        "name": "binary closure",
-        "command": "scripts/check-binary-closure",
-        "evidence": [
-            "scripts/check-binary-closure",
-            "spec/catalog/scalar-forms.json",
-            "spec/catalog/command-forms.json",
-        ],
-        "acceptance": "Every accepted encoded scalar and command form remains uniquely decodable with the recorded fingerprint.",
-        "long_running": False,
-    },
-    {
-        "id": "RG-10",
-        "name": "clean immutable candidate identity",
-        "command": 'test -z "$(git status --porcelain=v1)" && git rev-parse HEAD && git rev-parse HEAD^{tree}',
-        "evidence": ["GOVERNANCE.md", "CONTRIBUTING.md"],
-        "acceptance": "The clean checkout resolves to the recorded candidate commit and tree; signature verification is recorded through candidate and protected-branch evidence.",
-        "long_running": False,
-    },
-)
-
-EXTERNAL_CONTROLS: tuple[dict[str, str], ...] = (
-    {
-        "id": "EC-01",
-        "name": "protected branch",
-        "required_state": "main is protected and administrators are subject to protection",
-    },
-    {
-        "id": "EC-02",
-        "name": "required hosted check",
-        "required_state": "PR / validate is required before main updates; release publication separately requires exact-head Release / validate",
-    },
-    {
-        "id": "EC-03",
-        "name": "signed commits",
-        "required_state": "main requires signed commits",
-    },
-    {
-        "id": "EC-04",
-        "name": "linear history",
-        "required_state": "main requires linear history",
-    },
-    {
-        "id": "EC-05",
-        "name": "conversation resolution",
-        "required_state": "all pull-request conversations must be resolved",
-    },
-    {
-        "id": "EC-06",
-        "name": "force-push protection",
-        "required_state": "force pushes to main are disabled",
-    },
-    {
-        "id": "EC-07",
-        "name": "deletion protection",
-        "required_state": "main deletion is disabled",
-    },
-    {
-        "id": "EC-08",
-        "name": "merge authority",
-        "required_state": "only repository administrators may update or merge main",
-    },
-    {
-        "id": "EC-09",
-        "name": "merge method",
-        "required_state": "squash merge is enabled and merge-commit/rebase merge are disabled",
-    },
-    {
-        "id": "EC-10",
-        "name": "web signoff",
-        "required_state": "web commit signoff is required",
-    },
-)
-
-APPROVAL_SPECS = (
-    {
-        "id": "AP-ARCH",
-        "perspective": "PTO architecture",
-        "scope": "totality, determinism, visible state, faults, aliasing, boundaries, ordering, portability, and profile claims",
-    },
-    {
-        "id": "AP-FORMAL",
-        "perspective": "formal model",
-        "scope": "ASL type soundness, decode closure, semantic reachability, executable evidence, toolchain pin, and claim hygiene",
+        "name": "clean exact commit identity",
+        "command": 'test -z "$(git status --porcelain=v1 --untracked-files=all)"',
+        "evidence": ["scripts/asl_release_suite.py"],
     },
 )
 
 
-def load(path: str) -> dict[str, Any]:
-    return json.loads((ROOT / path).read_text(encoding="utf-8"))
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def require(condition: bool, message: str) -> None:
-    if not condition:
-        raise SystemExit(f"release-gate readiness generation failed: {message}")
-
-
-def require_paths(paths: list[str], label: str) -> None:
-    missing = [path for path in paths if not (ROOT / path).is_file()]
-    require(not missing, f"{label} names missing paths {missing}")
-
-
-def sha256(path: str) -> str:
-    return hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
-
-
-def maturity_target_key(target: str) -> tuple[int, int]:
-    match = re.fullmatch(r"S([0-6])-T(10|[1-9])", target)
-    require(match is not None, f"invalid maturity target identity {target}")
-    return int(match.group(1)), int(match.group(2))
-
-
-def validate_makefile() -> None:
-    body = (ROOT / "Makefile").read_text(encoding="utf-8")
-    required_targets = {
-        "clean",
-        "repo-check",
-        "toolchain-check",
-        "check",
-        "test-parallel",
-        "test-shards",
-        "pr-check",
-        "release-prepare",
-        "release-verify",
-        "ci",
-        "print-asl-sources",
-        "print-asl-tests",
-        "print-asl-test-shards",
-        "print-asl-test-shard-names",
-    }
-    defined_targets = set(re.findall(r"^([A-Za-z][A-Za-z0-9_-]*):", body, re.MULTILINE))
-    require(required_targets <= defined_targets, "Makefile release target drift")
-    require("ci: pr-check" in body, "make ci must remain the lightweight PR alias")
-    require(
-        "release-verify: pr-check release-check toolchain-check check test-shards" in body,
-        "make release-verify no longer composes every strict release gate",
-    )
-    require(
-        "release-prepare:" in body
-        and "./scripts/generate-release-manifest" in body
-        and "./scripts/check-release-manifest" in body
-        and "git diff --exit-code -- spec/release-manifest.json spec/evidence" in body,
-        "make release-prepare no longer proves reproducible release evidence",
-    )
-    require("ASL_TEST_JOBS ?= 4" in body, "parallel default job count drift")
-    require(
-        "$(MAKE) --no-print-directory -j$(ASL_TEST_JOBS) test-shards" in body,
-        "parallel runtime recipe drift",
-    )
-
-
-def validate_workflow() -> dict[str, Any]:
-    body = (ROOT / ".github/workflows/release.yml").read_text(encoding="utf-8")
-    result = subprocess.run(
-        [str(ROOT / "scripts/check-release-workflow")],
-        cwd=ROOT,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-    require(result.returncode == 0, result.stderr.strip() or "release workflow policy drift")
-    action_uses = [
-        {"action": action, "commit": commit}
-        for action, commit in re.findall(r"uses:\s+([^@\s]+)@([0-9A-Za-z._-]+)", body)
-    ]
-    actions = list({(row["action"], row["commit"]): row for row in action_uses}.values())
-    require(
-        {row["action"] for row in actions}
-        == {"actions/checkout", "ocaml/setup-ocaml", "actions/upload-artifact"},
-        "release workflow action inventory drift",
-    )
-    require(
-        all(re.fullmatch(r"[0-9a-f]{40}", row["commit"]) for row in action_uses),
-        "every hosted action must use a full commit pin",
-    )
+def build_document(root: Path = ROOT) -> dict[str, object]:
+    trace_path = root / "spec/evidence/release-traceability-readiness.json"
+    trace = json.loads(trace_path.read_text(encoding="utf-8"))
+    if trace.get("schema") != "pto.release-traceability.v2":
+        raise ValueError("release traceability projection has the wrong schema")
+    summary = trace["summary"]
+    if summary["status"] != "closed":
+        raise ValueError("release traceability projection is not closed")
+    for relative in SOURCE_PATHS:
+        if "docs/status/legacy/" in relative or not (root / relative).is_file():
+            raise ValueError(f"invalid release gate source: {relative}")
+    for gate in GATES:
+        for relative in gate["evidence"]:
+            if not (root / relative).is_file():
+                raise ValueError(f"missing release gate evidence: {relative}")
     return {
-        "workflow": ".github/workflows/release.yml",
-        "workflow_name": "Release verification",
-        "trigger": "workflow_dispatch with exact commit input",
-        "required_check": "Release / validate",
-        "permissions": {"contents": "read"},
-        "concurrency_cancel_in_progress": False,
-        "timeout_minutes": 360,
-        "matrix_fail_fast": False,
-        "matrix_max_parallel": 8,
-        "protected_aggregator_needs": ["plan", "strict-model", "asl-shard", "release-evidence"],
-        "actions": actions,
-        "contract_status": "closed",
-    }
-
-
-def validate_shards() -> dict[str, Any]:
-    result = subprocess.run(
-        [str(ROOT / "scripts/check-asl-test-shards")],
-        cwd=ROOT,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-    require(result.returncode == 0, result.stderr.strip() or "shard validation failed")
-    match = re.fullmatch(
-        r"ASL test shards passed: (\d+) shards partition (\d+) canonical calls and reach (\d+) test subprograms\n?",
-        result.stdout,
-    )
-    require(match is not None, "unexpected shard-check output")
-    shard_count, call_count, subprogram_count = map(int, match.groups())
-    shards = subprocess.check_output(
-        ["make", "--no-print-directory", "print-asl-test-shards"],
-        cwd=ROOT,
-        text=True,
-    ).splitlines()
-    require(len(shards) == len(set(shards)) == shard_count, "shard identity drift")
-    require_paths(shards, "parallel shard inventory")
-    require(
-        shard_count == EXPECTED_COUNTS["shard_count"]
-        and call_count == EXPECTED_COUNTS["canonical_call_count"]
-        and subprogram_count == EXPECTED_COUNTS["reachable_test_subprogram_count"],
-        "parallel topology count drift",
-    )
-    return {
-        "shards": shards,
-        "shard_count": shard_count,
-        "canonical_call_count": call_count,
-        "reachable_test_subprogram_count": subprogram_count,
-        "default_parallel_jobs": 4,
-        "partition_status": "closed",
-        "candidate_runtime_result": None,
-    }
-
-
-def build_evidence() -> dict[str, Any]:
-    require_paths(list(SOURCE_PATHS), "release-gate source inventory")
-    validate_makefile()
-    workflow = validate_workflow()
-    parallel_topology = validate_shards()
-
-    maturity = load("spec/evidence/maturity-closure.json")
-    targets = {row["id"]: row["status"] for row in maturity["targets"]}
-    require(
-        len(targets) == len(maturity["targets"]) == 31,
-        "maturity target inventory drift",
-    )
-    closed_targets = sorted(
-        (target for target, status in targets.items() if status == "closed"),
-        key=maturity_target_key,
-    )
-    require(
-        len(closed_targets) == EXPECTED_COUNTS["closed_target_count"],
-        "closed target count drift",
-    )
-    require(
-        targets.get("S5-T2") == "open"
-        and targets.get("S6-T1") == "open"
-        and targets.get("S6-T2") == "open",
-        "release prerequisite status changed; revise S6-T2 readiness",
-    )
-    required_prerequisites = sorted(
-        (
-            target
-            for target in targets
-            if target.startswith(tuple(f"S{stage}-" for stage in range(6)))
-        ),
-        key=maturity_target_key,
-    ) + ["S6-T1"]
-    open_prerequisites = [
-        target for target in required_prerequisites if targets[target] != "closed"
-    ]
-    require(open_prerequisites == ["S5-T2", "S6-T1"], "release prerequisite gap drift")
-
-    traceability = load("spec/evidence/release-traceability-readiness.json")
-    require(
-        traceability["status"] == "inventory-and-links-closed-promotion-open"
-        and traceability["summary"]["traceability_item_count"] == 925
-        and traceability["summary"]["release_traceability_status"] == "open:S6-T1",
-        "S6-T1 readiness contract drift",
-    )
-    specification = (ROOT / "specification.toml").read_text(encoding="utf-8")
-    require(
-        'status = "draft"' in specification, "release metadata no longer reports draft"
-    )
-    require(
-        'architectural_completion = "open"' in specification,
-        "architectural completion metadata changed without S6 closure",
-    )
-
-    gates = []
-    for spec in GATE_SPECS:
-        require_paths(spec["evidence"], f"release gate {spec['id']}")
-        gates.append(
-            {
-                **spec,
-                "contract_status": "closed",
-                "candidate_commit": None,
-                "candidate_result": None,
-                "result_evidence": None,
-            }
-        )
-    require(len(gates) == EXPECTED_COUNTS["gate_count"], "release gate count drift")
-
-    controls = [
-        {
-            **row,
-            "verification_method": "GitHub repository and branch-protection API snapshot at the immutable candidate commit",
-            "observed_at": None,
-            "observed_state": None,
-            "evidence_url": None,
-            "verification_status": "candidate-snapshot-required",
-        }
-        for row in EXTERNAL_CONTROLS
-    ]
-    approvals = [
-        {
-            **row,
-            "reviewer_identity": None,
-            "reviewed_commit": None,
-            "review_date": None,
-            "disposition": None,
-            "evidence_url": None,
-            "status": "candidate-review-required",
-        }
-        for row in APPROVAL_SPECS
-    ]
-    require(
-        len(controls) == EXPECTED_COUNTS["required_external_control_count"],
-        "external control count drift",
-    )
-    require(
-        len(approvals) == EXPECTED_COUNTS["required_approval_count"],
-        "approval perspective count drift",
-    )
-
-    return {
-        "schema_version": 1,
-        "target": "S6-T2",
-        "status": "gate-contract-closed-promotion-open",
-        "policy": {
-            "authority": "The frozen PTO candidate, clone-verifiable gates, hosted validation, protected-branch state, and recorded architecture/formal approvals must agree before M6 promotion.",
-            "no_live_branch_evidence": "A passing run on a moving draft branch is useful feedback but is not architecturally-complete release evidence.",
-            "long_running_policy": "Long runtime gates execute only through the manually dispatched exact-head 53-shard release topology; readiness generation validates the contract without waiting for it.",
-            "closure_rule": "S6-T2 closes only after cumulative S0 through S6-T1 closure, one immutable signed candidate, every local and hosted gate passing at that commit, all external controls verified, and both review perspectives accepted.",
-        },
-        "sources": [{"path": path, "sha256": sha256(path)} for path in SOURCE_PATHS],
-        "sub_stages": [
-            {
-                "id": "S6-T2-A",
-                "status": "closed",
-                "target": "freeze the exact clone-verifiable and external release-gate contract",
-                "blocked_by": [],
-            },
-            {
-                "id": "S6-T2-B",
-                "status": "closed",
-                "target": "prove manual exact-head workflow pinning and exact shard topology",
-                "blocked_by": [],
-            },
-            {
-                "id": "S6-T2-C",
-                "status": "blocked-by-prerequisite",
-                "target": "freeze one signed architecturally-complete candidate commit",
-                "blocked_by": ["S5-T2", "S6-T1"],
-            },
-            {
-                "id": "S6-T2-D",
-                "status": "waiting-on-prerequisite",
-                "target": "reproduce every local and hosted gate at the candidate commit",
-                "blocked_by": ["S6-T2-C"],
-            },
-            {
-                "id": "S6-T2-E",
-                "status": "waiting-on-prerequisite",
-                "target": "verify protected-branch controls and obtain both independent approvals",
-                "blocked_by": ["S6-T2-C", "S6-T2-D"],
-            },
-            {
-                "id": "S6-T2-F",
-                "status": "waiting-on-prerequisite",
-                "target": "promote metadata and release the M6 candidate",
-                "blocked_by": ["S6-T2-C", "S6-T2-D", "S6-T2-E"],
-            },
-        ],
-        "blocking_gaps": [
-            {
-                "id": "S6-T2-G1",
-                "classification": "release-governance",
-                "statement": "S5-T2 and S6-T1 are open, so no immutable architecturally-complete candidate may be frozen.",
-                "acceptance_evidence": [
-                    "closed S5-T2",
-                    "closed S6-T1",
-                    "signed immutable candidate commit",
-                ],
-            },
-            {
-                "id": "S6-T2-G2",
-                "classification": "release-governance",
-                "statement": "No frozen candidate has complete clean-tree local and hosted gate results.",
-                "acceptance_evidence": [
-                    "clean make release-verify and make release-prepare",
-                    "git diff --check",
-                    "passing Release / validate at the same candidate commit",
-                ],
-            },
-            {
-                "id": "S6-T2-G3",
-                "classification": "release-governance",
-                "statement": "Candidate-specific protected-branch evidence and PTO architecture/formal-model approvals are unrecorded.",
-                "acceptance_evidence": [
-                    "content-addressed GitHub control snapshot",
-                    "accepted PTO architecture review",
-                    "accepted formal-model review",
-                ],
-            },
-        ],
-        "prerequisites": {
-            "required_targets": required_prerequisites,
-            "closed_targets": [
-                target
-                for target in required_prerequisites
-                if targets[target] == "closed"
-            ],
-            "open_targets": open_prerequisites,
-            "traceability_status": traceability["status"],
-            "candidate_freeze_status": "blocked",
-        },
-        "workflow_contract": workflow,
-        "parallel_topology": parallel_topology,
-        "gates": gates,
-        "external_controls": controls,
-        "approvals": approvals,
-        "candidate": {
-            "commit": None,
-            "source_tree_sha256": None,
-            "signed_commit_evidence": None,
-            "clean_tree_evidence": None,
-            "hosted_run_id": None,
-            "hosted_run_url": None,
-            "hosted_conclusion": None,
-            "promotion_commit": None,
-        },
+        "schema": "pto.release-gate.v2",
+        "sources": {relative: _sha256(root / relative) for relative in SOURCE_PATHS},
+        "gates": list(GATES),
         "summary": {
-            **EXPECTED_COUNTS,
-            "open_prerequisite_targets": open_prerequisites,
-            "closed_gate_contract_count": len(gates),
-            "candidate_gate_result_count": 0,
-            "verified_external_control_count": 0,
-            "accepted_approval_count": 0,
-            "gate_contract_status": "closed",
-            "candidate_execution_status": "not-started",
-            "release_gate_status": "open:S6-T2",
+            "gate_count": len(GATES),
+            "unit_count": summary["unit_count"],
+            "documentation_page_count": summary["documentation_page_count"],
+            "mnemonic_count": summary["mnemonic_count"],
+            "test_count": summary["test_count"],
+            "test_page_size": PAGE_SIZE,
+            "test_page_count": math.ceil(summary["test_count"] / PAGE_SIZE),
+            "executable_requirement_count": summary["executable_requirement_count"],
+            "uncovered_unit_count": summary["uncovered_unit_count"],
+            "uncovered_executable_requirement_count": summary[
+                "uncovered_executable_requirement_count"
+            ],
+            "status": "ready-for-exact-head-verification",
         },
     }
 
 
-def render(document: dict[str, Any]) -> str:
-    return json.dumps(document, indent=2, ensure_ascii=False) + "\n"
+def render(document: dict[str, object]) -> str:
+    return json.dumps(document, indent=2, sort_keys=True) + "\n"
 
 
-def main() -> None:
+def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
-    args = parser.parse_args()
-    generated = render(build_evidence())
-    if args.check:
-        require(args.output.is_file(), f"missing generated artifact {args.output}")
-        require(
-            args.output.read_text(encoding="utf-8") == generated,
-            f"stale generated artifact {args.output}",
-        )
-        return
-    args.output.write_text(generated, encoding="utf-8")
+    arguments = parser.parse_args()
+    try:
+        generated = render(build_document())
+        if arguments.check:
+            if not arguments.output.is_file():
+                raise ValueError(f"missing generated artifact {arguments.output}")
+            if arguments.output.read_text(encoding="utf-8") != generated:
+                raise ValueError(f"stale generated artifact {arguments.output}")
+        else:
+            arguments.output.write_text(generated, encoding="utf-8")
+    except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError) as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 1
+    if arguments.check:
+        print("release gate projection passed")
+    else:
+        print(f"wrote {arguments.output.relative_to(ROOT)}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

@@ -11,15 +11,19 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.release_workflow import validate_release_workflow
+from scripts.release_workflow import validate_pr_workflow, validate_release_workflow
 
 
 def main() -> int:
+    pr_path = ROOT / ".github/workflows/asl.yml"
     workflow_path = ROOT / ".github/workflows/release.yml"
-    if not workflow_path.is_file():
-        print(f"missing release workflow: {workflow_path.relative_to(ROOT)}", file=sys.stderr)
+    missing = [path for path in (pr_path, workflow_path) if not path.is_file()]
+    if missing:
+        for path in missing:
+            print(f"missing workflow: {path.relative_to(ROOT)}", file=sys.stderr)
         return 1
-    errors = validate_release_workflow(workflow_path.read_text(encoding="utf-8"))
+    errors = validate_pr_workflow(pr_path.read_text(encoding="utf-8"))
+    errors.extend(validate_release_workflow(workflow_path.read_text(encoding="utf-8")))
     if errors:
         print("release workflow contract failed:", file=sys.stderr)
         for error in errors:

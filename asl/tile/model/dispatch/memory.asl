@@ -1,0 +1,2 @@
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-DISPATCH-MEMORY","surface":"tile","classification":["model","dispatch","memory"],"depends_on":["PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE","PTO-TILE-MODEL-MEMORY-RESTART","PTO-TILE-GMOV","PTO-TILE-MGATHER","PTO-TILE-MGATHER-CAS","PTO-TILE-MGATHER-MASK","PTO-TILE-MSCATTER","PTO-TILE-MSCATTER-MASK","PTO-TILE-TLOAD","PTO-TILE-TPREFETCH","PTO-TILE-TSTORE"]}
+// Dispatch ownership for the memory PTO tile taxonomy class.

@@ -3,7 +3,7 @@
   "target": "S5-T2-A2:PD-04",
   "decision_id": "PD-04",
   "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
-  "acceptance_record": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
+  "acceptance_record": "docs/status/decisions/0049-hardware-subnormal-policy.md",
   "profile_id": "pto-hardware-numeric-0.58.0-ieee-v1",
   "policy": {
     "input_subnormals": "preserve-exact-source-value",
@@ -2546,34 +2546,74 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "94d48007a9082fae64a0ec0a089f3ab146afe5f8a3b3b4a859ccfaa41519ef03"
+      "sha256": "ec9e3f2ef160cf84391c1ff38201098642e60b1c3449df2746dd9ab738605c96"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "9637ce69b1b2f12d76e65c73fb7536fe66c22a1dde19c11b7827c4f5b60cc24b"
+      "sha256": "0eae4a99230713271bdcff56dd02d6011988a32edd2971160748f40f174fad7c"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "7bd2bfa673c449813d4cf27ae22612d2ca15d20498b6551e514ff4e1d6d40919"
+      "sha256": "75f6b9d725c47ff06026b4ba7dde7be0e5d1892f2e9b955223602fb2bae402fe"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "122166c233403dc30c49a3a3d274c21f0ce9ea1fddad1f55871659ef25a1f22b"
+      "sha256": "10e8bcfed47aee24719038ec07ecefe75aeaf342a0765cb15308da584242e1b8"
     },
     {
-      "path": "asl/types.asl",
-      "sha256": "1018ae49c0ef3a3e1bb15f452446f6606f5c825e01e528ea42c6a8a32c031ae9"
+      "path": "asl/arch/data-types/fault.asl",
+      "sha256": "e3a280e7acf0e582d6f777dee4c5295747a518a505d93e1e3118661f0b561d92"
     },
     {
-      "path": "asl/numeric/formats.asl",
-      "sha256": "ace17d58294c3d41fc0d80c594f7a7eef7683f504df91dbafb19021036993bd4"
+      "path": "asl/arch/data-types/floating-point.asl",
+      "sha256": "9232fffb96d16c57168252188147ad98d4be027780b5cacd926acbd3915e4dc2"
+    },
+    {
+      "path": "asl/arch/data-types/integer.asl",
+      "sha256": "ee412e917aca73b90cf0729bb05b6ee8eba9d636dd87bd01c3d49481fbb6de39"
+    },
+    {
+      "path": "asl/arch/data-types/memory-model.asl",
+      "sha256": "4012f50d5019f5692d8eb2f31ff0ce58f133a3763163e47cf760bed6a2ebbf67"
+    },
+    {
+      "path": "asl/arch/data-types/memory-operations.asl",
+      "sha256": "5213fbde30b1e6cc67f9676e0f0e478a21a04e89853c73e7a2bac7723901d07a"
+    },
+    {
+      "path": "asl/arch/data-types/numeric-classification.asl",
+      "sha256": "0c592e04bf159e15822c47f085dac61066c78a20a33c887665ae46f3053a5a7a"
+    },
+    {
+      "path": "asl/arch/data-types/packed.asl",
+      "sha256": "4ec9fb1eb2d1b14dcba562a5dc1462724c407fa67e5887ac99eb919887777d42"
+    },
+    {
+      "path": "asl/arch/data-types/rounding.asl",
+      "sha256": "6763b6bc65185550a466412faac96fc23438e6f97b85f1b2b84f951f47e407ee"
+    },
+    {
+      "path": "asl/arch/data-types/system-registers.asl",
+      "sha256": "db06b148c04403903c1973f696eb2c23ce49f2c29279d6b2412a083d4ed7d02e"
+    },
+    {
+      "path": "asl/arch/data-types/tile-data-types.asl",
+      "sha256": "40afc7c9304a83307fe7abfcca2a0f9cc82998872b2349250132b81f51f564cc"
+    },
+    {
+      "path": "asl/arch/data-types/trap-context.asl",
+      "sha256": "b7183d7eb28289b128c842e2f806c5cf4ff95151e24e64799d689f6410faaafd"
+    },
+    {
+      "path": "asl/tile/model/numeric/formats.asl",
+      "sha256": "7b35e8353c621a7448facada22a4175acc30e14377fdc2a7cb9c130ab1323d56"
     },
     {
       "path": "tests/asl/profile-tests.asl",
       "sha256": "47248debd7876d0117b0738a44d226e4352806581d574895a7f10a8cb8949f89"
     },
     {
-      "path": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
+      "path": "docs/status/decisions/0049-hardware-subnormal-policy.md",
       "sha256": "9065787b60ef2a323515c1deb82331bfde059d8be4455c3c3ffa0d0f50f4311a"
     }
   ],

@@ -149,30 +149,42 @@ DELETED_TEPL_NAMES = (
     'TLRELU',
 )
 
-GENERATED_DOCS = (
-    "docs/instructions/block-command.md",
-    "docs/instructions/index.md",
-    "docs/instructions/scalar-agu.md",
-    "docs/instructions/scalar-alu.md",
-    "docs/instructions/scalar-amo.md",
-    "docs/instructions/scalar-bru.md",
-    "docs/instructions/scalar-fsu.md",
-    "docs/instructions/scalar-sys.md",
-    "docs/instructions/scalar.md",
-    "docs/instructions/system-registers.md",
-    "docs/instructions/tile.md",
+GENERATED_DOCS = tuple(
+    sorted(
+        (Path("docs") / path.relative_to(ROOT / "asl").with_suffix(".md")).as_posix()
+        for path in (ROOT / "asl").rglob("*.asl")
+    )
 )
-EVIDENCE_FILES = (
+RELEASE_INPUTS_PATH = ROOT / "spec/release-inputs.json"
+RELEASE_INPUTS = json.loads(RELEASE_INPUTS_PATH.read_text(encoding="utf-8"))
+if RELEASE_INPUTS.get("schema") != "pto.release-inputs.v1":
+    raise SystemExit("spec/release-inputs.json has the wrong schema")
+RELEASE_EVIDENCE = tuple(RELEASE_INPUTS.get("evidence", ()))
+if any(not isinstance(row, dict) for row in RELEASE_EVIDENCE):
+    raise SystemExit("spec/release-inputs.json evidence must be an array of objects")
+EVIDENCE_FILES = tuple(
+    sorted(
+        row["path"] for row in RELEASE_EVIDENCE if row.get("role") == "owned-output"
+    )
+)
+CANONICAL_EVIDENCE_INPUTS = tuple(
+    sorted(
+        row["path"]
+        for row in RELEASE_EVIDENCE
+        if row.get("role") == "canonical-input"
+    )
+)
+if set(EVIDENCE_FILES) != {
     str(ABI_VECTORS_PATH),
     str(TOTALITY_PATH),
     str(NUMERIC_VECTORS_PATH),
-)
+}:
+    raise SystemExit("release owned-output evidence registry drift")
 CANONICAL_STATIC_INPUTS = (
     ".aslref-version",
     "specification.toml",
-    "spec/profile-hooks.json",
+    "spec/release-inputs.json",
     "spec/hardware-conformance-profile.json",
-    "spec/requirements.json",
     "spec/catalog/command-forms.json",
     "spec/catalog/linx-vector-reservations.json",
     "spec/catalog/numeric-profile-applicability.json",
@@ -180,19 +192,6 @@ CANONICAL_STATIC_INPUTS = (
     "spec/catalog/scalar-forms.json",
     "spec/catalog/system-registers.json",
     "spec/catalog/tile-operations.json",
-    "docs/architecture.md",
-    "docs/coverage.md",
-    "docs/memory-model.md",
-    "docs/maturity-bringup-plan.md",
-    "docs/maturity-stage-targets.md",
-    "docs/modeling-conventions.md",
-    "docs/normative-sources.md",
-    "docs/numeric-profile-decision-register.md",
-    "docs/profile-contracts.md",
-    "docs/review-checklist.md",
-    "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-    "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
-    "docs/architecture-decisions/0053-pto-isa-0580-tile-operation-cleanup.md",
 )
 FORM_PROJECTION_KEYS = (
     "form_id",
@@ -1001,17 +1000,8 @@ def build_numeric_vectors(profile: dict) -> dict:
 
 def canonical_input_paths() -> list[str]:
     asl = sorted(str(path.relative_to(ROOT)) for path in (ROOT / "asl").rglob("*.asl"))
-    decisions = sorted(
-        str(path.relative_to(ROOT))
-        for path in (ROOT / "docs/architecture-decisions").glob("*.md")
-    )
-    closure_evidence = sorted(
-        str(path.relative_to(ROOT))
-        for path in (ROOT / "spec/evidence").glob("*.json")
-        if str(path.relative_to(ROOT)) not in EVIDENCE_FILES
-    )
     paths = sorted(
-        set(CANONICAL_STATIC_INPUTS).union(asl, decisions, closure_evidence)
+        set(CANONICAL_STATIC_INPUTS).union(asl, CANONICAL_EVIDENCE_INPUTS)
     )
     missing = [path for path in paths if not (ROOT / path).is_file()]
     if missing:
@@ -1023,8 +1013,8 @@ def validate_owned_set() -> None:
     actual_docs = tuple(
         sorted(
             str(path.relative_to(ROOT))
-            for path in (ROOT / "docs/instructions").glob("*.md")
-            if path.name != "README.md"
+            for surface in ("arch", "block", "scalar", "tile")
+            for path in (ROOT / "docs" / surface).rglob("*.md")
         )
     )
     if actual_docs != GENERATED_DOCS:

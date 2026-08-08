@@ -6,19 +6,23 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.evidence_sources import source_rows  # noqa: E402
+
 SCALAR_CATALOG = ROOT / "spec/catalog/scalar-forms.json"
 COMMAND_CATALOG = ROOT / "spec/catalog/command-forms.json"
 DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
 IDENTITY_CATALOG = ROOT / "spec/catalog/numeric-profile-identities.json"
 OUTPUT = ROOT / "spec/evidence/numeric-rounding-selector-contract.json"
-ACCEPTANCE_RECORD = (
-    "docs/architecture-decisions/0047-numeric-rounding-semantics.md"
-)
+ACCEPTANCE_RECORD = "docs/status/decisions/0047-numeric-rounding-semantics.md"
 
 ACTIVE_ROUNDING = (
     (0, "assigned", "RNE", "nearest-ties-even"),
@@ -337,19 +341,19 @@ def generate() -> dict[str, Any]:
             source("spec/catalog/numeric-profile-identities.json"),
             source("spec/evidence/numeric-profile-decision-inputs.json"),
             source("spec/evidence/scalar-fsu-totality.json"),
-            source("asl/scalar/floating.asl"),
-            source("asl/scalar/dispatch.asl"),
-            source("asl/bundle/state.asl"),
-            source("asl/bundle/dispatch.asl"),
-            source("asl/tile/conversion.asl"),
-            source("asl/tile/cube.asl"),
+            *source_rows(ROOT, "asl/scalar/model/fsu/*.asl"),
+            *source_rows(ROOT, "asl/scalar/model/dispatch/*.asl"),
+            *source_rows(ROOT, "asl/block/model/state/*.asl"),
+            *source_rows(ROOT, "asl/block/model/dispatch/*.asl"),
+            *source_rows(ROOT, "asl/tile/model/numeric/*.asl"),
+            *source_rows(ROOT, "asl/tile/model/execution/cube.asl"),
             source("spec/catalog/tile-operations.json"),
             source("spec/hardware-conformance-profile.json"),
             source(
-                "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md"
+                "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md"
             ),
             source(
-                "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
+                "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
             ),
             source(ACCEPTANCE_RECORD),
         ],

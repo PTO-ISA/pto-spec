@@ -3,7 +3,7 @@
   "target": "S5-T2-A2:PD-03",
   "decision_id": "PD-03",
   "status": "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open",
-  "acceptance_record": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+  "acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
   "policy": {
     "namespace_separation": "Scalar FRM, scalar fixed conversion overrides, bundle RMode, public API modes, matrix controls, and stochastic controls are distinct selector namespaces unless an accepted rule maps them.",
     "no_backend_inheritance": "Backend CAST, ROUND, PART, and stochastic-control values are evidence only and cannot create portable PTO encodings.",
@@ -777,62 +777,158 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "ae4b08f8b59118e447e52e2f6f41dd2d9323483c24931479245f1c367ea49b67"
+      "sha256": "572ffe3fefce946057590312872387272b414414030bba6e7e6c0cc6cecb820a"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
-      "sha256": "f2bf1bcfa9e6ce1006132ac6d9aec4a8c698990a20eeb7736d361d62ed6477ed"
+      "sha256": "05752d689ec6b73fe008804fdea50a94eed2048c6b7d19f065b722e80a8767ef"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "94d48007a9082fae64a0ec0a089f3ab146afe5f8a3b3b4a859ccfaa41519ef03"
+      "sha256": "ec9e3f2ef160cf84391c1ff38201098642e60b1c3449df2746dd9ab738605c96"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
       "sha256": "d8d188dc06cb4195fcf3d62724591416c17cbd938c0c225d2093890d61eeb7dc"
     },
     {
-      "path": "asl/scalar/floating.asl",
-      "sha256": "b4c7865f739fdf069091dbdcb3f5b42444c39063ff8be4fe319e001fb0d52cf0"
+      "path": "asl/scalar/model/fsu/arithmetic.asl",
+      "sha256": "3860cbeee3636ec15db56994839f035769157b5afabaac48d15eaa7037396f51"
     },
     {
-      "path": "asl/scalar/dispatch.asl",
-      "sha256": "ff7990fd930802c1b9e21461c0000a66d64810397154faae07984c83cedaffa2"
+      "path": "asl/scalar/model/fsu/profile.asl",
+      "sha256": "201b595409610c79731244da60c8e1809cb0f3fdd2305d75d3fd156c6c220fbb"
     },
     {
-      "path": "asl/bundle/state.asl",
-      "sha256": "ffda005856950cbb47ab2f5c93f070207574d8b3491691d39ea581dae17b9327"
+      "path": "asl/scalar/model/dispatch/agu.asl",
+      "sha256": "9be69ee9b7036cae9f04979fdc1be30aaff071f349ce74c271f82b10f47f3344"
     },
     {
-      "path": "asl/bundle/dispatch.asl",
-      "sha256": "300001357e41aa68f4c2913d7d9591d7959020552e7927af0fa0c1e19bc799c9"
+      "path": "asl/scalar/model/dispatch/alu.asl",
+      "sha256": "3c7d42dc7b0fadad274c1aaa6c1718819bc9464cb936bc13ad74e21685e83b32"
     },
     {
-      "path": "asl/tile/conversion.asl",
-      "sha256": "943e415907740524a864bcca1ffda627fbaa22ad9612814530dfe896fdc359cd"
+      "path": "asl/scalar/model/dispatch/amo.asl",
+      "sha256": "759e0cb12f19b8cbccf2ff797f72b63407d128d925531b3f37ca82357e193856"
     },
     {
-      "path": "asl/tile/cube.asl",
-      "sha256": "2eec5feb790b5f7eedd8c45cff5f5946275a4fd8357e18ce6573bccdedad3745"
+      "path": "asl/scalar/model/dispatch/bru.asl",
+      "sha256": "9b0160ea4246b13632acb34494e18f20b27663e05a799973d7b14a291939e5dc"
+    },
+    {
+      "path": "asl/scalar/model/dispatch/decode.asl",
+      "sha256": "59ea6af4d7f9ccf85d69483e1903bf6faf5ca75b1864921e064d001fd972eb3d"
+    },
+    {
+      "path": "asl/scalar/model/dispatch/fsu.asl",
+      "sha256": "c0e08051db71ae8427c20f913ba70d0ad960b618c78bbae982a68c739535b163"
+    },
+    {
+      "path": "asl/scalar/model/dispatch/sys.asl",
+      "sha256": "e05775b77eba292cdf8bbcdad4ff1fc6aed33dfe348f1975280647808c4a1308"
+    },
+    {
+      "path": "asl/scalar/model/dispatch/top-level.asl",
+      "sha256": "07c654528b9e9c6b4af6c9efb78a4e22f1c0492b80a232670621485c2b8e7409"
+    },
+    {
+      "path": "asl/block/model/state/binding-state.asl",
+      "sha256": "46b650a4830ca540fa274c2ad3cdfd70910d71795761f16b92160fd2d7a96a3a"
+    },
+    {
+      "path": "asl/block/model/state/control-state.asl",
+      "sha256": "fb33ab9e5af85e57fe07adc030014470a48b77d2ca2e11afbad70355b5f40519"
+    },
+    {
+      "path": "asl/block/model/state/descriptor-state.asl",
+      "sha256": "0fae413a024f93e1b5f938a574182bffcfbbdd6d5bbdf0ade0aa1cfc3b00471f"
+    },
+    {
+      "path": "asl/block/model/state/types.asl",
+      "sha256": "fafa4b35fbcf78c24e4d20f76daed5badc4c8a7f3c12400561276ab772f47a9b"
+    },
+    {
+      "path": "asl/block/model/dispatch/commands.asl",
+      "sha256": "32ec82f164b68e70527b7699ffabd4a6441f4601eca6c738247436177cfac034"
+    },
+    {
+      "path": "asl/block/model/dispatch/decode.asl",
+      "sha256": "bc8ac47d3ff1a6008b8041ec2f030933a2e35ee3143d7d029f2daa38cb22b555"
+    },
+    {
+      "path": "asl/block/model/dispatch/descriptor-legality.asl",
+      "sha256": "1f8af32320adbca3ab304f23f49ff0c7956960b51071c9d7a79fb6d1874c6575"
+    },
+    {
+      "path": "asl/block/model/dispatch/destination-shape.asl",
+      "sha256": "776b2d3438434ffd48f48fba2eec4aa8cd22ea5745712300db6a5d8e816d494d"
+    },
+    {
+      "path": "asl/block/model/dispatch/numeric-control.asl",
+      "sha256": "9daca978ecd21d83f7be11e4532c4eaa3db5cdbf5562833e7dfd93fcb29c3e33"
+    },
+    {
+      "path": "asl/block/model/dispatch/scalar-schema.asl",
+      "sha256": "59e466c059b1d7aac880ba3bede340d9deed8ffa87356b1c1a8ce05f09a4e6b4"
+    },
+    {
+      "path": "asl/block/model/dispatch/shared-cube.asl",
+      "sha256": "a6994836c697d0216b916751ee044ce27dede62e31af002ed7510b213409da33"
+    },
+    {
+      "path": "asl/block/model/dispatch/shared-tlsu.asl",
+      "sha256": "976bf66d12eca3a672dceb8cc139f91fe0a39d361b0f41fd1d9bb230de5ecb88"
+    },
+    {
+      "path": "asl/block/model/dispatch/start.asl",
+      "sha256": "81a6f6b2d119419f9ba89e51607bce4206104ffcb85cb77e08a4e4a241eea14d"
+    },
+    {
+      "path": "asl/block/model/dispatch/tile-execution.asl",
+      "sha256": "ec6512a4206c948b8163657d814054c4f90d1622b96870489c6c1ca99fba3645"
+    },
+    {
+      "path": "asl/block/model/dispatch/tile-schema.asl",
+      "sha256": "dcaef41e2839b30122b7a9a725da3689595e8e87808e80e5a128935c4d51b890"
+    },
+    {
+      "path": "asl/block/model/dispatch/top-level.asl",
+      "sha256": "1f154fe66c4d09c8981a7166c18b8f2cd1313c258e9630c418d0d9e0922f0043"
+    },
+    {
+      "path": "asl/tile/model/numeric/exceptions.asl",
+      "sha256": "7acbde42269981937c4b34454cde84242dd6e22c4daec4c57e8318b347f7adfa"
+    },
+    {
+      "path": "asl/tile/model/numeric/formats.asl",
+      "sha256": "7b35e8353c621a7448facada22a4175acc30e14377fdc2a7cb9c130ab1323d56"
+    },
+    {
+      "path": "asl/tile/model/numeric/rounding.asl",
+      "sha256": "749f652fb0fdd9dc7e87c2ef889ff7ecf5f17debdf10590a72f98bcb0e6adb6f"
+    },
+    {
+      "path": "asl/tile/model/execution/cube.asl",
+      "sha256": "397a3e276d3988b2aa4380b8f2fd9fe2eec88d1f4ac4faf70c702c6d18235389"
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "74f4524fe5505335bf5c7855170ebe18aa9e3b85c34068b2ecd15049a3363134"
+      "sha256": "e1c60c6acab2beffca2cc8ff9c24392ace035f01df19dca482a93876866908c8"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
       "sha256": "c4076cf8ac6ebd0c6db8a070b7c290b9928ed7f98c089538ee53ed4644e1531a"
     },
     {
-      "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
+      "path": "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
       "sha256": "07c51707a4f02fa6a451f92ab267b31fe4f0398d3def26f12b461f79d734d6a7"
     },
     {
-      "path": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
-      "sha256": "e4b8ec913ebe63322fca7985e2421b7e8cb894c06ed73c652a6179d63121c63b"
+      "path": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+      "sha256": "2d571c4df9bae68cb34824db62f2944145c96f61ea113ec15b3475e60b6610b6"
     },
     {
-      "path": "docs/architecture-decisions/0047-numeric-rounding-semantics.md",
+      "path": "docs/status/decisions/0047-numeric-rounding-semantics.md",
       "sha256": "6595060f3b01749643d01677014308fc89aa02b23670fdef79d82e582f9232f2"
     }
   ],

@@ -3,7 +3,7 @@
   "target": "TrapContext per-leaf recovery evidence",
   "status": "per-leaf-save-preserve-recover-invalidate-closed",
   "issue": "https://github.com/PTO-ISA/pto-spec/issues/27",
-  "adr": "docs/architecture-decisions/0011-visible-ebarg-snapshot.md",
+  "adr": "docs/status/decisions/0011-visible-ebarg-snapshot.md",
   "requirement_ids": [
     "PTO-REQ-FAULT-001",
     "PTO-REQ-SCALAR-SSR-001"

@@ -3,7 +3,7 @@
   "target": "S5-T2-A2:PD-06",
   "decision_id": "PD-06",
   "status": "state-owner-matrix-closed-profile-production-open",
-  "acceptance_record": "docs/architecture-decisions/0038-scalar-numeric-flag-state-and-ownership.md",
+  "acceptance_record": "docs/status/decisions/0038-scalar-numeric-flag-state-and-ownership.md",
   "architecture_contract": {
     "storage": {
       "system_register": "CORE_STATE",
@@ -528,22 +528,62 @@
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "9637ce69b1b2f12d76e65c73fb7536fe66c22a1dde19c11b7827c4f5b60cc24b"
+      "sha256": "0eae4a99230713271bdcff56dd02d6011988a32edd2971160748f40f174fad7c"
     },
     {
-      "path": "asl/scalar/floating.asl",
-      "sha256": "b4c7865f739fdf069091dbdcb3f5b42444c39063ff8be4fe319e001fb0d52cf0"
+      "path": "asl/scalar/model/fsu/arithmetic.asl",
+      "sha256": "3860cbeee3636ec15db56994839f035769157b5afabaac48d15eaa7037396f51"
     },
     {
-      "path": "asl/scalar/dispatch.asl",
-      "sha256": "ff7990fd930802c1b9e21461c0000a66d64810397154faae07984c83cedaffa2"
+      "path": "asl/scalar/model/fsu/profile.asl",
+      "sha256": "201b595409610c79731244da60c8e1809cb0f3fdd2305d75d3fd156c6c220fbb"
     },
     {
-      "path": "asl/profiles/pto-v0.asl",
-      "sha256": "cffaef654c49cafd02ef73478295de4e070f4ab1aa4c046decb2950a03103808"
+      "path": "asl/scalar/model/dispatch/agu.asl",
+      "sha256": "9be69ee9b7036cae9f04979fdc1be30aaff071f349ce74c271f82b10f47f3344"
     },
     {
-      "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
+      "path": "asl/scalar/model/dispatch/alu.asl",
+      "sha256": "3c7d42dc7b0fadad274c1aaa6c1718819bc9464cb936bc13ad74e21685e83b32"
+    },
+    {
+      "path": "asl/scalar/model/dispatch/amo.asl",
+      "sha256": "759e0cb12f19b8cbccf2ff797f72b63407d128d925531b3f37ca82357e193856"
+    },
+    {
+      "path": "asl/scalar/model/dispatch/bru.asl",
+      "sha256": "9b0160ea4246b13632acb34494e18f20b27663e05a799973d7b14a291939e5dc"
+    },
+    {
+      "path": "asl/scalar/model/dispatch/decode.asl",
+      "sha256": "59ea6af4d7f9ccf85d69483e1903bf6faf5ca75b1864921e064d001fd972eb3d"
+    },
+    {
+      "path": "asl/scalar/model/dispatch/fsu.asl",
+      "sha256": "c0e08051db71ae8427c20f913ba70d0ad960b618c78bbae982a68c739535b163"
+    },
+    {
+      "path": "asl/scalar/model/dispatch/sys.asl",
+      "sha256": "e05775b77eba292cdf8bbcdad4ff1fc6aed33dfe348f1975280647808c4a1308"
+    },
+    {
+      "path": "asl/scalar/model/dispatch/top-level.asl",
+      "sha256": "07c654528b9e9c6b4af6c9efb78a4e22f1c0492b80a232670621485c2b8e7409"
+    },
+    {
+      "path": "asl/arch/profile/applicability.asl",
+      "sha256": "7d4eb33f24fe8d7a80ff480d367d07969dd915ef9a6d44d886db0730bcf848ca"
+    },
+    {
+      "path": "asl/arch/profile/reference-profile.asl",
+      "sha256": "36571f279ea941f313648e70ee09181160782c69dffac8ad8e432cce27a05614"
+    },
+    {
+      "path": "asl/arch/profile/reset.asl",
+      "sha256": "7828cea919d7585796c97b4493aa48603e2119ab1053982ce31fb6fa8338aec5"
+    },
+    {
+      "path": "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
       "sha256": "07c51707a4f02fa6a451f92ab267b31fe4f0398d3def26f12b461f79d734d6a7"
     }
   ],

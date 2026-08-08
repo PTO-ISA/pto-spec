@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 import re
 import subprocess
 from pathlib import Path
@@ -13,14 +14,19 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.evidence_sources import source_rows  # noqa: E402
+
 CATALOG = ROOT / "spec/catalog/system-registers.json"
 OUTPUT = ROOT / "spec/evidence/system-register-witness-closure.json"
 
 EXPECTED_STORAGE_SEMANTIC_INVENTORY_SHA256 = (
-    "f69a94f8f9b46f76ae8d1d1601017510c4044d7f35814dd473d12e77b5afeeff"
+    "4b4a06569ba70ff00244a575c9919a1ed94fd118c90eaa408291962274ebae62"
 )
 EXPECTED_TRAP_ACTIVATION_INVENTORY_SHA256 = (
-    "dea83626097300f0f2de13a489d56e0d88216b1c4da0c42739df1cac97d91fb0"
+    "fa211845e0f2393acb85ff5af71717d274961ec43de6dfb8fae21ae17fd55b2c"
 )
 
 STORAGE_BOUNDARY_SYMBOLS = {
@@ -216,9 +222,7 @@ def unit_inventory(
         r"(?<![A-Za-z0-9_])(?:0x[0-9a-fA-F]+|[0-9]+)(?![A-Za-z0-9_])"
     )
     normalized = [normalized_body(unit["body"]) for unit in units]
-    semantic = [
-        normalized_body(without_line_comments(unit["body"])) for unit in units
-    ]
+    semantic = [normalized_body(without_line_comments(unit["body"])) for unit in units]
     tainted = {
         index
         for index, value in enumerate(semantic)
@@ -535,9 +539,10 @@ def trap_consumer_exclusion(
                     continue
                 normalized = line.strip()
                 allowed = (
-                    relative == "asl/types.asl" and normalized.rstrip(",") == fault
+                    relative == "asl/arch/data-types/fault.asl"
+                    and normalized.rstrip(",") == fault
                 ) or (
-                    relative == "asl/state.asl"
+                    relative == "asl/arch/memory-model/fault-precision.asl"
                     and normalized.startswith(
                         f"when {fault} => _ACRTrapNumber[[ring]] ="
                     )
@@ -590,42 +595,42 @@ def consumer_exclusion_negative_canaries(
         (
             "storage-full-bank-address",
             storage_consumer_exclusion,
-            "asl/state.asl",
+            "asl/arch/system-registers/addressing.asl",
             "func CanaryStorageFullAddress() => Word begin return ReadSystemRegisterAddress(Zeros{24} + 0x1f10); end;",
             "storage semantic access inventory drift",
         ),
         (
             "storage-symbolic-backing-index",
             storage_consumer_exclusion,
-            "asl/state.asl",
+            "asl/arch/system-registers/addressing.asl",
             "func CanaryStorageSymbolic(index: SystemRegisterFileIndex) => Word begin return _ExtendedSystemRegisters[[index]]; end;",
             "storage semantic access inventory drift",
         ),
         (
             "storage-transitive-wrapper-consumer",
             storage_consumer_exclusion,
-            "asl/state.asl",
+            "asl/arch/system-registers/addressing.asl",
             "func CanaryStorageWrapperConsumer(address: SystemRegisterAddress) begin ExecuteCompressedSystemRegisterGet(address); end;",
             "storage semantic access inventory drift",
         ),
         (
             "trap-direct-number-assignment",
             trap_consumer_exclusion,
-            "asl/state.asl",
+            "asl/arch/memory-model/fault-precision.asl",
             "func CanaryTrapNumber(ring: AccessControlRing) begin _ACRTrapNumber[[ring]] = Zeros{6} + 33; end;",
             "trap activation inventory drift",
         ),
         (
             "trap-number-helper",
             trap_consumer_exclusion,
-            "asl/state.asl",
+            "asl/arch/memory-model/fault-precision.asl",
             "pure func CanaryTrapHelper() => TrapNumber begin return Zeros{6} + 49; end;",
             "trap activation inventory drift",
         ),
         (
             "trap-indirect-setfault",
             trap_consumer_exclusion,
-            "asl/state.asl",
+            "asl/arch/memory-model/fault-precision.asl",
             "func CanaryIndirectFault(code: FaultCode) begin SetFault(code, ReadTPC()); end;",
             "trap activation inventory drift",
         ),
@@ -872,10 +877,15 @@ def generate() -> dict[str, Any]:
             source("tests/asl/scalar-tests.asl"),
             source("tests/asl/state-tests.asl"),
             source("tests/asl/tile-tests.asl"),
-            source("asl/types.asl"),
-            source("asl/state.asl"),
-            source("asl/profiles/pto-v0.asl"),
-            source("asl/scalar/system-registers.asl"),
+            *source_rows(ROOT, "asl/arch/data-types/*.asl"),
+            *source_rows(
+                ROOT,
+                "asl/arch/programming-model/*.asl",
+                "asl/arch/state/*.asl",
+                "asl/arch/system-registers/*.asl",
+            ),
+            *source_rows(ROOT, "asl/arch/profile/*.asl"),
+            *source_rows(ROOT, "asl/scalar/model/sys/registers.asl"),
         ],
         "summary": {
             "register_definition_count": len(catalog["registers"]),
