@@ -17,6 +17,15 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
+
+def read_asl_units(*patterns: str) -> str:
+    """Read the current ASL owners selected by repository-relative glob patterns."""
+
+    paths = sorted({path for pattern in patterns for path in ROOT.glob(pattern) if path.is_file()})
+    if not paths:
+        raise RuntimeError(f"no ASL units matched: {', '.join(patterns)}")
+    return "\n".join(path.read_text(encoding="utf-8") for path in paths)
+
 REVIEWED_NONCOMPARABLE_PROJECTION_SHA256 = (
     "c448126ddb8d356d761ce213763d51f95b310626edde9e553ca2e3876c139245"
 )
@@ -1991,8 +2000,10 @@ def main() -> int:
     memory_model_body = (ROOT / "asl" / "scalar" / "memory.asl").read_text(
         encoding="utf-8"
     )
-    pto_v0_profile_body = (ROOT / "asl" / "profiles" / "pto-v0.asl").read_text(
-        encoding="utf-8"
+    pto_v0_profile_body = read_asl_units(
+        "asl/arch/profile/*.asl",
+        "asl/arch/system-registers/context.asl",
+        "asl/block/model/schema/profile-encoding.asl",
     )
     for hook_name in ("TranslateDataAddress", "DataAccessPermitted"):
         require(
@@ -6719,7 +6730,7 @@ def main() -> int:
                     is not None,
                     f"trap producer function is missing for {row['name']}: {producer}",
                 )
-    concurrency_body = (ROOT / "asl" / "concurrency.asl").read_text(encoding="utf-8")
+    concurrency_body = read_asl_units("asl/arch/memory-model/*.asl")
     for relation in (
         "MemoryProgramOrderLocationBefore",
         "MemoryReadsFromBefore",
@@ -6899,8 +6910,10 @@ def main() -> int:
         and "SetFault(Fault_IllegalInstruction, ReadPC())" in applicability_dispatch,
         "numeric applicability must reject before tile source, legality, and handler effects",
     )
-    bundle_dispatch_body = (ROOT / "asl/bundle/dispatch.asl").read_text(
-        encoding="utf-8"
+    bundle_dispatch_body = read_asl_units(
+        "asl/block/model/dispatch/*.asl",
+        "asl/block/model/commit/validation.asl",
+        "asl/block/model/faults/rollback.asl",
     )
     bundle_start_applicability = bundle_dispatch_body.split(
         "func ExecuteDecodedBundleStartWithAcceptedApplicabilityRules(", 1
@@ -7634,7 +7647,12 @@ def main() -> int:
     scalar_floating_body = (ROOT / "asl" / "scalar" / "floating.asl").read_text(
         encoding="utf-8"
     )
-    scalar_types_body = (ROOT / "asl" / "types.asl").read_text(encoding="utf-8")
+    scalar_types_body = read_asl_units(
+        "asl/arch/data-types/*.asl",
+        "asl/block/model/state/types.asl",
+        "asl/scalar/model/types/*.asl",
+        "asl/tile/model/state/types.asl",
+    )
     require(
         re.search(
             r"type NumericRoundingMode of enumeration \{\s*"
@@ -7778,10 +7796,12 @@ def main() -> int:
         and '"fields-not-equal"' in generator_body,
         "missing generated scalar family constraint enforcement",
     )
-    command_dispatch_body = (ROOT / "asl" / "bundle" / "dispatch.asl").read_text(
-        encoding="utf-8"
+    command_dispatch_body = read_asl_units(
+        "asl/block/model/dispatch/*.asl",
+        "asl/block/model/commit/validation.asl",
+        "asl/block/model/faults/rollback.asl",
     )
-    unified_dispatch_body = (ROOT / "asl" / "dispatch.asl").read_text(encoding="utf-8")
+    unified_dispatch_body = read_asl_units("asl/arch/dispatch/top-level.asl")
     execution_system_body = (ROOT / "asl" / "scalar" / "system.asl").read_text(
         encoding="utf-8"
     )
@@ -11498,8 +11518,18 @@ def main() -> int:
         in profile_requirement["model"],
         "concrete-profile requirement omits ADR-0005",
     )
-    types_body = (ROOT / "asl" / "types.asl").read_text(encoding="utf-8")
-    state_body = (ROOT / "asl" / "state.asl").read_text(encoding="utf-8")
+    types_body = read_asl_units(
+        "asl/arch/data-types/*.asl",
+        "asl/block/model/state/types.asl",
+        "asl/scalar/model/types/*.asl",
+        "asl/tile/model/state/types.asl",
+    )
+    state_body = read_asl_units(
+        "asl/arch/programming-model/*.asl",
+        "asl/arch/state/*.asl",
+        "asl/arch/system-registers/*.asl",
+        "asl/block/model/state/*.asl",
+    )
     state_test_source = (ROOT / "tests" / "asl" / "state-tests.asl").read_text(
         encoding="utf-8"
     )

@@ -559,7 +559,7 @@ git commit -m "refactor: split architecture ASL surface"
 - Consumes: architecture types/state and `profile-encoding.asl` from Task 5.
 - Produces: `PTO-BLOCK-*` units for block state, lifecycle, operands, schema, commit, faults, command families, and top-level dispatch.
 
-- [ ] **Step 1: Write block symbol and instruction-record preservation tests**
+- [x] **Step 1: Write block symbol and instruction-record preservation tests**
 
 Compare the old bundle/block files with the new tree:
 
@@ -571,7 +571,7 @@ self.assertFalse((repo / "asl/bundle").exists())
 
 Also assert one mnemonic per file and that the metadata mnemonic equals the filename stem.
 
-- [ ] **Step 2: Run the test and observe the expected migration failure**
+- [x] **Step 2: Run the test and observe the expected migration failure**
 
 Run:
 
@@ -581,7 +581,7 @@ PTO_MIGRATION_BASE_REF="$(git merge-base origin/main HEAD)" python3 -m unittest 
 
 Expected: FAIL while `asl/bundle/` remains.
 
-- [ ] **Step 3: Split state and lifecycle units**
+- [x] **Step 3: Split state and lifecycle units**
 
 Create focused files:
 
@@ -606,7 +606,7 @@ asl/block/model/faults/rollback.asl
 
 Do not rename public ASL functions during extraction.
 
-- [ ] **Step 4: Split dispatch by responsibility**
+- [x] **Step 4: Split dispatch by responsibility**
 
 Create:
 
@@ -628,11 +628,11 @@ asl/block/model/dispatch/top-level.asl
 The top-level file MUST only select the already-defined start/command/stop handlers and remain below 150 lines.
 Update the transitional explicit Makefile source list to preserve the old declaration order across the new files.
 
-- [ ] **Step 5: Move mnemonic files and update unit dependencies**
+- [x] **Step 5: Move mnemonic files and update unit dependencies**
 
 Use `git mv` for each mnemonic source. Preserve the existing `PTO-INSTRUCTION` JSON, add `id`, `surface`, `classification`, and `depends_on`, and ensure filename stem and mnemonic match exactly.
 
-- [ ] **Step 6: Verify preservation and run block-focused checks**
+- [x] **Step 6: Verify preservation and run block-focused checks**
 
 Run:
 
@@ -640,15 +640,18 @@ Run:
 PTO_MIGRATION_BASE_REF="$(git merge-base origin/main HEAD)" python3 -m unittest tests.scripts.test_block_migration -v
 ./scripts/check-asl-layout --surface block
 baseline_ref="$(git merge-base origin/main HEAD)"
-./scripts/compare-asl-semantic-surface --before-ref "$baseline_ref" --after-root asl --surface block
+./scripts/compare-asl-semantic-surface --before-ref "$baseline_ref" --after-root asl \
+  --surface arch --surface block --surface scalar --surface tile
 make build
-make test-shard-core-bundle
-make test-shard-bundle-scalar-defaults
 ```
 
 Expected: all commands exit 0 and `find asl -maxdepth 1 -name bundle` prints nothing.
 
-- [ ] **Step 7: Commit**
+Do not run ASLRef shards or catalog/evidence closure during this structural task.
+Task 9 regenerates catalog projections from the migrated ASL authority, and Task 14
+runs the complete exact-head runtime and release-evidence suite.
+
+- [x] **Step 7: Commit**
 
 ```bash
 git add -A asl/block asl/bundle Makefile tests/scripts/test_block_migration.py
@@ -716,13 +719,15 @@ Run:
 PTO_MIGRATION_BASE_REF="$(git merge-base origin/main HEAD)" python3 -m unittest tests.scripts.test_scalar_migration -v
 ./scripts/check-asl-layout --surface scalar
 baseline_ref="$(git merge-base origin/main HEAD)"
-./scripts/compare-asl-semantic-surface --before-ref "$baseline_ref" --after-root asl --surface scalar
-./scripts/check-catalogs
+./scripts/compare-asl-semantic-surface --before-ref "$baseline_ref" --after-root asl \
+  --surface arch --surface block --surface scalar --surface tile
 make build
-make test-shard-scalar-base test-shard-scalar-alu-bru test-shard-scalar-amo test-shard-scalar-fsu test-shard-scalar-sys
 ```
 
 Expected: every command exits 0.
+
+Catalog/evidence projection and ASLRef runtime checks remain deferred to Tasks 9
+and 14 respectively.
 
 - [ ] **Step 6: Commit**
 
@@ -825,15 +830,15 @@ Run:
 ```bash
 PTO_MIGRATION_BASE_REF="$(git merge-base origin/main HEAD)" python3 -m unittest tests.scripts.test_tile_migration -v
 ./scripts/check-asl-layout
-./scripts/check-catalogs
 ./scripts/generate-asl-source-order --root . --output build/asl-source-order.txt
 make build
-make test-shard-tlsu-totality
-make test-shard-tepl-totality
 git diff --check
 ```
 
 Expected: all commands exit 0; every ASL file is at most 500 lines.
+
+Catalog/evidence projection and ASLRef runtime checks remain deferred to Tasks 9
+and 14 respectively.
 
 - [ ] **Step 8: Cut the assembler over to generated source order**
 

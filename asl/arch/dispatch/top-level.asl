@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-ARCH-DISPATCH-TOP-LEVEL","surface":"arch","classification":["dispatch","top-level"],"depends_on":["PTO-BLOCK-MODEL-SCHEMA-PROFILE-ENCODING"]}
+// PTO-UNIT: {"id":"PTO-ARCH-DISPATCH-TOP-LEVEL","surface":"arch","classification":["dispatch","top-level"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TOP-LEVEL"]}
 // PTO-REQ-INSTRUCTION-DISPATCH-001: total PTO encoded-instruction entry point.
 
 type PTOInstructionExecutionStatus of enumeration {

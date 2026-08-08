@@ -41,7 +41,20 @@ ASL_SOURCES_BEFORE_DECODER := \
 	asl/arch/state/trap-context.asl \
 	asl/arch/memory-model/fault-precision.asl \
 	asl/arch/memory-model/address-space.asl \
-	asl/bundle/state.asl \
+	asl/block/model/state/control-state.asl \
+	asl/block/model/state/descriptor-state.asl \
+	asl/block/model/state/binding-state.asl \
+	asl/block/model/lifecycle/reset.asl \
+	asl/block/model/schema/dimensions.asl \
+	asl/block/model/operands/shared-bindings.asl \
+	asl/block/model/operands/scalar-bindings.asl \
+	asl/block/model/operands/tile-bindings.asl \
+	asl/block/model/schema/header.asl \
+	asl/block/model/schema/attributes.asl \
+	asl/block/model/lifecycle/begin.asl \
+	asl/block/model/lifecycle/enter-stop.asl \
+	asl/block/model/lifecycle/lifetime.asl \
+	asl/block/model/commit/effects.asl \
 	asl/tile/state.asl \
 	asl/scalar/operands.asl \
 	asl/scalar/integer.asl \
@@ -78,7 +91,20 @@ ASL_SOURCES_AFTER_DECODER := \
 	asl/arch/profile/reference-profile.asl \
 	asl/block/model/schema/profile-encoding.asl \
 	$(ASL_MNEMONIC_SOURCES) \
-	asl/bundle/dispatch.asl \
+	asl/block/model/dispatch/decode.asl \
+	asl/block/model/dispatch/descriptor-legality.asl \
+	asl/block/model/dispatch/scalar-schema.asl \
+	asl/block/model/dispatch/tile-schema.asl \
+	asl/block/model/dispatch/numeric-control.asl \
+	asl/block/model/dispatch/destination-shape.asl \
+	asl/block/model/faults/rollback.asl \
+	asl/block/model/dispatch/shared-cube.asl \
+	asl/block/model/dispatch/shared-tlsu.asl \
+	asl/block/model/dispatch/tile-execution.asl \
+	asl/block/model/commit/validation.asl \
+	asl/block/model/dispatch/start.asl \
+	asl/block/model/dispatch/commands.asl \
+	asl/block/model/dispatch/top-level.asl \
 	asl/scalar/dispatch.asl \
 	asl/arch/dispatch/top-level.asl
 
