@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+
 if ! command -v opam >/dev/null 2>&1; then
     echo "error: opam is required to build ASLRef" >&2
     exit 1
 fi
 
 opam install --yes dune menhir zarith
+"$repo_root/scripts/prepare-aslref"

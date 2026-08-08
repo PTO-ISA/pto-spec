@@ -22,7 +22,8 @@
       "command": "make toolchain-check",
       "evidence": [
         ".aslref-version",
-        "scripts/check-toolchain"
+        "scripts/check-toolchain",
+        "scripts/prepare-aslref"
       ],
       "id": "RG-03",
       "name": "pinned ASLRef canaries"
@@ -31,7 +32,8 @@
       "command": "make check",
       "evidence": [
         "Makefile",
-        "scripts/aslref"
+        "scripts/aslref",
+        "scripts/prepare-aslref"
       ],
       "id": "RG-04",
       "name": "strict normative type check"
@@ -89,6 +91,7 @@
     "GOVERNANCE.md": "f4081bfbdc1ae3ea7d22dce98c3960ba0290ce282a88f89cb471c4d255cad409",
     "Makefile": "3651e5447f901925f709e4b40a2761464a1b7db28b489ca1eaf7eb564b6a5dd5",
     "scripts/asl_release_suite.py": "1e14d6327f1ff3aa95d92956be8cface3e28e53992524d53312a703873ccd4ac",
+    "scripts/aslref": "7961ad9ccfd89eebbe043fa87974eb6354c9a92271dc69bed7efbceeeeed607f",
     "scripts/check-active-paths": "574d08000f2944cea217282c3165ded62592c28ca11985cf6189b49ad45ab27f",
     "scripts/check-asl-layout": "5283ef77e8650d607c537e29de06fb544add29be6b76caf6e431f1954301e39f",
     "scripts/check-asl-tests": "3a0ef89d06725179960c8a7cd3a319d71f18ef76c798e4863036c860cbab2189",
@@ -98,15 +101,17 @@
     "scripts/check-release-closure": "2fcefbdb821bcb55b92abf9ef0f2df8310a277f7ce75b9d8cd4d1e1ad1016319",
     "scripts/check-release-manifest": "32e3d6b41139090514beab297cdb18328af1e88079093711441ebe71d74cfc3c",
     "scripts/check-release-workflow": "c2c5f6e548397e427a5164183c991f9da687348a8aea088fab3a679a710853aa",
-    "scripts/check-repository": "abd2334bae2b31bb2e634cb63d81ac6f54761973264f17799f665ea9335f3aa4",
+    "scripts/check-repository": "763ee05eb6af957c8f4dff44b0d53b84951358e1f07d7f14fb7f7806888ce83c",
     "scripts/check-script-entrypoints": "814cd44ff42e27c764b401bf8de1583aaa0e68d77dcb2937bb2646ae8465ac7e",
     "scripts/check-toolchain": "bd1c7bd659e12f24140f0f1f9680d8742caeeb489d447469a943f592365f73cb",
     "scripts/encoding_witness.py": "f7767271a695c7d0e634683d3d5768f476f17a50f587f0e4020bd380d5769202",
     "scripts/instruction_docs.py": "23c6e5d2a92e3d8030b14e3dab2eef0a0a916e56e87607cee79116a2bec91b55",
+    "scripts/prepare-aslref": "0aceca8980869c80e3d8b7751bd7fcdc61d1920f027bfd760e1a7b5e3f8f85c6",
     "scripts/print-asl-test-matrix": "2582db3a6ed8c414c3865e8cca11eb50499e611b07017c93529cf014da504b79",
     "scripts/project_asl_catalogs.py": "8ce781bc8867095945c887ecbb3637480d2f8985ef7e646fcbeec8f8aa000507",
     "scripts/run-asl-release-suite": "56cbd340490c0d4d94990cff0f4607a3c3a53fccee818775b38a37a43a7ff654",
     "scripts/run-asl-test": "152bc50910a4927ff9b78b805fac286d1948be8cbaf5751325a65e8316bf7851",
+    "scripts/setup-aslref": "0cbe5e413f53d6d1cce1d2f604a65fd5e7e77cc5eec9c449978f4a5e136d64da",
     "spec/evidence/release-traceability-readiness.json": "927454e721cee4086e68382130af01f500db40b958be4c05b8e21934aef11b58",
     "spec/release-inputs.json": "d90cc3c8a8c7855572f57fcf4dbbe371471a95c61ee4ac7fb1896deda59ca984"
   },

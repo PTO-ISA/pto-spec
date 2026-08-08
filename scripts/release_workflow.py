@@ -37,6 +37,17 @@ def _event_block(workflow: str) -> str:
     return match.group("body") if match else ""
 
 
+def _standalone_run_position(job: str, command: str) -> int | None:
+    """Return the offset of an exact one-line GitHub Actions run command."""
+
+    match = re.search(
+        rf"^(?:      - run:|        run:)\s*{re.escape(command)}\s*$",
+        job,
+        re.MULTILINE,
+    )
+    return match.start() if match else None
+
+
 def validate_pr_workflow(workflow: str) -> list[str]:
     """Return violations of the intentionally lightweight PR contract."""
 
@@ -105,7 +116,7 @@ def validate_release_workflow(workflow: str) -> list[str]:
     if not re.search(r"ocaml/setup-ocaml@[0-9a-f]{40}", strict_model):
         errors.append("strict-model must use a commit-pinned OCaml setup action")
     if (
-        "make setup" not in strict_model
+        _standalone_run_position(strict_model, "make setup") is None
         or "make toolchain-check check" not in strict_model
     ):
         errors.append(
@@ -121,6 +132,16 @@ def validate_release_workflow(workflow: str) -> list[str]:
         errors.append("ASL jobs must consume the exact page matrix exported by plan")
     if "print-asl-test-matrix" not in page:
         errors.append("each ASL page must regenerate its print-asl-test-matrix page")
+    setup_position = _standalone_run_position(page, "make setup")
+    execution_position = page.find("run-asl-test --id")
+    if (
+        setup_position is None
+        or execution_position < 0
+        or setup_position > execution_position
+    ):
+        errors.append(
+            "each ASL page must prepare pinned ASLRef before parallel test execution"
+        )
     if not re.search(r"^\s*cmp\s+", page, re.MULTILINE):
         errors.append(
             "each ASL page must compare its regenerated page with the plan artifact"
@@ -129,6 +150,19 @@ def validate_release_workflow(workflow: str) -> list[str]:
         errors.append(
             "ASL pages must invoke run-asl-test --id for every independent point"
         )
+    if len(re.findall(r"\brun-asl-test\b", page)) != 1 or len(
+        re.findall(r"\bxargs\b", page)
+    ) != 1:
+        errors.append(
+            "ASL pages must contain exactly one xargs invocation and one run-asl-test invocation"
+        )
+    if not re.search(
+        r"^[ \t]*\|[ \t]+xargs[ \t]+-P[ \t]+8[ \t]+-n[ \t]+1[ \t]+"
+        r"\./scripts/run-asl-test[ \t]+--id[ \t]*$",
+        page,
+        re.MULTILINE,
+    ):
+        errors.append("ASL pages must execute independent points with eight-way parallelism")
     if "asl-test-results" not in page or not re.search(
         r"actions/upload-artifact@[0-9a-f]{40}", page
     ):

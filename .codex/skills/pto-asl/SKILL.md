@@ -103,10 +103,12 @@ make release-verify RELEASE_COMMIT="$(git rev-parse HEAD)"
 make release-prepare
 ```
 
-For parallel executable tests, build the repository-pinned ASLRef executable once and have each shard invoke that
-executable directly. Do not keep `dune exec` alive around each ASLRef process: Dune retains the workspace lock for the
-process lifetime and silently serializes otherwise independent shards. The repository `scripts/aslref` wrapper owns this
-build-once/direct-execution behavior.
+For parallel executable tests, run `make setup` first. Its `scripts/prepare-aslref` step serially fetches, checks out,
+and builds the repository-pinned ASLRef executable once. Each shard must then invoke the prepared executable through
+the read-only `scripts/aslref` launcher. The launcher must never fetch, check out, or build: an absent, wrong-origin, or
+wrong-commit cache fails closed and tells the caller to run `make setup`. Do not keep `dune exec` alive around each
+ASLRef process: Dune retains the workspace lock for the process lifetime and silently serializes otherwise independent
+shards.
 
 Keep runtime shards focused: assemble only the test-library sources that define a shard's calls, schedule the known
 heavy totality matrices first, and use a bounded job count. The shard checker must inspect only each actual `main()`
