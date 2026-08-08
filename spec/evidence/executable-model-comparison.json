@@ -9518,8 +9518,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
       "classification": "divergence",
@@ -9534,7 +9534,7 @@
       "index": 0,
       "mnemonic": "B.CATR",
       "pto_command_disposition": "executed",
-      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest encoding divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest encoding divergence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -9546,8 +9546,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
       "classification": "divergence",
@@ -9562,7 +9562,7 @@
       "index": 1,
       "mnemonic": "B.DATR",
       "pto_command_disposition": "executed",
-      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest encoding divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest encoding divergence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -9718,8 +9718,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
       "classification": "divergence",
@@ -9734,7 +9734,7 @@
       "index": 8,
       "mnemonic": "B.IOT",
       "pto_command_disposition": "executed",
-      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest encoding divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest encoding divergence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -9746,8 +9746,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
       "classification": "divergence",
@@ -9762,7 +9762,7 @@
       "index": 9,
       "mnemonic": "B.IOT",
       "pto_command_disposition": "executed",
-      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest encoding divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest encoding divergence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -9798,8 +9798,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
       "classification": "divergence",
@@ -9814,7 +9814,7 @@
       "index": 11,
       "mnemonic": "B.IOT",
       "pto_command_disposition": "executed",
-      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest encoding divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest encoding divergence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -9826,8 +9826,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
       "classification": "divergence",
@@ -9842,7 +9842,7 @@
       "index": 12,
       "mnemonic": "B.IOT",
       "pto_command_disposition": "executed",
-      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest encoding divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest encoding divergence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -10478,8 +10478,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
       "classification": "divergence",
@@ -10494,7 +10494,7 @@
       "index": 39,
       "mnemonic": "BSTART.TEPL",
       "pto_command_disposition": "executed",
-      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest encoding divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest encoding divergence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -12018,8 +12018,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12033,7 +12033,7 @@
       "independent_status": "selector-manifest",
       "index": 4,
       "mnemonic": "TREM",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12166,8 +12166,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12181,7 +12181,7 @@
       "independent_status": "selector-manifest",
       "index": 10,
       "mnemonic": "TMAX",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12194,8 +12194,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12209,7 +12209,7 @@
       "independent_status": "selector-manifest",
       "index": 11,
       "mnemonic": "TMIN",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12222,8 +12222,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12237,7 +12237,7 @@
       "independent_status": "selector-manifest",
       "index": 12,
       "mnemonic": "TCMP",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12250,8 +12250,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12265,7 +12265,7 @@
       "independent_status": "selector-manifest",
       "index": 13,
       "mnemonic": "TABS",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12278,8 +12278,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12293,7 +12293,7 @@
       "independent_status": "selector-manifest",
       "index": 14,
       "mnemonic": "TNOT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12306,8 +12306,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12321,7 +12321,7 @@
       "independent_status": "selector-manifest",
       "index": 15,
       "mnemonic": "TNEG",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12334,8 +12334,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12349,7 +12349,7 @@
       "independent_status": "selector-manifest",
       "index": 16,
       "mnemonic": "TEXP",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12362,8 +12362,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12377,7 +12377,7 @@
       "independent_status": "selector-manifest",
       "index": 17,
       "mnemonic": "TLOG",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12390,8 +12390,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12405,7 +12405,7 @@
       "independent_status": "selector-manifest",
       "index": 18,
       "mnemonic": "TRECIP",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12418,8 +12418,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12433,7 +12433,7 @@
       "independent_status": "selector-manifest",
       "index": 19,
       "mnemonic": "TSQRT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12446,8 +12446,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12461,7 +12461,7 @@
       "independent_status": "selector-manifest",
       "index": 20,
       "mnemonic": "TRSQRT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12474,8 +12474,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12489,7 +12489,7 @@
       "independent_status": "selector-manifest",
       "index": 21,
       "mnemonic": "TRELU",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12502,8 +12502,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12517,7 +12517,7 @@
       "independent_status": "selector-manifest",
       "index": 22,
       "mnemonic": "TSEL",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12530,8 +12530,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12545,7 +12545,7 @@
       "independent_status": "selector-manifest",
       "index": 23,
       "mnemonic": "TCVT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12678,8 +12678,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12693,7 +12693,7 @@
       "independent_status": "selector-manifest",
       "index": 29,
       "mnemonic": "TREMS",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12826,8 +12826,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12841,7 +12841,7 @@
       "independent_status": "selector-manifest",
       "index": 35,
       "mnemonic": "TMAXS",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12854,8 +12854,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12869,7 +12869,7 @@
       "independent_status": "selector-manifest",
       "index": 36,
       "mnemonic": "TMINS",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12882,8 +12882,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12897,7 +12897,7 @@
       "independent_status": "selector-manifest",
       "index": 37,
       "mnemonic": "TCMPS",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12910,8 +12910,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12925,7 +12925,7 @@
       "independent_status": "selector-manifest",
       "index": 38,
       "mnemonic": "TSELS",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12938,8 +12938,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12953,7 +12953,7 @@
       "independent_status": "selector-manifest",
       "index": 39,
       "mnemonic": "TEXPANDS",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12966,8 +12966,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -12981,7 +12981,7 @@
       "independent_status": "selector-manifest",
       "index": 40,
       "mnemonic": "TROWSUM",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -12994,8 +12994,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13009,7 +13009,7 @@
       "independent_status": "selector-manifest",
       "index": 41,
       "mnemonic": "TROWMAX",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13022,8 +13022,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13037,7 +13037,7 @@
       "independent_status": "selector-manifest",
       "index": 42,
       "mnemonic": "TROWMIN",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13050,8 +13050,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13065,7 +13065,7 @@
       "independent_status": "selector-manifest",
       "index": 43,
       "mnemonic": "TROWPROD",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13078,8 +13078,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13093,7 +13093,7 @@
       "independent_status": "selector-manifest",
       "index": 44,
       "mnemonic": "TROWEXPAND",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13106,8 +13106,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13121,7 +13121,7 @@
       "independent_status": "selector-manifest",
       "index": 45,
       "mnemonic": "TROWEXPANDADD",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13134,8 +13134,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13149,7 +13149,7 @@
       "independent_status": "selector-manifest",
       "index": 46,
       "mnemonic": "TROWEXPANDSUB",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13162,8 +13162,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13177,7 +13177,7 @@
       "independent_status": "selector-manifest",
       "index": 47,
       "mnemonic": "TROWEXPANDMUL",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13190,8 +13190,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13205,7 +13205,7 @@
       "independent_status": "selector-manifest",
       "index": 48,
       "mnemonic": "TROWEXPANDDIV",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13218,8 +13218,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13233,7 +13233,7 @@
       "independent_status": "selector-manifest",
       "index": 49,
       "mnemonic": "TROWEXPANDMAX",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13246,8 +13246,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13261,7 +13261,7 @@
       "independent_status": "selector-manifest",
       "index": 50,
       "mnemonic": "TROWEXPANDMIN",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13274,8 +13274,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13289,7 +13289,7 @@
       "independent_status": "selector-manifest",
       "index": 51,
       "mnemonic": "TROWEXPANDEXPDIF",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13302,8 +13302,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13317,7 +13317,7 @@
       "independent_status": "selector-manifest",
       "index": 52,
       "mnemonic": "TROWARGMAX",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13330,8 +13330,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13345,7 +13345,7 @@
       "independent_status": "selector-manifest",
       "index": 53,
       "mnemonic": "TROWARGMIN",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13358,8 +13358,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13373,7 +13373,7 @@
       "independent_status": "selector-manifest",
       "index": 54,
       "mnemonic": "TCOLSUM",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13386,8 +13386,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13401,7 +13401,7 @@
       "independent_status": "selector-manifest",
       "index": 55,
       "mnemonic": "TCOLMAX",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13414,8 +13414,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13429,7 +13429,7 @@
       "independent_status": "selector-manifest",
       "index": 56,
       "mnemonic": "TCOLMIN",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13442,8 +13442,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13457,7 +13457,7 @@
       "independent_status": "selector-manifest",
       "index": 57,
       "mnemonic": "TCOLPROD",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13470,8 +13470,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13485,7 +13485,7 @@
       "independent_status": "selector-manifest",
       "index": 58,
       "mnemonic": "TCOLEXPAND",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13498,8 +13498,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13513,7 +13513,7 @@
       "independent_status": "selector-manifest",
       "index": 59,
       "mnemonic": "TCOLEXPANDADD",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13526,8 +13526,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13541,7 +13541,7 @@
       "independent_status": "selector-manifest",
       "index": 60,
       "mnemonic": "TCOLEXPANDSUB",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13554,8 +13554,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13569,7 +13569,7 @@
       "independent_status": "selector-manifest",
       "index": 61,
       "mnemonic": "TCOLEXPANDMUL",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13582,8 +13582,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13597,7 +13597,7 @@
       "independent_status": "selector-manifest",
       "index": 62,
       "mnemonic": "TCOLEXPANDDIV",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13610,8 +13610,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13625,7 +13625,7 @@
       "independent_status": "selector-manifest",
       "index": 63,
       "mnemonic": "TCOLEXPANDMAX",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13638,8 +13638,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13653,7 +13653,7 @@
       "independent_status": "selector-manifest",
       "index": 64,
       "mnemonic": "TCOLEXPANDMIN",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13666,8 +13666,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13681,7 +13681,7 @@
       "independent_status": "selector-manifest",
       "index": 65,
       "mnemonic": "TCOLEXPANDEXPDIF",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13694,8 +13694,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13709,7 +13709,7 @@
       "independent_status": "selector-manifest",
       "index": 66,
       "mnemonic": "TCOLARGMAX",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13722,8 +13722,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13737,7 +13737,7 @@
       "independent_status": "selector-manifest",
       "index": 67,
       "mnemonic": "TCOLARGMIN",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13750,8 +13750,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13765,7 +13765,7 @@
       "independent_status": "selector-manifest",
       "index": 68,
       "mnemonic": "TCONCAT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13778,8 +13778,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13793,7 +13793,7 @@
       "independent_status": "selector-manifest",
       "index": 69,
       "mnemonic": "TEXTRACT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13806,8 +13806,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13821,7 +13821,7 @@
       "independent_status": "selector-manifest",
       "index": 70,
       "mnemonic": "TINSERT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13834,8 +13834,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13849,7 +13849,7 @@
       "independent_status": "selector-manifest",
       "index": 71,
       "mnemonic": "TIMG2COL",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13862,8 +13862,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13877,7 +13877,7 @@
       "independent_status": "selector-manifest",
       "index": 72,
       "mnemonic": "TFILLPAD",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13890,8 +13890,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13905,7 +13905,7 @@
       "independent_status": "selector-manifest",
       "index": 73,
       "mnemonic": "TCI",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13918,8 +13918,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13933,7 +13933,7 @@
       "independent_status": "selector-manifest",
       "index": 74,
       "mnemonic": "TTRI",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13946,8 +13946,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13961,7 +13961,7 @@
       "independent_status": "selector-manifest",
       "index": 75,
       "mnemonic": "THISTOGRAM",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -13974,8 +13974,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -13989,7 +13989,7 @@
       "independent_status": "selector-manifest",
       "index": 76,
       "mnemonic": "TQUANT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -14002,8 +14002,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -14017,7 +14017,7 @@
       "independent_status": "selector-manifest",
       "index": 77,
       "mnemonic": "TDEQUANT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -14030,8 +14030,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -14045,7 +14045,7 @@
       "independent_status": "selector-manifest",
       "index": 78,
       "mnemonic": "TSORT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -14058,8 +14058,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -14073,7 +14073,7 @@
       "independent_status": "selector-manifest",
       "index": 79,
       "mnemonic": "TMRGSORT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -14086,8 +14086,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -14101,7 +14101,7 @@
       "independent_status": "selector-manifest",
       "index": 80,
       "mnemonic": "TTRANS",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -14114,8 +14114,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -14129,7 +14129,7 @@
       "independent_status": "selector-manifest",
       "index": 81,
       "mnemonic": "TGATHER",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -14142,8 +14142,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -14157,7 +14157,7 @@
       "independent_status": "selector-manifest",
       "index": 82,
       "mnemonic": "TSCATTER",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -14170,8 +14170,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -14185,7 +14185,7 @@
       "independent_status": "selector-manifest",
       "index": 83,
       "mnemonic": "TPARTADD",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -14198,8 +14198,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -14213,7 +14213,7 @@
       "independent_status": "selector-manifest",
       "index": 84,
       "mnemonic": "TPARTMUL",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -14226,8 +14226,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -14241,7 +14241,7 @@
       "independent_status": "selector-manifest",
       "index": 85,
       "mnemonic": "TPARTMAX",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
@@ -14254,8 +14254,8 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
@@ -14269,7 +14269,7 @@
       "independent_status": "selector-manifest",
       "index": 86,
       "mnemonic": "TPARTMIN",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",

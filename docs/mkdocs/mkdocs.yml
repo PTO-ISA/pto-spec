@@ -953,7 +953,6 @@ nav:
           - "ADR 0042: Numeric variation-point ownership": status/decisions/0042-numeric-variation-point-ownership.md
           - "ADR 0043: Public numeric type identity and target availability": status/decisions/0043-public-numeric-type-identity-and-availability.md
           - "ADR 0044: Public integer conversion result subset": status/decisions/0044-public-integer-conversion-result-subset.md
-          - "ADR 0045: Define the PTO ISA 0.57.1 tile and bundle contract": status/decisions/0045-pto-isa-release-tile-contract.md
           - "ADR 0046: Separate the kernel execution mask and warp predicates": status/decisions/0046-separate-execution-mask-and-warp-predicates.md
           - "ADR 0047: Numeric rounding semantics": status/decisions/0047-numeric-rounding-semantics.md
           - "ADR 0048: Numeric format value classification": status/decisions/0048-numeric-format-value-classification.md

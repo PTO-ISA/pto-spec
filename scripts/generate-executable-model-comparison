@@ -421,10 +421,10 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
             disposition = "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence."
         elif not encoding_match:
             classification = "divergence"
-            disposition = "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest encoding divergence."
+            disposition = "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest encoding divergence."
             abi_change_acceptance = {
-                "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-                "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+                "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+                "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
                 "kind": "accepted-0.58.0-command-encoding-break",
             }
         elif (
@@ -519,10 +519,10 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
             )
         elif not selector_match:
             classification = "divergence"
-            disposition = "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence."
+            disposition = "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence."
             abi_change_acceptance = {
-                "decision": "docs/status/decisions/0045-pto-isa-release-tile-contract.md",
-                "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+                "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+                "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
                 "kind": "accepted-0.58.0-compact-tepl-selector-break",
             }
         elif family == "TEPL":

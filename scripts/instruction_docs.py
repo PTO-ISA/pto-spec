@@ -801,6 +801,26 @@ def check_navigation(root: Path = ROOT) -> list[str]:
     return []
 
 
+def check_navigation_projection(root: Path = ROOT) -> list[str]:
+    records = load_doc_index(root)
+    projections = (
+        (
+            root / "docs/mkdocs/generated-nav.yml",
+            render_nav(records, Path("docs"), root),
+        ),
+        (
+            root / "docs/mkdocs/mkdocs.yml",
+            _render_mkdocs_config(records, root),
+        ),
+    )
+    errors: list[str] = []
+    for path, expected in projections:
+        relative = path.relative_to(root).as_posix()
+        if not path.exists() or path.read_text(encoding="utf-8") != expected:
+            errors.append(f"stale generated MkDocs navigation: {relative}")
+    return errors
+
+
 def check_normative_legacy_links(root: Path = ROOT) -> list[str]:
     errors: list[str] = []
     active_files = list((root / "asl").rglob("*.asl"))
@@ -861,6 +881,7 @@ def main(argv: list[str] | None = None) -> int:
             + check_catalog_projection(ROOT)
             + check_version_neutrality(ROOT)
             + check_navigation(ROOT)
+            + check_navigation_projection(ROOT)
             + check_normative_legacy_links(ROOT)
             + check_legacy_banners(ROOT)
         )

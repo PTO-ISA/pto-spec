@@ -12,6 +12,7 @@ from scripts.instruction_docs import (
     check_catalog_projection,
     check_legacy_banners,
     check_navigation,
+    check_navigation_projection,
     check_normative_legacy_links,
     check_tree,
     check_version_neutrality,
@@ -359,6 +360,22 @@ class InstructionDocsTest(unittest.TestCase):
             mkdocs_config.read_text(encoding="utf-8"),
         )
         self.assertEqual(check_navigation(self.root), [])
+        self.assertEqual(check_navigation_projection(self.root), [])
+
+    def test_navigation_projection_rejects_stale_generated_files(self) -> None:
+        self.write_asl()
+        generate_tree(self.root)
+        generated_nav = self.root / "docs/mkdocs/generated-nav.yml"
+        generated_nav.write_text(
+            generated_nav.read_text(encoding="utf-8")
+            + "  - Retired: status/decisions/0045-retired.md\n",
+            encoding="utf-8",
+        )
+
+        self.assertEqual(
+            check_navigation_projection(self.root),
+            ["stale generated MkDocs navigation: docs/mkdocs/generated-nav.yml"],
+        )
 
     def test_version_neutrality_reports_only_active_normative_surfaces(self) -> None:
         active_asl = self.root / "asl/tile/state.asl"

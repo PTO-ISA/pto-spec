@@ -13,6 +13,8 @@ architecture requirement.
   then read the exact mirrored page under `docs/<surface>/<classification>/` for supplementary
   explanation and examples. Do not infer semantics from generated catalogs,
   HTML, spreadsheets, or release projections.
+- Never use `docs/status/legacy/` as an architecture, implementation, review,
+  or agent-routing source. It is excluded from navigation and release closure.
 - For architecture-wide rules, locate the stable NDF `PTO-*` clause in ASL.
   Continue through generated instruction pages, decision/open metadata, and
   release evidence in that order; never create a second normative explanation.
@@ -43,6 +45,7 @@ architecture requirement.
 
 ```bash
 make pr-check                # lightweight PR lane; no opam or ASLRef
+make repo-check              # generated model and release-evidence closure
 git diff --check
 ```
 
