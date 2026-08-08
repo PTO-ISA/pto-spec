@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/amo/SC.W.asl`
 
-Execute the SC.W scalar instruction contract.
+SC.W - Conditionally store the scalar value when the matching reservation remains valid.
 
 ## Normative identity {#PTO-INST-SCALAR-SC-W}
 
@@ -34,6 +34,17 @@ sc.w<.{aq, rl, f, aqrl, aqf, rlf, aqrlf}> SrcL, [SrcR], {->t, ->u, ->Rd}
 | sc_w_32_14b238f02bfd | far | 1 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":1}] |
 | sc_w_32_14b238f02bfd | rl | 1 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":1}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+| aq | encoded operand or control |
+| far | encoded operand or control |
+| rl | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/SC.W.asl -->
@@ -44,10 +55,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -62,11 +69,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `SC.W - Conditionally store the scalar value when the matching reservation remains valid.`
+- **Semantic handler:** `StoreConditional`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

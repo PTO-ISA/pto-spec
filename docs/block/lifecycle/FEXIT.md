@@ -31,6 +31,14 @@ FEXIT [RegDst0 ~ RegDstn], sp!, uimm
 | fexit_32_37b663f2a34d | DstEnd | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | fexit_32_37b663f2a34d | uimm | 15 | unsigned | [{"instruction_lsb":25,"value_lsb":3,"width":7},{"instruction_lsb":7,"value_lsb":10,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| DstBegin | encoded operand or control |
+| DstEnd | encoded operand or control |
+| uimm | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/FEXIT.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -59,11 +63,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `Atomically validates and commits a frame-template exit state.`
+- **Semantic handler:** `ExecuteFrameExit`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

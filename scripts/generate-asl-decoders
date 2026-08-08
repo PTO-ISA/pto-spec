@@ -10128,8 +10128,10 @@ def main() -> None:
             print("    ResetProfileState();")
             print("    for scalar_sys_init = 0 to PTO_ABSOLUTE_GPR_COUNT - 1 do")
             print(
-                f"        _GPR[[scalar_sys_init]] = Zeros{{PTO_XLEN}} + "
-                f"{selector_state_base + selector_case_index * 64} + scalar_sys_init;"
+                f"        WriteGPR(scalar_sys_init as GPRIndex, "
+                f"Zeros{{PTO_XLEN}} + "
+                f"{selector_state_base + selector_case_index * 64} + "
+                f"scalar_sys_init);"
             )
             print("    end;")
             print("    for scalar_sys_init = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do")
@@ -10205,8 +10207,10 @@ def main() -> None:
                 print("    ResetProfileState();")
                 print("    for scalar_sys_init = 0 to PTO_ABSOLUTE_GPR_COUNT - 1 do")
                 print(
-                    f"        _GPR[[scalar_sys_init]] = Zeros{{PTO_XLEN}} + "
-                    f"{selector_state_base + selector_case_index * 64} + scalar_sys_init;"
+                    f"        WriteGPR(scalar_sys_init as GPRIndex, "
+                    f"Zeros{{PTO_XLEN}} + "
+                    f"{selector_state_base + selector_case_index * 64} + "
+                    f"scalar_sys_init);"
                 )
                 print("    end;")
                 print("    for scalar_sys_init = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do")

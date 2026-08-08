@@ -3,7 +3,10 @@
 // architecture-visible scalar, memory, access-control-ring, reset-profile,
 // concurrency-candidate, and fault state.
 
-var _GPR : array [[PTO_ABSOLUTE_GPR_COUNT]] of Word;
+// A core owns four private scalar register files.  An encoded absolute GPR
+// selector is shared by the instruction, but each PE resolves that selector
+// in its own file.
+var _PEGPRs : array [[PTO_MODEL_MEMORY_AGENTS]] of PERegisterFile;
 var _TQueue : TemporaryQueueSnapshot;
 var _UQueue : TemporaryQueueSnapshot;
 var _PC : Word;

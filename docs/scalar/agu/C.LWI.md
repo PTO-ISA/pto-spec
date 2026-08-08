@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/agu/C.LWI.asl`
 
-Execute the C.LWI scalar instruction contract.
+C.LWI - Load scalar data using this mnemonic's width, signedness, and address-update form.
 
 ## Normative identity {#PTO-INST-SCALAR-C-LWI}
 
@@ -30,6 +30,13 @@ c.lwi [srcL, simm], ->t
 | c_lwi_16_b224525971da | SrcL | 5 | encoding-defined | [{"instruction_lsb":6,"value_lsb":0,"width":5}] |
 | c_lwi_16_b224525971da | simm5 | 5 | signed | [{"instruction_lsb":11,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcL | encoded operand or control |
+| simm5 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/C.LWI.asl -->
@@ -40,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -58,11 +61,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `C.LWI - Load scalar data using this mnemonic's width, signedness, and address-update form.`
+- **Semantic handler:** `ExecuteScalarLoad`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

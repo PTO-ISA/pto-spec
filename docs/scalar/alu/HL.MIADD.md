@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/HL.MIADD.asl`
 
-Execute the HL.MIADD scalar instruction contract.
+HL.MIADD - Multiply by the encoded immediate and add the scalar source.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-MIADD}
 
@@ -32,6 +32,15 @@ hl.miadd SrcL, SrcR, uimm, ->{t, u, Rd}
 | hl_miadd_48_ec5127b6dfd6 | SrcR | 5 | encoding-defined | [{"instruction_lsb":36,"value_lsb":0,"width":5}] |
 | hl_miadd_48_ec5127b6dfd6 | uimm19 | 19 | unsigned | [{"instruction_lsb":41,"value_lsb":0,"width":7},{"instruction_lsb":4,"value_lsb":7,"width":12}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+| uimm19 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.MIADD.asl -->
@@ -42,10 +51,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -60,11 +65,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.MIADD - Multiply by the encoded immediate and add the scalar source.`
+- **Semantic handler:** `ScalarMultiplyImmediateAdd`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

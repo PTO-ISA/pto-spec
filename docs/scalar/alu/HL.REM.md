@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/HL.REM.asl`
 
-Execute the HL.REM scalar instruction contract.
+HL.REM - Compute quotient and remainder as a scalar result pair.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-REM}
 
@@ -32,6 +32,15 @@ hl.rem SrcL, SrcR, ->Dst0, Dst1
 | hl_rem_48_3c13e08615aa | SrcL | 5 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":5}] |
 | hl_rem_48_3c13e08615aa | SrcR | 5 | encoding-defined | [{"instruction_lsb":36,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst0 | encoded operand or control |
+| RegDst1 | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.REM.asl -->
@@ -42,10 +51,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -60,11 +65,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.REM - Compute quotient and remainder as a scalar result pair.`
+- **Semantic handler:** `ExecuteScalarDividePair`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

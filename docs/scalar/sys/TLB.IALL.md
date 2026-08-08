@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/sys/TLB.IALL.asl`
 
-Execute the TLB.IALL scalar instruction contract.
+TLB.IALL - Perform this mnemonic's cache, TLB, or bundle maintenance operation.
 
 ## Normative identity {#PTO-INST-SCALAR-TLB-IALL}
 
@@ -23,6 +23,10 @@ tlb.iall
 | --- | --- | ---: | --- | --- |
 | tlb_iall_32_0fb421b85c88 | L32 | 32 | 0x0030702b / 0xffffffff | [] |
 
+## Operands and results
+
+This instruction has no explicit operand fields.
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/TLB.IALL.asl -->
@@ -33,10 +37,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -51,11 +51,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `TLB.IALL - Perform this mnemonic's cache, TLB, or bundle maintenance operation.`
+- **Semantic handler:** `ExecuteMaintenance`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

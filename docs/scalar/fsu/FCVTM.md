@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/fsu/FCVTM.asl`
 
-Execute the FCVTM scalar instruction contract.
+FCVTM - Convert between the encoded scalar numeric formats.
 
 ## Normative identity {#PTO-INST-SCALAR-FCVTM}
 
@@ -32,6 +32,15 @@ fcvtm.{srcT2dstT} SrcL, ->{t, u, Rd}
 | fcvtm_32_8801f1562870 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | fcvtm_32_8801f1562870 | SrcType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| DstType | encoded operand or control |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcType | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FCVTM.asl -->
@@ -42,10 +51,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -60,11 +65,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `FCVTM - Convert between the encoded scalar numeric formats.`
+- **Semantic handler:** `ConvertFloatingEncoding`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

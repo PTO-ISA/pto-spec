@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory/pe-movement/GMOV.asl`
 
-Execute the GMOV Tile operation contract.
+Copy the resolved peer-PE Tile fragment selected by the bound peer TID.
 
 ## Normative identity {#PTO-INST-TILE-GMOV}
 
@@ -23,6 +23,14 @@ GMOV <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | GMOV | TLSU |  | 13 |  | GMOV |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | resolved-peer-source |
+| scalar0 | peer-tid |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory/pe-movement/GMOV.asl -->
@@ -33,10 +41,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -60,11 +64,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_GMOV`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["Layout"], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `GMOV`
+- **Effect contract:** `GMOV`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:resolved-peer-source", "operand:scalar0:peer-tid"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

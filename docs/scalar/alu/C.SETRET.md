@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/C.SETRET.asl`
 
-Execute the C.SETRET scalar instruction contract.
+C.SETRET - Write the architectural return address.
 
 ## Normative identity {#PTO-INST-SCALAR-C-SETRET}
 
@@ -29,6 +29,12 @@ c.setret uimm, - >Ra
 | --- | --- | ---: | --- | --- |
 | c_setret_16_335651ef6c27 | uimm5 | 5 | unsigned | [{"instruction_lsb":6,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| uimm5 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/C.SETRET.asl -->
@@ -39,10 +45,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -57,11 +59,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `C.SETRET - Write the architectural return address.`
+- **Semantic handler:** `SetReturnAddress`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

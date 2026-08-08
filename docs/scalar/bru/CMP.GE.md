@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/bru/CMP.GE.asl`
 
-Execute the CMP.GE scalar instruction contract.
+CMP.GE - Compare scalar operands and write the encoded boolean result.
 
 ## Normative identity {#PTO-INST-SCALAR-CMP-GE}
 
@@ -32,6 +32,15 @@ cmp.ge SrcL, SrcR<{.sw, .uw}>, ->{t, u, Rd}
 | cmp_ge_32_d88e3a1cfff4 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | cmp_ge_32_d88e3a1cfff4 | SrcRType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+| SrcRType | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/CMP.GE.asl -->
@@ -42,10 +51,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -60,11 +65,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `CMP.GE - Compare scalar operands and write the encoded boolean result.`
+- **Semantic handler:** `ExecuteCompare`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

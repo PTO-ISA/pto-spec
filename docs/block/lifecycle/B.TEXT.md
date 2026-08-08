@@ -29,6 +29,12 @@ B.TEXT <label>
 | --- | --- | ---: | --- | --- |
 | b_text_32_1ce09f50e5dd | simm25 | 25 | signed | [{"instruction_lsb":7,"value_lsb":0,"width":25}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| simm25 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/B.TEXT.asl -->
@@ -39,10 +45,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -57,11 +59,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `Sets the out-of-line body entry address for a decoupled bundle.`
+- **Semantic handler:** `SetBundleBodyAddress`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

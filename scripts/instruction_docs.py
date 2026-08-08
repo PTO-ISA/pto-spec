@@ -366,6 +366,85 @@ def _encoding_section(record: InstructionRecord) -> list[str]:
     return lines
 
 
+def _operands_section(record: InstructionRecord) -> list[str]:
+    rows: list[list[str]] = []
+    seen: set[tuple[str, str]] = set()
+    for catalog_record in record.catalog_records:
+        for operand in catalog_record.get("operands", []):
+            row = (str(operand.get("field", "")), str(operand.get("role", "")))
+            if row not in seen:
+                seen.add(row)
+                rows.append(list(row))
+        if not catalog_record.get("operands"):
+            for field in catalog_record.get("fields", []):
+                row = (str(field.get("name", "")), "encoded operand or control")
+                if row not in seen:
+                    seen.add(row)
+                    rows.append(list(row))
+    lines = ["## Operands and results", ""]
+    if rows:
+        lines.extend(
+            [
+                "| Field | Architectural role |",
+                "| --- | --- |",
+                *[
+                    "| " + " | ".join(_markdown_cell(cell) for cell in row) + " |"
+                    for row in rows
+                ],
+                "",
+            ]
+        )
+    else:
+        lines.extend(["This instruction has no explicit operand fields.", ""])
+    return lines
+
+
+def _contract_values(record: InstructionRecord, keys: tuple[str, ...]) -> list[str]:
+    values: list[str] = []
+    for catalog_record in record.catalog_records:
+        for key in keys:
+            value = catalog_record.get(key)
+            if value in (None, "", [], {}):
+                continue
+            rendered = (
+                f"`{value}`"
+                if isinstance(value, str)
+                else f"`{json.dumps(value, ensure_ascii=False, sort_keys=True)}`"
+            )
+            entry = f"- **{key.replace('_', ' ').capitalize()}:** {rendered}"
+            if entry not in values:
+                values.append(entry)
+    return values
+
+
+def _legality_section(record: InstructionRecord) -> list[str]:
+    lines = ["## Legality and exceptions", ""]
+    values = _contract_values(
+        record,
+        ("constraints", "legality_handler", "fault_contract", "datr_contract"),
+    )
+    lines.extend(values or ["- No additional catalog constraint beyond decode legality."])
+    lines.append("")
+    return lines
+
+
+def _operational_section(record: InstructionRecord) -> list[str]:
+    lines = ["## Operational information", ""]
+    values = _contract_values(
+        record,
+        (
+            "semantic_summary",
+            "semantic_handler",
+            "effect_contract",
+            "restart_contract",
+            "state_effects",
+        ),
+    )
+    lines.extend(values or [f"- **Summary:** {record.summary}"])
+    lines.append("")
+    return lines
+
+
 def render_page(record: InstructionRecord, supplementary: str = "") -> str:
     lines = [
         f"<!-- GENERATED FROM: {record.source_path.as_posix()} -->",
@@ -388,13 +467,10 @@ def render_page(record: InstructionRecord, supplementary: str = "") -> str:
         "```",
         "",
         *_encoding_section(record),
+        *_operands_section(record),
         "## Decode",
         "",
         *_generated_region(record, "decode"),
-        "",
-        "## Assembler symbols",
-        "",
-        "Supplementary operand names and examples may be added here.",
         "",
     ]
     if record.surface == "tile":
@@ -414,14 +490,8 @@ def render_page(record: InstructionRecord, supplementary: str = "") -> str:
             "",
             *_generated_region(record, "operation"),
             "",
-            "## Legality and exceptions",
-            "",
-            "Normative legality is embedded from the ASL source above.",
-            "",
-            "## Operational information",
-            "",
-            "Supplementary implementation-neutral guidance may be added here.",
-            "",
+            *_legality_section(record),
+            *_operational_section(record),
             SUPPLEMENTARY_BEGIN,
             supplementary.rstrip(),
             SUPPLEMENTARY_END,

@@ -55,8 +55,16 @@ end;
 func RecordLoadEvent(address: Word, size_bytes: integer {1,2,4,8},
                      value: Word, order: MemoryOrder)
 begin
+    RecordLoadEventForAgent(_CurrentMemoryAgent, address, size_bytes, value,
+        order);
+end;
+
+func RecordLoadEventForAgent(agent: MemoryAgentId, address: Word,
+                             size_bytes: integer {1,2,4,8}, value: Word,
+                             order: MemoryOrder)
+begin
     if _MemoryEventCaptureEnabled then
-        let event = AddLoadEvent(_CurrentMemoryAgent, address, size_bytes,
+        let event = AddLoadEvent(agent, address, size_bytes,
             value, order);
         ResolveCapturedReadFrom(event);
     end;
@@ -65,8 +73,16 @@ end;
 func RecordStoreEvent(address: Word, size_bytes: integer {1,2,4,8},
                       value: Word, order: MemoryOrder)
 begin
+    RecordStoreEventForAgent(_CurrentMemoryAgent, address, size_bytes, value,
+        order);
+end;
+
+func RecordStoreEventForAgent(agent: MemoryAgentId, address: Word,
+                              size_bytes: integer {1,2,4,8}, value: Word,
+                              order: MemoryOrder)
+begin
     if _MemoryEventCaptureEnabled then
-        - = AddStoreEvent(_CurrentMemoryAgent, address, size_bytes, value,
+        - = AddStoreEvent(agent, address, size_bytes, value,
             order, NextMemoryCoherenceRank(address, size_bytes));
     end;
 end;

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/complex-layout/union/TPARTADD.asl`
 
-Execute the TPARTADD Tile operation contract.
+Combine corresponding source partitions by addition.
 
 ## Normative identity {#PTO-INST-TILE-TPARTADD}
 
@@ -23,6 +23,14 @@ TPARTADD <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TPARTADD | TEPL | 0x071 | 17 | 3 | ExecuteTilePartial |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source-left |
+| source1 | source-right |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/union/TPARTADD.asl -->
@@ -33,10 +41,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -62,11 +66,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_ExecuteTilePartial`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `ExecuteTilePartial`
+- **Effect contract:** `ExecuteTilePartial`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source-left", "operand:source1:source-right"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

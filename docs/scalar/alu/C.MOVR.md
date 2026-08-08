@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/C.MOVR.asl`
 
-Execute the C.MOVR scalar instruction contract.
+C.MOVR - Move the scalar source to the selected destination.
 
 ## Normative identity {#PTO-INST-SCALAR-C-MOVR}
 
@@ -30,6 +30,13 @@ c.movr SrcL, ->{t, u, Rd}
 | c_movr_16_80d2b5f3580b | RegDst | 5 | encoding-defined | [{"instruction_lsb":11,"value_lsb":0,"width":5}] |
 | c_movr_16_80d2b5f3580b | SrcL | 5 | encoding-defined | [{"instruction_lsb":6,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/C.MOVR.asl -->
@@ -40,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -58,11 +61,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `C.MOVR - Move the scalar source to the selected destination.`
+- **Semantic handler:** `MoveScalarValue`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

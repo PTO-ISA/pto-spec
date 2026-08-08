@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/complex-layout/format-conversion/TQUANT.asl`
 
-Execute the TQUANT Tile operation contract.
+Quantize source elements using scale, zero point, rounding, and saturation controls.
 
 ## Normative identity {#PTO-INST-TILE-TQUANT}
 
@@ -23,6 +23,16 @@ TQUANT <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TQUANT | TEPL | 0x06A | 10 | 3 | TQUANT |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source |
+| scalar0 | scale |
+| scalar1 | zero-point |
+| numeric_control | rounding-and-saturation |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/format-conversion/TQUANT.asl -->
@@ -33,10 +43,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -62,11 +68,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TQUANT`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["Sat", "Canonicalize", "DataType", "RMode", "Layout"], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TQUANT`
+- **Effect contract:** `TQUANT`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source", "operand:scalar0:scale", "operand:scalar1:zero-point", "operand:numeric_control:rounding-and-saturation"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

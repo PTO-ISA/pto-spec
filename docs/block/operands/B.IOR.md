@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/operands/B.IOR.asl`
 
-Binds encoded scalar inputs and outputs to the current bundle interface.
+Bind up to three absolute GPR inputs and one absolute GPR output; TLOAD/TSTORE use source zero as GM base and source one as logical row stride.
 
 ## Normative identity {#PTO-INST-BLOCK-B-IOR}
 
@@ -14,7 +14,7 @@ The current instruction contract is owned by the ASL source linked above.
 ## Assembly
 
 ```asm
-B.IOR [RegSrc0, RegSrc1, RegSrc2],[RegDst]
+B.IOR [<gpr>[, <gpr>[, <gpr>]]][, -><gpr>]
 ```
 
 ## Encoding
@@ -32,6 +32,15 @@ B.IOR [RegSrc0, RegSrc1, RegSrc2],[RegDst]
 | b_ior_32_c3ea71404eb3 | RegSrc1 | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | b_ior_32_c3ea71404eb3 | RegSrc2 | 5 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| RegSrc0 | encoded operand or control |
+| RegSrc1 | encoded operand or control |
+| RegSrc2 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/operands/B.IOR.asl -->
@@ -43,14 +52,31 @@ end;
 ```
 <!-- GENERATED-ASL-END: decode -->
 
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
-
 ## Operation
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/operands/B.IOR.asl -->
 ```asl
+// Canonical <gpr> spellings are zero, sp, a0..a7, ra, s0..s8, and x0..x3.
+// Relative T/U queue selectors are not legal in any B.IOR field.
+pure func InstructionContractAbsoluteGPRSelectorLegal_B_IOR(
+    selector: Reg5Selector) => boolean
+begin
+    return selector < PTO_ABSOLUTE_GPR_COUNT;
+end;
+
+// In TLOAD/TSTORE schemas source zero supplies the GM base and source one
+// supplies row stride in logical elements.  Omission is distinct from an
+// encoded selector whose current value is zero.
+pure func InstructionContractTLSUBaseSource_B_IOR() => integer
+begin
+    return 0;
+end;
+
+pure func InstructionContractTLSURowStrideSource_B_IOR() => integer
+begin
+    return 1;
+end;
+
 readonly func InstructionContractHandler_B_IOR() => CommandSemanticHandler
 begin
     return CommandHandler_BindBundleScalarIO;
@@ -60,11 +86,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Constraints:** `[{"field": "RegDst", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]}, {"field": "RegSrc0", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]}, {"field": "RegSrc1", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]}, {"field": "RegSrc2", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]}]`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `Bind up to three absolute GPR inputs and one absolute GPR output; TLOAD/TSTORE use source zero as GM base and source one as logical row stride.`
+- **Semantic handler:** `BindBundleScalarIO`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

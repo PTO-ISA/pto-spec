@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/fsu/FNMSUB.asl`
 
-Execute the FNMSUB scalar instruction contract.
+FNMSUB - Compute this mnemonic's fused floating-point operation.
 
 ## Normative identity {#PTO-INST-SCALAR-FNMSUB}
 
@@ -33,6 +33,16 @@ fnmsub.{T} SrcL, SrcR, SrcA, ->{t, u, Rd}
 | fnmsub_32_6542d56665b3 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | fnmsub_32_6542d56665b3 | SrcType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcA | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+| SrcType | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FNMSUB.asl -->
@@ -43,10 +53,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -61,11 +67,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `FNMSUB - Compute this mnemonic's fused floating-point operation.`
+- **Semantic handler:** `FloatingFused`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

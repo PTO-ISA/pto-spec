@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/complex-layout/layout/TGATHER.asl`
 
-Execute the TGATHER Tile operation contract.
+Gather source elements by Tile indices into the destination.
 
 ## Normative identity {#PTO-INST-TILE-TGATHER}
 
@@ -23,6 +23,14 @@ TGATHER <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TGATHER | TEPL | 0x06F | 15 | 3 | TGATHER |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source |
+| source1 | indices |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/layout/TGATHER.asl -->
@@ -33,10 +41,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -62,11 +66,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TGATHER`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["Layout"], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TGATHER`
+- **Effect contract:** `TGATHER`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source", "operand:source1:indices"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

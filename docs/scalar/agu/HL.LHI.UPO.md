@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/agu/HL.LHI.UPO.asl`
 
-Execute the HL.LHI.UPO scalar instruction contract.
+HL.LHI.UPO - Load scalar data using this mnemonic's width, signedness, and address-update form.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-LHI-UPO}
 
@@ -32,6 +32,15 @@ hl.lhi.upo [SrcL, simm], ->Dst0, Dst1
 | hl_lhi_upo_48_81c796b13b12 | SrcL | 5 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":5}] |
 | hl_lhi_upo_48_81c796b13b12 | simm17 | 17 | signed | [{"instruction_lsb":36,"value_lsb":0,"width":12},{"instruction_lsb":6,"value_lsb":12,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst0 | encoded operand or control |
+| RegDst1 | encoded operand or control |
+| SrcL | encoded operand or control |
+| simm17 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.LHI.UPO.asl -->
@@ -42,10 +51,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -60,11 +65,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.LHI.UPO - Load scalar data using this mnemonic's width, signedness, and address-update form.`
+- **Semantic handler:** `ExecuteScalarLoad`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

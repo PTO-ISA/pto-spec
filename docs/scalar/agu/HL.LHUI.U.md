@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/agu/HL.LHUI.U.asl`
 
-Execute the HL.LHUI.U scalar instruction contract.
+HL.LHUI.U - Load scalar data using this mnemonic's width, signedness, and address-update form.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-LHUI-U}
 
@@ -31,6 +31,14 @@ hl.lhui.u [SrcL, simm], ->{t, u, Rd}
 | hl_lhui_u_48_d75649bac1c7 | SrcL | 5 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":5}] |
 | hl_lhui_u_48_d75649bac1c7 | simm22 | 22 | signed | [{"instruction_lsb":36,"value_lsb":0,"width":12},{"instruction_lsb":6,"value_lsb":12,"width":10}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| simm22 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.LHUI.U.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -59,11 +63,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.LHUI.U - Load scalar data using this mnemonic's width, signedness, and address-update form.`
+- **Semantic handler:** `ExecuteScalarLoad`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

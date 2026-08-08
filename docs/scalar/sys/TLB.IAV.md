@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/sys/TLB.IAV.asl`
 
-Execute the TLB.IAV scalar instruction contract.
+TLB.IAV - Perform this mnemonic's cache, TLB, or bundle maintenance operation.
 
 ## Normative identity {#PTO-INST-SCALAR-TLB-IAV}
 
@@ -29,6 +29,12 @@ tlb.iav SrcL
 | --- | --- | ---: | --- | --- |
 | tlb_iav_32_95f4937d2917 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcL | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/TLB.IAV.asl -->
@@ -39,10 +45,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -57,11 +59,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `TLB.IAV - Perform this mnemonic's cache, TLB, or bundle maintenance operation.`
+- **Semantic handler:** `ExecuteMaintenance`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

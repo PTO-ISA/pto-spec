@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/amo/DMA.asl`
 
-Execute the DMA scalar instruction contract.
+DMA - Copy the scalar-described 64-bit DMA region.
 
 ## Normative identity {#PTO-INST-SCALAR-DMA}
 
@@ -30,6 +30,13 @@ dma [SrcL], SrcR
 | dma_32_a168aeca5fa5 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | dma_32_a168aeca5fa5 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/DMA.asl -->
@@ -40,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -58,11 +61,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `DMA - Copy the scalar-described 64-bit DMA region.`
+- **Semantic handler:** `ExecuteScalarDMACopy64`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

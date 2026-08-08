@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/fsu/FEQS.asl`
 
-Execute the FEQS scalar instruction contract.
+FEQS - Compare floating-point operands and produce the encoded result.
 
 ## Normative identity {#PTO-INST-SCALAR-FEQS}
 
@@ -32,6 +32,15 @@ feqs.{T} SrcL, SrcR, ->{t, u, Rd}
 | feqs_32_1d3011890fa8 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | feqs_32_1d3011890fa8 | SrcType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+| SrcType | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FEQS.asl -->
@@ -42,10 +51,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -60,11 +65,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `FEQS - Compare floating-point operands and produce the encoded result.`
+- **Semantic handler:** `FloatingCompare`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

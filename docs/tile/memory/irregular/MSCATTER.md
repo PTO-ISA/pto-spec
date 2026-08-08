@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory/irregular/MSCATTER.asl`
 
-Execute the MSCATTER Tile operation contract.
+Scatter source Tile elements to GM addresses selected by Tile indices.
 
 ## Normative identity {#PTO-INST-TILE-MSCATTER}
 
@@ -23,6 +23,14 @@ MSCATTER <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | MSCATTER | TLSU |  | 5 |  | MSCATTER |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| address | base-address |
+| source0 | source |
+| source1 | indices |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory/irregular/MSCATTER.asl -->
@@ -33,10 +41,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -63,11 +67,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_MSCATTER`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["Layout"], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `MSCATTER`
+- **Effect contract:** `MSCATTER`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:address:base-address", "operand:source0:source", "operand:source1:indices"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

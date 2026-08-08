@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/complex-layout/initialization/THISTOGRAM.asl`
 
-Execute the THISTOGRAM Tile operation contract.
+Accumulate a histogram from source values and selected-byte indices.
 
 ## Normative identity {#PTO-INST-TILE-THISTOGRAM}
 
@@ -23,6 +23,15 @@ THISTOGRAM <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | THISTOGRAM | TEPL | 0x068 | 8 | 3 | THISTOGRAM |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source |
+| source1 | indices |
+| selected_byte | selected-byte |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/initialization/THISTOGRAM.asl -->
@@ -33,10 +42,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -60,11 +65,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_THISTOGRAM`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["PadValueOrByteId", "DataType"], "pad_union": "histogram-byte-id"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `THISTOGRAM`
+- **Effect contract:** `THISTOGRAM`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source", "operand:source1:indices", "operand:selected_byte:selected-byte"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

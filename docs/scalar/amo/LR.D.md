@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/amo/LR.D.asl`
 
-Execute the LR.D scalar instruction contract.
+LR.D - Load the scalar memory value and establish a matching reservation.
 
 ## Normative identity {#PTO-INST-SCALAR-LR-D}
 
@@ -34,6 +34,17 @@ lr.d<.{aq, rl, f, aqrl, aqf, rlf, aqrlf}> [SrcL], {->t, ->u, ->Rd}
 | lr_d_32_84d21a553dc1 | far | 1 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":1}] |
 | lr_d_32_84d21a553dc1 | rl | 1 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":1}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcZero | encoded operand or control |
+| aq | encoded operand or control |
+| far | encoded operand or control |
+| rl | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/LR.D.asl -->
@@ -44,10 +55,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -62,11 +69,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `LR.D - Load the scalar memory value and establish a matching reservation.`
+- **Semantic handler:** `LoadReserved`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/matrix/matrix-matrix/TMATMUL_MX_ACC.asl`
 
-Execute the TMATMUL_MX_ACC Tile operation contract.
+Multiply scaled matrices and accumulate into the supplied accumulator Tile.
 
 ## Normative identity {#PTO-INST-TILE-TMATMUL-MX-ACC}
 
@@ -23,6 +23,17 @@ TMATMUL_MX_ACC <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TMATMUL_MX_ACC | CUBE |  | 6 |  | TMATMUL_MX_ACC |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | accumulator |
+| source1 | left |
+| source2 | row-scale |
+| source3 | right |
+| source4 | column-scale |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/matrix/matrix-matrix/TMATMUL_MX_ACC.asl -->
@@ -33,10 +44,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -71,11 +78,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TMATMUL_MX_ACC`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TMATMUL_MX_ACC`
+- **Effect contract:** `TMATMUL_MX_ACC`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:accumulator", "operand:source1:left", "operand:source2:row-scale", "operand:source3:right", "operand:source4:column-scale"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

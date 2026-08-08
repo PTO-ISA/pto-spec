@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/MULUW.asl`
 
-Execute the MULUW scalar instruction contract.
+MULUW - Compute the 32-bit product and sign-extend it.
 
 ## Normative identity {#PTO-INST-SCALAR-MULUW}
 
@@ -31,6 +31,14 @@ muluw SrcL, SrcR, ->{t, u, Rd}
 | muluw_32_8f52b3d45e53 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | muluw_32_8f52b3d45e53 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/MULUW.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -59,11 +63,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `MULUW - Compute the 32-bit product and sign-extend it.`
+- **Semantic handler:** `ScalarMultiplyW`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/HL.SUBI.asl`
 
-Execute the HL.SUBI scalar instruction contract.
+HL.SUBI - Compute this mnemonic's binary scalar operation and write the selected destination.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-SUBI}
 
@@ -31,6 +31,14 @@ hl.subi SrcL, uimm, ->{t, u, Rd}
 | hl_subi_48_e1f491a8aead | SrcL | 5 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":5}] |
 | hl_subi_48_e1f491a8aead | uimm24 | 24 | unsigned | [{"instruction_lsb":36,"value_lsb":0,"width":12},{"instruction_lsb":4,"value_lsb":12,"width":12}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| uimm24 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.SUBI.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -59,11 +63,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.SUBI - Compute this mnemonic's binary scalar operation and write the selected destination.`
+- **Semantic handler:** `ScalarBinary`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

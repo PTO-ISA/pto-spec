@@ -31,6 +31,14 @@ FRET.RA [RegDst0 ~ RegDstn], sp!, uimm
 | fret_ra_32_659c886221c1 | DstEnd | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | fret_ra_32_659c886221c1 | uimm | 15 | unsigned | [{"instruction_lsb":25,"value_lsb":3,"width":7},{"instruction_lsb":7,"value_lsb":10,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| DstBegin | encoded operand or control |
+| DstEnd | encoded operand or control |
+| uimm | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/FRET.RA.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -59,11 +63,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `Restores a frame and returns through the retained return-address target.`
+- **Semantic handler:** `ExecuteFrameReturnAddress`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

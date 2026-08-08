@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/HL.LIU.asl`
 
-Execute the HL.LIU scalar instruction contract.
+HL.LIU - Materialize the encoded unsigned long immediate.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-LIU}
 
@@ -30,6 +30,13 @@ hl.liu uimm, ->{t, u, Rd}
 | hl_liu_48_9dd207ce3aea | RegDst | 5 | encoding-defined | [{"instruction_lsb":23,"value_lsb":0,"width":5}] |
 | hl_liu_48_9dd207ce3aea | uimm32 | 32 | unsigned | [{"instruction_lsb":28,"value_lsb":0,"width":20},{"instruction_lsb":4,"value_lsb":20,"width":12}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| uimm32 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.LIU.asl -->
@@ -40,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -58,11 +61,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.LIU - Materialize the encoded unsigned long immediate.`
+- **Semantic handler:** `MaterializeLongUnsigned`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/tile-scalar-elementwise/logical/TCMPS.asl`
 
-Execute the TCMPS Tile operation contract.
+Apply elementwise comparison between the source Tile and bound scalar.
 
 ## Normative identity {#PTO-INST-TILE-TCMPS}
 
@@ -23,6 +23,15 @@ TCMPS <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TCMPS | TEPL | 0x02D | 13 | 1 | ExecuteTileCompareScalar |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source |
+| scalar0 | scalar |
+| comparison | comparison |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-elementwise/logical/TCMPS.asl -->
@@ -33,10 +42,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -63,11 +68,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_ExecuteTileCompareScalar`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["CMode"], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `ExecuteTileCompareScalar`
+- **Effect contract:** `ExecuteTileCompareScalar`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source", "operand:scalar0:scalar", "operand:comparison:comparison"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

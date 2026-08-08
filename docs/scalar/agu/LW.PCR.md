@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/agu/LW.PCR.asl`
 
-Execute the LW.PCR scalar instruction contract.
+LW.PCR - Load scalar data using this mnemonic's width, signedness, and address-update form.
 
 ## Normative identity {#PTO-INST-SCALAR-LW-PCR}
 
@@ -30,6 +30,13 @@ lw.pcr [symbol], ->{t, u, Rd}
 | lw_pcr_32_d135a1aa4ffb | RegDst | 5 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":5}] |
 | lw_pcr_32_d135a1aa4ffb | simm17 | 17 | signed | [{"instruction_lsb":15,"value_lsb":0,"width":17}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| simm17 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/LW.PCR.asl -->
@@ -40,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -58,11 +61,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `LW.PCR - Load scalar data using this mnemonic's width, signedness, and address-update form.`
+- **Semantic handler:** `ExecuteScalarLoad`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

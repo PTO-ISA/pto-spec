@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/AND.asl`
 
-Execute the AND scalar instruction contract.
+AND - Compute this mnemonic's binary scalar operation and write the selected destination.
 
 ## Normative identity {#PTO-INST-SCALAR-AND}
 
@@ -33,6 +33,16 @@ and SrcL, SrcR<{.sw,.uw,.not}><<<shamt>, ->{t, u, Rd}
 | and_32_b6a903a3ec94 | SrcRType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
 | and_32_b6a903a3ec94 | shamt | 5 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+| SrcRType | encoded operand or control |
+| shamt | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/AND.asl -->
@@ -43,10 +53,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -61,11 +67,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `AND - Compute this mnemonic's binary scalar operation and write the selected destination.`
+- **Semantic handler:** `ScalarBinary`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

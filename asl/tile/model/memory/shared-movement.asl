@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT","surface":"tile","classification":["model","memory","shared-movement"],"depends_on":["PTO-TILE-MODEL-STATE-SHARED-REGISTERS","PTO-SCALAR-MODEL-AGU-MEMORY"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT","surface":"tile","classification":["model","memory","shared-movement"],"depends_on":["PTO-TILE-MODEL-STATE-SHARED-REGISTERS","PTO-SCALAR-MODEL-AGU-MEMORY","PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS"]}
 // PTO-REQ-TLSU-001, PTO-REQ-MEMORY-COMPLETION-001,
 // PTO-REQ-MEMORY-TSO-001: precise, restartable direct
 // TLOAD/TSTORE/MGATHER/MSCATTER and destination-free TPREFETCH.
@@ -66,8 +66,8 @@ begin
     if pe_mask == '1111' then MarkTileValidRegionDefined(destination); end;
 end;
 
-func TLOADShared(shared_id: bits(8), base_address: Word,
-                 row_stride_elements: Word,
+func TLOADShared(shared_id: bits(8), base_addresses: CorePEWords,
+                 row_stride_elements: CorePEWords,
                  size_code: integer {1..7},
                  rows: integer {1..65535}, columns: integer {1..65535},
                  valid_rows: integer {1..65535},
@@ -113,11 +113,13 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             let region = SharedTileElementRegion(tile, element);
             if pe_mask[region] == '1' then
+                let agent = region as MemoryAgentId;
                 let memory_index = TileMemoryStridedIndex(
                     row as integer {0..65535},
-                    column as integer {0..65535}, row_stride_elements);
+                    column as integer {0..65535},
+                    row_stride_elements[[agent]]);
                 let address = TileMemoryIndexedAddress(
-                    base_address, memory_index, tile.data_type);
+                    base_addresses[[agent]], memory_index, tile.data_type);
                 let probe = ProbeTileMemoryAccess(address, tile.data_type, FALSE);
                 if RaiseDataAccessFault(probe, address) then return; end;
                 translated_addresses[[element]] = probe.translated_address;
@@ -130,14 +132,17 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             let region = SharedTileElementRegion(tile, element);
             if pe_mask[region] == '1' then
+                let agent = region as MemoryAgentId;
                 let memory_index = TileMemoryStridedIndex(
                     row as integer {0..65535},
-                    column as integer {0..65535}, row_stride_elements);
+                    column as integer {0..65535},
+                    row_stride_elements[[agent]]);
                 let high_nibble = TileMemoryIndexedHighNibble(
                     memory_index, tile.data_type);
                 let raw = LoadTranslatedUnsigned(translated_addresses[[element]],
                     TileMemoryElementBytes(tile.data_type));
-                RecordLoadEvent(translated_addresses[[element]],
+                RecordLoadEventForAgent(agent,
+                    translated_addresses[[element]],
                     TileMemoryElementBytes(tile.data_type), raw,
                     CurrentBundleMemoryOrder());
                 tile.payload[[element]] = LoadTileMemoryElement(
@@ -155,7 +160,8 @@ begin
     assert updated;
 end;
 
-func TSTOREShared(base_address: Word, row_stride_elements: Word,
+func TSTOREShared(base_addresses: CorePEWords,
+                  row_stride_elements: CorePEWords,
                   shared_id: bits(8),
                   pe_mask: bits(4))
 begin
@@ -172,11 +178,14 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             let selected = pe_mask[SharedTileElementRegion(tile, element)] == '1';
             if selected then
+                let agent = SharedTileElementRegion(tile, element)
+                    as MemoryAgentId;
                 let memory_index = TileMemoryStridedIndex(
                     row as integer {0..65535},
-                    column as integer {0..65535}, row_stride_elements);
+                    column as integer {0..65535},
+                    row_stride_elements[[agent]]);
                 let address = TileMemoryIndexedAddress(
-                    base_address, memory_index, tile.data_type);
+                    base_addresses[[agent]], memory_index, tile.data_type);
                 let probe = ProbeTileMemoryAccess(address, tile.data_type, TRUE);
                 if RaiseDataAccessFault(probe, address) then return; end;
                 original_addresses[[element]] = address;
@@ -192,12 +201,15 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             let selected = pe_mask[SharedTileElementRegion(tile, element)] == '1';
             if selected then
+                let agent = SharedTileElementRegion(tile, element)
+                    as MemoryAgentId;
                 let stored_value = StoreTileMemoryElement(
                     original_addresses[[element]],
                     translated_addresses[[element]], tile.data_type,
                     high_nibbles[element] == '1',
                     ReadSharedTileWord(shared_id, element));
-                RecordStoreEvent(translated_addresses[[element]],
+                RecordStoreEventForAgent(agent,
+                    translated_addresses[[element]],
                     TileMemoryElementBytes(tile.data_type), stored_value,
                     CurrentBundleMemoryOrder());
             end;

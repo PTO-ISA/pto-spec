@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/complex-layout/layout/TSCATTER.asl`
 
-Execute the TSCATTER Tile operation contract.
+Scatter source elements by Tile indices into the destination.
 
 ## Normative identity {#PTO-INST-TILE-TSCATTER}
 
@@ -23,6 +23,14 @@ TSCATTER <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TSCATTER | TEPL | 0x070 | 16 | 3 | TSCATTER |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source |
+| source1 | indices |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/layout/TSCATTER.asl -->
@@ -33,10 +41,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -62,11 +66,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TSCATTER`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["Layout"], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TSCATTER`
+- **Effect contract:** `TSCATTER`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source", "operand:source1:indices"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

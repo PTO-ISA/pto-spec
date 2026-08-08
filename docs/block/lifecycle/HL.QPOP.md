@@ -34,6 +34,17 @@ hl.qpop.{e,r,er} SrcL, ->Dst0, Dst1
 | hl_qpop_48_a2c57f5bc27b | e | 1 | encoding-defined | [{"instruction_lsb":41,"value_lsb":0,"width":1}] |
 | hl_qpop_48_a2c57f5bc27b | r | 1 | encoding-defined | [{"instruction_lsb":42,"value_lsb":0,"width":1}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst0 | encoded operand or control |
+| RegDst1 | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+| e | encoded operand or control |
+| r | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/HL.QPOP.asl -->
@@ -44,10 +55,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -62,11 +69,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `Pops selected scalar queue values into encoded destinations.`
+- **Semantic handler:** `ExecuteQueuePop`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/agu/SH.PCR.asl`
 
-Execute the SH.PCR scalar instruction contract.
+SH.PCR - Store scalar data using this mnemonic's width and address-update form.
 
 ## Normative identity {#PTO-INST-SCALAR-SH-PCR}
 
@@ -30,6 +30,13 @@ sh.pcr SrcL, [symbol]
 | sh_pcr_32_14ba505eb3c2 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | sh_pcr_32_14ba505eb3c2 | simm | 17 | signed | [{"instruction_lsb":20,"value_lsb":0,"width":12},{"instruction_lsb":7,"value_lsb":12,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcL | encoded operand or control |
+| simm | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/SH.PCR.asl -->
@@ -40,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -58,11 +61,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `SH.PCR - Store scalar data using this mnemonic's width and address-update form.`
+- **Semantic handler:** `ExecuteScalarStore`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

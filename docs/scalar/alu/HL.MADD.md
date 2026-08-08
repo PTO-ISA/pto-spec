@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/HL.MADD.asl`
 
-Execute the HL.MADD scalar instruction contract.
+HL.MADD - Compute multiply-add and return the scalar result pair.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-MADD}
 
@@ -33,6 +33,16 @@ hl.madd SrcL, SrcR, SrcD, ->Dst0, Dst1
 | hl_madd_48_b062d741fd99 | SrcL | 5 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":5}] |
 | hl_madd_48_b062d741fd99 | SrcR | 5 | encoding-defined | [{"instruction_lsb":36,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst0 | encoded operand or control |
+| RegDst1 | encoded operand or control |
+| SrcD | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.MADD.asl -->
@@ -43,10 +53,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -61,11 +67,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.MADD - Compute multiply-add and return the scalar result pair.`
+- **Semantic handler:** `ExecuteScalarMultiplyAddPair`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

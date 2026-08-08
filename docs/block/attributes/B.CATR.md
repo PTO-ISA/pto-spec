@@ -34,6 +34,17 @@ B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}
 | b_catr_32_e90bd52fa480 | aq | 1 | encoding-defined | [{"instruction_lsb":16,"value_lsb":0,"width":1}] |
 | b_catr_32_e90bd52fa480 | rl | 1 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":1}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| DR | encoded operand or control |
+| trap | encoded operand or control |
+| far | encoded operand or control |
+| atom | encoded operand or control |
+| aq | encoded operand or control |
+| rl | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/attributes/B.CATR.asl -->
@@ -44,10 +55,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -62,11 +69,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `Latches bundle control, trap, atomic, ordering, and address-class attributes.`
+- **Semantic handler:** `SetBundleControlAttributes`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

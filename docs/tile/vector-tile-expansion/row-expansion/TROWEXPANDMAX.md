@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/vector-tile-expansion/row-expansion/TROWEXPANDMAX.asl`
 
-Execute the TROWEXPANDMAX Tile operation contract.
+Apply maximum selection while expanding the bound row vector across the source Tile.
 
 ## Normative identity {#PTO-INST-TILE-TROWEXPANDMAX}
 
@@ -23,6 +23,14 @@ TROWEXPANDMAX <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TROWEXPANDMAX | TEPL | 0x049 | 9 | 2 | ExecuteTileExpand |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source |
+| source1 | broadcast-source |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/vector-tile-expansion/row-expansion/TROWEXPANDMAX.asl -->
@@ -33,10 +41,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -62,11 +66,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_ExecuteTileExpand`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `ExecuteTileExpand`
+- **Effect contract:** `ExecuteTileExpand`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source", "operand:source1:broadcast-source"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

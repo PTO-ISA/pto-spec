@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/ANDIW.asl`
 
-Execute the ANDIW scalar instruction contract.
+ANDIW - Compute this mnemonic's 32-bit binary operation and sign-extend the result.
 
 ## Normative identity {#PTO-INST-SCALAR-ANDIW}
 
@@ -31,6 +31,14 @@ andiw SrcL, simm, ->{t, u, Rd}
 | andiw_32_9ec1f7343dbd | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | andiw_32_9ec1f7343dbd | simm12 | 12 | signed | [{"instruction_lsb":20,"value_lsb":0,"width":12}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| simm12 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/ANDIW.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -59,11 +63,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `ANDIW - Compute this mnemonic's 32-bit binary operation and sign-extend the result.`
+- **Semantic handler:** `ScalarBinaryW`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

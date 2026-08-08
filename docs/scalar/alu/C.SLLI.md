@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/C.SLLI.asl`
 
-Execute the C.SLLI scalar instruction contract.
+C.SLLI - Compute this mnemonic's binary scalar operation and write the selected destination.
 
 ## Normative identity {#PTO-INST-SCALAR-C-SLLI}
 
@@ -29,6 +29,12 @@ c.slli t#1, uimm, ->t
 | --- | --- | ---: | --- | --- |
 | c_slli_16_958a14dc4058 | uimm5 | 5 | unsigned | [{"instruction_lsb":6,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| uimm5 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/C.SLLI.asl -->
@@ -39,10 +45,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -57,11 +59,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `C.SLLI - Compute this mnemonic's binary scalar operation and write the selected destination.`
+- **Semantic handler:** `ScalarBinary`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

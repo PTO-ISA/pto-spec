@@ -65,7 +65,13 @@ begin
     // or changing any Shared descriptor or payload state.
     ResetMemoryExecution();
     ClearFault();
-    TLOADShared(Zeros{8} + 255, Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 63, 3,
+    var shared_bases: CorePEWords;
+    var shared_strides: CorePEWords;
+    for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+        shared_bases[[pe]] = Zeros{PTO_XLEN};
+        shared_strides[[pe]] = Zeros{PTO_XLEN} + 63;
+    end;
+    TLOADShared(Zeros{8} + 255, shared_bases, shared_strides, 3,
         1, 63, 1, 63, TileDataType_U64, TileLayout_RowMajor, '0001');
     assert _LastFault == Fault_TileLegality;
     assert _MemoryEventCount == 0;

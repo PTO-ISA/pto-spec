@@ -44,6 +44,12 @@ BSTART.STD DIRECT, <label>
 | bstart_std_32_b05390d367cf | simm17 | 17 | signed | [{"instruction_lsb":15,"value_lsb":0,"width":17}] |
 | bstart_std_32_c1de85e06878 | simm17 | 17 | signed | [{"instruction_lsb":15,"value_lsb":0,"width":17}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| simm17 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.STD.asl -->
@@ -61,10 +67,6 @@ end;
 ```
 <!-- GENERATED-ASL-END: decode -->
 
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
-
 ## Operation
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.STD.asl -->
@@ -78,11 +80,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.`
+- **Semantic handler:** `ExecuteBundleStart`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

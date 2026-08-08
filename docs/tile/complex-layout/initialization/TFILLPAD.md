@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/complex-layout/initialization/TFILLPAD.asl`
 
-Execute the TFILLPAD Tile operation contract.
+Copy the source and fill destination padding elements with the bound scalar.
 
 ## Normative identity {#PTO-INST-TILE-TFILLPAD}
 
@@ -23,6 +23,14 @@ TFILLPAD <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TFILLPAD | TEPL | 0x065 | 5 | 3 | TFILLPAD |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source |
+| scalar0 | padding |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/initialization/TFILLPAD.asl -->
@@ -33,10 +41,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -62,11 +66,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TFILLPAD`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["PadValueOrByteId", "Layout"], "pad_union": "pad-value"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TFILLPAD`
+- **Effect contract:** `TFILLPAD`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source", "operand:scalar0:padding"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

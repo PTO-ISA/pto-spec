@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/complex-layout/layout/TCONCAT.asl`
 
-Execute the TCONCAT Tile operation contract.
+Concatenate two source Tiles along the selected axis.
 
 ## Normative identity {#PTO-INST-TILE-TCONCAT}
 
@@ -23,6 +23,15 @@ TCONCAT <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TCONCAT | TEPL | 0x060 | 0 | 3 | TCONCAT |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source-left |
+| source1 | source-right |
+| axis | axis |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/layout/TCONCAT.asl -->
@@ -33,10 +42,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -62,11 +67,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TCONCAT`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["Layout"], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TCONCAT`
+- **Effect contract:** `TCONCAT`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source-left", "operand:source1:source-right", "operand:axis:axis"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

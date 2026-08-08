@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/tile-tile-elementwise/logical/TOR.asl`
 
-Execute the TOR Tile operation contract.
+Apply elementwise bitwise OR to the two source Tiles.
 
 ## Normative identity {#PTO-INST-TILE-TOR}
 
@@ -23,6 +23,14 @@ TOR <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TOR | TEPL | 0x007 | 7 | 0 | ExecuteTileBinary |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source-left |
+| source1 | source-right |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-tile-elementwise/logical/TOR.asl -->
@@ -33,10 +41,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -62,11 +66,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_ExecuteTileBinary`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `ExecuteTileBinary`
+- **Effect contract:** `ExecuteTileBinary`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source-left", "operand:source1:source-right"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

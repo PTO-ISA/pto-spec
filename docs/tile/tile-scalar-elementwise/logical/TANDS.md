@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/tile-scalar-elementwise/logical/TANDS.asl`
 
-Execute the TANDS Tile operation contract.
+Apply elementwise bitwise AND between the source Tile and bound scalar.
 
 ## Normative identity {#PTO-INST-TILE-TANDS}
 
@@ -23,6 +23,14 @@ TANDS <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TANDS | TEPL | 0x026 | 6 | 1 | ExecuteTileScalar |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source |
+| scalar0 | scalar |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-elementwise/logical/TANDS.asl -->
@@ -33,10 +41,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -63,11 +67,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_ExecuteTileScalar`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `ExecuteTileScalar`
+- **Effect contract:** `ExecuteTileScalar`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source", "operand:scalar0:scalar"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/agu/HL.SWI.PO.asl`
 
-Execute the HL.SWI.PO scalar instruction contract.
+HL.SWI.PO - Store scalar data using this mnemonic's width and address-update form.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-SWI-PO}
 
@@ -32,6 +32,15 @@ hl.swi.po SrcD, [SrcR, simm], ->{t, u, Rd}
 | hl_swi_po_48_66a80d0fa7f5 | SrcR | 5 | encoding-defined | [{"instruction_lsb":36,"value_lsb":0,"width":5}] |
 | hl_swi_po_48_66a80d0fa7f5 | simm17 | 17 | signed | [{"instruction_lsb":41,"value_lsb":0,"width":7},{"instruction_lsb":23,"value_lsb":7,"width":5},{"instruction_lsb":6,"value_lsb":12,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcD | encoded operand or control |
+| SrcR | encoded operand or control |
+| simm17 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.SWI.PO.asl -->
@@ -42,10 +51,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -60,11 +65,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.SWI.PO - Store scalar data using this mnemonic's width and address-update form.`
+- **Semantic handler:** `ExecuteScalarStore`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

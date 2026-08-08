@@ -23,6 +23,10 @@ C.BSTART.MSEQ FALL
 | --- | --- | ---: | --- | --- |
 | c_bstart_mseq_16_b5597e0e41c2 | C16 | 16 | 0x48c0 / 0xffff | [] |
 
+## Operands and results
+
+This instruction has no explicit operand fields.
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/encoding/C.BSTART.MSEQ.asl -->
@@ -33,10 +37,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -51,11 +51,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.`
+- **Semantic handler:** `ExecuteBundleStart`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

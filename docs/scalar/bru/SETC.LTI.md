@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/bru/SETC.LTI.asl`
 
-Execute the SETC.LTI scalar instruction contract.
+SETC.LTI - Compare scalar operands and update the bundle commit condition.
 
 ## Normative identity {#PTO-INST-SCALAR-SETC-LTI}
 
@@ -31,6 +31,14 @@ setc.lti SrcL, simm
 | setc_lti_32_89d74d948b74 | shamt | 5 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":5}] |
 | setc_lti_32_89d74d948b74 | simm12 | 12 | signed | [{"instruction_lsb":20,"value_lsb":0,"width":12}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcL | encoded operand or control |
+| shamt | encoded operand or control |
+| simm12 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/SETC.LTI.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -59,11 +63,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `SETC.LTI - Compare scalar operands and update the bundle commit condition.`
+- **Semantic handler:** `ExecuteSetCommit`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

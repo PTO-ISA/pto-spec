@@ -23,6 +23,10 @@ C.BSTOP
 | --- | --- | ---: | --- | --- |
 | c_bstop_16_ca4743d8a95e | C16 | 16 | 0x0000 / 0xffff | [] |
 
+## Operands and results
+
+This instruction has no explicit operand fields.
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/C.BSTOP.asl -->
@@ -33,10 +37,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -51,11 +51,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `Commits the current bundle and transfers to its selected continuation.`
+- **Semantic handler:** `ExecuteBundleStop`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

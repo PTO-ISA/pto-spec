@@ -80,6 +80,10 @@ def load_units(root: Path, *, source_prefix: Path = Path("asl")) -> tuple[AslUni
         text = path.read_text(encoding="utf-8")
         relative = path.relative_to(root)
         source_path = source_prefix / relative
+        if not text.isascii():
+            raise ValueError(
+                f"{source_path}: ASL source must be ASCII for ASLRef compatibility"
+            )
         metadata, prefix = _metadata_record(source_path, text)
         unit_id = _string_field(metadata, "id", source_path)
         surface = _string_field(metadata, "surface", source_path)

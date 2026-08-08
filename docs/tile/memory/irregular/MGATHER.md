@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory/irregular/MGATHER.asl`
 
-Execute the MGATHER Tile operation contract.
+Gather GM elements at Tile-provided indices into the destination.
 
 ## Normative identity {#PTO-INST-TILE-MGATHER}
 
@@ -23,6 +23,14 @@ MGATHER <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | MGATHER | TLSU |  | 4 |  | MGATHER |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| address | base-address |
+| source0 | indices |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory/irregular/MGATHER.asl -->
@@ -33,10 +41,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -63,11 +67,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_MGATHER`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["Layout"], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `MGATHER`
+- **Effect contract:** `MGATHER`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:address:base-address", "operand:source0:indices"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

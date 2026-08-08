@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/complex-layout/layout/TMOV.asl`
 
-Execute the TMOV Tile operation contract.
+Copy the source Tile payload and definedness into the destination.
 
 ## Normative identity {#PTO-INST-TILE-TMOV}
 
@@ -23,6 +23,13 @@ TMOV <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TMOV | TLSU |  | 2 |  | TMOV |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/layout/TMOV.asl -->
@@ -33,10 +40,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -61,11 +64,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TMOV`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["Layout"], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TMOV`
+- **Effect contract:** `TMOV`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

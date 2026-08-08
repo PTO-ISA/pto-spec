@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/LUI.asl`
 
-Execute the LUI scalar instruction contract.
+LUI - Materialize the upper immediate.
 
 ## Normative identity {#PTO-INST-SCALAR-LUI}
 
@@ -30,6 +30,13 @@ lui simm, ->{t, u, Rd}
 | lui_32_982113b541d6 | RegDst | 5 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":5}] |
 | lui_32_982113b541d6 | imm20 | 20 | encoding-defined | [{"instruction_lsb":12,"value_lsb":0,"width":20}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| imm20 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/LUI.asl -->
@@ -40,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -58,11 +61,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `LUI - Materialize the upper immediate.`
+- **Semantic handler:** `MaterializeLUI`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

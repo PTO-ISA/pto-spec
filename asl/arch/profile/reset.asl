@@ -4,8 +4,10 @@
 
 implementation func ResetProfileState()
 begin
-    for index = 0 to PTO_ABSOLUTE_GPR_COUNT - 1 do
-        _GPR[[index]] = Zeros{PTO_XLEN};
+    for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+        for index = 0 to PTO_ABSOLUTE_GPR_COUNT - 1 do
+            _PEGPRs[[pe]][[index]] = Zeros{PTO_XLEN};
+        end;
     end;
     for index = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do
         _TQueue[[index]] = Zeros{PTO_XLEN};

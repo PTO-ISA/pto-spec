@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/complex-layout/initialization/TEXPANDS.asl`
 
-Execute the TEXPANDS Tile operation contract.
+Fill the destination Tile by expanding the bound scalar value.
 
 ## Normative identity {#PTO-INST-TILE-TEXPANDS}
 
@@ -23,6 +23,13 @@ TEXPANDS <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TEXPANDS | TEPL | 0x03B | 27 | 1 | ExecuteTileFillScalar |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| scalar0 | scalar |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/initialization/TEXPANDS.asl -->
@@ -33,10 +40,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -63,11 +66,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_ExecuteTileFillScalar`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `ExecuteTileFillScalar`
+- **Effect contract:** `ExecuteTileFillScalar`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:scalar0:scalar"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

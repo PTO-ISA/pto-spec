@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/fsu/FRECIP.asl`
 
-Execute the FRECIP scalar instruction contract.
+FRECIP - Compute this mnemonic's unary floating-point operation.
 
 ## Normative identity {#PTO-INST-SCALAR-FRECIP}
 
@@ -31,6 +31,14 @@ frecip.{T} SrcL, ->{t, u, Rd}
 | frecip_32_3d51f4f727ea | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | frecip_32_3d51f4f727ea | SrcType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcType | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FRECIP.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -59,11 +63,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `FRECIP - Compute this mnemonic's unary floating-point operation.`
+- **Semantic handler:** `FloatingUnary`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

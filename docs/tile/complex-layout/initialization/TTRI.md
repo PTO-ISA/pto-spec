@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/complex-layout/initialization/TTRI.asl`
 
-Execute the TTRI Tile operation contract.
+Initialize the selected upper or lower triangular region relative to the diagonal.
 
 ## Normative identity {#PTO-INST-TILE-TTRI}
 
@@ -23,6 +23,14 @@ TTRI <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TTRI | TEPL | 0x067 | 7 | 3 | TTRI |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| flag0 | upper |
+| diagonal | diagonal |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/complex-layout/initialization/TTRI.asl -->
@@ -33,10 +41,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -63,11 +67,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TTRI`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TTRI`
+- **Effect contract:** `TTRI`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:flag0:upper", "operand:diagonal:diagonal"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

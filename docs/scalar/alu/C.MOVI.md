@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/C.MOVI.asl`
 
-Execute the C.MOVI scalar instruction contract.
+C.MOVI - Move the scalar source to the selected destination.
 
 ## Normative identity {#PTO-INST-SCALAR-C-MOVI}
 
@@ -30,6 +30,13 @@ c.movi simm, ->{t, u, Rd}
 | c_movi_16_2c84faf1bc72 | RegDst | 5 | encoding-defined | [{"instruction_lsb":11,"value_lsb":0,"width":5}] |
 | c_movi_16_2c84faf1bc72 | simm5 | 5 | signed | [{"instruction_lsb":6,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| simm5 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/C.MOVI.asl -->
@@ -40,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -58,11 +61,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Constraints:** `[{"field": "RegDst", "operator": "not-equal", "value": 10}]`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `C.MOVI - Move the scalar source to the selected destination.`
+- **Semantic handler:** `MoveScalarValue`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

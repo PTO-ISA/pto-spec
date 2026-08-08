@@ -250,6 +250,49 @@ class InstructionDocsTest(unittest.TestCase):
         self.assertIn("0x00001013 / 0xf00871ff", rendered)
         self.assertIn("| b_ios_32_example | SharedTID | 8 |", rendered)
 
+    def test_generate_tree_projects_complete_catalog_contract_without_placeholders(self) -> None:
+        self.write_asl(
+            "tile/memory/regular/TLOAD.asl",
+            mnemonic="TLOAD",
+            surface="tile",
+            classification=["memory", "regular"],
+            catalog_records=[
+                {
+                    "name": "TLOAD",
+                    "family": "TLSU",
+                    "function": 0,
+                    "semantic_handler": "TLOAD",
+                    "semantic_summary": "Load the selected GM rectangle into a Tile destination.",
+                    "operands": [
+                        {"field": "destination0", "role": "destination"},
+                        {"field": "address", "role": "base-address"},
+                        {"field": "scalar0", "role": "row-stride-elements"},
+                    ],
+                    "state_effects": ["destination0 payload and definedness"],
+                    "legality_handler": "TileOperandsLegal_TLOAD",
+                    "effect_contract": "TLOAD",
+                    "fault_contract": "ExecuteTileInstruction",
+                    "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+                    "datr_contract": {
+                        "allowed_nonzero_fields": ["Layout"],
+                        "pad_union": "must-zero",
+                    },
+                }
+            ],
+        )
+
+        generate_tree(self.root)
+        rendered = (
+            self.root / "docs/tile/memory/regular/TLOAD.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("## Operands and results", rendered)
+        self.assertIn("| address | base-address |", rendered)
+        self.assertIn("`TileOperandsLegal_TLOAD`", rendered)
+        self.assertIn("`CompleteBundleAtWithAcceptedApplicabilityRules`", rendered)
+        self.assertIn("destination0 payload and definedness", rendered)
+        self.assertNotIn("may be added here", rendered)
+
     def test_generate_tree_preserves_supplementary_markdown(self) -> None:
         self.write_asl()
         page = self.root / "docs/tile/tile-tile-elementwise/arithmetic/TADD.md"

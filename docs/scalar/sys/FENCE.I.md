@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/sys/FENCE.I.asl`
 
-Execute the FENCE.I scalar instruction contract.
+FENCE.I - Synchronize instruction visibility after prior writes.
 
 ## Normative identity {#PTO-INST-SCALAR-FENCE-I}
 
@@ -23,6 +23,10 @@ fence.i
 | --- | --- | ---: | --- | --- |
 | fence_i_32_a321a2a186b1 | L32 | 32 | 0x1000202b / 0xffffffff | [] |
 
+## Operands and results
+
+This instruction has no explicit operand fields.
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/FENCE.I.asl -->
@@ -33,10 +37,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -51,11 +51,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `FENCE.I - Synchronize instruction visibility after prior writes.`
+- **Semantic handler:** `FenceInstruction`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

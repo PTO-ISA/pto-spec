@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/sys/DC.CISW.asl`
 
-Execute the DC.CISW scalar instruction contract.
+DC.CISW - Perform this mnemonic's cache, TLB, or bundle maintenance operation.
 
 ## Normative identity {#PTO-INST-SCALAR-DC-CISW}
 
@@ -29,6 +29,12 @@ dc.cisw SrcL
 | --- | --- | ---: | --- | --- |
 | dc_cisw_32_166b7135e3c1 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcL | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/DC.CISW.asl -->
@@ -39,10 +45,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -57,11 +59,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `DC.CISW - Perform this mnemonic's cache, TLB, or bundle maintenance operation.`
+- **Semantic handler:** `ExecuteMaintenance`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

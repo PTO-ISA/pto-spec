@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/bru/ADDTPC.asl`
 
-Execute the ADDTPC scalar instruction contract.
+ADDTPC - Add the encoded displacement to the program counter.
 
 ## Normative identity {#PTO-INST-SCALAR-ADDTPC}
 
@@ -30,6 +30,13 @@ addtpc simm, ->{t, u, Rd}
 | addtpc_32_e5aa0f0abca3 | RegDst | 5 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":5}] |
 | addtpc_32_e5aa0f0abca3 | imm20 | 20 | encoding-defined | [{"instruction_lsb":12,"value_lsb":0,"width":20}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| imm20 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/ADDTPC.asl -->
@@ -40,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -58,11 +61,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Constraints:** `[{"field": "RegDst", "operator": "not-equal", "value": 10}]`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `ADDTPC - Add the encoded displacement to the program counter.`
+- **Semantic handler:** `AddToPC`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

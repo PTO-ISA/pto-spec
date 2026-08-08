@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/bru/SETC.GE.asl`
 
-Execute the SETC.GE scalar instruction contract.
+SETC.GE - Compare scalar operands and update the bundle commit condition.
 
 ## Normative identity {#PTO-INST-SCALAR-SETC-GE}
 
@@ -31,6 +31,14 @@ setc.ge SrcL, SrcR<{.sw, .uw}>
 | setc_ge_32_56a2b539b072 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | setc_ge_32_56a2b539b072 | SrcRType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+| SrcRType | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/SETC.GE.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -59,11 +63,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `SETC.GE - Compare scalar operands and update the bundle commit condition.`
+- **Semantic handler:** `ExecuteSetCommit`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

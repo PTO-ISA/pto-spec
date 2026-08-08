@@ -35,10 +35,12 @@ nav:
           - Address Space: arch/memory-model/address-space.md
           - Atomicity: arch/memory-model/atomicity.md
           - Fault Precision: arch/memory-model/fault-precision.md
+          - Global Memory Access: arch/memory-model/global-memory-access.md
           - Memory Events: arch/memory-model/memory-events.md
           - Ordering: arch/memory-model/ordering.md
       - Overview:
           - Architecture: arch/overview/architecture.md
+          - Encoding Ownership: arch/overview/encoding-ownership.md
           - Instruction Classification: arch/overview/instruction-classification.md
       - Profile:
           - Applicability: arch/profile/applicability.md
@@ -962,5 +964,6 @@ nav:
           - "ADR 0053: PTO ISA 0.58.0 Tile Operation Cleanup": status/decisions/0053-pto-isa-0580-tile-operation-cleanup.md
           - "ADR 0054: PE-Local Tile Size and 32-bit Shared I/O Binding": status/decisions/0054-pe-local-tile-size-and-32-bit-shared-io-binding.md
           - "ADR 0055: Complete-Bundle B.IOR Schema and Defaults": status/decisions/0055-complete-bundle-bior-schema-and-defaults.md
+          - "ADR 0056: PTO/Linx Common Encoding Ownership and Per-PE GM Access": status/decisions/0056-pto-linx-common-encoding-and-gm-access.md
       - Open:
           - "Open architecture questions": status/open/index.md

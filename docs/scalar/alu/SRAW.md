@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/SRAW.asl`
 
-Execute the SRAW scalar instruction contract.
+SRAW - Compute this mnemonic's 32-bit binary operation and sign-extend the result.
 
 ## Normative identity {#PTO-INST-SCALAR-SRAW}
 
@@ -31,6 +31,14 @@ sraw SrcL, SrcR, ->{t, u, Rd}
 | sraw_32_5baf37f34241 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | sraw_32_5baf37f34241 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/SRAW.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -59,11 +63,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `SRAW - Compute this mnemonic's 32-bit binary operation and sign-extend the result.`
+- **Semantic handler:** `ScalarBinaryW`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

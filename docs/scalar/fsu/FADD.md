@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/fsu/FADD.asl`
 
-Execute the FADD scalar instruction contract.
+FADD - Compute this mnemonic's binary floating-point operation.
 
 ## Normative identity {#PTO-INST-SCALAR-FADD}
 
@@ -32,6 +32,15 @@ fadd.{T} SrcL, SrcR, ->{t, u, Rd}
 | fadd_32_b78b658e6740 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | fadd_32_b78b658e6740 | SrcType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+| SrcType | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FADD.asl -->
@@ -42,10 +51,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -60,11 +65,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `FADD - Compute this mnemonic's binary floating-point operation.`
+- **Semantic handler:** `FloatingBinary`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

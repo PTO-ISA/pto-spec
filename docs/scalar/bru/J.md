@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/bru/J.asl`
 
-Execute the J scalar instruction contract.
+J - Jump to the PC-relative target.
 
 ## Normative identity {#PTO-INST-SCALAR-J}
 
@@ -29,6 +29,12 @@ j label
 | --- | --- | ---: | --- | --- |
 | j_32_a303cf05af42 | simm22 | 22 | signed | [{"instruction_lsb":15,"value_lsb":0,"width":17},{"instruction_lsb":7,"value_lsb":17,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| simm22 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/J.asl -->
@@ -39,10 +45,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -57,11 +59,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `J - Jump to the PC-relative target.`
+- **Semantic handler:** `JumpRelative`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

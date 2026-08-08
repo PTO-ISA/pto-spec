@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/fsu/FDIV.asl`
 
-Execute the FDIV scalar instruction contract.
+FDIV - Compute this mnemonic's binary floating-point operation.
 
 ## Normative identity {#PTO-INST-SCALAR-FDIV}
 
@@ -32,6 +32,15 @@ fdiv.{T} SrcL, SrcR, ->{t, u, Rd}
 | fdiv_32_04a5bb6ab56f | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | fdiv_32_04a5bb6ab56f | SrcType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+| SrcType | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FDIV.asl -->
@@ -42,10 +51,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -60,11 +65,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `FDIV - Compute this mnemonic's binary floating-point operation.`
+- **Semantic handler:** `FloatingBinary`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

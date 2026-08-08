@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/unary-tile-elementwise/logical/TABS.asl`
 
-Execute the TABS Tile operation contract.
+Apply elementwise absolute value to the source Tile.
 
 ## Normative identity {#PTO-INST-TILE-TABS}
 
@@ -23,6 +23,13 @@ TABS <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TABS | TEPL | 0x00F | 15 | 0 | ExecuteTileUnary |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | source |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/unary-tile-elementwise/logical/TABS.asl -->
@@ -33,10 +40,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -62,11 +65,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_ExecuteTileUnary`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `ExecuteTileUnary`
+- **Effect contract:** `ExecuteTileUnary`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:source"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory/regular/TPREFETCH.asl`
 
-Execute the TPREFETCH Tile operation contract.
+Prefetch the requested GM byte range without producing a Tile destination.
 
 ## Normative identity {#PTO-INST-TILE-TPREFETCH}
 
@@ -23,6 +23,13 @@ TPREFETCH <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TPREFETCH | TLSU |  | 3 |  | TPREFETCH |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| address | base-address |
+| byte_count | byte-count |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory/regular/TPREFETCH.asl -->
@@ -33,10 +40,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -63,11 +66,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TPREFETCH`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TPREFETCH`
+- **Effect contract:** `TPREFETCH`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:address:base-address", "operand:byte_count:byte-count"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

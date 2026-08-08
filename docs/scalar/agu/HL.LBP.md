@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/agu/HL.LBP.asl`
 
-Execute the HL.LBP scalar instruction contract.
+HL.LBP - Load a scalar register pair using this mnemonic's address-update form.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-LBP}
 
@@ -34,6 +34,17 @@ hl.lbp [SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>], ->Dst0, Dst1
 | hl_lbp_48_9d1fd0b3105b | SrcRType | 2 | encoding-defined | [{"instruction_lsb":41,"value_lsb":0,"width":2}] |
 | hl_lbp_48_9d1fd0b3105b | shamt | 5 | encoding-defined | [{"instruction_lsb":43,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst0 | encoded operand or control |
+| RegDst1 | encoded operand or control |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+| SrcRType | encoded operand or control |
+| shamt | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.LBP.asl -->
@@ -44,10 +55,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -62,11 +69,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.LBP - Load a scalar register pair using this mnemonic's address-update form.`
+- **Semantic handler:** `ExecuteScalarLoadPair`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

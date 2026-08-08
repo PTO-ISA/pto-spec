@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory/regular/TLOAD.asl`
 
-Execute the TLOAD Tile operation contract.
+Load the valid GM rectangle into a Tile using the encoded base and logical row stride.
 
 ## Normative identity {#PTO-INST-TILE-TLOAD}
 
@@ -23,6 +23,14 @@ TLOAD <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TLOAD | TLSU |  | 0 |  | TLOAD |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| address | base-address |
+| scalar0 | row-stride-elements |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory/regular/TLOAD.asl -->
@@ -33,10 +41,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -73,16 +77,30 @@ readonly func InstructionContractHandler_TLOAD() => TileSemanticHandler
 begin
     return TileHandler_TLOAD;
 end;
+
+readonly func InstructionContractGMAddress_TLOAD(
+    base_address: Word, row: integer {0..65535},
+    column: integer {0..65535}, row_stride_elements: Word,
+    data_type: TileDataType) => Word
+begin
+    return TileMemoryIndexedAddress(base_address,
+        TileMemoryStridedIndex(row, column, row_stride_elements), data_type);
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TLOAD`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": ["Layout"], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TLOAD`
+- **Effect contract:** `TLOAD`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:address:base-address", "operand:scalar0:row-stride-elements"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 Both Local (`B.IOT`) and Shared (`B.IOS`) destination forms use LB0 as valid

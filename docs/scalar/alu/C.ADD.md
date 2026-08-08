@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/C.ADD.asl`
 
-Execute the C.ADD scalar instruction contract.
+C.ADD - Compute this mnemonic's binary scalar operation and write the selected destination.
 
 ## Normative identity {#PTO-INST-SCALAR-C-ADD}
 
@@ -30,6 +30,13 @@ c.add srcL, srcR, ->t
 | c_add_16_85136d1e4904 | SrcL | 5 | encoding-defined | [{"instruction_lsb":6,"value_lsb":0,"width":5}] |
 | c_add_16_85136d1e4904 | SrcR | 5 | encoding-defined | [{"instruction_lsb":11,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcL | encoded operand or control |
+| SrcR | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/C.ADD.asl -->
@@ -40,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -58,11 +61,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `C.ADD - Compute this mnemonic's binary scalar operation and write the selected destination.`
+- **Semantic handler:** `ScalarBinary`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

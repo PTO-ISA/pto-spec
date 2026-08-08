@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/sys/HL.SSRSET.asl`
 
-Execute the HL.SSRSET scalar instruction contract.
+HL.SSRSET - Write the addressed system register.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-SSRSET}
 
@@ -30,6 +30,13 @@ hl.ssrset SrcL, SSR_ID
 | hl_ssrset_48_dd25753307c2 | SSR_ID | 24 | encoding-defined | [{"instruction_lsb":36,"value_lsb":0,"width":12},{"instruction_lsb":4,"value_lsb":12,"width":12}] |
 | hl_ssrset_48_dd25753307c2 | SrcL | 5 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SSR_ID | encoded operand or control |
+| SrcL | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/HL.SSRSET.asl -->
@@ -40,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -58,11 +61,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.SSRSET - Write the addressed system register.`
+- **Semantic handler:** `ExecuteSystemRegisterSet`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

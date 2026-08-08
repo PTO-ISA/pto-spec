@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/agu/HL.SDI.asl`
 
-Execute the HL.SDI scalar instruction contract.
+HL.SDI - Store scalar data using this mnemonic's width and address-update form.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-SDI}
 
@@ -31,6 +31,14 @@ hl.sdi SrcD, [SrcR, simm]
 | hl_sdi_48_3203094081da | SrcR | 5 | encoding-defined | [{"instruction_lsb":36,"value_lsb":0,"width":5}] |
 | hl_sdi_48_3203094081da | simm22 | 22 | signed | [{"instruction_lsb":41,"value_lsb":0,"width":7},{"instruction_lsb":23,"value_lsb":7,"width":5},{"instruction_lsb":6,"value_lsb":12,"width":10}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcD | encoded operand or control |
+| SrcR | encoded operand or control |
+| simm22 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.SDI.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -59,11 +63,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.SDI - Store scalar data using this mnemonic's width and address-update form.`
+- **Semantic handler:** `ExecuteScalarStore`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/matrix/matrix-vector/TGEMV_MX_BIAS.asl`
 
-Execute the TGEMV_MX_BIAS Tile operation contract.
+Multiply the scaled matrix and vector and add the bias Tile.
 
 ## Normative identity {#PTO-INST-TILE-TGEMV-MX-BIAS}
 
@@ -23,6 +23,17 @@ TGEMV_MX_BIAS <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TGEMV_MX_BIAS | CUBE |  | 21 |  | TGEMV_MX_BIAS |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | matrix |
+| source1 | row-scale |
+| source2 | vector |
+| source3 | column-scale |
+| source4 | bias |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/matrix/matrix-vector/TGEMV_MX_BIAS.asl -->
@@ -33,10 +44,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -70,11 +77,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TGEMV_MX_BIAS`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TGEMV_MX_BIAS`
+- **Effect contract:** `TGEMV_MX_BIAS`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:matrix", "operand:source1:row-scale", "operand:source2:vector", "operand:source3:column-scale", "operand:source4:bias"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

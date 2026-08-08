@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/HL.LIS.asl`
 
-Execute the HL.LIS scalar instruction contract.
+HL.LIS - Materialize the encoded signed long immediate.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-LIS}
 
@@ -30,6 +30,13 @@ hl.lis simm, ->{t, u, Rd}
 | hl_lis_48_908853d6ef87 | RegDst | 5 | encoding-defined | [{"instruction_lsb":23,"value_lsb":0,"width":5}] |
 | hl_lis_48_908853d6ef87 | simm32 | 32 | signed | [{"instruction_lsb":28,"value_lsb":0,"width":20},{"instruction_lsb":4,"value_lsb":20,"width":12}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| RegDst | encoded operand or control |
+| simm32 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.LIS.asl -->
@@ -40,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -58,11 +61,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.LIS - Materialize the encoded signed long immediate.`
+- **Semantic handler:** `MaterializeLongSigned`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

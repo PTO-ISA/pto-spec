@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/agu/HL.SD.PCR.asl`
 
-Execute the HL.SD.PCR scalar instruction contract.
+HL.SD.PCR - Store scalar data using this mnemonic's width and address-update form.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-SD-PCR}
 
@@ -30,6 +30,13 @@ hl.sd.pcr SrcL, [<symbol>]
 | hl_sd_pcr_48_8ed6bb942a78 | SrcL | 5 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":5}] |
 | hl_sd_pcr_48_8ed6bb942a78 | simm | 29 | signed | [{"instruction_lsb":36,"value_lsb":0,"width":12},{"instruction_lsb":23,"value_lsb":12,"width":5},{"instruction_lsb":4,"value_lsb":17,"width":12}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcL | encoded operand or control |
+| simm | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.SD.PCR.asl -->
@@ -40,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -58,11 +61,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `HL.SD.PCR - Store scalar data using this mnemonic's width and address-update form.`
+- **Semantic handler:** `ExecuteScalarStore`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

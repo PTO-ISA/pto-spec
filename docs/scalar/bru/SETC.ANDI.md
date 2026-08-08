@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/bru/SETC.ANDI.asl`
 
-Execute the SETC.ANDI scalar instruction contract.
+SETC.ANDI - Combine scalar comparison results and update the bundle commit condition.
 
 ## Normative identity {#PTO-INST-SCALAR-SETC-ANDI}
 
@@ -31,6 +31,14 @@ setc.andi SrcL, simm
 | setc_andi_32_32fe61c0559b | shamt | 5 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":5}] |
 | setc_andi_32_32fe61c0559b | simm12 | 12 | signed | [{"instruction_lsb":20,"value_lsb":0,"width":12}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcL | encoded operand or control |
+| shamt | encoded operand or control |
+| simm12 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/SETC.ANDI.asl -->
@@ -41,10 +49,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -59,11 +63,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `SETC.ANDI - Combine scalar comparison results and update the bundle commit condition.`
+- **Semantic handler:** `ExecuteSetCommitLogical`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

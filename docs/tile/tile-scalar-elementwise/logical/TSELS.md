@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/tile-scalar-elementwise/logical/TSELS.asl`
 
-Execute the TSELS Tile operation contract.
+Select each destination element from the Tile source or scalar alternative under the mask Tile.
 
 ## Normative identity {#PTO-INST-TILE-TSELS}
 
@@ -23,6 +23,15 @@ TSELS <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TSELS | TEPL | 0x03A | 26 | 1 | ExecuteTileSelectScalar |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | mask |
+| source1 | source-true |
+| scalar0 | scalar-false |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-elementwise/logical/TSELS.asl -->
@@ -33,10 +42,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -63,11 +68,16 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_ExecuteTileSelectScalar`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `ExecuteTileSelectScalar`
+- **Effect contract:** `ExecuteTileSelectScalar`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:mask", "operand:source1:source-true", "operand:scalar0:scalar-false"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/tile-tile-elementwise/arithmetic/TFMA.asl`
 
-Execute the TFMA Tile operation contract.
+Compute a fused elementwise left-times-right plus addend result.
 
 ## Normative identity {#PTO-INST-TILE-TFMA}
 
@@ -23,6 +23,15 @@ TFMA <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TFMA | TEPL | 0x01C | 28 | 0 | TFMA |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | destination |
+| source0 | multiplicand-left |
+| source1 | multiplicand-right |
+| source2 | addend |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-tile-elementwise/arithmetic/TFMA.asl -->
@@ -33,10 +42,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Block composition
 
@@ -58,16 +63,30 @@ readonly func InstructionContractHandler_TFMA() => TileSemanticHandler
 begin
     return TileHandler_TFMA;
 end;
+
+func InstructionContractElement_TFMA(
+    addend: Word, left: Word, right: Word,
+    destination_type: TileDataType, left_type: TileDataType,
+    right_type: TileDataType) => Word
+begin
+    return TileProfileMatrixAccumulate(addend, left, right,
+        destination_type, left_type, right_type);
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- **Legality handler:** `TileOperandsLegal_TFMA`
+- **Fault contract:** `ExecuteTileInstruction`
+- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic handler:** `TFMA`
+- **Effect contract:** `TFMA`
+- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
+- **State effects:** `["operand:destination0:destination", "operand:source0:multiplicand-left", "operand:source1:multiplicand-right", "operand:source2:addend"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/C.SEXT.B.asl`
 
-Execute the C.SEXT.B scalar instruction contract.
+C.SEXT.B - Sign-extend or zero-extend the selected scalar subword.
 
 ## Normative identity {#PTO-INST-SCALAR-C-SEXT-B}
 
@@ -29,6 +29,12 @@ c.sext.b srcL, ->t
 | --- | --- | ---: | --- | --- |
 | c_sext_b_16_8ffd07d15409 | SrcL | 5 | encoding-defined | [{"instruction_lsb":6,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcL | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/C.SEXT.B.asl -->
@@ -39,10 +45,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -57,11 +59,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `C.SEXT.B - Sign-extend or zero-extend the selected scalar subword.`
+- **Semantic handler:** `ExtendScalarValue`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

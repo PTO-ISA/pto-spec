@@ -1088,7 +1088,9 @@ def build_artifacts() -> dict[str, dict]:
         "catalog_counts": {
             **FORM_COUNTS,
             "command_form_families": COMMAND_FAMILY_COUNTS,
-            "linx_vector_reservations": 6,
+            "linx_vector_reservations": len(
+                projection["linx_vector_reservations"]
+            ),
             "tile_operations": FAMILY_COUNTS,
             "tile_operations_total": sum(FAMILY_COUNTS.values()),
             "pending_base_operations": 0,

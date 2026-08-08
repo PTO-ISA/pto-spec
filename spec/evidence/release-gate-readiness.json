@@ -92,7 +92,7 @@
     "scripts/check-active-paths": "2c2f886b0ce4af27d227b06f946b0db4f6fad4b2c74515633f2b580aa91a0a18",
     "scripts/check-asl-layout": "5283ef77e8650d607c537e29de06fb544add29be6b76caf6e431f1954301e39f",
     "scripts/check-asl-tests": "3a0ef89d06725179960c8a7cd3a319d71f18ef76c798e4863036c860cbab2189",
-    "scripts/check-binary-closure": "74d100b85647bd4614c12bb3e30010bb6c38e79e3fcfa6bad8c5c4a89771d3e3",
+    "scripts/check-binary-closure": "245a7f70e3433da9f8bfb8ecea89cb1eeae478188ac06c1920e55c8e24eb8611",
     "scripts/check-ndf": "288f430cfc09ce3b76fea16a8d02d7eb71f67fc199042b76742ecfed8d68ed0e",
     "scripts/check-pr": "9b2918013d0390fc81abf231004e96e0ffe6d1eb2f2e50ada1235540dbc97489",
     "scripts/check-release-closure": "2fcefbdb821bcb55b92abf9ef0f2df8310a277f7ce75b9d8cd4d1e1ad1016319",
@@ -102,25 +102,25 @@
     "scripts/check-script-entrypoints": "814cd44ff42e27c764b401bf8de1583aaa0e68d77dcb2937bb2646ae8465ac7e",
     "scripts/check-toolchain": "bd1c7bd659e12f24140f0f1f9680d8742caeeb489d447469a943f592365f73cb",
     "scripts/encoding_witness.py": "f7767271a695c7d0e634683d3d5768f476f17a50f587f0e4020bd380d5769202",
-    "scripts/instruction_docs.py": "e110659c3771bd786df42bd69be88e6451c152585418fe0d27047d1584946909",
+    "scripts/instruction_docs.py": "15334ba27d66443b9b2993431b1a36d1445164510e82b1e6f7745e8e36d6e6b5",
     "scripts/print-asl-test-matrix": "2582db3a6ed8c414c3865e8cca11eb50499e611b07017c93529cf014da504b79",
-    "scripts/project_asl_catalogs.py": "07fd86a95816540d5b3f981139c55e35a1f60cbb5bcafb6e19a22e512c59e928",
+    "scripts/project_asl_catalogs.py": "8ce781bc8867095945c887ecbb3637480d2f8985ef7e646fcbeec8f8aa000507",
     "scripts/run-asl-release-suite": "56cbd340490c0d4d94990cff0f4607a3c3a53fccee818775b38a37a43a7ff654",
     "scripts/run-asl-test": "152bc50910a4927ff9b78b805fac286d1948be8cbaf5751325a65e8316bf7851",
-    "spec/evidence/release-traceability-readiness.json": "3ea2b18d92759ec1a0847243206a73896d786c3cfdd6f1e08ebde4826c81df74",
+    "spec/evidence/release-traceability-readiness.json": "b6da68f6a4a394c89946ab1b65ba8df407d65c7a85789fa15186874bf4aadbf6",
     "spec/release-inputs.json": "d90cc3c8a8c7855572f57fcf4dbbe371471a95c61ee4ac7fb1896deda59ca984"
   },
   "summary": {
-    "documentation_page_count": 785,
+    "documentation_page_count": 787,
     "executable_requirement_count": 649,
     "gate_count": 9,
     "mnemonic_count": 649,
     "status": "ready-for-exact-head-verification",
-    "test_count": 898,
-    "test_page_count": 9,
+    "test_count": 905,
+    "test_page_count": 10,
     "test_page_size": 100,
     "uncovered_executable_requirement_count": 0,
     "uncovered_unit_count": 0,
-    "unit_count": 785
+    "unit_count": 787
   }
 }

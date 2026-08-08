@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/agu/C.SWI.asl`
 
-Execute the C.SWI scalar instruction contract.
+C.SWI - Store scalar data using this mnemonic's width and address-update form.
 
 ## Normative identity {#PTO-INST-SCALAR-C-SWI}
 
@@ -30,6 +30,13 @@ c.swi t#1, [srcL, simm]
 | c_swi_16_ca6c111163e5 | SrcL | 5 | encoding-defined | [{"instruction_lsb":6,"value_lsb":0,"width":5}] |
 | c_swi_16_ca6c111163e5 | simm5 | 5 | signed | [{"instruction_lsb":11,"value_lsb":0,"width":5}] |
 
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| SrcL | encoded operand or control |
+| simm5 | encoded operand or control |
+
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/C.SWI.asl -->
@@ -40,10 +47,6 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
-
-## Assembler symbols
-
-Supplementary operand names and examples may be added here.
 
 ## Operation
 
@@ -58,11 +61,12 @@ end;
 
 ## Legality and exceptions
 
-Normative legality is embedded from the ASL source above.
+- No additional catalog constraint beyond decode legality.
 
 ## Operational information
 
-Supplementary implementation-neutral guidance may be added here.
+- **Semantic summary:** `C.SWI - Store scalar data using this mnemonic's width and address-update form.`
+- **Semantic handler:** `ExecuteScalarStore`
 
 <!-- SUPPLEMENTARY-BEGIN -->
 
