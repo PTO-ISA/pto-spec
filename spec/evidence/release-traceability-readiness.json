@@ -8171,10 +8171,10 @@
     "tests/asl/block/attributes/B.DATR/PTO-AVS-BLOCK-TESTBUNDLEDATAATTRIBUTES-EXECUTION-001.asl": "8d3fbc46fa94d1c2697f4428fb681fddf864003c557809f99bfc63d817025c7d",
     "tests/asl/block/attributes/B.DIM/PTO-AVS-BLOCK-B-DIM-DECODE-001.asl": "ac10b1de4aa54f5b37851d0c11fceb50bccea736477e5f9fb38246fbef8d81a5",
     "tests/asl/block/attributes/C.B.DIMI/PTO-AVS-BLOCK-C-B-DIMI-DECODE-001.asl": "70dc312e9506d750cdeacd559e6c2ef428acf94f0e1209c3f86d628a4990caec",
-    "tests/asl/block/encoding/C.BSTART.FP/PTO-AVS-BLOCK-C-BSTART-FP-DECODE-001.asl": "35e9b1dfb8f6b0b02e8cb27b3ff6fa3d2fea0145ef73db9e3cff0f10feb259a6",
+    "tests/asl/block/encoding/C.BSTART.FP/PTO-AVS-BLOCK-C-BSTART-FP-DECODE-001.asl": "5de7cef6526d9a39e0c47b982606daf30aabb8f910378b5939e57aa933f5af2b",
     "tests/asl/block/encoding/C.BSTART.MPAR/PTO-AVS-BLOCK-C-BSTART-MPAR-DECODE-001.asl": "d92a46679b42ffcb07bee5d864d0dc516a1adf49219e5465cf344165cf179ebf",
     "tests/asl/block/encoding/C.BSTART.MSEQ/PTO-AVS-BLOCK-C-BSTART-MSEQ-DECODE-001.asl": "08e7958b574ea910a7810819a33083b2042e9a2a34f72c3f405e45aec8faf770",
-    "tests/asl/block/encoding/C.BSTART.STD/PTO-AVS-BLOCK-C-BSTART-STD-DECODE-001.asl": "d161b4a4e5758eb9b76d982aec42fcb5b3856ecaf6cf0dc1bdec6877de07c1d8",
+    "tests/asl/block/encoding/C.BSTART.STD/PTO-AVS-BLOCK-C-BSTART-STD-DECODE-001.asl": "ed0909a77a18fd8c344296bfacb82ea2ea48ef9e212174fd7eae5777a87a583a",
     "tests/asl/block/encoding/C.BSTART.SYS/PTO-AVS-BLOCK-C-BSTART-SYS-DECODE-001.asl": "2d09ca7fa621887ec5270c319a7f8b53a3856efb2b92470eed6778643e376558",
     "tests/asl/block/encoding/C.BSTART/PTO-AVS-BLOCK-C-BSTART-DECODE-001.asl": "93a8bdf87006829d4675a84d6af7553381c63a901ffe82b7b9eb48b897f6380c",
     "tests/asl/block/encoding/HL.BSTART.FP/PTO-AVS-BLOCK-HL-BSTART-FP-DECODE-001.asl": "a3a4029d5c3621850a4b7f8193efd42196d89b3f959036041a4dda6ba4e9a0b6",
@@ -8281,7 +8281,7 @@
     "tests/asl/block/operands/B.IOS/PTO-AVS-BLOCK-B-IOS-DECODE-001.asl": "93096183d0dddadbea0626054b240630baeb8aa621fc8e2b73338836758dd555",
     "tests/asl/block/operands/B.IOS/PTO-AVS-BLOCK-TESTBUNDLESHAREDBINDINGV5-EXECUTION-001.asl": "6e98f0423da21ab91d06c5ea53a134bc063782c927cea079d862a16c60e0a31b",
     "tests/asl/block/operands/B.IOS/PTO-AVS-BLOCK-TESTBUNDLESHAREDBINDINGV6-EXECUTION-001.asl": "5d2742eee363bc30c8c4c7777586a2de503b7910373dd5775e6c8c53670b6234",
-    "tests/asl/block/operands/B.IOT/PTO-AVS-BLOCK-B-IOT-DECODE-001.asl": "0ba7310e71c0ed9dedbbb631efa3a5d81a8e90264f03810038bc3c6d96d05e7e",
+    "tests/asl/block/operands/B.IOT/PTO-AVS-BLOCK-B-IOT-DECODE-001.asl": "b7e16b7c8e90d5a940cdc6aa34e0ef0c60a84cd5cf480252f1cc9d995c2673dc",
     "tests/asl/block/operands/B.IOT/PTO-AVS-BLOCK-TESTBUNDLETILEBINDINGV5SCHEMAS-EXECUTION-001.asl": "47fabaaaec6e89ccf37d24041117e27ffb157e1b75beb725fc8064658af75d5d",
     "tests/asl/scalar/agu/C.LDI/PTO-AVS-SCALAR-C-LDI-DECODE-001.asl": "c8b6d5a74b5e2d215a7ad91e1ae82b0e8db130141d493cf8a5cfb3d6c6f1ae6f",
     "tests/asl/scalar/agu/C.LWI/PTO-AVS-SCALAR-C-LWI-DECODE-001.asl": "e703aadb2d7124750a80ab5395bf765aa129c9bb20f4a346e3955d3e80f5b208",
@@ -9580,7 +9580,7 @@
       "requirements": [
         "PTO-INST-BLOCK-B-IOT"
       ],
-      "sha256": "0ba7310e71c0ed9dedbbb631efa3a5d81a8e90264f03810038bc3c6d96d05e7e",
+      "sha256": "b7e16b7c8e90d5a940cdc6aa34e0ef0c60a84cd5cf480252f1cc9d995c2673dc",
       "source": "asl/block/operands/B.IOT.asl"
     },
     {
@@ -9930,7 +9930,7 @@
       "requirements": [
         "PTO-INST-BLOCK-C-BSTART-FP"
       ],
-      "sha256": "35e9b1dfb8f6b0b02e8cb27b3ff6fa3d2fea0145ef73db9e3cff0f10feb259a6",
+      "sha256": "5de7cef6526d9a39e0c47b982606daf30aabb8f910378b5939e57aa933f5af2b",
       "source": "asl/block/encoding/C.BSTART.FP.asl"
     },
     {
@@ -9960,7 +9960,7 @@
       "requirements": [
         "PTO-INST-BLOCK-C-BSTART-STD"
       ],
-      "sha256": "d161b4a4e5758eb9b76d982aec42fcb5b3856ecaf6cf0dc1bdec6877de07c1d8",
+      "sha256": "ed0909a77a18fd8c344296bfacb82ea2ea48ef9e212174fd7eae5777a87a583a",
       "source": "asl/block/encoding/C.BSTART.STD.asl"
     },
     {

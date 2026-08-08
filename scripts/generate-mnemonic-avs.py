@@ -15,6 +15,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.asl_units import AslUnit, load_units  # noqa: E402
+from scripts.encoding_witness import encoded_catalog_witnesses  # noqa: E402
 from scripts.ndf import instruction_clause_id, parse_ndf_regions  # noqa: E402
 
 
@@ -35,22 +36,6 @@ def bit_literal(value: int, width: int) -> str:
     if value < 0 or value >= 1 << width:
         raise ValueError(f"value {value} does not fit bits({width})")
     return "'" + format(value, f"0{width}b") + "'"
-
-
-def _instruction_value(record: dict[str, object]) -> int:
-    value = 0
-    encodings = record.get("encoding")
-    if not isinstance(encodings, list) or not encodings:
-        raise ValueError("instruction catalog record has no encoding")
-    for encoding in encodings:
-        if not isinstance(encoding, dict):
-            raise ValueError("instruction encoding must be an object")
-        index = encoding.get("index")
-        match = encoding.get("match")
-        if not isinstance(index, int) or not isinstance(match, str):
-            raise ValueError("instruction encoding index/match is invalid")
-        value |= int(match, 16) << (index * 32)
-    return value
 
 
 def _test_metadata(unit: AslUnit, test_id: str, kind: str) -> str:
@@ -84,11 +69,18 @@ def _catalog(unit: AslUnit) -> tuple[tuple[int, dict[str, object]], ...]:
     return tuple(paired)
 
 
-def _scalar_assertions(unit: AslUnit) -> list[str]:
+def _scalar_assertions(
+    unit: AslUnit, witness_by_index: dict[int, int] | None = None
+) -> list[str]:
     mnemonic = asl_identifier(unit.mnemonic or "")
     lines: list[str] = []
-    for index, record in _catalog(unit):
-        instruction = _instruction_value(record)
+    catalog = _catalog(unit)
+    witnesses = (
+        encoded_catalog_witnesses([record for _, record in catalog])
+        if witness_by_index is None
+        else [witness_by_index[index] for index, _ in catalog]
+    )
+    for instruction, (index, record) in zip(witnesses, catalog, strict=True):
         length = record.get("length_bits")
         handler = record.get("semantic_handler")
         if not isinstance(length, int) or not isinstance(handler, str):
@@ -130,11 +122,18 @@ def _scalar_assertions(unit: AslUnit) -> list[str]:
     return lines
 
 
-def _block_assertions(unit: AslUnit) -> list[str]:
+def _block_assertions(
+    unit: AslUnit, witness_by_index: dict[int, int] | None = None
+) -> list[str]:
     mnemonic = asl_identifier(unit.mnemonic or "")
     lines: list[str] = []
-    for index, record in _catalog(unit):
-        instruction = _instruction_value(record)
+    catalog = _catalog(unit)
+    witnesses = (
+        encoded_catalog_witnesses([record for _, record in catalog])
+        if witness_by_index is None
+        else [witness_by_index[index] for index, _ in catalog]
+    )
+    for instruction, (index, record) in zip(witnesses, catalog, strict=True):
         length = record.get("length_bits")
         form_id = record.get("form_id")
         handler = record.get("semantic_handler")
@@ -190,7 +189,11 @@ def _tile_assertions(unit: AslUnit) -> list[str]:
     return lines
 
 
-def render_mnemonic_avs(unit: AslUnit) -> tuple[Path, str]:
+def render_mnemonic_avs(
+    unit: AslUnit,
+    scalar_witnesses: dict[int, int] | None = None,
+    block_witnesses: dict[int, int] | None = None,
+) -> tuple[Path, str]:
     """Render the canonical checked-in AVS point for one mnemonic unit."""
 
     if unit.mnemonic is None or unit.surface not in {"scalar", "block", "tile"}:
@@ -206,11 +209,12 @@ def render_mnemonic_avs(unit: AslUnit) -> tuple[Path, str]:
         / unit.source_path.relative_to("asl").with_suffix("")
         / f"{test_id}.asl"
     )
-    assertions = {
-        "scalar": _scalar_assertions,
-        "block": _block_assertions,
-        "tile": _tile_assertions,
-    }[unit.surface](unit)
+    if unit.surface == "scalar":
+        assertions = _scalar_assertions(unit, scalar_witnesses)
+    elif unit.surface == "block":
+        assertions = _block_assertions(unit, block_witnesses)
+    else:
+        assertions = _tile_assertions(unit)
     document = "\n".join(
         (
             GENERATED_MARKER,
@@ -267,8 +271,44 @@ def render_concept_avs(root: Path, unit: AslUnit) -> tuple[Path, str]:
 
 def generated_documents(root: Path) -> dict[Path, str]:
     units = load_units(root / "asl")
+    scalar_catalog = sorted(
+        (
+            item
+            for unit in units
+            if unit.surface == "scalar" and unit.mnemonic is not None
+            for item in _catalog(unit)
+        ),
+        key=lambda item: item[0],
+    )
+    if [index for index, _ in scalar_catalog] != list(range(len(scalar_catalog))):
+        raise ValueError("scalar catalog indices are not contiguous")
+    scalar_witnesses = dict(
+        zip(
+            (index for index, _ in scalar_catalog),
+            encoded_catalog_witnesses([record for _, record in scalar_catalog]),
+            strict=True,
+        )
+    )
+    block_catalog = sorted(
+        (
+            item
+            for unit in units
+            if unit.surface == "block" and unit.mnemonic is not None
+            for item in _catalog(unit)
+        ),
+        key=lambda item: item[0],
+    )
+    if [index for index, _ in block_catalog] != list(range(len(block_catalog))):
+        raise ValueError("block catalog indices are not contiguous")
+    block_witnesses = dict(
+        zip(
+            (index for index, _ in block_catalog),
+            encoded_catalog_witnesses([record for _, record in block_catalog]),
+            strict=True,
+        )
+    )
     documents = [
-        render_mnemonic_avs(unit)
+        render_mnemonic_avs(unit, scalar_witnesses, block_witnesses)
         if unit.mnemonic is not None
         else render_concept_avs(root, unit)
         for unit in units

@@ -34,6 +34,7 @@ SOURCE_PATHS = (
     "scripts/check-repository",
     "scripts/check-script-entrypoints",
     "scripts/check-toolchain",
+    "scripts/encoding_witness.py",
     "scripts/instruction_docs.py",
     "scripts/print-asl-test-matrix",
     "scripts/project_asl_catalogs.py",

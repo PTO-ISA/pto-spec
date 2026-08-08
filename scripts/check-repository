@@ -84,6 +84,7 @@ required_files=(
     scripts/run-asl-release-suite
     scripts/check-release-manifest
     scripts/check-script-entrypoints
+    scripts/encoding_witness.py
 )
 
 for path in "${required_files[@]}"; do

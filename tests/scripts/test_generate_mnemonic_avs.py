@@ -108,6 +108,44 @@ class GenerateMnemonicAvsTest(unittest.TestCase):
         )
         self.assertIn("InstructionContractMatches_B_IOR", document)
 
+    def test_block_decode_witness_satisfies_operand_constraints(self) -> None:
+        unit = instruction_unit(
+            "block",
+            "B.IOT",
+            {
+                "encoding": [
+                    {
+                        "index": 0,
+                        "mask": "0xfc00707f",
+                        "match": "0x00005013",
+                        "width_bits": 32,
+                    }
+                ],
+                "fields": [
+                    {
+                        "name": "TSize",
+                        "width": 3,
+                        "pieces": [{"instruction_lsb": 9, "value_lsb": 0, "width": 3}],
+                    }
+                ],
+                "constraints": [
+                    {"field": "TSize", "operator": "one-of", "values": [1, 2, 3]}
+                ],
+                "form_id": "b_iot_32_fixture",
+                "length_bits": 32,
+                "semantic_handler": "BindBundleTileIO",
+            },
+        )
+
+        _, document = self.render(unit)
+
+        self.assertIn(
+            "0000000000000000000000000000000000000000000000000101001000010011", document
+        )
+        self.assertNotIn(
+            "0000000000000000000000000000000000000000000000000101000000010011", document
+        )
+
     def test_tile_static_test_checks_selector_classification_and_block_composition(
         self,
     ) -> None:

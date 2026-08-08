@@ -14,6 +14,7 @@ PYTHON_LAUNCHED = frozenset(
     {
         "__init__.py",
         "asl_tests.py",
+        "encoding_witness.py",
         "evidence_sources.py",
         "generate-mnemonic-avs.py",
     }
