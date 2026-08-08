@@ -4,14 +4,18 @@ set -euo pipefail
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 cd "$repo_root"
 
-mode=${1:-full}
-case $mode in
-    full | --structure-only) ;;
-    *)
-        echo "usage: $0 [--structure-only]" >&2
-        exit 2
-        ;;
-esac
+structure_only=false
+four_surface=false
+for argument in "$@"; do
+    case $argument in
+        --structure-only) structure_only=true ;;
+        --four-surface) four_surface=true ;;
+        *)
+            echo "usage: $0 [--structure-only] [--four-surface]" >&2
+            exit 2
+            ;;
+    esac
+done
 
 fail() {
     echo "error: $*" >&2
@@ -221,7 +225,11 @@ for script in scripts/*; do
     esac
 done
 
-if [[ $mode == --structure-only ]]; then
+if [[ $four_surface == true ]]; then
+    ./scripts/check-asl-layout
+fi
+
+if [[ $structure_only == true ]]; then
     ./scripts/check-ndf
     ./scripts/check-asl-test-shards
     python3 scripts/instruction_docs.py --check
