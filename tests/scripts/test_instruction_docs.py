@@ -36,7 +36,7 @@ def asl_source(
         "id": f"PTO-INST-{surface.upper()}-{mnemonic.replace('.', '-').replace(' ', '-').upper()}",
         "mnemonic": mnemonic,
         "surface": surface,
-        "classification": classification or ["tile-tile-elementwise", "arithmetic"],
+        "classification": classification or ["elementwise-tile-tile", "arithmetic"],
         "depends_on": [],
         "summary": "Add corresponding tile elements.",
         "assembly": ["TADD <shape>, Src0, Src1, ->Dst"],
@@ -45,6 +45,8 @@ def asl_source(
         or [{"mnemonic": mnemonic, "semantic_handler": "ExecuteTileBinary"}],
         "catalog_indices": list(range(len(catalog_records or [{}]))),
     }
+    if surface == "tile":
+        metadata["engine"] = "VEC"
     encoded = json.dumps(metadata, ensure_ascii=False, sort_keys=True)
     return (
         f"// PTO-INSTRUCTION: {encoded}\n"
@@ -90,7 +92,7 @@ class InstructionDocsTest(unittest.TestCase):
 
     def write_asl(
         self,
-        relative: str = "tile/tile-tile-elementwise/arithmetic/TADD.asl",
+        relative: str = "tile/elementwise-tile-tile/arithmetic/TADD.asl",
         **kwargs: object,
     ) -> Path:
         path = self.root / "asl" / relative
@@ -104,7 +106,7 @@ class InstructionDocsTest(unittest.TestCase):
         records = load_instruction_index(self.root)
 
         self.assertEqual([record.mnemonic for record in records], ["TADD"])
-        self.assertEqual(records[0].classification, ("tile-tile-elementwise", "arithmetic"))
+        self.assertEqual(records[0].classification, ("elementwise-tile-tile", "arithmetic"))
         self.assertIn("func ExecuteTADD()", records[0].regions["operation"])
         self.assertEqual(records[0].catalog_records[0]["mnemonic"], "TADD")
 
@@ -124,19 +126,19 @@ class InstructionDocsTest(unittest.TestCase):
         errors = check_tree(self.root)
 
         self.assertIn(
-            "missing Markdown page for TADD: docs/tile/tile-tile-elementwise/arithmetic/TADD.md",
+            "missing Markdown page for TADD: docs/tile/elementwise-tile-tile/arithmetic/TADD.md",
             errors,
         )
 
     def test_check_tree_rejects_page_without_asl(self) -> None:
-        page = self.root / "docs/tile/tile-tile-elementwise/arithmetic/TADD.md"
+        page = self.root / "docs/tile/elementwise-tile-tile/arithmetic/TADD.md"
         page.parent.mkdir(parents=True, exist_ok=True)
         page.write_text("# TADD\n", encoding="utf-8")
 
         errors = check_tree(self.root)
 
         self.assertIn(
-            "missing ASL source for docs/tile/tile-tile-elementwise/arithmetic/TADD.md",
+            "missing ASL source for docs/tile/elementwise-tile-tile/arithmetic/TADD.md",
             errors,
         )
 
@@ -146,7 +148,7 @@ class InstructionDocsTest(unittest.TestCase):
         errors = check_tree(self.root)
 
         self.assertIn(
-            "TADD metadata classification tile-tile-elementwise/arithmetic does not match ASL path tile/matrix/TADD.asl",
+            "TADD metadata classification elementwise-tile-tile/arithmetic does not match ASL path tile/matrix/TADD.asl",
             errors,
         )
 
@@ -167,7 +169,7 @@ class InstructionDocsTest(unittest.TestCase):
 
     def test_load_instruction_index_rejects_duplicate_mnemonic(self) -> None:
         self.write_asl()
-        self.write_asl("tile/tile-tile-elementwise/logical/TADD.asl")
+        self.write_asl("tile/elementwise-tile-tile/logical/TADD.asl")
 
         with self.assertRaisesRegex(ValueError, "duplicate instruction mnemonic TADD"):
             load_instruction_index(self.root)
@@ -176,7 +178,7 @@ class InstructionDocsTest(unittest.TestCase):
         source = self.write_asl()
 
         generate_tree(self.root)
-        page = self.root / "docs/tile/tile-tile-elementwise/arithmetic/TADD.md"
+        page = self.root / "docs/tile/elementwise-tile-tile/arithmetic/TADD.md"
         rendered = page.read_text(encoding="utf-8")
         self.assertIn(f"source={source.relative_to(self.root)}", rendered)
         self.assertIn("func ExecuteTADD()", rendered)
@@ -189,7 +191,7 @@ class InstructionDocsTest(unittest.TestCase):
         self.write_asl()
 
         generate_tree(self.root)
-        page = self.root / "docs/tile/tile-tile-elementwise/arithmetic/TADD.md"
+        page = self.root / "docs/tile/elementwise-tile-tile/arithmetic/TADD.md"
         rendered = page.read_text(encoding="utf-8")
 
         self.assertIn("## Normative identity {#PTO-INST-TILE-TADD}", rendered)
@@ -197,13 +199,15 @@ class InstructionDocsTest(unittest.TestCase):
             "<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->",
             rendered,
         )
+        self.assertIn("**Instruction class:** `elementwise-tile-tile`", rendered)
+        self.assertIn("**Execution engine:** `VEC`", rendered)
 
     def test_generate_tree_emits_complete_tile_block(self) -> None:
         self.write_asl()
 
         generate_tree(self.root)
         rendered = (
-            self.root / "docs/tile/tile-tile-elementwise/arithmetic/TADD.md"
+            self.root / "docs/tile/elementwise-tile-tile/arithmetic/TADD.md"
         ).read_text(encoding="utf-8")
 
         self.assertIn("## Block composition", rendered)
@@ -253,10 +257,10 @@ class InstructionDocsTest(unittest.TestCase):
 
     def test_generate_tree_projects_complete_catalog_contract_without_placeholders(self) -> None:
         self.write_asl(
-            "tile/memory/regular/TLOAD.asl",
+            "tile/memory-and-data-movement/regular/TLOAD.asl",
             mnemonic="TLOAD",
             surface="tile",
-            classification=["memory", "regular"],
+            classification=["memory-and-data-movement", "regular"],
             catalog_records=[
                 {
                     "name": "TLOAD",
@@ -284,7 +288,7 @@ class InstructionDocsTest(unittest.TestCase):
 
         generate_tree(self.root)
         rendered = (
-            self.root / "docs/tile/memory/regular/TLOAD.md"
+            self.root / "docs/tile/memory-and-data-movement/regular/TLOAD.md"
         ).read_text(encoding="utf-8")
 
         self.assertIn("## Operands and results", rendered)
@@ -296,7 +300,7 @@ class InstructionDocsTest(unittest.TestCase):
 
     def test_generate_tree_preserves_supplementary_markdown(self) -> None:
         self.write_asl()
-        page = self.root / "docs/tile/tile-tile-elementwise/arithmetic/TADD.md"
+        page = self.root / "docs/tile/elementwise-tile-tile/arithmetic/TADD.md"
         page.parent.mkdir(parents=True, exist_ok=True)
         page.write_text(
             "# Legacy TADD\n\nThis paragraph explains why TADD exists.\n",
@@ -339,9 +343,9 @@ class InstructionDocsTest(unittest.TestCase):
             "      - ALU:\n"
             "          - ADD: scalar/alu/ADD.md\n"
             "  - Tile:\n"
-            "      - Tile Tile Elementwise:\n"
+            "      - Elementwise Tile Tile:\n"
             "          - Arithmetic:\n"
-            "              - TADD: tile/tile-tile-elementwise/arithmetic/TADD.md\n",
+            "              - TADD: tile/elementwise-tile-tile/arithmetic/TADD.md\n",
         )
 
     def test_generate_tree_writes_mkdocs_navigation(self) -> None:
@@ -356,7 +360,7 @@ class InstructionDocsTest(unittest.TestCase):
             render_nav(load_doc_index(self.root), Path("docs"), self.root),
         )
         self.assertIn(
-            "tile/tile-tile-elementwise/arithmetic/TADD.md",
+            "tile/elementwise-tile-tile/arithmetic/TADD.md",
             mkdocs_config.read_text(encoding="utf-8"),
         )
         self.assertEqual(check_navigation(self.root), [])

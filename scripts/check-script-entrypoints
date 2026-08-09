@@ -17,6 +17,7 @@ PYTHON_LAUNCHED = frozenset(
         "encoding_witness.py",
         "evidence_sources.py",
         "generate-mnemonic-avs.py",
+        "tile_taxonomy.py",
     }
 )
 PYTHON_SHEBANG = "#!/usr/bin/env python3"

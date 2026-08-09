@@ -16,12 +16,12 @@ five distinct numeric type-code namespaces:
 - two-bit scalar FSU source selectors;
 - five-bit scalar floating destination selectors;
 - five-bit scalar integer destination selectors;
-- six-bit TMA/TALLOC tile data-type selectors; and
+- six-bit TLSU/TALLOC tile data-type selectors; and
 - five-bit bundle `DataType` selectors.
 
 Some numeric codes coincide across namespaces and others differ. For example,
-TMA/TALLOC code 2 denotes the raw `F16` carrier while bundle code 4 denotes
-`F16`; `FP4` is mapped only in the TMA/TALLOC namespace, while `E8M0` is mapped
+TLSU/TALLOC code 2 denotes the raw `F16` carrier while bundle code 4 denotes
+`F16`; `FP4` is mapped only in the TLSU/TALLOC namespace, while `E8M0` is mapped
 only in the bundle namespace. Treating the integers as one shared encoding
 would therefore change architectural behavior.
 
@@ -39,7 +39,7 @@ The generated
 structural checkpoint for `PD-02`.
 
 1. Numeric codes are namespace-local. Equality of code values across scalar,
-   TMA/TALLOC, and bundle namespaces has no architectural meaning unless a
+   TLSU/TALLOC, and bundle namespaces has no architectural meaning unless a
    later accepted PTO decision explicitly maps them.
 2. All 19 `TileDataType` identities and their raw storage widths are closed.
    Width and signedness are exact for integer carriers. Floating identities
@@ -48,7 +48,7 @@ structural checkpoint for `PD-02`.
    selectors 2 and 3 reject before effects. Scalar floating and integer
    destination selectors 0 through 14 have the Stage 4 carrier widths recorded
    in `scalar-fsu-totality.json`; selectors 15 through 31 reject before effects.
-4. The TMA/TALLOC namespace contains 18 mapped and 46 reserved six-bit codes.
+4. The TLSU/TALLOC namespace contains 18 mapped and 46 reserved six-bit codes.
    `E8M0` is intentionally unmapped there. The bundle namespace contains 18
    mapped and 14 reserved five-bit codes. `FP4` is intentionally unmapped
    there. These are separate, total encoding tables rather than a conflict to
@@ -95,7 +95,7 @@ complete PD-02 result decision.
 - `tests/asl/state-tests.asl`
 - `tests/asl/scalar-tests.asl`
 - `tests/asl/bundle-tests.asl`
-- `tests/asl/tlsu-totality-tests.asl`
+- `tests/asl/tile/model/memory/load-store/PTO-AVS-TILE-TESTTLSUTOTALITY-BOUNDARY-001.asl`
 - `docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md`
-- `docs/status/decisions/0033-tma-four-bit-memory-packing.md`
+- `docs/status/decisions/0033-tlsu-four-bit-memory-packing.md`
 - `docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md`

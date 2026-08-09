@@ -15,6 +15,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.asl_units import AslUnit, load_units  # noqa: E402
+from scripts.tile_taxonomy import derive_tile_catalog_record  # noqa: E402
 
 
 CATALOG_PATHS = (
@@ -92,10 +93,20 @@ def _indexed_records(units: Sequence[AslUnit]) -> dict[str, list[dict[str, objec
             )
         catalog = SURFACE_CATALOG[unit.surface]
         for index, record in zip(indices, records, strict=True):
+            projected_record = dict(record)
+            if unit.surface == "tile":
+                try:
+                    projected_record = derive_tile_catalog_record(
+                        record,
+                        classification=unit.classification[0],
+                        engine=unit.metadata.get("engine"),
+                    )
+                except ValueError as error:
+                    raise ValueError(f"{unit.source_path}: {error}") from error
             existing = slots[catalog].get(index)
             if existing is not None:
                 existing_record, existing_path = existing
-                if existing_record != record:
+                if existing_record != projected_record:
                     raise ValueError(
                         f"conflicting catalog record for {catalog} slot {index}: "
                         f"{existing_path} and {unit.source_path}"
@@ -104,7 +115,7 @@ def _indexed_records(units: Sequence[AslUnit]) -> dict[str, list[dict[str, objec
                     f"duplicate catalog slot for {catalog} slot {index}: "
                     f"{existing_path} and {unit.source_path}"
                 )
-            slots[catalog][index] = (record, unit.source_path)
+            slots[catalog][index] = (projected_record, unit.source_path)
 
     ordered: dict[str, list[dict[str, object]]] = {}
     for catalog, indexed in slots.items():

@@ -11926,7 +11926,7 @@
       "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -11950,7 +11950,7 @@
       "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -11974,7 +11974,7 @@
       "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -11998,7 +11998,7 @@
       "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12026,7 +12026,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12050,7 +12050,7 @@
       "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12074,7 +12074,7 @@
       "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12098,7 +12098,7 @@
       "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12122,7 +12122,7 @@
       "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12146,7 +12146,7 @@
       "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12174,7 +12174,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12202,7 +12202,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12230,7 +12230,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12258,7 +12258,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12286,7 +12286,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12314,7 +12314,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12342,7 +12342,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12370,7 +12370,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12398,7 +12398,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12426,7 +12426,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12454,7 +12454,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12482,7 +12482,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12510,7 +12510,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12538,7 +12538,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12562,7 +12562,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12586,7 +12586,7 @@
       "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12610,7 +12610,7 @@
       "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12634,7 +12634,7 @@
       "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12658,7 +12658,7 @@
       "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12686,7 +12686,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12710,7 +12710,7 @@
       "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12734,7 +12734,7 @@
       "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12758,7 +12758,7 @@
       "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12782,7 +12782,7 @@
       "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12806,7 +12806,7 @@
       "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12834,7 +12834,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12862,7 +12862,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12890,7 +12890,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12918,7 +12918,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12946,7 +12946,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -12974,7 +12974,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13002,7 +13002,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13030,7 +13030,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13058,7 +13058,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13086,7 +13086,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13114,7 +13114,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13142,7 +13142,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13170,7 +13170,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13198,7 +13198,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13226,7 +13226,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13254,7 +13254,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13282,7 +13282,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13310,7 +13310,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13338,7 +13338,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13366,7 +13366,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13394,7 +13394,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13422,7 +13422,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13450,7 +13450,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13478,7 +13478,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13506,7 +13506,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13534,7 +13534,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13562,7 +13562,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13590,7 +13590,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13618,7 +13618,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13646,7 +13646,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13674,7 +13674,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13702,7 +13702,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13730,7 +13730,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13758,7 +13758,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13786,7 +13786,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13814,7 +13814,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13842,7 +13842,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13870,7 +13870,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13898,7 +13898,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13926,7 +13926,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13954,7 +13954,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -13982,7 +13982,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -14010,7 +14010,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -14038,7 +14038,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -14066,7 +14066,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -14094,7 +14094,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -14122,7 +14122,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -14150,7 +14150,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -14178,7 +14178,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -14206,7 +14206,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -14234,7 +14234,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -14262,7 +14262,7 @@
       "classification": "divergence",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
+        "spec/evidence/vec-sfu-carrier-totality.json",
         "docs/status/decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
@@ -14287,7 +14287,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -14311,7 +14311,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -14335,7 +14335,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -14359,7 +14359,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -14383,7 +14383,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -14407,7 +14407,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -14431,7 +14431,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -14455,7 +14455,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -14479,7 +14479,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -14503,7 +14503,7 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tma-four-bit-memory-packing.md"
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
       ],
       "family": "TLSU",
       "independent_status": "missing",

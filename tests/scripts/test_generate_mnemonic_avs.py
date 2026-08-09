@@ -15,8 +15,22 @@ def instruction_unit(surface: str, mnemonic: str, record: dict[str, object]) -> 
     classification = {
         "scalar": ("alu",),
         "block": ("operands",),
-        "tile": ("memory", "regular"),
+        "tile": ("memory-and-data-movement", "regular"),
     }[surface]
+    metadata = {
+        "id": f"PTO-{surface.upper()}-{mnemonic.replace('.', '-').replace('_', '-')}",
+        "surface": surface,
+        "classification": list(classification),
+        "depends_on": [],
+        "mnemonic": mnemonic,
+        "summary": f"{mnemonic} contract",
+        "assembly": [f"{mnemonic} operands"],
+        "block": ["BSTART", "B.IOT", "BSTOP"] if surface == "tile" else [],
+        "catalog_indices": [3],
+        "catalog_records": [record],
+    }
+    if surface == "tile":
+        metadata["engine"] = "TLSU"
     return AslUnit(
         unit_id=f"PTO-{surface.upper()}-{mnemonic.replace('.', '-').replace('_', '-')}",
         surface=surface,
@@ -25,18 +39,7 @@ def instruction_unit(surface: str, mnemonic: str, record: dict[str, object]) -> 
         source_path=Path("asl") / surface / Path(*classification) / f"{mnemonic}.asl",
         mnemonic=mnemonic,
         line_count=20,
-        metadata={
-            "id": f"PTO-{surface.upper()}-{mnemonic.replace('.', '-').replace('_', '-')}",
-            "surface": surface,
-            "classification": list(classification),
-            "depends_on": [],
-            "mnemonic": mnemonic,
-            "summary": f"{mnemonic} contract",
-            "assembly": [f"{mnemonic} operands"],
-            "block": ["BSTART", "B.IOT", "BSTOP"] if surface == "tile" else [],
-            "catalog_indices": [3],
-            "catalog_records": [record],
-        },
+        metadata=metadata,
     )
 
 
@@ -166,7 +169,9 @@ class GenerateMnemonicAvsTest(unittest.TestCase):
         self.assertIn("DecodeTileOperation(TileDecode_TLSU", document)
         self.assertIn("TileOperationOfIndex(3) == TileOperation_TLOAD", document)
         self.assertIn("TileHandlerOfIndex(3) == TileHandler_TLOAD", document)
-        self.assertIn("// classification: memory/regular", document)
+        self.assertIn("TileClassOfIndex(3) == TileClass_MemoryAndDataMovement", document)
+        self.assertIn("TileEngineOfIndex(3) == TileEngine_TLSU", document)
+        self.assertIn("// classification: memory-and-data-movement/regular", document)
         self.assertIn("// block: BSTART | B.IOT | BSTOP", document)
 
     def test_regeneration_is_byte_identical(self) -> None:

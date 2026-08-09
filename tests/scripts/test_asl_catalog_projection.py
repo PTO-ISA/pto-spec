@@ -57,6 +57,19 @@ class AslCatalogProjectionTest(unittest.TestCase):
             project_catalogs(self.units), project_catalogs(tuple(reversed(self.units)))
         )
 
+    def test_tile_class_and_engine_are_derived_from_unit_metadata(self) -> None:
+        tile_owner = next(unit for unit in self.units if unit.surface == "tile")
+        source_record = tile_owner.metadata["catalog_records"][0]
+        self.assertNotIn("classification", source_record)
+        self.assertNotIn("engine", source_record)
+
+        projected = json.loads(
+            project_catalogs(self.units)[Path("spec/catalog/tile-operations.json")]
+        )
+        operation = projected["operations"][tile_owner.metadata["catalog_indices"][0]]
+        self.assertEqual(operation["classification"], tile_owner.classification[0])
+        self.assertEqual(operation["engine"], tile_owner.metadata["engine"])
+
     def test_duplicate_catalog_slot_is_rejected(self) -> None:
         owner = next(
             unit for unit in self.units if unit.metadata.get("catalog_indices")

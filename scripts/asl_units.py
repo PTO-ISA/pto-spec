@@ -9,6 +9,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable, Sequence
 
+from scripts.tile_taxonomy import TILE_ENGINES
+
 
 UNIT_PREFIX = "// PTO-UNIT: "
 INSTRUCTION_PREFIX = "// PTO-INSTRUCTION: "
@@ -147,6 +149,16 @@ def _validate_units(
             if unit.source_path.stem != expected_stem:
                 errors.append(
                     f"{unit.source_path}: mnemonic does not match filename: {unit.mnemonic}"
+                )
+            engine = unit.metadata.get("engine")
+            if unit.surface == "tile" and engine not in TILE_ENGINES:
+                errors.append(
+                    f"{unit.source_path}: Tile instruction engine must be one of "
+                    f"{', '.join(sorted(TILE_ENGINES))}"
+                )
+            elif unit.surface != "tile" and engine is not None:
+                errors.append(
+                    f"{unit.source_path}: non-Tile instruction must not declare an engine"
                 )
         if unit.line_count > MAX_HANDWRITTEN_LINES:
             errors.append(

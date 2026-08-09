@@ -58,6 +58,18 @@ readonly func InstructionContractHandler_BSTART_TEPL() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
+
+pure func InstructionContractAcceptsEngineAlias_BSTART_TEPL(
+    engine: TileExecutionEngine) => boolean
+begin
+    return TileEngineHasCanonicalBundleStartAlias(engine);
+end;
+
+pure func InstructionContractAcceptsTileOperation_BSTART_TEPL(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
+begin
+    return TileTEPLAliasAcceptsOperation(TileTEPLAlias_TEPL, operation);
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

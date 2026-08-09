@@ -38,7 +38,7 @@ required_files=(
     asl/arch/overview/architecture.asl
     asl/block/lifecycle/BSTART.asl
     asl/scalar/alu/ADD.asl
-    asl/tile/memory/regular/TLOAD.asl
+    asl/tile/memory-and-data-movement/regular/TLOAD.asl
     docs/mkdocs/mkdocs.yml
     docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md
     docs/status/decisions/0038-scalar-numeric-flag-state-and-ownership.md

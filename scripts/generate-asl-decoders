@@ -25,6 +25,11 @@ from scripts.encoding_witness import (  # noqa: E402
     encoding_alternatives,
 )
 from scripts.project_asl_catalogs import project_catalogs  # noqa: E402
+from scripts.tile_taxonomy import (  # noqa: E402
+    TILE_CLASS_ENUM,
+    TILE_ENGINE_ENUM,
+    VEC_ALLOWED_CLASSIFICATIONS,
+)
 
 EXECUTABLE_SCALAR_FAMILIES = {"AGU", "ALU", "AMO", "BRU", "FSU", "SYS"}
 CANONICAL_EXECUTION_FAULTS = {
@@ -7209,6 +7214,21 @@ def main() -> None:
         raise ValueError("scalar operation identifiers are not unique")
     if len(tile_operations) != len(set(tile_operations)):
         raise ValueError("tile operation identifiers are not unique")
+    for row in tile:
+        if row.get("classification") not in TILE_CLASS_ENUM:
+            raise ValueError(
+                f"unknown Tile classification for {row['name']}: "
+                f"{row.get('classification')!r}"
+            )
+        if row.get("engine") not in TILE_ENGINE_ENUM:
+            raise ValueError(
+                f"unknown Tile engine for {row['name']}: {row.get('engine')!r}"
+            )
+        if (
+            row["engine"] == "VEC"
+            and row["classification"] not in VEC_ALLOWED_CLASSIFICATIONS
+        ):
+            raise ValueError(f"VEC Tile operation is not elementwise: {row['name']}")
     command_indices_by_mnemonic: dict[str, list[int]] = {}
     for index, row in enumerate(command):
         command_indices_by_mnemonic.setdefault(row["mnemonic"], []).append(index)
@@ -11360,6 +11380,63 @@ def main() -> None:
     print("    unreachable;")
     print("end;")
     print()
+    print("pure func TileClassOfIndex(")
+    print("    operation: integer {0..PTO_TILE_OPERATION_COUNT-1})")
+    print("    => TileInstructionClass")
+    print("begin")
+    for index, row in enumerate(tile):
+        print(
+            f"    if operation == {index} then return "
+            f"{TILE_CLASS_ENUM[row['classification']]}; end;"
+        )
+    print("    unreachable;")
+    print("end;")
+    print()
+    print("pure func TileEngineOfIndex(")
+    print("    operation: integer {0..PTO_TILE_OPERATION_COUNT-1})")
+    print("    => TileExecutionEngine")
+    print("begin")
+    for index, row in enumerate(tile):
+        print(
+            f"    if operation == {index} then return "
+            f"{TILE_ENGINE_ENUM[row['engine']]}; end;"
+        )
+    print("    unreachable;")
+    print("end;")
+    print()
+    print("pure func TileOperationUsesTEPLCarrier(")
+    print("    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean")
+    print("begin")
+    for index, row in enumerate(tile):
+        if row["family"] == "TEPL":
+            print(f"    if operation == {index} then return TRUE; end;")
+    print("    return FALSE;")
+    print("end;")
+    print()
+    print("pure func TileTEPLAliasAcceptsOperation(")
+    print("    alias: TileTEPLAssemblyAlias,")
+    print("    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean")
+    print("begin")
+    print("    if !TileOperationUsesTEPLCarrier(operation) then return FALSE; end;")
+    print("    if alias == TileTEPLAlias_TEPL then return TRUE; end;")
+    print("    if alias == TileTEPLAlias_VEC then")
+    print("        return TileEngineOfIndex(operation) == TileEngine_VEC;")
+    print("    end;")
+    print("    return TileEngineOfIndex(operation) == TileEngine_SFU;")
+    print("end;")
+    print()
+    print("pure func TileCanonicalTEPLAliasOfIndex(")
+    print("    operation: integer {0..PTO_TILE_OPERATION_COUNT-1})")
+    print("    => TileTEPLAssemblyAlias")
+    print("begin")
+    print("    assert TileOperationUsesTEPLCarrier(operation);")
+    print("    if TileEngineOfIndex(operation) == TileEngine_VEC then")
+    print("        return TileTEPLAlias_VEC;")
+    print("    end;")
+    print("    assert TileEngineOfIndex(operation) == TileEngine_SFU;")
+    print("    return TileTEPLAlias_SFU;")
+    print("end;")
+    print()
     print("pure func TileOperandPresent(")
     print("    operation: integer {0..PTO_TILE_OPERATION_COUNT-1},")
     print("    field: TileOperandField) => boolean")
@@ -11539,6 +11616,51 @@ def main() -> None:
         print(
             f"    assert TileHandlerOfIndex({index}) == TileHandler_{row['semantic_handler']};"
         )
+        print(
+            f"    assert TileClassOfIndex({index}) == "
+            f"{TILE_CLASS_ENUM[row['classification']]};"
+        )
+        print(
+            f"    assert TileEngineOfIndex({index}) == "
+            f"{TILE_ENGINE_ENUM[row['engine']]};"
+        )
+        if row["family"] == "TEPL":
+            canonical_alias = (
+                "TileTEPLAlias_VEC" if row["engine"] == "VEC" else "TileTEPLAlias_SFU"
+            )
+            print(f"    assert TileOperationUsesTEPLCarrier({index});")
+            print(
+                f"    assert TileTEPLAliasAcceptsOperation(TileTEPLAlias_TEPL, {index});"
+            )
+            print(
+                f"    assert InstructionContractAcceptsTileOperation_BSTART_TEPL({index});"
+            )
+            print(
+                f"    assert TileTEPLAliasAcceptsOperation({canonical_alias}, {index});"
+            )
+            rejected_alias = (
+                "TileTEPLAlias_SFU" if row["engine"] == "VEC" else "TileTEPLAlias_VEC"
+            )
+            print(
+                f"    assert !TileTEPLAliasAcceptsOperation({rejected_alias}, {index});"
+            )
+            print(
+                f"    assert TileCanonicalTEPLAliasOfIndex({index}) == {canonical_alias};"
+            )
+            accepted_contract = (
+                "InstructionContractAcceptsTileOperation_BSTART_VEC"
+                if row["engine"] == "VEC"
+                else "InstructionContractAcceptsTileOperation_BSTART_SFU"
+            )
+            rejected_contract = (
+                "InstructionContractAcceptsTileOperation_BSTART_SFU"
+                if row["engine"] == "VEC"
+                else "InstructionContractAcceptsTileOperation_BSTART_VEC"
+            )
+            print(f"    assert {accepted_contract}({index});")
+            print(f"    assert !{rejected_contract}({index});")
+        else:
+            print(f"    assert !TileOperationUsesTEPLCarrier({index});")
         for operand in row["operands"]:
             print(
                 f"    assert TileOperandPresent({index}, TileOperand_{operand['field']});"

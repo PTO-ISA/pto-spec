@@ -208,16 +208,16 @@ def generate() -> dict[str, Any]:
             "asl_enumerator": f"TileDataType_{name}",
             "storage_bits": bits,
             "raw_class": raw_class,
-            "tma_talloc_code": code,
+            "tlsu_talloc_code": code,
             "bundle_code": code,
             "numeric_semantics_status": status,
         }
         for name, bits, raw_class, code, status in TILE_DATA_TYPES
     ]
 
-    tma_mapping = {code: name for name, _, _, code, _ in TILE_DATA_TYPES}
+    tlsu_mapping = {code: name for name, _, _, code, _ in TILE_DATA_TYPES}
     bundle_mapping = {code: name for name, _, _, code, _ in TILE_DATA_TYPES}
-    require(len(tma_mapping) == 25, "TLSU/TALLOC mapping count drift")
+    require(len(tlsu_mapping) == 25, "TLSU/TALLOC mapping count drift")
     require(len(bundle_mapping) == 25, "bundle mapping count drift")
     hardware_types = {
         (row["name"], row["code"]) for row in hardware_profile["data_types"]
@@ -371,7 +371,7 @@ def generate() -> dict[str, Any]:
         "scalar_source_type": scalar_source_rows,
         "scalar_floating_destination_type": scalar_fp_destination_rows,
         "scalar_integer_destination_type": scalar_integer_destination_rows,
-        "tma_talloc_data_type": code_rows("tma-talloc-data-type", 6, tma_mapping),
+        "tlsu_talloc_data_type": code_rows("tlsu-talloc-data-type", 6, tlsu_mapping),
         "bundle_data_type": code_rows("bundle-data-type", 5, bundle_mapping),
         "four_bit_packing": {
             "types": four_bit_types,
@@ -445,7 +445,7 @@ def generate() -> dict[str, Any]:
             "tests/asl/state-tests.asl:TestTileRegisterMapping",
             "tests/asl/scalar-tests.asl:TestScalarFloating",
             "tests/asl/bundle-tests.asl:TestBundleOperationDescriptorFields",
-            "tests/asl/tlsu-totality-tests.asl:TestTlsuAllFourBitTypes",
+            "tests/asl/tile/model/memory/load-store/PTO-AVS-TILE-TESTTLSUTOTALITY-BOUNDARY-001.asl:TestTlsuAllFourBitTypes",
             "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUTotality",
         ],
         "sources": [
@@ -464,7 +464,7 @@ def generate() -> dict[str, Any]:
             source(
                 "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md"
             ),
-            source("docs/status/decisions/0033-tma-four-bit-memory-packing.md"),
+            source("docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"),
             source(
                 "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
             ),
@@ -483,8 +483,8 @@ def generate() -> dict[str, Any]:
             "scalar_floating_destination_reserved_count": 32 - len(floating_by_code),
             "scalar_integer_destination_mapped_count": len(integer_by_code),
             "scalar_integer_destination_reserved_count": 32 - len(integer_by_code),
-            "tma_talloc_mapped_count": len(tma_mapping),
-            "tma_talloc_reserved_count": 64 - len(tma_mapping),
+            "tlsu_talloc_mapped_count": len(tlsu_mapping),
+            "tlsu_talloc_reserved_count": 64 - len(tlsu_mapping),
             "bundle_mapped_count": len(bundle_mapping),
             "bundle_reserved_count": 32 - len(bundle_mapping),
             "four_bit_type_count": len(four_bit_types),
