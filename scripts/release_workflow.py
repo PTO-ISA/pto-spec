@@ -7,6 +7,14 @@ import re
 
 
 JOB_HEADER = re.compile(r"^  ([a-z][a-z0-9-]*):\s*$", re.MULTILINE)
+STEP_HEADER = re.compile(r"^      - .*$", re.MULTILINE)
+UPLOAD_ARTIFACT_SHA = "ea165f8d65b6e75b540449e92b4886f43607fa02"
+INVALID_STEP_USES = "<invalid-step-uses>"
+YAML_ANCHOR_OR_ALIAS = re.compile(
+    r"^[ \t]*(?:-[ \t]+)?(?:[A-Za-z0-9_-]+:[ \t]+)?"
+    r"[&*][^ \t#\[\]{},]+(?:[ \t]+|$)",
+    re.MULTILINE,
+)
 
 PR_GATES = (
     "./scripts/check-asl-layout",
@@ -37,6 +45,64 @@ def _event_block(workflow: str) -> str:
     return match.group("body") if match else ""
 
 
+def _step_blocks(job: str) -> list[str]:
+    matches = list(STEP_HEADER.finditer(job))
+    return [
+        job[match.start() : matches[index + 1].start()]
+        if index + 1 < len(matches)
+        else job[match.start() :]
+        for index, match in enumerate(matches)
+    ]
+
+
+def _direct_mapping_values(step: str, mapping: str, key: str) -> list[str]:
+    """Return direct scalar values below one step-level mapping."""
+
+    lines = step.splitlines()
+    header = f"        {mapping}:"
+    headers = [index for index, line in enumerate(lines) if line == header]
+    if len(headers) != 1:
+        return []
+    values: list[str] = []
+    for line in lines[headers[0] + 1 :]:
+        stripped = line.lstrip(" ")
+        if not stripped or stripped.startswith("#"):
+            continue
+        indentation = len(line) - len(stripped)
+        if indentation <= 8:
+            break
+        if indentation != 10:
+            continue
+        field, separator, value = stripped.partition(":")
+        if separator and field == key:
+            values.append(value.strip())
+    return values
+
+
+def _step_uses(step: str) -> str | None:
+    values: list[str] = []
+    for line in step.splitlines():
+        match = re.fullmatch(r"(?:      - |        )uses:[ \t]*(.*)", line)
+        if match is None:
+            continue
+        raw = match.group(1).strip()
+        if not raw:
+            return None
+        if raw[0] in ("'", '"'):
+            if "\\" in raw:
+                return INVALID_STEP_USES
+            quoted = re.fullmatch(
+                r"(?P<quote>['\"])(?P<value>[^'\"]+)(?P=quote)(?:[ \t]+#.*)?",
+                raw,
+            )
+            if quoted is None:
+                return None
+            values.append(quoted.group("value"))
+        else:
+            values.append(re.sub(r"[ \t]+#.*$", "", raw).strip())
+    return values[0] if len(values) == 1 else None
+
+
 def _standalone_run_position(job: str, command: str) -> int | None:
     """Return the offset of an exact one-line GitHub Actions run command."""
 
@@ -46,6 +112,17 @@ def _standalone_run_position(job: str, command: str) -> int | None:
         re.MULTILINE,
     )
     return match.start() if match else None
+
+
+def _script_line_positions(job: str, command: str) -> list[int]:
+    """Return offsets for exact commands inside one multi-line run script."""
+
+    return [
+        match.start()
+        for match in re.finditer(
+            rf"^[ ]{{10}}{re.escape(command)}[ \t]*$", job, re.MULTILINE
+        )
+    ]
 
 
 def validate_pr_workflow(workflow: str) -> list[str]:
@@ -74,6 +151,8 @@ def validate_release_workflow(workflow: str) -> list[str]:
     """Return fail-closed contract violations for release verification."""
 
     errors: list[str] = []
+    if YAML_ANCHOR_OR_ALIAS.search(workflow):
+        errors.append("release workflow must not use YAML anchors or aliases")
     events = _event_block(workflow)
     if "workflow_dispatch:" not in events or any(
         re.search(rf"^  {event}:\s*$", events, re.MULTILINE)
@@ -133,7 +212,20 @@ def validate_release_workflow(workflow: str) -> list[str]:
     if "print-asl-test-matrix" not in page:
         errors.append("each ASL page must regenerate its print-asl-test-matrix page")
     setup_position = _standalone_run_position(page, "make setup")
-    execution_position = page.find("run-asl-test --id")
+    jobs_command = (
+        'ASL_TEST_JOBS="${PTO_ASL_TEST_JOBS:-$(getconf _NPROCESSORS_ONLN)}"'
+    )
+    runner_command = (
+        './scripts/run-asl-page --matrix build/actual-page.json -j "$ASL_TEST_JOBS"'
+    )
+    reporter_command = (
+        "./scripts/report-asl-page-results --matrix build/actual-page.json "
+        "--results build/asl-test-results"
+    )
+    jobs_positions = _script_line_positions(page, jobs_command)
+    runner_positions = _script_line_positions(page, runner_command)
+    reporter_positions = _script_line_positions(page, reporter_command)
+    execution_position = runner_positions[0] if len(runner_positions) == 1 else -1
     if (
         setup_position is None
         or execution_position < 0
@@ -146,29 +238,113 @@ def validate_release_workflow(workflow: str) -> list[str]:
         errors.append(
             "each ASL page must compare its regenerated page with the plan artifact"
         )
-    if "run-asl-test --id" not in page:
+    if len(runner_positions) != 1:
         errors.append(
-            "ASL pages must invoke run-asl-test --id for every independent point"
+            "ASL pages must invoke exactly one run-asl-page command for every independent point"
         )
-    if len(re.findall(r"\brun-asl-test\b", page)) != 1 or len(
-        re.findall(r"\bxargs\b", page)
-    ) != 1:
+    if len(runner_positions) != 1:
+        errors.append("ASL pages must use -j configurable parallelism")
+    if len(jobs_positions) != 1:
         errors.append(
-            "ASL pages must contain exactly one xargs invocation and one run-asl-test invocation"
+            "ASL page parallelism must default to the machine core count with a PTO_ASL_TEST_JOBS override"
         )
-    if not re.search(
-        r"^[ \t]*\|[ \t]+xargs[ \t]+-P[ \t]+4[ \t]+-n[ \t]+1[ \t]+"
-        r"\./scripts/run-asl-test[ \t]+--id[ \t]*$",
-        page,
-        re.MULTILINE,
+    if len(reporter_positions) != 1 or (
+        execution_position >= 0 and reporter_positions[0] <= execution_position
     ):
         errors.append(
-            "ASL pages must execute independent points with four-way memory-safe parallelism"
+            "ASL pages must report every ASL page result after parallel execution"
         )
-    if "asl-test-results" not in page or not re.search(
-        r"actions/upload-artifact@[0-9a-f]{40}", page
+    execution_status_positions = _script_line_positions(
+        page, "execution_status=$?"
+    )
+    report_status_positions = _script_line_positions(page, "report_status=$?")
+    execution_gate_positions = _script_line_positions(
+        page, 'test "$execution_status" = 0'
+    )
+    report_gate_positions = _script_line_positions(page, 'test "$report_status" = 0')
+    set_plus_positions = _script_line_positions(page, "set +e")
+    set_minus_positions = _script_line_positions(page, "set -e")
+    exact_fail_closed_block = "\n".join(
+        f"          {line}"
+        for line in (
+            "set +e",
+            jobs_command,
+            runner_command,
+            "execution_status=$?",
+            reporter_command,
+            "report_status=$?",
+            "set -e",
+            'test "$execution_status" = 0',
+            'test "$report_status" = 0',
+        )
+    )
+    if exact_fail_closed_block not in page:
+        errors.append(
+            "ASL pages must use one contiguous fail-closed page execution and report block"
+        )
+    if not (
+        len(set_plus_positions) == 1
+        and len(execution_status_positions) == 1
+        and execution_position >= 0
+        and set_plus_positions[0] < execution_position < execution_status_positions[0]
     ):
-        errors.append("ASL pages must upload per-ID result.json artifacts")
+        errors.append("ASL pages must capture the parallel execution status fail-closed")
+    if not (
+        len(report_status_positions) == 1
+        and len(reporter_positions) == 1
+        and reporter_positions[0] < report_status_positions[0]
+    ):
+        errors.append("ASL pages must capture the page report status fail-closed")
+    if len(execution_gate_positions) != 1:
+        errors.append("ASL pages must explicitly require the execution status to pass")
+    if len(report_gate_positions) != 1:
+        errors.append("ASL pages must explicitly require the report status to pass")
+    if not (
+        len(set_minus_positions) == 1
+        and len(execution_gate_positions) == 1
+        and len(report_gate_positions) == 1
+        and len(report_status_positions) == 1
+        and report_status_positions[0]
+        < set_minus_positions[0]
+        < execution_gate_positions[0]
+        < report_gate_positions[0]
+    ):
+        errors.append(
+            "ASL pages must restore fail-fast mode before checking execution and report statuses"
+        )
+    if re.search(r"\bxargs\b|\brun-asl-test\b", page):
+        errors.append(
+            "ASL pages must use the repository page runner instead of shell-level xargs"
+        )
+    page_steps = _step_blocks(page)
+    if any(_step_uses(step) == INVALID_STEP_USES for step in page_steps):
+        errors.append("ASL page uses values must not contain YAML escapes")
+    upload_steps = [
+        step
+        for step in page_steps
+        if (_step_uses(step) or "").startswith("actions/upload-artifact@")
+    ]
+    result_uploads = [
+        step
+        for step in upload_steps
+        if _step_uses(step) == f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}"
+    ] if len(upload_steps) == 1 else []
+    result_names = (
+        _direct_mapping_values(result_uploads[0], "with", "name")
+        if len(result_uploads) == 1
+        else []
+    )
+    result_paths = (
+        _direct_mapping_values(result_uploads[0], "with", "path")
+        if len(result_uploads) == 1
+        else []
+    )
+    if result_names != ["asl-test-results-${{ matrix.page }}"] or result_paths != [
+        "build/asl-test-results/*/result.json"
+    ]:
+        errors.append(
+            "ASL pages must upload only per-ID result.json artifacts"
+        )
 
     evidence = _job_block(workflow, "release-evidence")
     if "run-asl-release-suite" not in evidence or "--aggregate-only" not in evidence:

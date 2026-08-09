@@ -15,7 +15,7 @@ import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Mapping, Sequence
+from typing import Callable, Mapping, Sequence, TextIO
 
 from scripts.asl_units import (
     AslUnit,
@@ -53,11 +53,13 @@ METADATA_FIELDS = frozenset(
     }
 )
 DEFAULT_TIMEOUT_SECONDS = 360 * 60
+MAX_LOG_EXCERPT_CHARS = 8192
 
 
 @dataclass(frozen=True)
 class AslTestPoint:
     test_id: str
+    display_name: str
     source: Path
     requirements: tuple[str, ...]
     kind: str
@@ -132,6 +134,15 @@ def _expected_test_path(source: Path, test_id: str) -> Path:
     )
 
 
+def _display_name(unit: AslUnit, kind: str, summary: str) -> str:
+    owner = (
+        unit.mnemonic
+        if unit.mnemonic is not None
+        else f"{unit.surface.upper()} {'/'.join(unit.classification)}"
+    )
+    return f"{owner} | {kind} | {summary}"
+
+
 def _validate_main(path: Path, text: str) -> tuple[str, ...]:
     symbols = _symbols_from_text(text)
     integer_main = [
@@ -155,7 +166,8 @@ def _validate_main(path: Path, text: str) -> tuple[str, ...]:
 def load_test_points(root: Path, units: Sequence[AslUnit]) -> tuple[AslTestPoint, ...]:
     """Load all independent tests below *root* and reject ambiguous ownership."""
 
-    known_sources = {unit.source_path for unit in units}
+    units_by_source = {unit.source_path: unit for unit in units}
+    known_sources = set(units_by_source)
     loaded: list[tuple[AslTestPoint, str, tuple[str, ...]]] = []
     test_root = root / "tests/asl"
     raw_files: list[tuple[Path, Path, str, dict[str, object]]] = []
@@ -187,6 +199,7 @@ def load_test_points(root: Path, units: Sequence[AslUnit]) -> tuple[AslTestPoint
             )
         requirements = _strings(metadata, "requirements", relative)
         kind = _string(metadata, "kind", relative)
+        summary = _string(metadata, "summary", relative)
         if kind not in SUPPORTED_KINDS:
             raise ValueError(f"{relative}: unsupported ASL test kind {kind}")
         related_sources = tuple(
@@ -201,10 +214,11 @@ def load_test_points(root: Path, units: Sequence[AslUnit]) -> tuple[AslTestPoint
             (
                 AslTestPoint(
                     test_id=test_id,
+                    display_name=_display_name(units_by_source[source], kind, summary),
                     source=source,
                     requirements=requirements,
                     kind=kind,
-                    summary=_string(metadata, "summary", relative),
+                    summary=summary,
                     pass_condition=_string(metadata, "pass_condition", relative),
                     related_sources=related_sources,
                     path=relative,
@@ -266,6 +280,7 @@ def matrix(points: Sequence[AslTestPoint]) -> list[dict[str, object]]:
     return [
         {
             "id": point.test_id,
+            "display_name": point.display_name,
             "path": point.path.as_posix(),
             "source": point.source.as_posix(),
             "requirements": list(point.requirements),
@@ -324,17 +339,177 @@ def _write_result(
     (result_dir / "aslref.log").write_text(log, encoding="utf-8")
     payload = {
         "id": point.test_id,
+        "display_name": point.display_name,
         "path": point.path.as_posix(),
+        "source": point.source.as_posix(),
+        "kind": point.kind,
         "sha256": point.sha256,
         "status": status,
         "returncode": returncode,
         "duration_seconds": round(duration, 6),
         "command": list(command),
         "error": error,
+        "log_excerpt": "" if status == "passed" else log[-MAX_LOG_EXCERPT_CHARS:],
     }
     (result_dir / "result.json").write_text(
         json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
+
+
+def _github_escape(value: object, *, property_value: bool = False) -> str:
+    escaped = str(value).replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+    if property_value:
+        escaped = escaped.replace(":", "%3A").replace(",", "%2C")
+    return escaped
+
+
+def _markdown_escape(value: object) -> str:
+    return str(value).replace("|", "\\|").replace("\r", " ").replace("\n", " ")
+
+
+def _result_objects(result_root: Path) -> tuple[list[dict[str, object]], list[str]]:
+    values: list[dict[str, object]] = []
+    errors: list[str] = []
+    for path in sorted(result_root.rglob("result.json")) if result_root.exists() else []:
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            errors.append(f"invalid result {path}: {error}")
+            continue
+        if not isinstance(value, dict):
+            errors.append(f"invalid result {path}: expected JSON object")
+            continue
+        values.append(value)
+    return values, errors
+
+
+def report_page_results(
+    matrix_path: Path,
+    result_root: Path,
+    *,
+    summary_path: Path | None,
+    output: TextIO = sys.stdout,
+) -> int:
+    """Report one exact ASL page with GitHub summary and failure annotations."""
+
+    try:
+        document = json.loads(matrix_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        print(f"error: invalid matrix {matrix_path}: {error}", file=output)
+        return 1
+    if not isinstance(document, dict) or not isinstance(document.get("include"), list):
+        print(f"error: invalid matrix schema {matrix_path}", file=output)
+        return 1
+    page = document.get("page")
+    planned: dict[str, dict[str, object]] = {}
+    errors: list[str] = []
+    for entry in document["include"]:
+        if not isinstance(entry, dict) or not isinstance(entry.get("id"), str):
+            errors.append("matrix contains an invalid entry")
+            continue
+        test_id = str(entry["id"])
+        if test_id in planned:
+            errors.append(f"duplicate planned result {test_id}")
+        planned[test_id] = entry
+
+    results, load_errors = _result_objects(result_root)
+    errors.extend(load_errors)
+    observed: dict[str, dict[str, object]] = {}
+    for result in results:
+        test_id = result.get("id")
+        if not isinstance(test_id, str) or not test_id:
+            errors.append("result contains an invalid ID")
+            continue
+        if test_id in observed:
+            errors.append(f"duplicate observed result {test_id}")
+            continue
+        observed[test_id] = result
+
+    rows: list[dict[str, object]] = []
+    metadata_fields = ("path", "sha256", "display_name", "source", "kind")
+    for test_id, entry in sorted(planned.items()):
+        result = observed.get(test_id)
+        row_errors: list[str] = []
+        if result is None:
+            row_errors.append("missing result")
+            result = {}
+        else:
+            for field in metadata_fields:
+                if result.get(field) != entry.get(field):
+                    row_errors.append(f"{field} mismatch")
+            if result.get("status") != "passed":
+                row_errors.append(
+                    str(result.get("error") or f"status {result.get('status')}")
+                )
+                if result.get("returncode") is not None:
+                    row_errors.append(f"return code {result['returncode']}")
+        status = "PASS" if not row_errors else "FAIL"
+        display_name = str(entry.get("display_name") or test_id)
+        duration = result.get("duration_seconds", "-")
+        print(f"{status} {display_name} [{test_id}] ({duration}s)", file=output)
+        if row_errors:
+            message = "; ".join(row_errors)
+            log_excerpt = str(result.get("log_excerpt") or "")
+            if log_excerpt:
+                message += "\n" + log_excerpt
+            print(
+                "::error "
+                f"file={_github_escape(entry.get('path', ''), property_value=True)},"
+                f"title={_github_escape(display_name, property_value=True)}::"
+                f"{_github_escape(message)}",
+                file=output,
+            )
+        rows.append(
+            {
+                "status": status,
+                "display_name": display_name,
+                "id": test_id,
+                "kind": entry.get("kind", ""),
+                "duration": duration,
+                "errors": row_errors,
+                "log_excerpt": result.get("log_excerpt", ""),
+            }
+        )
+
+    for test_id in sorted(set(observed) - set(planned)):
+        errors.append(f"unplanned result {test_id}")
+    for error in errors:
+        print(f"::error title=ASL page {_github_escape(page, property_value=True)}::{_github_escape(error)}", file=output)
+
+    summary_lines = [
+        f"## ASL page {page}",
+        "",
+        "| Status | Test | Stable ID | Kind | Duration (s) |",
+        "| --- | --- | --- | --- | ---: |",
+    ]
+    for row in rows:
+        summary_lines.append(
+            f"| {row['status']} | {_markdown_escape(row['display_name'])} | "
+            f"`{_markdown_escape(row['id'])}` | {_markdown_escape(row['kind'])} | "
+            f"{_markdown_escape(row['duration'])} |"
+        )
+    failures = [row for row in rows if row["status"] == "FAIL"]
+    for row in failures:
+        summary_lines.extend(
+            [
+                "",
+                f"### FAIL {_markdown_escape(row['display_name'])}",
+                "",
+                f"- ID: `{_markdown_escape(row['id'])}`",
+                f"- Reason: {_markdown_escape('; '.join(row['errors']))}",
+            ]
+        )
+        if row["log_excerpt"]:
+            summary_lines.extend(
+                ["", "```text", str(row["log_excerpt"]).replace("```", "` ` `"), "```"]
+            )
+    for error in errors:
+        summary_lines.append(f"\n- Framework error: {_markdown_escape(error)}")
+    if summary_path is not None:
+        summary_path.parent.mkdir(parents=True, exist_ok=True)
+        with summary_path.open("a", encoding="utf-8") as summary:
+            summary.write("\n".join(summary_lines) + "\n")
+    return 1 if errors or failures else 0
 
 
 def execute_test_point(

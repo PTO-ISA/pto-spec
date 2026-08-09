@@ -21,14 +21,21 @@ from scripts.asl_tests import (
 from scripts.asl_units import AslUnit
 
 
-def unit(source: str = "asl/arch/state/registers.asl") -> AslUnit:
+def unit(
+    source: str = "asl/arch/state/registers.asl",
+    *,
+    unit_id: str = "PTO-ARCH-STATE-REGISTERS",
+    surface: str = "arch",
+    classification: tuple[str, ...] = ("state", "registers"),
+    mnemonic: str | None = None,
+) -> AslUnit:
     return AslUnit(
-        unit_id="PTO-ARCH-STATE-REGISTERS",
-        surface="arch",
-        classification=("state", "registers"),
+        unit_id=unit_id,
+        surface=surface,
+        classification=classification,
         depends_on=(),
         source_path=Path(source),
-        mnemonic=None,
+        mnemonic=mnemonic,
         line_count=10,
     )
 
@@ -91,8 +98,41 @@ class AslTestsTest(unittest.TestCase):
         self.assertEqual(point.test_id, "PTO-AVS-ARCH-STATE-REGISTERS-001")
         self.assertEqual(point.source, Path("asl/arch/state/registers.asl"))
         self.assertEqual(point.kind, "state-transition")
+        self.assertEqual(
+            point.display_name,
+            "ARCH state/registers | state-transition | "
+            "register state remains independently testable",
+        )
         self.assertEqual(point.sha256, hashlib.sha256(body.encode()).hexdigest())
         self.assertEqual(point.path, self.path.relative_to(self.root))
+
+    def test_instruction_test_display_name_is_derived_from_mnemonic(self) -> None:
+        source = "asl/tile/tepl/TADD.asl"
+        test_id = "PTO-AVS-TILE-TEPL-TADD-EXECUTION-001"
+        path = self.root / f"tests/asl/tile/tepl/TADD/{test_id}.asl"
+        self.write(
+            test_source(
+                test_id=test_id,
+                source=source,
+                requirements=(),
+                kind="execution",
+            ),
+            path=path,
+        )
+        owner = unit(
+            source,
+            unit_id="PTO-TILE-TEPL-TADD",
+            surface="tile",
+            classification=("tepl",),
+            mnemonic="TADD",
+        )
+
+        point = load_test_points(self.root, (owner,))[0]
+
+        self.assertEqual(
+            point.display_name,
+            "TADD | execution | register state remains independently testable",
+        )
 
     def test_rejects_duplicate_ids(self) -> None:
         self.write()
@@ -208,7 +248,15 @@ class AslTestsTest(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertEqual(
             set(first[0].keys()),
-            {"id", "path", "source", "requirements", "kind", "sha256"},
+            {
+                "id",
+                "display_name",
+                "path",
+                "source",
+                "requirements",
+                "kind",
+                "sha256",
+            },
         )
 
     def test_matrix_page_is_compact_sorted_and_bound_to_exact_commit(self) -> None:
@@ -246,7 +294,10 @@ class AslTestsTest(unittest.TestCase):
         self.assertEqual(payload["page_count"], 2)
         self.assertEqual(payload["test_count"], 2)
         self.assertEqual(payload["include"][0]["id"], first.test_id)
-        self.assertNotIn(" ", output.getvalue().strip())
+        self.assertEqual(
+            output.getvalue().strip(),
+            json.dumps(payload, separators=(",", ":"), sort_keys=True),
+        )
 
     def test_all_supported_kinds_are_accepted(self) -> None:
         kinds = (
@@ -276,6 +327,7 @@ class AslTestsTest(unittest.TestCase):
             fields,
             {
                 "test_id",
+                "display_name",
                 "source",
                 "requirements",
                 "kind",
@@ -321,7 +373,43 @@ class AslTestsTest(unittest.TestCase):
         payload = json.loads(result_path.read_text(encoding="utf-8"))
         self.assertEqual(payload["status"], "passed")
         self.assertEqual(payload["returncode"], 0)
+        self.assertEqual(payload["display_name"], point.display_name)
+        self.assertEqual(payload["source"], point.source.as_posix())
+        self.assertEqual(payload["kind"], point.kind)
+        self.assertEqual(payload["log_excerpt"], "")
         self.assertTrue((result_path.parent / "aslref.log").is_file())
+
+    def test_failed_execution_records_bounded_log_excerpt(self) -> None:
+        self.write()
+        point = load_test_points(self.root, (unit(),))[0]
+        invocation = 0
+
+        def fake_run(command: list[str], **_: object) -> CompletedProcess[str]:
+            nonlocal invocation
+            invocation += 1
+            stdout = "// generated decoder\n" if invocation == 1 else ""
+            if invocation == 4:
+                return CompletedProcess(
+                    command, 1, stdout="x" * 9000 + "failure-tail", stderr=""
+                )
+            return CompletedProcess(command, 0, stdout=stdout, stderr="")
+
+        with patch(
+            "scripts.asl_tests.generate_source_order",
+            return_value=("asl/arch/state/registers.asl",),
+        ):
+            result = execute_test_point(
+                self.root, point, timeout_seconds=7, run=fake_run
+            )
+
+        self.assertEqual(result, 1)
+        result_path = (
+            self.root / "build/asl-test-results" / point.test_id / "result.json"
+        )
+        payload = json.loads(result_path.read_text(encoding="utf-8"))
+        self.assertEqual(payload["status"], "failed")
+        self.assertLessEqual(len(payload["log_excerpt"]), 8192)
+        self.assertTrue(payload["log_excerpt"].endswith("failure-tail"))
 
     def test_individual_execution_records_timeout_fail_closed(self) -> None:
         self.write()
