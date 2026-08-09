@@ -128,6 +128,6 @@ add a new ADR for any changed divergence.
 - `scripts/generate-noncomparable-oracle-coverage`
 - `spec/evidence/scalar-effect-closure.json`
 - `spec/evidence/bundle-command-totality.json`
-- `spec/evidence/tepl-totality.json`
+- `spec/evidence/vec-sfu-carrier-totality.json`
 - `spec/evidence/tlsu-totality.json`
 - `spec/evidence/cube-totality.json`

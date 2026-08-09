@@ -21,7 +21,7 @@ build: $(SPEC)
 
 $(DECODER_SPEC): $(ASL_UNIT_SOURCES) scripts/generate-asl-decoders \
 		scripts/project_asl_catalogs.py scripts/asl_units.py \
-		scripts/encoding_witness.py \
+		scripts/encoding_witness.py scripts/tile_taxonomy.py \
 		spec/catalog/numeric-profile-applicability.json \
 		spec/catalog/system-registers.json
 	@mkdir -p build

@@ -19,6 +19,7 @@ class ReleaseClosureTest(unittest.TestCase):
         gate = json.loads(RELEASE_GATE.read_text(encoding="utf-8"))
         self.assertIn("scripts/check-release-workflow", gate["sources"])
         self.assertIn("scripts/release_workflow.py", gate["sources"])
+        self.assertIn("scripts/tile_taxonomy.py", gate["sources"])
 
     def test_release_targets_require_fresh_canonical_evidence(self) -> None:
         makefile = MAKEFILE.read_text(encoding="utf-8")

@@ -256,8 +256,8 @@ def evidence_for_tile_family(family: str, name: str) -> tuple[list[str], list[st
                 "PTO-REQ-TILE-LEGALITY-001",
             ],
             [
-                "spec/evidence/tepl-totality.json",
-                "docs/status/decisions/0035-tepl-raw-carrier-totality.md",
+                "spec/evidence/vec-sfu-carrier-totality.json",
+                "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
             ],
         )
     if family == "TLSU":
@@ -269,7 +269,7 @@ def evidence_for_tile_family(family: str, name: str) -> tuple[list[str], list[st
             ],
             [
                 "spec/evidence/tlsu-totality.json",
-                "docs/status/decisions/0033-tma-four-bit-memory-packing.md",
+                "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
             ],
         )
     if family == "CUBE":
@@ -519,7 +519,7 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
             )
         elif not selector_match:
             classification = "divergence"
-            disposition = "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence."
+            disposition = "The independent snapshot retains the superseded VEC/SFU carrier selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence."
             abi_change_acceptance = {
                 "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
                 "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",

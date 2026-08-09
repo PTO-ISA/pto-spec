@@ -44,8 +44,9 @@ state. Older bridge and pipe-management wording did not match that contract.
 
 ## Consequences
 
-- The accepted direct tile catalog contains 120 operations: 98 TEPL, 9 TMA, and
-  13 CUBE.
+- The accepted direct Tile catalog contains 109 operations: 87 use the
+  unchanged TEPL Mode/Function carrier, 10 use TLSU, and 12 use CUBE. The TEPL
+  carrier operations are classified architecturally as VEC or SFU.
 - Vector instruction execution is outside PTO.
 - Implementations may use physical queues, layouts, or pipelines, but they must
   preserve the state and fault behavior defined by the ASL.

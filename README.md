@@ -1,6 +1,7 @@
 # PTO ISA Formal Specification
 
-[![PR validation](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml/badge.svg)](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml)
+[![PR validation](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml/badge.svg?branch=main)](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml)
+[![Release verification](https://github.com/PTO-ISA/pto-spec/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/PTO-ISA/pto-spec/actions/workflows/release.yml)
 
 `pto-spec` is the normative ASL1 definition of the PTO Instruction Set
 Architecture. It specifies a 64-bit scalar ISA, bundle/command forms, direct
@@ -11,8 +12,8 @@ The repository is the normative draft of the **PTO ISA 0.58.0** contract at
 maturity M4. The release identity and active executable profile identity are
 separate: 0.58.0 fixes the encoding ABI, while `pto-v0` remains the deterministic
 raw-carrier reference profile. Accepted catalogs, decoded execution paths,
-architectural state/fault envelopes, ordering, and scalar, bundle, TEPL, TLSU,
-and CUBE reference semantics are cumulatively closed through Stage 4. The
+architectural state/fault envelopes, ordering, and scalar, block, VEC, SFU,
+TLSU, and CUBE reference semantics are cumulatively closed through Stage 4. The
 independent executable-model comparison is also closed under `S5-T3`; target
 numeric conformance and release closure remain staged work. Current generated
 status is recorded under [`spec/evidence/`](spec/evidence/) and open design
@@ -109,25 +110,29 @@ qualified executable parity is currently 0/38 and fails closed on structural-
 only, stale, missing, timed-out, nonzero, or unreviewed evidence.
 
 Release traceability is now generated rather than inferred from prose. The
-`spec/evidence/release-traceability-readiness.json` ledger covers 925 exact
-units: all 47 requirements, accepted forms and operations, system registers,
-traps, 36 profile hooks, and 75 ASL state roots expanded to 235 leaf fields. Its
-inventory and links are closed, while S6-T1 promotion remains explicitly open
-on S5-T2 and an immutable-commit claim-hygiene review.
+`spec/evidence/release-traceability-readiness.json` ledger covers 788 exact ASL
+units, 788 generated documentation pages, 906 independent AVS points, and all
+651 executable mnemonic requirements. Its inventory and links are closed,
+while S6-T1 promotion remains explicitly open on S5-T2 and an immutable-commit
+claim-hygiene review.
 The generated `spec/evidence/release-gate-readiness.json` ledger separately
 closes the S6-T2 gate contract and hosted/parallel topology without treating a
-live draft-branch run as release proof. Ten candidate gates, ten external
-controls, and two review perspectives remain fail-closed until one signed,
-immutable post-S5-T2 candidate supplies matching local, hosted, protection, and
-approval evidence.
+live draft-branch run as release proof. Nine candidate gates remain fail-closed
+until one signed, immutable post-S5-T2 candidate supplies matching local,
+hosted, protection, and approval evidence.
 
 ## Architecture scope
 
 - 474 scalar forms across AGU, ALU, AMO, BRU, FSU, and SYS.
 - 99 bundle/command forms for bundle start, dimension,
   attributes, IO binding, hints, stop, and context handling.
-- 109 direct tile operations: 87 TEPL, 10 TLSU, and 12 CUBE.
-- PTO ISA 0.58.0 Mode/Function tile encoding with no untagged legacy decoder.
+- 109 direct tile operations across seven semantic classes: elementwise
+  tile-tile, tile-scalar/immediate, reduce/expand, memory/data movement,
+  matrix/matrix-vector, layout/rearrangement, and irregular/complex.
+- Four execution engines: 35 VEC, 52 SFU, 10 TLSU, and 12 CUBE operations.
+- PTO ISA 0.58.0 Mode/Function tile encoding with 87 operations retaining the
+  unchanged TEPL binary carrier, split canonically between `BSTART.VEC` and
+  `BSTART.SFU`; `BSTART.TEPL` remains an accepted compatibility spelling.
 - A 32-code scalar namespace: 24 absolute GPRs plus four-entry T and U
   temporary queues, eight 32-bit per-warp predicate registers, one independent
   64-bit MPAR/MSEQ execution mask, and 64 flat T/U/M/N tiles.
@@ -199,6 +204,7 @@ pages embed their normative ASL regions verbatim and are checked for drift:
 | Document | Purpose |
 | --- | --- |
 | [Architecture reference](docs/arch/overview/architecture.md) | Generated architecture overview owned by ASL |
+| [Instruction classification](docs/arch/overview/instruction-classification.md) | Seven Tile semantic classes, four execution engines, and unchanged TEPL carrier aliases |
 | [Block reference](docs/block/) | BSTART, BSTOP, B.* instructions, and block model units |
 | [Scalar reference](docs/scalar/) | Scalar instruction and scalar model units |
 | [Tile reference](docs/tile/) | PTO-classified tile instructions and tile model units |
@@ -217,9 +223,9 @@ Ordinary pull requests run a lightweight, opam-free contract:
 make pr-check
 ```
 
-This checks NDF structure, repository and 53-shard topology, generated
-instruction pages, script tests, publication hygiene, and whitespace. It does
-not run ASLRef and does not claim release readiness.
+This checks NDF structure, the mirrored ASL/docs/tests topology, generated
+catalogs, instruction pages and AVS points, script tests, publication hygiene,
+and whitespace. It does not run ASLRef and does not claim release readiness.
 
 Full verification is a separate manual exact-head release lane. Dispatch the
 `Release verification` workflow with the full 40-character merged commit SHA,
@@ -241,13 +247,13 @@ different-commit result is not success.
 
 ```text
 asl/                     Normative ASL1 sources
+  arch/                  Architectural state, programming and memory models, data types, profiles, and classification
+  block/                 BSTART, BSTOP, B.* instructions, and block model units
   scalar/                Scalar operand, arithmetic, control, memory, atomic, system, and FP semantics
-  bundle/                 Bundle/command state and semantics
-  tile/                  Flat tile state, legality, TEPL, TLSU, and CUBE semantics
-  profiles/              Concrete architecture profiles
+  tile/                  Tile instructions, seven semantic classes, and VEC/TLSU/CUBE/SFU execution
 spec/                    Machine-readable catalogs, requirements, profiles, and evidence
 tests/
-  asl/                   Executable architecture and boundary tests
+  asl/                   Arch/block/scalar/tile mirror; one independently runnable AVS point per file
   canary/                Pinned ASLRef parser, type-checker, and interpreter canaries
 docs/                    Architecture, generated instruction reference, memory model, profiles, evidence policy, and ADRs
 scripts/                 Deterministic generation and fail-closed validation

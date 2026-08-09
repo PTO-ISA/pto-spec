@@ -7,7 +7,7 @@ import argparse
 import json
 import re
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -16,22 +16,17 @@ if str(ROOT) not in sys.path:
 
 from scripts.asl_units import AslUnit, load_units  # noqa: E402
 from scripts.ndf import instruction_clause_id  # noqa: E402
+from scripts.tile_taxonomy import (  # noqa: E402
+    TILE_CLASSIFICATIONS,
+    TILE_ENGINES,
+    derive_tile_catalog_record,
+)
 
 
 METADATA_PREFIX = "// PTO-INSTRUCTION: "
 REGION_BEGIN = re.compile(r"^// DOC-BEGIN: ([a-z][a-z0-9-]*)$")
 REGION_END = re.compile(r"^// DOC-END: ([a-z][a-z0-9-]*)$")
 SURFACES = {"arch", "scalar", "block", "tile"}
-TILE_CLASSIFICATIONS = {
-    "tile-tile-elementwise",
-    "unary-tile-elementwise",
-    "tile-scalar-elementwise",
-    "reduction",
-    "vector-tile-expansion",
-    "matrix",
-    "memory",
-    "complex-layout",
-}
 SURFACE_ORDER = ("arch", "block", "scalar", "tile")
 SUPPLEMENTARY_BEGIN = "<!-- SUPPLEMENTARY-BEGIN -->"
 SUPPLEMENTARY_END = "<!-- SUPPLEMENTARY-END -->"
@@ -70,6 +65,10 @@ class InstructionRecord:
     catalog_indices: tuple[int, ...]
     source_path: Path
     regions: dict[str, str]
+    engine: str | None
+    alias_of: str | None
+    alias_engine: str | None
+    alias_catalog_records: tuple[dict[str, object], ...] = ()
 
     @property
     def ndf_id(self) -> str:
@@ -82,6 +81,10 @@ class InstructionRecord:
     @property
     def markdown_path(self) -> Path:
         return doc_path_for(self.source_path)
+
+    @property
+    def display_catalog_records(self) -> tuple[dict[str, object], ...]:
+        return self.catalog_records or self.alias_catalog_records
 
 
 @dataclass(frozen=True)
@@ -174,14 +177,48 @@ def _load_record(root: Path, path: Path) -> InstructionRecord | None:
         raise ValueError(f"{path}: empty instruction classification")
     if surface == "tile" and classification[0] not in TILE_CLASSIFICATIONS:
         raise ValueError(f"{path}: unknown Tile classification {classification[0]}")
+    engine = metadata.get("engine")
+    if surface == "tile":
+        if engine not in TILE_ENGINES:
+            raise ValueError(f"{path}: unknown or missing Tile engine {engine!r}")
+    elif engine is not None:
+        raise ValueError(f"{path}: non-Tile instruction must not declare an engine")
     regions = _parse_regions(path, lines)
     for required_region in ("decode", "operation"):
         if required_region not in regions:
             raise ValueError(f"{path}: missing documentation region {required_region}")
-    catalog_records = tuple(metadata["catalog_records"])
+    raw_catalog_records = metadata["catalog_records"]
+    if not isinstance(raw_catalog_records, list) or any(
+        not isinstance(record, dict) for record in raw_catalog_records
+    ):
+        raise ValueError(f"{path}: catalog_records must be an array of objects")
+    catalog_records = tuple(raw_catalog_records)
+    if surface == "tile":
+        try:
+            catalog_records = tuple(
+                derive_tile_catalog_record(
+                    record,
+                    classification=classification[0],
+                    engine=engine,
+                )
+                for record in catalog_records
+            )
+        except ValueError as error:
+            raise ValueError(f"{path}: {error}") from error
     catalog_indices = tuple(metadata["catalog_indices"])
-    if not catalog_records:
+    alias_of = metadata.get("alias_of")
+    alias_engine = metadata.get("alias_engine")
+    if alias_of is not None:
+        if surface != "block" or not isinstance(alias_of, str) or not alias_of:
+            raise ValueError(f"{path}: only Block instructions may declare alias_of")
+        if alias_engine not in {"VEC", "SFU"}:
+            raise ValueError(f"{path}: Block engine alias must declare VEC or SFU")
+        if catalog_records or catalog_indices:
+            raise ValueError(f"{path}: encoding alias must not own catalog records")
+    elif not catalog_records:
         raise ValueError(f"{path}: instruction has no catalog records")
+    elif alias_engine is not None:
+        raise ValueError(f"{path}: alias_engine requires alias_of")
     if len(catalog_records) != len(catalog_indices):
         raise ValueError(f"{path}: catalog_records and catalog_indices lengths differ")
     if any(record.get("mnemonic", record.get("name")) != metadata["mnemonic"] for record in catalog_records):
@@ -197,6 +234,9 @@ def _load_record(root: Path, path: Path) -> InstructionRecord | None:
         catalog_indices=catalog_indices,
         source_path=path.relative_to(root),
         regions=regions,
+        engine=engine,
+        alias_of=alias_of,
+        alias_engine=alias_engine,
     )
 
 
@@ -221,7 +261,28 @@ def load_instruction_index(root: Path = ROOT) -> list[InstructionRecord]:
             )
         by_ndf_id[record.ndf_id] = record.source_path
         records.append(record)
-    return sorted(records, key=lambda record: (record.surface, record.classification, record.mnemonic))
+    by_name = {record.mnemonic: record for record in records}
+    resolved: list[InstructionRecord] = []
+    for record in records:
+        if record.alias_of is None:
+            resolved.append(record)
+            continue
+        target = by_name.get(record.alias_of)
+        if target is None:
+            raise ValueError(
+                f"{record.source_path}: unknown instruction alias target {record.alias_of}"
+            )
+        if target.alias_of is not None:
+            raise ValueError(f"{record.source_path}: instruction alias chain is forbidden")
+        if target.surface != record.surface:
+            raise ValueError(f"{record.source_path}: alias target surface differs")
+        resolved.append(
+            replace(record, alias_catalog_records=target.catalog_records)
+        )
+    return sorted(
+        resolved,
+        key=lambda record: (record.surface, record.classification, record.mnemonic),
+    )
 
 
 def load_doc_index(root: Path = ROOT) -> list[DocRecord]:
@@ -274,7 +335,7 @@ def _encoding_section(record: InstructionRecord) -> list[str]:
     encoded_rows: list[list[str]] = []
     tile_rows: list[list[str]] = []
     field_rows: list[list[str]] = []
-    for catalog_record in record.catalog_records:
+    for catalog_record in record.display_catalog_records:
         identity = str(
             catalog_record.get("form_id", catalog_record.get("name", record.mnemonic))
         )
@@ -325,6 +386,13 @@ def _encoding_section(record: InstructionRecord) -> list[str]:
             )
 
     lines = ["## Encoding", ""]
+    if record.alias_of is not None:
+        lines.extend(
+            [
+                f"This spelling reuses the exact encoding owned by `{record.alias_of}`.",
+                "",
+            ]
+        )
     if encoded_rows:
         lines.extend(
             [
@@ -369,7 +437,7 @@ def _encoding_section(record: InstructionRecord) -> list[str]:
 def _operands_section(record: InstructionRecord) -> list[str]:
     rows: list[list[str]] = []
     seen: set[tuple[str, str]] = set()
-    for catalog_record in record.catalog_records:
+    for catalog_record in record.display_catalog_records:
         for operand in catalog_record.get("operands", []):
             row = (str(operand.get("field", "")), str(operand.get("role", "")))
             if row not in seen:
@@ -401,7 +469,7 @@ def _operands_section(record: InstructionRecord) -> list[str]:
 
 def _contract_values(record: InstructionRecord, keys: tuple[str, ...]) -> list[str]:
     values: list[str] = []
-    for catalog_record in record.catalog_records:
+    for catalog_record in record.display_catalog_records:
         for key in keys:
             value = catalog_record.get(key)
             if value in (None, "", [], {}):
@@ -460,19 +528,43 @@ def render_page(record: InstructionRecord, supplementary: str = "") -> str:
         "",
         "The current instruction contract is owned by the ASL source linked above.",
         "",
-        "## Assembly",
-        "",
-        "```asm",
-        *record.assembly,
-        "```",
-        "",
-        *_encoding_section(record),
-        *_operands_section(record),
-        "## Decode",
-        "",
-        *_generated_region(record, "decode"),
-        "",
     ]
+    if record.surface == "tile":
+        lines.extend(
+            [
+                "## Classification and execution engine",
+                "",
+                f"- **Instruction class:** `{record.classification[0]}`",
+                f"- **Execution engine:** `{record.engine}`",
+                "",
+            ]
+        )
+    if record.alias_of is not None:
+        lines.extend(
+            [
+                "## Alias contract",
+                "",
+                f"- **Encoding owner:** `{record.alias_of}`",
+                f"- **Canonical engine:** `{record.alias_engine}`",
+                "",
+            ]
+        )
+    lines.extend(
+        [
+            "## Assembly",
+            "",
+            "```asm",
+            *record.assembly,
+            "```",
+            "",
+            *_encoding_section(record),
+            *_operands_section(record),
+            "## Decode",
+            "",
+            *_generated_region(record, "decode"),
+            "",
+        ]
+    )
     if record.surface == "tile":
         lines.extend(
             [

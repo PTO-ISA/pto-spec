@@ -47,6 +47,7 @@ SOURCE_PATHS = (
     "scripts/run-asl-release-suite",
     "scripts/run-asl-test",
     "scripts/setup-aslref",
+    "scripts/tile_taxonomy.py",
     "spec/evidence/release-traceability-readiness.json",
     "spec/release-inputs.json",
 )

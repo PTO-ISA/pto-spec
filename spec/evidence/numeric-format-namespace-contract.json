@@ -21,7 +21,7 @@
       "asl_enumerator": "TileDataType_FP64",
       "storage_bits": 64,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 0,
+      "tlsu_talloc_code": 0,
       "bundle_code": 0,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -30,7 +30,7 @@
       "asl_enumerator": "TileDataType_FP32",
       "storage_bits": 32,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 1,
+      "tlsu_talloc_code": 1,
       "bundle_code": 1,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -39,7 +39,7 @@
       "asl_enumerator": "TileDataType_TF32",
       "storage_bits": 32,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 2,
+      "tlsu_talloc_code": 2,
       "bundle_code": 2,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -48,7 +48,7 @@
       "asl_enumerator": "TileDataType_HF32",
       "storage_bits": 32,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 3,
+      "tlsu_talloc_code": 3,
       "bundle_code": 3,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -57,7 +57,7 @@
       "asl_enumerator": "TileDataType_FP16",
       "storage_bits": 16,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 4,
+      "tlsu_talloc_code": 4,
       "bundle_code": 4,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -66,7 +66,7 @@
       "asl_enumerator": "TileDataType_BF16",
       "storage_bits": 16,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 5,
+      "tlsu_talloc_code": 5,
       "bundle_code": 5,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -75,7 +75,7 @@
       "asl_enumerator": "TileDataType_HiF8",
       "storage_bits": 8,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 6,
+      "tlsu_talloc_code": 6,
       "bundle_code": 6,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -84,7 +84,7 @@
       "asl_enumerator": "TileDataType_E4M3",
       "storage_bits": 8,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 7,
+      "tlsu_talloc_code": 7,
       "bundle_code": 7,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -93,7 +93,7 @@
       "asl_enumerator": "TileDataType_E5M2",
       "storage_bits": 8,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 8,
+      "tlsu_talloc_code": 8,
       "bundle_code": 8,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -102,7 +102,7 @@
       "asl_enumerator": "TileDataType_E3M2",
       "storage_bits": 8,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 9,
+      "tlsu_talloc_code": 9,
       "bundle_code": 9,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -111,7 +111,7 @@
       "asl_enumerator": "TileDataType_E2M3",
       "storage_bits": 8,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 10,
+      "tlsu_talloc_code": 10,
       "bundle_code": 10,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -120,7 +120,7 @@
       "asl_enumerator": "TileDataType_E2M1X2",
       "storage_bits": 4,
       "raw_class": "packed-floating-raw-carrier",
-      "tma_talloc_code": 11,
+      "tlsu_talloc_code": 11,
       "bundle_code": 11,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -129,7 +129,7 @@
       "asl_enumerator": "TileDataType_E1M2X2",
       "storage_bits": 4,
       "raw_class": "packed-floating-raw-carrier",
-      "tma_talloc_code": 12,
+      "tlsu_talloc_code": 12,
       "bundle_code": 12,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -138,7 +138,7 @@
       "asl_enumerator": "TileDataType_E8M0",
       "storage_bits": 8,
       "raw_class": "scale-raw-carrier",
-      "tma_talloc_code": 13,
+      "tlsu_talloc_code": 13,
       "bundle_code": 13,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -147,7 +147,7 @@
       "asl_enumerator": "TileDataType_HiF4X2",
       "storage_bits": 4,
       "raw_class": "packed-floating-raw-carrier",
-      "tma_talloc_code": 14,
+      "tlsu_talloc_code": 14,
       "bundle_code": 14,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -156,7 +156,7 @@
       "asl_enumerator": "TileDataType_S64",
       "storage_bits": 64,
       "raw_class": "signed-integer",
-      "tma_talloc_code": 16,
+      "tlsu_talloc_code": 16,
       "bundle_code": 16,
       "numeric_semantics_status": "width-and-signedness-closed"
     },
@@ -165,7 +165,7 @@
       "asl_enumerator": "TileDataType_S32",
       "storage_bits": 32,
       "raw_class": "signed-integer",
-      "tma_talloc_code": 17,
+      "tlsu_talloc_code": 17,
       "bundle_code": 17,
       "numeric_semantics_status": "width-and-signedness-closed"
     },
@@ -174,7 +174,7 @@
       "asl_enumerator": "TileDataType_S16",
       "storage_bits": 16,
       "raw_class": "signed-integer",
-      "tma_talloc_code": 18,
+      "tlsu_talloc_code": 18,
       "bundle_code": 18,
       "numeric_semantics_status": "width-and-signedness-closed"
     },
@@ -183,7 +183,7 @@
       "asl_enumerator": "TileDataType_S8",
       "storage_bits": 8,
       "raw_class": "signed-integer",
-      "tma_talloc_code": 19,
+      "tlsu_talloc_code": 19,
       "bundle_code": 19,
       "numeric_semantics_status": "width-and-signedness-closed"
     },
@@ -192,7 +192,7 @@
       "asl_enumerator": "TileDataType_S4X2",
       "storage_bits": 4,
       "raw_class": "signed-integer",
-      "tma_talloc_code": 20,
+      "tlsu_talloc_code": 20,
       "bundle_code": 20,
       "numeric_semantics_status": "width-and-signedness-closed"
     },
@@ -201,7 +201,7 @@
       "asl_enumerator": "TileDataType_U64",
       "storage_bits": 64,
       "raw_class": "unsigned-integer",
-      "tma_talloc_code": 24,
+      "tlsu_talloc_code": 24,
       "bundle_code": 24,
       "numeric_semantics_status": "width-and-signedness-closed"
     },
@@ -210,7 +210,7 @@
       "asl_enumerator": "TileDataType_U32",
       "storage_bits": 32,
       "raw_class": "unsigned-integer",
-      "tma_talloc_code": 25,
+      "tlsu_talloc_code": 25,
       "bundle_code": 25,
       "numeric_semantics_status": "width-and-signedness-closed"
     },
@@ -219,7 +219,7 @@
       "asl_enumerator": "TileDataType_U16",
       "storage_bits": 16,
       "raw_class": "unsigned-integer",
-      "tma_talloc_code": 26,
+      "tlsu_talloc_code": 26,
       "bundle_code": 26,
       "numeric_semantics_status": "width-and-signedness-closed"
     },
@@ -228,7 +228,7 @@
       "asl_enumerator": "TileDataType_U8",
       "storage_bits": 8,
       "raw_class": "unsigned-integer",
-      "tma_talloc_code": 27,
+      "tlsu_talloc_code": 27,
       "bundle_code": 27,
       "numeric_semantics_status": "width-and-signedness-closed"
     },
@@ -237,7 +237,7 @@
       "asl_enumerator": "TileDataType_U4X2",
       "storage_bits": 4,
       "raw_class": "unsigned-integer",
-      "tma_talloc_code": 28,
+      "tlsu_talloc_code": 28,
       "bundle_code": 28,
       "numeric_semantics_status": "width-and-signedness-closed"
     }
@@ -1159,450 +1159,450 @@
       "stage4_name": null
     }
   ],
-  "tma_talloc_data_type": [
+  "tlsu_talloc_data_type": [
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 0,
       "bits": "000000",
       "status": "mapped",
       "tile_data_type": "FP64"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 1,
       "bits": "000001",
       "status": "mapped",
       "tile_data_type": "FP32"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 2,
       "bits": "000010",
       "status": "mapped",
       "tile_data_type": "TF32"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 3,
       "bits": "000011",
       "status": "mapped",
       "tile_data_type": "HF32"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 4,
       "bits": "000100",
       "status": "mapped",
       "tile_data_type": "FP16"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 5,
       "bits": "000101",
       "status": "mapped",
       "tile_data_type": "BF16"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 6,
       "bits": "000110",
       "status": "mapped",
       "tile_data_type": "HiF8"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 7,
       "bits": "000111",
       "status": "mapped",
       "tile_data_type": "E4M3"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 8,
       "bits": "001000",
       "status": "mapped",
       "tile_data_type": "E5M2"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 9,
       "bits": "001001",
       "status": "mapped",
       "tile_data_type": "E3M2"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 10,
       "bits": "001010",
       "status": "mapped",
       "tile_data_type": "E2M3"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 11,
       "bits": "001011",
       "status": "mapped",
       "tile_data_type": "E2M1X2"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 12,
       "bits": "001100",
       "status": "mapped",
       "tile_data_type": "E1M2X2"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 13,
       "bits": "001101",
       "status": "mapped",
       "tile_data_type": "E8M0"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 14,
       "bits": "001110",
       "status": "mapped",
       "tile_data_type": "HiF4X2"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 15,
       "bits": "001111",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 16,
       "bits": "010000",
       "status": "mapped",
       "tile_data_type": "S64"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 17,
       "bits": "010001",
       "status": "mapped",
       "tile_data_type": "S32"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 18,
       "bits": "010010",
       "status": "mapped",
       "tile_data_type": "S16"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 19,
       "bits": "010011",
       "status": "mapped",
       "tile_data_type": "S8"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 20,
       "bits": "010100",
       "status": "mapped",
       "tile_data_type": "S4X2"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 21,
       "bits": "010101",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 22,
       "bits": "010110",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 23,
       "bits": "010111",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 24,
       "bits": "011000",
       "status": "mapped",
       "tile_data_type": "U64"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 25,
       "bits": "011001",
       "status": "mapped",
       "tile_data_type": "U32"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 26,
       "bits": "011010",
       "status": "mapped",
       "tile_data_type": "U16"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 27,
       "bits": "011011",
       "status": "mapped",
       "tile_data_type": "U8"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 28,
       "bits": "011100",
       "status": "mapped",
       "tile_data_type": "U4X2"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 29,
       "bits": "011101",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 30,
       "bits": "011110",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 31,
       "bits": "011111",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 32,
       "bits": "100000",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 33,
       "bits": "100001",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 34,
       "bits": "100010",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 35,
       "bits": "100011",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 36,
       "bits": "100100",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 37,
       "bits": "100101",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 38,
       "bits": "100110",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 39,
       "bits": "100111",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 40,
       "bits": "101000",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 41,
       "bits": "101001",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 42,
       "bits": "101010",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 43,
       "bits": "101011",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 44,
       "bits": "101100",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 45,
       "bits": "101101",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 46,
       "bits": "101110",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 47,
       "bits": "101111",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 48,
       "bits": "110000",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 49,
       "bits": "110001",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 50,
       "bits": "110010",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 51,
       "bits": "110011",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 52,
       "bits": "110100",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 53,
       "bits": "110101",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 54,
       "bits": "110110",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 55,
       "bits": "110111",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 56,
       "bits": "111000",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 57,
       "bits": "111001",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 58,
       "bits": "111010",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 59,
       "bits": "111011",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 60,
       "bits": "111100",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 61,
       "bits": "111101",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 62,
       "bits": "111110",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-talloc-data-type",
       "code": 63,
       "bits": "111111",
       "status": "reserved-before-effects",
@@ -1918,7 +1918,7 @@
     "tests/asl/state-tests.asl:TestTileRegisterMapping",
     "tests/asl/scalar-tests.asl:TestScalarFloating",
     "tests/asl/bundle-tests.asl:TestBundleOperationDescriptorFields",
-    "tests/asl/tlsu-totality-tests.asl:TestTlsuAllFourBitTypes",
+    "tests/asl/tile/model/memory/load-store/PTO-AVS-TILE-TESTTLSUTOTALITY-BOUNDARY-001.asl:TestTlsuAllFourBitTypes",
     "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUTotality"
   ],
   "sources": [
@@ -1932,11 +1932,11 @@
     },
     {
       "path": "spec/evidence/tlsu-totality.json",
-      "sha256": "6e4fc52b8cce087f565d8cfe2247a0a675ffad991d526dac801fbbeeded45ccf"
+      "sha256": "86d12e8f2650bac7e398ceccee6859337541967270cdf70ae818d9286a7b8e72"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "10e8bcfed47aee24719038ec07ecefe75aeaf342a0765cb15308da584242e1b8"
+      "sha256": "922cbf63ef466262fd5013d48fc75e8f83dfa4c5c69b2ff14aafd34923723c24"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -1944,31 +1944,31 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "572ffe3fefce946057590312872387272b414414030bba6e7e6c0cc6cecb820a"
+      "sha256": "aaa16ddd046b7c6ee06aedd6444c90da2541c6f3204ef8d12dba34815e96f15b"
     },
     {
       "path": "asl/arch/data-types/fault.asl",
-      "sha256": "e3a280e7acf0e582d6f777dee4c5295747a518a505d93e1e3118661f0b561d92"
+      "sha256": "52840ac26216e5f3c9a61709d4bf827e941183a655b57f74471a10cd72eb7b6b"
     },
     {
       "path": "asl/arch/data-types/floating-point.asl",
-      "sha256": "9232fffb96d16c57168252188147ad98d4be027780b5cacd926acbd3915e4dc2"
+      "sha256": "3eaa4e906174194125ff651c24703bd9a4704073baf2d37268634bd67d5a06a2"
     },
     {
       "path": "asl/arch/data-types/integer.asl",
-      "sha256": "ee412e917aca73b90cf0729bb05b6ee8eba9d636dd87bd01c3d49481fbb6de39"
+      "sha256": "c23c97d2627eed8c2acef84aa9dd9a331e88f3f7c678e0ecbb5282722b45ecc0"
     },
     {
       "path": "asl/arch/data-types/memory-model.asl",
-      "sha256": "4012f50d5019f5692d8eb2f31ff0ce58f133a3763163e47cf760bed6a2ebbf67"
+      "sha256": "dd4adb80d037bc6e6b9b87dd53b8f4ccf6cda4a4fcd648c2874074d8587312d7"
     },
     {
       "path": "asl/arch/data-types/memory-operations.asl",
-      "sha256": "5213fbde30b1e6cc67f9676e0f0e478a21a04e89853c73e7a2bac7723901d07a"
+      "sha256": "4c5b08dd7c47caa6b1917185886bd8ea6929a9bf00c2b8578b86ead04e110b71"
     },
     {
       "path": "asl/arch/data-types/numeric-classification.asl",
-      "sha256": "0c592e04bf159e15822c47f085dac61066c78a20a33c887665ae46f3053a5a7a"
+      "sha256": "b2d9d280d2b40e6cd0c5e17400e9c2b29aec86fbb651d20404cf7b3a7b6b2cb9"
     },
     {
       "path": "asl/arch/data-types/packed.asl",
@@ -1976,15 +1976,15 @@
     },
     {
       "path": "asl/arch/data-types/rounding.asl",
-      "sha256": "6763b6bc65185550a466412faac96fc23438e6f97b85f1b2b84f951f47e407ee"
+      "sha256": "7914ae826137d9581ca7703b578532e9711d46675a2f45823700faaf6317adff"
     },
     {
       "path": "asl/arch/data-types/system-registers.asl",
-      "sha256": "db06b148c04403903c1973f696eb2c23ce49f2c29279d6b2412a083d4ed7d02e"
+      "sha256": "c1f9c741dd9e4f1d18eba487fc0a536bf3b5911b5c02909808d959ea8476f6b7"
     },
     {
       "path": "asl/arch/data-types/tile-data-types.asl",
-      "sha256": "40afc7c9304a83307fe7abfcca2a0f9cc82998872b2349250132b81f51f564cc"
+      "sha256": "2ff3f5594268b6c28f9660b890dc6af845a477547189d2de190f06539f12d6cf"
     },
     {
       "path": "asl/arch/data-types/trap-context.asl",
@@ -1996,7 +1996,7 @@
     },
     {
       "path": "asl/scalar/model/fsu/arithmetic.asl",
-      "sha256": "3860cbeee3636ec15db56994839f035769157b5afabaac48d15eaa7037396f51"
+      "sha256": "21bdc927b7c5e13f0db364ccb07d87a8e303b82041212bc2bb289e5fa9377288"
     },
     {
       "path": "asl/scalar/model/fsu/profile.asl",
@@ -2004,27 +2004,27 @@
     },
     {
       "path": "asl/tile/model/state/allocation.asl",
-      "sha256": "e8ca1076546d22d516125e5545601281a7b470922c384ec4b87239a9a8e538c7"
+      "sha256": "5b758cb40554cbbfaa8f4f6bfb8dee776a4c43d50d59b0d985992e8cff6468d1"
     },
     {
       "path": "asl/tile/model/state/descriptors.asl",
-      "sha256": "46dd046019843894d3111860121c855ebbf4e764ba8e3c01f5a6dd8b1db7c80a"
+      "sha256": "9ca25ce75a751e8383666bd4356da82534c93f045cf31fb27ca813586e66f4c5"
     },
     {
       "path": "asl/tile/model/state/local-registers.asl",
-      "sha256": "7886ccb9507042785279cd0c44d30fe95a5af1d796f25ed5f86a5a4dbff85a36"
+      "sha256": "cc7db333e1fd3b13cc301c9c709f1a035f8b07b034a18ad0df7d5983aa4b64b8"
     },
     {
       "path": "asl/tile/model/state/shared-registers.asl",
-      "sha256": "590d4d667acca548025b7373b4d171346bfe2c4e76c505312aeb543f92ea7b10"
+      "sha256": "070d2060e1d86f9a50afe319374ea84d3d01333984cf109f7f263bf24782d6a1"
     },
     {
       "path": "asl/tile/model/state/types.asl",
-      "sha256": "6da9305e220aa238702b6a23f8a9a6bc3d98cf0bb1b71fdad6594727e90d3f61"
+      "sha256": "18c76cc653e37c16cbe320e7dd4caa91ffb13f31a8bcbcfb2b990b54071f31f1"
     },
     {
       "path": "asl/tile/model/memory/addressing.asl",
-      "sha256": "473eefe799d7a2fb33adc4ea193aaca4c70b8422f0d62f27e4d900d344e996d2"
+      "sha256": "d2d70f320fdb8f8b893a971d5ff5fd8c257f205d7ffc03a1ec4dad18efb71c76"
     },
     {
       "path": "asl/tile/model/memory/atomics.asl",
@@ -2032,11 +2032,11 @@
     },
     {
       "path": "asl/tile/model/memory/gather-scatter.asl",
-      "sha256": "dbc912fa60bdb2dd87b1d0f15fc121fcae96be4a2eb26f268c6a85ee21ece191"
+      "sha256": "357da4e57783d49f115979450dd3eef1e289f0a46a70f1824f1162ce189e5be0"
     },
     {
       "path": "asl/tile/model/memory/load-store.asl",
-      "sha256": "625be0da8c91ebd105458cf0a79ee2e0948d7e62b2aad4a59ea7848e74430e75"
+      "sha256": "dfa0625cb6377a513d3d06ccb045075da137320a5c5a480cce729c26c4ccb8f9"
     },
     {
       "path": "asl/tile/model/memory/restart.asl",
@@ -2044,55 +2044,55 @@
     },
     {
       "path": "asl/tile/model/memory/shared-movement.asl",
-      "sha256": "83feba066451ecdffff03bbbfabf234979c78f9a5201c11d92597854badd558f"
+      "sha256": "b6e811a052a763bc77d441bc648122bc3bc12eb25261cd373cd03ec4d00db4bb"
     },
     {
       "path": "asl/tile/model/memory/stride.asl",
-      "sha256": "db940af4218bc1c76dbda444b3d3d8b74d50aba8572bf19a475d280ecd925dd6"
+      "sha256": "84fa5d1f63c26132f1f0c07d6ffad391498765771619dcbc005217ee127e84c7"
     },
     {
       "path": "asl/block/model/dispatch/commands.asl",
-      "sha256": "32ec82f164b68e70527b7699ffabd4a6441f4601eca6c738247436177cfac034"
+      "sha256": "f1b739e0c201787cf94d3bd95f8afd66d6d9c5f6e2ba443c55781b721593d294"
     },
     {
       "path": "asl/block/model/dispatch/decode.asl",
-      "sha256": "bc8ac47d3ff1a6008b8041ec2f030933a2e35ee3143d7d029f2daa38cb22b555"
+      "sha256": "00f8688edc54c48d3037068ac248df1ad4329cef4b53c3b5fce8baf6c4f62930"
     },
     {
       "path": "asl/block/model/dispatch/descriptor-legality.asl",
-      "sha256": "1f8af32320adbca3ab304f23f49ff0c7956960b51071c9d7a79fb6d1874c6575"
+      "sha256": "32968883c8a0d175201733cf08f0276952b0d4fa66e5a8bce99887ec409906fc"
     },
     {
       "path": "asl/block/model/dispatch/destination-shape.asl",
-      "sha256": "776b2d3438434ffd48f48fba2eec4aa8cd22ea5745712300db6a5d8e816d494d"
+      "sha256": "17fe753898389fc06bd4b5b6ad6ff0c9f0834dc60dbb29dc4f8b372ecc1998d8"
     },
     {
       "path": "asl/block/model/dispatch/numeric-control.asl",
-      "sha256": "9daca978ecd21d83f7be11e4532c4eaa3db5cdbf5562833e7dfd93fcb29c3e33"
+      "sha256": "8372aa20c99f953c426e489be3555430cc0fe240d4808fda34180a9a11f5a8f7"
     },
     {
       "path": "asl/block/model/dispatch/scalar-schema.asl",
-      "sha256": "59e466c059b1d7aac880ba3bede340d9deed8ffa87356b1c1a8ce05f09a4e6b4"
+      "sha256": "e74d4fed80cd6081401f017703a11dc1b340b590b4c580febe9833a1fbfcce77"
     },
     {
       "path": "asl/block/model/dispatch/shared-cube.asl",
-      "sha256": "a6994836c697d0216b916751ee044ce27dede62e31af002ed7510b213409da33"
+      "sha256": "0bafd474f3ceb9d18fd32cd189a18e9cd0ab82d2d930ee7771ffbb85d5f233ee"
     },
     {
       "path": "asl/block/model/dispatch/shared-tlsu.asl",
-      "sha256": "976bf66d12eca3a672dceb8cc139f91fe0a39d361b0f41fd1d9bb230de5ecb88"
+      "sha256": "11984903b13b53bc073b17bdd33ecc40a5e7188d44bc5e45be1f25ce392b54ab"
     },
     {
       "path": "asl/block/model/dispatch/start.asl",
-      "sha256": "81a6f6b2d119419f9ba89e51607bce4206104ffcb85cb77e08a4e4a241eea14d"
+      "sha256": "10dba72b8aab7ea88c727bd8a56728ebf60406499a9aa97b127f9e3ce4e60fdb"
     },
     {
       "path": "asl/block/model/dispatch/tile-execution.asl",
-      "sha256": "ec6512a4206c948b8163657d814054c4f90d1622b96870489c6c1ca99fba3645"
+      "sha256": "1d7a77b0ceeca2bb9d36b6bf2aa120c89674135300e0f4d7f4130c94f47a9906"
     },
     {
       "path": "asl/block/model/dispatch/tile-schema.asl",
-      "sha256": "dcaef41e2839b30122b7a9a725da3689595e8e87808e80e5a128935c4d51b890"
+      "sha256": "6ff3b0f713b93a0b5ad0acd60e567c741ea2d6d32a270d9e63e871405e2159bf"
     },
     {
       "path": "asl/block/model/dispatch/top-level.asl",
@@ -2103,16 +2103,16 @@
       "sha256": "07c51707a4f02fa6a451f92ab267b31fe4f0398d3def26f12b461f79d734d6a7"
     },
     {
-      "path": "docs/status/decisions/0033-tma-four-bit-memory-packing.md",
-      "sha256": "9ef2dcf86fec5b1f39cf85faf82357e077aa9f9c17d1774a2f854d81c50cbced"
+      "path": "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
+      "sha256": "0cfe31d7d158463b2351634e224020d1fe1f3b5b2a378be0de909340a09e3514"
     },
     {
       "path": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
-      "sha256": "2d571c4df9bae68cb34824db62f2944145c96f61ea113ec15b3475e60b6610b6"
+      "sha256": "b3bc529241803a91bec919243e98f122a57da14153afd9c5f8ce5f45d5474025"
     },
     {
       "path": "docs/status/decisions/0048-numeric-format-value-classification.md",
-      "sha256": "cca6076b80003179731fe8f843ae230b835b5f0e581024f8e5b4509cd0f33f7e"
+      "sha256": "a6b9ff05dec9b5ff31285872f2e7b366b9860db6c0d462f96ec39b7290c86c6e"
     }
   ],
   "summary": {
@@ -2130,8 +2130,8 @@
     "scalar_floating_destination_reserved_count": 17,
     "scalar_integer_destination_mapped_count": 15,
     "scalar_integer_destination_reserved_count": 17,
-    "tma_talloc_mapped_count": 25,
-    "tma_talloc_reserved_count": 39,
+    "tlsu_talloc_mapped_count": 25,
+    "tlsu_talloc_reserved_count": 39,
     "bundle_mapped_count": 25,
     "bundle_reserved_count": 7,
     "four_bit_type_count": 5,

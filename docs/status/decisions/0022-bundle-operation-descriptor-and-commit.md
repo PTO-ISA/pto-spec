@@ -24,7 +24,7 @@ priority order as execution.
   the exact command-form identity, operation class, selector-presence and
   selector value, DataType-presence and value, Mode-presence and value, and
   BrType-presence and value.
-- Specific TMA and CUBE starts use constants from the direct tile-operation
+- Specific TLSU and CUBE starts use constants from the direct tile-operation
   catalog. Generic TEPL and CUBE starts retain their encoded selector. No
   independent selector table is permitted.
 - PTO v0 recognizes compressed BrType values 1 (`FALL`), 5 (`IND`), 6
@@ -46,7 +46,7 @@ priority order as execution.
   as a catalog encoding but returns `CommandExecution_Rejected` with
   `Fault_IllegalInstruction` before changing bundle state.
 - A generic CUBE selector must name one of the 13 accepted direct CUBE
-  operations. Holes are illegal. Reserved TEPL/TMA/CUBE selectors and
+  operations. Holes are illegal. Reserved TEPL/TLSU/CUBE selectors and
   unsupported DataTypes fault before an active bundle is committed.
 - BSTART validates the new descriptor and target before committing an existing
   bundle. After a successful boundary commit it clears the prior header state,

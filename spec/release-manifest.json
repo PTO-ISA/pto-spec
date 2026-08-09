@@ -102,7 +102,7 @@
     },
     {
       "path": "asl/arch/overview/instruction-classification.asl",
-      "sha256": "dd85302fd570a0c51388eac3b744feafdac3eb185124b723edcbacc3a1b4bb4d"
+      "sha256": "9306ccb6a080dbbe8069a998c8a88e7db48c1c45d0613407b59d2892405f0958"
     },
     {
       "path": "asl/arch/profile/applicability.asl",
@@ -293,6 +293,10 @@
       "sha256": "055e53b407063de3b01ef2ac738305c49e3c4a1c1569d31f112acf3ae87fe622"
     },
     {
+      "path": "asl/block/execution/BSTART.SFU.asl",
+      "sha256": "8bb483874290916f14a9a47b28d62bb40106440fc1222a1d5995b7760b9563ff"
+    },
+    {
       "path": "asl/block/execution/BSTART.STD.asl",
       "sha256": "8d67395af8524662cd66410d458beda28544fe8a7aa8d033d245ecb361ccbe9e"
     },
@@ -302,7 +306,7 @@
     },
     {
       "path": "asl/block/execution/BSTART.TEPL.asl",
-      "sha256": "6e964940471a7e1d166270b2409e83c790e3e71976fd5c95d36b0671ed254065"
+      "sha256": "11644d144aeb0600fed56a0dc8c822e38e6fc8e112a4a706c830c12c1ba2ac97"
     },
     {
       "path": "asl/block/execution/BSTART.TGEMV.ACC.asl",
@@ -367,6 +371,10 @@
     {
       "path": "asl/block/execution/BSTART.TSTORE.asl",
       "sha256": "51ea5d7c0662ff89a4912b3caa610ef44b669bf0878fb6e14a604185f1bf6d1b"
+    },
+    {
+      "path": "asl/block/execution/BSTART.VEC.asl",
+      "sha256": "29a7492857179e428513e044a2bdeee3a9e8e7e6ca8fcf0c2e51fb10ef1fefa4"
     },
     {
       "path": "asl/block/execution/BSTART_CALL.asl",
@@ -2541,176 +2549,268 @@
       "sha256": "6d1fa4b919c2dc1041b9c24ef9ae521e369ce15c783ba772a339aeeaa80d699d"
     },
     {
-      "path": "asl/tile/complex-layout/format-conversion/TCVT.asl",
-      "sha256": "4697762f056ea0b5b4f2e8cd94307edb6e569979cea8666bf3accd8e490fbf90"
+      "path": "asl/tile/elementwise-tile-tile/arithmetic/TADD.asl",
+      "sha256": "212085892814ef9e8f1a29e89dc6779a60eafcd3a2750f96f2748f4111d1a23c"
     },
     {
-      "path": "asl/tile/complex-layout/format-conversion/TDEQUANT.asl",
-      "sha256": "9663792935f4e4eb08d71a781434c82ade0b6ffddfa6109d0ba745f840c141af"
+      "path": "asl/tile/elementwise-tile-tile/arithmetic/TFMA.asl",
+      "sha256": "e91d610c30e7680b3553bf3f3657f270910bbebe231c04fbd98d5d15a10e39ac"
     },
     {
-      "path": "asl/tile/complex-layout/format-conversion/TQUANT.asl",
-      "sha256": "63b6e45ee321cc7b063f1cc22722731cf94f4710792071f9dce88c8b95c01ad1"
+      "path": "asl/tile/elementwise-tile-tile/arithmetic/TMAX.asl",
+      "sha256": "7d1a7402e6bc9429e1de81455b8bc188adfb124ed9c9392a758e1ca2ec35d45f"
     },
     {
-      "path": "asl/tile/complex-layout/initialization/TCI.asl",
-      "sha256": "9f7c32dab3e2d37752e18d0d6a051f787f4b54a03bcfdb8caedeed96f021307e"
+      "path": "asl/tile/elementwise-tile-tile/arithmetic/TMIN.asl",
+      "sha256": "9152b78d3ebaa8e3b91c1ce4202ac6668506e7c1086273606e021212ef7a9499"
     },
     {
-      "path": "asl/tile/complex-layout/initialization/TEXPANDS.asl",
-      "sha256": "edd5f5fe8fde927b91e0bc3d3eb2f3f5d707a862cd4ebc815194149d17279beb"
+      "path": "asl/tile/elementwise-tile-tile/arithmetic/TMUL.asl",
+      "sha256": "5b43e12517ee322b7c5989ad01df0266b2f2d449d52a2d827fafc0a52a9cfcfa"
     },
     {
-      "path": "asl/tile/complex-layout/initialization/TFILLPAD.asl",
-      "sha256": "7a32a2bad6e0c2449a32dd5452ac36c92fdaa8f942427a810728ac8ba58b4f8d"
+      "path": "asl/tile/elementwise-tile-tile/arithmetic/TSUB.asl",
+      "sha256": "80a6ddf65f702fbb314cb8f62d982261c2a94136c49962fc3fb561405ed81459"
     },
     {
-      "path": "asl/tile/complex-layout/initialization/THISTOGRAM.asl",
-      "sha256": "b01843fcf8cc6d26753c2e1f21d1d937f3fb717c05fe2a808dfe24acb4f0f4a4"
+      "path": "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl",
+      "sha256": "021ed346ef282e8342e511e4d7ccff46926ad672f95d5d21923dd18b33fa9214"
     },
     {
-      "path": "asl/tile/complex-layout/initialization/TTRI.asl",
-      "sha256": "f285968f57b15395bfd474a1c411ee8b2ba2106f0ca07b5bc45fd64a811708c7"
+      "path": "asl/tile/elementwise-tile-tile/logical/TABS.asl",
+      "sha256": "6f852abf27e9a4c275adfa1ca727d424cc66a94867ef8ee4f7f0087779b170bb"
     },
     {
-      "path": "asl/tile/complex-layout/layout/TCONCAT.asl",
-      "sha256": "404c8c5130180e9798d89c60def2cf5c17d7fd86079b33567ce1b8ddd20ae1bf"
+      "path": "asl/tile/elementwise-tile-tile/logical/TAND.asl",
+      "sha256": "15bb8ade87007d3f21740024a143e6d182e1033c5be012ce78429267619cbb16"
     },
     {
-      "path": "asl/tile/complex-layout/layout/TEXTRACT.asl",
-      "sha256": "9d3c5b1c5e91991fa161ff8bf8e5024536ecf00687fbf8b0e7acfda419429a44"
+      "path": "asl/tile/elementwise-tile-tile/logical/TCMP.asl",
+      "sha256": "330fce41d8197f0344b2c7e6044901ecc7d3b8131c052f53dfbaab7cfb60854b"
     },
     {
-      "path": "asl/tile/complex-layout/layout/TGATHER.asl",
-      "sha256": "c9adf450f952cc3236dab55eb81fb5c47bcad407653d719d37a0b38e13da5834"
+      "path": "asl/tile/elementwise-tile-tile/logical/TNEG.asl",
+      "sha256": "feadde036924768a971a1d24161d869c017cc0600a54d266dda35863b8c20de3"
     },
     {
-      "path": "asl/tile/complex-layout/layout/TIMG2COL.asl",
-      "sha256": "f31eba1936b4340b2eca05c9b622f5143974b45ae0d4df74393216c393fabb64"
+      "path": "asl/tile/elementwise-tile-tile/logical/TNOT.asl",
+      "sha256": "a917fbf783ecba0516b61fc2258ffa36186586bee2127a8ff6998991e52c4305"
     },
     {
-      "path": "asl/tile/complex-layout/layout/TINSERT.asl",
-      "sha256": "bacd6dbae07f983346712bc32c4c2e9b67598077b13b40295c3ecebd62ad905f"
+      "path": "asl/tile/elementwise-tile-tile/logical/TOR.asl",
+      "sha256": "23109dd52f2497b1e433f4ed055cd4a283e73818b8074745405011e638e54b36"
     },
     {
-      "path": "asl/tile/complex-layout/layout/TMOV.asl",
-      "sha256": "0bf54fe58d6da992f0482e250b9e5adf8a92d5dc2430d1598f231eba64ec607e"
+      "path": "asl/tile/elementwise-tile-tile/logical/TRELU.asl",
+      "sha256": "79822b9e182301ac08b75b023d0e794acaf048c2598c9adc51c08658a9f5cdfd"
     },
     {
-      "path": "asl/tile/complex-layout/layout/TSCATTER.asl",
-      "sha256": "991f4abb69e83610407001b7772a00ec2051fc739cf05188cd454a342f315734"
+      "path": "asl/tile/elementwise-tile-tile/logical/TSEL.asl",
+      "sha256": "339f74a60016386dc5c7c4583a7ca0e316895278b7a0b83bebf185e732015401"
     },
     {
-      "path": "asl/tile/complex-layout/layout/TTRANS.asl",
-      "sha256": "a730a3027da4e3451ec3f893ba39f0301ef4ff14d9f796aef7810439e161bb4c"
+      "path": "asl/tile/elementwise-tile-tile/logical/TSHL.asl",
+      "sha256": "df6a925c5dd30cc1e208d08ef7ccc30ea6bb83b8a538f49badcbe274e8657d89"
     },
     {
-      "path": "asl/tile/complex-layout/sorting/TMRGSORT.asl",
-      "sha256": "c9d48c26108220d1d3618bffc4479761195b62c11dbe86665d25e03e2c2e5164"
+      "path": "asl/tile/elementwise-tile-tile/logical/TSHR.asl",
+      "sha256": "65a1f6915670685ba3d5609351048487020033fe4eef04b03783a25bb0a5cc57"
     },
     {
-      "path": "asl/tile/complex-layout/sorting/TSORT.asl",
-      "sha256": "e8d31be9ca44e22d480191148e73b1e7c8bb00662cebe64a497b28b8343111da"
+      "path": "asl/tile/elementwise-tile-tile/logical/TXOR.asl",
+      "sha256": "579425275cd54109bd270aabe118e0cd973a2a68c761414732ca955b9cc81f6b"
     },
     {
-      "path": "asl/tile/complex-layout/union/TPARTADD.asl",
-      "sha256": "cbd98a1eae618f1d6bda4f9274d3c224c7a8f7a3db71be29b8b5eea4cd067b17"
+      "path": "asl/tile/elementwise-tile-tile/transcendental/TDIV.asl",
+      "sha256": "6b43dfb365b59c83f3b16cbf32c41758943560f7e2ce370e00fd4b2b7f08e883"
     },
     {
-      "path": "asl/tile/complex-layout/union/TPARTMAX.asl",
-      "sha256": "a2c26eaa0e7e997bc00f1698818745f509dc9ae2edf915e284549580e7c538d3"
+      "path": "asl/tile/elementwise-tile-tile/transcendental/TEXP.asl",
+      "sha256": "48f7b5d356baa121c365d5504539013c3b5dd549691c4d4504b0b53f531c98f0"
     },
     {
-      "path": "asl/tile/complex-layout/union/TPARTMIN.asl",
-      "sha256": "ddaf2802390b4b2ce3f8ce52bda1eae4fb4a9cef281e0b2b490814527ddd6163"
+      "path": "asl/tile/elementwise-tile-tile/transcendental/TLOG.asl",
+      "sha256": "850e39ccc64b03965b65a0c9f566ac90a17fed5e717d83d695117774827a33ba"
     },
     {
-      "path": "asl/tile/complex-layout/union/TPARTMUL.asl",
-      "sha256": "a3d5b7e5ce8ff8ab23d94680f4d414707b062e6aae92a2d04329838c56bf43a5"
+      "path": "asl/tile/elementwise-tile-tile/transcendental/TRECIP.asl",
+      "sha256": "e82a362644e51ee11b4a0d0cd5d7ee86822e72e880e4f8b9fec4d7b6fcc9e520"
     },
     {
-      "path": "asl/tile/matrix/matrix-matrix/TMATMUL.asl",
-      "sha256": "4b7d105bcf734c67a9f91ecc6264054c902ae954084278eccb34a3821631e378"
+      "path": "asl/tile/elementwise-tile-tile/transcendental/TREM.asl",
+      "sha256": "64e18f1bb0e3163a6a0ff60b2d8cd5b619e85991093bdab7a95e09f31807b992"
     },
     {
-      "path": "asl/tile/matrix/matrix-matrix/TMATMUL_ACC.asl",
-      "sha256": "526d1317a52430ce6fd81413417bd35df4dd12d04022ccbea5b3cef9d60d5085"
+      "path": "asl/tile/elementwise-tile-tile/transcendental/TRSQRT.asl",
+      "sha256": "8b0910be7c86f3175e4dcf37e3b15b412fc169b42e635756a5be851d7f73cf91"
     },
     {
-      "path": "asl/tile/matrix/matrix-matrix/TMATMUL_BIAS.asl",
-      "sha256": "dace12e4fa180c16269565643194f01fda6b7f9c4c82671c0cbdf21c35cc2fa0"
+      "path": "asl/tile/elementwise-tile-tile/transcendental/TSQRT.asl",
+      "sha256": "a13389ab9b41852b843953ed1c0420359565abeb5e7f0b84b2685cc779650c92"
     },
     {
-      "path": "asl/tile/matrix/matrix-matrix/TMATMUL_MX.asl",
-      "sha256": "c3b628ac186fdfdf5a09e0a1c5dd1ef9c35ce42e5d689f70854912030d9356af"
+      "path": "asl/tile/irregular-and-complex/format-conversion/TDEQUANT.asl",
+      "sha256": "a732b90aa8fd0f735122e199f3c685e324a3c6fc01fbe56c43ae9251e307dabf"
     },
     {
-      "path": "asl/tile/matrix/matrix-matrix/TMATMUL_MX_ACC.asl",
-      "sha256": "5d4afc69f9af58e1e171272d60970f1dd6b5dec589ec8be7aad7b763acbc7bd5"
+      "path": "asl/tile/irregular-and-complex/format-conversion/TQUANT.asl",
+      "sha256": "1932369baad7d6c5a53c8e3fd10674f04d2d5feed7f74bbed02562a58fd40043"
     },
     {
-      "path": "asl/tile/matrix/matrix-matrix/TMATMUL_MX_BIAS.asl",
-      "sha256": "4a20dc98ee14cdad765cda5ce37297e93bda59d52cd7317d2f6ab53ce8cad90f"
+      "path": "asl/tile/irregular-and-complex/initialization/TCI.asl",
+      "sha256": "834935b3652456660ea0118947c63668b9265a710225472d20cdd9fa1d03a0b2"
     },
     {
-      "path": "asl/tile/matrix/matrix-vector/TGEMV.asl",
-      "sha256": "799da77b869da0bc9efa62a962468d9a545e68847afca53ebc8b6f95d5afabfd"
+      "path": "asl/tile/irregular-and-complex/initialization/THISTOGRAM.asl",
+      "sha256": "6874a1f48e0117aa436edf535308f40bd3eb899fb7e63dbd15778ddc00408fc5"
     },
     {
-      "path": "asl/tile/matrix/matrix-vector/TGEMV_ACC.asl",
-      "sha256": "7a1b24695cd5370a50f6f982e4d029a9c34c5725d853b9836f0e4ba0ed5c45ba"
+      "path": "asl/tile/irregular-and-complex/initialization/TTRI.asl",
+      "sha256": "96d8940337c99b3e4fb52ea2630718ba1e88bc83db07a837d90f8baa43cc157b"
     },
     {
-      "path": "asl/tile/matrix/matrix-vector/TGEMV_BIAS.asl",
-      "sha256": "20ad74094bef9343e6199ebded74f29dbf3ad245c4058021d72a2fb196bdece0"
+      "path": "asl/tile/irregular-and-complex/layout/TGATHER.asl",
+      "sha256": "16ee3b2344c3261956c56815d00a0f26742269aec5dfec58e40007034e18f594"
     },
     {
-      "path": "asl/tile/matrix/matrix-vector/TGEMV_MX.asl",
-      "sha256": "54bfd71174c5b30fee589b02ad46e0039f969824ea57d763f39903a6c808dd8c"
+      "path": "asl/tile/irregular-and-complex/layout/TSCATTER.asl",
+      "sha256": "68a37fefddb58cc812f3f9915acf3e56161a17c8a209e95efa494ff747fc096f"
     },
     {
-      "path": "asl/tile/matrix/matrix-vector/TGEMV_MX_ACC.asl",
-      "sha256": "d4df6bfb47743574a621576473ce5a072fa17960896aafac5e2f5058009275e7"
+      "path": "asl/tile/irregular-and-complex/sorting/TMRGSORT.asl",
+      "sha256": "6cbf0d1567eb173318644a6398ce81a116f96bb0b2e23b403efeea298de07e89"
     },
     {
-      "path": "asl/tile/matrix/matrix-vector/TGEMV_MX_BIAS.asl",
-      "sha256": "498835d1d052408605a9a26c8dc2c51d3df71f92b979487ecb59dd95e9962978"
+      "path": "asl/tile/irregular-and-complex/sorting/TSORT.asl",
+      "sha256": "1db6c93af43de7cb9a769922a9d78fd0860a920831d999bf02c8625b5b4b6946"
     },
     {
-      "path": "asl/tile/memory/irregular/MGATHER.asl",
-      "sha256": "9eb1344fdb92a2ed28e6a7b5680b70bd7c15a2677a272ca59dbe59b59adeb2e1"
+      "path": "asl/tile/irregular-and-complex/union/TPARTADD.asl",
+      "sha256": "40c0e320f510a3e7efc12e0b243971144acd806d1772e67fc977f59470570035"
     },
     {
-      "path": "asl/tile/memory/irregular/MGATHER_CAS.asl",
-      "sha256": "304d6b60a8f66eda29c0dc86d84a5ab7025ab1967f5b7c3e359b24f1d31ed9b6"
+      "path": "asl/tile/irregular-and-complex/union/TPARTMAX.asl",
+      "sha256": "046687837435d841400a040c44acaf59f2582bb5a23cd2f17f1a064db4f2fd1b"
     },
     {
-      "path": "asl/tile/memory/irregular/MGATHER_MASK.asl",
-      "sha256": "fc13ca0143e9f3b60cd21f00f9bf32981a2aff8ca2daf804dbcfcddb366c0f12"
+      "path": "asl/tile/irregular-and-complex/union/TPARTMIN.asl",
+      "sha256": "ed8eedd0e1287447497892c3d936bcea52044df1c452be8240c12c43f18aabb9"
     },
     {
-      "path": "asl/tile/memory/irregular/MSCATTER.asl",
-      "sha256": "b1b040fb7815772ce9dd7909adbfeee67754517d3792ac5388e7feae53452048"
+      "path": "asl/tile/irregular-and-complex/union/TPARTMUL.asl",
+      "sha256": "58a6acc902979204e96521575ee87fbccf86974515d5eab0cae6b1b37be5714e"
     },
     {
-      "path": "asl/tile/memory/irregular/MSCATTER_MASK.asl",
-      "sha256": "716ae7973010bd64e5c99f360e2f2af95cf5de3e2bcf4e6fe5e4347d38501aa9"
+      "path": "asl/tile/layout-and-rearrangement/initialization/TFILLPAD.asl",
+      "sha256": "1ee12397621b712457b94997cb06123f6c3d7dfb0ff7ea21b2e7626a177d5166"
     },
     {
-      "path": "asl/tile/memory/pe-movement/GMOV.asl",
-      "sha256": "d456194effd300e933fc26b5052a1ac627251ffc1f9d209c32a3d770e7aaacd0"
+      "path": "asl/tile/layout-and-rearrangement/layout/TCONCAT.asl",
+      "sha256": "33e39bfc4f32fdb1d522eb587659ecbc98eeab2d46458734105445c3fc61d458"
     },
     {
-      "path": "asl/tile/memory/regular/TLOAD.asl",
-      "sha256": "f5464f375a18c1a88a4e0a70b8e4478eeb5d15b2653f23c9fd3e55feca111c25"
+      "path": "asl/tile/layout-and-rearrangement/layout/TEXTRACT.asl",
+      "sha256": "6d73fe7575e72f2b693b72a2adbc1acc2391700168de0cb839dd8c8adfc41e29"
     },
     {
-      "path": "asl/tile/memory/regular/TPREFETCH.asl",
-      "sha256": "b1418bdad679dd32bc644d0818849730543ce93bff6c7b5408da3b1a48c974c9"
+      "path": "asl/tile/layout-and-rearrangement/layout/TIMG2COL.asl",
+      "sha256": "fd2da671958e168c0b6849429bcdea37a1dbb9f5e6131545cd3e113ae97233fb"
     },
     {
-      "path": "asl/tile/memory/regular/TSTORE.asl",
-      "sha256": "0a6718c0cda6da6c3cce3edd79ae4cc8e608dc1658144408281f8d8c512e5302"
+      "path": "asl/tile/layout-and-rearrangement/layout/TINSERT.asl",
+      "sha256": "92dd6e65b3962bd08e2171b413ade2efe60c6e8d6321290bde7833e8cfaa72ca"
+    },
+    {
+      "path": "asl/tile/layout-and-rearrangement/layout/TMOV.asl",
+      "sha256": "3e0a05f4ebd14cd650eaeb273746c87a72753ef7c2a0c9a91686e13ac97cc309"
+    },
+    {
+      "path": "asl/tile/layout-and-rearrangement/layout/TTRANS.asl",
+      "sha256": "8e0146b509a0f792ab992661d2a1661eaf1ff6069d79a7d7fee00db69a039f01"
+    },
+    {
+      "path": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.asl",
+      "sha256": "af1314077d0b13b33df0656f538adc78fd8ab7446a2a07c11ea8d7e098fcd90a"
+    },
+    {
+      "path": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.asl",
+      "sha256": "a732178a70179251462926ca689e60f9fa41a5032d8179def31a9bafdffe1a96"
+    },
+    {
+      "path": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "sha256": "109018ca5ca69bf1aeb557130eda2fc72ffc32cde6f28b826a40bf720741f0d7"
+    },
+    {
+      "path": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX.asl",
+      "sha256": "bf7bd7806dcc119bf7c5ca4f5430a54917dc089abe4f0bf6ec19585a8323dbff"
+    },
+    {
+      "path": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_ACC.asl",
+      "sha256": "32058f44ac460ffeeb9135fde11dffd8292d9508ede0b26ad4643748ac1ded73"
+    },
+    {
+      "path": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "sha256": "2a8094cab46b97ad839a95380c7f462eff08e60e8ab39e247f04911d20bb4c00"
+    },
+    {
+      "path": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV.asl",
+      "sha256": "fa50c14396cbf5c6dca39f5c3a1ab653ead63e696935ce7a921f1b98550a44f1"
+    },
+    {
+      "path": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_ACC.asl",
+      "sha256": "762cbc088063d66fedb298a94cd5708b3e529299f759ed27a30525ed86f85de9"
+    },
+    {
+      "path": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "sha256": "874c01257a894485385b6dce74014863c71f7c2676e37e309743771046d61699"
+    },
+    {
+      "path": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX.asl",
+      "sha256": "e95d56db492b57bee0f694f7a39904f3fbfd4de3a3ef8bfd83b0966b3c1ba22e"
+    },
+    {
+      "path": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_ACC.asl",
+      "sha256": "b516e20271299689893360ba0583b6395001d1f73ea88ed2f3a875636cd3396c"
+    },
+    {
+      "path": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "sha256": "b64ad9f0abbff58cbe0907b365fef9f8ba0d4d9932715d8abbd41dcf4c76a13e"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MGATHER.asl",
+      "sha256": "68c580a04568900f5de53b588571330e3c87783bbb4c78432d5fb20654db23fe"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MGATHER_CAS.asl",
+      "sha256": "ae1fc73ccc00008d42de823cda9fe92b95a8d31cadc9568e82536717758980ca"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MGATHER_MASK.asl",
+      "sha256": "4fe69c3e645ccbb5f98c5fb88b662282ed77493d1a5f334ea375fbc07951e3b6"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MSCATTER.asl",
+      "sha256": "5c3422c4091f851719b96de7dfd694120eb9367bb9ce90a967630dc5bc6cba65"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK.asl",
+      "sha256": "c821846e2622409e40ffb9065c353cddd8595c827a9fd2e9bfeb212703e622ce"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "sha256": "2c30282771c7cf69c43611fbed39397af8ef984a40701b1be3501e5eb6d24422"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/regular/TLOAD.asl",
+      "sha256": "6502be6f6df481db2e4e6b0114e9b4bb6d48b106ba951a93d59f0a11ca4a7d29"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/regular/TPREFETCH.asl",
+      "sha256": "c1bf9c9d8b97c2e58da9928adda0b9f7e8679d1782db1e0f47e4ad15dddcc7e3"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/regular/TSTORE.asl",
+      "sha256": "1cc747ff3a38d9ed9a82145d06d32b6fad1117e79f2a79b7a0c1d67248d9043d"
     },
     {
       "path": "asl/tile/model/capacity/local.asl",
@@ -2725,40 +2825,36 @@
       "sha256": "9f6d7324fe475e95081198ca9372cabacdc15f70132f494e76475939c7b23a1d"
     },
     {
-      "path": "asl/tile/model/dispatch/complex-layout.asl",
-      "sha256": "a44903ca9bc0b82883e53eb514f8c247a78a0c5342344b37ae94e0bdd88d46d3"
+      "path": "asl/tile/model/dispatch/elementwise-tile-tile.asl",
+      "sha256": "c6257f248096b719c29450b8b83265a5a2b6c197da4f9ddfb5fd1e6eff43cb89"
     },
     {
-      "path": "asl/tile/model/dispatch/matrix.asl",
-      "sha256": "1ce1d076ffac8ffbada5863110adfc29908e3f73b252967de5abd27da6993bea"
+      "path": "asl/tile/model/dispatch/irregular-and-complex.asl",
+      "sha256": "35d17be02efae3f794dff8e18a39c7e94e7c0d4d3d468238a610bfcddc78ea3d"
     },
     {
-      "path": "asl/tile/model/dispatch/memory.asl",
-      "sha256": "ba206ce3568969d8f5c0114f08d1ac492771e4d44f175af742a4fd580a082958"
+      "path": "asl/tile/model/dispatch/layout-and-rearrangement.asl",
+      "sha256": "85ada11f0f10250a17ff32a363397cb6ab825371900ee847a0eb420508e45d72"
     },
     {
-      "path": "asl/tile/model/dispatch/reduction.asl",
-      "sha256": "e06ddce4d8f9309022ae5943eebe2216a1108dfdf853c796d3216d6ebee67308"
+      "path": "asl/tile/model/dispatch/matrix-and-matrix-vector.asl",
+      "sha256": "6a869bf3a0dcfe416361dab350ab3a2829827853ff625356ff74d36e333e724e"
     },
     {
-      "path": "asl/tile/model/dispatch/tile-scalar-elementwise.asl",
-      "sha256": "048d614ff4a88af314ae3b737119a04493769dee432c16ce40974ffdb31fdff4"
+      "path": "asl/tile/model/dispatch/memory-and-data-movement.asl",
+      "sha256": "473dbd7b776655e91730a264c350d6f8118ed9bf5559abf0da2219b560610802"
     },
     {
-      "path": "asl/tile/model/dispatch/tile-tile-elementwise.asl",
-      "sha256": "2aaa6cef53ee0736e2329787507c206120340c3088757eb4fa300ba8cad6b672"
+      "path": "asl/tile/model/dispatch/reduce-and-expand.asl",
+      "sha256": "bcf8887c62f11d09b782777b54a5bfe403496d47a2fa0b59467708798010d8ae"
+    },
+    {
+      "path": "asl/tile/model/dispatch/tile-scalar-and-immediate.asl",
+      "sha256": "771142c9e2c821d16f222853b939291fafdf6e78f363161bf22869007d03bec6"
     },
     {
       "path": "asl/tile/model/dispatch/top-level.asl",
-      "sha256": "eaca280b36d0ebb6bcf24a5f7ce438032b67cc473b1f3acb6b8572e4db2c8811"
-    },
-    {
-      "path": "asl/tile/model/dispatch/unary-tile-elementwise.asl",
-      "sha256": "42565dd58b749694798e0f79407acb50c3d1fa69e039b5d1e0579ee6c8c18bf3"
-    },
-    {
-      "path": "asl/tile/model/dispatch/vector-tile-expansion.asl",
-      "sha256": "b210e2bcba9d995804cd2a5f8880c401b960f8315e67e5263f4ce54fe1502893"
+      "sha256": "3c61dab10e33dcc2faabe0b8c7b0bfd9b2fa6cf0cc585cbfaa997828aa62204e"
     },
     {
       "path": "asl/tile/model/execution/complex.asl",
@@ -2889,272 +2985,180 @@
       "sha256": "18c76cc653e37c16cbe320e7dd4caa91ffb13f31a8bcbcfb2b990b54071f31f1"
     },
     {
-      "path": "asl/tile/reduction/column-reduction/TCOLARGMAX.asl",
-      "sha256": "c0a49ff1ec2052d98937c31c0ae63855f2dbaf451659d5c7b968d60e8f3e4542"
+      "path": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPAND.asl",
+      "sha256": "b63a0ee4ff7897cbef02cfb29e966a7f0e1fd5e0d4a7c6f60917886c26a25b84"
     },
     {
-      "path": "asl/tile/reduction/column-reduction/TCOLARGMIN.asl",
-      "sha256": "01c33471da499f800b6776979f85aa98255724bb3dbf713ec5b9aba4a87c86c8"
+      "path": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDADD.asl",
+      "sha256": "b4dac19f9976afad191ec88632bcc561c49cf4dd8cb98005c9d857e250ddb30e"
     },
     {
-      "path": "asl/tile/reduction/column-reduction/TCOLMAX.asl",
-      "sha256": "b3ffff284a8a6ddc364a1f0c201fe82f99dd8adedce659a989d5eb41cb4f5515"
+      "path": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDDIV.asl",
+      "sha256": "8b0819c2ba8303b03e698b5917c3908b1c6fc4d6d7947359121e9e71fe30e194"
     },
     {
-      "path": "asl/tile/reduction/column-reduction/TCOLMIN.asl",
-      "sha256": "d58b4934838917b4af841adb143233c191bb44730ab900831a4b6c5f1dc9e682"
+      "path": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDEXPDIF.asl",
+      "sha256": "4376862ef3d41fde8b85b42abd677d88bca7f3e07e54a86f5f70cce2f0b06486"
     },
     {
-      "path": "asl/tile/reduction/column-reduction/TCOLPROD.asl",
-      "sha256": "a93de580a8c7eff91b231c3485535ef529e58e17d974dfae36c422a4e7bd823b"
+      "path": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMAX.asl",
+      "sha256": "88b6735e92e184d3ba5fa5bf789a8adee620d7dbbe00279a59e0c7dc9edc3237"
     },
     {
-      "path": "asl/tile/reduction/column-reduction/TCOLSUM.asl",
-      "sha256": "3130ff81a61fd870c7f7bad889fa9bdbf50dbc188cd9cb3da257b138dbfe35f3"
+      "path": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMIN.asl",
+      "sha256": "55fe86b7f070860bd53a4499d34d4dedddb165c0ab8de7b004972036cae1e91a"
     },
     {
-      "path": "asl/tile/reduction/row-reduction/TROWARGMAX.asl",
-      "sha256": "12434cf8aada105503dbaf7333087aa1b9cd4a3862f8790ab5928bfa73663fa6"
+      "path": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMUL.asl",
+      "sha256": "1c55f8367ebd926a6c9d6ef60134481ae26f34b76f7fbb106f912b2c08fbce2d"
     },
     {
-      "path": "asl/tile/reduction/row-reduction/TROWARGMIN.asl",
-      "sha256": "633193281fbcfe404614f881669235a1775cf862fc96cb4b333464e939114f81"
+      "path": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDSUB.asl",
+      "sha256": "a6c29ce612e5886fd77be8a1d111557bed710abab043d13f7528dc25b0a1af89"
     },
     {
-      "path": "asl/tile/reduction/row-reduction/TROWMAX.asl",
-      "sha256": "7775e971d18124e69f9ae5fd912b7151d29488fb13a1856223546c41df74472d"
+      "path": "asl/tile/reduce-and-expand/column-reduction/TCOLARGMAX.asl",
+      "sha256": "d9a1274399f78046c1601924402a113ac386dc4a7b589a777d8ace4e9c92ea0f"
     },
     {
-      "path": "asl/tile/reduction/row-reduction/TROWMIN.asl",
-      "sha256": "5cd188dcba90a8a530b038346db3ad89aac14061ece5491cae17255d73411551"
+      "path": "asl/tile/reduce-and-expand/column-reduction/TCOLARGMIN.asl",
+      "sha256": "0f2b34c3d26d7b75f6da3606b51b80ac0afbb1d29181b715cd50a7f5729b1194"
     },
     {
-      "path": "asl/tile/reduction/row-reduction/TROWPROD.asl",
-      "sha256": "e3a8096374b9e002eba4d97a1e115255d86646e745c108a0efff7562ae8c7acf"
+      "path": "asl/tile/reduce-and-expand/column-reduction/TCOLMAX.asl",
+      "sha256": "71164f12c88973d5708c009545e11586c88fdbf9d21962add5481e8bfd864aaa"
     },
     {
-      "path": "asl/tile/reduction/row-reduction/TROWSUM.asl",
-      "sha256": "c35095baae719e084d3109c71f5a4281aaf26b4c2c3addee4d6ea51aa67c0dfd"
+      "path": "asl/tile/reduce-and-expand/column-reduction/TCOLMIN.asl",
+      "sha256": "8c3274b4ab6bf9b372ab82c22145cdc2e9f2d0a692cf63c1986fc499d76b0b95"
     },
     {
-      "path": "asl/tile/tile-scalar-elementwise/arithmetic/TADDS.asl",
-      "sha256": "953eab580e906f49b63e4643131b626cd12f8e66e2e5975746feeecc27804a76"
+      "path": "asl/tile/reduce-and-expand/column-reduction/TCOLPROD.asl",
+      "sha256": "22169f86e37bfdf733342219f06d180b9dc49ceebd569deeabc8fa1a0ee79e17"
     },
     {
-      "path": "asl/tile/tile-scalar-elementwise/arithmetic/TDIVS.asl",
-      "sha256": "0bd9812fccf63e715654a6974ee0e06e6ce7cecbb088e10d13037bec3b5aeea8"
+      "path": "asl/tile/reduce-and-expand/column-reduction/TCOLSUM.asl",
+      "sha256": "7f176608d6680b3295d1a90d1ce220ab5019c9972447d300e4f1e106955132e3"
     },
     {
-      "path": "asl/tile/tile-scalar-elementwise/arithmetic/TMAXS.asl",
-      "sha256": "f027f0939d56692ea3e3f7e7a2c150d2c4ba1210e052e592edc20a9346fc01b3"
+      "path": "asl/tile/reduce-and-expand/row-expansion/TROWEXPAND.asl",
+      "sha256": "9c9e5d7f36f01122a9851813b979bdb82c3feb4b468f332eae591f5e7adcae64"
     },
     {
-      "path": "asl/tile/tile-scalar-elementwise/arithmetic/TMINS.asl",
-      "sha256": "d37a98173b97debd18f8d3cf0446f01c1530cc0f0b393552ac38c6d92bb4d3cf"
+      "path": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDADD.asl",
+      "sha256": "682f32a7b78ab536e780950f0176d90266dd2b76f78f11092829c7ae5dedcc73"
     },
     {
-      "path": "asl/tile/tile-scalar-elementwise/arithmetic/TMULS.asl",
-      "sha256": "35b61ef3948309e670a4e8b3aad12b038d5815c0c6fc7c0690ec073db11fb6d2"
+      "path": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.asl",
+      "sha256": "ab46e2018a7aa44653452d0d046c0d9d8762dae0921c980b7baf344d91a3aff5"
     },
     {
-      "path": "asl/tile/tile-scalar-elementwise/arithmetic/TREMS.asl",
-      "sha256": "1e50d5950723c12cc064852bdc7d91c9fa5fab9d6e2d5efd92b196912464b127"
+      "path": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.asl",
+      "sha256": "7856f68accd8088102ead185284e21a63f2db728beec9707dbf5957f433f111d"
     },
     {
-      "path": "asl/tile/tile-scalar-elementwise/arithmetic/TSUBS.asl",
-      "sha256": "33cf989fd5f8af27a50853a6adfcd53a301ae75d8f85268fecf9886a077e1a38"
+      "path": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX.asl",
+      "sha256": "3148f3a943a4525836e52af1bfb907f1c5f8d37cad34860d3791ebb63cf3221e"
     },
     {
-      "path": "asl/tile/tile-scalar-elementwise/logical/TANDS.asl",
-      "sha256": "1d79778c3b121f3b621f0fd9b763ea3d6ad9281c425683bcccf2c0111bec1f3d"
+      "path": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.asl",
+      "sha256": "2c3cef4a20faac77155d1575ddd07079cf6a66b875541fb6e99b9bfbcf999e33"
     },
     {
-      "path": "asl/tile/tile-scalar-elementwise/logical/TCMPS.asl",
-      "sha256": "f3b1e403c0653cf3f9a3a013ce97915b78c78436b9b383bd27a6ec1dd204b8e6"
+      "path": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.asl",
+      "sha256": "56845ac0a75bc88f234b3025185ac9b7cd2eda69d7f58b98d51d95118742eb90"
     },
     {
-      "path": "asl/tile/tile-scalar-elementwise/logical/TORS.asl",
-      "sha256": "59e21c9594663031ec9574b649c58ce8eb073fdf46390cc637652fa497f5c753"
+      "path": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB.asl",
+      "sha256": "8f005859111beca6d520c06790a21d00515aef08e91639729e97354edfc164a0"
     },
     {
-      "path": "asl/tile/tile-scalar-elementwise/logical/TSELS.asl",
-      "sha256": "edc49f77eed78e2079fb75a4d252fd14555902391f98f82d74d045490ab5a06d"
+      "path": "asl/tile/reduce-and-expand/row-reduction/TROWARGMAX.asl",
+      "sha256": "84b2ec1115980e8d8bc8dc1f63b7f2d844e3fa93cb01e70bfa0e3bf6ce5fc6b9"
     },
     {
-      "path": "asl/tile/tile-scalar-elementwise/logical/TSHLS.asl",
-      "sha256": "e59daccc3f44ab78302f353070ac0aefa2accbe056dd4108f45e5e11c4a1ac1c"
+      "path": "asl/tile/reduce-and-expand/row-reduction/TROWARGMIN.asl",
+      "sha256": "b10f2988995b9e55350cb83a87ab0095092a3ef7236df0901938c3fe5f8da014"
     },
     {
-      "path": "asl/tile/tile-scalar-elementwise/logical/TSHRS.asl",
-      "sha256": "c33c14788d248b144ce6b89f53f5c864583c34da788d2a7e69d1c8f731c92d82"
+      "path": "asl/tile/reduce-and-expand/row-reduction/TROWMAX.asl",
+      "sha256": "2eb2ce2e7cd737359c51d3aa1a9ae40c950ab1099a353ba20d173fd3d1e11c81"
     },
     {
-      "path": "asl/tile/tile-scalar-elementwise/logical/TXORS.asl",
-      "sha256": "f2530aa4e9176cfa5a9942954819363d3198eae2c8d53177a7c5c9b63341b65a"
+      "path": "asl/tile/reduce-and-expand/row-reduction/TROWMIN.asl",
+      "sha256": "29afd74a8e8f20ae0d67b62c21570ae6f688ba4e44f6bf8f27baddc721b8463b"
     },
     {
-      "path": "asl/tile/tile-tile-elementwise/arithmetic/TADD.asl",
-      "sha256": "2f958a08a8a749f1bf6ac6be838b6fe11672b444f7231cb8441a49dd7f52d26b"
+      "path": "asl/tile/reduce-and-expand/row-reduction/TROWPROD.asl",
+      "sha256": "5f32db32a0407a26533866b78ca43fb6f4d854eafd71034ba871b338e2d7e0ad"
     },
     {
-      "path": "asl/tile/tile-tile-elementwise/arithmetic/TFMA.asl",
-      "sha256": "b758401125e0534332243d8bf178331082d8169665f2206b74acd5631742c7f3"
+      "path": "asl/tile/reduce-and-expand/row-reduction/TROWSUM.asl",
+      "sha256": "e0fee99b42ee2369ce307f9ea549680dd95515f5e9381caa867f7ab64b87fe07"
     },
     {
-      "path": "asl/tile/tile-tile-elementwise/arithmetic/TMAX.asl",
-      "sha256": "b59c7dce50f7944fc60b37e5756d268dc1fdfb9d46cb3ad5dc35bcd7b314b458"
+      "path": "asl/tile/tile-scalar-and-immediate/arithmetic/TADDS.asl",
+      "sha256": "5c0c3de896e47fa564c617f0d9d298a10f839a21fbb89a263fec87bf0ef94c23"
     },
     {
-      "path": "asl/tile/tile-tile-elementwise/arithmetic/TMIN.asl",
-      "sha256": "dccc80fb48bb6038e7ca8e795254e20b99350a91cb75098037043757d6c703e4"
+      "path": "asl/tile/tile-scalar-and-immediate/arithmetic/TDIVS.asl",
+      "sha256": "5fbe58868b542fd7e73e9d0d1222cf9e3e965e8ac70acb822b238438d22069fc"
     },
     {
-      "path": "asl/tile/tile-tile-elementwise/arithmetic/TMUL.asl",
-      "sha256": "fd4c287a9c2fa71865e9b827dbdd3ff1789a44dc19725165fc11263d20e8f75d"
+      "path": "asl/tile/tile-scalar-and-immediate/arithmetic/TMAXS.asl",
+      "sha256": "d553f6c23b44ddc8b9fa70c3d9d162e9e55ac9d11cdd639a3bc4ef7da1296ecd"
     },
     {
-      "path": "asl/tile/tile-tile-elementwise/arithmetic/TSUB.asl",
-      "sha256": "29439641ee17c552da48ae95392b4aab81779933e8d039902db402a0b629fc41"
+      "path": "asl/tile/tile-scalar-and-immediate/arithmetic/TMINS.asl",
+      "sha256": "9d85b7ce96dadb1d9a0541ced41f249b6e0f2b95ef3089f304e01bce550038bd"
     },
     {
-      "path": "asl/tile/tile-tile-elementwise/logical/TAND.asl",
-      "sha256": "13d9a43deedd1e169e1a24818351b9ac0f7f21adae747dd3f06a8235c812eca4"
+      "path": "asl/tile/tile-scalar-and-immediate/arithmetic/TMULS.asl",
+      "sha256": "6c185afefe5aefc2ae4ec00cf9900ee65743ea997f922cfa908c6692e30a6b57"
     },
     {
-      "path": "asl/tile/tile-tile-elementwise/logical/TCMP.asl",
-      "sha256": "9d0759d3bb87dde9f099514bf556c216e527b885fb8ead8fe73050ebfcf71037"
+      "path": "asl/tile/tile-scalar-and-immediate/arithmetic/TREMS.asl",
+      "sha256": "0948e50f99e305b6146464b4475b7b2b850e5528b32d2f18628e87752cdd1aff"
     },
     {
-      "path": "asl/tile/tile-tile-elementwise/logical/TOR.asl",
-      "sha256": "3738873852ca4f6e0eb101854ab8c23ced5852bb0956883f2e804e9e99598321"
+      "path": "asl/tile/tile-scalar-and-immediate/arithmetic/TSUBS.asl",
+      "sha256": "1f8ee640fbda980d582dbdfd0763ce06803ad1e1e157dd5fb633c46ec5ce65e3"
     },
     {
-      "path": "asl/tile/tile-tile-elementwise/logical/TSEL.asl",
-      "sha256": "3b014330b66783ec695786e39796c7728ebd0d4914bddf969d886adaa4e7505e"
+      "path": "asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS.asl",
+      "sha256": "6c8c002767cb2870dd0ca567719d50760b76863188a72dcc36be973937dedea5"
     },
     {
-      "path": "asl/tile/tile-tile-elementwise/logical/TSHL.asl",
-      "sha256": "58346b2f4730f7f0d7215f4af98cf17d1f2a6e02d14ff0abc97509ce090f5f47"
+      "path": "asl/tile/tile-scalar-and-immediate/logical/TANDS.asl",
+      "sha256": "7e5aa2bab2cbe534bee9900ea25c05dfabb40012563695dd6ae12a2dc7729638"
     },
     {
-      "path": "asl/tile/tile-tile-elementwise/logical/TSHR.asl",
-      "sha256": "5a357f326c0007c2a887e227743dad3aea074d220de1605ae7ccf8354ee93f34"
+      "path": "asl/tile/tile-scalar-and-immediate/logical/TCMPS.asl",
+      "sha256": "cb2099e18121a1c3d6f65ab94373bff53234f63de9436133f22ffa0a572a2bb8"
     },
     {
-      "path": "asl/tile/tile-tile-elementwise/logical/TXOR.asl",
-      "sha256": "1753a692b9b12ca92dcfa3450aa88c4d92ee3dcba505bfbc755c2a3d0c20f993"
+      "path": "asl/tile/tile-scalar-and-immediate/logical/TORS.asl",
+      "sha256": "f3e6b82076869f8679717197bf7dc4793e28eb162d469cf152a1dbf7ac11d6ff"
     },
     {
-      "path": "asl/tile/unary-tile-elementwise/logical/TABS.asl",
-      "sha256": "06cc2d0f60ed46b51d89d27cc049458ff5b5c86d2796a98906e5f9f58a7fb7ec"
+      "path": "asl/tile/tile-scalar-and-immediate/logical/TSELS.asl",
+      "sha256": "f2c5dbba4a90f10e45c389fd79a32286d8aafa2da333fb307ee0ceb6df83cafa"
     },
     {
-      "path": "asl/tile/unary-tile-elementwise/logical/TNEG.asl",
-      "sha256": "d000dd429c6fa9740adf2cebc87291ee92370d7c7cbcd528d13ed84ca5fbadce"
+      "path": "asl/tile/tile-scalar-and-immediate/logical/TSHLS.asl",
+      "sha256": "9e8ac1f51faa1f75d22e3ea2eb44bda8241727b0312c17299b1058243e482fde"
     },
     {
-      "path": "asl/tile/unary-tile-elementwise/logical/TNOT.asl",
-      "sha256": "cca83a50c0dbfa31994905ea5d238fad3da37385cdce7a0f5406e8848e5f6266"
+      "path": "asl/tile/tile-scalar-and-immediate/logical/TSHRS.asl",
+      "sha256": "5c27d0f928ea26fb866b3b0ef8ea70e949be2290aea95971e24ec2ba76714e81"
     },
     {
-      "path": "asl/tile/unary-tile-elementwise/logical/TRELU.asl",
-      "sha256": "7939e7f9bf2c97cc883d1f7d43ccf60526e341f4544acebe92c1810e49971447"
-    },
-    {
-      "path": "asl/tile/unary-tile-elementwise/transcendental/TDIV.asl",
-      "sha256": "7202bc5671d15b897d41afbd2a23729f9111030cac75e293a7e574d62f939d65"
-    },
-    {
-      "path": "asl/tile/unary-tile-elementwise/transcendental/TEXP.asl",
-      "sha256": "3d2d0e934449b3ed4dd09f483195b07fb39780bcc845ccb58c74c5c8207f45e0"
-    },
-    {
-      "path": "asl/tile/unary-tile-elementwise/transcendental/TLOG.asl",
-      "sha256": "0c7e01b0f941a91dfa400233a7e117fdac528b43eda8a12a55c986b98ed44f7d"
-    },
-    {
-      "path": "asl/tile/unary-tile-elementwise/transcendental/TRECIP.asl",
-      "sha256": "a0648441743572386fce4fac5d80e7bfa8f43bc4e0131fd2cb5e5ba624f64af4"
-    },
-    {
-      "path": "asl/tile/unary-tile-elementwise/transcendental/TREM.asl",
-      "sha256": "caa857b12bdf4847fcb85f23544346b2fc6a6ca21f4b33188bec100b2573803f"
-    },
-    {
-      "path": "asl/tile/unary-tile-elementwise/transcendental/TRSQRT.asl",
-      "sha256": "549e4e6b3e09916f5baebe0037a431577c33d68ea683d0160fada98cb7989686"
-    },
-    {
-      "path": "asl/tile/unary-tile-elementwise/transcendental/TSQRT.asl",
-      "sha256": "1bbd67b9453dd8d7ebc75fb7f66a0c294fa9c13d79cd1dde3e6b7318c8b8e92f"
-    },
-    {
-      "path": "asl/tile/vector-tile-expansion/column-expansion/TCOLEXPAND.asl",
-      "sha256": "83a9499876810c39dba0aa31a157342384589fa08d2a4e544bc2765577fd7f1e"
-    },
-    {
-      "path": "asl/tile/vector-tile-expansion/column-expansion/TCOLEXPANDADD.asl",
-      "sha256": "d94e8dd16733b376e4d71e9dbc75bc150855d0d7c2bdc47d17394d85bcc44c40"
-    },
-    {
-      "path": "asl/tile/vector-tile-expansion/column-expansion/TCOLEXPANDDIV.asl",
-      "sha256": "b619a3850509d11cb4c8f5496843a8982df85136e7f597c4535a3b6c3e0dd5b7"
-    },
-    {
-      "path": "asl/tile/vector-tile-expansion/column-expansion/TCOLEXPANDEXPDIF.asl",
-      "sha256": "6d539dde5539fb803825bcb3af39bfbe3936071767a3f95748c0c2e2f000d2c2"
-    },
-    {
-      "path": "asl/tile/vector-tile-expansion/column-expansion/TCOLEXPANDMAX.asl",
-      "sha256": "1811d22307c4382e672849b6e814b2c2c99c5cf302f35d985d1baf2c4bfdcd9e"
-    },
-    {
-      "path": "asl/tile/vector-tile-expansion/column-expansion/TCOLEXPANDMIN.asl",
-      "sha256": "d46b7c8351fedb40f711958e68d3512fdbcac35eb6c40bdd8054b037bce3ae76"
-    },
-    {
-      "path": "asl/tile/vector-tile-expansion/column-expansion/TCOLEXPANDMUL.asl",
-      "sha256": "de99a26cf5df84f3b6043bcad53dc32e4c3f479926b3383ff69df49a9caa9b3c"
-    },
-    {
-      "path": "asl/tile/vector-tile-expansion/column-expansion/TCOLEXPANDSUB.asl",
-      "sha256": "6c79351e5b4c3786e2f60d17d6cfa73d6d97695d9aac45b3d6619a052b2170d5"
-    },
-    {
-      "path": "asl/tile/vector-tile-expansion/row-expansion/TROWEXPAND.asl",
-      "sha256": "f151d8990dc3860d6525a7777861f4fed2a8ce2f58af416d9d6531e29a5332cd"
-    },
-    {
-      "path": "asl/tile/vector-tile-expansion/row-expansion/TROWEXPANDADD.asl",
-      "sha256": "21ecd4aa41ba83aa7cf9ab03eba8b938c0ca0e618d8536dccc11074dc6b6ce3b"
-    },
-    {
-      "path": "asl/tile/vector-tile-expansion/row-expansion/TROWEXPANDDIV.asl",
-      "sha256": "530049101d4eebd01344da867300d98d7f0e5da0058438f5c84f03a14e98e055"
-    },
-    {
-      "path": "asl/tile/vector-tile-expansion/row-expansion/TROWEXPANDEXPDIF.asl",
-      "sha256": "34d91dee19ae87fa8118926061834fa2f348cb4e516eeea16d78e16dc5d5b4f8"
-    },
-    {
-      "path": "asl/tile/vector-tile-expansion/row-expansion/TROWEXPANDMAX.asl",
-      "sha256": "69cba95eccba8160c458d7406aa366f1d8423b9e476c7b8924b27c8f1ec2a787"
-    },
-    {
-      "path": "asl/tile/vector-tile-expansion/row-expansion/TROWEXPANDMIN.asl",
-      "sha256": "ba6e9e5705bfd5c5773ef620811a628958221bf2447db8818ebf28d1d3bf3736"
-    },
-    {
-      "path": "asl/tile/vector-tile-expansion/row-expansion/TROWEXPANDMUL.asl",
-      "sha256": "48805b9d61dc561ccfa6d6b56c4b5a69ca7ac1b73283583fe9867fe2ec48f0dd"
-    },
-    {
-      "path": "asl/tile/vector-tile-expansion/row-expansion/TROWEXPANDSUB.asl",
-      "sha256": "8400ed52178170b9594ecb16c64de2268a3936a35e1c6ed5040dc6939898ca32"
+      "path": "asl/tile/tile-scalar-and-immediate/logical/TXORS.asl",
+      "sha256": "998c9b110f4838a454c48fa54b80d6555f4d59c981c6e02cbc41a071ee331ccb"
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "79ddfab5fc798d42e8280a5591dac33ef1ccdd42dce3ed9fa96d596f63963cc6"
+      "sha256": "aaa16ddd046b7c6ee06aedd6444c90da2541c6f3204ef8d12dba34815e96f15b"
     },
     {
       "path": "spec/catalog/linx-vector-reservations.json",
@@ -3178,15 +3182,15 @@
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "e1c60c6acab2beffca2cc8ff9c24392ace035f01df19dca482a93876866908c8"
+      "sha256": "aa1fa0a5ba07c7f015875025cc93c42f49b8d4313c55ce2cd72eaaa51bdc7d56"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "b0f86734f42918819e54f7222808a23d3e2842ccaecf3be0b3e8d29683967de4"
+      "sha256": "cd9ef6a731777a8a442c1e5e09d48ab79bc0ac045f3035c3af8779cf7b46bca6"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "3b8e30bf0619daa6359a48d4616266ca7324b87816904a8de62a89bb30042d5e"
+      "sha256": "1a9c65277aa1df36bed0adf6763be7dd3082d6eb54d8d790cd2a8552d43ef485"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3220,7 +3224,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "08fbf4bcca8e273ed7a89743f0f24d8e43d37266ef8bb8bd11d4bcfe80e4c19c",
+  "content_sha256": "645efccf6ac537e3a6ac821e3c0e42aa283eab4c3b07e11fd813cf5e61e4926f",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3377,7 +3381,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/overview/instruction-classification.md",
-      "sha256": "1c27e2ebfd4bd9bdc4b1241dd5fc7e4cbb3e8584f63f3a6a1285aeb365d82e5a"
+      "sha256": "79e8943b1bc16fc7d975c74abfa5b83d0daabf1aa9db66db16a7d289eb2c2028"
     },
     {
       "kind": "generated-documentation",
@@ -3616,6 +3620,11 @@
     },
     {
       "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.SFU.md",
+      "sha256": "79f3fc4287cc74504db28ecf11e503ee736e1cf6bae71f8090c4d0d78b5fc865"
+    },
+    {
+      "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.STD.md",
       "sha256": "8968afa43b8c121e706e8d6a3916588f6b3b202ebc04185c935d6e3f2c7d54aa"
     },
@@ -3627,7 +3636,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TEPL.md",
-      "sha256": "89d8ab1d579d20b3dcbd340f00e7e593266a56f065ca2cac23f1b5a3b2189bec"
+      "sha256": "8f14452200d26daee02611e18f2e806fa07c32a21f6a7a58f75fecaafb5eff61"
     },
     {
       "kind": "generated-documentation",
@@ -3708,6 +3717,11 @@
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TSTORE.md",
       "sha256": "e596f472aaf53cfe72f7c9ebf5e88f9ed8cc3bba135af8ea1a21a6e8ee3d8075"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.VEC.md",
+      "sha256": "c6a8a597613cfabf3c2dd804913f61a093a69a987bb6538d678e159146a9f299"
     },
     {
       "kind": "generated-documentation",
@@ -6426,218 +6440,333 @@
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/format-conversion/TCVT.md",
-      "sha256": "efc69ee3586110c0af10388a5e86363e139b61d71b074e5a60b485055c24c8c6"
+      "path": "docs/tile/elementwise-tile-tile/arithmetic/TADD.md",
+      "sha256": "9a0ebbcd9d98c08365a62680083924cab928370d6bcb9907971e9cc680b8f0c0"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/format-conversion/TDEQUANT.md",
-      "sha256": "7448f02178a049ce61fe308eee707c342cc6426111b8fe279c2118d2e676f38f"
+      "path": "docs/tile/elementwise-tile-tile/arithmetic/TFMA.md",
+      "sha256": "3837adc34cf52172809eb30fa2aab9574d351b092ad288d8f6c29324410ab900"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/format-conversion/TQUANT.md",
-      "sha256": "e76aa2a459126444f1fd7faca3ea09a69fca1889cf02201001f1554d483cc380"
+      "path": "docs/tile/elementwise-tile-tile/arithmetic/TMAX.md",
+      "sha256": "53677cfcf57afd831f1e471e9e386783ef679a48a68c3a104c3ba2b7e83eadd7"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/initialization/TCI.md",
-      "sha256": "2a0bf57636db0dd2e2d91ae86f3ddffae0eef82dca3e598dbbe0d850844e48ad"
+      "path": "docs/tile/elementwise-tile-tile/arithmetic/TMIN.md",
+      "sha256": "1fb105756d4129c0803e2a8a824b9ef10718c5fabef246f801657cf31fc0d035"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/initialization/TEXPANDS.md",
-      "sha256": "ad8e0f892f10ac44557fedcb1a0625caea6d1ef76899ffa6e5d41548952bedf4"
+      "path": "docs/tile/elementwise-tile-tile/arithmetic/TMUL.md",
+      "sha256": "d0f54410fb5a8b200b9d940c849ba5e8ca1a1b5b19bee68cf62f205c40d75f33"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/initialization/TFILLPAD.md",
-      "sha256": "f397250281d0b9ccc0de3d7b4104bf0cfe44d2229f41b4e6b5e579b88b373120"
+      "path": "docs/tile/elementwise-tile-tile/arithmetic/TSUB.md",
+      "sha256": "2bfdc533c3eeafabc213fa36700e3020bd949b069dfc7764af36c34113a52e63"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/initialization/THISTOGRAM.md",
-      "sha256": "cfdbaf7d5522b44eb4a69c1e0bbbe33b880397b413f56143ac1dc21a6156373c"
+      "path": "docs/tile/elementwise-tile-tile/format-conversion/TCVT.md",
+      "sha256": "b1714e903904b3e592ebc6a9a7ef9ca5172917ee13fe3d75c9100ab7688becca"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/initialization/TTRI.md",
-      "sha256": "aaee414711463aa87acd235ffbca8b0e830571c5470b747931ea9066985f4e34"
+      "path": "docs/tile/elementwise-tile-tile/logical/TABS.md",
+      "sha256": "f397d037e1232d5875f892c59fa9e0ceba5dbeb40e08de4b6d70e470b3c6f1bc"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/layout/TCONCAT.md",
-      "sha256": "388b6648aa3f9c5193d415f4746600f8ee5e4e2f9cd2653f444b3c39bb0a5be9"
+      "path": "docs/tile/elementwise-tile-tile/logical/TAND.md",
+      "sha256": "818c1252e201ef259ccf7dcb42ce2d5be80cf33ed8fc9310b0e696f143eb985d"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/layout/TEXTRACT.md",
-      "sha256": "3e18097749f533ccbc5d0009d1c578091d2d59019aea634e078d8018d70a4385"
+      "path": "docs/tile/elementwise-tile-tile/logical/TCMP.md",
+      "sha256": "03b017c833161b673d68cc49e73a578fe7bded5d7d93a3f0cfdd5101abe1147e"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/layout/TGATHER.md",
-      "sha256": "76535ad319978aff9a369cd8934690222a86f1916d2e3497b2a09aab3d2e6d0c"
+      "path": "docs/tile/elementwise-tile-tile/logical/TNEG.md",
+      "sha256": "2a62e16ec89805a13286f0166e3a712030ce915af14b988d684d11d7215bd112"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/layout/TIMG2COL.md",
-      "sha256": "3c1f7df2a5c4258cf771eeba5bb1975d29dd93472fe75900a657faba576ed93f"
+      "path": "docs/tile/elementwise-tile-tile/logical/TNOT.md",
+      "sha256": "fc067b0197987c9ecdc998f734accb2f63911f804bce5591b9f0791075e04bc6"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/layout/TINSERT.md",
-      "sha256": "3f1f3708f667d0fc49da287f542e38789c722d291b83ea02965b33747610096a"
+      "path": "docs/tile/elementwise-tile-tile/logical/TOR.md",
+      "sha256": "6c11487649a8b88898cc8484da7324bb4e8a3ed14d836b3e41cd1779aa1b154b"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/layout/TMOV.md",
-      "sha256": "153fffe7de31d187845cdf7dc42a2465a1e231e2198668c24c2545e7f2f59d8f"
+      "path": "docs/tile/elementwise-tile-tile/logical/TRELU.md",
+      "sha256": "b9b2787c2a31c357a250b3bb001eb7dbdfc637c211e8cea1c2ce04e481fa6b2e"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/layout/TSCATTER.md",
-      "sha256": "8561d7929d315c1c1b4d4c69792ba73dfeb7afaa29c8698c6cbd2324c95630b3"
+      "path": "docs/tile/elementwise-tile-tile/logical/TSEL.md",
+      "sha256": "1adada34332ac27152efa3ab36693c01ea473448f342e88ac938a85ad38e765c"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/layout/TTRANS.md",
-      "sha256": "35f14424b89fbd038945e8663b67dc066c9e47013e8f6f0c458d86cc0b5e7066"
+      "path": "docs/tile/elementwise-tile-tile/logical/TSHL.md",
+      "sha256": "e6dab98ded93181b5a379f535b7d57a3c642f402394552acc8405030af649b9f"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/sorting/TMRGSORT.md",
-      "sha256": "f773620d19519da58f7b141532081417dc4aa586b571612c2a34861c3c4aeedd"
+      "path": "docs/tile/elementwise-tile-tile/logical/TSHR.md",
+      "sha256": "03459e2f985977fb828e73ad35348f19988fcd17d2a20ee9db038b3b0a0f8f19"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/sorting/TSORT.md",
-      "sha256": "4c2c9f33a9bdcb7dc2c57a49e2738103261864644f7ae8fd32e8cdb24d01c3cc"
+      "path": "docs/tile/elementwise-tile-tile/logical/TXOR.md",
+      "sha256": "7884ebb7a299b78b904743282cd1730968133f95741df369dfa1da4390072d68"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/union/TPARTADD.md",
-      "sha256": "576ac8489ce7978f9e2fcb0008fdb984bdd86b24cab10f2cf901bbb459d0de78"
+      "path": "docs/tile/elementwise-tile-tile/transcendental/TDIV.md",
+      "sha256": "3f7c50ee40ef930b73a34961c417156893d6ab0f80946fdaf83910af2913162f"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/union/TPARTMAX.md",
-      "sha256": "cab1aa5bf93a2b579ac5bcd897d21bf4b802df2fc708e53fdd77e244cb159abd"
+      "path": "docs/tile/elementwise-tile-tile/transcendental/TEXP.md",
+      "sha256": "8d643376530688bd370dcb5f613d0d585f3dfb918cc8c872b87203e89ced290c"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/union/TPARTMIN.md",
-      "sha256": "3aa40834f73e906ba5398d8ad43572a51605bd8939cb393db1e8ded25e0ebf5e"
+      "path": "docs/tile/elementwise-tile-tile/transcendental/TLOG.md",
+      "sha256": "02ef590747dc5c234da6ce4897b3020a045f04e0061cd62d777c6d61bddf1db2"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/complex-layout/union/TPARTMUL.md",
-      "sha256": "6e28140e2109cf06133d0a18200ecb9f85b1ef48a98164b7b9a00b10a57a1b9c"
+      "path": "docs/tile/elementwise-tile-tile/transcendental/TRECIP.md",
+      "sha256": "18d45c2b368bf0c9431cfd80c7f1b6fc0a55f1c518cceed496eb6ad5c2a18df8"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/matrix/matrix-matrix/TMATMUL.md",
-      "sha256": "25247c1f59815f5132e4d3d4db515dfa9405791f0c2c2e2813f413e409c5ce10"
+      "path": "docs/tile/elementwise-tile-tile/transcendental/TREM.md",
+      "sha256": "67e9510449a54bd9c0cafb2656e7c513c2321ac58146e3f072e9c27e3bb59647"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/matrix/matrix-matrix/TMATMUL_ACC.md",
-      "sha256": "efabdec5f612652d3505cf93d42f06114a31747f18842bfc38b715fd4dc04416"
+      "path": "docs/tile/elementwise-tile-tile/transcendental/TRSQRT.md",
+      "sha256": "a4f3f922a0e090ceb939f1ce598b617cfce7338cbedd9f38ec7137cce4c2e6a8"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/matrix/matrix-matrix/TMATMUL_BIAS.md",
-      "sha256": "174cbd5bdd55a1c1af7bbb3687f0cb7de1281c344c68b18c092fc2f0435aec3b"
+      "path": "docs/tile/elementwise-tile-tile/transcendental/TSQRT.md",
+      "sha256": "7eb9a832b18fc57f86da902fdc477680c7d5d237b1aa4069ac2400c7abce46c9"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/matrix/matrix-matrix/TMATMUL_MX.md",
-      "sha256": "849abbd02aeb8f8c05c66599744defa73a3ec38d6b7a2bd294a22d037b824aa8"
+      "path": "docs/tile/irregular-and-complex/format-conversion/TDEQUANT.md",
+      "sha256": "1d71a7723cd89f6c7321e7d931d770fb62e2d699a7a0c31a267a96bdd26622a5"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/matrix/matrix-matrix/TMATMUL_MX_ACC.md",
-      "sha256": "26161993ba2f9be283f1d310845876fa6666daab6d0a75a24772f961425b7ce8"
+      "path": "docs/tile/irregular-and-complex/format-conversion/TQUANT.md",
+      "sha256": "5a4e91f98bd9b3e6a4efc8b821f1d9cc2b314a11a646a64b0a03949af64363bf"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/matrix/matrix-matrix/TMATMUL_MX_BIAS.md",
-      "sha256": "22ce16113ccd4d16e148f5743a4e4b5812c1f01e34a069e03b4f144a17d0dbfc"
+      "path": "docs/tile/irregular-and-complex/initialization/TCI.md",
+      "sha256": "568509e659a8921225e68301547e4959ab1e9356ac481d9aee738dec0a4e79fa"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/matrix/matrix-vector/TGEMV.md",
-      "sha256": "2027bc556d768d40e0df0295e6687878ac1a44c06b057ae623b8c2f34fed175d"
+      "path": "docs/tile/irregular-and-complex/initialization/THISTOGRAM.md",
+      "sha256": "85cb5fd9304606ef231cad19869b69353364ea2e7e2ca8a731e7f3336d2edc4a"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/matrix/matrix-vector/TGEMV_ACC.md",
-      "sha256": "2cca7dc85be7f0ee8ae33772b87f66edca80700518a3df91d3cd2fa8d3564f20"
+      "path": "docs/tile/irregular-and-complex/initialization/TTRI.md",
+      "sha256": "9ec19d351b8ef8ed2fcd6b03547f30ebd6b909053be3676fe96b072a55ff336b"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/matrix/matrix-vector/TGEMV_BIAS.md",
-      "sha256": "1e0c1524fce02b8eefe8a2a75bd8981402a96610a8285c5a06d4f179b7ad9b4f"
+      "path": "docs/tile/irregular-and-complex/layout/TGATHER.md",
+      "sha256": "0103afc9189fd72b4328b614939ac08e438255287dcca4a3ca6f2ebafbf56f76"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/matrix/matrix-vector/TGEMV_MX.md",
-      "sha256": "71ad4bdf5c4adbc390624868a69f7e1a39b7f585e44ca8e3d052ed0ebba9ff61"
+      "path": "docs/tile/irregular-and-complex/layout/TSCATTER.md",
+      "sha256": "873bfde6a06e4cef7b8ca5d9c5997b4cacfc9535fdab9673f1c1ede12353f656"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/matrix/matrix-vector/TGEMV_MX_ACC.md",
-      "sha256": "7ff669c037b1cfe7fb9dc1b4ed760bdbf9730358a9ee60a4612fca7d8a71e3c8"
+      "path": "docs/tile/irregular-and-complex/sorting/TMRGSORT.md",
+      "sha256": "fc7a37b51abdfa4c8de1b68b9d759c611838ae51ffa19986d758e72107512683"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/matrix/matrix-vector/TGEMV_MX_BIAS.md",
-      "sha256": "89ac33e050c37d64dcb540b3f301504624b4802c74e367a03a72f39cca7e2cb9"
+      "path": "docs/tile/irregular-and-complex/sorting/TSORT.md",
+      "sha256": "cd511a3bb25cd2a96bf7d27e3ab9fb5df2e08235d2867eee54f61da32819c88a"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/memory/irregular/MGATHER.md",
-      "sha256": "3f37bb0245e3e2e6c1650df050d4997e837f271af1dd3121659466b0d813321f"
+      "path": "docs/tile/irregular-and-complex/union/TPARTADD.md",
+      "sha256": "33ecfb9fbd113e998ea02647be0ff9216d36b47eb7870b53dab002eb8f95f39a"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/memory/irregular/MGATHER_CAS.md",
-      "sha256": "06ced43b41e2e908afb590382684d257111cf2deb0bc962447486e31d5271134"
+      "path": "docs/tile/irregular-and-complex/union/TPARTMAX.md",
+      "sha256": "d4c7f8cf3848c4f2c3019cb76a4d78093183ebe90d636682f70f901908a74bf3"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/memory/irregular/MGATHER_MASK.md",
-      "sha256": "671e85a92471843453929b6a10990d06aec627da83f8687fec5fb0b526b313e0"
+      "path": "docs/tile/irregular-and-complex/union/TPARTMIN.md",
+      "sha256": "d6dd2b786175013c59772f0fb60a62ccac492012a0cdfc300c746060a44693db"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/memory/irregular/MSCATTER.md",
-      "sha256": "32a7f59b5086222c48913fbde628282f5be54ba6d1cb0750e82ae103be7a45ff"
+      "path": "docs/tile/irregular-and-complex/union/TPARTMUL.md",
+      "sha256": "7a52c7b40503b08246c9a68d43233e6654b3279525c087050974d1c2daf6c21b"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/memory/irregular/MSCATTER_MASK.md",
-      "sha256": "de8ef7636482483fc23315e157511921d288c30a40299b8e8f622a825ae012aa"
+      "path": "docs/tile/layout-and-rearrangement/initialization/TFILLPAD.md",
+      "sha256": "81809ff1d16f24638dad7cf1307aa90d1b1633c146f143ce1f4ce22cd20a5c4f"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/memory/pe-movement/GMOV.md",
-      "sha256": "ae342d778ff488c799fb16b3b1a4e761e4282c0de2b191ea3e0169c99c219e8a"
+      "path": "docs/tile/layout-and-rearrangement/layout/TCONCAT.md",
+      "sha256": "21d96c957232e5fc5ce7bc8829bc62ab591745829344c6d7036148a6208733b7"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/memory/regular/TLOAD.md",
-      "sha256": "f8bf862fd24b33158bede5f0192c01d29d819a95c1db2331f2f29d94ee4f9c68"
+      "path": "docs/tile/layout-and-rearrangement/layout/TEXTRACT.md",
+      "sha256": "8051950633b91743e25b0fbad37dbe637a009cf82497d4fa6c7e59da073226d6"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/memory/regular/TPREFETCH.md",
-      "sha256": "3e97e245f2348c8380349f91793d01252dc72a3b7df45f0f59ad055a6a9ee9d9"
+      "path": "docs/tile/layout-and-rearrangement/layout/TIMG2COL.md",
+      "sha256": "e5dddf43859e328a5d038d5798b48a7e86862b36640685843b403f9bcf480879"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/memory/regular/TSTORE.md",
-      "sha256": "fb6cd14ce8db39795c390d85f5415541416b08a80e0370773983d433da367e64"
+      "path": "docs/tile/layout-and-rearrangement/layout/TINSERT.md",
+      "sha256": "91144bf4c2f3caee78881895dfabc990bf207851e88e9df3c85491fc3a28b43f"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/layout-and-rearrangement/layout/TMOV.md",
+      "sha256": "80fab1851035786efff7d531b4240e75b34efc1408c89776c37f3360097a1d0d"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/layout-and-rearrangement/layout/TTRANS.md",
+      "sha256": "e137c68ef49d71e9e6579dccfe28ade3e54304e35c728b266f754d6a2829c0ce"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.md",
+      "sha256": "c36306444c47d3c49988593e802f86a0516d1951a27b09d06c131a3fc6383d36"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.md",
+      "sha256": "e789e431a3baf77c0700113246a569300f20621392355764dbafa7af8173d516"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.md",
+      "sha256": "55df50d1e68bcede5f55088b53850f1b5d9e28a03974b4062439f5974aa6edca"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX.md",
+      "sha256": "b0faa6c2e5e122b062fa7440a6edc2efd758606d3c2b149038f6210f5cdc8207"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_ACC.md",
+      "sha256": "22dec25640efd5d71e8eddbb4c7c5ea7559131d43df66a5b7ef5abc9fc529728"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.md",
+      "sha256": "ad9072e35a715f34fc98ee340d023ced1338ed914e9912f85a0265194b065a2a"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/matrix-and-matrix-vector/matrix-vector/TGEMV.md",
+      "sha256": "8a7796eb7e644971715a2aa935cb0885f2acac77084ffed871dd2ddd2c27ac4e"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_ACC.md",
+      "sha256": "b79f3f9d2dd08f093387ce1076fab374cf3d14fa9a00cb69ad17f1f9e521b179"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.md",
+      "sha256": "aacfb81e6199c6a00556d5265dcb0afb69bfb52086a9d9bc2eeabe28dbe116ad"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX.md",
+      "sha256": "87a1fd6ae9d4136be15db523b32368d2513158707eaf9b9ebd17384a9e6692ff"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_ACC.md",
+      "sha256": "748e3991193f4782efc9aaad40d161e068c46a8737008f53bd3139b57032ce51"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.md",
+      "sha256": "b0abe556b4ec098e77a1399f537cb8d627d8d4574adc37e0022b5233f1ab7f79"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MGATHER.md",
+      "sha256": "ca90e6ece680231229f3481a96d324339e05b69ef0270b6bb11a2eefbd60374d"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_CAS.md",
+      "sha256": "58dbdd931433d6c7714854b425809e7403b59738a8e560aac0d10a227f1a6896"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_MASK.md",
+      "sha256": "45ffb29a26e4b0a1e9b25c287c6cab2adc73386363b67ec61924d7f832beec12"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER.md",
+      "sha256": "fb4de794b853dca4a9ef35512d8973ecc86e38d3edc4ed5cd416ab70b08d59cf"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_MASK.md",
+      "sha256": "dfd2af007be7f263e80d1cacbda22a05a9cf933c32b6039403b85af224a49551"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/pe-movement/GMOV.md",
+      "sha256": "1bc0feb865f0a3a49c1bce82c9a93001645d1a86e53432620daacecf89d71868"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/regular/TLOAD.md",
+      "sha256": "5bac06e73f91f5ee20a6d9594484f3d124f12865860dbe9a6f81cd89b70d9e57"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/regular/TPREFETCH.md",
+      "sha256": "87bfebb27e31e911d83344c6c111fad890c60e1fa97e77a69502f6b5392ffbde"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/regular/TSTORE.md",
+      "sha256": "fbd1c2434daddfec0164edc4bf40ca4bb2796c5a92acb08c77b5f8f9d0197de6"
     },
     {
       "kind": "generated-documentation",
@@ -6656,48 +6785,43 @@
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/model/dispatch/complex-layout.md",
-      "sha256": "7118d62dcb17f21a88604d52f558c482179b4ff44bb8a7990276c7893a386a28"
+      "path": "docs/tile/model/dispatch/elementwise-tile-tile.md",
+      "sha256": "6c9b1d50edc3435affb1f2bddde5561bb4992148d9d64d181d8593d9a8c2ae85"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/model/dispatch/matrix.md",
-      "sha256": "a76dcd8189fbf01c480105ce226abfbaa1c73086e4263f5e90751ae18365217f"
+      "path": "docs/tile/model/dispatch/irregular-and-complex.md",
+      "sha256": "6f3649f1f243251a683a925d020ccacadf54c71f4832843c495b9e2d5d7671d9"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/model/dispatch/memory.md",
-      "sha256": "25398df440a043323c0b802588a931946c53a8690db4e4921953135fc7c10a37"
+      "path": "docs/tile/model/dispatch/layout-and-rearrangement.md",
+      "sha256": "ae6cb251f7fb4de016a4cadea4ddeb011409c3a7e16290df080ee7bd290a7a6f"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/model/dispatch/reduction.md",
-      "sha256": "02758032dfd060743cd30fdecdbfc60c771029d2aaff1e5a9f8b0792f6b548e8"
+      "path": "docs/tile/model/dispatch/matrix-and-matrix-vector.md",
+      "sha256": "841d6fd4fe820c4c9014914fa505be44bf87abeee311fdc8f851010fb43fc1ce"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/model/dispatch/tile-scalar-elementwise.md",
-      "sha256": "ae45721d7a7340127f4a02cb1e18406c591fea6645e7d04268447ba52f0b545b"
+      "path": "docs/tile/model/dispatch/memory-and-data-movement.md",
+      "sha256": "1a2d7ed3aec42484322037e60ccfdd09c242e90eadf28f30282b5b8f2e3a175d"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/model/dispatch/tile-tile-elementwise.md",
-      "sha256": "407aefb4eaab4b5b3594ba18dc8407fd7441231d592add9dfc4265de0e6b7da8"
+      "path": "docs/tile/model/dispatch/reduce-and-expand.md",
+      "sha256": "849cf43ad9d1ff7f966d6825a196cc1741cfb736ff0e16fd53e8aa51da618784"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/model/dispatch/tile-scalar-and-immediate.md",
+      "sha256": "a06b48059f3eee2595506dbeb7d9ecd1fa342833ee096d1f65f25cbf67584f54"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/dispatch/top-level.md",
-      "sha256": "8d768c7df29a4c05c0d71492c35f5e2954c793465523b4ca9231a680cfdeac14"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/model/dispatch/unary-tile-elementwise.md",
-      "sha256": "98ce7dfaf5a33dd639e5bc46eab47a8bd8f614a046441861a9beb4cd221ff595"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/model/dispatch/vector-tile-expansion.md",
-      "sha256": "e7618b4cc53318e2805bb13f42e9cfa56a77110f263cf37ef5731557d6dd62c6"
+      "sha256": "3eb8ef06503d9a3543ff909a59423d1c808490e147cc5b58c3b7ad70f0ce5d78"
     },
     {
       "kind": "generated-documentation",
@@ -6861,333 +6985,218 @@
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/reduction/column-reduction/TCOLARGMAX.md",
-      "sha256": "a272efdc3c78d3dc0180cede7c91b1c2f682c38018b48fcd5fcd758739a868a5"
+      "path": "docs/tile/reduce-and-expand/column-expansion/TCOLEXPAND.md",
+      "sha256": "7c4f02562b57c5c5ddf2c4d35ca7ca3d36a1ee7f617421c9d888a2f9e84ba03b"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/reduction/column-reduction/TCOLARGMIN.md",
-      "sha256": "e9736bdcd18edf8b89d132cce554fef4abb2ce45c17a0d0ee53299ae132c731c"
+      "path": "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDADD.md",
+      "sha256": "f1e33e0a3a606850b008a52c79d6de29f707fea5b89e1f397a68e76501f9aed5"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/reduction/column-reduction/TCOLMAX.md",
-      "sha256": "7ae1c20c9b1bb95cb40c7d2d4944155b8586bbcf410baeeb3e76c4c1f27875bc"
+      "path": "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDDIV.md",
+      "sha256": "5e743cbc40735e9eb1ee21384ab260e6df667435d0277d5a7aaec132411dd2f1"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/reduction/column-reduction/TCOLMIN.md",
-      "sha256": "61f742d77a1a1adb4d42d4da04e0b55caa270473e7f00eea0b07f7f38fe69892"
+      "path": "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDEXPDIF.md",
+      "sha256": "a9f759e2c3dbec565a2d0d2e5c1211306a9f6e0a3d4a33a182a9d29bfdd4f58f"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/reduction/column-reduction/TCOLPROD.md",
-      "sha256": "e518d3ef86043ae910f87dcdc12383dda473cb3e6c122887cead54cde0645e83"
+      "path": "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDMAX.md",
+      "sha256": "50e8fed4ec980c959dd14cfe7ad5008f97abea69487202cf156990861398a377"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/reduction/column-reduction/TCOLSUM.md",
-      "sha256": "71b861d92e997e44205a1876db4f0547f06843bb0b842c21b5296a816c303390"
+      "path": "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDMIN.md",
+      "sha256": "f8d18facd70f45d65aae50426ae3a944d3d16e6791f40d7b9e842ef8fdf3b2ef"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/reduction/row-reduction/TROWARGMAX.md",
-      "sha256": "68942a62e27b95ea8cc24cc1f323f4e7de45420bfa2f31abea003c032d216b33"
+      "path": "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDMUL.md",
+      "sha256": "8d95db86a0ef1a6a423a4fc658f25db898d98afd0c02101b803ee0cbc784a46b"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/reduction/row-reduction/TROWARGMIN.md",
-      "sha256": "748cda46da075825a3e07147d06ba9ca0dd966e65e8d53859688cd3f2a39e940"
+      "path": "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDSUB.md",
+      "sha256": "95379345e33b9096ad693d925e08f9baff41cbe714194c898e1f56951e9ac620"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/reduction/row-reduction/TROWMAX.md",
-      "sha256": "1857351e4941a010453e4ada7b4316c39cae2eabe68f82a5d0340bbd795e67a9"
+      "path": "docs/tile/reduce-and-expand/column-reduction/TCOLARGMAX.md",
+      "sha256": "6d3938c37f83fa868130c811f878c301f64c13019a242d3f1b2e808111475aa6"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/reduction/row-reduction/TROWMIN.md",
-      "sha256": "4599ad26f3399b310bde13fc377f7db8fde9f66c9f81a410fe720a565d75756f"
+      "path": "docs/tile/reduce-and-expand/column-reduction/TCOLARGMIN.md",
+      "sha256": "78cda3ce2e869a101ae66cb7d145d42afb8b42c0410e5465d2d8d0b92686e9e3"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/reduction/row-reduction/TROWPROD.md",
-      "sha256": "3fdc28106e9adfe6b26e43fb5d3b975e6dbd2d2c6157f5d759cae4a19b1d98a5"
+      "path": "docs/tile/reduce-and-expand/column-reduction/TCOLMAX.md",
+      "sha256": "2582241a0f731504df4fca271b602e544703a08f95138fe0999202dc7a64bc11"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/reduction/row-reduction/TROWSUM.md",
-      "sha256": "8545acdab3c52e56fa6cc8c6f52988db604dc9041e58aea3dd47eafadf0f7083"
+      "path": "docs/tile/reduce-and-expand/column-reduction/TCOLMIN.md",
+      "sha256": "9aaed148566ba82ecb0dd5c20ded8758d633f643d25d62b652a1f6db4b466b8b"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-scalar-elementwise/arithmetic/TADDS.md",
-      "sha256": "e4d8ca69cf99ef632aca7d3da5bdc2be93af041e6c0ce290bf12362cdc2e9a0b"
+      "path": "docs/tile/reduce-and-expand/column-reduction/TCOLPROD.md",
+      "sha256": "0417eed0b167ba4f1c24bbbe83f032950cd31a5eca4e841016e9d7cfa17d731a"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-scalar-elementwise/arithmetic/TDIVS.md",
-      "sha256": "08448822dbba71d48ed149c75678f8d9314f58738302fc0f47d4b57339529135"
+      "path": "docs/tile/reduce-and-expand/column-reduction/TCOLSUM.md",
+      "sha256": "0d09cc6ca114ee48d12b4fe7d5c6b50aee51f25a42f1511d26055fcf3371eba0"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-scalar-elementwise/arithmetic/TMAXS.md",
-      "sha256": "dcc2e1eea39ce7f7634193f03524b2d5d5c942464928ece29e995c71889a90a5"
+      "path": "docs/tile/reduce-and-expand/row-expansion/TROWEXPAND.md",
+      "sha256": "3ab43e8feaf91ad78cff3240263146378eb5a1a331ac3796ad01aa76b2f6946b"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-scalar-elementwise/arithmetic/TMINS.md",
-      "sha256": "7e6c5b9ed94743c40185f3843cbb799ea387aa8fd0ea013c18e859a2ad8370f9"
+      "path": "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDADD.md",
+      "sha256": "1c3d20ccf50a821301f1fd4471f655103e846280e58efb688bcfaaf6075672ae"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-scalar-elementwise/arithmetic/TMULS.md",
-      "sha256": "02e37af632fe7005042547eae1756a7444e823a20697a665db9dad4e10ab115e"
+      "path": "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.md",
+      "sha256": "0796b4a7e8703c29a08b84c2fa778d7e9948b4a61e2f29de683fcbf95c3f038c"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-scalar-elementwise/arithmetic/TREMS.md",
-      "sha256": "03fe1cb7843759235aa6c7899a54206178ddb28d54419ac02f7a508ece2f0784"
+      "path": "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.md",
+      "sha256": "f93b8467c297b7de42f9e34264f627e5f2f0c418108df8497514968b467d3135"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-scalar-elementwise/arithmetic/TSUBS.md",
-      "sha256": "e11f6f479b5a980140cd4f40d00192a125ddb37a6920054309c806455664bbda"
+      "path": "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX.md",
+      "sha256": "c7f929430f09a587aec17ca041b386105fba349fa48bc5a33974007a2603ff69"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-scalar-elementwise/logical/TANDS.md",
-      "sha256": "4c607fa4ecbb462408f01e6bf25a14de9f596757e7065dbef5bb8e18092a547f"
+      "path": "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.md",
+      "sha256": "ac132a88d52b5be48ee5ba12843137abbf4e2f880361788418e83dc4d3699541"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-scalar-elementwise/logical/TCMPS.md",
-      "sha256": "81c044395ab976829bb98d03bac32dbff4fc25aad6fe3d06ce16ad41bc9edf0e"
+      "path": "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.md",
+      "sha256": "7bd51f96b3359dfb8dd69eac08b521992ca17463d31fb196a4d4b8862f584154"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-scalar-elementwise/logical/TORS.md",
-      "sha256": "a8d96371775b1d5177a65c8ede06d015c51e60d164240d66415f6d8651098e75"
+      "path": "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB.md",
+      "sha256": "c5e5599b48b52db519d23bef43009c60a3e9876c6d79b2122e69866029880d39"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-scalar-elementwise/logical/TSELS.md",
-      "sha256": "d7bb5897de7799b7405085c947d59d5cbe813407476e485c2ffd2b3b22a299ec"
+      "path": "docs/tile/reduce-and-expand/row-reduction/TROWARGMAX.md",
+      "sha256": "98a3f80e5aa5e3a319e1c259b0f4d1fcb6a23096bb482ea80f71af2e3ab246ab"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-scalar-elementwise/logical/TSHLS.md",
-      "sha256": "22db2d32e82e281803b36f4206ffe0ab0a06b80576aacfe20e7dac2e4389f65e"
+      "path": "docs/tile/reduce-and-expand/row-reduction/TROWARGMIN.md",
+      "sha256": "f2e7ec7167fd52e816a6ed5df2dea9bd84272df9cfba7d9fd73be0b595b0b414"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-scalar-elementwise/logical/TSHRS.md",
-      "sha256": "134f5ecf46c1368d4a249032be5832899036e1a1ed27b7c6bc0228ea2d64360b"
+      "path": "docs/tile/reduce-and-expand/row-reduction/TROWMAX.md",
+      "sha256": "dbcc9e6c51d44828bb83cec2b5b91c9acc058f54b121b745df59f6686eed399c"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-scalar-elementwise/logical/TXORS.md",
-      "sha256": "d854ddcbe732d32f6cfe338812f56af728289b6d73049fba6faf0cc3448f5596"
+      "path": "docs/tile/reduce-and-expand/row-reduction/TROWMIN.md",
+      "sha256": "c53b1c31bc962afb7a2cde9a3d375fcfab49eff20a1b62ae0b0e6b3aedbe5fc4"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-tile-elementwise/arithmetic/TADD.md",
-      "sha256": "17bb3afa8e0f8c1330452036d8f24a0cb562982b706ce910c16b5a23fe73dfe5"
+      "path": "docs/tile/reduce-and-expand/row-reduction/TROWPROD.md",
+      "sha256": "f6b1b49f9d3270d82553f682dd93a7b01896c0cbb4318c17ed84f4d82f14bb76"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-tile-elementwise/arithmetic/TFMA.md",
-      "sha256": "2b40f6f62e74cf8fda951cf0fb2246934b660394214438b6e15fa32594030408"
+      "path": "docs/tile/reduce-and-expand/row-reduction/TROWSUM.md",
+      "sha256": "3920316a5789e24bd9ad9a078a646e9b18698368fd7c0fea059cde72adb07a20"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-tile-elementwise/arithmetic/TMAX.md",
-      "sha256": "bc2cedfb47b306584e581402a5aaabf24a0381ab7ca0d9f1d2f16f72bf3949e2"
+      "path": "docs/tile/tile-scalar-and-immediate/arithmetic/TADDS.md",
+      "sha256": "c56d58b3d4d1127c45e0de4238161f600707e5cef14b7f8bf2a34147bb5a1cd8"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-tile-elementwise/arithmetic/TMIN.md",
-      "sha256": "6796237e2610b6a230f8121559b18a32b99854d5f45b132e9f3b8611c5aa9c4b"
+      "path": "docs/tile/tile-scalar-and-immediate/arithmetic/TDIVS.md",
+      "sha256": "bd09570076d8ec51043427a3b467ac5fad018492ac35edad3e38ae993d845b48"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-tile-elementwise/arithmetic/TMUL.md",
-      "sha256": "8aabf237b726b095b282b3d04811109813c8552a2b0037a2f6eaf8f1598a57b1"
+      "path": "docs/tile/tile-scalar-and-immediate/arithmetic/TMAXS.md",
+      "sha256": "4ed312cc6e9f57b9976007b3ecccbe7b23e0ffd34e0596f0a7aa853b9f5591f4"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-tile-elementwise/arithmetic/TSUB.md",
-      "sha256": "3122542f9590a2064e7f16cfa63ac2b91365378b0aef497bf66edf2d96988924"
+      "path": "docs/tile/tile-scalar-and-immediate/arithmetic/TMINS.md",
+      "sha256": "576bb5e2bfb92753c395dfa28463857f82bfdaba1deca237eb75fec4fd552cae"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-tile-elementwise/logical/TAND.md",
-      "sha256": "28ea8b1fd63cff47dcb4279187936468c0551223172e1e4b41a2819ba22b6702"
+      "path": "docs/tile/tile-scalar-and-immediate/arithmetic/TMULS.md",
+      "sha256": "743403d01c17eed00130a00e09034ee874a45e3747fb426791cadc0b3e8f03ae"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-tile-elementwise/logical/TCMP.md",
-      "sha256": "05a5c85f1937b8208757150fa668818e1bc72cbd816ee447d594254e219edac9"
+      "path": "docs/tile/tile-scalar-and-immediate/arithmetic/TREMS.md",
+      "sha256": "41ad7eef4b71a373fb97ecaa3968cad762a930fa07832b75f4497e9cd57839ea"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-tile-elementwise/logical/TOR.md",
-      "sha256": "ab4543b87ae06ebb1fd50cdce775eb09bd58ec6cde48619b5ca182d40609d9c6"
+      "path": "docs/tile/tile-scalar-and-immediate/arithmetic/TSUBS.md",
+      "sha256": "95e86f23f91daebe462c5350df98d5f072302c3435515d92c8b1618150485551"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-tile-elementwise/logical/TSEL.md",
-      "sha256": "94b88bf651bd4aad67edb55f3f181918fc10997537d9efff7a0f67d73f125fef"
+      "path": "docs/tile/tile-scalar-and-immediate/initialization/TEXPANDS.md",
+      "sha256": "c26506254f00067c6d716976f9f32bb5375ae6a39d5839b748fb66b5b27256c1"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-tile-elementwise/logical/TSHL.md",
-      "sha256": "f6e3aee59540fcdc5a3727a0d3f0a25dc44f3ce00815fd332688ec6629ef7b04"
+      "path": "docs/tile/tile-scalar-and-immediate/logical/TANDS.md",
+      "sha256": "d54eb1110f146ab434cb0d86200dac470d4529936851ef8be9de7d87bf0f9ca9"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-tile-elementwise/logical/TSHR.md",
-      "sha256": "5d9017ef93f04989100d0c6e04c675eb6cba548fe1e910f0f4b05343ae88b453"
+      "path": "docs/tile/tile-scalar-and-immediate/logical/TCMPS.md",
+      "sha256": "277edffd2b6bcc867533072d0111883bdc31562baf68e34caf7c8f43dfeb317e"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/tile-tile-elementwise/logical/TXOR.md",
-      "sha256": "61d69f296dbc505151975d34a6919a801971f3685ab443aa5616fba31100c351"
+      "path": "docs/tile/tile-scalar-and-immediate/logical/TORS.md",
+      "sha256": "350e9ff13bf5dbe44c64115b25f77dde85e7b4d7bed5e29e5c9cb1c35a2b6f1d"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/unary-tile-elementwise/logical/TABS.md",
-      "sha256": "664c0fb45c7b7de171151aa291bbcd24674a23da7d3b5facaf0b4f5eaff68987"
+      "path": "docs/tile/tile-scalar-and-immediate/logical/TSELS.md",
+      "sha256": "30f99ebcd500df8804493789e75088850e13351cec4d2e6913250a4ced4a2f7a"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/unary-tile-elementwise/logical/TNEG.md",
-      "sha256": "fb33c715d6e70ecb1dd04e9ad9afd7d85d2d775be4f5886cc9af65e20569181e"
+      "path": "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md",
+      "sha256": "e8e03a46415a05e285dbee79cc011e12ffe20e276acac8eec76ecb898f867a1b"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/unary-tile-elementwise/logical/TNOT.md",
-      "sha256": "7fa01988de593ad029116315ca3753b0f50496dcf74ff6866ac081affae09613"
+      "path": "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md",
+      "sha256": "6c32f231b89e63d91864b655b1c042bb17bd732018d9efc150f4d188adb2ee4c"
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/tile/unary-tile-elementwise/logical/TRELU.md",
-      "sha256": "273f4a931f9305d0f2721ec7a5a924cf4f533e6efee2f45dfebcea2340458e03"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/unary-tile-elementwise/transcendental/TDIV.md",
-      "sha256": "de3d2b5fb0bcc93bee1f3db91f690cf66fb093c8b762e5830f420fb3a6cef3f3"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/unary-tile-elementwise/transcendental/TEXP.md",
-      "sha256": "c3baff8d4087f726d59917f35c00987540e49b3018316a4cb68c7cc3e37444a4"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/unary-tile-elementwise/transcendental/TLOG.md",
-      "sha256": "7a41e71dd769d5bdf2f5c9299f4c3cb7ae525332cfd9ad96e7c82856d72a6dd5"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/unary-tile-elementwise/transcendental/TRECIP.md",
-      "sha256": "fcd58e97f1b5a3d8e603ea007ba311d3e28d8708e4a2d5c7752c7575c8de8881"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/unary-tile-elementwise/transcendental/TREM.md",
-      "sha256": "3b7c2fa8b6b0599b98699f22e5eab8f1a91828c4b3ed5b03ace85dc4137e303c"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/unary-tile-elementwise/transcendental/TRSQRT.md",
-      "sha256": "6f632d439f2482d4922206832b3252e87a6bf878cc547a869c8bbbf7da95241e"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/unary-tile-elementwise/transcendental/TSQRT.md",
-      "sha256": "51ea8d942604a5a111ad36953230161d78484d49c4bcd5336a70cb9965325cf9"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/vector-tile-expansion/column-expansion/TCOLEXPAND.md",
-      "sha256": "fcfc899aaceb03a3cbfcd978078665f15ba42e2d741803ae7ca4517a110a7228"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/vector-tile-expansion/column-expansion/TCOLEXPANDADD.md",
-      "sha256": "58ba4604f5ca8cffcd4f17db36bf0bcbc60bcffdfdc5445350ae7b4b3dfc8874"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/vector-tile-expansion/column-expansion/TCOLEXPANDDIV.md",
-      "sha256": "f745e26dc87a1d6d89ef31b59d7503b4149b6158d9176a77358d0b6b9c035b7d"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/vector-tile-expansion/column-expansion/TCOLEXPANDEXPDIF.md",
-      "sha256": "c4b6ab9cfb472d13f115486bb58eb34c19cc09b0ce0e9c78624ed7882a7de10f"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/vector-tile-expansion/column-expansion/TCOLEXPANDMAX.md",
-      "sha256": "40441fda8f60837891eb72a040d54235c14b760f61a4a947c097afe1ba51071c"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/vector-tile-expansion/column-expansion/TCOLEXPANDMIN.md",
-      "sha256": "650546fb72934c18e2321a82d81747fbf3d0e657dc1b9c5aeeb79054ed4c7d0b"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/vector-tile-expansion/column-expansion/TCOLEXPANDMUL.md",
-      "sha256": "fa5ebdda0d7fedd8db48886a1c8f79e3a9b53a73e283c8b2b82535002087c22e"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/vector-tile-expansion/column-expansion/TCOLEXPANDSUB.md",
-      "sha256": "dbfb1f8d6cda802d95b560b926cdde81dad2ac2ec186c3f3246aa82a6bf76b8d"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/vector-tile-expansion/row-expansion/TROWEXPAND.md",
-      "sha256": "be0a09f4ac7feb404b321638bb4da2a0df1b2793d9b07d7e2148facd77bf65ad"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/vector-tile-expansion/row-expansion/TROWEXPANDADD.md",
-      "sha256": "b52db5180a0097e693751377aa14af4f261d19a5b6ca312ecda68de98448dfa4"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/vector-tile-expansion/row-expansion/TROWEXPANDDIV.md",
-      "sha256": "1da755762e2588cda6b125f8f74d2dad243b9a87d70e83e17af6fe1139817dc4"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/vector-tile-expansion/row-expansion/TROWEXPANDEXPDIF.md",
-      "sha256": "6a471876306c35e6607f638a6910810ff1f032b34b6936a0c10124e4b117861d"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/vector-tile-expansion/row-expansion/TROWEXPANDMAX.md",
-      "sha256": "52263e63ffb3dbd22df222b186de1ac945a01e0ce8c63a85cfeec48692aa397f"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/vector-tile-expansion/row-expansion/TROWEXPANDMIN.md",
-      "sha256": "c7ab1e2f97d67a0cd66aa60c00d1e31a862b1550aaf984d47abfb0b566fa879a"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/vector-tile-expansion/row-expansion/TROWEXPANDMUL.md",
-      "sha256": "bca0dcd05f938ddd2b76f4dc072fa32ccbbfdec0c8210cf20073e2dc3693cd32"
-    },
-    {
-      "kind": "generated-documentation",
-      "path": "docs/tile/vector-tile-expansion/row-expansion/TROWEXPANDSUB.md",
-      "sha256": "dfd7be27176c2b8dd58dac4fa5ba7b3d3a6508581283a13d00d1b53a42ef7faf"
+      "path": "docs/tile/tile-scalar-and-immediate/logical/TXORS.md",
+      "sha256": "1dc9f8b3422670863b32149f36ce7d5acf5a2a0d0a9fe49ec00167f73577ebb6"
     },
     {
       "kind": "generated-evidence",
