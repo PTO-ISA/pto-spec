@@ -24,7 +24,7 @@ TABS <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TABS | TEPL | 0x00F | 15 | 0 | ExecuteTileUnary |
 

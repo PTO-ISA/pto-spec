@@ -1,5 +1,5 @@
 <!-- GENERATED FROM: asl/block/model/dispatch/shared-tlsu.asl -->
-# Shared Tlsu
+# Shared TLSU
 
 **Normative ASL source:** `asl/block/model/dispatch/shared-tlsu.asl`
 

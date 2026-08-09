@@ -24,7 +24,7 @@ TDIV <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TDIV | TEPL | 0x003 | 3 | 0 | ExecuteTileBinary |
 

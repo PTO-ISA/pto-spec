@@ -24,7 +24,7 @@ MSCATTER_MASK <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | MSCATTER_MASK | TLSU |  | 7 |  | MSCATTER_MASK |
 

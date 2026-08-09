@@ -1,7 +1,9 @@
 # PTO ISA Formal Specification
 
-[![PR validation](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml/badge.svg?branch=main)](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml)
-[![Release verification](https://github.com/PTO-ISA/pto-spec/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/PTO-ISA/pto-spec/actions/workflows/release.yml)
+[![PR checks](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml/badge.svg?branch=main&event=push)](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml?query=branch%3Amain)
+[![Exact-head release verification](https://github.com/PTO-ISA/pto-spec/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/PTO-ISA/pto-spec/actions/workflows/release.yml)
+[![PTO ISA v0.58](https://img.shields.io/badge/PTO_ISA-v0.58-blue.svg)](https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58)
+[![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE)
 
 `pto-spec` is the normative ASL1 definition of the PTO Instruction Set
 Architecture. It specifies a 64-bit scalar ISA, bundle/command forms, direct
@@ -9,117 +11,37 @@ tile operations, visible architectural state, legality, faults, completion,
 profiles, and memory ordering in one executable model.
 
 The repository is the normative draft of the **PTO ISA 0.58.0** contract at
-maturity M4. The release identity and active executable profile identity are
-separate: 0.58.0 fixes the encoding ABI, while `pto-v0` remains the deterministic
-raw-carrier reference profile. Accepted catalogs, decoded execution paths,
-architectural state/fault envelopes, ordering, and scalar, block, VEC, SFU,
-TLSU, and CUBE reference semantics are cumulatively closed through Stage 4. The
-independent executable-model comparison is also closed under `S5-T3`; target
-numeric conformance and release closure remain staged work. Current generated
-status is recorded under [`spec/evidence/`](spec/evidence/) and open design
-questions under [`docs/status/open/`](docs/status/open/).
+maturity M4. The release identity fixes the encoding ABI; `pto-v0` is the
+deterministic raw-carrier reference profile. Target numeric conformance remains
+open under `S5-T2`, and a pending, skipped, failed, stale, or different-commit
+release run is never treated as success.
 
-The Stage 5 numeric ownership inventory is already closed: 19 scalar forms and
-85 direct-tile operations are assigned to all 30 numeric profile hooks in
-`spec/evidence/numeric-contracts.json`. This inventory does not claim numerical
-or target-hardware conformance; those obligations remain open under `S5-T2`.
-The generated `spec/evidence/numeric-conformance-readiness.json` ledger
-partitions that work across six parallel lanes and keeps every unavailable
-profile, oracle, vector, result, and review identity explicit.
-The generated `spec/evidence/numeric-profile-decision-proposals.json` ledger
-imports four versioned identities and five selection rules accepted by ADR
-0037, then proposes dispositions for all 12 numeric decisions and mappings for
-all 18 domains. PD-03 and PD-04 are accepted; the remaining ten complete decisions and all
-18 complete domain rules remain open. ADR 0038 and the generated
-`spec/evidence/scalar-numeric-flag-contract.json` ledger separately close the
-scalar flag lifecycle and 30/30 producer-owner matrix while leaving exact
-conditions open for 19 profile-owned forms, so PD-06 and S5-T2 remain open.
-The machine-derived closure snapshot is 2 accepted and 10 open decisions,
-0 accepted and 18 open complete domain rules, and 16 selected and 73 open
-variation routes.
-ADRs 0039 and 0047 and the generated
-`spec/evidence/numeric-rounding-selector-contract.json` ledger separately map
-all scalar, fixed-conversion, bundle, public, matrix, stochastic, and
-backend-only rounding selector namespaces. PD-03 now accepts the complete
-selector translations, tie behavior, operation defaults, rounding points, and
-rounding-before-saturation order across 16 affected domains, 100 operations,
-and 23 hooks. Other numeric decisions keep S5-T2 open.
-ADR 0049 and the generated `numeric-subnormal-contract.json` accept PD-04 for
-the named hardware profile: all eleven subnormal-capable formats preserve
-input subnormals, use gradual underflow, detect tininess after rounding, and
-expose no FTZ/DAZ state or operation override. The contract covers 14 domains,
-93 operations, and 1,023 conditional operation/type obligations without
-changing `pto-v0` or claiming operation/type support.
-ADR 0050 and the generated `numeric-special-value-contract.json` add the
-bounded PD-05-SC2 hardware special-value checkpoint. The checkpoint fixes
-three accepted special-value rules for produced canonical NaNs, NaN/signed-zero
-comparison results, and MIN/MAX NaN/signed-zero selection across eight
-operations and 154 conditional operation/type tuples. It is conditional on
-separate profile support, does not change `pto-v0`, and does not close PD-05:
-infinity arithmetic, broader NaN creation, conversions, reductions,
-quantization, matrix results, and complete flag/status behavior remain open.
-ADRs 0040 and 0048 and the generated
-`spec/evidence/numeric-format-namespace-contract.json` ledger close the
-structural part of PD-02: five independent code namespaces, all 25
-`TileDataType` raw-carrier identities, every mapped and reserved code, and the
-low-nibble-first packing rule for all five packed four-bit types. The shared ASL
-classifier additionally assigns all 25 formats a typed value class, rejects
-four internally constrained encodings, and supplies canonical NaNs for the ten
-NaN-capable formats. Operation-specific propagation, quieting, flags,
-legality, target availability, and vectors remain open. ADR 0043 and
-`spec/evidence/public-numeric-type-baseline.json` then bind all 16 published
-type identities to 16 accepted catalog identities and close the A2/A3
-(11 types) and A5 (16 types) availability baseline. Nine catalog types remain
-outside the public inventory, and four legality, vector, parity, and
-review residuals remain; no complete domain rule is accepted, so PD-02 and
-`S5-T2` remain open while the M4 status is unchanged.
-ADR 0044 and
-`spec/evidence/public-integer-conversion-contract.json` close the next bounded
-result checkpoint: all 48 unequal-width ordered pairs among the eight public
-integer types use source-signed sign extension, source-unsigned zero extension,
-or high-bit truncation. These are portable results only after a target profile
-accepts the `TCVT` tuple. Six PD-07 residuals—including same-width,
-floating-point, saturation, flags, and support legality—remain open; no complete
-domain rule or parent numeric decision is accepted.
-ADR 0041 and the generated
-`spec/evidence/numeric-profile-applicability-closure.json` ledger close one
-negative PD-01 applicability slice: A2/A3 rejects the six MX CUBE selectors
-for all 25 `TileDataType` identities with `IllegalInstruction` before effects.
-It accepts no result rule, so PD-01, `cube-matrix`, and S5-T2 remain open.
-ADR 0042 and the generated
-`spec/evidence/numeric-variation-point-ownership.json` ledger enumerate all 89
-open domain/dimension variation points and map them to all 104 numeric
-operations and 28 hooks. Every point remains owned by `pto-numeric-v1`; no
-delegation, allowed-result contract, or domain result rule is accepted, so
-PD-12 and S5-T2 remain open.
-The numeric maturity counters remain unchanged by bounded checkpoints that do
-not accept a complete decision or domain: two of 12 complete decisions are
-accepted, ten remain open, no complete numeric domain is closed, and the
-generic variation-route count remains 16/89.
-The executable-model comparison has an exhaustive 682-row disposition matrix:
-554 exact matches, 90 explicit divergences, and 38 non-comparable rows. The
-clean content-addressed snapshot
-passes its generation, validation, documentation, Sail parser, and Sail
-C-backend gates. This classification closes `S5-T3` without changing the open
-`S5-T2` and Stage 6 claims.
+## Start here
 
-The generated `spec/evidence/noncomparable-oracle-coverage.json` ledger keeps a
-separate independent-executable-parity grade for the 38 non-comparable rows.
-PTO semantic closure and the S5-T3 disposition matrix remain closed, while
-qualified executable parity is currently 0/38 and fails closed on structural-
-only, stale, missing, timed-out, nonzero, or unreviewed evidence.
+| Need | Entry point |
+| --- | --- |
+| Architecture and programming model | [Architecture reference](docs/arch/overview/architecture.md) |
+| Instruction classes and execution engines | [Instruction classification](docs/arch/overview/instruction-classification.md) |
+| Block instructions and model | [`docs/block/`](docs/block/) |
+| Scalar instructions and model | [`docs/scalar/`](docs/scalar/) |
+| Tile instructions and model | [`docs/tile/`](docs/tile/) |
+| Encodings and accepted catalogs | [`spec/catalog/`](spec/catalog/) |
+| Open architecture questions | [`docs/status/open/`](docs/status/open/) |
+| Normative change process | [Contributing](CONTRIBUTING.md) and [Governance](GOVERNANCE.md) |
+| Generated maturity and release evidence | [`spec/evidence/`](spec/evidence/) |
 
-Release traceability is now generated rather than inferred from prose. The
-`spec/evidence/release-traceability-readiness.json` ledger covers 788 exact ASL
-units, 788 generated documentation pages, 906 independent AVS points, and all
-651 executable mnemonic requirements. Its inventory and links are closed,
-while S6-T1 promotion remains explicitly open on S5-T2 and an immutable-commit
-claim-hygiene review.
-The generated `spec/evidence/release-gate-readiness.json` ledger separately
-closes the S6-T2 gate contract and hosted/parallel topology without treating a
-live draft-branch run as release proof. Nine candidate gates remain fail-closed
-until one signed, immutable post-S5-T2 candidate supplies matching local,
-hosted, protection, and approval evidence.
+The active source chain is deliberately singular:
+
+```text
+normative ASL -> generated Markdown mirror -> independent AVS points -> release evidence
+```
+
+The current executable inventory contains 474 scalar forms, 99 block forms,
+and 109 direct Tile operations. Release traceability covers 788 ASL units, 788
+generated pages, 906 independently runnable AVS points, and 651 executable
+mnemonic requirements. Detailed numeric, model-comparison, and release-gate
+ledgers stay machine-readable under [`spec/evidence/`](spec/evidence/) instead
+of being duplicated in this landing page.
 
 ## Architecture scope
 
@@ -259,9 +181,10 @@ docs/                    Architecture, generated instruction reference, memory m
 scripts/                 Deterministic generation and fail-closed validation
 ```
 
-Every checked-in ASL source must appear in `ASL_SOURCES`, and every semantic
-test must appear in `ASL_TESTS`, both in dependency order in the `Makefile`.
-Generated assemblies remain ignored under `build/`.
+ASL source order is generated from each `PTO-UNIT` dependency declaration, and
+AVS points are discovered from the mirrored `tests/asl/` tree. No
+hand-maintained aggregate source or test list is normative. Generated
+assemblies remain ignored under `build/`.
 
 ## Contributing and license
 

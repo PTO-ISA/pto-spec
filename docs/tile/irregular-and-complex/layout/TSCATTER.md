@@ -24,7 +24,7 @@ TSCATTER <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TSCATTER | TEPL | 0x070 | 16 | 3 | TSCATTER |
 

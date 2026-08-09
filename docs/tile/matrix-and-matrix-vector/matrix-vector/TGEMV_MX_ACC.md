@@ -24,7 +24,7 @@ TGEMV_MX_ACC <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TGEMV_MX_ACC | CUBE |  | 22 |  | TGEMV_MX_ACC |
 

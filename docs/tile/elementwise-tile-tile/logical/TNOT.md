@@ -24,7 +24,7 @@ TNOT <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TNOT | TEPL | 0x010 | 16 | 0 | ExecuteTileUnary |
 

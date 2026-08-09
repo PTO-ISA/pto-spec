@@ -24,7 +24,7 @@ TGATHER <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TGATHER | TEPL | 0x06F | 15 | 3 | TGATHER |
 

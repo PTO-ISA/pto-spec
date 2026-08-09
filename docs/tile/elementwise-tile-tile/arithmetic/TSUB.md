@@ -24,7 +24,7 @@ TSUB <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TSUB | TEPL | 0x001 | 1 | 0 | ExecuteTileBinary |
 

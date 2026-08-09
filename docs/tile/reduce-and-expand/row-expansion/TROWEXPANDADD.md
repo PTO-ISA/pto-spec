@@ -24,7 +24,7 @@ TROWEXPANDADD <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TROWEXPANDADD | TEPL | 0x045 | 5 | 2 | ExecuteTileExpand |
 

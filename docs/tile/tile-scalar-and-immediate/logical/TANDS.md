@@ -24,7 +24,7 @@ TANDS <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TANDS | TEPL | 0x026 | 6 | 1 | ExecuteTileScalar |
 

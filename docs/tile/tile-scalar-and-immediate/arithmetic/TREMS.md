@@ -24,7 +24,7 @@ TREMS <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TREMS | TEPL | 0x024 | 4 | 1 | ExecuteTileScalar |
 

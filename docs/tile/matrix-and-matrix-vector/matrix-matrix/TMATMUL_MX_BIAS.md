@@ -24,7 +24,7 @@ TMATMUL_MX_BIAS <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TMATMUL_MX_BIAS | CUBE |  | 5 |  | TMATMUL_MX_BIAS |
 

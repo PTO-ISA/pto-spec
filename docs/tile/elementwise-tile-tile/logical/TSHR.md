@@ -24,7 +24,7 @@ TSHR <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TSHR | TEPL | 0x00A | 10 | 0 | ExecuteTileBinary |
 

@@ -24,7 +24,7 @@ TPARTADD <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TPARTADD | TEPL | 0x071 | 17 | 3 | ExecuteTilePartial |
 

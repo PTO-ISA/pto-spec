@@ -24,7 +24,7 @@ TMOV <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TMOV | TLSU |  | 2 |  | TMOV |
 

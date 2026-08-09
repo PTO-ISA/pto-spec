@@ -24,7 +24,7 @@ TPARTMUL <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TPARTMUL | TEPL | 0x072 | 18 | 3 | ExecuteTilePartial |
 

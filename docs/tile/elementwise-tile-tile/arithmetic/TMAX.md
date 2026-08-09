@@ -24,7 +24,7 @@ TMAX <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TMAX | TEPL | 0x00B | 11 | 0 | ExecuteTileBinary |
 

@@ -1,5 +1,5 @@
 <!-- GENERATED FROM: asl/block/model/dispatch/shared-cube.asl -->
-# Shared Cube
+# Shared CUBE
 
 **Normative ASL source:** `asl/block/model/dispatch/shared-cube.asl`
 

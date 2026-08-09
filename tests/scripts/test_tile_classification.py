@@ -25,6 +25,12 @@ EXPECTED_CLASSES = {
 
 SFU_ELEMENTWISE = frozenset({"TEXP", "TLOG", "TRECIP", "TRSQRT", "TSQRT"})
 
+EXPECTED_VEC = frozenset(
+    "TABS TADD TADDS TAND TANDS TCMP TCMPS TCVT TDIV TDIVS TEXPANDS TFMA "
+    "TMAX TMAXS TMIN TMINS TMUL TMULS TNEG TNOT TOR TORS TRELU TREM TREMS "
+    "TSEL TSELS TSHL TSHLS TSHR TSHRS TSUB TSUBS TXOR TXORS".split()
+)
+
 
 class TileClassificationTest(unittest.TestCase):
     @classmethod
@@ -69,6 +75,16 @@ class TileClassificationTest(unittest.TestCase):
                 self.assertEqual(engine, "SFU")
 
         self.assertEqual(by_engine, {"VEC": 35, "SFU": 52, "TLSU": 10, "CUBE": 12})
+
+        actual_vec = {record.mnemonic for record in self.tile if record.engine == "VEC"}
+        self.assertEqual(actual_vec, EXPECTED_VEC)
+        tepl = {
+            record.mnemonic
+            for record in self.tile
+            if record.catalog_records[0]["family"] == "TEPL"
+        }
+        actual_sfu = {record.mnemonic for record in self.tile if record.engine == "SFU"}
+        self.assertEqual(actual_sfu, tepl - EXPECTED_VEC)
 
     def test_catalog_projection_carries_class_and_engine(self) -> None:
         catalog = json.loads(
@@ -158,6 +174,21 @@ class TileClassificationTest(unittest.TestCase):
                 "vector-tile-expansion.asl",
             }.isdisjoint(path.name for path in dispatch.glob("*.asl"))
         )
+
+    def test_active_tools_use_tlsu_terminology(self) -> None:
+        comparison = (ROOT / "scripts/generate-executable-model-comparison").read_text(
+            encoding="utf-8"
+        )
+        self.assertNotIn("engine_tma", comparison)
+        self.assertNotIn("tma-and-cube-manifest-boundary", comparison)
+        self.assertFalse((ROOT / "scripts/generate-instruction-reference").exists())
+
+    def test_instruction_pages_label_tepl_as_an_encoding_carrier(self) -> None:
+        vec_page = (
+            ROOT / "docs/tile/elementwise-tile-tile/arithmetic/TADD.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("| Operation | Encoding carrier |", vec_page)
+        self.assertNotIn("| Operation | Family |", vec_page)
 
     def test_decoder_validation_binds_engine_specific_alias_contracts(self) -> None:
         generated = subprocess.run(

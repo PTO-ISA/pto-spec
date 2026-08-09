@@ -24,7 +24,7 @@ TADD <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TADD | TEPL | 0x000 | 0 | 0 | ExecuteTileBinary |
 

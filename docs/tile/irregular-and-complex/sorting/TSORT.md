@@ -24,7 +24,7 @@ TSORT <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TSORT | TEPL | 0x06C | 12 | 3 | TSORT |
 

@@ -761,9 +761,9 @@ def validate_numeric_profile() -> dict:
     ):
         raise SystemExit("B.DATR rounding-mode map drift")
     if profile["sort"].get("group_size") != 32:
-        raise SystemExit("hardware TSORT32 group size must remain exactly 32")
+        raise SystemExit("hardware TSORT group size must remain exactly 32")
     if profile["sort"].get("output") != "value paired with U32 original index":
-        raise SystemExit("hardware TSORT32 output must retain U32 original indices")
+        raise SystemExit("hardware TSORT output must retain U32 original indices")
     if not profile["arithmetic"].get("standard", "").startswith("IEEE 754-2019"):
         raise SystemExit("hardware numeric profile must use IEEE 754-2019 semantics")
     return profile

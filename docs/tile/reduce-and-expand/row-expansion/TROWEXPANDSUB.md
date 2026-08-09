@@ -24,7 +24,7 @@ TROWEXPANDSUB <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TROWEXPANDSUB | TEPL | 0x046 | 6 | 2 | ExecuteTileExpand |
 

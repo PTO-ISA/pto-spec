@@ -27,7 +27,7 @@ nav:
       - Dispatch:
           - Top Level: arch/dispatch/top-level.md
       - Features:
-          - Mx Formats: arch/features/mx-formats.md
+          - MX Formats: arch/features/mx-formats.md
           - Predication: arch/features/predication.md
           - Shared Tile State: arch/features/shared-tile-state.md
           - Tile Allocation: arch/features/tile-allocation.md
@@ -140,7 +140,6 @@ nav:
           - Commit:
               - Effects: block/model/commit/effects.md
               - Validation: block/model/commit/validation.md
-      - Model:
           - Dispatch:
               - Commands: block/model/dispatch/commands.md
               - Decode: block/model/dispatch/decode.md
@@ -148,33 +147,28 @@ nav:
               - Destination Shape: block/model/dispatch/destination-shape.md
               - Numeric Control: block/model/dispatch/numeric-control.md
               - Scalar Schema: block/model/dispatch/scalar-schema.md
-              - Shared Cube: block/model/dispatch/shared-cube.md
-              - Shared Tlsu: block/model/dispatch/shared-tlsu.md
+              - Shared CUBE: block/model/dispatch/shared-cube.md
+              - Shared TLSU: block/model/dispatch/shared-tlsu.md
               - Start: block/model/dispatch/start.md
               - Tile Execution: block/model/dispatch/tile-execution.md
               - Tile Schema: block/model/dispatch/tile-schema.md
               - Top Level: block/model/dispatch/top-level.md
-      - Model:
           - Faults:
               - Rollback: block/model/faults/rollback.md
-      - Model:
           - Lifecycle:
               - Begin: block/model/lifecycle/begin.md
               - Enter Stop: block/model/lifecycle/enter-stop.md
               - Lifetime: block/model/lifecycle/lifetime.md
               - Reset: block/model/lifecycle/reset.md
-      - Model:
           - Operands:
               - Scalar Bindings: block/model/operands/scalar-bindings.md
               - Shared Bindings: block/model/operands/shared-bindings.md
               - Tile Bindings: block/model/operands/tile-bindings.md
-      - Model:
           - Schema:
               - Attributes: block/model/schema/attributes.md
               - Dimensions: block/model/schema/dimensions.md
               - Header: block/model/schema/header.md
               - Profile Encoding: block/model/schema/profile-encoding.md
-      - Model:
           - State:
               - Binding State: block/model/state/binding-state.md
               - Control State: block/model/state/control-state.md
@@ -633,34 +627,27 @@ nav:
           - AGU:
               - Addressing: scalar/model/agu/addressing.md
               - Memory: scalar/model/agu/memory.md
-      - Model:
           - ALU:
               - Semantics: scalar/model/alu/semantics.md
-      - Model:
           - AMO:
               - Semantics: scalar/model/amo/semantics.md
-      - Model:
           - BRU:
               - Semantics: scalar/model/bru/semantics.md
-      - Model:
           - Dispatch:
-              - Agu: scalar/model/dispatch/agu.md
-              - Alu: scalar/model/dispatch/alu.md
-              - Amo: scalar/model/dispatch/amo.md
-              - Bru: scalar/model/dispatch/bru.md
+              - AGU: scalar/model/dispatch/agu.md
+              - ALU: scalar/model/dispatch/alu.md
+              - AMO: scalar/model/dispatch/amo.md
+              - BRU: scalar/model/dispatch/bru.md
               - Decode: scalar/model/dispatch/decode.md
-              - Fsu: scalar/model/dispatch/fsu.md
-              - Sys: scalar/model/dispatch/sys.md
+              - FSU: scalar/model/dispatch/fsu.md
+              - SYS: scalar/model/dispatch/sys.md
               - Top Level: scalar/model/dispatch/top-level.md
-      - Model:
           - FSU:
               - Arithmetic: scalar/model/fsu/arithmetic.md
               - Profile: scalar/model/fsu/profile.md
-      - Model:
           - SYS:
               - Registers: scalar/model/sys/registers.md
               - Semantics: scalar/model/sys/semantics.md
-      - Model:
           - Types:
               - Operands: scalar/model/types/operands.md
               - Operations: scalar/model/types/operations.md
@@ -709,10 +696,8 @@ nav:
               - TMIN: tile/elementwise-tile-tile/arithmetic/TMIN.md
               - TMUL: tile/elementwise-tile-tile/arithmetic/TMUL.md
               - TSUB: tile/elementwise-tile-tile/arithmetic/TSUB.md
-      - Elementwise Tile Tile:
           - Format Conversion:
               - TCVT: tile/elementwise-tile-tile/format-conversion/TCVT.md
-      - Elementwise Tile Tile:
           - Logical:
               - TABS: tile/elementwise-tile-tile/logical/TABS.md
               - TAND: tile/elementwise-tile-tile/logical/TAND.md
@@ -725,7 +710,6 @@ nav:
               - TSHL: tile/elementwise-tile-tile/logical/TSHL.md
               - TSHR: tile/elementwise-tile-tile/logical/TSHR.md
               - TXOR: tile/elementwise-tile-tile/logical/TXOR.md
-      - Elementwise Tile Tile:
           - Transcendental:
               - TDIV: tile/elementwise-tile-tile/transcendental/TDIV.md
               - TEXP: tile/elementwise-tile-tile/transcendental/TEXP.md
@@ -738,20 +722,16 @@ nav:
           - Format Conversion:
               - TDEQUANT: tile/irregular-and-complex/format-conversion/TDEQUANT.md
               - TQUANT: tile/irregular-and-complex/format-conversion/TQUANT.md
-      - Irregular And Complex:
           - Initialization:
               - TCI: tile/irregular-and-complex/initialization/TCI.md
               - THISTOGRAM: tile/irregular-and-complex/initialization/THISTOGRAM.md
               - TTRI: tile/irregular-and-complex/initialization/TTRI.md
-      - Irregular And Complex:
           - Layout:
               - TGATHER: tile/irregular-and-complex/layout/TGATHER.md
               - TSCATTER: tile/irregular-and-complex/layout/TSCATTER.md
-      - Irregular And Complex:
           - Sorting:
               - TMRGSORT: tile/irregular-and-complex/sorting/TMRGSORT.md
               - TSORT: tile/irregular-and-complex/sorting/TSORT.md
-      - Irregular And Complex:
           - Union:
               - TPARTADD: tile/irregular-and-complex/union/TPARTADD.md
               - TPARTMAX: tile/irregular-and-complex/union/TPARTMAX.md
@@ -760,7 +740,6 @@ nav:
       - Layout And Rearrangement:
           - Initialization:
               - TFILLPAD: tile/layout-and-rearrangement/initialization/TFILLPAD.md
-      - Layout And Rearrangement:
           - Layout:
               - TCONCAT: tile/layout-and-rearrangement/layout/TCONCAT.md
               - TEXTRACT: tile/layout-and-rearrangement/layout/TEXTRACT.md
@@ -776,7 +755,6 @@ nav:
               - TMATMUL_MX: tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX.md
               - TMATMUL_MX_ACC: tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_ACC.md
               - TMATMUL_MX_BIAS: tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.md
-      - Matrix And Matrix Vector:
           - Matrix Vector:
               - TGEMV: tile/matrix-and-matrix-vector/matrix-vector/TGEMV.md
               - TGEMV_ACC: tile/matrix-and-matrix-vector/matrix-vector/TGEMV_ACC.md
@@ -791,10 +769,8 @@ nav:
               - MGATHER_MASK: tile/memory-and-data-movement/irregular/MGATHER_MASK.md
               - MSCATTER: tile/memory-and-data-movement/irregular/MSCATTER.md
               - MSCATTER_MASK: tile/memory-and-data-movement/irregular/MSCATTER_MASK.md
-      - Memory And Data Movement:
-          - Pe Movement:
+          - PE Movement:
               - GMOV: tile/memory-and-data-movement/pe-movement/GMOV.md
-      - Memory And Data Movement:
           - Regular:
               - TLOAD: tile/memory-and-data-movement/regular/TLOAD.md
               - TPREFETCH: tile/memory-and-data-movement/regular/TPREFETCH.md
@@ -803,10 +779,8 @@ nav:
           - Capacity:
               - Local: tile/model/capacity/local.md
               - Shared: tile/model/capacity/shared.md
-      - Model:
           - Definedness:
               - Elements: tile/model/definedness/elements.md
-      - Model:
           - Dispatch:
               - Elementwise Tile Tile: tile/model/dispatch/elementwise-tile-tile.md
               - Irregular And Complex: tile/model/dispatch/irregular-and-complex.md
@@ -816,16 +790,14 @@ nav:
               - Reduce And Expand: tile/model/dispatch/reduce-and-expand.md
               - Tile Scalar And Immediate: tile/model/dispatch/tile-scalar-and-immediate.md
               - Top Level: tile/model/dispatch/top-level.md
-      - Model:
           - Execution:
               - Complex: tile/model/execution/complex.md
-              - Cube: tile/model/execution/cube.md
+              - CUBE: tile/model/execution/cube.md
               - Elementwise: tile/model/execution/elementwise.md
               - Expansion: tile/model/execution/expansion.md
               - Generation: tile/model/execution/generation.md
               - Rearrangement: tile/model/execution/rearrangement.md
               - Reduction: tile/model/execution/reduction.md
-      - Model:
           - Legality:
               - Allocation Capacity: tile/model/legality/allocation-capacity.md
               - Descriptor Shape: tile/model/legality/descriptor-shape.md
@@ -835,7 +807,6 @@ nav:
               - Memory Schema: tile/model/legality/memory-schema.md
               - Operand Schema: tile/model/legality/operand-schema.md
               - PE Mask: tile/model/legality/pe-mask.md
-      - Model:
           - Memory:
               - Addressing: tile/model/memory/addressing.md
               - Atomics: tile/model/memory/atomics.md
@@ -844,16 +815,13 @@ nav:
               - Restart: tile/model/memory/restart.md
               - Shared Movement: tile/model/memory/shared-movement.md
               - Stride: tile/model/memory/stride.md
-      - Model:
           - Numeric:
               - Exceptions: tile/model/numeric/exceptions.md
               - Formats: tile/model/numeric/formats.md
               - Rounding: tile/model/numeric/rounding.md
-      - Model:
           - Shape:
               - Rows Columns: tile/model/shape/rows-columns.md
               - Valid Region: tile/model/shape/valid-region.md
-      - Model:
           - State:
               - Allocation: tile/model/state/allocation.md
               - Descriptors: tile/model/state/descriptors.md
@@ -870,7 +838,6 @@ nav:
               - TCOLEXPANDMIN: tile/reduce-and-expand/column-expansion/TCOLEXPANDMIN.md
               - TCOLEXPANDMUL: tile/reduce-and-expand/column-expansion/TCOLEXPANDMUL.md
               - TCOLEXPANDSUB: tile/reduce-and-expand/column-expansion/TCOLEXPANDSUB.md
-      - Reduce And Expand:
           - Column Reduction:
               - TCOLARGMAX: tile/reduce-and-expand/column-reduction/TCOLARGMAX.md
               - TCOLARGMIN: tile/reduce-and-expand/column-reduction/TCOLARGMIN.md
@@ -878,7 +845,6 @@ nav:
               - TCOLMIN: tile/reduce-and-expand/column-reduction/TCOLMIN.md
               - TCOLPROD: tile/reduce-and-expand/column-reduction/TCOLPROD.md
               - TCOLSUM: tile/reduce-and-expand/column-reduction/TCOLSUM.md
-      - Reduce And Expand:
           - Row Expansion:
               - TROWEXPAND: tile/reduce-and-expand/row-expansion/TROWEXPAND.md
               - TROWEXPANDADD: tile/reduce-and-expand/row-expansion/TROWEXPANDADD.md
@@ -888,7 +854,6 @@ nav:
               - TROWEXPANDMIN: tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.md
               - TROWEXPANDMUL: tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.md
               - TROWEXPANDSUB: tile/reduce-and-expand/row-expansion/TROWEXPANDSUB.md
-      - Reduce And Expand:
           - Row Reduction:
               - TROWARGMAX: tile/reduce-and-expand/row-reduction/TROWARGMAX.md
               - TROWARGMIN: tile/reduce-and-expand/row-reduction/TROWARGMIN.md
@@ -905,10 +870,8 @@ nav:
               - TMULS: tile/tile-scalar-and-immediate/arithmetic/TMULS.md
               - TREMS: tile/tile-scalar-and-immediate/arithmetic/TREMS.md
               - TSUBS: tile/tile-scalar-and-immediate/arithmetic/TSUBS.md
-      - Tile Scalar And Immediate:
           - Initialization:
               - TEXPANDS: tile/tile-scalar-and-immediate/initialization/TEXPANDS.md
-      - Tile Scalar And Immediate:
           - Logical:
               - TANDS: tile/tile-scalar-and-immediate/logical/TANDS.md
               - TCMPS: tile/tile-scalar-and-immediate/logical/TCMPS.md

@@ -24,7 +24,7 @@ TCOLEXPANDMAX <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TCOLEXPANDMAX | TEPL | 0x059 | 25 | 2 | ExecuteTileExpand |
 

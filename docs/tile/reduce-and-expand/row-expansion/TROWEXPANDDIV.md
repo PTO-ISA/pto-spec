@@ -24,7 +24,7 @@ TROWEXPANDDIV <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TROWEXPANDDIV | TEPL | 0x048 | 8 | 2 | ExecuteTileExpand |
 

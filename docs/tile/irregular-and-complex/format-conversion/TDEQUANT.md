@@ -24,7 +24,7 @@ TDEQUANT <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TDEQUANT | TEPL | 0x06B | 11 | 3 | TDEQUANT |
 

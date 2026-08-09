@@ -1,5 +1,5 @@
 <!-- GENERATED FROM: asl/tile/model/execution/cube.asl -->
-# Cube
+# CUBE
 
 **Normative ASL source:** `asl/tile/model/execution/cube.asl`
 

@@ -24,7 +24,7 @@ TSUBS <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TSUBS | TEPL | 0x021 | 1 | 1 | ExecuteTileScalar |
 

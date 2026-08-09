@@ -24,7 +24,7 @@ TSTORE <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TSTORE | TLSU |  | 1 |  | TSTORE |
 

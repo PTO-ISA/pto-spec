@@ -422,7 +422,7 @@ def _encoding_section(record: InstructionRecord) -> list[str]:
     if tile_rows:
         lines.extend(
             [
-                "| Operation | Family | Selector | Function | Mode | Handler |",
+                "| Operation | Encoding carrier | Selector | Function | Mode | Handler |",
                 "| --- | --- | --- | ---: | ---: | --- |",
                 *[
                     "| " + " | ".join(_markdown_cell(cell) for cell in row) + " |"
@@ -599,13 +599,26 @@ def _unit_title(record: DocRecord) -> str:
     words = record.source_path.stem.replace("_", "-").split("-")
     acronyms = {
         "acr": "ACR",
+        "agu": "AGU",
+        "alu": "ALU",
+        "amo": "AMO",
         "asl": "ASL",
+        "bru": "BRU",
+        "cube": "CUBE",
         "dtype": "Data Type",
+        "fsu": "FSU",
         "gpr": "GPR",
+        "io": "IO",
+        "mx": "MX",
         "ndf": "NDF",
         "pe": "PE",
         "pto": "PTO",
+        "sfu": "SFU",
+        "sys": "SYS",
+        "tepl": "TEPL",
+        "tlsu": "TLSU",
         "tso": "TSO",
+        "vec": "VEC",
     }
     return " ".join(acronyms.get(word.lower(), word.capitalize()) for word in words)
 
@@ -647,9 +660,60 @@ def render_unit_page(
 
 
 def _display_name(slug: str) -> str:
-    if slug in {"agu", "alu", "amo", "bru", "fsu", "sys"}:
-        return slug.upper()
-    return " ".join(part.capitalize() for part in slug.split("-"))
+    acronyms = {
+        "agu",
+        "alu",
+        "amo",
+        "asl",
+        "bru",
+        "cube",
+        "fsu",
+        "gpr",
+        "io",
+        "mx",
+        "ndf",
+        "pe",
+        "pto",
+        "sfu",
+        "sys",
+        "tepl",
+        "tlsu",
+        "uop",
+        "vec",
+    }
+    return " ".join(
+        part.upper() if part.lower() in acronyms else part.capitalize()
+        for part in slug.split("-")
+    )
+
+
+def _render_nav_groups(
+    lines: list[str],
+    classifications: dict[tuple[str, ...], list[InstructionRecord | DocRecord]],
+    markdown_root: Path,
+) -> None:
+    tree: dict[str, object] = {}
+    records_key = "__records__"
+    for classification, records in classifications.items():
+        node = tree
+        for part in classification:
+            node = node.setdefault(part, {})  # type: ignore[assignment]
+        node.setdefault(records_key, []).extend(records)  # type: ignore[union-attr]
+
+    def render_node(node: dict[str, object], indent: int) -> None:
+        for part in sorted(key for key in node if key != records_key):
+            lines.append(f"{' ' * indent}- {_display_name(part)}:")
+            render_node(node[part], indent + 4)  # type: ignore[arg-type]
+        records = node.get(records_key, [])
+        for record in sorted(
+            records,  # type: ignore[arg-type]
+            key=lambda item: item.markdown_path.as_posix(),
+        ):
+            target = record.markdown_path.relative_to(markdown_root).as_posix()
+            title = record.mnemonic if record.mnemonic is not None else _unit_title(record)
+            lines.append(f"{' ' * indent}- {title}: {target}")
+
+    render_node(tree, 6)
 
 
 def render_nav(
@@ -674,22 +738,7 @@ def render_nav(
         if not classifications:
             continue
         lines.append(f"  - {surface.capitalize()}:")
-        for classification in sorted(classifications):
-            indent = 6
-            for part in classification:
-                lines.append(f"{' ' * indent}- {_display_name(part)}:")
-                indent += 4
-            for record in sorted(
-                classifications[classification],
-                key=lambda item: item.markdown_path.as_posix(),
-            ):
-                target = record.markdown_path.relative_to(markdown_root).as_posix()
-                title = (
-                    record.mnemonic
-                    if record.mnemonic is not None
-                    else _unit_title(record)
-                )
-                lines.append(f"{' ' * indent}- {title}: {target}")
+        _render_nav_groups(lines, classifications, markdown_root)
     if root is not None:
         status_groups: list[tuple[str, list[Path]]] = []
         for name in ("decisions", "open"):

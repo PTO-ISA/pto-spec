@@ -1,5 +1,5 @@
 <!-- GENERATED FROM: asl/scalar/model/dispatch/amo.asl -->
-# Amo
+# AMO
 
 **Normative ASL source:** `asl/scalar/model/dispatch/amo.asl`
 

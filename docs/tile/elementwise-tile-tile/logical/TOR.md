@@ -24,7 +24,7 @@ TOR <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TOR | TEPL | 0x007 | 7 | 0 | ExecuteTileBinary |
 

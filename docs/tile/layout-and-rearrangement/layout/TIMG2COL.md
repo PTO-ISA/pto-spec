@@ -24,7 +24,7 @@ TIMG2COL <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TIMG2COL | TEPL | 0x064 | 4 | 3 | TIMG2COL |
 

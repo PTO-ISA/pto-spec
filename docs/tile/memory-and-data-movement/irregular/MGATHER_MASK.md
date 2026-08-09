@@ -24,7 +24,7 @@ MGATHER_MASK <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | MGATHER_MASK | TLSU |  | 6 |  | MGATHER_MASK |
 

@@ -24,7 +24,7 @@ TTRANS <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TTRANS | TEPL | 0x06E | 14 | 3 | TTRANS |
 

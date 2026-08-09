@@ -24,7 +24,7 @@ TGEMV_MX_BIAS <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TGEMV_MX_BIAS | CUBE |  | 21 |  | TGEMV_MX_BIAS |
 

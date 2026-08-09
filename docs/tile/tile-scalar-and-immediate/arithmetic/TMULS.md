@@ -24,7 +24,7 @@ TMULS <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TMULS | TEPL | 0x022 | 2 | 1 | ExecuteTileScalar |
 

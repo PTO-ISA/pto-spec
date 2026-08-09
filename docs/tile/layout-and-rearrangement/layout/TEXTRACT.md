@@ -24,7 +24,7 @@ TEXTRACT <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TEXTRACT | TEPL | 0x062 | 2 | 3 | TEXTRACT |
 

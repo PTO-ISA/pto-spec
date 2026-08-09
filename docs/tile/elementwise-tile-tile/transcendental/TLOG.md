@@ -24,7 +24,7 @@ TLOG <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TLOG | TEPL | 0x013 | 19 | 0 | ExecuteTileUnary |
 

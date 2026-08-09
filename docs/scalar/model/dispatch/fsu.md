@@ -1,5 +1,5 @@
 <!-- GENERATED FROM: asl/scalar/model/dispatch/fsu.asl -->
-# Fsu
+# FSU
 
 **Normative ASL source:** `asl/scalar/model/dispatch/fsu.asl`
 

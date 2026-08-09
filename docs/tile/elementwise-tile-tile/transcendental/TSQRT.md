@@ -24,7 +24,7 @@ TSQRT <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TSQRT | TEPL | 0x015 | 21 | 0 | ExecuteTileUnary |
 
