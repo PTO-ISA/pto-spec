@@ -75,8 +75,15 @@ jobs:
       - run: |
           ./scripts/print-asl-test-matrix --page-size 100 --page "${{ matrix.page }}"
           cmp "build/planned-asl-test-pages/page-${{ matrix.page }}.json" "build/actual-page.json"
-          printf '%s\\n' fixture \
-            | xargs -P 4 -n 1 ./scripts/run-asl-test --id
+          set +e
+          ASL_TEST_JOBS="${PTO_ASL_TEST_JOBS:-$(getconf _NPROCESSORS_ONLN)}"
+          ./scripts/run-asl-page --matrix build/actual-page.json -j "$ASL_TEST_JOBS"
+          execution_status=$?
+          ./scripts/report-asl-page-results --matrix build/actual-page.json --results build/asl-test-results
+          report_status=$?
+          set -e
+          test "$execution_status" = 0
+          test "$report_status" = 0
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: asl-test-results-${{ matrix.page }}
@@ -160,8 +167,8 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
 
     def test_independent_runner_is_required(self) -> None:
         self.assert_rejected(
-            VALID_RELEASE_WORKFLOW.replace("./scripts/run-asl-test --id", "true"),
-            "run-asl-test --id",
+            VALID_RELEASE_WORKFLOW.replace("./scripts/run-asl-page", "true"),
+            "run-asl-page",
         )
 
     def test_each_page_must_prepare_aslref_before_parallel_execution(self) -> None:
@@ -190,54 +197,223 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
                     "prepare pinned ASLRef",
                 )
 
-    def test_asl_pages_must_keep_four_way_memory_safe_parallelism(self) -> None:
+    def test_asl_pages_require_explicit_configurable_parallelism(self) -> None:
         self.assert_rejected(
-            VALID_RELEASE_WORKFLOW.replace("xargs -P 4", "xargs -P 1"),
-            "four-way memory-safe parallelism",
+            VALID_RELEASE_WORKFLOW.replace(' -j "$ASL_TEST_JOBS"', ""),
+            "-j configurable parallelism",
         )
 
-    def test_asl_pages_reject_memory_unsafe_eight_way_parallelism(self) -> None:
+    def test_parallelism_defaults_to_machine_core_count_with_override(self) -> None:
         self.assert_rejected(
-            VALID_RELEASE_WORKFLOW.replace("xargs -P 4", "xargs -P 8"),
-            "four-way memory-safe parallelism",
+            VALID_RELEASE_WORKFLOW.replace(
+                '          ASL_TEST_JOBS="${PTO_ASL_TEST_JOBS:-$(getconf _NPROCESSORS_ONLN)}"\n',
+                '          ASL_TEST_JOBS="4"\n',
+            ),
+            "machine core count",
         )
 
-    def test_parallel_pipeline_rejects_decoys_and_best_effort_execution(self) -> None:
-        required = "            | xargs -P 4 -n 1 ./scripts/run-asl-test --id\n"
-        for replacement in (
-            "          # | xargs -P 4 -n 1 ./scripts/run-asl-test --id\n"
-            "            | xargs -P 1 -n 1 ./scripts/run-asl-test --id\n",
-            "          echo '| xargs -P 4 -n 1 ./scripts/run-asl-test --id'\n"
-            "            | xargs -P 1 -n 1 ./scripts/run-asl-test --id\n",
-            "            | xargs -P 4 -n 1 ./scripts/run-asl-test --id || true\n",
+    def test_page_report_must_run_after_parallel_execution(self) -> None:
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace(
+                "          ./scripts/report-asl-page-results --matrix build/actual-page.json --results build/asl-test-results\n",
+                "",
+            ),
+            "report every ASL page",
+        )
+
+    def test_execution_and_report_statuses_must_both_fail_closed(self) -> None:
+        for line, expected in (
+            ('          test "$execution_status" = 0\n', "execution status"),
+            ('          test "$report_status" = 0\n', "report status"),
         ):
-            with self.subTest(replacement=replacement):
+            with self.subTest(line=line):
                 self.assert_rejected(
-                    VALID_RELEASE_WORKFLOW.replace(required, replacement),
-                    "four-way memory-safe parallelism",
+                    VALID_RELEASE_WORKFLOW.replace(line, ""), expected
                 )
 
-    def test_skipped_p4_pipeline_cannot_hide_real_serial_execution(self) -> None:
-        required = (
-            "          printf '%s\\\\n' fixture \\\n"
-            "            | xargs -P 4 -n 1 ./scripts/run-asl-test --id\n"
-        )
-        replacement = (
-            "          false && printf '%s\\\\n' fixture \\\n"
-            "            | xargs -P 4 -n 1 ./scripts/run-asl-test --id\n"
-            "          printf '%s\\\\n' fixture \\\n"
-            "            | xargs -P 1 -n 1 ./scripts/run-asl-test --id\n"
-        )
-        self.assert_rejected(
-            VALID_RELEASE_WORKFLOW.replace(required, replacement),
-            "exactly one",
-        )
+    def test_status_capture_must_be_immediately_after_each_command(self) -> None:
+        for command, status in (
+            (
+                '          ./scripts/run-asl-page --matrix build/actual-page.json -j "$ASL_TEST_JOBS"\n',
+                "          execution_status=$?\n",
+            ),
+            (
+                "          ./scripts/report-asl-page-results --matrix build/actual-page.json --results build/asl-test-results\n",
+                "          report_status=$?\n",
+            ),
+        ):
+            with self.subTest(command=command):
+                self.assert_rejected(
+                    VALID_RELEASE_WORKFLOW.replace(
+                        command + status, command + "          true\n" + status
+                    ),
+                    "contiguous fail-closed page execution",
+                )
 
     def test_fail_closed_aggregation_is_required(self) -> None:
         self.assert_rejected(
             VALID_RELEASE_WORKFLOW.replace(" --aggregate-only", ""),
             "aggregate-only",
         )
+
+    def test_asl_pages_upload_only_compact_result_json_artifacts(self) -> None:
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace(
+                "          path: build/asl-test-results/*/result.json\n",
+                "          path: build/asl-test-results\n",
+            ),
+            "only per-ID result.json",
+        )
+
+    def test_compact_decoy_cannot_hide_broad_real_result_upload(self) -> None:
+        real_upload = """      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: asl-test-results-${{ matrix.page }}
+          path: build/asl-test-results/*/result.json
+"""
+        decoy_and_broad_upload = """      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: compact-decoy
+          path: build/asl-test-results/*/result.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: asl-test-results-${{ matrix.page }}
+          path: build/asl-test-results
+"""
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace(real_upload, decoy_and_broad_upload),
+            "only per-ID result.json",
+        )
+
+    def test_upload_action_comment_decoy_cannot_spoof_real_uses_key(self) -> None:
+        real_upload = """      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: asl-test-results-${{ matrix.page }}
+          path: build/asl-test-results/*/result.json
+"""
+        spoofed_upload = """      - uses: attacker/not-upload-artifact@0123456789abcdef0123456789abcdef01234567
+        # actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: asl-test-results-${{ matrix.page }}
+          path: build/asl-test-results/*/result.json
+"""
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace(real_upload, spoofed_upload),
+            "only per-ID result.json",
+        )
+
+    def test_env_name_decoy_cannot_spoof_upload_with_inputs(self) -> None:
+        real_upload = """      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: asl-test-results-${{ matrix.page }}
+          path: build/asl-test-results/*/result.json
+"""
+        spoofed_upload = """      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        env:
+          name: asl-test-results-${{ matrix.page }}
+        with:
+          name: ignored-by-release-download-${{ matrix.page }}
+          path: build/asl-test-results/*/result.json
+"""
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace(real_upload, spoofed_upload),
+            "only per-ID result.json",
+        )
+
+    def test_extra_broad_result_namespace_upload_is_rejected(self) -> None:
+        real_upload = """      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: asl-test-results-${{ matrix.page }}
+          path: build/asl-test-results/*/result.json
+"""
+        compact_and_broad_uploads = real_upload + """      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: asl-test-results-broad-${{ matrix.page }}
+          path: build/asl-test-results
+"""
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace(real_upload, compact_and_broad_uploads),
+            "only per-ID result.json",
+        )
+
+    def test_extra_broad_upload_with_unpinned_action_ref_is_rejected(self) -> None:
+        real_upload = """      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: asl-test-results-${{ matrix.page }}
+          path: build/asl-test-results/*/result.json
+"""
+        compact_and_unpinned_broad_uploads = real_upload + """      - uses: actions/upload-artifact@v4
+        with:
+          name: asl-test-results-broad-${{ matrix.page }}
+          path: build/asl-test-results
+"""
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace(
+                real_upload, compact_and_unpinned_broad_uploads
+            ),
+            "only per-ID result.json",
+        )
+
+    def test_extra_quoted_broad_upload_action_is_rejected(self) -> None:
+        real_upload = """      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: asl-test-results-${{ matrix.page }}
+          path: build/asl-test-results/*/result.json
+"""
+        for quote in ('"', "'"):
+            with self.subTest(quote=quote):
+                quoted_broad_upload = real_upload + f"""      - uses: {quote}actions/upload-artifact@v4{quote}
+        with:
+          name: asl-test-results-broad-${{{{ matrix.page }}}}
+          path: build/asl-test-results
+"""
+                self.assert_rejected(
+                    VALID_RELEASE_WORKFLOW.replace(real_upload, quoted_broad_upload),
+                    "only per-ID result.json",
+                )
+
+    def test_escaped_quoted_upload_action_is_rejected(self) -> None:
+        real_upload = """      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: asl-test-results-${{ matrix.page }}
+          path: build/asl-test-results/*/result.json
+"""
+        for escaped_action in (
+            r"actions/upload-artifact\u0040v4",
+            r"action\u0073/upload-artifact@v4",
+        ):
+            with self.subTest(escaped_action=escaped_action):
+                escaped_broad_upload = real_upload + f'''      - uses: "{escaped_action}"
+        with:
+          name: asl-test-results-broad-${{{{ matrix.page }}}}
+          path: build/asl-test-results
+'''
+                self.assert_rejected(
+                    VALID_RELEASE_WORKFLOW.replace(
+                        real_upload, escaped_broad_upload
+                    ),
+                    "uses values",
+                )
+
+    def test_yaml_alias_cannot_inject_broad_result_upload(self) -> None:
+        for anchor in ("broad_result_upload", "1"):
+            with self.subTest(anchor=anchor):
+                anchored_upload_job = f"""  upload-template:
+    steps:
+      - &{anchor}
+        uses: actions/upload-artifact@v4
+        with:
+          name: asl-test-results-broad-${{{{ matrix.page }}}}
+          path: build/asl-test-results
+"""
+                workflow = VALID_RELEASE_WORKFLOW.replace(
+                    "  asl-page:\n", anchored_upload_job + "  asl-page:\n"
+                ).replace(
+                    "          path: build/asl-test-results/*/result.json\n",
+                    "          path: build/asl-test-results/*/result.json\n"
+                    f"      - *{anchor}\n",
+                )
+                self.assert_rejected(workflow, "anchors or aliases")
 
     def test_uploaded_evidence_must_include_matrix_and_checksum(self) -> None:
         self.assert_rejected(

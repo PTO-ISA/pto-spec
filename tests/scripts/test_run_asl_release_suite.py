@@ -17,6 +17,7 @@ from scripts.asl_release_suite import (
 MATRIX = [
     {
         "id": "PTO-AVS-ARCH-ONE-001",
+        "display_name": "ARCH one | execution | one",
         "path": "tests/asl/arch/one/PTO-AVS-ARCH-ONE-001.asl",
         "source": "asl/arch/one.asl",
         "requirements": ["PTO-ARCH-ONE-001"],
@@ -32,12 +33,16 @@ def result(
     return {
         "id": test_id or MATRIX[0]["id"],
         "path": MATRIX[0]["path"],
+        "display_name": MATRIX[0]["display_name"],
+        "source": MATRIX[0]["source"],
+        "kind": MATRIX[0]["kind"],
         "sha256": sha256 or MATRIX[0]["sha256"],
         "status": status,
         "returncode": 0 if status == "passed" else 1,
         "duration_seconds": 0.1,
         "command": ["fake-aslref"],
         "error": None if status == "passed" else status,
+        "log_excerpt": "" if status == "passed" else status,
     }
 
 
@@ -83,6 +88,13 @@ class ReleaseSuiteAggregationTest(unittest.TestCase):
     def test_hash_mismatch_is_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "hash mismatch"):
             aggregate_results("c" * 40, MATRIX, [result(sha256="b" * 64)])
+
+    def test_display_name_mismatch_is_rejected(self) -> None:
+        observed = result()
+        observed["display_name"] = "wrong"
+
+        with self.assertRaisesRegex(ValueError, "display_name mismatch"):
+            aggregate_results("c" * 40, MATRIX, [observed])
 
     def test_fake_runner_pass_failure_and_timeout_are_observed(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

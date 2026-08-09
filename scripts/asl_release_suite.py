@@ -77,6 +77,9 @@ def aggregate_results(
             raise ValueError(f"path mismatch for {test_id}")
         if result.get("sha256") != entry.get("sha256"):
             raise ValueError(f"hash mismatch for {test_id}")
+        for field in ("display_name", "source", "kind"):
+            if result.get(field) != entry.get(field):
+                raise ValueError(f"{field} mismatch for {test_id}")
         if result.get("status") != "passed":
             raise ValueError(
                 f"result did not pass for {test_id}: {result.get('status')}"
@@ -194,6 +197,21 @@ def load_results(directory: Path) -> list[dict[str, object]]:
     return values
 
 
+def load_matrix_page(path: Path, commit: str) -> tuple[int, list[dict[str, object]]]:
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(value, dict) or value.get("commit") != commit:
+        raise ValueError(f"planned matrix page has wrong commit: {path}")
+    page = value.get("page")
+    include = value.get("include")
+    if not isinstance(page, int) or not isinstance(include, list):
+        raise ValueError(f"planned matrix page schema mismatch: {path}")
+    if any(not isinstance(entry, dict) for entry in include):
+        raise ValueError(f"planned matrix page contains a non-object entry: {path}")
+    entries = list(include)
+    _matrix_by_id(entries)
+    return page, entries
+
+
 def _matrix_document(commit: str, entries: Sequence[MatrixEntry]) -> bytes:
     document = {
         "commit": commit,
@@ -226,12 +244,59 @@ def _write_evidence(
     )
 
 
+def page_main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--root", type=Path, default=Path.cwd())
+    parser.add_argument("--matrix", type=Path, required=True)
+    parser.add_argument(
+        "-j",
+        "--jobs",
+        type=int,
+        default=int(
+            os.environ.get("PTO_ASL_TEST_JOBS", str(os.cpu_count() or 1))
+        ),
+    )
+    arguments = parser.parse_args(argv)
+    root = arguments.root.resolve()
+    if arguments.jobs <= 0:
+        print("error: jobs must be positive", file=sys.stderr)
+        return 2
+    try:
+        actual = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=root,
+            text=True,
+            capture_output=True,
+            check=True,
+        ).stdout.strip()
+        page, entries = load_matrix_page(arguments.matrix.resolve(), actual)
+        results = execute_matrix(root, entries, jobs=arguments.jobs)
+        coverage = aggregate_results(actual, entries, results)
+    except (
+        OSError,
+        ValueError,
+        json.JSONDecodeError,
+        subprocess.CalledProcessError,
+    ) as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 1
+    print(
+        f"ASL page {page} passed: {coverage['test_count']} independent points "
+        f"with -j {arguments.jobs}"
+    )
+    return 0
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path.cwd())
     parser.add_argument("--commit", required=True)
     parser.add_argument(
-        "--jobs", type=int, default=int(os.environ.get("PTO_ASL_TEST_JOBS", "4"))
+        "--jobs",
+        type=int,
+        default=int(
+            os.environ.get("PTO_ASL_TEST_JOBS", str(os.cpu_count() or 1))
+        ),
     )
     parser.add_argument("--aggregate-only", action="store_true")
     parser.add_argument("--matrix-pages", type=Path)

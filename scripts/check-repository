@@ -73,6 +73,7 @@ required_files=(
     scripts/generate-release-gate-readiness
     scripts/generate-release-manifest
     scripts/generate-release-traceability-readiness
+    scripts/asl_tests.py
     tests/README.md
     scripts/check-asl-layout
     scripts/check-active-paths
@@ -81,6 +82,8 @@ required_files=(
     scripts/check-release-closure
     scripts/print-asl-test-matrix
     scripts/prepare-aslref
+    scripts/report-asl-page-results
+    scripts/run-asl-page
     scripts/run-asl-test
     scripts/run-asl-release-suite
     scripts/check-release-manifest

@@ -138,15 +138,22 @@ jobs:
             --page-size "$ASL_TEST_PAGE_SIZE" --page "$PAGE" \
             > build/actual-page.json
           cmp "build/planned-asl-test-pages/page-$PAGE.json" build/actual-page.json
-          python3 -c 'import json; [print(row["id"]) for row in json.load(open("build/actual-page.json"))["include"]]' \
-            | xargs -P 4 -n 1 ./scripts/run-asl-test --id
+          set +e
+          ASL_TEST_JOBS="${PTO_ASL_TEST_JOBS:-$(getconf _NPROCESSORS_ONLN)}"
+          ./scripts/run-asl-page --matrix build/actual-page.json -j "$ASL_TEST_JOBS"
+          execution_status=$?
+          ./scripts/report-asl-page-results --matrix build/actual-page.json --results build/asl-test-results
+          report_status=$?
+          set -e
+          test "$execution_status" = 0
+          test "$report_status" = 0
 
       - name: Upload per-ID ASL results
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: asl-test-results-${{ matrix.page }}
-          path: build/asl-test-results
+          path: build/asl-test-results/*/result.json
           if-no-files-found: error
           retention-days: 90
 
