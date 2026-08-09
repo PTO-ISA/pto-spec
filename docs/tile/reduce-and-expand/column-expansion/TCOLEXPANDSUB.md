@@ -24,7 +24,7 @@ TCOLEXPANDSUB <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TCOLEXPANDSUB | TEPL | 0x056 | 22 | 2 | ExecuteTileExpand |
 

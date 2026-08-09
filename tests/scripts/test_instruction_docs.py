@@ -100,6 +100,12 @@ class InstructionDocsTest(unittest.TestCase):
         path.write_text(asl_source(**kwargs), encoding="utf-8")
         return path
 
+    def write_unit(self, relative: str, source: str) -> Path:
+        path = self.root / "asl" / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(source, encoding="utf-8")
+        return path
+
     def test_load_instruction_index_reads_mnemonic_and_regions(self) -> None:
         self.write_asl()
 
@@ -365,6 +371,46 @@ class InstructionDocsTest(unittest.TestCase):
         )
         self.assertEqual(check_navigation(self.root), [])
         self.assertEqual(check_navigation_projection(self.root), [])
+
+    def test_navigation_merges_common_classification_prefixes(self) -> None:
+        self.write_unit(
+            "block/model/commit/effects.asl",
+            unit_source(
+                unit_id="PTO-BLOCK-MODEL-COMMIT-EFFECTS",
+                surface="block",
+                classification=["model", "commit", "effects"],
+            ),
+        )
+        self.write_unit(
+            "block/model/dispatch/decode.asl",
+            unit_source(
+                unit_id="PTO-BLOCK-MODEL-DISPATCH-DECODE",
+                surface="block",
+                classification=["model", "dispatch", "decode"],
+            ),
+        )
+
+        nav = render_nav(load_doc_index(self.root), Path("docs"))
+
+        self.assertEqual(nav.count("      - Model:\n"), 1)
+        self.assertIn("          - Commit:\n", nav)
+        self.assertIn("          - Dispatch:\n", nav)
+        self.assertIn("              - Effects: block/model/commit/effects.md\n", nav)
+        self.assertIn("              - Decode: block/model/dispatch/decode.md\n", nav)
+
+    def test_navigation_renders_engine_acronyms_canonically(self) -> None:
+        self.write_unit(
+            "block/model/dispatch/shared-tlsu.asl",
+            unit_source(
+                unit_id="PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU",
+                surface="block",
+                classification=["model", "dispatch", "shared-tlsu"],
+            ),
+        )
+
+        nav = render_nav(load_doc_index(self.root), Path("docs"))
+
+        self.assertIn("              - Shared TLSU: block/model/dispatch/shared-tlsu.md", nav)
 
     def test_navigation_projection_rejects_stale_generated_files(self) -> None:
         self.write_asl()

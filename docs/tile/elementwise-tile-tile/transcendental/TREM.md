@@ -24,7 +24,7 @@ TREM <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TREM | TEPL | 0x004 | 4 | 0 | ExecuteTileBinary |
 

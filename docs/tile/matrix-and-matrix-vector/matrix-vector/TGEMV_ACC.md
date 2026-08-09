@@ -24,7 +24,7 @@ TGEMV_ACC <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TGEMV_ACC | CUBE |  | 18 |  | TGEMV_ACC |
 

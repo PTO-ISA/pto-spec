@@ -91,6 +91,21 @@ def load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def independent_tlsu_aliases(engine: dict[str, Any]) -> list[dict[str, Any]]:
+    """Adapt current and immutable historical TLSU snapshot schemas."""
+    current = engine.get("tlsu")
+    historical = engine.get("tma")
+    if current is not None and historical is not None and current != historical:
+        raise ValueError("conflicting TLSU manifests in independent snapshot")
+    family = current if current is not None else historical
+    if not isinstance(family, dict):
+        raise ValueError("independent snapshot is missing its TLSU operation manifest")
+    aliases = family.get("legal_aliases")
+    if not isinstance(aliases, list):
+        raise ValueError("independent snapshot TLSU aliases must be a list")
+    return aliases
+
+
 def stable_json(data: Any) -> str:
     return json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
 
@@ -358,7 +373,9 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
         for entry in op_map.get("entries", [])
     }
     engine_tepl = {entry["name"]: entry for entry in engine["tepl"]["ops"]}
-    engine_tma = {entry["mnemonic"]: entry for entry in engine["tma"]["legal_aliases"]}
+    engine_tlsu = {
+        entry["mnemonic"]: entry for entry in independent_tlsu_aliases(engine)
+    }
     engine_cube = {
         entry["mnemonic"]: entry for entry in engine["cube"]["legal_aliases"]
     }
@@ -486,7 +503,7 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
             engine_entry = engine_tepl.get(manifest_name)
             independent_status = "selector-manifest"
         elif family == "TLSU":
-            engine_entry = engine_tma.get(tile_header_name(name))
+            engine_entry = engine_tlsu.get(tile_header_name(name))
             independent_status = "header-manifest"
         else:
             engine_entry = engine_cube.get(tile_header_name(name))
@@ -638,7 +655,7 @@ def build(snapshot_root: Path) -> dict[str, Any]:
                 "disposition": "PTO defines 87 TEPL operations. The retained independent selector evidence is classified row by row; TFMA is an explicit PTO-owned extension.",
             },
             {
-                "id": "tma-and-cube-manifest-boundary",
+                "id": "tlsu-and-cube-manifest-boundary",
                 "disposition": "The retained TLSU and CUBE manifest rows are header/function evidence rather than independent tile payload execution; GMOV is an explicit PTO-owned extension.",
             },
             {

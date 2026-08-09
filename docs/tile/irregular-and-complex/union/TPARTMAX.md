@@ -24,7 +24,7 @@ TPARTMAX <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TPARTMAX | TEPL | 0x073 | 19 | 3 | ExecuteTilePartial |
 

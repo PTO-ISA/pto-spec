@@ -24,7 +24,7 @@ TMUL <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TMUL | TEPL | 0x002 | 2 | 0 | ExecuteTileBinary |
 

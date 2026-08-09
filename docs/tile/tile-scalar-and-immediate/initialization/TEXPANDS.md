@@ -24,7 +24,7 @@ TEXPANDS <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TEXPANDS | TEPL | 0x03B | 27 | 1 | ExecuteTileFillScalar |
 

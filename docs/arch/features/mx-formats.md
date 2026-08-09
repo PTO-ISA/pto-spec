@@ -1,5 +1,5 @@
 <!-- GENERATED FROM: asl/arch/features/mx-formats.asl -->
-# Mx Formats
+# MX Formats
 
 **Normative ASL source:** `asl/arch/features/mx-formats.asl`
 

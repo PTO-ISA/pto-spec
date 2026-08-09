@@ -24,7 +24,7 @@ TCOLMAX <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TCOLMAX | TEPL | 0x051 | 17 | 2 | ExecuteTileReduction |
 

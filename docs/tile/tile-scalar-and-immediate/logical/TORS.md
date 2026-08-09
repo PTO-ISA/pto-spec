@@ -24,7 +24,7 @@ TORS <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TORS | TEPL | 0x027 | 7 | 1 | ExecuteTileScalar |
 

@@ -24,7 +24,7 @@ TEXP <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TEXP | TEPL | 0x012 | 18 | 0 | ExecuteTileUnary |
 

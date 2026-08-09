@@ -24,7 +24,7 @@ TCOLEXPANDMIN <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TCOLEXPANDMIN | TEPL | 0x05A | 26 | 2 | ExecuteTileExpand |
 

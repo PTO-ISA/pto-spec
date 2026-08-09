@@ -24,7 +24,7 @@ TCI <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TCI | TEPL | 0x066 | 6 | 3 | TCI |
 

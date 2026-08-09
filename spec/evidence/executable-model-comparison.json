@@ -28,7 +28,7 @@
     },
     {
       "disposition": "The retained TLSU and CUBE manifest rows are header/function evidence rather than independent tile payload execution; GMOV is an explicit PTO-owned extension.",
-      "id": "tma-and-cube-manifest-boundary"
+      "id": "tlsu-and-cube-manifest-boundary"
     },
     {
       "disposition": "Tile payload effects, aliases, legality, packed four-bit memory behavior, and raw numeric carriers are closed by PTO-owned ASL tests and ADRs, not by the independent executable model.",

@@ -24,7 +24,7 @@ TFILLPAD <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TFILLPAD | TEPL | 0x065 | 5 | 3 | TFILLPAD |
 

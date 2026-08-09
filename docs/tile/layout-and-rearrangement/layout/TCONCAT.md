@@ -24,7 +24,7 @@ TCONCAT <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TCONCAT | TEPL | 0x060 | 0 | 3 | TCONCAT |
 

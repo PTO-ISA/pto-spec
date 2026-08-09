@@ -24,7 +24,7 @@ TINSERT <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TINSERT | TEPL | 0x063 | 3 | 3 | TINSERT |
 

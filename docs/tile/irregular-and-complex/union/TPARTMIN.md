@@ -24,7 +24,7 @@ TPARTMIN <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TPARTMIN | TEPL | 0x074 | 20 | 3 | ExecuteTilePartial |
 

@@ -24,7 +24,7 @@ TXORS <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TXORS | TEPL | 0x028 | 8 | 1 | ExecuteTileScalar |
 

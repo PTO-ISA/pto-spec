@@ -24,7 +24,7 @@ TRSQRT <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TRSQRT | TEPL | 0x016 | 22 | 0 | ExecuteTileUnary |
 

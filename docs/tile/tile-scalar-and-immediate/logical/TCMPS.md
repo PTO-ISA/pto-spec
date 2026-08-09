@@ -24,7 +24,7 @@ TCMPS <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TCMPS | TEPL | 0x02D | 13 | 1 | ExecuteTileCompareScalar |
 

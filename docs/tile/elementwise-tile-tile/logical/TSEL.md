@@ -24,7 +24,7 @@ TSEL <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TSEL | TEPL | 0x01A | 26 | 0 | ExecuteTileSelect |
 

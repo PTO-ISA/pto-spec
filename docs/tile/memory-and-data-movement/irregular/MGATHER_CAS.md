@@ -24,7 +24,7 @@ MGATHER_CAS <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | MGATHER_CAS | TLSU |  | 8 |  | MGATHER_CAS |
 

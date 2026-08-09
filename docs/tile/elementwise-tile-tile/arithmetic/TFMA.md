@@ -24,7 +24,7 @@ TFMA <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TFMA | TEPL | 0x01C | 28 | 0 | TFMA |
 

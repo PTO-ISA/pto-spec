@@ -1,5 +1,5 @@
 <!-- GENERATED FROM: asl/scalar/model/dispatch/agu.asl -->
-# Agu
+# AGU
 
 **Normative ASL source:** `asl/scalar/model/dispatch/agu.asl`
 

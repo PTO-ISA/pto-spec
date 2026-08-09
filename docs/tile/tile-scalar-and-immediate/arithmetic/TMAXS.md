@@ -24,7 +24,7 @@ TMAXS <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TMAXS | TEPL | 0x02B | 11 | 1 | ExecuteTileScalar |
 

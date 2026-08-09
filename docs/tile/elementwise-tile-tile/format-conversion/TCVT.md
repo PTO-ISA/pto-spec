@@ -24,7 +24,7 @@ TCVT <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TCVT | TEPL | 0x01B | 27 | 0 | TCVT |
 

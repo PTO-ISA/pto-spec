@@ -24,7 +24,7 @@ TTRI <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TTRI | TEPL | 0x067 | 7 | 3 | TTRI |
 

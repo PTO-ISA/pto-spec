@@ -24,7 +24,7 @@ TCOLEXPANDADD <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TCOLEXPANDADD | TEPL | 0x055 | 21 | 2 | ExecuteTileExpand |
 

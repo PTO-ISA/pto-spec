@@ -24,7 +24,7 @@ TCMP <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TCMP | TEPL | 0x00D | 13 | 0 | ExecuteTileCompare |
 

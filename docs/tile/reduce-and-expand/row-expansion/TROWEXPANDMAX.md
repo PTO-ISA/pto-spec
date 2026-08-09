@@ -24,7 +24,7 @@ TROWEXPANDMAX <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TROWEXPANDMAX | TEPL | 0x049 | 9 | 2 | ExecuteTileExpand |
 

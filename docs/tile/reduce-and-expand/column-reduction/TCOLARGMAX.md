@@ -24,7 +24,7 @@ TCOLARGMAX <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TCOLARGMAX | TEPL | 0x05C | 28 | 2 | ExecuteTileReduction |
 

@@ -24,7 +24,7 @@ TSHRS <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TSHRS | TEPL | 0x02A | 10 | 1 | ExecuteTileScalar |
 

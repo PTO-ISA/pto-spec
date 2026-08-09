@@ -24,7 +24,7 @@ TDIVS <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TDIVS | TEPL | 0x023 | 3 | 1 | ExecuteTileScalar |
 

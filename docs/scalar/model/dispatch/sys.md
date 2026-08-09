@@ -1,5 +1,5 @@
 <!-- GENERATED FROM: asl/scalar/model/dispatch/sys.asl -->
-# Sys
+# SYS
 
 **Normative ASL source:** `asl/scalar/model/dispatch/sys.asl`
 

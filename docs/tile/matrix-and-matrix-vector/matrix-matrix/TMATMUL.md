@@ -24,7 +24,7 @@ TMATMUL <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TMATMUL | CUBE |  | 0 |  | TMATMUL |
 

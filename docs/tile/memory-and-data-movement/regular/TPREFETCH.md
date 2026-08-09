@@ -24,7 +24,7 @@ TPREFETCH <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TPREFETCH | TLSU |  | 3 |  | TPREFETCH |
 

@@ -24,7 +24,7 @@ TROWMAX <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TROWMAX | TEPL | 0x041 | 1 | 2 | ExecuteTileReduction |
 

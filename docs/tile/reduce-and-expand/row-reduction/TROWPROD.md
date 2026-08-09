@@ -24,7 +24,7 @@ TROWPROD <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TROWPROD | TEPL | 0x043 | 3 | 2 | ExecuteTileReduction |
 

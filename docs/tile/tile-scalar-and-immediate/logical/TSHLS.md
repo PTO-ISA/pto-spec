@@ -24,7 +24,7 @@ TSHLS <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TSHLS | TEPL | 0x029 | 9 | 1 | ExecuteTileScalar |
 

@@ -1,5 +1,5 @@
 <!-- GENERATED FROM: asl/scalar/model/dispatch/alu.asl -->
-# Alu
+# ALU
 
 **Normative ASL source:** `asl/scalar/model/dispatch/alu.asl`
 

@@ -24,7 +24,7 @@ TMATMUL_MX_ACC <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TMATMUL_MX_ACC | CUBE |  | 6 |  | TMATMUL_MX_ACC |
 

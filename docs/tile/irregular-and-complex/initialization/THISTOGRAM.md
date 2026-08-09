@@ -24,7 +24,7 @@ THISTOGRAM <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | THISTOGRAM | TEPL | 0x068 | 8 | 3 | THISTOGRAM |
 

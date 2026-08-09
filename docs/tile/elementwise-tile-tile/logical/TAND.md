@@ -24,7 +24,7 @@ TAND <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TAND | TEPL | 0x006 | 6 | 0 | ExecuteTileBinary |
 

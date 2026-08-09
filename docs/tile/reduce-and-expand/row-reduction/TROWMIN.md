@@ -24,7 +24,7 @@ TROWMIN <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TROWMIN | TEPL | 0x042 | 2 | 2 | ExecuteTileReduction |
 

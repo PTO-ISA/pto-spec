@@ -24,7 +24,7 @@ TROWARGMIN <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TROWARGMIN | TEPL | 0x04D | 13 | 2 | ExecuteTileReduction |
 

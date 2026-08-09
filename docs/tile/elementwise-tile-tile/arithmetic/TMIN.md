@@ -24,7 +24,7 @@ TMIN <bundle operands>
 
 ## Encoding
 
-| Operation | Family | Selector | Function | Mode | Handler |
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
 | --- | --- | --- | ---: | ---: | --- |
 | TMIN | TEPL | 0x00C | 12 | 0 | ExecuteTileBinary |
 

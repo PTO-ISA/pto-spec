@@ -1,5 +1,5 @@
 <!-- GENERATED FROM: asl/scalar/model/dispatch/bru.asl -->
-# Bru
+# BRU
 
 **Normative ASL source:** `asl/scalar/model/dispatch/bru.asl`
 
