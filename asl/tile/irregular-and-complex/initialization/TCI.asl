@@ -6,6 +6,9 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
+// Complete-bundle B.IOR consumes start in RegSrc0 and descending in RegSrc1
+// using the fixed address, scalar0, scalar1, diagonal, flag0 order. Omission
+// keeps the (0,FALSE) defaults; encoded zero is an explicit zero selector.
 readonly func InstructionContractHandler_TCI() => TileSemanticHandler
 begin
     return TileHandler_TCI;

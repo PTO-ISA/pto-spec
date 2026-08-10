@@ -65,35 +65,56 @@ begin
             end;
         end;
     end;
+    // B.IOR inputs are resolved in one architectural order so that optional
+    // fields pack densely into RegSrc0..RegSrc2.  TLOAD/TSTORE retain their
+    // omission-only dense-row stride default.
     if TileOperandPresent(operation, TileOperand_address) then
         if _BundleScalarBindings[[0]].valid then
             operands.address = ReadScalarRegisterOperand(
-                _BundleScalarBindings[[0]].source0);
+                BundleOperationGPRInputSelector(
+                    BundleOperationGPRInputSlot(
+                        operation, TileOperand_address) as integer {0..2}));
         end;
-        if TileOperandPresent(operation, TileOperand_scalar0) then
-            if _BundleScalarBindings[[0]].valid then
-                operands.scalar0 = ReadScalarRegisterOperand(
-                    _BundleScalarBindings[[0]].source1);
-            else
-                // TLOAD/TSTORE retain dense-row behavior when B.IOR is
-                // omitted: the resolved LB2/Col dimension is the row stride.
-                operands.scalar0 = _BundleDimensions[[2]];
-            end;
-        elsif TileOperandPresent(operation, TileOperand_scalar1) &&
-              _BundleScalarBindings[[0]].valid then
-            operands.scalar1 = ReadScalarRegisterOperand(
-                _BundleScalarBindings[[0]].source1);
-        end;
-    else
-        if TileOperandPresent(operation, TileOperand_scalar0) &&
-           _BundleScalarBindings[[0]].valid then
+    end;
+    if TileOperandPresent(operation, TileOperand_scalar0) then
+        if _BundleScalarBindings[[0]].valid then
             operands.scalar0 = ReadScalarRegisterOperand(
-                _BundleScalarBindings[[0]].source0);
+                BundleOperationGPRInputSelector(
+                    BundleOperationGPRInputSlot(
+                        operation, TileOperand_scalar0) as integer {0..2}));
+        elsif TileOperandPresent(operation, TileOperand_address) then
+            // TLOAD/TSTORE retain dense-row behavior when B.IOR is omitted:
+            // the resolved LB2/Col dimension is the row stride.
+            operands.scalar0 = _BundleDimensions[[2]];
         end;
-        if TileOperandPresent(operation, TileOperand_scalar1) &&
-           _BundleScalarBindings[[0]].valid then
-            operands.scalar1 = ReadScalarRegisterOperand(
-                _BundleScalarBindings[[0]].source1);
+    end;
+    if TileOperandPresent(operation, TileOperand_scalar1) &&
+       _BundleScalarBindings[[0]].valid then
+        operands.scalar1 = ReadScalarRegisterOperand(
+            BundleOperationGPRInputSelector(
+                BundleOperationGPRInputSlot(
+                    operation, TileOperand_scalar1) as integer {0..2}));
+    end;
+    if TileOperandPresent(operation, TileOperand_diagonal) then
+        if _BundleScalarBindings[[0]].valid then
+            let raw = ReadScalarRegisterOperand(
+                BundleOperationGPRInputSelector(
+                    BundleOperationGPRInputSlot(
+                        operation, TileOperand_diagonal) as integer {0..2}));
+            // Raw conversion is performed only after the complete-bundle
+            // preflight has proved the signed value lies in the ASL domain.
+            operands.diagonal = SInt(raw) as integer {-65535..65535};
+        end;
+    end;
+    if TileOperandPresent(operation, TileOperand_flag0) then
+        if _BundleScalarBindings[[0]].valid then
+            let raw = ReadScalarRegisterOperand(
+                BundleOperationGPRInputSelector(
+                    BundleOperationGPRInputSlot(
+                        operation, TileOperand_flag0) as integer {0..2}));
+            // Raw booleans accept exactly zero and one; legality is checked
+            // before this constrained assignment during bundle commit.
+            operands.flag0 = UInt(raw) == 1;
         end;
     end;
     let dimension0 = UInt(_BundleDimensions[[0]]);

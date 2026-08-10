@@ -63,6 +63,9 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/irregular-and-complex/initialization/TTRI.asl -->
 ```asl
+// Complete-bundle B.IOR consumes diagonal in RegSrc0 and upper in RegSrc1.
+// The raw diagonal is signed XLEN and legal only in -65535..65535; upper is
+// raw boolean 0/1. Validation precedes destination resolution at BSTOP.
 readonly func InstructionContractHandler_TTRI() => TileSemanticHandler
 begin
     return TileHandler_TTRI;

@@ -55,6 +55,7 @@ end;
 BSTART.SFU TSORT, DataType
 B.DIM sort_width -> LB0
 B.IOT
+B.IOR
 BSTOP
 ```
 
@@ -62,6 +63,9 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/irregular-and-complex/sorting/TSORT.asl -->
 ```asl
+// Complete-bundle B.IOR consumes only descending in RegSrc0.  The encoded
+// zero selector is distinct from omission; raw values are validated before
+// BSTOP resolves destinations.  Equal keys retain source/index order.
 readonly func InstructionContractHandler_TSORT() => TileSemanticHandler
 begin
     return TileHandler_TSORT;

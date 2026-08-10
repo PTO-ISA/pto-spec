@@ -49,7 +49,9 @@ For the current executable direct-operation catalog, register inputs bind to
 `RegSrc0` and `RegSrc1` in architectural operand order. An `address`, when
 present, is the first input; otherwise `scalar0` is first. No current direct
 operation consumes `RegSrc2` or `RegDst`; adding such a consumer requires an
-explicit catalog/schema change and executable evidence.
+explicit catalog/schema change and executable evidence. ADR 0058 refines this
+consumer statement for the complete ordered GPR schema and records the
+operation-specific control decoding for `diagonal` and `flag0`.
 
 TLOAD and TSTORE keep their existing instruction encoding, B.IOR layout,
 opcode, selector, and instruction length. `RegSrc0` supplies the base address;
@@ -106,9 +108,10 @@ consume, descriptor update, or lifetime update occurs.
 
 This decision supersedes ADR 0032's and ADR 0036's narrow three-field bundle
 bridge, and ADR 0052/ADR 0054 where they describe B.IOR absence, raw-field
-assembly, duplicate-register legality, or mandatory scalar binding. Their
-operation inventory, B.IOS encoding, PE-local size, Shared allocation, and
-other retained decisions remain in force.
+assembly, duplicate-register legality, or mandatory scalar binding. ADR 0058
+narrowly supersedes the complete-bundle consumer-resolution paragraph above;
+the B.IOR encoding, omission-versus-zero distinction, and all other retained
+decisions remain in force.
 
 ## Verification
 

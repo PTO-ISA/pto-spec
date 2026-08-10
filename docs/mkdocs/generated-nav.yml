@@ -923,5 +923,6 @@ nav:
           - "ADR 0055: Complete-Bundle B.IOR Schema and Defaults": status/decisions/0055-complete-bundle-bior-schema-and-defaults.md
           - "ADR 0056: PTO/Linx Common Encoding Ownership and Per-PE GM Access": status/decisions/0056-pto-linx-common-encoding-and-gm-access.md
           - "ADR 0057: Tile Classification and Execution-Engine Aliases": status/decisions/0057-tile-classification-and-engine-aliases.md
+          - "ADR 0058: Complete-Bundle GPR Operand Resolution": status/decisions/0058-complete-bundle-gpr-operand-resolution.md
       - Open:
           - "Open architecture questions": status/open/index.md

@@ -55,7 +55,7 @@
     "hint_rule": "B.HINT records the complete encoded payload and advances the hint epoch but has no PTO-v0 scheduling effect.",
     "metadata_rule": "B.DIM, B.TEXT, B.IOR, B.IOT, B.CATR, and B.DATR consume every decoded field into trap-preserved bundle state. After the complete bundle is collected, PTO-v0 resolves the selected direct operation's tile, scalar/address, dimension, data-attribute, and operation-default operands before commit.",
     "memory_rule": "MCOPY and MSET accept lengths 0 through 63 bytes and reject larger XLEN values without truncation or partial effects.",
-    "bridge_rule": "The PTO-v0 bundle bridge resolves every canonical TileInstructionOperands field from ordered B.IOT/B.IOR bindings, bundle headers, or the operation's architectural default. Every accepted direct tile operation is schema-representable; malformed or surplus bindings still reject before tile effects."
+    "bridge_rule": "The PTO-v0 bundle bridge resolves every canonical TileInstructionOperands field through a concrete ordered B.IOT/B.IOR resolver or explicit operation default, with raw-value decode policy recorded before constrained assignment. B.IOR GPR inputs use the fixed address, scalar0, scalar1, diagonal, flag0 order, occupy unique dense RegSrc0..RegSrc2 slots, and never exceed three inputs. Duplicate fields, duplicate assigned slots, malformed or surplus bindings reject before tile effects."
   },
   "form_matrix": [
     {
@@ -1818,6 +1818,128 @@
       "source3",
       "source4"
     ],
+    "bound_operand_resolvers": {
+      "address": {
+        "resolver": "B.IOR ordered GPR input slot for address",
+        "default": "XLEN zero when B.IOR is omitted",
+        "raw_value_policy": "XLEN Word"
+      },
+      "axis": {
+        "resolver": "operation default",
+        "default": "TileAxis_Row",
+        "raw_value_policy": "typed enum default"
+      },
+      "byte_count": {
+        "resolver": "B.DIM LB0",
+        "default": "0",
+        "raw_value_policy": "natural integer 0..262144"
+      },
+      "comparison": {
+        "resolver": "B.DATR CMode",
+        "default": "TileComparison_EQ",
+        "raw_value_policy": "CMode decode with EQ fallback"
+      },
+      "destination0": {
+        "resolver": "ordered B.IOT destination binding",
+        "default": "0",
+        "raw_value_policy": "absolute TileIndex"
+      },
+      "destination1": {
+        "resolver": "ordered B.IOT destination binding",
+        "default": "0",
+        "raw_value_policy": "absolute TileIndex"
+      },
+      "diagonal": {
+        "resolver": "B.IOR ordered GPR input slot for diagonal",
+        "default": "0",
+        "raw_value_policy": "XLEN two-complement signed value; reject outside -65535..65535"
+      },
+      "flag0": {
+        "resolver": "B.IOR ordered GPR input slot for flag0",
+        "default": "FALSE",
+        "raw_value_policy": "raw XLEN value exactly 0 or 1; reject all others"
+      },
+      "natural0": {
+        "resolver": "B.DIM LB0",
+        "default": "0",
+        "raw_value_policy": "natural integer 0..65535"
+      },
+      "natural1": {
+        "resolver": "B.DIM LB1",
+        "default": "0",
+        "raw_value_policy": "natural integer 0..65535"
+      },
+      "numeric_control": {
+        "resolver": "B.DATR RMode/Sat",
+        "default": "operation numeric default",
+        "raw_value_policy": "typed NumericExecutionControl"
+      },
+      "positive0": {
+        "resolver": "B.DIM LB0",
+        "default": "1",
+        "raw_value_policy": "positive integer 1..65535"
+      },
+      "positive1": {
+        "resolver": "B.DIM LB1",
+        "default": "1",
+        "raw_value_policy": "positive integer 1..65535"
+      },
+      "positive2": {
+        "resolver": "operation default",
+        "default": "1",
+        "raw_value_policy": "positive integer 1..65535 (default only)"
+      },
+      "positive3": {
+        "resolver": "operation default",
+        "default": "1",
+        "raw_value_policy": "positive integer 1..65535 (default only)"
+      },
+      "scalar0": {
+        "resolver": "B.IOR ordered GPR input slot for scalar0",
+        "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+        "raw_value_policy": "XLEN Word"
+      },
+      "scalar1": {
+        "resolver": "B.IOR ordered GPR input slot for scalar1",
+        "default": "XLEN zero",
+        "raw_value_policy": "XLEN Word"
+      },
+      "selected_byte": {
+        "resolver": "B.DATR PadValueOrByteId",
+        "default": "0",
+        "raw_value_policy": "integer 0..3"
+      },
+      "sort_width": {
+        "resolver": "B.DIM LB0",
+        "default": "32",
+        "raw_value_policy": "integer 1..64"
+      },
+      "source0": {
+        "resolver": "ordered B.IOT source binding",
+        "default": "0",
+        "raw_value_policy": "absolute TileIndex"
+      },
+      "source1": {
+        "resolver": "ordered B.IOT source binding",
+        "default": "0",
+        "raw_value_policy": "absolute TileIndex"
+      },
+      "source2": {
+        "resolver": "ordered B.IOT source binding",
+        "default": "0",
+        "raw_value_policy": "absolute TileIndex"
+      },
+      "source3": {
+        "resolver": "ordered B.IOT source binding",
+        "default": "0",
+        "raw_value_policy": "absolute TileIndex"
+      },
+      "source4": {
+        "resolver": "ordered B.IOT source binding",
+        "default": "0",
+        "raw_value_policy": "absolute TileIndex"
+      }
+    },
     "counts": {
       "TEPL": {
         "total": 87,
@@ -1845,6 +1967,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -1858,6 +2002,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -1871,6 +2037,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -1884,6 +2072,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -1897,6 +2107,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -1910,6 +2142,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -1923,6 +2177,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -1936,6 +2212,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -1949,6 +2247,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -1962,6 +2282,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -1975,6 +2317,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -1988,6 +2352,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2002,6 +2388,34 @@
           "source1",
           "comparison"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "comparison",
+            "resolver": "B.DATR CMode",
+            "default": "TileComparison_EQ",
+            "raw_value_policy": "CMode decode with EQ fallback"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2014,6 +2428,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2026,6 +2456,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2038,6 +2484,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2050,6 +2512,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2062,6 +2540,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2074,6 +2568,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2086,6 +2596,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2098,6 +2624,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2110,6 +2652,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2124,6 +2682,34 @@
           "source1",
           "source2"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source2",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2137,6 +2723,28 @@
           "source0",
           "numeric_control"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "numeric_control",
+            "resolver": "B.DATR RMode/Sat",
+            "default": "operation numeric default",
+            "raw_value_policy": "typed NumericExecutionControl"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2151,6 +2759,34 @@
           "source1",
           "source2"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source2",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2164,6 +2800,31 @@
           "source0",
           "scalar0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2177,6 +2838,31 @@
           "source0",
           "scalar0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2190,6 +2876,31 @@
           "source0",
           "scalar0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2203,6 +2914,31 @@
           "source0",
           "scalar0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2216,6 +2952,31 @@
           "source0",
           "scalar0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2229,6 +2990,31 @@
           "source0",
           "scalar0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2242,6 +3028,31 @@
           "source0",
           "scalar0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2255,6 +3066,31 @@
           "source0",
           "scalar0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2268,6 +3104,31 @@
           "source0",
           "scalar0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2281,6 +3142,31 @@
           "source0",
           "scalar0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2294,6 +3180,31 @@
           "source0",
           "scalar0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2307,6 +3218,31 @@
           "source0",
           "scalar0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2321,6 +3257,37 @@
           "scalar0",
           "comparison"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "comparison",
+            "resolver": "B.DATR CMode",
+            "default": "TileComparison_EQ",
+            "raw_value_policy": "CMode decode with EQ fallback"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2335,6 +3302,37 @@
           "source1",
           "scalar0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2347,6 +3345,25 @@
           "destination0",
           "scalar0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2359,6 +3376,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2371,6 +3404,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2383,6 +3432,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2395,6 +3460,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2408,6 +3489,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2421,6 +3524,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2434,6 +3559,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2447,6 +3594,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2460,6 +3629,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2473,6 +3664,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2486,6 +3699,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2499,6 +3734,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2511,6 +3768,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2523,6 +3796,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2535,6 +3824,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2547,6 +3852,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2559,6 +3880,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2571,6 +3908,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2584,6 +3937,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2597,6 +3972,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2610,6 +4007,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2623,6 +4042,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2636,6 +4077,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2649,6 +4112,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2662,6 +4147,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2675,6 +4182,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2687,6 +4216,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2699,6 +4244,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2713,6 +4274,34 @@
           "source1",
           "axis"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "axis",
+            "resolver": "operation default",
+            "default": "TileAxis_Row",
+            "raw_value_policy": "typed enum default"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2727,6 +4316,34 @@
           "natural0",
           "natural1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "natural0",
+            "resolver": "B.DIM LB0",
+            "default": "0",
+            "raw_value_policy": "natural integer 0..65535"
+          },
+          {
+            "field": "natural1",
+            "resolver": "B.DIM LB1",
+            "default": "0",
+            "raw_value_policy": "natural integer 0..65535"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2741,6 +4358,34 @@
           "natural0",
           "natural1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "natural0",
+            "resolver": "B.DIM LB0",
+            "default": "0",
+            "raw_value_policy": "natural integer 0..65535"
+          },
+          {
+            "field": "natural1",
+            "resolver": "B.DIM LB1",
+            "default": "0",
+            "raw_value_policy": "natural integer 0..65535"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2760,6 +4405,67 @@
           "natural1",
           "scalar0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "positive0",
+            "resolver": "B.DIM LB0",
+            "default": "1",
+            "raw_value_policy": "positive integer 1..65535"
+          },
+          {
+            "field": "positive1",
+            "resolver": "B.DIM LB1",
+            "default": "1",
+            "raw_value_policy": "positive integer 1..65535"
+          },
+          {
+            "field": "positive2",
+            "resolver": "operation default",
+            "default": "1",
+            "raw_value_policy": "positive integer 1..65535 (default only)"
+          },
+          {
+            "field": "positive3",
+            "resolver": "operation default",
+            "default": "1",
+            "raw_value_policy": "positive integer 1..65535 (default only)"
+          },
+          {
+            "field": "natural0",
+            "resolver": "B.DIM LB0",
+            "default": "0",
+            "raw_value_policy": "natural integer 0..65535"
+          },
+          {
+            "field": "natural1",
+            "resolver": "B.DIM LB1",
+            "default": "0",
+            "raw_value_policy": "natural integer 0..65535"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2773,6 +4479,31 @@
           "source0",
           "scalar0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2786,6 +4517,33 @@
           "scalar0",
           "flag0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "flag0",
+            "resolver": "B.IOR ordered GPR input slot for flag0",
+            "default": "FALSE",
+            "raw_value_policy": "raw XLEN value exactly 0 or 1; reject all others",
+            "slot": "RegSrc1"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0",
+          "flag0": "RegSrc1"
+        },
+        "gpr_input_count": 2,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2799,6 +4557,33 @@
           "flag0",
           "diagonal"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "flag0",
+            "resolver": "B.IOR ordered GPR input slot for flag0",
+            "default": "FALSE",
+            "raw_value_policy": "raw XLEN value exactly 0 or 1; reject all others",
+            "slot": "RegSrc1"
+          },
+          {
+            "field": "diagonal",
+            "resolver": "B.IOR ordered GPR input slot for diagonal",
+            "default": "0",
+            "raw_value_policy": "XLEN two-complement signed value; reject outside -65535..65535",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "flag0": "RegSrc1",
+          "diagonal": "RegSrc0"
+        },
+        "gpr_input_count": 2,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2813,6 +4598,34 @@
           "source1",
           "selected_byte"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "selected_byte",
+            "resolver": "B.DATR PadValueOrByteId",
+            "default": "0",
+            "raw_value_policy": "integer 0..3"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2828,6 +4641,45 @@
           "scalar1",
           "numeric_control"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "scalar1",
+            "resolver": "B.IOR ordered GPR input slot for scalar1",
+            "default": "XLEN zero",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc1"
+          },
+          {
+            "field": "numeric_control",
+            "resolver": "B.DATR RMode/Sat",
+            "default": "operation numeric default",
+            "raw_value_policy": "typed NumericExecutionControl"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0",
+          "scalar1": "RegSrc1"
+        },
+        "gpr_input_count": 2,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2843,6 +4695,45 @@
           "scalar1",
           "numeric_control"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "scalar1",
+            "resolver": "B.IOR ordered GPR input slot for scalar1",
+            "default": "XLEN zero",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc1"
+          },
+          {
+            "field": "numeric_control",
+            "resolver": "B.DATR RMode/Sat",
+            "default": "operation numeric default",
+            "raw_value_policy": "typed NumericExecutionControl"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0",
+          "scalar1": "RegSrc1"
+        },
+        "gpr_input_count": 2,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2858,6 +4749,43 @@
           "sort_width",
           "flag0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "destination1",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "sort_width",
+            "resolver": "B.DIM LB0",
+            "default": "32",
+            "raw_value_policy": "integer 1..64"
+          },
+          {
+            "field": "flag0",
+            "resolver": "B.IOR ordered GPR input slot for flag0",
+            "default": "FALSE",
+            "raw_value_policy": "raw XLEN value exactly 0 or 1; reject all others",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "flag0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2872,6 +4800,37 @@
           "source1",
           "flag0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "flag0",
+            "resolver": "B.IOR ordered GPR input slot for flag0",
+            "default": "FALSE",
+            "raw_value_policy": "raw XLEN value exactly 0 or 1; reject all others",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "flag0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2884,6 +4843,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2897,6 +4872,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2910,6 +4907,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2923,6 +4942,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2936,6 +4977,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2949,6 +5012,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2962,6 +5047,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2975,6 +5082,33 @@
           "address",
           "scalar0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc1"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0",
+          "scalar0": "RegSrc1"
+        },
+        "gpr_input_count": 2,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -2988,6 +5122,33 @@
           "scalar0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc1"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0",
+          "scalar0": "RegSrc1"
+        },
+        "gpr_input_count": 2,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3000,6 +5161,22 @@
           "destination0",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3012,6 +5189,25 @@
           "address",
           "byte_count"
         ],
+        "operand_resolutions": [
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "byte_count",
+            "resolver": "B.DIM LB0",
+            "default": "0",
+            "raw_value_policy": "natural integer 0..262144"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3025,6 +5221,31 @@
           "address",
           "source0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3038,6 +5259,31 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3052,6 +5298,37 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3066,6 +5343,37 @@
           "source1",
           "source2"
         ],
+        "operand_resolutions": [
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source2",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3081,6 +5389,43 @@
           "source1",
           "source2"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source2",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3094,6 +5439,31 @@
           "source0",
           "scalar0"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3107,6 +5477,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3121,6 +5513,34 @@
           "source1",
           "source2"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source2",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3135,6 +5555,34 @@
           "source1",
           "source2"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source2",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3150,6 +5598,40 @@
           "source2",
           "source3"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source2",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source3",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3166,6 +5648,46 @@
           "source3",
           "source4"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source2",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source3",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source4",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3182,6 +5704,46 @@
           "source3",
           "source4"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source2",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source3",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source4",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3195,6 +5757,28 @@
           "source0",
           "source1"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3209,6 +5793,34 @@
           "source1",
           "source2"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source2",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3223,6 +5835,34 @@
           "source1",
           "source2"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source2",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3238,6 +5878,40 @@
           "source2",
           "source3"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source2",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source3",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3254,6 +5928,46 @@
           "source3",
           "source4"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source2",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source3",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source4",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"
@@ -3270,6 +5984,46 @@
           "source3",
           "source4"
         ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source2",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source3",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source4",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "commit_disposition": "execute-after-complete-binding"

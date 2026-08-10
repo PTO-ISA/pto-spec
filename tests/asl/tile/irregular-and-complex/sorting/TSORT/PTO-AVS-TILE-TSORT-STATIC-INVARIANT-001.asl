@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: irregular-and-complex/sorting
-    // block: BSTART.SFU TSORT, DataType | B.DIM sort_width -> LB0 | B.IOT | BSTOP
+    // block: BSTART.SFU TSORT, DataType | B.DIM sort_width -> LB0 | B.IOT | B.IOR | BSTOP
     assert DecodeTileOperation(TileDecode_TEPL, '000001101100') == 78;
     assert TileOperationOfIndex(78) == TileOperation_TSORT;
     assert TileHandlerOfIndex(78) == TileHandler_TSORT;
