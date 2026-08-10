@@ -1,4 +1,4 @@
-# ADR 0057: Complete-Bundle GPR Operand Resolution
+# ADR 0058: Complete-Bundle GPR Operand Resolution
 
 - **Status**: accepted
 - **Date**: 2026-08-10
@@ -40,6 +40,14 @@ resolver or explicit default and a raw-value decode policy. Nonzero surplus
 B.IOR fields and `RegDst` reject; an encoded zero remains a real zero selector;
 a second B.IOR faults without replacing the first. `PE_MASK=0000` exits before
 all GPR reads, validation, allocation, faults, and Tile updates.
+
+The representability gate derives and records the concrete dense slot for each
+GPR field. It rejects duplicate operand fields, duplicate assigned slots, and
+any accepted operation requiring more than three GPR inputs; it never reports
+such an operation as representable. Independent evidence executes the decoded
+bundle through `BSTART`, `B.IOR`, `B.IOT`, and `BSTOP` so fault identity,
+destination preservation, zero-mask suppression, and observable operation
+results are covered at the architectural commit boundary.
 
 TSORT and TMRGSORT retain their v0.58 direct-binary ordering contracts:
 TSORT ties remain stable, TMRGSORT ties select the left source first, and both

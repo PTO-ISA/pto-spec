@@ -123,7 +123,7 @@
     "scripts/run-asl-test": "152bc50910a4927ff9b78b805fac286d1948be8cbaf5751325a65e8316bf7851",
     "scripts/setup-aslref": "0cbe5e413f53d6d1cce1d2f604a65fd5e7e77cc5eec9c449978f4a5e136d64da",
     "scripts/tile_taxonomy.py": "49385a4413b15eed33e87c20df0e2fb29e9b8171c68167dbea57cc813eb1f59d",
-    "spec/evidence/release-traceability-readiness.json": "2b5475919171c812f782266541da9b7dcfda5a60edbf1b4a4c42405d96228a7e",
+    "spec/evidence/release-traceability-readiness.json": "44506d02c7c16366962da94bba7600898315637824a3cbc45a48cc64a148d1c3",
     "spec/release-inputs.json": "d90cc3c8a8c7855572f57fcf4dbbe371471a95c61ee4ac7fb1896deda59ca984"
   },
   "summary": {
@@ -132,7 +132,7 @@
     "gate_count": 9,
     "mnemonic_count": 651,
     "status": "ready-for-exact-head-verification",
-    "test_count": 906,
+    "test_count": 909,
     "test_page_count": 10,
     "test_page_size": 100,
     "uncovered_executable_requirement_count": 0,

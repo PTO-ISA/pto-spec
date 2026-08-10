@@ -64,6 +64,9 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/irregular-and-complex/sorting/TMRGSORT.asl -->
 ```asl
+// Complete-bundle B.IOR consumes descending in RegSrc0. Omission keeps the
+// ascending default; encoded zero is explicit. Equal keys select the left
+// source first, and inputs must already be sorted in the selected direction.
 readonly func InstructionContractHandler_TMRGSORT() => TileSemanticHandler
 begin
     return TileHandler_TMRGSORT;

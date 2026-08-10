@@ -173,17 +173,44 @@ BRIDGE_RESOLVERS = {
 }
 
 BRIDGE_FIELDS = frozenset(BRIDGE_RESOLVERS)
+GPR_INPUT_ORDER = ("address", "scalar0", "scalar1", "diagonal", "flag0")
+GPR_INPUT_FIELDS = frozenset(GPR_INPUT_ORDER)
 
 
 def bridge_operand_resolutions(operand_fields: list[str]) -> list[dict[str, str]]:
-    """Return resolver evidence or fail closed for an unknown/incomplete field."""
+    """Return resolver evidence or fail closed for an unknown/incomplete field.
+
+    B.IOR has three dense architectural input slots.  Derive those slots from
+    the fixed logical field order rather than from the catalog operand order;
+    this is the representability proof consumed by the release evidence.
+    """
+
+    duplicate_fields = [
+        field for field, count in Counter(operand_fields).items() if count > 1
+    ]
+    if duplicate_fields:
+        raise ValueError(
+            "duplicate GPR operand fields: " + ", ".join(sorted(duplicate_fields))
+        )
+    gpr_fields = [field for field in GPR_INPUT_ORDER if field in operand_fields]
+    if len(gpr_fields) > 3:
+        raise ValueError(
+            f"more than three GPR inputs are not representable: {gpr_fields}"
+        )
 
     resolutions = []
     for field in operand_fields:
         contract = BRIDGE_RESOLVERS.get(field)
         if not contract or not all(contract.get(key) for key in ("resolver", "default", "raw_value_policy")):
             raise ValueError(f"missing concrete bridge resolver/default for operand {field}")
-        resolutions.append({"field": field, **contract})
+        resolution = {"field": field, **contract}
+        if field in GPR_INPUT_FIELDS:
+            slot = gpr_fields.index(field)
+            resolution["slot"] = f"RegSrc{slot}"
+        resolutions.append(resolution)
+    slots = [row["slot"] for row in resolutions if "slot" in row]
+    if len(slots) != len(set(slots)):
+        raise ValueError(f"duplicate assigned GPR slots: {slots}")
     return resolutions
 
 
@@ -259,6 +286,11 @@ def build_evidence() -> dict:
         if not unsupported_fields:
             resolutions = bridge_operand_resolutions(operand_fields)
         representable = not unsupported_fields and bool(resolutions or not operand_fields)
+        gpr_slots = {
+            resolution["field"]: resolution["slot"]
+            for resolution in resolutions
+            if "slot" in resolution
+        }
         bridge_matrix.append(
             {
                 "family": row["family"],
@@ -268,6 +300,8 @@ def build_evidence() -> dict:
                 "operation": row["name"],
                 "operand_fields": operand_fields,
                 "operand_resolutions": resolutions,
+                "gpr_input_slots": gpr_slots,
+                "gpr_input_count": len(gpr_slots),
                 "representable": representable,
                 "unsupported_operand_fields": unsupported_fields,
                 "commit_disposition": (
@@ -331,7 +365,7 @@ def build_evidence() -> dict:
             "hint_rule": "B.HINT records the complete encoded payload and advances the hint epoch but has no PTO-v0 scheduling effect.",
             "metadata_rule": "B.DIM, B.TEXT, B.IOR, B.IOT, B.CATR, and B.DATR consume every decoded field into trap-preserved bundle state. After the complete bundle is collected, PTO-v0 resolves the selected direct operation's tile, scalar/address, dimension, data-attribute, and operation-default operands before commit.",
             "memory_rule": "MCOPY and MSET accept lengths 0 through 63 bytes and reject larger XLEN values without truncation or partial effects.",
-            "bridge_rule": "The PTO-v0 bundle bridge resolves every canonical TileInstructionOperands field through a concrete ordered B.IOT/B.IOR resolver or explicit operation default, with raw-value decode policy recorded before constrained assignment. Every accepted direct tile operation is schema-representable; malformed or surplus bindings still reject before tile effects.",
+            "bridge_rule": "The PTO-v0 bundle bridge resolves every canonical TileInstructionOperands field through a concrete ordered B.IOT/B.IOR resolver or explicit operation default, with raw-value decode policy recorded before constrained assignment. B.IOR GPR inputs use the fixed address, scalar0, scalar1, diagonal, flag0 order, occupy unique dense RegSrc0..RegSrc2 slots, and never exceed three inputs. Duplicate fields, duplicate assigned slots, malformed or surplus bindings reject before tile effects.",
         },
         "form_matrix": form_matrix,
         "encoding_variant_matrix": encoding_variant_matrix,
