@@ -40,6 +40,14 @@ begin
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;
     end;
+    // Validate raw B.IOR controls only after the PE mask zero no-effect exit
+    // and before destination allocation/resolution.  Invalid values never
+    // enter constrained TileInstructionOperands fields or architectural Tile
+    // state.
+    if !BundleOperationGPRBindingValuesLegal(operation) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
     if !SelectedBundleTileDataAttributesLegal(operation) then
         return FALSE;
     end;
