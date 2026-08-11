@@ -184,6 +184,161 @@ begin
         Zeros{PTO_XLEN} + 0x5a);
 end;
 
+func TestDecodedM16B4InterleaveAndTail()
+begin
+    // M16 b4 crosses both CELL words: logical columns 4..7 are in the
+    // second word and columns 8..11 return to the first word's tail.
+    ResetProfileState();
+    Store(Zeros{PTO_XLEN} + 0x500, 1, Zeros{PTO_XLEN} + 0x10);
+    Store(Zeros{PTO_XLEN} + 0x501, 1, Zeros{PTO_XLEN} + 0x32);
+    Store(Zeros{PTO_XLEN} + 0x502, 1, Zeros{PTO_XLEN} + 0x54);
+    Store(Zeros{PTO_XLEN} + 0x503, 1, Zeros{PTO_XLEN} + 0x76);
+    Store(Zeros{PTO_XLEN} + 0x504, 1, Zeros{PTO_XLEN} + 0x98);
+    Store(Zeros{PTO_XLEN} + 0x505, 1, Zeros{PTO_XLEN} + 0xba);
+    Store(Zeros{PTO_XLEN} + 0x506, 1, Zeros{PTO_XLEN} + 0xdc);
+    Store(Zeros{PTO_XLEN} + 0x507, 1, Zeros{PTO_XLEN} + 0xfe);
+    for byte = 0 to 7 do
+        Store(Zeros{PTO_XLEN} + 0x600 + byte, 1,
+            Zeros{PTO_XLEN} + 0xaa);
+    end;
+    WriteGPR(2, Zeros{PTO_XLEN} + 0x500);
+    WriteGPR(3, Zeros{PTO_XLEN} + 16);
+    let load_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('00000', '11100'), 32);
+    let load_datr = ExecuteCommandInstruction(BundleTestDATR('10110'), 32);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 13);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 16);
+    let load_destination = ExecuteCommandInstruction(
+        BundleTestTileDestinationV5('001', '00', '1111', TRUE), 32);
+    let load_ior = ExecuteCommandInstruction(BundleTestScalarBinding(
+        Zeros{5}, Zeros{5} + 2, Zeros{5} + 3, Zeros{5}), 32);
+    assert load_start == CommandExecution_Executed;
+    assert load_datr == CommandExecution_Executed;
+    assert load_destination == CommandExecution_Executed;
+    assert load_ior == CommandExecution_Executed;
+    let load_stop = ExecuteCommandInstruction(Zeros{64} + 1, 32);
+    assert load_stop == CommandExecution_Executed;
+    let loaded = _BundleTileBindings[[0]].destination;
+    assert _Tiles[[loaded]].layout == TileLayout_CUBE_M16;
+    assert _Tiles[[loaded]].valid_columns == 13;
+    assert ReadTileElement(loaded, 0, 0) == Zeros{PTO_XLEN};
+    assert ReadTileElement(loaded, 0, 4) == Zeros{PTO_XLEN} + 4;
+    assert ReadTileElement(loaded, 0, 8) == Zeros{PTO_XLEN} + 8;
+    assert ReadTileElement(loaded, 0, 12) == Zeros{PTO_XLEN} + 12;
+
+    ResetBundleControlState();
+    WriteGPR(2, Zeros{PTO_XLEN} + 0x600);
+    WriteGPR(3, Zeros{PTO_XLEN} + 16);
+    let store_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('00001', '11100'), 32);
+    let store_datr = ExecuteCommandInstruction(BundleTestDATR('11001'), 32);
+    let store_source = ExecuteCommandInstruction(BundleTestTileSourceV5(
+        '000', Zeros{6} + loaded, '1111', TRUE), 32);
+    let store_ior = ExecuteCommandInstruction(BundleTestScalarBinding(
+        Zeros{5}, Zeros{5} + 2, Zeros{5} + 3, Zeros{5}), 32);
+    assert store_start == CommandExecution_Executed;
+    assert store_datr == CommandExecution_Executed;
+    assert store_source == CommandExecution_Executed;
+    assert store_ior == CommandExecution_Executed;
+    let store_stop = ExecuteCommandInstruction(Zeros{64} + 1, 32);
+    assert store_stop == CommandExecution_Executed;
+    let stored_byte0 = LoadUnsigned(Zeros{PTO_XLEN} + 0x600, 1);
+    let stored_byte1 = LoadUnsigned(Zeros{PTO_XLEN} + 0x601, 1);
+    let stored_byte5 = LoadUnsigned(Zeros{PTO_XLEN} + 0x605, 1);
+    let stored_byte6 = LoadUnsigned(Zeros{PTO_XLEN} + 0x606, 1);
+    let stored_byte7 = LoadUnsigned(Zeros{PTO_XLEN} + 0x607, 1);
+    assert stored_byte0 == Zeros{PTO_XLEN} + 0x10;
+    assert stored_byte1 == Zeros{PTO_XLEN} + 0x32;
+    assert stored_byte5 == Zeros{PTO_XLEN} + 0xba;
+    assert stored_byte6 == Zeros{PTO_XLEN} + 0xac;
+    assert stored_byte7 == Zeros{PTO_XLEN} + 0xaa;
+end;
+
+func TestDecodedN8FP16RepeatsAndTails()
+begin
+    // N8 FP16 uses K=8 and N=8 CELL repeats.  13x19 therefore exercises
+    // both repeat boundaries and both final K/N tails through decoded TLSU.
+    ResetProfileState();
+    Store(Zeros{PTO_XLEN} + 0x100 + (0 * 24 + 0) * 2,
+        2, Zeros{PTO_XLEN} + 0x1001);
+    Store(Zeros{PTO_XLEN} + 0x100 + (7 * 24 + 0) * 2,
+        2, Zeros{PTO_XLEN} + 0x1007);
+    Store(Zeros{PTO_XLEN} + 0x100 + (8 * 24 + 0) * 2,
+        2, Zeros{PTO_XLEN} + 0x1008);
+    Store(Zeros{PTO_XLEN} + 0x100 + (0 * 24 + 7) * 2,
+        2, Zeros{PTO_XLEN} + 0x1070);
+    Store(Zeros{PTO_XLEN} + 0x100 + (0 * 24 + 8) * 2,
+        2, Zeros{PTO_XLEN} + 0x1080);
+    Store(Zeros{PTO_XLEN} + 0x100 + (12 * 24 + 18) * 2,
+        2, Zeros{PTO_XLEN} + 0x1212);
+    Store(Zeros{PTO_XLEN} + 0x900 + (13 * 24 + 0) * 2,
+        2, Zeros{PTO_XLEN} + 0xdead);
+    Store(Zeros{PTO_XLEN} + 0x900 + (0 * 24 + 19) * 2,
+        2, Zeros{PTO_XLEN} + 0xbeef);
+    WriteGPR(2, Zeros{PTO_XLEN} + 0x100);
+    WriteGPR(3, Zeros{PTO_XLEN} + 24);
+    let load_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('00000', '00100'), 32);
+    let load_datr = ExecuteCommandInstruction(BundleTestDATR('10111'), 32);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 19);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 13);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 24);
+    let load_destination = ExecuteCommandInstruction(
+        BundleTestTileDestinationV5('100', '00', '1111', TRUE), 32);
+    let load_ior = ExecuteCommandInstruction(BundleTestScalarBinding(
+        Zeros{5}, Zeros{5} + 2, Zeros{5} + 3, Zeros{5}), 32);
+    assert load_start == CommandExecution_Executed;
+    assert load_datr == CommandExecution_Executed;
+    assert load_destination == CommandExecution_Executed;
+    assert load_ior == CommandExecution_Executed;
+    let load_stop = ExecuteCommandInstruction(Zeros{64} + 1, 32);
+    assert load_stop == CommandExecution_Executed;
+    let loaded = _BundleTileBindings[[0]].destination;
+    assert _Tiles[[loaded]].layout == TileLayout_CUBE_N8;
+    assert _Tiles[[loaded]].valid_rows == 13;
+    assert _Tiles[[loaded]].valid_columns == 19;
+    assert _Tiles[[loaded]].cube_cell_count == 6;
+    assert ReadTileElement(loaded, 0, 0) == Zeros{PTO_XLEN} + 0x1001;
+    assert ReadTileElement(loaded, 7, 0) == Zeros{PTO_XLEN} + 0x1007;
+    assert ReadTileElement(loaded, 8, 0) == Zeros{PTO_XLEN} + 0x1008;
+    assert ReadTileElement(loaded, 0, 7) == Zeros{PTO_XLEN} + 0x1070;
+    assert ReadTileElement(loaded, 0, 8) == Zeros{PTO_XLEN} + 0x1080;
+    assert ReadTileElement(loaded, 12, 18) == Zeros{PTO_XLEN} + 0x1212;
+
+    ResetBundleControlState();
+    WriteGPR(2, Zeros{PTO_XLEN} + 0x900);
+    WriteGPR(3, Zeros{PTO_XLEN} + 24);
+    let store_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('00001', '00100'), 32);
+    let store_datr = ExecuteCommandInstruction(BundleTestDATR('11010'), 32);
+    let store_source = ExecuteCommandInstruction(BundleTestTileSourceV5(
+        '000', Zeros{6} + loaded, '1111', TRUE), 32);
+    let store_ior = ExecuteCommandInstruction(BundleTestScalarBinding(
+        Zeros{5}, Zeros{5} + 2, Zeros{5} + 3, Zeros{5}), 32);
+    assert store_start == CommandExecution_Executed;
+    assert store_datr == CommandExecution_Executed;
+    assert store_source == CommandExecution_Executed;
+    assert store_ior == CommandExecution_Executed;
+    let store_stop = ExecuteCommandInstruction(Zeros{64} + 1, 32);
+    assert store_stop == CommandExecution_Executed;
+    let stored_k_boundary = LoadUnsigned(
+        Zeros{PTO_XLEN} + 0x900 + (7 * 24 + 0) * 2, 2);
+    let stored_k_repeat = LoadUnsigned(
+        Zeros{PTO_XLEN} + 0x900 + (8 * 24 + 0) * 2, 2);
+    let stored_final_tail = LoadUnsigned(
+        Zeros{PTO_XLEN} + 0x900 + (12 * 24 + 18) * 2, 2);
+    let stored_invalid_row = LoadUnsigned(
+        Zeros{PTO_XLEN} + 0x900 + (13 * 24 + 0) * 2, 2);
+    let stored_invalid_column = LoadUnsigned(
+        Zeros{PTO_XLEN} + 0x900 + (0 * 24 + 19) * 2, 2);
+    assert stored_k_boundary == Zeros{PTO_XLEN} + 0x1007;
+    assert stored_k_repeat == Zeros{PTO_XLEN} + 0x1008;
+    assert stored_final_tail == Zeros{PTO_XLEN} + 0x1212;
+    assert stored_invalid_row == Zeros{PTO_XLEN} + 0xdead;
+    assert stored_invalid_column == Zeros{PTO_XLEN} + 0xbeef;
+end;
+
 func TestDecodedCubeM32LoadStore()
 begin
     ResetProfileState();
@@ -388,6 +543,8 @@ func main() => integer
 begin
     ResetProfileState();
     TestDecodedCubeLayoutAndWidthMatrix();
+    TestDecodedM16B4InterleaveAndTail();
+    TestDecodedN8FP16RepeatsAndTails();
     TestDecodedCubeM32LoadStore();
     TestCubeConversionBoundariesAndFaults();
     return 0;
