@@ -11502,8 +11502,13 @@ def main() -> None:
             if operand["field"].startswith("source") or operand["role"] == "bias"
         ]
         if source_fields:
+            source_defined_predicate = (
+                "TileMemorySourceContentsDefined"
+                if row["name"] == "TSTORE"
+                else "TileSourceContentsDefined"
+            )
             undefined_sources = " || ".join(
-                f"!TileSourceContentsDefined(operands.{field})"
+                f"!{source_defined_predicate}(operands.{field})"
                 for field in source_fields
             )
             print(f"            if {undefined_sources} then")

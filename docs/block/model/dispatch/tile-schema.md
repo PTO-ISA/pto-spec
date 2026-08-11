@@ -195,9 +195,28 @@ begin
     return operands;
 end;
 
+readonly func BundleDataLayoutDirectionLegal(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1},
+    data_layout: bits(5)) => boolean
+begin
+    if !TileDataLayoutIsCubeConversion(data_layout) then return TRUE; end;
+    let selected = TileOperationOfIndex(operation);
+    return (TileDataLayoutConversionIsLoad(data_layout) &&
+            selected == TileOperation_TLOAD) ||
+           (TileDataLayoutConversionIsStore(data_layout) &&
+            selected == TileOperation_TSTORE);
+end;
+
 func SelectedBundleTileDataAttributesLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
+    if !BundleDataLayoutDirectionLegal(operation,
+           _BundleDataAttributes.data_layout) ||
+       (TileDataLayoutIsCubeConversion(_BundleDataAttributes.data_layout) &&
+        BundleSharedBindingCount() > 0) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
     let matrix = _BundleOperation.valid &&
         _BundleOperation.operation_class == BundleOperation_TileMatrix;
     let datr_legal = if matrix then

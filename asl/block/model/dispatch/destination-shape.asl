@@ -99,6 +99,7 @@ begin
 
     let selected_type = TileDataTypeFromEncoding(
         ZeroExtend{PTO_XLEN}(CurrentBundleTileOperationDataTypeCode()));
+    let selected_layout = CurrentBundleTileLayout();
     let matrix = _BundleOperation.valid &&
         _BundleOperation.operation_class == BundleOperation_TileMatrix;
     let accumulator_type = TileMatrixAccumulatorDataType(selected_type);
@@ -155,9 +156,16 @@ begin
                 binding as BundleTileBindingIndex);
             let rows = DerivedTileRows(capacity_bytes, auxiliary_columns,
                 destination_type);
-            if !TileDescriptorShapeLegal(capacity_bytes, auxiliary_columns,
-                   valid_rows, auxiliary_valid_columns, destination_type) ||
-               rows * auxiliary_columns > PTO_MODEL_TILE_ELEMENTS then
+            let shape_legal = if TileLayoutIsCube(selected_layout) then
+                TileCubeDescriptorShapeLegal(capacity_bytes, valid_rows,
+                    auxiliary_valid_columns, destination_type,
+                    selected_layout)
+            else
+                TileDescriptorShapeLegal(capacity_bytes, auxiliary_columns,
+                    valid_rows, auxiliary_valid_columns, destination_type);
+            if !shape_legal ||
+               (!TileLayoutIsCube(selected_layout) &&
+                rows * auxiliary_columns > PTO_MODEL_TILE_ELEMENTS) then
                 SetFault(Fault_TileAllocation, ReadTPC());
                 return FALSE;
             end;
@@ -193,11 +201,18 @@ begin
                 else valid_columns;
             let capacity_bytes = BundleTileDestinationSizeBytes(
                 binding as BundleTileBindingIndex);
-            ConfigureTileForMask(resolved[[binding]],
-                capacity_bytes, valid_rows, auxiliary_columns, valid_rows,
-                auxiliary_valid_columns, destination_type,
-                CurrentBundleTileLayout(), TileLocation_Any,
-                _BundleTileBindings[[binding]].pe_mask);
+            if TileLayoutIsCube(selected_layout) then
+                ConfigureCubeTileForMask(resolved[[binding]], capacity_bytes,
+                    valid_rows, auxiliary_valid_columns, destination_type,
+                    selected_layout, TileLocation_Any,
+                    _BundleTileBindings[[binding]].pe_mask);
+            else
+                ConfigureTileForMask(resolved[[binding]],
+                    capacity_bytes, valid_rows, auxiliary_columns, valid_rows,
+                    auxiliary_valid_columns, destination_type,
+                    selected_layout, TileLocation_Any,
+                    _BundleTileBindings[[binding]].pe_mask);
+            end;
             _BundleTileBindings[[binding]].destination = resolved[[binding]];
             _BundleTileBindings[[binding]].destination_allocated_by_bundle =
                 TRUE;

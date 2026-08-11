@@ -22,14 +22,14 @@ readonly func TileOperandsLegal_TLOAD(destination: TileIndex,
                                       base_address: Word,
                                       row_stride_elements: Word) => boolean
 begin
-    return TileDescriptorLegal(destination);
+    return TileMemoryDescriptorLegal(destination);
 end;
 
 readonly func TileOperandsLegal_TSTORE(base_address: Word,
                                        row_stride_elements: Word,
                                        source: TileIndex) => boolean
 begin
-    return TileDescriptorLegal(source);
+    return TileMemoryDescriptorLegal(source);
 end;
 
 readonly func TileOperandsLegal_MGATHER(

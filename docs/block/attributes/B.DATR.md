@@ -21,7 +21,7 @@ B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize}
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| b_datr_32_c161a042ff38 | L32 | 32 | 0x00001023 / 0x000c707f | [{"field":"CMode","operator":"one-of","values":[0,1,2,3,4,5]},{"field":"DataType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,24,25,26,27,28]},{"field":"Layout","operator":"one-of","values":[0,1,3,4,6,8,9,17,18,20,27,28,30]}] |
+| b_datr_32_c161a042ff38 | L32 | 32 | 0x00001023 / 0x000c707f | [{"field":"CMode","operator":"one-of","values":[0,1,2,3,4,5]},{"field":"DataType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,24,25,26,27,28]},{"field":"Layout","operator":"one-of","values":[0,1,3,4,6,8,9,17,18,20,21,22,23,24,25,26,27,28,30]}] |
 
 ### Fields
 
@@ -71,7 +71,7 @@ end;
 
 ## Legality and exceptions
 
-- **Constraints:** `[{"field": "CMode", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5]}, {"field": "DataType", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28]}, {"field": "Layout", "operator": "one-of", "values": [0, 1, 3, 4, 6, 8, 9, 17, 18, 20, 27, 28, 30]}]`
+- **Constraints:** `[{"field": "CMode", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5]}, {"field": "DataType", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28]}, {"field": "Layout", "operator": "one-of", "values": [0, 1, 3, 4, 6, 8, 9, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30]}]`
 
 ## Operational information
 

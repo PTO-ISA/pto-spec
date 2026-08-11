@@ -117,8 +117,26 @@ begin
     let code = UInt(data_layout);
     return code == 0 || code == 1 || code == 3 || code == 4 ||
            code == 6 || code == 8 || code == 9 || code == 17 ||
-           code == 18 || code == 20 || code == 27 || code == 28 ||
+           code == 18 || code == 20 || (21 <= code && code <= 28) ||
            code == 30;
+end;
+
+pure func TileDataLayoutIsCubeConversion(data_layout: bits(5)) => boolean
+begin
+    let code = UInt(data_layout);
+    return 21 <= code && code <= 26;
+end;
+
+pure func TileDataLayoutConversionIsLoad(data_layout: bits(5)) => boolean
+begin
+    let code = UInt(data_layout);
+    return 21 <= code && code <= 23;
+end;
+
+pure func TileDataLayoutConversionIsStore(data_layout: bits(5)) => boolean
+begin
+    let code = UInt(data_layout);
+    return 24 <= code && code <= 26;
 end;
 
 readonly func TileDataLayoutCodeSupported(data_layout: bits(5)) => boolean
@@ -131,6 +149,15 @@ readonly func CurrentBundleTileLayout() => TileLayout
 begin
     if _BundleDataAttributes.data_layout == Zeros{5} then
         return TileLayout_RowMajor;
+    elsif _BundleDataAttributes.data_layout == '10101' ||
+          _BundleDataAttributes.data_layout == '11000' then
+        return TileLayout_CUBE_M32;
+    elsif _BundleDataAttributes.data_layout == '10110' ||
+          _BundleDataAttributes.data_layout == '11001' then
+        return TileLayout_CUBE_M16;
+    elsif _BundleDataAttributes.data_layout == '10111' ||
+          _BundleDataAttributes.data_layout == '11010' then
+        return TileLayout_CUBE_N8;
     else
         // PTO's generic model cannot interpret advertised target layouts.
         // The capability makes their descriptors legal, not generically

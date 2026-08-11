@@ -56,9 +56,25 @@ begin
            TileGenericIndexingPermitted(_Tiles[[index]]);
 end;
 
+// TLSU is the first consumer that may carry a persistent CUBE descriptor.
+// Other generic tile engines continue to use TileDescriptorLegal and remain
+// ordinary-layout only until a later stage defines their bindings.
+readonly func TileMemoryDescriptorLegal(index: TileIndex) => boolean
+begin
+    return TileDescriptorConfigured(index) &&
+           (TileLayoutIsCube(_Tiles[[index]].layout) ||
+            TileGenericIndexingPermitted(_Tiles[[index]]));
+end;
+
 readonly func TileSourceContentsDefined(index: TileIndex) => boolean
 begin
     return TileDescriptorLegal(index) && _Tiles[[index]].contents_defined;
+end;
+
+readonly func TileMemorySourceContentsDefined(index: TileIndex) => boolean
+begin
+    return TileMemoryDescriptorLegal(index) &&
+           _Tiles[[index]].contents_defined;
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

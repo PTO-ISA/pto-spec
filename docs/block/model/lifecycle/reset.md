@@ -91,6 +91,14 @@ begin
     _BundleFixedPointAttributes.max_abs_en = FALSE;
     _TileDataLayoutCapabilities = Zeros{32};
     _TileDataLayoutCapabilities[0] = '1';
+    // PTO CUBE CELL conversions are architectural B.DATR layouts, not
+    // implementation-defined extensions.
+    _TileDataLayoutCapabilities[21] = '1';
+    _TileDataLayoutCapabilities[22] = '1';
+    _TileDataLayoutCapabilities[23] = '1';
+    _TileDataLayoutCapabilities[24] = '1';
+    _TileDataLayoutCapabilities[25] = '1';
+    _TileDataLayoutCapabilities[26] = '1';
     for ring = 0 to PTO_ACR_COUNT - 1 do
         _TrapContexts[[ring]].valid = FALSE;
         _TrapContexts[[ring]].source_acr = 0;

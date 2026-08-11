@@ -16,6 +16,21 @@ begin
     return TRUE;
 end;
 
+readonly func BundleCubeConversionOperandsLegal(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1},
+    operands: TileInstructionOperands) => boolean
+begin
+    let data_layout = _BundleDataAttributes.data_layout;
+    if !TileDataLayoutIsCubeConversion(data_layout) then return TRUE; end;
+    let expected = CurrentBundleTileLayout();
+    if TileOperationOfIndex(operation) == TileOperation_TLOAD then
+        return _Tiles[[operands.destination0]].layout == expected;
+    elsif TileOperationOfIndex(operation) == TileOperation_TSTORE then
+        return _Tiles[[operands.source0]].layout == expected;
+    end;
+    return FALSE;
+end;
+
 func ExecuteBundleTileOperationWithAcceptedApplicabilityRules(
     rules: NumericApplicabilityRuleSet) => boolean
 begin
@@ -62,6 +77,11 @@ begin
     end;
     if !ResolveBundleTileDestinations() then return FALSE; end;
     let operands = BundleTileInstructionOperands(operation);
+    if !BundleCubeConversionOperandsLegal(operation, operands) then
+        RollBackBundleTileDestinations();
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
     let (status, -) =
         ExecuteTileInstructionWithoutTimeWithAcceptedApplicabilityRules(
             rules, family, code, operands);
