@@ -20,6 +20,7 @@ PR_GATES = (
     "./scripts/check-asl-layout",
     "./scripts/check-ndf",
     "./scripts/check-asl-tests",
+    "./scripts/check-release-event-schema",
     "python3 scripts/project_asl_catalogs.py --root . --check",
     "python3 scripts/instruction_docs.py --check",
     "python3 scripts/check-publication-hygiene",

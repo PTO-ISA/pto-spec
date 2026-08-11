@@ -1,0 +1,19 @@
+format_version: "0.2"
+project: pto-spec
+roots:
+  - asl/**/*.asl
+id_prefixes:
+  - PTO
+domains:
+  - architecture
+  - scalar
+  - block
+  - tile
+  - state
+  - memory
+  - concurrency
+policies: {}
+dependencies:
+  ndf:
+    path: tools/ndf
+    graph: false

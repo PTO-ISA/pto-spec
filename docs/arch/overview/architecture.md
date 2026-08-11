@@ -23,6 +23,24 @@ This page is a generated reference view of the normative ASL unit.
 // catalogs and Markdown MUST remain deterministic projections or evidence.
 // NDF-END: PTO-SOURCE-HIERARCHY
 
+// NDF-BEGIN: PTO-ARCH-COMMIT-EVENT-CONFORMANCE-001
+// ndf: kind=contract level=L1 layer=architecture status=accepted
+// Accepted instruction completion and its architecture-visible memory events
+// MUST be defined by the reachable ASL dispatch, completion, and memory-event owners.
+// NDF-END: PTO-ARCH-COMMIT-EVENT-CONFORMANCE-001
+
+// NDF-BEGIN: PTO-ARCH-STATE-CLOSURE-001
+// ndf: kind=contract level=L1 layer=architecture status=accepted
+// Architecture-visible state MUST be exactly [[PTO-STATE-ARCH-GPR]],
+// [[PTO-STATE-ARCH-TEMPORARY-QUEUES]], [[PTO-STATE-ARCH-PROGRAM-CONTROL]],
+// [[PTO-STATE-ARCH-FAULT]], [[PTO-STATE-ARCH-MEMORY]],
+// [[PTO-STATE-ARCH-MAINTENANCE]], [[PTO-STATE-ARCH-SYSTEM-REGISTERS]],
+// [[PTO-STATE-ARCH-EXTENDED-SYSTEM-REGISTERS]],
+// [[PTO-STATE-ARCH-TRAP-CONTEXT]], [[PTO-STATE-TILE-LOCAL]],
+// [[PTO-STATE-TILE-SHARED]], and [[PTO-STATE-BLOCK-CONTROL]], and MUST change
+// only through the accepted ASL transitions owned by those state units.
+// NDF-END: PTO-ARCH-STATE-CLOSURE-001
+
 // NDF-BEGIN: PTO-TILE-CAPACITY-PER-PE
 // ndf: kind=contract level=L1 layer=tile status=accepted
 // A decoded Tile size MUST denote one selected PE's capacity; PE_MASK selects

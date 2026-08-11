@@ -156,7 +156,8 @@ type TileInfo of record {
     payload: TilePayload
 };
 
-// PTO-REQ-SHARED-TILE-001: S0..S255 are absolute, core-private architectural
+// Requirement reference PTO-REQ-SHARED-TILE-001: S0..S255 are absolute,
+// core-private architectural
 // Shared registers. Each record is persistent descriptor-plus-payload state;
 // initialized_mask identifies the fixed-offset quarters whose payload has
 // been written. All four PEs in one core address the same 256 records.

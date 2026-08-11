@@ -24,6 +24,11 @@
       "generator": "scripts/generate-release-traceability-readiness",
       "path": "spec/evidence/release-traceability-readiness.json",
       "role": "canonical-input"
+    },
+    {
+      "generator": "scripts/check-release-event-schema",
+      "path": "spec/schemas/pto-spec-release-event-v1.schema.json",
+      "role": "canonical-input"
     }
   ],
   "schema": "pto.release-inputs.v1"

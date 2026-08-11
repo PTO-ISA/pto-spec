@@ -103,9 +103,16 @@ def validate(root: Path) -> list[str]:
             manifest_evidence = {
                 path for path in canonical | owned if path.startswith("spec/evidence/")
             }
-            if manifest_evidence != set(registered):
+            registered_evidence = {
+                path for path in registered if path.startswith("spec/evidence/")
+            }
+            if manifest_evidence != registered_evidence:
                 errors.append(
                     "release manifest evidence set does not equal the explicit registry"
+                )
+            if not set(registered) <= canonical | owned:
+                errors.append(
+                    "registered release input is absent from the release manifest"
                 )
             for relative in canonical:
                 absolute = root / relative

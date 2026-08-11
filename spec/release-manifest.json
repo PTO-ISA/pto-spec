@@ -14,7 +14,7 @@
     },
     {
       "path": "asl/arch/data-types/integer.asl",
-      "sha256": "c23c97d2627eed8c2acef84aa9dd9a331e88f3f7c678e0ecbb5282722b45ecc0"
+      "sha256": "9c09a85c8eedcbacc04e0007a556f5dc8a08e3076ec47b58a805d2c06e3af995"
     },
     {
       "path": "asl/arch/data-types/memory-model.asl",
@@ -94,7 +94,7 @@
     },
     {
       "path": "asl/arch/overview/architecture.asl",
-      "sha256": "d61329d2e9126f78baf462f06d49fdfa495a5e59ca989b13212c77f9ebb83ff1"
+      "sha256": "c192bf74e790148342601235c81e47247d4679821cf6650df61fd4780248cefe"
     },
     {
       "path": "asl/arch/overview/encoding-ownership.asl",
@@ -122,7 +122,7 @@
     },
     {
       "path": "asl/arch/programming-model/execution-context.asl",
-      "sha256": "12d614c1395a7a4a8e9ebe365b6435c9c8a7454596f6aedf3b8ac8a12f7b2ef0"
+      "sha256": "8cb6305e50d4914b9229dd3748731446e4576776e24bc773aae7da4f9675cedc"
     },
     {
       "path": "asl/arch/programming-model/predicate-registers.asl",
@@ -166,7 +166,7 @@
     },
     {
       "path": "asl/arch/system-registers/addressing.asl",
-      "sha256": "a34345153639fd36c2884d3ea96c18ee9eb1af34409dcaf3953670d41329686a"
+      "sha256": "9a6b1b703497812b9be330d30b5600fe7640c3b1ded3cb234696f451da8d893d"
     },
     {
       "path": "asl/arch/system-registers/context.asl",
@@ -554,7 +554,7 @@
     },
     {
       "path": "asl/block/model/state/control-state.asl",
-      "sha256": "250a67131182451af1585b002870f756767546620566eec6378c783b919d882a"
+      "sha256": "b0b4d20b042c46fac3710f4f84526839aa82e29c44f07b59d65397cba98fe1ac"
     },
     {
       "path": "asl/block/model/state/descriptor-state.asl",
@@ -2974,7 +2974,7 @@
     },
     {
       "path": "asl/tile/model/state/local-registers.asl",
-      "sha256": "cc7db333e1fd3b13cc301c9c709f1a035f8b07b034a18ad0df7d5983aa4b64b8"
+      "sha256": "645fda7cae232d5180641ea966a673abbab33cb9bc2f4085aedfae4d84b69f6a"
     },
     {
       "path": "asl/tile/model/state/shared-registers.asl",
@@ -2982,7 +2982,7 @@
     },
     {
       "path": "asl/tile/model/state/types.asl",
-      "sha256": "18c76cc653e37c16cbe320e7dd4caa91ffb13f31a8bcbcfb2b990b54071f31f1"
+      "sha256": "9edb3647ee89cd7e703bf6ff04bbd4b1d1f16a8e6d09a033ca5c55bcea1b2e2a"
     },
     {
       "path": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPAND.asl",
@@ -3186,11 +3186,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "84b6f977ef25511f2ac477ba2ad8ab0744ffda89a4dee25a53cb9762896ee93b"
+      "sha256": "a9a309312f69c448e235d0fb652baedee135a5d39b2a597b75a4920634b4769e"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "44506d02c7c16366962da94bba7600898315637824a3cbc45a48cc64a148d1c3"
+      "sha256": "9c582d64f6a27dfc7ca5f421a78e4089c925b593226c4c7c4099c0525898fb8e"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3198,7 +3198,11 @@
     },
     {
       "path": "spec/release-inputs.json",
-      "sha256": "d90cc3c8a8c7855572f57fcf4dbbe371471a95c61ee4ac7fb1896deda59ca984"
+      "sha256": "67934904c0ed4736ee206e4d6fb7ba1b1eb6e68398b39b9df1b692f6806617c0"
+    },
+    {
+      "path": "spec/schemas/pto-spec-release-event-v1.schema.json",
+      "sha256": "0ad73b22f2f1d7802c1aa6c5f0f418bd5415c5b5de78b3c6170c7fa5bfb8bd7c"
     },
     {
       "path": "specification.toml",
@@ -3224,7 +3228,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "355e96045cd3f159c367c75d32b1b2d0a8438cd8df61def2b5d4cd650d103873",
+  "content_sha256": "31294b1c26c3dd52dca1ceaa224b8a14c5a266ba0f14dc7dc283592b7ba71ce4",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3271,7 +3275,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/data-types/integer.md",
-      "sha256": "9fd783311f08c631622819173e38f0e0a3b751a12c27387eb36ab0a535bf4722"
+      "sha256": "2c4e096be1a81f1349628744b1543b07cec4c94c73ddfe065bf57ec47e104b4b"
     },
     {
       "kind": "generated-documentation",
@@ -3371,7 +3375,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/overview/architecture.md",
-      "sha256": "b308a48b63403495623210ec3660d8bd27f53b26883ec0249489400ebd407561"
+      "sha256": "a8a4b3a55081c309735a8c34d1ca65b600478401e837a74080193a8a7d0be5b9"
     },
     {
       "kind": "generated-documentation",
@@ -3406,7 +3410,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/programming-model/execution-context.md",
-      "sha256": "78b0f48dad50022b3237cc3a1430d4d5a48daeb624acac4eaa069d673bd81e12"
+      "sha256": "60c7ad82abb84f4daaafbc2aec2464e4cb2c6bbc34ea49a871956b0e1545dc5b"
     },
     {
       "kind": "generated-documentation",
@@ -3461,7 +3465,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/system-registers/addressing.md",
-      "sha256": "8f758cb329a3c6c289cb4527772da80ebbbd243b5aa8a9a5af411b046fc9e54b"
+      "sha256": "aa14611632c7c2791c8ec04c136055fc12f53efccde873f02f805950e7361225"
     },
     {
       "kind": "generated-documentation",
@@ -3946,7 +3950,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/state/control-state.md",
-      "sha256": "10c60afba7b64e0a43632575fa6c9a0148bc35e6f5d1faf168175512795533a2"
+      "sha256": "2aef65c6bc2f627a8553261d272cccc5bc4f22a294e8c386a34a7d83a4c03276"
     },
     {
       "kind": "generated-documentation",
@@ -6971,7 +6975,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/state/local-registers.md",
-      "sha256": "e02ddda0faeadb9386708cd5f0aa6b31a5cff6cb9bd22b78ad92b4af7cec7998"
+      "sha256": "3a0a559e81791b26b2352bdc4e2bcb342045bcc84690d7087821b353bed3716a"
     },
     {
       "kind": "generated-documentation",
@@ -6981,7 +6985,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/state/types.md",
-      "sha256": "9ebb27473cfe87b1968ba6afe1215c616881e7c71baab989ee7ee5d6882cb4fe"
+      "sha256": "ecc1a0384d70dc25f20532367d9ce114a54eb1e6f7d10c4df4f3404ce5d48096"
     },
     {
       "kind": "generated-documentation",
