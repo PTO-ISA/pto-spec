@@ -38,7 +38,6 @@ begin
     _Tiles[[index]].cube_k_repeat = 0;
     _Tiles[[index]].cube_n_repeat = 0;
     _Tiles[[index]].cube_cell_count = 0;
-    _Tiles[[index]].cube_role = TileCubeOperand_None;
     _Tiles[[index]].data_type = data_type;
     _Tiles[[index]].layout = layout;
     _Tiles[[index]].location = location;
@@ -49,23 +48,22 @@ func ConfigureCubeTileForMask(index: TileIndex,
                               valid_rows: integer {0..65535},
                               valid_columns: integer {0..65535},
                               data_type: TileDataType, layout: TileLayout,
-                              role: TileCubeOperandRole,
                               location: TileLocation,
                               allocation_mask: bits(4))
 begin
     assert TileCubeDescriptorShapeLegal(capacity_bytes, valid_rows,
-        valid_columns, data_type, layout, role);
+        valid_columns, data_type, layout);
     assert allocation_mask != Zeros{4};
-    let storage_rows = TileCubeStorageRows(layout, role, valid_rows,
+    let storage_rows = TileCubeStorageRows(layout, valid_rows,
         data_type);
-    let storage_columns = TileCubeStorageColumns(layout, role,
+    let storage_columns = TileCubeStorageColumns(layout,
         valid_columns, data_type);
-    let storage_bytes = TileCubeRequiredBytes(layout, role, valid_rows,
+    let storage_bytes = TileCubeRequiredBytes(layout, valid_rows,
         valid_columns, data_type);
-    let k_repeat = TileCubeKRepeat(layout, role, valid_rows, valid_columns,
+    let k_repeat = TileCubeKRepeat(layout, valid_rows, valid_columns,
         data_type);
-    let n_repeat = TileCubeNRepeat(layout, role, valid_columns, data_type);
-    let cell_count = TileCubeCellCount(layout, role, valid_rows,
+    let n_repeat = TileCubeNRepeat(layout, valid_columns, data_type);
+    let cell_count = TileCubeCellCount(layout, valid_rows,
         valid_columns, data_type);
     assert TileCapacityInUseExcept(index) + SharedTileCapacityInUse() +
         TileCoreAllocationBytes(allocation_mask, capacity_bytes) <=
@@ -86,7 +84,6 @@ begin
     _Tiles[[index]].cube_k_repeat = k_repeat;
     _Tiles[[index]].cube_n_repeat = n_repeat;
     _Tiles[[index]].cube_cell_count = cell_count;
-    _Tiles[[index]].cube_role = role;
     _Tiles[[index]].data_type = data_type;
     _Tiles[[index]].layout = layout;
     _Tiles[[index]].location = location;
@@ -107,10 +104,10 @@ func ConfigureCubeTile(index: TileIndex, capacity_bytes: integer {0..262144},
                        valid_rows: integer {0..65535},
                        valid_columns: integer {0..65535},
                        data_type: TileDataType, layout: TileLayout,
-                       role: TileCubeOperandRole, location: TileLocation)
+                       location: TileLocation)
 begin
     ConfigureCubeTileForMask(index, capacity_bytes, valid_rows,
-        valid_columns, data_type, layout, role, location, '0001');
+        valid_columns, data_type, layout, location, '0001');
 end;
 
 readonly func CubeValidRegionUpdateLegal(tile: TileInfo,
@@ -122,9 +119,9 @@ begin
        valid_rows == 0 || valid_columns == 0 ||
        valid_rows > tile.storage_rows ||
        valid_columns > tile.storage_columns then return FALSE; end;
-    return TileCubeKRepeat(tile.layout, tile.cube_role, valid_rows,
-               valid_columns, tile.data_type) == tile.cube_k_repeat &&
-           TileCubeNRepeat(tile.layout, tile.cube_role, valid_columns,
+    return TileCubeKRepeat(tile.layout, valid_rows, valid_columns,
+               tile.data_type) == tile.cube_k_repeat &&
+           TileCubeNRepeat(tile.layout, valid_columns,
                tile.data_type) ==
                tile.cube_n_repeat;
 end;
@@ -136,7 +133,7 @@ begin
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
             let element = TileCubePayloadIndex(tile.layout, tile.data_type,
-                tile.cube_role, tile.cube_k_repeat,
+                tile.cube_k_repeat,
                 row as integer {0..65535},
                 column as integer {0..65535});
             if _Tiles[[index]].defined_elements[element] == '1' then
@@ -181,7 +178,6 @@ begin
     _Tiles[[index]].cube_k_repeat = 0;
     _Tiles[[index]].cube_n_repeat = 0;
     _Tiles[[index]].cube_cell_count = 0;
-    _Tiles[[index]].cube_role = TileCubeOperand_None;
     _Tiles[[index]].data_type = TileDataType_U8;
     _Tiles[[index]].layout = TileLayout_RowMajor;
     _Tiles[[index]].location = TileLocation_Any;

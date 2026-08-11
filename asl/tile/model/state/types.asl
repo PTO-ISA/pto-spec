@@ -170,7 +170,6 @@ type TileInfo of record {
     cube_k_repeat: integer {0..65535},
     cube_n_repeat: integer {0..65535},
     cube_cell_count: integer {0..65535},
-    cube_role: TileCubeOperandRole,
     data_type: TileDataType,
     layout: TileLayout,
     location: TileLocation,

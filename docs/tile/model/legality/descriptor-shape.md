@@ -21,19 +21,19 @@ begin
         return tile.allocated &&
                TileCubeDescriptorShapeLegal(tile.capacity_bytes,
                    tile.valid_rows, tile.valid_columns, tile.data_type,
-                   tile.layout, tile.cube_role) &&
+                   tile.layout) &&
                tile.rows == tile.storage_rows &&
                tile.columns == tile.storage_columns &&
                tile.storage_bytes == TileCubeRequiredBytes(tile.layout,
-                   tile.cube_role, tile.valid_rows, tile.valid_columns,
+                   tile.valid_rows, tile.valid_columns,
                    tile.data_type) &&
                tile.cube_k_repeat == TileCubeKRepeat(tile.layout,
-                   tile.cube_role, tile.valid_rows, tile.valid_columns,
+                   tile.valid_rows, tile.valid_columns,
                    tile.data_type) &&
                tile.cube_n_repeat == TileCubeNRepeat(tile.layout,
-                   tile.cube_role, tile.valid_columns, tile.data_type) &&
+                   tile.valid_columns, tile.data_type) &&
                tile.cube_cell_count == TileCubeCellCount(tile.layout,
-                   tile.cube_role, tile.valid_rows, tile.valid_columns,
+                   tile.valid_rows, tile.valid_columns,
                    tile.data_type) &&
                tile.storage_bytes <= tile.capacity_bytes;
     end;

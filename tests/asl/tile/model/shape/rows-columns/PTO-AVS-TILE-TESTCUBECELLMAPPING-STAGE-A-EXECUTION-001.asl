@@ -36,10 +36,6 @@ begin
         TileDataType_U8) == 16;
     assert TileCubeKPerCell(TileLayout_CUBE_N8,
         TileDataType_U4X2) == 32;
-    assert TileCubeRoleLegal(TileLayout_CUBE_M32, TileCubeOperand_A);
-    assert TileCubeRoleLegal(TileLayout_CUBE_M16, TileCubeOperand_C);
-    assert TileCubeRoleLegal(TileLayout_CUBE_N8, TileCubeOperand_B);
-    assert !TileCubeRoleLegal(TileLayout_CUBE_N8, TileCubeOperand_A);
     assert TileCubeKPerCell(TileLayout_CUBE_M32, TileDataType_FP64) == 0;
 
     for width_index = 0 to 3 looplimit 4 do
@@ -48,21 +44,21 @@ begin
         let width_m16 = TileCubeKPerCell(TileLayout_CUBE_M16, data_type);
         let width_n8 = TileCubeKPerCell(TileLayout_CUBE_N8, data_type);
         assert TileCubeStorageRows(TileLayout_CUBE_M32,
-            TileCubeOperand_A, 1, data_type) == 32;
+            1, data_type) == 32;
         assert TileCubeStorageColumns(TileLayout_CUBE_M32,
-            TileCubeOperand_A, width_m32 + 1, data_type) == width_m32 * 2;
-        assert TileCubeNRepeat(TileLayout_CUBE_M32, TileCubeOperand_C,
-            width_m32 + 1, data_type) == 2;
+            width_m32 + 1, data_type) == width_m32 * 2;
+        assert TileCubeNRepeat(TileLayout_CUBE_M32,
+            width_m32 + 1, data_type) == 1;
         assert TileCubeStorageRows(TileLayout_CUBE_M16,
-            TileCubeOperand_C, 1, data_type) == 16;
+            1, data_type) == 16;
         assert TileCubeStorageColumns(TileLayout_CUBE_M16,
-            TileCubeOperand_C, width_m16 + 1, data_type) == width_m16 * 2;
-        assert TileCubeNRepeat(TileLayout_CUBE_M16, TileCubeOperand_D,
-            width_m16 + 1, data_type) == 2;
+            width_m16 + 1, data_type) == width_m16 * 2;
+        assert TileCubeNRepeat(TileLayout_CUBE_M16,
+            width_m16 + 1, data_type) == 1;
         assert TileCubeStorageRows(TileLayout_CUBE_N8,
-            TileCubeOperand_B, width_n8 + 1, data_type) == width_n8 * 2;
+            width_n8 + 1, data_type) == width_n8 * 2;
         assert TileCubeStorageColumns(TileLayout_CUBE_N8,
-            TileCubeOperand_B, 9, data_type) == 16;
+            9, data_type) == 16;
     end;
 end;
 
@@ -86,7 +82,7 @@ begin
     assert TileCubeCellElementIndex(layout, data_type, 0, 13) == 13;
     assert TileCubeCellElementIndex(layout, data_type, 0, 14) == 14;
     assert TileCubeCellElementIndex(layout, data_type, 0, 15) == 15;
-    assert TileCubePayloadIndex(layout, data_type, TileCubeOperand_A, 1,
+    assert TileCubePayloadIndex(layout, data_type, 1,
         1, 4) == 24;
 end;
 
@@ -97,35 +93,35 @@ begin
     ResetProfileState();
     assert TileCapacityIsLegal(1024);
     assert TileCubeKPerCell(layout, data_type) == 8;
-    assert TileCubeStorageRows(layout, TileCubeOperand_B, 13,
+    assert TileCubeStorageRows(layout, 13,
         data_type) == 16;
-    assert TileCubeStorageColumns(layout, TileCubeOperand_B, 19,
+    assert TileCubeStorageColumns(layout, 19,
         data_type) == 24;
-    assert TileCubeKRepeat(layout, TileCubeOperand_B, 13, 19,
+    assert TileCubeKRepeat(layout, 13, 19,
         data_type) == 2;
-    assert TileCubeNRepeat(layout, TileCubeOperand_B, 19, data_type) == 3;
-    assert TileCubeCellCount(layout, TileCubeOperand_B, 13, 19,
+    assert TileCubeNRepeat(layout, 19, data_type) == 3;
+    assert TileCubeCellCount(layout, 13, 19,
         data_type) == 6;
-    assert TileCubeRequiredBytes(layout, TileCubeOperand_B, 13, 19,
+    assert TileCubeRequiredBytes(layout, 13, 19,
         data_type) == 768;
     assert TileCubeDescriptorShapeLegal(1024, 13, 19, data_type,
-        layout, TileCubeOperand_B);
+        layout);
     assert !TileCubeDescriptorShapeLegal(512, 13, 19, data_type,
-        layout, TileCubeOperand_B);
-    assert TileCubeStorageRows(layout, TileCubeOperand_B, 13,
+        layout);
+    assert TileCubeStorageRows(layout, 13,
         data_type) == 16;
-    assert TileCubeStorageColumns(layout, TileCubeOperand_B, 19,
+    assert TileCubeStorageColumns(layout, 19,
         data_type) == 24;
-    assert TileCubeKRepeat(layout, TileCubeOperand_B, 13, 19, data_type) == 2;
-    assert TileCubeNRepeat(layout, TileCubeOperand_B, 19, data_type) == 3;
-    assert TileCubeCellCount(layout, TileCubeOperand_B, 13, 19,
+    assert TileCubeKRepeat(layout, 13, 19, data_type) == 2;
+    assert TileCubeNRepeat(layout, 19, data_type) == 3;
+    assert TileCubeCellCount(layout, 13, 19,
         data_type) == 6;
     // K-repeat is the fast CELL dimension; N-repeat is slow.
-    assert TileCubePayloadIndex(layout, data_type, TileCubeOperand_B, 2,
+    assert TileCubePayloadIndex(layout, data_type, 2,
         8, 0) == 64;
-    assert TileCubePayloadIndex(layout, data_type, TileCubeOperand_B, 2,
+    assert TileCubePayloadIndex(layout, data_type, 2,
         0, 8) == 128;
-    assert TileCubePayloadIndex(layout, data_type, TileCubeOperand_B, 2,
+    assert TileCubePayloadIndex(layout, data_type, 2,
         12, 18) == 340;
 end;
 
@@ -133,7 +129,7 @@ func TestCubeStageADescriptorPersistence()
 begin
     ResetProfileState();
     ConfigureCubeTile(0, 128, 16, 4, TileDataType_U4X2,
-        TileLayout_CUBE_M16, TileCubeOperand_A, TileLocation_Matrix);
+        TileLayout_CUBE_M16, TileLocation_Matrix);
     WriteTileElement(0, 0, 3, Zeros{PTO_XLEN} + 0x5a);
     let old_storage_rows = _Tiles[[0]].storage_rows;
     let old_storage_columns = _Tiles[[0]].storage_columns;
@@ -159,7 +155,6 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
     assert _Tiles[[1]].storage_rows == _Tiles[[1]].rows;
     assert _Tiles[[1]].storage_columns == _Tiles[[1]].columns;
-    assert _Tiles[[1]].cube_role == TileCubeOperand_None;
     assert TileDescriptorConfigured(1);
 end;
 

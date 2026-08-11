@@ -96,20 +96,6 @@ begin
     return 0;
 end;
 
-pure func TileCubeRoleLegal(layout: TileLayout,
-                            role: TileCubeOperandRole) => boolean
-begin
-    if layout == TileLayout_CUBE_N8 then
-        return role == TileCubeOperand_B;
-    end;
-    if layout == TileLayout_CUBE_M32 || layout == TileLayout_CUBE_M16 then
-        return role == TileCubeOperand_A ||
-               role == TileCubeOperand_C ||
-               role == TileCubeOperand_D;
-    end;
-    return FALSE;
-end;
-
 pure func TileCubeCeilDiv(value: integer {0..65535},
                           divisor: integer {1..65535}) => integer {0..65535}
 begin
@@ -119,12 +105,10 @@ begin
 end;
 
 pure func TileCubeStorageRows(layout: TileLayout,
-                              role: TileCubeOperandRole,
                               valid_rows: integer {0..65535},
                               data_type: TileDataType) => integer {0..65535}
 begin
-    if !TileCubeRoleLegal(layout, role) then return 0; end;
-    if role == TileCubeOperand_B then
+    if layout == TileLayout_CUBE_N8 then
         let k_per_cell = TileCubeKPerCell(layout, data_type);
         if k_per_cell == 0 then return 0; end;
         return (TileCubeCeilDiv(valid_rows,
@@ -135,14 +119,13 @@ begin
 end;
 
 pure func TileCubeStorageColumns(layout: TileLayout,
-                                 role: TileCubeOperandRole,
                                  valid_columns: integer {0..65535},
                                  data_type: TileDataType) => integer {0..65535}
 begin
-    if !TileCubeRoleLegal(layout, role) then return 0; end;
+    if !TileLayoutIsCube(layout) then return 0; end;
     let width = TileCubeKPerCell(layout, data_type);
     if width == 0 then return 0; end;
-    if role == TileCubeOperand_B then
+    if layout == TileLayout_CUBE_N8 then
         return (TileCubeCeilDiv(valid_columns, 8) * 8)
             as integer {0..65535};
     end;
@@ -151,55 +134,44 @@ begin
         as integer {0..65535};
 end;
 
-pure func TileCubeKRepeat(layout: TileLayout, role: TileCubeOperandRole,
+pure func TileCubeKRepeat(layout: TileLayout,
                           valid_rows: integer {0..65535},
                           valid_columns: integer {0..65535},
                           data_type: TileDataType) => integer {0..65535}
 begin
-    if !TileCubeRoleLegal(layout, role) then return 0; end;
-    if role == TileCubeOperand_C || role == TileCubeOperand_D then
-        return 1;
-    end;
-    if role == TileCubeOperand_B then
+    if !TileLayoutIsCube(layout) then return 0; end;
+    if layout == TileLayout_CUBE_N8 then
         let width = TileCubeKPerCell(layout, data_type);
         if width == 0 then return 0; end;
         return TileCubeCeilDiv(valid_rows,
             width as integer {1..65535});
     end;
-    if role == TileCubeOperand_A then
-        let width = TileCubeKPerCell(layout, data_type);
-        if width == 0 then return 0; end;
-        return TileCubeCeilDiv(valid_columns,
-            width as integer {1..65535});
-    end;
-    return 0;
+    let width = TileCubeKPerCell(layout, data_type);
+    if width == 0 then return 0; end;
+    return TileCubeCeilDiv(valid_columns,
+        width as integer {1..65535});
 end;
 
-pure func TileCubeNRepeat(layout: TileLayout, role: TileCubeOperandRole,
+pure func TileCubeNRepeat(layout: TileLayout,
                           valid_columns: integer {0..65535},
                           data_type: TileDataType)
                           => integer {0..65535}
 begin
-    if !TileCubeRoleLegal(layout, role) then return 0; end;
-    if role == TileCubeOperand_A then return 1; end;
-    if role == TileCubeOperand_B then
+    if !TileLayoutIsCube(layout) then return 0; end;
+    if layout == TileLayout_CUBE_N8 then
         return TileCubeCeilDiv(valid_columns, 8);
     end;
-    if role == TileCubeOperand_C || role == TileCubeOperand_D then
-        return TileCubeCeilDiv(valid_columns,
-            TileCubeKPerCell(layout, data_type) as integer {1..65535});
-    end;
-    return 0;
+    return 1;
 end;
 
-pure func TileCubeCellCount(layout: TileLayout, role: TileCubeOperandRole,
+pure func TileCubeCellCount(layout: TileLayout,
                             valid_rows: integer {0..65535},
                             valid_columns: integer {0..65535},
                             data_type: TileDataType) => integer {0..65535}
 begin
-    let k_repeat = TileCubeKRepeat(layout, role, valid_rows, valid_columns,
+    let k_repeat = TileCubeKRepeat(layout, valid_rows, valid_columns,
         data_type);
-    let n_repeat = TileCubeNRepeat(layout, role, valid_columns, data_type);
+    let n_repeat = TileCubeNRepeat(layout, valid_columns, data_type);
     if k_repeat == 0 || n_repeat == 0 then return 0; end;
     let cells: integer = k_repeat * n_repeat;
     if cells > 65535 then return 65535; end;
@@ -207,13 +179,12 @@ begin
 end;
 
 pure func TileCubeRequiredBytes(layout: TileLayout,
-                                role: TileCubeOperandRole,
                                 valid_rows: integer {0..65535},
                                 valid_columns: integer {0..65535},
                                 data_type: TileDataType) => integer {0..262144}
 begin
     let bytes: integer =
-        TileCubeCellCount(layout, role, valid_rows, valid_columns, data_type) *
+        TileCubeCellCount(layout, valid_rows, valid_columns, data_type) *
         PTO_TILE_CELL_BYTES;
     if bytes > 262144 then return 262144; end;
     return bytes as integer {0..262144};
@@ -222,17 +193,17 @@ end;
 readonly func TileCubeDescriptorShapeLegal(
     capacity_bytes: integer {0..262144}, valid_rows: integer {0..65535},
     valid_columns: integer {0..65535}, data_type: TileDataType,
-    layout: TileLayout, role: TileCubeOperandRole) => boolean
+    layout: TileLayout) => boolean
 begin
-    if !TileLayoutIsCube(layout) || !TileCubeRoleLegal(layout, role) ||
+    if !TileLayoutIsCube(layout) ||
        !TileCapacityIsLegal(capacity_bytes) || valid_rows == 0 ||
        valid_columns == 0 then return FALSE; end;
     let k_per_cell = TileCubeKPerCell(layout, data_type);
-    let storage_rows = TileCubeStorageRows(layout, role, valid_rows,
+    let storage_rows = TileCubeStorageRows(layout, valid_rows,
         data_type);
-    let storage_columns = TileCubeStorageColumns(layout, role,
+    let storage_columns = TileCubeStorageColumns(layout,
         valid_columns, data_type);
-    let required_bytes = TileCubeRequiredBytes(layout, role, valid_rows,
+    let required_bytes = TileCubeRequiredBytes(layout, valid_rows,
         valid_columns, data_type);
     return k_per_cell != 0 && storage_rows != 0 && storage_columns != 0 &&
            valid_rows <= storage_rows && valid_columns <= storage_columns &&
@@ -267,7 +238,6 @@ end;
 
 readonly func TileCubePayloadIndex(layout: TileLayout,
                                data_type: TileDataType,
-                               role: TileCubeOperandRole,
                                k_repeat: integer {0..65535},
                                row: integer {0..65535},
                                column: integer {0..65535})
@@ -277,7 +247,7 @@ begin
     let n_width = TileCubeNPerCell(layout);
     let m_height = TileCubeMPerCell(layout);
     assert k_width != 0;
-    if role == TileCubeOperand_B then
+    if layout == TileLayout_CUBE_N8 then
         let cell_k: integer =
             row DIVRM (k_width as integer {1..65535});
         let cell_n: integer =
@@ -301,8 +271,8 @@ begin
         column MOD (cell_width as integer {1..65535});
     let local_offset: integer = TileCubeCellElementIndex(layout, data_type,
         row, local_column as integer {0..65535});
-    // A/C/D M layouts repeat only in K (A) or N (C/D); both have one
-    // CELL-height in M and the same X-fast intra-CELL mapping.
+    // M layouts use one generic storage class. Matrix binding later resolves
+    // whether the logical X direction is K (A) or N (C/D).
     let cell_offset: integer = cell_index * (m_height * cell_width);
     assert cell_offset + local_offset < PTO_MODEL_TILE_ELEMENTS;
     return (cell_offset + local_offset) as ModelTileElementIndex;

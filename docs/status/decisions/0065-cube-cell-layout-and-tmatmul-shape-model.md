@@ -50,6 +50,13 @@ The layout is descriptor state, not merely a transfer mode. Its element
 mapping is parameterized by the Tile data type. In particular, `CUBE_M16` does
 not have one dtype-independent byte permutation.
 
+The persistent descriptor records only this layout class and its derived
+storage geometry. `CUBE_M32` and `CUBE_M16` are one generic M-layout storage
+class; `CUBE_N8` is the B-layout storage class. Because decoded `ND2M*`
+conversions carry no A/C/D role discriminator, the descriptor does not record
+or default A, C, or D identity. Matrix operand binding resolves that identity
+when a later operation consumes the tile.
+
 Shared Tiles do not support any CUBE layout. A Shared Tile remains an ordinary
 two-dimensional Tile. It carries no persistent ND/DN orientation metadata.
 
@@ -130,7 +137,8 @@ which explicitly showed only f32 and f16.
 ### Multi-CELL storage geometry
 
 The persistent descriptor records storage geometry separately from valid
-geometry. Software supplies layout, dtype, valid dimensions, and capacity
+geometry, without retaining matrix operand identity. Software supplies layout,
+dtype, valid dimensions, and capacity
 through the existing bundle descriptors. The architecture derives the minimal
 storage geometry by applying the layout's CELL-alignment formulas below and
 retains that geometry in the allocated Tile descriptor. No new encoded

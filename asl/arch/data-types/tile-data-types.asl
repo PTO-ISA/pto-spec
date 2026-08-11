@@ -66,9 +66,9 @@ type TileLayout of enumeration {
     TileLayout_ImplementationDefined
 };
 
-// CUBE storage geometry is resolved from the matrix operand role at tile
-// allocation time.  The role is descriptor state only; it is not an encoded
-// persistent MShard4/group tag.
+// CUBE storage geometry is a persistent layout-class property.  M32/M16 use
+// one generic M-layout storage class and N8 uses the B-layout storage class;
+// A/C/D operand identity is resolved only by matrix binding at operation time.
 type TileCubeOperandRole of enumeration {
     TileCubeOperand_None,
     TileCubeOperand_A,

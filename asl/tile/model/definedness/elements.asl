@@ -14,7 +14,7 @@ begin
     assert TileGenericIndexingPermitted(tile);
     let index: integer = if TileLayoutIsCube(tile.layout) then
         TileCubePayloadIndex(tile.layout, tile.data_type,
-            tile.cube_role, tile.cube_k_repeat, row, column)
+            tile.cube_k_repeat, row, column)
     else if tile.layout == TileLayout_RowMajor then
         row * tile.columns + column else column * tile.rows + row;
     assert index < PTO_MODEL_TILE_ELEMENTS;
@@ -205,6 +205,5 @@ begin
            left.cube_k_repeat == right.cube_k_repeat &&
            left.cube_n_repeat == right.cube_n_repeat &&
            left.cube_cell_count == right.cube_cell_count &&
-           left.cube_role == right.cube_role &&
            left.data_type == right.data_type;
 end;

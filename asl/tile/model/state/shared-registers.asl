@@ -54,7 +54,6 @@ begin
            left.cube_k_repeat == right.cube_k_repeat &&
            left.cube_n_repeat == right.cube_n_repeat &&
            left.cube_cell_count == right.cube_cell_count &&
-           left.cube_role == right.cube_role &&
            left.data_type == right.data_type &&
            left.layout == right.layout && left.location == right.location;
 end;
