@@ -8,6 +8,7 @@ commands=(
     "./scripts/check-asl-layout"
     "./scripts/check-ndf"
     "./scripts/check-asl-tests"
+    "./scripts/check-release-event-schema"
     "./scripts/check-release-workflow"
     "python3 -m unittest discover -s tests/scripts -p test_*.py"
     "python3 scripts/project_asl_catalogs.py --root . --check"

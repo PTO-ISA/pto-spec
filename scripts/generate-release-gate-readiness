@@ -31,6 +31,7 @@ SOURCE_PATHS = (
     "scripts/check-ndf",
     "scripts/check-pr",
     "scripts/check-release-closure",
+    "scripts/check-release-event-schema",
     "scripts/check-release-manifest",
     "scripts/check-release-workflow",
     "scripts/check-repository",
@@ -42,6 +43,7 @@ SOURCE_PATHS = (
     "scripts/prepare-aslref",
     "scripts/project_asl_catalogs.py",
     "scripts/report-asl-page-results",
+    "scripts/release_event.py",
     "scripts/release_workflow.py",
     "scripts/run-asl-page",
     "scripts/run-asl-release-suite",
@@ -50,13 +52,20 @@ SOURCE_PATHS = (
     "scripts/tile_taxonomy.py",
     "spec/evidence/release-traceability-readiness.json",
     "spec/release-inputs.json",
+    "spec/schemas/pto-spec-release-event-v1.schema.json",
 )
 GATES = (
     {
         "id": "RG-01",
         "name": "lightweight pull-request contract",
         "command": "make pr-check",
-        "evidence": ["Makefile", ".github/workflows/asl.yml"],
+        "evidence": [
+            "Makefile",
+            ".github/workflows/asl.yml",
+            "scripts/check-release-event-schema",
+            "scripts/release_event.py",
+            "spec/schemas/pto-spec-release-event-v1.schema.json",
+        ],
     },
     {
         "id": "RG-02",

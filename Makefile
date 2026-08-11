@@ -10,7 +10,7 @@ DECODER_SPEC := build/decoders.asl
 .PHONY: all setup build clean release-manifest release-evidence-check release-check release-prepare \
 	release-verify repo-check pr-check toolchain-check check test test-parallel ci \
 	check-asl-layout check-ndf check-asl-tests check-projections \
-	check-publication-hygiene print-asl-sources print-asl-tests
+	check-publication-hygiene check-release-event-schema print-asl-sources print-asl-tests
 
 all: ci
 
@@ -51,7 +51,10 @@ check-projections:
 check-publication-hygiene:
 	python3 scripts/check-publication-hygiene
 
-pr-check: check-asl-layout check-ndf check-asl-tests check-projections check-publication-hygiene
+check-release-event-schema:
+	./scripts/check-release-event-schema
+
+pr-check: check-asl-layout check-ndf check-asl-tests check-projections check-publication-hygiene check-release-event-schema
 	./scripts/check-release-workflow
 	python3 -m unittest discover -s tests/scripts -p 'test_*.py'
 	git diff --check

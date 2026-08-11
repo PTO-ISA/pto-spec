@@ -4,7 +4,10 @@
       "command": "make pr-check",
       "evidence": [
         "Makefile",
-        ".github/workflows/asl.yml"
+        ".github/workflows/asl.yml",
+        "scripts/check-release-event-schema",
+        "scripts/release_event.py",
+        "spec/schemas/pto-spec-release-event-v1.schema.json"
       ],
       "id": "RG-01",
       "name": "lightweight pull-request contract"
@@ -91,11 +94,11 @@
   "schema": "pto.release-gate.v2",
   "sources": {
     ".aslref-version": "943437e8563813c276417b022296f0c51b34fadbb8da49ca70dbac7f6589db63",
-    ".github/workflows/asl.yml": "d880c1fc9a5087cb0256d5bb4f8b9d51b9860dc27aae6f753191a00e4e10b1f1",
+    ".github/workflows/asl.yml": "3dc9e14d43b616a2065c166e4e3528147e1c9edd6b9e066db29f38bdf59a414f",
     ".github/workflows/release.yml": "9cd27200e878a997211414b24a5762911c4841848ffb21911fe70c58a1db44ff",
     "CONTRIBUTING.md": "1aef7301df0ca3c10cb87e72f5fe944bb30c1b54eca2d6f0a730ab2e42c32b7b",
     "GOVERNANCE.md": "f4081bfbdc1ae3ea7d22dce98c3960ba0290ce282a88f89cb471c4d255cad409",
-    "Makefile": "b25f94209c9964e1689e70628ee53afd5351f2aab20cc27982358f00f058a028",
+    "Makefile": "3f15035741520cbb5a819944a3dd4f79171c04ab7fc0f152d6faa5bb56d87b8c",
     "scripts/asl_release_suite.py": "c40117cb285ee9270cd5721fcbd8c7be382d65e652c611f3f76e3335b4b35740",
     "scripts/asl_tests.py": "16b3b65d54f6faa70f4b582af9f9d4a683068cc88d5558f802d17a3774d04ad1",
     "scripts/aslref": "7961ad9ccfd89eebbe043fa87974eb6354c9a92271dc69bed7efbceeeeed607f",
@@ -104,8 +107,9 @@
     "scripts/check-asl-tests": "3a0ef89d06725179960c8a7cd3a319d71f18ef76c798e4863036c860cbab2189",
     "scripts/check-binary-closure": "245a7f70e3433da9f8bfb8ecea89cb1eeae478188ac06c1920e55c8e24eb8611",
     "scripts/check-ndf": "288f430cfc09ce3b76fea16a8d02d7eb71f67fc199042b76742ecfed8d68ed0e",
-    "scripts/check-pr": "9b2918013d0390fc81abf231004e96e0ffe6d1eb2f2e50ada1235540dbc97489",
-    "scripts/check-release-closure": "2fcefbdb821bcb55b92abf9ef0f2df8310a277f7ce75b9d8cd4d1e1ad1016319",
+    "scripts/check-pr": "eee82b264cc0fa5fec8c10ab2c2777b8afcdebe5e7a0a283a8faea7f61ee6e4d",
+    "scripts/check-release-closure": "f362bcadd1b89cdae420bc147b87bca8bed1f46073dad04f9eabc4509a41e0c0",
+    "scripts/check-release-event-schema": "3940f2eec504abba7ee6ac0fa04eab579c4a64942f6f3ca51db642d3b47a1fd8",
     "scripts/check-release-manifest": "32e3d6b41139090514beab297cdb18328af1e88079093711441ebe71d74cfc3c",
     "scripts/check-release-workflow": "c2c5f6e548397e427a5164183c991f9da687348a8aea088fab3a679a710853aa",
     "scripts/check-repository": "98ac3b12597851e600598ed8dc218dcf7ee8113ee288d1537f02aa5ea313037b",
@@ -116,7 +120,8 @@
     "scripts/prepare-aslref": "0aceca8980869c80e3d8b7751bd7fcdc61d1920f027bfd760e1a7b5e3f8f85c6",
     "scripts/print-asl-test-matrix": "2582db3a6ed8c414c3865e8cca11eb50499e611b07017c93529cf014da504b79",
     "scripts/project_asl_catalogs.py": "728dfc0ad4eb2a3681ae7d082f29e2c823b43803cc1314d9c915da2b77db13a2",
-    "scripts/release_workflow.py": "0f50c2252390cd35e8fd5238548ef004dc2405804d0168a2486b5abb9c3db60a",
+    "scripts/release_event.py": "68b9867b8e333d0097f2d115da5592ac130c55c4b90e853d72b2f94207b5fc29",
+    "scripts/release_workflow.py": "7125c1b76d86d382f77bc0720d9c95de33e1852f134eb961993516ec616f0d7e",
     "scripts/report-asl-page-results": "2dde0acdd94de060dc56c409e5d232f2252a2fa605512fe4461c360ffdda3cae",
     "scripts/run-asl-page": "64e7e3a7eaa7db6d264665325fcdf42b1b29cc7c4d7b7e1fd9fde30655c19e7f",
     "scripts/run-asl-release-suite": "56cbd340490c0d4d94990cff0f4607a3c3a53fccee818775b38a37a43a7ff654",
@@ -124,7 +129,8 @@
     "scripts/setup-aslref": "0cbe5e413f53d6d1cce1d2f604a65fd5e7e77cc5eec9c449978f4a5e136d64da",
     "scripts/tile_taxonomy.py": "49385a4413b15eed33e87c20df0e2fb29e9b8171c68167dbea57cc813eb1f59d",
     "spec/evidence/release-traceability-readiness.json": "9c582d64f6a27dfc7ca5f421a78e4089c925b593226c4c7c4099c0525898fb8e",
-    "spec/release-inputs.json": "d90cc3c8a8c7855572f57fcf4dbbe371471a95c61ee4ac7fb1896deda59ca984"
+    "spec/release-inputs.json": "67934904c0ed4736ee206e4d6fb7ba1b1eb6e68398b39b9df1b692f6806617c0",
+    "spec/schemas/pto-spec-release-event-v1.schema.json": "0ad73b22f2f1d7802c1aa6c5f0f418bd5415c5b5de78b3c6170c7fa5bfb8bd7c"
   },
   "summary": {
     "documentation_page_count": 788,

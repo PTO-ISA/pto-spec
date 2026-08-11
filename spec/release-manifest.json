@@ -3186,7 +3186,7 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "e238b8c241c6de8eaeebbd25e3a02f02e92f94ace0d2633f37261873d1eee453"
+      "sha256": "a9a309312f69c448e235d0fb652baedee135a5d39b2a597b75a4920634b4769e"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
@@ -3198,7 +3198,11 @@
     },
     {
       "path": "spec/release-inputs.json",
-      "sha256": "d90cc3c8a8c7855572f57fcf4dbbe371471a95c61ee4ac7fb1896deda59ca984"
+      "sha256": "67934904c0ed4736ee206e4d6fb7ba1b1eb6e68398b39b9df1b692f6806617c0"
+    },
+    {
+      "path": "spec/schemas/pto-spec-release-event-v1.schema.json",
+      "sha256": "0ad73b22f2f1d7802c1aa6c5f0f418bd5415c5b5de78b3c6170c7fa5bfb8bd7c"
     },
     {
       "path": "specification.toml",
@@ -3224,7 +3228,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "f609f7d892a18b3c334b9037c9edade9a13dc52a1065d80ccf334cf70084a7d5",
+  "content_sha256": "31294b1c26c3dd52dca1ceaa224b8a14c5a266ba0f14dc7dc283592b7ba71ce4",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",

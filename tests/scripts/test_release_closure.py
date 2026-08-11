@@ -18,6 +18,11 @@ class ReleaseClosureTest(unittest.TestCase):
     def test_release_gate_provenance_covers_workflow_validator_implementation(self) -> None:
         gate = json.loads(RELEASE_GATE.read_text(encoding="utf-8"))
         self.assertIn("scripts/check-release-workflow", gate["sources"])
+        self.assertIn("scripts/check-release-event-schema", gate["sources"])
+        self.assertIn("scripts/release_event.py", gate["sources"])
+        self.assertIn(
+            "spec/schemas/pto-spec-release-event-v1.schema.json", gate["sources"]
+        )
         self.assertIn("scripts/release_workflow.py", gate["sources"])
         self.assertIn("scripts/tile_taxonomy.py", gate["sources"])
 
@@ -74,6 +79,7 @@ class ReleaseClosureTest(unittest.TestCase):
                 "spec/evidence/pto-isa-0580-hardware-numeric-vectors.json",
                 "spec/evidence/release-gate-readiness.json",
                 "spec/evidence/release-traceability-readiness.json",
+                "spec/schemas/pto-spec-release-event-v1.schema.json",
             },
         )
         for row in registry["evidence"]:

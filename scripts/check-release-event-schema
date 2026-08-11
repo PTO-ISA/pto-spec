@@ -1,0 +1,133 @@
+#!/usr/bin/env python3
+"""Check the canonical PTO-SPEC stable release event schema."""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+import sys
+
+
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.release_event import canonical_release_event, validate_release_event  # noqa: E402
+
+
+SCHEMA_PATH = ROOT / "spec/schemas/pto-spec-release-event-v1.schema.json"
+REQUIRED_FIELDS = [
+    "schema_version",
+    "repository",
+    "tag",
+    "commit",
+    "release_id",
+    "release_url",
+    "release_manifest_sha256",
+    "published_at",
+]
+
+
+def validate_schema(schema: object) -> list[str]:
+    """Return drift from the exact fail-closed release event schema contract."""
+
+    if not isinstance(schema, dict):
+        return ["release event schema must be an object"]
+    errors: list[str] = []
+    expected_top_level = {
+        "$id",
+        "$schema",
+        "additionalProperties",
+        "properties",
+        "required",
+        "title",
+        "type",
+    }
+    if set(schema) != expected_top_level:
+        errors.append("release event schema top-level fields drift")
+    if schema.get("$id") != (
+        "https://github.com/PTO-ISA/pto-spec/blob/main/"
+        "spec/schemas/pto-spec-release-event-v1.schema.json"
+    ):
+        errors.append("release event schema ID drift")
+    if schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema":
+        errors.append("release event schema must use JSON Schema draft 2020-12")
+    if schema.get("title") != "PTO-SPEC stable release event v1":
+        errors.append("release event schema title drift")
+    if schema.get("type") != "object":
+        errors.append("release event schema must describe an object")
+    if schema.get("additionalProperties") is not False:
+        errors.append("release event schema must reject additional properties")
+    if schema.get("required") != REQUIRED_FIELDS:
+        errors.append("release event schema required fields drift")
+    properties = schema.get("properties")
+    if not isinstance(properties, dict) or set(properties) != set(REQUIRED_FIELDS):
+        errors.append("release event schema properties drift")
+        return errors
+    expected = {
+        "schema_version": {"const": "1"},
+        "repository": {"const": "PTO-ISA/pto-spec"},
+        "tag": {
+            "type": "string",
+            "pattern": r"^v(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)$",
+        },
+        "commit": {"type": "string", "pattern": r"^[0-9a-f]{40}$"},
+        "release_id": {"type": "integer", "minimum": 1},
+        "release_url": {
+            "type": "string",
+            "pattern": (
+                r"^https://github\.com/PTO-ISA/pto-spec/releases/tag/"
+                r"v(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)$"
+            ),
+        },
+        "release_manifest_sha256": {
+            "type": "string",
+            "pattern": r"^[0-9a-f]{64}$",
+        },
+        "published_at": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": (
+                r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T"
+                r"[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+            ),
+        },
+    }
+    if properties != expected:
+        errors.append("release event schema property constraints drift")
+    return errors
+
+
+def main() -> int:
+    try:
+        schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        print(f"release event schema is invalid: {error}", file=sys.stderr)
+        return 1
+    errors = validate_schema(schema)
+    sample = {
+        "schema_version": "1",
+        "repository": "PTO-ISA/pto-spec",
+        "tag": "v0.59",
+        "commit": "0123456789abcdef0123456789abcdef01234567",
+        "release_id": 123,
+        "release_url": "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.59",
+        "release_manifest_sha256": "a" * 64,
+        "published_at": "2026-08-10T00:00:00Z",
+    }
+    errors.extend(validate_release_event(sample))
+    try:
+        canonical_release_event(sample)
+    except ValueError as error:
+        errors.append(str(error))
+    if errors:
+        print("release event schema contract failed:", file=sys.stderr)
+        for error in errors:
+            print(f"- {error}", file=sys.stderr)
+        return 1
+    print("release event schema contract passed")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
