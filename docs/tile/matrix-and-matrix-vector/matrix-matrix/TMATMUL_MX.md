@@ -68,6 +68,11 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX.asl -->
 ```asl
+// Complete-bundle dynamic schema linkage: this static mathematical operand owner participates in the
+// conditional B.FPATR schema (scalar QuantParam/LReLUParam, ordered Local
+// RowMax/parameter streams, and D/auxiliary destinations) owned by
+// PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA and evidenced in
+// spec/evidence/bundle-command-totality.json.
 readonly func InstructionContractMatrixShapeLegal_TMATMUL_MX_(left: TileIndex, right: TileIndex) => boolean
 begin
     return TileMatrixShapeLegal(left, right);

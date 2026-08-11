@@ -81,6 +81,14 @@ begin
     _BundleDataAttributes.rounding_mode = Zeros{3};
     _BundleDataAttributes.saturating = FALSE;
     _BundleDataAttributes.canonicalize = FALSE;
+    _BundleFixedPointAttributes.valid = FALSE;
+    _BundleFixedPointAttributes.pre_quant_mode = Zeros{6};
+    _BundleFixedPointAttributes.relu_mode = Zeros{3};
+    _BundleFixedPointAttributes.group_n_code = Zeros{4};
+    _BundleFixedPointAttributes.row_max_en = FALSE;
+    _BundleFixedPointAttributes.group_max_en = FALSE;
+    _BundleFixedPointAttributes.row_max_init = FALSE;
+    _BundleFixedPointAttributes.max_abs_en = FALSE;
     _TileDataLayoutCapabilities = Zeros{32};
     _TileDataLayoutCapabilities[0] = '1';
     for ring = 0 to PTO_ACR_COUNT - 1 do
@@ -110,6 +118,8 @@ begin
         _TrapContexts[[ring]].bundle_control_attributes =
             _BundleControlAttributes;
         _TrapContexts[[ring]].bundle_data_attributes = _BundleDataAttributes;
+        _TrapContexts[[ring]].bundle_fixed_point_attributes =
+            _BundleFixedPointAttributes;
         _TrapContexts[[ring]].t_queue = _TQueue;
         _TrapContexts[[ring]].u_queue = _UQueue;
         _TrapContexts[[ring]].execution_mask = _ExecutionMask;

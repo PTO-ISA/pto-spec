@@ -33,6 +33,24 @@ begin
                 CommandDecodedBool(instruction, form, CommandField_Sat),
                 CommandDecodedBool(
                     instruction, form, CommandField_Canonicalize));
+        when CommandHandler_SetBundleFixedPointAttributes =>
+            if _BundleFixedPointAttributes.valid ||
+               (_BundleOperation.valid &&
+                _BundleOperation.operation_class != BundleOperation_TileMatrix) then
+                SetFault(Fault_BundleControl, ReadTPC());
+                return CommandExecution_Rejected;
+            end;
+            SetBundleFixedPointAttributeState(
+                DecodeCommandOperandRaw(instruction, form,
+                    CommandField_PreQuantMode)[5:0],
+                DecodeCommandOperandRaw(instruction, form,
+                    CommandField_ReluMode)[2:0],
+                DecodeCommandOperandRaw(instruction, form,
+                    CommandField_GroupNCode)[3:0],
+                CommandDecodedBool(instruction, form, CommandField_RowMaxEn),
+                CommandDecodedBool(instruction, form, CommandField_GroupMaxEn),
+                CommandDecodedBool(instruction, form, CommandField_RowMaxInit),
+                CommandDecodedBool(instruction, form, CommandField_MaxAbsEn));
         when CommandHandler_SetBundleDimension =>
             if CommandOperandPresent(form, CommandField_RegSrc) then
                 SetBundleDimension(CommandDecodedBundleDimension(instruction, form),

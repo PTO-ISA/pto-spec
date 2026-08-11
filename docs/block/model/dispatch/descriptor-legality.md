@@ -178,10 +178,16 @@ begin
             if _BundleTileBindings[[binding]].last then last_seen = TRUE; end;
         end;
     end;
+    let matrix = _BundleOperation.valid &&
+        _BundleOperation.operation_class == BundleOperation_TileMatrix;
     let expected_destinations =
         (if TileOperandPresent(operation, TileOperand_destination0)
          then 1 else 0) +
         (if TileOperandPresent(operation, TileOperand_destination1)
+         then 1 else 0) +
+        (if matrix && _BundleFixedPointAttributes.row_max_en
+         then 1 else 0) +
+        (if matrix && _BundleFixedPointAttributes.group_max_en
          then 1 else 0);
     let expected_sources =
         (if TileOperandPresent(operation, TileOperand_source0)
@@ -193,7 +199,49 @@ begin
         (if TileOperandPresent(operation, TileOperand_source3)
          then 1 else 0) +
         (if TileOperandPresent(operation, TileOperand_source4)
+         then 1 else 0) +
+        (if matrix && _BundleFixedPointAttributes.row_max_en &&
+            _BundleFixedPointAttributes.row_max_init
+         then 1 else 0) +
+        (if matrix && BundleFPATRModeUsesVectorParameter(
+               _BundleFixedPointAttributes.pre_quant_mode)
+         then 1 else 0) +
+        (if matrix && BundleFPATRReluModeUsesVectorParameter(
+               _BundleFixedPointAttributes.relu_mode)
          then 1 else 0);
+    // Matrix post-processing is a complete-bundle schema contribution.  The
+    // static catalog carries mathematical operands; B.FPATR contributes
+    // optional RowMax/parameter streams and compact auxiliary destinations.
+    if matrix then
+        if !_BundleFixedPointAttributes.valid then return FALSE; end;
+    elsif _BundleFixedPointAttributes.valid then
+        return FALSE;
+    end;
+    if matrix && destination_count > 1 then
+        // D, RowMaxOut and GroupMaxOut are one atomic output group.  Their
+        // architectural Tile IDs must be distinct; source/destination alias
+        // checks remain operation-specific (RowMaxIn may equal RowMaxOut).
+        for first = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 looplimit 16 do
+            if _BundleTileBindings[[first]].valid &&
+               _BundleTileBindings[[first]].destination_valid then
+                for second = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 looplimit 16 do
+                    if first != second &&
+                       _BundleTileBindings[[second]].valid &&
+                       _BundleTileBindings[[second]].destination_valid &&
+                       _BundleTileBindings[[first]].destination ==
+                       _BundleTileBindings[[second]].destination then
+                        return FALSE;
+                    end;
+                end;
+            end;
+        end;
+    end;
+    // The complete-bundle B.FPATR carrier has eight compact Local source
+    // ordinals and three compact destination ordinals. Reject surplus
+    // streams before descriptor allocation or operand consumption.
+    if matrix && (source_count > 8 || destination_count > 3) then
+        return FALSE;
+    end;
     if destination_count != expected_destinations ||
        source_count != expected_sources then return FALSE; end;
     if binding_count > 0 && !last_seen then return FALSE; end;

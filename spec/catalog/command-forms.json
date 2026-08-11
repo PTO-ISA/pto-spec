@@ -1,6 +1,6 @@
 {
-  "form_count": 99,
-  "form_constraint_count": 44,
+  "form_count": 100,
+  "form_constraint_count": 56,
   "forms": [
     {
       "asm": "B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}",
@@ -719,7 +719,17 @@
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleScalarIO",
       "semantic_summary": "Bind up to three absolute GPR inputs and one absolute GPR output; TLOAD/TSTORE use source zero as GM base and source one as logical row stride.",
-      "status": "accepted"
+      "status": "accepted",
+      "complete_bundle_schema": {
+        "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "evidence": "spec/evidence/bundle-command-totality.json",
+        "gpr_logical_order": [
+          "scalar QuantParam",
+          "scalar LReLUParam"
+        ],
+        "omission_default": "R0/zero for each consumed slot",
+        "encoded_surplus_rule": "RegSrc2, RegDst, and all unconsumed source fields must be zero"
+      }
     },
     {
       "asm": "B.IOT SrcTile0, mask=PE_MASK, <last>, ->DstTile<TSize>",
@@ -5622,11 +5632,317 @@
       "semantic_handler": "ExecuteCrossBlockTransfer",
       "semantic_summary": "Transfers the named context value to a target virtual core block.",
       "status": "accepted"
+    },
+    {
+      "asm": "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn",
+      "constraints": [
+        {
+          "field": "PreQuantMode",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            12,
+            13,
+            16,
+            17,
+            18,
+            19,
+            20,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39
+          ]
+        },
+        {
+          "field": "ReluMode",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "field": "GroupNCode",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        },
+        {
+          "field": "RowMaxEn",
+          "operator": "one-of",
+          "values": [
+            0,
+            1
+          ]
+        },
+        {
+          "field": "GroupMaxEn",
+          "operator": "one-of",
+          "values": [
+            0,
+            1
+          ]
+        },
+        {
+          "field": "RowMaxInit",
+          "operator": "one-of",
+          "values": [
+            0,
+            1
+          ]
+        },
+        {
+          "field": "MaxAbsEn",
+          "operator": "one-of",
+          "values": [
+            0,
+            1
+          ]
+        },
+        {
+          "field": "Func",
+          "operator": "one-of",
+          "values": [
+            2
+          ]
+        },
+        {
+          "field": "ElementWiseEn",
+          "operator": "one-of",
+          "values": [
+            0
+          ]
+        },
+        {
+          "field": "Opc1",
+          "operator": "one-of",
+          "values": [
+            2
+          ]
+        },
+        {
+          "field": "Opcode",
+          "operator": "one-of",
+          "values": [
+            1
+          ]
+        },
+        {
+          "field": "W",
+          "operator": "one-of",
+          "values": [
+            1
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x00007fff",
+          "match": "0x00002023",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "PreQuantMode",
+          "pieces": [
+            {
+              "instruction_lsb": 26,
+              "value_lsb": 0,
+              "width": 6
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 6
+        },
+        {
+          "name": "ReluMode",
+          "pieces": [
+            {
+              "instruction_lsb": 23,
+              "value_lsb": 0,
+              "width": 3
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 3
+        },
+        {
+          "name": "GroupNCode",
+          "pieces": [
+            {
+              "instruction_lsb": 19,
+              "value_lsb": 0,
+              "width": 4
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 4
+        },
+        {
+          "name": "RowMaxEn",
+          "pieces": [
+            {
+              "instruction_lsb": 18,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
+        },
+        {
+          "name": "GroupMaxEn",
+          "pieces": [
+            {
+              "instruction_lsb": 17,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
+        },
+        {
+          "name": "RowMaxInit",
+          "pieces": [
+            {
+              "instruction_lsb": 16,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
+        },
+        {
+          "name": "MaxAbsEn",
+          "pieces": [
+            {
+              "instruction_lsb": 15,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
+        },
+        {
+          "name": "Func",
+          "pieces": [
+            {
+              "instruction_lsb": 12,
+              "value_lsb": 0,
+              "width": 3
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 3
+        },
+        {
+          "name": "ElementWiseEn",
+          "pieces": [
+            {
+              "instruction_lsb": 11,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
+        },
+        {
+          "name": "Reserved",
+          "pieces": [
+            {
+              "instruction_lsb": 7,
+              "value_lsb": 0,
+              "width": 4
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 4
+        },
+        {
+          "name": "Opc1",
+          "pieces": [
+            {
+              "instruction_lsb": 4,
+              "value_lsb": 0,
+              "width": 3
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 3
+        },
+        {
+          "name": "Opcode",
+          "pieces": [
+            {
+              "instruction_lsb": 1,
+              "value_lsb": 0,
+              "width": 3
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 3
+        },
+        {
+          "name": "W",
+          "pieces": [
+            {
+              "instruction_lsb": 0,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
+        }
+      ],
+      "form_id": "b_fpatr_32_4f2db11e8e8a",
+      "length_bits": 32,
+      "mnemonic": "B.FPATR",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Fixed-Point PostProcess Attribute",
+      "semantic_handler": "SetBundleFixedPointAttributes",
+      "semantic_summary": "Latches complete-bundle matrix post-processing mode, reduction enables, and fixed-point descriptor controls.",
+      "status": "accepted"
     }
   ],
   "isa": "PTO Instruction Set Architecture",
-  "operand_field_count": 57,
-  "operand_piece_count": 190,
+  "operand_field_count": 70,
+  "operand_piece_count": 203,
   "reviewed_encoding_overlaps": [
     {
       "broad_form_id": "b_iot_32_10db6db84f5d",
@@ -5645,6 +5961,6 @@
     }
   ],
   "schema_version": 2,
-  "semantic_handler_count": 22,
+  "semantic_handler_count": 23,
   "surface": "command-and-boundary"
 }

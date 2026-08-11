@@ -80,7 +80,7 @@
   },
   "format_namespace_contract": {
     "path": "spec/evidence/numeric-format-namespace-contract.json",
-    "sha256": "34194a41e19092494c691e434a8fb9f3cf3fdca8cc35c398b127d72959462d2f",
+    "sha256": "4ce1200852c19211788a8415f3e0edd0739f30d23b87542018e15665c2b0e62c",
     "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
     "acceptance_record": "docs/status/decisions/0040-numeric-format-namespace-ownership.md",
     "classification_checkpoint_id": "PD-02-SC2:PD-05-SC1",
@@ -155,7 +155,7 @@
   },
   "profile_applicability_contract": {
     "path": "spec/evidence/numeric-profile-applicability-closure.json",
-    "sha256": "0b5307ba9a432795bd65d8a488c96987e5bfba1939bf3fbd87c3571f8edba5e2",
+    "sha256": "790d990e67e624491455c2e173a7de431068dc9cf0f4301090068863f453a309",
     "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
     "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md",
     "rule_count": 6,
@@ -165,7 +165,7 @@
     "tuple_count": 150,
     "bundle_execution_tuple_count": 150,
     "bundle_command_form_count": 6,
-    "accepted_command_form_count": 99,
+    "accepted_command_form_count": 100,
     "result_rule_count": 0,
     "parent_pd01_complete": false,
     "cube_matrix_complete": false,

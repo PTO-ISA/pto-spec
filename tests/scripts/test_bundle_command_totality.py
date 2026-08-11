@@ -68,6 +68,41 @@ class BundleCommandTotalityTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "duplicate GPR operand fields"):
                 GENERATOR["build_evidence"]()
 
+    def test_representability_rejects_unknown_operand_field(self) -> None:
+        original_load_json = GENERATOR["load_json"]
+        tile_catalog = original_load_json(GENERATOR["TILE_CATALOG"])
+        synthetic = deepcopy(tile_catalog["operations"][0])
+        synthetic["name"] = "SYNTHETIC_UNKNOWN_FIELD"
+        synthetic["operands"] = [{"field": "not_a_real_operand", "role": "source"}]
+        tile_catalog["operations"].append(synthetic)
+
+        def load_json(path):
+            if path == GENERATOR["TILE_CATALOG"]:
+                return tile_catalog
+            return original_load_json(path)
+
+        with patch.dict(GENERATOR["build_evidence"].__globals__, {"load_json": load_json}):
+            with self.assertRaisesRegex(ValueError, "unknown bridge operand fields"):
+                GENERATOR["build_evidence"]()
+
+    def test_conditional_matrix_schema_is_dense_and_bounded(self) -> None:
+        resolutions = GENERATOR["conditional_gpr_resolutions"](
+            ["scalar_lrelu_param", "scalar_quant_param"]
+        )
+        self.assertEqual(
+            [(row["field"], row["slot"]) for row in resolutions],
+            [("scalar_quant_param", "RegSrc0"), ("scalar_lrelu_param", "RegSrc1")],
+        )
+        schema = GENERATOR["conditional_local_schema"](
+            ["source0", "source1", "source2", "source3", "source4"]
+        )
+        self.assertEqual(schema["source_capacity"], 8)
+        self.assertEqual(schema["destination_capacity"], 3)
+        with self.assertRaisesRegex(ValueError, "duplicate conditional GPR fields"):
+            GENERATOR["conditional_gpr_resolutions"](
+                ["scalar_quant_param", "scalar_quant_param"]
+            )
+
     def test_real_operations_record_architectural_gpr_slots(self) -> None:
         evidence = GENERATOR["build_evidence"]()
         rows = {

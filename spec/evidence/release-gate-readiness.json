@@ -102,7 +102,7 @@
     "scripts/check-active-paths": "574d08000f2944cea217282c3165ded62592c28ca11985cf6189b49ad45ab27f",
     "scripts/check-asl-layout": "5283ef77e8650d607c537e29de06fb544add29be6b76caf6e431f1954301e39f",
     "scripts/check-asl-tests": "3a0ef89d06725179960c8a7cd3a319d71f18ef76c798e4863036c860cbab2189",
-    "scripts/check-binary-closure": "245a7f70e3433da9f8bfb8ecea89cb1eeae478188ac06c1920e55c8e24eb8611",
+    "scripts/check-binary-closure": "270c643f27beed33d208768b0ee61a055d34111e87b26a105f1e6cc9bc8e4738",
     "scripts/check-ndf": "288f430cfc09ce3b76fea16a8d02d7eb71f67fc199042b76742ecfed8d68ed0e",
     "scripts/check-pr": "9b2918013d0390fc81abf231004e96e0ffe6d1eb2f2e50ada1235540dbc97489",
     "scripts/check-release-closure": "2fcefbdb821bcb55b92abf9ef0f2df8310a277f7ce75b9d8cd4d1e1ad1016319",
@@ -123,20 +123,20 @@
     "scripts/run-asl-test": "152bc50910a4927ff9b78b805fac286d1948be8cbaf5751325a65e8316bf7851",
     "scripts/setup-aslref": "0cbe5e413f53d6d1cce1d2f604a65fd5e7e77cc5eec9c449978f4a5e136d64da",
     "scripts/tile_taxonomy.py": "49385a4413b15eed33e87c20df0e2fb29e9b8171c68167dbea57cc813eb1f59d",
-    "spec/evidence/release-traceability-readiness.json": "44506d02c7c16366962da94bba7600898315637824a3cbc45a48cc64a148d1c3",
+    "spec/evidence/release-traceability-readiness.json": "b110b869567bb4486e522105a5a68f59b294c2cd025f39faad2e5c5641ef8ce2",
     "spec/release-inputs.json": "d90cc3c8a8c7855572f57fcf4dbbe371471a95c61ee4ac7fb1896deda59ca984"
   },
   "summary": {
-    "documentation_page_count": 788,
-    "executable_requirement_count": 651,
+    "documentation_page_count": 790,
+    "executable_requirement_count": 652,
     "gate_count": 9,
-    "mnemonic_count": 651,
+    "mnemonic_count": 652,
     "status": "ready-for-exact-head-verification",
-    "test_count": 909,
+    "test_count": 916,
     "test_page_count": 10,
     "test_page_size": 100,
     "uncovered_executable_requirement_count": 0,
     "uncovered_unit_count": 0,
-    "unit_count": 788
+    "unit_count": 790
   }
 }

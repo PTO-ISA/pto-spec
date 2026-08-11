@@ -46,7 +46,7 @@ of being duplicated in this landing page.
 ## Architecture scope
 
 - 474 scalar forms across AGU, ALU, AMO, BRU, FSU, and SYS.
-- 99 bundle/command forms for bundle start, dimension,
+- 100 bundle/command forms for bundle start, dimension,
   attributes, IO binding, hints, stop, and context handling.
 - 109 direct tile operations across seven semantic classes: elementwise
   tile-tile, tile-scalar/immediate, reduce/expand, memory/data movement,

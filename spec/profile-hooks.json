@@ -629,6 +629,39 @@
         "tests/asl/profile-tests.asl",
         "tests/asl/tile-tests.asl"
       ]
+    },
+    {
+      "domain": "tile-matrix-postprocess",
+      "model": "asl/tile/model/execution/postprocess.asl",
+      "name": "TileProfileMatrixPostProcess",
+      "portable_default": "Preserve the raw carrier value through the named matrix post-process hook; PTO-v0 does not select target FP19 arithmetic.",
+      "profile_obligations": [
+        "Define FP19 conversion, rounding boundary, exceptional values, overflow, saturation, quantization offsets, activation behavior, and output encodings for every accepted PreQuantMode/ReluMode/type tuple."
+      ],
+      "requirement": "PTO-REQ-CUBE-001",
+      "implementation_status": "implemented-by-pto-v0",
+      "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
+      "maturity_target": "S5-T2",
+      "tests": [
+        "tests/asl/tile/model/execution/postprocess/PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-STATIC-INVARIANT-001.asl",
+        "tests/asl/tile/model/execution/postprocess/PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001.asl"
+      ]
+    },
+    {
+      "domain": "tile-matrix-reduction",
+      "model": "asl/tile/model/execution/postprocess.asl",
+      "name": "TileProfileMatrixReductionStep",
+      "portable_default": "Reuse registered TileProfileUnary ABS and TileProfileReductionStep MAX on raw carriers, selecting the candidate on equal/non-NaN maxima per the reference profile.",
+      "profile_obligations": [
+        "Define FP19 absolute-value and reduction folding, signed zero/NaN behavior, partial groups, GroupN>N tails, and output encoding for every accepted matrix type."
+      ],
+      "requirement": "PTO-REQ-CUBE-001",
+      "implementation_status": "implemented-by-pto-v0",
+      "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
+      "maturity_target": "S5-T2",
+      "tests": [
+        "tests/asl/tile/model/execution/postprocess/PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001.asl"
+      ]
     }
   ],
   "schema_version": 3

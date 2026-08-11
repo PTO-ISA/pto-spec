@@ -57,6 +57,17 @@ begin
     end;
 end;
 
+readonly func BundleGroupMaxColumns(columns: integer {0..65535})
+                                      => integer {0..65535}
+begin
+    let group_n = BundleFPATRGroupN(_BundleFixedPointAttributes.group_n_code);
+    if !_BundleFixedPointAttributes.group_max_en || group_n == 0 then
+        return columns;
+    end;
+    return ((columns + (group_n - 1)) DIVRM group_n)
+        as integer {0..65535};
+end;
+
 func ResolveBundleTileDestinations() => boolean
 begin
     var reserved: array [[PTO_TILE_REGISTER_COUNT]] of boolean;
@@ -101,6 +112,15 @@ begin
 
     let selected_type = TileDataTypeFromEncoding(
         ZeroExtend{PTO_XLEN}(CurrentBundleTileOperationDataTypeCode()));
+    let matrix = _BundleOperation.valid &&
+        _BundleOperation.operation_class == BundleOperation_TileMatrix;
+    let accumulator_type = TileMatrixAccumulatorDataType(selected_type);
+    let matrix_output_type = if matrix &&
+        UInt(_BundleFixedPointAttributes.pre_quant_mode) == 0 then
+        accumulator_type
+    else if matrix then
+        BundleFPATROutputType(_BundleFixedPointAttributes.pre_quant_mode)
+    else selected_type;
     var shape_source_valid = FALSE;
     var shape_source: TileIndex = 0;
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
@@ -130,14 +150,27 @@ begin
             let columns = BundleDestinationPhysicalColumns(
                 shape_source_valid, shape_source);
             let destination_type = if destination_ordinal == 0 then
-                selected_type else TileDataType_U32;
+                matrix_output_type else if matrix then accumulator_type
+                else TileDataType_U32;
+            let auxiliary_row = matrix && destination_ordinal > 0 &&
+                _BundleFixedPointAttributes.row_max_en &&
+                ((destination_ordinal == 1) ||
+                 !_BundleFixedPointAttributes.group_max_en);
+            let auxiliary_columns = if auxiliary_row then 1
+                else if matrix && _BundleFixedPointAttributes.group_max_en then
+                    BundleGroupMaxColumns(columns)
+                else columns;
+            let auxiliary_valid_columns = if auxiliary_row then 1
+                else if matrix && _BundleFixedPointAttributes.group_max_en then
+                    BundleGroupMaxColumns(valid_columns)
+                else valid_columns;
             let capacity_bytes = BundleTileDestinationSizeBytes(
                 binding as BundleTileBindingIndex);
-            let rows = DerivedTileRows(capacity_bytes, columns,
+            let rows = DerivedTileRows(capacity_bytes, auxiliary_columns,
                 destination_type);
-            if !TileDescriptorShapeLegal(capacity_bytes, columns,
-                   valid_rows, valid_columns, destination_type) ||
-               rows * columns > PTO_MODEL_TILE_ELEMENTS then
+            if !TileDescriptorShapeLegal(capacity_bytes, auxiliary_columns,
+                   valid_rows, auxiliary_valid_columns, destination_type) ||
+               rows * auxiliary_columns > PTO_MODEL_TILE_ELEMENTS then
                 SetFault(Fault_TileAllocation, ReadTPC());
                 return FALSE;
             end;
@@ -157,12 +190,25 @@ begin
             let columns = BundleDestinationPhysicalColumns(
                 shape_source_valid, shape_source);
             let destination_type = if destination_ordinal == 0 then
-                selected_type else TileDataType_U32;
+                matrix_output_type else if matrix then accumulator_type
+                else TileDataType_U32;
+            let auxiliary_row = matrix && destination_ordinal > 0 &&
+                _BundleFixedPointAttributes.row_max_en &&
+                ((destination_ordinal == 1) ||
+                 !_BundleFixedPointAttributes.group_max_en);
+            let auxiliary_columns = if auxiliary_row then 1
+                else if matrix && _BundleFixedPointAttributes.group_max_en then
+                    BundleGroupMaxColumns(columns)
+                else columns;
+            let auxiliary_valid_columns = if auxiliary_row then 1
+                else if matrix && _BundleFixedPointAttributes.group_max_en then
+                    BundleGroupMaxColumns(valid_columns)
+                else valid_columns;
             let capacity_bytes = BundleTileDestinationSizeBytes(
                 binding as BundleTileBindingIndex);
             ConfigureTileForMask(resolved[[binding]],
-                capacity_bytes, valid_rows, columns, valid_rows,
-                valid_columns, destination_type,
+                capacity_bytes, valid_rows, auxiliary_columns, valid_rows,
+                auxiliary_valid_columns, destination_type,
                 CurrentBundleTileLayout(), TileLocation_Any,
                 _BundleTileBindings[[binding]].pe_mask);
             _BundleTileBindings[[binding]].destination = resolved[[binding]];

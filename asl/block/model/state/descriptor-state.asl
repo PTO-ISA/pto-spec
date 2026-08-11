@@ -54,4 +54,12 @@ begin
     _BundleDataAttributes.rounding_mode = Zeros{3};
     _BundleDataAttributes.saturating = FALSE;
     _BundleDataAttributes.canonicalize = FALSE;
+    _BundleFixedPointAttributes.valid = FALSE;
+    _BundleFixedPointAttributes.pre_quant_mode = Zeros{6};
+    _BundleFixedPointAttributes.relu_mode = Zeros{3};
+    _BundleFixedPointAttributes.group_n_code = Zeros{4};
+    _BundleFixedPointAttributes.row_max_en = FALSE;
+    _BundleFixedPointAttributes.group_max_en = FALSE;
+    _BundleFixedPointAttributes.row_max_init = FALSE;
+    _BundleFixedPointAttributes.max_abs_en = FALSE;
 end;

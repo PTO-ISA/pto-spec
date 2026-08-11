@@ -99,6 +99,20 @@ type BundleDataAttributes of record {
     canonicalize: boolean
 };
 
+// B.FPATR is a complete-bundle post-processing descriptor.  `valid` tracks
+// encoded presence separately from the field values so omission, duplicate
+// headers, and encoded zero remain distinct at bundle commit.
+type BundleFixedPointAttributes of record {
+    valid: boolean,
+    pre_quant_mode: bits(6),
+    relu_mode: bits(3),
+    group_n_code: bits(4),
+    row_max_en: boolean,
+    group_max_en: boolean,
+    row_max_init: boolean,
+    max_abs_en: boolean
+};
+
 // ACR0 is the root ring. The active profile defines permissions and the
 // implemented Access Control Ring subtree.
 type AccessControlRing of integer {0..15};

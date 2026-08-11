@@ -30,6 +30,7 @@ var _BundleTileBindings : BundleTileBindingSnapshot;
 var _BundleSharedBindings : BundleSharedBindingSnapshot;
 var _BundleControlAttributes : BundleControlAttributes;
 var _BundleDataAttributes : BundleDataAttributes;
+var _BundleFixedPointAttributes : BundleFixedPointAttributes;
 // NORM is mandatory. Other accepted layout bits require an advertised
 // profile/platform capability.
 var _TileDataLayoutCapabilities : bits(32);

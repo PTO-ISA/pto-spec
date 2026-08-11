@@ -6,6 +6,11 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
+// Complete-bundle dynamic schema linkage: this static mathematical operand owner participates in the
+// conditional B.FPATR schema (scalar QuantParam/LReLUParam, ordered Local
+// RowMax/parameter streams, and D/auxiliary destinations) owned by
+// PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA and evidenced in
+// spec/evidence/bundle-command-totality.json.
 readonly func InstructionContractMatrixShapeLegal_TGEMV_MX_(left: TileIndex, right: TileIndex) => boolean
 begin
     return TileMatrixShapeLegal(left, right);
