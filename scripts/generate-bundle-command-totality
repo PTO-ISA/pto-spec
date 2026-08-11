@@ -529,9 +529,9 @@ def build_evidence() -> dict:
             "decoded_complete_bundle_matrix": [
                 {"case": "canonical-none-observable-D", "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001", "assertion": "decoded CUBE bundle with omitted B.IOR publishes D and enabled auxiliaries"},
                 {"case": "scalar-quant-omitted-versus-x0", "avs_id": "PTO-AVS-BLOCK-B-IOR-END-TO-END-EXECUTION-001", "assertion": "omitted and encoded RegSrc0=x0 resolve the same R0/zero through distinct presence paths"},
-                {"case": "scalar-lrelu-regsrc0", "avs_id": "PTO-AVS-BLOCK-B-FPATR-OPERAND-ROUTING-EXECUTION-001", "assertion": "LReLU-only consumes RegSrc0"},
-                {"case": "scalar-quant-and-lrelu-dense", "avs_id": "PTO-AVS-BLOCK-B-FPATR-OPERAND-ROUTING-EXECUTION-001", "assertion": "QuantParam and LReLUParam consume RegSrc0/RegSrc1"},
-                {"case": "vector-quant-and-prelu-local-order", "avs_id": "PTO-AVS-BLOCK-B-FPATR-OPERAND-ROUTING-EXECUTION-001", "assertion": "conditional Local source ordinals remain after mathematical sources"},
+                {"case": "scalar-lrelu-regsrc0", "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001", "assertion": "decoded B.FPATR/B.IOR scalar route executes through auxiliary commit"},
+                {"case": "scalar-quant-and-lrelu-dense", "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001", "assertion": "decoded B.FPATR/B.IOR dense RegSrc0/RegSrc1 route executes through auxiliary commit"},
+                {"case": "vector-quant-and-prelu-local-order", "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001", "assertion": "decoded vector Local sources follow mathematical and RowMaxIn sources through auxiliary commit"},
                 {"case": "shared-tmatmul-auxiliary", "avs_id": "PTO-AVS-BLOCK-TESTBUNDLESHAREDCUBEEXECUTION-EXECUTION-001", "assertion": "Shared TMATMUL reaches decoded bundle effects with auxiliary schema"},
                 {"case": "local-tgemv-auxiliary", "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001", "assertion": "Local-only matrix path reaches the common postprocess commit"},
                 {"case": "eight-local-sources-three-destinations", "avs_id": "PTO-AVS-BLOCK-B-FPATR-OPERAND-ROUTING-EXECUTION-001", "assertion": "carrier packing proves eight source and three destination ordinals"},

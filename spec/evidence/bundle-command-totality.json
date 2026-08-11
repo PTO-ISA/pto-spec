@@ -7275,18 +7275,18 @@
       },
       {
         "case": "scalar-lrelu-regsrc0",
-        "avs_id": "PTO-AVS-BLOCK-B-FPATR-OPERAND-ROUTING-EXECUTION-001",
-        "assertion": "LReLU-only consumes RegSrc0"
+        "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001",
+        "assertion": "decoded B.FPATR/B.IOR scalar route executes through auxiliary commit"
       },
       {
         "case": "scalar-quant-and-lrelu-dense",
-        "avs_id": "PTO-AVS-BLOCK-B-FPATR-OPERAND-ROUTING-EXECUTION-001",
-        "assertion": "QuantParam and LReLUParam consume RegSrc0/RegSrc1"
+        "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001",
+        "assertion": "decoded B.FPATR/B.IOR dense RegSrc0/RegSrc1 route executes through auxiliary commit"
       },
       {
         "case": "vector-quant-and-prelu-local-order",
-        "avs_id": "PTO-AVS-BLOCK-B-FPATR-OPERAND-ROUTING-EXECUTION-001",
-        "assertion": "conditional Local source ordinals remain after mathematical sources"
+        "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001",
+        "assertion": "decoded vector Local sources follow mathematical and RowMaxIn sources through auxiliary commit"
       },
       {
         "case": "shared-tmatmul-auxiliary",
