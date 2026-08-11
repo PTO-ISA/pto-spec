@@ -16,6 +16,12 @@ METADATA_PREFIX = "// ndf: "
 REFERENCE = re.compile(r"\[\[(PTO-[A-Z0-9]+(?:-[A-Z0-9]+)*)\]\]")
 MARKDOWN_NDF = re.compile(r"(?:\{#PTO-[A-Z0-9-]+\}|<!--\s*ndf:)")
 INSTRUCTION_PREFIX = "// PTO-INSTRUCTION: "
+UNIT_PREFIX = "// PTO-UNIT: "
+STATE_PREFIX = "// PTO-STATE: "
+STATE_ID = re.compile(r"PTO-STATE-[A-Z0-9]+(?:-[A-Z0-9]+)*")
+STATE_CLASSIFICATION = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
+STATE_SCOPES = {"pe", "bundle", "core", "memory-agent", "acr", "system"}
+ASL_VAR = re.compile(r"^\s*var\s+(_[A-Za-z][A-Za-z0-9_]*)\s*:")
 
 KINDS = {
     "intent": "L0",
@@ -50,6 +56,18 @@ class NdfClause:
     source: Path
     line: int
     references: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class PtoState:
+    state_id: str
+    classification: tuple[str, ...]
+    scope: str
+    owner: str
+    members: tuple[str, ...]
+    depends_on: tuple[str, ...]
+    source: Path
+    line: int
 
 
 class NdfValidationError(ValueError):
@@ -184,6 +202,203 @@ def parse_ndf_regions(text: str, source: Path) -> tuple[NdfClause, ...]:
     return tuple(clauses)
 
 
+def _string_array(
+    metadata: dict[str, object], name: str, source: Path, line: int
+) -> tuple[tuple[str, ...], list[str]]:
+    value = metadata.get(name)
+    if not isinstance(value, list) or any(
+        not isinstance(item, str) or not item for item in value
+    ):
+        return (), [f"{source}:{line}: PTO state {name} must be an array of non-empty strings"]
+    return tuple(value), []
+
+
+def parse_state_records(text: str, source: Path, unit_id: str) -> tuple[PtoState, ...]:
+    """Parse and validate every PTO-STATE record owned by one ASL unit."""
+
+    declared = {
+        match.group(1)
+        for line in text.splitlines()
+        if (match := ASL_VAR.match(line)) is not None
+    }
+    required = {"id", "classification", "scope", "owner", "members", "depends_on"}
+    records: list[PtoState] = []
+    errors: list[str] = []
+    state_ids: set[str] = set()
+    owned_members: set[str] = set()
+    for line_number, line in enumerate(text.splitlines(), start=1):
+        if not line.startswith(STATE_PREFIX):
+            continue
+        try:
+            metadata = json.loads(line.removeprefix(STATE_PREFIX))
+        except json.JSONDecodeError as error:
+            errors.append(f"{source}:{line_number}: invalid PTO state metadata: {error}")
+            continue
+        if not isinstance(metadata, dict):
+            errors.append(f"{source}:{line_number}: PTO state metadata must be an object")
+            continue
+        for name in sorted(required - metadata.keys()):
+            errors.append(f"{source}:{line_number}: missing PTO state metadata field {name}")
+        for name in sorted(metadata.keys() - required):
+            errors.append(f"{source}:{line_number}: unknown PTO state metadata field {name}")
+        if metadata.keys() != required:
+            continue
+
+        state_id = metadata["id"]
+        owner = metadata["owner"]
+        scope = metadata["scope"]
+        classification, classification_errors = _string_array(
+            metadata, "classification", source, line_number
+        )
+        members, member_errors = _string_array(metadata, "members", source, line_number)
+        dependencies, dependency_errors = _string_array(
+            metadata, "depends_on", source, line_number
+        )
+        local_errors = classification_errors + member_errors + dependency_errors
+        if not isinstance(state_id, str) or STATE_ID.fullmatch(state_id) is None:
+            local_errors.append(
+                f"{source}:{line_number}: PTO state id must be an uppercase PTO-STATE identity"
+            )
+        if classification and any(
+            STATE_CLASSIFICATION.fullmatch(item) is None for item in classification
+        ):
+            local_errors.append(
+                f"{source}:{line_number}: PTO state classification must contain lowercase segments"
+            )
+        if not classification:
+            local_errors.append(
+                f"{source}:{line_number}: PTO state classification must not be empty"
+            )
+        if not isinstance(scope, str) or scope not in STATE_SCOPES:
+            local_errors.append(f"{source}:{line_number}: unsupported PTO state scope {scope}")
+        if not isinstance(owner, str) or owner != unit_id:
+            local_errors.append(
+                f"{source}:{line_number}: PTO state owner {owner} does not match same-file unit {unit_id}"
+            )
+        if not members:
+            local_errors.append(f"{source}:{line_number}: PTO state members must not be empty")
+        if len(members) != len(set(members)):
+            local_errors.append(
+                f"{source}:{line_number}: PTO state members must not contain duplicates"
+            )
+        for member in members:
+            if member not in declared:
+                local_errors.append(
+                    f"{source}:{line_number}: state member {member} is not a same-file ASL var"
+                )
+            if member in owned_members:
+                local_errors.append(
+                    f"{source}:{line_number}: state member {member} belongs to multiple families"
+                )
+        for dependency in dependencies:
+            if STATE_ID.fullmatch(dependency) is None:
+                local_errors.append(
+                    f"{source}:{line_number}: invalid PTO state dependency {dependency}"
+                )
+        if isinstance(state_id, str) and state_id in state_ids:
+            local_errors.append(f"{source}:{line_number}: duplicate PTO state {state_id}")
+        errors.extend(local_errors)
+        if local_errors:
+            continue
+        state_ids.add(state_id)
+        owned_members.update(members)
+        records.append(
+            PtoState(
+                state_id=state_id,
+                classification=classification,
+                scope=scope,
+                owner=owner,
+                members=members,
+                depends_on=dependencies,
+                source=source,
+                line=line_number,
+            )
+        )
+    if errors:
+        raise NdfValidationError(errors)
+    return tuple(records)
+
+
+def _state_unit_id(text: str, source: Path) -> str:
+    records: list[str] = []
+    for line_number, line in enumerate(text.splitlines(), start=1):
+        prefix = next(
+            (
+                candidate
+                for candidate in (UNIT_PREFIX, INSTRUCTION_PREFIX)
+                if line.startswith(candidate)
+            ),
+            None,
+        )
+        if prefix is None:
+            continue
+        try:
+            metadata = json.loads(line.removeprefix(prefix))
+        except json.JSONDecodeError as error:
+            raise NdfValidationError(
+                [f"{source}:{line_number}: invalid ASL unit metadata: {error}"]
+            ) from error
+        if not isinstance(metadata, dict) or not isinstance(metadata.get("id"), str):
+            raise NdfValidationError(
+                [f"{source}:{line_number}: ASL unit metadata requires string id"]
+            )
+        records.append(metadata["id"])
+    if len(records) != 1:
+        raise NdfValidationError(
+            [f"{source}: PTO state owner file requires exactly one ASL unit record"]
+        )
+    return records[0]
+
+
+def state_index(root: Path) -> dict[str, PtoState]:
+    """Return the complete, dependency-closed PTO state catalog under *root*."""
+
+    asl_root = root / "asl" if (root / "asl").is_dir() else root
+    states: dict[str, PtoState] = {}
+    errors: list[str] = []
+    for path in sorted(asl_root.rglob("*.asl")):
+        text = path.read_text(encoding="utf-8")
+        if STATE_PREFIX not in text:
+            continue
+        source = path.relative_to(root) if path.is_relative_to(root) else path
+        try:
+            unit_id = _state_unit_id(text, source)
+            records = parse_state_records(text, source, unit_id)
+        except NdfValidationError as error:
+            errors.extend(error.errors)
+            continue
+        for record in records:
+            if record.state_id in states:
+                errors.append(f"duplicate PTO state {record.state_id}")
+            else:
+                states[record.state_id] = record
+    for state in states.values():
+        for dependency in state.depends_on:
+            if dependency not in states:
+                errors.append(
+                    f"{state.source}:{state.line}: unknown PTO state dependency {dependency}"
+                )
+
+    remaining = set(states)
+    resolved: set[str] = set()
+    while True:
+        ready = {
+            state_id
+            for state_id in remaining
+            if set(states[state_id].depends_on) <= resolved
+        }
+        if not ready:
+            break
+        remaining -= ready
+        resolved |= ready
+    for state_id in sorted(remaining):
+        state = states[state_id]
+        errors.append(f"{state.source}:{state.line}: cyclic PTO state dependency {state_id}")
+    if errors:
+        raise NdfValidationError(errors)
+    return states
+
+
 def _repository_files(root: Path) -> list[Path]:
     return sorted(path for path in root.rglob("*") if path.is_file() and ".git" not in path.parts)
 
@@ -247,7 +462,12 @@ def check_repository(root: Path) -> list[str]:
             errors.append(f"duplicate NDF clause {clause.clause_id}")
         else:
             by_id[clause.clause_id] = clause
-    known_ids = set(by_id) | _instruction_identities(root)
+    try:
+        states = state_index(root)
+    except NdfValidationError as error:
+        errors.extend(error.errors)
+        states = {}
+    known_ids = set(by_id) | _instruction_identities(root) | set(states)
     for clause in clauses:
         for reference in clause.references:
             if reference not in known_ids:

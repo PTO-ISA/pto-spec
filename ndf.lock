@@ -1,0 +1,6 @@
+format_version: "0.1"
+dependencies:
+  ndf:
+    uri: https://github.com/PTO-ISA/normative_language.git
+    revision: ed356980ce7ecb2e8482902988d5012fb54058b3
+    path: tools/ndf

@@ -91,8 +91,8 @@
   "schema": "pto.release-gate.v2",
   "sources": {
     ".aslref-version": "943437e8563813c276417b022296f0c51b34fadbb8da49ca70dbac7f6589db63",
-    ".github/workflows/asl.yml": "2654e2d9230986e4e7094f022c04707c9058e9c27b28a7ea7a4d59f5a7002e7d",
-    ".github/workflows/release.yml": "d854702c856cbe9d2ce8b0ca171eaf6a6fbeafce386a0cc4df3bd0903077f1c6",
+    ".github/workflows/asl.yml": "d880c1fc9a5087cb0256d5bb4f8b9d51b9860dc27aae6f753191a00e4e10b1f1",
+    ".github/workflows/release.yml": "9cd27200e878a997211414b24a5762911c4841848ffb21911fe70c58a1db44ff",
     "CONTRIBUTING.md": "1aef7301df0ca3c10cb87e72f5fe944bb30c1b54eca2d6f0a730ab2e42c32b7b",
     "GOVERNANCE.md": "f4081bfbdc1ae3ea7d22dce98c3960ba0290ce282a88f89cb471c4d255cad409",
     "Makefile": "b25f94209c9964e1689e70628ee53afd5351f2aab20cc27982358f00f058a028",
@@ -123,7 +123,7 @@
     "scripts/run-asl-test": "152bc50910a4927ff9b78b805fac286d1948be8cbaf5751325a65e8316bf7851",
     "scripts/setup-aslref": "0cbe5e413f53d6d1cce1d2f604a65fd5e7e77cc5eec9c449978f4a5e136d64da",
     "scripts/tile_taxonomy.py": "49385a4413b15eed33e87c20df0e2fb29e9b8171c68167dbea57cc813eb1f59d",
-    "spec/evidence/release-traceability-readiness.json": "44506d02c7c16366962da94bba7600898315637824a3cbc45a48cc64a148d1c3",
+    "spec/evidence/release-traceability-readiness.json": "9c582d64f6a27dfc7ca5f421a78e4089c925b593226c4c7c4099c0525898fb8e",
     "spec/release-inputs.json": "d90cc3c8a8c7855572f57fcf4dbbe371471a95c61ee4ac7fb1896deda59ca984"
   },
   "summary": {
