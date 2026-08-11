@@ -99,6 +99,14 @@ begin
     tile.columns = columns;
     tile.valid_rows = valid_rows;
     tile.valid_columns = valid_columns;
+    tile.storage_rows = derived_rows;
+    tile.storage_columns = columns;
+    tile.storage_bytes = TileStorageBytes(derived_rows, columns, data_type)
+        as integer {0..262144};
+    tile.cube_k_repeat = 0;
+    tile.cube_n_repeat = 0;
+    tile.cube_cell_count = 0;
+    tile.cube_role = TileCubeOperand_None;
     tile.data_type = data_type;
     tile.layout = layout;
     tile.location = TileLocation_Any;
@@ -153,7 +161,8 @@ begin
     end;
     if pe_mask == '1111' then
         tile.defined_valid_elements =
-            (tile.valid_rows * tile.valid_columns) as integer {0..4096};
+            (tile.valid_rows * tile.valid_columns)
+                as integer {0..16384};
         tile.contents_defined = TRUE;
     end;
     let updated = AtomicUpdateSharedTile(shared_id, tile, pe_mask);

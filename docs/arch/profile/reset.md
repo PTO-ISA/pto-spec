@@ -56,6 +56,13 @@ begin
         _Tiles[[index]].columns = 0;
         _Tiles[[index]].valid_rows = 0;
         _Tiles[[index]].valid_columns = 0;
+        _Tiles[[index]].storage_rows = 0;
+        _Tiles[[index]].storage_columns = 0;
+        _Tiles[[index]].storage_bytes = 0;
+        _Tiles[[index]].cube_k_repeat = 0;
+        _Tiles[[index]].cube_n_repeat = 0;
+        _Tiles[[index]].cube_cell_count = 0;
+        _Tiles[[index]].cube_role = TileCubeOperand_None;
         _Tiles[[index]].data_type = TileDataType_U64;
         _Tiles[[index]].layout = TileLayout_RowMajor;
         _Tiles[[index]].location = TileLocation_Any;
@@ -69,6 +76,13 @@ begin
         _SharedTiles[[index]].tile.defined_elements =
             Zeros{PTO_MODEL_TILE_ELEMENTS};
         _SharedTiles[[index]].tile.defined_valid_elements = 0;
+        _SharedTiles[[index]].tile.storage_rows = 0;
+        _SharedTiles[[index]].tile.storage_columns = 0;
+        _SharedTiles[[index]].tile.storage_bytes = 0;
+        _SharedTiles[[index]].tile.cube_k_repeat = 0;
+        _SharedTiles[[index]].tile.cube_n_repeat = 0;
+        _SharedTiles[[index]].tile.cube_cell_count = 0;
+        _SharedTiles[[index]].tile.cube_role = TileCubeOperand_None;
     end;
     _PC = Zeros{PTO_XLEN};
     _BPC = Zeros{PTO_XLEN};

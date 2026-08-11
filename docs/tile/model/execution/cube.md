@@ -57,7 +57,8 @@ begin
         end;
     end;
     result.defined_valid_elements =
-        (result.valid_rows * result.valid_columns) as integer {0..4096};
+        (result.valid_rows * result.valid_columns)
+            as integer {0..16384};
     result.contents_defined = TRUE;
     return result;
 end;

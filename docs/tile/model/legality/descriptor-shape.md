@@ -17,6 +17,26 @@ This page is a generated reference view of the normative ASL unit.
 readonly func TileDescriptorConfigured(index: TileIndex) => boolean
 begin
     let tile = _Tiles[[index]];
+    if TileLayoutIsCube(tile.layout) then
+        return tile.allocated &&
+               TileCubeDescriptorShapeLegal(tile.capacity_bytes,
+                   tile.valid_rows, tile.valid_columns, tile.data_type,
+                   tile.layout, tile.cube_role) &&
+               tile.rows == tile.storage_rows &&
+               tile.columns == tile.storage_columns &&
+               tile.storage_bytes == TileCubeRequiredBytes(tile.layout,
+                   tile.cube_role, tile.valid_rows, tile.valid_columns,
+                   tile.data_type) &&
+               tile.cube_k_repeat == TileCubeKRepeat(tile.layout,
+                   tile.cube_role, tile.valid_rows, tile.valid_columns,
+                   tile.data_type) &&
+               tile.cube_n_repeat == TileCubeNRepeat(tile.layout,
+                   tile.cube_role, tile.valid_columns, tile.data_type) &&
+               tile.cube_cell_count == TileCubeCellCount(tile.layout,
+                   tile.cube_role, tile.valid_rows, tile.valid_columns,
+                   tile.data_type) &&
+               tile.storage_bytes <= tile.capacity_bytes;
+    end;
     return tile.allocated &&
            TileCapacityIsLegal(tile.capacity_bytes) &&
            TileShapeMatchesCapacity(tile.capacity_bytes, tile.rows,
@@ -28,7 +48,11 @@ end;
 
 readonly func TileDescriptorLegal(index: TileIndex) => boolean
 begin
+    // Generic VEC/SFU/rearrangement consumers remain ordinary-layout only in
+    // Stage A.  Matrix/TLSU owners may opt into CUBE descriptors explicitly
+    // when their later stages define those bindings.
     return TileDescriptorConfigured(index) &&
+           !TileLayoutIsCube(_Tiles[[index]].layout) &&
            TileGenericIndexingPermitted(_Tiles[[index]]);
 end;
 

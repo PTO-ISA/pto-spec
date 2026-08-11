@@ -60,7 +60,21 @@ type TilePadValue of enumeration {
 type TileLayout of enumeration {
     TileLayout_RowMajor,
     TileLayout_ColumnMajor,
+    TileLayout_CUBE_M32,
+    TileLayout_CUBE_M16,
+    TileLayout_CUBE_N8,
     TileLayout_ImplementationDefined
+};
+
+// CUBE storage geometry is resolved from the matrix operand role at tile
+// allocation time.  The role is descriptor state only; it is not an encoded
+// persistent MShard4/group tag.
+type TileCubeOperandRole of enumeration {
+    TileCubeOperand_None,
+    TileCubeOperand_A,
+    TileCubeOperand_B,
+    TileCubeOperand_C,
+    TileCubeOperand_D
 };
 
 type TileLocation of enumeration {

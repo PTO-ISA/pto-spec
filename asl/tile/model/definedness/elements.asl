@@ -12,7 +12,10 @@ begin
     // An implementation-defined layout is a legal configured descriptor, but
     // portable row/column indexing cannot interpret it.
     assert TileGenericIndexingPermitted(tile);
-    let index: integer = if tile.layout == TileLayout_RowMajor then
+    let index: integer = if TileLayoutIsCube(tile.layout) then
+        TileCubePayloadIndex(tile.layout, tile.data_type,
+            tile.cube_role, tile.cube_k_repeat, row, column)
+    else if tile.layout == TileLayout_RowMajor then
         row * tile.columns + column else column * tile.rows + row;
     assert index < PTO_MODEL_TILE_ELEMENTS;
     return index as ModelTileElementIndex;
@@ -166,7 +169,7 @@ begin
                 PTO_MODEL_TILE_ELEMENTS;
             _Tiles[[index]].defined_valid_elements =
                 (_Tiles[[index]].defined_valid_elements + 1)
-                    as integer {0..4096};
+                    as integer {0..16384};
         end;
     end;
     _Tiles[[index]].contents_defined =
@@ -186,7 +189,7 @@ begin
     end;
     _Tiles[[index]].defined_valid_elements =
         (tile.valid_rows * tile.valid_columns)
-            as integer {0..4096};
+            as integer {0..16384};
     _Tiles[[index]].contents_defined = TRUE;
 end;
 
@@ -196,5 +199,12 @@ begin
            left.columns == right.columns &&
            left.valid_rows == right.valid_rows &&
            left.valid_columns == right.valid_columns &&
+           left.storage_rows == right.storage_rows &&
+           left.storage_columns == right.storage_columns &&
+           left.storage_bytes == right.storage_bytes &&
+           left.cube_k_repeat == right.cube_k_repeat &&
+           left.cube_n_repeat == right.cube_n_repeat &&
+           left.cube_cell_count == right.cube_cell_count &&
+           left.cube_role == right.cube_role &&
            left.data_type == right.data_type;
 end;

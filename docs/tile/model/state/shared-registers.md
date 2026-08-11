@@ -40,6 +40,7 @@ readonly func SharedTileDescriptorLegal(shared_id: bits(8)) => boolean
 begin
     let shared = SharedTileRecord(shared_id);
     return shared.descriptor_valid && shared.tile.allocated &&
+           !TileLayoutIsCube(shared.tile.layout) &&
            shared.allocation_mask != Zeros{4} &&
            (shared.initialized_mask AND NOT shared.allocation_mask) == Zeros{4} &&
            TileCapacityIsLegal(shared.tile.capacity_bytes) &&
@@ -60,6 +61,13 @@ begin
            left.rows == right.rows && left.columns == right.columns &&
            left.valid_rows == right.valid_rows &&
            left.valid_columns == right.valid_columns &&
+           left.storage_rows == right.storage_rows &&
+           left.storage_columns == right.storage_columns &&
+           left.storage_bytes == right.storage_bytes &&
+           left.cube_k_repeat == right.cube_k_repeat &&
+           left.cube_n_repeat == right.cube_n_repeat &&
+           left.cube_cell_count == right.cube_cell_count &&
+           left.cube_role == right.cube_role &&
            left.data_type == right.data_type &&
            left.layout == right.layout && left.location == right.location;
 end;
@@ -69,6 +77,7 @@ readonly func SharedTileUpdateCompatible(shared_id: bits(8), tile: TileInfo,
 begin
     if pe_mask == Zeros{4} then return TRUE; end;
     if !TileCapacityIsLegal(tile.capacity_bytes) ||
+       TileLayoutIsCube(tile.layout) ||
        !TileShapeMatchesCapacity(tile.capacity_bytes, tile.rows,
                                  tile.columns, tile.data_type) ||
        tile.valid_rows > tile.rows ||
@@ -132,7 +141,8 @@ begin
     end;
     if tile.contents_defined then
         tile.defined_valid_elements =
-            (tile.valid_rows * tile.valid_columns) as integer {0..4096};
+            (tile.valid_rows * tile.valid_columns)
+                as integer {0..16384};
     end;
     tile.location = TileLocation_Any;
     return tile;
@@ -160,7 +170,7 @@ begin
         updated.tile.contents_defined = TRUE;
         updated.tile.defined_valid_elements =
             (updated.tile.valid_rows * updated.tile.valid_columns)
-                as integer {0..4096};
+                as integer {0..16384};
     else
         for element = 0 to tile.rows * tile.columns - 1 looplimit 4096 do
             let region = SharedTileElementRegion(tile,
@@ -181,7 +191,7 @@ begin
         if updated.tile.contents_defined then
             updated.tile.defined_valid_elements =
                 (updated.tile.valid_rows * updated.tile.valid_columns)
-                    as integer {0..4096};
+                    as integer {0..16384};
         end;
     end;
     _SharedTiles[[index]] = updated;
