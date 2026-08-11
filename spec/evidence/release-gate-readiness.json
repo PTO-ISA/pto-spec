@@ -123,7 +123,7 @@
     "scripts/run-asl-test": "152bc50910a4927ff9b78b805fac286d1948be8cbaf5751325a65e8316bf7851",
     "scripts/setup-aslref": "0cbe5e413f53d6d1cce1d2f604a65fd5e7e77cc5eec9c449978f4a5e136d64da",
     "scripts/tile_taxonomy.py": "49385a4413b15eed33e87c20df0e2fb29e9b8171c68167dbea57cc813eb1f59d",
-    "spec/evidence/release-traceability-readiness.json": "c77c42c7b88e116c6eedd40ea39c6b1c0504b71fc4ec47d023dab809f60213ba",
+    "spec/evidence/release-traceability-readiness.json": "3c1acb28c3a1e5b81580b56da32edafa4e14df0660648611b0a842709d495b1a",
     "spec/release-inputs.json": "d90cc3c8a8c7855572f57fcf4dbbe371471a95c61ee4ac7fb1896deda59ca984"
   },
   "summary": {

@@ -7300,8 +7300,8 @@
       },
       {
         "case": "eight-local-sources-three-destinations",
-        "avs_id": "PTO-AVS-BLOCK-B-FPATR-OPERAND-ROUTING-EXECUTION-001",
-        "assertion": "carrier packing proves eight source and three destination ordinals"
+        "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001",
+        "assertion": "decoded TMATMUL_MX_ACC packs eight Local sources across four B.IOT words and commits three destinations"
       },
       {
         "case": "rowmax-alias-groupmax-full-k",

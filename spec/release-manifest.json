@@ -2910,7 +2910,7 @@
     },
     {
       "path": "asl/tile/model/legality/matrix-shape.asl",
-      "sha256": "2c48b3163d7052cb2cba3932604d41c6999ab96a9720f90e931214f31050a54b"
+      "sha256": "705ca0e3f4b8279747ae979d91bab96ac559837df90a1266d92337c415531a24"
     },
     {
       "path": "asl/tile/model/legality/memory-schema.asl",
@@ -3194,11 +3194,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "aea2a9b2b2bd1923219387b960bde6267820311b9b2904f49873c8b3ecccd475"
+      "sha256": "596c4fc7469d576b268b2c4f31519e9de2fba933ee692058db17f9eed7a949bb"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "c77c42c7b88e116c6eedd40ea39c6b1c0504b71fc4ec47d023dab809f60213ba"
+      "sha256": "3c1acb28c3a1e5b81580b56da32edafa4e14df0660648611b0a842709d495b1a"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3232,7 +3232,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "b64c7f493b6020476b981f9931d5c9272b058c41694fe4dd4d74ae22911c8686",
+  "content_sha256": "e814d86eac3525cc84e7c79c5a13025b3b07df57e9d1861a7c756e8ac03aefbc",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -6899,7 +6899,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/legality/matrix-shape.md",
-      "sha256": "16870c833dfe35ed75ff055b2cc50830be8efbdb88f3ae4254c17a395f9b5f19"
+      "sha256": "8ccf5ec8c21675771bb3a8451d9210f111189bf48bbc32f25c928588d7f1f04a"
     },
     {
       "kind": "generated-documentation",

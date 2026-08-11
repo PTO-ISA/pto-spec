@@ -235,6 +235,20 @@ begin
            _Tiles[[destination]].data_type == expected_destination_type;
 end;
 
+readonly func TileMatrixAccumulatorDestinationLegal(destination: TileIndex,
+                                                     left: TileIndex,
+                                                     right: TileIndex) => boolean
+begin
+    if !TileDescriptorLegal(destination) ||
+       !TileMatrixShapeLegal(left, right) then return FALSE; end;
+    let selected_type = TileDataTypeFromEncoding(
+        ZeroExtend{PTO_XLEN}(CurrentBundleTileOperationDataTypeCode()));
+    let accumulator_type = TileMatrixAccumulatorDataType(selected_type);
+    return _Tiles[[destination]].valid_rows == _Tiles[[left]].valid_rows &&
+           _Tiles[[destination]].valid_columns == _Tiles[[right]].valid_columns &&
+           _Tiles[[destination]].data_type == accumulator_type;
+end;
+
 readonly func TileOperandsLegal_TMATMUL(
     destination: TileIndex, left: TileIndex, right: TileIndex) => boolean
 begin
@@ -256,7 +270,7 @@ readonly func TileOperandsLegal_TMATMUL_ACC(
 begin
     return TileOperandsLegal_TMATMUL(destination, left, right) &&
            TileSourceContentsDefined(accumulator) &&
-           TileMatrixDestinationLegal(accumulator, left, right) &&
+           TileMatrixAccumulatorDestinationLegal(accumulator, left, right) &&
            _Tiles[[accumulator]].layout == _Tiles[[destination]].layout &&
            _Tiles[[accumulator]].capacity_bytes ==
                _Tiles[[destination]].capacity_bytes;
@@ -288,7 +302,7 @@ begin
     return TileOperandsLegal_TMATMUL_MX(
                destination, left, left_scale, right, right_scale) &&
            TileSourceContentsDefined(accumulator) &&
-           TileMatrixDestinationLegal(accumulator, left, right) &&
+           TileMatrixAccumulatorDestinationLegal(accumulator, left, right) &&
            _Tiles[[accumulator]].layout == _Tiles[[destination]].layout &&
            _Tiles[[accumulator]].capacity_bytes ==
                _Tiles[[destination]].capacity_bytes;

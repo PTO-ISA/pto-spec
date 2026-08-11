@@ -7,6 +7,14 @@ begin
     return instruction;
 end;
 
+pure func PostProcessTestCUBEMXAccumulatorStart() => bits(64)
+begin
+    var instruction = Zeros{64} + 0x00031181;
+    instruction[24:20] = Zeros{5} + 6;
+    instruction[31:27] = Zeros{5} + 1;
+    return instruction;
+end;
+
 pure func PostProcessTestFPATR() => bits(64)
 begin
     return Zeros{64} + 0x00002023;
@@ -114,6 +122,18 @@ begin
     instruction[11:9] = '000';
     instruction[18:15] = '1111';
     instruction[25:20] = source0;
+    instruction[19] = if last then '1' else '0';
+    return instruction;
+end;
+
+pure func PostProcessTestTwoSource(source0: bits(6), source1: bits(6),
+                                   last: boolean) => bits(64)
+begin
+    var instruction = Zeros{64} + 0x00004013;
+    instruction[11:9] = '000';
+    instruction[18:15] = '1111';
+    instruction[25:20] = source0;
+    instruction[31:26] = source1;
     instruction[19] = if last then '1' else '0';
     return instruction;
 end;
@@ -277,6 +297,72 @@ begin
     assert vector_group == CommandExecution_Executed;
     let vector_completed = ExecuteBundleTileOperation();
     assert vector_completed;
+
+    // TMATMUL_MX_ACC is the legal worst-case 8-source/3-destination form:
+    // five mathematical sources, RowMaxIn, vector QuantParam, and vector
+    // PReLUParam are packed by four decoded B.IOT words.
+    ResetProfileState();
+    ConfigureTile(0, 512, 1, 32, 1, 32, TileDataType_E4M3,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(1, 512, 1, 1, 1, 1, TileDataType_E8M0,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(2, 512, 32, 1, 32, 1, TileDataType_E5M2,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(3, 512, 1, 1, 1, 1, TileDataType_E8M0,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(4, 512, 1, 1, 1, 1, TileDataType_FP32,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(5, 512, 1, 1, 1, 1, TileDataType_FP32,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(6, 512, 1, 1, 1, 1, TileDataType_FP32,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(7, 512, 1, 1, 1, 1, TileDataType_FP32,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(6, 0, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(7, 0, 0, Zeros{PTO_XLEN} + 1);
+    for column = 1 to 31 looplimit 32 do
+        WriteTileElement(0, 0, column, Zeros{PTO_XLEN} + 2);
+    end;
+    for row = 1 to 31 looplimit 32 do
+        WriteTileElement(2, row, 0, Zeros{PTO_XLEN} + 3);
+    end;
+    let mx_start = ExecuteCommandInstruction(PostProcessTestCUBEMXAccumulatorStart(), 32);
+    let mx_datr = ExecuteCommandInstruction(PostProcessTestDATR(), 32);
+    let mx_fpatr = ExecuteCommandInstruction(
+        PostProcessTestFPATRWithModes('000010', '011', '0010'), 32);
+    let mx_first = ExecuteCommandInstruction(
+        PostProcessTestTwoSourceDestination(Zeros{6} + 7, Zeros{6}, '00', FALSE), 32);
+    let mx_second = ExecuteCommandInstruction(
+        PostProcessTestTwoSourceDestination(Zeros{6} + 1, Zeros{6} + 2, '01', FALSE), 32);
+    let mx_third = ExecuteCommandInstruction(
+        PostProcessTestTwoSource(Zeros{6} + 3, Zeros{6} + 4, FALSE), 32);
+    let mx_fourth = ExecuteCommandInstruction(
+        PostProcessTestTwoSourceDestination(Zeros{6} + 5, Zeros{6} + 6, '10', TRUE), 32);
+    assert mx_start == CommandExecution_Executed;
+    assert mx_datr == CommandExecution_Executed;
+    assert mx_fpatr == CommandExecution_Executed;
+    assert mx_first == CommandExecution_Executed;
+    assert mx_second == CommandExecution_Executed;
+    assert mx_third == CommandExecution_Executed;
+    assert mx_fourth == CommandExecution_Executed;
+    let mx_operation = DecodeTileOperation(TileDecode_CUBE, Zeros{12} + 6)
+        as integer {0..PTO_TILE_OPERATION_COUNT-1};
+    assert BundleOperationBindingsComplete(mx_operation);
+    let mx_destinations = ResolveBundleTileDestinations();
+    assert mx_destinations;
+    assert CurrentBundleTileOperationDataTypeCode() == '00001';
+    assert _BundleFixedPointAttributes.pre_quant_mode == '000010';
+    assert _Tiles[[_BundleTileBindings[[0]].destination]].data_type == TileDataType_S8;
+    assert TileOperandsLegal_TMATMUL_MX_ACC(
+        _BundleTileBindings[[0]].destination, 7, 0, 1, 2, 3);
+    let mx_completed = ExecuteBundleTileOperation();
+    assert mx_completed;
 
     ResetProfileState();
     ConfigureTile(0, 512, 1, 1, 1, 1, TileDataType_U64,
