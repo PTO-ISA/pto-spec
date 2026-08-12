@@ -20,6 +20,10 @@ begin
         TileCoreAllocationBytes(allocation_mask, capacity_bytes) <=
         TileCapacityLimitBytes();
     _TileAllocationMasks[[index]] = allocation_mask;
+    _TilePerPEValidRows[[index]].pe0 = valid_rows;
+    _TilePerPEValidRows[[index]].pe1 = valid_rows;
+    _TilePerPEValidRows[[index]].pe2 = valid_rows;
+    _TilePerPEValidRows[[index]].pe3 = valid_rows;
     _Tiles[[index]].allocated = TRUE;
     // Allocation defines TileInfo but not the payload. A producer must write
     // the tile before any generic payload read is legal.
@@ -69,6 +73,10 @@ begin
         TileCoreAllocationBytes(allocation_mask, capacity_bytes) <=
         TileCapacityLimitBytes();
     _TileAllocationMasks[[index]] = allocation_mask;
+    _TilePerPEValidRows[[index]].pe0 = valid_rows;
+    _TilePerPEValidRows[[index]].pe1 = valid_rows;
+    _TilePerPEValidRows[[index]].pe2 = valid_rows;
+    _TilePerPEValidRows[[index]].pe3 = valid_rows;
     _Tiles[[index]].allocated = TRUE;
     _Tiles[[index]].contents_defined = FALSE;
     _Tiles[[index]].defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
@@ -163,6 +171,10 @@ end;
 func ReleaseTile(index: TileIndex)
 begin
     _TileAllocationMasks[[index]] = Zeros{4};
+    _TilePerPEValidRows[[index]].pe0 = 0;
+    _TilePerPEValidRows[[index]].pe1 = 0;
+    _TilePerPEValidRows[[index]].pe2 = 0;
+    _TilePerPEValidRows[[index]].pe3 = 0;
     _Tiles[[index]].allocated = FALSE;
     _Tiles[[index]].contents_defined = FALSE;
     _Tiles[[index]].defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};

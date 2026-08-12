@@ -100,6 +100,43 @@ begin
     assert _LastFault == Fault_IllegalInstruction;
 end;
 
+func TestDecodedSharedTransposeCase(trans_a: boolean, trans_b: boolean,
+                                    expected00: Word, expected01: Word,
+                                    expected10: Word, expected11: Word)
+begin
+    ResetProfileState();
+    ConfigureTile(10, 512, 2, 2, 2, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(10, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(10, 0, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(10, 1, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(10, 1, 1, Zeros{PTO_XLEN} + 4);
+    InstallSharedTile(Zeros{8} + 64, _Tiles[[10]], '1111');
+    ConfigureTile(11, 512, 2, 2, 2, 2, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(11, 0, 0, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(11, 0, 1, Zeros{PTO_XLEN} + 6);
+    WriteTileElement(11, 1, 0, Zeros{PTO_XLEN} + 7);
+    WriteTileElement(11, 1, 1, Zeros{PTO_XLEN} + 8);
+    InstallSharedTile(Zeros{8} + 65, _Tiles[[11]], '1111');
+    assert ExecuteCommandInstruction(BundleTestStageCCUBEStart(), 32) ==
+        CommandExecution_Executed;
+    assert ExecuteCommandInstruction(BundleTestFPATRTranspose(trans_a, trans_b), 32) ==
+        CommandExecution_Executed;
+    assert ExecuteCommandInstruction(BundleTestStageCSharedBinding(Zeros{8} + 64), 32) ==
+        CommandExecution_Executed;
+    assert ExecuteCommandInstruction(BundleTestStageCSharedBinding(Zeros{8} + 65), 32) ==
+        CommandExecution_Executed;
+    assert ExecuteCommandInstruction(BundleTestStageCTileDestination(), 32) ==
+        CommandExecution_Executed;
+    assert ExecuteBundleTileOperation();
+    let destination = _BundleTileBindings[[0]].destination;
+    assert ReadTileElement(destination, 0, 0) == expected00;
+    assert ReadTileElement(destination, 0, 1) == expected01;
+    assert ReadTileElement(destination, 1, 0) == expected10;
+    assert ReadTileElement(destination, 1, 1) == expected11;
+end;
+
 func main() => integer
 begin
     assert TileCubeGroupLayoutForM(1) == TileLayout_CUBE_M16;
@@ -117,5 +154,19 @@ begin
     assert TileCubeGroupPEValidM(65, 3) == 0;
     assert TileCubeGroupPEValidM(128, 3) == 32;
     TestDecodedSharedTranspose();
+    // Decode each independent transpose control, including canonical 0,0
+    // and both controls, with asymmetric matrices and exact outputs.
+    TestDecodedSharedTransposeCase(FALSE, FALSE,
+        Zeros{PTO_XLEN} + 19, Zeros{PTO_XLEN} + 22,
+        Zeros{PTO_XLEN} + 43, Zeros{PTO_XLEN} + 50);
+    TestDecodedSharedTransposeCase(TRUE, FALSE,
+        Zeros{PTO_XLEN} + 26, Zeros{PTO_XLEN} + 30,
+        Zeros{PTO_XLEN} + 38, Zeros{PTO_XLEN} + 44);
+    TestDecodedSharedTransposeCase(FALSE, TRUE,
+        Zeros{PTO_XLEN} + 17, Zeros{PTO_XLEN} + 23,
+        Zeros{PTO_XLEN} + 39, Zeros{PTO_XLEN} + 53);
+    TestDecodedSharedTransposeCase(TRUE, TRUE,
+        Zeros{PTO_XLEN} + 23, Zeros{PTO_XLEN} + 31,
+        Zeros{PTO_XLEN} + 34, Zeros{PTO_XLEN} + 46);
     return 0;
 end;

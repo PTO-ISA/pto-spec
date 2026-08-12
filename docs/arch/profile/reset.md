@@ -47,6 +47,10 @@ begin
     end;
     for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
         _TileAllocationMasks[[index]] = Zeros{4};
+        _TilePerPEValidRows[[index]].pe0 = 0;
+        _TilePerPEValidRows[[index]].pe1 = 0;
+        _TilePerPEValidRows[[index]].pe2 = 0;
+        _TilePerPEValidRows[[index]].pe3 = 0;
         _Tiles[[index]].allocated = FALSE;
         _Tiles[[index]].contents_defined = FALSE;
         _Tiles[[index]].defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};

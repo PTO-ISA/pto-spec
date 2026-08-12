@@ -168,6 +168,14 @@ begin
         let expected_rows = TileCubeGroupPEValidM(group_m, 0);
         assert _Tiles[[destination]].layout == expected_layout;
         assert _Tiles[[destination]].valid_rows == expected_rows;
+        assert TilePEValidRows(destination, 0) ==
+            TileCubeGroupPEValidM(group_m, 0);
+        assert TilePEValidRows(destination, 1) ==
+            TileCubeGroupPEValidM(group_m, 1);
+        assert TilePEValidRows(destination, 2) ==
+            TileCubeGroupPEValidM(group_m, 2);
+        assert TilePEValidRows(destination, 3) ==
+            TileCubeGroupPEValidM(group_m, 3);
         assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 1;
         assert !TileElementDefined(destination, expected_rows, 0);
     else

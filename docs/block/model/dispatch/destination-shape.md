@@ -249,6 +249,18 @@ begin
                     selected_layout, TileLocation_Any,
                     _BundleTileBindings[[binding]].pe_mask);
             end;
+            if matrix && BundleSharedBindingCount() > 0 then
+                let encoded_group_m = UInt(_BundleDimensions[[
+                    BundleDimensionIndexOfRole(BundleDimension_ValidRows)]])
+                    as integer {0..65535};
+                let group_m = if encoded_group_m == 0 then valid_rows
+                    else encoded_group_m;
+                for pe = 0 to 3 do
+                    let pe_rows = TileCubeGroupPEValidM(group_m, pe);
+                    SetTilePEValidRows(resolved[[binding]], pe,
+                        pe_rows as integer {0..65535});
+                end;
+            end;
             _BundleTileBindings[[binding]].destination = resolved[[binding]];
             _BundleTileBindings[[binding]].destination_allocated_by_bundle =
                 TRUE;
