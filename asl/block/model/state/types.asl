@@ -90,6 +90,7 @@ type BundleControlAttributes of record {
 };
 
 type BundleDataAttributes of record {
+    data_type_present: boolean,
     data_type: bits(5),
     data_layout: bits(5),
     pad_value: bits(2),

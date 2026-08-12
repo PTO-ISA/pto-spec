@@ -1,0 +1,3 @@
+[submodule "tools/ndf"]
+	path = tools/ndf
+	url = https://github.com/PTO-ISA/normative_language.git

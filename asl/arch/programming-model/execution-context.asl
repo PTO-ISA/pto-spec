@@ -1,7 +1,25 @@
 // PTO-UNIT: {"id":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","surface":"arch","classification":["programming-model","execution-context"],"depends_on":["PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING"]}
-// PTO-REQ-STATE-001, PTO-REQ-PROFILE-001, PTO-REQ-MEMORY-TSO-001:
-// architecture-visible scalar, memory, access-control-ring, reset-profile,
-// concurrency-candidate, and fault state.
+// PTO-STATE: {"id":"PTO-STATE-ARCH-GPR","classification":["architecture","scalar","gpr"],"scope":"pe","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_PEGPRs"],"depends_on":[]}
+// PTO-STATE: {"id":"PTO-STATE-ARCH-TEMPORARY-QUEUES","classification":["architecture","temporary-queues"],"scope":"bundle","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_TQueue","_UQueue"],"depends_on":[]}
+// PTO-STATE: {"id":"PTO-STATE-ARCH-PROGRAM-CONTROL","classification":["architecture","program-control"],"scope":"core","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_PC","_BPC","_BundleActive","_BundleBodyActive","_ReturnAddress","_CommitArgument","_ExecutionMask","_PredicateRegisters"],"depends_on":[]}
+// PTO-STATE: {"id":"PTO-STATE-ARCH-FAULT","classification":["architecture","fault"],"scope":"core","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_LastFault","_FaultAddress"],"depends_on":[]}
+// PTO-STATE: {"id":"PTO-STATE-ARCH-MEMORY","classification":["architecture","memory"],"scope":"system","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_Memory","_ReservationValid","_ReservationAddress","_ReservationSize","_LastFencePredecessor","_LastFenceSuccessor","_MemoryEvents","_MemoryEventCount","_MemoryEventCaptureEnabled","_CurrentMemoryAgent"],"depends_on":[]}
+// PTO-STATE: {"id":"PTO-STATE-ARCH-MAINTENANCE","classification":["architecture","maintenance"],"scope":"system","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_DataCacheEpoch","_InstructionCacheEpoch","_BundleCacheEpoch","_TLBEpoch","_LastMaintenanceOperation","_LastMaintenanceOperand","_BundleHintEpoch","_ArchitectureRequestEpoch","_LastControlRequest","_ControlRequestOperand","_BreakpointTag"],"depends_on":[]}
+// PTO-STATE: {"id":"PTO-STATE-ARCH-EXTENDED-SYSTEM-REGISTERS","classification":["architecture","extended-system-registers"],"scope":"system","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_ExtendedSystemRegisters","_CurrentACR"],"depends_on":[]}
+// PTO-STATE: {"id":"PTO-STATE-ARCH-TRAP-CONTEXT","classification":["architecture","trap-context"],"scope":"acr","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_ACRTrapAsynchronous","_ACRTrapArgumentValid","_ACRTrapCause","_ACRTrapNumber","_ACRTrapArgument0","_TrapContexts"],"depends_on":[]}
+
+// NDF-BEGIN: PTO-REQ-STATE-001
+// ndf: kind=contract level=L1 layer=state status=accepted
+// Architecture-visible execution state MUST be the state defined by
+// [[PTO-STATE-ARCH-GPR]], [[PTO-STATE-ARCH-TEMPORARY-QUEUES]],
+// [[PTO-STATE-ARCH-PROGRAM-CONTROL]], [[PTO-STATE-ARCH-FAULT]],
+// [[PTO-STATE-ARCH-MEMORY]], [[PTO-STATE-ARCH-MAINTENANCE]],
+// [[PTO-STATE-ARCH-SYSTEM-REGISTERS]],
+// [[PTO-STATE-ARCH-EXTENDED-SYSTEM-REGISTERS]], and
+// [[PTO-STATE-ARCH-TRAP-CONTEXT]].
+// NDF-END: PTO-REQ-STATE-001
+
+// Requirement references: PTO-REQ-PROFILE-001, PTO-REQ-MEMORY-TSO-001.
 
 // A core owns four private scalar register files.  An encoded absolute GPR
 // selector is shared by the instruction, but each PE resolves that selector

@@ -57,6 +57,12 @@ end;
 
 func ResolveBundleTileDestinations() => boolean
 begin
+    let (effective_type_valid, selected_type) =
+        ResolveBundleEffectiveDataType();
+    if !effective_type_valid then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
     var reserved: array [[PTO_TILE_REGISTER_COUNT]] of boolean;
     var resolved: array [[PTO_BUNDLE_TILE_BINDING_COUNT]] of TileIndex;
     var required_capacity: integer = 0;
@@ -97,8 +103,6 @@ begin
         return FALSE;
     end;
 
-    let selected_type = TileDataTypeFromEncoding(
-        ZeroExtend{PTO_XLEN}(CurrentBundleTileOperationDataTypeCode()));
     let matrix = _BundleOperation.valid &&
         _BundleOperation.operation_class == BundleOperation_TileMatrix;
     let accumulator_type = TileMatrixAccumulatorDataType(selected_type);

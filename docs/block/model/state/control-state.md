@@ -12,7 +12,13 @@ This page is a generated reference view of the normative ASL unit.
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/state/control-state.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","surface":"block","classification":["model","state","control-state"],"depends_on":["PTO-BLOCK-MODEL-STATE-TYPES"]}
-// PTO-REQ-BUNDLE-STATE-001: architecture-visible bundle-control state.
+// PTO-STATE: {"id":"PTO-STATE-BLOCK-CONTROL","classification":["block","control"],"scope":"core","owner":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","members":["_BundleKind","_BundleTransfer","_BundleCondition","_BundleTarget","_BundleFallthrough","_BundleReturnTarget","_BundleBodyAddress","_BundleArgument","_BundleArgumentKind","_BundleOperation","_BundleDimensions","_BundleScalarBindings","_BundleTileBindings","_BundleSharedBindings","_BundleControlAttributes","_BundleDataAttributes","_BundleFixedPointAttributes","_TileDataLayoutCapabilities","_FrameDepth","_LastFrameBegin","_LastFrameEnd","_LastFrameSize","_LastQueueLeft","_LastQueueRight","_LastQueueFlags","_LastMemoryCommandAddress","_LastMemoryCommandSize","_LastCrossBlockACR","_LastCrossBlockID","_LastBundleHintPayload"],"depends_on":[]}
+
+// NDF-BEGIN: PTO-REQ-BUNDLE-STATE-001
+// ndf: kind=contract level=L1 layer=block status=accepted
+// Architecture-visible bundle-control state MUST be the state defined by
+// [[PTO-STATE-BLOCK-CONTROL]].
+// NDF-END: PTO-REQ-BUNDLE-STATE-001
 
 var _BundleKind : BundleKind;
 var _BundleTransfer : BundleTransfer;
@@ -160,11 +166,12 @@ func SetBundleDataAttributeState(
     conversion_mode: bits(3), rounding_mode: bits(3), saturating: boolean,
     canonicalize: boolean)
 begin
-    if !TileDataTypeEncodingValid(ZeroExtend{PTO_XLEN}(data_type)) ||
+    if !BundleDataTypeFieldValid(data_type) ||
        !TileDataLayoutCodeSupported(data_layout) then
         SetFault(Fault_TileLegality, ReadTPC());
         return;
     end;
+    _BundleDataAttributes.data_type_present = TRUE;
     _BundleDataAttributes.data_type = data_type;
     _BundleDataAttributes.data_layout = data_layout;
     _BundleDataAttributes.pad_value = pad_value;

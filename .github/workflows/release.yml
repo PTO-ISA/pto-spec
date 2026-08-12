@@ -38,6 +38,7 @@ jobs:
           ref: ${{ inputs.commit }}
           fetch-depth: 0
           persist-credentials: false
+          submodules: recursive
 
       - name: Prove exact head and lightweight contract
         shell: bash
@@ -84,6 +85,7 @@ jobs:
         with:
           ref: ${{ inputs.commit }}
           persist-credentials: false
+          submodules: recursive
 
       - name: Set up pinned OCaml
         uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0 # v3
@@ -112,6 +114,7 @@ jobs:
         with:
           ref: ${{ inputs.commit }}
           persist-credentials: false
+          submodules: recursive
 
       - name: Download exact ASL test plan
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
@@ -167,6 +170,7 @@ jobs:
         with:
           ref: ${{ inputs.commit }}
           persist-credentials: false
+          submodules: recursive
 
       - name: Download exact ASL test plan
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1

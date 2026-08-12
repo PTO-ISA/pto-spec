@@ -74,7 +74,8 @@ begin
     _BundleControlAttributes.release = FALSE;
     _BundleControlAttributes.far = FALSE;
     _BundleControlAttributes.direct_register = FALSE;
-    _BundleDataAttributes.data_type = Zeros{5};
+    _BundleDataAttributes.data_type_present = FALSE;
+    _BundleDataAttributes.data_type = DTYPE_NONE;
     _BundleDataAttributes.data_layout = Zeros{5};
     _BundleDataAttributes.pad_value = Zeros{2};
     _BundleDataAttributes.conversion_mode = Zeros{3};

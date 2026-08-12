@@ -19,6 +19,7 @@ jobs:
           ./scripts/check-asl-layout
           ./scripts/check-ndf
           ./scripts/check-asl-tests
+          ./scripts/check-release-event-schema
           python3 scripts/project_asl_catalogs.py --root . --check
           python3 scripts/instruction_docs.py --check
           python3 scripts/check-publication-hygiene
@@ -134,6 +135,13 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
         workflow = VALID_PR_WORKFLOW.replace("          ./scripts/check-ndf\n", "")
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("check-ndf" in error for error in errors))
+
+    def test_pr_workflow_requires_release_event_schema_gate(self) -> None:
+        workflow = VALID_PR_WORKFLOW.replace(
+            "          ./scripts/check-release-event-schema\n", ""
+        )
+        errors = validate_pr_workflow(workflow)
+        self.assertTrue(any("check-release-event-schema" in error for error in errors))
 
 
 class ReleaseWorkflowContractTest(unittest.TestCase):

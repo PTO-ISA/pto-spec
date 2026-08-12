@@ -21,7 +21,7 @@ B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize}
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| b_datr_32_c161a042ff38 | L32 | 32 | 0x00001023 / 0x000c707f | [{"field":"CMode","operator":"one-of","values":[0,1,2,3,4,5]},{"field":"DataType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,24,25,26,27,28]},{"field":"Layout","operator":"one-of","values":[0,1,3,4,6,8,9,17,18,20,27,28,30]}] |
+| b_datr_32_c161a042ff38 | L32 | 32 | 0x00001023 / 0x000c707f | [{"field":"CMode","operator":"one-of","values":[0,1,2,3,4,5]},{"field":"DataType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,24,25,26,27,28,31]},{"field":"Layout","operator":"one-of","values":[0,1,3,4,6,8,9,17,18,20,27,28,30]}] |
 
 ### Fields
 
@@ -62,6 +62,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/attributes/B.DATR.asl -->
 ```asl
+// DataType code 31 has the canonical spelling DTYPE_NONE. It is an encoded
+// field sentinel, not a TileDataType. A concrete B.DATR type overrides the
+// BSTART type; DTYPE_NONE preserves a concrete BSTART type and still latches
+// the remaining B.DATR controls. If no concrete type can be resolved, complete
+// bundle preflight raises Fault_TileLegality before allocation or effects.
 readonly func InstructionContractHandler_B_DATR() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleDataAttributes;
@@ -71,7 +76,7 @@ end;
 
 ## Legality and exceptions
 
-- **Constraints:** `[{"field": "CMode", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5]}, {"field": "DataType", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28]}, {"field": "Layout", "operator": "one-of", "values": [0, 1, 3, 4, 6, 8, 9, 17, 18, 20, 27, 28, 30]}]`
+- **Constraints:** `[{"field": "CMode", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5]}, {"field": "DataType", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28, 31]}, {"field": "Layout", "operator": "one-of", "values": [0, 1, 3, 4, 6, 8, 9, 17, 18, 20, 27, 28, 30]}]`
 
 ## Operational information
 
@@ -79,5 +84,12 @@ end;
 - **Semantic handler:** `SetBundleDataAttributes`
 
 <!-- SUPPLEMENTARY-BEGIN -->
-
+DataType code 31 is canonically spelled `DTYPE_NONE`. It is a valid encoded
+field value, but it is not a `TileDataType` and has no width, arithmetic
+meaning, or implicit U8/U32 default. Effective type resolution uses a concrete
+`B.DATR.DataType`, then a concrete `BSTART.DataType`, then—only for TMOV—the
+bound Local or Shared source descriptor. Thus `B.DATR DTYPE_NONE` preserves a
+concrete BSTART type while its layout, padding, rounding, and other controls
+still apply. If a concrete type remains unresolved, complete-bundle preflight
+raises `Fault_TileLegality` before destination allocation or source effects.
 <!-- SUPPLEMENTARY-END -->

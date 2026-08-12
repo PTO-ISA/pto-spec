@@ -53,9 +53,9 @@ end;
 BSTART.CUBE TMATMUL AType
 B.DATR BType RMode Sat
 B.FPATR
-B.DIM LB0 N
-B.DIM LB1 M
-B.DIM LB2 Col
+B.DIM LB0 M
+B.DIM LB1 N
+B.DIM LB2 K
 B.IOS Shared operand binder (optional)
 B.IOT Local sources and Local outputs
 B.IOR scalar PostProcess parameter (optional)
@@ -66,6 +66,8 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.asl -->
 ```asl
+// Bundle dimensions use the standard C = A x B naming: LB0=M (result rows),
+// LB1=N (result columns), and LB2=K (the shared inner dimension).
 // Complete-bundle dynamic schema linkage: this static mathematical operand owner participates in the
 // conditional B.FPATR schema (scalar QuantParam/LReLUParam, ordered Local
 // RowMax/parameter streams, and D/auxiliary destinations) owned by
@@ -97,8 +99,8 @@ end;
 - **State effects:** `["operand:destination0:destination", "operand:source0:left", "operand:source1:right"]`
 
 <!-- SUPPLEMENTARY-BEGIN -->
-The block uses `LB0=N`, `LB1=M`, and `LB2=Col`, where Col is the physical
-power-of-two column count of the result Tile. K is the equal logical inner
-dimension of the two source descriptors. M, N, and K must each be nonzero
-powers of two before any destination allocation or operand effect.
+The block uses the standard matrix product dimensions `LB0=M`, `LB1=N`, and
+`LB2=K`: M is the result row count, N is the result column count, and K is the
+equal logical inner dimension of the two source descriptors. M, N, and K must
+each be nonzero powers of two before destination allocation or operand effects.
 <!-- SUPPLEMENTARY-END -->

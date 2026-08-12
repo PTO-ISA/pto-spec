@@ -54,9 +54,9 @@ end;
 BSTART.CUBE TMATMUL.ACC AType
 B.DATR BType RMode Sat
 B.FPATR
-B.DIM LB0 N
-B.DIM LB1 M
-B.DIM LB2 Col
+B.DIM LB0 M
+B.DIM LB1 N
+B.DIM LB2 K
 B.IOS Shared operand binder (optional)
 B.IOT Local sources and Local outputs
 B.IOR scalar PostProcess parameter (optional)

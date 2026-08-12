@@ -187,6 +187,11 @@ func SelectedBundleTileDataAttributesLegal(
 begin
     let matrix = _BundleOperation.valid &&
         _BundleOperation.operation_class == BundleOperation_TileMatrix;
+    let effective_datr_data_type =
+        if _BundleDataAttributes.data_type_present &&
+           BundleDataTypeConcrete(_BundleDataAttributes.data_type) then
+            _BundleDataAttributes.data_type
+        else Zeros{5};
     let datr_legal = if matrix then
         _BundleFixedPointAttributes.valid &&
         BundleFPATRDATRFieldsLegal(
@@ -197,7 +202,7 @@ begin
         TileOperationDATRFieldsLegal(
             operation, _BundleDataAttributes.conversion_mode,
             _BundleDataAttributes.pad_value, _BundleDataAttributes.saturating,
-            _BundleDataAttributes.canonicalize, _BundleDataAttributes.data_type,
+            _BundleDataAttributes.canonicalize, effective_datr_data_type,
             _BundleDataAttributes.rounding_mode,
             _BundleDataAttributes.data_layout);
     if !datr_legal then

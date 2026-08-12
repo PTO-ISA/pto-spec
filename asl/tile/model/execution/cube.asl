@@ -65,6 +65,9 @@ begin
         UInt(_BundleFixedPointAttributes.pre_quant_mode) != 0 then
         BundleFPATROutputType(_BundleFixedPointAttributes.pre_quant_mode)
     else accumulator_data_type;
+    let output_transformed = _BundleFixedPointAttributes.valid &&
+        (UInt(_BundleFixedPointAttributes.pre_quant_mode) != 0 ||
+         UInt(_BundleFixedPointAttributes.relu_mode) != 0);
     assert left_tile.allocated && left_tile.contents_defined;
     assert right_tile.allocated && right_tile.contents_defined;
     assert left_tile.valid_columns == right_tile.valid_rows;
@@ -78,7 +81,8 @@ begin
         assert accumulator_tile.valid_columns == right_tile.valid_columns;
         assert accumulator_tile.data_type == accumulator_data_type;
         assert accumulator_tile.layout == destination_tile.layout;
-        assert accumulator_tile.capacity_bytes == destination_tile.capacity_bytes;
+        assert output_transformed ||
+               accumulator_tile.capacity_bytes == destination_tile.capacity_bytes;
     end;
 
     let left_payload = left_tile.payload;
@@ -172,6 +176,9 @@ begin
         UInt(_BundleFixedPointAttributes.pre_quant_mode) != 0 then
         BundleFPATROutputType(_BundleFixedPointAttributes.pre_quant_mode)
     else accumulator_data_type;
+    let output_transformed = _BundleFixedPointAttributes.valid &&
+        (UInt(_BundleFixedPointAttributes.pre_quant_mode) != 0 ||
+         UInt(_BundleFixedPointAttributes.relu_mode) != 0);
     assert left_tile.allocated && left_tile.contents_defined;
     assert right_tile.allocated && right_tile.contents_defined;
     assert left_scale_tile.allocated && left_scale_tile.contents_defined;
@@ -187,7 +194,8 @@ begin
         assert accumulator_tile.valid_columns == right_tile.valid_columns;
         assert accumulator_tile.data_type == accumulator_data_type;
         assert accumulator_tile.layout == destination_tile.layout;
-        assert accumulator_tile.capacity_bytes == destination_tile.capacity_bytes;
+        assert output_transformed ||
+               accumulator_tile.capacity_bytes == destination_tile.capacity_bytes;
     end;
 
     let left_payload = left_tile.payload;

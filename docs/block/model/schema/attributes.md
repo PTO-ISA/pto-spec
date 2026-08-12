@@ -28,6 +28,11 @@ func SetBundleDataAttributeState(data_type: bits(5), data_layout: bits(5),
                                 pad_value: bits(2), conversion_mode: bits(3),
                                 rounding_mode: bits(3), saturating: boolean)
 begin
+    if !BundleDataTypeFieldValid(data_type) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return;
+    end;
+    _BundleDataAttributes.data_type_present = TRUE;
     _BundleDataAttributes.data_type = data_type;
     _BundleDataAttributes.data_layout = data_layout;
     _BundleDataAttributes.pad_value = pad_value;
