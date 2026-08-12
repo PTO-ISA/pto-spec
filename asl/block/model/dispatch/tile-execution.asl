@@ -36,6 +36,11 @@ begin
     end;
     let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
     if SelectedBundleTileMaskIsZero() then return TRUE; end;
+    if _BundleFixedPointAttributes.valid &&
+       _BundleOperation.operation_class != BundleOperation_TileMatrix then
+        SetFault(Fault_BundleControl, ReadTPC());
+        return FALSE;
+    end;
     if !BundleOperationBindingsComplete(operation) then
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;

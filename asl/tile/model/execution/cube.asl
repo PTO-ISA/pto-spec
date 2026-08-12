@@ -61,25 +61,34 @@ begin
         ZeroExtend{PTO_XLEN}(CurrentBundleTileOperationDataTypeCode()));
     let accumulator_data_type =
         TileMatrixAccumulatorDataType(selected_data_type);
+    let expected_destination_type = if _BundleFixedPointAttributes.valid &&
+        UInt(_BundleFixedPointAttributes.pre_quant_mode) != 0 then
+        BundleFPATROutputType(_BundleFixedPointAttributes.pre_quant_mode)
+    else accumulator_data_type;
+    let output_transformed = _BundleFixedPointAttributes.valid &&
+        (UInt(_BundleFixedPointAttributes.pre_quant_mode) != 0 ||
+         UInt(_BundleFixedPointAttributes.relu_mode) != 0);
     assert left_tile.allocated && left_tile.contents_defined;
     assert right_tile.allocated && right_tile.contents_defined;
     assert left_tile.valid_columns == right_tile.valid_rows;
     assert destination_tile.allocated;
     assert destination_tile.valid_rows == left_tile.valid_rows;
     assert destination_tile.valid_columns == right_tile.valid_columns;
-    assert destination_tile.data_type == accumulator_data_type;
+    assert destination_tile.data_type == expected_destination_type;
     if accumulate then
         assert accumulator_tile.allocated && accumulator_tile.contents_defined;
         assert accumulator_tile.valid_rows == left_tile.valid_rows;
         assert accumulator_tile.valid_columns == right_tile.valid_columns;
         assert accumulator_tile.data_type == accumulator_data_type;
         assert accumulator_tile.layout == destination_tile.layout;
-        assert accumulator_tile.capacity_bytes == destination_tile.capacity_bytes;
+        assert output_transformed ||
+               accumulator_tile.capacity_bytes == destination_tile.capacity_bytes;
     end;
 
     let left_payload = left_tile.payload;
     let right_payload = right_tile.payload;
     var result: TileInfo = destination_tile;
+    result.data_type = accumulator_data_type;
     result.contents_defined = FALSE;
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
@@ -163,6 +172,13 @@ begin
         ZeroExtend{PTO_XLEN}(CurrentBundleTileOperationDataTypeCode()));
     let accumulator_data_type =
         TileMatrixAccumulatorDataType(selected_data_type);
+    let expected_destination_type = if _BundleFixedPointAttributes.valid &&
+        UInt(_BundleFixedPointAttributes.pre_quant_mode) != 0 then
+        BundleFPATROutputType(_BundleFixedPointAttributes.pre_quant_mode)
+    else accumulator_data_type;
+    let output_transformed = _BundleFixedPointAttributes.valid &&
+        (UInt(_BundleFixedPointAttributes.pre_quant_mode) != 0 ||
+         UInt(_BundleFixedPointAttributes.relu_mode) != 0);
     assert left_tile.allocated && left_tile.contents_defined;
     assert right_tile.allocated && right_tile.contents_defined;
     assert left_scale_tile.allocated && left_scale_tile.contents_defined;
@@ -171,14 +187,15 @@ begin
     assert destination_tile.allocated;
     assert destination_tile.valid_rows == left_tile.valid_rows;
     assert destination_tile.valid_columns == right_tile.valid_columns;
-    assert destination_tile.data_type == accumulator_data_type;
+    assert destination_tile.data_type == expected_destination_type;
     if accumulate then
         assert accumulator_tile.allocated && accumulator_tile.contents_defined;
         assert accumulator_tile.valid_rows == left_tile.valid_rows;
         assert accumulator_tile.valid_columns == right_tile.valid_columns;
         assert accumulator_tile.data_type == accumulator_data_type;
         assert accumulator_tile.layout == destination_tile.layout;
-        assert accumulator_tile.capacity_bytes == destination_tile.capacity_bytes;
+        assert output_transformed ||
+               accumulator_tile.capacity_bytes == destination_tile.capacity_bytes;
     end;
 
     let left_payload = left_tile.payload;
@@ -186,6 +203,7 @@ begin
     let left_scale_payload = left_scale_tile.payload;
     let right_scale_payload = right_scale_tile.payload;
     var result: TileInfo = destination_tile;
+    result.data_type = accumulator_data_type;
     result.contents_defined = FALSE;
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
@@ -262,11 +280,6 @@ begin
     let result = if use_bias then MatrixBiasResult(product, bias)
         else product;
     CommitMatrixResult(destination, result);
-end;
-
-func CommitMatrixResult(destination: TileIndex, result: TileInfo)
-begin
-    _Tiles[[destination]] = result;
 end;
 
 func TMATMUL(destination: TileIndex, left: TileIndex, right: TileIndex)

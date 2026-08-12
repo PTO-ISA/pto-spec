@@ -12,9 +12,15 @@ begin
                 if destination_count == 0 then
                     operands.destination0 =
                         _BundleTileBindings[[binding]].destination;
-                else
+                elsif destination_count == 1 then
                     operands.destination1 =
                         _BundleTileBindings[[binding]].destination;
+                elsif destination_count == 2 then
+                    operands.destination2 =
+                        _BundleTileBindings[[binding]].destination;
+                else
+                    SetFault(Fault_TileLegality, ReadTPC());
+                    return operands;
                 end;
                 destination_count = destination_count + 1;
             end;
@@ -29,6 +35,12 @@ begin
                     when 3 => operands.source3 =
                         _BundleTileBindings[[binding]].source0;
                     when 4 => operands.source4 =
+                        _BundleTileBindings[[binding]].source0;
+                    when 5 => operands.source5 =
+                        _BundleTileBindings[[binding]].source0;
+                    when 6 => operands.source6 =
+                        _BundleTileBindings[[binding]].source0;
+                    when 7 => operands.source7 =
                         _BundleTileBindings[[binding]].source0;
                     otherwise => unreachable;
                 end;
@@ -45,6 +57,12 @@ begin
                     when 3 => operands.source3 =
                         _BundleTileBindings[[binding]].source1;
                     when 4 => operands.source4 =
+                        _BundleTileBindings[[binding]].source1;
+                    when 5 => operands.source5 =
+                        _BundleTileBindings[[binding]].source1;
+                    when 6 => operands.source6 =
+                        _BundleTileBindings[[binding]].source1;
+                    when 7 => operands.source7 =
                         _BundleTileBindings[[binding]].source1;
                     otherwise => unreachable;
                 end;
@@ -104,6 +122,26 @@ begin
             operands.flag0 = UInt(raw) == 1;
         end;
     end;
+    // Matrix post-processing scalar descriptors consume the next dense B.IOR
+    // slots after any mathematical scalar controls.  Matrix operations do not
+    // currently have scalar0/scalar1 controls, so these are RegSrc0/RegSrc1.
+    if _BundleOperation.valid &&
+       _BundleOperation.operation_class == BundleOperation_TileMatrix &&
+       _BundleFixedPointAttributes.valid &&
+       _BundleScalarBindings[[0]].valid then
+        var post_slot: integer {0..2} = 0;
+        if BundleFPATRModeUsesScalarParameter(
+               _BundleFixedPointAttributes.pre_quant_mode) then
+            operands.post_quant_param = ReadScalarRegisterOperand(
+                BundleOperationGPRInputSelector(post_slot));
+            post_slot = (post_slot + 1) as integer {0..2};
+        end;
+        if BundleFPATRReluModeUsesScalarParameter(
+               _BundleFixedPointAttributes.relu_mode) then
+            operands.post_lrelu_param = ReadScalarRegisterOperand(
+                BundleOperationGPRInputSelector(post_slot));
+        end;
+    end;
     let dimension0 = UInt(_BundleDimensions[[0]]);
     let dimension1 = UInt(_BundleDimensions[[1]]);
     if dimension0 <= 65535 then
@@ -147,12 +185,27 @@ end;
 func SelectedBundleTileDataAttributesLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
-    if !TileOperationDATRFieldsLegal(
-        operation, _BundleDataAttributes.conversion_mode,
-        _BundleDataAttributes.pad_value, _BundleDataAttributes.saturating,
-        _BundleDataAttributes.canonicalize, _BundleDataAttributes.data_type,
-        _BundleDataAttributes.rounding_mode,
-        _BundleDataAttributes.data_layout) then
+    let matrix = _BundleOperation.valid &&
+        _BundleOperation.operation_class == BundleOperation_TileMatrix;
+    let effective_datr_data_type =
+        if _BundleDataAttributes.data_type_present &&
+           BundleDataTypeConcrete(_BundleDataAttributes.data_type) then
+            _BundleDataAttributes.data_type
+        else Zeros{5};
+    let datr_legal = if matrix then
+        _BundleFixedPointAttributes.valid &&
+        BundleFPATRDATRFieldsLegal(
+            _BundleFixedPointAttributes.pre_quant_mode,
+            _BundleDataAttributes.rounding_mode,
+            _BundleDataAttributes.saturating)
+    else
+        TileOperationDATRFieldsLegal(
+            operation, _BundleDataAttributes.conversion_mode,
+            _BundleDataAttributes.pad_value, _BundleDataAttributes.saturating,
+            _BundleDataAttributes.canonicalize, effective_datr_data_type,
+            _BundleDataAttributes.rounding_mode,
+            _BundleDataAttributes.data_layout);
+    if !datr_legal then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;

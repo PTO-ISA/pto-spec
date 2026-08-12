@@ -18,9 +18,19 @@ end;
 
 pure func BundleDataTypeSupported(data_type: bits(5)) => boolean
 begin
+    return BundleDataTypeConcrete(data_type);
+end;
+
+pure func BundleDataTypeConcrete(data_type: bits(5)) => boolean
+begin
     let code = UInt(data_type);
     return code <= 14 || (16 <= code && code <= 20) ||
            (24 <= code && code <= 28);
+end;
+
+pure func BundleDataTypeFieldValid(data_type: bits(5)) => boolean
+begin
+    return BundleDataTypeConcrete(data_type) || data_type == DTYPE_NONE;
 end;
 
 pure func BundleTileDataType(data_type: bits(5)) => TileDataType
@@ -53,6 +63,62 @@ begin
         when '11100' => return TileDataType_U4X2;
         otherwise => unreachable;
     end;
+end;
+
+pure func BundleDescriptorSelectsTMOV(
+    descriptor: BundleOperationDescriptor) => boolean
+begin
+    if descriptor.operation_class != BundleOperation_TileMemory ||
+       !descriptor.selector_valid then return FALSE; end;
+    return BundleOperationDecodeCode(descriptor) == Zeros{12} + 2;
+end;
+
+readonly func BundleTMOVSelected() => boolean
+begin
+    return _BundleOperation.valid &&
+           BundleDescriptorSelectsTMOV(_BundleOperation);
+end;
+
+readonly func ResolveBundleEffectiveDataType() => (boolean, TileDataType)
+begin
+    if _BundleDataAttributes.data_type_present &&
+       BundleDataTypeConcrete(_BundleDataAttributes.data_type) then
+        return (TRUE, BundleTileDataType(_BundleDataAttributes.data_type));
+    end;
+    if _BundleOperation.data_type_valid &&
+       BundleDataTypeConcrete(_BundleOperation.data_type) then
+        return (TRUE, BundleTileDataType(_BundleOperation.data_type));
+    end;
+    if BundleTMOVSelected() then
+        for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+            if _BundleTileBindings[[binding]].valid then
+                if _BundleTileBindings[[binding]].source0_valid &&
+                   TileDescriptorConfigured(
+                       _BundleTileBindings[[binding]].source0) then
+                    return (TRUE, _Tiles[[
+                        _BundleTileBindings[[binding]].source0]].data_type);
+                elsif _BundleTileBindings[[binding]].source1_valid &&
+                      TileDescriptorConfigured(
+                          _BundleTileBindings[[binding]].source1) then
+                    return (TRUE, _Tiles[[
+                        _BundleTileBindings[[binding]].source1]].data_type);
+                end;
+            end;
+        end;
+        for binding = 0 to 3 do
+            if _BundleSharedBindings[[binding]].valid &&
+               !_BundleSharedBindings[[binding]].consumed &&
+               !BundleSharedBindingIsDestination(binding) then
+                let shared_id = BundleSharedBindingId(binding);
+                if SharedTileDescriptorLegal(shared_id) then
+                    return (TRUE, SharedTileRecord(shared_id).tile.data_type);
+                end;
+            end;
+        end;
+    end;
+    // This value is unobservable when the valid member is FALSE. FP64 is a
+    // total ASL return value, never a default interpretation of DTYPE_NONE.
+    return (FALSE, TileDataType_FP64);
 end;
 
 pure func BundleTileDecodeFamily(operation_class: BundleOperationClass)
@@ -108,13 +174,15 @@ begin
              BundleOperation_TileMemory,
              BundleOperation_TileMatrix =>
             if !descriptor.selector_valid || !descriptor.data_type_valid ||
-               !BundleDataTypeSupported(descriptor.data_type) then
+               !BundleDataTypeFieldValid(descriptor.data_type) then
                 return FALSE;
             end;
             let operation = DecodeTileOperation(
                 BundleTileDecodeFamily(descriptor.operation_class),
                 BundleOperationDecodeCode(descriptor));
-            return operation != PTO_TILE_OPERATION_COUNT;
+            if operation == PTO_TILE_OPERATION_COUNT then return FALSE; end;
+            return BundleDataTypeConcrete(descriptor.data_type) ||
+                   BundleDescriptorSelectsTMOV(descriptor);
         when BundleOperation_FixedPoint =>
             // PTO v0 has no direct FIXP selector family. The accepted spelling
             // remains decodable but cannot install an executable descriptor.
@@ -165,10 +233,16 @@ begin
             if _BundleTileBindings[[binding]].last then last_seen = TRUE; end;
         end;
     end;
+    let matrix = _BundleOperation.valid &&
+        _BundleOperation.operation_class == BundleOperation_TileMatrix;
     let expected_destinations =
         (if TileOperandPresent(operation, TileOperand_destination0)
          then 1 else 0) +
         (if TileOperandPresent(operation, TileOperand_destination1)
+         then 1 else 0) +
+        (if matrix && _BundleFixedPointAttributes.row_max_en
+         then 1 else 0) +
+        (if matrix && _BundleFixedPointAttributes.group_max_en
          then 1 else 0);
     let expected_sources =
         (if TileOperandPresent(operation, TileOperand_source0)
@@ -180,7 +254,49 @@ begin
         (if TileOperandPresent(operation, TileOperand_source3)
          then 1 else 0) +
         (if TileOperandPresent(operation, TileOperand_source4)
+         then 1 else 0) +
+        (if matrix && _BundleFixedPointAttributes.row_max_en &&
+            _BundleFixedPointAttributes.row_max_init
+         then 1 else 0) +
+        (if matrix && BundleFPATRModeUsesVectorParameter(
+               _BundleFixedPointAttributes.pre_quant_mode)
+         then 1 else 0) +
+        (if matrix && BundleFPATRReluModeUsesVectorParameter(
+               _BundleFixedPointAttributes.relu_mode)
          then 1 else 0);
+    // Matrix post-processing is a complete-bundle schema contribution.  The
+    // static catalog carries mathematical operands; B.FPATR contributes
+    // optional RowMax/parameter streams and compact auxiliary destinations.
+    if matrix then
+        if !_BundleFixedPointAttributes.valid then return FALSE; end;
+    elsif _BundleFixedPointAttributes.valid then
+        return FALSE;
+    end;
+    if matrix && destination_count > 1 then
+        // D, RowMaxOut and GroupMaxOut are one atomic output group.  Their
+        // architectural Tile IDs must be distinct; source/destination alias
+        // checks remain operation-specific (RowMaxIn may equal RowMaxOut).
+        for first = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 looplimit 16 do
+            if _BundleTileBindings[[first]].valid &&
+               _BundleTileBindings[[first]].destination_valid then
+                for second = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 looplimit 16 do
+                    if first != second &&
+                       _BundleTileBindings[[second]].valid &&
+                       _BundleTileBindings[[second]].destination_valid &&
+                       _BundleTileBindings[[first]].destination ==
+                       _BundleTileBindings[[second]].destination then
+                        return FALSE;
+                    end;
+                end;
+            end;
+        end;
+    end;
+    // The complete-bundle B.FPATR carrier has eight compact Local source
+    // ordinals and three compact destination ordinals. Reject surplus
+    // streams before descriptor allocation or operand consumption.
+    if matrix && (source_count > 8 || destination_count > 3) then
+        return FALSE;
+    end;
     if destination_count != expected_destinations ||
        source_count != expected_sources then return FALSE; end;
     if binding_count > 0 && !last_seen then return FALSE; end;

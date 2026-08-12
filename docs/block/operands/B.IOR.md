@@ -63,6 +63,26 @@ end;
 // flag0. Omission is distinct from an encoded zero selector. Consumers own
 // raw-value validation before constrained assignment; a second B.IOR faults
 // with Fault_BundleControl and preserves the first binding.
+// Matrix complete-bundle consumers append optional scalar QuantParam then
+// scalar LReLUParam in the same dense RegSrc order. Their omission/default,
+// surplus-zero, and raw-carrier policy is owned by the dynamic schema at
+// PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA and
+// spec/evidence/bundle-command-totality.json.
+pure func InstructionContractMatrixPostProcessGPRQuantSlot_B_IOR() => integer
+begin
+    return 0;
+end;
+
+pure func InstructionContractMatrixPostProcessGPRLReLUSlot_B_IOR() => integer
+begin
+    return 1;
+end;
+
+pure func InstructionContractMatrixPostProcessGPRCapacity_B_IOR() => integer
+begin
+    return 3;
+end;
+
 pure func InstructionContractAbsoluteGPRSelectorLegal_B_IOR(
     selector: Reg5Selector) => boolean
 begin

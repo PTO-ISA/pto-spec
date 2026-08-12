@@ -28,6 +28,8 @@ begin
     _TrapContexts[[target]].bundle_control_attributes =
         _BundleControlAttributes;
     _TrapContexts[[target]].bundle_data_attributes = _BundleDataAttributes;
+    _TrapContexts[[target]].bundle_fixed_point_attributes =
+        _BundleFixedPointAttributes;
     _TrapContexts[[target]].t_queue = _TQueue;
     _TrapContexts[[target]].u_queue = _UQueue;
     _TrapContexts[[target]].execution_mask = _ExecutionMask;
@@ -69,6 +71,8 @@ begin
     _BundleControlAttributes =
         _TrapContexts[[target]].bundle_control_attributes;
     _BundleDataAttributes = _TrapContexts[[target]].bundle_data_attributes;
+    _BundleFixedPointAttributes =
+        _TrapContexts[[target]].bundle_fixed_point_attributes;
     _TQueue = _TrapContexts[[target]].t_queue;
     _UQueue = _TrapContexts[[target]].u_queue;
     _ExecutionMask = _TrapContexts[[target]].execution_mask;

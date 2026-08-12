@@ -14807,11 +14807,31 @@
       "selector_match": true,
       "stable_id": "cube:0x016:TGEMV_MX_ACC",
       "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "non-comparable",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 99,
+      "mnemonic": "B.FPATR",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "No independent executable evidence exists for this newly accepted form; PTO-owned ASL, decoder witness, and AVS remain authoritative.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "SetBundleFixedPointAttributes",
+      "stable_id": "b_fpatr_32_4f2db11e8e8a",
+      "surface": "command"
     }
   ],
   "schema": "pto.executable-model-comparison.v1",
   "scope": {
-    "command_forms": 99,
+    "command_forms": 100,
     "direct_tile_breakdown": {
       "CUBE": 12,
       "TEPL": 87,
@@ -14819,7 +14839,7 @@
     },
     "direct_tile_operations": 109,
     "scalar_forms": 474,
-    "total_rows": 682
+    "total_rows": 683
   },
   "snapshot": {
     "content_hashes": {
@@ -14932,18 +14952,18 @@
     "classification_counts": {
       "comparable-match": 554,
       "divergence": 90,
-      "non-comparable": 38
+      "non-comparable": 39
     },
     "independent_status_counts": {
       "decode-only": 17,
       "executable-subset": 553,
       "header-manifest": 21,
-      "missing": 5,
+      "missing": 6,
       "selector-manifest": 86
     },
-    "row_count": 682,
+    "row_count": 683,
     "surface_counts": {
-      "command": 99,
+      "command": 100,
       "direct-tile": 109,
       "scalar": 474
     },

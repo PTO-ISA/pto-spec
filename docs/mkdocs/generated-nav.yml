@@ -59,6 +59,7 @@ nav:
           - B.CATR: block/attributes/B.CATR.md
           - B.DATR: block/attributes/B.DATR.md
           - B.DIM: block/attributes/B.DIM.md
+          - B.FPATR: block/attributes/B.FPATR.md
           - C.B.DIMI: block/attributes/C.B.DIMI.md
       - Encoding:
           - C.BSTART.FP: block/encoding/C.BSTART.FP.md
@@ -784,6 +785,7 @@ nav:
               - Elementwise: tile/model/execution/elementwise.md
               - Expansion: tile/model/execution/expansion.md
               - Generation: tile/model/execution/generation.md
+              - Postprocess: tile/model/execution/postprocess.md
               - Rearrangement: tile/model/execution/rearrangement.md
               - Reduction: tile/model/execution/reduction.md
           - Legality:
@@ -924,5 +926,6 @@ nav:
           - "ADR 0056: PTO/Linx Common Encoding Ownership and Per-PE GM Access": status/decisions/0056-pto-linx-common-encoding-and-gm-access.md
           - "ADR 0057: Tile Classification and Execution-Engine Aliases": status/decisions/0057-tile-classification-and-engine-aliases.md
           - "ADR 0058: Complete-Bundle GPR Operand Resolution": status/decisions/0058-complete-bundle-gpr-operand-resolution.md
+          - "ADR 0064: B.FPATR Complete-Bundle Matrix PostProcess": status/decisions/0064-b-fpatr-complete-bundle-postprocess.md
       - Open:
           - "Open architecture questions": status/open/index.md

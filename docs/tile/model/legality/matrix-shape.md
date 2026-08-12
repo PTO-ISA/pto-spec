@@ -72,9 +72,13 @@ begin
     let selected_type = TileDataTypeFromEncoding(
         ZeroExtend{PTO_XLEN}(CurrentBundleTileOperationDataTypeCode()));
     let accumulator_type = TileMatrixAccumulatorDataType(selected_type);
+    let expected_destination_type = if _BundleFixedPointAttributes.valid &&
+        UInt(_BundleFixedPointAttributes.pre_quant_mode) != 0 then
+        BundleFPATROutputType(_BundleFixedPointAttributes.pre_quant_mode)
+    else accumulator_type;
     return _Tiles[[destination]].valid_rows == left.valid_rows &&
            _Tiles[[destination]].valid_columns == right.valid_columns &&
-           _Tiles[[destination]].data_type == accumulator_type;
+           _Tiles[[destination]].data_type == expected_destination_type;
 end;
 
 readonly func TileMatrixInfoBiasLegal(left: TileInfo, right: TileInfo,
@@ -99,11 +103,22 @@ readonly func TileMatrixInfoAccumulatorLegal(destination: TileIndex,
                                                left: TileInfo,
                                                right: TileInfo) => boolean
 begin
+    let output_transformed = _BundleFixedPointAttributes.valid &&
+        (UInt(_BundleFixedPointAttributes.pre_quant_mode) != 0 ||
+         UInt(_BundleFixedPointAttributes.relu_mode) != 0);
+    let selected_type = TileDataTypeFromEncoding(
+        ZeroExtend{PTO_XLEN}(CurrentBundleTileOperationDataTypeCode()));
+    let accumulator_type = TileMatrixAccumulatorDataType(selected_type);
     return TileSourceContentsDefined(accumulator) &&
-           TileMatrixInfoDestinationLegal(accumulator, left, right) &&
+           TileDescriptorLegal(accumulator) &&
+           TileMatrixInfoShapeLegal(left, right) &&
+           _Tiles[[accumulator]].valid_rows == left.valid_rows &&
+           _Tiles[[accumulator]].valid_columns == right.valid_columns &&
+           _Tiles[[accumulator]].data_type == accumulator_type &&
            _Tiles[[accumulator]].layout == _Tiles[[destination]].layout &&
-           _Tiles[[accumulator]].capacity_bytes ==
-               _Tiles[[destination]].capacity_bytes;
+           (output_transformed ||
+            _Tiles[[accumulator]].capacity_bytes ==
+                _Tiles[[destination]].capacity_bytes);
 end;
 
 readonly func TileMatrixInfoScalesLegal(left: TileInfo,
@@ -222,6 +237,24 @@ begin
     let selected_type = TileDataTypeFromEncoding(
         ZeroExtend{PTO_XLEN}(CurrentBundleTileOperationDataTypeCode()));
     let accumulator_type = TileMatrixAccumulatorDataType(selected_type);
+    let expected_destination_type = if _BundleFixedPointAttributes.valid &&
+        UInt(_BundleFixedPointAttributes.pre_quant_mode) != 0 then
+        BundleFPATROutputType(_BundleFixedPointAttributes.pre_quant_mode)
+    else accumulator_type;
+    return _Tiles[[destination]].valid_rows == _Tiles[[left]].valid_rows &&
+           _Tiles[[destination]].valid_columns == _Tiles[[right]].valid_columns &&
+           _Tiles[[destination]].data_type == expected_destination_type;
+end;
+
+readonly func TileMatrixAccumulatorDestinationLegal(destination: TileIndex,
+                                                     left: TileIndex,
+                                                     right: TileIndex) => boolean
+begin
+    if !TileDescriptorLegal(destination) ||
+       !TileMatrixShapeLegal(left, right) then return FALSE; end;
+    let selected_type = TileDataTypeFromEncoding(
+        ZeroExtend{PTO_XLEN}(CurrentBundleTileOperationDataTypeCode()));
+    let accumulator_type = TileMatrixAccumulatorDataType(selected_type);
     return _Tiles[[destination]].valid_rows == _Tiles[[left]].valid_rows &&
            _Tiles[[destination]].valid_columns == _Tiles[[right]].valid_columns &&
            _Tiles[[destination]].data_type == accumulator_type;
@@ -246,12 +279,16 @@ readonly func TileOperandsLegal_TMATMUL_ACC(
     destination: TileIndex, accumulator: TileIndex,
     left: TileIndex, right: TileIndex) => boolean
 begin
+    let output_transformed = _BundleFixedPointAttributes.valid &&
+        (UInt(_BundleFixedPointAttributes.pre_quant_mode) != 0 ||
+         UInt(_BundleFixedPointAttributes.relu_mode) != 0);
     return TileOperandsLegal_TMATMUL(destination, left, right) &&
            TileSourceContentsDefined(accumulator) &&
-           TileMatrixDestinationLegal(accumulator, left, right) &&
+           TileMatrixAccumulatorDestinationLegal(accumulator, left, right) &&
            _Tiles[[accumulator]].layout == _Tiles[[destination]].layout &&
-           _Tiles[[accumulator]].capacity_bytes ==
-               _Tiles[[destination]].capacity_bytes;
+           (output_transformed ||
+            _Tiles[[accumulator]].capacity_bytes ==
+                _Tiles[[destination]].capacity_bytes);
 end;
 
 readonly func TileOperandsLegal_TMATMUL_MX(
@@ -277,13 +314,17 @@ readonly func TileOperandsLegal_TMATMUL_MX_ACC(
     left: TileIndex, left_scale: TileIndex,
     right: TileIndex, right_scale: TileIndex) => boolean
 begin
+    let output_transformed = _BundleFixedPointAttributes.valid &&
+        (UInt(_BundleFixedPointAttributes.pre_quant_mode) != 0 ||
+         UInt(_BundleFixedPointAttributes.relu_mode) != 0);
     return TileOperandsLegal_TMATMUL_MX(
                destination, left, left_scale, right, right_scale) &&
            TileSourceContentsDefined(accumulator) &&
-           TileMatrixDestinationLegal(accumulator, left, right) &&
+           TileMatrixAccumulatorDestinationLegal(accumulator, left, right) &&
            _Tiles[[accumulator]].layout == _Tiles[[destination]].layout &&
-           _Tiles[[accumulator]].capacity_bytes ==
-               _Tiles[[destination]].capacity_bytes;
+           (output_transformed ||
+            _Tiles[[accumulator]].capacity_bytes ==
+                _Tiles[[destination]].capacity_bytes);
 end;
 
 readonly func TileOperandsLegal_TGEMV(

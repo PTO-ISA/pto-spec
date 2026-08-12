@@ -47,6 +47,10 @@ type TileDataType of enumeration {
     TileDataType_U4X2
 };
 
+// Encoded DataType 31 is a field-level sentinel. It is deliberately not a
+// TileDataType and therefore has no width, format, or arithmetic semantics.
+constant DTYPE_NONE = '11111';
+
 type TileDataLayout of enumeration {
     TileDataLayout_NORM,
     TileDataLayout_ND2DN,

@@ -15,6 +15,11 @@ func SetBundleDataAttributeState(data_type: bits(5), data_layout: bits(5),
                                 pad_value: bits(2), conversion_mode: bits(3),
                                 rounding_mode: bits(3), saturating: boolean)
 begin
+    if !BundleDataTypeFieldValid(data_type) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return;
+    end;
+    _BundleDataAttributes.data_type_present = TRUE;
     _BundleDataAttributes.data_type = data_type;
     _BundleDataAttributes.data_layout = data_layout;
     _BundleDataAttributes.pad_value = pad_value;
@@ -22,4 +27,29 @@ begin
     _BundleDataAttributes.rounding_mode = rounding_mode;
     _BundleDataAttributes.saturating = saturating;
     _BundleDataAttributes.canonicalize = FALSE;
+end;
+
+func SetBundleFixedPointAttributeState(pre_quant_mode: bits(6),
+                                       relu_mode: bits(3),
+                                       group_n_code: bits(4),
+                                       row_max_en: boolean,
+                                       group_max_en: boolean,
+                                       row_max_init: boolean,
+                                       max_abs_en: boolean)
+begin
+    // Header-local field checks happen before the descriptor becomes visible.
+    if !BundleFPATRFieldsLegal(pre_quant_mode, relu_mode, group_n_code,
+                               row_max_en, group_max_en, row_max_init,
+                               max_abs_en) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return;
+    end;
+    _BundleFixedPointAttributes.valid = TRUE;
+    _BundleFixedPointAttributes.pre_quant_mode = pre_quant_mode;
+    _BundleFixedPointAttributes.relu_mode = relu_mode;
+    _BundleFixedPointAttributes.group_n_code = group_n_code;
+    _BundleFixedPointAttributes.row_max_en = row_max_en;
+    _BundleFixedPointAttributes.group_max_en = group_max_en;
+    _BundleFixedPointAttributes.row_max_init = row_max_init;
+    _BundleFixedPointAttributes.max_abs_en = max_abs_en;
 end;

@@ -54,9 +54,9 @@ end;
 BSTART.CUBE TMATMUL.ACC AType
 B.DATR BType RMode Sat
 B.FPATR
-B.DIM LB0 N
-B.DIM LB1 M
-B.DIM LB2 Col
+B.DIM LB0 M
+B.DIM LB1 N
+B.DIM LB2 K
 B.IOS Shared operand binder (optional)
 B.IOT Local sources and Local outputs
 B.IOR scalar PostProcess parameter (optional)
@@ -67,6 +67,11 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.asl -->
 ```asl
+// Complete-bundle dynamic schema linkage: this static mathematical operand owner participates in the
+// conditional B.FPATR schema (scalar QuantParam/LReLUParam, ordered Local
+// RowMax/parameter streams, and D/auxiliary destinations) owned by
+// PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA and evidenced in
+// spec/evidence/bundle-command-totality.json.
 readonly func InstructionContractMatrixShapeLegal_TMATMUL_ACC_(left: TileIndex, right: TileIndex) => boolean
 begin
     return TileMatrixShapeLegal(left, right);

@@ -32,24 +32,36 @@ end;
 // Complete-bundle GPR inputs are packed in the architectural order
 // address, scalar0, scalar1, diagonal, flag0.  Tile operands that are not
 // present in the selected operation do not consume a B.IOR source slot.
-pure func BundleOperationGPRInputCount(
-    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => integer {0..5}
+readonly func BundleOperationGPRInputCount(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => integer {0..7}
 begin
-    var count: integer {0..5} = 0;
+    var count: integer {0..7} = 0;
     if TileOperandPresent(operation, TileOperand_address) then
-        count = (count + 1) as integer {0..5};
+        count = (count + 1) as integer {0..7};
     end;
     if TileOperandPresent(operation, TileOperand_scalar0) then
-        count = (count + 1) as integer {0..5};
+        count = (count + 1) as integer {0..7};
     end;
     if TileOperandPresent(operation, TileOperand_scalar1) then
-        count = (count + 1) as integer {0..5};
+        count = (count + 1) as integer {0..7};
     end;
     if TileOperandPresent(operation, TileOperand_diagonal) then
-        count = (count + 1) as integer {0..5};
+        count = (count + 1) as integer {0..7};
     end;
     if TileOperandPresent(operation, TileOperand_flag0) then
-        count = (count + 1) as integer {0..5};
+        count = (count + 1) as integer {0..7};
+    end;
+    if _BundleOperation.valid &&
+       _BundleOperation.operation_class == BundleOperation_TileMatrix &&
+       _BundleFixedPointAttributes.valid then
+        if BundleFPATRModeUsesScalarParameter(
+               _BundleFixedPointAttributes.pre_quant_mode) then
+            count = (count + 1) as integer {0..7};
+        end;
+        if BundleFPATRReluModeUsesScalarParameter(
+               _BundleFixedPointAttributes.relu_mode) then
+            count = (count + 1) as integer {0..7};
+        end;
     end;
     return count;
 end;
@@ -99,6 +111,7 @@ readonly func BundleOperationGPRBindingValuesLegal(
 begin
     if !_BundleScalarBindings[[0]].valid then return TRUE; end;
     let input_count = BundleOperationGPRInputCount(operation);
+    if input_count > 3 then return FALSE; end;
     if TileOperandPresent(operation, TileOperand_flag0) then
         let slot = BundleOperationGPRInputSlot(operation, TileOperand_flag0);
         let raw = ReadScalarRegisterOperand(

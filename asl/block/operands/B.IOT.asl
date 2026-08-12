@@ -10,6 +10,22 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
+// Complete-bundle matrix consumers use the compact Local stream documented by
+// PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA and
+// spec/evidence/bundle-command-totality.json: existing mathematical sources,
+// optional RowMaxIn, vector QuantParam, vector PReLUParam, then D followed by
+// optional RowMaxOut and GroupMaxOut.  The carrier is bounded at eight source
+// and three destination ordinals; static operation catalogs remain unchanged.
+pure func InstructionContractCompleteBundleLocalSourceCapacity_B_IOT() => integer
+begin
+    return 8;
+end;
+
+pure func InstructionContractCompleteBundleLocalDestinationCapacity_B_IOT() => integer
+begin
+    return 3;
+end;
+
 pure func InstructionContractZeroMaskIsNoOp_B_IOT(
     pe_mask: bits(4)) => boolean
 begin

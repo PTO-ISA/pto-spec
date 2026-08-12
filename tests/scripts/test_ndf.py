@@ -238,6 +238,7 @@ class NdfTest(unittest.TestCase):
                 "_BundleSharedBindings",
                 "_BundleControlAttributes",
                 "_BundleDataAttributes",
+                "_BundleFixedPointAttributes",
                 "_TileDataLayoutCapabilities",
                 "_FrameDepth",
                 "_LastFrameBegin",

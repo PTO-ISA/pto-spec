@@ -19,6 +19,11 @@ begin
     return instruction;
 end;
 
+pure func BundleTestFPATR() => bits(64)
+begin
+    return Zeros{64} + 0x00002023;
+end;
+
 pure func BundleTestNamedMxStart(function: integer {4..22},
                                  data_type: bits(5)) => bits(64)
 begin
@@ -143,6 +148,7 @@ begin
     InstallSharedTile(Zeros{8} + 30, invalid_right, '1111');
     let invalid_start = ExecuteCommandInstruction(
         BundleTestCUBEStart('00000', Zeros{5} + 24), 32);
+    let invalid_fpatr = ExecuteCommandInstruction(BundleTestFPATR(), 32);
     let invalid_bind_right = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 30), 32);
     let invalid_local_a_and_d = ExecuteCommandInstruction(
@@ -150,6 +156,7 @@ begin
     let invalid_ior = ExecuteCommandInstruction(
         BundleTestScalarBinding(Zeros{5}, Zeros{5} + 2, Zeros{5}, Zeros{5}), 32);
     assert invalid_start == CommandExecution_Executed;
+    assert invalid_fpatr == CommandExecution_Executed;
     assert invalid_bind_right == CommandExecution_Executed;
     assert invalid_local_a_and_d == CommandExecution_Executed;
     assert invalid_ior == CommandExecution_Executed;
@@ -168,6 +175,7 @@ begin
     InstallSharedTile(Zeros{8} + 31, right, '1111');
     let start = ExecuteCommandInstruction(
         BundleTestCUBEStart('00000', Zeros{5} + 24), 32);
+    let fpatr = ExecuteCommandInstruction(BundleTestFPATR(), 32);
     let bind_right = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 31), 32);
     let local_a_and_d = ExecuteCommandInstruction(
@@ -175,6 +183,7 @@ begin
     let zero_ior = ExecuteCommandInstruction(
         BundleTestScalarBinding(Zeros{5}, Zeros{5}, Zeros{5}, Zeros{5}), 32);
     assert start == CommandExecution_Executed;
+    assert fpatr == CommandExecution_Executed;
     assert bind_right == CommandExecution_Executed;
     assert local_a_and_d == CommandExecution_Executed;
     assert zero_ior == CommandExecution_Executed;
@@ -197,6 +206,7 @@ begin
     InstallSharedTile(Zeros{8} + 41, shared_right, '1111');
     let both_start = ExecuteCommandInstruction(
         BundleTestCUBEStart('00000', Zeros{5} + 24), 32);
+    let both_fpatr = ExecuteCommandInstruction(BundleTestFPATR(), 32);
     let bind_left = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 40), 32);
     let bind_second_right = ExecuteCommandInstruction(
@@ -204,6 +214,7 @@ begin
     let only_destination = ExecuteCommandInstruction(
         BundleTestTileDestinationV5('001', '00', '1111', TRUE), 32);
     assert both_start == CommandExecution_Executed;
+    assert both_fpatr == CommandExecution_Executed;
     assert bind_left == CommandExecution_Executed;
     assert bind_second_right == CommandExecution_Executed;
     assert only_destination == CommandExecution_Executed;
@@ -230,6 +241,7 @@ begin
     InstallSharedTile(Zeros{8} + 43, _Tiles[[11]], '1111');
     let mx_two_start = ExecuteCommandInstruction(
         BundleTestNamedMxStart(4, Zeros{5} + 1), 32);
+    let mx_two_fpatr = ExecuteCommandInstruction(BundleTestFPATR(), 32);
     let mx_bind_right = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 42), 32);
     let mx_bind_right_scale = ExecuteCommandInstruction(
@@ -238,6 +250,7 @@ begin
         BundleTestTwoSourceDestinationV5('001', '10', '1111',
             Zeros{6}, Zeros{6} + 1, TRUE), 32);
     assert mx_two_start == CommandExecution_Executed;
+    assert mx_two_fpatr == CommandExecution_Executed;
     assert mx_bind_right == CommandExecution_Executed;
     assert mx_bind_right_scale == CommandExecution_Executed;
     assert mx_local_pair == CommandExecution_Executed;
@@ -268,6 +281,7 @@ begin
     InstallSharedTile(Zeros{8} + 47, _Tiles[[13]], '1111');
     let mx_four_start = ExecuteCommandInstruction(
         BundleTestNamedMxStart(4, Zeros{5} + 1), 32);
+    let mx_four_fpatr = ExecuteCommandInstruction(BundleTestFPATR(), 32);
     let mx_bind_left = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 44), 32);
     let mx_bind_left_scale = ExecuteCommandInstruction(
@@ -279,6 +293,7 @@ begin
     let mx_only_destination = ExecuteCommandInstruction(
         BundleTestTileDestinationV5('001', '00', '1111', TRUE), 32);
     assert mx_four_start == CommandExecution_Executed;
+    assert mx_four_fpatr == CommandExecution_Executed;
     assert mx_bind_left == CommandExecution_Executed;
     assert mx_bind_left_scale == CommandExecution_Executed;
     assert mx_bind_second_right == CommandExecution_Executed;
@@ -292,9 +307,11 @@ begin
     ResetProfileState();
     let gemv_start = ExecuteCommandInstruction(
         BundleTestCUBEStart('10000', Zeros{5} + 24), 32);
+    let gemv_fpatr = ExecuteCommandInstruction(BundleTestFPATR(), 32);
     let gemv_shared = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 50), 32);
     assert gemv_start == CommandExecution_Executed;
+    assert gemv_fpatr == CommandExecution_Executed;
     assert gemv_shared == CommandExecution_Executed;
     let gemv_completed = ExecuteBundleTileOperation();
     assert !gemv_completed;
@@ -304,9 +321,11 @@ begin
     ResetProfileState();
     let mx_start = ExecuteCommandInstruction(
         BundleTestNamedMxStart(4, Zeros{5} + 1), 32);
+    let mx_fpatr = ExecuteCommandInstruction(BundleTestFPATR(), 32);
     let mx_one_binder = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 60), 32);
     assert mx_start == CommandExecution_Executed;
+    assert mx_fpatr == CommandExecution_Executed;
     assert mx_one_binder == CommandExecution_Executed;
     let mx_completed = ExecuteBundleTileOperation();
     assert !mx_completed;

@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: matrix-and-matrix-vector/matrix-matrix
-    // block: BSTART.CUBE TMATMULMX.BIAS AType | B.DATR BType RMode Sat | B.FPATR | B.DIM LB0 N | B.DIM LB1 M | B.DIM LB2 Col | B.IOS Shared operand binder (optional) | B.IOT Local sources and Local outputs | B.IOR scalar PostProcess parameter (optional) | BSTOP
+    // block: BSTART.CUBE TMATMULMX.BIAS AType | B.DATR BType RMode Sat | B.FPATR | B.DIM LB0 M | B.DIM LB1 N | B.DIM LB2 K | B.IOS Shared operand binder (optional) | B.IOT Local sources and Local outputs | B.IOR scalar PostProcess parameter (optional) | BSTOP
     assert DecodeTileOperation(TileDecode_CUBE, '000000000101') == 101;
     assert TileOperationOfIndex(101) == TileOperation_TMATMUL_MX_BIAS;
     assert TileHandlerOfIndex(101) == TileHandler_TMATMUL_MX_BIAS;

@@ -101,6 +101,14 @@ begin
         _TrapContexts[[ring]].bundle_argument_kind = Zeros{3};
         _TrapContexts[[ring]].bundle_active = FALSE;
         _TrapContexts[[ring]].bundle_body_active = FALSE;
+        _TrapContexts[[ring]].bundle_fixed_point_attributes.valid = FALSE;
+        _TrapContexts[[ring]].bundle_fixed_point_attributes.pre_quant_mode = Zeros{6};
+        _TrapContexts[[ring]].bundle_fixed_point_attributes.relu_mode = Zeros{3};
+        _TrapContexts[[ring]].bundle_fixed_point_attributes.group_n_code = Zeros{4};
+        _TrapContexts[[ring]].bundle_fixed_point_attributes.row_max_en = FALSE;
+        _TrapContexts[[ring]].bundle_fixed_point_attributes.group_max_en = FALSE;
+        _TrapContexts[[ring]].bundle_fixed_point_attributes.row_max_init = FALSE;
+        _TrapContexts[[ring]].bundle_fixed_point_attributes.max_abs_en = FALSE;
         _TrapContexts[[ring]].t_queue = _TQueue;
         _TrapContexts[[ring]].u_queue = _UQueue;
         _TrapContexts[[ring]].execution_mask = Zeros{PTO_XLEN};

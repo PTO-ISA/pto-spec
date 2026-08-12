@@ -628,9 +628,9 @@ def build(snapshot_root: Path) -> dict[str, Any]:
         },
         "scope": {
             "scalar_forms": 474,
-            "command_forms": 99,
+            "command_forms": 100,
             "direct_tile_operations": 109,
-            "total_rows": 682,
+            "total_rows": 683,
             "direct_tile_breakdown": {"TEPL": 87, "TLSU": 10, "CUBE": 12},
         },
         "model_limits": [
@@ -730,15 +730,37 @@ def prune_existing_to_catalog() -> dict[str, Any]:
             f"refusing to prune unexpected command rows: {sorted(removed_ids)}"
         )
     missing_ids = accepted_ids - existing_command_ids - set(reassigned_ids.values())
-    if missing_ids:
-        raise SystemExit(
-            f"existing comparison cannot synthesize new command rows: {sorted(missing_ids)}"
+    # A newly accepted PTO-owned command has no row in the frozen independent
+    # snapshot.  Preserve that fact explicitly as a non-comparable/missing row;
+    # pruning must never fabricate an independent execution result.
+    synthetic_rows = []
+    for missing_id in sorted(missing_ids):
+        command_row = next(
+            row for row in command_catalog["forms"] if row["form_id"] == missing_id
+        )
+        synthetic_rows.append(
+            {
+                "abi_change_acceptance": None,
+                "classification": "non-comparable",
+                "encoding_match": False,
+                "evidence": ["spec/catalog/command-forms.json"],
+                "independent_status": "missing",
+                "index": 0,
+                "mnemonic": command_row["mnemonic"],
+                "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+                "pto_disposition": "No independent executable evidence exists for this newly accepted form; PTO-owned ASL, decoder witness, and AVS remain authoritative.",
+                "requirements": ["PTO-REQ-BUNDLE-DISPATCH-001", "PTO-REQ-BUNDLE-STATE-001"],
+                "semantic_handler": command_row["semantic_handler"],
+                "stable_id": missing_id,
+                "surface": "command",
+            }
         )
     rows = [
         row
         for row in data["rows"]
         if row["surface"] != "command" or row["stable_id"] in accepted_ids
     ]
+    rows.extend(synthetic_rows)
     for old_id, new_id in reassigned_ids.items():
         if old_id not in existing_command_ids or new_id not in accepted_ids:
             continue

@@ -11,24 +11,35 @@ readonly func BundleSharedCubeSchemaLegal(function: integer {0..31},
                                            local_count: integer {0..32})
                                            => boolean
 begin
+    if !_BundleFixedPointAttributes.valid then return FALSE; end;
+    let post_sources =
+        (if _BundleFixedPointAttributes.row_max_en &&
+            _BundleFixedPointAttributes.row_max_init
+         then 1 else 0) +
+        (if BundleFPATRModeUsesVectorParameter(
+               _BundleFixedPointAttributes.pre_quant_mode)
+         then 1 else 0) +
+        (if BundleFPATRReluModeUsesVectorParameter(
+               _BundleFixedPointAttributes.relu_mode)
+         then 1 else 0);
     if function == 0 then
-        return (shared_count == 1 && local_count == 1) ||
-               (shared_count == 2 && local_count == 0);
+        return (shared_count == 1 && local_count == 1 + post_sources) ||
+               (shared_count == 2 && local_count == 0 + post_sources);
     elsif function == 1 then
-        return (shared_count == 1 && local_count == 2) ||
-               (shared_count == 2 && local_count == 1);
+        return (shared_count == 1 && local_count == 2 + post_sources) ||
+               (shared_count == 2 && local_count == 1 + post_sources);
     elsif function == 2 then
-        return (shared_count == 1 && local_count == 2) ||
-               (shared_count == 2 && local_count == 1);
+        return (shared_count == 1 && local_count == 2 + post_sources) ||
+               (shared_count == 2 && local_count == 1 + post_sources);
     elsif function == 4 then
-        return (shared_count == 2 && local_count == 2) ||
-               (shared_count == 4 && local_count == 0);
+        return (shared_count == 2 && local_count == 2 + post_sources) ||
+               (shared_count == 4 && local_count == 0 + post_sources);
     elsif function == 5 then
-        return (shared_count == 2 && local_count == 3) ||
-               (shared_count == 4 && local_count == 1);
+        return (shared_count == 2 && local_count == 3 + post_sources) ||
+               (shared_count == 4 && local_count == 1 + post_sources);
     elsif function == 6 then
-        return (shared_count == 2 && local_count == 3) ||
-               (shared_count == 4 && local_count == 1);
+        return (shared_count == 2 && local_count == 3 + post_sources) ||
+               (shared_count == 4 && local_count == 1 + post_sources);
     else
         return FALSE;
     end;
@@ -63,9 +74,19 @@ begin
     let function = UInt(_BundleOperation.selector[4:0]);
     let shared_count = BundleSharedBindingCount();
     let local_count = BundleLocalTileSourceCount();
+    let post_destinations =
+        (if _BundleFixedPointAttributes.row_max_en then 1 else 0) +
+        (if _BundleFixedPointAttributes.group_max_en then 1 else 0);
     if BundleSharedMasksAreZero(shared_count as integer {1..4}) &&
        SelectedBundleTileMaskIsZero() then
         return TRUE;
+    end;
+    // Matrix CUBE participation is a complete-bundle contract.  Missing
+    // B.FPATR is a bundle-control fault and must be reported before any
+    // operand resolution, destination allocation, or shared-binding consume.
+    if !_BundleFixedPointAttributes.valid then
+        SetFault(Fault_BundleControl, ReadTPC());
+        return FALSE;
     end;
     let decoded = DecodeTileOperation(TileDecode_CUBE,
         BundleOperationDecodeCode(_BundleOperation));
@@ -79,7 +100,7 @@ begin
         return FALSE;
     end;
     if !BundleSharedCubeSchemaLegal(function, shared_count, local_count) ||
-       BundleLocalTileDestinationCount() != 1 ||
+       BundleLocalTileDestinationCount() != 1 + post_destinations ||
        !BundleTileBindingStreamTerminated() ||
        !SelectedBundleTileDataAttributesLegal(operation) ||
        !SelectedBundleTileMasksLegal() ||

@@ -11,8 +11,8 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 NDF_ROOT = REPOSITORY_ROOT / "tools" / "ndf"
 NDF_REVISION = "ed356980ce7ecb2e8482902988d5012fb54058b3"
 EXPECTED_COUNTS = {
-    "unit": 788,
-    "instruction": 651,
+    "unit": 790,
+    "instruction": 652,
     "synthetic-unit": 1,
     "state": 12,
 }

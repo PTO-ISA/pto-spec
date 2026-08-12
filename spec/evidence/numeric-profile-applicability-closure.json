@@ -5246,17 +5246,17 @@
       "symbol": "BundleOperationDescriptorRejectedByAcceptedApplicabilityRules"
     },
     "direct_test": {
-      "path": "tests/asl/cube-totality-tests.asl",
+      "path": "tests/asl/tile/model/execution/cube/PTO-AVS-TILE-TESTCUBETOTALITY-BOUNDARY-001.asl",
       "symbol": "TestA2A3CubeMxDirectRejectionMatrix"
     },
     "bundle_test": {
-      "path": "tests/asl/bundle-tests.asl",
+      "path": "tests/asl/block/model/dispatch/top-level/PTO-AVS-BLOCK-TESTA2A3CUBEMXBUNDLEREJECTIONMATRIX-EXECUTION-001.asl",
       "symbol": "TestA2A3CubeMxBundleRejectionMatrix"
     }
   },
   "tests": [
-    "tests/asl/bundle-tests.asl",
-    "tests/asl/cube-totality-tests.asl"
+    "tests/asl/block/model/dispatch/top-level/PTO-AVS-BLOCK-TESTA2A3CUBEMXBUNDLEREJECTIONMATRIX-EXECUTION-001.asl",
+    "tests/asl/tile/model/execution/cube/PTO-AVS-TILE-TESTCUBETOTALITY-BOUNDARY-001.asl"
   ],
   "source_hashes": [
     {
@@ -5269,15 +5269,15 @@
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "e1c60c6acab2beffca2cc8ff9c24392ace035f01df19dca482a93876866908c8"
+      "sha256": "aa1fa0a5ba07c7f015875025cc93c42f49b8d4313c55ce2cd72eaaa51bdc7d56"
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "572ffe3fefce946057590312872387272b414414030bba6e7e6c0cc6cecb820a"
+      "sha256": "bbdef7eaa6fd713b040ccada410a1916cebe55756c7ab7c90fd98dfbda87e0e2"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "75f6b9d725c47ff06026b4ba7dde7be0e5d1892f2e9b955223602fb2bae402fe"
+      "sha256": "4ce1200852c19211788a8415f3e0edd0739f30d23b87542018e15665c2b0e62c"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
@@ -5289,35 +5289,35 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "10e8bcfed47aee24719038ec07ecefe75aeaf342a0765cb15308da584242e1b8"
+      "sha256": "0166ec51abfe015fb266a67f0684cb9f4a19f30c68e002f206226b9d6a7c80ba"
     },
     {
       "path": "scripts/generate-asl-decoders",
-      "sha256": "224b9a18137be2748d050bcd196d5e6c87c7264b400c3a4bb26fbc6a88697bb5"
+      "sha256": "b02e78a8e1d16427f7a17e29d0bbe83edc7299851280d87ad4aac680b9f9657e"
     },
     {
       "path": "asl/arch/data-types/fault.asl",
-      "sha256": "e3a280e7acf0e582d6f777dee4c5295747a518a505d93e1e3118661f0b561d92"
+      "sha256": "52840ac26216e5f3c9a61709d4bf827e941183a655b57f74471a10cd72eb7b6b"
     },
     {
       "path": "asl/arch/data-types/floating-point.asl",
-      "sha256": "9232fffb96d16c57168252188147ad98d4be027780b5cacd926acbd3915e4dc2"
+      "sha256": "3eaa4e906174194125ff651c24703bd9a4704073baf2d37268634bd67d5a06a2"
     },
     {
       "path": "asl/arch/data-types/integer.asl",
-      "sha256": "ee412e917aca73b90cf0729bb05b6ee8eba9d636dd87bd01c3d49481fbb6de39"
+      "sha256": "c23c97d2627eed8c2acef84aa9dd9a331e88f3f7c678e0ecbb5282722b45ecc0"
     },
     {
       "path": "asl/arch/data-types/memory-model.asl",
-      "sha256": "4012f50d5019f5692d8eb2f31ff0ce58f133a3763163e47cf760bed6a2ebbf67"
+      "sha256": "dd4adb80d037bc6e6b9b87dd53b8f4ccf6cda4a4fcd648c2874074d8587312d7"
     },
     {
       "path": "asl/arch/data-types/memory-operations.asl",
-      "sha256": "5213fbde30b1e6cc67f9676e0f0e478a21a04e89853c73e7a2bac7723901d07a"
+      "sha256": "4c5b08dd7c47caa6b1917185886bd8ea6929a9bf00c2b8578b86ead04e110b71"
     },
     {
       "path": "asl/arch/data-types/numeric-classification.asl",
-      "sha256": "0c592e04bf159e15822c47f085dac61066c78a20a33c887665ae46f3053a5a7a"
+      "sha256": "b2d9d280d2b40e6cd0c5e17400e9c2b29aec86fbb651d20404cf7b3a7b6b2cb9"
     },
     {
       "path": "asl/arch/data-types/packed.asl",
@@ -5325,75 +5325,75 @@
     },
     {
       "path": "asl/arch/data-types/rounding.asl",
-      "sha256": "6763b6bc65185550a466412faac96fc23438e6f97b85f1b2b84f951f47e407ee"
+      "sha256": "7914ae826137d9581ca7703b578532e9711d46675a2f45823700faaf6317adff"
     },
     {
       "path": "asl/arch/data-types/system-registers.asl",
-      "sha256": "db06b148c04403903c1973f696eb2c23ce49f2c29279d6b2412a083d4ed7d02e"
+      "sha256": "c1f9c741dd9e4f1d18eba487fc0a536bf3b5911b5c02909808d959ea8476f6b7"
     },
     {
       "path": "asl/arch/data-types/tile-data-types.asl",
-      "sha256": "40afc7c9304a83307fe7abfcca2a0f9cc82998872b2349250132b81f51f564cc"
+      "sha256": "2ff3f5594268b6c28f9660b890dc6af845a477547189d2de190f06539f12d6cf"
     },
     {
       "path": "asl/arch/data-types/trap-context.asl",
-      "sha256": "b7183d7eb28289b128c842e2f806c5cf4ff95151e24e64799d689f6410faaafd"
+      "sha256": "f9d98bb4a7e1ba0f119c41b6fa22e82d4ca28b332e828f37d11d93692fceca50"
     },
     {
       "path": "asl/block/model/dispatch/commands.asl",
-      "sha256": "32ec82f164b68e70527b7699ffabd4a6441f4601eca6c738247436177cfac034"
+      "sha256": "965c5da23a12fb8253a3755767dc72caaba5c7b801957ccdab26ceee757b0ebb"
     },
     {
       "path": "asl/block/model/dispatch/decode.asl",
-      "sha256": "bc8ac47d3ff1a6008b8041ec2f030933a2e35ee3143d7d029f2daa38cb22b555"
+      "sha256": "00f8688edc54c48d3037068ac248df1ad4329cef4b53c3b5fce8baf6c4f62930"
     },
     {
       "path": "asl/block/model/dispatch/descriptor-legality.asl",
-      "sha256": "1f8af32320adbca3ab304f23f49ff0c7956960b51071c9d7a79fb6d1874c6575"
+      "sha256": "5f165826bffa3a564c1003395b22d14ffedff1f16e369e60ebabac5deebdd30c"
     },
     {
       "path": "asl/block/model/dispatch/destination-shape.asl",
-      "sha256": "776b2d3438434ffd48f48fba2eec4aa8cd22ea5745712300db6a5d8e816d494d"
+      "sha256": "94ff1889f2ff7ea6101102a30a89ccc94ee73034516ab770ed4612caeacaaa17"
     },
     {
       "path": "asl/block/model/dispatch/numeric-control.asl",
-      "sha256": "9daca978ecd21d83f7be11e4532c4eaa3db5cdbf5562833e7dfd93fcb29c3e33"
+      "sha256": "8372aa20c99f953c426e489be3555430cc0fe240d4808fda34180a9a11f5a8f7"
     },
     {
       "path": "asl/block/model/dispatch/scalar-schema.asl",
-      "sha256": "59e466c059b1d7aac880ba3bede340d9deed8ffa87356b1c1a8ce05f09a4e6b4"
+      "sha256": "3647656bebc81da8dd0389b8c925829c9be9b049717dadbde187955ef017ba5a"
     },
     {
       "path": "asl/block/model/dispatch/shared-cube.asl",
-      "sha256": "a6994836c697d0216b916751ee044ce27dede62e31af002ed7510b213409da33"
+      "sha256": "138f9432e0fba1c4626dc51c3db41977f749fc8ff461178077216166ea392c42"
     },
     {
       "path": "asl/block/model/dispatch/shared-tlsu.asl",
-      "sha256": "976bf66d12eca3a672dceb8cc139f91fe0a39d361b0f41fd1d9bb230de5ecb88"
+      "sha256": "11984903b13b53bc073b17bdd33ecc40a5e7188d44bc5e45be1f25ce392b54ab"
     },
     {
       "path": "asl/block/model/dispatch/start.asl",
-      "sha256": "81a6f6b2d119419f9ba89e51607bce4206104ffcb85cb77e08a4e4a241eea14d"
+      "sha256": "10dba72b8aab7ea88c727bd8a56728ebf60406499a9aa97b127f9e3ce4e60fdb"
     },
     {
       "path": "asl/block/model/dispatch/tile-execution.asl",
-      "sha256": "ec6512a4206c948b8163657d814054c4f90d1622b96870489c6c1ca99fba3645"
+      "sha256": "1749e9bc2376d517da706c9a705d9d4ea97450cead89b2933bcfa11ad7333c50"
     },
     {
       "path": "asl/block/model/dispatch/tile-schema.asl",
-      "sha256": "dcaef41e2839b30122b7a9a725da3689595e8e87808e80e5a128935c4d51b890"
+      "sha256": "26ea6bf226c8f8d4362065dc576d210980a5a1c0aada8529587f1251821de795"
     },
     {
       "path": "asl/block/model/dispatch/top-level.asl",
       "sha256": "1f154fe66c4d09c8981a7166c18b8f2cd1313c258e9630c418d0d9e0922f0043"
     },
     {
-      "path": "tests/asl/bundle-tests.asl",
-      "sha256": "818a99cde7fa3ee4a9ab098abe5feb46522aa1c14ba11bb0473db7ce9c59ab39"
+      "path": "tests/asl/block/model/dispatch/top-level/PTO-AVS-BLOCK-TESTA2A3CUBEMXBUNDLEREJECTIONMATRIX-EXECUTION-001.asl",
+      "sha256": "26f0495f6d6854ee055c9fa758d6bb139c32b89d3f8a05a62d3df53117d45856"
     },
     {
-      "path": "tests/asl/cube-totality-tests.asl",
-      "sha256": "64f0185ecacc2e6963168c289fc4c296d6b92bb40f8b6f99be41cd2ea8b6925c"
+      "path": "tests/asl/tile/model/execution/cube/PTO-AVS-TILE-TESTCUBETOTALITY-BOUNDARY-001.asl",
+      "sha256": "ff9c9613be0b4b0cc4005f495c592fa30128b10936ab92a93542061c47203b90"
     },
     {
       "path": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md",
@@ -5413,7 +5413,7 @@
     "tuple_count": 150,
     "bundle_execution_tuple_count": 150,
     "bundle_command_form_count": 6,
-    "accepted_command_form_count": 99,
+    "accepted_command_form_count": 100,
     "result_rule_count": 0,
     "parent_pd01_complete": false,
     "cube_matrix_complete": false,

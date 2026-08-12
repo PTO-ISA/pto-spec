@@ -1,5 +1,5 @@
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","surface":"block","classification":["model","state","control-state"],"depends_on":["PTO-BLOCK-MODEL-STATE-TYPES"]}
-// PTO-STATE: {"id":"PTO-STATE-BLOCK-CONTROL","classification":["block","control"],"scope":"core","owner":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","members":["_BundleKind","_BundleTransfer","_BundleCondition","_BundleTarget","_BundleFallthrough","_BundleReturnTarget","_BundleBodyAddress","_BundleArgument","_BundleArgumentKind","_BundleOperation","_BundleDimensions","_BundleScalarBindings","_BundleTileBindings","_BundleSharedBindings","_BundleControlAttributes","_BundleDataAttributes","_TileDataLayoutCapabilities","_FrameDepth","_LastFrameBegin","_LastFrameEnd","_LastFrameSize","_LastQueueLeft","_LastQueueRight","_LastQueueFlags","_LastMemoryCommandAddress","_LastMemoryCommandSize","_LastCrossBlockACR","_LastCrossBlockID","_LastBundleHintPayload"],"depends_on":[]}
+// PTO-STATE: {"id":"PTO-STATE-BLOCK-CONTROL","classification":["block","control"],"scope":"core","owner":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","members":["_BundleKind","_BundleTransfer","_BundleCondition","_BundleTarget","_BundleFallthrough","_BundleReturnTarget","_BundleBodyAddress","_BundleArgument","_BundleArgumentKind","_BundleOperation","_BundleDimensions","_BundleScalarBindings","_BundleTileBindings","_BundleSharedBindings","_BundleControlAttributes","_BundleDataAttributes","_BundleFixedPointAttributes","_TileDataLayoutCapabilities","_FrameDepth","_LastFrameBegin","_LastFrameEnd","_LastFrameSize","_LastQueueLeft","_LastQueueRight","_LastQueueFlags","_LastMemoryCommandAddress","_LastMemoryCommandSize","_LastCrossBlockACR","_LastCrossBlockID","_LastBundleHintPayload"],"depends_on":[]}
 
 // NDF-BEGIN: PTO-REQ-BUNDLE-STATE-001
 // ndf: kind=contract level=L1 layer=block status=accepted
@@ -23,6 +23,7 @@ var _BundleTileBindings : BundleTileBindingSnapshot;
 var _BundleSharedBindings : BundleSharedBindingSnapshot;
 var _BundleControlAttributes : BundleControlAttributes;
 var _BundleDataAttributes : BundleDataAttributes;
+var _BundleFixedPointAttributes : BundleFixedPointAttributes;
 // NORM is mandatory. Other accepted layout bits require an advertised
 // profile/platform capability.
 var _TileDataLayoutCapabilities : bits(32);
@@ -152,11 +153,12 @@ func SetBundleDataAttributeState(
     conversion_mode: bits(3), rounding_mode: bits(3), saturating: boolean,
     canonicalize: boolean)
 begin
-    if !TileDataTypeEncodingValid(ZeroExtend{PTO_XLEN}(data_type)) ||
+    if !BundleDataTypeFieldValid(data_type) ||
        !TileDataLayoutCodeSupported(data_layout) then
         SetFault(Fault_TileLegality, ReadTPC());
         return;
     end;
+    _BundleDataAttributes.data_type_present = TRUE;
     _BundleDataAttributes.data_type = data_type;
     _BundleDataAttributes.data_layout = data_layout;
     _BundleDataAttributes.pad_value = pad_value;

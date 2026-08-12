@@ -2,10 +2,10 @@
   "schema_version": 1,
   "target": "S4-T7",
   "status": "closed",
-  "accepted_form_count": 99,
+  "accepted_form_count": 100,
   "encoding_variant_count": 5,
   "disposition_counts": {
-    "executed": 89,
+    "executed": 90,
     "pto-v0-rejected": 10
   },
   "handler_counts": {
@@ -30,6 +30,7 @@
     "SetBundleControlAttributes": 1,
     "SetBundleDataAttributes": 1,
     "SetBundleDimension": 4,
+    "SetBundleFixedPointAttributes": 1,
     "SetBundleHint": 2
   },
   "architecture_contract": {
@@ -55,7 +56,8 @@
     "hint_rule": "B.HINT records the complete encoded payload and advances the hint epoch but has no PTO-v0 scheduling effect.",
     "metadata_rule": "B.DIM, B.TEXT, B.IOR, B.IOT, B.CATR, and B.DATR consume every decoded field into trap-preserved bundle state. After the complete bundle is collected, PTO-v0 resolves the selected direct operation's tile, scalar/address, dimension, data-attribute, and operation-default operands before commit.",
     "memory_rule": "MCOPY and MSET accept lengths 0 through 63 bytes and reject larger XLEN values without truncation or partial effects.",
-    "bridge_rule": "The PTO-v0 bundle bridge resolves every canonical TileInstructionOperands field through a concrete ordered B.IOT/B.IOR resolver or explicit operation default, with raw-value decode policy recorded before constrained assignment. B.IOR GPR inputs use the fixed address, scalar0, scalar1, diagonal, flag0 order, occupy unique dense RegSrc0..RegSrc2 slots, and never exceed three inputs. Duplicate fields, duplicate assigned slots, malformed or surplus bindings reject before tile effects."
+    "bridge_rule": "The PTO-v0 bundle bridge resolves every canonical TileInstructionOperands field through a concrete ordered B.IOT/B.IOR resolver or explicit operation default, with raw-value decode policy recorded before constrained assignment. B.IOR GPR inputs use the fixed address, scalar0, scalar1, diagonal, flag0 order, occupy unique dense RegSrc0..RegSrc2 slots, and never exceed three inputs. Duplicate fields, duplicate assigned slots, malformed or surplus bindings reject before tile effects.",
+    "matrix_postprocess_rule": "CUBE complete-bundle evidence adds optional scalar QuantParam and scalar LReLUParam after the baseline logical GPR fields, and optional RowMaxIn/vector QuantParam/vector PReLUParam before D/RowMaxOut/GroupMaxOut in the compact B.IOT stream. The static mathematical operand catalog remains unchanged."
   },
   "form_matrix": [
     {
@@ -1702,6 +1704,46 @@
       "effect_class": "pto-v0-unsupported-handler",
       "rejection_precedes_effects": true,
       "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 99,
+      "form_id": "b_fpatr_32_4f2db11e8e8a",
+      "mnemonic": "B.FPATR",
+      "semantic_handler": "SetBundleFixedPointAttributes",
+      "decoded_fields": [
+        "PreQuantMode",
+        "ReluMode",
+        "GroupNCode",
+        "RowMaxEn",
+        "GroupMaxEn",
+        "RowMaxInit",
+        "MaxAbsEn",
+        "Func",
+        "ElementWiseEn",
+        "Reserved",
+        "Opc1",
+        "Opcode",
+        "W"
+      ],
+      "consumed_fields": [
+        "PreQuantMode",
+        "ReluMode",
+        "GroupNCode",
+        "RowMaxEn",
+        "GroupMaxEn",
+        "RowMaxInit",
+        "MaxAbsEn",
+        "Func",
+        "ElementWiseEn",
+        "Reserved",
+        "Opc1",
+        "Opcode",
+        "W"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-fixed-point-attributes",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
     }
   ],
   "encoding_variant_matrix": [
@@ -1799,6 +1841,7 @@
       "comparison",
       "destination0",
       "destination1",
+      "destination2",
       "diagonal",
       "flag0",
       "natural0",
@@ -1816,7 +1859,10 @@
       "source1",
       "source2",
       "source3",
-      "source4"
+      "source4",
+      "source5",
+      "source6",
+      "source7"
     ],
     "bound_operand_resolvers": {
       "address": {
@@ -1845,6 +1891,11 @@
         "raw_value_policy": "absolute TileIndex"
       },
       "destination1": {
+        "resolver": "ordered B.IOT destination binding",
+        "default": "0",
+        "raw_value_policy": "absolute TileIndex"
+      },
+      "destination2": {
         "resolver": "ordered B.IOT destination binding",
         "default": "0",
         "raw_value_policy": "absolute TileIndex"
@@ -1938,6 +1989,21 @@
         "resolver": "ordered B.IOT source binding",
         "default": "0",
         "raw_value_policy": "absolute TileIndex"
+      },
+      "source5": {
+        "resolver": "ordered B.IOT source binding",
+        "default": "0",
+        "raw_value_policy": "absolute TileIndex"
+      },
+      "source6": {
+        "resolver": "ordered B.IOT source binding",
+        "default": "0",
+        "raw_value_policy": "absolute TileIndex"
+      },
+      "source7": {
+        "resolver": "ordered B.IOT source binding",
+        "default": "0",
+        "raw_value_policy": "absolute TileIndex"
       }
     },
     "counts": {
@@ -1991,6 +2057,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2026,6 +2093,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2061,6 +2129,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2096,6 +2165,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2131,6 +2201,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2166,6 +2237,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2201,6 +2273,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2236,6 +2309,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2271,6 +2345,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2306,6 +2381,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2341,6 +2417,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2376,6 +2453,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2418,6 +2496,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2446,6 +2525,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2474,6 +2554,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2502,6 +2583,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2530,6 +2612,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2558,6 +2641,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2586,6 +2670,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2614,6 +2699,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2642,6 +2728,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2670,6 +2757,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2712,6 +2800,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2747,6 +2836,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2789,6 +2879,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2827,6 +2918,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2865,6 +2957,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2903,6 +2996,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2941,6 +3035,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -2979,6 +3074,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3017,6 +3113,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3055,6 +3152,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3093,6 +3191,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3131,6 +3230,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3169,6 +3269,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3207,6 +3308,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3245,6 +3347,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3290,6 +3393,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3335,6 +3439,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3366,6 +3471,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3394,6 +3500,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3422,6 +3529,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3450,6 +3558,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3478,6 +3587,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3513,6 +3623,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3548,6 +3659,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3583,6 +3695,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3618,6 +3731,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3653,6 +3767,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3688,6 +3803,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3723,6 +3839,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3758,6 +3875,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3786,6 +3904,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3814,6 +3933,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3842,6 +3962,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3870,6 +3991,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3898,6 +4020,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3926,6 +4049,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3961,6 +4085,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -3996,6 +4121,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4031,6 +4157,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4066,6 +4193,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4101,6 +4229,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4136,6 +4265,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4171,6 +4301,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4206,6 +4337,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4234,6 +4366,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4262,6 +4395,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4304,6 +4438,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4346,6 +4481,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4388,6 +4524,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4468,6 +4605,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4506,6 +4644,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4546,6 +4685,7 @@
         "gpr_input_count": 2,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4586,6 +4726,7 @@
         "gpr_input_count": 2,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4628,6 +4769,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4682,6 +4824,7 @@
         "gpr_input_count": 2,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4736,6 +4879,7 @@
         "gpr_input_count": 2,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4788,6 +4932,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4833,6 +4978,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4861,6 +5007,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4896,6 +5043,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4931,6 +5079,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -4966,6 +5115,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5001,6 +5151,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5036,6 +5187,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5071,6 +5223,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5111,6 +5264,7 @@
         "gpr_input_count": 2,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5151,6 +5305,7 @@
         "gpr_input_count": 2,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5179,6 +5334,7 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5210,6 +5366,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5248,6 +5405,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5286,6 +5444,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5331,6 +5490,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5376,6 +5536,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5428,6 +5589,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5466,6 +5628,7 @@
         "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5501,6 +5664,91 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": {
+          "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+          "evidence": "spec/evidence/bundle-command-totality.json",
+          "static_mathematical_fields": [
+            "destination0",
+            "source0",
+            "source1"
+          ],
+          "gpr": {
+            "logical_order": [
+              "scalar_quant_param",
+              "scalar_lrelu_param"
+            ],
+            "resolutions": [
+              {
+                "field": "scalar_quant_param",
+                "resolver": "conditional B.FPATR scalar QuantParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc0"
+              },
+              {
+                "field": "scalar_lrelu_param",
+                "resolver": "conditional B.FPATR scalar LReLUParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc1"
+              }
+            ],
+            "omission_default": "omitted B.IOR resolves every consumed scalar slot through R0/zero",
+            "encoded_surplus_rule": "RegSrc2, RegDst, and every unconsumed source field must be zero"
+          },
+          "local": {
+            "ordered_stream": [
+              "source0",
+              "source1",
+              "row_max_in",
+              "vector_quant_param",
+              "vector_prelu_param"
+            ],
+            "optional_fields": [
+              {
+                "field": "row_max_in",
+                "resolver": "ordered B.IOT source after static mathematical sources",
+                "default": "not consumed unless RowMaxInit is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_quant_param",
+                "resolver": "ordered B.IOT source after RowMaxIn",
+                "default": "not consumed unless a vector QuantParam mode is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_prelu_param",
+                "resolver": "ordered B.IOT source after vector QuantParam",
+                "default": "not consumed unless ReluMode=vector is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "destinations": [
+              {
+                "field": "destination0",
+                "resolver": "first ordered B.IOT destination (D)",
+                "default": "none; required for every participating matrix bundle",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "row_max_out",
+                "resolver": "second ordered B.IOT destination when RowMaxEn is enabled",
+                "default": "not consumed unless RowMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "group_max_out",
+                "resolver": "next ordered B.IOT destination when GroupMaxEn is enabled",
+                "default": "not consumed unless GroupMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "source_capacity": 8,
+            "destination_capacity": 3,
+            "packing": "compact B.IOT order; one source/destination ordinal per valid binding"
+          }
+        },
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5543,6 +5791,93 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": {
+          "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+          "evidence": "spec/evidence/bundle-command-totality.json",
+          "static_mathematical_fields": [
+            "destination0",
+            "source0",
+            "source1",
+            "source2"
+          ],
+          "gpr": {
+            "logical_order": [
+              "scalar_quant_param",
+              "scalar_lrelu_param"
+            ],
+            "resolutions": [
+              {
+                "field": "scalar_quant_param",
+                "resolver": "conditional B.FPATR scalar QuantParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc0"
+              },
+              {
+                "field": "scalar_lrelu_param",
+                "resolver": "conditional B.FPATR scalar LReLUParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc1"
+              }
+            ],
+            "omission_default": "omitted B.IOR resolves every consumed scalar slot through R0/zero",
+            "encoded_surplus_rule": "RegSrc2, RegDst, and every unconsumed source field must be zero"
+          },
+          "local": {
+            "ordered_stream": [
+              "source0",
+              "source1",
+              "source2",
+              "row_max_in",
+              "vector_quant_param",
+              "vector_prelu_param"
+            ],
+            "optional_fields": [
+              {
+                "field": "row_max_in",
+                "resolver": "ordered B.IOT source after static mathematical sources",
+                "default": "not consumed unless RowMaxInit is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_quant_param",
+                "resolver": "ordered B.IOT source after RowMaxIn",
+                "default": "not consumed unless a vector QuantParam mode is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_prelu_param",
+                "resolver": "ordered B.IOT source after vector QuantParam",
+                "default": "not consumed unless ReluMode=vector is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "destinations": [
+              {
+                "field": "destination0",
+                "resolver": "first ordered B.IOT destination (D)",
+                "default": "none; required for every participating matrix bundle",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "row_max_out",
+                "resolver": "second ordered B.IOT destination when RowMaxEn is enabled",
+                "default": "not consumed unless RowMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "group_max_out",
+                "resolver": "next ordered B.IOT destination when GroupMaxEn is enabled",
+                "default": "not consumed unless GroupMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "source_capacity": 8,
+            "destination_capacity": 3,
+            "packing": "compact B.IOT order; one source/destination ordinal per valid binding"
+          }
+        },
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5585,6 +5920,93 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": {
+          "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+          "evidence": "spec/evidence/bundle-command-totality.json",
+          "static_mathematical_fields": [
+            "destination0",
+            "source0",
+            "source1",
+            "source2"
+          ],
+          "gpr": {
+            "logical_order": [
+              "scalar_quant_param",
+              "scalar_lrelu_param"
+            ],
+            "resolutions": [
+              {
+                "field": "scalar_quant_param",
+                "resolver": "conditional B.FPATR scalar QuantParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc0"
+              },
+              {
+                "field": "scalar_lrelu_param",
+                "resolver": "conditional B.FPATR scalar LReLUParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc1"
+              }
+            ],
+            "omission_default": "omitted B.IOR resolves every consumed scalar slot through R0/zero",
+            "encoded_surplus_rule": "RegSrc2, RegDst, and every unconsumed source field must be zero"
+          },
+          "local": {
+            "ordered_stream": [
+              "source0",
+              "source1",
+              "source2",
+              "row_max_in",
+              "vector_quant_param",
+              "vector_prelu_param"
+            ],
+            "optional_fields": [
+              {
+                "field": "row_max_in",
+                "resolver": "ordered B.IOT source after static mathematical sources",
+                "default": "not consumed unless RowMaxInit is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_quant_param",
+                "resolver": "ordered B.IOT source after RowMaxIn",
+                "default": "not consumed unless a vector QuantParam mode is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_prelu_param",
+                "resolver": "ordered B.IOT source after vector QuantParam",
+                "default": "not consumed unless ReluMode=vector is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "destinations": [
+              {
+                "field": "destination0",
+                "resolver": "first ordered B.IOT destination (D)",
+                "default": "none; required for every participating matrix bundle",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "row_max_out",
+                "resolver": "second ordered B.IOT destination when RowMaxEn is enabled",
+                "default": "not consumed unless RowMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "group_max_out",
+                "resolver": "next ordered B.IOT destination when GroupMaxEn is enabled",
+                "default": "not consumed unless GroupMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "source_capacity": 8,
+            "destination_capacity": 3,
+            "packing": "compact B.IOT order; one source/destination ordinal per valid binding"
+          }
+        },
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5634,6 +6056,95 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": {
+          "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+          "evidence": "spec/evidence/bundle-command-totality.json",
+          "static_mathematical_fields": [
+            "destination0",
+            "source0",
+            "source1",
+            "source2",
+            "source3"
+          ],
+          "gpr": {
+            "logical_order": [
+              "scalar_quant_param",
+              "scalar_lrelu_param"
+            ],
+            "resolutions": [
+              {
+                "field": "scalar_quant_param",
+                "resolver": "conditional B.FPATR scalar QuantParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc0"
+              },
+              {
+                "field": "scalar_lrelu_param",
+                "resolver": "conditional B.FPATR scalar LReLUParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc1"
+              }
+            ],
+            "omission_default": "omitted B.IOR resolves every consumed scalar slot through R0/zero",
+            "encoded_surplus_rule": "RegSrc2, RegDst, and every unconsumed source field must be zero"
+          },
+          "local": {
+            "ordered_stream": [
+              "source0",
+              "source1",
+              "source2",
+              "source3",
+              "row_max_in",
+              "vector_quant_param",
+              "vector_prelu_param"
+            ],
+            "optional_fields": [
+              {
+                "field": "row_max_in",
+                "resolver": "ordered B.IOT source after static mathematical sources",
+                "default": "not consumed unless RowMaxInit is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_quant_param",
+                "resolver": "ordered B.IOT source after RowMaxIn",
+                "default": "not consumed unless a vector QuantParam mode is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_prelu_param",
+                "resolver": "ordered B.IOT source after vector QuantParam",
+                "default": "not consumed unless ReluMode=vector is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "destinations": [
+              {
+                "field": "destination0",
+                "resolver": "first ordered B.IOT destination (D)",
+                "default": "none; required for every participating matrix bundle",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "row_max_out",
+                "resolver": "second ordered B.IOT destination when RowMaxEn is enabled",
+                "default": "not consumed unless RowMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "group_max_out",
+                "resolver": "next ordered B.IOT destination when GroupMaxEn is enabled",
+                "default": "not consumed unless GroupMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "source_capacity": 8,
+            "destination_capacity": 3,
+            "packing": "compact B.IOT order; one source/destination ordinal per valid binding"
+          }
+        },
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5690,6 +6201,97 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": {
+          "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+          "evidence": "spec/evidence/bundle-command-totality.json",
+          "static_mathematical_fields": [
+            "destination0",
+            "source0",
+            "source1",
+            "source2",
+            "source3",
+            "source4"
+          ],
+          "gpr": {
+            "logical_order": [
+              "scalar_quant_param",
+              "scalar_lrelu_param"
+            ],
+            "resolutions": [
+              {
+                "field": "scalar_quant_param",
+                "resolver": "conditional B.FPATR scalar QuantParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc0"
+              },
+              {
+                "field": "scalar_lrelu_param",
+                "resolver": "conditional B.FPATR scalar LReLUParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc1"
+              }
+            ],
+            "omission_default": "omitted B.IOR resolves every consumed scalar slot through R0/zero",
+            "encoded_surplus_rule": "RegSrc2, RegDst, and every unconsumed source field must be zero"
+          },
+          "local": {
+            "ordered_stream": [
+              "source0",
+              "source1",
+              "source2",
+              "source3",
+              "source4",
+              "row_max_in",
+              "vector_quant_param",
+              "vector_prelu_param"
+            ],
+            "optional_fields": [
+              {
+                "field": "row_max_in",
+                "resolver": "ordered B.IOT source after static mathematical sources",
+                "default": "not consumed unless RowMaxInit is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_quant_param",
+                "resolver": "ordered B.IOT source after RowMaxIn",
+                "default": "not consumed unless a vector QuantParam mode is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_prelu_param",
+                "resolver": "ordered B.IOT source after vector QuantParam",
+                "default": "not consumed unless ReluMode=vector is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "destinations": [
+              {
+                "field": "destination0",
+                "resolver": "first ordered B.IOT destination (D)",
+                "default": "none; required for every participating matrix bundle",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "row_max_out",
+                "resolver": "second ordered B.IOT destination when RowMaxEn is enabled",
+                "default": "not consumed unless RowMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "group_max_out",
+                "resolver": "next ordered B.IOT destination when GroupMaxEn is enabled",
+                "default": "not consumed unless GroupMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "source_capacity": 8,
+            "destination_capacity": 3,
+            "packing": "compact B.IOT order; one source/destination ordinal per valid binding"
+          }
+        },
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5746,6 +6348,97 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": {
+          "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+          "evidence": "spec/evidence/bundle-command-totality.json",
+          "static_mathematical_fields": [
+            "destination0",
+            "source0",
+            "source1",
+            "source2",
+            "source3",
+            "source4"
+          ],
+          "gpr": {
+            "logical_order": [
+              "scalar_quant_param",
+              "scalar_lrelu_param"
+            ],
+            "resolutions": [
+              {
+                "field": "scalar_quant_param",
+                "resolver": "conditional B.FPATR scalar QuantParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc0"
+              },
+              {
+                "field": "scalar_lrelu_param",
+                "resolver": "conditional B.FPATR scalar LReLUParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc1"
+              }
+            ],
+            "omission_default": "omitted B.IOR resolves every consumed scalar slot through R0/zero",
+            "encoded_surplus_rule": "RegSrc2, RegDst, and every unconsumed source field must be zero"
+          },
+          "local": {
+            "ordered_stream": [
+              "source0",
+              "source1",
+              "source2",
+              "source3",
+              "source4",
+              "row_max_in",
+              "vector_quant_param",
+              "vector_prelu_param"
+            ],
+            "optional_fields": [
+              {
+                "field": "row_max_in",
+                "resolver": "ordered B.IOT source after static mathematical sources",
+                "default": "not consumed unless RowMaxInit is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_quant_param",
+                "resolver": "ordered B.IOT source after RowMaxIn",
+                "default": "not consumed unless a vector QuantParam mode is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_prelu_param",
+                "resolver": "ordered B.IOT source after vector QuantParam",
+                "default": "not consumed unless ReluMode=vector is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "destinations": [
+              {
+                "field": "destination0",
+                "resolver": "first ordered B.IOT destination (D)",
+                "default": "none; required for every participating matrix bundle",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "row_max_out",
+                "resolver": "second ordered B.IOT destination when RowMaxEn is enabled",
+                "default": "not consumed unless RowMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "group_max_out",
+                "resolver": "next ordered B.IOT destination when GroupMaxEn is enabled",
+                "default": "not consumed unless GroupMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "source_capacity": 8,
+            "destination_capacity": 3,
+            "packing": "compact B.IOT order; one source/destination ordinal per valid binding"
+          }
+        },
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5781,6 +6474,91 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": {
+          "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+          "evidence": "spec/evidence/bundle-command-totality.json",
+          "static_mathematical_fields": [
+            "destination0",
+            "source0",
+            "source1"
+          ],
+          "gpr": {
+            "logical_order": [
+              "scalar_quant_param",
+              "scalar_lrelu_param"
+            ],
+            "resolutions": [
+              {
+                "field": "scalar_quant_param",
+                "resolver": "conditional B.FPATR scalar QuantParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc0"
+              },
+              {
+                "field": "scalar_lrelu_param",
+                "resolver": "conditional B.FPATR scalar LReLUParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc1"
+              }
+            ],
+            "omission_default": "omitted B.IOR resolves every consumed scalar slot through R0/zero",
+            "encoded_surplus_rule": "RegSrc2, RegDst, and every unconsumed source field must be zero"
+          },
+          "local": {
+            "ordered_stream": [
+              "source0",
+              "source1",
+              "row_max_in",
+              "vector_quant_param",
+              "vector_prelu_param"
+            ],
+            "optional_fields": [
+              {
+                "field": "row_max_in",
+                "resolver": "ordered B.IOT source after static mathematical sources",
+                "default": "not consumed unless RowMaxInit is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_quant_param",
+                "resolver": "ordered B.IOT source after RowMaxIn",
+                "default": "not consumed unless a vector QuantParam mode is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_prelu_param",
+                "resolver": "ordered B.IOT source after vector QuantParam",
+                "default": "not consumed unless ReluMode=vector is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "destinations": [
+              {
+                "field": "destination0",
+                "resolver": "first ordered B.IOT destination (D)",
+                "default": "none; required for every participating matrix bundle",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "row_max_out",
+                "resolver": "second ordered B.IOT destination when RowMaxEn is enabled",
+                "default": "not consumed unless RowMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "group_max_out",
+                "resolver": "next ordered B.IOT destination when GroupMaxEn is enabled",
+                "default": "not consumed unless GroupMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "source_capacity": 8,
+            "destination_capacity": 3,
+            "packing": "compact B.IOT order; one source/destination ordinal per valid binding"
+          }
+        },
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5823,6 +6601,93 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": {
+          "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+          "evidence": "spec/evidence/bundle-command-totality.json",
+          "static_mathematical_fields": [
+            "destination0",
+            "source0",
+            "source1",
+            "source2"
+          ],
+          "gpr": {
+            "logical_order": [
+              "scalar_quant_param",
+              "scalar_lrelu_param"
+            ],
+            "resolutions": [
+              {
+                "field": "scalar_quant_param",
+                "resolver": "conditional B.FPATR scalar QuantParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc0"
+              },
+              {
+                "field": "scalar_lrelu_param",
+                "resolver": "conditional B.FPATR scalar LReLUParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc1"
+              }
+            ],
+            "omission_default": "omitted B.IOR resolves every consumed scalar slot through R0/zero",
+            "encoded_surplus_rule": "RegSrc2, RegDst, and every unconsumed source field must be zero"
+          },
+          "local": {
+            "ordered_stream": [
+              "source0",
+              "source1",
+              "source2",
+              "row_max_in",
+              "vector_quant_param",
+              "vector_prelu_param"
+            ],
+            "optional_fields": [
+              {
+                "field": "row_max_in",
+                "resolver": "ordered B.IOT source after static mathematical sources",
+                "default": "not consumed unless RowMaxInit is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_quant_param",
+                "resolver": "ordered B.IOT source after RowMaxIn",
+                "default": "not consumed unless a vector QuantParam mode is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_prelu_param",
+                "resolver": "ordered B.IOT source after vector QuantParam",
+                "default": "not consumed unless ReluMode=vector is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "destinations": [
+              {
+                "field": "destination0",
+                "resolver": "first ordered B.IOT destination (D)",
+                "default": "none; required for every participating matrix bundle",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "row_max_out",
+                "resolver": "second ordered B.IOT destination when RowMaxEn is enabled",
+                "default": "not consumed unless RowMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "group_max_out",
+                "resolver": "next ordered B.IOT destination when GroupMaxEn is enabled",
+                "default": "not consumed unless GroupMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "source_capacity": 8,
+            "destination_capacity": 3,
+            "packing": "compact B.IOT order; one source/destination ordinal per valid binding"
+          }
+        },
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5865,6 +6730,93 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": {
+          "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+          "evidence": "spec/evidence/bundle-command-totality.json",
+          "static_mathematical_fields": [
+            "destination0",
+            "source0",
+            "source1",
+            "source2"
+          ],
+          "gpr": {
+            "logical_order": [
+              "scalar_quant_param",
+              "scalar_lrelu_param"
+            ],
+            "resolutions": [
+              {
+                "field": "scalar_quant_param",
+                "resolver": "conditional B.FPATR scalar QuantParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc0"
+              },
+              {
+                "field": "scalar_lrelu_param",
+                "resolver": "conditional B.FPATR scalar LReLUParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc1"
+              }
+            ],
+            "omission_default": "omitted B.IOR resolves every consumed scalar slot through R0/zero",
+            "encoded_surplus_rule": "RegSrc2, RegDst, and every unconsumed source field must be zero"
+          },
+          "local": {
+            "ordered_stream": [
+              "source0",
+              "source1",
+              "source2",
+              "row_max_in",
+              "vector_quant_param",
+              "vector_prelu_param"
+            ],
+            "optional_fields": [
+              {
+                "field": "row_max_in",
+                "resolver": "ordered B.IOT source after static mathematical sources",
+                "default": "not consumed unless RowMaxInit is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_quant_param",
+                "resolver": "ordered B.IOT source after RowMaxIn",
+                "default": "not consumed unless a vector QuantParam mode is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_prelu_param",
+                "resolver": "ordered B.IOT source after vector QuantParam",
+                "default": "not consumed unless ReluMode=vector is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "destinations": [
+              {
+                "field": "destination0",
+                "resolver": "first ordered B.IOT destination (D)",
+                "default": "none; required for every participating matrix bundle",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "row_max_out",
+                "resolver": "second ordered B.IOT destination when RowMaxEn is enabled",
+                "default": "not consumed unless RowMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "group_max_out",
+                "resolver": "next ordered B.IOT destination when GroupMaxEn is enabled",
+                "default": "not consumed unless GroupMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "source_capacity": 8,
+            "destination_capacity": 3,
+            "packing": "compact B.IOT order; one source/destination ordinal per valid binding"
+          }
+        },
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5914,6 +6866,95 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": {
+          "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+          "evidence": "spec/evidence/bundle-command-totality.json",
+          "static_mathematical_fields": [
+            "destination0",
+            "source0",
+            "source1",
+            "source2",
+            "source3"
+          ],
+          "gpr": {
+            "logical_order": [
+              "scalar_quant_param",
+              "scalar_lrelu_param"
+            ],
+            "resolutions": [
+              {
+                "field": "scalar_quant_param",
+                "resolver": "conditional B.FPATR scalar QuantParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc0"
+              },
+              {
+                "field": "scalar_lrelu_param",
+                "resolver": "conditional B.FPATR scalar LReLUParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc1"
+              }
+            ],
+            "omission_default": "omitted B.IOR resolves every consumed scalar slot through R0/zero",
+            "encoded_surplus_rule": "RegSrc2, RegDst, and every unconsumed source field must be zero"
+          },
+          "local": {
+            "ordered_stream": [
+              "source0",
+              "source1",
+              "source2",
+              "source3",
+              "row_max_in",
+              "vector_quant_param",
+              "vector_prelu_param"
+            ],
+            "optional_fields": [
+              {
+                "field": "row_max_in",
+                "resolver": "ordered B.IOT source after static mathematical sources",
+                "default": "not consumed unless RowMaxInit is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_quant_param",
+                "resolver": "ordered B.IOT source after RowMaxIn",
+                "default": "not consumed unless a vector QuantParam mode is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_prelu_param",
+                "resolver": "ordered B.IOT source after vector QuantParam",
+                "default": "not consumed unless ReluMode=vector is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "destinations": [
+              {
+                "field": "destination0",
+                "resolver": "first ordered B.IOT destination (D)",
+                "default": "none; required for every participating matrix bundle",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "row_max_out",
+                "resolver": "second ordered B.IOT destination when RowMaxEn is enabled",
+                "default": "not consumed unless RowMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "group_max_out",
+                "resolver": "next ordered B.IOT destination when GroupMaxEn is enabled",
+                "default": "not consumed unless GroupMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "source_capacity": 8,
+            "destination_capacity": 3,
+            "packing": "compact B.IOT order; one source/destination ordinal per valid binding"
+          }
+        },
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -5970,6 +7011,97 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": {
+          "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+          "evidence": "spec/evidence/bundle-command-totality.json",
+          "static_mathematical_fields": [
+            "destination0",
+            "source0",
+            "source1",
+            "source2",
+            "source3",
+            "source4"
+          ],
+          "gpr": {
+            "logical_order": [
+              "scalar_quant_param",
+              "scalar_lrelu_param"
+            ],
+            "resolutions": [
+              {
+                "field": "scalar_quant_param",
+                "resolver": "conditional B.FPATR scalar QuantParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc0"
+              },
+              {
+                "field": "scalar_lrelu_param",
+                "resolver": "conditional B.FPATR scalar LReLUParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc1"
+              }
+            ],
+            "omission_default": "omitted B.IOR resolves every consumed scalar slot through R0/zero",
+            "encoded_surplus_rule": "RegSrc2, RegDst, and every unconsumed source field must be zero"
+          },
+          "local": {
+            "ordered_stream": [
+              "source0",
+              "source1",
+              "source2",
+              "source3",
+              "source4",
+              "row_max_in",
+              "vector_quant_param",
+              "vector_prelu_param"
+            ],
+            "optional_fields": [
+              {
+                "field": "row_max_in",
+                "resolver": "ordered B.IOT source after static mathematical sources",
+                "default": "not consumed unless RowMaxInit is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_quant_param",
+                "resolver": "ordered B.IOT source after RowMaxIn",
+                "default": "not consumed unless a vector QuantParam mode is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_prelu_param",
+                "resolver": "ordered B.IOT source after vector QuantParam",
+                "default": "not consumed unless ReluMode=vector is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "destinations": [
+              {
+                "field": "destination0",
+                "resolver": "first ordered B.IOT destination (D)",
+                "default": "none; required for every participating matrix bundle",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "row_max_out",
+                "resolver": "second ordered B.IOT destination when RowMaxEn is enabled",
+                "default": "not consumed unless RowMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "group_max_out",
+                "resolver": "next ordered B.IOT destination when GroupMaxEn is enabled",
+                "default": "not consumed unless GroupMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "source_capacity": 8,
+            "destination_capacity": 3,
+            "packing": "compact B.IOT order; one source/destination ordinal per valid binding"
+          }
+        },
         "commit_disposition": "execute-after-complete-binding"
       },
       {
@@ -6026,29 +7158,187 @@
         "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
+        "complete_bundle_schema": {
+          "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+          "evidence": "spec/evidence/bundle-command-totality.json",
+          "static_mathematical_fields": [
+            "destination0",
+            "source0",
+            "source1",
+            "source2",
+            "source3",
+            "source4"
+          ],
+          "gpr": {
+            "logical_order": [
+              "scalar_quant_param",
+              "scalar_lrelu_param"
+            ],
+            "resolutions": [
+              {
+                "field": "scalar_quant_param",
+                "resolver": "conditional B.FPATR scalar QuantParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc0"
+              },
+              {
+                "field": "scalar_lrelu_param",
+                "resolver": "conditional B.FPATR scalar LReLUParam in logical matrix order",
+                "default": "XLEN zero through omitted B.IOR R0/zero",
+                "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+                "slot": "RegSrc1"
+              }
+            ],
+            "omission_default": "omitted B.IOR resolves every consumed scalar slot through R0/zero",
+            "encoded_surplus_rule": "RegSrc2, RegDst, and every unconsumed source field must be zero"
+          },
+          "local": {
+            "ordered_stream": [
+              "source0",
+              "source1",
+              "source2",
+              "source3",
+              "source4",
+              "row_max_in",
+              "vector_quant_param",
+              "vector_prelu_param"
+            ],
+            "optional_fields": [
+              {
+                "field": "row_max_in",
+                "resolver": "ordered B.IOT source after static mathematical sources",
+                "default": "not consumed unless RowMaxInit is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_quant_param",
+                "resolver": "ordered B.IOT source after RowMaxIn",
+                "default": "not consumed unless a vector QuantParam mode is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "vector_prelu_param",
+                "resolver": "ordered B.IOT source after vector QuantParam",
+                "default": "not consumed unless ReluMode=vector is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "destinations": [
+              {
+                "field": "destination0",
+                "resolver": "first ordered B.IOT destination (D)",
+                "default": "none; required for every participating matrix bundle",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "row_max_out",
+                "resolver": "second ordered B.IOT destination when RowMaxEn is enabled",
+                "default": "not consumed unless RowMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              },
+              {
+                "field": "group_max_out",
+                "resolver": "next ordered B.IOT destination when GroupMaxEn is enabled",
+                "default": "not consumed unless GroupMaxEn is enabled",
+                "raw_value_policy": "absolute TileIndex"
+              }
+            ],
+            "source_capacity": 8,
+            "destination_capacity": 3,
+            "packing": "compact B.IOT order; one source/destination ordinal per valid binding"
+          }
+        },
         "commit_disposition": "execute-after-complete-binding"
       }
     ]
   },
   "executable_evidence": {
     "canonical_form_test": "scripts/generate-asl-decoders:ValidateCanonicalCommandExecution",
-    "boundary_test": "tests/asl/bundle-tests.asl:TestBundleCommandTotalityBoundaries",
+    "boundary_test": "tests/asl/block/model/dispatch/commands/PTO-AVS-BLOCK-TESTBUNDLECOMMANDTOTALITYBOUNDARIES-BOUNDARY-001.asl:TestBundleCommandTotalityBoundaries",
     "bridge_tests": [
-      "tests/asl/bundle-tests.asl:TestBundleTileCommitLifecycle",
-      "tests/asl/bundle-tests.asl:TestBundleTileCommitRollback",
-      "tests/asl/bundle-tests.asl:TestBundleScalarBindingSchemaDefaults"
+      "tests/asl/block/model/commit/effects/PTO-AVS-BLOCK-TESTBUNDLETILECOMMITLIFECYCLE-STATE-TRANSITION-001.asl:TestBundleTileCommitLifecycle",
+      "tests/asl/block/model/faults/rollback/PTO-AVS-BLOCK-TESTBUNDLETILECOMMITROLLBACK-EXECUTION-001.asl:TestBundleTileCommitRollback",
+      "tests/asl/block/operands/B.IOR/PTO-AVS-BLOCK-B-IOR-END-TO-END-EXECUTION-001.asl:TestBundleScalarBindingSchemaDefaults"
     ],
-    "canonical_form_case_count": 99
+    "canonical_form_case_count": 100,
+    "decoded_complete_bundle_matrix": [
+      {
+        "case": "canonical-none-observable-D",
+        "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001",
+        "assertion": "decoded CUBE bundle with omitted B.IOR publishes D and enabled auxiliaries"
+      },
+      {
+        "case": "scalar-quant-omitted-versus-x0",
+        "avs_id": "PTO-AVS-BLOCK-B-IOR-END-TO-END-EXECUTION-001",
+        "assertion": "omitted and encoded RegSrc0=x0 resolve the same R0/zero through distinct presence paths"
+      },
+      {
+        "case": "scalar-lrelu-regsrc0",
+        "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001",
+        "assertion": "decoded B.FPATR/B.IOR scalar route executes through auxiliary commit"
+      },
+      {
+        "case": "scalar-quant-and-lrelu-dense",
+        "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001",
+        "assertion": "decoded B.FPATR/B.IOR dense RegSrc0/RegSrc1 route executes through auxiliary commit"
+      },
+      {
+        "case": "vector-quant-and-prelu-local-order",
+        "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001",
+        "assertion": "decoded vector Local sources follow mathematical and RowMaxIn sources through auxiliary commit"
+      },
+      {
+        "case": "shared-tmatmul-auxiliary",
+        "avs_id": "PTO-AVS-BLOCK-TESTBUNDLESHAREDCUBEEXECUTION-EXECUTION-001",
+        "assertion": "Shared TMATMUL reaches decoded bundle effects with auxiliary schema"
+      },
+      {
+        "case": "local-tgemv-auxiliary",
+        "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001",
+        "assertion": "Local-only matrix path reaches the common postprocess commit"
+      },
+      {
+        "case": "eight-local-sources-three-destinations",
+        "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001",
+        "assertion": "decoded TMATMUL_MX_ACC packs eight Local sources across four B.IOT words and commits three destinations"
+      },
+      {
+        "case": "rowmax-alias-groupmax-full-k",
+        "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001",
+        "assertion": "RowMaxIn==RowMaxOut reads old data and GroupMaxOut observes the same full-K result"
+      },
+      {
+        "case": "D-explicit-C-legal",
+        "avs_id": "PTO-AVS-BLOCK-TESTBUNDLESHAREDCUBEEXECUTION-EXECUTION-001",
+        "assertion": "explicit D/C alias restriction remains accepted"
+      },
+      {
+        "case": "malformed-schema-pre-effect-faults",
+        "avs_id": "PTO-AVS-BLOCK-B-FPATR-PRESENCE-FAULT-001",
+        "assertion": "missing/duplicate/nonzero-unused/descriptor faults precede effects"
+      },
+      {
+        "case": "second-bior-preserves-first",
+        "avs_id": "PTO-AVS-BLOCK-B-IOR-END-TO-END-EXECUTION-001",
+        "assertion": "second B.IOR faults while preserving the first binding"
+      },
+      {
+        "case": "pe-mask-zero-strict-no-effect-and-rollback",
+        "avs_id": "PTO-AVS-BLOCK-TESTBUNDLESHAREDCUBEEXECUTION-EXECUTION-001",
+        "assertion": "PE_MASK=0000 is a strict no-op and post-reservation faults roll back D and auxiliaries"
+      }
+    ]
   },
   "independent_comparison": {
     "source": "content-addressed independent executable ISA snapshot",
     "aggregate_sha256": "1f8862ef90ee72d0e917398b2d96b2799f541f2e7198c103d9fc47af998a54ec",
-    "matched_form_ids": 99,
+    "matched_form_ids": 100,
     "exact_encoding_matches": 89,
     "accepted_abi_encoding_divergences": 7,
     "executable_subset": 80,
     "decode_only": 16,
-    "missing": 3,
+    "missing": 4,
     "authority": "non-normative structural comparison only",
     "limitation": "The independent snapshot predates seven accepted PTO 0.58.0 command encoding changes and the completed direct-operation bundle schema. It stages bundle headers rather than tile payload execution, so the PTO catalogs, ADR 0055, and PTO-owned ASL evidence remain authoritative."
   },

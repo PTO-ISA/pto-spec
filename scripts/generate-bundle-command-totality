@@ -42,6 +42,7 @@ EFFECT_BY_HANDLER = {
     "SetBundleBodyAddress": "bundle-body-address",
     "SetBundleControlAttributes": "bundle-control-attributes",
     "SetBundleDataAttributes": "bundle-data-attributes",
+    "SetBundleFixedPointAttributes": "bundle-fixed-point-attributes",
     "SetBundleDimension": "bundle-dimension",
     "SetBundleHint": "diagnostic-hint-payload",
 }
@@ -76,6 +77,11 @@ BRIDGE_RESOLVERS = {
         "raw_value_policy": "absolute TileIndex",
     },
     "destination1": {
+        "resolver": "ordered B.IOT destination binding",
+        "default": "0",
+        "raw_value_policy": "absolute TileIndex",
+    },
+    "destination2": {
         "resolver": "ordered B.IOT destination binding",
         "default": "0",
         "raw_value_policy": "absolute TileIndex",
@@ -170,11 +176,80 @@ BRIDGE_RESOLVERS = {
         "default": "0",
         "raw_value_policy": "absolute TileIndex",
     },
+    "source5": {
+        "resolver": "ordered B.IOT source binding",
+        "default": "0",
+        "raw_value_policy": "absolute TileIndex",
+    },
+    "source6": {
+        "resolver": "ordered B.IOT source binding",
+        "default": "0",
+        "raw_value_policy": "absolute TileIndex",
+    },
+    "source7": {
+        "resolver": "ordered B.IOT source binding",
+        "default": "0",
+        "raw_value_policy": "absolute TileIndex",
+    },
 }
 
 BRIDGE_FIELDS = frozenset(BRIDGE_RESOLVERS)
 GPR_INPUT_ORDER = ("address", "scalar0", "scalar1", "diagonal", "flag0")
 GPR_INPUT_FIELDS = frozenset(GPR_INPUT_ORDER)
+
+# Matrix post-processing contributes a second, conditional B.IOR schema.  It
+# is intentionally kept out of the static tile-operation operand catalog.
+MATRIX_GPR_ORDER = ("scalar_quant_param", "scalar_lrelu_param")
+MATRIX_LOCAL_OPTIONAL_ORDER = (
+    "row_max_in",
+    "vector_quant_param",
+    "vector_prelu_param",
+)
+MATRIX_LOCAL_DESTINATION_ORDER = ("destination0", "row_max_out", "group_max_out")
+MATRIX_GPR_RESOLVERS = {
+    "scalar_quant_param": {
+        "resolver": "conditional B.FPATR scalar QuantParam in logical matrix order",
+        "default": "XLEN zero through omitted B.IOR R0/zero",
+        "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+    },
+    "scalar_lrelu_param": {
+        "resolver": "conditional B.FPATR scalar LReLUParam in logical matrix order",
+        "default": "XLEN zero through omitted B.IOR R0/zero",
+        "raw_value_policy": "XLEN Word; profile-owned raw carrier",
+    },
+}
+MATRIX_LOCAL_RESOLVERS = {
+    "row_max_in": {
+        "resolver": "ordered B.IOT source after static mathematical sources",
+        "default": "not consumed unless RowMaxInit is enabled",
+        "raw_value_policy": "absolute TileIndex",
+    },
+    "vector_quant_param": {
+        "resolver": "ordered B.IOT source after RowMaxIn",
+        "default": "not consumed unless a vector QuantParam mode is enabled",
+        "raw_value_policy": "absolute TileIndex",
+    },
+    "vector_prelu_param": {
+        "resolver": "ordered B.IOT source after vector QuantParam",
+        "default": "not consumed unless ReluMode=vector is enabled",
+        "raw_value_policy": "absolute TileIndex",
+    },
+    "destination0": {
+        "resolver": "first ordered B.IOT destination (D)",
+        "default": "none; required for every participating matrix bundle",
+        "raw_value_policy": "absolute TileIndex",
+    },
+    "row_max_out": {
+        "resolver": "second ordered B.IOT destination when RowMaxEn is enabled",
+        "default": "not consumed unless RowMaxEn is enabled",
+        "raw_value_policy": "absolute TileIndex",
+    },
+    "group_max_out": {
+        "resolver": "next ordered B.IOT destination when GroupMaxEn is enabled",
+        "default": "not consumed unless GroupMaxEn is enabled",
+        "raw_value_policy": "absolute TileIndex",
+    },
+}
 
 
 def bridge_operand_resolutions(operand_fields: list[str]) -> list[dict[str, str]]:
@@ -201,7 +276,9 @@ def bridge_operand_resolutions(operand_fields: list[str]) -> list[dict[str, str]
     resolutions = []
     for field in operand_fields:
         contract = BRIDGE_RESOLVERS.get(field)
-        if not contract or not all(contract.get(key) for key in ("resolver", "default", "raw_value_policy")):
+        if not contract:
+            raise ValueError(f"unknown bridge operand field: {field}")
+        if not all(contract.get(key) for key in ("resolver", "default", "raw_value_policy")):
             raise ValueError(f"missing concrete bridge resolver/default for operand {field}")
         resolution = {"field": field, **contract}
         if field in GPR_INPUT_FIELDS:
@@ -212,6 +289,48 @@ def bridge_operand_resolutions(operand_fields: list[str]) -> list[dict[str, str]
     if len(slots) != len(set(slots)):
         raise ValueError(f"duplicate assigned GPR slots: {slots}")
     return resolutions
+
+
+def conditional_gpr_resolutions(fields: list[str]) -> list[dict[str, str]]:
+    """Resolve the conditional scalar post-process fields densely."""
+
+    duplicate_fields = [
+        field for field, count in Counter(fields).items() if count > 1
+    ]
+    if duplicate_fields:
+        raise ValueError(
+            "duplicate conditional GPR fields: " + ", ".join(sorted(duplicate_fields))
+        )
+    unknown = sorted(set(fields) - set(MATRIX_GPR_RESOLVERS))
+    if unknown:
+        raise ValueError("unknown conditional GPR field: " + ", ".join(unknown))
+    ordered = [field for field in MATRIX_GPR_ORDER if field in fields]
+    if len(ordered) > 3:
+        raise ValueError(f"more than three GPR inputs are not representable: {ordered}")
+    return [
+        {"field": field, **MATRIX_GPR_RESOLVERS[field], "slot": f"RegSrc{index}"}
+        for index, field in enumerate(ordered)
+    ]
+
+
+def conditional_local_schema(static_fields: list[str]) -> dict[str, object]:
+    unknown = sorted(set(static_fields) - {f"source{index}" for index in range(5)})
+    if unknown:
+        raise ValueError("unknown static Local field: " + ", ".join(unknown))
+    return {
+        "ordered_stream": [*static_fields, *MATRIX_LOCAL_OPTIONAL_ORDER],
+        "optional_fields": [
+            {"field": field, **MATRIX_LOCAL_RESOLVERS[field]}
+            for field in MATRIX_LOCAL_OPTIONAL_ORDER
+        ],
+        "destinations": [
+            {"field": field, **MATRIX_LOCAL_RESOLVERS[field]}
+            for field in MATRIX_LOCAL_DESTINATION_ORDER
+        ],
+        "source_capacity": 8,
+        "destination_capacity": 3,
+        "packing": "compact B.IOT order; one source/destination ordinal per valid binding",
+    }
 
 
 def load_json(path: Path) -> dict:
@@ -283,14 +402,33 @@ def build_evidence() -> dict:
         operand_fields = [operand["field"] for operand in row["operands"]]
         unsupported_fields = sorted(set(operand_fields) - BRIDGE_FIELDS)
         resolutions = []
-        if not unsupported_fields:
-            resolutions = bridge_operand_resolutions(operand_fields)
-        representable = not unsupported_fields and bool(resolutions or not operand_fields)
+        if unsupported_fields:
+            raise ValueError(
+                "unknown bridge operand fields: " + ", ".join(unsupported_fields)
+            )
+        resolutions = bridge_operand_resolutions(operand_fields)
+        representable = bool(resolutions or not operand_fields)
         gpr_slots = {
             resolution["field"]: resolution["slot"]
             for resolution in resolutions
             if "slot" in resolution
         }
+        matrix_schema = None
+        if row["family"] == "CUBE":
+            matrix_schema = {
+                "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+                "evidence": "spec/evidence/bundle-command-totality.json",
+                "static_mathematical_fields": operand_fields,
+                "gpr": {
+                    "logical_order": list(MATRIX_GPR_ORDER),
+                    "resolutions": conditional_gpr_resolutions(list(MATRIX_GPR_ORDER)),
+                    "omission_default": "omitted B.IOR resolves every consumed scalar slot through R0/zero",
+                    "encoded_surplus_rule": "RegSrc2, RegDst, and every unconsumed source field must be zero",
+                },
+                "local": conditional_local_schema(
+                    [field for field in operand_fields if field.startswith("source")]
+                ),
+            }
         bridge_matrix.append(
             {
                 "family": row["family"],
@@ -304,6 +442,7 @@ def build_evidence() -> dict:
                 "gpr_input_count": len(gpr_slots),
                 "representable": representable,
                 "unsupported_operand_fields": unsupported_fields,
+                "complete_bundle_schema": matrix_schema,
                 "commit_disposition": (
                     "execute-after-complete-binding"
                     if representable
@@ -342,7 +481,7 @@ def build_evidence() -> dict:
             "command comparison must cover every canonical command form exactly once"
         )
     if comparison_status_counts != Counter(
-        {"executable-subset": 80, "decode-only": 16, "missing": 3}
+        {"executable-subset": 80, "decode-only": 16, "missing": 4}
     ):
         raise ValueError(
             f"unexpected independent command status counts: {comparison_status_counts}"
@@ -366,6 +505,7 @@ def build_evidence() -> dict:
             "metadata_rule": "B.DIM, B.TEXT, B.IOR, B.IOT, B.CATR, and B.DATR consume every decoded field into trap-preserved bundle state. After the complete bundle is collected, PTO-v0 resolves the selected direct operation's tile, scalar/address, dimension, data-attribute, and operation-default operands before commit.",
             "memory_rule": "MCOPY and MSET accept lengths 0 through 63 bytes and reject larger XLEN values without truncation or partial effects.",
             "bridge_rule": "The PTO-v0 bundle bridge resolves every canonical TileInstructionOperands field through a concrete ordered B.IOT/B.IOR resolver or explicit operation default, with raw-value decode policy recorded before constrained assignment. B.IOR GPR inputs use the fixed address, scalar0, scalar1, diagonal, flag0 order, occupy unique dense RegSrc0..RegSrc2 slots, and never exceed three inputs. Duplicate fields, duplicate assigned slots, malformed or surplus bindings reject before tile effects.",
+            "matrix_postprocess_rule": "CUBE complete-bundle evidence adds optional scalar QuantParam and scalar LReLUParam after the baseline logical GPR fields, and optional RowMaxIn/vector QuantParam/vector PReLUParam before D/RowMaxOut/GroupMaxOut in the compact B.IOT stream. The static mathematical operand catalog remains unchanged.",
         },
         "form_matrix": form_matrix,
         "encoding_variant_matrix": encoding_variant_matrix,
@@ -379,13 +519,28 @@ def build_evidence() -> dict:
         },
         "executable_evidence": {
             "canonical_form_test": "scripts/generate-asl-decoders:ValidateCanonicalCommandExecution",
-            "boundary_test": "tests/asl/bundle-tests.asl:TestBundleCommandTotalityBoundaries",
+            "boundary_test": "tests/asl/block/model/dispatch/commands/PTO-AVS-BLOCK-TESTBUNDLECOMMANDTOTALITYBOUNDARIES-BOUNDARY-001.asl:TestBundleCommandTotalityBoundaries",
             "bridge_tests": [
-                "tests/asl/bundle-tests.asl:TestBundleTileCommitLifecycle",
-                "tests/asl/bundle-tests.asl:TestBundleTileCommitRollback",
-                "tests/asl/bundle-tests.asl:TestBundleScalarBindingSchemaDefaults",
+                "tests/asl/block/model/commit/effects/PTO-AVS-BLOCK-TESTBUNDLETILECOMMITLIFECYCLE-STATE-TRANSITION-001.asl:TestBundleTileCommitLifecycle",
+                "tests/asl/block/model/faults/rollback/PTO-AVS-BLOCK-TESTBUNDLETILECOMMITROLLBACK-EXECUTION-001.asl:TestBundleTileCommitRollback",
+                "tests/asl/block/operands/B.IOR/PTO-AVS-BLOCK-B-IOR-END-TO-END-EXECUTION-001.asl:TestBundleScalarBindingSchemaDefaults",
             ],
             "canonical_form_case_count": len(command_rows),
+            "decoded_complete_bundle_matrix": [
+                {"case": "canonical-none-observable-D", "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001", "assertion": "decoded CUBE bundle with omitted B.IOR publishes D and enabled auxiliaries"},
+                {"case": "scalar-quant-omitted-versus-x0", "avs_id": "PTO-AVS-BLOCK-B-IOR-END-TO-END-EXECUTION-001", "assertion": "omitted and encoded RegSrc0=x0 resolve the same R0/zero through distinct presence paths"},
+                {"case": "scalar-lrelu-regsrc0", "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001", "assertion": "decoded B.FPATR/B.IOR scalar route executes through auxiliary commit"},
+                {"case": "scalar-quant-and-lrelu-dense", "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001", "assertion": "decoded B.FPATR/B.IOR dense RegSrc0/RegSrc1 route executes through auxiliary commit"},
+                {"case": "vector-quant-and-prelu-local-order", "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001", "assertion": "decoded vector Local sources follow mathematical and RowMaxIn sources through auxiliary commit"},
+                {"case": "shared-tmatmul-auxiliary", "avs_id": "PTO-AVS-BLOCK-TESTBUNDLESHAREDCUBEEXECUTION-EXECUTION-001", "assertion": "Shared TMATMUL reaches decoded bundle effects with auxiliary schema"},
+                {"case": "local-tgemv-auxiliary", "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001", "assertion": "Local-only matrix path reaches the common postprocess commit"},
+                {"case": "eight-local-sources-three-destinations", "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001", "assertion": "decoded TMATMUL_MX_ACC packs eight Local sources across four B.IOT words and commits three destinations"},
+                {"case": "rowmax-alias-groupmax-full-k", "avs_id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001", "assertion": "RowMaxIn==RowMaxOut reads old data and GroupMaxOut observes the same full-K result"},
+                {"case": "D-explicit-C-legal", "avs_id": "PTO-AVS-BLOCK-TESTBUNDLESHAREDCUBEEXECUTION-EXECUTION-001", "assertion": "explicit D/C alias restriction remains accepted"},
+                {"case": "malformed-schema-pre-effect-faults", "avs_id": "PTO-AVS-BLOCK-B-FPATR-PRESENCE-FAULT-001", "assertion": "missing/duplicate/nonzero-unused/descriptor faults precede effects"},
+                {"case": "second-bior-preserves-first", "avs_id": "PTO-AVS-BLOCK-B-IOR-END-TO-END-EXECUTION-001", "assertion": "second B.IOR faults while preserving the first binding"},
+                {"case": "pe-mask-zero-strict-no-effect-and-rollback", "avs_id": "PTO-AVS-BLOCK-TESTBUNDLESHAREDCUBEEXECUTION-EXECUTION-001", "assertion": "PE_MASK=0000 is a strict no-op and post-reservation faults roll back D and auxiliaries"},
+            ],
         },
         "independent_comparison": {
             "source": "content-addressed independent executable ISA snapshot",

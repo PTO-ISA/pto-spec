@@ -38,6 +38,7 @@ type TrapContext of record {
     bundle_shared_bindings: BundleSharedBindingSnapshot,
     bundle_control_attributes: BundleControlAttributes,
     bundle_data_attributes: BundleDataAttributes,
+    bundle_fixed_point_attributes: BundleFixedPointAttributes,
     t_queue: TemporaryQueueSnapshot,
     u_queue: TemporaryQueueSnapshot,
     execution_mask: Word,
