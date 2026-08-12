@@ -105,7 +105,7 @@
     "scripts/check-active-paths": "574d08000f2944cea217282c3165ded62592c28ca11985cf6189b49ad45ab27f",
     "scripts/check-asl-layout": "5283ef77e8650d607c537e29de06fb544add29be6b76caf6e431f1954301e39f",
     "scripts/check-asl-tests": "3a0ef89d06725179960c8a7cd3a319d71f18ef76c798e4863036c860cbab2189",
-    "scripts/check-binary-closure": "245a7f70e3433da9f8bfb8ecea89cb1eeae478188ac06c1920e55c8e24eb8611",
+    "scripts/check-binary-closure": "270c643f27beed33d208768b0ee61a055d34111e87b26a105f1e6cc9bc8e4738",
     "scripts/check-ndf": "288f430cfc09ce3b76fea16a8d02d7eb71f67fc199042b76742ecfed8d68ed0e",
     "scripts/check-pr": "eee82b264cc0fa5fec8c10ab2c2777b8afcdebe5e7a0a283a8faea7f61ee6e4d",
     "scripts/check-release-closure": "f362bcadd1b89cdae420bc147b87bca8bed1f46073dad04f9eabc4509a41e0c0",
@@ -128,21 +128,21 @@
     "scripts/run-asl-test": "152bc50910a4927ff9b78b805fac286d1948be8cbaf5751325a65e8316bf7851",
     "scripts/setup-aslref": "0cbe5e413f53d6d1cce1d2f604a65fd5e7e77cc5eec9c449978f4a5e136d64da",
     "scripts/tile_taxonomy.py": "49385a4413b15eed33e87c20df0e2fb29e9b8171c68167dbea57cc813eb1f59d",
-    "spec/evidence/release-traceability-readiness.json": "9c582d64f6a27dfc7ca5f421a78e4089c925b593226c4c7c4099c0525898fb8e",
+    "spec/evidence/release-traceability-readiness.json": "8510d7d93a1bbe23a7774f10892499153f2b953c3905f047876a1dc9e8d0519c",
     "spec/release-inputs.json": "67934904c0ed4736ee206e4d6fb7ba1b1eb6e68398b39b9df1b692f6806617c0",
     "spec/schemas/pto-spec-release-event-v1.schema.json": "0ad73b22f2f1d7802c1aa6c5f0f418bd5415c5b5de78b3c6170c7fa5bfb8bd7c"
   },
   "summary": {
-    "documentation_page_count": 788,
-    "executable_requirement_count": 651,
+    "documentation_page_count": 790,
+    "executable_requirement_count": 652,
     "gate_count": 9,
-    "mnemonic_count": 651,
+    "mnemonic_count": 652,
     "status": "ready-for-exact-head-verification",
-    "test_count": 909,
+    "test_count": 918,
     "test_page_count": 10,
     "test_page_size": 100,
     "uncovered_executable_requirement_count": 0,
     "uncovered_unit_count": 0,
-    "unit_count": 788
+    "unit_count": 790
   }
 }

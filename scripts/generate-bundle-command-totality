@@ -18,10 +18,6 @@ EXECUTABLE_COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
 UNSUPPORTED_HANDLERS = {
     "SaveExecutionContext",
     "RecoverExecutionContext",
-    "ExecuteFrameEntry",
-    "ExecuteFrameExit",
-    "ExecuteFrameReturnAddress",
-    "ExecuteFrameReturnStack",
     "ExecuteQueueMove",
     "ExecuteQueuePop",
     "ExecuteQueuePush",
@@ -38,6 +34,10 @@ EFFECT_BY_HANDLER = {
     "ExecuteBundleStop": "bundle-commit-and-stop",
     "ExecuteMemoryCopy": "bounded-memory-copy",
     "ExecuteMemorySet": "bounded-memory-fill",
+    "ExecuteFrameEntry": "frame-entry-atomic",
+    "ExecuteFrameExit": "frame-exit-atomic",
+    "ExecuteFrameReturnAddress": "frame-return-address-atomic",
+    "ExecuteFrameReturnStack": "frame-return-stack-atomic",
     "SetBundleArgument": "bundle-argument-kind-and-value",
     "SetBundleBodyAddress": "bundle-body-address",
     "SetBundleControlAttributes": "bundle-control-attributes",
@@ -379,7 +379,12 @@ def build_evidence() -> dict:
                 "sequential_tpc_advance": (
                     not rejected
                     and row["semantic_handler"]
-                    not in {"ExecuteBundleStart", "ExecuteBundleStop"}
+                    not in {
+                        "ExecuteBundleStart",
+                        "ExecuteBundleStop",
+                        "ExecuteFrameReturnAddress",
+                        "ExecuteFrameReturnStack",
+                    }
                 ),
             }
         )

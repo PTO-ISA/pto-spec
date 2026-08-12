@@ -55,10 +55,6 @@ begin
     case handler of
         when CommandHandler_SaveExecutionContext,
              CommandHandler_RecoverExecutionContext,
-             CommandHandler_ExecuteFrameEntry,
-             CommandHandler_ExecuteFrameExit,
-             CommandHandler_ExecuteFrameReturnAddress,
-             CommandHandler_ExecuteFrameReturnStack,
              CommandHandler_ExecuteQueueMove,
              CommandHandler_ExecuteQueuePop,
              CommandHandler_ExecuteQueuePush,
@@ -71,7 +67,9 @@ pure func CommandHandlerAdvancesSequentially(handler: CommandSemanticHandler)
                                              => boolean
 begin
     return handler != CommandHandler_ExecuteBundleStart &&
-           handler != CommandHandler_ExecuteBundleStop;
+           handler != CommandHandler_ExecuteBundleStop &&
+           handler != CommandHandler_ExecuteFrameReturnAddress &&
+           handler != CommandHandler_ExecuteFrameReturnStack;
 end;
 
 pure func CommandDecodedSmall(instruction: bits(64),

@@ -5,8 +5,8 @@
   "accepted_form_count": 100,
   "encoding_variant_count": 5,
   "disposition_counts": {
-    "executed": 90,
-    "pto-v0-rejected": 10
+    "executed": 94,
+    "pto-v0-rejected": 6
   },
   "handler_counts": {
     "BindBundleScalarIO": 1,
@@ -36,10 +36,6 @@
   "architecture_contract": {
     "unsupported_handlers": [
       "ExecuteCrossBlockTransfer",
-      "ExecuteFrameEntry",
-      "ExecuteFrameExit",
-      "ExecuteFrameReturnAddress",
-      "ExecuteFrameReturnStack",
       "ExecuteQueueMove",
       "ExecuteQueuePop",
       "ExecuteQueuePush",
@@ -1232,11 +1228,15 @@
         "SrcEnd",
         "uimm"
       ],
-      "consumed_fields": [],
-      "disposition": "pto-v0-rejected",
-      "effect_class": "pto-v0-unsupported-handler",
-      "rejection_precedes_effects": true,
-      "sequential_tpc_advance": false
+      "consumed_fields": [
+        "SrcBegin",
+        "SrcEnd",
+        "uimm"
+      ],
+      "disposition": "executed",
+      "effect_class": "frame-entry-atomic",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
     },
     {
       "form_index": 71,
@@ -1248,11 +1248,15 @@
         "DstEnd",
         "uimm"
       ],
-      "consumed_fields": [],
-      "disposition": "pto-v0-rejected",
-      "effect_class": "pto-v0-unsupported-handler",
-      "rejection_precedes_effects": true,
-      "sequential_tpc_advance": false
+      "consumed_fields": [
+        "DstBegin",
+        "DstEnd",
+        "uimm"
+      ],
+      "disposition": "executed",
+      "effect_class": "frame-exit-atomic",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
     },
     {
       "form_index": 72,
@@ -1264,10 +1268,14 @@
         "DstEnd",
         "uimm"
       ],
-      "consumed_fields": [],
-      "disposition": "pto-v0-rejected",
-      "effect_class": "pto-v0-unsupported-handler",
-      "rejection_precedes_effects": true,
+      "consumed_fields": [
+        "DstBegin",
+        "DstEnd",
+        "uimm"
+      ],
+      "disposition": "executed",
+      "effect_class": "frame-return-address-atomic",
+      "rejection_precedes_effects": false,
       "sequential_tpc_advance": false
     },
     {
@@ -1280,10 +1288,14 @@
         "DstEnd",
         "uimm"
       ],
-      "consumed_fields": [],
-      "disposition": "pto-v0-rejected",
-      "effect_class": "pto-v0-unsupported-handler",
-      "rejection_precedes_effects": true,
+      "consumed_fields": [
+        "DstBegin",
+        "DstEnd",
+        "uimm"
+      ],
+      "disposition": "executed",
+      "effect_class": "frame-return-stack-atomic",
+      "rejection_precedes_effects": false,
       "sequential_tpc_advance": false
     },
     {

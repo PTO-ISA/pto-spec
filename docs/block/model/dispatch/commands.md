@@ -166,25 +166,25 @@ begin
                 ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
                     CommandField_RegSrc2)));
         when CommandHandler_ExecuteFrameEntry =>
-            EnterFrame(
+            ExecuteFrameEntry(
                 CommandDecodedReg5(instruction, form, CommandField_SrcBegin),
                 CommandDecodedReg5(instruction, form, CommandField_SrcEnd),
                 CommandDecodedWord(instruction, form, CommandField_uimm));
         when CommandHandler_ExecuteFrameExit =>
-            ExitFrame(
+            ExecuteFrameRestore(
                 CommandDecodedReg5(instruction, form, CommandField_DstBegin),
                 CommandDecodedReg5(instruction, form, CommandField_DstEnd),
-                CommandDecodedWord(instruction, form, CommandField_uimm));
+                CommandDecodedWord(instruction, form, CommandField_uimm), 0);
         when CommandHandler_ExecuteFrameReturnAddress =>
-            ReturnFromFrame(
+            ExecuteFrameRestore(
                 CommandDecodedReg5(instruction, form, CommandField_DstBegin),
                 CommandDecodedReg5(instruction, form, CommandField_DstEnd),
-                CommandDecodedWord(instruction, form, CommandField_uimm), TRUE);
+                CommandDecodedWord(instruction, form, CommandField_uimm), 1);
         when CommandHandler_ExecuteFrameReturnStack =>
-            ReturnFromFrame(
+            ExecuteFrameRestore(
                 CommandDecodedReg5(instruction, form, CommandField_DstBegin),
                 CommandDecodedReg5(instruction, form, CommandField_DstEnd),
-                CommandDecodedWord(instruction, form, CommandField_uimm), FALSE);
+                CommandDecodedWord(instruction, form, CommandField_uimm), 2);
         when CommandHandler_ExecuteQueueMove =>
             ExecuteQueueManagerMove(
                 CommandDecodedReg5(instruction, form, CommandField_RegDst),
