@@ -15,12 +15,12 @@
       "inputs": [
         {
           "encoding_abi": "pto-isa-0.58.0-mode-function-v1",
-          "encoding_projection_sha256": "e0744018d665503730fab16302a688575f3808255dfaeb2b645dc2e9a145a213",
+          "encoding_projection_sha256": "90f4686ff1356f5eaffa004b15b1b5bcc7a903929c7ec782ac678db9d65fdc2b",
           "release": "0.58.0"
         },
         {
           "encoding_abi": "pto-isa-0.58.0-mode-function-v1",
-          "encoding_projection_sha256": "e0744018d665503730fab16302a688575f3808255dfaeb2b645dc2e9a145a213",
+          "encoding_projection_sha256": "90f4686ff1356f5eaffa004b15b1b5bcc7a903929c7ec782ac678db9d65fdc2b",
           "release": "0.58.0"
         }
       ],
@@ -32,7 +32,7 @@
       "inputs": [
         {
           "encoding_abi": "pto-isa-0.58.0-mode-function-v1",
-          "encoding_projection_sha256": "e0744018d665503730fab16302a688575f3808255dfaeb2b645dc2e9a145a213",
+          "encoding_projection_sha256": "90f4686ff1356f5eaffa004b15b1b5bcc7a903929c7ec782ac678db9d65fdc2b",
           "release": "0.58.0"
         },
         null
@@ -46,12 +46,12 @@
       "inputs": [
         {
           "encoding_abi": "pto-isa-0.58.0-mode-function-v1",
-          "encoding_projection_sha256": "e0744018d665503730fab16302a688575f3808255dfaeb2b645dc2e9a145a213",
+          "encoding_projection_sha256": "90f4686ff1356f5eaffa004b15b1b5bcc7a903929c7ec782ac678db9d65fdc2b",
           "release": "0.58.0"
         },
         {
           "encoding_abi": "pto-isa-0.58.0-mode-function-v1",
-          "encoding_projection_sha256": "e0744018d665503730fab16302a688575f3808255dfaeb2b645dc2e9a145a213",
+          "encoding_projection_sha256": "90f4686ff1356f5eaffa004b15b1b5bcc7a903929c7ec782ac678db9d65fdc2b",
           "release": "0.58.0"
         }
       ],
@@ -64,12 +64,12 @@
       "inputs": [
         {
           "encoding_abi": "pto-isa-0.58.0-mode-function-v1",
-          "encoding_projection_sha256": "e0744018d665503730fab16302a688575f3808255dfaeb2b645dc2e9a145a213",
+          "encoding_projection_sha256": "90f4686ff1356f5eaffa004b15b1b5bcc7a903929c7ec782ac678db9d65fdc2b",
           "release": "0.58.0"
         },
         {
           "encoding_abi": "pto-isa-0.58.0-legacy-selector-v0",
-          "encoding_projection_sha256": "e0744018d665503730fab16302a688575f3808255dfaeb2b645dc2e9a145a213",
+          "encoding_projection_sha256": "90f4686ff1356f5eaffa004b15b1b5bcc7a903929c7ec782ac678db9d65fdc2b",
           "release": "0.58.0"
         }
       ],
@@ -82,7 +82,7 @@
       "inputs": [
         {
           "encoding_abi": "pto-isa-0.58.0-mode-function-v1",
-          "encoding_projection_sha256": "e0744018d665503730fab16302a688575f3808255dfaeb2b645dc2e9a145a213",
+          "encoding_projection_sha256": "90f4686ff1356f5eaffa004b15b1b5bcc7a903929c7ec782ac678db9d65fdc2b",
           "release": "0.58.0"
         },
         {
@@ -99,12 +99,12 @@
       "id": "elf-load-match",
       "image": {
         "encoding_abi": "pto-isa-0.58.0-mode-function-v1",
-        "encoding_projection_sha256": "e0744018d665503730fab16302a688575f3808255dfaeb2b645dc2e9a145a213",
+        "encoding_projection_sha256": "90f4686ff1356f5eaffa004b15b1b5bcc7a903929c7ec782ac678db9d65fdc2b",
         "release": "0.58.0"
       },
       "implementation": {
         "encoding_abi": "pto-isa-0.58.0-mode-function-v1",
-        "encoding_projection_sha256": "e0744018d665503730fab16302a688575f3808255dfaeb2b645dc2e9a145a213",
+        "encoding_projection_sha256": "90f4686ff1356f5eaffa004b15b1b5bcc7a903929c7ec782ac678db9d65fdc2b",
         "release": "0.58.0"
       },
       "stage": "load"
@@ -115,7 +115,7 @@
       "image": null,
       "implementation": {
         "encoding_abi": "pto-isa-0.58.0-mode-function-v1",
-        "encoding_projection_sha256": "e0744018d665503730fab16302a688575f3808255dfaeb2b645dc2e9a145a213",
+        "encoding_projection_sha256": "90f4686ff1356f5eaffa004b15b1b5bcc7a903929c7ec782ac678db9d65fdc2b",
         "release": "0.58.0"
       },
       "reason": "missing-identity",
@@ -131,7 +131,7 @@
       },
       "implementation": {
         "encoding_abi": "pto-isa-0.58.0-mode-function-v1",
-        "encoding_projection_sha256": "e0744018d665503730fab16302a688575f3808255dfaeb2b645dc2e9a145a213",
+        "encoding_projection_sha256": "90f4686ff1356f5eaffa004b15b1b5bcc7a903929c7ec782ac678db9d65fdc2b",
         "release": "0.58.0"
       },
       "reason": "encoding-hash-mismatch",
@@ -142,12 +142,12 @@
       "id": "bare-metal-manifest-match",
       "image": {
         "encoding_abi": "pto-isa-0.58.0-mode-function-v1",
-        "encoding_projection_sha256": "e0744018d665503730fab16302a688575f3808255dfaeb2b645dc2e9a145a213",
+        "encoding_projection_sha256": "90f4686ff1356f5eaffa004b15b1b5bcc7a903929c7ec782ac678db9d65fdc2b",
         "release": "0.58.0"
       },
       "implementation": {
         "encoding_abi": "pto-isa-0.58.0-mode-function-v1",
-        "encoding_projection_sha256": "e0744018d665503730fab16302a688575f3808255dfaeb2b645dc2e9a145a213",
+        "encoding_projection_sha256": "90f4686ff1356f5eaffa004b15b1b5bcc7a903929c7ec782ac678db9d65fdc2b",
         "release": "0.58.0"
       },
       "stage": "bare-metal-load"
@@ -157,12 +157,12 @@
       "id": "bare-metal-manifest-mismatch",
       "image": {
         "encoding_abi": "pto-isa-0.58.0-mode-function-v1",
-        "encoding_projection_sha256": "e0744018d665503730fab16302a688575f3808255dfaeb2b645dc2e9a145a213",
+        "encoding_projection_sha256": "90f4686ff1356f5eaffa004b15b1b5bcc7a903929c7ec782ac678db9d65fdc2b",
         "release": "0.58.0"
       },
       "implementation": {
         "encoding_abi": "pto-isa-0.58.0-mode-function-v1",
-        "encoding_projection_sha256": "e0744018d665503730fab16302a688575f3808255dfaeb2b645dc2e9a145a213",
+        "encoding_projection_sha256": "90f4686ff1356f5eaffa004b15b1b5bcc7a903929c7ec782ac678db9d65fdc2b",
         "release": "0.58.0"
       },
       "reason": "release-mismatch",
@@ -187,7 +187,7 @@
     "section": ".note.pto.isa"
   },
   "encoding_abi": "pto-isa-0.58.0-mode-function-v1",
-  "encoding_projection_sha256": "e0744018d665503730fab16302a688575f3808255dfaeb2b645dc2e9a145a213",
+  "encoding_projection_sha256": "90f4686ff1356f5eaffa004b15b1b5bcc7a903929c7ec782ac678db9d65fdc2b",
   "release": "0.58.0",
   "schema_version": 1
 }

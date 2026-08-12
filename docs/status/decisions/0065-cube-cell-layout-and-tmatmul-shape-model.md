@@ -479,6 +479,29 @@ representation, but may not introduce shared persistent `MShard4` metadata.
    traceability, and the acceptance-to-test evidence matrix agree at the final
    candidate HEAD.
 
+### Acceptance-to-test evidence matrix
+
+The matrix below is the ADR's integration record.  Each executable row starts
+with decoded architectural instructions and names the observable result or
+fault; helper assertions are included only where the criterion is explicitly
+an owner-level legality or geometry predicate.
+
+| ADR acceptance | Decoded AVS and entry points | Required observable |
+| --- | --- | --- |
+| 1. Six GM/Local conversions, width mappings, interleave, and fault/no-access behavior | `PTO-AVS-BLOCK-TESTCUBECONVERSION-STAGE-B-EXECUTION-001`: `TestDecodedCubeLayoutAndWidthMatrix`, `TestDecodedM16B4InterleaveAndTail`, `TestDecodedN8FP16RepeatsAndTails`, `TestDecodedCubeM32LoadStore`, `TestCubeConversionBoundariesAndFaults` | Decoded `BSTART`/`B.DATR`/`B.IOT`/`B.IOR`/`BSTOP` loads and stores each of `ND2M32`, `ND2M16`, `ND2N8`, `M322ND`, `M162ND`, and `N82ND` for b32/b16/b8/b4; layout and raw `ReadTileElement`/`LoadUnsigned` values match, M16-b4 word interleave and N8 K/N repeat tails match, sentinels outside valid geometry remain unchanged, b64 and wrong-direction/shared forms fault before allocation/consumption. |
+| 2. PE CUBE operands, N greater than 8, repeat order, tails, and capacity | Decoded `PTO-AVS-BLOCK-TESTCUBEMATRIX-STAGE-C-EXECUTION-001`: `StageCDecodedPE` for `CUBE_M16` and `CUBE_M32`; conversion AVS `TestDecodedN8FP16RepeatsAndTails` | Matrix bundle commits the expected `3` values at `(0,0)` and `(1,8)` for N=9 and leaves `(0,9)` undefined; the conversion path observes K-fast/N-slow six-CELL ordering, K/N boundary values, and untouched invalid-row/invalid-column sentinels; undersized destination faults as `Fault_TileAllocation` with no allocation or source consumption. |
+| 3. Group M boundaries, per-PE distribution, rejection, and zero-mask no-effect | Decoded `PTO-AVS-BLOCK-TESTCUBEMATRIX-STAGE-C-EXECUTION-001`: `StageCDecodedGroup(1/64/65/128/0/129)` and `StageCDecodedGroupZeroMask` | M=1/64 selects M16 and M=65/128 selects M32; decoded `TilePEValidRows` for all four PEs equals `TileCubeGroupPEValidM`, inactive PEs expose zero rows, M=0 and M=129 fault before destination allocation or Shared consumption, and zero PE mask with M=0 returns `Fault_None` with no effects. |
+| 4. Shared transpose controls, defaults, reserved bits, and mandatory FPATR | Decoded `PTO-AVS-BLOCK-TESTBUNDLESHAREDTRANSPOSE-STAGE-C-EXECUTION-001`: `TestDecodedSharedTranspose` and `TestDecodedSharedTransposeCase(FALSE,FALSE/TRUE,FALSE/FALSE,TRUE/TRUE,TRUE)`; presence fault `PTO-AVS-BLOCK-B-FPATR-PRESENCE-FAULT-001` | Decoded 00/10/01/11 controls produce the four asserted matrix results; Local-source transpose faults as `Fault_TileLegality` before consume/allocation, reserved `[10:9]` decodes as `Fault_IllegalInstruction`, and missing/duplicate/non-CUBE `B.FPATR` faults as `Fault_BundleControl` before effects. |
+| 5. Distinct accumulator C/D, quantized and preserving outputs, and rollback | Decoded `PTO-AVS-BLOCK-TESTCUBEMATRIX-STAGE-C-EXECUTION-001`: `StageCDecodedACCPreserving`, `StageCDecodedACCQuantized`, `StageCDecodedACCQuantizedFault`, `StageCDecodedACCAliasRules` | Decoded ACC commits a fresh FP32 D (D index differs from C) with `7`, preserves old C=`5`, and commits a distinct S8 D=`7` for final quantization; capacity fault is `Fault_TileAllocation` with no destination allocation/consumption and C unchanged; after decoded ACC controls, owner `TileOperandsLegal_TMATMUL_ACC` rejects both direct `D==C` cases, and no decoded alias form is accepted. |
+| 6. Projection and V1 closure | `spec/evidence/release-traceability-readiness.json`, `spec/evidence/release-gate-readiness.json`, generated catalogs/docs/nav, and final `make pr-check`, `make repo-check`, `git diff --check` | All normative owners and direct consumers have current generated hashes and test links; the final candidate passes each V1 gate with no stale projection. |
+
+The accepted Stage C `B.FPATR` transpose controls are also reflected in the
+reviewed 574-form encoded projection.  Its current binary-closure fingerprint
+is `78e1912b05dac8e5606c5bc431b659f08c115af3bce5afe116a41f56862eb819`;
+the changed form is the already accepted `TransA`/`TransB` field extension,
+with reserved bits remaining rejected.  The release manifest and encoded
+evidence are generated from this reviewed catalog projection.
+
 ### Validation
 
 V1. Run focused generation and executable evidence while iterating, then the
