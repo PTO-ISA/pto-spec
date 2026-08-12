@@ -40,15 +40,18 @@ begin
     var result = input;
     let new_rows = input.valid_columns;
     let new_columns = input.valid_rows;
-    result.rows = new_rows;
+    let physical_rows = DerivedTileRows(input.capacity_bytes,
+        new_columns, input.data_type);
+    assert physical_rows != 0;
+    result.rows = physical_rows;
     result.columns = new_columns;
     result.valid_rows = new_rows;
     result.valid_columns = new_columns;
-    result.storage_rows = new_rows;
+    result.storage_rows = physical_rows;
     result.storage_columns = new_columns;
-    result.storage_bytes = TileStorageBytes(new_rows, new_columns,
+    result.storage_bytes = TileStorageBytes(physical_rows, new_columns,
         input.data_type) as integer {0..262144};
-    result.capacity_bytes = result.storage_bytes;
+    result.capacity_bytes = input.capacity_bytes;
     result.cube_k_repeat = 0;
     result.cube_n_repeat = 0;
     result.cube_cell_count = 0;
@@ -56,7 +59,7 @@ begin
     result.contents_defined = FALSE;
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
-    var payload: TilePayload = Zeros{PTO_MODEL_TILE_ELEMENTS};
+    var payload: TilePayload = input.payload;
     for row = 0 to input.valid_rows - 1 looplimit 65536 do
         for column = 0 to input.valid_columns - 1 looplimit 65536 do
             let source_element = TileLinearIndex(input,
@@ -68,7 +71,8 @@ begin
         end;
     end;
     result.payload = payload;
-    result.defined_valid_elements = new_rows * new_columns;
+    result.defined_valid_elements =
+        (new_rows * new_columns) as integer {0..16384};
     result.contents_defined = input.contents_defined;
     return result;
 end;
@@ -87,7 +91,8 @@ begin
     if rows == 0 || rows >= input.valid_rows then return input; end;
     var result = input;
     result.valid_rows = rows;
-    result.defined_valid_elements = rows * result.valid_columns;
+    result.defined_valid_elements =
+        (rows * result.valid_columns) as integer {0..16384};
     result.contents_defined = input.contents_defined;
     return result;
 end;

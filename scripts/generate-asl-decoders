@@ -11502,15 +11502,24 @@ def main() -> None:
             if operand["field"].startswith("source") or operand["role"] == "bias"
         ]
         if source_fields:
-            source_defined_predicate = (
-                "TileMemorySourceContentsDefined"
-                if row["name"] == "TSTORE"
-                else "TileSourceContentsDefined"
-            )
-            undefined_sources = " || ".join(
-                f"!{source_defined_predicate}(operands.{field})"
-                for field in source_fields
-            )
+            if row.get("engine") == "CUBE":
+                # Matrix operands may retain a persistent CUBE descriptor.
+                # Generic TileSourceContentsDefined intentionally remains
+                # ordinary-layout-only for VEC/SFU consumers.
+                undefined_sources = " || ".join(
+                    f"!TileMatrixSourceDescriptorLegal(_Tiles[[operands.{field}]])"
+                    for field in source_fields
+                )
+            else:
+                source_defined_predicate = (
+                    "TileMemorySourceContentsDefined"
+                    if row["name"] == "TSTORE"
+                    else "TileSourceContentsDefined"
+                )
+                undefined_sources = " || ".join(
+                    f"!{source_defined_predicate}(operands.{field})"
+                    for field in source_fields
+                )
             print(f"            if {undefined_sources} then")
             print("                SetFault(Fault_TileLegality, ReadPC());")
             print("                return (TileExecution_Rejected, Zeros{PTO_XLEN});")

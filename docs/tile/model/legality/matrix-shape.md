@@ -212,11 +212,10 @@ begin
         shape.layout == left.layout &&
         shape.valid_rows == left.valid_rows &&
         shape.valid_columns == right.valid_columns
-    elsif TileLayoutIsCube(right.layout) then FALSE
+    else if TileLayoutIsCube(right.layout) then FALSE
     else if BundleSharedBindingCount() > 0 && TileLayoutIsCube(shape.layout) then
         TileMatrixGroupBindingLegal(left, shape)
-    else !TileLayoutIsCube(shape.layout)
-    end;
+    else !TileLayoutIsCube(shape.layout);
     return layout_legal &&
            _Tiles[[destination]].valid_rows == left.valid_rows &&
            _Tiles[[destination]].valid_columns == right.valid_columns &&

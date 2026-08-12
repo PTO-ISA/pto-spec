@@ -80,6 +80,23 @@ begin
     let layout = CurrentBundleTileLayout();
     if _BundleOperation.valid &&
        _BundleOperation.operation_class == BundleOperation_TileMatrix &&
+       BundleSharedBindingCount() == 0 then
+        // PE-level C/D inherit the persistent M-layout class from the first
+        // bound Local matrix source (A for ordinary forms, C for ACC).
+        // B.DATR remains an ordinary transfer attribute and must not force a
+        // RowMajor destination for a CUBE matrix operation.
+        for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 looplimit 16 do
+            if _BundleTileBindings[[binding]].valid then
+                if _BundleTileBindings[[binding]].source0_valid then
+                    return _Tiles[[_BundleTileBindings[[binding]].source0]].layout;
+                elsif _BundleTileBindings[[binding]].source1_valid then
+                    return _Tiles[[_BundleTileBindings[[binding]].source1]].layout;
+                end;
+            end;
+        end;
+    end;
+    if _BundleOperation.valid &&
+       _BundleOperation.operation_class == BundleOperation_TileMatrix &&
        BundleSharedBindingCount() > 0 && !TileLayoutIsCube(layout) then
         let encoded = UInt(_BundleDimensions[[BundleDimensionIndexOfRole(
             BundleDimension_ValidRows)]]) as integer {0..65535};

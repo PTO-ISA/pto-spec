@@ -8,9 +8,25 @@ begin
     return instruction;
 end;
 
+pure func BundleTestDim(role: bits(2), value: integer {0..131071})
+        => bits(64)
+begin
+    var instruction: bits(64) = Zeros{64};
+    case UInt(role) of
+        when 0 => instruction = Zeros{64} + 0x00000043;
+        when 1 => instruction = Zeros{64} + 0x00001043;
+        when 2 => instruction = Zeros{64} + 0x00002043;
+        otherwise => unreachable;
+    end;
+    let immediate = Zeros{64} + value;
+    instruction[31:20] = immediate[11:0];
+    instruction[11:7] = immediate[16:12];
+    return instruction;
+end;
+
 pure func BundleTestStageCCUBEStart() => bits(64)
 begin
-    return Zeros{64} + 0x00031181 + LSL(Zeros{64} + 24, 27);
+    return Zeros{64} + 0x00031181 + LSL(Zeros{64} + 1, 27);
 end;
 
 pure func BundleTestStageCSharedBinding(shared_id: bits(8)) => bits(64)
@@ -22,6 +38,15 @@ begin
     return instruction;
 end;
 
+pure func BundleTestStageCLocalSource(source0: bits(6)) => bits(64)
+begin
+    var instruction: bits(64) = Zeros{64} + 0x00005013;
+    instruction[18:15] = '1111';
+    instruction[25:20] = source0;
+    instruction[19] = '1';
+    return instruction;
+end;
+
 pure func BundleTestFPATRReserved() => bits(64)
 begin
     return (Zeros{64} + 0x00002023) OR (Zeros{64} + 0x00000200);
@@ -30,7 +55,7 @@ end;
 pure func BundleTestStageCTileDestination() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00006013;
-    instruction[11:9] = '001';
+    instruction[11:9] = '010';
     instruction[8:7] = '00';
     instruction[18:15] = '1111';
     instruction[19] = '1';
@@ -40,14 +65,14 @@ end;
 func TestDecodedSharedTranspose()
 begin
     ResetProfileState();
-    ConfigureTile(10, 512, 2, 2, 2, 2, TileDataType_U64,
+    ConfigureTile(10, 512, 2, 2, 2, 2, TileDataType_FP32,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(10, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(10, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(10, 1, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(10, 1, 1, Zeros{PTO_XLEN} + 4);
     var left = _Tiles[[10]];
-    ConfigureTile(11, 512, 2, 2, 2, 2, TileDataType_U64,
+    ConfigureTile(11, 512, 2, 2, 2, 2, TileDataType_FP32,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(11, 0, 0, Zeros{PTO_XLEN} + 5);
     WriteTileElement(11, 0, 1, Zeros{PTO_XLEN} + 6);
@@ -55,18 +80,32 @@ begin
     WriteTileElement(11, 1, 1, Zeros{PTO_XLEN} + 8);
     InstallSharedTile(Zeros{8} + 60, left, '1111');
     InstallSharedTile(Zeros{8} + 61, _Tiles[[11]], '1111');
-    assert ExecuteCommandInstruction(
-        BundleTestStageCCUBEStart(), 32) ==
-        CommandExecution_Executed;
-    assert ExecuteCommandInstruction(BundleTestFPATRTranspose(TRUE, FALSE), 32) ==
-        CommandExecution_Executed;
-    assert ExecuteCommandInstruction(BundleTestStageCSharedBinding(Zeros{8} + 60), 32) ==
-        CommandExecution_Executed;
-    assert ExecuteCommandInstruction(BundleTestStageCSharedBinding(Zeros{8} + 61), 32) ==
-        CommandExecution_Executed;
-    assert ExecuteCommandInstruction(BundleTestStageCTileDestination(), 32) ==
-        CommandExecution_Executed;
-    assert ExecuteBundleTileOperation();
+    let transpose_command_status_1 = ExecuteCommandInstruction(
+        BundleTestStageCCUBEStart(), 32);
+    assert transpose_command_status_1 == CommandExecution_Executed;
+    let transpose_command_status_2 = ExecuteCommandInstruction(
+        BundleTestFPATRTranspose(TRUE, FALSE), 32);
+    assert transpose_command_status_2 == CommandExecution_Executed;
+    let transpose_command_status_2a = ExecuteCommandInstruction(
+        BundleTestDim('00', 2), 32);
+    assert transpose_command_status_2a == CommandExecution_Executed;
+    let transpose_command_status_2b = ExecuteCommandInstruction(
+        BundleTestDim('01', 2), 32);
+    assert transpose_command_status_2b == CommandExecution_Executed;
+    let transpose_command_status_2c = ExecuteCommandInstruction(
+        BundleTestDim('10', 2), 32);
+    assert transpose_command_status_2c == CommandExecution_Executed;
+    let transpose_command_status_3 = ExecuteCommandInstruction(
+        BundleTestStageCSharedBinding(Zeros{8} + 60), 32);
+    assert transpose_command_status_3 == CommandExecution_Executed;
+    let transpose_command_status_4 = ExecuteCommandInstruction(
+        BundleTestStageCSharedBinding(Zeros{8} + 61), 32);
+    assert transpose_command_status_4 == CommandExecution_Executed;
+    let transpose_command_status_5 = ExecuteCommandInstruction(
+        BundleTestStageCTileDestination(), 32);
+    assert transpose_command_status_5 == CommandExecution_Executed;
+    let transpose_operation_status_1 = ExecuteBundleTileOperation();
+    assert transpose_operation_status_1;
     let destination = _BundleTileBindings[[0]].destination;
     assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 26;
     assert ReadTileElement(destination, 0, 1) == Zeros{PTO_XLEN} + 30;
@@ -75,28 +114,45 @@ begin
 
     // A transpose bit on Local A is rejected before allocation or consume.
     ResetProfileState();
-    ConfigureTile(10, 512, 1, 1, 1, 1, TileDataType_U64,
+    ConfigureTile(10, 512, 1, 1, 1, 1, TileDataType_FP32,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(10, 0, 0, Zeros{PTO_XLEN} + 2);
     InstallSharedTile(Zeros{8} + 62, _Tiles[[10]], '1111');
-    assert ExecuteCommandInstruction(
-        BundleTestStageCCUBEStart(), 32) ==
-        CommandExecution_Executed;
-    assert ExecuteCommandInstruction(BundleTestFPATRTranspose(TRUE, FALSE), 32) ==
-        CommandExecution_Executed;
-    assert ExecuteCommandInstruction(BundleTestStageCSharedBinding(Zeros{8} + 62), 32) ==
-        CommandExecution_Executed;
-    assert ExecuteCommandInstruction(BundleTestStageCTileDestination(), 32) ==
-        CommandExecution_Executed;
-    assert !ExecuteBundleTileOperation();
+    let transpose_command_status_6 = ExecuteCommandInstruction(
+        BundleTestStageCCUBEStart(), 32);
+    assert transpose_command_status_6 == CommandExecution_Executed;
+    let transpose_command_status_7 = ExecuteCommandInstruction(
+        BundleTestFPATRTranspose(TRUE, FALSE), 32);
+    assert transpose_command_status_7 == CommandExecution_Executed;
+    let transpose_command_status_7a = ExecuteCommandInstruction(
+        BundleTestDim('00', 1), 32);
+    assert transpose_command_status_7a == CommandExecution_Executed;
+    let transpose_command_status_7b = ExecuteCommandInstruction(
+        BundleTestDim('01', 1), 32);
+    assert transpose_command_status_7b == CommandExecution_Executed;
+    let transpose_command_status_7c = ExecuteCommandInstruction(
+        BundleTestDim('10', 1), 32);
+    assert transpose_command_status_7c == CommandExecution_Executed;
+    let transpose_command_status_7d = ExecuteCommandInstruction(
+        BundleTestStageCLocalSource(Zeros{6} + 10), 32);
+    assert transpose_command_status_7d == CommandExecution_Executed;
+    let transpose_command_status_8 = ExecuteCommandInstruction(
+        BundleTestStageCSharedBinding(Zeros{8} + 62), 32);
+    assert transpose_command_status_8 == CommandExecution_Executed;
+    let transpose_command_status_9 = ExecuteCommandInstruction(
+        BundleTestStageCTileDestination(), 32);
+    assert transpose_command_status_9 == CommandExecution_Executed;
+    let transpose_operation_status_2 = ExecuteBundleTileOperation();
+    assert !transpose_operation_status_2;
     assert _LastFault == Fault_TileLegality;
     assert !_BundleSharedBindings[[0]].consumed;
     assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
 
     // Bits 10:9 remain reserved and are rejected by decoded command matching.
     ResetProfileState();
-    assert ExecuteCommandInstruction(BundleTestFPATRReserved(), 32) ==
-        CommandExecution_Rejected;
+    let transpose_command_status_10 = ExecuteCommandInstruction(
+        BundleTestFPATRReserved(), 32);
+    assert transpose_command_status_10 == CommandExecution_Rejected;
     assert _LastFault == Fault_IllegalInstruction;
 end;
 
@@ -105,31 +161,46 @@ func TestDecodedSharedTransposeCase(trans_a: boolean, trans_b: boolean,
                                     expected10: Word, expected11: Word)
 begin
     ResetProfileState();
-    ConfigureTile(10, 512, 2, 2, 2, 2, TileDataType_U64,
+    ConfigureTile(10, 512, 2, 2, 2, 2, TileDataType_FP32,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(10, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(10, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(10, 1, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(10, 1, 1, Zeros{PTO_XLEN} + 4);
     InstallSharedTile(Zeros{8} + 64, _Tiles[[10]], '1111');
-    ConfigureTile(11, 512, 2, 2, 2, 2, TileDataType_U64,
+    ConfigureTile(11, 512, 2, 2, 2, 2, TileDataType_FP32,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(11, 0, 0, Zeros{PTO_XLEN} + 5);
     WriteTileElement(11, 0, 1, Zeros{PTO_XLEN} + 6);
     WriteTileElement(11, 1, 0, Zeros{PTO_XLEN} + 7);
     WriteTileElement(11, 1, 1, Zeros{PTO_XLEN} + 8);
     InstallSharedTile(Zeros{8} + 65, _Tiles[[11]], '1111');
-    assert ExecuteCommandInstruction(BundleTestStageCCUBEStart(), 32) ==
-        CommandExecution_Executed;
-    assert ExecuteCommandInstruction(BundleTestFPATRTranspose(trans_a, trans_b), 32) ==
-        CommandExecution_Executed;
-    assert ExecuteCommandInstruction(BundleTestStageCSharedBinding(Zeros{8} + 64), 32) ==
-        CommandExecution_Executed;
-    assert ExecuteCommandInstruction(BundleTestStageCSharedBinding(Zeros{8} + 65), 32) ==
-        CommandExecution_Executed;
-    assert ExecuteCommandInstruction(BundleTestStageCTileDestination(), 32) ==
-        CommandExecution_Executed;
-    assert ExecuteBundleTileOperation();
+    let transpose_command_status_11 = ExecuteCommandInstruction(
+        BundleTestStageCCUBEStart(), 32);
+    assert transpose_command_status_11 == CommandExecution_Executed;
+    let transpose_command_status_12 = ExecuteCommandInstruction(
+        BundleTestFPATRTranspose(trans_a, trans_b), 32);
+    assert transpose_command_status_12 == CommandExecution_Executed;
+    let transpose_command_status_12a = ExecuteCommandInstruction(
+        BundleTestDim('00', 2), 32);
+    assert transpose_command_status_12a == CommandExecution_Executed;
+    let transpose_command_status_12b = ExecuteCommandInstruction(
+        BundleTestDim('01', 2), 32);
+    assert transpose_command_status_12b == CommandExecution_Executed;
+    let transpose_command_status_12c = ExecuteCommandInstruction(
+        BundleTestDim('10', 2), 32);
+    assert transpose_command_status_12c == CommandExecution_Executed;
+    let transpose_command_status_13 = ExecuteCommandInstruction(
+        BundleTestStageCSharedBinding(Zeros{8} + 64), 32);
+    assert transpose_command_status_13 == CommandExecution_Executed;
+    let transpose_command_status_14 = ExecuteCommandInstruction(
+        BundleTestStageCSharedBinding(Zeros{8} + 65), 32);
+    assert transpose_command_status_14 == CommandExecution_Executed;
+    let transpose_command_status_15 = ExecuteCommandInstruction(
+        BundleTestStageCTileDestination(), 32);
+    assert transpose_command_status_15 == CommandExecution_Executed;
+    let transpose_operation_status_3 = ExecuteBundleTileOperation();
+    assert transpose_operation_status_3;
     let destination = _BundleTileBindings[[0]].destination;
     assert ReadTileElement(destination, 0, 0) == expected00;
     assert ReadTileElement(destination, 0, 1) == expected01;
