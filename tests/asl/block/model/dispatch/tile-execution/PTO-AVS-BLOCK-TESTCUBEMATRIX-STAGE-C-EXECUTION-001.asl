@@ -331,15 +331,26 @@ end;
 func StageCDecodedACCQuantizedFault()
 begin
     ResetProfileState();
+    // Keep every source descriptor legal and fully defined so the intended
+    // destination-capacity fault is reached through the decoded CUBE path.
+    // A is MxK (2x9), B is KxN (9x9), and C is the preserved MxN (2x9).
     ConfigureCubeTile(0, 1024, 2, 9, TileDataType_FP32,
         TileLayout_CUBE_M16, TileLocation_Matrix);
-    ConfigureCubeTile(10, 256, 2, 2, TileDataType_FP32,
+    ConfigureCubeTile(10, 1024, 2, 9, TileDataType_FP32,
         TileLayout_CUBE_M16, TileLocation_Matrix);
-    ConfigureCubeTile(11, 256, 2, 9, TileDataType_FP32,
+    ConfigureCubeTile(11, 1024, 9, 9, TileDataType_FP32,
         TileLayout_CUBE_N8, TileLocation_Matrix);
-    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 5);
-    WriteTileElement(10, 0, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(11, 0, 0, Zeros{PTO_XLEN} + 1);
+    for row = 0 to 1 looplimit 2 do
+        for column = 0 to 8 looplimit 9 do
+            WriteTileElement(0, row, column, Zeros{PTO_XLEN} + 5);
+            WriteTileElement(10, row, column, Zeros{PTO_XLEN} + 1);
+        end;
+    end;
+    for row = 0 to 8 looplimit 9 do
+        for column = 0 to 8 looplimit 9 do
+            WriteTileElement(11, row, column, Zeros{PTO_XLEN} + 1);
+        end;
+    end;
     let stage_c_command_status_40 = ExecuteCommandInstruction(StageCCUBEStart('00001', TRUE), 32);
     assert stage_c_command_status_40 == CommandExecution_Executed;
     let stage_c_command_status_41 = ExecuteCommandInstruction(StageCDATR('00000', '00001'), 32);
