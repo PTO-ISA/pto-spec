@@ -82,9 +82,40 @@ begin
     return FALSE;
 end;
 
+readonly func BundleTileIsAccumulatorSource(tile: TileIndex) => boolean
+begin
+    if !_BundleOperation.valid ||
+       _BundleOperation.operation_class != BundleOperation_TileMatrix ||
+       !_BundleOperation.selector_valid then return FALSE; end;
+    let operation = DecodeTileOperation(TileDecode_CUBE,
+        BundleOperationDecodeCode(_BundleOperation));
+    // ACC forms consume C as a read-only accumulator.  The decoded Stage C
+    // contract requires the old C value to remain observable after a fresh D
+    // is committed, so do not release the first ordered Local source.
+    if operation != 99 && operation != 102 && operation != 105 &&
+       operation != 108 then return FALSE; end;
+    var first_source_valid = FALSE;
+    var first_source: TileIndex = 0;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 looplimit 16 do
+        if _BundleTileBindings[[binding]].valid then
+            if !first_source_valid &&
+               _BundleTileBindings[[binding]].source0_valid then
+                first_source = _BundleTileBindings[[binding]].source0;
+                first_source_valid = TRUE;
+            elsif !first_source_valid &&
+                  _BundleTileBindings[[binding]].source1_valid then
+                first_source = _BundleTileBindings[[binding]].source1;
+                first_source_valid = TRUE;
+            end;
+        end;
+    end;
+    return first_source_valid && first_source == tile;
+end;
+
 func CommitBundleTileSourceLifetime(binding: BundleTileBindingIndex)
 begin
     if _BundleTileBindings[[binding]].source0_valid &&
+       !BundleTileIsAccumulatorSource(_BundleTileBindings[[binding]].source0) &&
        !BundleTileIsDestination(_BundleTileBindings[[binding]].source0) then
         ReleaseTile(_BundleTileBindings[[binding]].source0);
     end;

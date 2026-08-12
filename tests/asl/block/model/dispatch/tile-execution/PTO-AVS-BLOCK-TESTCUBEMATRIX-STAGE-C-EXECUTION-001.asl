@@ -247,6 +247,11 @@ begin
         TileLayout_CUBE_M16, TileLocation_Matrix);
     ConfigureCubeTile(11, 256, 2, 2, TileDataType_FP32,
         TileLayout_CUBE_N8, TileLocation_Matrix);
+    // PreQuantMode=2 consumes an ordered vector QuantParam source after the
+    // three static TMATMUL_ACC operands.  Keep that post-process carrier
+    // ordinary-layout because it is not a mathematical CUBE operand.
+    ConfigureTile(12, 256, 2, 2, 1, 2, TileDataType_FP32,
+        TileLayout_RowMajor, TileLocation_Any);
     for row = 0 to 1 looplimit 2 do
         for column = 0 to 1 looplimit 2 do
             WriteTileElement(0, row, column, Zeros{PTO_XLEN} + 5);
@@ -254,6 +259,8 @@ begin
             WriteTileElement(11, row, column, Zeros{PTO_XLEN} + 1);
         end;
     end;
+    WriteTileElement(12, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(12, 0, 1, Zeros{PTO_XLEN} + 1);
     let stage_c_command_status_24 = ExecuteCommandInstruction(StageCCUBEStart('00001', TRUE), 32);
     assert stage_c_command_status_24 == CommandExecution_Executed;
     let stage_c_command_status_25 = ExecuteCommandInstruction(StageCDATR('00000', '00001'), 32);
@@ -271,8 +278,11 @@ begin
         '001', '00', '1111', Zeros{6}, Zeros{6} + 10, FALSE), 32);
     assert stage_c_command_status_30 == CommandExecution_Executed;
     let stage_c_command_status_31 = ExecuteCommandInstruction(StageCOneSource(
-        Zeros{6} + 11, '1111', TRUE), 32);
+        Zeros{6} + 11, '1111', FALSE), 32);
     assert stage_c_command_status_31 == CommandExecution_Executed;
+    let stage_c_command_status_31b = ExecuteCommandInstruction(StageCOneSource(
+        Zeros{6} + 12, '1111', TRUE), 32);
+    assert stage_c_command_status_31b == CommandExecution_Executed;
     let stage_c_operation_status_3 = ExecuteBundleTileOperation();
     assert stage_c_operation_status_3;
     let destination = _BundleTileBindings[[0]].destination;
@@ -340,6 +350,8 @@ begin
         TileLayout_CUBE_M16, TileLocation_Matrix);
     ConfigureCubeTile(11, 1024, 9, 9, TileDataType_FP32,
         TileLayout_CUBE_N8, TileLocation_Matrix);
+    ConfigureTile(12, 1024, 16, 16, 1, 9, TileDataType_FP32,
+        TileLayout_RowMajor, TileLocation_Any);
     for row = 0 to 1 looplimit 2 do
         for column = 0 to 8 looplimit 9 do
             WriteTileElement(0, row, column, Zeros{PTO_XLEN} + 5);
@@ -350,6 +362,9 @@ begin
         for column = 0 to 8 looplimit 9 do
             WriteTileElement(11, row, column, Zeros{PTO_XLEN} + 1);
         end;
+    end;
+    for column = 0 to 8 looplimit 9 do
+        WriteTileElement(12, 0, column, Zeros{PTO_XLEN} + 1);
     end;
     let stage_c_command_status_40 = ExecuteCommandInstruction(StageCCUBEStart('00001', TRUE), 32);
     assert stage_c_command_status_40 == CommandExecution_Executed;
@@ -368,15 +383,21 @@ begin
         '001', '00', '1111', Zeros{6}, Zeros{6} + 10, FALSE), 32);
     assert stage_c_command_status_46 == CommandExecution_Executed;
     let stage_c_command_status_47 = ExecuteCommandInstruction(StageCOneSource(
-        Zeros{6} + 11, '1111', TRUE), 32);
+        Zeros{6} + 11, '1111', FALSE), 32);
     assert stage_c_command_status_47 == CommandExecution_Executed;
+    let stage_c_command_status_47b = ExecuteCommandInstruction(StageCOneSource(
+        Zeros{6} + 12, '1111', TRUE), 32);
+    assert stage_c_command_status_47b == CommandExecution_Executed;
     let stage_c_operation_status_5 = ExecuteBundleTileOperation();
     assert !stage_c_operation_status_5;
     assert _LastFault == Fault_TileAllocation;
     assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
-    assert TileSourceContentsDefined(0);
-    assert TileSourceContentsDefined(10);
-    assert TileSourceContentsDefined(11);
+    assert _Tiles[[0]].contents_defined &&
+        TileMatrixSourceDescriptorLegal(_Tiles[[0]]);
+    assert _Tiles[[10]].contents_defined &&
+        TileMatrixSourceDescriptorLegal(_Tiles[[10]]);
+    assert _Tiles[[11]].contents_defined &&
+        TileMatrixSourceDescriptorLegal(_Tiles[[11]]);
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 5;
 end;
 
