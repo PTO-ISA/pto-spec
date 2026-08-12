@@ -64,6 +64,11 @@ begin
     end;
     let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
     if SelectedBundleTileMaskIsZero() then return TRUE; end;
+    if _BundleOperation.operation_class == BundleOperation_TileMatrix &&
+       !BundleSharedCubeTransposeLegal(BundleSharedBindingCount()) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
     if _BundleFixedPointAttributes.valid &&
        _BundleOperation.operation_class != BundleOperation_TileMatrix then
         SetFault(Fault_BundleControl, ReadTPC());

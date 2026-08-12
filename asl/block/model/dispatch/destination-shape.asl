@@ -6,7 +6,14 @@ begin
     let index = BundleDimensionIndexOfRole(BundleDimension_ValidRows);
     if UInt(_BundleDimensions[[index]]) >= 1 &&
        UInt(_BundleDimensions[[index]]) <= 65535 then
-        return UInt(_BundleDimensions[[index]]) as integer {1..65535};
+        let encoded = UInt(_BundleDimensions[[index]]) as integer {1..65535};
+        if _BundleOperation.valid &&
+           _BundleOperation.operation_class == BundleOperation_TileMatrix &&
+           BundleSharedBindingCount() > 0 then
+            let pe_rows = TileCubeGroupPEValidM(encoded, 0);
+            if pe_rows != 0 then return pe_rows as integer {1..65535}; end;
+        end;
+        return encoded;
     elsif shape_source_valid && TileDescriptorConfigured(shape_source) then
         return _Tiles[[shape_source]].valid_rows;
     else
@@ -55,6 +62,22 @@ begin
         as integer {0..65535};
 end;
 
+readonly func BundleMatrixDestinationLayout() => TileLayout
+begin
+    let layout = CurrentBundleTileLayout();
+    if _BundleOperation.valid &&
+       _BundleOperation.operation_class == BundleOperation_TileMatrix &&
+       BundleSharedBindingCount() > 0 && !TileLayoutIsCube(layout) then
+        let encoded = UInt(_BundleDimensions[[BundleDimensionIndexOfRole(
+            BundleDimension_ValidRows)]]) as integer {0..65535};
+        // Group C/D are always per-PE CUBE M-layouts.  When legacy complete
+        // bundles omit the optional M dimension, the first PE's local shape
+        // selects M16; an encoded 65..128 selects M32.
+        return TileCubeGroupLayoutForM(if encoded == 0 then 1 else encoded);
+    end;
+    return layout;
+end;
+
 func ResolveBundleTileDestinations() => boolean
 begin
     var reserved: array [[PTO_TILE_REGISTER_COUNT]] of boolean;
@@ -99,7 +122,7 @@ begin
 
     let selected_type = TileDataTypeFromEncoding(
         ZeroExtend{PTO_XLEN}(CurrentBundleTileOperationDataTypeCode()));
-    let selected_layout = CurrentBundleTileLayout();
+    let selected_layout = BundleMatrixDestinationLayout();
     let matrix = _BundleOperation.valid &&
         _BundleOperation.operation_class == BundleOperation_TileMatrix;
     let accumulator_type = TileMatrixAccumulatorDataType(selected_type);

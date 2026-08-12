@@ -19,6 +19,79 @@ begin
            _BundleOperation.selector_valid && BundleSharedBindingCount() > 0;
 end;
 
+readonly func BundleSharedCubeTransposeLegal(shared_count: integer {0..4})
+                                                     => boolean
+begin
+    if shared_count == 0 then
+        return !_BundleFixedPointAttributes.trans_a &&
+               !_BundleFixedPointAttributes.trans_b;
+    end;
+    if shared_count == 1 then
+        // The accepted one-Shared schema is Local A plus Shared B.
+        return !_BundleFixedPointAttributes.trans_a;
+    end;
+    if shared_count == 2 then return TRUE; end;
+    return FALSE;
+end;
+
+func TransposeSharedMatrix(input: TileInfo) => TileInfo
+begin
+    assert !TileLayoutIsCube(input.layout);
+    var result = input;
+    let new_rows = input.valid_columns;
+    let new_columns = input.valid_rows;
+    result.rows = new_rows;
+    result.columns = new_columns;
+    result.valid_rows = new_rows;
+    result.valid_columns = new_columns;
+    result.storage_rows = new_rows;
+    result.storage_columns = new_columns;
+    result.storage_bytes = TileStorageBytes(new_rows, new_columns,
+        input.data_type) as integer {0..262144};
+    result.capacity_bytes = result.storage_bytes;
+    result.cube_k_repeat = 0;
+    result.cube_n_repeat = 0;
+    result.cube_cell_count = 0;
+    result.layout = TileLayout_RowMajor;
+    result.contents_defined = FALSE;
+    result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
+    result.defined_valid_elements = 0;
+    var payload: TilePayload = Zeros{PTO_MODEL_TILE_ELEMENTS};
+    for row = 0 to input.valid_rows - 1 looplimit 65536 do
+        for column = 0 to input.valid_columns - 1 looplimit 65536 do
+            let source_element = TileLinearIndex(input,
+                row as integer {0..65535}, column as integer {0..65535});
+            let destination_element = TileLinearIndex(result,
+                column as integer {0..65535}, row as integer {0..65535});
+            payload[[destination_element]] = input.payload[[source_element]];
+            result.defined_elements[destination_element] = '1';
+        end;
+    end;
+    result.payload = payload;
+    result.defined_valid_elements = new_rows * new_columns;
+    result.contents_defined = input.contents_defined;
+    return result;
+end;
+
+func NormalizeSharedMatrix(input: TileInfo, transpose: boolean) => TileInfo
+begin
+    if transpose then return TransposeSharedMatrix(input); end;
+    return input;
+end;
+
+func NormalizeSharedGroupRows(input: TileInfo) => TileInfo
+begin
+    let encoded = TileMatrixEncodedGroupM();
+    if encoded == 0 || encoded > 128 then return input; end;
+    let rows = TileCubeGroupPEValidM(encoded, 0);
+    if rows == 0 || rows >= input.valid_rows then return input; end;
+    var result = input;
+    result.valid_rows = rows;
+    result.defined_valid_elements = rows * result.valid_columns;
+    result.contents_defined = input.contents_defined;
+    return result;
+end;
+
 readonly func BundleSharedCubeSchemaLegal(function: integer {0..31},
                                            shared_count: integer {0..4},
                                            local_count: integer {0..32})
@@ -117,6 +190,7 @@ begin
        !BundleTileBindingStreamTerminated() ||
        !SelectedBundleTileDataAttributesLegal(operation) ||
        !SelectedBundleTileMasksLegal() ||
+       !BundleSharedCubeTransposeLegal(shared_count) ||
        _BundleTileBindings[[0]].pe_mask != '1111' ||
        !BundleSharedCubeDescriptorsReady(shared_count as integer {1..4}) ||
        !ResolveBundleTileDestinations() then
@@ -137,7 +211,9 @@ begin
     var accumulate = FALSE;
     if function <= 2 then
         if shared_count == 1 then
-            right = MaterializeSharedTile(BundleSharedBindingId(0), '1111');
+            right = NormalizeSharedMatrix(
+                MaterializeSharedTile(BundleSharedBindingId(0), '1111'),
+                _BundleFixedPointAttributes.trans_b);
             if function == 0 then
                 left = _Tiles[[operands.source0]];
             elsif function == 1 then
@@ -150,8 +226,12 @@ begin
                 accumulate = TRUE;
             end;
         else
-            left = MaterializeSharedTile(BundleSharedBindingId(0), '1111');
-            right = MaterializeSharedTile(BundleSharedBindingId(1), '1111');
+            left = NormalizeSharedGroupRows(NormalizeSharedMatrix(
+                MaterializeSharedTile(BundleSharedBindingId(0), '1111'),
+                _BundleFixedPointAttributes.trans_a));
+            right = NormalizeSharedMatrix(
+                MaterializeSharedTile(BundleSharedBindingId(1), '1111'),
+                _BundleFixedPointAttributes.trans_b);
             if function == 1 then
                 bias = operands.source0;
                 use_bias = TRUE;
@@ -173,7 +253,9 @@ begin
             bias, use_bias, accumulate);
     else
         if shared_count == 2 then
-            right = MaterializeSharedTile(BundleSharedBindingId(0), '1111');
+            right = NormalizeSharedMatrix(
+                MaterializeSharedTile(BundleSharedBindingId(0), '1111'),
+                _BundleFixedPointAttributes.trans_b);
             right_scale = MaterializeSharedTile(
                 BundleSharedBindingId(1), '1111');
             if function == 4 then
@@ -191,10 +273,14 @@ begin
                 accumulate = TRUE;
             end;
         else
-            left = MaterializeSharedTile(BundleSharedBindingId(0), '1111');
-            left_scale = MaterializeSharedTile(
-                BundleSharedBindingId(1), '1111');
-            right = MaterializeSharedTile(BundleSharedBindingId(2), '1111');
+            left = NormalizeSharedGroupRows(NormalizeSharedMatrix(
+                MaterializeSharedTile(BundleSharedBindingId(0), '1111'),
+                _BundleFixedPointAttributes.trans_a));
+            left_scale = NormalizeSharedGroupRows(MaterializeSharedTile(
+                BundleSharedBindingId(1), '1111'));
+            right = NormalizeSharedMatrix(
+                MaterializeSharedTile(BundleSharedBindingId(2), '1111'),
+                _BundleFixedPointAttributes.trans_b);
             right_scale = MaterializeSharedTile(
                 BundleSharedBindingId(3), '1111');
             if function == 5 then

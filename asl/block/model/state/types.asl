@@ -110,7 +110,12 @@ type BundleFixedPointAttributes of record {
     row_max_en: boolean,
     group_max_en: boolean,
     row_max_init: boolean,
-    max_abs_en: boolean
+    max_abs_en: boolean,
+    // Shared-input logical transpose controls.  They are latched with the
+    // complete-bundle B.FPATR descriptor and validated against resolved
+    // operand bindings at matrix dispatch time.
+    trans_a: boolean,
+    trans_b: boolean
 };
 
 // ACR0 is the root ring. The active profile defines permissions and the

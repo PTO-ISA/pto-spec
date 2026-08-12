@@ -50,7 +50,9 @@ begin
                 CommandDecodedBool(instruction, form, CommandField_RowMaxEn),
                 CommandDecodedBool(instruction, form, CommandField_GroupMaxEn),
                 CommandDecodedBool(instruction, form, CommandField_RowMaxInit),
-                CommandDecodedBool(instruction, form, CommandField_MaxAbsEn));
+                CommandDecodedBool(instruction, form, CommandField_MaxAbsEn),
+                CommandDecodedBool(instruction, form, CommandField_TransA),
+                CommandDecodedBool(instruction, form, CommandField_TransB));
         when CommandHandler_SetBundleDimension =>
             if CommandOperandPresent(form, CommandField_RegSrc) then
                 SetBundleDimension(CommandDecodedBundleDimension(instruction, form),

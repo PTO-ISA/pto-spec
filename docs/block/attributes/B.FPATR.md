@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/attributes/B.FPATR.asl`
 
-Latches complete-bundle matrix post-processing mode, reduction enables, and fixed-point descriptor controls.
+Latches complete-bundle matrix post-processing mode, reduction enables, and Shared-input transpose controls.
 
 ## Normative identity {#PTO-INST-BLOCK-B-FPATR}
 
@@ -14,14 +14,14 @@ The current instruction contract is owned by the ASL source linked above.
 ## Assembly
 
 ```asm
-B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn
+B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB
 ```
 
 ## Encoding
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| b_fpatr_32_4f2db11e8e8a | L32 | 32 | 0x00002023 / 0x00007fff | [{"field":"PreQuantMode","operator":"one-of","values":[0,1,2,3,4,5,12,13,16,17,18,19,20,23,24,25,26,27,28,32,33,34,35,36,37,38,39]},{"field":"ReluMode","operator":"one-of","values":[0,1,2,3]},{"field":"GroupNCode","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9]},{"field":"RowMaxEn","operator":"one-of","values":[0,1]},{"field":"GroupMaxEn","operator":"one-of","values":[0,1]},{"field":"RowMaxInit","operator":"one-of","values":[0,1]},{"field":"MaxAbsEn","operator":"one-of","values":[0,1]},{"field":"Func","operator":"one-of","values":[2]},{"field":"ElementWiseEn","operator":"one-of","values":[0]},{"field":"Opc1","operator":"one-of","values":[2]},{"field":"Opcode","operator":"one-of","values":[1]},{"field":"W","operator":"one-of","values":[1]}] |
+| b_fpatr_32_4f2db11e8e8a | L32 | 32 | 0x00002023 / 0x00007e7f | [{"field":"PreQuantMode","operator":"one-of","values":[0,1,2,3,4,5,12,13,16,17,18,19,20,23,24,25,26,27,28,32,33,34,35,36,37,38,39]},{"field":"ReluMode","operator":"one-of","values":[0,1,2,3]},{"field":"GroupNCode","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9]},{"field":"RowMaxEn","operator":"one-of","values":[0,1]},{"field":"GroupMaxEn","operator":"one-of","values":[0,1]},{"field":"RowMaxInit","operator":"one-of","values":[0,1]},{"field":"MaxAbsEn","operator":"one-of","values":[0,1]},{"field":"TransA","operator":"one-of","values":[0,1]},{"field":"TransB","operator":"one-of","values":[0,1]},{"field":"Func","operator":"one-of","values":[2]},{"field":"ElementWiseEn","operator":"one-of","values":[0]},{"field":"Opc1","operator":"one-of","values":[2]},{"field":"Opcode","operator":"one-of","values":[1]},{"field":"W","operator":"one-of","values":[1]}] |
 
 ### Fields
 
@@ -34,9 +34,11 @@ B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, Ma
 | b_fpatr_32_4f2db11e8e8a | GroupMaxEn | 1 | encoding-defined | [{"instruction_lsb":17,"value_lsb":0,"width":1}] |
 | b_fpatr_32_4f2db11e8e8a | RowMaxInit | 1 | encoding-defined | [{"instruction_lsb":16,"value_lsb":0,"width":1}] |
 | b_fpatr_32_4f2db11e8e8a | MaxAbsEn | 1 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":1}] |
+| b_fpatr_32_4f2db11e8e8a | TransA | 1 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":1}] |
+| b_fpatr_32_4f2db11e8e8a | TransB | 1 | encoding-defined | [{"instruction_lsb":8,"value_lsb":0,"width":1}] |
 | b_fpatr_32_4f2db11e8e8a | Func | 3 | encoding-defined | [{"instruction_lsb":12,"value_lsb":0,"width":3}] |
 | b_fpatr_32_4f2db11e8e8a | ElementWiseEn | 1 | encoding-defined | [{"instruction_lsb":11,"value_lsb":0,"width":1}] |
-| b_fpatr_32_4f2db11e8e8a | Reserved | 4 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":4}] |
+| b_fpatr_32_4f2db11e8e8a | Reserved | 2 | encoding-defined | [{"instruction_lsb":9,"value_lsb":0,"width":2}] |
 | b_fpatr_32_4f2db11e8e8a | Opc1 | 3 | encoding-defined | [{"instruction_lsb":4,"value_lsb":0,"width":3}] |
 | b_fpatr_32_4f2db11e8e8a | Opcode | 3 | encoding-defined | [{"instruction_lsb":1,"value_lsb":0,"width":3}] |
 | b_fpatr_32_4f2db11e8e8a | W | 1 | encoding-defined | [{"instruction_lsb":0,"value_lsb":0,"width":1}] |
@@ -52,6 +54,8 @@ B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, Ma
 | GroupMaxEn | encoded operand or control |
 | RowMaxInit | encoded operand or control |
 | MaxAbsEn | encoded operand or control |
+| TransA | encoded operand or control |
+| TransB | encoded operand or control |
 | Func | encoded operand or control |
 | ElementWiseEn | encoded operand or control |
 | Reserved | encoded operand or control |
@@ -202,11 +206,11 @@ end;
 
 ## Legality and exceptions
 
-- **Constraints:** `[{"field": "PreQuantMode", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 28, 32, 33, 34, 35, 36, 37, 38, 39]}, {"field": "ReluMode", "operator": "one-of", "values": [0, 1, 2, 3]}, {"field": "GroupNCode", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}, {"field": "RowMaxEn", "operator": "one-of", "values": [0, 1]}, {"field": "GroupMaxEn", "operator": "one-of", "values": [0, 1]}, {"field": "RowMaxInit", "operator": "one-of", "values": [0, 1]}, {"field": "MaxAbsEn", "operator": "one-of", "values": [0, 1]}, {"field": "Func", "operator": "one-of", "values": [2]}, {"field": "ElementWiseEn", "operator": "one-of", "values": [0]}, {"field": "Opc1", "operator": "one-of", "values": [2]}, {"field": "Opcode", "operator": "one-of", "values": [1]}, {"field": "W", "operator": "one-of", "values": [1]}]`
+- **Constraints:** `[{"field": "PreQuantMode", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 28, 32, 33, 34, 35, 36, 37, 38, 39]}, {"field": "ReluMode", "operator": "one-of", "values": [0, 1, 2, 3]}, {"field": "GroupNCode", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}, {"field": "RowMaxEn", "operator": "one-of", "values": [0, 1]}, {"field": "GroupMaxEn", "operator": "one-of", "values": [0, 1]}, {"field": "RowMaxInit", "operator": "one-of", "values": [0, 1]}, {"field": "MaxAbsEn", "operator": "one-of", "values": [0, 1]}, {"field": "TransA", "operator": "one-of", "values": [0, 1]}, {"field": "TransB", "operator": "one-of", "values": [0, 1]}, {"field": "Func", "operator": "one-of", "values": [2]}, {"field": "ElementWiseEn", "operator": "one-of", "values": [0]}, {"field": "Opc1", "operator": "one-of", "values": [2]}, {"field": "Opcode", "operator": "one-of", "values": [1]}, {"field": "W", "operator": "one-of", "values": [1]}]`
 
 ## Operational information
 
-- **Semantic summary:** `Latches complete-bundle matrix post-processing mode, reduction enables, and fixed-point descriptor controls.`
+- **Semantic summary:** `Latches complete-bundle matrix post-processing mode, reduction enables, and Shared-input transpose controls.`
 - **Semantic handler:** `SetBundleFixedPointAttributes`
 
 <!-- SUPPLEMENTARY-BEGIN -->

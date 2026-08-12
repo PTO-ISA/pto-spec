@@ -89,6 +89,8 @@ begin
     _BundleFixedPointAttributes.group_max_en = FALSE;
     _BundleFixedPointAttributes.row_max_init = FALSE;
     _BundleFixedPointAttributes.max_abs_en = FALSE;
+    _BundleFixedPointAttributes.trans_a = FALSE;
+    _BundleFixedPointAttributes.trans_b = FALSE;
     _TileDataLayoutCapabilities = Zeros{32};
     _TileDataLayoutCapabilities[0] = '1';
     // PTO CUBE CELL conversions are architectural B.DATR layouts, not

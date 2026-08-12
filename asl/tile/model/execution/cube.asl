@@ -2,8 +2,8 @@
 // PTO-REQ-CUBE-001: profile-defined matrix arithmetic with portable integer
 // defaults. DavinciOO v5 CUBE operations name their Local destination D
 // explicitly. ACC forms also name their Local accumulator input C explicitly;
-// C is snapshotted before D is written so D == C has read-old/write-new
-// behavior.
+// complete-bundle destinations are distinct freshly allocated Tiles; D==C
+// reuse is deferred and rejected by legality.
 
 impdef func TileProfileMatrixAccumulate(accumulator: Word, left: Word, right: Word,
                                          destination_type: TileDataType,
@@ -79,13 +79,15 @@ begin
         assert accumulator_tile.valid_columns == right_tile.valid_columns;
         assert accumulator_tile.data_type == accumulator_data_type;
         assert accumulator_tile.layout == destination_tile.layout;
-        assert accumulator_tile.capacity_bytes == destination_tile.capacity_bytes;
+        assert destination != accumulator;
     end;
 
     let left_payload = left_tile.payload;
     let right_payload = right_tile.payload;
+    // Preserve D's dtype/layout in the result descriptor so CUBE payload
+    // indexing remains parameterized by destination storage geometry.
+    // Arithmetic itself uses the independent FP32/S32 accumulator domain.
     var result: TileInfo = destination_tile;
-    result.data_type = accumulator_data_type;
     result.contents_defined = FALSE;
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
@@ -109,7 +111,7 @@ begin
                     inner as integer {0..65535}, column as integer {0..65535});
                 sum = TileProfileMatrixAccumulate(sum,
                     left_payload[[left_element]], right_payload[[right_element]],
-                    result.data_type, left_tile.data_type,
+                    accumulator_data_type, left_tile.data_type,
                     right_tile.data_type);
             end;
             result_payload[[result_element]] = sum;
@@ -188,15 +190,16 @@ begin
         assert accumulator_tile.valid_columns == right_tile.valid_columns;
         assert accumulator_tile.data_type == accumulator_data_type;
         assert accumulator_tile.layout == destination_tile.layout;
-        assert accumulator_tile.capacity_bytes == destination_tile.capacity_bytes;
+        assert destination != accumulator;
     end;
 
     let left_payload = left_tile.payload;
     let right_payload = right_tile.payload;
     let left_scale_payload = left_scale_tile.payload;
     let right_scale_payload = right_scale_tile.payload;
+    // Preserve D's dtype/layout for CUBE payload indexing; scaled arithmetic
+    // still accumulates in the profile-selected FP32/S32 domain.
     var result: TileInfo = destination_tile;
-    result.data_type = accumulator_data_type;
     result.contents_defined = FALSE;
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
@@ -229,7 +232,7 @@ begin
                     right_payload[[right_element]],
                     left_scale_payload[[left_scale_element]],
                     right_scale_payload[[right_scale_element]],
-                    result.data_type, left_tile.data_type,
+                    accumulator_data_type, left_tile.data_type,
                     right_tile.data_type, left_scale_tile.data_type,
                     right_scale_tile.data_type);
             end;

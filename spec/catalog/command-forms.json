@@ -1,6 +1,6 @@
 {
   "form_count": 100,
-  "form_constraint_count": 56,
+  "form_constraint_count": 58,
   "forms": [
     {
       "asm": "B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}",
@@ -5640,7 +5640,7 @@
       "status": "accepted"
     },
     {
-      "asm": "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn",
+      "asm": "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB",
       "constraints": [
         {
           "field": "PreQuantMode",
@@ -5734,6 +5734,22 @@
           ]
         },
         {
+          "field": "TransA",
+          "operator": "one-of",
+          "values": [
+            0,
+            1
+          ]
+        },
+        {
+          "field": "TransB",
+          "operator": "one-of",
+          "values": [
+            0,
+            1
+          ]
+        },
+        {
           "field": "Func",
           "operator": "one-of",
           "values": [
@@ -5772,7 +5788,7 @@
       "encoding": [
         {
           "index": 0,
-          "mask": "0x00007fff",
+          "mask": "0x00007e7f",
           "match": "0x00002023",
           "width_bits": 32
         }
@@ -5864,6 +5880,30 @@
           "width": 1
         },
         {
+          "name": "TransA",
+          "pieces": [
+            {
+              "instruction_lsb": 7,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
+        },
+        {
+          "name": "TransB",
+          "pieces": [
+            {
+              "instruction_lsb": 8,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
+        },
+        {
           "name": "Func",
           "pieces": [
             {
@@ -5891,13 +5931,13 @@
           "name": "Reserved",
           "pieces": [
             {
-              "instruction_lsb": 7,
+              "instruction_lsb": 9,
               "value_lsb": 0,
-              "width": 4
+              "width": 2
             }
           ],
           "signedness": "encoding-defined",
-          "width": 4
+          "width": 2
         },
         {
           "name": "Opc1",
@@ -5942,13 +5982,13 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Fixed-Point PostProcess Attribute",
       "semantic_handler": "SetBundleFixedPointAttributes",
-      "semantic_summary": "Latches complete-bundle matrix post-processing mode, reduction enables, and fixed-point descriptor controls.",
+      "semantic_summary": "Latches complete-bundle matrix post-processing mode, reduction enables, and Shared-input transpose controls.",
       "status": "accepted"
     }
   ],
   "isa": "PTO Instruction Set Architecture",
-  "operand_field_count": 70,
-  "operand_piece_count": 203,
+  "operand_field_count": 72,
+  "operand_piece_count": 205,
   "reviewed_encoding_overlaps": [
     {
       "broad_form_id": "b_iot_32_10db6db84f5d",

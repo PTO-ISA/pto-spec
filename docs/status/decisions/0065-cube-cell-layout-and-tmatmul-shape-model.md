@@ -20,7 +20,7 @@ The upstream PR defines the byte arrangement inside one 128-byte CELL. The PTO
 work additionally has to define persistent Local Tile layouts, multi-CELL
 geometry, GM-to-Local conversion, PE-level versus group-level matrix
 multiplication, arbitrary valid tails, Shared-input transpose, and accumulator
-aliasing.
+input/output separation.
 
 ## Source boundary
 
@@ -299,11 +299,12 @@ used as the next C. For the final quantizing chunk, C remains FP32/S32 while D
 may have a lower or otherwise different dtype; that D is not a later
 accumulator input.
 
-`D == C` is legal only for the non-final accumulator-preserving case, with the
-same accumulator dtype, CUBE layout class, storage geometry, and capacity. The
-operation observes a snapshot of C before writing D. Final quantization with a
-different dtype or storage geometry requires distinct C and D Tiles and is not
-an atomic in-place replacement.
+`D` and `C` must be distinct Tiles for every `TMATMUL_ACC` operation, including
+the non-final accumulator-preserving case. The accepted complete-bundle
+destination forms allocate a fresh destination and carry no reuse/alias bit, so
+this change does not add an in-place accumulator form. A non-final FP32/S32 D
+may be bound as C by a later operation after the current operation commits.
+Final quantization likewise writes a distinct D Tile.
 
 The existing ASL accumulator legality must consequently stop reusing
 destination-output legality for C.
@@ -358,12 +359,13 @@ defined here.
    and rejects values above 128.
 7. `TransA` and `TransB` affect only corresponding Shared inputs and normalize
    the logical operand before matrix multiplication.
-8. `TMATMUL_ACC` accepts FP32/S32 C independently of a quantized D type;
-   accumulator-preserving in-place aliasing works and final-quantizing aliasing
-   is rejected.
+8. `TMATMUL_ACC` accepts FP32/S32 C independently of a quantized D type and
+   requires D to be distinct from C for both accumulator-preserving and final
+   quantizing operations.
 9. Focused executable tests cover every CELL dtype row, repeat-boundary tails,
    M values 1/64/65/128, invalid M values, transpose legality, quantized ACC,
-   aliasing, capacity overflow, zero mask, and no-effect-on-fault behavior.
+   distinct C/D enforcement, capacity overflow, zero mask, and
+   no-effect-on-fault behavior.
 10. Catalogs, generated Markdown, runtime mirrors, source indices, and V1
     checks agree with normative ASL.
 
@@ -372,7 +374,8 @@ defined here.
 The DESIGN contract is frozen. All architecture-visible choices needed by
 APPLY are resolved, including the six layout encodings, dtype-preserving
 width-based layout conversion, `B.FPATR` transpose bits, zero-mask precedence,
-CELL mappings, repeat order, group-M derivation, and accumulator aliasing.
+CELL mappings, repeat order, group-M derivation, and distinct accumulator
+input/output bindings.
 
 The exact ASL representation of per-PE private descriptors is not considered
 an open architecture choice if it preserves the observable contract above.
@@ -390,7 +393,7 @@ representation, but may not introduce shared persistent `MShard4` metadata.
   zero-mask strict no-op; ADR 0065 supersedes only its group `MShard4` M rule
   for group `TMATMUL`.
 - ADR 0064 for complete-bundle PostProcess ordering and state; ADR 0065 refines
-  C/D layout, accumulator input, and in-place-alias legality.
+  C/D layout, accumulator input, and the requirement for a distinct D Tile.
 - Upstream layout input: public CUBE layout PR #33, merge commit
   `95d1340b46a5c16dd65a40fee4652fc02095fe35`.
 
@@ -431,8 +434,8 @@ representation, but may not introduce shared persistent `MShard4` metadata.
 - Add `B.FPATR.TransA=[7]` and `TransB=[8]`; bits `[10:9]` stay reserved zero.
   Each transpose is legal only for its corresponding Shared source.
 - Separate FP32/S32 accumulator-input legality from post-processed D legality.
-  Permit read-old/write-new `D==C` only for accumulator-preserving output and
-  reject final-quantizing in-place aliasing.
+  Require D to be distinct from C for both accumulator-preserving and
+  final-quantizing output.
 
 ### Protected / unchanged
 
@@ -445,6 +448,8 @@ representation, but may not introduce shared persistent `MShard4` metadata.
   metadata. GM/Shared is raw base-plus-row-stride transfer with no conversion.
 - Local/Shared conversion, generic VEC/SFU/rearrangement support for CUBE
   layouts, and arbitrary CUBE-to-CUBE conversion remain out of scope.
+- Complete-bundle destination reuse/alias encoding and `D==C` matrix execution
+  are deferred. No accepted `B.IOT` destination form carries a reuse bit.
 - Existing TMATMUL dtype-profile legality remains independent of layout
   transfer legality. Layout conversion does not widen the legal matrix profile.
 - PostProcess still consumes the full accumulator result before producing D;
@@ -466,9 +471,10 @@ representation, but may not introduce shared persistent `MShard4` metadata.
    mandatory `B.FPATR`, canonical explicit zero-bit no-transpose, reserved
    `[10:9]` rejection, Local-source transpose rejection, and correct logical
    results after transpose.
-5. Decoded `TMATMUL_ACC` proves FP32/S32 C with a differently typed final D,
-   accumulator-preserving read-old/write-new aliasing, final-quantizing alias
-   rejection, and no partial destination or memory effect on every fault.
+5. Decoded `TMATMUL_ACC` proves FP32/S32 C with a freshly allocated,
+   accumulator-preserving or differently typed final D and proves no partial
+   destination or memory effect on every fault. Owner legality rejects direct
+   `D==C`; no decoded alias form exists in this contract.
 6. Normative owners, catalogs, generated Markdown, navigation, runtime mirrors,
    traceability, and the acceptance-to-test evidence matrix agree at the final
    candidate HEAD.
@@ -482,8 +488,8 @@ current repository PR gates `make pr-check`, `make repo-check`, and
 ### Executor effort
 
 XHigh. APPLY crosses complete-bundle encoding/state, persistent descriptors,
-non-dense indexing, memory effects, group execution, aliasing, and a broad
-decoded negative-path matrix.
+non-dense indexing, memory effects, group execution, distinct C/D enforcement,
+and a broad decoded negative-path matrix.
 
 ### Staged APPLY orchestration
 
@@ -504,7 +510,7 @@ revert or reinterpret it. No stage is pushed or opened as a separate PR.
 |---|---|---|
 | A | Add the three persistent CUBE layouts, dtype-specific CELL mappings, derived storage geometry, arbitrary valid-region support, layout-specific indexing, capacity, and definedness. Do not yet accept new transfer encodings. | Focused mapping/shape evidence covers every width, M16-b4, repeat boundaries, arbitrary tails, capacity overflow, and descriptor persistence. Sol accepts the state-model diff and pins the checkpoint HEAD. |
 | B | Add `B.DATR.Layout` values 21 through 26 and close GM/Local `TLOAD`/`TSTORE` conversion legality, memory effects, faults, and decoded evidence in the same stage. | All six directions, b32/b16/b8/b4 raw preservation, b64 rejection, no access outside valid geometry, and Shared/Local-Shared rejection pass through decoded normal paths. Sol accepts the TLSU diff and pins the checkpoint HEAD. |
-| C | Close the complete matrix family together: PE/group binding topology, group valid-M derivation, `B.FPATR.TransA/TransB`, Shared logical transpose, C/D layout derivation, `TMATMUL_ACC` accumulator typing, PostProcess output, aliasing, transactional faults, and decoded evidence. | M boundaries, N greater than 8, K/N tails, transpose/default/reserved cases, quantized final D, alias read-old/write-new, zero mask, and no-effect-on-fault are observable through decoded paths. Sol accepts the CUBE diff and pins the checkpoint HEAD. |
+| C | Close the complete matrix family together: PE/group binding topology, group valid-M derivation, `B.FPATR.TransA/TransB`, Shared logical transpose, C/D layout derivation, `TMATMUL_ACC` accumulator typing, PostProcess output, distinct C/D enforcement, transactional faults, and decoded evidence. | M boundaries, N greater than 8, K/N tails, transpose/default/reserved cases, freshly allocated accumulator-preserving and quantized D, zero mask, and no-effect-on-fault are observable through decoded paths; owner legality rejects direct `D==C`. Sol accepts the CUBE diff and pins the checkpoint HEAD. |
 | D | Perform integration closure only: programming guidance, generated projections, catalogs, navigation, traceability, acceptance-to-test matrix, regression repair, scope audit, and final V1 gates. | Final candidate passes focused checks, `make pr-check`, `make repo-check`, and `git diff --check`; Sol performs the final semantic review before any authorized push or PR creation. |
 
 At each checkpoint the executor returns the exact HEAD, normative owners and

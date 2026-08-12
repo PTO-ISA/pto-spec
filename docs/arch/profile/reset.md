@@ -134,6 +134,8 @@ begin
         _TrapContexts[[ring]].bundle_fixed_point_attributes.group_max_en = FALSE;
         _TrapContexts[[ring]].bundle_fixed_point_attributes.row_max_init = FALSE;
         _TrapContexts[[ring]].bundle_fixed_point_attributes.max_abs_en = FALSE;
+        _TrapContexts[[ring]].bundle_fixed_point_attributes.trans_a = FALSE;
+        _TrapContexts[[ring]].bundle_fixed_point_attributes.trans_b = FALSE;
         _TrapContexts[[ring]].t_queue = _TQueue;
         _TrapContexts[[ring]].u_queue = _UQueue;
         _TrapContexts[[ring]].execution_mask = Zeros{PTO_XLEN};
