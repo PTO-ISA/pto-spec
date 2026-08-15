@@ -6,6 +6,10 @@
   PTO-REQ-SCALAR-EXECUTION-001, PTO-REQ-BUNDLE-STATE-001,
   PTO-REQ-SCALAR-OPERAND-001
 
+> The ADDTPC and HL.ADDTPC rule in this record is superseded and narrowed by
+> [ADR 0065](0065-addtpc-page-scaling-correction.md). The branch, jump, and
+> SETRET rules remain in force.
+
 ## Decision
 
 Scalar conditions consume complete 64-bit operands. `EQ` and `NE` compare the
@@ -49,12 +53,12 @@ instruction-memory target policy must name and test a new architectural hook;
 it cannot silently refine this portable rule.
 
 `ADDTPC` and `HL.ADDTPC` use signed 20-bit and 32-bit immediates respectively,
-shift them left by one, and write through the normal Reg5 destination rules.
-Their catalog constraint rejects R10 as an encoded destination. `SETRET` and
-`HL.SETRET` use unsigned 20-bit and 32-bit immediates, shift them left by one,
-and atomically write the same wrapped target to R10 and the bundle return
-address. Normal sequential TPC advancement remains the dispatch boundary's
-responsibility.
+shift them left by twelve for 4-KiB page scaling, and write through the normal
+Reg5 destination rules. ADR 0065 owns this correction. Their catalog constraint
+rejects R10 as an encoded destination. `SETRET` and `HL.SETRET` use unsigned
+20-bit and 32-bit immediates, shift them left by one, and atomically write the
+same wrapped target to R10 and the bundle return address. Normal sequential TPC
+advancement remains the dispatch boundary's responsibility.
 
 ## Rationale
 
@@ -63,9 +67,10 @@ source/destination overlap legal. The target rules must therefore define queue
 sources, source snapshots, destination pushes, wrapping, and fault effects
 rather than relying on host evaluation order or an implementation fetch unit.
 
-An independent executable ISA/model comparison corroborates halfword-scaled
-offsets, signed relative displacements, predicate-based conditional control,
-wrapped PC-relative arithmetic, and synchronized return-address effects. Its
+An independent executable ISA/model comparison corroborates the shared branch,
+jump, and return-address halfword-scaled offsets, signed relative
+displacements, predicate-based conditional control, wrapped PC-relative
+arithmetic, and synchronized return-address effects. Its
 additional start-marker target policy is intentionally not imported: PTO v0
 does not expose the state needed to evaluate that policy. PTO owns the rules
 above, and the comparison is evidence rather than authority.

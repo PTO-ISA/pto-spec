@@ -403,6 +403,14 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
         else:
             classification = "non-comparable"
             disposition = "Independent model decodes the form but does not provide executable semantics for this row."
+        if row["mnemonic"] in {"ADDTPC", "HL.ADDTPC"} and status == "executable-subset":
+            classification = "divergence"
+            displacement_name = row["mnemonic"]
+            disposition = (
+                f"The pinned independent snapshot retains halfword-scaled {displacement_name} behavior. "
+                "PTO ADR 0065 and ASL define signed page-scaled "
+                f"{displacement_name}; this semantic divergence is explicit and PTO-owned semantics remain authoritative."
+            )
         rows.append(
             {
                 "surface": "scalar",
@@ -419,6 +427,8 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
                     "spec/catalog/scalar-forms.json",
                     "spec/evidence/scalar-effect-closure.json",
                     "tests/asl/scalar-tests.asl",
+                    *(["docs/status/decisions/0065-addtpc-page-scaling-correction.md"]
+                      if row["mnemonic"] in {"ADDTPC", "HL.ADDTPC"} else []),
                 ],
             }
         )

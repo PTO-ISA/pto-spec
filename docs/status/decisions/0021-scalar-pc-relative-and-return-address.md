@@ -4,6 +4,10 @@
 - Date: 2026-07-29
 - Requirement: PTO-REQ-SCALAR-CONTROL-001
 
+> The ADDTPC and HL.ADDTPC rule in this record is superseded and narrowed by
+> [ADR 0065](0065-addtpc-page-scaling-correction.md). The SETRET rules below
+> remain in force.
+
 ## Context
 
 PTO exposes TPC as the current scalar instruction address and names R10 as the
@@ -14,7 +18,8 @@ rest of the TPC execution contract.
 
 ## Decision
 
-- `ADDTPC` and `HL.ADDTPC` compute `TPC + (sign-extended immediate << 1)`.
+- `ADDTPC` and `HL.ADDTPC` compute `TPC + (sign-extended immediate << 12)`;
+  this correction is owned by ADR 0065.
 - `SETRET`, `HL.SETRET`, and `C.SETRET` compute `TPC + (immediate << 1)`.
 - `SETRET` writes the computed target to architectural R10 (`ra`) and mirrors
   it into the bundle-local return-address state used by return bundle starts,

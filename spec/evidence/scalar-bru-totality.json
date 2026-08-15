@@ -120,7 +120,7 @@
       "dimensions": [
         "signed-20-bit-immediate",
         "signed-32-bit-immediate",
-        "halfword-scaling",
+        "page-scaling (4-KiB)",
         "pre-increment-TPC-base",
         "64-bit-wrap",
         "normal-Reg5-destination"

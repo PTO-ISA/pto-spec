@@ -411,7 +411,7 @@
       ],
       "status": "decoded-effect-tested",
       "visible_assertions": [
-        "the decoded signed immediate is halfword-scaled and added to the pre-increment TPC",
+        "the decoded signed immediate is page-scaled (4-KiB pages) and added to the pre-increment TPC",
         "the destination value and sequential TPC update are independently asserted",
         "sources, unrelated state, fault result, and time satisfy the shared attempt contract"
       ]

@@ -137,17 +137,18 @@
       "surface": "scalar"
     },
     {
-      "classification": "comparable-match",
+      "classification": "divergence",
       "encoding_match": true,
       "evidence": [
         "spec/catalog/scalar-forms.json",
         "spec/evidence/scalar-effect-closure.json",
-        "tests/asl/scalar-tests.asl"
+        "tests/asl/scalar-tests.asl",
+        "docs/status/decisions/0065-addtpc-page-scaling-correction.md"
       ],
       "independent_status": "executable-subset",
       "index": 5,
       "mnemonic": "ADDTPC",
-      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
+      "pto_disposition": "The pinned independent snapshot retains halfword-scaled ADDTPC behavior. PTO ADR 0065 and ASL define signed page-scaled ADDTPC; this semantic divergence is explicit and PTO-owned semantics remain authoritative.",
       "requirements": [
         "PTO-REQ-SCALAR-CONTROL-001",
         "PTO-REQ-SCALAR-EXECUTION-001"
@@ -2577,17 +2578,18 @@
       "surface": "scalar"
     },
     {
-      "classification": "comparable-match",
+      "classification": "divergence",
       "encoding_match": true,
       "evidence": [
         "spec/catalog/scalar-forms.json",
         "spec/evidence/scalar-effect-closure.json",
-        "tests/asl/scalar-tests.asl"
+        "tests/asl/scalar-tests.asl",
+        "docs/status/decisions/0065-addtpc-page-scaling-correction.md"
       ],
       "independent_status": "executable-subset",
       "index": 127,
       "mnemonic": "HL.ADDTPC",
-      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
+      "pto_disposition": "The pinned independent snapshot retains halfword-scaled HL.ADDTPC behavior. PTO ADR 0065 and ASL define signed page-scaled HL.ADDTPC; this semantic divergence is explicit and PTO-owned semantics remain authoritative.",
       "requirements": [
         "PTO-REQ-SCALAR-CONTROL-001",
         "PTO-REQ-SCALAR-EXECUTION-001"
@@ -14950,8 +14952,8 @@
   "status": "comparison-matrix-closed-clean-gates-passed:S5-T3",
   "summary": {
     "classification_counts": {
-      "comparable-match": 554,
-      "divergence": 90,
+      "comparable-match": 552,
+      "divergence": 92,
       "non-comparable": 39
     },
     "independent_status_counts": {
