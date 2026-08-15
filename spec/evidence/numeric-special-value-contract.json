@@ -5,7 +5,7 @@
   "checkpoint_id": "PD-05-SC2",
   "status": "named-hardware-special-value-checkpoint-accepted-pd05-open",
   "acceptance_record": "docs/status/decisions/0050-hardware-special-value-checkpoint.md",
-  "profile_id": "pto-hardware-numeric-0.58.0-ieee-v1",
+  "profile_id": "pto-hardware-numeric-0.58.1-ieee-v1",
   "policy": {
     "produced_nan": "canonical-destination-format-nan",
     "comparison_nan": "NE-true-all-other-relations-false",
@@ -556,8 +556,8 @@
   },
   "tests": {
     "sources": [
-      "tests/asl/profile-tests.asl",
-      "tests/asl/scalar-tests.asl"
+      "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl",
+      "tests/asl/scalar/model/fsu/arithmetic/scalar-exec-fp-dispatch-effects-001.asl"
     ],
     "entrypoints": [
       "ValidateNumericFormatClassification",
@@ -582,75 +582,79 @@
   "sources": [
     {
       "path": "docs/status/decisions/0050-hardware-special-value-checkpoint.md",
-      "sha256": "8743491d4ca91d06e7514082d0b878f18087ec9f70e010765153dd52cbd719b9"
+      "sha256": "d3153e2a28c89eedf60e3bcbbf3767636dd0f5d187b8d16a2ef99899b83c0420"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "c4076cf8ac6ebd0c6db8a070b7c290b9928ed7f98c089538ee53ed4644e1531a"
+      "sha256": "170deadacb174c933c287231fb67da1046d7989f84b6852bf353d68a495d1755"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "75f6b9d725c47ff06026b4ba7dde7be0e5d1892f2e9b955223602fb2bae402fe"
+      "sha256": "681d7a75e1aa58cfb9ba8ed06ce6e6b3a17786c87b11949098fe25470b7b8da1"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "0eae4a99230713271bdcff56dd02d6011988a32edd2971160748f40f174fad7c"
+      "sha256": "7c3005a7885e94537911d717b5ae977ced8ba088cd966934619cc82ba6dda03c"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "0fb686db56423c37d669f92058003d4668b0c183a9bd0428d25c4ae70b391670"
+      "sha256": "9f3841d568ffa73fcb43bf4fd365d3c4dba42d27acffa7e273e0f403c0f0c602"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "10e8bcfed47aee24719038ec07ecefe75aeaf342a0765cb15308da584242e1b8"
+      "sha256": "429fdeb37c2bd4b3e9a0d2c209f959b92c476860e81a3331e5d7df90c95970d3"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "7b35e8353c621a7448facada22a4175acc30e14377fdc2a7cb9c130ab1323d56"
+      "sha256": "55eb6eaf63ddfdcd918603a21673b53c198f448c6e8800e3389b28f43410fad8"
     },
     {
       "path": "asl/scalar/model/fsu/arithmetic.asl",
-      "sha256": "3860cbeee3636ec15db56994839f035769157b5afabaac48d15eaa7037396f51"
+      "sha256": "21bdc927b7c5e13f0db364ccb07d87a8e303b82041212bc2bb289e5fa9377288"
     },
     {
       "path": "asl/scalar/model/fsu/profile.asl",
-      "sha256": "201b595409610c79731244da60c8e1809cb0f3fdd2305d75d3fd156c6c220fbb"
+      "sha256": "c429ac19ea648dd0b0180a736af1fcd3990cb949b2397ca2e33003b3da593295"
     },
     {
       "path": "asl/scalar/model/dispatch/agu.asl",
-      "sha256": "9be69ee9b7036cae9f04979fdc1be30aaff071f349ce74c271f82b10f47f3344"
+      "sha256": "1e22037018ca860fef794052cda29bf99103c543ae2b6391fce292a5cba9f682"
     },
     {
       "path": "asl/scalar/model/dispatch/alu.asl",
-      "sha256": "3c7d42dc7b0fadad274c1aaa6c1718819bc9464cb936bc13ad74e21685e83b32"
+      "sha256": "fadf06ed6c43749bb1ee0d41596df7c3176542441aec5368c6cb70c232a5b1bc"
     },
     {
       "path": "asl/scalar/model/dispatch/amo.asl",
-      "sha256": "759e0cb12f19b8cbccf2ff797f72b63407d128d925531b3f37ca82357e193856"
+      "sha256": "6c1cbff9ffb76d530083ce68fc0b2b288475080ba5713b28d363f3fb23ea2666"
     },
     {
       "path": "asl/scalar/model/dispatch/bru.asl",
-      "sha256": "9b0160ea4246b13632acb34494e18f20b27663e05a799973d7b14a291939e5dc"
+      "sha256": "5e17dd87f241b57a46f28de258d2387c94a9e54d087ef078676ed988f9a113c2"
     },
     {
       "path": "asl/scalar/model/dispatch/decode.asl",
-      "sha256": "59ea6af4d7f9ccf85d69483e1903bf6faf5ca75b1864921e064d001fd972eb3d"
+      "sha256": "e998504bdb173641e9a42315c57a1ea8baf69f6e37c1f5dfd05b77c93b13d501"
     },
     {
       "path": "asl/scalar/model/dispatch/fsu.asl",
-      "sha256": "c0e08051db71ae8427c20f913ba70d0ad960b618c78bbae982a68c739535b163"
+      "sha256": "07ea4132a13f28b549578473df9ba986a9e6d107c3514ac300b5ea44bc0a54a3"
     },
     {
       "path": "asl/scalar/model/dispatch/sys.asl",
-      "sha256": "e05775b77eba292cdf8bbcdad4ff1fc6aed33dfe348f1975280647808c4a1308"
+      "sha256": "3962b4109ea93dfb583d5f27b5eff22367ddd1e33b55f364a5ce0b7dfa43e8e5"
     },
     {
       "path": "asl/scalar/model/dispatch/top-level.asl",
-      "sha256": "07c654528b9e9c6b4af6c9efb78a4e22f1c0492b80a232670621485c2b8e7409"
+      "sha256": "aa3ddf8835162b5c3f5692bcfb5e9d3aac64407c5feef8a58edddbb7d309657a"
     },
     {
-      "path": "tests/asl/profile-tests.asl",
-      "sha256": "47248debd7876d0117b0738a44d226e4352806581d574895a7f10a8cb8949f89"
+      "path": "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl",
+      "sha256": "ec317991843f696e06d7c2456002feef823107ed466de354a8e04c4c4218360d"
+    },
+    {
+      "path": "tests/asl/scalar/model/fsu/arithmetic/scalar-exec-fp-dispatch-effects-001.asl",
+      "sha256": "c524593e05c0f0f763f183dfd80c1e1561563c4d1f9af1d04b19b1c3b99598b5"
     }
   ],
   "summary": {

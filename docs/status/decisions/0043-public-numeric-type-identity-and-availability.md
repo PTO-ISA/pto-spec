@@ -15,11 +15,10 @@ to the public PTO type system. Without a checked binding, a familiar spelling
 such as `FP8`, `FPL8`, or `F64` could be mistaken for a published numeric type,
 and a backend-supported C++ carrier could silently become architecture.
 
-The public PTO type table at the pinned source revision names 16 element-type
-identities. It also gives an A2/A3 and A5 availability baseline. The public
-profile contract permits a target profile to narrow support, but not to
-redefine portable PTO semantics. The CPU simulator is implementation evidence;
-it is not a target-profile or numeric-result oracle.
+PTO names 16 public element-type identities and defines an A2/A3 and A5
+availability baseline. A target profile may narrow support but cannot redefine
+portable PTO semantics. Simulator behavior is not a target-profile or
+numeric-result definition.
 
 ## Decision
 
@@ -57,12 +56,6 @@ and exception vectors, record downstream byte-and-effect parity for the
 immutable hardware profile, and accept architecture and formal-model review
 against the exact 0.57.1 type contract.
 These four legality, vector, parity, and review residuals remain open.
-
-The pinned independent executable model is only structural evidence here. Its
-scalar type fields corroborate carrier namespaces, while its tile numeric
-selectors do not execute payload arithmetic and use code spaces that conflict
-with PTO catalog names. It therefore supplies neither these public bindings nor
-a result oracle.
 
 ## Evidence
 

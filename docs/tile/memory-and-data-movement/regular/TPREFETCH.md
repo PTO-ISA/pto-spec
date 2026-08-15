@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory-and-data-movement/regular/TPREFETCH.asl`
 
-Prefetch the requested GM byte range without producing a Tile destination.
+Prefetches a typed, strided GM rectangle for all four PEs without producing a Tile destination.
 
 ## Normative identity {#PTO-INST-TILE-TPREFETCH}
 
@@ -28,12 +28,22 @@ TPREFETCH <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TPREFETCH | TLSU |  | 3 |  | TPREFETCH |
 
+## Encoding class
+
+- **Class:** `selector-encoded-block-operation`
+- **Standalone opcode:** `no`
+
+This operation has no standalone opcode.
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| address | base-address |
-| byte_count | byte-count |
+| address | per-PE GM base |
+| scalar0 | per-PE logical row stride in elements |
+| positive0 | ValidCol |
+| positive1 | ValidRow |
+| positive2 | physical Col |
 
 ## Decode
 
@@ -49,12 +59,10 @@ end;
 ## Block composition
 
 ```asm
-BSTART.TLSU TPREFETCH, DataType
-B.DATR (optional)
-B.DIM LB0
-B.DIM (LB1/LB2 for 2D)
-B.IOT
-B.IOR
+BSTART.TPREFETCH DataType
+B.DATR Layout (optional)
+B.DIM LB0/ValidCol, LB1/ValidRow, LB2/Col (optional)
+B.IOR base,row_stride (optional)
 BSTOP
 ```
 
@@ -69,18 +77,43 @@ end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- **Legality handler:** `TileOperandsLegal_TPREFETCH`
-- **Fault contract:** `ExecuteTileInstruction`
-- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
+- Omitted B.DATR selects NORM; omitted LB0 and LB1 each select one, and omitted LB2 selects resolved ValidCol.
+- Omitted B.IOR supplies base zero and dense row stride equal to resolved Col for every PE. Explicit zero selectors remain actual zero values.
 
-## Operational information
+## Legality
 
-- **Semantic handler:** `TPREFETCH`
-- **Effect contract:** `TPREFETCH`
-- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
-- **State effects:** `["operand:address:base-address", "operand:byte_count:byte-count"]`
+- TPREFETCH is selected only by BSTART.TPREFETCH at TLSU Function 3 and has no standalone opcode.
+- It has implicit participation 1111 and accepts no Local or Shared Tile binding.
+- ValidCol and ValidRow are positive; Col is a nonzero power of two and is at least ValidCol.
+- B.DATR permits only Layout as a nonzero operation attribute and requires the pad union to remain zero.
+
+## State effects
+
+- No destination Tile exists and no Tile or Shared state changes.
+- A successful attempt contributes only its typed memory-access and ordering events.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- For each PE, prefetch the same typed, strided ValidRow x ValidCol GM footprint that TLOAD would read from that PE's private base and row-stride GPR values.
+- The operation records TLOAD-equivalent typed-element load events but produces no destination. Cache placement and retention are not architecturally visible.
+
+### Ordering
+
+- Preflight all addresses and permissions for all four PEs before any event.
+- Use CurrentBundleMemoryOrder so aq/rl and PTO-TSO behavior match TLOAD.
+
+## Exceptions
+
+- Malformed dimensions, unsupported data attributes, any B.IOT or B.IOS, or any memory fault in the combined four-PE footprint rejects before the first request or event.
+- A rejected or faulting attempt changes no Tile, Shared, descriptor, payload, definedness, or allocation state.
+
+## Examples
+
+- BSTART.TPREFETCH U8; B.DIM zero, 16, ->LB0; B.DIM zero, 4, ->LB1; B.DIM zero, 32, ->LB2; B.IOR zero, a0; BSTOP
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

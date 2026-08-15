@@ -24,11 +24,6 @@ halfword of a word. The `.U` marker on the six writeback stores distinguishes
 them from their scaled register-offset counterparts and must remain observable
 with a nonzero offset.
 
-An independent executable ISA comparison corroborates the aligned PC-relative
-base and the intended unscaled naming, but its six unscaled-store execution
-paths conflict with its own comments. PTO therefore records and tests its own
-disposition rather than importing that implementation inconsistency.
-
 ## Verification
 
 Decoded PC-relative witnesses use a TPC with bit 1 set and assert an address

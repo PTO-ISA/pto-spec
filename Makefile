@@ -6,11 +6,19 @@ ASL_SOURCE_ORDER := build/asl-source-order.txt
 ASL_UNIT_SOURCES := $(shell find asl -type f -name '*.asl' | sort)
 SPEC := build/pto-spec.asl
 DECODER_SPEC := build/decoders.asl
+VALIDATION_INDEX := build/validation-index.json
+DECODER_GENERATION_INPUTS := $(ASL_UNIT_SOURCES) scripts/generate-asl-decoders \
+		scripts/project_asl_catalogs.py scripts/asl_units.py \
+		scripts/asl_validation_shards.py scripts/encoding_witness.py \
+		scripts/tile_taxonomy.py \
+		spec/catalog/numeric-profile-applicability.json \
+		spec/catalog/system-registers.json
 
 .PHONY: all setup build clean release-manifest release-evidence-check release-check release-prepare \
 	release-verify repo-check pr-check toolchain-check check test test-parallel ci \
 	check-asl-layout check-ndf check-asl-tests check-projections \
-	check-publication-hygiene check-release-event-schema print-asl-sources print-asl-tests
+	check-decoder-partition check-publication-hygiene check-release-event-schema \
+	print-asl-sources print-asl-tests
 
 all: ci
 
@@ -19,13 +27,13 @@ setup:
 
 build: $(SPEC)
 
-$(DECODER_SPEC): $(ASL_UNIT_SOURCES) scripts/generate-asl-decoders \
-		scripts/project_asl_catalogs.py scripts/asl_units.py \
-		scripts/encoding_witness.py scripts/tile_taxonomy.py \
-		spec/catalog/numeric-profile-applicability.json \
-		spec/catalog/system-registers.json
+$(DECODER_SPEC): $(DECODER_GENERATION_INPUTS)
 	@mkdir -p build
 	@./scripts/generate-asl-decoders > $@
+
+$(VALIDATION_INDEX): $(DECODER_GENERATION_INPUTS)
+	@mkdir -p build
+	@./scripts/generate-asl-decoders --kind validation-index > $@
 
 $(ASL_SOURCE_ORDER): $(ASL_UNIT_SOURCES) scripts/generate-asl-source-order scripts/asl_units.py
 	@mkdir -p build
@@ -43,6 +51,13 @@ check-ndf:
 check-asl-tests:
 	./scripts/check-asl-tests
 
+check-decoder-partition: $(DECODER_SPEC) $(VALIDATION_INDEX)
+	@if grep -Eq '^func Validate[A-Za-z0-9_]+\(\)' $(DECODER_SPEC); then \
+		echo 'error: normative decoder contains generated validation functions' >&2; \
+		exit 1; \
+	fi
+	@./scripts/generate-asl-decoders --kind validation-index | cmp - $(VALIDATION_INDEX)
+
 check-projections:
 	python3 scripts/project_asl_catalogs.py --root . --check
 	python3 scripts/instruction_docs.py --check
@@ -54,7 +69,7 @@ check-publication-hygiene:
 check-release-event-schema:
 	./scripts/check-release-event-schema
 
-pr-check: check-asl-layout check-ndf check-asl-tests check-projections check-publication-hygiene check-release-event-schema
+pr-check: check-asl-layout check-ndf check-asl-tests check-decoder-partition check-projections check-publication-hygiene check-release-event-schema
 	./scripts/check-release-workflow
 	python3 -m unittest discover -s tests/scripts -p 'test_*.py'
 	git diff --check
@@ -67,6 +82,8 @@ release-manifest:
 	./scripts/generate-release-manifest
 
 release-evidence-check:
+	./scripts/generate-instruction-contract-closure --check
+	python3 scripts/manual_semantic_audit.py
 	./scripts/generate-release-traceability-readiness --check
 	./scripts/generate-release-gate-readiness --check
 	./scripts/check-release-closure

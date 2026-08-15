@@ -1,18 +1,23 @@
 {
   "evidence": [
     {
+      "generator": "scripts/generate-instruction-contract-closure",
+      "path": "spec/evidence/instruction-contract-closure.json",
+      "role": "canonical-input"
+    },
+    {
       "generator": "scripts/generate-release-manifest",
-      "path": "spec/evidence/pto-isa-0580-abi-vectors.json",
+      "path": "spec/evidence/pto-isa-0581-abi-vectors.json",
       "role": "owned-output"
     },
     {
       "generator": "scripts/generate-release-manifest",
-      "path": "spec/evidence/pto-isa-0580-encoding-totality.json",
+      "path": "spec/evidence/pto-isa-0581-encoding-totality.json",
       "role": "owned-output"
     },
     {
       "generator": "scripts/generate-release-manifest",
-      "path": "spec/evidence/pto-isa-0580-hardware-numeric-vectors.json",
+      "path": "spec/evidence/pto-isa-0581-hardware-numeric-vectors.json",
       "role": "owned-output"
     },
     {

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/elementwise-tile-tile/arithmetic/TMAX.asl`
 
-Apply elementwise maximum selection to the two source Tiles.
+Maximum corresponding Local Tile elements under typed integer and floating ordering.
 
 ## Normative identity {#PTO-INST-TILE-TMAX}
 
@@ -28,13 +28,20 @@ TMAX <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TMAX | TEPL | 0x00B | 11 | 0 | ExecuteTileBinary |
 
+## Encoding class
+
+- **Class:** `selector-encoded-block-operation`
+- **Standalone opcode:** `no`
+
+This operation has no standalone opcode.
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| destination0 | destination |
-| source0 | source-left |
-| source1 | source-right |
+| destination0 | new Local destination |
+| source0 | left comparison source |
+| source1 | right comparison source |
 
 ## Decode
 
@@ -51,10 +58,11 @@ end;
 
 ```asm
 BSTART.VEC TMAX, DataType
-B.DATR (optional)
-B.DIM LB0
-B.DIM (LB1/LB2 for 2D)
-B.IOT
+B.DATR PadValue (optional)
+B.DIM LB0=ValidCol
+B.DIM LB1=ValidRow (optional)
+B.DIM LB2=Col (optional)
+B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->DstTile<TSize>
 BSTOP
 ```
 
@@ -62,25 +70,97 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/arithmetic/TMAX.asl -->
 ```asl
+pure func InstructionContractDataTypeLegal_TMAX(
+    data_type: TileDataType) => boolean
+begin
+    return TileVecArithmeticDataTypeSupported(data_type);
+end;
+
+readonly func InstructionContractOperandsLegal_TMAX(
+    destination: TileIndex,
+    source_left: TileIndex,
+    source_right: TileIndex) => boolean
+begin
+    return TileOperandsLegal_ExecuteTileBinary(
+        TileBinary_MAX,
+        destination,
+        source_left,
+        source_right);
+end;
+
+pure func InstructionContractFloatingValue_TMAX(
+    data_type: TileDataType,
+    source_left: Word,
+    source_right: Word) => (Word, boolean)
+begin
+    assert InstructionContractDataTypeLegal_TMAX(data_type);
+    assert TileDataTypeIsFloating(data_type);
+    return TileFloatingMinMaxValue(
+        TileBinary_MAX,
+        data_type,
+        source_left,
+        source_right);
+end;
+
 readonly func InstructionContractHandler_TMAX() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;
+
+func InstructionContractExecute_TMAX(
+    destination: TileIndex,
+    source_left: TileIndex,
+    source_right: TileIndex)
+begin
+    ExecuteTileBinary(
+        TileBinary_MAX,
+        destination,
+        source_left,
+        source_right);
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- **Legality handler:** `TileOperandsLegal_ExecuteTileBinary`
-- **Fault contract:** `ExecuteTileInstruction`
-- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
+- LB0 is required and supplies nonzero ValidCol; omitted LB1 defaults ValidRow to one and omitted LB2 defaults Col to ValidCol.
+- Omitted B.DATR selects PadValue=Null; explicit 00, 01, 10, and 11 select Zero, Max, Min, and Null.
+- For floating TMAX, one NaN selects the numeric operand, two NaNs select canonical NaN, signaling NaN reports invalid, and mixed signed zeros select positive zero.
 
-## Operational information
+## Legality
 
-- **Semantic handler:** `ExecuteTileBinary`
-- **Effect contract:** `ExecuteTileBinary`
-- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
-- **State effects:** `["operand:destination0:destination", "operand:source0:source-left", "operand:source1:source-right"]`
+- TMAX is BSTART.VEC Mode 0 Function 11 and has no standalone opcode.
+- Exactly one terminating Local B.IOT supplies two ordered Local sources and one new Local destination; B.IOR and B.IOS are illegal.
+- DataType is one of FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.
+- Sources are fully defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and PE_MASK.
+- Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.
+- Floating source encodings invalid for the selected operation reject before allocation or destination effects; PE_MASK zero is a strict no-op.
+
+## State effects
+
+- Select the typed elementwise maximum for every valid coordinate.
+- Signed integers use signed ordering, unsigned integers use unsigned ordering, and supported floating carriers use deterministic NaN and signed-zero rules.
+- Publish the complete valid result and selected physical padding atomically; rejection has no architectural effect.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- Both source payloads are snapshotted after complete legality and encoding preflight and before destination writes.
+- Source aliasing and source-to-destination aliasing therefore observe pre-operation values.
+
+## Exceptions
+
+- Malformed bindings, missing or zero dimensions, undefined or mismatched sources, unsupported DataType, non-row-major layout, invalid source encoding, or invalid destination capacity raises Fault_TileLegality before effects.
+- A signaling NaN reports the selected numeric profile invalid condition without changing the deterministic selected result.
+
+## Examples
+
+- BSTART.VEC TMAX, FP32; B.DIM LB0=ValidCol; B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

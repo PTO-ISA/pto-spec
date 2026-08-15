@@ -15,11 +15,14 @@ This page is a generated reference view of the normative ASL unit.
 func BindBundleSharedIO(shared_id: bits(8), size_code: integer {0..7},
                         pe_mask: bits(4))
 begin
+    if !BundleSharedMaskCanAppend(pe_mask) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return;
+    end;
     for index = 0 to 3 do
         if _BundleSharedBindings[[index]].valid &&
-           _BundleSharedBindings[[index]].shared_id == shared_id &&
-           !_BundleSharedBindings[[index]].consumed then
-            SetFault(Fault_TileLegality, ReadTPC());
+           _BundleSharedBindings[[index]].shared_id == shared_id then
+            SetFault(Fault_BundleControl, ReadTPC());
             return;
         end;
     end;
@@ -33,7 +36,19 @@ begin
             return;
         end;
     end;
-    SetFault(Fault_TileLegality, ReadTPC());
+    SetFault(Fault_BundleControl, ReadTPC());
+end;
+
+readonly func BundleSharedMaskCanAppend(pe_mask: bits(4)) => boolean
+begin
+    if !BundleTileMaskCanAppend(pe_mask) then return FALSE; end;
+    for index = 0 to 3 do
+        if _BundleSharedBindings[[index]].valid &&
+           _BundleSharedBindings[[index]].pe_mask != pe_mask then
+            return FALSE;
+        end;
+    end;
+    return TRUE;
 end;
 
 readonly func BundleSharedBindingCount() => integer {0..4}

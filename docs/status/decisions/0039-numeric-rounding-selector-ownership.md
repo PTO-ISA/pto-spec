@@ -24,11 +24,8 @@ The existing PTO surface contains several different selector namespaces:
   stochastic controls, and backend-only cast/part controls.
 
 Shared widths or similar names do not prove that these namespaces have the
-same encoding or result rule. The pinned public contract and implementation
-evidence expose different enumerations and support restrictions. A reviewed
-independent executable ISA model corroborates the scalar FRM field and the
-four directional code order, but it is not a PTO numeric oracle and does not
-define bundle or target controls.
+same encoding or result rule. PTO therefore defines each selector namespace
+and every explicit mapping between namespaces in its own ASL.
 
 ## Decision
 
@@ -89,6 +86,6 @@ decision remain valid.
 - `asl/scalar/dispatch.asl`
 - `asl/bundle/state.asl`
 - `asl/bundle/dispatch.asl`
-- `tests/asl/profile-tests.asl`
+- `tests/asl/arch/data-types/rounding/arch-static-rounding-contract-001.asl`
 - `docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md`
 - `docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md`

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/operands/B.IOT.asl`
 
-Binds v5 PE_MASK, ordered Local tile sources, last-use, and optional TSize/2-bit Local destination metadata; reuse bits do not exist.
+Binds an ordered Local Tile source/destination sequence with one common four-PE participation mask; L terminates only that sequence and never releases a source.
 
 ## Normative identity {#PTO-INST-BLOCK-B-IOT}
 
@@ -58,16 +58,54 @@ B.IOT mask=PE_MASK, <last>, ->DstTile<TSize>
 | b_iot_32_efa0fe3fe49a | TSize | 3 | encoding-defined | [{"instruction_lsb":9,"value_lsb":0,"width":3}] |
 | b_iot_32_efa0fe3fe49a | DstTile | 2 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":2}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| b_iot_32_10db6db84f5d | SrcTile0 | 6 | 0–63 | none | none | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 | Encoded zero supplies numeric zero for the first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16. |
+| b_iot_32_10db6db84f5d | L | 1 | 0–1 | none | none | effective-binding sequence terminator; not a source-lifetime marker | Encoded zero leaves the B.IOT sequence open; encoded one closes the sequence after this effective binding and does not end any source lifetime. |
+| b_iot_32_10db6db84f5d | PE_MASK | 4 | 0–15 | none | none | four-PE predicate shared by every effective binding in the block | Encoded zero selects no participating PE and makes B.IOT a strict no-op. |
+| b_iot_32_10db6db84f5d | TSize | 3 | 1–7 | none | 0 | per-participating-PE destination capacity code: 1..7 encode 128 B..8 KiB | Encoded zero is reserved in every destination form; source-only forms do not encode TSize. |
+| b_iot_32_10db6db84f5d | DstTile | 2 | 0–3 | none | none | destination hand selector: 0 T, 1 U, 2 M, or 3 N | Encoded zero supplies numeric zero for the destination hand selector: 0 T, 1 U, 2 M, or 3 N. |
+| b_iot_32_2c07e7177fad | SrcTile1 | 6 | 0–63 | none | none | second ordered relative Local source in the same 64-entry queue namespace | Encoded zero supplies numeric zero for the second ordered relative Local source in the same 64-entry queue namespace. |
+| b_iot_32_2c07e7177fad | SrcTile0 | 6 | 0–63 | none | none | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 | Encoded zero supplies numeric zero for the first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16. |
+| b_iot_32_2c07e7177fad | L | 1 | 0–1 | none | none | effective-binding sequence terminator; not a source-lifetime marker | Encoded zero leaves the B.IOT sequence open; encoded one closes the sequence after this effective binding and does not end any source lifetime. |
+| b_iot_32_2c07e7177fad | PE_MASK | 4 | 0–15 | none | none | four-PE predicate shared by every effective binding in the block | Encoded zero selects no participating PE and makes B.IOT a strict no-op. |
+| b_iot_32_8b8bce6bffe8 | SrcTile1 | 6 | 0–63 | none | none | second ordered relative Local source in the same 64-entry queue namespace | Encoded zero supplies numeric zero for the second ordered relative Local source in the same 64-entry queue namespace. |
+| b_iot_32_8b8bce6bffe8 | SrcTile0 | 6 | 0–63 | none | none | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 | Encoded zero supplies numeric zero for the first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16. |
+| b_iot_32_8b8bce6bffe8 | L | 1 | 0–1 | none | none | effective-binding sequence terminator; not a source-lifetime marker | Encoded zero leaves the B.IOT sequence open; encoded one closes the sequence after this effective binding and does not end any source lifetime. |
+| b_iot_32_8b8bce6bffe8 | PE_MASK | 4 | 0–15 | none | none | four-PE predicate shared by every effective binding in the block | Encoded zero selects no participating PE and makes B.IOT a strict no-op. |
+| b_iot_32_8b8bce6bffe8 | TSize | 3 | 1–7 | none | 0 | per-participating-PE destination capacity code: 1..7 encode 128 B..8 KiB | Encoded zero is reserved in every destination form; source-only forms do not encode TSize. |
+| b_iot_32_8b8bce6bffe8 | DstTile | 2 | 0–3 | none | none | destination hand selector: 0 T, 1 U, 2 M, or 3 N | Encoded zero supplies numeric zero for the destination hand selector: 0 T, 1 U, 2 M, or 3 N. |
+| b_iot_32_c11eb189dd83 | SrcTile0 | 6 | 0–63 | none | none | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 | Encoded zero supplies numeric zero for the first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16. |
+| b_iot_32_c11eb189dd83 | L | 1 | 0–1 | none | none | effective-binding sequence terminator; not a source-lifetime marker | Encoded zero leaves the B.IOT sequence open; encoded one closes the sequence after this effective binding and does not end any source lifetime. |
+| b_iot_32_c11eb189dd83 | PE_MASK | 4 | 0–15 | none | none | four-PE predicate shared by every effective binding in the block | Encoded zero selects no participating PE and makes B.IOT a strict no-op. |
+| b_iot_32_efa0fe3fe49a | L | 1 | 0–1 | none | none | effective-binding sequence terminator; not a source-lifetime marker | Encoded zero leaves the B.IOT sequence open; encoded one closes the sequence after this effective binding and does not end any source lifetime. |
+| b_iot_32_efa0fe3fe49a | PE_MASK | 4 | 0–15 | none | none | four-PE predicate shared by every effective binding in the block | Encoded zero selects no participating PE and makes B.IOT a strict no-op. |
+| b_iot_32_efa0fe3fe49a | TSize | 3 | 1–7 | none | 0 | per-participating-PE destination capacity code: 1..7 encode 128 B..8 KiB | Encoded zero is reserved in every destination form; source-only forms do not encode TSize. |
+| b_iot_32_efa0fe3fe49a | DstTile | 2 | 0–3 | none | none | destination hand selector: 0 T, 1 U, 2 M, or 3 N | Encoded zero supplies numeric zero for the destination hand selector: 0 T, 1 U, 2 M, or 3 N. |
+
+- `b_iot_32_10db6db84f5d.TSize` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
+- `b_iot_32_8b8bce6bffe8.TSize` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
+- `b_iot_32_efa0fe3fe49a.TSize` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| SrcTile0 | encoded operand or control |
-| L | encoded operand or control |
-| PE_MASK | encoded operand or control |
-| TSize | encoded operand or control |
-| DstTile | encoded operand or control |
-| SrcTile1 | encoded operand or control |
+| SrcTile0 | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 |
+| SrcTile1 | second ordered relative Local source in the same 64-entry queue namespace |
+| L | effective-binding sequence terminator; not a source-lifetime marker |
+| PE_MASK | four-PE predicate shared by every effective binding in the block |
+| TSize | per-participating-PE destination capacity code: 1..7 encode 128 B..8 KiB |
+| DstTile | destination hand selector: 0 T, 1 U, 2 M, or 3 N |
 
 ## Decode
 
@@ -83,6 +121,12 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
+
+## Block composition
+
+```asm
+Header command after BSTART and before the first body instruction. One or more effective B.IOT instructions form an ordered sequence whose final effective instruction has L=1.
+```
 
 ## Operation
 
@@ -135,16 +179,55 @@ end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- **Constraints:** `[{"field": "PE_MASK", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]}, {"field": "TSize", "operator": "one-of", "values": [1, 2, 3, 4, 5, 6, 7]}, {"field": "DstTile", "operator": "one-of", "values": [0, 1, 2, 3]}]`
-- **Constraints:** `[{"field": "PE_MASK", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]}]`
+- PE_MASK=0000 is a strict no-op even when placement or downstream schema would otherwise reject; destination forms require TSize 1 through 7, and omitted source or destination roles are determined only by the selected encoding form.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `Binds v5 PE_MASK, ordered Local tile sources, last-use, and optional TSize/2-bit Local destination metadata; reuse bits do not exist.`
-- **Semantic handler:** `BindBundleTileIO`
-- **Semantic summary:** `Binds a destination-only Local Tile operand with per-PE TSize, PE_MASK, and last-use metadata; PE_MASK=0000 is a strict no-op and there is no mask-only Shared companion form.`
+- b_iot_32_10db6db84f5d.PE_MASK accepts only 0..15; all other encodings are reserved.
+- b_iot_32_10db6db84f5d.TSize accepts only 1..7; all other encodings are reserved.
+- b_iot_32_10db6db84f5d.DstTile accepts only 0..3; all other encodings are reserved.
+- b_iot_32_2c07e7177fad.PE_MASK accepts only 0..15; all other encodings are reserved.
+- b_iot_32_8b8bce6bffe8.PE_MASK accepts only 0..15; all other encodings are reserved.
+- b_iot_32_8b8bce6bffe8.TSize accepts only 1..7; all other encodings are reserved.
+- b_iot_32_8b8bce6bffe8.DstTile accepts only 0..3; all other encodings are reserved.
+- b_iot_32_c11eb189dd83.PE_MASK accepts only 0..15; all other encodings are reserved.
+- b_iot_32_efa0fe3fe49a.PE_MASK accepts only 0..15; all other encodings are reserved.
+- b_iot_32_efa0fe3fe49a.TSize accepts only 1..7; all other encodings are reserved.
+- b_iot_32_efa0fe3fe49a.DstTile accepts only 0..3; all other encodings are reserved.
+- Exactly five B.IOT forms are accepted: source0+destination, source0+source1, source0+source1+destination, source0, and destination-only.
+- Source codes 0..63 name the relative queue namespace T#1..T#16, U#1..U#16, M#1..M#16, and N#1..N#16 in that order.
+- Destination code 0..3 names the T, U, M, or N destination hand; the implementation allocates and renames a new physical Local Tile for that hand.
+- Every nonzero effective Local or Shared binding in one block uses the same PE_MASK; a selected operation may impose a stricter mask.
+- A participating B.IOT is legal only after BSTART and before the block body. No effective B.IOT may follow an L-marked binding.
+- Only Local tile selectors are legal; destination TSize encodes 128 B through 8 KiB per participating PE and code zero is reserved.
+
+## State effects
+
+- Binds an ordered Local Tile source/destination sequence with one common four-PE participation mask; L terminates only that sequence and never releases a source.
+- A source binding observes an existing Local Tile descriptor and remains allocated after the block. A destination binding allocates a new physical Local Tile, associates it with the selected destination hand, and does not expose PE_MASK to later consumers.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- B.IOT bindings are consumed in encoded order. L=1 closes the sequence after the current effective binding; a later effective B.IOT raises Illegal Block Exception before effects.
+
+## Exceptions
+
+- Reserved field encodings raise Fault_IllegalInstruction before architectural effects.
+- A participating B.IOT outside an active header, a participating B.IOT after L, or an incomplete sequence raises Illegal Block Exception before binding or allocation.
+- Mismatched nonzero masks, an illegal destination size, or operation-specific mask/schema violations raise Fault_TileLegality before tile effects.
+- PE_MASK zero is a strict no-op before placement, stream, schema, allocation, descriptor, or downstream fault checks.
+
+## Examples
+
+- B.IOT SrcTile0, mask=PE_MASK, <last>, ->DstTile<TSize>
 
 <!-- SUPPLEMENTARY-BEGIN -->
 Destination TSize is a per-selected-PE capacity. Core allocation is the

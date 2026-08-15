@@ -11,7 +11,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/scalar-schema.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","surface":"block","classification":["model","dispatch","scalar-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","surface":"block","classification":["model","dispatch","scalar-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-TILE-MODEL-NUMERIC-FORMATS"]}
 pure func BundleOperationConsumesScalarSource0(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -112,6 +112,29 @@ begin
     if !_BundleScalarBindings[[0]].valid then return TRUE; end;
     let input_count = BundleOperationGPRInputCount(operation);
     if input_count > 3 then return FALSE; end;
+    let decoded = TileOperationOfIndex(operation);
+    if decoded == TileOperation_TQUANT ||
+       decoded == TileOperation_TDEQUANT then
+        let scale = ReadScalarRegisterOperand(
+            BundleOperationGPRInputSelector(0));
+        let zero_point = ReadScalarRegisterOperand(
+            BundleOperationGPRInputSelector(1));
+        if !TileQuantizationScaleLegal(scale) then return FALSE; end;
+        let zero_point_type = if decoded == TileOperation_TQUANT then
+            if _BundleDataAttributes.data_type_present &&
+               BundleDataTypeConcrete(_BundleDataAttributes.data_type) then
+                BundleTileDataType(_BundleDataAttributes.data_type)
+            else TileDataType_FP64
+        else if _BundleOperation.data_type_valid &&
+                BundleDataTypeConcrete(_BundleOperation.data_type) then
+            BundleTileDataType(_BundleOperation.data_type)
+        else TileDataType_FP64;
+        if !TileQuantizationZeroPointLegal(
+               zero_point,
+               zero_point_type) then
+            return FALSE;
+        end;
+    end;
     if TileOperandPresent(operation, TileOperand_flag0) then
         let slot = BundleOperationGPRInputSlot(operation, TileOperand_flag0);
         let raw = ReadScalarRegisterOperand(
@@ -125,6 +148,47 @@ begin
             BundleOperationGPRInputSelector(slot as integer {0..2}));
         let value = SInt(raw);
         if value < -65535 || value > 65535 then return FALSE; end;
+    end;
+    if _BundleOperation.valid &&
+       _BundleOperation.operation_class == BundleOperation_TileMatrix &&
+       _BundleFixedPointAttributes.valid then
+        var post_slot: integer {0..5} = 0;
+        if TileOperandPresent(operation, TileOperand_address) then
+            post_slot = (post_slot + 1) as integer {0..5};
+        end;
+        if TileOperandPresent(operation, TileOperand_scalar0) then
+            post_slot = (post_slot + 1) as integer {0..5};
+        end;
+        if TileOperandPresent(operation, TileOperand_scalar1) then
+            post_slot = (post_slot + 1) as integer {0..5};
+        end;
+        if TileOperandPresent(operation, TileOperand_diagonal) then
+            post_slot = (post_slot + 1) as integer {0..5};
+        end;
+        if TileOperandPresent(operation, TileOperand_flag0) then
+            post_slot = (post_slot + 1) as integer {0..5};
+        end;
+
+        if BundleFPATRModeUsesScalarParameter(
+               _BundleFixedPointAttributes.pre_quant_mode) then
+            let raw = ReadScalarRegisterOperand(
+                BundleOperationGPRInputSelector(
+                    post_slot as integer {0..2}));
+            if !BundleFPATRQuantParameterWordLegal(
+                   _BundleFixedPointAttributes.pre_quant_mode, raw) then
+                return FALSE;
+            end;
+            post_slot = (post_slot + 1) as integer {0..5};
+        end;
+        if BundleFPATRReluModeUsesScalarParameter(
+               _BundleFixedPointAttributes.relu_mode) then
+            let raw = ReadScalarRegisterOperand(
+                BundleOperationGPRInputSelector(
+                    post_slot as integer {0..2}));
+            if !BundleFPATRReluParameterWordLegal(raw) then
+                return FALSE;
+            end;
+        end;
     end;
     return TRUE;
 end;

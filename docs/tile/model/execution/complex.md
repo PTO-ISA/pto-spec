@@ -11,84 +11,89 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/execution/complex.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-COMPLEX","surface":"tile","classification":["model","execution","complex"],"depends_on":["PTO-TILE-MODEL-EXECUTION-REARRANGEMENT"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-COMPLEX","surface":"tile","classification":["model","execution","complex"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-EXECUTION-REARRANGEMENT","PTO-TILE-MODEL-LEGALITY-INDEXED-LAYOUT"]}
 // PTO-REQ-TEPL-COMPLEX-001: partial, ordering, and histogram operations.
 
-pure func TilePartialValue(op: TilePartialOperation, left: Word, right: Word) => Word
+pure func TilePartialBinaryOperation(
+    operation: TilePartialOperation) => TileBinaryOperation
 begin
-    case op of
-        when TilePartial_ADD => return left + right;
-        when TilePartial_MUL => return MultiplyWord(left, right);
-        when TilePartial_MAX => if SInt(left) >= SInt(right) then return left; else return right; end;
-        when TilePartial_MIN => if SInt(left) <= SInt(right) then return left; else return right; end;
-        when TilePartial_ARGMAX =>
-            if SInt(left) >= SInt(right) then return Zeros{PTO_XLEN};
-            else return Zeros{PTO_XLEN} + 1; end;
-        when TilePartial_ARGMIN =>
-            if SInt(left) <= SInt(right) then return Zeros{PTO_XLEN};
-            else return Zeros{PTO_XLEN} + 1; end;
+    case operation of
+        when TilePartial_ADD => return TileBinary_ADD;
+        when TilePartial_MUL => return TileBinary_MUL;
+        when TilePartial_MAX => return TileBinary_MAX;
+        when TilePartial_MIN => return TileBinary_MIN;
+        otherwise => unreachable;
     end;
 end;
 
-impdef func TileProfilePartialValue(op: TilePartialOperation,
-                                     data_type: TileDataType,
-                                     left: Word, right: Word) => Word
+func TileProfilePartialValueWithFlags(
+    operation: TilePartialOperation,
+    data_type: TileDataType,
+    left: Word,
+    right: Word) => (Word, bits(5))
 begin
-    return TilePartialValue(op, left, right);
+    return TileProfileBinaryWithFlags(
+        TilePartialBinaryOperation(operation),
+        data_type,
+        left,
+        right);
 end;
 
-impdef func TileProfileOrderLeft(left: Word, right: Word,
-                                 descending: boolean,
-                                 data_type: TileDataType) => boolean
+impdef func TileProfileOrderLeft(
+    left: Word,
+    right: Word,
+    descending: boolean,
+    data_type: TileDataType) => boolean
 begin
-    if descending then return SInt(left) >= SInt(right);
-    else return SInt(left) <= SInt(right);
+    if descending then
+        return SInt(left) >= SInt(right);
     end;
+    return SInt(left) <= SInt(right);
 end;
 
-impdef func TileProfileValueIsNaN(value: Word,
-                                  data_type: TileDataType) => boolean
+impdef func TileProfileValueIsNaN(
+    value: Word,
+    data_type: TileDataType) => boolean
 begin
     return FALSE;
-end;
-
-func TileSortLeftBefore(left: Word, right: Word, descending: boolean,
-                        data_type: TileDataType) => boolean
-begin
-    let left_nan = TileProfileValueIsNaN(left, data_type);
-    let right_nan = TileProfileValueIsNaN(right, data_type);
-    if left_nan then return right_nan; end;
-    if right_nan then return TRUE; end;
-    return TileProfileOrderLeft(left, right, descending, data_type);
 end;
 
 func ExecuteTilePartial(op: TilePartialOperation, destination: TileIndex,
                         source_left: TileIndex, source_right: TileIndex)
 begin
-    let destination_tile = _Tiles[[destination]];
+    assert TileOperandsLegal_ExecuteTilePartial(
+        op,
+        destination,
+        source_left,
+        source_right);
+    var result = _Tiles[[destination]];
     let left_tile = _Tiles[[source_left]];
     let right_tile = _Tiles[[source_right]];
-    assert destination_tile.data_type == left_tile.data_type;
-    assert destination_tile.data_type == right_tile.data_type;
-    assert left_tile.valid_rows <= destination_tile.valid_rows;
-    assert left_tile.valid_columns <= destination_tile.valid_columns;
-    assert right_tile.valid_rows <= destination_tile.valid_rows;
-    assert right_tile.valid_columns <= destination_tile.valid_columns;
     let left_payload = left_tile.payload;
     let right_payload = right_tile.payload;
-    for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
-            let left_valid = row < left_tile.valid_rows && column < left_tile.valid_columns;
-            let right_valid = row < right_tile.valid_rows && column < right_tile.valid_columns;
-            assert left_valid || right_valid;
+    var flags = Zeros{5};
+    for row = 0 to result.valid_rows - 1 looplimit 65536 do
+        for column = 0 to result.valid_columns - 1 looplimit 65536 do
+            let left_valid =
+                row < left_tile.valid_rows &&
+                column < left_tile.valid_columns;
+            let right_valid =
+                row < right_tile.valid_rows &&
+                column < right_tile.valid_columns;
             var value: Word;
             if left_valid && right_valid then
                 let left_element = TileLinearIndex(left_tile,
                     row as integer {0..65535}, column as integer {0..65535});
                 let right_element = TileLinearIndex(right_tile,
                     row as integer {0..65535}, column as integer {0..65535});
-                value = TileProfilePartialValue(op, destination_tile.data_type,
-                    left_payload[[left_element]], right_payload[[right_element]]);
+                let (combined, element_flags) =
+                    TileProfilePartialValueWithFlags(
+                        op,
+                        result.data_type,
+                        left_payload[[left_element]],
+                        right_payload[[right_element]]);
+                value = combined;
+                flags = flags OR element_flags;
             elsif left_valid then
                 let left_element = TileLinearIndex(left_tile,
                     row as integer {0..65535}, column as integer {0..65535});
@@ -98,10 +103,18 @@ begin
                     row as integer {0..65535}, column as integer {0..65535});
                 value = right_payload[[right_element]];
             end;
-            WriteTileElement(destination, row as integer {0..65535},
-                column as integer {0..65535}, value);
+            let destination_element = TileLinearIndex(
+                result,
+                row as integer {0..65535},
+                column as integer {0..65535});
+            result.payload[[destination_element]] = value;
         end;
     end;
+    result = TileWithValidRegionDefined(result);
+    result = TileWithPadding(result, TilePad_Null);
+    result.location = TileLocation_Any;
+    RecordNumericStatusFlags(flags);
+    _Tiles[[destination]] = result;
 end;
 
 func ExecuteTilePartialArg(maximum: boolean, destination: TileIndex,
@@ -138,8 +151,10 @@ begin
             end;
             if left_valid && right_valid then
                 choose_left = TileProfileOrderLeft(
-                    left_payload[[left_element]], right_payload[[right_element]],
-                    maximum, destination_tile.data_type);
+                    left_payload[[left_element]],
+                    right_payload[[right_element]],
+                    maximum,
+                    destination_tile.data_type);
             end;
             let output_value = if choose_left then left_payload[[left_element]]
                                else right_payload[[right_element]];
@@ -153,101 +168,59 @@ begin
     end;
 end;
 
-func TSORT(destination: TileIndex, destination_indices: TileIndex,
-           source: TileIndex, sort_width: integer {1..64}, descending: boolean)
-begin
-    let source_tile = _Tiles[[source]];
-    let destination_tile = _Tiles[[destination]];
-    let index_tile = _Tiles[[destination_indices]];
-    let extent: integer = source_tile.valid_rows * source_tile.valid_columns;
-    assert destination_tile.valid_rows * destination_tile.valid_columns == extent;
-    assert index_tile.valid_rows * index_tile.valid_columns == extent;
-    assert destination_tile.data_type == source_tile.data_type;
-    var values: TilePayload = source_tile.payload;
-    var indices: TilePayload;
-    for element = 0 to extent - 1 looplimit 4096 do
-        indices[[element as ModelTileElementIndex]] =
-            Zeros{PTO_XLEN} + (element MOD sort_width);
-    end;
-    let group_count: integer = (extent + (sort_width - 1)) DIVRM sort_width;
-    for group = 0 to group_count - 1 looplimit 4096 do
-        let group_begin: integer = group * sort_width;
-        let group_end: integer = if group_begin + sort_width < extent then
-            group_begin + sort_width else extent;
-        for sort_pass = 0 to 63 do
-            for offset = 0 to 62 do
-                let element: integer = group_begin + offset;
-                if element + 1 < group_end then
-                    let left = values[[element as ModelTileElementIndex]];
-                    let right = values[[(element + 1) as ModelTileElementIndex]];
-                    let swap = !TileSortLeftBefore(
-                        left, right, descending, source_tile.data_type);
-                    if swap then
-                        values[[element as ModelTileElementIndex]] = right;
-                        values[[(element + 1) as ModelTileElementIndex]] = left;
-                        let left_index =
-                            indices[[element as ModelTileElementIndex]];
-                        indices[[element as ModelTileElementIndex]] =
-                            indices[[(element + 1) as ModelTileElementIndex]];
-                        indices[[(element + 1) as ModelTileElementIndex]] =
-                            left_index;
-                    end;
-                end;
-            end;
-        end;
-    end;
-    for element = 0 to extent - 1 looplimit 4096 do
-        _Tiles[[destination]].payload[[element as ModelTileElementIndex]] =
-            values[[element as ModelTileElementIndex]];
-        _Tiles[[destination_indices]].payload[[
-            element as ModelTileElementIndex]] =
-            indices[[element as ModelTileElementIndex]];
-    end;
-    MarkTileValidRegionDefined(destination);
-    MarkTileValidRegionDefined(destination_indices);
-end;
-
 pure func ExtractWordByte(value: Word, byte_index: integer {0..3}) => Byte
 begin
     return value[(byte_index * 8) +: 8];
 end;
 
-func THISTOGRAM(destination: TileIndex, source: TileIndex, indices: TileIndex,
+func THISTOGRAM(destination: TileIndex, source: TileIndex, filter: TileIndex,
                 selected_byte: integer {0..3})
 begin
-    let destination_tile = _Tiles[[destination]];
+    var result = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
-    let index_tile = _Tiles[[indices]];
-    assert destination_tile.valid_rows == source_tile.valid_rows;
-    assert destination_tile.valid_columns >= 256;
-    assert source_tile.data_type == TileDataType_U16 || source_tile.data_type == TileDataType_U32;
-    if source_tile.data_type == TileDataType_U16 then assert selected_byte <= 1; end;
+    let filter_tile = _Tiles[[filter]];
+    assert TileOperandsLegal_THISTOGRAM(
+        destination,
+        source,
+        filter,
+        selected_byte);
     let source_payload = source_tile.payload;
-    let index_payload = index_tile.payload;
+    let filter_payload = filter_tile.payload;
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         var counts: array [[256]] of Word;
-        for bin = 0 to 255 do counts[[bin]] = Zeros{PTO_XLEN}; end;
+        for bin = 0 to 255 do
+            counts[[bin]] = Zeros{PTO_XLEN};
+        end;
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let source_element = TileLinearIndex(source_tile,
-                row as integer {0..65535}, column as integer {0..65535});
+            let source_element = TileLinearIndex(
+                source_tile,
+                row as integer {0..65535},
+                column as integer {0..65535});
             let value = source_payload[[source_element]];
             var selected = TRUE;
-            if source_tile.data_type == TileDataType_U16 && selected_byte == 0 then
-                let filter_element = TileLinearIndex(index_tile,
-                    row as integer {0..65535}, 0);
-                selected = ExtractWordByte(value, 1) == index_payload[[filter_element]][7:0];
+            if source_tile.data_type == TileDataType_U16 &&
+               selected_byte == 0 then
+                let filter_element = TileLinearIndex(
+                    filter_tile,
+                    row as integer {0..65535},
+                    0);
+                selected = ExtractWordByte(value, 1) ==
+                    filter_payload[[filter_element]][7:0];
             elsif source_tile.data_type == TileDataType_U32 then
                 if selected_byte <= 2 then
                     selected = ExtractWordByte(value, 3) ==
-                        index_payload[[TileLinearIndex(index_tile, 0, 0)]][7:0];
+                        filter_payload[[
+                            TileLinearIndex(filter_tile, 0, 0)]][7:0];
                 end;
                 if selected && selected_byte <= 1 then
                     selected = ExtractWordByte(value, 2) ==
-                        index_payload[[TileLinearIndex(index_tile, 1, 0)]][7:0];
+                        filter_payload[[
+                            TileLinearIndex(filter_tile, 1, 0)]][7:0];
                 end;
                 if selected && selected_byte == 0 then
                     selected = ExtractWordByte(value, 1) ==
-                        index_payload[[TileLinearIndex(index_tile, 2, 0)]][7:0];
+                        filter_payload[[
+                            TileLinearIndex(filter_tile, 2, 0)]][7:0];
                 end;
             end;
             if selected then
@@ -258,46 +231,17 @@ begin
         var cumulative: Word = Zeros{PTO_XLEN};
         for bin = 0 to 255 do
             cumulative = cumulative + counts[[bin]];
-            WriteTileElement(destination, row as integer {0..65535},
-                bin as integer {0..65535}, cumulative);
+            let element = TileLinearIndex(
+                result,
+                row as integer {0..65535},
+                bin as integer {0..65535});
+            result.payload[[element]] = cumulative;
         end;
     end;
-end;
-
-func TMRGSORT(destination: TileIndex, source_left: TileIndex, source_right: TileIndex,
-              descending: boolean)
-begin
-    let left_tile = _Tiles[[source_left]];
-    let right_tile = _Tiles[[source_right]];
-    let destination_tile = _Tiles[[destination]];
-    let left_extent: integer = left_tile.valid_rows * left_tile.valid_columns;
-    let right_extent: integer = right_tile.valid_rows * right_tile.valid_columns;
-    assert destination_tile.valid_rows * destination_tile.valid_columns == left_extent + right_extent;
-    assert left_tile.data_type == right_tile.data_type;
-    assert destination_tile.data_type == left_tile.data_type;
-    let left_payload = left_tile.payload;
-    let right_payload = right_tile.payload;
-    var left_index: integer = 0;
-    var right_index: integer = 0;
-    for output = 0 to (left_extent + right_extent) - 1 looplimit 4096 do
-        var take_left = right_index >= right_extent;
-        if left_index < left_extent && right_index < right_extent then
-            let left_value = left_payload[[left_index as ModelTileElementIndex]];
-            let right_value = right_payload[[right_index as ModelTileElementIndex]];
-            take_left = TileProfileOrderLeft(
-                left_value, right_value, descending, left_tile.data_type);
-        end;
-        if take_left then
-            _Tiles[[destination]].payload[[output as ModelTileElementIndex]] =
-                left_payload[[left_index as ModelTileElementIndex]];
-            left_index = left_index + 1;
-        else
-            _Tiles[[destination]].payload[[output as ModelTileElementIndex]] =
-                right_payload[[right_index as ModelTileElementIndex]];
-            right_index = right_index + 1;
-        end;
-    end;
-    MarkTileValidRegionDefined(destination);
+    result = TileWithValidRegionDefined(result);
+    result = TileWithPadding(result, TilePad_Null);
+    result.location = TileLocation_Any;
+    _Tiles[[destination]] = result;
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

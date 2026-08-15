@@ -149,8 +149,12 @@ end;
 
 implementation func TileReciprocal(value: Word) => Word
 begin
-    assert !IsZero(value);
     return DivideWordUnsigned(Ones{PTO_XLEN}, value);
+end;
+
+implementation func TileReciprocalSquareRoot(value: Word) => Word
+begin
+    return value;
 end;
 
 implementation func TileExponential(value: Word) => Word
@@ -158,40 +162,18 @@ begin
     return value + 1;
 end;
 
-implementation func TileExpDifference(left: Word, right: Word) => Word
-begin
-    return left - right;
-end;
-
 implementation func TileProfileConvert(value: Word,
                                         source_type: TileDataType,
                                         destination_type: TileDataType,
-                                        control: NumericExecutionControl) => Word
+                                        control: NumericExecutionControl)
+                                        => (Word, bits(5))
 begin
     if !TileDataTypeIsFloating(destination_type) then
-        return NormalizeTileInteger(value, destination_type);
+        return (
+            NormalizeTileInteger(value, destination_type),
+            Zeros{5});
     end;
-    return value;
-end;
-
-implementation func TileProfileQuantize(value: Word, scale: Word,
-                                         zero_point: Word,
-                                         source_type: TileDataType,
-                                         destination_type: TileDataType,
-                                         control: NumericExecutionControl) => Word
-begin
-    assert !IsZero(scale);
-    return NormalizeTileInteger(DivideWordUnsigned(value, scale) + zero_point,
-        destination_type);
-end;
-
-implementation func TileProfileDequantize(value: Word, scale: Word,
-                                           zero_point: Word,
-                                           source_type: TileDataType,
-                                           destination_type: TileDataType,
-                                           control: NumericExecutionControl) => Word
-begin
-    return MultiplyWord(value - zero_point, scale);
+    return (value, Zeros{5});
 end;
 
 readonly implementation func AtomicAddress(address: Word,
@@ -232,46 +214,57 @@ begin
     _TrapContexts[[target]].commit_argument = _CommitArgument;
     _TrapContexts[[target]].bundle_active = _BundleActive;
     _TrapContexts[[target]].bundle_body_active = _BundleBodyActive;
-    _TrapContexts[[target]].bundle_kind = _BundleKind;
-    _TrapContexts[[target]].bundle_transfer = _BundleTransfer;
-    _TrapContexts[[target]].bundle_condition = _BundleCondition;
-    _TrapContexts[[target]].bundle_target = _BundleTarget;
-    _TrapContexts[[target]].bundle_fallthrough = _BundleFallthrough;
-    _TrapContexts[[target]].bundle_return_target = _BundleReturnTarget;
+    _TrapContexts[[target]].bundle_commit_target_set =
+        _BundleCommitTargetSet;
+    _TrapContexts[[target]].system_block_terminal_pending =
+        _SystemBlockTerminalPending;
+    _TrapContexts[[target]].barg = _BARG;
+    _TrapContexts[[target]].bundle_sequential_pc = _BundleSequentialPC;
+    _TrapContexts[[target]].frame_stack_return_target =
+        _FrameStackReturnTarget;
     _TrapContexts[[target]].return_address = _ReturnAddress;
     _TrapContexts[[target]].bundle_argument_kind = _BundleArgumentKind;
-    _TrapContexts[[target]].bundle_body_address = _BundleBodyAddress;
     _TrapContexts[[target]].bundle_operation = _BundleOperation;
     _TrapContexts[[target]].bundle_dimensions = _BundleDimensions;
+    _TrapContexts[[target]].bundle_dimension_present =
+        _BundleDimensionPresent;
     _TrapContexts[[target]].bundle_scalar_bindings = _BundleScalarBindings;
     _TrapContexts[[target]].bundle_tile_bindings = _BundleTileBindings;
     _TrapContexts[[target]].bundle_shared_bindings = _BundleSharedBindings;
+    _TrapContexts[[target]].bundle_zero_participation_seen =
+        _BundleZeroParticipationSeen;
     _TrapContexts[[target]].bundle_control_attributes =
         _BundleControlAttributes;
     _TrapContexts[[target]].bundle_data_attributes = _BundleDataAttributes;
+    _TrapContexts[[target]].bundle_data_attributes_present =
+        _BundleDataAttributesPresent;
+    _TrapContexts[[target]].bundle_hint = _BundleHint;
     _TrapContexts[[target]].bundle_fixed_point_attributes =
         _BundleFixedPointAttributes;
+    _TrapContexts[[target]].memory_copy_template = _MemoryCopyTemplate;
+    _TrapContexts[[target]].frame_template = _FrameTemplate;
     _TrapContexts[[target]].t_queue = _TQueue;
+    _TrapContexts[[target]].t_queue_valid = _TQueueValid;
     _TrapContexts[[target]].u_queue = _UQueue;
-    _TrapContexts[[target]].execution_mask = _ExecutionMask;
+    _TrapContexts[[target]].u_queue_valid = _UQueueValid;
     _TrapContexts[[target]].predicates = _PredicateRegisters;
 
     var ecstate = _SystemRegisters.core_state;
-    ecstate[3:0] = Zeros{4} + source;
+    ecstate[3:0] = AccessControlRingBits(source);
     ecstate[4] = if _BundleBodyActive then '1' else '0';
     PTOv0WriteContextRegister(target, 0x0f00, ecstate);
 
     var control: Word = Zeros{PTO_XLEN};
-    control[3:0] = Zeros{4} + source;
+    control[3:0] = AccessControlRingBits(source);
     control[4] = '1';
     control[5] = if _BundleActive then '1' else '0';
     control[6] = if _BundleBodyActive then '1' else '0';
-    control[10:7] = PTOv0BundleKindCode(_BundleKind);
-    control[13:11] = PTOv0BundleTransferCode(_BundleTransfer);
-    control[14] = if _BundleCondition then '1' else '0';
+    control[10:7] = PTOv0BundleKindCode(_BARG.block_type);
+    control[13:11] = PTOv0BundleTransferCode(_BARG.transfer_type);
+    control[14] = if _BARG.taken then '1' else '0';
     PTOv0WriteContextRegister(target, 0x0f40, control);
     PTOv0WriteContextRegister(target, 0x0f41, ReadBPC());
-    PTOv0WriteContextRegister(target, 0x0f42, _BundleTarget);
+    PTOv0WriteContextRegister(target, 0x0f42, _BARG.bpcn);
     PTOv0WriteContextRegister(target, 0x0f43, ReadTPC());
     PTOv0WriteContextRegister(target, 0x0f44, _ReturnAddress);
     for index = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do
@@ -284,115 +277,94 @@ begin
     PTOv0WriteContextRegister(target, 0x0f4e, Zeros{PTO_XLEN});
 end;
 
-implementation func RecoverTrapContext(target: AccessControlRing) => boolean
+implementation func TileProfileFloatingModulo(data_type: TileDataType,
+                                               left: Word, right: Word) => Word
 begin
-    var control = PTOv0ReadContextRegister(target, 0x0f40);
-    let ecstate = PTOv0ReadContextRegister(target, 0x0f00);
-    let recovered_bpc = PTOv0ReadContextRegister(target, 0x0f41);
-    let recovered_tpc = PTOv0ReadContextRegister(target, 0x0f43);
-    if !_TrapContexts[[target]].valid || control[4] == '0' ||
-       !PTOv0EBARGControlLegal(control) ||
-       control[3:0] != ecstate[3:0] ||
-       recovered_bpc[0] == '1' || recovered_tpc[0] == '1' then
-        return FALSE;
+    let encoding = TileDataTypeToEncoding(data_type);
+    if ScalarFPCarrierIsZero(right, encoding) then
+        return Ones{PTO_XLEN};
     end;
-    WriteTPC(recovered_tpc);
-    WriteBPC(recovered_bpc);
-    _SystemRegisters.core_state = ecstate;
-    _BundleArgument = _TrapContexts[[target]].bundle_argument;
-    _CommitArgument = _TrapContexts[[target]].commit_argument;
-    _BundleActive = control[5] == '1';
-    _BundleBodyActive = control[6] == '1';
-    _BundleKind = PTOv0BundleKindOf(control[10:7]);
-    _BundleTransfer = PTOv0BundleTransferOf(control[13:11]);
-    _BundleCondition = control[14] == '1';
-    _BundleTarget = PTOv0ReadContextRegister(target, 0x0f42);
-    _BundleReturnTarget = _TrapContexts[[target]].bundle_return_target;
-    _BundleBodyAddress = recovered_bpc;
-    _ReturnAddress = PTOv0ReadContextRegister(target, 0x0f44);
-    _BundleArgumentKind = _TrapContexts[[target]].bundle_argument_kind;
-    _BundleFallthrough = _TrapContexts[[target]].bundle_fallthrough;
-    _BundleOperation = _TrapContexts[[target]].bundle_operation;
-    _BundleDimensions = _TrapContexts[[target]].bundle_dimensions;
-    _BundleScalarBindings = _TrapContexts[[target]].bundle_scalar_bindings;
-    _BundleTileBindings = _TrapContexts[[target]].bundle_tile_bindings;
-    _BundleSharedBindings = _TrapContexts[[target]].bundle_shared_bindings;
-    _BundleControlAttributes =
-        _TrapContexts[[target]].bundle_control_attributes;
-    _BundleDataAttributes = _TrapContexts[[target]].bundle_data_attributes;
-    _BundleFixedPointAttributes =
-        _TrapContexts[[target]].bundle_fixed_point_attributes;
-    for index = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do
-        _TQueue[[index]] = PTOv0ReadContextRegister(target, 0x0f45 + index);
-        _UQueue[[index]] = PTOv0ReadContextRegister(target, 0x0f49 + index);
-    end;
-    _ExecutionMask = _TrapContexts[[target]].execution_mask;
-    _PredicateRegisters = _TrapContexts[[target]].predicates;
-    _CurrentACR = UInt(ecstate[3:0]) as AccessControlRing;
-    control[4] = '0';
-    PTOv0WriteContextRegister(target, 0x0f40, control);
-    _TrapContexts[[target]].valid = FALSE;
-    return TRUE;
-end;
-
-implementation func TileProfileBinary(op: TileBinaryOperation,
-                                       data_type: TileDataType,
-                                       left: Word, right: Word) => Word
-begin
-    return TileBinaryValue(op, left, right);
+    let quotient = DivideWordUnsigned(left, right);
+    return left - MultiplyWord(quotient, right);
 end;
 
 implementation func TileProfileUnary(op: TileUnaryOperation,
                                       data_type: TileDataType,
-                                      value: Word) => Word
+                                      value: Word) => (Word, bits(5))
 begin
-    return TileUnaryValue(op, value);
+    if TileUnaryUsesClosedElementwiseContract(op) then
+        let (result, invalid) = TileFixedUnaryValue(
+            op,
+            data_type,
+            value);
+        return (
+            result,
+            if invalid then Zeros{5} + 1 else Zeros{5});
+    end;
+    return (
+        TileUnaryValue(op, value),
+        Zeros{5});
 end;
 
-implementation func TileProfileCompare(comparison: TileComparison,
-                                        data_type: TileDataType,
-                                        left: Word, right: Word) => Word
+implementation func TileProfileFloatingCompare(
+    comparison: TileComparison,
+    data_type: TileDataType,
+    left: Word,
+    right: Word) => (boolean, bits(5))
 begin
-    return TileCompareValue(comparison, left, right);
+    let left_class = TileNumericValueClass(data_type, left);
+    let right_class = TileNumericValueClass(data_type, right);
+    let signaling_nan =
+        left_class == NumericValue_SignalingNaN ||
+        right_class == NumericValue_SignalingNaN;
+    if NumericValueClassIsNaN(left_class) ||
+       NumericValueClassIsNaN(right_class) then
+        return (
+            comparison == TileComparison_NE,
+            if signaling_nan then Zeros{5} + 1 else Zeros{5});
+    end;
+    let both_zero = NumericValueClassIsZero(left_class) &&
+        NumericValueClassIsZero(right_class);
+    let equal = both_zero || left == right;
+    let left_less = if both_zero then FALSE else
+        UInt(TileFloatingOrderKey(data_type, left)) <
+        UInt(TileFloatingOrderKey(data_type, right));
+    return (TileCompareBoolean(comparison, left_less, equal), Zeros{5});
 end;
 
 implementation func TileProfileReductionInitial(
-    op: TileReductionOperation, data_type: TileDataType, first: Word) => Word
+    operation: TileReductionOperation,
+    data_type: TileDataType,
+    first: Word) => Word
 begin
-    return ReductionInitial(op, first);
+    return TileReductionInitialValue(
+        operation,
+        data_type,
+        first);
 end;
 
 implementation func TileProfileReductionStep(
-    op: TileReductionOperation, data_type: TileDataType,
+    operation: TileReductionOperation,
+    data_type: TileDataType,
     accumulator: Word, value: Word) => (Word, boolean)
 begin
-    case op of
-        when TileReduction_SUM => return (accumulator + value, FALSE);
-        when TileReduction_PRODUCT =>
-            return (MultiplyWord(accumulator, value), FALSE);
-        when TileReduction_MIN, TileReduction_ARGMIN =>
-            if SInt(value) < SInt(accumulator) then return (value, TRUE);
-            else return (accumulator, FALSE);
-            end;
-        when TileReduction_MAX, TileReduction_ARGMAX =>
-            if SInt(value) > SInt(accumulator) then return (value, TRUE);
-            else return (accumulator, FALSE);
-            end;
-    end;
+    let (result, selected, -) = TileReductionStepWithFlags(
+        operation,
+        data_type,
+        accumulator,
+        value);
+    return (result, selected);
 end;
 
 implementation func TileProfileExpand(op: TileExpandOperation,
                                       data_type: TileDataType,
                                       left: Word, broadcast: Word) => Word
 begin
-    return TileExpandValue(op, left, broadcast);
-end;
-
-implementation func TileProfilePartialValue(op: TilePartialOperation,
-                                             data_type: TileDataType,
-                                             left: Word, right: Word) => Word
-begin
-    return TilePartialValue(op, left, right);
+    return TileExpandValue(
+        op,
+        data_type,
+        left,
+        broadcast);
 end;
 
 implementation func TileProfileOrderLeft(left: Word, right: Word,
@@ -414,9 +386,36 @@ end;
 implementation func TileProfileMatrixAccumulate(
     accumulator: Word, left: Word, right: Word,
     destination_type: TileDataType, left_type: TileDataType,
-    right_type: TileDataType) => Word
+    right_type: TileDataType, control: NumericExecutionControl) => Word
 begin
     return accumulator + MultiplyWord(left, right);
+end;
+
+implementation func TileProfileFusedMultiplyAdd(
+    data_type: TileDataType,
+    addend: Word,
+    left: Word,
+    right: Word) => (Word, bits(5))
+begin
+    return ScalarFPFusedProfile(
+        FloatingFused_MADD,
+        DefaultNumericExecutionControl().rounding_mode,
+        TileDataTypeToEncoding(data_type),
+        addend,
+        left,
+        right);
+end;
+
+implementation func TileProfileFusedInvalidResult(
+    data_type: TileDataType,
+    left: Word,
+    right: Word,
+    addend: Word) => (Word, bits(5))
+begin
+    let (available, quiet_nan) =
+        HardwareNumericCanonicalNaNResult(data_type);
+    assert available;
+    return (quiet_nan, Zeros{5} + 1);
 end;
 
 implementation func TileProfileMatrixBias(value: Word, bias: Word,
@@ -429,12 +428,19 @@ end;
 implementation func TileProfileMatrixScaledAccumulate(
     accumulator: Word, left: Word, right: Word,
     left_scale: Word, right_scale: Word,
+    left_scale_present: boolean, right_scale_present: boolean,
     destination_type: TileDataType, left_type: TileDataType,
     right_type: TileDataType, left_scale_type: TileDataType,
     right_scale_type: TileDataType) => Word
 begin
-    let scaled_left = MultiplyWord(left, left_scale);
-    let scaled_right = MultiplyWord(right, right_scale);
+    let scaled_left = if left_scale_present then
+        MultiplyWord(left, left_scale)
+    else
+        left;
+    let scaled_right = if right_scale_present then
+        MultiplyWord(right, right_scale)
+    else
+        right;
     return accumulator + MultiplyWord(scaled_left, scaled_right);
 end;
 
@@ -457,10 +463,16 @@ implementation func TileProfileMatrixReductionStep(
     current: Word, candidate: Word, max_abs: boolean,
     data_type: TileDataType) => Word
 begin
-    let lhs = if max_abs then TileProfileUnary(
-        TileUnary_ABS, data_type, current) else current;
-    let rhs = if max_abs then TileProfileUnary(
-        TileUnary_ABS, data_type, candidate) else candidate;
+    let (lhs_abs, -) = TileFixedUnaryValue(
+        TileUnary_ABS,
+        data_type,
+        current);
+    let (rhs_abs, -) = TileFixedUnaryValue(
+        TileUnary_ABS,
+        data_type,
+        candidate);
+    let lhs = if max_abs then lhs_abs else current;
+    let rhs = if max_abs then rhs_abs else candidate;
     let (selected, _) = TileProfileReductionStep(
         TileReduction_MAX, data_type, lhs, rhs);
     return selected;

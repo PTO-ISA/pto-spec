@@ -86,11 +86,6 @@ freedom without confusing a retained hint selector with architectural state.
 Removing the non-decoded pair-writeback helper branch likewise keeps support
 code from appearing to widen the accepted ISA.
 
-An independent executable ISA/model comparison is supporting evidence only.
-Shared address arithmetic and access rules are recorded as corroboration;
-profile-specific or missing queue, permission, event, and restart behavior is
-not imported into PTO.
-
 ## Verification
 
 `spec/evidence/scalar-agu-totality.json` owns the exact catalog-derived case

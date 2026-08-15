@@ -14,6 +14,7 @@ from scripts.tile_taxonomy import TILE_ENGINES
 
 UNIT_PREFIX = "// PTO-UNIT: "
 INSTRUCTION_PREFIX = "// PTO-INSTRUCTION: "
+REVIEW_PREFIX = "// PTO-REVIEW: "
 APPROVED_SURFACES = ("arch", "block", "scalar", "tile")
 MAX_HANDWRITTEN_LINES = 500
 SYNTHETIC_DECODER_NODE = "generated:decoders"
@@ -30,6 +31,7 @@ class AslUnit:
     mnemonic: str | None
     line_count: int
     metadata: dict[str, object] = field(default_factory=dict, compare=False)
+    manual_semantic_review: object | None = field(default=None, compare=False)
 
 
 def _metadata_record(path: Path, text: str) -> tuple[dict[str, object], str]:
@@ -50,6 +52,24 @@ def _metadata_record(path: Path, text: str) -> tuple[dict[str, object], str]:
     if not isinstance(metadata, dict):
         raise ValueError(f"{path}: PTO metadata must be a JSON object")
     return metadata, prefix
+
+
+def _review_record(path: Path, text: str, metadata: dict[str, object]) -> object | None:
+    records = [line[len(REVIEW_PREFIX) :] for line in text.splitlines() if line.startswith(REVIEW_PREFIX)]
+    if len(records) > 1:
+        raise ValueError(
+            f"{path}: expected at most one PTO review record, found {len(records)}"
+        )
+    if "manual_semantic_review" in metadata:
+        raise ValueError(
+            f"{path}: manual_semantic_review must use a separate PTO-REVIEW record"
+        )
+    if not records:
+        return None
+    try:
+        return json.loads(records[0])
+    except json.JSONDecodeError as error:
+        raise ValueError(f"{path}: invalid PTO review JSON: {error}") from error
 
 
 def _string_field(metadata: dict[str, object], name: str, path: Path) -> str:
@@ -87,6 +107,7 @@ def load_units(root: Path, *, source_prefix: Path = Path("asl")) -> tuple[AslUni
                 f"{source_path}: ASL source must be ASCII for ASLRef compatibility"
             )
         metadata, prefix = _metadata_record(source_path, text)
+        manual_semantic_review = _review_record(source_path, text, metadata)
         unit_id = _string_field(metadata, "id", source_path)
         surface = _string_field(metadata, "surface", source_path)
         classification = _string_tuple_field(metadata, "classification", source_path)
@@ -104,6 +125,7 @@ def load_units(root: Path, *, source_prefix: Path = Path("asl")) -> tuple[AslUni
                 mnemonic=mnemonic,
                 line_count=len(text.splitlines()),
                 metadata=metadata,
+                manual_semantic_review=manual_semantic_review,
             )
         )
     return tuple(sorted(units, key=lambda unit: unit.source_path.as_posix()))
@@ -186,6 +208,24 @@ def _validate_units(
     return errors
 
 
+def _single_line_implementation_errors(
+    root: Path, units: Sequence[AslUnit]
+) -> list[str]:
+    errors: list[str] = []
+    for unit in units:
+        source = root / unit.source_path.relative_to("asl")
+        for line_number, line in enumerate(
+            source.read_text(encoding="utf-8").splitlines(), start=1
+        ):
+            code = line.split("//", 1)[0]
+            if re.search(r"\bbegin\b.*\bend\s*;", code):
+                errors.append(
+                    f"{unit.source_path}: implementation body must span multiple "
+                    f"physical lines: {line_number}"
+                )
+    return errors
+
+
 def validate_layout(root: Path, units: Sequence[AslUnit]) -> list[str]:
     """Validate the complete four-surface ASL tree and return every error."""
 
@@ -200,6 +240,7 @@ def validate_layout(root: Path, units: Sequence[AslUnit]) -> list[str]:
     for name in sorted(set(entries) - set(APPROVED_SURFACES)):
         errors.append(f"unexpected ASL root entry: {name}")
     errors.extend(_validate_units(units, require_complete_dependencies=True))
+    errors.extend(_single_line_implementation_errors(root, units))
     return errors
 
 
@@ -220,6 +261,7 @@ def validate_surface(root: Path, surface: str, units: Sequence[AslUnit]) -> list
     for name in sorted(set(entries) - set(APPROVED_SURFACES)):
         errors.append(f"unexpected ASL root entry: {name}")
     errors.extend(_validate_units(units, require_complete_dependencies=False))
+    errors.extend(_single_line_implementation_errors(root, units))
     for unit in units:
         if unit.surface != surface:
             errors.append(

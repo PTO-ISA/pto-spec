@@ -17,9 +17,8 @@ state. Older bridge and pipe-management wording did not match that contract.
   toward `#4` and discards the previous `#4` value.
 - The architecture exposes eight 32-bit per-warp predicate registers. P0 is
   hardwired all-ones; P1 through P7 are independent trap-preserved state with
-  no PTO ISA 0.57.1 instruction consumer. A separate 64-bit execution mask is
-  active only in MPAR and MSEQ bodies, where scalar B.Z and B.NZ consume it.
-  See ADR 0046.
+  no accepted PTO instruction consumer. Scalar `B.Z` and `B.NZ` consume the
+  bundle commit argument established by `SETC.*`.
 - Access is governed by ACR0..ACR15. PTO v0 resets to ACR0, restricts extended
   system-register families to ACR0, and applies its protected memory region to
   ACR2 through ACR15.

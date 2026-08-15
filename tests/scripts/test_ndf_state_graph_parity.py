@@ -6,16 +6,25 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from scripts.asl_units import load_units
+from scripts.ndf import state_index
+
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 NDF_ROOT = REPOSITORY_ROOT / "tools" / "ndf"
 NDF_REVISION = "ed356980ce7ecb2e8482902988d5012fb54058b3"
-EXPECTED_COUNTS = {
-    "unit": 790,
-    "instruction": 652,
-    "synthetic-unit": 1,
-    "state": 12,
-}
+
+
+def expected_counts() -> dict[str, int]:
+    """Derive the independent PTO inventory compared with the NDF graph."""
+
+    units = load_units(REPOSITORY_ROOT / "asl")
+    return {
+        "unit": len(units),
+        "instruction": sum(unit.mnemonic is not None for unit in units),
+        "synthetic-unit": 1,
+        "state": len(state_index(REPOSITORY_ROOT)),
+    }
 
 
 def command(*arguments: str, cwd: Path = REPOSITORY_ROOT) -> subprocess.CompletedProcess[str]:
@@ -53,6 +62,7 @@ class NdfStateGraphParityTest(unittest.TestCase):
         self.assertIn("    path: tools/ndf\n", lock)
 
     def test_compiler_graph_matches_the_pto_metadata_inventory(self) -> None:
+        expected = expected_counts()
         build = command(
             "cargo",
             "build",
@@ -82,7 +92,7 @@ class NdfStateGraphParityTest(unittest.TestCase):
             self.assertTrue(envelope["ok"], envelope)
 
             actual: dict[str, int] = {}
-            for entity in EXPECTED_COUNTS:
+            for entity in expected:
                 queried = command(
                     str(binary),
                     "query",
@@ -98,7 +108,7 @@ class NdfStateGraphParityTest(unittest.TestCase):
                 self.assertTrue(result["ok"], result)
                 actual[entity] = len(result["data"])
 
-        self.assertEqual(actual, EXPECTED_COUNTS)
+        self.assertEqual(actual, expected)
 
 
 if __name__ == "__main__":

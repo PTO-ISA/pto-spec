@@ -12,7 +12,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/memory-model/fault-precision.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION","surface":"arch","classification":["memory-model","fault-precision"],"depends_on":["PTO-ARCH-STATE-TRAP-CONTEXT"]}
-func SetFault(code: FaultCode, address: Word)
+func SetFaultWithCause(code: FaultCode, address: Word, cause: bits(24))
 begin
     let source_ring = CurrentACR();
     let ring = if code == Fault_None then source_ring
@@ -24,7 +24,7 @@ begin
     _FaultAddress = address;
     _ACRTrapAsynchronous[[ring]] = FALSE;
     _ACRTrapArgumentValid[[ring]] = code != Fault_None;
-    _ACRTrapCause[[ring]] = Zeros{24};
+    _ACRTrapCause[[ring]] = cause;
     case code of
         when Fault_None => _ACRTrapNumber[[ring]] = Zeros{6};
         when Fault_ExecutionStateCheck => _ACRTrapNumber[[ring]] = Zeros{6};
@@ -40,6 +40,10 @@ begin
         when Fault_TileLegality => _ACRTrapNumber[[ring]] = Zeros{6} + 5;
         when Fault_TileAllocation => _ACRTrapNumber[[ring]] = Zeros{6} + 5;
         when Fault_BundleControl => _ACRTrapNumber[[ring]] = Zeros{6} + 5;
+        // B.CATR.trap is a successful-commit boundary trap, not a failed
+        // instruction.  It uses the bundle exception class while preserving
+        // the already selected continuation in the saved clean context.
+        when Fault_BundlePostCommit => _ACRTrapNumber[[ring]] = Zeros{6} + 5;
         when Fault_ServiceRequest => _ACRTrapNumber[[ring]] = Zeros{6} + 6;
     end;
     _ACRTrapArgument0[[ring]] = address;
@@ -47,6 +51,11 @@ begin
         SetCurrentACR(ring);
         WriteTPC(TrapVectorEntry(ring, address));
     end;
+end;
+
+func SetFault(code: FaultCode, address: Word)
+begin
+    SetFaultWithCause(code, address, Zeros{24});
 end;
 
 func RaiseServiceRequest(request_type: bits(4)) => boolean

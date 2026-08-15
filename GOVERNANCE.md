@@ -36,6 +36,8 @@ success. The verification workflow does not create a tag or release.
 | --- | --- |
 | NDF regions are unique, well-formed, reference-resolved, and free of legacy copies | `scripts/check-ndf` |
 | Instruction pages embed the owning ASL without drift | `scripts/instruction_docs.py --check` |
+| ASL tests mirror their owner, use the canonical concise filename grammar, and carry purpose metadata | `scripts/check-asl-tests` |
+| Normative ASL implementation bodies remain multiline and reviewable | `scripts/check-asl-layout` |
 | PR checks remain lightweight and the release workflow remains exact-head and fail-closed | `scripts/check-pr` and `scripts/check-release-workflow` |
 | The pinned ASLRef accepts valid and rejects invalid ASL1 | `scripts/check-toolchain` in the release lane |
 | Canonical release evidence is explicitly registered, current, legacy-free, and manifest-complete | `scripts/check-release-closure` in both repository and release lanes |

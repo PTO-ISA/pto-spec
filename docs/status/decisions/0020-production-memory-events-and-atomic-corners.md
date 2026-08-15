@@ -60,8 +60,10 @@ The remaining rules are:
   order, including duplicate addresses, after instruction-wide preflight.
 - Scalar prefetch is a non-faulting hint and emits no event. Tile `TPREFETCH`
   is deliberately different: it preflights the complete footprint, faults and
-  restarts like a tile load, and records one byte-load event per footprint byte
-  when capture is enabled.
+  restarts like a tile load, and records the same typed-element load events as
+  destination-producing `TLOAD` when capture is enabled. Packed four-bit
+  logical elements retain the same byte-addressed event decomposition as
+  `TLOAD`.
 - PTO-TSO locations remain exact translated address-and-size pairs. A candidate
   with mixed-size or partially overlapping accesses fails validity until PTO
   owns a byte-level coherence extension.

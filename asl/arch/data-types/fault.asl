@@ -14,5 +14,6 @@ type FaultCode of enumeration {
     Fault_TileLegality,
     Fault_TileAllocation,
     Fault_BundleControl,
+    Fault_BundlePostCommit,
     Fault_ServiceRequest
 };

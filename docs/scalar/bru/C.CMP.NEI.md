@@ -29,11 +29,24 @@ c.cmp.nei t#1, simm, ->t
 | --- | --- | ---: | --- | --- |
 | c_cmp_nei_16_35d1f02063e2 | simm5 | 5 | signed | [{"instruction_lsb":6,"value_lsb":0,"width":5}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| c_cmp_nei_16_35d1f02063e2 | simm5 | 5 | 0–31 | none | none | 5-bit signed immediate | Encoded zero supplies numeric zero for the 5-bit signed immediate. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| simm5 | encoded operand or control |
+| simm5 | 5-bit signed immediate |
 
 ## Decode
 
@@ -57,14 +70,36 @@ end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `C.CMP.NEI - Compare scalar operands and write the encoded boolean result.`
-- **Semantic handler:** `ExecuteCompare`
+- Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects.
+
+## State effects
+
+- C.CMP.NEI - Compare scalar operands and write the encoded boolean result.
+- After decode and legality checks, execute the normative ExecuteCompare ASL handler; no other architectural state is modified.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- none
+
+## Exceptions
+
+- Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation.
+
+## Examples
+
+- c.cmp.nei t#1, simm, ->t
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.asl`
 
-Multiply the left and right matrices into the destination.
+Multiply A[M x K] by B[K x N] into one private FP32, S32, or U32 CUBE destination.
 
 ## Normative identity {#PTO-INST-TILE-TMATMUL}
 
@@ -28,6 +28,13 @@ TMATMUL <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TMATMUL | CUBE |  | 0 |  | TMATMUL |
 
+## Encoding class
+
+- **Class:** `selector-encoded-block-operation`
+- **Standalone opcode:** `no`
+
+This operation has no standalone opcode.
+
 ## Operands and results
 
 | Field | Architectural role |
@@ -40,7 +47,8 @@ TMATMUL <bundle operands>
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.asl -->
 ```asl
-readonly func InstructionContractOperation_TMATMUL() => TileOperation
+readonly func InstructionContractOperation_TMATMUL()
+    => TileOperation
 begin
     return TileOperation_TMATMUL;
 end;
@@ -50,53 +58,92 @@ end;
 ## Block composition
 
 ```asm
-BSTART.CUBE TMATMUL AType
-B.DATR BType RMode Sat
-B.FPATR
-B.DIM LB0 M
-B.DIM LB1 N
-B.DIM LB2 K
-B.IOS Shared operand binder (optional)
-B.IOT Local sources and Local outputs
-B.IOR scalar PostProcess parameter (optional)
-BSTOP
+BSTART.TMATMUL AType
+B.DATR BType, RMode, Sat (optional; BType defaults to AType)
+B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)
+B.DIM LB0 M (optional, default 1)
+B.DIM LB1 N (optional, default 1)
+B.DIM LB2 K (optional, default 1)
+B.IOS complete right or both matrix operand groups (optional; executing mask 1111)
+B.IOT ordered Local mathematical sources: A matrix, B matrix
+B.IOT D, optional RowMaxOut, optional GroupMaxOut destinations
+B.IOT/B.IOR postprocess operands selected by B.FPATR
+BSTOP or the next BSTART completion boundary
 ```
 
 ## Operation
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.asl -->
 ```asl
-// Bundle dimensions use the standard C = A x B naming: LB0=M (result rows),
-// LB1=N (result columns), and LB2=K (the shared inner dimension).
-// Complete-bundle dynamic schema linkage: this static mathematical operand owner participates in the
-// conditional B.FPATR schema (scalar QuantParam/LReLUParam, ordered Local
-// RowMax/parameter streams, and D/auxiliary destinations) owned by
-// PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA and evidenced in
-// spec/evidence/bundle-command-totality.json.
-readonly func InstructionContractMatrixShapeLegal_TMATMUL_(left: TileIndex, right: TileIndex) => boolean
+readonly func InstructionContractCubeFunction_TMATMUL()
+    => integer {0..31}
 begin
-    return TileMatrixShapeLegal(left, right);
+    return 0;
 end;
 
-readonly func InstructionContractHandler_TMATMUL() => TileSemanticHandler
+readonly func InstructionContractSharedOperandsAllowed_TMATMUL()
+    => boolean
+begin
+    return TRUE;
+end;
+
+readonly func InstructionContractOperandsLegal_TMATMUL(
+    destination: TileIndex,
+    left: TileIndex,
+    right: TileIndex) => boolean
+begin
+    return TileOperandsLegal_TMATMUL(
+        destination,
+        left,
+        right);
+end;
+
+readonly func InstructionContractHandler_TMATMUL()
+    => TileSemanticHandler
 begin
     return TileHandler_TMATMUL;
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- **Legality handler:** `TileOperandsLegal_TMATMUL`
-- **Fault contract:** `ExecuteTileInstruction`
-- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
+- Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.
+- Omitted LB0, LB1, and LB2 default M, N, and K independently to one.
+- Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.
 
-## Operational information
+## Legality
 
-- **Semantic handler:** `TMATMUL`
-- **Effect contract:** `TMATMUL`
-- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
-- **State effects:** `["operand:destination0:destination", "operand:source0:left", "operand:source1:right"]`
+- The carrier selects exactly CUBE Function 0 and TileOperation_TMATMUL.
+- AType and BType must be supported ordinary Matrix types from one numeric class. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.
+- Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.
+- B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.
+
+## State effects
+
+- Multiply A[M x K] by B[K x N] into one private FP32, S32, or U32 CUBE destination.
+- After complete preflight, execute TMATMUL with the operand bindings listed above; destination definedness changes only as specified by that handler.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- Complete schema, field, type, dimension, descriptor, shape, capacity, readiness, alias, and allocation preflight precedes every source snapshot and destination effect.
+- D and every enabled reduction output publish as one atomic group; rejection publishes none and successful sources persist.
+
+## Exceptions
+
+- A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.
+- Missing, duplicate, or non-Matrix B.FPATR use raises Fault_BundleControl before allocation or payload effects.
+- Illegal types, dimensions, masks, binding streams, descriptors, shapes, capacities, aliases, readiness, or postprocess values raise Fault_TileLegality before source snapshots and effects.
+
+## Examples
+
+- BSTART.TMATMUL AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; executing mask 1111); B.IOT ordered Local mathematical sources: A matrix, B matrix; B.IOT D, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary
 
 <!-- SUPPLEMENTARY-BEGIN -->
 The block uses the standard matrix product dimensions `LB0=M`, `LB1=N`, and

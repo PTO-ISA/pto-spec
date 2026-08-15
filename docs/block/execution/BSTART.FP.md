@@ -15,12 +15,10 @@ The current instruction contract is owned by the ASL source linked above.
 
 ```asm
 BSTART.FP RET
-BSTART.FP ICALL
 BSTART.FP COND, <label>
 BSTART.FP IND
 BSTART.FP DIRECT, <label>
-BSTART.FP CALL, <label>
-BSTART.FP FALL<, fixup_label>
+BSTART.FP FALL
 ```
 
 ## Encoding
@@ -28,12 +26,10 @@ BSTART.FP FALL<, fixup_label>
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
 | bstart_fp_32_0c671a644214 | L32 | 32 | 0x00007101 / 0xffffffff | [] |
-| bstart_fp_32_24db3966d6ba | L32 | 32 | 0x00006101 / 0xffffffff | [] |
 | bstart_fp_32_58ad7954fb49 | L32 | 32 | 0x00003101 / 0x00007fff | [] |
 | bstart_fp_32_7978795a29a1 | L32 | 32 | 0x00005101 / 0xffffffff | [] |
 | bstart_fp_32_d00a708a81f0 | L32 | 32 | 0x00002101 / 0x00007fff | [] |
-| bstart_fp_32_dd7bc8dd694c | L32 | 32 | 0x00004101 / 0x00007fff | [] |
-| bstart_fp_32_face4f238d84 | L32 | 32 | 0x00001101 / 0x00007fff | [] |
+| bstart_fp_32_face4f238d84 | L32 | 32 | 0x00001101 / 0x00007fff | [{"field":"simm17","operator":"one-of","values":[0]}] |
 
 ### Fields
 
@@ -41,14 +37,30 @@ BSTART.FP FALL<, fixup_label>
 | --- | --- | ---: | --- | --- |
 | bstart_fp_32_58ad7954fb49 | simm17 | 17 | signed | [{"instruction_lsb":15,"value_lsb":0,"width":17}] |
 | bstart_fp_32_d00a708a81f0 | simm17 | 17 | signed | [{"instruction_lsb":15,"value_lsb":0,"width":17}] |
-| bstart_fp_32_dd7bc8dd694c | simm17 | 17 | signed | [{"instruction_lsb":15,"value_lsb":0,"width":17}] |
 | bstart_fp_32_face4f238d84 | simm17 | 17 | signed | [{"instruction_lsb":15,"value_lsb":0,"width":17}] |
+
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| bstart_fp_32_58ad7954fb49 | simm17 | 17 | 0–131071 | none | none | 17-bit signed bundle target displacement | Encoded zero supplies a zero displacement or zero immediate value. |
+| bstart_fp_32_d00a708a81f0 | simm17 | 17 | 0–131071 | none | none | 17-bit signed bundle target displacement | Encoded zero supplies a zero displacement or zero immediate value. |
+| bstart_fp_32_face4f238d84 | simm17 | 17 | 0 | none | 1–131071 | 17-bit signed bundle target displacement | Encoded zero supplies a zero displacement or zero immediate value. |
+
+- `bstart_fp_32_face4f238d84.simm17` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
 
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| simm17 | encoded operand or control |
+| simm17 | 17-bit signed bundle target displacement |
 
 ## Decode
 
@@ -57,15 +69,20 @@ BSTART.FP FALL<, fixup_label>
 readonly func InstructionContractMatches_BSTART_FP(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_fp_32_0c671a644214) ||
-           (operation == CommandOperation_bstart_fp_32_24db3966d6ba) ||
            (operation == CommandOperation_bstart_fp_32_58ad7954fb49) ||
            (operation == CommandOperation_bstart_fp_32_7978795a29a1) ||
            (operation == CommandOperation_bstart_fp_32_d00a708a81f0) ||
-           (operation == CommandOperation_bstart_fp_32_dd7bc8dd694c) ||
            (operation == CommandOperation_bstart_fp_32_face4f238d84);
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
+
+## Block composition
+
+```asm
+BSTART.FP retires any active predecessor block, then opens one FP block whose header commands execute sequentially until BSTOP or the next BSTART selects the BARG continuation.
+COND publishes a candidate BPCN but SETC may update TAKEN before commit; IND requires and snapshots a retiring Standard or Floating BARG.BPCN, while RET snapshots architectural ra before predecessor retirement.
+```
 
 ## Operation
 
@@ -78,14 +95,44 @@ end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- BSTART.FP FALL encodes simm17=0; nonzero values in that family are extension-reserved.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.`
-- **Semantic handler:** `ExecuteBundleStart`
+- Exactly FALL, DIRECT, COND, IND, and RET are accepted.
+- The FALL form accepts only simm17=0; every nonzero FALL payload is extension-reserved.
+- Bare CALL and ICALL forms are deleted.
+
+## State effects
+
+- On success BPC records the BSTART address; BARG.BlockType becomes FP; BARG.TYPE records FALL, DIRECT, COND, IND, or RET; BARG.BPCN records the candidate target; and BARG.TAKEN is false only for COND until SETC resolves it.
+- Header execution continues at the sequential PC. BSTOP or the next BSTART commits the candidate continuation selected by BARG.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- All target, descriptor, and form checks precede predecessor retirement. New BARG state is installed only after successful retirement.
+
+## Exceptions
+
+- A nonzero FALL simm17, deleted bare CALL/ICALL encoding, reserved BrType, odd target, or unsupported form raises before predecessor retirement or new BARG effects.
+- IND without an active retiring Standard or Floating BARG raises Fault_BundleControl before effects.
+- If predecessor commit fails, the old block and continuation remain authoritative and no FP block is installed.
+
+## Examples
+
+- BSTART.FP FALL
+- BSTART.FP DIRECT, target
+- BSTART.FP COND, target
+- BSTART.FP IND
+- BSTART.FP RET
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

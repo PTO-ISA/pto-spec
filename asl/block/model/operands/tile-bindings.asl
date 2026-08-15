@@ -40,6 +40,10 @@ func AddBundleTileBinding(destination_valid: boolean,
                           source1: TileIndex,
                           last: boolean)
 begin
+    if BundleTileBindingSequenceClosed() then
+        SetFault(Fault_BundleControl, ReadTPC());
+        return;
+    end;
     var added = FALSE;
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if !added && !_BundleTileBindings[[binding]].valid then
@@ -50,6 +54,17 @@ begin
         end;
     end;
     if !added then SetFault(Fault_TileLegality, ReadTPC()); end;
+end;
+
+readonly func BundleTileBindingSequenceClosed() => boolean
+begin
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].last then
+            return TRUE;
+        end;
+    end;
+    return FALSE;
 end;
 
 readonly func BundleTileDestinationSizeLegal(
@@ -82,29 +97,9 @@ begin
     return FALSE;
 end;
 
-func CommitBundleTileSourceLifetime(binding: BundleTileBindingIndex)
-begin
-    if _BundleTileBindings[[binding]].source0_valid &&
-       !BundleTileIsDestination(_BundleTileBindings[[binding]].source0) then
-        ReleaseTile(_BundleTileBindings[[binding]].source0);
-    end;
-    if _BundleTileBindings[[binding]].source1_valid &&
-       !BundleTileIsDestination(_BundleTileBindings[[binding]].source1) &&
-       (!_BundleTileBindings[[binding]].source0_valid ||
-        _BundleTileBindings[[binding]].source1 !=
-            _BundleTileBindings[[binding]].source0) then
-        ReleaseTile(_BundleTileBindings[[binding]].source1);
-    end;
-end;
-
 func FinalizeBundleTileAttempt(status: TileExecutionStatus)
 begin
-    if status == TileExecution_Executed then
-        for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
-            if _BundleTileBindings[[binding]].valid then
-                CommitBundleTileSourceLifetime(
-                    binding as BundleTileBindingIndex);
-            end;
-        end;
-    end;
+    // B.IOT.L terminates only the binding sequence. Local sources remain
+    // allocated after both successful and rejected block attempts.
+    return;
 end;

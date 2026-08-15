@@ -14,14 +14,14 @@ The current instruction contract is owned by the ASL source linked above.
 ## Assembly
 
 ```asm
-BSTART.SYS FALL<, fixup_label>
+BSTART.SYS FALL
 ```
 
 ## Encoding
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| bstart_sys_32_762d9d84a6d8 | L32 | 32 | 0x00001081 / 0x00007fff | [] |
+| bstart_sys_32_762d9d84a6d8 | L32 | 32 | 0x00001081 / 0x00007fff | [{"field":"simm17","operator":"one-of","values":[0]}] |
 
 ### Fields
 
@@ -29,11 +29,26 @@ BSTART.SYS FALL<, fixup_label>
 | --- | --- | ---: | --- | --- |
 | bstart_sys_32_762d9d84a6d8 | simm17 | 17 | signed | [{"instruction_lsb":15,"value_lsb":0,"width":17}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| bstart_sys_32_762d9d84a6d8 | simm17 | 17 | 0 | none | 1–131071 | fixed-zero fallthrough payload; nonzero values are extension-reserved | Encoded zero supplies a zero displacement or zero immediate value. |
+
+- `bstart_sys_32_762d9d84a6d8.simm17` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| simm17 | encoded operand or control |
+| simm17 | fixed-zero fallthrough payload; nonzero values are extension-reserved |
 
 ## Decode
 
@@ -46,6 +61,13 @@ end;
 ```
 <!-- GENERATED-ASL-END: decode -->
 
+## Block composition
+
+```asm
+BSTART.SYS retires any active predecessor block, then opens one system block whose header commands execute sequentially until BSTOP or the next BSTART.
+SYS has no candidate transfer: BPCN, TYPE, and TAKEN are inapplicable and cannot select the next PC.
+```
+
 ## Operation
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.SYS.asl -->
@@ -57,14 +79,37 @@ end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- The encoded simm17 field is fixed to zero; nonzero values are extension-reserved.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.`
-- **Semantic handler:** `ExecuteBundleStart`
+- Only simm17=0 is accepted; every nonzero payload is extension-reserved.
+
+## State effects
+
+- On success BPC records the BSTART address and BARG.BlockType becomes SYS. BPCN, TYPE, and TAKEN are inapplicable and are canonicalized to non-selecting values.
+- Header execution and the eventual block continuation are sequential.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- The fixed-zero payload and form legality are checked before predecessor retirement. New SYS BARG state is installed only after successful retirement.
+
+## Exceptions
+
+- Any nonzero simm17 in the SYS FALL family is extension-reserved and raises before predecessor retirement or new BARG effects.
+- If predecessor commit fails, the old block and continuation remain authoritative and no system block is installed.
+
+## Examples
+
+- BSTART.SYS FALL
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

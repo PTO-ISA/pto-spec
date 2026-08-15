@@ -6,6 +6,21 @@ begin
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;
     end;
+    // SETC.TGT can replace BARG.BPCN after BSTART. Validate the final selected
+    // continuation before any tile or block effect is made visible.
+    if continuation[0] == '1' || BARGCommitPC(continuation)[0] == '1' then
+        SetFault(Fault_InstructionPC, BARGCommitPC(continuation));
+        return FALSE;
+    end;
+    // DR is group execution for VEC/SFU/TLSU only.  The raw bit may be
+    // collected before the complete header selects its operation, so reject
+    // the incompatible completed block here, before any block effect.
+    if _BundleControlAttributes.dimension_reduction &&
+       _BARG.block_type != BundleKind_TileElement &&
+       _BARG.block_type != BundleKind_TileMemory then
+        SetFault(Fault_BundleControl, ReadTPC());
+        return FALSE;
+    end;
     if _BundleOperation.valid then
         if _BundleOperation.operation_class == BundleOperation_TileElement ||
            _BundleOperation.operation_class == BundleOperation_TileMemory ||

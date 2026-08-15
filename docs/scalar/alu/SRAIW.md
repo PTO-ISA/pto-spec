@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/SRAIW.asl`
 
-SRAIW - Compute this mnemonic's 32-bit binary operation and sign-extend the result.
+SRAIW performs a word arithmetic right shift and sign-extends the result.
 
 ## Normative identity {#PTO-INST-SCALAR-SRAIW}
 
@@ -31,19 +31,35 @@ sraiw SrcL, shamt, ->{t, u, Rd}
 | sraiw_32_db04a6299504 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | sraiw_32_db04a6299504 | shamt | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| sraiw_32_db04a6299504 | RegDst | 5 | 0–31 | none | none | Reg5 destination or discard | Encoded zero discards the result. |
+| sraiw_32_db04a6299504 | SrcL | 5 | 0–31 | none | none | Reg5 source; low 32 bits used | Encoded zero reads the architectural zero GPR. |
+| sraiw_32_db04a6299504 | shamt | 5 | 0–31 | none | none | five-bit shift amount | Encoded zero performs no shift. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| RegDst | encoded operand or control |
-| SrcL | encoded operand or control |
-| shamt | encoded operand or control |
+| RegDst | Reg5 destination or discard |
+| SrcL | Reg5 source; low 32 bits used |
+| shamt | five-bit shift amount |
 
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/SRAIW.asl -->
 ```asl
-readonly func InstructionContractOperation_SRAIW() => ScalarOperation
+readonly func InstructionContractOperation_SRAIW()
+    => ScalarOperation
 begin
     return ScalarOperation_SRAIW;
 end;
@@ -54,21 +70,64 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/SRAIW.asl -->
 ```asl
-readonly func InstructionContractHandler_SRAIW() => ScalarSemanticHandler
+readonly func InstructionContractHandler_SRAIW()
+    => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
+end;
+
+pure func InstructionContractShiftWidth_SRAIW()
+    => integer {1..64}
+begin
+    return 5;
+end;
+
+pure func InstructionContractIsWordOperation_SRAIW()
+    => boolean
+begin
+    return TRUE;
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- SrcL, shamt, and RegDst are required fields; no field can be omitted.
+- shamt is a 5-bit shift amount from 0 through 31. Encoded zero performs an identity word shift.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `SRAIW - Compute this mnemonic's 32-bit binary operation and sign-extend the result.`
-- **Semantic handler:** `ScalarBinaryW`
+- SrcL codes 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4 without consumption.
+- RegDst codes 0 and 24..29 discard, code 30 pushes U, code 31 pushes T, and codes 1..23 write GPRs.
+- Every 5-bit shift amount from 0 through 31 is legal; source bits above bit 31 do not participate.
+
+## State effects
+
+- Compute the 32-bit arithmetic right shift ASR(SrcL[31:0], shamt), then publish the 32-bit result sign-extended to XLEN.
+- Destination codes 0 and 24..29 discard, code 30 pushes U, code 31 pushes T, and codes 1..23 write GPRs; source queues are non-consuming.
+- No memory, reservation, descriptor, flag, block, privilege, or control-flow state changes except the successful TPC advance.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- Snapshot SrcL before the destination effect so aliases read the pre-instruction value.
+- Publish the sign-extended word result, then advance TPC by four bytes.
+
+## Exceptions
+
+- SRAIW raises no arithmetic exception; copies of SrcL[31] enter from the left and the final word is sign-extended to XLEN.
+- Bits 31:25 are fixed zero. A mismatch or unavailable T/U source raises Fault_IllegalInstruction before the destination effect and TPC advance.
+
+## Examples
+
+- sraiw a0, 1, ->a0
+- sraiw u#1, 31, ->t
+- sraiw zero, 0, ->zero
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

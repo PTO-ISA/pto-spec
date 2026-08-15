@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/encoding/C.BSTART.SYS.asl`
 
-Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.
+Starts the fixed compressed sequential System block without a selecting branch continuation.
 
 ## Normative identity {#PTO-INST-BLOCK-C-BSTART-SYS}
 
@@ -23,6 +23,11 @@ C.BSTART.SYS FALL
 | --- | --- | ---: | --- | --- |
 | c_bstart_sys_16_ec213ce96eb7 | C16 | 16 | 0x0840 / 0xffff | [] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
 ## Operands and results
 
 This instruction has no explicit operand fields.
@@ -38,10 +43,21 @@ end;
 ```
 <!-- GENERATED-ASL-END: decode -->
 
+## Block composition
+
+```asm
+After any active predecessor block commits successfully, C.BSTART.SYS opens one System block. Its header commands execute sequentially until BSTOP or the next BSTART.
+```
+
 ## Operation
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/encoding/C.BSTART.SYS.asl -->
 ```asl
+pure func InstructionContractKind_C_BSTART_SYS() => BundleKind
+begin
+    return BundleKind_System;
+end;
+
 readonly func InstructionContractHandler_C_BSTART_SYS() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
@@ -49,14 +65,38 @@ end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- The instruction has no operand field. FALL and zero displacement are fixed by its complete 16-bit encoding.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.`
-- **Semantic handler:** `ExecuteBundleStart`
+- The complete 16-bit pattern 0x0840 is the only accepted C.BSTART.SYS encoding.
+- System blocks have only sequential fallthrough and expose no BPCN, TYPE, or TAKEN continuation.
+
+## State effects
+
+- Installs BARG.BPC=P and BlockType=SYS, advances header execution to P+2, and keeps BPCN zero with canonical non-selecting fallthrough state.
+- BSTOP or the next BSTART commits to the sequential continuation.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- The predecessor block commits before the new System BARG is installed. C.BSTART.SYS itself performs no memory access.
+
+## Exceptions
+
+- Any different bit pattern belongs to another instruction or is illegal; it is not a C.BSTART.SYS operand variation.
+- If predecessor commit fails, the retiring block remains authoritative and no System BARG is installed.
+
+## Examples
+
+- C.BSTART.SYS FALL
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

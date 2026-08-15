@@ -11,14 +11,31 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/legality/operand-schema.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA","surface":"tile","classification":["model","legality","operand-schema"],"depends_on":["PTO-TILE-MODEL-LEGALITY-ALLOCATION-CAPACITY"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA","surface":"tile","classification":["model","legality","operand-schema"],"depends_on":["PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-ALLOCATION-CAPACITY"]}
 readonly func TileOperandsLegal_ExecuteTileBinary(
     op: TileBinaryOperation, destination: TileIndex,
     source_left: TileIndex, source_right: TileIndex) => boolean
 begin
     if !TileShapeAndTypeMatch(source_left, source_right) ||
        !TileShapeAndTypeMatch(destination, source_left) then return FALSE; end;
-    if op == TileBinary_DIV || op == TileBinary_REM then
+    if TileBinaryUsesClosedElementwiseContract(op) then
+        if !TileSourceContentsDefined(source_left) ||
+           !TileSourceContentsDefined(source_right) ||
+           !TileBinaryDataTypeSupported(
+               op,
+               _Tiles[[source_left]].data_type) ||
+           _Tiles[[source_left]].layout != TileLayout_RowMajor then
+            return FALSE;
+        end;
+    end;
+    if (op == TileBinary_MAX || op == TileBinary_MIN) &&
+       TileDataTypeIsFloating(_Tiles[[source_left]].data_type) &&
+       (!TileSourceEncodingsValid(source_left) ||
+        !TileSourceEncodingsValid(source_right)) then
+        return FALSE;
+    end;
+    if (op == TileBinary_DIV || op == TileBinary_REM) &&
+       TileDataTypeIsInteger(_Tiles[[source_right]].data_type) then
         return TilePayloadNonzero(source_right);
     end;
     return TRUE;
@@ -27,15 +44,27 @@ end;
 readonly func TileOperandsLegal_ExecuteTileFillScalar(
     destination: TileIndex, scalar: Word) => boolean
 begin
-    return TileDescriptorLegal(destination);
+    return TileDescriptorLegal(destination) &&
+           _Tiles[[destination]].storage_kind == TileStorage_Numeric &&
+           _Tiles[[destination]].layout == TileLayout_RowMajor &&
+           TileVecArithmeticDataTypeSupported(
+               _Tiles[[destination]].data_type);
 end;
 
 readonly func TileOperandsLegal_ExecuteTileUnary(
     op: TileUnaryOperation, destination: TileIndex, source: TileIndex) => boolean
 begin
     if !TileShapeAndTypeMatch(destination, source) then return FALSE; end;
-    if op == TileUnary_RECIP || op == TileUnary_RSQRT then
-        return TilePayloadNonzero(source);
+    if TileUnaryUsesCompleteElementwiseSchema(op) then
+        if !TileSourceContentsDefined(source) ||
+           !TileUnaryDataTypeSupported(op, _Tiles[[source]].data_type) ||
+           _Tiles[[source]].layout != TileLayout_RowMajor then
+            return FALSE;
+        end;
+        if TileDataTypeIsFloating(_Tiles[[source]].data_type) &&
+           !TileSourceEncodingsValid(source) then
+            return FALSE;
+        end;
     end;
     return TRUE;
 end;
@@ -44,8 +73,29 @@ readonly func TileOperandsLegal_ExecuteTileScalar(
     op: TileBinaryOperation, destination: TileIndex,
     source: TileIndex, scalar: Word) => boolean
 begin
-    if !TileShapeAndTypeMatch(destination, source) then return FALSE; end;
-    return (op != TileBinary_DIV && op != TileBinary_REM) || !IsZero(scalar);
+    if !TileShapeAndTypeMatch(destination, source) ||
+       _Tiles[[source]].storage_kind != TileStorage_Numeric ||
+       _Tiles[[source]].layout != TileLayout_RowMajor ||
+       !TileBinaryDataTypeSupported(op, _Tiles[[source]].data_type) ||
+       !TileSourceContentsDefined(source) ||
+       !TileSourceEncodingsValid(source) then
+        return FALSE;
+    end;
+    let normalized_scalar = TileRawElementValue(
+        scalar,
+        _Tiles[[source]].data_type);
+    if !TileNumericEncodingValid(
+           _Tiles[[source]].data_type,
+           normalized_scalar) then
+        return FALSE;
+    end;
+    if (op == TileBinary_DIV || op == TileBinary_REM) &&
+       TileDataTypeIsInteger(_Tiles[[source]].data_type) then
+        return !IsZero(TileIntegerOperandValue(
+            normalized_scalar,
+            _Tiles[[source]].data_type));
+    end;
+    return TRUE;
 end;
 
 readonly func TileOperandsLegal_ExecuteTileCompare(
@@ -53,14 +103,34 @@ readonly func TileOperandsLegal_ExecuteTileCompare(
     comparison: TileComparison) => boolean
 begin
     return TileShapeAndTypeMatch(source_left, source_right) &&
-           TileLogicalShapeMatch(destination, source_left);
+           _Tiles[[source_left]].storage_kind == TileStorage_Numeric &&
+           _Tiles[[source_left]].layout == TileLayout_RowMajor &&
+           TileCompareDataTypeSupported(_Tiles[[source_left]].data_type) &&
+           TileSourceContentsDefined(source_left) &&
+           TileSourceContentsDefined(source_right) &&
+           TileSourceEncodingsValid(source_left) &&
+           TileSourceEncodingsValid(source_right) &&
+           TileLogicalShapeMatch(destination, source_left) &&
+           _Tiles[[destination]].storage_kind == TileStorage_Predicate;
 end;
 
 readonly func TileOperandsLegal_ExecuteTileCompareScalar(
     destination: TileIndex, source: TileIndex, scalar: Word,
     comparison: TileComparison) => boolean
 begin
-    return TileLogicalShapeMatch(destination, source);
+    let normalized_scalar = TileRawElementValue(
+        scalar,
+        _Tiles[[source]].data_type);
+    return _Tiles[[source]].storage_kind == TileStorage_Numeric &&
+           _Tiles[[source]].layout == TileLayout_RowMajor &&
+           TileCompareDataTypeSupported(_Tiles[[source]].data_type) &&
+           TileSourceContentsDefined(source) &&
+           TileSourceEncodingsValid(source) &&
+           TileNumericEncodingValid(
+               _Tiles[[source]].data_type,
+               normalized_scalar) &&
+           TileLogicalShapeMatch(destination, source) &&
+           _Tiles[[destination]].storage_kind == TileStorage_Predicate;
 end;
 
 readonly func TileOperandsLegal_ExecuteTileSelect(
@@ -68,81 +138,88 @@ readonly func TileOperandsLegal_ExecuteTileSelect(
     source_true: TileIndex, source_false: TileIndex) => boolean
 begin
     return TileShapeAndTypeMatch(source_true, source_false) &&
+           _Tiles[[source_true]].storage_kind == TileStorage_Numeric &&
+           _Tiles[[source_true]].layout == TileLayout_RowMajor &&
+           TileSelectDataTypeSupported(_Tiles[[source_true]].data_type) &&
+           TileSourceContentsDefined(source_true) &&
+           TileSourceContentsDefined(source_false) &&
+           TilePredicateValuesLegal(mask) &&
            TileLogicalShapeMatch(mask, source_true) &&
-           TileShapeAndTypeMatch(destination, source_true);
+           TileShapeAndTypeMatch(destination, source_true) &&
+           _Tiles[[destination]].storage_kind == TileStorage_Numeric;
 end;
 
 readonly func TileOperandsLegal_ExecuteTileSelectScalar(
     destination: TileIndex, mask: TileIndex,
     source_true: TileIndex, scalar_false: Word) => boolean
 begin
-    return TileLogicalShapeMatch(destination, source_true) &&
-           TileLogicalShapeMatch(mask, source_true);
-end;
-
-readonly func TileOperandsLegal_ExecuteTileReduction(
-    op: TileReductionOperation, axis: TileAxis,
-    destination: TileIndex, source: TileIndex) => boolean
-begin
-    if !TileDescriptorLegal(destination) || !TileDescriptorLegal(source) ||
-       _Tiles[[source]].valid_rows == 0 ||
-       _Tiles[[source]].valid_columns == 0 then return FALSE; end;
-    if axis == TileAxis_Row then
-        return _Tiles[[destination]].valid_rows >= _Tiles[[source]].valid_rows &&
-               _Tiles[[destination]].valid_columns >= 1;
-    else
-        return _Tiles[[destination]].valid_rows >= 1 &&
-               _Tiles[[destination]].valid_columns >= _Tiles[[source]].valid_columns;
-    end;
-end;
-
-readonly func TileOperandsLegal_ExecuteTileExpand(
-    op: TileExpandOperation, axis: TileAxis, destination: TileIndex,
-    source: TileIndex, broadcast_source: TileIndex) => boolean
-begin
-    if !TileShapeAndTypeMatch(destination, source) ||
-       !TileDescriptorLegal(broadcast_source) ||
-       _Tiles[[broadcast_source]].data_type != _Tiles[[source]].data_type then
-        return FALSE;
-    end;
-    let shape_legal = if axis == TileAxis_Row then
-        _Tiles[[broadcast_source]].valid_rows >= _Tiles[[source]].valid_rows &&
-        _Tiles[[broadcast_source]].valid_columns >= 1
-    else
-        _Tiles[[broadcast_source]].valid_rows >= 1 &&
-        _Tiles[[broadcast_source]].valid_columns >= _Tiles[[source]].valid_columns;
-    if !shape_legal then return FALSE; end;
-    return op != TileExpand_DIV ||
-           TileBroadcastPayloadNonzero(axis, source, broadcast_source);
+    return _Tiles[[source_true]].storage_kind == TileStorage_Numeric &&
+           _Tiles[[source_true]].layout == TileLayout_RowMajor &&
+           TileSelectDataTypeSupported(_Tiles[[source_true]].data_type) &&
+           TileSourceContentsDefined(source_true) &&
+           TilePredicateValuesLegal(mask) &&
+           TileLogicalShapeMatch(mask, source_true) &&
+           TileShapeAndTypeMatch(destination, source_true) &&
+           _Tiles[[destination]].storage_kind == TileStorage_Numeric;
 end;
 
 readonly func TileOperandsLegal_TCI(
     destination: TileIndex, start: Word, descending: boolean) => boolean
 begin
-    return TileDescriptorLegal(destination);
+    if !TileDescriptorLegal(destination) then return FALSE; end;
+    let tile = _Tiles[[destination]];
+    return TileTCIDataTypeSupported(tile.data_type) &&
+           tile.storage_kind == TileStorage_Numeric &&
+           tile.layout == TileLayout_RowMajor &&
+           tile.valid_rows == 1 &&
+           tile.valid_columns >= 1 &&
+           tile.columns >= tile.valid_columns;
 end;
 
 readonly func TileOperandsLegal_TTRI(
     destination: TileIndex, upper: boolean,
     diagonal: integer {-65535..65535}) => boolean
 begin
-    return TileDescriptorLegal(destination);
-end;
-
-readonly func TileOperandsLegal_TFILLPAD(
-    destination: TileIndex, source: TileIndex, padding: Word) => boolean
-begin
-    return TileDescriptorLegal(destination) &&
-           TileDescriptorLegal(source) &&
-           _Tiles[[destination]].rows >= _Tiles[[source]].valid_rows &&
-           _Tiles[[destination]].columns >= _Tiles[[source]].valid_columns;
+    if !TileDescriptorLegal(destination) then return FALSE; end;
+    let tile = _Tiles[[destination]];
+    return TileTTRIDataTypeSupported(tile.data_type) &&
+           tile.storage_kind == TileStorage_Numeric &&
+           tile.layout == TileLayout_RowMajor &&
+           tile.valid_rows >= 1 &&
+           tile.valid_columns >= 1 &&
+           tile.rows >= tile.valid_rows &&
+           tile.columns >= tile.valid_columns;
 end;
 
 readonly func TileOperandsLegal_TCVT(destination: TileIndex,
                                      source: TileIndex,
                                      control: NumericExecutionControl) => boolean
 begin
-    return TileLogicalShapeMatch(destination, source);
+    if !TileDescriptorLegal(destination) ||
+       !TileSourceContentsDefined(source) ||
+       !TileSourceEncodingsValid(source) then
+        return FALSE;
+    end;
+    let destination_tile = _Tiles[[destination]];
+    let source_tile = _Tiles[[source]];
+    if destination_tile.rows != source_tile.rows ||
+       destination_tile.columns != source_tile.columns ||
+       destination_tile.valid_rows != source_tile.valid_rows ||
+       destination_tile.valid_columns != source_tile.valid_columns then
+        return FALSE;
+    end;
+    let private_cube_source =
+        source_tile.location == TileLocation_Matrix;
+    if private_cube_source != CurrentBundleCanonicalize() then
+        return FALSE;
+    end;
+    if private_cube_source then
+        return CurrentBundleDataLayout() == TileDataLayout_NORM &&
+               source_tile.layout == TileLayout_RowMajor &&
+               destination_tile.layout == TileLayout_RowMajor;
+    end;
+    return source_tile.layout == CurrentBundleTileSourceLayout() &&
+           destination_tile.layout == CurrentBundleTileLayout();
 end;
 
 readonly func TileOperandsLegal_TQUANT(destination: TileIndex,
@@ -150,7 +227,28 @@ readonly func TileOperandsLegal_TQUANT(destination: TileIndex,
                                        zero_point: Word,
                                        control: NumericExecutionControl) => boolean
 begin
-    return TileLogicalShapeMatch(destination, source) && !IsZero(scale);
+    if !TileDescriptorLegal(destination) ||
+       !TileDescriptorLegal(source) ||
+       _Tiles[[destination]].storage_kind != TileStorage_Numeric ||
+       _Tiles[[source]].storage_kind != TileStorage_Numeric ||
+       (_Tiles[[destination]].data_type != TileDataType_S8 &&
+        _Tiles[[destination]].data_type != TileDataType_U8) ||
+       _Tiles[[source]].data_type != TileDataType_FP32 ||
+       _Tiles[[destination]].layout != TileLayout_RowMajor ||
+       _Tiles[[source]].layout != TileLayout_RowMajor ||
+       _Tiles[[destination]].valid_rows != _Tiles[[source]].valid_rows ||
+       _Tiles[[destination]].valid_columns !=
+           _Tiles[[source]].valid_columns ||
+       _Tiles[[destination]].valid_rows == 0 ||
+       _Tiles[[destination]].valid_columns == 0 ||
+       !TileSourceContentsDefined(source) ||
+       !TileSourceEncodingsValid(source) ||
+       !TileQuantizationScaleLegal(scale) then
+        return FALSE;
+    end;
+    return TileQuantizationZeroPointLegal(
+        zero_point,
+        _Tiles[[destination]].data_type);
 end;
 
 readonly func TileOperandsLegal_TDEQUANT(destination: TileIndex,
@@ -158,44 +256,29 @@ readonly func TileOperandsLegal_TDEQUANT(destination: TileIndex,
                                          zero_point: Word,
                                          control: NumericExecutionControl) => boolean
 begin
-    return TileLogicalShapeMatch(destination, source);
-end;
-
-readonly func TileOperandsLegal_TEXTRACT(
-    destination: TileIndex, source: TileIndex,
-    row_offset: integer {0..65535},
-    column_offset: integer {0..65535}) => boolean
-begin
-    return TileDescriptorLegal(destination) && TileDescriptorLegal(source) &&
-           _Tiles[[destination]].data_type == _Tiles[[source]].data_type &&
-           row_offset + _Tiles[[destination]].valid_rows <=
-               _Tiles[[source]].valid_rows &&
-           column_offset + _Tiles[[destination]].valid_columns <=
-               _Tiles[[source]].valid_columns;
-end;
-
-readonly func TileOperandsLegal_TINSERT(
-    destination: TileIndex, source: TileIndex,
-    row_offset: integer {0..65535},
-    column_offset: integer {0..65535}) => boolean
-begin
-    return TileDescriptorLegal(destination) &&
-           _Tiles[[destination]].contents_defined &&
-           TileDescriptorLegal(source) &&
-           _Tiles[[destination]].data_type == _Tiles[[source]].data_type &&
-           row_offset + _Tiles[[source]].valid_rows <=
-               _Tiles[[destination]].valid_rows &&
-           column_offset + _Tiles[[source]].valid_columns <=
-               _Tiles[[destination]].valid_columns;
-end;
-
-readonly func TileOperandsLegal_TTRANS(destination: TileIndex,
-                                       source: TileIndex) => boolean
-begin
-    return TileDescriptorLegal(destination) && TileDescriptorLegal(source) &&
-           _Tiles[[destination]].valid_rows == _Tiles[[source]].valid_columns &&
-           _Tiles[[destination]].valid_columns == _Tiles[[source]].valid_rows &&
-           _Tiles[[destination]].data_type == _Tiles[[source]].data_type;
+    if !TileDescriptorLegal(destination) ||
+       !TileDescriptorLegal(source) ||
+       _Tiles[[destination]].storage_kind != TileStorage_Numeric ||
+       _Tiles[[source]].storage_kind != TileStorage_Numeric ||
+       _Tiles[[destination]].data_type != TileDataType_FP32 ||
+       (_Tiles[[source]].data_type != TileDataType_S8 &&
+        _Tiles[[source]].data_type != TileDataType_U8) ||
+       _Tiles[[destination]].layout != TileLayout_RowMajor ||
+       _Tiles[[source]].layout != TileLayout_RowMajor ||
+       _Tiles[[destination]].valid_rows != _Tiles[[source]].valid_rows ||
+       _Tiles[[destination]].valid_columns !=
+           _Tiles[[source]].valid_columns ||
+       _Tiles[[destination]].valid_rows == 0 ||
+       _Tiles[[destination]].valid_columns == 0 ||
+       !TileSourceContentsDefined(source) ||
+       !TileSourceEncodingsValid(source) ||
+       !TileQuantizationScaleLegal(scale) ||
+       control.saturating then
+        return FALSE;
+    end;
+    return TileQuantizationZeroPointLegal(
+        zero_point,
+        _Tiles[[source]].data_type);
 end;
 
 readonly func TileOperandsLegal_TRESHAPE(destination: TileIndex,
@@ -207,66 +290,6 @@ begin
            _Tiles[[destination]].valid_rows * _Tiles[[destination]].valid_columns ==
                _Tiles[[source]].valid_rows * _Tiles[[source]].valid_columns &&
            _Tiles[[destination]].data_type == _Tiles[[source]].data_type;
-end;
-
-readonly func TileOperandsLegal_TCONCAT(
-    destination: TileIndex, source_left: TileIndex,
-    source_right: TileIndex, axis: TileAxis) => boolean
-begin
-    if !TileDescriptorLegal(destination) ||
-       !TileDescriptorLegal(source_left) ||
-       !TileDescriptorLegal(source_right) ||
-       _Tiles[[destination]].data_type != _Tiles[[source_left]].data_type ||
-       _Tiles[[destination]].data_type != _Tiles[[source_right]].data_type then
-        return FALSE;
-    end;
-    if axis == TileAxis_Row then
-        return _Tiles[[source_left]].valid_columns ==
-                   _Tiles[[source_right]].valid_columns &&
-               _Tiles[[destination]].valid_rows ==
-                   _Tiles[[source_left]].valid_rows +
-                   _Tiles[[source_right]].valid_rows &&
-               _Tiles[[destination]].valid_columns ==
-                   _Tiles[[source_left]].valid_columns;
-    else
-        return _Tiles[[source_left]].valid_rows ==
-                   _Tiles[[source_right]].valid_rows &&
-               _Tiles[[destination]].valid_rows ==
-                   _Tiles[[source_left]].valid_rows &&
-               _Tiles[[destination]].valid_columns ==
-                   _Tiles[[source_left]].valid_columns +
-                   _Tiles[[source_right]].valid_columns;
-    end;
-end;
-
-readonly func TileOperandsLegal_TGATHER(destination: TileIndex,
-                                        source: TileIndex,
-                                        indices: TileIndex) => boolean
-begin
-    if !TileLogicalShapeMatch(destination, indices) ||
-       !TileDescriptorLegal(source) ||
-       _Tiles[[destination]].data_type != _Tiles[[source]].data_type then
-        return FALSE;
-    end;
-    let source_extent: integer =
-        _Tiles[[source]].valid_rows * _Tiles[[source]].valid_columns;
-    return TileIndexPayloadWithin(indices, source_extent);
-end;
-
-readonly func TileOperandsLegal_TSCATTER(destination: TileIndex,
-                                         source: TileIndex,
-                                         indices: TileIndex) => boolean
-begin
-    if !TileDescriptorLegal(destination) ||
-       !_Tiles[[destination]].contents_defined ||
-       !TileDescriptorLegal(source) ||
-       !TileLogicalShapeMatch(source, indices) ||
-       _Tiles[[destination]].data_type != _Tiles[[source]].data_type then
-        return FALSE;
-    end;
-    let destination_extent: integer =
-        _Tiles[[destination]].valid_rows * _Tiles[[destination]].valid_columns;
-    return TileIndexPayloadWithin(indices, destination_extent);
 end;
 
 readonly func TileOperandsLegal_TINTERLEAVE(
@@ -308,33 +331,6 @@ begin
            _Tiles[[destination_odd]].data_type == _Tiles[[source]].data_type &&
            _Tiles[[destination_even]].layout == _Tiles[[source]].layout &&
            _Tiles[[destination_odd]].layout == _Tiles[[source]].layout;
-end;
-
-readonly func TileOperandsLegal_TIMG2COL(
-    destination: TileIndex, source: TileIndex,
-    kernel_rows: integer {1..65535},
-    kernel_columns: integer {1..65535},
-    stride_rows: integer {1..65535},
-    stride_columns: integer {1..65535},
-    pad_rows: integer {0..65535},
-    pad_columns: integer {0..65535}, padding: Word) => boolean
-begin
-    if !TileDescriptorLegal(destination) || !TileDescriptorLegal(source) ||
-       _Tiles[[source]].valid_rows + 2 * pad_rows < kernel_rows ||
-       _Tiles[[source]].valid_columns + 2 * pad_columns < kernel_columns then
-        return FALSE;
-    end;
-    let output_rows: integer =
-        (((_Tiles[[source]].valid_rows + 2 * pad_rows) - kernel_rows)
-            DIVRM stride_rows) + 1;
-    let output_columns: integer =
-        (((_Tiles[[source]].valid_columns + 2 * pad_columns) - kernel_columns)
-            DIVRM stride_columns) + 1;
-    let patch_count: integer = output_rows * output_columns;
-    let patch_elements: integer = kernel_rows * kernel_columns;
-    return patch_count <= 65535 && patch_elements <= 65535 &&
-           _Tiles[[destination]].valid_rows == patch_count &&
-           _Tiles[[destination]].valid_columns == patch_elements;
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

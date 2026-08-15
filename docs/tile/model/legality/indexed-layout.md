@@ -12,13 +12,42 @@ This page is a generated reference view of the normative ASL unit.
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/legality/indexed-layout.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-INDEXED-LAYOUT","surface":"tile","classification":["model","legality","indexed-layout"],"depends_on":["PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA"]}
+pure func TilePartialDataTypeSupported(
+    data_type: TileDataType) => boolean
+begin
+    return data_type == TileDataType_FP32 ||
+           data_type == TileDataType_FP16 ||
+           data_type == TileDataType_BF16 ||
+           data_type == TileDataType_S32 ||
+           data_type == TileDataType_S16 ||
+           data_type == TileDataType_S8 ||
+           data_type == TileDataType_U32 ||
+           data_type == TileDataType_U16 ||
+           data_type == TileDataType_U8;
+end;
+
 readonly func TileOperandsLegal_ExecuteTilePartial(
     op: TilePartialOperation, destination: TileIndex,
     source_left: TileIndex, source_right: TileIndex) => boolean
 begin
-    return TilePartialCoverageLegal(destination, source_left, source_right) &&
-           _Tiles[[destination]].data_type == _Tiles[[source_left]].data_type &&
-           _Tiles[[destination]].data_type == _Tiles[[source_right]].data_type;
+    if op == TilePartial_ARGMAX || op == TilePartial_ARGMIN ||
+       !TilePartialCoverageLegal(destination, source_left, source_right) then
+        return FALSE;
+    end;
+    let data_type = _Tiles[[destination]].data_type;
+    if !TilePartialDataTypeSupported(data_type) ||
+       _Tiles[[source_left]].data_type != data_type ||
+       _Tiles[[source_right]].data_type != data_type ||
+       _Tiles[[destination]].layout != TileLayout_RowMajor ||
+       _Tiles[[source_left]].layout != TileLayout_RowMajor ||
+       _Tiles[[source_right]].layout != TileLayout_RowMajor ||
+       !TileSourceContentsDefined(source_left) ||
+       !TileSourceContentsDefined(source_right) then
+        return FALSE;
+    end;
+    return !TileDataTypeIsFloating(data_type) ||
+           (TileSourceEncodingsValid(source_left) &&
+            TileSourceEncodingsValid(source_right));
 end;
 
 readonly func TileOperandsLegal_TFMA(
@@ -29,12 +58,19 @@ begin
            TileSourceContentsDefined(source_left) &&
            TileSourceContentsDefined(source_right) &&
            TileSourceContentsDefined(addend) &&
+           TileFusedMultiplyAddDataTypeSupported(
+               _Tiles[[destination]].data_type) &&
            TileLogicalShapeMatch(destination, source_left) &&
            TileLogicalShapeMatch(destination, source_right) &&
            TileLogicalShapeMatch(destination, addend) &&
            _Tiles[[destination]].data_type == _Tiles[[source_left]].data_type &&
            _Tiles[[destination]].data_type == _Tiles[[source_right]].data_type &&
-           _Tiles[[destination]].data_type == _Tiles[[addend]].data_type;
+           _Tiles[[destination]].data_type == _Tiles[[addend]].data_type &&
+           _Tiles[[destination]].layout == TileLayout_RowMajor &&
+           (!TileDataTypeIsFloating(_Tiles[[destination]].data_type) ||
+            (TileSourceEncodingsValid(source_left) &&
+             TileSourceEncodingsValid(source_right) &&
+             TileSourceEncodingsValid(addend)));
 end;
 
 readonly func TileOperandsLegal_ExecuteTilePartialArg(
@@ -52,48 +88,105 @@ begin
            _Tiles[[destination]].data_type == _Tiles[[source_right]].data_type;
 end;
 
-readonly func TileOperandsLegal_TSORT(destination: TileIndex,
-                                      destination_indices: TileIndex,
-                                      source: TileIndex,
-                                      sort_width: integer {1..64},
-                                      descending: boolean) => boolean
+pure func TileHistogramSourceDataTypeSupported(
+    data_type: TileDataType) => boolean
 begin
-    return destination != destination_indices &&
-           TileDescriptorLegal(destination) &&
-           TileDescriptorLegal(destination_indices) &&
-           TileSourceContentsDefined(source) &&
-           _Tiles[[destination]].valid_rows *
-               _Tiles[[destination]].valid_columns ==
-               _Tiles[[source]].valid_rows * _Tiles[[source]].valid_columns &&
-           _Tiles[[destination_indices]].valid_rows *
-               _Tiles[[destination_indices]].valid_columns ==
-               _Tiles[[source]].valid_rows * _Tiles[[source]].valid_columns &&
-           _Tiles[[destination]].data_type == _Tiles[[source]].data_type &&
-           _Tiles[[destination_indices]].data_type == TileDataType_U32;
+    return data_type == TileDataType_U16 ||
+           data_type == TileDataType_U32;
+end;
+
+pure func TileHistogramSelectedByteSupported(
+    data_type: TileDataType,
+    selected_byte: integer {0..3}) => boolean
+begin
+    if data_type == TileDataType_U16 then
+        return selected_byte <= 1;
+    end;
+    return data_type == TileDataType_U32;
+end;
+
+readonly func TileHistogramPrefixDefined(
+    filter: TileIndex,
+    required_rows: integer {0..3}) => boolean
+begin
+    if required_rows == 0 then return TRUE; end;
+    if _Tiles[[filter]].valid_rows < required_rows ||
+       _Tiles[[filter]].valid_columns < 1 then
+        return FALSE;
+    end;
+    for row = 0 to required_rows - 1 do
+        if !TileElementDefined(
+               filter,
+               row as integer {0..65535},
+               0) then
+            return FALSE;
+        end;
+    end;
+    return TRUE;
+end;
+
+readonly func TileHistogramInputsLegal(
+    source: TileIndex,
+    filter: TileIndex,
+    selected_byte: integer {0..3}) => boolean
+begin
+    if !TileSourceContentsDefined(source) ||
+       !TileDescriptorLegal(filter) ||
+       _Tiles[[source]].storage_kind != TileStorage_Numeric ||
+       _Tiles[[filter]].storage_kind != TileStorage_Numeric ||
+       _Tiles[[source]].layout != TileLayout_RowMajor ||
+       _Tiles[[filter]].data_type != TileDataType_U8 then
+        return FALSE;
+    end;
+
+    let source_type = _Tiles[[source]].data_type;
+    if !TileHistogramSelectedByteSupported(
+           source_type,
+           selected_byte) then
+        return FALSE;
+    end;
+    if source_type == TileDataType_U16 then
+        if selected_byte == 1 then return TRUE; end;
+        if _Tiles[[filter]].valid_rows < _Tiles[[source]].valid_rows ||
+           _Tiles[[filter]].valid_columns < 1 then
+            return FALSE;
+        end;
+        for row = 0 to _Tiles[[source]].valid_rows - 1 looplimit 65536 do
+            if !TileElementDefined(
+                   filter,
+                   row as integer {0..65535},
+                   0) then
+                return FALSE;
+            end;
+        end;
+        return TRUE;
+    elsif source_type == TileDataType_U32 then
+        let required_rows: integer {0..3} = if selected_byte == 0 then 3
+            else if selected_byte == 1 then 2
+            else if selected_byte == 2 then 1
+            else 0;
+        return TileHistogramPrefixDefined(filter, required_rows);
+    end;
+    return FALSE;
 end;
 
 readonly func TileOperandsLegal_THISTOGRAM(
-    destination: TileIndex, source: TileIndex, indices: TileIndex,
+    destination: TileIndex, source: TileIndex, filter: TileIndex,
     selected_byte: integer {0..3}) => boolean
 begin
-    if !TileDescriptorLegal(destination) || !TileDescriptorLegal(source) ||
-       !TileDescriptorLegal(indices) ||
-       _Tiles[[destination]].valid_rows != _Tiles[[source]].valid_rows ||
-       _Tiles[[destination]].valid_columns < 256 ||
-       !(_Tiles[[source]].data_type == TileDataType_U16 ||
-         _Tiles[[source]].data_type == TileDataType_U32) then return FALSE; end;
-    if _Tiles[[source]].data_type == TileDataType_U16 then
-        if selected_byte > 1 then return FALSE; end;
-        return selected_byte == 1 ||
-               (_Tiles[[indices]].valid_rows >= _Tiles[[source]].valid_rows &&
-                _Tiles[[indices]].valid_columns >= 1);
-    else
-        let required_rows: integer = if selected_byte == 0 then 3 else
-                                     if selected_byte == 1 then 2 else
-                                     if selected_byte == 2 then 1 else 0;
-        return _Tiles[[indices]].valid_rows >= required_rows &&
-               (required_rows == 0 || _Tiles[[indices]].valid_columns >= 1);
+    if destination == source || destination == filter ||
+       !TileDescriptorLegal(destination) ||
+       !TileHistogramInputsLegal(source, filter, selected_byte) then
+        return FALSE;
     end;
+    let result = _Tiles[[destination]];
+    return result.storage_kind == TileStorage_Numeric &&
+           result.data_type == TileDataType_U32 &&
+           result.layout == TileLayout_RowMajor &&
+           result.valid_rows == _Tiles[[source]].valid_rows &&
+           result.valid_columns == 256 &&
+           result.rows >= result.valid_rows &&
+           result.columns >= 256;
 end;
 
 readonly func TileOperandsLegal_GMOV(
@@ -109,23 +202,6 @@ begin
            _Tiles[[destination]].location != TileLocation_Matrix &&
            _Tiles[[source]].location != TileLocation_Memory &&
            _Tiles[[source]].location != TileLocation_Matrix;
-end;
-
-readonly func TileOperandsLegal_TMRGSORT(
-    destination: TileIndex, source_left: TileIndex,
-    source_right: TileIndex, descending: boolean) => boolean
-begin
-    if !TileDescriptorLegal(destination) ||
-       !TileDescriptorLegal(source_left) ||
-       !TileDescriptorLegal(source_right) then return FALSE; end;
-    let left_extent: integer =
-        _Tiles[[source_left]].valid_rows * _Tiles[[source_left]].valid_columns;
-    let right_extent: integer =
-        _Tiles[[source_right]].valid_rows * _Tiles[[source_right]].valid_columns;
-    return _Tiles[[destination]].valid_rows *
-               _Tiles[[destination]].valid_columns == left_extent + right_extent &&
-           _Tiles[[source_left]].data_type == _Tiles[[source_right]].data_type &&
-           _Tiles[[destination]].data_type == _Tiles[[source_left]].data_type;
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

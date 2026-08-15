@@ -23,6 +23,44 @@ VERSION_TOKEN = "v" + "0" + "57"
 SNAPSHOT_ENV = "PTO_COMPARE_ROOT"
 COMMAND_TIMEOUT_SECONDS = 180
 
+# These frozen comparison rows belonged to command forms that the accepted
+# mnemonic review removed from the PTO command catalog. Keep the list explicit
+# so pruning cannot silently discard an unexpected form.
+ALLOWED_RETIRED_COMMAND_FORM_IDS = {
+    "b_text_32_1ce09f50e5dd",
+    "bstart_acccvt_32_56c3ce3838c5",
+    "bstart_fp_32_24db3966d6ba",
+    "bstart_fp_32_dd7bc8dd694c",
+    "bstart_mgather_cas_32_fd8c8a3b720a",
+    "bstart_mgather_mask_32_5573241cd944",
+    "bstart_mpar_32_2d163417c615",
+    "bstart_mscatter_mask_32_2a33eed646f7",
+    "bstart_mseq_32_39343a456ec5",
+    "bstart_std_32_3f6980d013f7",
+    "bstart_std_32_b05390d367cf",
+    "c_bstart_mpar_16_66c3ef2226ec",
+    "c_bstart_mseq_16_b5597e0e41c2",
+    "hl_bstart_call_48_3c784c583c90",
+    "hl_bstart_fp_48_038e2e96cf64",
+    "hl_bstart_fp_48_43530d2ebfae",
+    "hl_bstart_fp_48_81b457553844",
+    "hl_bstart_fp_48_eb938e9200eb",
+    "hl_bstart_std_48_51f78942222e",
+    "hl_bstart_std_48_9ba705800872",
+    "hl_bstart_std_48_b13f22c7c4a3",
+    "hl_bstart_std_48_d814d26508a4",
+    "hl_bstart_sys_48_5bf0381f7bf8",
+    "l_bstart_fp_64_098e57019d7b",
+    "l_bstart_fp_64_0cac9941f7d4",
+    "l_bstart_fp_64_2067ad6667ed",
+    "l_bstart_fp_64_8115c042ef26",
+    "l_bstart_std_64_37e84068ce61",
+    "l_bstart_std_64_463a1567da91",
+    "l_bstart_std_64_72d502fcd30d",
+    "l_bstart_std_64_899592f9c5bc",
+    "l_bstart_sys_64_919e576c79e4",
+}
+
 GATE_COMMANDS: tuple[dict[str, Any], ...] = (
     {
         "id": "format-regeneration",
@@ -262,6 +300,12 @@ def evidence_for_scalar_family(family: str) -> list[str]:
     return by_family.get(family, ["PTO-REQ-SCALAR-EFFECT-CLOSURE-001"])
 
 
+def normalize_pto_evidence_paths(paths: list[str]) -> list[str]:
+    """Return stable, de-duplicated canonical PTO evidence routes."""
+
+    return sorted(set(paths))
+
+
 def evidence_for_tile_family(family: str, name: str) -> tuple[list[str], list[str]]:
     if family == "TEPL":
         return (
@@ -271,7 +315,8 @@ def evidence_for_tile_family(family: str, name: str) -> tuple[list[str], list[st
                 "PTO-REQ-TILE-LEGALITY-001",
             ],
             [
-                "spec/evidence/vec-sfu-carrier-totality.json",
+                "spec/catalog/tile-operations.json",
+                "spec/evidence/release-traceability-readiness.json",
                 "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
             ],
         )
@@ -295,7 +340,8 @@ def evidence_for_tile_family(family: str, name: str) -> tuple[list[str], list[st
                 "PTO-REQ-PROFILE-001",
             ],
             [
-                "spec/evidence/cube-totality.json",
+                "spec/catalog/tile-operations.json",
+                "spec/evidence/release-traceability-readiness.json",
                 "docs/status/decisions/0034-cube-raw-carrier-totality.md",
             ],
         )
@@ -352,6 +398,35 @@ def clean_snapshot_metadata(root: Path) -> dict[str, Any]:
         "kind": "content-addressed independent executable ISA snapshot",
         "revision_sha256": sha256_text(head or "unknown"),
         "worktree_clean": dirty == "",
+    }
+
+
+def reviewed_missing_command_row(
+    row: dict[str, Any], *, index: int, pto_effect: str
+) -> dict[str, Any]:
+    """Record an accepted PTO command absent from the independent snapshot."""
+
+    return {
+        "abi_change_acceptance": None,
+        "classification": "divergence",
+        "encoding_match": False,
+        "evidence": ["spec/catalog/command-forms.json"],
+        "independent_status": "missing",
+        "index": index,
+        "mnemonic": row["mnemonic"],
+        "pto_command_disposition": pto_effect,
+        "pto_disposition": (
+            "PTO command catalog has no independent comparison row; the "
+            "missing comparison remains an explicit divergence."
+        ),
+        "requirements": [
+            "PTO-REQ-BUNDLE-DISPATCH-001",
+            "PTO-REQ-BUNDLE-OPERATION-001",
+            "PTO-REQ-BUNDLE-STATE-001",
+        ],
+        "semantic_handler": row["semantic_handler"],
+        "stable_id": row["form_id"],
+        "surface": "command",
     }
 
 
@@ -417,8 +492,8 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
                 "requirements": evidence_for_scalar_family(row["semantic_family"]),
                 "evidence": [
                     "spec/catalog/scalar-forms.json",
-                    "spec/evidence/scalar-effect-closure.json",
-                    "tests/asl/scalar-tests.asl",
+                    "spec/evidence/instruction-contract-closure.json",
+                    "spec/evidence/release-traceability-readiness.json",
                 ],
             }
         )
@@ -483,7 +558,7 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
                 "evidence": [
                     "spec/catalog/command-forms.json",
                     "spec/evidence/bundle-command-totality.json",
-                    "tests/asl/bundle-tests.asl",
+                    "spec/evidence/release-traceability-readiness.json",
                     "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
                 ],
             }
@@ -628,9 +703,9 @@ def build(snapshot_root: Path) -> dict[str, Any]:
         },
         "scope": {
             "scalar_forms": 474,
-            "command_forms": 100,
+            "command_forms": len(load_json(ROOT / "spec/catalog/command-forms.json")["forms"]),
             "direct_tile_operations": 109,
-            "total_rows": 683,
+            "total_rows": len(rows),
             "direct_tile_breakdown": {"TEPL": 87, "TLSU": 10, "CUBE": 12},
         },
         "model_limits": [
@@ -677,12 +752,12 @@ def build(snapshot_root: Path) -> dict[str, Any]:
             ],
         },
     }
-    if summary["row_count"] != 682:
-        raise SystemExit(f"expected 682 rows, got {summary['row_count']}")
+    if summary["row_count"] != 657:
+        raise SystemExit(f"expected 657 rows, got {summary['row_count']}")
     if summary["classification_counts"] != {
-        "comparable-match": 554,
-        "divergence": 90,
-        "non-comparable": 38,
+        "comparable-match": 527,
+        "divergence": 91,
+        "non-comparable": 39,
     }:
         raise SystemExit(
             f"unexpected comparison classification counts: {summary['classification_counts']}"
@@ -719,10 +794,7 @@ def prune_existing_to_catalog() -> dict[str, Any]:
         "c_b_ios_16_14f1b8fba5e6": "b_ios_32_4ba5ef98fdaa",
     }
     allowed_retired_ids = {
-        "bstart_acccvt_32_56c3ce3838c5",
-        "bstart_mgather_cas_32_fd8c8a3b720a",
-        "bstart_mgather_mask_32_5573241cd944",
-        "bstart_mscatter_mask_32_2a33eed646f7",
+        *ALLOWED_RETIRED_COMMAND_FORM_IDS,
         *reassigned_ids,
     }
     if removed_ids - allowed_retired_ids:
@@ -731,7 +803,7 @@ def prune_existing_to_catalog() -> dict[str, Any]:
         )
     missing_ids = accepted_ids - existing_command_ids - set(reassigned_ids.values())
     # A newly accepted PTO-owned command has no row in the frozen independent
-    # snapshot.  Preserve that fact explicitly as a non-comparable/missing row;
+    # snapshot. Preserve that fact explicitly as a divergence/missing row;
     # pruning must never fabricate an independent execution result.
     synthetic_rows = []
     for missing_id in sorted(missing_ids):
@@ -739,21 +811,13 @@ def prune_existing_to_catalog() -> dict[str, Any]:
             row for row in command_catalog["forms"] if row["form_id"] == missing_id
         )
         synthetic_rows.append(
-            {
-                "abi_change_acceptance": None,
-                "classification": "non-comparable",
-                "encoding_match": False,
-                "evidence": ["spec/catalog/command-forms.json"],
-                "independent_status": "missing",
-                "index": 0,
-                "mnemonic": command_row["mnemonic"],
-                "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
-                "pto_disposition": "No independent executable evidence exists for this newly accepted form; PTO-owned ASL, decoder witness, and AVS remain authoritative.",
-                "requirements": ["PTO-REQ-BUNDLE-DISPATCH-001", "PTO-REQ-BUNDLE-STATE-001"],
-                "semantic_handler": command_row["semantic_handler"],
-                "stable_id": missing_id,
-                "surface": "command",
-            }
+            reviewed_missing_command_row(
+                command_row,
+                index=0,
+                pto_effect=(
+                    "accepted PTO command absent from the independent snapshot"
+                ),
+            )
         )
     rows = [
         row
@@ -793,6 +857,7 @@ def prune_existing_to_catalog() -> dict[str, Any]:
         )
     command_index = 0
     for row in rows:
+        row["evidence"] = normalize_pto_evidence_paths(row.get("evidence", []))
         if row["surface"] == "command":
             row["index"] = command_index
             command_index += 1

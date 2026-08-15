@@ -1,0 +1,19 @@
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-DATR-LAYOUT-MAP-001","source":"asl/block/attributes/B.DATR.asl","requirements":["PTO-INST-BLOCK-B-DATR"],"kind":"boundary","summary":"The thirteen assigned Layout encodings have exact bidirectional mappings.","pass_condition":"Every assigned sparse code maps to its named transformation and round-trips; every other code is reserved.","related_sources":["asl/block/model/state/control-state.asl"]}
+func main() => integer
+begin
+    var accepted_count: integer {0..32} = 0;
+    for code = 0 to 31 do
+        let encoded = Zeros{5} + code;
+        if TileDataLayoutCodeAccepted(encoded) then
+            let mapped = TileDataLayoutOfCode(encoded);
+            assert TileDataLayoutCodeOf(mapped) == encoded;
+            accepted_count = (accepted_count + 1) as integer {0..32};
+        end;
+    end;
+    assert accepted_count == 13;
+    assert TileDataLayoutOfCode(Zeros{5}) == TileDataLayout_NORM;
+    assert TileDataLayoutOfCode(Zeros{5} + 1) == TileDataLayout_ND2DN;
+    assert TileDataLayoutOfCode(Zeros{5} + 3) == TileDataLayout_ND2ZN;
+    assert TileDataLayoutOfCode(Zeros{5} + 30) == TileDataLayout_NZ2ZN;
+    return 0;
+end;

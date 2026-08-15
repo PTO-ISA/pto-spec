@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/lifecycle/BSTART.asl`
 
-Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.
+Initializes the single BARG continuation record after any retiring block commits successfully.
 
 ## Normative identity {#PTO-INST-BLOCK-BSTART}
 
@@ -14,7 +14,7 @@ The current instruction contract is owned by the ASL source linked above.
 ## Assembly
 
 ```asm
-BSTART {DIRECT, CALL}, <label>
+BSTART DIRECT, <label>
 BSTART COND, <label>
 ```
 
@@ -32,11 +32,25 @@ BSTART COND, <label>
 | bstart_32_7eb93b649748 | simm25 | 25 | signed | [{"instruction_lsb":7,"value_lsb":0,"width":25}] |
 | bstart_32_e11e678a32ac | simm25 | 25 | signed | [{"instruction_lsb":7,"value_lsb":0,"width":25}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| bstart_32_7eb93b649748 | simm25 | 25 | 0–33554431 | none | none | 25-bit signed bundle target displacement | Encoded zero supplies a zero displacement or zero immediate value. |
+| bstart_32_e11e678a32ac | simm25 | 25 | 0–33554431 | none | none | 25-bit signed bundle target displacement | Encoded zero supplies a zero displacement or zero immediate value. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| simm25 | encoded operand or control |
+| simm25 | 25-bit signed bundle target displacement |
 
 ## Decode
 
@@ -61,14 +75,39 @@ end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- simm25 zero is a real zero displacement, so BARG.BPCN equals the BSTART address P.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.`
-- **Semantic handler:** `ExecuteBundleStart`
+- The low-seven-bit 0010001 form is DIRECT only; CALL is not an alias.
+- The low-seven-bit 0100001 form is COND only.
+
+## State effects
+
+- DIRECT installs BARG.BPC=P, BlockType=STD, BPCN=P+(SignExtend(simm25)<<1), TYPE=DIRECT, TAKEN=1.
+- COND installs the same BPC/BlockType/BPCN fields with TYPE=COND and TAKEN=0; SETC.* may update TAKEN and SETC.TGT may update BPCN before commit.
+- Neither form selects BPCN at decode; BSTOP or the next BSTART is the continuation boundary.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- Any memory effects of the retiring block complete before the new BARG is installed; BSTART itself performs no memory access.
+
+### Ordering
+
+- Decode and candidate-target validation precede retiring-block commit; successful commit precedes atomic publication of the new BARG.
+
+## Exceptions
+
+- An odd computed BARG.BPCN raises Fault_InstructionPC before changing BARG.
+- A failed retiring-block commit preserves the retiring BARG and does not install the candidate BARG.
+
+## Examples
+
+- BSTART DIRECT, <label>
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

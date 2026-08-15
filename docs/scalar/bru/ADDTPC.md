@@ -30,12 +30,28 @@ addtpc simm, ->{t, u, Rd}
 | addtpc_32_e5aa0f0abca3 | RegDst | 5 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":5}] |
 | addtpc_32_e5aa0f0abca3 | imm20 | 20 | encoding-defined | [{"instruction_lsb":12,"value_lsb":0,"width":20}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| addtpc_32_e5aa0f0abca3 | RegDst | 5 | 0–9, 11–31 | none | 10 | absolute GPR destination | Encoded zero names the architectural zero GPR. |
+| addtpc_32_e5aa0f0abca3 | imm20 | 20 | 0–1048575 | none | none | 20-bit immediate value | Encoded zero supplies numeric zero for the 20-bit immediate value. |
+
+- `addtpc_32_e5aa0f0abca3.RegDst` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| RegDst | encoded operand or control |
-| imm20 | encoded operand or control |
+| RegDst | absolute GPR destination |
+| imm20 | 20-bit immediate value |
 
 ## Decode
 
@@ -59,14 +75,36 @@ end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- **Constraints:** `[{"field": "RegDst", "operator": "not-equal", "value": 10}]`
+- The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `ADDTPC - Add the encoded displacement to the program counter.`
-- **Semantic handler:** `AddToPC`
+- addtpc_32_e5aa0f0abca3.RegDst excludes 10; the excluded encoding is reserved.
+
+## State effects
+
+- ADDTPC - Add the encoded displacement to the program counter.
+- After decode and legality checks, execute the normative AddToPC ASL handler; no other architectural state is modified.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- none
+
+## Exceptions
+
+- Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation.
+
+## Examples
+
+- addtpc simm, ->{t, u, Rd}
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

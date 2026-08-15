@@ -23,6 +23,11 @@ C.BSTOP
 | --- | --- | ---: | --- | --- |
 | c_bstop_16_ca4743d8a95e | C16 | 16 | 0x0000 / 0xffff | [] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
 ## Operands and results
 
 This instruction has no explicit operand fields.
@@ -49,14 +54,37 @@ end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- The instruction has no encoded operand field and therefore no operand default.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `Commits the current bundle and transfers to its selected continuation.`
-- **Semantic handler:** `ExecuteBundleStop`
+- All bit patterns not excluded by the form decode are assigned by this instruction contract.
+
+## State effects
+
+- Commits the active block, selects BARG.BPCN for DIRECT/CALL/IND/ICALL/RET or taken COND, otherwise selects the sequential PC.
+- After successful commit, clears BARG, BPC, descriptor fields, dimensions, operand bindings, attributes, and active/body state.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- Commits every architecture-visible memory effect of the active block before selecting its continuation.
+
+### Ordering
+
+- Validate the active block and final BARG continuation, execute the selected block operation, then select BARG.BPCN or the sequential PC and clear block-private state.
+
+## Exceptions
+
+- No active block raises Fault_BundleControl.
+- Schema, applicability, execution, or final-PC faults reject before block-private state is cleared.
+
+## Examples
+
+- C.BSTOP
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

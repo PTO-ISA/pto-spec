@@ -24,8 +24,9 @@
 // [[PTO-STATE-ARCH-MAINTENANCE]], [[PTO-STATE-ARCH-SYSTEM-REGISTERS]],
 // [[PTO-STATE-ARCH-EXTENDED-SYSTEM-REGISTERS]],
 // [[PTO-STATE-ARCH-TRAP-CONTEXT]], [[PTO-STATE-TILE-LOCAL]],
-// [[PTO-STATE-TILE-SHARED]], and [[PTO-STATE-BLOCK-CONTROL]], and MUST change
-// only through the accepted ASL transitions owned by those state units.
+// [[PTO-STATE-TILE-SHARED]], [[PTO-STATE-ARCH-GQM]], and
+// [[PTO-STATE-BLOCK-CONTROL]], and MUST change only through the accepted ASL
+// transitions owned by those state units.
 // NDF-END: PTO-ARCH-STATE-CLOSURE-001
 
 // NDF-BEGIN: PTO-TILE-CAPACITY-PER-PE

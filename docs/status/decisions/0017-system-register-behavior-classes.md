@@ -24,11 +24,11 @@ translation or instruction/data matching.
   write, side effects, and profile status.
 - The catalog checker rejects missing, duplicate, unknown, access-inconsistent,
   or malformed classifications.
-- `spec/evidence/system-register-witness-closure.json` assigns stable reset,
-  access, and side-effect witness IDs to all 25 behavior classes. Each ID binds
-  to one exact assertion marker in either the reachable generated
-  `ValidateSystemRegisterResetAndAccess` test or the checked-in scalar, state,
-  and tile semantic tests. Every cited source is content-addressed.
+- `spec/catalog/system-registers.json`, the mirrored system-register ASL units,
+  and their independent tests own reset, access, and side-effect behavior for
+  all 25 classes. `spec/evidence/release-traceability-readiness.json` derives
+  the current ASL-to-test ownership without retaining a second behavioral
+  ledger.
 - Generated executable witnesses check reset for every visible base address,
   every bank of each ACR-family register, and every fixed-context register.
   They also prove read-only rejection and preservation, write-only rejection,

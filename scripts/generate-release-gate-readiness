@@ -38,7 +38,10 @@ SOURCE_PATHS = (
     "scripts/check-script-entrypoints",
     "scripts/check-toolchain",
     "scripts/encoding_witness.py",
+    "scripts/generate-instruction-contract-closure",
+    "scripts/instruction_contracts.py",
     "scripts/instruction_docs.py",
+    "scripts/manual_semantic_audit.py",
     "scripts/print-asl-test-matrix",
     "scripts/prepare-aslref",
     "scripts/project_asl_catalogs.py",
@@ -127,6 +130,12 @@ GATES = (
         "name": "clean exact commit identity",
         "command": 'test -z "$(git status --porcelain=v1 --untracked-files=all)"',
         "evidence": ["scripts/asl_release_suite.py"],
+    },
+    {
+        "id": "RG-10",
+        "name": "formal mnemonic implementation closure",
+        "command": "python3 scripts/manual_semantic_audit.py",
+        "evidence": ["scripts/manual_semantic_audit.py"],
     },
 )
 

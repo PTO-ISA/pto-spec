@@ -29,11 +29,30 @@ BSTART.TMOV DataType
 | --- | --- | ---: | --- | --- |
 | bstart_tmov_32_211446509efb | DataType | 5 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":5}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| bstart_tmov_32_211446509efb | DataType | 5 | 0–14, 16–20, 24–28, 31 | none | 15, 21–23, 29–30 | concrete source/destination Tile type or DTYPE_NONE source-descriptor inference | Encoded zero selects FP64. |
+
+- `bstart_tmov_32_211446509efb.DataType` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| DataType | encoded operand or control |
+| DataType | concrete source/destination Tile type or DTYPE_NONE source-descriptor inference |
+| B.DATR.Layout | Local or Shared Tile layout selection |
+| B.DIM.LB0/LB1/LB2 | ValidCol, ValidRow, and physical Col |
+| B.IOT | Local source and/or renamed Local destination |
+| B.IOS | absolute Shared source or atomic Shared destination |
 
 ## Decode
 
@@ -45,6 +64,14 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
+
+## Block composition
+
+```asm
+Local copy (Function 2): BSTART.TMOV DataType; optional B.DATR Layout; optional B.DIM shape; one terminating B.IOT binds one Local source and one newly allocated Local destination with one common PE_MASK; BSTOP commits.
+TMOV.L2S.INSERT (Function 9) and TMOV.L2S.PUBLISH (Function 10): one source B.IOT and one destination B.IOS use the same mask; B.IOS supplies the Shared destination capacity.
+TMOV.S2L.BROADCAST (Function 11) and TMOV.S2L.EXTRACT (Function 12): one source B.IOS and one destination B.IOT use the same mask; B.IOT supplies the Local destination capacity.
+```
 
 ## Operation
 
@@ -60,14 +87,48 @@ end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- **Constraints:** `[{"field": "DataType", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28, 31]}]`
+- Concrete DataType codes explicitly select the transfer type. DTYPE_NONE infers the type from the bound source descriptor; failure to resolve a concrete source type rejects before destination effects. Optional B.DATR omission retains NORM layout.
+- Omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from an allocated source descriptor. An unallocated Shared EXTRACT source defaults them to 1, 1, and ValidCol.
+- PE_MASK=0000 is a strict no-op before source reads, destination allocation, publication checks, faults, or binding consumption.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.`
-- **Semantic handler:** `ExecuteBundleStart`
+- DataType accepts the 25 concrete TileDataType codes and code 31 DTYPE_NONE for source-descriptor inference; codes 15, 21..23, and 29..30 are reserved.
+- Function 2 is Local-to-Local only. Functions 9 and 10 are Local-to-Shared only. Functions 11 and 12 are Shared-to-Local only. GMOV remains the distinct Function 13 peer-Local operation.
+- INSERT atomically updates selected same-index Shared quarters but never establishes publication. PUBLISH succeeds only when its prospective initialized mask covers the complete immutable allocation mask, then atomically marks the value published.
+- BROADCAST requires PE_MASK=1111, allocation mask 1111, and a fully initialized published Shared value. EXTRACT accepts any nonzero subset and may read unallocated or uninitialized Shared state as undefined-register values.
+- The source and destination descriptors agree on per-PE capacity, DataType, Layout, physical Col, and completed valid shape. Local sources persist; Local destinations are renamed and published only after successful preflight.
+
+## State effects
+
+- Function 2 copies Local payload and definedness into one renamed Local destination while preserving the Local source.
+- INSERT updates selected Shared quarters without publication; PUBLISH updates selected quarters and establishes publication only after prospective completeness.
+- BROADCAST copies all four same-index Shared quarters to a new Local destination; EXTRACT copies only selected same-index quarters and leaves unselected destination regions unchanged.
+- Shared source operations never modify descriptor, allocation mask, initialized mask, publication state, or payload.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- Complete role, mask, size, descriptor, shape, data-type, layout, readiness, and allocation preflight precedes every payload, publication, or destination effect.
+- Each successful Shared destination update commits its selected payload and metadata atomically; INSERT leaves publication false, while PUBLISH may establish it after completeness. A Shared source read is read-only.
+
+## Exceptions
+
+- Reserved DataType, unsupported Layout, malformed or unterminated binding schema, role/size/mask mismatch, incompatible descriptor, incomplete PUBLISH, unpublished BROADCAST, allocation failure, or shape mismatch rejects before destination effects.
+- EXTRACT from an unallocated Shared register or from a selected uninitialized quarter is legal and supplies undefined-register values without changing Shared state.
+
+## Examples
+
+- BSTART.TMOV U8; B.IOT T#1, mask=1111, ->U<1>, last; BSTOP
+- BSTART.TMOV U8 [TMOV.L2S.INSERT form]; B.IOT T#1, mask=0011, last; B.IOS mask=0011, ->S7<1>; BSTOP
+- BSTART.TMOV U8 [TMOV.S2L.EXTRACT form]; B.IOS S7, mask=0011; B.IOT mask=0011, ->T<1>, last; BSTOP
 
 <!-- SUPPLEMENTARY-BEGIN -->
 `BSTART.TMOV` accepts DataType code 31, canonically spelled `DTYPE_NONE`. When

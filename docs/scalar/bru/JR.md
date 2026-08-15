@@ -31,13 +31,28 @@ jr SrcL, label
 | jr_32_c4128e843b05 | SrcZero | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | jr_32_c4128e843b05 | simm12 | 12 | signed | [{"instruction_lsb":25,"value_lsb":0,"width":7},{"instruction_lsb":7,"value_lsb":7,"width":5}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| jr_32_c4128e843b05 | SrcL | 5 | 0–31 | none | none | left absolute GPR source | Encoded zero names the architectural zero GPR. |
+| jr_32_c4128e843b05 | SrcZero | 5 | 0–31 | none | none | explicit zero-valued source selector | Encoded zero selects value zero of the explicit zero-valued source selector. |
+| jr_32_c4128e843b05 | simm12 | 12 | 0–4095 | none | none | 12-bit signed immediate or displacement | Encoded zero supplies numeric zero for the 12-bit signed immediate or displacement. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| SrcL | encoded operand or control |
-| SrcZero | encoded operand or control |
-| simm12 | encoded operand or control |
+| SrcL | left absolute GPR source |
+| SrcZero | explicit zero-valued source selector |
+| simm12 | 12-bit signed immediate or displacement |
 
 ## Decode
 
@@ -61,14 +76,36 @@ end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `JR - Jump to the scalar-register target.`
-- **Semantic handler:** `JumpRegister`
+- Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects.
+
+## State effects
+
+- JR - Jump to the scalar-register target.
+- After decode and legality checks, execute the normative JumpRegister ASL handler; no other architectural state is modified.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- none
+
+## Exceptions
+
+- Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation.
+
+## Examples
+
+- jr SrcL, label
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

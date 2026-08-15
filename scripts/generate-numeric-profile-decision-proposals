@@ -78,7 +78,7 @@ PROPOSALS: dict[str, dict[str, Any]] = {
             "named-target-profile-rule",
             "implementation-defined-with-explicit-allowed-set",
         ],
-        "proposed_rule": "ADR 0049 fixes the pto-hardware-numeric-0.58.0-ieee-v1 rule: preserve every defined input subnormal, use gradual underflow for every defined result subnormal, detect tininess after rounding, expose no FTZ/DAZ architectural state or operation override, and reject a nonconforming configuration before effects. The rule is conditional on independent operation/type support and does not change pto-v0.",
+        "proposed_rule": "ADR 0049 fixes the pto-hardware-numeric-0.58.1-ieee-v1 rule: preserve every defined input subnormal, use gradual underflow for every defined result subnormal, detect tininess after rounding, expose no FTZ/DAZ architectural state or operation override, and reject a nonconforming configuration before effects. The rule is conditional on independent operation/type support and does not change pto-v0.",
         "open_items": [],
     },
     "PD-05": {
@@ -227,7 +227,7 @@ def generate() -> dict[str, Any]:
             "affected_operation_count": 93,
             "operation_applicability_row_count": 93,
             "conditional_operation_type_tuple_count": 1023,
-            "affected_hook_count": 21,
+            "affected_hook_count": 23,
             "accepted_decision_count": 1,
             "accepted_complete_domain_rule_count": 0,
             "pd04_complete": True,
@@ -304,7 +304,7 @@ def generate() -> dict[str, Any]:
             "external_selector_class_count": 4,
             "affected_domain_count": 16,
             "affected_operation_count": 100,
-            "affected_hook_count": 23,
+            "affected_hook_count": 25,
             "accepted_domain_rounding_rule_count": 16,
             "pd03_complete": True,
         },
@@ -418,7 +418,7 @@ def generate() -> dict[str, Any]:
             "tuple_count": 150,
             "bundle_execution_tuple_count": 150,
             "bundle_command_form_count": 6,
-            "accepted_command_form_count": 100,
+            "accepted_command_form_count": 74,
             "result_rule_count": 0,
             "parent_pd01_complete": False,
             "cube_matrix_complete": False,
@@ -526,7 +526,7 @@ def generate() -> dict[str, Any]:
     )
     require(len(domain_proposals) == 18, "numeric domain count drift")
     require(operation_count == 104, "numeric operation count drift")
-    require(len(profile_hooks) == 28, "numeric hook count drift")
+    require(len(profile_hooks) == 30, "numeric hook count drift")
     require(
         readiness["summary"]["operation_count"] == operation_count,
         "readiness operation count drift",

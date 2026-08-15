@@ -1,18 +1,28 @@
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-LOAD-STORE","surface":"tile","classification":["model","memory","load-store"],"depends_on":["PTO-TILE-MODEL-MEMORY-STRIDE","PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION"]}
+pure func DecodeTileMemoryElementRaw(raw: Word,
+                                     data_type: TileDataType,
+                                     high_nibble: boolean) => Word
+begin
+    let element_bytes = TileMemoryElementBytes(data_type);
+    if TileDataTypeIsFourBit(data_type) then
+        if high_nibble then
+            return ZeroExtend{PTO_XLEN}(raw[7:4]);
+        else
+            return ZeroExtend{PTO_XLEN}(raw[3:0]);
+        end;
+    else
+        return NormalizeLoadedValue(raw, element_bytes,
+            TileDataTypeIsSigned(data_type));
+    end;
+end;
+
 readonly func LoadTileMemoryElement(translated_address: Word,
                                     data_type: TileDataType,
                                     high_nibble: boolean) => Word
 begin
     let element_bytes = TileMemoryElementBytes(data_type);
     let raw = LoadTranslatedUnsigned(translated_address, element_bytes);
-    if TileDataTypeIsFourBit(data_type) then
-        if high_nibble then return ZeroExtend{PTO_XLEN}(raw[7:4]);
-        else return ZeroExtend{PTO_XLEN}(raw[3:0]);
-        end;
-    else
-        return NormalizeLoadedValue(raw, element_bytes,
-            TileDataTypeIsSigned(data_type));
-    end;
+    return DecodeTileMemoryElementRaw(raw, data_type, high_nibble);
 end;
 
 func StoreTileMemoryElement(original_address: Word,
@@ -83,8 +93,8 @@ begin
                 TileMemoryElementBytes(tile.data_type), raw,
                 CurrentBundleMemoryOrder());
             _Tiles[[destination]].payload[[element]] =
-                LoadTileMemoryElement(translated_addresses[[element]],
-                    tile.data_type, high_nibble);
+                DecodeTileMemoryElementRaw(
+                    raw, tile.data_type, high_nibble);
         end;
     end;
     MarkTileValidRegionDefined(destination);

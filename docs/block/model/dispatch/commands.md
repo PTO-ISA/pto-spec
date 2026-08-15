@@ -12,18 +12,91 @@ This page is a generated reference view of the normative ASL unit.
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/commands.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-COMMANDS","surface":"block","classification":["model","dispatch","commands"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-START"]}
+readonly func BundleFixedPointAttributesCanBePlaced() => boolean
+begin
+    if !_BundleActive ||
+       _BundleBodyActive ||
+       _BundleFixedPointAttributes.valid then
+        return FALSE;
+    end;
+
+    if _BundleOperation.valid &&
+       _BundleOperation.operation_class != BundleOperation_TileMatrix then
+        return FALSE;
+    end;
+
+    return !_BundleScalarBindings[[0]].valid &&
+           BundleTileBindingCount() == 0 &&
+           BundleSharedBindingCount() == 0;
+end;
+
 func ExecuteDecodedBundleCommand(instruction: bits(64),
                                 form: integer {0..PTO_COMMAND_FORM_COUNT-1},
                                 length_bits: integer {16,32,48,64})
                                 => CommandExecutionStatus
 begin
     let handler = CommandHandlerOfForm(form);
+    let hint_trace = handler == CommandHandler_SetBundleHint &&
+        CommandOperandPresent(form, CommandField_B_E);
     if !CommandHandlerSupportedPTOv0(handler) then
         SetFault(Fault_IllegalInstruction, ReadTPC());
         return CommandExecution_Rejected;
     end;
+    if handler == CommandHandler_ExecuteQueueMove then
+        let flags = CommandDecodedQueueMoveFlags(instruction, form);
+        if flags[1:0] == '11' then
+            SetFault(Fault_IllegalInstruction, ReadTPC());
+            return CommandExecution_Rejected;
+        end;
+        let source_left = CommandDecodedReg5(
+            instruction,
+            form,
+            CommandField_SrcL);
+        if !ScalarSourceSelectorLegal(source_left) then
+            SetFault(Fault_IllegalInstruction, ReadTPC());
+            return CommandExecution_Rejected;
+        end;
+        if flags[3] == '1' then
+            let source_right = CommandDecodedReg5(
+                instruction,
+                form,
+                CommandField_SrcR);
+            if !ScalarSourceSelectorLegal(source_right) then
+                SetFault(Fault_IllegalInstruction, ReadTPC());
+                return CommandExecution_Rejected;
+            end;
+        end;
+    elsif handler == CommandHandler_ExecuteQueuePush then
+        let source_left = CommandDecodedReg5(
+            instruction,
+            form,
+            CommandField_SrcL);
+        let source_right = CommandDecodedReg5(
+            instruction,
+            form,
+            CommandField_SrcR);
+        if !ScalarSourceSelectorLegal(source_left) ||
+           !ScalarSourceSelectorLegal(source_right) then
+            SetFault(Fault_IllegalInstruction, ReadTPC());
+            return CommandExecution_Rejected;
+        end;
+    elsif handler == CommandHandler_ExecuteQueuePop then
+        let source_left = CommandDecodedReg5(
+            instruction,
+            form,
+            CommandField_SrcL);
+        if !ScalarSourceSelectorLegal(source_left) then
+            SetFault(Fault_IllegalInstruction, ReadTPC());
+            return CommandExecution_Rejected;
+        end;
+    end;
     case handler of
         when CommandHandler_SetBundleControlAttributes =>
+            if !_BundleActive || _BundleBodyActive ||
+               _BundleControlAttributes.present then
+                SetFault(Fault_BundleControl, ReadTPC());
+                return CommandExecution_Rejected;
+            end;
             SetBundleControlAttributeState(
                 CommandDecodedBool(instruction, form, CommandField_trap),
                 CommandDecodedBool(instruction, form, CommandField_atom),
@@ -32,6 +105,11 @@ begin
                 CommandDecodedBool(instruction, form, CommandField_far),
                 CommandDecodedBool(instruction, form, CommandField_DR));
         when CommandHandler_SetBundleDataAttributes =>
+            if !_BundleActive || _BundleBodyActive ||
+               _BundleDataAttributesPresent then
+                SetFault(Fault_BundleControl, ReadTPC());
+                return CommandExecution_Rejected;
+            end;
             SetBundleDataAttributeState(
                 DecodeCommandOperandRaw(instruction, form,
                     CommandField_DataType)[4:0],
@@ -46,10 +124,11 @@ begin
                 CommandDecodedBool(instruction, form, CommandField_Sat),
                 CommandDecodedBool(
                     instruction, form, CommandField_Canonicalize));
+            if _LastFault == Fault_None then
+                _BundleDataAttributesPresent = TRUE;
+            end;
         when CommandHandler_SetBundleFixedPointAttributes =>
-            if _BundleFixedPointAttributes.valid ||
-               (_BundleOperation.valid &&
-                _BundleOperation.operation_class != BundleOperation_TileMatrix) then
+            if !BundleFixedPointAttributesCanBePlaced() then
                 SetFault(Fault_BundleControl, ReadTPC());
                 return CommandExecution_Rejected;
             end;
@@ -65,29 +144,46 @@ begin
                 CommandDecodedBool(instruction, form, CommandField_RowMaxInit),
                 CommandDecodedBool(instruction, form, CommandField_MaxAbsEn));
         when CommandHandler_SetBundleDimension =>
-            if CommandOperandPresent(form, CommandField_RegSrc) then
-                SetBundleDimension(CommandDecodedBundleDimension(instruction, form),
-                    ReadScalarRegisterOperand(CommandDecodedReg5(instruction,
+            if !_BundleActive || _BundleBodyActive then
+                SetFault(Fault_BundleControl, ReadTPC());
+                return CommandExecution_Rejected;
+            elsif CommandOperandPresent(form, CommandField_RegSrc) then
+                let sum = ReadScalarRegisterOperand(CommandDecodedReg5(instruction,
                         form, CommandField_RegSrc)) +
                     if CommandOperandPresent(form, CommandField_uimm17) then
                         CommandDecodedWord(instruction, form, CommandField_uimm17)
-                    else Zeros{PTO_XLEN});
+                    else Zeros{PTO_XLEN};
+                SetBundleDimension(CommandDecodedBundleDimension(instruction, form),
+                    ZeroExtend{PTO_XLEN}(sum[15:0]));
             else
                 SetBundleDimension(CommandDecodedBundleDimension(instruction, form),
                     CommandDecodedWord(instruction, form, CommandField_imm8));
             end;
         when CommandHandler_BindBundleSharedIO =>
+            let shared_mask = DecodeCommandOperandRaw(instruction, form,
+                CommandField_PE_MASK)[3:0];
+            if shared_mask == Zeros{4} then
+                // Strict no-op before placement, duplicate, stream, schema,
+                // allocation, descriptor, and operation-specific checks.
+                if _BundleActive && !_BundleBodyActive then
+                    _BundleZeroParticipationSeen = TRUE;
+                end;
+                WriteTPC(ReadTPC() + (Zeros{PTO_XLEN} + (length_bits DIV 8)));
+                return CommandExecution_Executed;
+            end;
+            if !_BundleActive || _BundleBodyActive then
+                SetFault(Fault_BundleControl, ReadTPC());
+                return CommandExecution_Rejected;
+            end;
             BindBundleSharedIO(
                 DecodeCommandOperandRaw(instruction, form,
                     CommandField_SharedTID)[7:0],
                 CommandDecodedSmall(instruction, form, CommandField_TSize)
                     as integer {0..7},
-                DecodeCommandOperandRaw(instruction, form,
-                    CommandField_PE_MASK)[3:0]);
-        when CommandHandler_SetBundleBodyAddress =>
-            SetBundleBodyAddress(CommandDecodedBundleTarget(instruction, form));
+                shared_mask);
         when CommandHandler_BindBundleScalarIO =>
-            if _BundleScalarBindings[[0]].valid then
+            if !_BundleActive || _BundleBodyActive ||
+               _BundleScalarBindings[[0]].valid then
                 SetFault(Fault_BundleControl, ReadTPC());
                 return CommandExecution_Rejected;
             end;
@@ -97,11 +193,25 @@ begin
                 CommandDecodedReg5(instruction, form, CommandField_RegSrc1),
                 CommandDecodedReg5(instruction, form, CommandField_RegSrc2), 3);
         when CommandHandler_BindBundleTileIO =>
+            let pe_mask = DecodeCommandOperandRaw(
+                instruction, form, CommandField_PE_MASK)[3:0];
+            if pe_mask == Zeros{4} then
+                // Strict no-op: zero participation suppresses every later
+                // placement, stream, schema, allocation, and descriptor check.
+                if _BundleActive && !_BundleBodyActive then
+                    _BundleZeroParticipationSeen = TRUE;
+                end;
+                WriteTPC(ReadTPC() + (Zeros{PTO_XLEN} + (length_bits DIV 8)));
+                return CommandExecution_Executed;
+            end;
+            if !_BundleActive || _BundleBodyActive ||
+               BundleTileBindingSequenceClosed() then
+                SetFault(Fault_BundleControl, ReadTPC());
+                return CommandExecution_Rejected;
+            end;
             let tile_size = if CommandOperandPresent(form, CommandField_TSize) then
                 CommandDecodedSmall(instruction, form, CommandField_TSize)
                 else 0;
-            let pe_mask = DecodeCommandOperandRaw(
-                instruction, form, CommandField_PE_MASK)[3:0];
             let local_to_shared =
                 _BundleOperation.valid &&
                 _BundleOperation.operation_class == BundleOperation_TileMemory &&
@@ -110,17 +220,11 @@ begin
                  _BundleOperation.selector[4:0] == '01010');
             let local_destination =
                 CommandOperandPresent(form, CommandField_TSize);
-            if pe_mask != Zeros{4} &&
-               (!BundleTileMaskCanAppend(pe_mask) ||
+            if !BundleTileMaskCanAppend(pe_mask) ||
                 (local_destination && tile_size == 0) ||
                 (local_to_shared &&
                  (CommandOperandPresent(form, CommandField_TSize) ||
-                  CommandOperandPresent(form, CommandField_DstTile))) ||
-                (_BundleOperation.valid &&
-                 _BundleOperation.operation_class == BundleOperation_TileMemory &&
-                 _BundleOperation.selector_valid &&
-                 _BundleOperation.selector[4:0] == '01101' &&
-                 pe_mask != '1111')) then
+                  CommandOperandPresent(form, CommandField_DstTile))) then
                 SetFault(Fault_TileLegality, ReadTPC());
                 return CommandExecution_Rejected;
             end;
@@ -147,7 +251,40 @@ begin
             let completed = CompleteBundleAt(ReadTPC() +
                 (Zeros{PTO_XLEN} + (length_bits DIV 8)));
         when CommandHandler_SetBundleHint =>
+            if hint_trace then
+                let instruction_pc = ReadTPC();
+                if _BundleActive && !CompleteBundleAt(instruction_pc) then
+                    return CommandExecution_Rejected;
+                end;
+                ClearBundleHeaderState();
+                let sequential = instruction_pc +
+                    (Zeros{PTO_XLEN} + (length_bits DIV 8));
+                BeginBundle(BundleKind_Standard,
+                    BundleTransfer_Fallthrough, sequential, sequential,
+                    sequential, TRUE);
+                if _LastFault != Fault_None then
+                    return CommandExecution_Rejected;
+                end;
+            elsif !_BundleActive || _BundleBodyActive ||
+                  _BundleHint.present then
+                SetFault(Fault_BundleControl, ReadTPC());
+                return CommandExecution_Rejected;
+            end;
             _LastBundleHintPayload = instruction;
+            _BundleHint.present = TRUE;
+            _BundleHint.trace = hint_trace;
+            _BundleHint.trace_end = hint_trace &&
+                CommandDecodedBool(instruction, form, CommandField_B_E);
+            _BundleHint.branch_valid = !hint_trace &&
+                CommandDecodedBool(instruction, form, CommandField_V);
+            _BundleHint.branch_likely = !hint_trace &&
+                CommandDecodedBool(instruction, form, CommandField_L_UL);
+            _BundleHint.temperature = if hint_trace then Zeros{2}
+                else DecodeCommandOperandRaw(instruction, form,
+                    CommandField_temp)[1:0];
+            _BundleHint.prefetch_size = if hint_trace then Zeros{12}
+                else DecodeCommandOperandRaw(instruction, form,
+                    CommandField_prefetch_size)[11:0];
             BundleTransformHint();
         when CommandHandler_SaveExecutionContext =>
             SaveExecutionContextState(
@@ -166,44 +303,49 @@ begin
                 ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
                     CommandField_RegSrc2)));
         when CommandHandler_ExecuteFrameEntry =>
-            EnterFrame(
+            ExecuteFENTRY(
                 CommandDecodedReg5(instruction, form, CommandField_SrcBegin),
                 CommandDecodedReg5(instruction, form, CommandField_SrcEnd),
                 CommandDecodedWord(instruction, form, CommandField_uimm));
         when CommandHandler_ExecuteFrameExit =>
-            ExitFrame(
+            ExecuteFEXIT(
                 CommandDecodedReg5(instruction, form, CommandField_DstBegin),
                 CommandDecodedReg5(instruction, form, CommandField_DstEnd),
                 CommandDecodedWord(instruction, form, CommandField_uimm));
         when CommandHandler_ExecuteFrameReturnAddress =>
-            ReturnFromFrame(
+            ExecuteFRETRA(
                 CommandDecodedReg5(instruction, form, CommandField_DstBegin),
                 CommandDecodedReg5(instruction, form, CommandField_DstEnd),
-                CommandDecodedWord(instruction, form, CommandField_uimm), TRUE);
+                CommandDecodedWord(instruction, form, CommandField_uimm));
         when CommandHandler_ExecuteFrameReturnStack =>
-            ReturnFromFrame(
+            ExecuteFRETSTK(
                 CommandDecodedReg5(instruction, form, CommandField_DstBegin),
                 CommandDecodedReg5(instruction, form, CommandField_DstEnd),
-                CommandDecodedWord(instruction, form, CommandField_uimm), FALSE);
+                CommandDecodedWord(instruction, form, CommandField_uimm));
         when CommandHandler_ExecuteQueueMove =>
-            ExecuteQueueManagerMove(
+            let flags = CommandDecodedQueueMoveFlags(instruction, form);
+            let capacity_source = if flags[3] == '1' then
+                ReadScalarRegisterOperand(CommandDecodedReg5(
+                    instruction,
+                    form,
+                    CommandField_SrcR))
+            else
+                Zeros{PTO_XLEN};
+            ExecuteHLQMT(
                 CommandDecodedReg5(instruction, form, CommandField_RegDst),
                 ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
                     CommandField_SrcL)),
-                ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
-                    CommandField_SrcR)),
-                CommandDecodedQueueMoveFlags(instruction, form));
+                capacity_source,
+                flags);
         when CommandHandler_ExecuteQueuePop =>
-            ExecuteQueueManagerPop(
+            ExecuteHLQPOP(
                 CommandDecodedReg5(instruction, form, CommandField_RegDst0),
                 CommandDecodedReg5(instruction, form, CommandField_RegDst1),
                 ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
                     CommandField_SrcL)),
-                ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
-                    CommandField_SrcR)),
                 CommandDecodedQueuePopFlags(instruction, form));
         when CommandHandler_ExecuteQueuePush =>
-            ExecuteQueueManagerPush(
+            ExecuteHLQPUSH(
                 CommandDecodedReg5(instruction, form, CommandField_RegDst),
                 ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
                     CommandField_SrcL)),
@@ -211,13 +353,29 @@ begin
                     CommandField_SrcR)),
                 CommandDecodedQueuePushFlags(instruction, form));
         when CommandHandler_ExecuteMemoryCopy =>
-            ExecuteBoundedMemoryCopy(
-                ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
-                    CommandField_RegSrc0)),
-                ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
-                    CommandField_RegSrc1)),
-                ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
-                    CommandField_RegSrc2)));
+            if _MemoryCopyTemplate.active then
+                ExecuteMemoryCopyTemplate(
+                    _MemoryCopyTemplate.destination,
+                    _MemoryCopyTemplate.source,
+                    _MemoryCopyTemplate.length);
+            else
+                let destination = ReadGPR(
+                    CommandDecodedReg5(
+                        instruction,
+                        form,
+                        CommandField_RegSrc0) as GPRIndex);
+                let source = ReadGPR(
+                    CommandDecodedReg5(
+                        instruction,
+                        form,
+                        CommandField_RegSrc1) as GPRIndex);
+                let length = ReadGPR(
+                    CommandDecodedReg5(
+                        instruction,
+                        form,
+                        CommandField_RegSrc2) as GPRIndex);
+                ExecuteMemoryCopyTemplate(destination, source, length);
+            end;
         when CommandHandler_ExecuteMemorySet =>
             ExecuteBoundedMemorySet(
                 ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
@@ -238,7 +396,7 @@ begin
     if _LastFault != Fault_None then
         return CommandExecution_Rejected;
     end;
-    if CommandHandlerAdvancesSequentially(handler) then
+    if CommandHandlerAdvancesSequentially(handler) && !hint_trace then
         WriteTPC(ReadTPC() + (Zeros{PTO_XLEN} + (length_bits DIV 8)));
     end;
     return CommandExecution_Executed;

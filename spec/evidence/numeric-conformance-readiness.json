@@ -44,7 +44,7 @@
     "affected_operation_count": 93,
     "operation_applicability_row_count": 93,
     "conditional_operation_type_tuple_count": 1023,
-    "affected_hook_count": 21,
+    "affected_hook_count": 23,
     "accepted_decision_count": 1,
     "accepted_complete_domain_rule_count": 0,
     "pd04_complete": true,
@@ -570,12 +570,14 @@
       "hooks": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep",
         "TileProfileMatrixScaledAccumulate"
       ],
       "counts": {
         "contract_domains": 2,
         "operations": 13,
-        "hooks": 3
+        "hooks": 5
       },
       "open_numeric_dimensions": [
         "NaN and infinity",
@@ -612,7 +614,7 @@
   ],
   "summary": {
     "contract_domain_count": 18,
-    "hook_count": 28,
+    "hook_count": 30,
     "lane_count": 6,
     "operation_count": 104,
     "accepted_configuration_identity_count": 4,

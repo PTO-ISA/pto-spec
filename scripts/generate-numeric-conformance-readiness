@@ -180,7 +180,7 @@ LANE_SPECS: tuple[dict[str, Any], ...] = (
 
 EXPECTED_COUNTS = {
     "contract_domain_count": 18,
-    "hook_count": 28,
+    "hook_count": 30,
     "lane_count": 6,
     "operation_count": 104,
 }

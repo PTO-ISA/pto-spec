@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/fsu/FNMSUB.asl`
 
-FNMSUB - Compute this mnemonic's fused floating-point operation.
+FNMSUB computes the negation of one fused SrcL multiplied by SrcR minus SrcA operation through the active numeric profile.
 
 ## Normative identity {#PTO-INST-SCALAR-FNMSUB}
 
@@ -21,7 +21,7 @@ fnmsub.{T} SrcL, SrcR, SrcA, ->{t, u, Rd}
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| fnmsub_32_6542d56665b3 | L32 | 32 | 0x0000704b / 0x0000707f | [] |
+| fnmsub_32_6542d56665b3 | L32 | 32 | 0x0000704b / 0x0000707f | [{"field":"SrcType","operator":"one-of","values":[0,1]}] |
 
 ### Fields
 
@@ -33,21 +33,41 @@ fnmsub.{T} SrcL, SrcR, SrcA, ->{t, u, Rd}
 | fnmsub_32_6542d56665b3 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | fnmsub_32_6542d56665b3 | SrcType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| fnmsub_32_6542d56665b3 | RegDst | 5 | 0–31 | none | none | Reg5 destination or discard | Encoded zero discards the result. |
+| fnmsub_32_6542d56665b3 | SrcA | 5 | 0–31 | none | none | fused addend Reg5 source | Encoded zero reads the architectural zero GPR. |
+| fnmsub_32_6542d56665b3 | SrcL | 5 | 0–31 | none | none | left or sole Reg5 source | Encoded zero reads the architectural zero GPR. |
+| fnmsub_32_6542d56665b3 | SrcR | 5 | 0–31 | none | none | right Reg5 source | Encoded zero reads the architectural zero GPR. |
+| fnmsub_32_6542d56665b3 | SrcType | 2 | 0–1 | none | 2–3 | source carrier selector | Encoded zero selects the 64-bit source carrier; it is not omission. |
+
+- `fnmsub_32_6542d56665b3.SrcType` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| RegDst | encoded operand or control |
-| SrcA | encoded operand or control |
-| SrcL | encoded operand or control |
-| SrcR | encoded operand or control |
-| SrcType | encoded operand or control |
+| RegDst | Reg5 destination or discard |
+| SrcA | fused addend Reg5 source |
+| SrcL | left or sole Reg5 source |
+| SrcR | right Reg5 source |
+| SrcType | source carrier selector |
 
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FNMSUB.asl -->
 ```asl
-readonly func InstructionContractOperation_FNMSUB() => ScalarOperation
+readonly func InstructionContractOperation_FNMSUB()
+    => ScalarOperation
 begin
     return ScalarOperation_FNMSUB;
 end;
@@ -58,21 +78,91 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FNMSUB.asl -->
 ```asl
-readonly func InstructionContractHandler_FNMSUB() => ScalarSemanticHandler
+readonly func InstructionContractHandler_FNMSUB()
+    => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingFused;
+end;
+
+pure func InstructionContractSourceTypeLegal_FNMSUB(encoded: bits(2))
+    => boolean
+begin
+    return encoded == '00' || encoded == '01';
+end;
+
+pure func InstructionContractSourceCarrier_FNMSUB(encoded: bits(2))
+    => bits(5)
+begin
+    assert InstructionContractSourceTypeLegal_FNMSUB(encoded);
+    return ScalarFPSourceTypeCode(encoded);
+end;
+
+pure func InstructionContractSourceArity_FNMSUB()
+    => integer {1..3}
+begin
+    return 3;
+end;
+
+pure func InstructionContractUsesProfileFlags_FNMSUB()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractUsesActiveRounding_FNMSUB()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractFusedOperation_FNMSUB()
+    => FloatingFusedOperation
+begin
+    return FloatingFused_NMSUB;
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.
+- SrcType=0 selects an FP64 carrier and SrcType=1 selects the zero-extended low-word FP32 carrier. SrcType=2 and SrcType=3 are reserved.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `FNMSUB - Compute this mnemonic's fused floating-point operation.`
-- **Semantic handler:** `FloatingFused`
+- Every Reg5 source uses codes 0..23 for absolute GPRs, 24..27 for T#1..T#4, and 28..31 for U#1..U#4 without consumption.
+- Every Reg5 destination is assigned: codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard only the result.
+- SrcType codes 0 and 1 are assigned; codes 2 and 3 are reserved.
+
+## State effects
+
+- FNMSUB computes the negation of one fused SrcL multiplied by SrcR minus SrcA operation through the active numeric profile.
+- The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.
+- For pto-v0, negate MultiplyWord(SrcL, SrcR) minus SrcA modulo the selected width and return zero flags. This executable reference behavior is not target floating-point conformance.
+- Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.
+- Successful execution advances TPC by four bytes.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- Validate every encoded type before the first architectural source read or profile call.
+- Snapshot every explicit source before flag or destination effects; duplicate sources, destination aliases, and same-queue read-then-push observe pre-instruction values.
+- Accumulate produced flags, publish or discard the destination, and then advance TPC.
+
+## Exceptions
+
+- A fixed-bit mismatch, reserved SrcType, reserved DstType where present, or unavailable selected T/U source raises Fault_IllegalInstruction before source, profile, destination, flag, queue, or TPC effects.
+- Numeric profile flags update sticky status and do not themselves raise a synchronous PTO trap.
+
+## Examples
+
+- fnmsub.fd a0, a1, a2, ->a3
+- fnmsub.fs t#1, u#1, a0, ->t
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

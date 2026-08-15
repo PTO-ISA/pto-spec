@@ -21,7 +21,7 @@ B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, Ma
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| b_fpatr_32_4f2db11e8e8a | L32 | 32 | 0x00002023 / 0x00007fff | [{"field":"PreQuantMode","operator":"one-of","values":[0,1,2,3,4,5,12,13,16,17,18,19,20,23,24,25,26,27,28,32,33,34,35,36,37,38,39]},{"field":"ReluMode","operator":"one-of","values":[0,1,2,3]},{"field":"GroupNCode","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9]},{"field":"RowMaxEn","operator":"one-of","values":[0,1]},{"field":"GroupMaxEn","operator":"one-of","values":[0,1]},{"field":"RowMaxInit","operator":"one-of","values":[0,1]},{"field":"MaxAbsEn","operator":"one-of","values":[0,1]},{"field":"Func","operator":"one-of","values":[2]},{"field":"ElementWiseEn","operator":"one-of","values":[0]},{"field":"Opc1","operator":"one-of","values":[2]},{"field":"Opcode","operator":"one-of","values":[1]},{"field":"W","operator":"one-of","values":[1]}] |
+| b_fpatr_32_4f2db11e8e8a | L32 | 32 | 0x00002023 / 0x00007fff | [{"field":"PreQuantMode","operator":"one-of","values":[0,1,2,3,4,5,12,13,16,17,18,19,20,23,24,25,26,27,28,32,33,34,35,36,37,38,39]},{"field":"ReluMode","operator":"one-of","values":[0,1,2,3]},{"field":"GroupNCode","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9]},{"field":"RowMaxEn","operator":"one-of","values":[0,1]},{"field":"GroupMaxEn","operator":"one-of","values":[0,1]},{"field":"RowMaxInit","operator":"one-of","values":[0,1]},{"field":"MaxAbsEn","operator":"one-of","values":[0,1]},{"field":"Func","operator":"one-of","values":[2]},{"field":"ElementWiseEn","operator":"one-of","values":[0]},{"field":"Reserved","operator":"one-of","values":[0]},{"field":"Opc1","operator":"one-of","values":[2]},{"field":"Opcode","operator":"one-of","values":[1]},{"field":"W","operator":"one-of","values":[1]}] |
 
 ### Fields
 
@@ -41,23 +41,58 @@ B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, Ma
 | b_fpatr_32_4f2db11e8e8a | Opcode | 3 | encoding-defined | [{"instruction_lsb":1,"value_lsb":0,"width":3}] |
 | b_fpatr_32_4f2db11e8e8a | W | 1 | encoding-defined | [{"instruction_lsb":0,"value_lsb":0,"width":1}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| b_fpatr_32_4f2db11e8e8a | PreQuantMode | 6 | 0–5, 12–13, 16–20, 23–28, 32–39 | none | 6–11, 14–15, 21–22, 29–31, 40–63 | closed Matrix destination pre-quantization and output-type selector | No pre-quantization; the Matrix accumulation result remains FP32. |
+| b_fpatr_32_4f2db11e8e8a | ReluMode | 3 | 0–3 | none | 4–7 | post-conversion activation selector | No activation. |
+| b_fpatr_32_4f2db11e8e8a | GroupNCode | 4 | 0–9 | none | 10–15 | group maximum column-count selector | No group maximum; GroupMaxEn must also be zero. |
+| b_fpatr_32_4f2db11e8e8a | RowMaxEn | 1 | 0–1 | none | none | row maximum input/output enable | No RowMax input or output. |
+| b_fpatr_32_4f2db11e8e8a | GroupMaxEn | 1 | 0–1 | none | none | group maximum output enable | No GroupMax output. |
+| b_fpatr_32_4f2db11e8e8a | RowMaxInit | 1 | 0–1 | none | none | row maximum initialization from RowMaxIn enable | Do not initialize RowMax from RowMaxIn. |
+| b_fpatr_32_4f2db11e8e8a | MaxAbsEn | 1 | 0–1 | none | none | maximum-absolute-value reduction selector | Use signed maximum rather than maximum absolute value for enabled reductions. |
+| b_fpatr_32_4f2db11e8e8a | Func | 3 | 2 | none | 0–1, 3–7 | fixed B.FPATR function discriminator equal to 2 | Encoded zero supplies numeric zero for the fixed B.FPATR function discriminator equal to 2. |
+| b_fpatr_32_4f2db11e8e8a | ElementWiseEn | 1 | 0 | none | 1 | fixed complete-bundle selector equal to zero | Fixed zero selects complete-bundle Matrix post-processing. |
+| b_fpatr_32_4f2db11e8e8a | Reserved | 4 | 0 | none | 1–15 | fixed-zero reserved field | Fixed zero; every nonzero encoding is reserved. |
+| b_fpatr_32_4f2db11e8e8a | Opc1 | 3 | 2 | none | 0–1, 3–7 | fixed command-class discriminator equal to 2 | Encoded zero supplies numeric zero for the fixed command-class discriminator equal to 2. |
+| b_fpatr_32_4f2db11e8e8a | Opcode | 3 | 1 | none | 0, 2–7 | fixed block-attribute opcode discriminator equal to 1 | Encoded zero supplies numeric zero for the fixed block-attribute opcode discriminator equal to 1. |
+| b_fpatr_32_4f2db11e8e8a | W | 1 | 1 | none | 0 | fixed 32-bit command-width discriminator equal to 1 | Encoded zero supplies numeric zero for the fixed 32-bit command-width discriminator equal to 1. |
+
+- `b_fpatr_32_4f2db11e8e8a.PreQuantMode` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
+- `b_fpatr_32_4f2db11e8e8a.ReluMode` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
+- `b_fpatr_32_4f2db11e8e8a.GroupNCode` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
+- `b_fpatr_32_4f2db11e8e8a.Func` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
+- `b_fpatr_32_4f2db11e8e8a.ElementWiseEn` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
+- `b_fpatr_32_4f2db11e8e8a.Reserved` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
+- `b_fpatr_32_4f2db11e8e8a.Opc1` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
+- `b_fpatr_32_4f2db11e8e8a.Opcode` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
+- `b_fpatr_32_4f2db11e8e8a.W` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| PreQuantMode | encoded operand or control |
-| ReluMode | encoded operand or control |
-| GroupNCode | encoded operand or control |
-| RowMaxEn | encoded operand or control |
-| GroupMaxEn | encoded operand or control |
-| RowMaxInit | encoded operand or control |
-| MaxAbsEn | encoded operand or control |
-| Func | encoded operand or control |
-| ElementWiseEn | encoded operand or control |
-| Reserved | encoded operand or control |
-| Opc1 | encoded operand or control |
-| Opcode | encoded operand or control |
-| W | encoded operand or control |
+| PreQuantMode | closed Matrix destination pre-quantization and output-type selector |
+| ReluMode | post-conversion activation selector |
+| GroupNCode | group maximum column-count selector |
+| RowMaxEn | row maximum input/output enable |
+| GroupMaxEn | group maximum output enable |
+| RowMaxInit | row maximum initialization from RowMaxIn enable |
+| MaxAbsEn | maximum-absolute-value reduction selector |
+| Func | fixed B.FPATR function discriminator equal to 2 |
+| ElementWiseEn | fixed complete-bundle selector equal to zero |
+| Reserved | fixed-zero reserved field |
+| Opc1 | fixed command-class discriminator equal to 2 |
+| Opcode | fixed block-attribute opcode discriminator equal to 1 |
+| W | fixed 32-bit command-width discriminator equal to 1 |
 
 ## Decode
 
@@ -69,6 +104,14 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
+
+## Block composition
+
+```asm
+Required exactly once in a CUBE Matrix block after BSTART and before scalar or tile bindings and the first body instruction.
+The complete block schema places mathematical Local sources first, then optional RowMaxIn, vector pre-quantization, and vector PReLU sources; Local destinations are D, optional RowMaxOut, then optional GroupMaxOut.
+Scalar pre-quantization and LReLU/PReLU parameters use the dense B.IOR schema; LReLU-only consumes RegSrc0.
+```
 
 ## Operation
 
@@ -141,6 +184,48 @@ begin
     return UInt(code) == 3;
 end;
 
+// Quantization descriptors use one closed 64-bit carrier.  The selected
+// mode alone determines which payload bits are meaningful; every other bit
+// is reserved and must be zero before matrix operands are snapshotted.
+pure func BundleFPATRQuantParameterWordLegal(code: bits(6),
+                                             value: Word) => boolean
+begin
+    let mode = UInt(code);
+    if mode == 12 || mode == 13 then
+        return value[31:0] == Zeros{32} &&
+               value[63:36] == Zeros{28};
+    end;
+    if mode == 17 || mode == 18 then
+        return value[12:0] == Zeros{13} &&
+               value[36:32] == Zeros{5} &&
+               value[63:42] == Zeros{22};
+    end;
+    if mode == 2 || mode == 3 || mode == 23 || mode == 24 then
+        return value[12:0] == Zeros{13} &&
+               value[36:32] == Zeros{5} &&
+               value[63:46] == Zeros{18};
+    end;
+    if mode == 19 || mode == 20 then
+        return value[12:0] == Zeros{13} &&
+               value[36:32] == Zeros{5} &&
+               value[63:54] == Zeros{10};
+    end;
+    if BundleFPATRModeUsesScalarParameter(code) ||
+       BundleFPATRModeUsesVectorParameter(code) then
+        return value[12:0] == Zeros{13} &&
+               value[63:32] == Zeros{32};
+    end;
+    return FALSE;
+end;
+
+// Scalar LReLU and vector PReLU elements carry one FP19 value in the low
+// nineteen bits.  FP19 arithmetic remains profile-owned, but its carrier is
+// architectural and therefore rejects nonzero high bits.
+pure func BundleFPATRReluParameterWordLegal(value: Word) => boolean
+begin
+    return value[63:19] == Zeros{45};
+end;
+
 // Matrix B.DATR contributes only the destination conversion controls once
 // B.FPATR is present.  None keeps the architectural default conversion
 // (RMode=NONE and Sat=0); every accepted non-zero mode carries the complete
@@ -200,14 +285,48 @@ end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- **Constraints:** `[{"field": "PreQuantMode", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 28, 32, 33, 34, 35, 36, 37, 38, 39]}, {"field": "ReluMode", "operator": "one-of", "values": [0, 1, 2, 3]}, {"field": "GroupNCode", "operator": "one-of", "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}, {"field": "RowMaxEn", "operator": "one-of", "values": [0, 1]}, {"field": "GroupMaxEn", "operator": "one-of", "values": [0, 1]}, {"field": "RowMaxInit", "operator": "one-of", "values": [0, 1]}, {"field": "MaxAbsEn", "operator": "one-of", "values": [0, 1]}, {"field": "Func", "operator": "one-of", "values": [2]}, {"field": "ElementWiseEn", "operator": "one-of", "values": [0]}, {"field": "Opc1", "operator": "one-of", "values": [2]}, {"field": "Opcode", "operator": "one-of", "values": [1]}, {"field": "W", "operator": "one-of", "values": [1]}]`
+- Encoded PreQuantMode=0 and ReluMode=0 disable pre-quantization and activation. GroupNCode=0 selects no group maximum. All four enable bits default to disabled.
+- Omitting B.FPATR is not a default for a CUBE Matrix block: complete-bundle preflight rejects the missing command before allocation or effects.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `Latches complete-bundle matrix post-processing mode, reduction enables, and fixed-point descriptor controls.`
-- **Semantic handler:** `SetBundleFixedPointAttributes`
+- PreQuantMode accepts exactly codes 0..5, 12..13, 16..20, 23..28, and 32..39; all other six-bit codes are reserved.
+- ReluMode codes 0..3 select None, ReLU, scalar LReLU/PReLU, and vector PReLU; codes 4..7 are reserved.
+- GroupNCode codes 0..9 select 0, 8, 16, 32, 48, 64, 80, 96, 112, and 128 columns; codes 10..15 are reserved.
+- RowMaxInit requires RowMaxEn. GroupMaxEn requires nonzero GroupNCode and nonzero GroupNCode requires GroupMaxEn. MaxAbsEn requires RowMaxEn or GroupMaxEn.
+- Func=2, ElementWiseEn=0, Reserved=0, Opc1=2, Opcode=1, and W=1 are fixed encoding discriminators.
+- Matrix B.DATR supplies only destination conversion controls when B.FPATR is present: None requires RMode=NONE and Sat=0; shift modes require RMode=NONE; accepted non-None modes otherwise retain the complete rounding selector and independent saturation control.
+- The derived scalar/vector parameter count, Local source count, and Local destination count must fit the complete-bundle schema without duplicate destinations or illegal source/destination aliases.
+
+## State effects
+
+- Latch the accepted fixed-point post-processing descriptor once for the active block; bundle reset clears its presence and every field.
+- Trap save and recovery preserve the complete latched descriptor with the pending block.
+- Successful execution applies the selected conversion, optional activation, and optional reductions to the completed Matrix result through the numeric-profile hook, then atomically commits enabled outputs.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- Complete field, B.DATR, operand-schema, alias, shape, and allocation preflight precedes every source consumption and destination effect.
+- D, RowMaxOut, and GroupMaxOut are published as one atomic complete-block output group; rejection exposes none of them.
+
+## Exceptions
+
+- Missing, duplicate, or non-CUBE-Matrix use raises Fault_BundleControl before operand consumption, allocation, payload, or destination effects.
+- Reserved field values, inconsistent reduction enables, invalid B.DATR conversion controls, malformed operand streams, illegal aliases, or invalid derived shapes raise Fault_TileLegality before effects.
+- Fixed-bit mismatch does not decode as B.FPATR and is rejected by normal command decoding before this handler executes.
+
+## Examples
+
+- B.FPATR None, None, 0, 0, 0, 0, 0
+- B.FPATR S8Vector, LReLU, 2, 1, 1, 1, 1
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

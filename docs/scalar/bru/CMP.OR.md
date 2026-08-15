@@ -32,14 +32,30 @@ cmp.or SrcL, SrcR<.sw, .uw, .not>, ->{t, u, Rd}
 | cmp_or_32_75e1fa54ba94 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | cmp_or_32_75e1fa54ba94 | SrcRType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| cmp_or_32_75e1fa54ba94 | RegDst | 5 | 0–31 | none | none | absolute GPR destination | Encoded zero names the architectural zero GPR. |
+| cmp_or_32_75e1fa54ba94 | SrcL | 5 | 0–31 | none | none | left absolute GPR source | Encoded zero names the architectural zero GPR. |
+| cmp_or_32_75e1fa54ba94 | SrcR | 5 | 0–31 | none | none | right absolute GPR source | Encoded zero names the architectural zero GPR. |
+| cmp_or_32_75e1fa54ba94 | SrcRType | 2 | 0–3 | none | none | right-source modifier selector | Encoded zero selects value zero of the right-source modifier selector. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| RegDst | encoded operand or control |
-| SrcL | encoded operand or control |
-| SrcR | encoded operand or control |
-| SrcRType | encoded operand or control |
+| RegDst | absolute GPR destination |
+| SrcL | left absolute GPR source |
+| SrcR | right absolute GPR source |
+| SrcRType | right-source modifier selector |
 
 ## Decode
 
@@ -63,14 +79,36 @@ end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `CMP.OR - Combine scalar comparison results with the encoded logical operation.`
-- **Semantic handler:** `ExecuteCompareLogical`
+- Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects.
+
+## State effects
+
+- CMP.OR - Combine scalar comparison results with the encoded logical operation.
+- After decode and legality checks, execute the normative ExecuteCompareLogical ASL handler; no other architectural state is modified.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- none
+
+## Exceptions
+
+- Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation.
+
+## Examples
+
+- cmp.or SrcL, SrcR<.sw, .uw, .not>, ->{t, u, Rd}
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

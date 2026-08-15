@@ -23,11 +23,20 @@ begin
         return ScalarExecution_Rejected;
     end;
     let form = decoded as integer {0..PTO_SCALAR_FORM_COUNT-1};
+    let operation = ScalarOperationOfForm(form);
+    if !ScalarOperationApplicable(operation) then
+        SetFault(Fault_BundleControl, ReadTPC());
+        return ScalarExecution_Rejected;
+    end;
     if !ScalarFormOperandsLegal(instruction, form) then
         SetFault(Fault_IllegalInstruction, ReadPC());
         return ScalarExecution_Rejected;
     end;
     if !ScalarRegisterOperandsLegal(instruction, form) then
+        SetFault(Fault_IllegalInstruction, ReadPC());
+        return ScalarExecution_Rejected;
+    end;
+    if !ScalarImplicitSourceOperandsLegal(operation) then
         SetFault(Fault_IllegalInstruction, ReadPC());
         return ScalarExecution_Rejected;
     end;

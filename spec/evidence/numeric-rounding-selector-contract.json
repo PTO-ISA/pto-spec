@@ -357,6 +357,8 @@
       "hooks": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep",
         "TileProfileMatrixScaledAccumulate"
       ],
       "candidate_profile_ids": [
@@ -765,19 +767,19 @@
     ]
   },
   "tests": [
-    "tests/asl/profile-tests.asl:TestConcreteProfile",
-    "tests/asl/scalar-tests.asl:TestScalarFloating",
+    "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl:main",
+    "tests/asl/scalar/model/fsu/arithmetic/scalar-exec-floating-001.asl:TestScalarFloating",
     "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUFlagAndRoundingHelpers",
     "scripts/generate-bundle-command-totality:ValidateCanonicalBundleCommandTotality"
   ],
   "sources": [
     {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "0fb686db56423c37d669f92058003d4668b0c183a9bd0428d25c4ae70b391670"
+      "sha256": "139632729bc011216e4793652e2f3dbd57acd17164bd0a34c18eb5817da2cf34"
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "572ffe3fefce946057590312872387272b414414030bba6e7e6c0cc6cecb820a"
+      "sha256": "84985a963489b69436709377d0f09ff4ec8ac7df1f3ca8fb2476f28a84fbb867"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
@@ -785,7 +787,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ec9e3f2ef160cf84391c1ff38201098642e60b1c3449df2746dd9ab738605c96"
+      "sha256": "d001984ca86695c8f08a10415419ee663e76ab3bc21743f9e70343e20d8efdf3"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
@@ -793,7 +795,7 @@
     },
     {
       "path": "asl/scalar/model/fsu/arithmetic.asl",
-      "sha256": "3860cbeee3636ec15db56994839f035769157b5afabaac48d15eaa7037396f51"
+      "sha256": "21bdc927b7c5e13f0db364ccb07d87a8e303b82041212bc2bb289e5fa9377288"
     },
     {
       "path": "asl/scalar/model/fsu/profile.asl",
@@ -801,35 +803,39 @@
     },
     {
       "path": "asl/scalar/model/dispatch/agu.asl",
-      "sha256": "9be69ee9b7036cae9f04979fdc1be30aaff071f349ce74c271f82b10f47f3344"
+      "sha256": "4317f8b3d9028a40d308efafa996197394fe617ecfa7ede309f0491f5910e678"
     },
     {
       "path": "asl/scalar/model/dispatch/alu.asl",
-      "sha256": "3c7d42dc7b0fadad274c1aaa6c1718819bc9464cb936bc13ad74e21685e83b32"
+      "sha256": "bc9a765133a19f0a248ccd070e20026f22ab8aebece23475755dd3b566d96349"
     },
     {
       "path": "asl/scalar/model/dispatch/amo.asl",
-      "sha256": "759e0cb12f19b8cbccf2ff797f72b63407d128d925531b3f37ca82357e193856"
+      "sha256": "6c1cbff9ffb76d530083ce68fc0b2b288475080ba5713b28d363f3fb23ea2666"
     },
     {
       "path": "asl/scalar/model/dispatch/bru.asl",
-      "sha256": "9b0160ea4246b13632acb34494e18f20b27663e05a799973d7b14a291939e5dc"
+      "sha256": "f052ce909a69d2e5e8cb63a9fc00945be2dd2c38ea31502e75536843b70e6bff"
     },
     {
       "path": "asl/scalar/model/dispatch/decode.asl",
-      "sha256": "59ea6af4d7f9ccf85d69483e1903bf6faf5ca75b1864921e064d001fd972eb3d"
+      "sha256": "18fca28c9d66963d31318414790b1795eadff6495410be6104c1042eef72d2e6"
     },
     {
       "path": "asl/scalar/model/dispatch/fsu.asl",
-      "sha256": "c0e08051db71ae8427c20f913ba70d0ad960b618c78bbae982a68c739535b163"
+      "sha256": "4d7f3b84d7ef9cb271e5ce30e13b6116b3f5b22d11d15079ddf93459f8ac1cc5"
     },
     {
       "path": "asl/scalar/model/dispatch/sys.asl",
-      "sha256": "e05775b77eba292cdf8bbcdad4ff1fc6aed33dfe348f1975280647808c4a1308"
+      "sha256": "5650cb4928d7b61f10bb0bb31fc771517336c6a59b25d8dfbddd711ffc82e823"
     },
     {
       "path": "asl/scalar/model/dispatch/top-level.asl",
       "sha256": "07c654528b9e9c6b4af6c9efb78a4e22f1c0492b80a232670621485c2b8e7409"
+    },
+    {
+      "path": "asl/block/model/state/barg.asl",
+      "sha256": "ba74c1628b701b6595892655ed7453c101f53dc78df73d88db8ff4d0915feefa"
     },
     {
       "path": "asl/block/model/state/binding-state.asl",
@@ -837,59 +843,91 @@
     },
     {
       "path": "asl/block/model/state/control-state.asl",
-      "sha256": "fb33ab9e5af85e57fe07adc030014470a48b77d2ca2e11afbad70355b5f40519"
+      "sha256": "e702697bd0983442b0aa39970173f7a6178a7c761b9d698db9d55043a00fe0c5"
     },
     {
       "path": "asl/block/model/state/descriptor-state.asl",
-      "sha256": "0fae413a024f93e1b5f938a574182bffcfbbdd6d5bbdf0ade0aa1cfc3b00471f"
+      "sha256": "2c8ff99c677abdc3a43f91ed439f8fa89c56b4be6013c11c762f5e863e13f751"
     },
     {
       "path": "asl/block/model/state/types.asl",
-      "sha256": "fafa4b35fbcf78c24e4d20f76daed5badc4c8a7f3c12400561276ab772f47a9b"
+      "sha256": "9975f8863416c1326f1b0973a560d36784272a90feda441775093c1d20b130e9"
     },
     {
       "path": "asl/block/model/dispatch/commands.asl",
-      "sha256": "32ec82f164b68e70527b7699ffabd4a6441f4601eca6c738247436177cfac034"
+      "sha256": "1752c213edccb63398545c18d48a8ec42454043507d6345b423cf1aa7f89e68a"
+    },
+    {
+      "path": "asl/block/model/dispatch/cube-tmatmul.asl",
+      "sha256": "93f6cf85cb27a676a442a46cd6f7f72ea7e3eeedc293cbb66dfb0ae28840233f"
     },
     {
       "path": "asl/block/model/dispatch/decode.asl",
-      "sha256": "bc8ac47d3ff1a6008b8041ec2f030933a2e35ee3143d7d029f2daa38cb22b555"
+      "sha256": "ccde34f4b4d73bd7cc6aa09de33425523dbce0b5af861b75a6532cf3026ac43a"
     },
     {
       "path": "asl/block/model/dispatch/descriptor-legality.asl",
-      "sha256": "1f8af32320adbca3ab304f23f49ff0c7956960b51071c9d7a79fb6d1874c6575"
+      "sha256": "29a45a8b9201831f4a333c75c95646844294a896af41b563d63f13c2c4af9d67"
     },
     {
       "path": "asl/block/model/dispatch/destination-shape.asl",
-      "sha256": "776b2d3438434ffd48f48fba2eec4aa8cd22ea5745712300db6a5d8e816d494d"
+      "sha256": "02f2e10d51ab5730a2f8d65e8b8fbfa524c57b99a347ba28b9500c40c6282fb5"
     },
     {
       "path": "asl/block/model/dispatch/numeric-control.asl",
-      "sha256": "9daca978ecd21d83f7be11e4532c4eaa3db5cdbf5562833e7dfd93fcb29c3e33"
+      "sha256": "8372aa20c99f953c426e489be3555430cc0fe240d4808fda34180a9a11f5a8f7"
     },
     {
       "path": "asl/block/model/dispatch/scalar-schema.asl",
-      "sha256": "59e466c059b1d7aac880ba3bede340d9deed8ffa87356b1c1a8ce05f09a4e6b4"
+      "sha256": "3647656bebc81da8dd0389b8c925829c9be9b049717dadbde187955ef017ba5a"
     },
     {
       "path": "asl/block/model/dispatch/shared-cube.asl",
-      "sha256": "a6994836c697d0216b916751ee044ce27dede62e31af002ed7510b213409da33"
+      "sha256": "138f9432e0fba1c4626dc51c3db41977f749fc8ff461178077216166ea392c42"
     },
     {
       "path": "asl/block/model/dispatch/shared-tlsu.asl",
-      "sha256": "976bf66d12eca3a672dceb8cc139f91fe0a39d361b0f41fd1d9bb230de5ecb88"
+      "sha256": "eb0183c2b8f42a20d0b70523d7b0bc55db37286fe510506699056b3b328fb5a6"
     },
     {
       "path": "asl/block/model/dispatch/start.asl",
-      "sha256": "81a6f6b2d119419f9ba89e51607bce4206104ffcb85cb77e08a4e4a241eea14d"
+      "sha256": "e4662b023190abfba80428d2a0ea7b4a2589dc4f1435c3c8e05ba41770c19334"
     },
     {
       "path": "asl/block/model/dispatch/tile-execution.asl",
-      "sha256": "ec6512a4206c948b8163657d814054c4f90d1622b96870489c6c1ca99fba3645"
+      "sha256": "6f2301bc5bfff97452a93066bd701d4076798f960cb077a6736adff12144f3f4"
     },
     {
       "path": "asl/block/model/dispatch/tile-schema.asl",
-      "sha256": "dcaef41e2839b30122b7a9a725da3689595e8e87808e80e5a128935c4d51b890"
+      "sha256": "a01e328520487c3bb62fbf72a1ea2d4aa4fd8482f408000ba57edb8d61a08ada"
+    },
+    {
+      "path": "asl/block/model/dispatch/tlsu-gmov.asl",
+      "sha256": "7133d722585828949c5116e01b927738386bfd78ca3789e0bf2ad4f5c7bf4fc3"
+    },
+    {
+      "path": "asl/block/model/dispatch/tlsu-mgather-cas.asl",
+      "sha256": "20adc13fddbd8623c3529d8985bf82f6820b4eef11fd29aca1e01ee34d976382"
+    },
+    {
+      "path": "asl/block/model/dispatch/tlsu-mgather-mask.asl",
+      "sha256": "77cc72ed251b0bef87a31d4b0a60c3cb3c9d44dd20e6ba756f0bca808036be1d"
+    },
+    {
+      "path": "asl/block/model/dispatch/tlsu-mgather.asl",
+      "sha256": "7d82e9d2572b1181ed0ac934e77db3c47f4223efc412a84c71ce69489a389fb0"
+    },
+    {
+      "path": "asl/block/model/dispatch/tlsu-mscatter-mask.asl",
+      "sha256": "a7f7ebc586067692422412fcb09853581f3eb46016ae66c379daa9716ad5c892"
+    },
+    {
+      "path": "asl/block/model/dispatch/tlsu-mscatter.asl",
+      "sha256": "cb084506f695cde5dabcb4898eaa07bb7b740fca0be6597bfaf5ea9dff6e16b7"
+    },
+    {
+      "path": "asl/block/model/dispatch/tlsu-prefetch.asl",
+      "sha256": "66632bb3fb087c73c90fd6db4f944cc83383aa7462fc7f2ce756b034dd0ead68"
     },
     {
       "path": "asl/block/model/dispatch/top-level.asl",
@@ -909,11 +947,11 @@
     },
     {
       "path": "asl/tile/model/execution/cube.asl",
-      "sha256": "397a3e276d3988b2aa4380b8f2fd9fe2eec88d1f4ac4faf70c702c6d18235389"
+      "sha256": "8a6e07ac3bac3732152c5a9bad2dd5365d18ca04ae6804400a4015f40dc36b3c"
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "e1c60c6acab2beffca2cc8ff9c24392ace035f01df19dca482a93876866908c8"
+      "sha256": "b13de35f0f0da4c7732704194fdcce5ed1aec82825eda00d04d6e2122c002828"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -921,15 +959,15 @@
     },
     {
       "path": "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
-      "sha256": "07c51707a4f02fa6a451f92ab267b31fe4f0398d3def26f12b461f79d734d6a7"
+      "sha256": "32d05fb963c061210b852b39ede4f697ced8beae29e9645cfd4da8bc64276da2"
     },
     {
       "path": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
-      "sha256": "2d571c4df9bae68cb34824db62f2944145c96f61ea113ec15b3475e60b6610b6"
+      "sha256": "b3bc529241803a91bec919243e98f122a57da14153afd9c5f8ce5f45d5474025"
     },
     {
       "path": "docs/status/decisions/0047-numeric-rounding-semantics.md",
-      "sha256": "6595060f3b01749643d01677014308fc89aa02b23670fdef79d82e582f9232f2"
+      "sha256": "d524cf4b8491acd01806044081869187aec74d4e0df6950936253a1ac4542b08"
     }
   ],
   "summary": {
@@ -939,7 +977,7 @@
     "external_selector_class_count": 4,
     "affected_domain_count": 16,
     "affected_operation_count": 100,
-    "affected_hook_count": 23,
+    "affected_hook_count": 25,
     "accepted_domain_rounding_rule_count": 16,
     "pd03_complete": true
   }

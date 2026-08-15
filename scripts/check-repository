@@ -48,13 +48,13 @@ required_files=(
     docs/status/decisions/0048-numeric-format-value-classification.md
     docs/status/decisions/0049-hardware-subnormal-policy.md
     docs/status/decisions/0050-hardware-special-value-checkpoint.md
-    docs/status/decisions/0051-public-v06-predicate-mask-boundary.md
+    docs/status/decisions/0051-predicate-state-namespace-boundary.md
     docs/status/decisions/0041-a2a3-mx-profile-applicability.md
     docs/status/decisions/0042-numeric-variation-point-ownership.md
     docs/status/decisions/0043-public-numeric-type-identity-and-availability.md
     docs/status/decisions/0044-public-integer-conversion-result-subset.md
-    docs/status/decisions/0052-pto-isa-0580-davincioo-catalog.md
-    docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md
+    docs/status/decisions/0052-direct-tile-and-bundle-catalog-closure.md
+    docs/status/decisions/0056-pto-encoding-ownership-and-gm-access.md
     docs/status/decisions/0046-separate-execution-mask-and-warp-predicates.md
     spec/release-inputs.json
     spec/catalog/scalar-forms.json
@@ -65,14 +65,15 @@ required_files=(
     spec/catalog/tile-operations.json
     spec/hardware-conformance-profile.json
     spec/release-manifest.json
-    spec/evidence/pto-isa-0580-abi-vectors.json
-    spec/evidence/pto-isa-0580-encoding-totality.json
-    spec/evidence/pto-isa-0580-hardware-numeric-vectors.json
+    spec/evidence/pto-isa-0581-abi-vectors.json
+    spec/evidence/pto-isa-0581-encoding-totality.json
+    spec/evidence/pto-isa-0581-hardware-numeric-vectors.json
     spec/evidence/release-gate-readiness.json
     spec/evidence/release-traceability-readiness.json
     scripts/generate-release-gate-readiness
     scripts/generate-release-manifest
     scripts/generate-release-traceability-readiness
+    scripts/manual_semantic_audit.py
     scripts/asl_tests.py
     tests/README.md
     scripts/check-asl-layout
@@ -168,6 +169,8 @@ git diff --cached --check
 ./scripts/check-asl-tests
 python3 scripts/project_asl_catalogs.py --root . --check
 python3 scripts/instruction_docs.py --check
+python3 scripts/instruction_contracts.py --check --require-complete
+./scripts/generate-instruction-contract-closure --check
 python3 scripts/generate-mnemonic-avs.py --check
 python3 scripts/check-publication-hygiene
 

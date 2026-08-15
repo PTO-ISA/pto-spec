@@ -20,6 +20,7 @@ from scripts.ndf import instruction_clause_id, parse_ndf_regions  # noqa: E402
 
 
 DEFAULT_OUTPUT = ROOT / "spec/evidence/release-traceability-readiness.json"
+INSTRUCTION_CONTRACT_PATH = Path("spec/evidence/instruction-contract-closure.json")
 
 
 def _sha256(path: Path) -> str:
@@ -32,6 +33,15 @@ def build_document(root: Path = ROOT) -> dict[str, object]:
     if errors:
         raise ValueError("\n".join(errors))
 
+    instruction_contract = json.loads(
+        (root / INSTRUCTION_CONTRACT_PATH).read_text(encoding="utf-8")
+    )
+    if instruction_contract.get("schema") != "pto.instruction-contract-closure.v1":
+        raise ValueError("instruction contract closure has the wrong schema")
+    contract_by_mnemonic = {
+        row["mnemonic"]: row for row in instruction_contract["instructions"]
+    }
+
     tests_by_source: dict[Path, list[str]] = defaultdict(list)
     tests_by_requirement: dict[str, list[str]] = defaultdict(list)
     for point in points:
@@ -41,7 +51,7 @@ def build_document(root: Path = ROOT) -> dict[str, object]:
 
     owners_by_requirement: dict[str, list[str]] = defaultdict(list)
     unit_rows: list[dict[str, object]] = []
-    source_paths: set[Path] = set()
+    source_paths: set[Path] = {INSTRUCTION_CONTRACT_PATH}
     for unit in units:
         absolute = root / unit.source_path
         document = Path("docs") / unit.source_path.relative_to("asl").with_suffix(".md")
@@ -59,17 +69,41 @@ def build_document(root: Path = ROOT) -> dict[str, object]:
             requirement_ids.append(instruction_clause_id(unit.surface, unit.mnemonic))
         for requirement in requirement_ids:
             owners_by_requirement[requirement].append(unit.source_path.as_posix())
-        unit_rows.append(
-            {
-                "id": unit.unit_id,
-                "surface": unit.surface,
-                "classification": list(unit.classification),
+        row: dict[str, object] = {
+            "id": unit.unit_id,
+            "surface": unit.surface,
+            "classification": list(unit.classification),
+            "source": unit.source_path.as_posix(),
+            "documentation": document.as_posix(),
+            "mnemonic": unit.mnemonic,
+            "tests": sorted(tests_by_source[unit.source_path]),
+        }
+        if unit.mnemonic is not None:
+            contract = contract_by_mnemonic.get(unit.mnemonic)
+            if contract is None:
+                raise ValueError(
+                    f"instruction contract closure is missing {unit.mnemonic}"
+                )
+            expected = {
                 "source": unit.source_path.as_posix(),
                 "documentation": document.as_posix(),
-                "mnemonic": unit.mnemonic,
-                "tests": sorted(tests_by_source[unit.source_path]),
+                "ndf_clause": instruction_clause_id(unit.surface, unit.mnemonic),
             }
-        )
+            for field, value in expected.items():
+                if contract.get(field) != value:
+                    raise ValueError(
+                        f"instruction contract closure {unit.mnemonic} has stale {field}"
+                    )
+            row["instruction_contract"] = {
+                "artifact": INSTRUCTION_CONTRACT_PATH.as_posix(),
+                "mnemonic": unit.mnemonic,
+                "ndf_clause": expected["ndf_clause"],
+            }
+        unit_rows.append(row)
+
+    unit_mnemonics = {unit.mnemonic for unit in units if unit.mnemonic is not None}
+    if set(contract_by_mnemonic) != unit_mnemonics:
+        raise ValueError("instruction contract closure mnemonic set is stale")
 
     test_rows: list[dict[str, object]] = []
     for point in points:
@@ -110,6 +144,7 @@ def build_document(root: Path = ROOT) -> dict[str, object]:
             "architecture_owner": "asl/{arch,block,scalar,tile}",
             "documentation_projection": "docs/{arch,block,scalar,tile}",
             "test_projection": "tests/asl/{arch,block,scalar,tile}",
+            "instruction_contract_projection": INSTRUCTION_CONTRACT_PATH.as_posix(),
         },
         "sources": {
             path.as_posix(): _sha256(root / path) for path in sorted(source_paths)
@@ -128,7 +163,9 @@ def build_document(root: Path = ROOT) -> dict[str, object]:
             "uncovered_units": uncovered_units,
             "uncovered_executable_requirement_count": len(uncovered_executable),
             "uncovered_executable_requirements": uncovered_executable,
-            "status": "closed" if not uncovered_units and not uncovered_executable else "open",
+            "status": "closed"
+            if not uncovered_units and not uncovered_executable
+            else "open",
         },
     }
 

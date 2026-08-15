@@ -14,16 +14,9 @@ profile-returned bits into that state. The target-profile decision package did
 not yet distinguish this closed state/lifecycle mechanism from the still-open
 conditions under which target arithmetic produces each flag.
 
-The pinned public PTO contract does not define a complete scalar exception-flag
-register or producer table. CPU, A2A3, and A5 implementations contain numeric
-control and saturation mechanisms but do not provide architecture-visible
-sticky flag evidence. They therefore cannot silently define PTO behavior.
-
-A reviewed independent executable ISA model corroborates a five-bit common
-state field, the NV/DZ/OF/UF/NX order, sticky accumulation, reset, system-
-register replacement, and illegal-type rejection before flag effects. Its
-numeric helpers are unbound declarations, and its comparison/minimum/maximum
-flag behavior differs from PTO, so it is not a producer oracle.
+The PTO ASL did not yet define a complete scalar exception-flag producer table.
+The missing producer conditions must remain explicit architecture gaps; tool
+or implementation behavior cannot silently define them.
 
 ## Decision
 
@@ -73,6 +66,6 @@ The repository maturity therefore remains M4 and `S5-T2` remains open.
 - `asl/scalar/floating.asl`
 - `asl/scalar/dispatch.asl`
 - `asl/profiles/pto-v0.asl`
-- `tests/asl/scalar-tests.asl`
+- `tests/asl/scalar/model/dispatch/fsu/scalar-exec-flag-and-rounding-helpers-001.asl`
 - `docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md`
 - `spec/evidence/numeric-profile-decision-proposals.json`

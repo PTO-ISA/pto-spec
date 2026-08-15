@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/CTZ.asl`
 
-CTZ - Count the selected bit property of the scalar source.
+CTZ counts trailing zero bits in an independently selected wrapping scalar field and publishes the XLEN count.
 
 ## Normative identity {#PTO-INST-SCALAR-CTZ}
 
@@ -32,22 +32,51 @@ ctz SrcL,  M, N, ->{t, u, Rd}
 | ctz_32_1761cbcc2a89 | imml | 6 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":6}] |
 | ctz_32_1761cbcc2a89 | imms | 6 | encoding-defined | [{"instruction_lsb":26,"value_lsb":0,"width":6}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| ctz_32_1761cbcc2a89 | RegDst | 5 | 0–31 | none | none | Reg5 destination or discard | Encoded zero discards the result. |
+| ctz_32_1761cbcc2a89 | SrcL | 5 | 0–31 | none | none | Reg5 source | Encoded zero reads the architectural zero GPR. |
+| ctz_32_1761cbcc2a89 | imml | 6 | 0–63 | none | none | selected field width N minus one | Encoded zero selects a one-bit field. |
+| ctz_32_1761cbcc2a89 | imms | 6 | 0–63 | none | none | selected field starting bit M | Encoded zero starts the selected field at source bit zero. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| RegDst | encoded operand or control |
-| SrcL | encoded operand or control |
-| imml | encoded operand or control |
-| imms | encoded operand or control |
+| RegDst | Reg5 destination or discard |
+| SrcL | Reg5 source |
+| imml | selected field width N minus one |
+| imms | selected field starting bit M |
 
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/CTZ.asl -->
 ```asl
-readonly func InstructionContractOperation_CTZ() => ScalarOperation
+readonly func InstructionContractOperation_CTZ()
+    => ScalarOperation
 begin
     return ScalarOperation_CTZ;
+end;
+
+pure func InstructionContractWidth_CTZ(encoded_imml: bits(6))
+    => integer {1..64}
+begin
+    return UInt(encoded_imml) + 1;
+end;
+
+pure func InstructionContractOffset_CTZ(encoded_imms: bits(6))
+    => integer {0..63}
+begin
+    return UInt(encoded_imms);
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
@@ -56,21 +85,67 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/CTZ.asl -->
 ```asl
-readonly func InstructionContractHandler_CTZ() => ScalarSemanticHandler
+readonly func InstructionContractHandler_CTZ()
+    => ScalarSemanticHandler
 begin
     return ScalarHandler_CountBitfield;
+end;
+
+pure func InstructionContractResult_CTZ(
+    value: Word,
+    width: integer {1..64},
+    offset: integer {0..63})
+    => Word
+begin
+    return CountBitfield(
+        value,
+        width,
+        offset,
+        FALSE,
+        FALSE);
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- SrcL, imml, imms, and RegDst are required encoded fields; no field can be omitted.
+- imml encodes N minus one, so raw values 0 through 63 select widths 1 through 64; encoded zero selects N=1.
+- imms directly encodes M from 0 through 63; encoded zero selects source bit zero.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `CTZ - Count the selected bit property of the scalar source.`
-- **Semantic handler:** `CountBitfield`
+- SrcL codes 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4 without consumption.
+- RegDst codes 0 and 24..29 discard, codes 1..23 write GPRs, code 30 pushes U, and code 31 pushes T.
+- Every imml and imms value is assigned. The selected N-bit field begins at bit M and wraps through bit 63 to bit 0.
+
+## State effects
+
+- Extract the N-bit field beginning at bit M, wrapping from bit 63 to bit 0, then count zero bits from selected field bit zero until the first one. An all-zero selected field returns N.
+- Publish the complete XLEN result through the common Reg5 destination map. Relative sources are non-consuming; only a T or U destination push changes a temporary queue.
+- No memory, reservation, descriptor, numeric-status, block, privilege, branch-target, or other control state changes. Successful execution advances TPC by four bytes.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- Snapshot SrcL before any destination effect so a GPR alias or a T/U destination push observes the pre-instruction source value.
+- Publish the result, then advance TPC by four bytes.
+
+## Exceptions
+
+- An unavailable selected T/U source raises Fault_IllegalInstruction before the destination effect and before TPC advances.
+- CTZ raises no arithmetic, memory, alignment, permission, or control-flow exception.
+
+## Examples
+
+- ctz a0, 0, 64, ->a1
+- ctz u#1, 60, 8, ->t
+- ctz zero, 0, 1, ->zero
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

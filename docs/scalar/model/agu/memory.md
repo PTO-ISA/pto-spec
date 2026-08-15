@@ -103,6 +103,17 @@ begin
     return result;
 end;
 
+pure func Bytes64ChunkValue(value: array [[64]] of Byte,
+                            chunk: integer {0..7}) => Word
+begin
+    var result: Word = Zeros{PTO_XLEN};
+    for byte_index = 0 to 7 do
+        let snapshot_index = (chunk * 8 + byte_index) as integer {0..63};
+        result[(byte_index * 8) +: 8] = value[[snapshot_index]];
+    end;
+    return result;
+end;
+
 readonly func LoadTranslatedBytesBounded(translated_address: Word,
                                          byte_count: integer {0..63})
                                          => array [[64]] of Byte

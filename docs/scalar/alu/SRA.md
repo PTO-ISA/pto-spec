@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/SRA.asl`
 
-SRA - Compute this mnemonic's binary scalar operation and write the selected destination.
+SRA performs a arithmetic right shift of the PTO_XLEN source by the low six bits of the snapshotted SrcR; the XLEN result is published directly.
 
 ## Normative identity {#PTO-INST-SCALAR-SRA}
 
@@ -31,19 +31,35 @@ sra SrcL, SrcR, ->{t, u, Rd}
 | sra_32_ba03eea6386b | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | sra_32_ba03eea6386b | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| sra_32_ba03eea6386b | RegDst | 5 | 0–31 | none | none | Reg5 destination or discard | Encoded zero discards the result. |
+| sra_32_ba03eea6386b | SrcL | 5 | 0–31 | none | none | Reg5 value source | Encoded zero reads the architectural zero GPR. |
+| sra_32_ba03eea6386b | SrcR | 5 | 0–31 | none | none | Reg5 shift-count source | Encoded zero reads zero and therefore selects shift amount zero. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| RegDst | encoded operand or control |
-| SrcL | encoded operand or control |
-| SrcR | encoded operand or control |
+| RegDst | Reg5 destination or discard |
+| SrcL | Reg5 value source |
+| SrcR | Reg5 shift-count source |
 
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/SRA.asl -->
 ```asl
-readonly func InstructionContractOperation_SRA() => ScalarOperation
+readonly func InstructionContractOperation_SRA()
+    => ScalarOperation
 begin
     return ScalarOperation_SRA;
 end;
@@ -54,21 +70,72 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/SRA.asl -->
 ```asl
-readonly func InstructionContractHandler_SRA() => ScalarSemanticHandler
+readonly func InstructionContractHandler_SRA()
+    => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
+end;
+
+pure func InstructionContractShiftAmount_SRA(right: Word)
+    => integer {0..63}
+begin
+    return UInt(right[5:0]);
+end;
+
+pure func InstructionContractResult_SRA(left: Word, right: Word)
+    => Word
+begin
+    let amount = InstructionContractShiftAmount_SRA(right);
+    let shifted = ASR(left, amount);
+    return shifted;
+end;
+
+pure func InstructionContractIsWordOperation_SRA()
+    => boolean
+begin
+    return FALSE;
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- SrcL, SrcR, and RegDst are required fields; no field can be omitted.
+- The low six bits of the snapshotted SrcR select the shift amount 0 through 63; every higher SrcR bit is ignored for the amount.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `SRA - Compute this mnemonic's binary scalar operation and write the selected destination.`
-- **Semantic handler:** `ScalarBinary`
+- SrcL and SrcR codes 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4 without consumption.
+- RegDst codes 0 and 24..29 discard, code 30 pushes U, code 31 pushes T, and codes 1..23 write GPRs.
+- All SrcR values are legal; only its low six bits contribute to the shift amount.
+
+## State effects
+
+- Compute the arithmetic right shift using the low six bits of the snapshotted SrcR. The PTO_XLEN result is written unchanged.
+- Destination codes 0 and 24..29 discard, code 30 pushes U, code 31 pushes T, and codes 1..23 write GPRs; source queues are non-consuming.
+- No memory, reservation, descriptor, flag, block, privilege, or control-flow state changes except the successful TPC advance.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- Snapshot both sources before the destination effect so aliases and T/U publication use pre-instruction values.
+- Publish the result, then advance TPC by four bytes.
+
+## Exceptions
+
+- SRA raises no arithmetic exception; shifted-out bits are discarded.
+- An unavailable T/U source raises Fault_IllegalInstruction before the destination effect and successful TPC advance.
+
+## Examples
+
+- sra a0, a1, ->a2
+- sra t#1, u#1, ->u
+- sra zero, zero, ->zero
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

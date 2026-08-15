@@ -31,13 +31,28 @@ setc.geu SrcL, SrcR<{.sw, .uw}>
 | setc_geu_32_494f1f79099e | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | setc_geu_32_494f1f79099e | SrcRType | 2 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":2}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| setc_geu_32_494f1f79099e | SrcL | 5 | 0–31 | none | none | left absolute GPR source | Encoded zero names the architectural zero GPR. |
+| setc_geu_32_494f1f79099e | SrcR | 5 | 0–31 | none | none | right absolute GPR source | Encoded zero names the architectural zero GPR. |
+| setc_geu_32_494f1f79099e | SrcRType | 2 | 0–3 | none | none | right-source modifier selector | Encoded zero selects value zero of the right-source modifier selector. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| SrcL | encoded operand or control |
-| SrcR | encoded operand or control |
-| SrcRType | encoded operand or control |
+| SrcL | left absolute GPR source |
+| SrcR | right absolute GPR source |
+| SrcRType | right-source modifier selector |
 
 ## Decode
 
@@ -61,14 +76,36 @@ end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `SETC.GEU - Compare scalar operands and update the bundle commit condition.`
-- **Semantic handler:** `ExecuteSetCommit`
+- Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects.
+
+## State effects
+
+- SETC.GEU - Compare scalar operands and update the bundle commit condition.
+- After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- none
+
+## Exceptions
+
+- Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation.
+
+## Examples
+
+- setc.geu SrcL, SrcR<{.sw, .uw}>
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

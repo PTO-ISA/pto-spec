@@ -14,9 +14,11 @@ PYTHON_LAUNCHED = frozenset(
     {
         "__init__.py",
         "asl_tests.py",
+        "asl_validation_shards.py",
         "encoding_witness.py",
         "evidence_sources.py",
         "generate-mnemonic-avs.py",
+        "manual_semantic_audit.py",
         "tile_taxonomy.py",
     }
 )

@@ -18,7 +18,7 @@ the same architecture-visible state. Bundle state is explicit through TPC, BPC,
 active/body flags, arguments, dimensions, IO bindings, and attributes. Tile
 registers are explicit operands.
 
-The canonical catalogs contain 474 scalar forms, 99 bundle/command forms, and
+The canonical catalogs contain 474 scalar forms, 100 bundle/command forms, and
 120 direct tile operations. Exact admission, selector allocation, reservation,
 and semantic coverage are machine checked.
 

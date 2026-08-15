@@ -1,0 +1,509 @@
+// Migrated from the pre-four-surface executable test suite.
+// PTO-TEST: {"id":"PTO-AVS-TILE-TESTTLSUTOTALITY-BOUNDARY-001","source":"asl/tile/model/memory/load-store.asl","requirements":[],"kind":"boundary","summary":"Covers Tlsu Totality.","pass_condition":"TestTlsuTotality completes without assertion failure","related_sources":[]}
+func ConfigurePackedTlsuTile(index: TileIndex, columns: integer {1..16})
+begin
+    // Keep packed data and U64 index tiles on the same legal physical shape:
+    // 16 rows x 16 power-of-two columns. Only the valid-column extent varies.
+    ConfigureTile(index, 128, 1, 16, 1, columns, TileDataType_U4X2,
+        TileLayout_RowMajor, TileLocation_Any);
+end;
+
+func ConfigurePackedTlsuTileTwoByTwo(index: TileIndex)
+begin
+    ConfigureTile(index, 256, 2, 2, 2, 2, TileDataType_U4X2,
+        TileLayout_RowMajor, TileLocation_Any);
+end;
+
+func ConfigurePackedTlsuTileType(index: TileIndex,
+                                columns: integer {1..16},
+                                data_type: TileDataType)
+begin
+    assert TileDataTypeIsFourBit(data_type);
+    ConfigureTile(index, 128, 1, 16, 1, columns, data_type,
+        TileLayout_RowMajor, TileLocation_Any);
+end;
+
+func ConfigureIndexTlsuTile(index: TileIndex, columns: integer {1..16})
+begin
+    ConfigureTile(index, 2048, 1, 16, 1, columns, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+end;
+
+func ConfigureByteTlsuTile(index: TileIndex, columns: integer {1..16})
+begin
+    ConfigureTile(index, 128, 1, 16, 1, columns, TileDataType_U8,
+        TileLayout_RowMajor, TileLocation_Any);
+end;
+
+func TestTlsuPackedDirectSelectors()
+begin
+    StopMemoryEventCapture();
+    ConfigurePackedTlsuTile(0, 3);
+    ConfigurePackedTlsuTile(1, 3);
+    ConfigurePackedTlsuTile(2, 3);
+
+    Store(Zeros{PTO_XLEN} + 0x100, 1, Zeros{PTO_XLEN} + 0xba);
+    Store(Zeros{PTO_XLEN} + 0x101, 1, Zeros{PTO_XLEN} + 0xc5);
+    StartMemoryEventCapture(0);
+    TLOAD(0, Zeros{PTO_XLEN} + 0x100, Zeros{PTO_XLEN} + 3);
+    assert _MemoryEventCount == 3;
+    assert _MemoryEvents[[0]].kind == MemoryEvent_Load;
+    assert _MemoryEvents[[0]].address == Zeros{PTO_XLEN} + 0x100;
+    assert _MemoryEvents[[0]].size_bytes == 1;
+    assert _MemoryEvents[[0]].read_value == Zeros{PTO_XLEN} + 0xba;
+    assert _MemoryEvents[[1]].address == Zeros{PTO_XLEN} + 0x100;
+    assert _MemoryEvents[[2]].address == Zeros{PTO_XLEN} + 0x101;
+    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 0xa;
+    assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN} + 0xb;
+    assert ReadTileElement(0, 0, 2) == Zeros{PTO_XLEN} + 0x5;
+    StopMemoryEventCapture();
+
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(1, 0, 2, Zeros{PTO_XLEN} + 3);
+    Store(Zeros{PTO_XLEN} + 0x110, 1, Zeros{PTO_XLEN} + 0x90);
+    Store(Zeros{PTO_XLEN} + 0x111, 1, Zeros{PTO_XLEN} + 0xe0);
+    StartMemoryEventCapture(0);
+    TSTORE(Zeros{PTO_XLEN} + 0x110, Zeros{PTO_XLEN} + 3, 1);
+    assert _MemoryEventCount == 3;
+    assert _MemoryEvents[[0]].kind == MemoryEvent_Store;
+    assert _MemoryEvents[[0]].address == Zeros{PTO_XLEN} + 0x110;
+    assert _MemoryEvents[[0]].size_bytes == 1;
+    assert _MemoryEvents[[0]].write_value == Zeros{PTO_XLEN} + 0x91;
+    assert _MemoryEvents[[1]].write_value == Zeros{PTO_XLEN} + 0x21;
+    assert _MemoryEvents[[2]].address == Zeros{PTO_XLEN} + 0x111;
+    assert _MemoryEvents[[2]].write_value == Zeros{PTO_XLEN} + 0xe3;
+    StopMemoryEventCapture();
+    let packed_store_byte0 = LoadUnsigned(Zeros{PTO_XLEN} + 0x110, 1);
+    let packed_store_byte1 = LoadUnsigned(Zeros{PTO_XLEN} + 0x111, 1);
+    assert packed_store_byte0 == Zeros{PTO_XLEN} + 0x21;
+    assert packed_store_byte1 == Zeros{PTO_XLEN} + 0xe3;
+
+    // Packed addressing applies row stride to the logical nibble index before
+    // choosing its containing byte and low/high nibble.
+    ConfigurePackedTlsuTileTwoByTwo(39);
+    Store(Zeros{PTO_XLEN} + 0x130, 1, Zeros{PTO_XLEN} + 0x21);
+    Store(Zeros{PTO_XLEN} + 0x131, 1, Zeros{PTO_XLEN} + 0xee);
+    Store(Zeros{PTO_XLEN} + 0x132, 1, Zeros{PTO_XLEN} + 0x43);
+    TLOAD(39, Zeros{PTO_XLEN} + 0x130, Zeros{PTO_XLEN} + 4);
+    assert ReadTileElement(39, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(39, 0, 1) == Zeros{PTO_XLEN} + 2;
+    assert ReadTileElement(39, 1, 0) == Zeros{PTO_XLEN} + 3;
+    assert ReadTileElement(39, 1, 1) == Zeros{PTO_XLEN} + 4;
+
+    WriteTileElement(39, 0, 0, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(39, 0, 1, Zeros{PTO_XLEN} + 6);
+    WriteTileElement(39, 1, 0, Zeros{PTO_XLEN} + 7);
+    WriteTileElement(39, 1, 1, Zeros{PTO_XLEN} + 8);
+    TSTORE(Zeros{PTO_XLEN} + 0x140, Zeros{PTO_XLEN} + 4, 39);
+    let packed_strided_row0 = LoadUnsigned(
+        Zeros{PTO_XLEN} + 0x140, 1);
+    let packed_strided_row1 = LoadUnsigned(
+        Zeros{PTO_XLEN} + 0x142, 1);
+    assert packed_strided_row0 == Zeros{PTO_XLEN} + 0x65;
+    assert packed_strided_row1 == Zeros{PTO_XLEN} + 0x87;
+
+    TMOV(2, 1);
+    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(2, 0, 1) == Zeros{PTO_XLEN} + 2;
+    assert ReadTileElement(2, 0, 2) == Zeros{PTO_XLEN} + 3;
+
+    // The one-level PTO model receives the peer fragment as the resolved
+    // source tile; peer_tid remains an explicit legality/control operand.
+    GMOV(0, 1, Zeros{PTO_XLEN} + 1);
+    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN} + 2;
+    assert ReadTileElement(0, 0, 2) == Zeros{PTO_XLEN} + 3;
+
+    StartMemoryEventCapture(0);
+    TPREFETCHAllPEs(Zeros{PTO_XLEN} + 0x120, Zeros{PTO_XLEN} + 2,
+        2, 1, 2, TileDataType_U8);
+    assert _MemoryEventCount == 8;
+    assert _MemoryEvents[[0]].kind == MemoryEvent_Load;
+    assert _MemoryEvents[[0]].size_bytes == 1;
+    assert _MemoryEvents[[1]].address == Zeros{PTO_XLEN} + 0x121;
+    StopMemoryEventCapture();
+end;
+
+func TestTlsuAllFourBitTypes()
+begin
+    ConfigurePackedTlsuTileType(33, 2, TileDataType_E2M1X2);
+    ConfigurePackedTlsuTileType(34, 2, TileDataType_E1M2X2);
+    ConfigurePackedTlsuTileType(35, 2, TileDataType_HiF4X2);
+    ConfigurePackedTlsuTileType(36, 2, TileDataType_S4X2);
+    ConfigurePackedTlsuTileType(37, 2, TileDataType_U4X2);
+    ConfigureIndexTlsuTile(38, 2);
+    WriteTileElement(38, 0, 0, Zeros{PTO_XLEN});
+    WriteTileElement(38, 0, 1, Zeros{PTO_XLEN} + 1);
+
+    for tile_offset = 0 to 4 do
+        let tile = (33 + tile_offset) as TileIndex;
+        let address = Zeros{PTO_XLEN} + 0x340 + tile_offset;
+        Store(address, 1, Zeros{PTO_XLEN} + 0xaf);
+        TLOAD(tile, address, Zeros{PTO_XLEN} + 2);
+        assert ReadTileElement(tile, 0, 0) == Zeros{PTO_XLEN} + 0xf;
+        assert ReadTileElement(tile, 0, 1) == Zeros{PTO_XLEN} + 0xa;
+
+        WriteTileElement(tile, 0, 0, Zeros{PTO_XLEN} + tile_offset + 1);
+        WriteTileElement(tile, 0, 1, Zeros{PTO_XLEN} + tile_offset + 5);
+        TSTORE(address, Zeros{PTO_XLEN} + 2, tile);
+        let stored = LoadUnsigned(address, 1);
+        assert stored == Zeros{PTO_XLEN} +
+            (tile_offset + 5) * 16 + tile_offset + 1;
+
+        assert !IndexedTLSUTransferDataTypeLegal(
+            _Tiles[[tile]].data_type);
+    end;
+end;
+
+func TestTlsuPackedIndexedSelectors()
+begin
+    StopMemoryEventCapture();
+    ConfigureByteTlsuTile(3, 3);
+    ConfigureIndexTlsuTile(4, 3);
+    ConfigureByteTlsuTile(5, 3);
+    ConfigurePackedTlsuTile(6, 3);
+    ConfigureIndexTlsuTile(7, 3);
+    ConfigurePackedTlsuTile(8, 3);
+    ConfigurePackedTlsuTile(9, 3);
+    ConfigureIndexTlsuTile(10, 3);
+    ConfigurePackedTlsuTile(11, 3);
+    ConfigurePackedTlsuTile(12, 3);
+
+    WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(4, 0, 1, Zeros{PTO_XLEN});
+    WriteTileElement(4, 0, 2, Zeros{PTO_XLEN} + 1);
+    Store(Zeros{PTO_XLEN} + 0x180, 1, Zeros{PTO_XLEN} + 0x21);
+    Store(Zeros{PTO_XLEN} + 0x181, 1, Zeros{PTO_XLEN} + 0x43);
+    StartMemoryEventCapture(1);
+    MGATHER(3, Zeros{PTO_XLEN} + 0x180, 4);
+    assert _MemoryEventCount == 3;
+    assert _MemoryEvents[[0]].kind == MemoryEvent_Load;
+    assert _MemoryEvents[[0]].address == Zeros{PTO_XLEN} + 0x181;
+    assert _MemoryEvents[[0]].size_bytes == 1;
+    assert _MemoryEvents[[1]].address == Zeros{PTO_XLEN} + 0x180;
+    assert _MemoryEvents[[2]].address == Zeros{PTO_XLEN} + 0x181;
+    assert ReadTileElement(3, 0, 0) == Zeros{PTO_XLEN} + 0x43;
+    assert ReadTileElement(3, 0, 1) == Zeros{PTO_XLEN} + 0x21;
+    assert ReadTileElement(3, 0, 2) == Zeros{PTO_XLEN} + 0x43;
+    StopMemoryEventCapture();
+
+    WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(5, 0, 1, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(5, 0, 2, Zeros{PTO_XLEN} + 6);
+    WriteTileElement(4, 0, 0, Zeros{PTO_XLEN});
+    WriteTileElement(4, 0, 1, Zeros{PTO_XLEN});
+    WriteTileElement(4, 0, 2, Zeros{PTO_XLEN} + 1);
+    Store(Zeros{PTO_XLEN} + 0x190, 1, Zeros{PTO_XLEN} + 0xa9);
+    StartMemoryEventCapture(1);
+    MSCATTER(Zeros{PTO_XLEN} + 0x190, 5, 4);
+    assert _MemoryEventCount == 3;
+    assert _MemoryEvents[[0]].kind == MemoryEvent_Store;
+    assert _MemoryEvents[[1]].kind == MemoryEvent_Store;
+    assert _MemoryEvents[[2]].kind == MemoryEvent_Store;
+    StopMemoryEventCapture();
+    let scatter_byte = LoadUnsigned(Zeros{PTO_XLEN} + 0x190, 1);
+    let scatter_next = LoadUnsigned(Zeros{PTO_XLEN} + 0x191, 1);
+    assert scatter_byte == Zeros{PTO_XLEN} + 4 ||
+           scatter_byte == Zeros{PTO_XLEN} + 5;
+    assert scatter_next == Zeros{PTO_XLEN} + 6;
+
+end;
+
+func TestTlsuPackedPreflightAndRestart()
+begin
+    StopMemoryEventCapture();
+    ConfigurePackedTlsuTile(13, 5);
+    ConfigureIndexTlsuTile(14, 3);
+    ConfigureByteTlsuTile(15, 3);
+    ConfigurePackedTlsuTile(16, 3);
+    ConfigurePackedTlsuTile(17, 3);
+
+    WriteTileElement(13, 0, 0, Zeros{PTO_XLEN} + 0xd);
+    WriteTileElement(13, 0, 1, Zeros{PTO_XLEN} + 0xd);
+    WriteTileElement(13, 0, 2, Zeros{PTO_XLEN} + 0xd);
+    WriteTileElement(13, 0, 3, Zeros{PTO_XLEN} + 0xd);
+    WriteTileElement(13, 0, 4, Zeros{PTO_XLEN} + 0xd);
+
+    ClearFault();
+    StartMemoryEventCapture(2);
+    TLOAD(13, Zeros{PTO_XLEN} + 4096, Zeros{PTO_XLEN} + 5);
+    assert _LastFault == Fault_DataPage;
+    assert _MemoryEventCount == 0;
+    StopMemoryEventCapture();
+    assert ReadTileElement(13, 0, 0) == Zeros{PTO_XLEN} + 0xd;
+
+    ClearFault();
+    StartMemoryEventCapture(2);
+    TLOAD(13, Zeros{PTO_XLEN} + 4095, Zeros{PTO_XLEN} + 5);
+    assert _LastFault == Fault_DataPage;
+    assert _MemoryEventCount == 0;
+    StopMemoryEventCapture();
+    assert ReadTileElement(13, 0, 2) == Zeros{PTO_XLEN} + 0xd;
+
+    Store(Zeros{PTO_XLEN} + 4094, 1, Zeros{PTO_XLEN} + 0xaa);
+    Store(Zeros{PTO_XLEN} + 4095, 1, Zeros{PTO_XLEN} + 0xbb);
+    ClearFault();
+    StartMemoryEventCapture(2);
+    TLOAD(13, Zeros{PTO_XLEN} + 4094, Zeros{PTO_XLEN} + 5);
+    assert _LastFault == Fault_DataPage;
+    assert _MemoryEventCount == 0;
+    StopMemoryEventCapture();
+    assert ReadTileElement(13, 0, 4) == Zeros{PTO_XLEN} + 0xd;
+
+    Store(Zeros{PTO_XLEN} + 0x1d0, 1, Zeros{PTO_XLEN} + 0x21);
+    Store(Zeros{PTO_XLEN} + 0x1d1, 1, Zeros{PTO_XLEN} + 0x43);
+    Store(Zeros{PTO_XLEN} + 0x1d2, 1, Zeros{PTO_XLEN} + 0x05);
+    ClearFault();
+    TLOAD(13, Zeros{PTO_XLEN} + 0x1d0, Zeros{PTO_XLEN} + 5);
+    assert _LastFault == Fault_None;
+    assert ReadTileElement(13, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(13, 0, 1) == Zeros{PTO_XLEN} + 2;
+    assert ReadTileElement(13, 0, 2) == Zeros{PTO_XLEN} + 3;
+    assert ReadTileElement(13, 0, 3) == Zeros{PTO_XLEN} + 4;
+    assert ReadTileElement(13, 0, 4) == Zeros{PTO_XLEN} + 5;
+
+    WriteTileElement(13, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(13, 0, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(13, 0, 2, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(13, 0, 3, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(13, 0, 4, Zeros{PTO_XLEN} + 5);
+    Store(Zeros{PTO_XLEN} + 4094, 1, Zeros{PTO_XLEN} + 0xaa);
+    Store(Zeros{PTO_XLEN} + 4095, 1, Zeros{PTO_XLEN} + 0xbb);
+    ClearFault();
+    StartMemoryEventCapture(2);
+    TSTORE(Zeros{PTO_XLEN} + 4094, Zeros{PTO_XLEN} + 5, 13);
+    assert _LastFault == Fault_DataPage;
+    assert _MemoryEventCount == 0;
+    StopMemoryEventCapture();
+    let fault_tstore_byte0 = LoadUnsigned(Zeros{PTO_XLEN} + 4094, 1);
+    let fault_tstore_byte1 = LoadUnsigned(Zeros{PTO_XLEN} + 4095, 1);
+    assert fault_tstore_byte0 == Zeros{PTO_XLEN} + 0xaa;
+    assert fault_tstore_byte1 == Zeros{PTO_XLEN} + 0xbb;
+
+    WriteTileElement(14, 0, 0, Zeros{PTO_XLEN});
+    WriteTileElement(14, 0, 1, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(14, 0, 2, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(15, 0, 0, Zeros{PTO_XLEN} + 7);
+    WriteTileElement(15, 0, 1, Zeros{PTO_XLEN} + 8);
+    WriteTileElement(15, 0, 2, Zeros{PTO_XLEN} + 9);
+    Store(Zeros{PTO_XLEN} + 4094, 1, Zeros{PTO_XLEN} + 0xaa);
+    Store(Zeros{PTO_XLEN} + 4095, 1, Zeros{PTO_XLEN} + 0xbb);
+    ClearFault();
+    StartMemoryEventCapture(2);
+    MSCATTER(Zeros{PTO_XLEN} + 4094, 15, 14);
+    assert _LastFault == Fault_DataPage;
+    assert _MemoryEventCount == 0;
+    StopMemoryEventCapture();
+    let fault_scatter_byte0 = LoadUnsigned(Zeros{PTO_XLEN} + 4094, 1);
+    let fault_scatter_byte1 = LoadUnsigned(Zeros{PTO_XLEN} + 4095, 1);
+    assert fault_scatter_byte0 == Zeros{PTO_XLEN} + 0xaa;
+    assert fault_scatter_byte1 == Zeros{PTO_XLEN} + 0xbb;
+
+end;
+
+func TestTlsuFaultPositionMatrix()
+begin
+    let base_address = Zeros{PTO_XLEN} + 0x380;
+
+    ConfigurePackedTlsuTile(26, 5);
+    for lane = 0 to 4 do
+        WriteTileElement(26, 0, lane, Zeros{PTO_XLEN} + lane + 1);
+    end;
+    for fault_position = 0 to 2 do
+        let start_address = if fault_position == 0 then
+            Zeros{PTO_XLEN} + 4096
+            else if fault_position == 1 then Zeros{PTO_XLEN} + 4095
+            else Zeros{PTO_XLEN} + 4094;
+        ClearFault();
+        StartMemoryEventCapture(0);
+        TSTORE(start_address, Zeros{PTO_XLEN} + 5, 26);
+        assert _LastFault == Fault_DataPage;
+        assert _MemoryEventCount == 0;
+        StopMemoryEventCapture();
+
+        let byte_count = if fault_position == 0 then 1 else 3;
+        ClearFault();
+        StartMemoryEventCapture(0);
+        TPREFETCHAllPEs(start_address, NaturalToWord(byte_count),
+            byte_count as integer {1..65535}, 1,
+            (if byte_count == 1 then 1 else 4), TileDataType_U8);
+        assert _LastFault == Fault_DataPage;
+        assert _MemoryEventCount == 0;
+        StopMemoryEventCapture();
+    end;
+
+    ConfigureByteTlsuTile(27, 3);
+    ConfigureIndexTlsuTile(28, 3);
+    ConfigurePackedTlsuTile(30, 3);
+    for lane = 0 to 2 do
+        WriteTileElement(27, 0, lane, Zeros{PTO_XLEN} + 9);
+        WriteTileElement(30, 0, lane, Zeros{PTO_XLEN} + 2);
+    end;
+
+    for fault_position = 0 to 2 do
+        for lane = 0 to 2 do
+            let index_value = if lane == fault_position then
+                Zeros{PTO_XLEN} + 6400 else Zeros{PTO_XLEN} + (lane * 2);
+            WriteTileElement(28, 0, lane, index_value);
+            WriteTileElement(27, 0, lane, Zeros{PTO_XLEN} + 9);
+        end;
+        Store(base_address, 1, Zeros{PTO_XLEN} + 0x21);
+        Store(base_address + 1, 1, Zeros{PTO_XLEN} + 0x43);
+        Store(base_address + 2, 1, Zeros{PTO_XLEN} + 0x65);
+        ClearFault();
+        StartMemoryEventCapture(2);
+        MGATHER(27, base_address, 28);
+        assert _LastFault == Fault_DataPage;
+        assert _MemoryEventCount == 0;
+        StopMemoryEventCapture();
+
+        ClearFault();
+        StartMemoryEventCapture(2);
+        MSCATTER(base_address, 27, 28);
+        assert _LastFault == Fault_DataPage;
+        assert _MemoryEventCount == 0;
+        StopMemoryEventCapture();
+    end;
+end;
+
+func TestTlsuDecodedSelectorClosure()
+begin
+    StopMemoryEventCapture();
+    ConfigurePackedTlsuTile(20, 1);
+    ConfigurePackedTlsuTile(21, 1);
+    ConfigureTile(22, 1024, 1, 16, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureByteTlsuTile(23, 1);
+    ConfigureByteTlsuTile(24, 1);
+    ConfigureByteTlsuTile(25, 1);
+    WriteTileElement(20, 0, 0, Zeros{PTO_XLEN});
+    WriteTileElement(21, 0, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(22, 0, 0, Zeros{PTO_XLEN});
+    WriteTileElement(23, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(24, 0, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(25, 0, 0, Zeros{PTO_XLEN} + 4);
+
+    Store(Zeros{PTO_XLEN} + 0x300, 1, Zeros{PTO_XLEN} + 0xa2);
+    var operands = DefaultTileInstructionOperands();
+    operands.destination0 = 20;
+    operands.address = Zeros{PTO_XLEN} + 0x300;
+    let (load_status, -) = ExecuteTileInstruction(
+        TileDecode_TLSU, Zeros{12}, operands);
+    assert load_status == TileExecution_Executed;
+    assert ReadTileElement(20, 0, 0) == Zeros{PTO_XLEN} + 2;
+
+    operands = DefaultTileInstructionOperands();
+    operands.address = Zeros{PTO_XLEN} + 0x300;
+    operands.source0 = 21;
+    let (store_status, -) = ExecuteTileInstruction(
+        TileDecode_TLSU, Zeros{12} + 1, operands);
+    assert store_status == TileExecution_Executed;
+    let stored_byte = LoadUnsigned(Zeros{PTO_XLEN} + 0x300, 1);
+    assert stored_byte == Zeros{PTO_XLEN} + 0xa3;
+
+    operands = DefaultTileInstructionOperands();
+    operands.destination0 = 20;
+    operands.source0 = 21;
+    let (move_status, -) = ExecuteTileInstruction(
+        TileDecode_TLSU, Zeros{12} + 2, operands);
+    assert move_status == TileExecution_Executed;
+    assert ReadTileElement(20, 0, 0) == Zeros{PTO_XLEN} + 3;
+
+    operands = DefaultTileInstructionOperands();
+    operands.address = Zeros{PTO_XLEN} + 0x300;
+    operands.scalar0 = Zeros{PTO_XLEN} + 1;
+    operands.positive0 = 1;
+    operands.positive1 = 1;
+    operands.positive2 = 1;
+    // TPREFETCH's direct semantic carrier receives DataType from the active
+    // block start because the operation has no destination descriptor.
+    _BundleOperation.valid = TRUE;
+    _BundleOperation.operation_class = BundleOperation_TileMemory;
+    _BundleOperation.data_type_valid = TRUE;
+    _BundleOperation.data_type = Zeros{5} + 27;
+    let (prefetch_status, -) = ExecuteTileInstruction(
+        TileDecode_TLSU, Zeros{12} + 3, operands);
+    assert prefetch_status == TileExecution_Executed;
+
+    ReleaseTile(20);
+    ConfigureByteTlsuTile(20, 1);
+    ReleaseTile(21);
+    ConfigureByteTlsuTile(21, 1);
+    WriteTileElement(21, 0, 0, Zeros{PTO_XLEN} + 3);
+    Store(Zeros{PTO_XLEN} + 0x300, 1, Zeros{PTO_XLEN} + 3);
+    operands = DefaultTileInstructionOperands();
+    operands.destination0 = 20;
+    operands.address = Zeros{PTO_XLEN} + 0x300;
+    operands.source0 = 22;
+    let (gather_status, -) = ExecuteTileInstruction(
+        TileDecode_TLSU, Zeros{12} + 4, operands);
+    assert gather_status == TileExecution_Executed;
+    assert ReadTileElement(20, 0, 0) == Zeros{PTO_XLEN} + 3;
+
+    ReleaseTile(20);
+    ConfigureByteTlsuTile(20, 1);
+
+    operands = DefaultTileInstructionOperands();
+    operands.address = Zeros{PTO_XLEN} + 0x300;
+    operands.source0 = 21;
+    operands.source1 = 22;
+    let (scatter_status, -) = ExecuteTileInstruction(
+        TileDecode_TLSU, Zeros{12} + 5, operands);
+    assert scatter_status == TileExecution_Executed;
+
+    operands = DefaultTileInstructionOperands();
+    operands.destination0 = 20;
+    operands.address = Zeros{PTO_XLEN} + 0x300;
+    operands.source0 = 22;
+    operands.source1 = 23;
+    let (masked_gather_status, -) = ExecuteTileInstruction(
+        TileDecode_TLSU, Zeros{12} + 6, operands);
+    assert masked_gather_status == TileExecution_Executed;
+    assert ReadTileElement(20, 0, 0) == Zeros{PTO_XLEN} + 3;
+
+    operands = DefaultTileInstructionOperands();
+    operands.address = Zeros{PTO_XLEN} + 0x300;
+    operands.source0 = 21;
+    operands.source1 = 22;
+    operands.source2 = 23;
+    let (masked_scatter_status, -) = ExecuteTileInstruction(
+        TileDecode_TLSU, Zeros{12} + 7, operands);
+    assert masked_scatter_status == TileExecution_Executed;
+
+    operands = DefaultTileInstructionOperands();
+    operands.destination0 = 20;
+    operands.address = Zeros{PTO_XLEN} + 0x300;
+    operands.source0 = 22;
+    operands.source1 = 24;
+    operands.source2 = 25;
+    let (gather_cas_status, -) = ExecuteTileInstruction(
+        TileDecode_TLSU, Zeros{12} + 8, operands);
+    assert gather_cas_status == TileExecution_Executed;
+    assert ReadTileElement(20, 0, 0) == Zeros{PTO_XLEN} + 3;
+
+    operands = DefaultTileInstructionOperands();
+    operands.destination0 = 20;
+    operands.source0 = 21;
+    operands.scalar0 = Zeros{PTO_XLEN} + 2;
+    let (gmov_status, -) = ExecuteTileInstruction(
+        TileDecode_TLSU, Zeros{12} + 13, operands);
+    assert gmov_status == TileExecution_Executed;
+    assert ReadTileElement(20, 0, 0) == Zeros{PTO_XLEN} + 3;
+end;
+
+func TestTlsuTotality()
+begin
+    TestTlsuPackedDirectSelectors();
+    TestTlsuAllFourBitTypes();
+    TestTlsuPackedIndexedSelectors();
+    TestTlsuPackedPreflightAndRestart();
+    TestTlsuFaultPositionMatrix();
+    TestTlsuDecodedSelectorClosure();
+end;
+func main() => integer
+begin
+    ResetProfileState();
+    TestTlsuTotality();
+    return 0;
+end;

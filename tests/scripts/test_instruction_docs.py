@@ -20,9 +20,38 @@ from scripts.instruction_docs import (
     generate_tree,
     load_doc_index,
     load_instruction_index,
+    render_page,
     render_unit_page,
     render_nav,
 )
+
+
+def complete_contract(
+    *,
+    encoding_class: str = "selector-encoded-block-operation",
+    standalone_opcode: bool = False,
+    block_composition: list[str] | None = None,
+) -> dict[str, object]:
+    return {
+        "encoding_class": encoding_class,
+        "canonical_assembly": ["TADD <shape>, Src0, Src1, ->Dst"],
+        "field_contracts": {},
+        "operands": [
+            {"field": "destination0", "role": "destination"},
+            {"field": "source0", "role": "source-left"},
+            {"field": "source1", "role": "source-right"},
+        ],
+        "defaults": ["B.DATR defaults to FP64 and NORM when omitted."],
+        "legality": ["All bound Tiles have matching valid shapes."],
+        "state_effects": ["Write destination0 atomically after preflight."],
+        "memory_effects": ["none"],
+        "ordering": ["none"],
+        "exceptions": ["Illegal bindings reject before destination effects."],
+        "examples": ["BSTART.VEC TADD, FP32; B.IOT ...; BSTOP"],
+        "block_composition": block_composition
+        or ["BSTART.VEC TADD, DataType", "B.IOT", "BSTOP"],
+        "standalone_opcode": standalone_opcode,
+    }
 
 
 def asl_source(
@@ -31,6 +60,7 @@ def asl_source(
     surface: str = "tile",
     classification: list[str] | None = None,
     catalog_records: list[dict[str, object]] | None = None,
+    contract: dict[str, object] | None = None,
 ) -> str:
     metadata = {
         "id": f"PTO-INST-{surface.upper()}-{mnemonic.replace('.', '-').replace(' ', '-').upper()}",
@@ -47,6 +77,8 @@ def asl_source(
     }
     if surface == "tile":
         metadata["engine"] = "VEC"
+    if contract is not None:
+        metadata["contract"] = contract
     encoded = json.dumps(metadata, ensure_ascii=False, sort_keys=True)
     return (
         f"// PTO-INSTRUCTION: {encoded}\n"
@@ -303,6 +335,158 @@ class InstructionDocsTest(unittest.TestCase):
         self.assertIn("`CompleteBundleAtWithAcceptedApplicabilityRules`", rendered)
         self.assertIn("destination0 payload and definedness", rendered)
         self.assertNotIn("may be added here", rendered)
+
+    def test_b_datr_renders_complete_datatype_encoding_closure(self) -> None:
+        record = next(
+            record
+            for record in load_instruction_index(ROOT)
+            if record.mnemonic == "B.DATR"
+        )
+
+        rendered = render_page(record)
+
+        self.assertIn("## Encoding class", rendered)
+        self.assertIn("`standalone-encoded`", rendered)
+        self.assertIn("## Encoded field closure", rendered)
+        self.assertIn(
+            "| b_datr_32_c161a042ff38 | DataType | 5 | "
+            "0–14, 16–20, 24–28, 31 | none | 15, 21–23, 29–30 |",
+            rendered,
+        )
+        self.assertIn("code 31, not code zero, is DTYPE_NONE", rendered)
+        self.assertIn("Encoded DataType zero selects FP64", rendered)
+        self.assertNotIn("encoded operand or control", rendered)
+
+    def test_encoded_field_dispositions_render_compact_assigned_and_reserved_ranges(self) -> None:
+        contract = complete_contract(
+            encoding_class="standalone-encoded",
+            standalone_opcode=True,
+            block_composition=["none"],
+        )
+        contract["operands"] = [
+            {"field": "RegDst", "role": "absolute GPR destination"}
+        ]
+        self.write_asl(
+            "block/operands/B.TEST.asl",
+            mnemonic="B.TEST",
+            surface="block",
+            classification=["operands"],
+            contract=contract,
+            catalog_records=[
+                {
+                    "mnemonic": "B.TEST",
+                    "form_id": "b_test_32",
+                    "encoding": [
+                        {"match": "0x0", "mask": "0x0", "width_bits": 32}
+                    ],
+                    "fields": [
+                        {
+                            "name": "RegDst",
+                            "width": 5,
+                            "signedness": "encoding-defined",
+                            "pieces": [],
+                        }
+                    ],
+                    "constraints": [
+                        {
+                            "field": "RegDst",
+                            "operator": "one-of",
+                            "values": list(range(24)),
+                        }
+                    ],
+                }
+            ],
+        )
+
+        generate_tree(self.root)
+        rendered = (self.root / "docs/block/operands/B.TEST.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("## Encoded field closure", rendered)
+        self.assertIn("| b_test_32 | RegDst | 5 | 0–23 | none | 24–31 |", rendered)
+        self.assertIn("Fault_IllegalInstruction", rendered)
+
+    def test_excluded_field_value_owner_is_not_rendered_as_reserved(self) -> None:
+        contract = complete_contract(
+            encoding_class="standalone-encoded",
+            standalone_opcode=True,
+            block_composition=["none"],
+        )
+        contract["operands"] = [
+            {"field": "BrType", "role": "block transfer selector"}
+        ]
+        self.write_asl(
+            "block/encoding/C.BSTART.TEST.asl",
+            mnemonic="C.BSTART.TEST",
+            surface="block",
+            classification=["encoding"],
+            contract=contract,
+            catalog_records=[
+                {
+                    "mnemonic": "C.BSTART.TEST",
+                    "form_id": "compressed_start",
+                    "encoding": [
+                        {"match": "0x0", "mask": "0x0", "width_bits": 16}
+                    ],
+                    "fields": [
+                        {
+                            "name": "BrType",
+                            "width": 3,
+                            "signedness": "encoding-defined",
+                            "pieces": [],
+                        }
+                    ],
+                    "constraints": [
+                        {"field": "BrType", "operator": "one-of", "values": [1, 5, 7]}
+                    ],
+                    "excluded_value_owners": [
+                        {"field": "BrType", "value": 0, "owner": "C.BSTOP"}
+                    ],
+                }
+            ],
+        )
+
+        generate_tree(self.root)
+        rendered = (self.root / "docs/block/encoding/C.BSTART.TEST.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn(
+            "| compressed_start | BrType | 3 | 1, 5, 7 | 0 (C.BSTOP) | 2–4, 6 |",
+            rendered,
+        )
+        self.assertNotIn("reserved values: 0", rendered)
+
+    def test_selector_operation_declares_no_standalone_opcode_and_composition(self) -> None:
+        self.write_asl(contract=complete_contract())
+
+        generate_tree(self.root)
+        rendered = (
+            self.root / "docs/tile/elementwise-tile-tile/arithmetic/TADD.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("`selector-encoded-block-operation`", rendered)
+        self.assertIn("This operation has no standalone opcode.", rendered)
+        self.assertIn("BSTART.VEC TADD, DataType", rendered)
+        self.assertIn("## Defaults and encoded zero", rendered)
+        self.assertIn("## State effects", rendered)
+        self.assertIn("## Memory effects and ordering", rendered)
+        self.assertIn("## Examples", rendered)
+
+    def test_check_detects_removed_datatype_closure_row(self) -> None:
+        generate_tree(ROOT)
+        page = ROOT / "docs/block/attributes/B.DATR.md"
+        original = page.read_text(encoding="utf-8")
+        self.addCleanup(page.write_text, original, encoding="utf-8")
+        datatype_row = next(
+            line
+            for line in original.splitlines(keepends=True)
+            if "| DataType | 5 |" in line
+        )
+        page.write_text(original.replace(datatype_row, ""), encoding="utf-8")
+
+        self.assertIn("stale generated Markdown page for B.DATR", check_tree(ROOT))
 
     def test_generate_tree_preserves_supplementary_markdown(self) -> None:
         self.write_asl()

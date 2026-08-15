@@ -11,61 +11,131 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/execution/generation.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-GENERATION","surface":"tile","classification":["model","execution","generation"],"depends_on":["PTO-TILE-MODEL-EXECUTION-EXPANSION"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-GENERATION","surface":"tile","classification":["model","execution","generation"],"depends_on":["PTO-TILE-MODEL-EXECUTION-EXPANSION","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT"]}
 // PTO-REQ-TEPL-GENERATE-001: generated sequences, masks, and padding.
+
+pure func TileTCIDataTypeSupported(data_type: TileDataType) => boolean
+begin
+    return data_type == TileDataType_S32 ||
+           data_type == TileDataType_S16 ||
+           data_type == TileDataType_U32 ||
+           data_type == TileDataType_U16;
+end;
+
+pure func TileTTRIDataTypeSupported(data_type: TileDataType) => boolean
+begin
+    return data_type == TileDataType_FP32 ||
+           data_type == TileDataType_FP16 ||
+           data_type == TileDataType_S32 ||
+           data_type == TileDataType_S16 ||
+           data_type == TileDataType_U32 ||
+           data_type == TileDataType_U16;
+end;
+
+pure func TileTTRIOneEncoding(data_type: TileDataType) => Word
+begin
+    case data_type of
+        when TileDataType_FP32 =>
+            return Zeros{PTO_XLEN} + 0x3f800000;
+        when TileDataType_FP16 =>
+            return Zeros{PTO_XLEN} + 0x3c00;
+        otherwise =>
+            return Zeros{PTO_XLEN} + 1;
+    end;
+end;
 
 func TCI(destination: TileIndex, start: Word, descending: boolean)
 begin
-    let tile = _Tiles[[destination]];
-    assert tile.allocated;
-    for row = 0 to tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(tile, row as integer {0..65535},
-                column as integer {0..65535});
-            let offset = NaturalToWord(element as integer {0..262144});
-            let value = if descending then start - offset else start + offset;
-            _Tiles[[destination]].payload[[element]] = value;
-        end;
+    var result = _Tiles[[destination]];
+    assert result.allocated;
+    assert result.valid_rows == 1;
+    assert TileTCIDataTypeSupported(result.data_type);
+    let normalized_start = TileRawElementValue(
+        start,
+        result.data_type);
+    for column = 0 to result.valid_columns - 1 looplimit 65536 do
+        let element = TileLinearIndex(
+            result,
+            0,
+            column as integer {0..65535});
+        let offset = NaturalToWord(column as integer {0..65535});
+        let value = if descending then
+            normalized_start - offset
+        else
+            normalized_start + offset;
+        result.payload[[element]] = TileRawElementValue(
+            value,
+            result.data_type);
     end;
-    MarkTileValidRegionDefined(destination);
+    result = TileWithValidRegionDefined(result);
+    result = TileWithPadding(result, TilePad_Null);
+    result.location = TileLocation_Any;
+    _Tiles[[destination]] = result;
 end;
 
 func TTRI(destination: TileIndex, upper: boolean,
           diagonal: integer {-65535..65535})
 begin
-    let tile = _Tiles[[destination]];
-    assert tile.allocated;
-    for row = 0 to tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
+    var result = _Tiles[[destination]];
+    assert result.allocated;
+    assert result.valid_rows >= 1;
+    assert result.valid_columns >= 1;
+    assert TileTTRIDataTypeSupported(result.data_type);
+    let one = TileTTRIOneEncoding(result.data_type);
+    for row = 0 to result.valid_rows - 1 looplimit 65536 do
+        for column = 0 to result.valid_columns - 1 looplimit 65536 do
             let boundary: integer = row + diagonal;
-            let selected = if upper then column >= boundary else column <= boundary;
-            let value = if selected then Zeros{PTO_XLEN} + 1 else Zeros{PTO_XLEN};
-            WriteTileElement(destination, row as integer {0..65535},
-                column as integer {0..65535}, value);
+            let selected = if upper then
+                column >= boundary
+            else
+                column <= boundary;
+            let element = TileLinearIndex(
+                result,
+                row as integer {0..65535},
+                column as integer {0..65535});
+            result.payload[[element]] = if selected then
+                one
+            else
+                Zeros{PTO_XLEN};
         end;
     end;
+    result = TileWithValidRegionDefined(result);
+    result = TileWithPadding(result, TilePad_Null);
+    result.location = TileLocation_Any;
+    _Tiles[[destination]] = result;
 end;
 
 func TFILLPAD(destination: TileIndex, source: TileIndex, padding: Word)
 begin
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
-    assert destination_tile.allocated && source_tile.allocated;
-    assert destination_tile.rows >= source_tile.valid_rows;
-    assert destination_tile.columns >= source_tile.valid_columns;
+    assert TileOperandsLegal_TFILLPAD(destination, source, padding);
     let source_payload = source_tile.payload;
+    let typed_padding = TileRawElementValue(
+        padding,
+        destination_tile.data_type);
+    var result = destination_tile;
     for row = 0 to destination_tile.rows - 1 looplimit 65536 do
         for column = 0 to destination_tile.columns - 1 looplimit 65536 do
-            var value = padding;
+            var value = typed_padding;
             if row < source_tile.valid_rows && column < source_tile.valid_columns then
                 let source_element = TileLinearIndex(source_tile,
                     row as integer {0..65535}, column as integer {0..65535});
                 value = source_payload[[source_element]];
             end;
-            WriteTileElement(destination, row as integer {0..65535},
-                column as integer {0..65535}, value);
+            let destination_element = TileLinearIndex(
+                result,
+                row as integer {0..65535},
+                column as integer {0..65535});
+            result.payload[[destination_element]] = value;
+            result.defined_elements[destination_element] = '1';
         end;
     end;
+    result.defined_valid_elements =
+        (result.valid_rows * result.valid_columns)
+            as integer {0..16384};
+    result.contents_defined = TRUE;
+    _Tiles[[destination]] = result;
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

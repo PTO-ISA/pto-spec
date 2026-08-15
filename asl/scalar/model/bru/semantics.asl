@@ -17,11 +17,9 @@ end;
 
 readonly func ReadBranchPredicate() => Word
 begin
-    // SETC.* supplies the coupled-bundle predicate. Inside a bundle body the
-    // independent architectural EXEC mask `p` drives B.Z/B.NZ; P0..P7 are a
-    // distinct 32-bit per-warp predicate register file.
-    return if ExecutionMaskIsActive() then ReadExecutionMask()
-           else _CommitArgument;
+    // SETC.* supplies the coupled-bundle predicate. P0..P7 are a distinct
+    // register file and have no accepted PTO instruction consumer.
+    return _CommitArgument;
 end;
 
 func BranchRelative(condition: ScalarCondition, left: Word, right: Word,
@@ -65,6 +63,7 @@ func ExecuteSetCommit(condition: ScalarCondition, left: Word, right: Word)
 begin
     _CommitArgument = if ConditionHolds(condition, left, right) then
         Zeros{PTO_XLEN} + 1 else Zeros{PTO_XLEN};
+    if _BundleActive then _BARG.taken = !IsZero(_CommitArgument); end;
 end;
 
 func ExecuteSetCommitLogical(left: Word, right: Word, combine_or: boolean)
@@ -72,6 +71,7 @@ begin
     let logical_result = if combine_or then left OR right else left AND right;
     _CommitArgument = if IsZero(logical_result) then Zeros{PTO_XLEN}
                       else Zeros{PTO_XLEN} + 1;
+    if _BundleActive then _BARG.taken = !IsZero(_CommitArgument); end;
 end;
 
 func SetReturnAddress(halfword_offset: Word)

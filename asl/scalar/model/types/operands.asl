@@ -5,12 +5,38 @@
 // and codes 28..31 select U#1..U#4. Queue index zero is the newest value.
 readonly func ScalarSourceSelectorLegal(selector: Reg5Selector) => boolean
 begin
-    return TRUE;
+    if selector < PTO_ABSOLUTE_GPR_COUNT then
+        return TRUE;
+    elsif selector < 28 then
+        return TemporaryQueueSourceAvailable(
+            TRUE,
+            (selector - 24) as TemporaryQueueIndex);
+    else
+        return TemporaryQueueSourceAvailable(
+            FALSE,
+            (selector - 28) as TemporaryQueueIndex);
+    end;
 end;
 
 readonly func ScalarDestinationSelectorLegal(selector: Reg5Selector) => boolean
 begin
     return TRUE;
+end;
+
+readonly func ScalarImplicitSourceOperandsLegal(
+    operation: ScalarOperation)
+    => boolean
+begin
+    case operation of
+        when ScalarOperation_C_SDI,
+             ScalarOperation_C_SLLI,
+             ScalarOperation_C_SRLI =>
+            return TemporaryQueueSourceAvailable(TRUE, 0);
+        when ScalarOperation_C_SWI =>
+            return TemporaryQueueSourceAvailable(TRUE, 0);
+        otherwise =>
+            return TRUE;
+    end;
 end;
 
 readonly func ReadScalarRegisterOperand(selector: Reg5Selector) => Word

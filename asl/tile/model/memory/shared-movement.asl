@@ -29,32 +29,37 @@ begin
 end;
 
 func TMOVLocalToShared(shared_id: bits(8), source: TileIndex,
-                       size_code: integer {1..7}, pe_mask: bits(4))
+                       size_code: integer {1..7}, pe_mask: bits(4),
+                       publish: boolean)
 begin
     if pe_mask == Zeros{4} then return; end;
     let capacity_bytes = TileSizeCodeBytes(size_code);
     let shared_tile = SharedTileFromLocal(source, capacity_bytes);
-    let updated = AtomicUpdateSharedTile(shared_id, shared_tile, pe_mask);
+    if publish && !SharedTileProspectiveFullyInitialized(
+            shared_id, shared_tile, pe_mask) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return;
+    end;
+    let updated = AtomicUpdateSharedTileWithPublication(
+        shared_id, shared_tile, pe_mask, publish);
     if !updated then SetFault(Fault_TileLegality, ReadTPC()); end;
 end;
 
 func TMOVSharedToLocal(destination: TileIndex, shared_id: bits(8),
-                       pe_mask: bits(4))
+                       shared_tile: TileInfo, pe_mask: bits(4))
 begin
     if pe_mask == Zeros{4} then return; end;
-    let shared = SharedTileRecord(shared_id);
     let destination_tile = _Tiles[[destination]];
-    assert SharedTileDescriptorLegal(shared_id);
-    assert destination_tile.capacity_bytes == shared.tile.capacity_bytes;
-    assert destination_tile.rows == shared.tile.rows &&
-           destination_tile.columns == shared.tile.columns &&
-           destination_tile.valid_rows == shared.tile.valid_rows &&
-           destination_tile.valid_columns == shared.tile.valid_columns &&
-           destination_tile.data_type == shared.tile.data_type &&
-           destination_tile.layout == shared.tile.layout;
-    for element = 0 to shared.tile.rows * shared.tile.columns - 1
-        looplimit 4096 do
-        let region = SharedTileElementRegion(shared.tile,
+    assert destination_tile.capacity_bytes == shared_tile.capacity_bytes;
+    assert destination_tile.rows == shared_tile.rows &&
+           destination_tile.columns == shared_tile.columns &&
+           destination_tile.valid_rows == shared_tile.valid_rows &&
+           destination_tile.valid_columns == shared_tile.valid_columns &&
+           destination_tile.data_type == shared_tile.data_type &&
+           destination_tile.layout == shared_tile.layout;
+    for element = 0 to shared_tile.rows * shared_tile.columns - 1
+        looplimit PTO_MODEL_TILE_ELEMENTS do
+        let region = SharedTileElementRegion(shared_tile,
             element as ModelTileElementIndex);
         if pe_mask[region] == '1' then
             _Tiles[[destination]].payload[[element]] = ReadSharedTileWord(
@@ -153,7 +158,7 @@ begin
     end;
     if pe_mask == '1111' then
         tile.defined_valid_elements =
-            (tile.valid_rows * tile.valid_columns) as integer {0..4096};
+            (tile.valid_rows * tile.valid_columns) as integer {0..16384};
         tile.contents_defined = TRUE;
     end;
     let updated = AtomicUpdateSharedTile(shared_id, tile, pe_mask);
@@ -163,12 +168,11 @@ end;
 func TSTOREShared(base_addresses: CorePEWords,
                   row_stride_elements: CorePEWords,
                   shared_id: bits(8),
+                  tile: TileInfo,
                   pe_mask: bits(4))
 begin
     if pe_mask == Zeros{4} then return; end;
-    let shared = SharedTileRecord(shared_id);
-    assert SharedTileDescriptorLegal(shared_id);
-    let tile = shared.tile;
+    assert tile.allocated;
     var original_addresses: TilePayload;
     var translated_addresses: TilePayload;
     var high_nibbles: bits(PTO_MODEL_TILE_ELEMENTS);
@@ -229,9 +233,10 @@ begin
     _Tiles[[destination]].contents_defined = source_tile.contents_defined;
 end;
 
-// The direct-operation carrier binds source to the fragment already resolved
-// from peer_tid by the Core4 collective front end.  This keeps the one-level
-// ASL model explicit: GMOV copies that read-old snapshot into the local tile.
+// The direct-operation carrier binds source to the Core4 snapshot already
+// resolved from the four PE-private peer_tid values.  The bundle dispatcher
+// performs collective readiness and peer-range preflight before this read-old,
+// write-new local copy.  No Shared register or global-memory event is involved.
 func GMOV(destination: TileIndex, source: TileIndex, peer_tid: Word)
 begin
     assert UInt(peer_tid) < 4;

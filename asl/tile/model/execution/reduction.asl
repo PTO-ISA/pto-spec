@@ -1,83 +1,200 @@
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-REDUCTION","surface":"tile","classification":["model","execution","reduction"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE"]}
-// PTO-REQ-TEPL-REDUCE-001: row/column reductions and index reductions.
+// PTO-REQ-TEPL-REDUCE-001: exact row, column, and index reductions.
 
-pure func ReductionInitial(op: TileReductionOperation, first: Word) => Word
+pure func TileReductionOneEncoding(
+    data_type: TileDataType) => Word
 begin
-    case op of
-        when TileReduction_SUM     => return Zeros{PTO_XLEN};
-        when TileReduction_PRODUCT => return Zeros{PTO_XLEN} + 1;
-        when TileReduction_MIN     => return first;
-        when TileReduction_MAX     => return first;
-        when TileReduction_ARGMIN  => return first;
-        when TileReduction_ARGMAX  => return first;
+    case data_type of
+        when TileDataType_FP64 =>
+            return Zeros{PTO_XLEN} + 0x3ff0000000000000;
+        when TileDataType_FP32, TileDataType_TF32,
+             TileDataType_HF32 =>
+            return Zeros{PTO_XLEN} + 0x3f800000;
+        when TileDataType_FP16 =>
+            return Zeros{PTO_XLEN} + 0x3c00;
+        when TileDataType_BF16 =>
+            return Zeros{PTO_XLEN} + 0x3f80;
+        when TileDataType_E4M3 =>
+            return Zeros{PTO_XLEN} + 0x38;
+        when TileDataType_E5M2 =>
+            return Zeros{PTO_XLEN} + 0x3c;
+        when TileDataType_S64, TileDataType_S32,
+             TileDataType_S16, TileDataType_S8,
+             TileDataType_U64, TileDataType_U32,
+             TileDataType_U16, TileDataType_U8 =>
+            return Zeros{PTO_XLEN} + 1;
+        otherwise =>
+            unreachable;
     end;
 end;
 
-impdef func TileProfileReductionInitial(op: TileReductionOperation,
-                                         data_type: TileDataType,
-                                         first: Word) => Word
+pure func TileReductionInitialValue(
+    operation: TileReductionOperation,
+    data_type: TileDataType,
+    first: Word) => Word
 begin
-    return ReductionInitial(op, first);
-end;
-
-impdef func TileProfileReductionStep(op: TileReductionOperation,
-                                     data_type: TileDataType,
-                                     accumulator: Word, value: Word)
-                                     => (Word, boolean)
-begin
-    case op of
-        when TileReduction_SUM => return (accumulator + value, FALSE);
+    case operation of
+        when TileReduction_SUM =>
+            return Zeros{PTO_XLEN};
         when TileReduction_PRODUCT =>
-            return (MultiplyWord(accumulator, value), FALSE);
-        when TileReduction_MIN, TileReduction_ARGMIN =>
-            if SInt(value) < SInt(accumulator) then return (value, TRUE);
-            else return (accumulator, FALSE);
-            end;
-        when TileReduction_MAX, TileReduction_ARGMAX =>
-            if SInt(value) > SInt(accumulator) then return (value, TRUE);
-            else return (accumulator, FALSE);
-            end;
+            return TileReductionOneEncoding(data_type);
+        when TileReduction_MIN, TileReduction_MAX,
+             TileReduction_ARGMIN, TileReduction_ARGMAX =>
+            return first;
     end;
 end;
 
-func ExecuteTileReduction(op: TileReductionOperation, axis: TileAxis,
-                          destination: TileIndex, source: TileIndex)
+impdef func TileProfileReductionInitial(
+    operation: TileReductionOperation,
+    data_type: TileDataType,
+    first: Word) => Word
 begin
-    let tile = _Tiles[[source]];
-    assert tile.allocated;
-    assert tile.valid_rows > 0 && tile.valid_columns > 0;
-    let payload = tile.payload;
-    let outer_count = if axis == TileAxis_Row then tile.valid_rows else tile.valid_columns;
-    let inner_count = if axis == TileAxis_Row then tile.valid_columns else tile.valid_rows;
+    return TileReductionInitialValue(
+        operation,
+        data_type,
+        first);
+end;
+
+func TileReductionStepWithFlags(
+    operation: TileReductionOperation,
+    data_type: TileDataType,
+    accumulator: Word,
+    value: Word) => (Word, boolean, bits(5))
+begin
+    var binary_operation: TileBinaryOperation;
+    case operation of
+        when TileReduction_SUM =>
+            binary_operation = TileBinary_ADD;
+        when TileReduction_PRODUCT =>
+            binary_operation = TileBinary_MUL;
+        when TileReduction_MIN, TileReduction_ARGMIN =>
+            binary_operation = TileBinary_MIN;
+        when TileReduction_MAX, TileReduction_ARGMAX =>
+            binary_operation = TileBinary_MAX;
+    end;
+
+    let (result, flags) = TileProfileBinaryWithFlags(
+        binary_operation,
+        data_type,
+        accumulator,
+        value);
+    let selected =
+        result == value && result != accumulator;
+    return (result, selected, flags);
+end;
+
+impdef func TileProfileReductionStep(
+    operation: TileReductionOperation,
+    data_type: TileDataType,
+    accumulator: Word,
+    value: Word) => (Word, boolean)
+begin
+    let (result, selected, -) = TileReductionStepWithFlags(
+        operation,
+        data_type,
+        accumulator,
+        value);
+    return (result, selected);
+end;
+
+func ExecuteTileReduction(
+    operation: TileReductionOperation,
+    axis: TileAxis,
+    destination: TileIndex,
+    source: TileIndex)
+begin
+    assert TileOperandsLegal_ExecuteTileReduction(
+        operation,
+        axis,
+        destination,
+        source);
+
+    let source_tile = _Tiles[[source]];
+    let source_payload = source_tile.payload;
+    var result_tile = _Tiles[[destination]];
+    var accumulated_flags = Zeros{5};
+    let outer_count =
+        if axis == TileAxis_Row then
+            source_tile.valid_rows
+        else
+            source_tile.valid_columns;
+    let inner_count =
+        if axis == TileAxis_Row then
+            source_tile.valid_columns
+        else
+            source_tile.valid_rows;
 
     for outer = 0 to outer_count - 1 looplimit 65536 do
-        let first_row = if axis == TileAxis_Row then outer else 0;
-        let first_column = if axis == TileAxis_Row then 0 else outer;
-        let first_element = TileLinearIndex(tile,
-            first_row as integer {0..65535}, first_column as integer {0..65535});
+        let first_row =
+            if axis == TileAxis_Row then outer else 0;
+        let first_column =
+            if axis == TileAxis_Row then 0 else outer;
+        let first_element = TileLinearIndex(
+            source_tile,
+            first_row as integer {0..65535},
+            first_column as integer {0..65535});
         var accumulator = TileProfileReductionInitial(
-            op, tile.data_type, payload[[first_element]]);
+            operation,
+            source_tile.data_type,
+            source_payload[[first_element]]);
         var selected_index: integer {0..65535} = 0;
-        for inner = 0 to inner_count - 1 looplimit 65536 do
-            let row = if axis == TileAxis_Row then outer else inner;
-            let column = if axis == TileAxis_Row then inner else outer;
-            let element = TileLinearIndex(tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            let value = payload[[element]];
-            let (next_accumulator, selected) = TileProfileReductionStep(
-                op, tile.data_type, accumulator, value);
-            accumulator = next_accumulator;
-            if selected &&
-               (op == TileReduction_ARGMIN || op == TileReduction_ARGMAX) then
-                selected_index = inner as integer {0..65535};
+        let identity_reduction =
+            operation == TileReduction_SUM ||
+            operation == TileReduction_PRODUCT;
+        let first_inner =
+            if identity_reduction then 0 else 1;
+
+        if first_inner < inner_count then
+            for inner = first_inner to inner_count - 1
+                looplimit 65536 do
+                let row =
+                    if axis == TileAxis_Row then outer else inner;
+                let column =
+                    if axis == TileAxis_Row then inner else outer;
+                let element = TileLinearIndex(
+                    source_tile,
+                    row as integer {0..65535},
+                    column as integer {0..65535});
+                let (next, selected, element_flags) =
+                    TileReductionStepWithFlags(
+                        operation,
+                        source_tile.data_type,
+                        accumulator,
+                        source_payload[[element]]);
+                accumulator = next;
+                accumulated_flags =
+                    accumulated_flags OR element_flags;
+                if selected &&
+                   (operation == TileReduction_ARGMIN ||
+                    operation == TileReduction_ARGMAX) then
+                    selected_index =
+                        inner as integer {0..65535};
+                end;
             end;
         end;
-        let destination_row = if axis == TileAxis_Row then outer else 0;
-        let destination_column = if axis == TileAxis_Row then 0 else outer;
-        let output = if op == TileReduction_ARGMIN || op == TileReduction_ARGMAX then
-            NaturalToWord(selected_index as integer {0..262144}) else accumulator;
-        WriteTileElement(destination,
+
+        let destination_row =
+            if axis == TileAxis_Row then outer else 0;
+        let destination_column =
+            if axis == TileAxis_Row then 0 else outer;
+        let destination_element = TileLinearIndex(
+            result_tile,
             destination_row as integer {0..65535},
-            destination_column as integer {0..65535}, output);
+            destination_column as integer {0..65535});
+        if operation == TileReduction_ARGMIN ||
+           operation == TileReduction_ARGMAX then
+            result_tile.payload[[destination_element]] =
+                NaturalToWord(
+                    selected_index as integer {0..262144});
+        else
+            result_tile.payload[[destination_element]] = accumulator;
+        end;
     end;
+
+    result_tile = TileWithValidRegionDefined(result_tile);
+    result_tile = TileWithPadding(
+        result_tile,
+        CurrentBundlePadValue());
+    RecordNumericStatusFlags(accumulated_flags);
+    _Tiles[[destination]] = result_tile;
 end;

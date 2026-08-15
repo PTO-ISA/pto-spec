@@ -2,7 +2,7 @@
 
 [![PR checks](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml/badge.svg?branch=main&event=push)](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml?query=branch%3Amain)
 [![Exact-head release verification](https://github.com/PTO-ISA/pto-spec/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/PTO-ISA/pto-spec/actions/workflows/release.yml)
-[![PTO ISA v0.58](https://img.shields.io/badge/PTO_ISA-v0.58-blue.svg)](https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58)
+[![PTO ISA v0.58.1](https://img.shields.io/badge/PTO_ISA-v0.58.1-blue.svg)](https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.1)
 [![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE)
 
 `pto-spec` is the normative ASL1 definition of the PTO Instruction Set
@@ -10,7 +10,7 @@ Architecture. It specifies a 64-bit scalar ISA, bundle/command forms, direct
 tile operations, visible architectural state, legality, faults, completion,
 profiles, and memory ordering in one executable model.
 
-The repository is the normative draft of the **PTO ISA 0.58.0** contract at
+The repository is the normative draft of the **PTO ISA 0.58.1** contract at
 maturity M4. The release identity fixes the encoding ABI; `pto-v0` is the
 deterministic raw-carrier reference profile. Target numeric conformance remains
 open under `S5-T2`, and a pending, skipped, failed, stale, or different-commit
@@ -36,9 +36,9 @@ The active source chain is deliberately singular:
 normative ASL -> generated Markdown mirror -> independent AVS points -> release evidence
 ```
 
-The current executable inventory contains 474 scalar forms, 99 block forms,
-and 109 direct Tile operations. Release traceability covers 788 ASL units, 788
-generated pages, 906 independently runnable AVS points, and 651 executable
+The current executable inventory contains 474 scalar forms, 100 block forms,
+and 109 direct Tile operations. Release traceability covers 789 ASL units, 789
+generated pages, 911 independently runnable AVS points, and 652 executable
 mnemonic requirements. Detailed numeric, model-comparison, and release-gate
 ledgers stay machine-readable under [`spec/evidence/`](spec/evidence/) instead
 of being duplicated in this landing page.
@@ -52,7 +52,7 @@ of being duplicated in this landing page.
   tile-tile, tile-scalar/immediate, reduce/expand, memory/data movement,
   matrix/matrix-vector, layout/rearrangement, and irregular/complex.
 - Four execution engines: 35 VEC, 52 SFU, 10 TLSU, and 12 CUBE operations.
-- PTO ISA 0.58.0 Mode/Function tile encoding with 87 operations retaining the
+- PTO ISA 0.58.1 Mode/Function tile encoding with 87 operations retaining the
   unchanged TEPL binary carrier, split canonically between `BSTART.VEC` and
   `BSTART.SFU`; `BSTART.TEPL` remains an accepted compatibility spelling.
 - A 32-code scalar namespace: 24 absolute GPRs plus four-entry T and U
@@ -72,7 +72,7 @@ of being duplicated in this landing page.
 - Explicit tile and scalar-queue legality before effects.
 - Instruction-granular memory completion and restart behavior.
 - A concrete `pto-v0` numeric, memory, ACR, reset, and time profile.
-- A named `pto-hardware-numeric-0.58.0-ieee-v1` contract whose independent
+- A named `pto-hardware-numeric-0.58.1-ieee-v1` contract whose independent
   implementation conformance remains open under `S5-T2`.
 - A bounded production-connected PTO-TSO candidate model.
 - No vector instruction execution surface; vector-only encodings are outside
@@ -130,7 +130,7 @@ pages embed their normative ASL regions verbatim and are checked for drift:
 | [Block reference](docs/block/) | BSTART, BSTOP, B.* instructions, and block model units |
 | [Scalar reference](docs/scalar/) | Scalar instruction and scalar model units |
 | [Tile reference](docs/tile/) | PTO-classified tile instructions and tile model units |
-| [PTO ISA 0.58.0 decision](docs/status/decisions/0052-pto-isa-0580-davincioo-catalog.md) | 109-operation DavinciOO catalog, Mode/Function encoding, documentation, ASL, HTML, and Excel closure |
+| [Direct Tile and bundle catalog decision](docs/status/decisions/0052-direct-tile-and-bundle-catalog-closure.md) | 109-operation catalog, Mode/Function ownership, ASL, generated-page, decoder, and AVS closure |
 | [Memory model](docs/arch/memory-model/) | Generated PTO memory-event, ordering, atomicity, and precision contracts |
 | [Profiles](docs/arch/profile/) | Generated profile applicability, reset, and reference-profile contracts |
 
@@ -184,7 +184,9 @@ scripts/                 Deterministic generation and fail-closed validation
 ASL source order is generated from each `PTO-UNIT` dependency declaration, and
 AVS points are discovered from the mirrored `tests/asl/` tree. No
 hand-maintained aggregate source or test list is normative. Generated
-assemblies remain ignored under `build/`.
+assemblies remain ignored under `build/`. Each test filename is a concise
+`<group>-<type>-<purpose>-<NNN>.asl` navigation key; its stable global identity
+remains in the embedded `PTO-TEST.id` record.
 
 ## Contributing and license
 

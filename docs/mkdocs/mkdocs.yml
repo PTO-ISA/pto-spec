@@ -27,6 +27,7 @@ nav:
       - Dispatch:
           - Top Level: arch/dispatch/top-level.md
       - Features:
+          - Minmax Profile: arch/features/minmax-profile.md
           - MX Formats: arch/features/mx-formats.md
           - Predication: arch/features/predication.md
           - Shared Tile State: arch/features/shared-tile-state.md
@@ -45,17 +46,20 @@ nav:
       - Profile:
           - Applicability: arch/profile/applicability.md
           - Reference Profile: arch/profile/reference-profile.md
+          - Reference Quantization: arch/profile/reference-quantization.md
           - Reset: arch/profile/reset.md
+          - Trap Context Recovery: arch/profile/trap-context-recovery.md
       - Programming Model:
           - Core PE Topology: arch/programming-model/core-pe-topology.md
           - Execution Context: arch/programming-model/execution-context.md
+          - General Queue Management: arch/programming-model/general-queue-management.md
           - Predicate Registers: arch/programming-model/predicate-registers.md
           - Scalar Registers: arch/programming-model/scalar-registers.md
           - Shared Tile Registers: arch/programming-model/shared-tile-registers.md
           - Tile Registers: arch/programming-model/tile-registers.md
       - State:
           - Definedness: arch/state/definedness.md
-          - Execution Mask: arch/state/execution-mask.md
+          - Numeric Status: arch/state/numeric-status.md
           - Program Counter: arch/state/program-counter.md
           - Tile Descriptor: arch/state/tile-descriptor.md
           - Trap Context: arch/state/trap-context.md
@@ -75,29 +79,20 @@ nav:
           - C.B.DIMI: block/attributes/C.B.DIMI.md
       - Encoding:
           - C.BSTART.FP: block/encoding/C.BSTART.FP.md
-          - C.BSTART.MPAR: block/encoding/C.BSTART.MPAR.md
-          - C.BSTART.MSEQ: block/encoding/C.BSTART.MSEQ.md
           - C.BSTART.STD: block/encoding/C.BSTART.STD.md
           - C.BSTART.SYS: block/encoding/C.BSTART.SYS.md
           - C.BSTART: block/encoding/C.BSTART.md
-          - HL.BSTART.FP: block/encoding/HL.BSTART.FP.md
-          - HL.BSTART.STD: block/encoding/HL.BSTART.STD.md
-          - HL.BSTART.SYS: block/encoding/HL.BSTART.SYS.md
-          - HL.BSTART CALL: block/encoding/HL.BSTART_CALL.md
-          - L.BSTART.FP: block/encoding/L.BSTART.FP.md
-          - L.BSTART.STD: block/encoding/L.BSTART.STD.md
-          - L.BSTART.SYS: block/encoding/L.BSTART.SYS.md
           - XB: block/encoding/XB.md
       - Execution:
+          - BSTART.CALL: block/execution/BSTART.CALL.md
           - BSTART.FP: block/execution/BSTART.FP.md
           - BSTART.GMOV: block/execution/BSTART.GMOV.md
+          - BSTART.ICALL: block/execution/BSTART.ICALL.md
           - BSTART.MGATHER.CAS: block/execution/BSTART.MGATHER.CAS.md
           - BSTART.MGATHER.MASK: block/execution/BSTART.MGATHER.MASK.md
           - BSTART.MGATHER: block/execution/BSTART.MGATHER.md
-          - BSTART.MPAR: block/execution/BSTART.MPAR.md
           - BSTART.MSCATTER.MASK: block/execution/BSTART.MSCATTER.MASK.md
           - BSTART.MSCATTER: block/execution/BSTART.MSCATTER.md
-          - BSTART.MSEQ: block/execution/BSTART.MSEQ.md
           - BSTART.SFU: block/execution/BSTART.SFU.md
           - BSTART.STD: block/execution/BSTART.STD.md
           - BSTART.SYS: block/execution/BSTART.SYS.md
@@ -119,10 +114,8 @@ nav:
           - BSTART.TPREFETCH: block/execution/BSTART.TPREFETCH.md
           - BSTART.TSTORE: block/execution/BSTART.TSTORE.md
           - BSTART.VEC: block/execution/BSTART.VEC.md
-          - BSTART CALL: block/execution/BSTART_CALL.md
       - Lifecycle:
           - B.HINT: block/lifecycle/B.HINT.md
-          - B.TEXT: block/lifecycle/B.TEXT.md
           - BSTART: block/lifecycle/BSTART.md
           - BSTOP: block/lifecycle/BSTOP.md
           - C.BSTOP: block/lifecycle/C.BSTOP.md
@@ -135,6 +128,7 @@ nav:
           - HL.QMT: block/lifecycle/HL.QMT.md
           - HL.QPOP: block/lifecycle/HL.QPOP.md
           - HL.QPUSH: block/lifecycle/HL.QPUSH.md
+          - L.BSTOP: block/lifecycle/L.BSTOP.md
           - MCOPY: block/lifecycle/MCOPY.md
           - MSET: block/lifecycle/MSET.md
       - Model:
@@ -143,16 +137,33 @@ nav:
               - Validation: block/model/commit/validation.md
           - Dispatch:
               - Commands: block/model/dispatch/commands.md
+              - Comparison Schema: block/model/dispatch/comparison-schema.md
+              - CUBE Tmatmul: block/model/dispatch/cube-tmatmul.md
               - Decode: block/model/dispatch/decode.md
               - Descriptor Legality: block/model/dispatch/descriptor-legality.md
               - Destination Shape: block/model/dispatch/destination-shape.md
+              - Expansion Schema: block/model/dispatch/expansion-schema.md
+              - Generation Schema: block/model/dispatch/generation-schema.md
+              - Histogram Schema: block/model/dispatch/histogram-schema.md
               - Numeric Control: block/model/dispatch/numeric-control.md
+              - Partial Schema: block/model/dispatch/partial-schema.md
+              - Quantization Schema: block/model/dispatch/quantization-schema.md
+              - Reduction Schema: block/model/dispatch/reduction-schema.md
               - Scalar Schema: block/model/dispatch/scalar-schema.md
-              - Shared CUBE: block/model/dispatch/shared-cube.md
               - Shared TLSU: block/model/dispatch/shared-tlsu.md
+              - Sorting Schema: block/model/dispatch/sorting-schema.md
               - Start: block/model/dispatch/start.md
+              - Tcvt Schema: block/model/dispatch/tcvt-schema.md
               - Tile Execution: block/model/dispatch/tile-execution.md
+              - Tile Scalar Schema: block/model/dispatch/tile-scalar-schema.md
               - Tile Schema: block/model/dispatch/tile-schema.md
+              - TLSU Gmov: block/model/dispatch/tlsu-gmov.md
+              - TLSU Mgather Cas: block/model/dispatch/tlsu-mgather-cas.md
+              - TLSU Mgather Mask: block/model/dispatch/tlsu-mgather-mask.md
+              - TLSU Mgather: block/model/dispatch/tlsu-mgather.md
+              - TLSU Mscatter Mask: block/model/dispatch/tlsu-mscatter-mask.md
+              - TLSU Mscatter: block/model/dispatch/tlsu-mscatter.md
+              - TLSU Prefetch: block/model/dispatch/tlsu-prefetch.md
               - Top Level: block/model/dispatch/top-level.md
           - Faults:
               - Rollback: block/model/faults/rollback.md
@@ -171,6 +182,7 @@ nav:
               - Header: block/model/schema/header.md
               - Profile Encoding: block/model/schema/profile-encoding.md
           - State:
+              - Barg: block/model/state/barg.md
               - Binding State: block/model/state/binding-state.md
               - Control State: block/model/state/control-state.md
               - Descriptor State: block/model/state/descriptor-state.md
@@ -792,23 +804,38 @@ nav:
               - Tile Scalar And Immediate: tile/model/dispatch/tile-scalar-and-immediate.md
               - Top Level: tile/model/dispatch/top-level.md
           - Execution:
+              - Comparison: tile/model/execution/comparison.md
               - Complex: tile/model/execution/complex.md
               - CUBE: tile/model/execution/cube.md
               - Elementwise: tile/model/execution/elementwise.md
               - Expansion: tile/model/execution/expansion.md
+              - Fused Multiply Add: tile/model/execution/fused-multiply-add.md
               - Generation: tile/model/execution/generation.md
+              - Image To Column: tile/model/execution/image-to-column.md
+              - Indexed Rearrangement: tile/model/execution/indexed-rearrangement.md
+              - Minmax: tile/model/execution/minmax.md
               - Postprocess: tile/model/execution/postprocess.md
               - Rearrangement: tile/model/execution/rearrangement.md
               - Reduction: tile/model/execution/reduction.md
+              - Sorting: tile/model/execution/sorting.md
+              - Unary: tile/model/execution/unary.md
           - Legality:
               - Allocation Capacity: tile/model/legality/allocation-capacity.md
               - Descriptor Shape: tile/model/legality/descriptor-shape.md
               - Data Type Layout: tile/model/legality/dtype-layout.md
+              - Image To Column: tile/model/legality/image-to-column.md
               - Indexed Layout: tile/model/legality/indexed-layout.md
+              - Indexed Rearrangement: tile/model/legality/indexed-rearrangement.md
+              - Layout Rearrangement: tile/model/legality/layout-rearrangement.md
+              - Matrix Functions: tile/model/legality/matrix-functions.md
+              - Matrix Operands: tile/model/legality/matrix-operands.md
+              - Matrix Postprocess: tile/model/legality/matrix-postprocess.md
               - Matrix Shape: tile/model/legality/matrix-shape.md
               - Memory Schema: tile/model/legality/memory-schema.md
               - Operand Schema: tile/model/legality/operand-schema.md
               - PE Mask: tile/model/legality/pe-mask.md
+              - Reduction And Expansion: tile/model/legality/reduction-and-expansion.md
+              - Sorting: tile/model/legality/sorting.md
           - Memory:
               - Addressing: tile/model/memory/addressing.md
               - Atomics: tile/model/memory/atomics.md
@@ -821,12 +848,15 @@ nav:
               - Exceptions: tile/model/numeric/exceptions.md
               - Formats: tile/model/numeric/formats.md
               - Rounding: tile/model/numeric/rounding.md
+          - Ordering:
+              - Sorting: tile/model/ordering/sorting.md
           - Shape:
               - Rows Columns: tile/model/shape/rows-columns.md
               - Valid Region: tile/model/shape/valid-region.md
           - State:
               - Allocation: tile/model/state/allocation.md
               - Descriptors: tile/model/state/descriptors.md
+              - Feature Map Descriptors: tile/model/state/feature-map-descriptors.md
               - Local Registers: tile/model/state/local-registers.md
               - Shared Registers: tile/model/state/shared-registers.md
               - Types: tile/model/state/types.md
@@ -916,7 +946,7 @@ nav:
           - "ADR-0033: TLSU four-bit memory packing and totality": status/decisions/0033-tlsu-four-bit-memory-packing.md
           - "ADR-0034: CUBE raw-carrier totality and composite preflight": status/decisions/0034-cube-raw-carrier-totality.md
           - "ADR 0035: VEC/SFU carrier totality and profile boundary": status/decisions/0035-vec-sfu-carrier-totality.md
-          - "ADR 0036: Executable-model comparison dispositions": status/decisions/0036-executable-model-comparison-dispositions.md
+          - "ADR 0036: Formal source and evidence boundary": status/decisions/0036-formal-source-and-evidence-boundary.md
           - "ADR 0037: Numeric profile identity and bounded variation framework": status/decisions/0037-numeric-profile-identity-and-variation-framework.md
           - "ADR 0038: Scalar numeric flag state and producer ownership": status/decisions/0038-scalar-numeric-flag-state-and-ownership.md
           - "ADR 0039: Numeric rounding selector ownership": status/decisions/0039-numeric-rounding-selector-ownership.md
@@ -925,19 +955,24 @@ nav:
           - "ADR 0042: Numeric variation-point ownership": status/decisions/0042-numeric-variation-point-ownership.md
           - "ADR 0043: Public numeric type identity and target availability": status/decisions/0043-public-numeric-type-identity-and-availability.md
           - "ADR 0044: Public integer conversion result subset": status/decisions/0044-public-integer-conversion-result-subset.md
-          - "ADR 0046: Separate the kernel execution mask and warp predicates": status/decisions/0046-separate-execution-mask-and-warp-predicates.md
+          - "ADR 0046: Separate execution-mask and predicate domains (superseded)": status/decisions/0046-separate-execution-mask-and-warp-predicates.md
           - "ADR 0047: Numeric rounding semantics": status/decisions/0047-numeric-rounding-semantics.md
           - "ADR 0048: Numeric format value classification": status/decisions/0048-numeric-format-value-classification.md
           - "ADR 0049: Hardware numeric subnormal policy": status/decisions/0049-hardware-subnormal-policy.md
           - "ADR 0050: Hardware special-value result checkpoint": status/decisions/0050-hardware-special-value-checkpoint.md
-          - "ADR 0051: Reconcile the public v0.6 typed-mask surface without changing PTO ISA 0.57.1": status/decisions/0051-public-v06-predicate-mask-boundary.md
-          - "ADR 0052: PTO ISA 0.58.0 DavinciOO catalog": status/decisions/0052-pto-isa-0580-davincioo-catalog.md
+          - "ADR 0051: Predicate state namespace boundary (superseded)": status/decisions/0051-predicate-state-namespace-boundary.md
+          - "ADR 0052: Direct Tile and bundle catalog closure": status/decisions/0052-direct-tile-and-bundle-catalog-closure.md
           - "ADR 0053: PTO ISA 0.58.0 Tile Operation Cleanup": status/decisions/0053-pto-isa-0580-tile-operation-cleanup.md
           - "ADR 0054: PE-Local Tile Size and 32-bit Shared I/O Binding": status/decisions/0054-pe-local-tile-size-and-32-bit-shared-io-binding.md
           - "ADR 0055: Complete-Bundle B.IOR Schema and Defaults": status/decisions/0055-complete-bundle-bior-schema-and-defaults.md
-          - "ADR 0056: PTO/Linx Common Encoding Ownership and Per-PE GM Access": status/decisions/0056-pto-linx-common-encoding-and-gm-access.md
+          - "ADR 0056: PTO Encoding Ownership and Per-PE GM Access": status/decisions/0056-pto-encoding-ownership-and-gm-access.md
           - "ADR 0057: Tile Classification and Execution-Engine Aliases": status/decisions/0057-tile-classification-and-engine-aliases.md
           - "ADR 0058: Complete-Bundle GPR Operand Resolution": status/decisions/0058-complete-bundle-gpr-operand-resolution.md
+          - "ADR 0059: Mnemonic and Encoded-Field Contract Closure": status/decisions/0059-mnemonic-field-encoding-closure.md
+          - "ADR 0060: Restore `L.BSTOP` as the common 64-bit bundle stop": status/decisions/0060-l-bstop-common-long-form.md
+          - "ADR 0061: Bundle commit state uses BARG/BPCN": status/decisions/0061-barg-bpcn-commit-state.md
+          - "PTO mnemonic review decisions": status/decisions/0062-mnemonic-review-decisions.md
           - "ADR 0064: B.FPATR Complete-Bundle Matrix PostProcess": status/decisions/0064-b-fpatr-complete-bundle-postprocess.md
+          - "ADR 0065: CUBE Matrix Family Contract": status/decisions/0065-cube-matrix-family-contract.md
       - Open:
           - "Open architecture questions": status/open/index.md

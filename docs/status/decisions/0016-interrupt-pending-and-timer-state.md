@@ -12,9 +12,8 @@ previous model treated most of them as unrelated generic words. `EOIEI` cleared
 trap-status flags without clearing the named pending interrupt, and timer
 comparison had no observable effect.
 
-Public-source reconciliation identifies external and timer interrupt classes,
-but PTO needs a self-contained rule for bit identity, priority, enable gating,
-and reassertion.
+PTO needs a self-contained rule for interrupt bit identity, priority, enable
+gating, and reassertion.
 
 ## Decision
 
@@ -41,10 +40,6 @@ and reassertion.
 - Interrupt injection sets pending state before enable checking. Enabled
   injection then uses the existing interrupt trap envelope and visible saved
   context.
-
-The external source is evidence for the register family, not normative PTO
-text. The bit numbering and priority rule above are PTO-owned and directly
-tested.
 
 ## Consequences
 

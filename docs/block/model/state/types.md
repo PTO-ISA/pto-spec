@@ -16,8 +16,6 @@ type BundleKind of enumeration {
     BundleKind_Standard,
     BundleKind_Floating,
     BundleKind_System,
-    BundleKind_MachineParallel,
-    BundleKind_MachineSequential,
     BundleKind_TileElement,
     BundleKind_TileMemory,
     BundleKind_TileMatrix,
@@ -34,13 +32,22 @@ type BundleTransfer of enumeration {
     BundleTransfer_IndirectCall
 };
 
+// BARG is the single architectural continuation record installed by BSTART.
+// BPC is stored by the architectural program-control state; the remaining
+// fields are stored here and are consumed only at the block commit boundary.
+type BundleArgumentRegister of record {
+    block_type: BundleKind,
+    transfer_type: BundleTransfer,
+    taken: boolean,
+    bpcn: Word
+};
+
 // A bundle start always installs one descriptor. Control-only starts retain
 // their exact form and modifiers, while operation-bearing starts additionally
 // carry the selector consumed when the bundle is committed.
 // PTO-REQ-BUNDLE-OPERATION-001: exact start fields survive decode and commit.
 type BundleOperationClass of enumeration {
     BundleOperation_Control,
-    BundleOperation_Machine,
     BundleOperation_TileElement,
     BundleOperation_TileMemory,
     BundleOperation_TileMatrix,
@@ -94,12 +101,13 @@ type BundleSharedBinding of record {
 };
 
 type BundleControlAttributes of record {
+    present: boolean,
     trap_enabled: boolean,
     atomic: boolean,
     acquire: boolean,
     release: boolean,
     far: boolean,
-    direct_register: boolean
+    dimension_reduction: boolean
 };
 
 type BundleDataAttributes of record {
@@ -107,10 +115,20 @@ type BundleDataAttributes of record {
     data_type: bits(5),
     data_layout: bits(5),
     pad_value: bits(2),
-    conversion_mode: bits(3),
+    comparison_mode: bits(3),
     rounding_mode: bits(3),
     saturating: boolean,
     canonicalize: boolean
+};
+
+type BundleHintAttributes of record {
+    present: boolean,
+    trace: boolean,
+    trace_end: boolean,
+    branch_valid: boolean,
+    branch_likely: boolean,
+    temperature: bits(2),
+    prefetch_size: bits(12)
 };
 
 // B.FPATR is a complete-bundle post-processing descriptor.  `valid` tracks
@@ -127,13 +145,58 @@ type BundleFixedPointAttributes of record {
     max_abs_en: boolean
 };
 
+// MCOPY retains the complete operand snapshot and the next byte offset across
+// a recoverable memory fault.  Progress names the first byte not yet committed.
+type MemoryCopyTemplateState of record {
+    active: boolean,
+    instruction_pc: Word,
+    destination: Word,
+    source: Word,
+    length: Word,
+    progress: Word
+};
+
+type FrameTemplateKind of enumeration {
+    FrameTemplate_Entry,
+    FrameTemplate_Exit,
+    FrameTemplate_ReturnAddress,
+    FrameTemplate_ReturnStack
+};
+
+type FrameRegisterCount of integer {0..22};
+type FrameRegisterOrdinal of integer {0..21};
+type FrameRegisterSnapshot of array [[22]] of Word;
+
+// Frame-template progress names the next register memory event that has not
+// committed.  Source values are retained before FENTRY changes sp, and the
+// whole record survives a recoverable memory fault.
+type FrameTemplateState of record {
+    active: boolean,
+    kind: FrameTemplateKind,
+    instruction_pc: Word,
+    begin_reg: Reg5Selector,
+    end_reg: Reg5Selector,
+    register_count: FrameRegisterCount,
+    frame_size: Word,
+    caller_sp: Word,
+    stack_adjusted: boolean,
+    progress: FrameRegisterCount,
+    return_target: Word,
+    return_target_valid: boolean,
+    source_values: FrameRegisterSnapshot
+};
+
 // ACR0 is the root ring. The active profile defines permissions and the
 // implemented Access Control Ring subtree.
 type AccessControlRing of integer {0..15};
 type TemporaryQueueSnapshot of array [[PTO_TEMPORARY_QUEUE_DEPTH]] of Word;
+type TemporaryQueueValiditySnapshot of array
+    [[PTO_TEMPORARY_QUEUE_DEPTH]] of boolean;
 type PredicateSnapshot of array [[PTO_PREDICATE_REGISTER_COUNT]]
     of PredicateWord;
 type BundleDimensionSnapshot of array [[PTO_BUNDLE_DIMENSION_COUNT]] of Word;
+type BundleDimensionPresenceSnapshot of array [[PTO_BUNDLE_DIMENSION_COUNT]]
+    of boolean;
 type BundleScalarBindingSnapshot of array [[PTO_BUNDLE_SCALAR_BINDING_COUNT]]
     of BundleScalarBinding;
 type BundleTileBindingSnapshot of array [[PTO_BUNDLE_TILE_BINDING_COUNT]]

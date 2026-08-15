@@ -110,16 +110,26 @@ def direct_match_in_region(
     )
 
 
-def tile_preservation_valid(tile_source: str) -> bool:
+TILE_LEGALITY_TEST = (
+    "tests/asl/tile/model/legality/operand-schema/"
+    "tile-fault-decoded-legality-faults-001.asl"
+)
+TILE_DEFINEDNESS_TEST = (
+    "tests/asl/tile/model/definedness/elements/"
+    "tile-exec-element-definedness-001.asl"
+)
+
+
+def tile_preservation_valid(legality_source: str, definedness_source: str) -> bool:
     try:
         helper = named_function_body(
-            tile_source, "tests/asl/tile-tests.asl", "AssertTwoByTwoTileEquals"
+            legality_source, TILE_LEGALITY_TEST, "AssertTwoByTwoTileEquals"
         )
         legality = named_function_body(
-            tile_source, "tests/asl/tile-tests.asl", "TestDecodedTileLegalityFaults"
+            legality_source, TILE_LEGALITY_TEST, "TestDecodedTileLegalityFaults"
         )
         definedness = named_function_body(
-            tile_source, "tests/asl/tile-tests.asl", "TestTileElementDefinedness"
+            definedness_source, TILE_DEFINEDNESS_TEST, "TestTileElementDefinedness"
         )
     except SystemExit:
         return False
@@ -187,10 +197,10 @@ scalar_assertion_files = tuple(
 
 scalar_count = assertion_count(scalar_assertion_files)
 tile_count = assertion_count(tile_assertion_files)
-if scalar_count != 34:
-    fail(f"scalar/system/concurrency assertion inventory drifted: {scalar_count} != 34")
-if tile_count != 198:
-    fail(f"tile/bundle assertion inventory drifted: {tile_count} != 198")
+if scalar_count != 36:
+    fail(f"scalar/system/concurrency assertion inventory drifted: {scalar_count} != 36")
+if tile_count != 229:
+    fail(f"tile/bundle assertion inventory drifted: {tile_count} != 229")
 
 concurrency_paths = (
     "asl/arch/memory-model/memory-events.asl",
@@ -235,8 +245,9 @@ for function, label, guard_pattern, effect_pattern in (
     ):
         fail(f"conditional-guard negative canary failed open for {function}")
 
-tile_source = source("tests/asl/tile-tests.asl")
-if not tile_preservation_valid(tile_source):
+tile_source = source(TILE_LEGALITY_TEST)
+tile_definedness_source = source(TILE_DEFINEDNESS_TEST)
+if not tile_preservation_valid(tile_source, tile_definedness_source):
     fail("decoded 2x2 rejection witnesses must call the pinned full-region helper")
 missing_preservation_call = tile_source.replace(
     "    AssertTwoByTwoTileEquals(9, Zeros{PTO_XLEN} + 0x5a);",
@@ -244,7 +255,7 @@ missing_preservation_call = tile_source.replace(
     1,
 )
 if missing_preservation_call == tile_source or tile_preservation_valid(
-    missing_preservation_call
+    missing_preservation_call, tile_definedness_source
 ):
     fail("missing full-region helper-call negative canary failed open")
 weakened_helper = tile_source.replace(
@@ -252,7 +263,9 @@ weakened_helper = tile_source.replace(
     "            assert ReadTileElement(index, 0, 0) == expected;",
     1,
 )
-if weakened_helper == tile_source or tile_preservation_valid(weakened_helper):
+if weakened_helper == tile_source or tile_preservation_valid(
+    weakened_helper, tile_definedness_source
+):
     fail("weakened full-region helper negative canary failed open")
 unreachable_helper = tile_source.replace(
     "    for row = 0 to 1 do\n"
@@ -269,7 +282,9 @@ unreachable_helper = tile_source.replace(
     "    end;",
     1,
 )
-if unreachable_helper == tile_source or tile_preservation_valid(unreachable_helper):
+if unreachable_helper == tile_source or tile_preservation_valid(
+    unreachable_helper, tile_definedness_source
+):
     fail("unreachable full-region helper negative canary failed open")
 unreachable_call = tile_source.replace(
     "    AssertTwoByTwoTileEquals(9, Zeros{PTO_XLEN} + 0x5a);",
@@ -278,12 +293,12 @@ unreachable_call = tile_source.replace(
     "    end;",
     1,
 )
-if unreachable_call == tile_source or tile_preservation_valid(unreachable_call):
+if unreachable_call == tile_source or tile_preservation_valid(
+    unreachable_call, tile_definedness_source
+):
     fail("unreachable full-region helper-call negative canary failed open")
 
-tile_definedness = function_body(
-    "tests/asl/tile-tests.asl", "TestTileElementDefinedness"
-)
+tile_definedness = function_body(TILE_DEFINEDNESS_TEST, "TestTileElementDefinedness")
 require_once(
     tile_definedness,
     r"assert\s+TileElementDefined\(0,\s*0,\s*0\)\s*;\s*"
@@ -302,7 +317,8 @@ require_once(
 )
 
 cube_preflight = function_body(
-    "tests/asl/cube-totality-tests.asl", "TestCubeCompositePreflight"
+    "tests/asl/tile/model/execution/cube/tile-bound-totality-001.asl",
+    "TestCubeCompositePreflight",
 )
 for status in (
     "shape_status",
@@ -316,7 +332,10 @@ for status in (
         f"decoded {status} rejection",
     )
 
-verifier = function_body("tests/asl/concurrency-tests.asl", "TestTSOConcurrency")
+verifier = function_body(
+    "tests/asl/arch/memory-model/ordering/arch-order-tso-concurrency-001.asl",
+    "TestTSOConcurrency",
+)
 for label, pattern in (
     (
         "maximum source index",

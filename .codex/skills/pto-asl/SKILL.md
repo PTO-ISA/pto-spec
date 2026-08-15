@@ -1,6 +1,6 @@
 ---
 name: pto-asl
-description: Author, migrate, review, validate, or govern PTO formal architecture specifications written in ASL1. Use for pto-spec state and instruction semantics, source-to-normative catalog migration, one-level tile modeling, ASLRef integration, executable validation, normative traceability, or formal-spec repository quality.
+description: Use when working in pto-spec on ASL1 architecture state or instruction semantics, mnemonic ASL/docs/test closure, ASLRef validation, normative traceability, or formal-spec repository governance.
 ---
 
 # PTO ASL
@@ -21,6 +21,8 @@ Before editing, read:
 
 For ASLRef setup, versioning, or language behavior, read [references/aslref.md](references/aslref.md). For any normative
 model change or review, also read [references/formal-quality.md](references/formal-quality.md).
+For mnemonic ASL authoring or readability refactors, also read
+[references/arm-style.md](references/arm-style.md).
 For source-to-normative migration or reconciliation, also read
 [references/source-map.md](references/source-map.md).
 
@@ -62,11 +64,45 @@ For instruction-set changes, also keep the four ASL-owned surfaces synchronized:
 An accepted spelling without all four surfaces is a specification defect. Do not reduce semantic coverage to a mnemonic
 count, function-name presence, or enum linkage, and do not hand-edit generated decoder output under `build/`.
 
+When implementing a frozen mnemonic audit, an accepted ADR-family record is
+the architecture decision input, not implementation evidence. Translate every
+recorded implementation gap into the owning ASL operation, exact embedded
+documentation, and independent tests. Continue until the active inventory is
+`642/642 FORMAL-COMPLETE`; an audit count of `642/642` does not satisfy this
+gate.
+
 Do not invent missing semantics. Stop at a documented requirement gap and open or request an architecture decision.
 
 ## ASL rules
 
 - Write ASL1 accepted by the repository-pinned ASLRef commit.
+- Use Arm-style specification structure: decode binds small local names and
+  legality; operation snapshots typed operands, computes named intermediate
+  values, performs preflight, then commits architectural effects.
+- Name public/shared helpers in descriptive PascalCase by architectural
+  action (`ProbeDataAccess`, `AtomicReadModifyWrite`). Use concise lower-case
+  locals for decoded indices and values (`address`, `old_value`, `result`).
+- Keep one declaration, condition, call argument group, or state assignment
+  visually reviewable. Wrap long signatures, boolean conditions, calls, and
+  expressions with continuation indentation; do not compress an instruction
+  operation into one line.
+- Separate reusable value semantics into `pure func`, read-only architectural
+  queries into `readonly func`, profile extension points into `impdef func`,
+  and visible state transitions into ordinary `func` procedures.
+- Keep instruction files thin but meaningful: their embedded operation region
+  must identify the exact handler, width, operation, publication behavior,
+  defaults, faults, and reserved space. Shared helpers may implement repeated
+  mechanisms, but a mnemonic may not rely on an unexplained generic label.
+- Keep decode and operation regions page-shaped. Decode names fields and
+  rejects reserved combinations; operation reads/snapshots inputs, derives
+  named dimensions or addresses, preflights every possible fault, then commits
+  visible effects. The generated page must embed these exact regions rather
+  than paraphrasing them in a second semantic description.
+- Prefer one architectural action per line. A complete instruction operation
+  must not be a one-line forwarding wrapper whose meaning can only be learned
+  by searching a generic dispatcher; retain a concise mnemonic-specific
+  wrapper that names the selected operation, operand roles, defaults, fault
+  boundary, and commit behavior.
 - Use named constrained integers for architectural domains and `bits(N)` for fixed-width values.
 - Prefix enumeration members with the type name.
 - Make side effects visible and localized.
@@ -84,6 +120,33 @@ Do not invent missing semantics. Stop at a documented requirement gap and open o
 - Treat private or incompatibly licensed implementations as read-only comparison evidence. Record anonymized names,
   hashes, and dispositions; never copy or expose their identities, repository paths, prose, code, or diagrams.
 
+## Mnemonic test shape
+
+- Put executable evidence only under the exact mirror
+  `tests/asl/{arch,block,scalar,tile}/.../<mnemonic>/`.
+- Do not create a new test root or alternate taxonomy. One ASL owner may have
+  multiple independent points, but every point remains inside its existing
+  mirrored owner directory.
+- Name each point `group-type-mnemonic-name-NNN.asl`, using the repository's
+  short group/type vocabulary (`block|scalar|tile|arch`, then
+  `decode|exec|bound|fault|state|noop|static`). Include the mnemonic, keep the
+  purpose concise, and omit filler words such as `test`, `validate`, and
+  `execution` from the name component. For example:
+  `tile-bound-tmatmul-mx-scale-001.asl`.
+- Give each file one stable test ID and one observable purpose. Split decode,
+  legal execution, defaults, boundary/reserved rejection, state transition,
+  no-effect, and precise-fault obligations when they are independent.
+- Keep fixture setup local and short; reuse architecture test-library helpers
+  only for setup mechanisms, never to compute the expected result.
+- Run each new point alone through `scripts/run-asl-test --id`, observe the
+  intended RED before production edits, then run the mnemonic family with the
+  bounded `-j` parallel runner after GREEN.
+- Build family pages from `scripts/print-asl-test-matrix` after adding or
+  renaming tests. Do not select a newly added point from a stale cached
+  `build/asl-test-matrix.json`.
+- Do not lengthen a test to amortize ASLRef startup. Improve assembly/cache and
+  parallel scheduling in the runner while preserving independent points.
+
 ## Repository quality gate
 
 For every pull request:
@@ -98,6 +161,7 @@ The pull-request lane is intentionally lightweight and does not claim release
 readiness. The manual exact-head release lane is:
 
 ```bash
+python3 scripts/manual_semantic_audit.py
 make setup
 make release-verify RELEASE_COMMIT="$(git rev-parse HEAD)"
 make release-prepare
@@ -133,7 +197,9 @@ Before committing, confirm:
   publication-safe command identity, exit code, result, output hashes, and a sanitized diagnostic excerpt. Keep any
   restricted source/version recipe behind constructed local generator inputs. Never hardcode a gate result. Missing
   commands, timeouts, or nonzero exits fail closed and keep the associated maturity target open.
-- Generated files are not committed.
+- Ephemeral `build/` outputs are not committed. Checked-in ASL-derived docs,
+  catalogs, canonical AVS points, and release evidence must be regenerated and
+  committed together when their owner changes.
 - No backend mechanism leaked into the portable model.
 - Governance, security, and contribution policies remain consistent.
 - No validation check or canary was weakened to make a change pass.

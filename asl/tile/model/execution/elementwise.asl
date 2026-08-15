@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","surface":"tile","classification":["model","execution","elementwise"],"depends_on":["PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-SCALAR-MODEL-FSU-PROFILE"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","surface":"tile","classification":["model","execution","elementwise"],"depends_on":["PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-EXECUTION-MINMAX","PTO-SCALAR-MODEL-FSU-PROFILE"]}
 // PTO-REQ-TEPL-001: direct, read-before-write TEPL semantics.
 
 impdef func TileSquareRoot(value: Word) => Word
@@ -14,8 +14,15 @@ end;
 
 impdef func TileReciprocal(value: Word) => Word
 begin
-    assert !IsZero(value);
+    // The typed SFU special-value path handles representable signed
+    // infinities and status before this finite-profile hook is called.
     return DivideWordUnsigned(Ones{PTO_XLEN}, value);
+end;
+
+impdef func TileReciprocalSquareRoot(value: Word) => Word
+begin
+    // One profile operation; this is not two architecturally rounded steps.
+    return value;
 end;
 
 impdef func TileExponential(value: Word) => Word
@@ -43,10 +50,270 @@ begin
     end;
 end;
 
-impdef func TileProfileBinary(op: TileBinaryOperation, data_type: TileDataType,
-                              left: Word, right: Word) => Word
+pure func TileIntegerOperandValue(value: Word,
+                                  data_type: TileDataType) => Word
 begin
-    return TileBinaryValue(op, left, right);
+    case data_type of
+        when TileDataType_S8 => return SignExtend{PTO_XLEN}(value[7:0]);
+        when TileDataType_S16 => return SignExtend{PTO_XLEN}(value[15:0]);
+        when TileDataType_S32 => return SignExtend{PTO_XLEN}(value[31:0]);
+        when TileDataType_S64 => return value;
+        when TileDataType_U8 => return ZeroExtend{PTO_XLEN}(value[7:0]);
+        when TileDataType_U16 => return ZeroExtend{PTO_XLEN}(value[15:0]);
+        when TileDataType_U32 => return ZeroExtend{PTO_XLEN}(value[31:0]);
+        when TileDataType_U64 => return value;
+        otherwise => unreachable;
+    end;
+end;
+
+// A scalar bound through B.IOR is one raw Tile element carried in an XLEN
+// GPR.  Bits above the architectural element width never participate in the
+// Tile operation.  Keep this normalization separate from signed integer
+// interpretation: a later operation decides whether the retained bits are a
+// floating encoding, a signed integer, or an unsigned integer.
+pure func TileRawElementValue(
+    value: Word,
+    data_type: TileDataType) => Word
+begin
+    case TileElementBits(data_type) of
+        when 8 =>
+            return ZeroExtend{PTO_XLEN}(value[7:0]);
+        when 16 =>
+            return ZeroExtend{PTO_XLEN}(value[15:0]);
+        when 32 =>
+            return ZeroExtend{PTO_XLEN}(value[31:0]);
+        when 64 =>
+            return value;
+        otherwise =>
+            // Packed four-bit types do not belong to the closed scalar-VEC
+            // type sets.  Retaining the low nibble makes this helper total
+            // without granting those types operation legality.
+            return ZeroExtend{PTO_XLEN}(value[3:0]);
+    end;
+end;
+
+pure func TileUnsignedElementValue(
+    value: Word,
+    data_type: TileDataType) => Word
+begin
+    case data_type of
+        when TileDataType_S8, TileDataType_U8 =>
+            return ZeroExtend{PTO_XLEN}(value[7:0]);
+        when TileDataType_S16, TileDataType_U16 =>
+            return ZeroExtend{PTO_XLEN}(value[15:0]);
+        when TileDataType_S32, TileDataType_U32 =>
+            return ZeroExtend{PTO_XLEN}(value[31:0]);
+        when TileDataType_S64, TileDataType_U64 =>
+            return value;
+        otherwise =>
+            unreachable;
+    end;
+end;
+
+pure func TileIntegerShiftAmount(
+    value: Word,
+    data_type: TileDataType) => integer {0..63}
+begin
+    case data_type of
+        when TileDataType_S8, TileDataType_U8 =>
+            return UInt(value[2:0]);
+        when TileDataType_S16, TileDataType_U16 =>
+            return UInt(value[3:0]);
+        when TileDataType_S32, TileDataType_U32 =>
+            return UInt(value[4:0]);
+        when TileDataType_S64, TileDataType_U64 =>
+            return UInt(value[5:0]);
+        otherwise =>
+            unreachable;
+    end;
+end;
+
+pure func TileIntegerMinMaxValue(
+    operation: TileBinaryOperation,
+    data_type: TileDataType,
+    left: Word,
+    right: Word) => Word
+begin
+    assert operation == TileBinary_MIN || operation == TileBinary_MAX;
+    let left_value = TileIntegerOperandValue(left, data_type);
+    let right_value = TileIntegerOperandValue(right, data_type);
+    if TileDataTypeIsSigned(data_type) then
+        if operation == TileBinary_MIN then
+            if SInt(left_value) <= SInt(right_value) then
+                return left_value;
+            else
+                return right_value;
+            end;
+        else
+            if SInt(left_value) >= SInt(right_value) then
+                return left_value;
+            else
+                return right_value;
+            end;
+        end;
+    end;
+    if operation == TileBinary_MIN then
+        if UInt(left_value) <= UInt(right_value) then
+            return left_value;
+        else
+            return right_value;
+        end;
+    else
+        if UInt(left_value) >= UInt(right_value) then
+            return left_value;
+        else
+            return right_value;
+        end;
+    end;
+end;
+
+pure func TileIntegerBinaryValue(
+    operation: TileBinaryOperation,
+    data_type: TileDataType,
+    left: Word,
+    right: Word) => Word
+begin
+    let left_value = TileIntegerOperandValue(left, data_type);
+    let right_value = TileIntegerOperandValue(right, data_type);
+    case operation of
+        when TileBinary_ADD =>
+            return NormalizeTileInteger(left_value + right_value, data_type);
+        when TileBinary_SUB =>
+            return NormalizeTileInteger(left_value - right_value, data_type);
+        when TileBinary_MUL =>
+            return NormalizeTileInteger(
+                MultiplyWord(left_value, right_value),
+                data_type);
+        when TileBinary_MAX, TileBinary_MIN =>
+            return TileIntegerMinMaxValue(
+                operation,
+                data_type,
+                left_value,
+                right_value);
+        when TileBinary_AND =>
+            return TileUnsignedElementValue(left_value AND right_value, data_type);
+        when TileBinary_OR =>
+            return TileUnsignedElementValue(left_value OR right_value, data_type);
+        when TileBinary_XOR =>
+            return TileUnsignedElementValue(left_value XOR right_value, data_type);
+        when TileBinary_SHL =>
+            return TileUnsignedElementValue(
+                LSL(left_value, TileIntegerShiftAmount(right_value, data_type)),
+                data_type);
+        when TileBinary_SHR =>
+            let shifted =
+                if TileDataTypeIsSigned(data_type) then
+                    ASR(left_value,
+                        TileIntegerShiftAmount(right_value, data_type))
+                else
+                    LSR(left_value,
+                        TileIntegerShiftAmount(right_value, data_type));
+            return TileUnsignedElementValue(shifted, data_type);
+        otherwise =>
+            unreachable;
+    end;
+end;
+
+pure func TileSignedModulo(dividend: Word, divisor: Word) => Word
+begin
+    let quotient = ScalarDivideSigned(dividend, divisor);
+    let remainder = dividend - MultiplyWord(quotient, divisor);
+    if IsZero(remainder) ||
+       remainder[PTO_XLEN - 1] == divisor[PTO_XLEN - 1] then
+        return remainder;
+    end;
+    return remainder + divisor;
+end;
+
+pure func TileIntegerDivRemValue(op: TileBinaryOperation,
+                                 data_type: TileDataType,
+                                 left: Word, right: Word) => Word
+begin
+    assert op == TileBinary_DIV || op == TileBinary_REM;
+    let dividend = TileIntegerOperandValue(left, data_type);
+    let divisor = TileIntegerOperandValue(right, data_type);
+    assert !IsZero(divisor);
+    if op == TileBinary_DIV then
+        if TileDataTypeIsSigned(data_type) then
+            return ScalarDivideSigned(dividend, divisor);
+        else
+            return DivideWordUnsigned(dividend, divisor);
+        end;
+    elsif TileDataTypeIsSigned(data_type) then
+        return TileSignedModulo(dividend, divisor);
+    else
+        let quotient = DivideWordUnsigned(dividend, divisor);
+        return dividend - MultiplyWord(quotient, divisor);
+    end;
+end;
+
+impdef func TileProfileFloatingModulo(data_type: TileDataType,
+                                      left: Word, right: Word) => Word
+begin
+    return left;
+end;
+
+impdef func TileProfileFloatingModuloFlags(
+    data_type: TileDataType,
+    left: Word,
+    right: Word) => bits(5)
+begin
+    return Zeros{5};
+end;
+
+func TileProfileBinaryWithFlags(
+    op: TileBinaryOperation,
+    data_type: TileDataType,
+    left: Word,
+    right: Word) => (Word, bits(5))
+begin
+    if (op == TileBinary_DIV || op == TileBinary_REM) &&
+       TileDataTypeIsInteger(data_type) then
+        return (
+            TileIntegerDivRemValue(op, data_type, left, right),
+            Zeros{5});
+    elsif TileDataTypeIsInteger(data_type) then
+        return (
+            TileIntegerBinaryValue(op, data_type, left, right),
+            Zeros{5});
+    elsif op == TileBinary_MIN || op == TileBinary_MAX then
+        let (result, invalid) =
+            TileFloatingMinMaxValue(op, data_type, left, right);
+        return (
+            result,
+            if invalid then Zeros{5} + 1 else Zeros{5});
+    elsif op == TileBinary_REM then
+        return (
+            TileProfileFloatingModulo(data_type, left, right),
+            TileProfileFloatingModuloFlags(data_type, left, right));
+    else
+        let control = DefaultNumericExecutionControl();
+        var operation: FloatingBinaryOperation;
+        case op of
+            when TileBinary_ADD => operation = FloatingBinary_ADD;
+            when TileBinary_SUB => operation = FloatingBinary_SUB;
+            when TileBinary_MUL => operation = FloatingBinary_MUL;
+            when TileBinary_DIV => operation = FloatingBinary_DIV;
+            otherwise => unreachable;
+        end;
+        return ScalarFPBinaryProfile(
+            operation,
+            control.rounding_mode,
+            TileDataTypeToEncoding(data_type),
+            left,
+            right);
+    end;
+end;
+
+func TileProfileBinary(op: TileBinaryOperation, data_type: TileDataType,
+                       left: Word, right: Word) => Word
+begin
+    let (result, -) = TileProfileBinaryWithFlags(
+        op,
+        data_type,
+        left,
+        right);
+    return result;
 end;
 
 func ExecuteTileBinary(op: TileBinaryOperation, destination: TileIndex,
@@ -74,219 +341,62 @@ begin
         end;
     end;
     MarkTileValidRegionDefined(destination);
-end;
-
-// PTO-REQ-TEPL-001: TFMA is one profile-defined fused multiply-add per
-// destination element.  The matrix multiply-add hook is deliberately reused:
-// it already owns the profile boundary between raw-carrier execution and the
-// selected floating-point implementation, and receives the addend first.
-func TFMA(destination: TileIndex, source_left: TileIndex,
-          source_right: TileIndex, addend: TileIndex)
-begin
-    let destination_tile = _Tiles[[destination]];
-    let left_tile = _Tiles[[source_left]];
-    let right_tile = _Tiles[[source_right]];
-    let addend_tile = _Tiles[[addend]];
-    let left_payload = left_tile.payload;
-    let right_payload = right_tile.payload;
-    let addend_payload = addend_tile.payload;
-    for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(destination_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            _Tiles[[destination]].payload[[element]] =
-                TileProfileMatrixAccumulate(addend_payload[[element]],
-                    left_payload[[element]], right_payload[[element]],
-                    destination_tile.data_type, left_tile.data_type,
-                    right_tile.data_type);
-        end;
+    if TileBinaryUsesClosedElementwiseContract(op) then
+        ApplyTilePadding(destination, CurrentBundlePadValue());
     end;
-    MarkTileValidRegionDefined(destination);
-end;
-
-func TileUnaryValue(op: TileUnaryOperation, value: Word) => Word
-begin
-    case op of
-        when TileUnary_ABS =>
-            if SInt(value) < 0 then return Zeros{PTO_XLEN} - value; else return value; end;
-        when TileUnary_NOT => return NOT value;
-        when TileUnary_NEG => return Zeros{PTO_XLEN} - value;
-        when TileUnary_RELU =>
-            if SInt(value) < 0 then return Zeros{PTO_XLEN}; else return value; end;
-        when TileUnary_SQRT => return TileSquareRoot(value);
-        when TileUnary_LOG => return TileLogarithm(value);
-        when TileUnary_RECIP => return TileReciprocal(value);
-        when TileUnary_EXP => return TileExponential(value);
-        when TileUnary_RSQRT => return TileReciprocal(TileSquareRoot(value));
-    end;
-end;
-
-impdef func TileProfileUnary(op: TileUnaryOperation, data_type: TileDataType,
-                             value: Word) => Word
-begin
-    return TileUnaryValue(op, value);
 end;
 
 func ExecuteTileFillScalar(destination: TileIndex, scalar: Word)
 begin
-    let destination_tile = _Tiles[[destination]];
-    assert destination_tile.allocated;
-    for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
-            WriteTileElement(destination, row as integer {0..65535},
-                column as integer {0..65535}, scalar);
+    assert TileOperandsLegal_ExecuteTileFillScalar(destination, scalar);
+    var result = _Tiles[[destination]];
+    let normalized_scalar = TileRawElementValue(
+        scalar,
+        result.data_type);
+    for row = 0 to result.valid_rows - 1 looplimit 65536 do
+        for column = 0 to result.valid_columns - 1 looplimit 65536 do
+            let element = TileLinearIndex(
+                result,
+                row as integer {0..65535},
+                column as integer {0..65535});
+            result.payload[[element]] = normalized_scalar;
         end;
     end;
-    MarkTileValidRegionDefined(destination);
-end;
-
-func ExecuteTileUnary(op: TileUnaryOperation, destination: TileIndex, source: TileIndex)
-begin
-    let source_tile = _Tiles[[source]];
-    assert source_tile.allocated;
-    assert TileShapesMatch(_Tiles[[destination]], source_tile);
-    assert _Tiles[[destination]].data_type == source_tile.data_type;
-    let source_payload = source_tile.payload;
-    for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(source_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            _Tiles[[destination]].payload[[element]] =
-                TileProfileUnary(op, source_tile.data_type,
-                    source_payload[[element]]);
-        end;
-    end;
-    MarkTileValidRegionDefined(destination);
+    result = TileWithValidRegionDefined(result);
+    result = TileWithPadding(result, CurrentBundlePadValue());
+    _Tiles[[destination]] = result;
 end;
 
 func ExecuteTileScalar(op: TileBinaryOperation, destination: TileIndex,
                        source: TileIndex, scalar: Word)
 begin
+    assert TileOperandsLegal_ExecuteTileScalar(
+        op,
+        destination,
+        source,
+        scalar);
     let source_tile = _Tiles[[source]];
-    assert source_tile.allocated;
-    assert TileShapesMatch(_Tiles[[destination]], source_tile);
-    assert _Tiles[[destination]].data_type == source_tile.data_type;
+    var result = _Tiles[[destination]];
     let source_payload = source_tile.payload;
+    let normalized_scalar = TileRawElementValue(
+        scalar,
+        source_tile.data_type);
+    var flags = Zeros{5};
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
             let element = TileLinearIndex(source_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            _Tiles[[destination]].payload[[element]] =
-                TileProfileBinary(op, source_tile.data_type,
-                    source_payload[[element]], scalar);
+            let (value, element_flags) = TileProfileBinaryWithFlags(
+                op,
+                source_tile.data_type,
+                source_payload[[element]],
+                normalized_scalar);
+            result.payload[[element]] = value;
+            flags = flags OR element_flags;
         end;
     end;
-    MarkTileValidRegionDefined(destination);
-end;
-
-pure func TileCompareValue(comparison: TileComparison, left: Word, right: Word) => Word
-begin
-    var result: boolean;
-    case comparison of
-        when TileComparison_EQ => result = left == right;
-        when TileComparison_NE => result = left != right;
-        when TileComparison_LT => result = SInt(left) < SInt(right);
-        when TileComparison_LE => result = SInt(left) <= SInt(right);
-        when TileComparison_GT => result = SInt(left) > SInt(right);
-        when TileComparison_GE => result = SInt(left) >= SInt(right);
-    end;
-    if result then return Zeros{PTO_XLEN} + 1; else return Zeros{PTO_XLEN}; end;
-end;
-
-impdef func TileProfileCompare(comparison: TileComparison,
-                               data_type: TileDataType,
-                               left: Word, right: Word) => Word
-begin
-    return TileCompareValue(comparison, left, right);
-end;
-
-func ExecuteTileCompare(destination: TileIndex, source_left: TileIndex,
-                        source_right: TileIndex, comparison: TileComparison)
-begin
-    let left_tile = _Tiles[[source_left]];
-    let right_tile = _Tiles[[source_right]];
-    assert TileShapesMatch(left_tile, right_tile);
-    assert left_tile.data_type == right_tile.data_type;
-    assert _Tiles[[destination]].rows == left_tile.rows;
-    assert _Tiles[[destination]].columns == left_tile.columns;
-    let left_payload = left_tile.payload;
-    let right_payload = right_tile.payload;
-    for row = 0 to left_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to left_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(left_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            _Tiles[[destination]].payload[[element]] =
-                TileProfileCompare(comparison, left_tile.data_type,
-                    left_payload[[element]], right_payload[[element]]);
-        end;
-    end;
-    MarkTileValidRegionDefined(destination);
-end;
-
-func ExecuteTileCompareScalar(destination: TileIndex, source: TileIndex,
-                              scalar: Word, comparison: TileComparison)
-begin
-    let source_tile = _Tiles[[source]];
-    assert _Tiles[[destination]].rows == source_tile.rows;
-    assert _Tiles[[destination]].columns == source_tile.columns;
-    let payload = source_tile.payload;
-    for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(source_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            _Tiles[[destination]].payload[[element]] =
-                TileProfileCompare(comparison, source_tile.data_type,
-                    payload[[element]], scalar);
-        end;
-    end;
-    MarkTileValidRegionDefined(destination);
-end;
-
-func ExecuteTileSelect(destination: TileIndex, mask: TileIndex,
-                       source_true: TileIndex, source_false: TileIndex)
-begin
-    let true_tile = _Tiles[[source_true]];
-    let false_tile = _Tiles[[source_false]];
-    assert TileShapesMatch(true_tile, false_tile);
-    assert _Tiles[[mask]].rows == true_tile.rows;
-    assert _Tiles[[mask]].columns == true_tile.columns;
-    assert TileShapesMatch(_Tiles[[destination]], true_tile);
-    let true_payload = true_tile.payload;
-    let false_payload = false_tile.payload;
-    let mask_payload = _Tiles[[mask]].payload;
-    for row = 0 to true_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to true_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(true_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            if !IsZero(mask_payload[[element]]) then
-                _Tiles[[destination]].payload[[element]] = true_payload[[element]];
-            else
-                _Tiles[[destination]].payload[[element]] = false_payload[[element]];
-            end;
-        end;
-    end;
-    MarkTileValidRegionDefined(destination);
-end;
-
-func ExecuteTileSelectScalar(destination: TileIndex, mask: TileIndex,
-                             source_true: TileIndex, scalar_false: Word)
-begin
-    let destination_tile = _Tiles[[destination]];
-    let true_tile = _Tiles[[source_true]];
-    let mask_tile = _Tiles[[mask]];
-    assert destination_tile.valid_rows == true_tile.valid_rows;
-    assert destination_tile.valid_columns == true_tile.valid_columns;
-    assert mask_tile.valid_rows == true_tile.valid_rows;
-    assert mask_tile.valid_columns == true_tile.valid_columns;
-    let true_payload = true_tile.payload;
-    let mask_payload = mask_tile.payload;
-    for row = 0 to true_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to true_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(true_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            _Tiles[[destination]].payload[[element]] = if !IsZero(mask_payload[[element]]) then
-                true_payload[[element]] else scalar_false;
-        end;
-    end;
-    MarkTileValidRegionDefined(destination);
+    result = TileWithValidRegionDefined(result);
+    result = TileWithPadding(result, CurrentBundlePadValue());
+    RecordNumericStatusFlags(flags);
+    _Tiles[[destination]] = result;
 end;

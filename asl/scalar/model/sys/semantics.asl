@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-SEMANTICS","surface":"scalar","classification":["model","sys","semantics"],"depends_on":["PTO-SCALAR-MODEL-AMO-SEMANTICS"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-SEMANTICS","surface":"scalar","classification":["model","sys","semantics"],"depends_on":["PTO-SCALAR-MODEL-AMO-SEMANTICS","PTO-BLOCK-MODEL-STATE-BARG"]}
 // PTO-REQ-SCALAR-SYS-001, PTO-REQ-MEMORY-TSO-001: PTO base SSR access,
 // architectural time, and data/instruction fences.
 
@@ -92,8 +92,10 @@ end;
 
 func SoftwareBreakpoint(tag: bits(5))
 begin
-    _BreakpointTag = tag;
-    SetFault(Fault_SoftwareBreakpoint, ReadPC());
+    SetFaultWithCause(
+        Fault_SoftwareBreakpoint,
+        ReadPC(),
+        ZeroExtend{24}(tag));
 end;
 
 func SwapSystemRegister(reg: SystemRegister, value: Word) => Word
@@ -166,6 +168,17 @@ begin
     if IsZero(value) then SetFault(Fault_Assert, ReadPC()); end;
 end;
 
+func ExecuteLocalStateRegisterGet(destination: Reg5Selector,
+                                  identifier: bits(12))
+begin
+    if !CurrentBARGWordApplicable(identifier) then
+        SetFault(Fault_BundleControl, ReadTPC());
+        return;
+    end;
+    let value = ReadCurrentBARGWord(identifier);
+    WriteScalarDestination(destination, value);
+end;
+
 func BundleTransformHint()
 begin
     _BundleHintEpoch = _BundleHintEpoch + 1;
@@ -173,6 +186,11 @@ end;
 
 func ArchitectureCloseRequest(request_type: bits(4))
 begin
+    if !ServiceRequestPermitted(CurrentACR(), request_type) then
+        SetFault(Fault_IllegalInstruction, ReadTPC());
+        return;
+    end;
+    _SystemBlockTerminalPending = TRUE;
     if RaiseServiceRequest(request_type) then
         _ArchitectureRequestEpoch = _ArchitectureRequestEpoch + 1;
         _ControlRequestOperand[3:0] = request_type;
@@ -186,14 +204,52 @@ begin
     // identity before assigning different recovery behavior.
     if request_type != '0000' && request_type != '0001' then
         SetFault(Fault_IllegalInstruction, ReadPC());
-    else
-        let recovered = RecoverTrapContext(CurrentACR());
-        if !recovered then
-            SetFault(Fault_ExecutionStateCheck, ReadPC());
-        else
-            _ArchitectureRequestEpoch = _ArchitectureRequestEpoch + 1;
-            _ControlRequestOperand[3:0] = request_type;
+        return;
+    end;
+    let target = CurrentACR();
+    let recovery_context = _TrapContexts[[target]];
+    if !TrapContextRecoverable(target) then
+        SetFault(Fault_ExecutionStateCheck, ReadPC());
+        if recovery_context.valid then
+            _TrapContexts[[target]] = recovery_context;
         end;
+        return;
+    end;
+    if !CompleteBundleAt(_BundleSequentialPC) then
+        _TrapContexts[[target]] = recovery_context;
+        return;
+    end;
+    let recovered = RecoverTrapContext(target);
+    assert recovered;
+    _ArchitectureRequestEpoch = _ArchitectureRequestEpoch + 1;
+    _ControlRequestOperand[3:0] = request_type;
+end;
+
+readonly func IsSystemBlockScalarOperation(operation: ScalarOperation)
+    => boolean
+begin
+    case operation of
+        when ScalarOperation_ACRC, ScalarOperation_ACRE,
+             ScalarOperation_ASSERT,
+             ScalarOperation_BC_IALL, ScalarOperation_BC_IVA,
+             ScalarOperation_BSE, ScalarOperation_BWE,
+             ScalarOperation_BWI, ScalarOperation_BWT,
+             ScalarOperation_C_EBREAK, ScalarOperation_C_SSRGET,
+             ScalarOperation_DC_CISW, ScalarOperation_DC_CIVA,
+             ScalarOperation_DC_CSW, ScalarOperation_DC_CVA,
+             ScalarOperation_DC_IALL, ScalarOperation_DC_ISW,
+             ScalarOperation_DC_IVA, ScalarOperation_DC_ZVA,
+             ScalarOperation_EBREAK,
+             ScalarOperation_FENCE_D, ScalarOperation_FENCE_I,
+             ScalarOperation_HL_SSRGET, ScalarOperation_HL_SSRSET,
+             ScalarOperation_IC_IALL, ScalarOperation_IC_IVA,
+             ScalarOperation_SSRGET, ScalarOperation_SSRSET,
+             ScalarOperation_SSRSWAP,
+             ScalarOperation_TLB_IA, ScalarOperation_TLB_IALL,
+             ScalarOperation_TLB_IAV, ScalarOperation_TLB_IV =>
+            return TRUE;
+        otherwise =>
+            return FALSE;
     end;
 end;
 
@@ -207,7 +263,53 @@ begin
     _ArchitectureRequestEpoch = _ArchitectureRequestEpoch + 1;
 end;
 
+readonly func BundleCommitTargetWritable() => boolean
+begin
+    return _BundleActive &&
+           (_BARG.block_type == BundleKind_Standard ||
+            _BARG.block_type == BundleKind_Floating);
+end;
+
+readonly func ScalarOperationApplicable(operation: ScalarOperation)
+    => boolean
+begin
+    if _SystemBlockTerminalPending then
+        return FALSE;
+    end;
+    case operation of
+        when ScalarOperation_C_SETC_TGT =>
+            return BundleCommitTargetWritable() &&
+                   !_BundleCommitTargetSet;
+        when ScalarOperation_SETC_TGT =>
+            return BundleCommitTargetWritable();
+        when ScalarOperation_LSRGET =>
+            return _BundleActive && _BundleBodyActive;
+        otherwise =>
+            if IsSystemBlockScalarOperation(operation) then
+                return _BundleActive &&
+                       _BundleBodyActive &&
+                       _BARG.block_type == BundleKind_System;
+            else
+                return TRUE;
+            end;
+    end;
+end;
+
 func SetCommitTarget(value: Word)
 begin
-    _CommitArgument = value;
+    if !BundleCommitTargetWritable() then
+        SetFault(Fault_BundleControl, ReadTPC());
+        return;
+    end;
+    _BARG.bpcn = value;
+end;
+
+func SetCompressedCommitTarget(value: Word)
+begin
+    if !BundleCommitTargetWritable() || _BundleCommitTargetSet then
+        SetFault(Fault_BundleControl, ReadTPC());
+        return;
+    end;
+    _BARG.bpcn = value;
+    _BundleCommitTargetSet = TRUE;
 end;

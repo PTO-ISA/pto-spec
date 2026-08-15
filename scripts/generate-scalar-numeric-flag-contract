@@ -178,9 +178,9 @@ def generate() -> dict[str, Any]:
             ],
         },
         "tests": [
-            "tests/asl/scalar-tests.asl:TestScalarFPFlagLifecycle",
-            "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUTotality",
-            "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUFlagAndRoundingHelpers",
+            "tests/asl/scalar/model/fsu/arithmetic/scalar-state-fp-flag-lifecycle-001.asl:TestScalarFPFlagLifecycle",
+            "scripts/generate-asl-decoders:emit_scalar_fsu_flags_validation",
+            "scripts/generate-asl-decoders:ValidateScalarFPFlagHelpers",
         ],
         "sources": [
             source("spec/catalog/scalar-forms.json"),

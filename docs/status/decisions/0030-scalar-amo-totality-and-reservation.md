@@ -19,11 +19,6 @@ That evidence did not close the Stage 4 questions around every encoded ordering
 and address-class modifier, width boundaries, reservation precedence, faults,
 restart, Reg5 aliases, or overlapping DMA ranges.
 
-The comparison executable ISA model corroborates the shared LR/SC, swap, CAS,
-and RMW value shapes. It does not model PTO ordering, fault, Reg5 queue, or DMA
-completion rules completely, so it remains independent evidence rather than
-PTO authority.
-
 ## Decision
 
 ### Width and value rules
@@ -138,7 +133,7 @@ adds 2,474 non-duplicative Stage 4 attempts: 337 modifier/order/address-class,
 assertions are merged into those attempts whenever the decoded operation already
 exercises the same transition; the count does not include duplicate state-only
 witnesses. The repository checker derives the inventory from the catalog,
-executes the Stage 4 witnesses from `tests/asl/main.asl`, and rejects maturity
+executes the independent AVS points under `tests/asl/scalar/amo/`, and rejects maturity
 promotion if any form, field value, effect class, semantic dimension, unique
 marker, or evidence count drifts.
 
@@ -150,5 +145,3 @@ marker, or evidence count drifts.
   clear are PTO architecture, not implementation conveniences.
 - LR `SrcZero` remains an accepted ignored alias; constraining it to zero would
   be an incompatible encoding change.
-- The comparison model's decode-only DMA behavior cannot substitute for PTO's
-  snapshot, fault, event, overlap, and restart evidence.

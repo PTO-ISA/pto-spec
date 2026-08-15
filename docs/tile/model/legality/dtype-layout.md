@@ -32,6 +32,102 @@ begin
     end;
 end;
 
+pure func TileVecArithmeticDataTypeSupported(
+    data_type: TileDataType) => boolean
+begin
+    case data_type of
+        when TileDataType_FP64, TileDataType_FP32, TileDataType_TF32,
+             TileDataType_HF32, TileDataType_FP16, TileDataType_BF16,
+             TileDataType_E4M3, TileDataType_E5M2,
+             TileDataType_S64, TileDataType_S32, TileDataType_S16,
+             TileDataType_S8, TileDataType_U64, TileDataType_U32,
+             TileDataType_U16, TileDataType_U8 => return TRUE;
+        otherwise => return FALSE;
+    end;
+end;
+
+pure func TileFusedMultiplyAddDataTypeSupported(
+    data_type: TileDataType) => boolean
+begin
+    return TileVecArithmeticDataTypeSupported(data_type);
+end;
+
+pure func TileMove24DataTypeSupported(
+    data_type: TileDataType) => boolean
+begin
+    return data_type != TileDataType_HiF4X2;
+end;
+
+pure func TileFillPadDataTypeSupported(
+    data_type: TileDataType) => boolean
+begin
+    case data_type of
+        when TileDataType_FP32, TileDataType_TF32,
+             TileDataType_HF32, TileDataType_FP16,
+             TileDataType_BF16, TileDataType_E4M3,
+             TileDataType_E5M2, TileDataType_S32,
+             TileDataType_S16, TileDataType_S8,
+             TileDataType_U32, TileDataType_U16,
+             TileDataType_U8 => return TRUE;
+        otherwise => return FALSE;
+    end;
+end;
+
+pure func TileImg2ColDataTypeSupported(
+    data_type: TileDataType) => boolean
+begin
+    case data_type of
+        when TileDataType_FP32, TileDataType_FP16,
+             TileDataType_BF16, TileDataType_S32,
+             TileDataType_S16, TileDataType_S8,
+             TileDataType_U32, TileDataType_U16,
+             TileDataType_U8 => return TRUE;
+        otherwise => return FALSE;
+    end;
+end;
+
+pure func TileBinaryUsesClosedElementwiseContract(
+    operation: TileBinaryOperation) => boolean
+begin
+    return operation == TileBinary_ADD ||
+           operation == TileBinary_SUB ||
+           operation == TileBinary_MUL ||
+           operation == TileBinary_DIV ||
+           operation == TileBinary_REM ||
+           operation == TileBinary_MAX ||
+           operation == TileBinary_MIN ||
+           operation == TileBinary_AND ||
+           operation == TileBinary_OR ||
+           operation == TileBinary_XOR ||
+           operation == TileBinary_SHL ||
+           operation == TileBinary_SHR;
+end;
+
+pure func TileVecScalarIntegerDataTypeSupported(
+    data_type: TileDataType) => boolean
+begin
+    case data_type of
+        when TileDataType_S64, TileDataType_S32, TileDataType_S16,
+             TileDataType_S8, TileDataType_U64, TileDataType_U32,
+             TileDataType_U16, TileDataType_U8 => return TRUE;
+        otherwise => return FALSE;
+    end;
+end;
+
+pure func TileBinaryDataTypeSupported(
+    operation: TileBinaryOperation,
+    data_type: TileDataType) => boolean
+begin
+    if operation == TileBinary_AND ||
+       operation == TileBinary_OR ||
+       operation == TileBinary_XOR ||
+       operation == TileBinary_SHL ||
+       operation == TileBinary_SHR then
+        return TileVecScalarIntegerDataTypeSupported(data_type);
+    end;
+    return TileVecArithmeticDataTypeSupported(data_type);
+end;
+
 readonly func TileLogicalShapeMatch(left: TileIndex, right: TileIndex) => boolean
 begin
     return TileDescriptorLegal(left) && TileDescriptorLegal(right) &&
@@ -45,6 +141,7 @@ end;
 readonly func TileShapeAndTypeMatch(left: TileIndex, right: TileIndex) => boolean
 begin
     return TileLogicalShapeMatch(left, right) &&
+           _Tiles[[left]].storage_kind == _Tiles[[right]].storage_kind &&
            _Tiles[[left]].data_type == _Tiles[[right]].data_type;
 end;
 ```

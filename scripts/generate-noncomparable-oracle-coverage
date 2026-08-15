@@ -87,8 +87,8 @@ def validate_comparison(comparison: dict[str, Any]) -> list[dict[str, Any]]:
     if comparison.get("schema") != "pto.executable-model-comparison.v1":
         raise ValueError("unsupported executable-model comparison schema")
     rows = comparison.get("rows")
-    if not isinstance(rows, list) or len(rows) != 682:
-        raise ValueError("comparison must contain exactly 682 rows")
+    if not isinstance(rows, list) or len(rows) != 683:
+        raise ValueError("comparison must contain exactly 683 rows")
     stable_ids = [row.get("stable_id") for row in rows]
     if None in stable_ids or len(set(stable_ids)) != len(stable_ids):
         raise ValueError("comparison stable identities must be present and unique")
@@ -258,7 +258,7 @@ def build(comparison: dict[str, Any]) -> dict[str, Any]:
         "target": "S5-T3-independent-executable-parity",
         "status": "foundation-complete-parity-open",
         "authority": (
-            "PTO-owned ASL semantics and the 682-row disposition matrix remain authoritative. "
+            "PTO-owned ASL semantics and the 683-row disposition matrix remain authoritative. "
             "Oracle coverage is an orthogonal corroboration grade and cannot change a row classification."
         ),
         "oracle_coverage_grades": list(ORACLE_COVERAGE_GRADES),
@@ -282,7 +282,7 @@ def build(comparison: dict[str, Any]) -> dict[str, Any]:
         },
         "source_comparison": {
             "schema": comparison["schema"],
-            "row_count": 682,
+            "row_count": 683,
             "noncomparable_row_count": 38,
             "stable_identity_sha256": stable_identity_digest(noncomparable),
             "reviewed_projection_sha256": REVIEWED_NONCOMPARABLE_PROJECTION_SHA256,
@@ -294,7 +294,7 @@ def build(comparison: dict[str, Any]) -> dict[str, Any]:
             },
             "independent_disposition_closure": {
                 "status": "closed:S5-T3",
-                "matrix_row_count": 682,
+                "matrix_row_count": 683,
                 "noncomparable_row_count": 38,
             },
             "independent_executable_parity": {

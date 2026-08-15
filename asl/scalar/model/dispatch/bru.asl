@@ -40,7 +40,7 @@ func ExecuteDecodedCompareRegister(instruction: bits(48),
 begin
     let right = ApplyRestrictedCompareModifier(
         ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
-        ScalarDecodedRightModifier(instruction, form));
+        ScalarDecodedComparisonRightModifier(instruction, form));
     ExecuteCompare(
         ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
         ScalarConditionForOperation(operation),
@@ -65,7 +65,7 @@ func ExecuteDecodedCompareLogicalRegister(
 begin
     let right = ApplyScalarRightModifier(
         ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
-        ScalarDecodedRightModifier(instruction, form), TRUE);
+        ScalarDecodedComparisonRightModifier(instruction, form), TRUE);
     ExecuteCompareLogical(
         ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
         ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
@@ -88,7 +88,7 @@ func ExecuteDecodedSetCommitRegister(instruction: bits(48),
 begin
     let right = ApplyRestrictedCompareModifier(
         ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
-        ScalarDecodedRightModifier(instruction, form));
+        ScalarDecodedComparisonRightModifier(instruction, form));
     ExecuteSetCommit(ScalarConditionForOperation(operation),
         ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL), right);
 end;
@@ -112,7 +112,7 @@ func ExecuteDecodedSetCommitLogicalRegister(
 begin
     let right = ApplyScalarRightModifier(
         ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
-        ScalarDecodedRightModifier(instruction, form), TRUE);
+        ScalarDecodedComparisonRightModifier(instruction, form), TRUE);
     ExecuteSetCommitLogical(
         ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
         right, combine_or);

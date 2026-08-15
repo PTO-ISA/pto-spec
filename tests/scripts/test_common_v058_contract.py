@@ -5,7 +5,9 @@ import re
 import unittest
 from pathlib import Path
 
+from scripts.asl_units import load_units
 from scripts.instruction_docs import load_instruction_index
+from scripts.instruction_contracts import load_field_domains
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -21,10 +23,56 @@ class CommonV058ContractTest(unittest.TestCase):
             (ROOT / "spec/catalog/tile-operations.json").read_text(encoding="utf-8")
         )
         cls.reservations = json.loads(
-            (ROOT / "spec/catalog/linx-vector-reservations.json").read_text(
+            (ROOT / "spec/catalog/extension-encoding-reservations.json").read_text(
                 encoding="utf-8"
             )
         )
+
+    def test_pto_formal_sources_do_not_depend_on_external_isa_references(self) -> None:
+        paths = [
+            *sorted((ROOT / "docs/status/decisions").glob("*.md")),
+            *sorted((ROOT / "docs/status/open").glob("*.md")),
+            *sorted((ROOT / "docs/status/plans").glob("*.md")),
+            ROOT / "asl/arch/overview/encoding-ownership.asl",
+        ]
+        forbidden = (
+            "davincioo",
+            "linx",
+            "docs/zh/isa",
+            "manual-page-read",
+            "linxisa",
+            "public-source",
+            "public source",
+            "external source",
+            "comparison source",
+            "independent executable",
+            "comparison executable",
+            "executable isa comparison",
+            "executable isa/model comparison",
+            "comparison model",
+            "pinned independent",
+            "pinned public",
+        )
+        for path in paths:
+            text = path.read_text(encoding="utf-8").lower()
+            for token in forbidden:
+                with self.subTest(path=path, token=token):
+                    self.assertNotIn(token, path.as_posix().lower())
+                    self.assertNotIn(token, text)
+
+    def test_pto_asl_omits_external_source_identities(self) -> None:
+        forbidden = (
+            "davincioo",
+            "linxisa",
+            "docs/zh/isa",
+            "manual-page-read",
+        )
+        for path in sorted((ROOT / "asl").rglob("*.asl")):
+            text = path.read_text(encoding="utf-8").lower()
+            for token in forbidden:
+                with self.subTest(path=path, token=token):
+                    self.assertNotIn(token, path.as_posix().lower())
+                    self.assertNotIn(token, text)
 
     def test_deleted_names_are_not_active_or_reserved(self) -> None:
         active_names = {form["mnemonic"] for form in self.command["forms"]}
@@ -53,6 +101,32 @@ class CommonV058ContractTest(unittest.TestCase):
             ],
         )
 
+    def test_l_bstop_owns_the_documented_64_bit_stop_encoding(self) -> None:
+        forms = [
+            form for form in self.command["forms"] if form["mnemonic"] == "L.BSTOP"
+        ]
+
+        self.assertEqual(len(forms), 1)
+        self.assertEqual(forms[0]["asm"], "L.BSTOP")
+        self.assertEqual(forms[0]["semantic_handler"], "ExecuteBundleStop")
+        self.assertEqual(
+            forms[0]["encoding"],
+            [
+                {
+                    "index": 0,
+                    "mask": "0xffffffff",
+                    "match": "0x0000000f",
+                    "width_bits": 32,
+                },
+                {
+                    "index": 1,
+                    "mask": "0xffffffff",
+                    "match": "0x00000001",
+                    "width_bits": 32,
+                },
+            ],
+        )
+
     def test_b_iot_has_no_mask_only_shared_form(self) -> None:
         forms = [form for form in self.command["forms"] if form["mnemonic"] == "B.IOT"]
 
@@ -74,6 +148,33 @@ class CommonV058ContractTest(unittest.TestCase):
             }
             self.assertEqual(operands["address"], "base-address")
             self.assertEqual(operands["scalar0"], "row-stride-elements")
+
+    def test_block_datatype_namespace_is_total_and_reserved_for_extension(self) -> None:
+        domains = load_field_domains(load_units(ROOT / "asl"))
+        domain = domains["PTO-FIELD-BLOCK-DATATYPE"]
+        assigned = dict(domain.assigned)
+
+        self.assertEqual(domain.width, 5)
+        self.assertEqual(len(assigned), 25)
+        self.assertEqual(assigned[0], "FP64")
+        self.assertEqual(assigned[28], "U4X2")
+        self.assertEqual(domain.reserved, (15, 21, 22, 23, 29, 30, 31))
+        self.assertNotIn("NONE", assigned.values())
+        self.assertNotIn("NULL", assigned.values())
+
+    def test_five_bit_datatype_mapping_is_owned_by_arch(self) -> None:
+        arch = (ROOT / "asl/arch/data-types/tile-data-types.asl").read_text(
+            encoding="utf-8"
+        )
+        elements = (ROOT / "asl/tile/model/definedness/elements.asl").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("type TileDataTypeEncoding of bits(5);", arch)
+        self.assertIn("func TileDataTypeFromEncoding", arch)
+        self.assertIn("func TileDataTypeToEncoding", arch)
+        self.assertNotIn("func TileDataTypeFromEncoding", elements)
+        self.assertNotIn("func TileDataTypeEncodingValid", elements)
 
     def test_tfma_remains_active_at_selector_01c(self) -> None:
         tfma = next(
@@ -103,15 +204,24 @@ class CommonV058ContractTest(unittest.TestCase):
             record.mnemonic: record for record in load_instruction_index(ROOT)
         }
 
-        for mnemonic in ("BSTART CALL", "HL.BSTART CALL"):
-            summary = records[mnemonic].summary
-            for required in (
+        expectations = {
+            "BSTART.CALL": (
                 "Atomically",
-                "call target",
-                "return address",
-                "independent unsigned displacement",
-                "writes ra",
-            ):
+                "direct-call BARG",
+                "independent return target",
+                "to ra",
+            ),
+            "BSTART.ICALL": (
+                "Atomically",
+                "BARG.BPCN",
+                "indirect-call BARG",
+                "independent return target",
+                "to ra",
+            ),
+        }
+        for mnemonic, required_fragments in expectations.items():
+            summary = records[mnemonic].summary
+            for required in required_fragments:
                 self.assertIn(required, summary, (mnemonic, summary))
 
     def test_dma_description_matches_the_normative_64_byte_copy(self) -> None:

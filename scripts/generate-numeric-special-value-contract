@@ -26,7 +26,7 @@ OUTPUT = ROOT / "spec/evidence/numeric-special-value-contract.json"
 ACCEPTANCE_RECORD = (
     "docs/status/decisions/0050-hardware-special-value-checkpoint.md"
 )
-PROFILE_ID = "pto-hardware-numeric-0.58.0-ieee-v1"
+PROFILE_ID = "pto-hardware-numeric-0.58.1-ieee-v1"
 
 
 SIGNED_ZERO_ENCODINGS = {
@@ -241,8 +241,8 @@ def generate() -> dict[str, Any]:
         },
         "tests": {
             "sources": [
-                "tests/asl/profile-tests.asl",
-                "tests/asl/scalar-tests.asl",
+                "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl",
+                "tests/asl/scalar/model/fsu/arithmetic/scalar-exec-fp-dispatch-effects-001.asl",
             ],
             "entrypoints": [
                 "ValidateNumericFormatClassification",
@@ -276,7 +276,12 @@ def generate() -> dict[str, Any]:
             *source_rows(ROOT, "asl/tile/model/numeric/formats.asl"),
             *source_rows(ROOT, "asl/scalar/model/fsu/*.asl"),
             *source_rows(ROOT, "asl/scalar/model/dispatch/*.asl"),
-            source("tests/asl/profile-tests.asl"),
+            source(
+                "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
+            ),
+            source(
+                "tests/asl/scalar/model/fsu/arithmetic/scalar-exec-fp-dispatch-effects-001.asl"
+            ),
         ],
         "summary": {
             "format_count": 25,

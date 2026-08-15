@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/agu/LBUI.asl`
 
-LBUI - Load scalar data using this mnemonic's width, signedness, and address-update form.
+LBUI snapshots its scalar sources, forms its encoded address, and loads one aligned little-endian 1-byte value.
 
 ## Normative identity {#PTO-INST-SCALAR-LBUI}
 
@@ -31,13 +31,28 @@ lbui [SrcL, simm], ->{t, u, Rd}
 | lbui_32_c39b9aa11f02 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | lbui_32_c39b9aa11f02 | simm12 | 12 | signed | [{"instruction_lsb":20,"value_lsb":0,"width":12}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| lbui_32_c39b9aa11f02 | RegDst | 5 | 0–31 | none | none | Reg5 loaded-value destination or discard | Encoded zero discards this result without suppressing the instruction's other effects. |
+| lbui_32_c39b9aa11f02 | SrcL | 5 | 0–31 | none | none | Reg5 address-base source | Encoded zero reads the architectural zero GPR. |
+| lbui_32_c39b9aa11f02 | simm12 | 12 | 0–4095 | none | none | signed address displacement | Encoded zero supplies a zero displacement; it does not denote omission. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| RegDst | encoded operand or control |
-| SrcL | encoded operand or control |
-| simm12 | encoded operand or control |
+| RegDst | Reg5 loaded-value destination or discard |
+| SrcL | Reg5 address-base source |
+| simm12 | signed address displacement |
 
 ## Decode
 
@@ -54,21 +69,95 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/agu/LBUI.asl -->
 ```asl
-readonly func InstructionContractHandler_LBUI() => ScalarSemanticHandler
+readonly func InstructionContractHandler_LBUI()
+    => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarLoad;
+end;
+
+pure func InstructionContractAGUAction_LBUI()
+    => ScalarAGUAction
+begin
+    return ScalarAGU_Load;
+end;
+
+pure func InstructionContractAGUAddressKind_LBUI()
+    => ScalarAGUAddressKind
+begin
+    return ScalarAGU_Immediate;
+end;
+
+pure func InstructionContractAGUSizeBytes_LBUI()
+    => integer {1,2,4,8}
+begin
+    return 1;
+end;
+
+pure func InstructionContractAGUOffsetScale_LBUI()
+    => integer {0..3}
+begin
+    return 0;
+end;
+
+pure func InstructionContractAGUUpdateMode_LBUI()
+    => AddressUpdateMode
+begin
+    return AddressUpdate_None;
+end;
+
+pure func InstructionContractAGUSignedLoad_LBUI()
+    => boolean
+begin
+    return FALSE;
+end;
+
+pure func InstructionContractAGUPrefetchReturnsAddress_LBUI()
+    => boolean
+begin
+    return FALSE;
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `LBUI - Load scalar data using this mnemonic's width, signedness, and address-update form.`
-- **Semantic handler:** `ExecuteScalarLoad`
+- Every encoded Reg5 source uses the complete domain: codes 0..23 select absolute GPRs, codes 24..27 select T#1..T#4, and codes 28..31 select U#1..U#4 without consumption.
+- Every Reg5 destination is assigned: codes 1..23 write GPRs, code 30 pushes U, code 31 pushes T, and codes 0 and 24..29 discard only that result.
+- simm12 assigns every signed 12-bit value -2048..2047; the encoded byte displacement is that value multiplied by 1.
+- Each memory address must be aligned to the 1-byte access size; a 1-byte access is the complete transfer unit.
+
+## State effects
+
+- Sign-extend simm12, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcL base.
+- After a successful 1-byte load, zero-extend the loaded value to PTO_XLEN and publish it through the destination.
+- Successful execution advances TPC by 4 bytes; a rejected or faulting attempt does not retire.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- After complete preflight, perform one little-endian 1-byte load and record one relaxed load event.
+- The load preserves memory and reservation state.
+
+### Ordering
+
+- Snapshot all explicit and implicit scalar sources before destination or memory effects; duplicate and source/destination aliases observe pre-instruction values.
+- Complete the relaxed 1-byte memory operation, publish any result or writeback, and then advance TPC.
+
+## Exceptions
+
+- A fixed-bit mismatch, reserved field value, or unavailable selected T/U source raises Fault_IllegalInstruction before instruction effects.
+- A misaligned 1-byte address raises Fault_DataAlignment before translation or permission. A later permission or bounded-memory failure raises Fault_DataPage at the original address.
+- A fault emits no successful memory event, performs no partial memory or destination effect, preserves pending writeback, and leaves TPC at the faulting instruction.
+- Recovery performs a full reissue: every address, source snapshot, preflight, memory operation, and destination is recomputed with no retained progress.
+
+## Examples
+
+- lbui [SrcL, simm], ->{t, u, Rd}
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

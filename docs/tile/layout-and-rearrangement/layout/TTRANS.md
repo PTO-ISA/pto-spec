@@ -28,6 +28,13 @@ TTRANS <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TTRANS | TEPL | 0x06E | 14 | 3 | TTRANS |
 
+## Encoding class
+
+- **Class:** `selector-encoded-block-operation`
+- **Standalone opcode:** `no`
+
+This operation has no standalone opcode.
+
 ## Operands and results
 
 | Field | Architectural role |
@@ -65,21 +72,64 @@ readonly func InstructionContractHandler_TTRANS() => TileSemanticHandler
 begin
     return TileHandler_TTRANS;
 end;
+
+pure func InstructionContractDataTypeLegal_TTRANS(
+    data_type: TileDataType) => boolean
+begin
+    return TileMove24DataTypeSupported(data_type);
+end;
+
+readonly func InstructionContractOperandsLegal_TTRANS(
+    destination: TileIndex,
+    source: TileIndex) => boolean
+begin
+    return TileOperandsLegal_TTRANS(destination, source);
+end;
+
+func InstructionContractExecute_TTRANS(
+    destination: TileIndex,
+    source: TileIndex)
+begin
+    assert InstructionContractOperandsLegal_TTRANS(destination, source);
+    TTRANS(destination, source);
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- **Legality handler:** `TileOperandsLegal_TTRANS`
-- **Fault contract:** `ExecuteTileInstruction`
-- **Datr contract:** `{"allowed_nonzero_fields": ["Layout"], "pad_union": "must-zero"}`
+- At BSTART the bundle descriptor begins with zero-valued B.DATR and B.DIM state; omitted optional commands retain those reset values, and an encoded zero is a value rather than absence.
+- The TileOperandsLegal_TTRANS schema determines which B.IOR, B.IOT, B.IOS, B.DATR, and B.DIM bindings are required or optional for TTRANS.
 
-## Operational information
+## Legality
 
-- **Semantic handler:** `TTRANS`
-- **Effect contract:** `TTRANS`
-- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
-- **State effects:** `["operand:destination0:destination", "operand:source0:source"]`
+- TTRANS is selected only by its BSTART carrier and selector/function assignment; it has no standalone opcode.
+- Before effects, TileOperandsLegal_TTRANS validates the complete assembled bundle, operand roles, dimensions, data attributes, and applicability.
+- B.DATR applicability is exactly [{"allowed_nonzero_fields":["Layout"],"pad_union":"must-zero"}].
+
+## State effects
+
+- Transpose the source Tile into the destination.
+- After complete preflight, execute TTRANS with the operand bindings listed above; destination definedness changes only as specified by that handler.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- none
+
+## Exceptions
+
+- ExecuteTileInstruction supplies the operation fault contract; illegal bundles and reserved selector combinations reject before architectural effects.
+- CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation.
+
+## Examples
+
+- BSTART.SFU TTRANS, DataType; B.DATR (optional); B.DIM LB0; B.DIM (LB1/LB2 for 2D); B.IOT; BSTOP
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

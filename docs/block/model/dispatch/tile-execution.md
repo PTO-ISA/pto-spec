@@ -11,7 +11,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/tile-execution.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","surface":"block","classification":["model","dispatch","tile-execution"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","PTO-TILE-MODEL-DISPATCH-TOP-LEVEL"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","surface":"block","classification":["model","dispatch","tile-execution"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-HISTOGRAM-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-PARTIAL-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SORTING-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","PTO-TILE-MODEL-DISPATCH-TOP-LEVEL"]}
 readonly func BundleTileTypesMatch(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1},
     operands: TileInstructionOperands,
@@ -29,11 +29,27 @@ begin
     return TRUE;
 end;
 
-func ExecuteBundleTileOperationWithAcceptedApplicabilityRules(
+func ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules(
     rules: NumericApplicabilityRuleSet) => boolean
 begin
-    if BundleSharedCubeSelected() then
-        return ExecuteBundleSharedCubeOperation();
+    if _BundleZeroParticipationSeen && BundleTileBindingCount() == 0 &&
+       BundleSharedBindingCount() == 0 then return TRUE; end;
+    if BundleCubeMatrixSelected() then
+        return ExecuteBundleTMATMULOperation();
+    elsif BundleGMOVSelected() then
+        return ExecuteBundleGMOVOperation();
+    elsif BundleMGATHERCASSelected() then
+        return ExecuteBundleMGATHERCASOperation();
+    elsif BundleMGATHERMASKSelected() then
+        return ExecuteBundleMGATHERMASKOperation();
+    elsif BundleMGATHERSelected() then
+        return ExecuteBundleMGATHEROperation();
+    elsif BundleMSCATTERSelected() then
+        return ExecuteBundleMSCATTEROperation();
+    elsif BundleMSCATTERMASKSelected() then
+        return ExecuteBundleMSCATTERMASKOperation();
+    elsif BundleTPREFETCHSelected() then
+        return ExecuteBundleTPREFETCHOperation();
     elsif BundleSharedTLSUSelected() then
         return ExecuteBundleSharedTLSUOperation();
     elsif BundleSharedBindingsUnconsumed() then
@@ -69,11 +85,79 @@ begin
     if !SelectedBundleTileDataAttributesLegal(operation) then
         return FALSE;
     end;
+    if !SelectedBundleClosedBinarySchemaLegal(operation) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if !SelectedBundleClosedUnarySchemaLegal(operation) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if !SelectedBundleClosedTFMASchemaLegal(operation) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if !SelectedBundleClosedQuantizationSchemaLegal(operation) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if !SelectedBundleClosedGenerationSchemaLegal(operation) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if !SelectedBundleClosedHistogramSchemaLegal(operation) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if !SelectedBundleClosedReductionSchemaLegal(operation) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if !SelectedBundleClosedSortingSchemaLegal(operation) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if !SelectedBundleClosedPartialSchemaLegal(operation) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if !SelectedBundleClosedExpansionSchemaLegal(operation) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if !SelectedBundleClosedTCVTSchemaLegal(operation) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if !SelectedBundleClosedTCMPSchemaLegal(operation) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if !SelectedBundleClosedTSELSchemaLegal(operation) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if !SelectedBundleClosedTileScalarBinarySchemaLegal(operation) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if !SelectedBundleClosedTCMPSSchemaLegal(operation) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if !SelectedBundleClosedTSELSSchemaLegal(operation) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if !SelectedBundleClosedTEXPANDSSchemaLegal(operation) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
     if !SelectedBundleTileMasksLegal() then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
-    if !ResolveBundleTileDestinations() then return FALSE; end;
+    if !ResolveBundleTileDestinationsForOperation(operation) then return FALSE; end;
     let operands = BundleTileInstructionOperands(operation);
     let (status, -) =
         ExecuteTileInstructionWithoutTimeWithAcceptedApplicabilityRules(
@@ -84,6 +168,31 @@ begin
     end;
     FinalizeBundleTileAttempt(status);
     return TRUE;
+end;
+
+func ExecuteFarBundleTileOperationWithAcceptedApplicabilityRules(
+    rules: NumericApplicabilityRuleSet) => boolean
+begin
+    // Routing and transport are not architecturally observable.  The formal
+    // model therefore executes the selected operation against the initiating
+    // core's captured inputs and publishes the returned results only through
+    // the same commit path as a local block.  A concrete implementation may
+    // dispatch this work to the target selected by its routing state, but it
+    // may not expose an intermediate remote result or a partial local commit.
+    return ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules(
+        rules);
+end;
+
+func ExecuteBundleTileOperationWithAcceptedApplicabilityRules(
+    rules: NumericApplicabilityRuleSet) => boolean
+begin
+    if _BundleControlAttributes.far then
+        return ExecuteFarBundleTileOperationWithAcceptedApplicabilityRules(
+            rules);
+    else
+        return ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules(
+            rules);
+    end;
 end;
 
 func ExecuteBundleTileOperation() => boolean

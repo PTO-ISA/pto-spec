@@ -110,22 +110,6 @@ there. A named numeric profile must explicitly use the accepted classifier and
 supply complete operation/type result, flag, and rejection rules before it may
 claim hardware or IEEE conformance.
 
-## Independent comparison
-
-An independently reviewed executable ISA model was checked at its recorded
-clean snapshot. Its FP32 and FP64 classifiers agree on:
-
-- exponent/fraction NaN detection;
-- quiet-versus-signaling NaN discrimination;
-- positive and negative zero equivalence;
-- canonical quiet-NaN encodings; and
-- min/max signed-zero and one-NaN selection foundations.
-
-The comparison model has no authoritative PTO low-precision type binding and
-does not cover HiF8, E4M3, E5M2, E3M2, E2M3, the packed four-bit types, or
-E8M0. Those definitions come from the PTO-owned hardware profile and are not
-inferred from the comparison.
-
 ## Rejected alternatives
 
 - **Keep classification in each operation hook.** Rejected because duplicate
@@ -161,7 +145,7 @@ profile, the generated format ledger, and the direct assertions together.
 ## Remaining boundaries
 
 PD-02 still requires the complete operation/type/profile legality matrix,
-target support, and independent result vectors. ADR 0050 now owns the bounded
+target support, and result vectors. ADR 0050 now owns the bounded
 PD-05-SC2 hardware special-value checkpoint for produced canonical NaNs,
 comparison NaN/signed-zero results, and MIN/MAX NaN/signed-zero results. PD-05
 still requires infinity arithmetic, broader NaN creation, conversions,
@@ -175,7 +159,7 @@ numeric domain is closed by classification alone.
 - `asl/types.asl`
 - `asl/numeric/formats.asl`
 - `asl/scalar/floating.asl`
-- `tests/asl/profile-tests.asl`
+- `tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl`
 - `spec/hardware-conformance-profile.json`
 - `spec/evidence/numeric-format-namespace-contract.json`
 - `scripts/generate-numeric-format-namespace-contract`

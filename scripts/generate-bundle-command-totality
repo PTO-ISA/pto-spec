@@ -39,7 +39,6 @@ EFFECT_BY_HANDLER = {
     "ExecuteMemoryCopy": "bounded-memory-copy",
     "ExecuteMemorySet": "bounded-memory-fill",
     "SetBundleArgument": "bundle-argument-kind-and-value",
-    "SetBundleBodyAddress": "bundle-body-address",
     "SetBundleControlAttributes": "bundle-control-attributes",
     "SetBundleDataAttributes": "bundle-data-attributes",
     "SetBundleFixedPointAttributes": "bundle-fixed-point-attributes",
@@ -345,6 +344,78 @@ def command_rejected(row: dict) -> bool:
     )
 
 
+def build_bridge_matrix(tile_rows: list[dict]) -> list[dict]:
+    """Build fail-closed bundle-to-tile operand representability evidence."""
+
+    bridge_matrix = []
+    for row in tile_rows:
+        operand_fields = [operand["field"] for operand in row["operands"]]
+        unsupported_fields = sorted(set(operand_fields) - BRIDGE_FIELDS)
+        if unsupported_fields:
+            raise ValueError(
+                "unknown bridge operand fields: " + ", ".join(unsupported_fields)
+            )
+        resolutions = bridge_operand_resolutions(operand_fields)
+        representable = bool(resolutions or not operand_fields)
+        gpr_slots = {
+            resolution["field"]: resolution["slot"]
+            for resolution in resolutions
+            if "slot" in resolution
+        }
+        matrix_schema = None
+        if row["family"] == "CUBE":
+            matrix_schema = {
+                "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+                "evidence": "spec/evidence/bundle-command-totality.json",
+                "static_mathematical_fields": operand_fields,
+                "gpr": {
+                    "logical_order": list(MATRIX_GPR_ORDER),
+                    "resolutions": conditional_gpr_resolutions(
+                        list(MATRIX_GPR_ORDER)
+                    ),
+                    "omission_default": (
+                        "omitted B.IOR resolves every consumed scalar slot "
+                        "through R0/zero"
+                    ),
+                    "encoded_surplus_rule": (
+                        "RegSrc2, RegDst, and every unconsumed source field "
+                        "must be zero"
+                    ),
+                },
+                "local": conditional_local_schema(
+                    [
+                        field
+                        for field in operand_fields
+                        if field.startswith("source")
+                    ]
+                ),
+            }
+        bridge_matrix.append(
+            {
+                "family": row["family"],
+                "selector": (
+                    row["selector"]
+                    if "selector" in row
+                    else f"0x{row['function']:03x}"
+                ),
+                "operation": row["name"],
+                "operand_fields": operand_fields,
+                "operand_resolutions": resolutions,
+                "gpr_input_slots": gpr_slots,
+                "gpr_input_count": len(gpr_slots),
+                "representable": representable,
+                "unsupported_operand_fields": unsupported_fields,
+                "complete_bundle_schema": matrix_schema,
+                "commit_disposition": (
+                    "execute-after-complete-binding"
+                    if representable
+                    else "reject-bundle-control-before-tile-effect"
+                ),
+            }
+        )
+    return bridge_matrix
+
+
 def build_evidence() -> dict:
     command_rows = load_json(COMMAND_CATALOG)["forms"]
     tile_rows = load_json(TILE_CATALOG)["operations"]
@@ -397,59 +468,7 @@ def build_evidence() -> dict:
                 }
             )
 
-    bridge_matrix = []
-    for row in tile_rows:
-        operand_fields = [operand["field"] for operand in row["operands"]]
-        unsupported_fields = sorted(set(operand_fields) - BRIDGE_FIELDS)
-        resolutions = []
-        if unsupported_fields:
-            raise ValueError(
-                "unknown bridge operand fields: " + ", ".join(unsupported_fields)
-            )
-        resolutions = bridge_operand_resolutions(operand_fields)
-        representable = bool(resolutions or not operand_fields)
-        gpr_slots = {
-            resolution["field"]: resolution["slot"]
-            for resolution in resolutions
-            if "slot" in resolution
-        }
-        matrix_schema = None
-        if row["family"] == "CUBE":
-            matrix_schema = {
-                "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
-                "evidence": "spec/evidence/bundle-command-totality.json",
-                "static_mathematical_fields": operand_fields,
-                "gpr": {
-                    "logical_order": list(MATRIX_GPR_ORDER),
-                    "resolutions": conditional_gpr_resolutions(list(MATRIX_GPR_ORDER)),
-                    "omission_default": "omitted B.IOR resolves every consumed scalar slot through R0/zero",
-                    "encoded_surplus_rule": "RegSrc2, RegDst, and every unconsumed source field must be zero",
-                },
-                "local": conditional_local_schema(
-                    [field for field in operand_fields if field.startswith("source")]
-                ),
-            }
-        bridge_matrix.append(
-            {
-                "family": row["family"],
-                "selector": (
-                    row["selector"] if "selector" in row else f"0x{row['function']:03x}"
-                ),
-                "operation": row["name"],
-                "operand_fields": operand_fields,
-                "operand_resolutions": resolutions,
-                "gpr_input_slots": gpr_slots,
-                "gpr_input_count": len(gpr_slots),
-                "representable": representable,
-                "unsupported_operand_fields": unsupported_fields,
-                "complete_bundle_schema": matrix_schema,
-                "commit_disposition": (
-                    "execute-after-complete-binding"
-                    if representable
-                    else "reject-bundle-control-before-tile-effect"
-                ),
-            }
-        )
+    bridge_matrix = build_bridge_matrix(tile_rows)
 
     handler_counts = Counter(row["semantic_handler"] for row in command_rows)
     disposition_counts = Counter(row["disposition"] for row in form_matrix)
@@ -481,7 +500,7 @@ def build_evidence() -> dict:
             "command comparison must cover every canonical command form exactly once"
         )
     if comparison_status_counts != Counter(
-        {"executable-subset": 80, "decode-only": 16, "missing": 4}
+        {"executable-subset": 53, "decode-only": 16, "missing": 5}
     ):
         raise ValueError(
             f"unexpected independent command status counts: {comparison_status_counts}"
@@ -502,7 +521,7 @@ def build_evidence() -> dict:
             "retirement_rule": "Every successful non-start/non-stop command advances TPC by its encoded instruction length; start and stop own their control transfer.",
             "argument_rule": "All six B.ARG forms retain distinct three-bit argument-kind state; the dynamic form also records its decoded value.",
             "hint_rule": "B.HINT records the complete encoded payload and advances the hint epoch but has no PTO-v0 scheduling effect.",
-            "metadata_rule": "B.DIM, B.TEXT, B.IOR, B.IOT, B.CATR, and B.DATR consume every decoded field into trap-preserved bundle state. After the complete bundle is collected, PTO-v0 resolves the selected direct operation's tile, scalar/address, dimension, data-attribute, and operation-default operands before commit.",
+            "metadata_rule": "B.DIM, B.IOR, B.IOT, B.IOS, B.CATR, B.DATR, and B.FPATR consume every decoded field into trap-preserved bundle state. After the complete bundle is collected, PTO resolves the selected direct operation's tile, scalar/address, dimension, data-attribute, fixed-point-attribute, and operation-default operands before commit.",
             "memory_rule": "MCOPY and MSET accept lengths 0 through 63 bytes and reject larger XLEN values without truncation or partial effects.",
             "bridge_rule": "The PTO-v0 bundle bridge resolves every canonical TileInstructionOperands field through a concrete ordered B.IOT/B.IOR resolver or explicit operation default, with raw-value decode policy recorded before constrained assignment. B.IOR GPR inputs use the fixed address, scalar0, scalar1, diagonal, flag0 order, occupy unique dense RegSrc0..RegSrc2 slots, and never exceed three inputs. Duplicate fields, duplicate assigned slots, malformed or surplus bindings reject before tile effects.",
             "matrix_postprocess_rule": "CUBE complete-bundle evidence adds optional scalar QuantParam and scalar LReLUParam after the baseline logical GPR fields, and optional RowMaxIn/vector QuantParam/vector PReLUParam before D/RowMaxOut/GroupMaxOut in the compact B.IOT stream. The static mathematical operand catalog remains unchanged.",
@@ -519,11 +538,11 @@ def build_evidence() -> dict:
         },
         "executable_evidence": {
             "canonical_form_test": "scripts/generate-asl-decoders:ValidateCanonicalCommandExecution",
-            "boundary_test": "tests/asl/block/model/dispatch/commands/PTO-AVS-BLOCK-TESTBUNDLECOMMANDTOTALITYBOUNDARIES-BOUNDARY-001.asl:TestBundleCommandTotalityBoundaries",
+            "boundary_test": "tests/asl/block/model/dispatch/commands/block-bound-command-totality-boundaries-001.asl:TestBundleCommandTotalityBoundaries",
             "bridge_tests": [
-                "tests/asl/block/model/commit/effects/PTO-AVS-BLOCK-TESTBUNDLETILECOMMITLIFECYCLE-STATE-TRANSITION-001.asl:TestBundleTileCommitLifecycle",
-                "tests/asl/block/model/faults/rollback/PTO-AVS-BLOCK-TESTBUNDLETILECOMMITROLLBACK-EXECUTION-001.asl:TestBundleTileCommitRollback",
-                "tests/asl/block/operands/B.IOR/PTO-AVS-BLOCK-B-IOR-END-TO-END-EXECUTION-001.asl:TestBundleScalarBindingSchemaDefaults",
+                "tests/asl/block/model/commit/effects/block-state-tile-commit-lifecycle-001.asl:TestBundleTileCommitLifecycle",
+                "tests/asl/block/model/faults/rollback/block-exec-tile-commit-001.asl:TestBundleTileCommitRollback",
+                "tests/asl/block/operands/B.IOR/block-exec-b-ior-end-to-end-001.asl:TestBundleScalarBindingSchemaDefaults",
             ],
             "canonical_form_case_count": len(command_rows),
             "decoded_complete_bundle_matrix": [

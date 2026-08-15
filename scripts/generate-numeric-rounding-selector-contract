@@ -330,9 +330,10 @@ def generate() -> dict[str, Any]:
             ],
         },
         "tests": [
-            "tests/asl/profile-tests.asl:TestConcreteProfile",
-            "tests/asl/scalar-tests.asl:TestScalarFloating",
-            "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUFlagAndRoundingHelpers",
+            "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl:main",
+            "tests/asl/scalar/model/fsu/arithmetic/scalar-exec-floating-001.asl:TestScalarFloating",
+            "scripts/generate-asl-decoders:emit_scalar_fsu_rounding_validation",
+            "scripts/generate-asl-decoders:ValidateScalarFPRoundingHelpers",
             "scripts/generate-bundle-command-totality:ValidateCanonicalBundleCommandTotality",
         ],
         "sources": [

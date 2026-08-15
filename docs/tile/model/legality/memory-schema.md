@@ -34,46 +34,119 @@ end;
 
 readonly func TileOperandsLegal_MGATHER(
     destination: TileIndex, base_address: Word,
+    indices: TileIndex, pad_value: TilePadValue) => boolean
+begin
+    return TileDescriptorLegal(destination) && TileDescriptorLegal(indices) &&
+           _Tiles[[destination]].valid_rows == _Tiles[[indices]].valid_rows &&
+           _Tiles[[destination]].valid_columns ==
+               _Tiles[[indices]].valid_columns &&
+           TileDataTypeIsInteger(_Tiles[[indices]].data_type) &&
+           IndexedTLSUTransferDataTypeLegal(
+               _Tiles[[destination]].data_type);
+end;
+
+readonly func TileOperandsLegal_MGATHER(
+    destination: TileIndex, base_address: Word,
     indices: TileIndex) => boolean
 begin
-    return TileLogicalShapeMatch(destination, indices);
+    return TileOperandsLegal_MGATHER(destination, base_address, indices,
+        TilePad_Null);
 end;
 
 readonly func TileOperandsLegal_MSCATTER(
     base_address: Word, source: TileIndex, indices: TileIndex) => boolean
 begin
-    return TileLogicalShapeMatch(source, indices);
+    return TileSourceContentsDefined(source) &&
+           TileSourceContentsDefined(indices) &&
+           TileDataTypeIsInteger(_Tiles[[indices]].data_type) &&
+           IndexedTLSUTransferDataTypeLegal(_Tiles[[source]].data_type) &&
+           _Tiles[[source]].valid_rows == _Tiles[[indices]].valid_rows &&
+           _Tiles[[source]].valid_columns ==
+               _Tiles[[indices]].valid_columns &&
+           _Tiles[[source]].layout == _Tiles[[indices]].layout;
 end;
 
 readonly func TileOperandsLegal_MGATHER_MASK(
     destination: TileIndex, base_address: Word,
     indices: TileIndex, mask: TileIndex, pad_value: TilePadValue) => boolean
 begin
-    return TileLogicalShapeMatch(destination, indices) &&
-           TileLogicalShapeMatch(destination, mask);
+    return TileDescriptorLegal(destination) &&
+           TileSourceContentsDefined(indices) &&
+           TilePredicateValuesLegal(mask) &&
+           TileDataTypeIsInteger(_Tiles[[indices]].data_type) &&
+           IndexedTLSUTransferDataTypeLegal(
+               _Tiles[[destination]].data_type) &&
+           _Tiles[[destination]].valid_rows == _Tiles[[indices]].valid_rows &&
+           _Tiles[[destination]].valid_columns ==
+               _Tiles[[indices]].valid_columns &&
+           _Tiles[[destination]].valid_rows == _Tiles[[mask]].valid_rows &&
+           _Tiles[[destination]].valid_columns ==
+               _Tiles[[mask]].valid_columns &&
+           _Tiles[[destination]].layout == _Tiles[[indices]].layout &&
+           _Tiles[[destination]].layout == _Tiles[[mask]].layout;
 end;
 
 readonly func TileOperandsLegal_MSCATTER_MASK(
     base_address: Word, source: TileIndex, indices: TileIndex,
     mask: TileIndex) => boolean
 begin
-    return TileLogicalShapeMatch(source, indices) &&
-           TileLogicalShapeMatch(source, mask);
+    return TileSourceContentsDefined(source) &&
+           TileSourceContentsDefined(indices) &&
+           TilePredicateValuesLegal(mask) &&
+           TileDataTypeIsInteger(_Tiles[[indices]].data_type) &&
+           IndexedTLSUTransferDataTypeLegal(_Tiles[[source]].data_type) &&
+           _Tiles[[source]].valid_rows == _Tiles[[indices]].valid_rows &&
+           _Tiles[[source]].valid_columns ==
+               _Tiles[[indices]].valid_columns &&
+           _Tiles[[source]].valid_rows == _Tiles[[mask]].valid_rows &&
+           _Tiles[[source]].valid_columns == _Tiles[[mask]].valid_columns &&
+           _Tiles[[source]].layout == _Tiles[[indices]].layout &&
+           _Tiles[[source]].layout == _Tiles[[mask]].layout;
+end;
+
+readonly func TileOperandsLegal_MGATHER_CAS(
+    destination: TileIndex, base_address: Word, indices: TileIndex,
+    expected: TileIndex, replacement: TileIndex,
+    pad_value: TilePadValue) => boolean
+begin
+    return TileDescriptorLegal(destination) &&
+           TileSourceContentsDefined(indices) &&
+           TileSourceContentsDefined(expected) &&
+           TileSourceContentsDefined(replacement) &&
+           TileDataTypeIsInteger(_Tiles[[indices]].data_type) &&
+           IndexedTLSUTransferDataTypeLegal(
+               _Tiles[[destination]].data_type) &&
+           _Tiles[[destination]].valid_rows == _Tiles[[indices]].valid_rows &&
+           _Tiles[[destination]].valid_columns ==
+               _Tiles[[indices]].valid_columns &&
+           _Tiles[[destination]].valid_rows == _Tiles[[expected]].valid_rows &&
+           _Tiles[[destination]].valid_columns ==
+               _Tiles[[expected]].valid_columns &&
+           _Tiles[[destination]].valid_rows ==
+               _Tiles[[replacement]].valid_rows &&
+           _Tiles[[destination]].valid_columns ==
+               _Tiles[[replacement]].valid_columns &&
+           _Tiles[[destination]].data_type == _Tiles[[expected]].data_type &&
+           _Tiles[[destination]].data_type ==
+               _Tiles[[replacement]].data_type;
 end;
 
 readonly func TileOperandsLegal_MGATHER_CAS(
     destination: TileIndex, base_address: Word, indices: TileIndex,
     expected: TileIndex, replacement: TileIndex) => boolean
 begin
-    return TileLogicalShapeMatch(destination, indices) &&
-           TileShapeAndTypeMatch(destination, expected) &&
-           TileShapeAndTypeMatch(destination, replacement);
+    return TileOperandsLegal_MGATHER_CAS(destination, base_address, indices,
+        expected, replacement, TilePad_Null);
 end;
 
 readonly func TileOperandsLegal_TPREFETCH(
-    base_address: Word, byte_count: integer {0..262144}) => boolean
+    base_address: Word, row_stride_elements: Word,
+    valid_columns: integer {1..65535},
+    valid_rows: integer {1..65535},
+    columns: integer {1..65535}) => boolean
 begin
-    return TRUE;
+    return valid_columns <= columns && IsNonzeroPowerOfTwo(columns) &&
+           valid_rows * valid_columns <= PTO_MODEL_TILE_ELEMENTS;
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
